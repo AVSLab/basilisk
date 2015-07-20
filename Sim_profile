@@ -1,0 +1,2 @@
+export SIMULATION_BASE=${PWD}
+
