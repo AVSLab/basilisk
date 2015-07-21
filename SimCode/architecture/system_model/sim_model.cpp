@@ -30,6 +30,37 @@ void SimModel::PrintSimulatedMessageData()
    SystemMessaging::GetInstance()->PrintAllMessageData();
 }
 
+/*! This method exists to provide a hook into the messaging system for obtaining 
+    message data that was written in the simulation.
+    @return uint64_t Message Write time that we got
+    @param MessageName String name for the message we are querying
+    @param MaxSize Maximum size of the message that we can pull
+    @param MessageData A shapeshifting buffer that we can chunk data into
+    @param LatestOffset An offset from the latest message to pull (default as zero)*/
+uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize, 
+   void *MessageData, uint64_t LatestOffset)
+{
+   int64_t MessageID;
+   SingleMessageHeader DataHeader;
+
+   //! Begin Method steps
+   //! - Grab the message ID associated with name if it exists
+   MessageID = SystemMessaging::GetInstance()->FindMessageID(MessageName);
+   //! - If we got an invalid message ID back, alert the user and quit
+   if(MessageID < 0)
+   {
+      std::cerr << "You requested a message name: " << MessageName<<std::endl;
+      std::cerr << "That message does not exist."<<std::endl;
+      return(0);
+   }
+   //! - For valid message names, get the data buffer associated with message
+   SystemMessaging::GetInstance()->ReadMessage(MessageID, &DataHeader, 
+      MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
+
+   return(DataHeader.WriteClockNanos);
+   
+}
+
 /*! This method is used to place the thread from the caller into the correct 
     place in the simulation schedule.  The transaction for this model is that 
     the caller will set the correct parameters in the calling argument and that 

@@ -188,8 +188,10 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
    }
    int64_t CurrentIndex = MsgHdr->UpdateCounter % MsgHdr->MaxNumberBuffers;
    CurrentIndex -= (1 + CurrentOffset);
-   CurrentIndex = (CurrentIndex < 0) ? CurrentIndex + MsgHdr->MaxNumberBuffers :
-      CurrentIndex;
+   while(CurrentIndex < 0)
+   {
+      CurrentIndex += MsgHdr->MaxNumberBuffers;
+   }
    uint8_t *ReadBuffer = &(MessageStorage->
       StorageBuffer[MsgHdr->StartingOffset]);
    ReadBuffer += CurrentIndex * (sizeof(SingleMessageHeader) + 

@@ -26,6 +26,8 @@ class SimModel
    void SingleStepNextThread(); ///@brief Step only the next thread on the stack
    void ScheduleThread(ModelScheduleEntry *ThreadCall); ///@brief Place thread in schedule
    void PrintSimulatedMessageData(); ///@brief Print out stats on active messages
+   uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize, 
+      void *MessageData, uint64_t LatestOffset=0); //!@brief Get message data
     
 
  public:

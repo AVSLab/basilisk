@@ -8,11 +8,14 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 #Get access to the area where the modules are built
 sys.path.append(os.environ['SIMULATION_BASE']+'/Binary/modules')
+sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
+import numpy
 
 #Import all of the modules that we are going to call in this simulation
 import spice_interface
 import sim_model
 import sys_model_thread
+import MessagingAccess
 
 #Create a sim module as an empty container
 TotalSim = sim_model.SimModel()
@@ -28,6 +31,7 @@ SpiceObject = spice_interface.SpiceInterface()
 SpiceObject.ModelTag = "SpiceInterfaceData"
 SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/../AVSRepo/Simulation/data/'
 SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
+SpiceObject.OutputBufferCount = 50000
 #Add the SPICE module to the schedule
 SensorThread.AddNewObject(SpiceObject)
 
@@ -50,6 +54,17 @@ while CurrentTime < TimeStop:
    SimTimeVariable.append(TotalSim.CurrentNanos*1.0E-9)
    GPSTimeVariable.append(SpiceObject.GPSSeconds)
    GPSWeekVariable.append(SpiceObject.GPSWeek)
+
+FinalTimeMessage = spice_interface.SpiceTimeOutput()
+TotalSim.GetWriteData("spice_time_output_data", 40, FinalTimeMessage, 0)
+
+#Pull the message that we wrote from the internal database (50000 entries)
+ListMessage = MessagingAccess.ObtainMessageList("spice_time_output_data", 'spice_interface',
+   'SpiceTimeOutput', 50000, TotalSim)
+
+#Data comes back from messaging system as a dictionary of lists
+GPSSecondsMessage = numpy.array(ListMessage['GPSSeconds'])
+MessageTimeMessage = numpy.array(ListMessage['MessageTime'])
 
 #Print out the information on what messages were created/written
 TotalSim.PrintSimulatedMessageData()
@@ -77,6 +92,9 @@ plt.plot(SimTimeVariable, GPSTimeVariable )
 
 plt.figure(2)
 plt.plot(SimTimeVariable, GPSWeekVariable )
+
+plt.figure(3)
+plt.plot(MessageTimeMessage*1.0E-9, GPSSecondsMessage)
 
 plt.show()
 
