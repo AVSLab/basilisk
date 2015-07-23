@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 #Get access to the area where the modules are built
-sys.path.append(os.environ['SIMULATION_BASE']+'/Binary/modules')
+sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
 sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 import numpy
 

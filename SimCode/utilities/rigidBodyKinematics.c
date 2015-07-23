@@ -10,7 +10,7 @@
 
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include <cstring>
+#include <string.h>
 
 /*
 * Q = addEP(B1,B2) provides the Euler parameter vector

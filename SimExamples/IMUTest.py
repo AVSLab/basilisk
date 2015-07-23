@@ -4,10 +4,8 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 #Point the path to the module storage area
-sys.path.append(os.environ['SIMULATION_BASE']+'/Binary/modules')
-os.environ['LD_LIBRARY_PATH'] = os.environ['SIMULATION_BASE']+'/Binary/lib'
-print os.environ['LD_LIBRARY_PATH']
-os.environ['DYLD_LIBRARY_PATH'] = os.environ['SIMULATION_BASE']+'/Binary/lib'
+sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
+sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 
 #import all of the modules that we are using for this run
 import star_tracker
