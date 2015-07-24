@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 2.8)
 
 project(basilisk)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -gdwarf-3 -I$ENV{CMAKE_SOURCE_DIR}/SimCode -I$ENV{CMAKE_SOURCE_DIR}/External/boost_1_58_0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -gdwarf-3 -I$ENV{CMAKE_SOURCE_DIR}/SimCode -I$ENV{CMAKE_SOURCE_DIR}/External/boost_1_58_0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11 -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimMessaging;SimUtilities")
-set(CMAKE_SWIG_OUTDIR "$ENV{CMAKE_SOURCE_DIR}/modules")
+set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules")
 # Create list of libraries depending on system
 if(WIN32)
    set(library_dependencies 
-      ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib
+      ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib)
 elseif(APPLE)
    set(library_dependencies 
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a)
