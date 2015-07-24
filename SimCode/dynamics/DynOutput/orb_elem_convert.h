@@ -6,6 +6,13 @@
 #include "utilities/sys_model.h"
 #include "utilities/orbitalMotion.h"
 
+/*! \addtogroup SimModelGroup
+ *  This architecture group contains the source used to drive/schedule/interface 
+ *  with the simulation.
+ * @{
+ */
+
+//! An orbital element/cartesian position and velocity converter
 class OrbElemConvert: public SysModel {
 public:
    OrbElemConvert();
@@ -20,19 +27,21 @@ public:
    void ReadInputs();
        
 public:
-   double r_N[3];                    // m  Current position vector (inertial)
-   double v_N[3];                    // m/s Current velocity vector (inertial)
-   double mu;                        // -- Current grav param (inertial)
-   classicElements CurrentElem; // -- Current orbital elements 
-   std::string StateString;          // -- port to use for conversion
-   std::string OutputDataString;     // -- port to use for output data
-   uint64_t OutputBufferCount;       // -- Count on number of buffers to output
-   bool ReinitSelf;                  // -- Indicator to reset conversion type
-   bool Elements2Cart;               // -- Flag saying which direction to go
+   double r_N[3];                    //!< m  Current position vector (inertial)
+   double v_N[3];                    //!< m/s Current velocity vector (inertial)
+   double mu;                        //!< -- Current grav param (inertial)
+   classicElements CurrentElem;      //!< -- Current orbital elements 
+   std::string StateString;          //!< -- port to use for conversion
+   std::string OutputDataString;     //!< -- port to use for output data
+   uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output
+   bool ReinitSelf;                  //!< -- Indicator to reset conversion type
+   bool Elements2Cart;               //!< -- Flag saying which direction to go
 
 private:
    int64_t StateInMsgID;              // -- MEssage ID for incoming data
    int64_t StateOutMsgID;             // -- Message ID for outgoing data
 };
+
+/*! @} */
 
 #endif

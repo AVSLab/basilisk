@@ -6,6 +6,9 @@
 
 #include <stdint.h>
 
+/*! \addtogroup ADCSAlgGroup
+ * @{
+ */
 #ifdef __cplusplus
    extern "C" {
 #endif
@@ -22,5 +25,7 @@
 #ifdef __cplusplus
    }
 #endif
+
+/*! @} */
 
 #endif
