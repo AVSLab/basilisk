@@ -141,8 +141,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double sunvec[3];
     double sigma[3];
     double omega[3];
-    double Omega[RWACount];       /* RW speeds */
-    double appliedU[RWACount];    /* Actual applied motor torques (wheel-speed limited) */
+    //double Omega[RWACount];       /* RW speeds */
+    //double appliedU[RWACount];    /* Actual applied motor torques (wheel-speed limited) */
     double hs;
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double d2[3];               /* intermediate variables */
@@ -168,9 +168,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omega[0] = X[i++];
     omega[1] = X[i++];
     omega[2] = X[i++];
-    for(j = 0; j < RWACount; j++) {
-        Omega[j] = X[i++];
-    }
+    //for(j = 0; j < RWACount; j++) {
+    //    Omega[j] = X[i++];
+    //}
     /* Check for torque limits due to wheel speed */
     //for(i = 0; i < NUM_RW; i++) {
     //    if(this->rw[i].state == COMPONENT_ON) {
@@ -236,12 +236,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 void SixDofEOM::integrateState(double CurrentTime)
 {
 
-    double  X[NStates];         /* integration state space */
-    double  X2[NStates];        /* integration state space */
-    double  k1[NStates];        /* intermediate RK results */
-    double  k2[NStates];
-    double  k3[NStates];
-    double  k4[NStates];
+    double  *X = new double[NStates];         /* integration state space */
+    double  *X2 = new double[NStates];        /* integration state space */
+    double  *k1 = new double[NStates];        /* intermediate RK results */
+    double  *k2 = new double[NStates];
+    double  *k3 = new double[NStates];
+    double  *k4 = new double[NStates];
     uint32_t i;
     double TimeStep;
     double sMag;
@@ -321,6 +321,13 @@ void SixDofEOM::integrateState(double CurrentTime)
     }
 
     TimePrev = CurrentTime;
+	delete[] X;
+	delete[]X2;
+	delete[] k1;
+	delete[] k2;
+	delete[] k3;
+	delete[] k4;
+
 }
 
 void SixDofEOM::computeOutputs()

@@ -8,6 +8,7 @@
 #include "architecture/messaging/blank_storage.h"
 #define MAX_MESSAGE_SIZE 512
 
+
 typedef struct {
    char MessageName[MAX_MESSAGE_SIZE];// -- It pains me, but let's fix name
    uint64_t UpdateCounter;      // -- Counter for number of updates in port
@@ -24,7 +25,12 @@ typedef struct {
    uint64_t WriteSize;         // -- Number of bytes that were written to buffer
 }SingleMessageHeader;
 
-class SystemMessaging
+#ifdef __WIN32
+   class __declspec( dllexport) SystemMessaging
+#else
+   class SystemMessaging
+#endif
+
 {
 
  public:
