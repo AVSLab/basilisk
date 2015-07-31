@@ -23,23 +23,25 @@ file(GLOB impl_files
 )
 
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
+get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
 foreach(file ${file_src})
    get_filename_component(FileBase ${file} NAME_WE)
-   set_source_files_properties(${file} PROPERTIES CPLUSPLUS ON)
+   set_source_files_properties(${file} PROPERTIES CPLUSPLUS OFF)
    set_source_files_properties(${file} PROPERTIES SWIG_FLAGS "-includeall")
    set_source_files_properties(${file} PROPERTIES SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities")
-   set_source_files_properties( ${swig_generated_file_fullname}
-               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
    SWIG_ADD_MODULE(${FileBase} python ${file} ${impl_files})
    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
-   foreach(LibFile ${LIBRARY_BUILD_LIST})
-         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
-   endforeach()
-   foreach(LibFile ${library_dependencies})
+   #foreach(LibFile ${LIBRARY_BUILD_LIST})
+   #      SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
+   #endforeach()
+   foreach(LibFile ${ALG_LIST})
       SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
    endforeach()
    set_property(GLOBAL APPEND PROPERTY TOTAL_TARGET_LIST "${FileBase}.py;_${FileBase}.so;")
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+   set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+         COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/ADCSAlgorithms")
+   #install(FILES _${FileBase}.so DESTINATION /home/spiggott/modules)
 endforeach()

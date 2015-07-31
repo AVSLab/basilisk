@@ -32,4 +32,5 @@ add_subdirectory("SimCode/sensors/imu")
 add_subdirectory("SimCode/sensors/star_tracker")
 add_subdirectory("ADCSAlgorithms/messaging")
 add_subdirectory("ADCSAlgorithms/CSSSensorData")
+add_subdirectory("ADCSAlgorithms/CSSEst")
 

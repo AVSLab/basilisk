@@ -1,7 +1,7 @@
 #Import some architectural stuff that we will probably always use
 import sys, os
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 #Point the path to the module storage area
 sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
@@ -24,6 +24,7 @@ import copy
 import cssComm
 import alg_contain
 import imu_sensor
+import cssWlsEst
 
 #Using these gravity files to set gravity coefficients (might be overkill)
 EarthGravFile = os.environ['SIMULATION_BASE']+'/External/LocalGravData/GGM03S.txt'
@@ -302,6 +303,19 @@ CSSDecodeFSWConfig = cssComm.CSSConfigData()
 CSSDecodeFSWConfig.NumSensors = 8
 CSSDecodeFSWConfig.MaxSensorValue = 500E-6
 CSSDecodeFSWConfig.OutputDataName = "css_data_aggregate"
+ChebyList = [-1.734963346951471e+06,   3.294117146099591e+06,
+        -2.816333294617512e+06,   2.163709942144332e+06,
+        -1.488025993860025e+06,   9.107359382775769e+05,
+        -4.919712500291216e+05,   2.318436583511218e+05,
+        -9.376105045529010e+04,   3.177536873430168e+04,
+        -8.704033370738143e+03,   1.816188108176300e+03,
+        -2.581556805090373e+02,   1.888418924282780e+01]
+CSSDecodeFSWConfig.ChebyCount = len(ChebyList)
+ChebyVec = ctypes.cast(CSSDecodeFSWConfig.KellyCheby.__long__(), ctypes.POINTER(ctypes.c_double))
+i=0;
+for elem in ChebyList:
+   ChebyVec[i] = elem
+   i+=1
 CurrentName = cssComm.SensorMsgNameCarrier()
 #Arrays of c-strings are hard for SWIG/python.  Required a bit of care.
 SensorListUse = [
@@ -331,6 +345,42 @@ CSSAlgWrap.UseSelfInit(cssComm.SelfInit_cssProcessTelem)
 CSSAlgWrap.UseCrossInit(cssComm.CrossInit_cssProcessTelem)
 FSWThread.AddNewObject(CSSAlgWrap)
 
+CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
+CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
+CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
+CSSWlsEstFSWConfig.UseWeights = True
+CSSWlsEstFSWConfig.SensorUseThresh = 0.1
+
+CSSConfigElement = cssWlsEst.SingleCSSConfig()
+CSSConfigElement.CBias = 1.0
+CSSConfigElement.cssNoiseStd = 0.05
+CSSOrientationList = [
+   [0.70710678118654757, 0, 0.70710678118654746],
+   [0.70710678118654757, 0.70710678118654746, 0],
+   [0.70710678118654757, 0, -0.70710678118654746],
+   [0.70710678118654757, -0.70710678118654746, 0],
+   [-0.70710678118654757, 0.0, 0.70710678118654746],
+   [-0.70710678118654768, -0.70710678118654735, 0],
+   [-0.70710678118654757, 0.0, -0.70710678118654746],
+   [-0.70710678118654746, 0.70710678118654757, 0]
+   ]
+i=0
+PointVec = ctypes.cast(CSSConfigElement.nHatBdy.__long__(), ctypes.POINTER(ctypes.c_double))
+for CSSHat in CSSOrientationList:
+   PointVec[0] = CSSHat[0]
+   PointVec[1] = CSSHat[1]
+   PointVec[2] = CSSHat[2]
+   cssWlsEst.CSSWlsConfigArray_setitem(CSSWlsEstFSWConfig.CSSData, i, 
+      CSSConfigElement)
+   i += 1
+
+CSSWlsAlgWrap = alg_contain.AlgContain()
+CSSWlsAlgWrap.UseData(CSSWlsEstFSWConfig)
+CSSWlsAlgWrap.UseUpdate(cssWlsEst.Update_cssWlsEst)
+CSSWlsAlgWrap.UseSelfInit(cssWlsEst.SelfInit_cssWlsEst)
+CSSWlsAlgWrap.UseCrossInit(cssWlsEst.CrossInit_cssWlsEst)
+FSWThread.AddNewObject(CSSWlsAlgWrap)
+
 #now all of our modules are added/configured.  Init the whole thing.
 TotalSim.InitThreads()
 
@@ -339,7 +389,7 @@ TotalSim.InitThreads()
 CurrentTime = 0
 TimeStepUse = int(1E7)
 TimeStop = int(60*1E9)
-TimeStop2 = TimeStop*20
+TimeStop2 = TimeStop*40
 
 #This is all just test/example code for how to obtain and then visualize data 
 # at the python level.  
@@ -354,11 +404,19 @@ CSSDataArray2 = []
 DVVecArray = []
 IMUDRArray = []
 IMUDVArray = []
+sHatFSWArray = []
+sHatDynTruth = []
+PointErrAngle = []
 VelPrev = VehDynObject.VelocityInit
 PosVec = ctypes.cast(VehDynObject.r_N.__long__(), ctypes.POINTER(ctypes.c_double))
 DVVec = ctypes.cast(VehDynObject.AccumDVBdy.__long__(), ctypes.POINTER(ctypes.c_double))
 IMUDRVec = ctypes.cast(IMUSensor.DRFramePlatform.__long__(), ctypes.POINTER(ctypes.c_double))
 IMUDVVec = ctypes.cast(IMUSensor.DVFramePlatform.__long__(), ctypes.POINTER(ctypes.c_double))
+sHatFSWPtr = ctypes.cast(CSSWlsEstFSWConfig.OutputData.sHatBdy.__long__(),
+  ctypes.POINTER(ctypes.c_double)) 
+sHatTruthPtr = ctypes.cast(CSSPyramid1HeadA.sHatStr.__long__(),
+  ctypes.POINTER(ctypes.c_double)) 
+
 
 #You can debug the script itself if something seems odd with it using pdb
 #import pdb
@@ -381,6 +439,11 @@ while CurrentTime < TimeStop:
    DVVecArray.append([DVVec[0], DVVec[1], DVVec[2]])
    IMUDRArray.append([IMUDRVec[0], IMUDRVec[1], IMUDRVec[2]])
    IMUDVArray.append([IMUDVVec[0], IMUDVVec[1], IMUDVVec[2]])
+   sHatFSWArray.append([sHatFSWPtr[0], sHatFSWPtr[1], sHatFSWPtr[2]])
+   sHatDynTruth.append([sHatTruthPtr[0], sHatTruthPtr[1], sHatTruthPtr[2]])
+   PointErrAngle.append(numpy.dot([sHatFSWPtr[0], sHatFSWPtr[1], sHatFSWPtr[2]],
+      [sHatTruthPtr[0], sHatTruthPtr[1], sHatTruthPtr[2]]))
+   
 
 #Now simulation is "paused" inject a thruster command and see what happens
 ACSThrusterDynObject.NewThrustCmds = thruster_dynamics.DoubleVector([1.0])
@@ -401,6 +464,10 @@ while CurrentTime < TimeStop2:
    DVVecArray.append([DVVec[0], DVVec[1], DVVec[2]])
    IMUDRArray.append([IMUDRVec[0], IMUDRVec[1], IMUDRVec[2]])
    IMUDVArray.append([IMUDVVec[0], IMUDVVec[1], IMUDVVec[2]])
+   sHatFSWArray.append([sHatFSWPtr[0], sHatFSWPtr[1], sHatFSWPtr[2]])
+   sHatDynTruth.append([sHatTruthPtr[0], sHatTruthPtr[1], sHatTruthPtr[2]])
+   PointErrAngle.append(numpy.dot([sHatFSWPtr[0], sHatFSWPtr[1], sHatFSWPtr[2]],
+      [sHatTruthPtr[0], sHatTruthPtr[1], sHatTruthPtr[2]]))
 
 
 #If I convert my python lists to numpy arrays I can treat them more like they 
@@ -415,6 +482,8 @@ CSSDataArray2 = numpy.array(CSSDataArray2)
 DVVecArray = numpy.array(DVVecArray)
 IMUDRArray = numpy.array(IMUDRArray)
 IMUDVArray = numpy.array(IMUDVArray)
+sHatDynTruth = numpy.array(sHatDynTruth)
+sHatFSWArray = numpy.array(sHatFSWArray)
 RateNumArray *= 0.01
 
 #Print out the stats on what messages were created/written
@@ -456,4 +525,14 @@ plt.plot(SimTimeVariable, CSSDataArray2[:,1], 'g')
 plt.plot(SimTimeVariable, CSSDataArray2[:,2], 'r')
 plt.plot(SimTimeVariable, CSSDataArray2[:,3], 'c' )
 
+plt.figure(8)
+plt.plot(SimTimeVariable, sHatFSWArray[:,0], 'b')
+plt.plot(SimTimeVariable, sHatDynTruth[:,0], 'b--')
+plt.plot(SimTimeVariable, sHatFSWArray[:,1], 'g')
+plt.plot(SimTimeVariable, sHatDynTruth[:,1], 'g--')
+plt.plot(SimTimeVariable, sHatFSWArray[:,2], 'r')
+plt.plot(SimTimeVariable, sHatDynTruth[:,2], 'r--')
+
+plt.figure(9)
+plt.plot(SimTimeVariable, PointErrAngle)
 plt.show()
