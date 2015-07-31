@@ -25,7 +25,7 @@ typedef struct {
    uint64_t WriteSize;         // -- Number of bytes that were written to buffer
 }SingleMessageHeader;
 
-#ifdef __WIN32
+#ifdef _WIN32
    class __declspec( dllexport) SystemMessaging
 #else
    class SystemMessaging

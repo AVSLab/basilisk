@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <stdint.h>
-#ifdef __WIN32
+#ifdef _WIN32
    class __declspec(dllexport) BlankStorage
 #else 
    class BlankStorage
