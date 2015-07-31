@@ -250,8 +250,8 @@ void SpiceInterface::ComputePlanetData()
 */
 int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
 {
-    char fileName[CharBufferSize];
-    SpiceChar name[CharBufferSize];
+    char *fileName = new char[CharBufferSize];
+    SpiceChar *name = new SpiceChar[CharBufferSize];
 
     //! Begin method steps
     //! - The required calls come from the SPICE documentation.  
@@ -265,6 +265,8 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
     //! - Check to see if we had trouble loading a kernel and alert user if so
     strcpy(name, "DEFAULT");
     erract_c("SET", CharBufferSize, name);
+	delete[] fileName;
+	delete[] name;
     if(failed_c()) {
         return 1;
     }
