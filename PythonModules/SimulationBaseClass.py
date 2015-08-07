@@ -7,7 +7,6 @@ import sim_model
 import sys_model_thread
 import types
 import numpy
-import gc
 import array
 
 class ThreadBaseClass:
@@ -26,6 +25,10 @@ class LogBaseClass:
    self.TimeValuePairs = array.array('d')
    self.ArrayDim = DataCols+1
    self.CallableFunction = RefFunction
+ def clearItem(self):
+   self.TimeValuePairs = array.array('d')
+   self.PrevLogTime = None
+   self.PrevValue = None
 
 class SimBaseClass:
  def __init__(self):
@@ -35,7 +38,7 @@ class SimBaseClass:
    self.NameReplace = {}
    self.VarLogList = {}
 
- def AddModelToThread(self, ThreadName, NewModel):
+ def AddModelToThread(self, ThreadName, NewModel, ModelData = None):
    i=0
    for Thread in self.ThreadList:
        if Thread.Name == ThreadName:
@@ -43,7 +46,10 @@ class SimBaseClass:
           ThreadReplaceTag = 'self.ThreadList['+str(i) + ']'
           ThreadReplaceTag += '.ThreadModels[' + str(len(Thread.ThreadModels)) + ']'
           self.NameReplace[NewModel.ModelTag] = ThreadReplaceTag
-          Thread.ThreadModels.append(NewModel)
+          if(ModelData != None):
+             Thread.ThreadModels.append(ModelData)
+          else:
+             Thread.ThreadModels.append(NewModel)
           return
        i+=1
    print "Could not find a Thread with name: %(ThreadName)s"  % \
@@ -117,7 +123,10 @@ class SimBaseClass:
          {"ModName": SplitName[0]}
 
  def InitializeSimulation(self):
+   self.TotalSim.ResetSimulation()
    self.TotalSim.InitThreads()
+   for LogItem, LogValue in self.VarLogList.iteritems():
+      LogValue.clearItem()
 
  def ConfigureStopTime(self, TimeStop):
    self.StopTime = TimeStop

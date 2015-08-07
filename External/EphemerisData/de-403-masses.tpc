@@ -1,0 +1,66 @@
+KPL/PCK
+
+This file was produced by Kevin Gehringer on June 15, 1995.
+The file was updated by Bill Taber on March 26, 1996 to add
+the value of the AU to the list of items input to the kernel pool.
+
+Use this at your own risk, for now.
+
+The masses for the sun and barycenter given in this file are 
+derived from the masses used for the integration of the planetary
+ephemerides DE-403. The value of the AU given in this ephemeris is.
+
+    AU = 149597870.693 km
+	 
+In the ephemeris the values of the masses are given as ratios to
+of Solar GM to barycenter GM.  These values are given here.
+
+	BODY1_GMSUN/GM  =   6023600.0
+	BODY2_GMSUN/GM  =    408523.71
+	BODY3_GMSUN/GM  =    332946.048134
+	BODY4_GMSUN/GM  =   3098708.0
+	BODY5_GMSUN/GM  =      1047.3486
+	BODY6_GMSUN/GM  =      3497.898
+	BODY7_GMSUN/GM  =     22902.94
+	BODY8_GMSUN/GM  =     19412.24
+	BODY9_GMSUN/GM  = 135000000.0
+
+These values are the ones that are used in the integration
+of DE-403 and are used by other products that use DE-403 to
+provide gravitational force models for integration of
+trajectories.
+
+
+\begindata
+
+AU         =      149597870.693 
+
+BODY1_GM   =          22032.080
+BODY2_GM   =         324858.599
+BODY3_GM   =         403503.235
+BODY4_GM   =          42828.314
+BODY5_GM   =      126712767.863
+BODY6_GM   =       37940626.063
+BODY7_GM   =        5794559.128
+BODY8_GM   =        6836534.064
+BODY9_GM   =            983.055
+BODY10_GM  =   132712440023.310
+
+\begintext
+
+The masses of bodies other than the earth and moon are
+simply taken to be the masses of the barycenters given above.
+The masses of the earth and moon are taken from DE-403.
+
+\begindata
+
+BODY199_GM   =         22032.080 
+BODY299_GM   =         324858.599
+BODY301_GM   =           4902.799
+BODY399_GM   =         398600.436
+BODY499_GM   =          42828.314
+BODY599_GM   =      126712767.881
+BODY699_GM   =       37940626.068
+BODY799_GM   =        5794559.128
+BODY899_GM   =        6836534.065
+BODY999_GM   =            983.055

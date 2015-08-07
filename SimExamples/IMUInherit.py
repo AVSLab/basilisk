@@ -41,7 +41,7 @@ TotalSim.CreateNewThread("FSWThread", int(1E8))
 #Now initialize the modules that we are using.  I got a little better as I went along
 SpiceObject = spice_interface.SpiceInterface()
 SpiceObject.ModelTag = "SpiceInterfaceData"
-SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/../AVSRepo/Simulation/data/'
+SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/External/EphemerisData/'
 SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
 SpiceObject.OutputBufferCount = 10000
 SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
@@ -363,10 +363,6 @@ CSSOrientationList = [
    ]
 i=0
 PointVec = ctypes.cast(CSSConfigElement.nHatBdy.__long__(), ctypes.POINTER(ctypes.c_double))
-WeightsPtr =  ctypes.cast(CSSWlsEstFSWConfig.UseWeights.__long__(), ctypes.POINTER(ctypes.c_bool))
-print WeightsPtr
-print ctypes.addressof(WeightsPtr)
-print CSSWlsEstFSWConfig
 for CSSHat in CSSOrientationList:
    PointVec[0] = CSSHat[0]
    PointVec[1] = CSSHat[1]
@@ -376,11 +372,12 @@ for CSSHat in CSSOrientationList:
    i += 1
 
 CSSWlsAlgWrap = alg_contain.AlgContain()
+CSSWlsAlgWrap.ModelTag = "CSSWlsEst"
 CSSWlsAlgWrap.UseData(CSSWlsEstFSWConfig)
 CSSWlsAlgWrap.UseUpdate(cssWlsEst.Update_cssWlsEst)
 CSSWlsAlgWrap.UseSelfInit(cssWlsEst.SelfInit_cssWlsEst)
 CSSWlsAlgWrap.UseCrossInit(cssWlsEst.CrossInit_cssWlsEst)
-TotalSim.AddModelToThread("FSWThread", CSSWlsAlgWrap)
+TotalSim.AddModelToThread("FSWThread", CSSWlsAlgWrap, CSSWlsEstFSWConfig)
 
 TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds', int(1E8))
 TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current', int(1E8))
@@ -391,6 +388,8 @@ TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.i', int(1E8))
 TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.f', int(1E8))
 TotalSim.AddVectorForLogging('VehicleDynamicsData.sigma', 'double', 0, 2,  int(1E8))
 TotalSim.AddVariableForLogging('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor', int(1E8))
+TotalSim.AddVectorForLogging('CSSWlsEst.OutputData.sHatBdy', 'double', 0, 2, int(1E8))
+TotalSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(int(60*1.0*1E9))
 
@@ -408,7 +407,8 @@ TotalSim.ExecuteSimulation()
 DataSemi = TotalSim.GetLogVariableData('VehicleOrbitalElements.CurrentElem.a')
 DataSigma = TotalSim.GetLogVariableData('VehicleDynamicsData.sigma')
 DataThrust = TotalSim.GetLogVariableData('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor')
-print DataThrust
+DataCSSFSW = TotalSim.GetLogVariableData('CSSWlsEst.OutputData.sHatBdy')
+DataCSSTruth = TotalSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 plt.figure(1)
 plt.plot(DataSemi[:,0], DataSemi[:,1] )
 
@@ -419,5 +419,10 @@ plt.plot(DataSigma[:,0], DataSigma[:,3] )
 
 plt.figure(3)
 plt.plot(DataThrust[:,0], DataThrust[:,1], 'bx')
+
+plt.figure(4)
+plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,1], 'b', DataCSSTruth[:,0], DataCSSTruth[:,1], 'b--')
+plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,2], 'g', DataCSSTruth[:,0], DataCSSTruth[:,2], 'g--')
+plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,3], 'r', DataCSSTruth[:,0], DataCSSTruth[:,3], 'r--')
 
 plt.show()

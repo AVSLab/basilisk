@@ -167,3 +167,16 @@ void SimModel::SingleStepNextThread()
    NextThreadTime = it->NextThreadStart;
    
 }
+
+void SimModel::ResetSimulation()
+{
+   std::vector<ModelScheduleEntry>::iterator it;
+   //! - Iterate through model list and call the thread model initializer
+   for(it = ThreadModels.begin(); it != ThreadModels.end(); it++)
+   {
+      it->ThreadPtr->ResetThread();
+      it->NextThreadStart = it->ThreadPtr->FirstThreadTime;
+   }
+   CurrentNanos = 0;
+   NextThreadTime = 0;
+}

@@ -353,7 +353,7 @@ CSSWlsEstFSWConfig.SensorUseThresh = 0.1
 
 CSSConfigElement = cssWlsEst.SingleCSSConfig()
 CSSConfigElement.CBias = 1.0
-CSSConfigElement.cssNoiseStd = 0.05
+CSSConfigElement.cssNoiseStd = 0.2
 CSSOrientationList = [
    [0.70710678118654757, 0, 0.70710678118654746],
    [0.70710678118654757, 0.70710678118654746, 0],
@@ -366,6 +366,10 @@ CSSOrientationList = [
    ]
 i=0
 PointVec = ctypes.cast(CSSConfigElement.nHatBdy.__long__(), ctypes.POINTER(ctypes.c_double))
+WeightsPtr =  ctypes.cast(CSSWlsEstFSWConfig.UseWeights.__long__(), ctypes.POINTER(ctypes.c_bool))
+print WeightsPtr
+print ctypes.addressof(WeightsPtr)
+print CSSWlsEstFSWConfig
 for CSSHat in CSSOrientationList:
    PointVec[0] = CSSHat[0]
    PointVec[1] = CSSHat[1]
@@ -380,6 +384,9 @@ CSSWlsAlgWrap.UseUpdate(cssWlsEst.Update_cssWlsEst)
 CSSWlsAlgWrap.UseSelfInit(cssWlsEst.SelfInit_cssWlsEst)
 CSSWlsAlgWrap.UseCrossInit(cssWlsEst.CrossInit_cssWlsEst)
 FSWThread.AddNewObject(CSSWlsAlgWrap)
+
+#TotalSim.AddVariableForLogging(CSSWlsEstFSWConfig.UseWeights)
+print type(CSSWlsEstFSWConfig.UseWeights)
 
 #now all of our modules are added/configured.  Init the whole thing.
 TotalSim.InitThreads()

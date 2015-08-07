@@ -33,7 +33,7 @@ class SimModel
    void PrintSimulatedMessageData(); //!< Print out all messages that have been created
    uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize, 
       void *MessageData, uint64_t LatestOffset=0); //!< Grab a particular MessageName with MaxSize limited
-    
+   void ResetSimulation(); //!< Reset simulation back to zero
 
  public:
    std::vector<ModelScheduleEntry> ThreadModels; //!< -- Array that has pointers to all GNC laws

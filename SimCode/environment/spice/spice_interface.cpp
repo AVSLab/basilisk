@@ -54,7 +54,7 @@ void SpiceInterface::SelfInit()
    //!- Load the SPICE kernels if they haven't already been loaded
    if(!SPICELoaded)
    {
-      if(loadSpiceKernel((char *)"naif0010.tls", SPICEDataPath.c_str())) {
+      if(loadSpiceKernel((char *)"naif0011.tls", SPICEDataPath.c_str())) {
            printf("Unable to load %s", "naif0010.tls");
        }
        if(loadSpiceKernel((char *)"pck00010.tpc", SPICEDataPath.c_str())) {
@@ -63,7 +63,7 @@ void SpiceInterface::SelfInit()
        if(loadSpiceKernel((char *)"de-403-masses.tpc", SPICEDataPath.c_str())) {
            printf("Unable to load %s", "de-403-masses.tpc");
        }
-       if(loadSpiceKernel((char *)"de421.bsp", SPICEDataPath.c_str())) {
+       if(loadSpiceKernel((char *)"de430.bsp", SPICEDataPath.c_str())) {
            printf("Unable to load %s", "de421.bsp");
        }
        if(loadSpiceKernel((char *)"MAR033_2000-2025.bsp", SPICEDataPath.c_str())) {

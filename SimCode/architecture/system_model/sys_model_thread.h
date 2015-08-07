@@ -27,7 +27,7 @@ class SysModelThread
       void AddNewObject(SysModel *NewModel, int32_t Priority = -1);
       void InitThreadList();
       void ExecuteThreadList(uint64_t CurrentSimTime);
-      
+      void ResetThread() {NextStartTime = FirstThreadTime;}
 
    public:
       std::vector<ModelPriorityPair> ThreadModels; //!< -- Array that has pointers to all GNC laws
@@ -36,6 +36,7 @@ class SysModelThread
       uint64_t NextPickupTime;                     //!< ns Next time read thread outputs
       uint64_t ThreadPeriod;                       //!< ns Cycle rate for thread
       uint64_t PickupDelay;                        //!< ns Time between dispatches
+      uint64_t FirstThreadTime;                     //!< ns Time to start thread for first time
 };
 
 /*! @} */

@@ -7,6 +7,7 @@
 %include "std_string.i"
 %include "std_map.i"
 %include "stdint.i"
+%include "carrays.i"
 
 // Instantiate templates used by example
 namespace std {

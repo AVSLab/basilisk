@@ -6,6 +6,13 @@
 %include "std_vector.i"
 %include "std_string.i"
 %include "stdint.i"
+%include "carrays.i"
+
+%array_functions(double, doubleArray);
+%array_functions(long, longArray);
+%array_functions(int, intArray);
+%array_functions(short, shortArray);
+%array_functions(bool, boolArray);
 
 // Instantiate templates used by example
 namespace std {

@@ -72,7 +72,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData)
           -# Check appropriate range on sensor and calibrate
           -# If Chebyshev polynomials are configured:
              - Seed polynominal computations
-             - Iterate over polynominals to compute estimated correction factor
+             - Loop over polynominals to compute estimated correction factor
              - Output is base value plus the correction factor
           -# If range is incorrect, set output value to zero */
    for(i=0; i<ConfigData->NumSensors; i++)

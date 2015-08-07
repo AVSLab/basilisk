@@ -12,6 +12,7 @@ SysModelThread :: SysModelThread()
    NextStartTime = 0;
    NextPickupTime = 0;
    PickupDelay = 0;
+   FirstThreadTime = 0;
 
 }
 /*! A construction option that allows the user to set all thread parameters.
@@ -27,6 +28,7 @@ SysModelThread :: SysModelThread(uint64_t InputPeriod, uint64_t InputDelay,
    PickupDelay = InputDelay;
    NextStartTime = FirstStartTime;
    NextPickupTime = NextStartTime + ThreadPeriod;
+   FirstThreadTime = FirstStartTime;
 }
 
 //! The destructor.  Everything is handled by STL.
