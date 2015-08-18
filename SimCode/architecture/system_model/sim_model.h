@@ -34,6 +34,10 @@ class SimModel
    uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize, 
       void *MessageData, uint64_t LatestOffset=0); //!< Grab a particular MessageName with MaxSize limited
    void ResetSimulation(); //!< Reset simulation back to zero
+   void WriteMessageData(std::string MessageName, uint64_t MessageSize, 
+      uint64_t ClockTime, void *MessageData); //!< Write in a single message
+   void CreateNewMessage(std::string MessageName, uint64_t MessageSize, 
+      uint64_t NumBuffers=2); //!< Create a new message for use
 
  public:
    std::vector<ModelScheduleEntry> ThreadModels; //!< -- Array that has pointers to all GNC laws

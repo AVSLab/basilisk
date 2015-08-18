@@ -72,7 +72,7 @@ class SimBaseClass:
       if(LogName in self.VarLogList):
          return
       if(type(eval(LogName)).__name__ == 'SwigPyObject'):
-         RefFunctionString = 'def Get' + NoDotName + '(self, ActSelf):\n'
+         RefFunctionString = 'def Get' + NoDotName + '(self):\n'
          RefFunctionString += '   return ['
          LoopTerminate = False
          i=0
@@ -83,7 +83,7 @@ class SimBaseClass:
             if(i > StopIndex-StartIndex):
                LoopTerminate = True
       else:
-         RefFunctionString = 'def Get' + NoDotName + '(self, ActSelf):\n'
+         RefFunctionString = 'def Get' + NoDotName + '(self):\n'
          RefFunctionString += '   return ['
          LoopTerminate = False
          i=0
@@ -112,7 +112,7 @@ class SimBaseClass:
    if SplitName[0] in self.NameReplace:
       LogName = self.NameReplace[SplitName[0]] + '.' + Subname
       if(LogName not in self.VarLogList):
-         RefFunctionString = 'def Get' + NoDotName + '(self, ActSelf):\n'
+         RefFunctionString = 'def Get' + NoDotName + '(self):\n'
          RefFunctionString += '   return '+ LogName
          exec(RefFunctionString)
          methodHandle = eval('Get' + NoDotName)
@@ -132,19 +132,22 @@ class SimBaseClass:
    self.StopTime = TimeStop
 
  def RecordLogVars(self):
+   CurrSimTime = self.TotalSim.CurrentNanos;
    for LogItem, LogValue in self.VarLogList.iteritems():
-      if(LogValue.PrevLogTime != None and self.TotalSim.CurrentNanos - 
-         LogValue.PrevLogTime < LogValue.Period):
+      LocalPrev = LogValue.PrevLogTime
+      if(LocalPrev != None and CurrSimTime - 
+         LocalPrev < LogValue.Period):
          continue
-      CurrentVal = LogValue.CallableFunction(self, self)
-      if(LogValue.PrevValue != CurrentVal):
-         LogValue.TimeValuePairs.append(self.TotalSim.CurrentNanos)
+      CurrentVal = LogValue.CallableFunction(self)
+      LocalTimeVal = LogValue.TimeValuePairs
+      if(LocalPrev != CurrentVal):
+         LocalTimeVal.append(CurrSimTime)
          if(isinstance(CurrentVal, (list, tuple))):
             for Value in CurrentVal:
-               LogValue.TimeValuePairs.append(Value)
+               LocalTimeVal.append(Value)
          else:
-            LogValue.TimeValuePairs.append(CurrentVal)
-         LogValue.PrevLogTime = self.TotalSim.CurrentNanos
+            LocalTimeVal.append(CurrentVal)
+         LogValue.PrevLogTime = CurrSimTime
          LogValue.PrevValue = CurrentVal
   
  def ExecuteSimulation(self):
@@ -157,3 +160,12 @@ class SimBaseClass:
    ArrayDim = self.VarLogList[LogName].ArrayDim
    TheArray = numpy.reshape(TheArray, (TheArray.shape[0]/ArrayDim, ArrayDim))
    return TheArray
+
+def SetCArray(InputList, VarType, ArrayPointer):
+   CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
+   CurrIndex = 0
+   for CurrElem in InputList:
+      exec(CmdString)
+      CurrIndex += 1
+   
+

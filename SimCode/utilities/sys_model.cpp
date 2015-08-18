@@ -1,10 +1,13 @@
 
 #include "utilities/sys_model.h"
-
-SysModel::~SysModel()
+SysModel::SysModel()
 {
    ModelTag = "";
    RNGSeed = 0x1badcad1;
+}
+
+SysModel::~SysModel()
+{
 }
 
 void SysModel :: SelfInit()

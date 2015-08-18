@@ -7,6 +7,13 @@
 #include "utilities/dyn_effector.h"
 #include <random>
 
+typedef struct{
+    double DVFramePlatform[3];      //!< m/s Accumulated DVs in platform
+    double AccelPlatform[3];        //!< m/s2 Apparent acceleration of the platform
+    double DRFramePlatform[3];      //!< r  Accumulated DRs in platform
+    double AngVelPlatform[3];       //!< r/s Angular velocity in platform frame
+}ImuSensorOutput;
+
 class ImuSensor: public SysModel {
 public:
    ImuSensor();

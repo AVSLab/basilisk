@@ -25,6 +25,9 @@ import cssComm
 import alg_contain
 import imu_sensor
 import cssWlsEst
+import sunSafePoint
+import vehicleConfigData
+import imuComm
 
 #Using these gravity files to set gravity coefficients (might be overkill)
 EarthGravFile = os.environ['SIMULATION_BASE']+'/External/LocalGravData/GGM03S.txt'
@@ -37,6 +40,12 @@ import SimulationBaseClass
 TotalSim = SimulationBaseClass.SimBaseClass()
 TotalSim.CreateNewThread("DynamicsThread", int(1E7))
 TotalSim.CreateNewThread("FSWThread", int(1E8))
+
+LocalConfigData = vehicleConfigData.vehicleConfigData()
+Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', LocalConfigData.T_str2body)
+TotalSim.TotalSim.CreateNewMessage("adcs_config_data", 8*9+4, 2)
+TotalSim.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, LocalConfigData)
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 SpiceObject = spice_interface.SpiceInterface()
@@ -342,6 +351,20 @@ CSSAlgWrap.UseSelfInit(cssComm.SelfInit_cssProcessTelem)
 CSSAlgWrap.UseCrossInit(cssComm.CrossInit_cssProcessTelem)
 TotalSim.AddModelToThread("FSWThread", CSSAlgWrap)
 
+IMUCommData = imuComm.IMUConfigData()
+IMUCommData.InputDataName = "imu_meas_data"
+IMUCommData.InputPropsName = "adcs_config_data"
+IMUCommData.OutputDataName = "parsed_imu_data"
+platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', IMUCommData.platform2StrDCM)
+IMUAlgWrap = alg_contain.AlgContain()
+IMUAlgWrap.UseData(IMUCommData)
+IMUAlgWrap.UseUpdate(imuComm.Update_imuProcessTelem)
+IMUAlgWrap.UseSelfInit(imuComm.SelfInit_imuProcessTelem)
+IMUAlgWrap.UseCrossInit(imuComm.CrossInit_imuProcessTelem)
+TotalSim.AddModelToThread("FSWThread", IMUAlgWrap)
+
+
 CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
 CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
 CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
@@ -379,17 +402,37 @@ CSSWlsAlgWrap.UseSelfInit(cssWlsEst.SelfInit_cssWlsEst)
 CSSWlsAlgWrap.UseCrossInit(cssWlsEst.CrossInit_cssWlsEst)
 TotalSim.AddModelToThread("FSWThread", CSSWlsAlgWrap, CSSWlsEstFSWConfig)
 
-TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds', int(1E8))
-TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current', int(1E8))
-TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek', int(1E8))
-TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.a', int(1E8))
-TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.e', int(1E8))
-TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.i', int(1E8))
-TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.f', int(1E8))
-TotalSim.AddVectorForLogging('VehicleDynamicsData.sigma', 'double', 0, 2,  int(1E8))
-TotalSim.AddVariableForLogging('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor', int(1E8))
-TotalSim.AddVectorForLogging('CSSWlsEst.OutputData.sHatBdy', 'double', 0, 2, int(1E8))
-TotalSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
+sunSafePointData = sunSafePoint.sunSafePointConfig()
+sunSafePointData.outputDataName = "sun_safe_att_err"
+sunSafePointData.inputSunVecName = "css_wls_est"
+sunSafePointData.inputIMUDataName = "parsed_imu_data"
+sunSafePointData.minUnitMag = 0.95
+PointVec = ctypes.cast(sunSafePointData.sHatBdyCmd.__long__(), ctypes.POINTER(ctypes.c_double))
+PointVec[0] = 1.0
+PointVec[1] = 0.0
+PointVec[2] = 0.0
+sunSafePointWrap = alg_contain.AlgContain()
+sunSafePointWrap.ModelTag = "sunSafePoint"
+sunSafePointWrap.UseData(sunSafePointData)
+sunSafePointWrap.UseUpdate(sunSafePoint.Update_sunSafePoint)
+sunSafePointWrap.UseSelfInit(sunSafePoint.SelfInit_sunSafePoint)
+sunSafePointWrap.UseCrossInit(sunSafePoint.CrossInit_sunSafePoint)
+TotalSim.AddModelToThread("FSWThread", sunSafePointWrap, sunSafePointData)
+
+TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds', int(1E9))
+TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current', int(1E9))
+TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek', int(1E9))
+TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.a', int(1E9))
+TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.e', int(1E9))
+TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.i', int(1E9))
+TotalSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.f', int(1E9))
+TotalSim.AddVectorForLogging('VehicleDynamicsData.sigma', 'double', 0, 2,  int(1E9))
+TotalSim.AddVariableForLogging('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor', int(1E9))
+TotalSim.AddVectorForLogging('CSSWlsEst.OutputData.sHatBdy', 'double', 0, 2, int(1E9))
+TotalSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E9))
+TotalSim.AddVariableForLogging('sunSafePoint.sunAngleErr', int(1E9))
+TotalSim.AddVectorForLogging('sunSafePoint.attOut.sigma_BR', 'double', 0, 2, int(1E9))
+TotalSim.AddVectorForLogging('sunSafePoint.attOut.omega_BR', 'double', 0, 2, int(1E9))
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(int(60*1.0*1E9))
 
@@ -397,32 +440,50 @@ TotalSim.ExecuteSimulation()
 
 ACSThrusterDynObject.NewThrustCmds = thruster_dynamics.DoubleVector([1.0])
 
-TotalSim.ConfigureStopTime(int(60*100.0*1E9))
+TotalSim.ConfigureStopTime(int(60*20.0*1E9))
 TotalSim.ExecuteSimulation()
 ACSThrusterDynObject.NewThrustCmds[0] = 1.0
 
-TotalSim.ConfigureStopTime(int(60*220.0*1E9))
+TotalSim.ConfigureStopTime(int(60*50.0*1E9))
 TotalSim.ExecuteSimulation()
 
-DataSemi = TotalSim.GetLogVariableData('VehicleOrbitalElements.CurrentElem.a')
-DataSigma = TotalSim.GetLogVariableData('VehicleDynamicsData.sigma')
-DataThrust = TotalSim.GetLogVariableData('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor')
-DataCSSFSW = TotalSim.GetLogVariableData('CSSWlsEst.OutputData.sHatBdy')
-DataCSSTruth = TotalSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
-plt.figure(1)
-plt.plot(DataSemi[:,0], DataSemi[:,1] )
-
-plt.figure(2)
-plt.plot(DataSigma[:,0], DataSigma[:,1] )
-plt.plot(DataSigma[:,0], DataSigma[:,2] )
-plt.plot(DataSigma[:,0], DataSigma[:,3] )
-
-plt.figure(3)
-plt.plot(DataThrust[:,0], DataThrust[:,1], 'bx')
-
-plt.figure(4)
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,1], 'b', DataCSSTruth[:,0], DataCSSTruth[:,1], 'b--')
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,2], 'g', DataCSSTruth[:,0], DataCSSTruth[:,2], 'g--')
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,3], 'r', DataCSSTruth[:,0], DataCSSTruth[:,3], 'r--')
-
-plt.show()
+#DataSemi = TotalSim.GetLogVariableData('VehicleOrbitalElements.CurrentElem.a')
+#DataSigma = TotalSim.GetLogVariableData('VehicleDynamicsData.sigma')
+##DataThrust = TotalSim.GetLogVariableData('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor')
+#DataCSSFSW = TotalSim.GetLogVariableData('CSSWlsEst.OutputData.sHatBdy')
+#DataCSSTruth = TotalSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
+#DatasunSafeAng = TotalSim.GetLogVariableData('sunSafePoint.sunAngleErr')
+#DatasunSafeSigma = TotalSim.GetLogVariableData('sunSafePoint.attOut.sigma_BR')
+#DatasunSafeOmega = TotalSim.GetLogVariableData('sunSafePoint.attOut.omega_BR')
+#
+#plt.figure(1)
+#plt.plot(DataSemi[:,0], DataSemi[:,1] )
+#
+#plt.figure(2)
+#plt.plot(DataSigma[:,0], DataSigma[:,1] )
+#plt.plot(DataSigma[:,0], DataSigma[:,2] )
+#plt.plot(DataSigma[:,0], DataSigma[:,3] )
+#
+##plt.figure(3)
+##plt.plot(DataThrust[:,0], DataThrust[:,1], 'bx')
+#
+#plt.figure(4)
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,1], 'b', DataCSSTruth[:,0], DataCSSTruth[:,1], 'b--')
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,2], 'g', DataCSSTruth[:,0], DataCSSTruth[:,2], 'g--')
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,3], 'r', DataCSSTruth[:,0], DataCSSTruth[:,3], 'r--')
+#
+#plt.figure(5)
+#plt.plot(DatasunSafeAng[:,0], DatasunSafeAng[:,1] )
+#
+#plt.figure(6)
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,1] )
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,2] )
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,3] )
+#
+#plt.figure(7)
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,1] )
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,2] )
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,3] )
+#
+#
+#plt.show()

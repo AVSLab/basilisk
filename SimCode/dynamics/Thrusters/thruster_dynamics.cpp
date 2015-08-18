@@ -81,10 +81,11 @@ void ThrusterDynamics::ReadInputs()
       ThrusterData.size()*sizeof(ThrustCmdStruct), 
       reinterpret_cast<uint8_t*> (IncomingCmdBuffer)); 
 
-   for(i=0, CmdIt = NewThrustCmds.begin(); CmdIt != NewThrustCmds.end(); 
-      CmdIt++, i++)
+   double *CmdPtr; //= NewThrustCmds.begin().data();
+   for(i=0, CmdPtr = NewThrustCmds.data(); i<ThrusterData.size(); 
+      CmdPtr++, i++)
    {
-      *CmdIt = IncomingCmdBuffer[i].OnTimeRequest;
+      *CmdPtr = IncomingCmdBuffer[i].OnTimeRequest;
    }
 
 }

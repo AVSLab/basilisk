@@ -26,13 +26,14 @@ import cssWlsEst
 import sunSafePoint
 import imuComm
 import sunSafeControl
+import sunSafeACS
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
-   self.CreateNewThread("DynamicsThread", int(1E7))
-   self.CreateNewThread("FSWThread", int(1E8))
+   self.CreateNewThread("DynamicsThread", int(1E8))
+   self.CreateNewThread("FSWThread", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
    self.InitCSSHeads()
@@ -85,6 +86,13 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
       sunSafeControl.CrossInit_sunSafeControl)
    self.sunSafeControlWrap.ModelTag = "sunSafeControl"
+ 
+   self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
+   self.sunSafeACSWrap = alg_contain.AlgContain(self.sunSafeACSData,
+      sunSafeACS.Update_sunSafeACS, sunSafeACS.SelfInit_sunSafeACS,
+      sunSafeACS.CrossInit_sunSafeACS)
+   self.sunSafeACSWrap.ModelTag = "sunSafeACS"
+ 
 
    self.InitAllFSWObjects()
 
@@ -95,6 +103,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafePointData)
    self.AddModelToThread("FSWThread", self.sunSafeControlWrap, 
       self.sunSafeControlData)
+   self.AddModelToThread("FSWThread", self.sunSafeACSWrap, 
+      self.sunSafeACSData)
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
@@ -178,8 +188,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    CSSKellyFactor = 0.1 #Used to get the curve shape correct for output
 
    #Platform 1 is forward, platform 2 is back notionally
-   CSSPlatform1YPR = [0.0, 0.0, 0.0]
-   CSSPlatform2YPR = [180.0*math.pi/180.0, 0.0, 0.0]
+   CSSPlatform1YPR = [-math.pi/2.0, -math.pi/4.0, -math.pi/2.0]
+   CSSPlatform2YPR = [0.0, -math.pi/2.0, 0.0]
 
    #Initialize one sensor by hand and then init the rest off of it
    self.CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
@@ -208,16 +218,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.CSSPyramid1HeadA.phi = 45.0*math.pi/180.0
    self.CSSPyramid1HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-   self.CSSPyramid1HeadB.theta = 45.0*math.pi/180.0
-   self.CSSPyramid1HeadB.phi = 0.0
+   self.CSSPyramid1HeadB.theta = 90.0*math.pi/180.0
+   self.CSSPyramid1HeadB.phi = 45.0*math.pi/180.0
    self.CSSPyramid1HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-   self.CSSPyramid1HeadC.theta = 0.0
-   self.CSSPyramid1HeadC.phi = -45.0*math.pi/180.0
+   self.CSSPyramid1HeadC.theta = 180.0*math.pi/180.0
+   self.CSSPyramid1HeadC.phi = 45.0*math.pi/180.0
    self.CSSPyramid1HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-   self.CSSPyramid1HeadD.theta = -45.0*math.pi/180.0
-   self.CSSPyramid1HeadD.phi = 0.0
+   self.CSSPyramid1HeadD.theta = 270.0*math.pi/180.0
+   self.CSSPyramid1HeadD.phi = 45*math.pi/180.0
    self.CSSPyramid1HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
    self.CSSPyramid2HeadA = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
@@ -267,7 +277,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)   
 
    self.MarsGravBody = six_dof_eom.GravityBodyData()
-   self.MarsGravBody.BodyMsgName = "earth_planet_data"
+   self.MarsGravBody.BodyMsgName = "mars_planet_data"
    self.MarsGravBody.IsCentralBody = False
    self.MarsGravBody.UseJParams = False
    JParams = LoadGravFromFile(MarsGravFile, self.MarsGravBody, JParamsSelect)
@@ -276,8 +286,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject.ModelTag = "VehicleDynamicsData"
    self.VehDynObject.PositionInit = six_dof_eom.DoubleVector([2.342211275644610E+07*1000.0, -1.503236698659483E+08*1000.0, -1.786319594218582E+04*1000.0])
    self.VehDynObject.VelocityInit = six_dof_eom.DoubleVector([2.896852053342327E+01*1000.0,  4.386175246767674E+00*1000.0, -3.469168621992313E-04*1000.0])
-   self.VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.0, 0.0, 0.0])
-   self.VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0, 0.0, 0.0])
+   self.VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.4, 0.2, 0.1])
+   self.VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0001, 0.0, 0.0])
    self.VehDynObject.MassInit = 1400.0
    self.VehDynObject.InertiaInit = six_dof_eom.DoubleVector([1000, 0.0, 0.0,
                                                              0.0, 1000.0, 0.0,
@@ -285,7 +295,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
                                                                0.0, 1.0, 0.0,
                                                                0.0, 0.0, 1.0])
-   self.VehDynObject.CoMInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0])
+   self.VehDynObject.CoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
    #Add the three gravity bodies in to the simulation
    self.VehDynObject.AddGravityBody(self.SunGravBody)
    self.VehDynObject.AddGravityBody(self.EarthGravBody)
@@ -351,14 +361,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    CSSConfigElement.CBias = 1.0
    CSSConfigElement.cssNoiseStd = 0.2
    CSSOrientationList = [
-      [0.70710678118654757, 0, 0.70710678118654746],
-      [0.70710678118654757, 0.70710678118654746, 0],
-      [0.70710678118654757, 0, -0.70710678118654746],
-      [0.70710678118654757, -0.70710678118654746, 0],
-      [-0.70710678118654757, 0.0, 0.70710678118654746],
-      [-0.70710678118654768, -0.70710678118654735, 0],
-      [-0.70710678118654757, 0.0, -0.70710678118654746],
-      [-0.70710678118654746, 0.70710678118654757, 0]
+      [0.70710678118654746, -0.5, 0.5],
+      [0.70710678118654746, -0.5, -0.5],
+      [0.70710678118654746, 0.5, -0.5],
+      [0.70710678118654746, 0.5, 0.5],
+      [-0.70710678118654746, 0, 0.70710678118654757],
+      [-0.70710678118654746, 0.70710678118654757, 0.0],
+      [-0.70710678118654746, 0, -0.70710678118654757],
+      [-0.70710678118654746, -0.70710678118654757, 0.0],
    ]
    i=0
    for CSSHat in CSSOrientationList:
@@ -376,10 +386,28 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafePointData.sHatBdyCmd)
 
  def SetsunSafeControl(self):
-   self.sunSafeControlData.K = 0.0
-   self.sunSafeControlData.P = 100.0
+   self.sunSafeControlData.K = 2.0
+   self.sunSafeControlData.P = 10.0
    self.sunSafeControlData.inputGuidName = "sun_safe_att_err"
    self.sunSafeControlData.outputDataName = "sun_safe_control_request"
+
+ def SetsunSafeACS(self):
+   self.sunSafeACSData.inputControlName = "sun_safe_control_request"
+   self.sunSafeACSData.outputDataName = "acs_thruster_cmds"
+   self.sunSafeACSData.minThrustRequest = 0.08
+   self.sunSafeACSData.numThrusters = 8
+   self.sunSafeACSData.maxNumCmds = 1
+   onTimeMap = [-1.0, 1.0, 1.0, 
+                 -1.0, -1.0, -1.0,
+                 1.0, -1.0, 1.0,
+                 1.0, 1.0, -1.0,
+                 1.0, -1.0, 1.0,
+                 1.0, 1.0, -1.0,
+                 -1.0, 1.0, 1.0,
+                 -1.0, -1.0, -1.0]
+   SimulationBaseClass.SetCArray(onTimeMap, 'double', 
+      self.sunSafeACSData.thrOnMap) 
+   
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -395,6 +423,62 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetCSSWlsEstFSWConfig()
    self.SetsunSafePoint()
    self.SetsunSafeControl()
+   self.SetsunSafeACS()
+
+# def AddVariableForLogging(self, VarName, LogPeriod = 0):
+#   i=0
+#   SplitName = VarName.split('.')
+#   Subname = '.'
+#   Subname = Subname.join(SplitName[1:])
+#   NoDotName = ''
+#   NoDotName = NoDotName.join(SplitName)
+#   NoDotName = NoDotName.translate(None, '[]')
+#   #if SplitName[0] in self.NameReplace:
+#   #   LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+#   if(VarName not in self.VarLogList):
+#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+#      RefFunctionString += '   return self.'+ VarName
+#      exec(RefFunctionString)
+#      methodHandle = eval('Get' + NoDotName)
+#      self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName, LogPeriod,
+#         methodHandle )
+#
+# def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
+#   SplitName = VarName.split('.')
+#   Subname = '.'
+#   Subname = Subname.join(SplitName[1:])
+#   NoDotName = ''
+#   NoDotName = NoDotName.join(SplitName) 
+#   NoDotName = NoDotName.translate(None, '[]')
+#   #LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+#   if(VarName in self.VarLogList):
+#      return
+#   if(type(eval('self.'+VarName)).__name__ == 'SwigPyObject'):
+#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+#      RefFunctionString += '   return ['
+#      LoopTerminate = False
+#      i=0
+#      while not LoopTerminate:
+#         RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
+#         RefFunctionString += 'self.'+VarName + ', ' + str(StartIndex + i) + '),'
+#         i+=1 
+#         if(i > StopIndex-StartIndex):
+#            LoopTerminate = True
+#   else:
+#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+#      RefFunctionString += '   return ['
+#      LoopTerminate = False
+#      i=0
+#      while not LoopTerminate:
+#         RefFunctionString += 'self.'+VarName + '[' +str(StartIndex+i) +'],'
+#         i+=1
+#         if(i > StopIndex-StartIndex):
+#            LoopTerminate = True
+#   RefFunctionString = RefFunctionString[:-1] + ']'
+#   exec(RefFunctionString)
+#   methodHandle = eval('Get' + NoDotName)
+#   self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName, LogPeriod,
+#      methodHandle, StopIndex - StartIndex+1)
 
 def LoadGravFromFile(FileName, GravBody, JParamsSelect):
    csvfile = open(FileName, 'rb')

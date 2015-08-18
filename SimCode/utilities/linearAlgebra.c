@@ -258,6 +258,25 @@ void vPrint(FILE *pFile, const char *name, void *v, size_t dim)
     fprintf(pFile, "];\n");
 }
 
+/*I hope you allocated the output prior to calling this!*/
+void vSort(double *Input, double *Output, size_t dim)
+{
+   int i, j;
+   memcpy(Output, Input, dim*sizeof(double));
+   for(i=0; i<dim; i++)
+   {
+      for(j=0; j<dim-1; j++)
+      {
+         if(Output[j]>Output[j+1])
+         {
+            double temp = Output[j+1];
+            Output[j+1] = Output[j];
+            Output[j] = temp;
+         }
+      }
+   }
+}
+
 #endif
 
 void v2Set(double v0, double v1,

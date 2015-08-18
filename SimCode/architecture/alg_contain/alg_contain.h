@@ -5,16 +5,17 @@
 #include "utilities/sys_model.h"
 
 typedef void (*AlgPtr)(void*);
+typedef void (*AlgUpdatePtr)(void*, uint64_t);
 
 class AlgContain: public SysModel {
 public:
    AlgContain();
    ~AlgContain();
-   AlgContain(void *DataIn, AlgPtr UpdateIn, AlgPtr SelfInitIn=NULL, 
-      AlgPtr CrossInitIn=NULL);
+   AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t), void (*SelfPtr)(void*)=NULL, 
+      void (*CrossPtr)(void*)=NULL);
    
    void UseData(void *IncomingData) {DataPtr = IncomingData;}
-   void UseUpdate(void (*LocPtr)(void*)) {AlgUpdate = LocPtr;}
+   void UseUpdate(void (*LocPtr)(void*, uint64_t)) {AlgUpdate = LocPtr;}
    void UseSelfInit(void (*LocPtr)(void*)) {AlgSelfInit = LocPtr;}
    void UseCrossInit(void (*LocPtr)(void*)) {AlgCrossInit = LocPtr;}
    void CrossInit();
@@ -25,7 +26,7 @@ private:
    void *DataPtr;
    AlgPtr AlgSelfInit;
    AlgPtr AlgCrossInit;
-   AlgPtr AlgUpdate;
+   AlgUpdatePtr AlgUpdate;
 };
 
 #endif

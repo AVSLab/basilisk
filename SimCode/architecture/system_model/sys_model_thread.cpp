@@ -37,10 +37,10 @@ SysModelThread :: ~SysModelThread()
 
 }
 
-/*! This method initializes all of the models that have been added to the thread.
+/*! This method self-initializes all of the models that have been added to the thread.
     @return void
 */
-void SysModelThread::InitThreadList()
+void SysModelThread::SelfInitThreadList()
 {
    std::vector<ModelPriorityPair>::iterator ModelPair;
    SysModel* NonIt;
@@ -53,6 +53,18 @@ void SysModelThread::InitThreadList()
        NonIt = (ModelPair->ModelPtr);
        NonIt->SelfInit();
    }
+   return;
+}
+
+/*! This method cross-initializes all of the models that have been added to the thread.
+    @return void
+*/
+void SysModelThread::CrossInitThreadList()
+{
+   std::vector<ModelPriorityPair>::iterator ModelPair;
+   SysModel* NonIt;
+
+   //! BEgin method steps
    //! - Loop over all of the models and do the CrossInit
    for(ModelPair = ThreadModels.begin(); ModelPair != ThreadModels.end();
       ModelPair++)

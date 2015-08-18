@@ -31,6 +31,7 @@ void    vNormalize(void *v, size_t dim, void *result);
 int     vIsEqual(void *v1, size_t dim, void *v2, double accuracy);
 int     vIsZero(void *v, size_t dim, double accuracy);
 void    vPrint(FILE *pFile, const char *name, void *v, size_t dim);
+void    vSort(double *Input, double *Output, size_t dim);
 #endif
 
 /* 2 element vectors */

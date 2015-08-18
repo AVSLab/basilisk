@@ -53,6 +53,8 @@ void ImuSensor::SelfInit()
       trans_rgen[i].seed(RNGSeed+i);
       trans_rnum[i].param(UpdateTransPair);
    }
+   OutputDataID = SystemMessaging::GetInstance()->CreateNewMessage(
+      OutputDataMsg, sizeof(ImuSensorOutput), OutputBufferCount); 
 }
 
 void ImuSensor::CrossInit()
@@ -89,6 +91,13 @@ void ImuSensor::ReadInputs()
 
 void ImuSensor::WriteOutputs(uint64_t Clock)
 {
+   ImuSensorOutput LocalOutput;
+   memcpy(LocalOutput.DVFramePlatform, DVFramePlatform, 3*sizeof(double));
+   memcpy(LocalOutput.AccelPlatform, AccelPlatform, 3*sizeof(double));
+   memcpy(LocalOutput.DRFramePlatform, DRFramePlatform, 3*sizeof(double));
+   memcpy(LocalOutput.AngVelPlatform, AngVelPlatform, 3*sizeof(double));
+   SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
+      sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput));
 }
 
 void ImuSensor::ApplySensorErrors(uint64_t CurrentTime)
@@ -177,6 +186,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
       ComputePlatformDR();
       ComputePlatformDV(CurrentSimNanos);
       ApplySensorErrors(CurrentSimNanos);
+      WriteOutputs(CurrentSimNanos);
    }
    memcpy(&StatePrevious, &StateCurrent, sizeof(OutputStateData));
    PreviousTime = CurrentSimNanos;

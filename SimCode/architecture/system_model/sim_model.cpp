@@ -112,11 +112,17 @@ void SimModel::InitThreads()
 {
    //! Begin Method steps
    std::vector<ModelScheduleEntry>::iterator it;
-   //! - Iterate through model list and call the thread model initializer
+   //! - Iterate through model list and call the thread model self-initializer
    for(it = ThreadModels.begin(); it != ThreadModels.end(); it++)
    {
       SysModelThread *LocalThread = it->ThreadPtr;
-      LocalThread->InitThreadList();
+      LocalThread->SelfInitThreadList();
+   }
+   //! - Iterate through model list and call the thread model cross-initializer
+   for(it = ThreadModels.begin(); it != ThreadModels.end(); it++)
+   {
+      SysModelThread *LocalThread = it->ThreadPtr;
+      LocalThread->CrossInitThreadList();
    }
 }
 
@@ -179,4 +185,43 @@ void SimModel::ResetSimulation()
    }
    CurrentNanos = 0;
    NextThreadTime = 0;
+}
+
+/*! This method exists to provide a hook into the messaging system for creating
+    messages for use by the simulation
+    @return void
+    @param MessageName String name for the message we are querying
+    @param MessageSize Maximum size of the message that we can pull
+    @param NumBuffers The count of message buffers to create*/
+void SimModel::CreateNewMessage(std::string MessageName, uint64_t MessageSize, 
+   uint64_t NumBuffers)
+{
+   SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize, 
+      NumBuffers);
+}  
+ 
+/*! This method exists to provide a hook into the messaging system for writing 
+    message data into existing messages
+    @return void
+    @param MessageName String name for the message we are querying
+    @param MessageSize Maximum size of the message that we can pull
+    @param MessageData A shapeshifting buffer that we can chunk data into
+    @param ClockTime The time that the message was written to*/
+void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize, 
+      uint64_t ClockTime, void *MessageData)
+{
+   int64_t MessageID;
+
+   //! Begin Method steps
+   //! - Grab the message ID associated with name if it exists
+   MessageID = SystemMessaging::GetInstance()->FindMessageID(MessageName);
+   //! - If we got an invalid message ID back, alert the user and quit
+   if(MessageID < 0)
+   {
+      std::cerr << "You requested a message name: " << MessageName<<std::endl;
+      std::cerr << "That message does not exist."<<std::endl;
+      return;
+   }
+   SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTime, 
+      MessageSize, reinterpret_cast<uint8_t*> (MessageData)); 
 }

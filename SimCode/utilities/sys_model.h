@@ -9,6 +9,7 @@ class SysModel
 {
 
  public:
+   SysModel();
    virtual ~SysModel();
    virtual void SelfInit();
    virtual void CrossInit();

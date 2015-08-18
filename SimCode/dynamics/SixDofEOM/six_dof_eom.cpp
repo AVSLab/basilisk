@@ -321,12 +321,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     }
 
     TimePrev = CurrentTime;
-	delete[] X;
-	delete[]X2;
-	delete[] k1;
-	delete[] k2;
-	delete[] k3;
-	delete[] k4;
+    delete[] X;
+    delete[]X2;
+    delete[] k1;
+    delete[] k2;
+    delete[] k3;
+    delete[] k4;
 
 }
 
