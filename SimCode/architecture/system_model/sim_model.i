@@ -20,6 +20,8 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
+   %template(messsageLogVector) vector<messageLogContainer>;
 }
 %include "sys_model_thread.h"
+%include "message_logger.h"
 %include "sim_model.h"

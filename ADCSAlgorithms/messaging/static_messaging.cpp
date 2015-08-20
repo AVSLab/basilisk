@@ -31,7 +31,7 @@ int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize)
     @param MsgSize The size of the message that we are writing
     @param MsgPayload A pointer to the message buffer that we are writing
 */ 
-int32_t WriteMessage(uint32_t MessageID, uint32_t ClockTimeNanos, uint32_t MsgSize,
+int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
       void *MsgPayload)
 {
    return(SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTimeNanos,

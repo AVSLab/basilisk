@@ -14,9 +14,10 @@
  public:
    BlankStorage();
    ~BlankStorage();
+   BlankStorage(const BlankStorage &mainCopy);
    void IncreaseStorage(uint64_t NewVolume);
    void ClearStorage();
-   uint64_t GetCurrentSize() {return(BufferStorageSize);}
+   uint64_t GetCurrentSize() const {return(BufferStorageSize);}
 
  public:
    uint8_t* StorageBuffer;  

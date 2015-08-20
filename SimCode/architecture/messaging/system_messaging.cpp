@@ -170,6 +170,30 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
    return(true);
 }
 
+/*! This method is static and is added so that other classes (ex. messageLogger) 
+    that have the messaging buffer layout can easily access their own internal 
+    buffers without having to re-write the same code.  Kind of overkill, but 
+    there you go.
+    @return void
+    @param MsgBuffer The base address of the message buffer we are reading
+    @param MsgBytes The maximum number of bytes for a given message type
+    @param CurrentOffset The message count that we want to ready out
+    @param DataHeader The message header that we are writing out to
+    @param OutputBuffer The output message buffer we are writing out to
+*/
+void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t MsgBytes,
+      uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
+      uint8_t *OutputBuffer)
+{
+   MsgBuffer += CurrentOffset * (sizeof(SingleMessageHeader) +
+      MsgBytes);
+   memcpy(DataHeader, MsgBuffer, sizeof(SingleMessageHeader));
+   uint64_t ReadSize = MsgBytes < DataHeader->WriteSize ? MsgBytes :
+      DataHeader->WriteSize;
+   MsgBuffer += sizeof(SingleMessageHeader);
+   memcpy(OutputBuffer, MsgBuffer, ReadSize);
+}
+
 bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader 
    *DataHeader, uint64_t MaxBytes, uint8_t *MsgPayload, uint64_t CurrentOffset)
 {
@@ -194,13 +218,10 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
    }
    uint8_t *ReadBuffer = &(MessageStorage->
       StorageBuffer[MsgHdr->StartingOffset]);
-   ReadBuffer += CurrentIndex * (sizeof(SingleMessageHeader) + 
-      MsgHdr->MaxMessageSize);
-   uint64_t ReadSize = MaxBytes < MsgHdr->CurrentReadSize ? MaxBytes : 
-      MsgHdr->CurrentReadSize;
-   memcpy(DataHeader, ReadBuffer, sizeof(SingleMessageHeader));
-   ReadBuffer += sizeof(SingleMessageHeader);
-   memcpy(MsgPayload, ReadBuffer, ReadSize);
+   uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
+      MsgHdr->MaxMessageSize;
+   AccessMessageData(ReadBuffer, MaxOutputBytes, CurrentIndex, 
+      DataHeader, MsgPayload);
    return(true);
 }
 

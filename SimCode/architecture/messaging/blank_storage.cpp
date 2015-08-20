@@ -18,6 +18,18 @@ BlankStorage::~BlankStorage()
    BufferStorageSize = 0;
 }
 
+
+BlankStorage :: BlankStorage(const BlankStorage &mainCopy)
+{
+   BufferStorageSize = 0;
+   StorageBuffer= NULL;
+   IncreaseStorage(mainCopy.GetCurrentSize());
+   if(BufferStorageSize > 0)
+   {
+      memcpy(StorageBuffer, mainCopy.StorageBuffer, BufferStorageSize);
+   }
+}
+
 void BlankStorage::ClearStorage()
 {
    if(StorageBuffer != NULL)

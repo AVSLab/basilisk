@@ -38,7 +38,7 @@ void SimModel::PrintSimulatedMessageData()
     @param MessageData A shapeshifting buffer that we can chunk data into
     @param LatestOffset An offset from the latest message to pull (default as zero)*/
 uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize, 
-   void *MessageData, uint64_t LatestOffset)
+   void *MessageData, VarAccessType logType, uint64_t LatestOffset)
 {
    int64_t MessageID;
    SingleMessageHeader DataHeader;
@@ -54,8 +54,21 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
       return(0);
    }
    //! - For valid message names, get the data buffer associated with message
-   SystemMessaging::GetInstance()->ReadMessage(MessageID, &DataHeader, 
-      MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
+   switch(logType) 
+   {
+      case messageBuffer:
+         SystemMessaging::GetInstance()->ReadMessage(MessageID, &DataHeader, 
+            MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
+         break;   
+      case logBuffer:
+         messageLogs.readLog(MessageID, &DataHeader,
+            MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
+         break;
+      default:
+         std::cout << "I don't know how to access the log type: "<<logType;
+         std::cout << std::endl;
+         break;
+   } 
 
    return(DataHeader.WriteClockNanos);
    
@@ -124,6 +137,11 @@ void SimModel::InitThreads()
       SysModelThread *LocalThread = it->ThreadPtr;
       LocalThread->CrossInitThreadList();
    }
+   //! - If a message has been added to logger, link the message IDs
+   if(!messageLogs.messagesLinked())
+   {
+      messageLogs.linkMessages();
+   }
 }
 
 /*! This method steps the simulation until the specified stop time has been 
@@ -171,6 +189,7 @@ void SimModel::SingleStepNextThread()
    //! - Figure out when we are going to be called next for scheduling purposes
    it = ThreadModels.begin();
    NextThreadTime = it->NextThreadStart;
+   messageLogs.logAllMessages();
    
 }
 
@@ -224,4 +243,16 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
    }
    SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTime, 
       MessageSize, reinterpret_cast<uint8_t*> (MessageData)); 
+}
+/*! This method functions as a pass-through to the message logging structure 
+    when adding messages to log.  The main point is to serve as an API at the 
+    main simulation level without having to hook in the message logger 
+    somewhere else.
+    @return void
+    @param messageName -- The name of the message that we want to log
+    @param messagePeriod ns The minimum time between messages that we want to allow
+*/ 
+void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
+{
+   messageLogs.addMessageLog(messageName, messagePeriod);
 }

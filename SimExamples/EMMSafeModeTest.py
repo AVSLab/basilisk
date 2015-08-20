@@ -3,17 +3,13 @@ import thruster_dynamics
 import matplotlib.pyplot as plt
 import ctypes
 import math
+import MessagingAccess
+import sim_model
 
 TheEMMSim = EMMSim.EMMSim()
 TheEMMSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds', int(1E8))
 TheEMMSim.AddVariableForLogging('SpiceInterfaceData.J2000Current', int(1E8))
 TheEMMSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek', int(1E8))
-TheEMMSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.a', int(1E8))
-TheEMMSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.e', int(1E8))
-TheEMMSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.i', int(1E8))
-TheEMMSim.AddVariableForLogging('VehicleOrbitalElements.CurrentElem.f', int(1E8))
-TheEMMSim.AddVectorForLogging('VehicleDynamicsData.sigma', 'double', 0, 2,  int(1E8))
-TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E8))
 #TheEMMSim.AddVariableForLogging('SpiceObject.GPSSeconds', int(1E8))
 #TheEMMSim.AddVariableForLogging('SpiceObject.J2000Current', int(1E8))
 #TheEMMSim.AddVariableForLogging('SpiceObject.GPSWeek', int(1E8))
@@ -28,12 +24,13 @@ TheEMMSim.AddVectorForLogging('CSSWlsEst.OutputData.sHatBdy', 'double', 0, 2, in
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSPyramid1HeadA.ScaledValue', int(1E8))
 TheEMMSim.AddVariableForLogging('sunSafePoint.sunAngleErr', int(1E8))
-TheEMMSim.AddVectorForLogging('sunSafePoint.attOut.sigma_BR', 'double', 0, 2, int(1E8))
-TheEMMSim.AddVectorForLogging('sunSafePoint.attOut.omega_BR', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVectorForLogging('sunSafeControl.controlOut.accelRequestBody', 'double', 0, 2, int(1E8))
-TheEMMSim.AddVectorForLogging('sunSafeACS.cmdRequests.effectorRequest', 'double', 0, 7, int(1E8))
+#TheEMMSim.AddVectorForLogging('sunSafeACS.cmdRequests.effectorRequest', 'double', 0, 7, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
-TheEMMSim.AddVectorForLogging('VehicleDynamicsData.r_N', 'double', 0, 2,  int(1E8))
+TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
+TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E8))
 
 TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
@@ -59,65 +56,79 @@ TheEMMSim.ConfigureStopTime(int(60*1440.0*1E9))
 TheEMMSim.ExecuteSimulation()
 
 
-DataSemi = TheEMMSim.GetLogVariableData('VehicleOrbitalElements.CurrentElem.a')
-DatasunSafeSigma = TheEMMSim.GetLogVariableData('sunSafePoint.attOut.sigma_BR')
-DatasunSafeOmega = TheEMMSim.GetLogVariableData('sunSafePoint.attOut.omega_BR')
+#DataSemi = TheEMMSim.GetLogVariableData('VehicleOrbitalElements.CurrentElem.a')
+#DatasunSafeSigma = TheEMMSim.GetLogVariableData('sunSafePoint.attOut.sigma_BR')
+#DatasunSafeOmega = TheEMMSim.GetLogVariableData('sunSafePoint.attOut.omega_BR')
 DataCSSFSW = TheEMMSim.GetLogVariableData('CSSWlsEst.OutputData.sHatBdy')
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
-Dataomega = TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
+#Dataomega = TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
 Datacontrol = TheEMMSim.GetLogVariableData('sunSafeControl.controlOut.accelRequestBody')
-Dataeffector = TheEMMSim.GetLogVariableData('sunSafeACS.cmdRequests.effectorRequest')
-DataSigma = TheEMMSim.GetLogVariableData('VehicleDynamicsData.sigma')
+#Dataeffector = TheEMMSim.GetLogVariableData('sunSafeACS.cmdRequests.effectorRequest')
+DataSigma = MessagingAccess.obtainMessageVector("inertial_state_output", 'six_dof_eom',
+   'OutputStateData', 86400, TheEMMSim.TotalSim, 'sigma', 'double', 0, 2, sim_model.logBuffer)
 DataSunSen = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.ScaledValue')
 DataActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
-DataPosition = TheEMMSim.GetLogVariableData('VehicleDynamicsData.r_N')
+#DataPosition = TheEMMSim.GetLogVariableData('VehicleDynamicsData.r_N')
+thrustLog = MessagingAccess.obtainMessageVector("acs_thruster_cmds", 'sunSafeACS',
+   'vehEffectorOut', 86400*2, TheEMMSim.TotalSim, 'effectorRequest', 'double', 0, 7, sim_model.logBuffer)
 
-print DataCSSTruth[DataCSSTruth.shape[0]-1, :]
-print Datacontrol[Datacontrol.shape[0]-1, :]
-print DataSigma[DataSigma.shape[0]-1, :]
-print DataCSSFSW[DataCSSFSW.shape[0]-1, :]
-print DataSunSen[DataSunSen.shape[0]-1, :]
-print DataPosition[DataPosition.shape[0]-1, :]
-print Dataomega[Dataomega.shape[0]-1, :]
-#
-plt.figure(1)
-plt.plot(DataSemi[:,0], DataSemi[:,1] )
-#
-plt.figure(2)
-plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,1] )
-plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,2] )
-plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,3] )
-#
-plt.figure(3)
-plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,1], 'b', Dataomega[:,0], Dataomega[:,1], 'b--' )
-plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,2] , 'g' , Dataomega[:,0], Dataomega[:,2], 'g--' )
-plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,3], 'r', Dataomega[:,0], Dataomega[:,3], 'r--'  )
+#TheEMMSim.TotalSim.PrintSimulatedMessageData()
+#print DataCSSTruth[DataCSSTruth.shape[0]-1, :]
+#print Datacontrol[Datacontrol.shape[0]-1, :]
+#print DataSigma[DataSigma.shape[0]-1, :]
+#print DataCSSFSW[DataCSSFSW.shape[0]-1, :]
+#print DataSunSen[DataSunSen.shape[0]-1, :]
+#print DataPosition[DataPosition.shape[0]-1, :]
+#print Dataomega[Dataomega.shape[0]-1, :]
+##print thrustLog[:, 0]
 ##
-plt.figure(4)
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,1], 'b', DataCSSTruth[:,0], DataCSSTruth[:,1], 'b--')
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,2], 'g', DataCSSTruth[:,0], DataCSSTruth[:,2], 'g--')
-plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,3], 'r', DataCSSTruth[:,0], DataCSSTruth[:,3], 'r--')
+#plt.figure(1)
+#plt.plot(DataSemi[:,0], DataSemi[:,1] )
+##
+#plt.figure(2)
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,1] )
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,2] )
+#plt.plot(DatasunSafeSigma[:,0], DatasunSafeSigma[:,3] )
+##
+#plt.figure(3)
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,1], 'b', Dataomega[:,0], Dataomega[:,1], 'b--' )
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,2] , 'g' , Dataomega[:,0], Dataomega[:,2], 'g--' )
+#plt.plot(DatasunSafeOmega[:,0], DatasunSafeOmega[:,3], 'r', Dataomega[:,0], Dataomega[:,3], 'r--'  )
+###
+#plt.figure(4)
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,1], 'b', DataCSSTruth[:,0], DataCSSTruth[:,1], 'b--')
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,2], 'g', DataCSSTruth[:,0], DataCSSTruth[:,2], 'g--')
+#plt.plot(DataCSSFSW[:,0], DataCSSFSW[:,3], 'r', DataCSSTruth[:,0], DataCSSTruth[:,3], 'r--')
+##
+#plt.figure(5)
+#plt.plot(Datacontrol[:,0], Datacontrol[:,1] )
+#plt.plot(Datacontrol[:,0], Datacontrol[:,2] )
+#plt.plot(Datacontrol[:,0], Datacontrol[:,3] )
+#plt.figure(6)
+#plt.plot(Dataeffector[:,0], Dataeffector[:,1] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,2] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,3] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,4] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,5] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,6] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,7] )
+#plt.plot(Dataeffector[:,0], Dataeffector[:,8] )
+##
+#plt.figure(7)
+#plt.plot(DataActive[:,0], DataActive[:,1] )
 #
-plt.figure(5)
-plt.plot(Datacontrol[:,0], Datacontrol[:,1] )
-plt.plot(Datacontrol[:,0], Datacontrol[:,2] )
-plt.plot(Datacontrol[:,0], Datacontrol[:,3] )
-plt.figure(6)
-plt.plot(Dataeffector[:,0], Dataeffector[:,1] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,2] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,3] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,4] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,5] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,6] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,7] )
-plt.plot(Dataeffector[:,0], Dataeffector[:,8] )
-#
-plt.figure(7)
-plt.plot(DataActive[:,0], DataActive[:,1] )
-
 plt.figure(8)
 plt.plot(DataSigma[:,0], DataSigma[:,1] )
 plt.plot(DataSigma[:,0], DataSigma[:,2] )
 plt.plot(DataSigma[:,0], DataSigma[:,3] )
-#
+##
+#plt.figure(9)
+#plt.plot(thrustLog[:,0], thrustLog[:,1] )
+#plt.plot(thrustLog[:,0], thrustLog[:,2] )
+#plt.plot(thrustLog[:,0], thrustLog[:,3] )
+#plt.plot(thrustLog[:,0], thrustLog[:,4] )
+#plt.plot(thrustLog[:,0], thrustLog[:,5] )
+#plt.plot(thrustLog[:,0], thrustLog[:,6] )
+#plt.plot(thrustLog[:,0], thrustLog[:,7] )
+#plt.plot(thrustLog[:,0], thrustLog[:,8] )
 plt.show()
