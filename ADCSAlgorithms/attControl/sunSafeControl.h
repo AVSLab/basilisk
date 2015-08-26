@@ -14,7 +14,7 @@
            This algorithm is intended to be incredibly simple and robust*/
 typedef struct {
    double K;           /*!< r/s2 The proportional gain applied to att errors*/
-   double P;           /*! 1/s The derivative gain applied to att rate errors*/
+   double P;           /*!< 1/s The derivative gain applied to att rate errors*/
    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
    char inputGuidName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
    int32_t outputMsgID;     /*!< -- ID for the outgoing body accel requests*/

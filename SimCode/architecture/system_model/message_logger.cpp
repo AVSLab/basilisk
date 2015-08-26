@@ -49,7 +49,7 @@ void messageLogger::addMessageLog(std::string messageName, uint64_t messagePerio
    newContainer.bufferOffset = 0;
    newContainer.storOff.clear();
    logData.push_back(newContainer);
-   //! - Since we have a new message, note that we need to link it durin run
+   //! - Since we have a new message, note that we need to link it during run
    allLogsLinked = false;
 }
 /*! This method is used to find the appropriate messaged ID associated with 

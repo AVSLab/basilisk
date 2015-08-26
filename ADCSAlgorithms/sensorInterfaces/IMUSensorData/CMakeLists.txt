@@ -20,6 +20,7 @@ set(TOTAL_FILE_STRING "")
 file(GLOB impl_files
     "*.cpp"
     "*.c"
+    "*.h"
 )
 
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
@@ -42,6 +43,9 @@ foreach(file ${file_src})
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
          LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+   set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+   set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
          COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/ADCSAlgorithms")
-   #install(FILES _${FileBase}.so DESTINATION /home/spiggott/modules)
 endforeach()

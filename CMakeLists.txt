@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 
 project("AVS basilisk")
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -std=c++11 -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
+set(CMAKE_MACOSX_RPATH 1)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -gdwarf-3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O2")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimMessaging;SimUtilities")
-set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules")
+set(CMAKE_SWIG_OUTDIR ${CMAKE_SOURCE_DIR}/modules)
 # Create list of libraries depending on system
 if(WIN32)
    set(library_dependencies 
@@ -39,3 +42,5 @@ add_subdirectory("ADCSAlgorithms/vehicleConfigData")
 add_subdirectory("ADCSAlgorithms/attControl")
 add_subdirectory("ADCSAlgorithms/effectorInterfaces/errorConversion")
 
+add_custom_target(ScriptRun ALL
+                COMMAND python)
