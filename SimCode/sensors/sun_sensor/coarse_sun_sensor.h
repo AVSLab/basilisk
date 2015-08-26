@@ -10,7 +10,7 @@
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
- */
+                             */
     CSSFAULT_STUCK_CURRENT, /*!< CSS measurement is set to current value for all future time */
     CSSFAULT_STUCK_MAX,     /*!< CSS measurement is set to maximum value for all future time */
     CSSFAULT_STUCK_RAND,    /*!< CSS measurement is set to randomly selected value for all future time */
@@ -20,27 +20,27 @@ typedef enum {
 } CSSFaultState_t;
 
 typedef struct {
-   double OutputData;       /*!< CSS measurement output */
+    double OutputData;       /*!< CSS measurement output */
 }CSSOutputData;
 
 class CoarseSunSensor: public SysModel {
 public:
-   CoarseSunSensor();
-   ~CoarseSunSensor();
- 
-   void CrossInit();
-   void SelfInit();
-   bool LinkMessages();
-   void UpdateState(uint64_t CurrentSimNanos);
-   void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb);
-   void setStructureToPlatformDCM(double yaw, double pitch, double roll);
-   bool SpacecraftIlluminated();
-   void ReadInputs();
-   void ComputeSunData();
-   void ComputeTruthOutput();
-   void ComputeActualOutput();
-   void WriteOutputs(uint64_t Clock);
-       
+    CoarseSunSensor();
+    ~CoarseSunSensor();
+    
+    void CrossInit();
+    void SelfInit();
+    bool LinkMessages();
+    void UpdateState(uint64_t CurrentSimNanos);
+    void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb);
+    void setStructureToPlatformDCM(double yaw, double pitch, double roll);
+    bool SpacecraftIlluminated();
+    void ReadInputs();
+    void ComputeSunData();
+    void ComputeTruthOutput();
+    void ComputeActualOutput();
+    void WriteOutputs(uint64_t Clock);
+    
 public:
     std::string InputSunMsg;                    /*!< Message name for sun data */
     std::string InputStateMsg;                  /*!< Message name for spacecraft state */
@@ -67,14 +67,14 @@ public:
     double SenBias;                  // -- Sensor bias value
     double SenNoiseStd;                 // -- Sensor noise value
     uint64_t OutputBufferCount;      /// -- number of output msgs stored
- private:
-   int64_t InputSunID;              // -- Connect to input time message
-   int64_t InputStateID;            // -- Connect to input time message
-   int64_t OutputDataID;            // -- Connect to output CSS data
-   SpicePlanetState SunData;        // -- Unused for now, but including it for future
-   OutputStateData StateCurrent;    // -- Current SSBI-relative state
-   std::default_random_engine rgen; // -- Random number generator for disp
-   std::normal_distribution<double> rnum;  // -- Random number distribution
+private:
+    int64_t InputSunID;              // -- Connect to input time message
+    int64_t InputStateID;            // -- Connect to input time message
+    int64_t OutputDataID;            // -- Connect to output CSS data
+    SpicePlanetState SunData;        // -- Unused for now, but including it for future
+    OutputStateData StateCurrent;    // -- Current SSBI-relative state
+    std::default_random_engine rgen; // -- Random number generator for disp
+    std::normal_distribution<double> rnum;  // -- Random number distribution
 };
 
 #endif

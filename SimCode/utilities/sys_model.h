@@ -7,19 +7,19 @@
 
 class SysModel
 {
-
- public:
-   SysModel();
-   virtual ~SysModel();
-   virtual void SelfInit();
-   virtual void CrossInit();
-   virtual void IntegratedInit();
-   virtual void UpdateState(uint64_t CurrentSimNanos);
-
- public:
-   std::string ModelTag;        /// -- name for the algorithm to base off of
-   uint64_t CallCounts=0;       /// -- Counts on the model being called
-   uint32_t RNGSeed;            /// -- Giving everyone a random seed for ease of MC
+    
+public:
+    SysModel();
+    virtual ~SysModel();
+    virtual void SelfInit();
+    virtual void CrossInit();
+    virtual void IntegratedInit();
+    virtual void UpdateState(uint64_t CurrentSimNanos);
+    
+public:
+    std::string ModelTag;        /// -- name for the algorithm to base off of
+    uint64_t CallCounts=0;       /// -- Counts on the model being called
+    uint32_t RNGSeed;            /// -- Giving everyone a random seed for ease of MC
 };
 
 

@@ -10,7 +10,7 @@
 
 /*! @brief Structure used to define the output definition for vehicle control*/
 typedef struct {
-   double accelRequestBody[3];     /*!< r/s2 Control output accel request*/
+    double accelRequestBody[3];     /*!< r/s2 Control output accel request*/
 }vehControlOut;
 
 /*! @} */

@@ -40,26 +40,26 @@ typedef struct classicElem {
 } classicElements;
 
 #ifdef __cplusplus
-   extern "C" {
+extern "C" {
 #endif
-double  E2f(double E, double e);
-double  E2M(double E, double e);
-double  f2E(double f, double e);
-double  f2H(double f, double e);
-double  H2f(double H, double e);
-double  H2N(double H, double e);
-double  M2E(double M, double e);
-double  N2H(double N, double e);
-void    elem2rv(double mu, classicElements *elements, double *rVec, double *vVec);
-void    rv2elem(double mu, double *rVec, double *vVec, classicElements *elements);
-
-double  atmosphericDensity(double alt);
-double  debyeLength(double alt);
-void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
-void    jPerturb(double *rvec, int num, double *ajtot, ...);
-void    solarRad(double A, double m, double *sunvec, double *arvec);
-
+    double  E2f(double E, double e);
+    double  E2M(double E, double e);
+    double  f2E(double f, double e);
+    double  f2H(double f, double e);
+    double  H2f(double H, double e);
+    double  H2N(double H, double e);
+    double  M2E(double M, double e);
+    double  N2H(double N, double e);
+    void    elem2rv(double mu, classicElements *elements, double *rVec, double *vVec);
+    void    rv2elem(double mu, double *rVec, double *vVec, classicElements *elements);
+    
+    double  atmosphericDensity(double alt);
+    double  debyeLength(double alt);
+    void    atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec, double *advec);
+    void    jPerturb(double *rvec, int num, double *ajtot, ...);
+    void    solarRad(double A, double m, double *sunvec, double *arvec);
+    
 #ifdef __cplusplus
-   }
+}
 #endif
 #endif

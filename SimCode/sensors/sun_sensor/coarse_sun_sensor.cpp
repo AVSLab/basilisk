@@ -7,7 +7,7 @@
 #include <cstring>
 #include <random>
 
-CoarseSunSensor::CoarseSunSensor() 
+CoarseSunSensor::CoarseSunSensor()
 {
     CallCounts = 0;
     MessagesLinked = false;
@@ -16,7 +16,7 @@ CoarseSunSensor::CoarseSunSensor()
     InputStateMsg = "inertial_state_output";
     InputSunMsg = "sun_planet_data";
     OutputDataMsg = "coarse_sun_data";
-
+    
     this->faultState = MAX_CSSFAULT;
     this->stuckPercent = 0.0;
     v3SetZero(this->nHatStr);
@@ -27,16 +27,16 @@ CoarseSunSensor::CoarseSunSensor()
     this->KellyFactor = 0.0001; ///- Basically removes kelly curve
     this->sensedValue = 0.0;
     this->fov           = 1.0471975512; /// 60*degrees2rad
-    this->maxVoltage    = 0.0; 
+    this->maxVoltage    = 0.0;
     this->phi           = 0.785398163397;
-    this->theta         = 0.0; 
+    this->theta         = 0.0;
     v3SetZero(this->B2P321Angles);
     v3SetZero(this->r_B);
     this->setStructureToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
-    this->setUnitDirectionVectorWithPerturbation(0, 0);   
+    this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
-
-   return;
+    
+    return;
 }
 
 /*
@@ -49,27 +49,27 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 {
     double tempPhi = this->phi + cssPhiPerturb;
     double tempTheta = this->theta + cssThetaPerturb;
-
-//    // Wrap azimuth angle to interval [0,360)
-//    if (tempTheta >= M_2_PI | tempTheta < 0) {
-//        tempTheta = this->wrapTo2PI(tempTheta);
-//    }
-//    // Wrap elevation angle to interval [0,90]
-//    if (tempPhi > M_PI/2 | tempPhi < 0) {
-//        tempPhi =  this->wrapToHalfPI(tempPhi);
-//    }
-
+    
+    //    // Wrap azimuth angle to interval [0,360)
+    //    if (tempTheta >= M_2_PI | tempTheta < 0) {
+    //        tempTheta = this->wrapTo2PI(tempTheta);
+    //    }
+    //    // Wrap elevation angle to interval [0,90]
+    //    if (tempPhi > M_PI/2 | tempPhi < 0) {
+    //        tempPhi =  this->wrapToHalfPI(tempPhi);
+    //    }
+    
     // Rotation from individual photo diode sensor frame (S) to css platform frame (P)
     double sensorV3_P[3] = {0,0,0}; // sensor diode normal in platform frame
     //double PS[3][3];              // rotation matrix sensor to platform frame
     double BP[3][3];                // rotation matrix platform to body frame
     
-        // azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
+    // azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
     // of the photo diode
     sensorV3_P[0] = cos(tempPhi) * cos(tempTheta);
     sensorV3_P[1] = cos(tempPhi) * sin(tempTheta);
     sensorV3_P[2] = sin(tempPhi);
-
+    
     // Rotation from P frame to structure frame (B)
     m33Transpose(this->PB, BP);
     m33MultV3(BP, sensorV3_P, this->nHatStr);
@@ -91,115 +91,115 @@ void CoarseSunSensor::setStructureToPlatformDCM(double yaw, double pitch, double
 
 CoarseSunSensor::~CoarseSunSensor()
 {
-   return;
+    return;
 }
 
 void CoarseSunSensor::SelfInit()
 {
-   std::normal_distribution<double>::param_type 
-      UpdatePair(SenBias, SenNoiseStd); 
-   rgen.seed(RNGSeed);
-   rnum.param(UpdatePair); 
-   OutputDataID = SystemMessaging::GetInstance()->CreateNewMessage(
-      OutputDataMsg, sizeof(CSSOutputData), OutputBufferCount);
+    std::normal_distribution<double>::param_type
+    UpdatePair(SenBias, SenNoiseStd);
+    rgen.seed(RNGSeed);
+    rnum.param(UpdatePair);
+    OutputDataID = SystemMessaging::GetInstance()->CreateNewMessage(
+                                                                    OutputDataMsg, sizeof(CSSOutputData), OutputBufferCount);
 }
 
 void CoarseSunSensor::CrossInit()
 {
-   LinkMessages();
+    LinkMessages();
 }
 
 bool CoarseSunSensor::SpacecraftIlluminated()
 {
-   return(true); /// Sun is always shining baby.  Fix this...
+    return(true); /// Sun is always shining baby.  Fix this...
 }
 
 bool CoarseSunSensor::LinkMessages()
 {
-   InputSunID = SystemMessaging::GetInstance()->FindMessageID(
-      InputSunMsg);
-   InputStateID = SystemMessaging::GetInstance()->FindMessageID(
-      InputStateMsg);
-   if(InputSunID >= 0 && InputStateID >= 0)
-   {
-      return(true);
-   }
-   else
-   {
-      std::cerr << "WARNING: Failed to link a sun sensor input message: ";
-      std::cerr << std::endl << "Sun: "<<InputSunID;
-      std::cerr << std::endl << "Sun: "<<InputStateID;
-   }
-   return(false);
+    InputSunID = SystemMessaging::GetInstance()->FindMessageID(
+                                                               InputSunMsg);
+    InputStateID = SystemMessaging::GetInstance()->FindMessageID(
+                                                                 InputStateMsg);
+    if(InputSunID >= 0 && InputStateID >= 0)
+    {
+        return(true);
+    }
+    else
+    {
+        std::cerr << "WARNING: Failed to link a sun sensor input message: ";
+        std::cerr << std::endl << "Sun: "<<InputSunID;
+        std::cerr << std::endl << "Sun: "<<InputStateID;
+    }
+    return(false);
 }
 
 void CoarseSunSensor::ReadInputs()
 {
-   SingleMessageHeader LocalHeader;
-
-   memset(&SunData, 0x0, sizeof(SpicePlanetState));
-   memset(&StateCurrent, 0x0, sizeof(OutputStateData));
-   if(InputSunID >= 0)
-   {
-      SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
-             sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&SunData));
-   }
-   if(InputStateID >= 0)
-   {
-      SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-             sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateCurrent));
-   }
+    SingleMessageHeader LocalHeader;
+    
+    memset(&SunData, 0x0, sizeof(SpicePlanetState));
+    memset(&StateCurrent, 0x0, sizeof(OutputStateData));
+    if(InputSunID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
+                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&SunData));
+    }
+    if(InputStateID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateCurrent));
+    }
 }
 
 void CoarseSunSensor::ComputeSunData()
 {
-   double Sc2Sun_Inrtl[3];
-   double sHatSunBdy[3];
-   double T_Irtl2Bdy[3][3];
-   
-   v3Scale(-1.0, StateCurrent.r_N, Sc2Sun_Inrtl);
-   v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
-   MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
-   m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
-   m33MultV3(StateCurrent.T_str2Bdy, sHatSunBdy, sHatStr);
+    double Sc2Sun_Inrtl[3];
+    double sHatSunBdy[3];
+    double T_Irtl2Bdy[3][3];
+    
+    v3Scale(-1.0, StateCurrent.r_N, Sc2Sun_Inrtl);
+    v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
+    MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
+    m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
+    m33MultV3(StateCurrent.T_str2Bdy, sHatSunBdy, sHatStr);
 }
 
 void CoarseSunSensor::ComputeTruthOutput()
 {
-   double temp1 = v3Dot(this->nHatStr, this->sHatStr);
-   directValue = 0.0;
-   if(temp1 >= cos(this->fov))
-   {
-      directValue = temp1;
-   }
-   albedoValue = 0.0; ///-placeholder
-   
+    double temp1 = v3Dot(this->nHatStr, this->sHatStr);
+    directValue = 0.0;
+    if(temp1 >= cos(this->fov))
+    {
+        directValue = temp1;
+    }
+    albedoValue = 0.0; ///-placeholder
+    
 }
 
 void CoarseSunSensor::ComputeActualOutput()
 {
-   double prevValue = this->ScaledValue;
-   double CurrentError = rnum(rgen);
-   double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
-   this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;
-   this->ScaledValue = this->sensedValue*this->scaleFactor;
-   
+    double prevValue = this->ScaledValue;
+    double CurrentError = rnum(rgen);
+    double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
+    this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;
+    this->ScaledValue = this->sensedValue*this->scaleFactor;
+    
 }
 
 void CoarseSunSensor::WriteOutputs(uint64_t Clock)
 {
-   CSSOutputData LocalMessage;
-   memset(&LocalMessage, 0x0, sizeof(CSSOutputData));
-   LocalMessage.OutputData = this->ScaledValue;
-   SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
-      sizeof(CSSOutputData), reinterpret_cast<uint8_t *> (&LocalMessage));
+    CSSOutputData LocalMessage;
+    memset(&LocalMessage, 0x0, sizeof(CSSOutputData));
+    LocalMessage.OutputData = this->ScaledValue;
+    SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
+                                                 sizeof(CSSOutputData), reinterpret_cast<uint8_t *> (&LocalMessage));
 }
 
 void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
 {
-   ReadInputs();
-   ComputeSunData();
-   ComputeTruthOutput();
-   ComputeActualOutput();
-   WriteOutputs(CurrentSimNanos);
+    ReadInputs();
+    ComputeSunData();
+    ComputeTruthOutput();
+    ComputeActualOutput();
+    WriteOutputs(CurrentSimNanos);
 }

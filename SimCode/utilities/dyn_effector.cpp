@@ -5,8 +5,8 @@ DynEffector::~DynEffector()
 {
 }
 
-void DynEffector :: ComputeDynamics(MassPropsData *Props, 
-   OutputStateData *Bstate, double CurrentTime)
+void DynEffector :: ComputeDynamics(MassPropsData *Props,
+                                    OutputStateData *Bstate, double CurrentTime)
 {
-   return;
+    return;
 }

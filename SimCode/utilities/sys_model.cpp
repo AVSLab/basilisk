@@ -2,8 +2,8 @@
 #include "utilities/sys_model.h"
 SysModel::SysModel()
 {
-   ModelTag = "";
-   RNGSeed = 0x1badcad1;
+    ModelTag = "";
+    RNGSeed = 0x1badcad1;
 }
 
 SysModel::~SysModel()
@@ -12,20 +12,20 @@ SysModel::~SysModel()
 
 void SysModel :: SelfInit()
 {
-  return;
+    return;
 }
 
 void SysModel :: CrossInit()
 {
-  return;
+    return;
 }
 
 void SysModel :: IntegratedInit()
 {
-   return;
+    return;
 }
 
 void SysModel :: UpdateState(uint64_t CurrentSimNanos)
 {
-   return;
+    return;
 }
