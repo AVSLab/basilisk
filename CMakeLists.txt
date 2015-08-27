@@ -48,5 +48,8 @@ add_subdirectory("ADCSAlgorithms/vehicleConfigData")
 add_subdirectory("ADCSAlgorithms/attControl")
 add_subdirectory("ADCSAlgorithms/effectorInterfaces/errorConversion")
 
-add_custom_target(ScriptRun ALL
-                COMMAND python)
+#find_package(Doxygen)
+#if(DOXYGEN_FOUND)
+#   add_custom_target(ScriptRun ALL
+#                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/DoxyData)
+#endif(DOXYGEN_FOUND)
