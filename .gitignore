@@ -1,4 +1,6 @@
 build/*
 modules/*
+html/*
+xml/*
 *.swp
 *.pyc

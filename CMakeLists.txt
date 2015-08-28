@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.8)
 project("AVS basilisk")
 
 set(CMAKE_MACOSX_RPATH 1)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -gdwarf-3 -fprofile-arcs -ftestcoverage")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -gdwarf-3")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O2")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0 -fprofile-arcs -ftest-coverage")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimMessaging;SimUtilities")
 set(CMAKE_SWIG_OUTDIR ${CMAKE_SOURCE_DIR}/modules)
 foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
@@ -48,5 +48,8 @@ add_subdirectory("ADCSAlgorithms/vehicleConfigData")
 add_subdirectory("ADCSAlgorithms/attControl")
 add_subdirectory("ADCSAlgorithms/effectorInterfaces/errorConversion")
 
-add_custom_target(ScriptRun ALL
-                COMMAND python)
+#find_package(Doxygen)
+#if(DOXYGEN_FOUND)
+#   add_custom_target(ScriptRun ALL
+#                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/DoxyData)
+#endif(DOXYGEN_FOUND)
