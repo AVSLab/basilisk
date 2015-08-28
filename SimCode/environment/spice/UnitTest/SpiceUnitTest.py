@@ -33,15 +33,6 @@ TotalSim.AddVariableForLogging('SpiceInterfaceData.JulianDateCurrent')
 TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
 #Just running these tests to make sure that I cover all of the code
-#SpiceObject.SPICEDataPath = "ADirectoryThatDoesntreallyexist"
-#SpiceObject.SPICELoaded = False
-#TotalSim.InitializeSimulation()
-#TotalSim.ExecuteSimulation()
-#SpiceObject.SPICEDataPath = ""
-#SpiceObject.SPICELoaded = False
-#SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun", "thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode"])
-#TotalSim.InitializeSimulation()
-#TotalSim.ExecuteSimulation()
 
 SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
 SpiceObject.UTCCalInit = "2016 June 16, 00:00:00.0 TDB"
@@ -50,7 +41,7 @@ TotalSim.ExecuteSimulation()
 DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
 DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.JulianDateCurrent')
 
-AllowTolerance = 1E-4
+AllowTolerance = 1E-6
 GPSRow = DataGPSSec[0,:]
 InitDiff = GPSRow[1] - GPSRow[0]*1.0E-9
 i=1
@@ -139,3 +130,14 @@ if(PosDiffNorm > PosErrTolerance):
          {"DiffVal": PosDiffNorm}
    TestResults['SunPosCheck'] = False
 
+SpiceObject.SPICEDataPath = "ADirectoryThatDoesntreallyexist"
+SpiceObject.SPICELoaded = False
+TotalSim.ConfigureStopTime(int(1E9))
+TotalSim.InitializeSimulation()
+TotalSim.ExecuteSimulation()
+SpiceObject.SPICEDataPath = ""
+SpiceObject.SPICELoaded = False
+SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun", "thisisaplanetthatisntreallyanythingbutIneedthenametobesolongthatIhitaninvalidconditioninmycode"])
+TotalSim.InitializeSimulation()
+TotalSim.ExecuteSimulation()
+TotalSim.ConfigureStopTime(int(1E9))
