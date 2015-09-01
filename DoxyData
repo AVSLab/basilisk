@@ -750,7 +750,9 @@ INPUT                  = "SimCode/architecture/system_model" \
    "ADCSAlgorithms/sensorInterfaces/IMUSensorData" \
    "ADCSAlgorithms/messaging" \
    "SimCode/dynamics/DynOutput" \ 
+   "SimCode/navigation/simple_nav" \ 
    "ADCSAlgorithms/attDetermination/CSSEst" \
+   "ADCSAlgorithms/attDetermination/navState" \
    "ADCSAlgorithms/attGuidance" \
    "ADCSAlgorithms/attControl"
 

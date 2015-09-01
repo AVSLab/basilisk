@@ -47,6 +47,8 @@ add_subdirectory("ADCSAlgorithms/attGuidance")
 add_subdirectory("ADCSAlgorithms/vehicleConfigData")
 add_subdirectory("ADCSAlgorithms/attControl")
 add_subdirectory("ADCSAlgorithms/effectorInterfaces/errorConversion")
+add_subdirectory("SimCode/navigation/simple_nav")
+add_subdirectory("ADCSAlgorithms/attDetermination/navState")
 
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)
