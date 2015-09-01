@@ -18,13 +18,14 @@ TotalSim = SimulationBaseClass.SimBaseClass()
 TotalSim.CreateNewThread("TimeTestThread", int(1E9))
 
 #Now initialize the modules that we are using.  I got a little better as I went along
-SpiceObject = spice_interface.SpiceInterface()
+
+TotalSim.AddModelToThread("TimeTestThread", SpiceObject)
+
 SpiceObject.ModelTag = "SpiceInterfaceData"
 SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/External/EphemerisData/'
-SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
 SpiceObject.OutputBufferCount = 10000
 SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
-TotalSim.AddModelToThread("TimeTestThread", SpiceObject)
+SpiceObject.UTCCalInit = "2016 June 16, 00:00:00.0 TDB"
 
 TotalSim.ConfigureStopTime(int(60.0*1E9))
 TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
@@ -34,8 +35,6 @@ TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
 #Just running these tests to make sure that I cover all of the code
 
-SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
-SpiceObject.UTCCalInit = "2016 June 16, 00:00:00.0 TDB"
 TotalSim.InitializeSimulation()
 TotalSim.ExecuteSimulation()
 DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
