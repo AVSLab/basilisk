@@ -18,6 +18,7 @@ import orb_elem_convert
 import thruster_dynamics
 import coarse_sun_sensor
 import imu_sensor
+import simple_nav
 #FSW algorithms that we want to call
 import cssComm
 import alg_contain
@@ -42,6 +43,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
    self.VehDynObject = six_dof_eom.SixDofEOM()
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
+   self.SimpleNavObject = simple_nav.SimpleNav()
    self.InitAllDynObjects()
    self.AddModelToThread("DynamicsThread", self.SpiceObject)
    self.AddModelToThread("DynamicsThread", self.CSSPyramid1HeadA)
@@ -56,6 +58,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToThread("DynamicsThread", self.ACSThrusterDynObject)
    self.AddModelToThread("DynamicsThread", self.VehDynObject)
    self.AddModelToThread("DynamicsThread", self.VehOrbElemObject)
+   self.AddModelToThread("DynamicsThread", self.SimpleNavObject)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -309,6 +312,25 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
    self.VehOrbElemObject.mu = self.SunGravBody.mu
 
+ def SetSimpleNavObject(self):
+   self.SimpleNavObject.ModelTag = "SimpleNavigation"
+   PMatrix = [0.0]*18*18
+   PMatrix[0*18+0] = PMatrix[1*18+1] = PMatrix[2*18+2] = 10.0; #Position
+   PMatrix[3*18+3] = PMatrix[4*18+4] = PMatrix[5*18+5] = 0.05; #Velocity
+   PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 5.0/3600.0*math.pi/180.0; #Attitude (sigma!)
+   PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.05*math.pi/180.0; #Attitude rate
+   PMatrix[12*18+12] = PMatrix[13*18+13] = PMatrix[14*18+14] = 0.1*math.pi/180.0; #Sun vector
+   PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
+   errorBounds = [1000.0, 1000.0, 1000.0, #Position 
+                  1.0, 1.0, 1.0, #Velocity
+                  5E-3, 5E-3, 5E-3, #Attitude
+                  0.02, 0.02, 0.02, #Attitude Rate
+                  5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
+                  0.053, 0.053, 0.053] #Accumulated DV
+   self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
+   self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
+   self.SimpleNavObject.crossTrans = True
+   self.SimpleNavObject.crossAtt = False
  def SetCSSDecodeFSWConfig(self):
    self.CSSDecodeFSWConfig.NumSensors = 8
    self.CSSDecodeFSWConfig.MaxSensorValue = 500E-6
@@ -416,6 +438,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetACSThrusterDynObject()
    self.SetVehDynObject()
    self.SetVehOrbElemObject()
+   self.SetSimpleNavObject()
 
  def InitAllFSWObjects(self):
    self.SetCSSDecodeFSWConfig()
