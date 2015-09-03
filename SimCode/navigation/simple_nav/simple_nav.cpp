@@ -4,6 +4,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include "environment/spice/spice_interface.h"
 #include <iostream>
+#include <cstring>
 
 /*! This is the constructor for the simple nav model.  It sets default variable 
     values and initializes the various parts of the model */
@@ -52,6 +53,7 @@ void SimpleNav::SelfInit()
         CreateNewMessage(
                      outputNavName, sizeof(NavStateOut), outputBufferCount);
     //! - Initialize the propagation matrix to default values for use in update
+    AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
     mSetIdentity(AMatrix.data(), numStates, numStates);
     it = AMatrix.begin();
@@ -117,13 +119,22 @@ void SimpleNav::computeOutput(uint64_t Clock)
     SpicePlanetState sunState;
     double sc2SunInrtl[3];
     double T_inrtl2bdy[3][3];
+    double T_bdyT2bdyO[3][3];
   
     //! Begin method steps
     //! - Obtain the messages associated with the vehicle state and the sun state
-    SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-        sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState));
-    SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-        sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&sunState));
+    memset(&sunState, 0x0, sizeof(SpicePlanetState));
+    memset(&localState, 0x0, sizeof(SpicePlanetState));
+    if(inputStateID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
+            sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState));
+    }
+    if(inputSunID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
+            sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&sunState));
+    }
     
     //! - Add errors to the simple cases (everything except sun-pointing)
     v3Add(localState.r_N, &(navErrors.data()[0]), outState.vehPosition);
@@ -136,7 +147,9 @@ void SimpleNav::computeOutput(uint64_t Clock)
     v3Subtract(sunState.PositionVector, localState.r_N, sc2SunInrtl);
     v3Normalize(sc2SunInrtl, sc2SunInrtl);
     MRP2C(localState.sigma, T_inrtl2bdy);
-    m33MultV3(T_inrtl2bdy, sc2SunInrtl, outState.sunPointBdy);
+    m33MultV3(T_inrtl2bdy, sc2SunInrtl, outState.vehSunPntBdy);
+    MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
+    m33MultV3(T_bdyT2bdyO, outState.vehSunPntBdy, outState.vehSunPntBdy);
     
     //! - Write the composite information into the output state message.
     SystemMessaging::GetInstance()->

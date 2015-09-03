@@ -746,6 +746,7 @@ WARN_LOGFILE           =
 INPUT                  = "SimCode/architecture/system_model" \
    "SimCode/environment/spice" \
    "SimCode/dynamics/Thrusters" \
+   "SimCode/utilities" \
    "ADCSAlgorithms/sensorInterfaces/CSSSensorData" \
    "ADCSAlgorithms/sensorInterfaces/IMUSensorData" \
    "ADCSAlgorithms/messaging" \

@@ -15,7 +15,7 @@ typedef struct {
     double vehAccumDV[3];    /*!< m/s Total accumulated delta-velocity for s/c*/
     double vehSigma[3];      /*!< -- Current spacecraft attitude (MRPs)*/
     double vehBodyRate[3];   /*!< r/s Current spacecraft body rate wrt reference*/
-    double sunPointBdy[3];   /*!< -- Current sun pointing vector in body frame*/
+    double vehSunPntBdy[3];   /*!< -- Current sun pointing vector in body frame*/
 }NavStateOut;
 
 /*! @} */
