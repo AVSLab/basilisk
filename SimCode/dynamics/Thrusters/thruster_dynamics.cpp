@@ -15,6 +15,7 @@ ThrusterDynamics::ThrusterDynamics()
     CmdsInMsgID = -1;
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
+    prevCommandTime = 0xFFFFFFFFFFFFFFFF;
     return;
 }
 
@@ -95,6 +96,12 @@ void ThrusterDynamics::ReadInputs()
     SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
                                                 ThrusterData.size()*sizeof(ThrustCmdStruct),
                                                 reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
+
+    //! - Check if message has already been read, if stale return
+    if(prevCommandTime==LocalHeader.WriteClockNanos) {
+        return;
+    }
+    prevCommandTime = LocalHeader.WriteClockNanos;
     
     //! - Set the NewThrustCmds vector.  Using the data() method for raw speed
     double *CmdPtr;

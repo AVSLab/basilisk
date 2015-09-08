@@ -99,6 +99,7 @@ private:
     int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data
     int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
     ThrustCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
+    uint64_t prevCommandTime;                      //!< -- Time for previous valid thruster firing
 };
 
 /*! @} */
