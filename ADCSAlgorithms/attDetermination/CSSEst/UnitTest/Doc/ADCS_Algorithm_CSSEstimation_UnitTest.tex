@@ -1,6 +1,7 @@
 \documentclass[]{LASPreport}
 
 \usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyperref}
 
 \newcommand{\SubSystem}{ADCS}
 \newcommand{\SERnumber}{ADCS Coarse Sun Sensor Sun Point Estimation Unit Test}
@@ -43,14 +44,6 @@ Draft & Initial Revision & S. Piggott \\
 \tableofcontents
 ~\\ \hrule ~\\
 
-%\begin{figure}[htb]
-%	\centerline{
-%	\includegraphics[]{Figures/Fig1}
-%	}
-%	\caption{Sample Figure Inclusion.}
-%	\label{fig:Fig1}
-%\end{figure}
-
 \section{Introduction}
 When in safe mode, the spacecraft uses its coarse sun sensors in order to 
 point the vehicle's solar arrays at the Sun.  This is done in order to ensure 
@@ -65,7 +58,10 @@ the sun pointing vector that best fits the current outputs from all of the CSSs.
 This is done by a least squares estimation process that provides the sun vector 
 that best fits from a weighted least squares perspective.  The weights are 
 simply set based on the current output of each sensor which ensures that the 
-sensors that have the best measurements are trusted the most.
+sensors that have the best measurements are trusted the most.  The details of 
+this algorithm are available in Steve O'Keefe's PhD dissertation. 
+\footnote{\href{http://gradworks.umi.com/3704787.pdf}
+   {O'Keefe Public Dissertation Link}}
 
 The algorithm stores its internal variables in the CSSWLSConfig data structure 
 with the input message coming from the "css\_data\_aggregate" message and the 
@@ -80,6 +76,9 @@ The unit test for the cssWlsEst module is located in:\\
 \noindent
 {\tt ADCSAlgorithms/attDetermination/CSSEst/UnitTest/CSSWlsEstUnitTest.py} \\
 \\
+
+Please see the python script for information on test setup and initial 
+conditions.  \\
 
 \noindent This unit test is designed to functionally test the algorithm 
 outputs as well as get complete code path coverage.  The test design is broken 

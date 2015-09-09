@@ -17,27 +17,34 @@ import sim_model
 import alg_contain
 
 
+# Function that takes a sun pointing vector and array of CSS normal vectors and 
+# returns the measurements associated with those normal vectors.
 def createCosList(sunPointVec, sensorPointList):
    outList = []
    for sensorPoint in sensorPointList:
       outList.append(numpy.dot(sunPointVec, sensorPoint))
    return outList
 
+# Method that checks that all of the numActive outputs from the data array 
+# that are greater than threshold thresh are consistent with the values in 
+# measVec
 def checkNumActiveAccuracy(measVec, numActiveUse, numActiveFailCriteria, thresh):
     numActivePred = 0
     testFailCount = 0
+    #Iterate through measVec and find all valid signals
     for i in range(0,32):
         obsVal = sim_model.doubleArray_getitem(measVec, i)
         if(obsVal > thresh):
             numActivePred += 1
 
+    #Iterate through the numActive array and sum up all numActive estimates
     numActiveTotal = numpy.array([0])
     j=0
     while j < numActiveUse.shape[0]:
         numActiveTotal += numActiveUse[j, 1:]
         j += 1
-
-    numActiveTotal /= j
+    numActiveTotal /= j #Mean number of numActive
+    #If we violate the test criteria, increment the failure count and alert user
     if(abs(numActiveTotal[0] - numActivePred) > numActiveFailCriteria):
         testFailCount += 1
         errorString = "Active number failure for count of: "
@@ -45,19 +52,24 @@ def checkNumActiveAccuracy(measVec, numActiveUse, numActiveFailCriteria, thresh)
         logging.error(errorString)
     return testFailCount
     
-
+#This method takes the sHat estimate output by the estimator and compares that 
+#against the actual sun vector passed in as an argument.  If it doesn't match 
+#to the specified tolerance, increment failure counter and alert the user
 def checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, TotalSim) :
     j=0
     testFailCount = 0
     sHatTotal = numpy.array([0.0, 0.0, 0.0])
+    #Sum up all of the sHat estimates from the execution
     while j < sHatEstUse.shape[0]:
         sHatTotal += sHatEstUse[j, 1:]
         j += 1
-
-    sHatTotal /= j
+    sHatTotal /= j #mean sHat estimate
+    #This logic is to protect cases where the dot product numerically breaks acos
     dot_value = numpy.dot(sHatTotal, testVec)
     if(abs(dot_value > 1.0)):
        dot_value -= 2.0*(dot_value -math.copysign(1.0, dot_value))
+
+    #If we violate the failure criteria, increment failure count and alert user
     if (abs(math.acos(dot_value)) > angleFailCriteria):
         testFailCount += 1
         errorString = "Angle fail criteria violated for test vector:"
@@ -71,16 +83,20 @@ TestResults = {}
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
+#Create test thread
 TotalSim.CreateNewThread("wlsEstTestThread", int(1E8))
 
+#Construct algorithm and associated C++ container
 CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
 CSSWlsWrap = alg_contain.AlgContain(CSSWlsEstFSWConfig,
    cssWlsEst.Update_cssWlsEst, cssWlsEst.SelfInit_cssWlsEst,
    cssWlsEst.CrossInit_cssWlsEst)
 CSSWlsWrap.ModelTag = "CSSWlsEst"
 
+#Add module to runtime call list
 TotalSim.AddModelToThread("wlsEstTestThread", CSSWlsWrap, CSSWlsEstFSWConfig)
 
+#Initialize the WLS estimator configuration data
 CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
 CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
 CSSWlsEstFSWConfig.UseWeights = False
@@ -100,13 +116,19 @@ CSSOrientationList = [
    [-0.70710678118654746, -0.70710678118654757, 0.0],
 ]
 i=0
+#Initializing a 2D double array is hard with SWIG.  That's why there is this 
+#layer between the above list and the actual C variables.
 for CSSHat in CSSOrientationList:
    SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
    cssWlsEst.CSSWlsConfigArray_setitem( CSSWlsEstFSWConfig.CSSData, i,
       CSSConfigElement)
    i += 1
 
+#Create input message and size it because the regular creator of that message 
+#is not part of the test.
 TotalSim.TotalSim.CreateNewMessage(CSSWlsEstFSWConfig.InputDataName, 8*32, 2)
+
+#Initialize input data for above message
 cssDataMsg = sim_model.new_doubleArray(32)
 i=0
 while(i<32):
@@ -116,10 +138,11 @@ while(i<32):
 angleFailCriteria = 17.5*math.pi/180.0 #Get 95% effective charging in this case
 numActiveFailCriteria = 0.000001 #basically zero
 
+#Log the output message as well as the internal numACtiveCss variables
 TotalSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
 TotalSim.AddVariableForLogging("CSSWlsEst.numActiveCss", int(1E8))
 
-testLength = 1.0
+#Initia test is all of the principal body axes
 TestVectors = [[-1.0, 0.0, 0.0],
                [0.0, -1.0, 0.0],
                [1.0, 0.0, 0.0],
@@ -127,35 +150,44 @@ TestVectors = [[-1.0, 0.0, 0.0],
                [0.0, 0.0, -1.0],
                [0.0, 0.0, 1.0]]
 
+#Initialize test and then step through all of the test vectors in a loop
 TotalSim.InitializeSimulation()
 stepCount = 0
 logLengthPrev = 0
 testFailCount = 0
 truthData = []
 for testVec in TestVectors:
-    if(stepCount > 1):
+    if(stepCount > 1): #Doing this to test permutations and get code coverage
         CSSWlsEstFSWConfig.UseWeights = True
     nextRows = []
+    #Get observation data based on sun pointing and CSS orientation data
     cssDataList = createCosList(testVec, CSSOrientationList)
     i=0
+    #Updating C-arrays is handled like this.  Kind of clunky, but so is C.
     while(i < len(cssDataList)):
        sim_model.doubleArray_setitem(cssDataMsg, i, cssDataList[i])
        i += 1
+    #Write in the observation data to the input message
     TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
        cssDataMsg);
+    #Increment the stop time to new termination value
     TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
+    #Execute simulation to current stop time
     TotalSim.ExecuteSimulation()
     stepCount += 1
+    #Pull logged data out into workspace for analysis
     sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
        'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
     numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
-    sHatEstUse = sHatEst[logLengthPrev:, :]
-    numActiveUse = numActive[logLengthPrev+1:, :]
+    sHatEstUse = sHatEst[logLengthPrev:, :] #Only data for this subtest
+    numActiveUse = numActive[logLengthPrev+1:, :] #Only data for this subtest
 
+    #Check failure criteria and add test failures
     testFailCount += checksHatAccuracy(testVec, sHatEstUse, angleFailCriteria, 
        TotalSim)
     testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
        numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
+    #Pop truth state onto end of array for plotting purposes
     currentRow = [sHatEstUse[0, 0]]
     currentRow.extend(testVec)
     truthData.append(currentRow)
@@ -164,6 +196,7 @@ for testVec in TestVectors:
     truthData.append(currentRow)
     logLengthPrev = sHatEst.shape[0]
 
+#Hand construct case where we get low coverage (2 valid sensors)
 LonVal = 0.0
 LatVal = 40.68*math.pi/180.0
 doubleTestVec = [math.sin(LatVal), math.cos(LatVal)*math.sin(LonVal), 
@@ -174,7 +207,7 @@ while(i < len(cssDataList)):
    sim_model.doubleArray_setitem(cssDataMsg, i, cssDataList[i])
    i += 1
 
-
+#Write in double coverage conditions and ensure that we get correct outputs
 TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
    cssDataMsg);
 TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
@@ -193,11 +226,13 @@ currentRow = [sHatEstUse[-1, 0]]
 currentRow.extend(doubleTestVec)
 truthData.append(currentRow)
 
+#Check test criteria again
 testFailCount += checksHatAccuracy(doubleTestVec, sHatEstUse, angleFailCriteria,
     TotalSim)
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
    numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
 
+#Same test as above, but zero first element to get to a single coverage case
 sim_model.doubleArray_setitem(cssDataMsg, 0, 0.0)
 TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
    cssDataMsg);
@@ -219,6 +254,7 @@ currentRow = [sHatEstUse[-1, 0]]
 currentRow.extend(doubleTestVec)
 truthData.append(currentRow)
 
+#Same test as above, but zero first and fourth elements to get to zero coverage
 sim_model.doubleArray_setitem(cssDataMsg, 0, 0.0)
 sim_model.doubleArray_setitem(cssDataMsg, 3, 0.0)
 TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
@@ -231,8 +267,8 @@ logLengthPrev = sHatEst.shape[0]
 testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse, 
    numActiveFailCriteria, CSSWlsEstFSWConfig.SensorUseThresh)
 
+#Format data for plotting
 truthData = numpy.array(truthData)
-
 sHatEst = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
    'CSSWlsEstOut', int(stepCount*10), TotalSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
 numActive = TotalSim.GetLogVariableData("CSSWlsEst.numActiveCss")
@@ -268,4 +304,9 @@ plt.plot(truthData[:,0]*1.0E-9, truthData[:,3], 'r--', label='Truth')
 plt.xlabel('Time (s)')
 plt.ylabel('Z Component (--)')
 
-plt.show()
+inputArgs = sys.argv
+if len(inputArgs) > 1:
+   if inputArgs[1] == 'True':
+      plt.show()
+
+sys.exit(testFailCount)
