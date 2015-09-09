@@ -26,6 +26,7 @@ class DynEffector
 {
     
 public:
+    DynEffector();
     virtual ~DynEffector();
     virtual void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
                                  double CurrentTime);
