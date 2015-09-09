@@ -55,9 +55,9 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
     uint32_t i;
     
     /*! Begin method steps */
-    /*! - If we only have one sensor, output our best guess (cone of possiblities)*/
+    /*! - If we only have one sensor, output best guess (cone of possiblities)*/
     if(numActiveCss == 1) {
-        /* find minimum norm solution */
+        /* Here's a guess.  Do with it what you will. */
         for(i = 0; i < 3; i=i+1) {
             x[i] = H[0*MAX_NUM_CSS_SENSORS+i] * y[0];
         }
@@ -67,16 +67,16 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         mMultMt(H, 2, 3, H, 2, 3, m22);
         status = m22Inverse(m22, m22);
         mtMultM(H, 2, 3, m22, 2, 2, m32);
-        /*!   -# Multiply the H(HtH)^-1 by the observation vector to get fit*/
+        /*!   -# Multiply the Ht(HtH)^-1 by the observation vector to get fit*/
         mMultV(m32, 3, 2, y, x);
-    } else if(numActiveCss > 2) {/*! - If we have more than 2, do a true LSQ fit*/
+    } else if(numActiveCss > 2) {/*! - If we have more than 2, do true LSQ fit*/
         /*!    -# Use the weights to compute (HtWH)^-1HW*/
         mtMultM(H, numActiveCss, 3, W, numActiveCss, numActiveCss, m3N);
         mMultM(m3N, 3, numActiveCss, H, numActiveCss, 3, m33);
         status = m33Inverse(m33, m33_2);
         mMultMt(m33_2, 3, 3, H, numActiveCss, 3, m3N);
         mMultM(m3N, 3, numActiveCss, W, numActiveCss, numActiveCss, m3N_2);
-        /*!    -# Multiply the LSQ matrix by the observation vector to get the best fit*/
+        /*!    -# Multiply the LSQ matrix by the obs vector for best fit*/
         mMultV(m3N_2, 3, numActiveCss, y, x);
     }
     
@@ -104,8 +104,10 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime)
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
+    memset(InputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData));
     ReadMessage(ConfigData->InputMsgID, &ClockTime, &ReadSize,
-                MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), (void*) &(InputBuffer));
+                MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData),
+                (void*) &(InputBuffer));
     
     /*! - Zero the Rinv matrix and set the observed active CSS count*/
     memset(Rinv, 0x0, MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS*sizeof(double));
@@ -123,12 +125,14 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime)
     {
         if(InputBuffer[i].CosValue > ConfigData->SensorUseThresh)
         {
-            v3Scale(ConfigData->CSSData[i].CBias, ConfigData->CSSData[i].nHatBdy,
-                    &H[ConfigData->numActiveCss*3]);
+            v3Scale(ConfigData->CSSData[i].CBias,
+                ConfigData->CSSData[i].nHatBdy, &H[ConfigData->numActiveCss*3]);
             y[ConfigData->numActiveCss] = InputBuffer[i].CosValue;
             Rinv[ConfigData->numActiveCss*ConfigData->numActiveCss +
-                 ConfigData->numActiveCss] = 1.0 / (ConfigData->CSSData[i].cssNoiseStd);
+                 ConfigData->numActiveCss] = 1.0 /
+                 (ConfigData->CSSData[i].cssNoiseStd);
             ConfigData->numActiveCss = ConfigData->numActiveCss + 1;
+            
         }
     }
     
