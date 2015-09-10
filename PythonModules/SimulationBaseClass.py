@@ -152,7 +152,7 @@ class SimBaseClass:
   
  def ExecuteSimulation(self):
    while(self.TotalSim.CurrentNanos < self.StopTime):
-      self.TotalSim.SingleStepNextThread()
+      self.TotalSim.StepUntilTime(self.TotalSim.NextThreadTime)
       self.RecordLogVars()
 
  def GetLogVariableData(self, LogName):
