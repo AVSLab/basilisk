@@ -1,4 +1,4 @@
-
+﻿
 #Import some architectural stuff that we will probably always use
 import sys, os, ast
 #Point the path to the module storage area
@@ -15,6 +15,10 @@ class ThreadBaseClass:
    self.ThreadData = sys_model_thread.SysModelThread(ThreadRate, InputDelay, 
       FirstStart)
    self.ThreadModels = []
+ def disable(self):
+     self.ThreadData.disableThread();
+ def enable(self):
+     self.ThreadData.enableThread();
 
 class LogBaseClass:
  def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols = 1):
@@ -160,6 +164,16 @@ class SimBaseClass:
    ArrayDim = self.VarLogList[LogName].ArrayDim
    TheArray = numpy.reshape(TheArray, (TheArray.shape[0]/ArrayDim, ArrayDim))
    return TheArray
+
+ def disableThread(self, threadName):
+     for Thread in self.ThreadList:
+       if Thread.Name == threadName:
+           Thread.disable()
+
+ def enableThread(self, threadName):
+     for Thread in self.ThreadList:
+       if Thread.Name == threadName:
+           Thread.enable()
 
 def SetCArray(InputList, VarType, ArrayPointer):
    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
