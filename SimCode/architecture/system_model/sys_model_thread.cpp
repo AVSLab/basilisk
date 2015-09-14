@@ -13,6 +13,7 @@ SysModelThread :: SysModelThread()
     NextPickupTime = 0;
     PickupDelay = 0;
     FirstThreadTime = 0;
+	threadActive = true;
     
 }
 /*! A construction option that allows the user to set all thread parameters.
@@ -29,6 +30,7 @@ SysModelThread :: SysModelThread(uint64_t InputPeriod, uint64_t InputDelay,
     NextStartTime = FirstStartTime;
     NextPickupTime = NextStartTime + ThreadPeriod;
     FirstThreadTime = FirstStartTime;
+	threadActive = true;
 }
 
 //! The destructor.  Everything is handled by STL.
@@ -88,7 +90,7 @@ void SysModelThread::ExecuteThreadList(uint64_t CurrentSimNanos)
     
     //! Begin method steps
     //! - Loop over all of the models in the simulation and call their UpdateState
-    for(ModelPair = ThreadModels.begin(); ModelPair != ThreadModels.end();
+    for(ModelPair = ThreadModels.begin(); (ModelPair != ThreadModels.end() && threadActive);
         ModelPair++)
     {
         NonIt = (ModelPair->ModelPtr);

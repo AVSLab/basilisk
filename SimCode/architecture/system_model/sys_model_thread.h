@@ -29,6 +29,8 @@ public:
     void CrossInitThreadList();
     void ExecuteThreadList(uint64_t CurrentSimTime);
     void ResetThread() {NextStartTime = FirstThreadTime;}
+	void enableThread() { threadActive = true; }
+	void disableThread() { threadActive = false; }
     
 public:
     std::vector<ModelPriorityPair> ThreadModels; //!< -- Array that has pointers to all GNC laws
@@ -37,7 +39,8 @@ public:
     uint64_t NextPickupTime;                     //!< ns Next time read thread outputs
     uint64_t ThreadPeriod;                       //!< ns Cycle rate for thread
     uint64_t PickupDelay;                        //!< ns Time between dispatches
-    uint64_t FirstThreadTime;                     //!< ns Time to start thread for first time
+    uint64_t FirstThreadTime;                    //!< ns Time to start thread for first time
+	bool threadActive;                           //!< -- Flag indicating whether the thread has been disabled 
 };
 
 /*! @} */
