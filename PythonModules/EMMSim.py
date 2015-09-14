@@ -28,13 +28,16 @@ import sunSafePoint
 import imuComm
 import sunSafeControl
 import sunSafeACS
+import attMnvrPoint
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
    self.CreateNewThread("DynamicsThread", int(1E8))
-   self.CreateNewThread("FSWThread", int(5E8))
+   self.CreateNewThread("sunSafeFSWThread", int(5E8))
+   self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
+   self.CreateNewThread("vehicleDVMnvrFSWThread", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
    self.InitCSSHeads()
@@ -95,19 +98,26 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafeACS.Update_sunSafeACS, sunSafeACS.SelfInit_sunSafeACS,
       sunSafeACS.CrossInit_sunSafeACS)
    self.sunSafeACSWrap.ModelTag = "sunSafeACS"
- 
+
+   self.attMnvrPointData = attMnvrPoint.attMnvrPointConfig()
+   self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
+      attMnvrPoint.Update_attMnvrPoint, attMnvrPoint.SelfInit_attMnvrPoint,
+      attMnvrPoint.CrossInit_attMnvrPoint)
+   self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
    self.InitAllFSWObjects()
 
-   self.AddModelToThread("FSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
-   self.AddModelToThread("FSWThread", self.IMUCommWrap, self.IMUCommData)
-   self.AddModelToThread("FSWThread", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
-   self.AddModelToThread("FSWThread", self.sunSafePointWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
+   self.AddModelToThread("sunSafeFSWThread", self.IMUCommWrap, self.IMUCommData)
+   self.AddModelToThread("sunSafeFSWThread", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafePointWrap, 
       self.sunSafePointData)
-   self.AddModelToThread("FSWThread", self.sunSafeControlWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafeControlWrap, 
       self.sunSafeControlData)
-   self.AddModelToThread("FSWThread", self.sunSafeACSWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafeACSWrap, 
       self.sunSafeACSData)
+   self.AddModelToThread("sunSafeFSWThread", self.attMnvrPointWrap, 
+      self.attMnvrPointData)
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
@@ -429,7 +439,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                  -1.0, -1.0, -1.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', 
       self.sunSafeACSData.thrOnMap) 
-   
+ def SetattMnvrPoint(self):
+   self.attMnvrPointData.inputNavStateName = "simple_nav_output" 
+   self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
+   self.attMnvrPointData.outputDataName = "nom_att_guid_out"
+   self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
+   self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
+   self.attMnvrPointData.maxAngAccel = 2.0/1000.0
+   self.attMnvrPointData.mnvrActive = 0
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -447,6 +464,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetsunSafePoint()
    self.SetsunSafeControl()
    self.SetsunSafeACS()
+   self.SetattMnvrPoint()
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
 #   i=0
