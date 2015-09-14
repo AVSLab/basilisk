@@ -1,4 +1,4 @@
-#Import some architectural stuff that we will probably always use
+﻿#Import some architectural stuff that we will probably always use
 import sys, os
 sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
 sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
@@ -105,6 +105,12 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       attMnvrPoint.CrossInit_attMnvrPoint)
    self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
+   self.attMnvrControlData = sunSafeControl.sunSafeControlConfig()
+   self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
+      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
+      sunSafeControl.CrossInit_sunSafeControl)
+   self.sunSafeControlWrap.ModelTag = "attMnvrControl"
+
    self.InitAllFSWObjects()
 
    self.AddModelToThread("sunSafeFSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
@@ -116,8 +122,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafeControlData)
    self.AddModelToThread("sunSafeFSWThread", self.sunSafeACSWrap, 
       self.sunSafeACSData)
-   self.AddModelToThread("sunSafeFSWThread", self.attMnvrPointWrap, 
+
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrPointWrap, 
       self.attMnvrPointData)
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrControlWrap, 
+      self.attMnvrControlData)
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.sunSafeACSWrap, 
+      self.sunSafeACSData)
+   
+
+
+   self.disableThread("vehicleAttMnvrFSWThread")
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
@@ -327,14 +342,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    PMatrix = [0.0]*18*18
    PMatrix[0*18+0] = PMatrix[1*18+1] = PMatrix[2*18+2] = 10.0; #Position
    PMatrix[3*18+3] = PMatrix[4*18+4] = PMatrix[5*18+5] = 0.05; #Velocity
-   PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 5.0/3600.0*math.pi/180.0; #Attitude (sigma!)
-   PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.05*math.pi/180.0; #Attitude rate
+   PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 1.0/3600.0*math.pi/180.0; #Attitude (sigma!)
+   PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.001*math.pi/180.0; #Attitude rate
    PMatrix[12*18+12] = PMatrix[13*18+13] = PMatrix[14*18+14] = 0.1*math.pi/180.0; #Sun vector
    PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
    errorBounds = [1000.0, 1000.0, 1000.0, #Position 
                   1.0, 1.0, 1.0, #Velocity
                   5E-3, 5E-3, 5E-3, #Attitude
-                  0.02, 0.02, 0.02, #Attitude Rate
+                  0.006, 0.006, 0.006, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
@@ -445,8 +460,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.outputDataName = "nom_att_guid_out"
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
    self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
-   self.attMnvrPointData.maxAngAccel = 2.0/1000.0
+   self.attMnvrPointData.maxAngAccel = 0.5/1000.0
    self.attMnvrPointData.mnvrActive = 0
+
+ def SetattMnvrControl(self):
+   self.attMnvrControlData.K = 10.0
+   self.attMnvrControlData.P = 150.0
+   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -465,6 +486,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetsunSafeControl()
    self.SetsunSafeACS()
    self.SetattMnvrPoint()
+   self.SetattMnvrControl()
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
 #   i=0

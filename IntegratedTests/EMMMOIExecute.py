@@ -8,16 +8,24 @@ import MessagingAccess
 import sim_model
 import numpy
 import logging
+import attMnvrPoint
+import SimulationBaseClass
 
 TheEMMSim = EMMSim.EMMSim()
+
+TheEMMSim.TotalSim.CreateNewMessage("att_cmd_output", 6*8, 2)
+
 TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E8))
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E8))
+TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E8))
+TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E8))
 
 TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
@@ -36,7 +44,17 @@ TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[
 
 TheEMMSim.InitializeSimulation()
 #TheEMMSim.ConfigureStopTime(int(120*1E9))
-TheEMMSim.ConfigureStopTime(int(60*120*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*1*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.disableThread("sunSafeFSWThread")
+TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
+attMsgUse = [0.1, 0.3, -0.4]
+CmdMessage = attMnvrPoint.attCmdOut()
+SimulationBaseClass.SetCArray(attMsgUse, 'double', 
+      CmdMessage.sigma_BR)
+TheEMMSim.TotalSim.WriteMessageData("att_cmd_output", 6*8, 
+    TheEMMSim.TotalSim.CurrentNanos, CmdMessage);
+TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
@@ -44,6 +62,10 @@ FSWsHat = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
 attMnvrCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.sigmaCmd')
+bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.bodyRateCmd')
+FSWControlOut = MessagingAccess.obtainMessageVector("sun_safe_control_request", 'sunSafeControl',
+   'vehControlOut', 7200*2, TheEMMSim.TotalSim, 'accelRequestBody', 'double', 0, 2, sim_model.logBuffer)
+bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 #accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
@@ -62,11 +84,25 @@ plt.plot(FSWsHat[:,0]*1.0E-9, FSWsHat[:,3], 'r', DataCSSTruth[:,0]*1.0E-9, DataC
 plt.figure(2)
 plt.plot(numCSSActive[:,0]*1.0E-9, numCSSActive[:,1])
 
-plt.figure()
+plt.figure(3)
 plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,1])
+plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,2])
+plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,3])
+
+plt.figure(4)
+plt.plot(FSWControlOut[:,0]*1.0E-9, FSWControlOut[:,1])
+plt.plot(FSWControlOut[:,0]*1.0E-9, FSWControlOut[:,2])
+plt.plot(FSWControlOut[:,0]*1.0E-9, FSWControlOut[:,3])
+
+plt.figure(5)
+plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,1], 'b--', bodyRateCmd[:,0]*1.0E-9, bodyRateCmd[:,1], 'b')
+plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,2], 'r--', bodyRateCmd[:,0]*1.0E-9, bodyRateCmd[:,2], 'r')
+plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,3], 'g--', bodyRateCmd[:,0]*1.0E-9, bodyRateCmd[:,3], 'g')
+
+
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):
       plt.show()
 
-sys.exit(accuracyFailCounter + controlFailCounter)
+sys.exit()

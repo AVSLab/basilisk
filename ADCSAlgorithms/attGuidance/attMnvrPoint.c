@@ -108,9 +108,12 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime)
     addMRP(ConfigData->sigmaCmd, localState.vehSigma,
     ConfigData->attOut.sigma_BR);
     
-    v3Scale(-phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
-    v3Add(localState.vehBodyRate, ConfigData->bodyRateCmd,
+    v3Scale(phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
+    v3Subtract(localState.vehBodyRate, ConfigData->bodyRateCmd,
     ConfigData->attOut.omega_BR);
+
+	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
+		(void*)&(ConfigData->attOut));
     
     return;
 }

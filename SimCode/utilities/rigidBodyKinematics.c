@@ -3734,9 +3734,16 @@ void PRV2C(double *q, double C[3][3])
 void PRV2elem(double *r, double *q)
 {
     q[0] = sqrt(v3Dot(r, r));
-    q[1] = r[0] / q[0];
-    q[2] = r[1] / q[0];
-    q[3] = r[2] / q[0];
+	if (q[0] < 1.0E-12)
+	{
+		q[1] = q[2] = q[3] = 0.0;
+	}
+	else
+	{
+		q[1] = r[0] / q[0];
+		q[2] = r[1] / q[0];
+		q[3] = r[2] / q[0];
+	}
 }
 
 /*

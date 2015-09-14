@@ -81,6 +81,12 @@ uint64_t SystemMessaging::GetCurrentSize()
 int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
                                           uint64_t MaxSize, uint64_t NumMessageBuffers)
 {
+	if (FindMessageID(MessageName) >= 0)
+	{
+		std::cerr << "The message " << MessageName << " was created more than once.";
+		std::cerr << std::endl;
+		return(FindMessageID(MessageName));
+	}
     if(NumMessageBuffers <= 0)
     {
         std::cerr << "I can't create a message with zero buffers.  I refuse.";
