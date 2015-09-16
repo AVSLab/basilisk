@@ -129,8 +129,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.attMnvrControlData)
    self.AddModelToThread("vehicleAttMnvrFSWThread", self.sunSafeACSWrap, 
       self.sunSafeACSData)
-   
-
 
    self.disableThread("vehicleAttMnvrFSWThread")
 
@@ -440,10 +438,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
  def SetsunSafeACS(self):
    self.sunSafeACSData.inputControlName = "sun_safe_control_request"
-   self.sunSafeACSData.outputDataName = "acs_thruster_cmds"
-   self.sunSafeACSData.minThrustRequest = 0.08
-   self.sunSafeACSData.numThrusters = 8
-   self.sunSafeACSData.maxNumCmds = 1
+   self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds"
+   self.sunSafeACSData.thrData.minThrustRequest = 0.08
+   self.sunSafeACSData.thrData.numEffectors = 8
+   self.sunSafeACSData.thrData.maxNumCmds = 1
    onTimeMap = [-1.0, 1.0, 1.0, 
                  -1.0, -1.0, -1.0,
                  1.0, -1.0, 1.0,
@@ -453,7 +451,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                  -1.0, 1.0, 1.0,
                  -1.0, -1.0, -1.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', 
-      self.sunSafeACSData.thrOnMap) 
+      self.sunSafeACSData.thrData.thrOnMap)
  def SetattMnvrPoint(self):
    self.attMnvrPointData.inputNavStateName = "simple_nav_output" 
    self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
