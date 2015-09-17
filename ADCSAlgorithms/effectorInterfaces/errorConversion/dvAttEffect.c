@@ -23,8 +23,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData)
         ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
         ConfigData->thrGroups[i].outputDataName, sizeof(vehEffectorOut));
     }
-    /*ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(vehEffectorOut));*/
+ 
     
 }
 

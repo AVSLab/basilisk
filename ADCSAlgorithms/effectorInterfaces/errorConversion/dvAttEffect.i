@@ -11,5 +11,6 @@
 %ignore SelfInit_dvAttEffect;
 %constant void CrossInit_dvAttEffect(void*);
 %ignore CrossInit_dvAttEffect;
+%array_functions(ThrustGroupData, ThrustGroupArray);
 %include "vehEffectorOut.h"
 %include "dvAttEffect.h"

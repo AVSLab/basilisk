@@ -43,7 +43,6 @@ TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[
 TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
 
 TheEMMSim.InitializeSimulation()
-#TheEMMSim.ConfigureStopTime(int(120*1E9))
 TheEMMSim.ConfigureStopTime(int(60*60*1*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("sunSafeFSWThread")
@@ -54,18 +53,20 @@ SimulationBaseClass.SetCArray(attMsgUse, 'double',
       CmdMessage.sigma_BR)
 TheEMMSim.TotalSim.WriteMessageData("att_cmd_output", 6*8, 
     TheEMMSim.TotalSim.CurrentNanos, CmdMessage);
-TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*4*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-   'CSSWlsEstOut', 7200*2, TheEMMSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+   'CSSWlsEstOut', 3600*2, TheEMMSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
 attMnvrCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.sigmaCmd')
 bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.bodyRateCmd')
 FSWControlOut = MessagingAccess.obtainMessageVector("sun_safe_control_request", 'sunSafeControl',
-   'vehControlOut', 7200*2, TheEMMSim.TotalSim, 'accelRequestBody', 'double', 0, 2, sim_model.logBuffer)
+   'vehControlOut', 7200*4, TheEMMSim.TotalSim, 'accelRequestBody', 'double', 0, 2, sim_model.logBuffer)
 bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
+DataSigma = MessagingAccess.obtainMessageVector("inertial_state_output", 'six_dof_eom',
+   'OutputStateData', 7200*2, TheEMMSim.TotalSim, 'sigma', 'double', 0, 2, sim_model.logBuffer)
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 #accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
@@ -85,9 +86,9 @@ plt.figure(2)
 plt.plot(numCSSActive[:,0]*1.0E-9, numCSSActive[:,1])
 
 plt.figure(3)
-plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,1])
-plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,2])
-plt.plot(attMnvrCmd[:,0]*1.0E-9, attMnvrCmd[:,3])
+plt.plot(DataSigma[:,0]*1.0E-9, DataSigma[:,1], 'b--', attMnvrCmd[:,0]*1.0E-9, -attMnvrCmd[:,1], 'b')
+plt.plot(DataSigma[:,0]*1.0E-9, DataSigma[:,2], 'r--', attMnvrCmd[:,0]*1.0E-9, -attMnvrCmd[:,2], 'r')
+plt.plot(DataSigma[:,0]*1.0E-9, DataSigma[:,3], 'g--', attMnvrCmd[:,0]*1.0E-9, -attMnvrCmd[:,3], 'g')
 
 plt.figure(4)
 plt.plot(FSWControlOut[:,0]*1.0E-9, FSWControlOut[:,1])

@@ -755,6 +755,7 @@ INPUT                  = "SimCode/architecture/system_model" \
    "ADCSAlgorithms/attDetermination/CSSEst" \
    "ADCSAlgorithms/attDetermination/navState" \
    "ADCSAlgorithms/attGuidance" \
+   "ADCSAlgorithms/effectorInterfaces/errorConversion" \
    "ADCSAlgorithms/attControl"
 
 # This tag can be used to specify the character encoding of the source files
