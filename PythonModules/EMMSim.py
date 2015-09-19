@@ -1,7 +1,5 @@
-#Import some architectural stuff that we will probably always use
+﻿#Import some architectural stuff that we will probably always use
 import sys, os
-sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
-sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
 
@@ -116,7 +114,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
-   self.SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/External/EphemerisData/'
+   self.SpiceObject.SPICEDataPath = self.simBasePath + '/External/EphemerisData/'
    self.SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
    self.SpiceObject.OutputBufferCount = 2
    self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
@@ -269,8 +267,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SunGravBody.UseJParams = False
 
    JParamsSelect = [2, 3, 4, 5, 6]
-   EarthGravFile = os.environ['SIMULATION_BASE']+'/External/LocalGravData/GGM03S.txt'
-   MarsGravFile = os.environ['SIMULATION_BASE']+'/External/LocalGravData/GGM2BData.txt'
+   EarthGravFile = self.simBasePath + '/External/LocalGravData/GGM03S.txt'
+   MarsGravFile = self.simBasePath +'/External/LocalGravData/GGM2BData.txt'
    
    self.EarthGravBody = six_dof_eom.GravityBodyData()
    self.EarthGravBody.BodyMsgName = "earth_planet_data"
