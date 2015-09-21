@@ -50,8 +50,8 @@ void SimpleNav::SelfInit()
     std::vector<double>::iterator it;
     //! - Create a new message for the output simple nav state data
     outputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage(
-                     outputNavName, sizeof(NavStateOut), outputBufferCount);
+        CreateNewMessage(outputNavName, sizeof(NavStateOut), outputBufferCount,
+        "NavStateOut");
     //! - Initialize the propagation matrix to default values for use in update
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);

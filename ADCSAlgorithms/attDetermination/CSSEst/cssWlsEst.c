@@ -15,7 +15,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-                                               sizeof(CSSWlsEstOut));
+        sizeof(CSSWlsEstOut), "CSSWlsEstOut");
     
 }
 

@@ -21,7 +21,8 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData)
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
-        ConfigData->thrGroups[i].outputDataName, sizeof(vehEffectorOut));
+            ConfigData->thrGroups[i].outputDataName, sizeof(vehEffectorOut),
+            "vehEffectorOut");
     }
  
     

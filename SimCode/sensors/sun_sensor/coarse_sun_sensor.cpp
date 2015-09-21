@@ -100,8 +100,9 @@ void CoarseSunSensor::SelfInit()
     UpdatePair(SenBias, SenNoiseStd);
     rgen.seed(RNGSeed);
     rnum.param(UpdatePair);
-    OutputDataID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                    OutputDataMsg, sizeof(CSSOutputData), OutputBufferCount);
+    OutputDataID = SystemMessaging::GetInstance()->
+        CreateNewMessage(OutputDataMsg, sizeof(CSSOutputData),
+        OutputBufferCount, "CSSOutputData");
 }
 
 void CoarseSunSensor::CrossInit()

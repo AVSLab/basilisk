@@ -53,8 +53,9 @@ void ImuSensor::SelfInit()
         trans_rgen[i].seed(RNGSeed+i);
         trans_rnum[i].param(UpdateTransPair);
     }
-    OutputDataID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                    OutputDataMsg, sizeof(ImuSensorOutput), OutputBufferCount);
+    OutputDataID = SystemMessaging::GetInstance()->
+        CreateNewMessage( OutputDataMsg, sizeof(ImuSensorOutput),
+        OutputBufferCount, "ImuSensorOutput");
 }
 
 void ImuSensor::CrossInit()

@@ -1,5 +1,7 @@
-﻿import sys, os
-sys.path.append('../PythonModules/')
+import sys, os, inspect
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+sys.path.append(path + '/../PythonModules/')
 import EMMSim
 import matplotlib.pyplot as plt
 import ctypes
@@ -77,8 +79,7 @@ TheEMMSim.InitializeSimulation()
 TheEMMSim.ConfigureStopTime(int(60*120*1E9))
 TheEMMSim.ExecuteSimulation()
 
-FSWsHat = MessagingAccess.obtainMessageVector("css_wls_est", 'cssWlsEst',
-   'CSSWlsEstOut', 7200*2, TheEMMSim.TotalSim, 'sHatBdy', 'double', 0, 2, sim_model.logBuffer)
+FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
 

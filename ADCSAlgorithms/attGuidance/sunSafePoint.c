@@ -18,7 +18,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut));
+        sizeof(attGuidOut), "attGuidOut");
     memset(ConfigData->attOut.intsigma_BR, 0x0, 3*sizeof(double));
     memset(ConfigData->attOut.omega_rB, 0x0, 3*sizeof(double));
     memset(ConfigData->attOut.domega_rB, 0x0, 3*sizeof(double));

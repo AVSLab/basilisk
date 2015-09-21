@@ -24,4 +24,5 @@ namespace std {
 }
 %include "sys_model_thread.h"
 %include "message_logger.h"
+%include "../messaging/system_messaging.h"
 %include "sim_model.h"

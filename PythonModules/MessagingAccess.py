@@ -5,11 +5,10 @@ import numpy
 import array
 import pdb
 
-def getMessageContainers(MessageName, MessageModule, MessageObj):
+def getMessageContainers(MessageModule, MessageObj):
    ## Begin Method steps here
    ## - Import the module in question to get access to structures
    LocalObj = __import__(MessageModule, globals(), locals(), [], -1)
-
    MessageList = []
    ## - Find the structure of the message from python/SWIG
    LocalContainer = eval('LocalObj.' + MessageObj + '()')
@@ -38,8 +37,7 @@ def ObtainMessageList(MessageName, MessageModule, MessageObj, MessageCount,
   SimContainer, messageType = sim_model.messageBuffer):
 
    ## Begin Method steps here
-   LocalContainer, TotalDict = getMessageContainers(MessageName, MessageModule,
-      MessageObj)
+   LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
    while(LocalCount < MessageCount):
@@ -65,8 +63,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    messageType = sim_model.messageBuffer):
    
    ## Begin Method steps here
-   LocalContainer, TotalDict = getMessageContainers(MessageName, MessageModule,
-      MessageObj)
+   LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
    swigObject = eval('LocalContainer.' + VarName);
@@ -106,4 +103,4 @@ def findMessageMatches(searchString, SimContainer):
            matchList.append(localName)
         i+=1
     return matchList
-    
+

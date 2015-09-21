@@ -35,9 +35,12 @@ void OrbElemConvert::SelfInit()
     //! - Determine what the size of the output should be and create the message
     uint64_t OutputSize = Elements2Cart ? sizeof(OutputStateData) :
     sizeof(classicElements);
+    std::string messageType = Elements2Cart ? "OutputStateData" :
+        "classicElements";
     
-    StateOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                     OutputDataString, OutputSize, OutputBufferCount);
+    StateOutMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,
+        messageType);
     
 }
 

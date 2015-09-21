@@ -162,3 +162,20 @@ bool messageLogger::readLog(int64_t messageID, SingleMessageHeader *dataHeader,
     return false;
 }
 
+uint64_t messageLogger::getLogCount(int64_t messageID)
+{
+    std::vector<messageLogContainer>::iterator it;
+    
+    uint64_t messageCount = 0;
+
+    for(it=logData.begin(); it != logData.end(); it++)
+    {
+        if(it->messageID != messageID)
+        {
+            continue;
+        }
+        messageCount = it->logInstanceCount;
+        return(messageCount);
+    }
+    return(messageCount);
+}

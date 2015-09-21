@@ -96,8 +96,9 @@ void SpiceInterface::InitTimeData()
     deltet_c(JDGPSEpoch, "ET", &EpochDelteET);
     
     //! - Create the output time message for SPICE
-    TimeOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                    OutputTimePort, sizeof(SpiceTimeOutput), OutputBufferCount);
+    TimeOutMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(OutputTimePort, sizeof(SpiceTimeOutput),
+        OutputBufferCount, "SpiceTimeOutput");
     
 }
 
@@ -208,8 +209,9 @@ void SpiceInterface::ComputePlanetData()
             memset(&NewPlanet, 0x0, sizeof(SpicePlanetState));
             strcpy(NewPlanet.PlanetName, it->c_str());
             //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
-            uint32_t MsgID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                              PlanetMsgName, sizeof(SpicePlanetState), OutputBufferCount);
+            uint32_t MsgID = SystemMessaging::GetInstance()->
+                CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
+                OutputBufferCount, "SpicePlanetState");
             PlanetData.insert(std::pair<uint32_t, SpicePlanetState>
                               (MsgID, NewPlanet));
         }

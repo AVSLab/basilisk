@@ -14,7 +14,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *ConfigData)
     
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-                                               sizeof(IMUOutputData));
+        sizeof(IMUOutputData), "IMUOutputData");
     
 }
 

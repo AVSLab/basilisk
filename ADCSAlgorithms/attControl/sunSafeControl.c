@@ -19,7 +19,7 @@ void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(vehControlOut));
+        sizeof(vehControlOut), "vehControlOut");
     
 }
 

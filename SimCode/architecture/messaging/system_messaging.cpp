@@ -79,7 +79,7 @@ uint64_t SystemMessaging::GetCurrentSize()
 }
 
 int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
-                                          uint64_t MaxSize, uint64_t NumMessageBuffers)
+    uint64_t MaxSize, uint64_t NumMessageBuffers, std::string messageStruct)
 {
 	if (FindMessageID(MessageName) >= 0)
 	{
@@ -127,6 +127,13 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->MessageName, MessageName.c_str(), NameLength);
+    NameLength = messageStruct.size();
+    if(NameLength > MAX_MESSAGE_SIZE)
+    {
+        std::cout << "Your struct name length is too long, truncating name" <<std::endl;
+        NameLength = MAX_MESSAGE_SIZE;
+    }
+    strncpy(NewHeader->messageStruct, messageStruct.c_str(), NameLength);
     NewHeader->UpdateCounter = 0;
     NewHeader->CurrentReadBuffer = 0;
     NewHeader->MaxNumberBuffers = NumMessageBuffers;

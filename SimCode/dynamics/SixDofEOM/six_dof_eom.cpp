@@ -82,11 +82,13 @@ void SixDofEOM::SelfInit()
     }
     computeOutputs();
     
-    StateOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                     OutputStateMessage, sizeof(OutputStateData), OutputBufferCount);
+    StateOutMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(OutputStateMessage, sizeof(OutputStateData),
+        OutputBufferCount, "OutputStateData");
     
-    MassPropsMsgID = SystemMessaging::GetInstance()->CreateNewMessage(
-                                                                      OutputMassPropsMsg, sizeof(MassPropsData), OutputBufferCount);
+    MassPropsMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(OutputMassPropsMsg, sizeof(MassPropsData),
+        OutputBufferCount, "MassPropsData");
     
 }
 

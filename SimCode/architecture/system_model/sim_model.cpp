@@ -213,10 +213,10 @@ void SimModel::ResetSimulation()
  @param MessageSize Maximum size of the message that we can pull
  @param NumBuffers The count of message buffers to create*/
 void SimModel::CreateNewMessage(std::string MessageName, uint64_t MessageSize,
-                                uint64_t NumBuffers)
+                                uint64_t NumBuffers, std::string messageStruct)
 {
     SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize,
-                                                     NumBuffers);
+                                                     NumBuffers, messageStruct);
 }
 
 /*! This method exists to provide a hook into the messaging system for writing
@@ -255,4 +255,51 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
 void SimModel::logThisMessage(std::string messageName, uint64_t messagePeriod)
 {
     messageLogs.addMessageLog(messageName, messagePeriod);
+}
+
+/*! This method gets the current number of messages that have been created in 
+    the simulation.
+    @return uint64_t The number of messages that have been created
+*/
+uint64_t SimModel::getNumMessages() {
+    return(SystemMessaging::GetInstance()->GetMessageCount());
+}
+/*! This method finds the name associated with the message ID that is passed 
+    in.
+    @return std::string The message name for the ID
+    @param messageID The message id that we wish to find the name for
+*/
+std::string SimModel::getMessageName(uint64_t messageID)
+{
+    return(SystemMessaging::GetInstance()->FindMessageName(messageID));
+}
+
+/*! This method obtains the header information associated with a given message.
+   Note the copy out to the incoming message.  The assumption is that this 
+   method is called from the python level where the storage for headerOut is 
+   created.  This way we don't connect a pointer to the internal messager at the 
+   python level
+   @return void
+   @param messageID The ID we want to pull header information for
+   @param headerOut The output header information we extract from the simulation
+*/
+void SimModel::populateMessageHeader(std::string messageName,
+                           MessageHeaderData* headerOut)
+{
+    uint64_t messageID = SystemMessaging::GetInstance()->
+        FindMessageID(messageName);
+    MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
+        FindMsgHeader(messageID);
+    memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
+}
+
+/*! This method find the ID associated with the message name and returns it to 
+    the caller.  Mostly used to make sure a message is valid.
+    @return int64_t ID of the message associated with messageName
+    @param messageName The name of the message that you want the ID for
+*/
+int64_t SimModel::getMessageID(std::string messageName)
+{
+    return(SystemMessaging::GetInstance()->
+           FindMessageID(messageName));
 }

@@ -18,7 +18,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData)
     }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-                                               sizeof(CSSOutputData)*MAX_NUM_CSS_SENSORS);
+        sizeof(CSSOutputData)*MAX_NUM_CSS_SENSORS, "CSSOutputData");
     
 }
 

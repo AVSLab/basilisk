@@ -19,7 +19,6 @@ class ThreadBaseClass:
    self.ThreadData = sys_model_thread.SysModelThread(ThreadRate, InputDelay, 
       FirstStart)
    self.ThreadModels = []
-   self.threadModules = set()
  def disable(self):
      self.ThreadData.disableThread();
  def enable(self):
@@ -98,9 +97,9 @@ class SimBaseClass:
    self.StopTime = 0
    self.NameReplace = {}
    self.VarLogList = {}
+   self.simModules = set()
    self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
-   self.dataStructIndex = \
-       os.environ['SIMULATION_BASE']+'/xml/index.xml'
+   self.dataStructIndex = self.simBasePath+'/xml/index.xml'
    self.indexParsed = False
 
  def AddModelToThread(self, ThreadName, NewModel, ModelData = None):
@@ -108,14 +107,15 @@ class SimBaseClass:
    for Thread in self.ThreadList:
        if Thread.Name == ThreadName:
           Thread.ThreadData.AddNewObject(NewModel)
-          Thread.threadModules.add(inspect.getmodule(NewModel))
           ThreadReplaceTag = 'self.ThreadList['+str(i) + ']'
           ThreadReplaceTag += '.ThreadModels[' + str(len(Thread.ThreadModels)) + ']'
           self.NameReplace[NewModel.ModelTag] = ThreadReplaceTag
           if(ModelData != None):
              Thread.ThreadModels.append(ModelData)
+             self.simModules.add(inspect.getmodule(ModelData))
           else:
              Thread.ThreadModels.append(NewModel)
+             self.simModules.add(inspect.getmodule(NewModel))
           return
        i+=1
    print "Could not find a Thread with name: %(ThreadName)s"  % \
@@ -276,6 +276,41 @@ class SimBaseClass:
             self.dataStructureDictionary[
              headerData.messageStruct].printElem()
     return searchComplete
+
+ def pullMessageLogData(self, varName, indices = [], numRecords = -1):
+    splitName = varName.split('.')
+    messageID = self.TotalSim.getMessageID(splitName[0])
+    if(messageID < 0):
+        print "Failed to pull log due to invalid ID for this message: " + splitName[0]
+        return []
+    headerData = sim_model.MessageHeaderData()
+    self.TotalSim.populateMessageHeader(splitName[0], headerData)
+    moduleFound = ''
+    for moduleData in self.simModules:
+        if moduleFound != '':
+            break
+        for name, obj in inspect.getmembers(moduleData):
+            if inspect.isclass(obj):
+                if obj.__name__ == headerData.messageStruct:
+                   moduleFound = moduleData.__name__
+                   break
+    if moduleFound == '':
+        print "Failed to find valid message structure for: " + headerData.messageStruct
+        return []
+    messageCount = self.TotalSim.messageLogs.getLogCount(messageID)
+    resplit = varName.split(splitName[0] + '.')
+    bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
+    messageCount = messageCount if messageCount > 0 else headerData.UpdateCounter
+    messageCount = messageCount if numRecords < 0 else numRecords
+    dataUse = MessagingAccess.obtainMessageVector(splitName[0], moduleFound,
+        headerData.messageStruct, messageCount, self.TotalSim, resplit[1], 'double',
+        indices[0], indices[-1], bufferUse)
+    indicesLocal = [0]
+    for indexUse in indices:
+        indicesLocal.append(indexUse+1)
+    return(dataUse[:, indicesLocal])
+
+
 
 def SetCArray(InputList, VarType, ArrayPointer):
    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'

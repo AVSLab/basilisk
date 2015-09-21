@@ -19,10 +19,10 @@ void InitializeStorage(uint32_t StorageBytes)
  @param MessageName The name of the message that we are creating
  @param MaxSize The maximum size that a given message can be
  */
-int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize)
+int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct)
 {
     return(SystemMessaging::GetInstance()->CreateNewMessage(
-                                                            MessageName, MaxSize, 2));
+        MessageName, MaxSize, 2, MessageStruct));
 }
 
 /*! This method writes a new copy of the given message into the system.

@@ -19,7 +19,8 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrData.outputMsgID = CreateNewMessage(
-        ConfigData->thrData.outputDataName, sizeof(vehEffectorOut));
+        ConfigData->thrData.outputDataName, sizeof(vehEffectorOut),
+        "vehEffectorOut");
     
 }
 

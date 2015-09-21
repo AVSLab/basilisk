@@ -11,6 +11,7 @@
 
 typedef struct {
     char MessageName[MAX_MESSAGE_SIZE];// -- It pains me, but let's fix name
+    char messageStruct[MAX_MESSAGE_SIZE]; // -- Again, pain, but it's better
     uint64_t UpdateCounter;      // -- Counter for number of updates in port
     uint32_t CurrentReadBuffer;  // -- Index for the current read buffer
     uint32_t MaxNumberBuffers;   // -- Length of message ring buffer
@@ -41,7 +42,7 @@ public:
     void ClearMessageBuffer();
     uint64_t GetCurrentSize();
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
-                             uint64_t NumMessageBuffers = 0);
+        uint64_t NumMessageBuffers = 2, std::string messageStruct = "");
     bool WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
                       uint8_t *MsgPayload);
     bool ReadMessage(uint64_t MessageID, SingleMessageHeader *DataHeader,

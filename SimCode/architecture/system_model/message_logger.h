@@ -34,6 +34,7 @@ public:
     void logAllMessages();
     bool readLog(int64_t messageID, SingleMessageHeader *dataHeader,
                  uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset=0);
+    uint64_t getLogCount(int64_t messageID);
     
 public:
     uint64_t initBufferSize; //!< Default buffer size fo message log storage

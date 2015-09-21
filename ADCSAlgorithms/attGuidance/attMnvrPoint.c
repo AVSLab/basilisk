@@ -18,7 +18,7 @@ void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut));
+        sizeof(attGuidOut), "attGuidOut");
     return;
     
 }
