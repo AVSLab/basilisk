@@ -26,13 +26,17 @@ import sunSafePoint
 import imuComm
 import sunSafeControl
 import sunSafeACS
+import attMnvrPoint
+import dvAttEffect
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
    self.CreateNewThread("DynamicsThread", int(1E8))
-   self.CreateNewThread("FSWThread", int(5E8))
+   self.CreateNewThread("sunSafeFSWThread", int(5E8))
+   self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
+   self.CreateNewThread("vehicleDVMnvrFSWThread", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
    self.InitCSSHeads()
@@ -93,19 +97,53 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafeACS.Update_sunSafeACS, sunSafeACS.SelfInit_sunSafeACS,
       sunSafeACS.CrossInit_sunSafeACS)
    self.sunSafeACSWrap.ModelTag = "sunSafeACS"
- 
+
+   self.attMnvrPointData = attMnvrPoint.attMnvrPointConfig()
+   self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
+      attMnvrPoint.Update_attMnvrPoint, attMnvrPoint.SelfInit_attMnvrPoint,
+      attMnvrPoint.CrossInit_attMnvrPoint)
+   self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
+
+   self.attMnvrControlData = sunSafeControl.sunSafeControlConfig()
+   self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
+      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
+      sunSafeControl.CrossInit_sunSafeControl)
+   self.sunSafeControlWrap.ModelTag = "attMnvrControl"
+   
+   self.dvAttEffectData = dvAttEffect.dvAttEffectConfig()
+   self.dvAttEffectWrap = alg_contain.AlgContain(self.dvAttEffectData,
+        dvAttEffect.Update_dvAttEffect, dvAttEffect.SelfInit_dvAttEffect,
+        dvAttEffect.CrossInit_dvAttEffect)
+   self.sunSafeACSWrap.ModelTag = "dvAttEffect"
 
    self.InitAllFSWObjects()
 
-   self.AddModelToThread("FSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
-   self.AddModelToThread("FSWThread", self.IMUCommWrap, self.IMUCommData)
-   self.AddModelToThread("FSWThread", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
-   self.AddModelToThread("FSWThread", self.sunSafePointWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
+   self.AddModelToThread("sunSafeFSWThread", self.IMUCommWrap, self.IMUCommData)
+   self.AddModelToThread("sunSafeFSWThread", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafePointWrap, 
       self.sunSafePointData)
-   self.AddModelToThread("FSWThread", self.sunSafeControlWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafeControlWrap, 
       self.sunSafeControlData)
-   self.AddModelToThread("FSWThread", self.sunSafeACSWrap, 
+   self.AddModelToThread("sunSafeFSWThread", self.sunSafeACSWrap, 
       self.sunSafeACSData)
+
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrPointWrap, 
+      self.attMnvrPointData)
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrControlWrap, 
+      self.attMnvrControlData)
+   self.AddModelToThread("vehicleAttMnvrFSWThread", self.sunSafeACSWrap, 
+      self.sunSafeACSData)
+      
+   self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrPointWrap,
+                            self.attMnvrPointData)
+   self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrControlWrap,
+                            self.attMnvrControlData)
+   self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvAttEffectWrap,
+                            self.dvAttEffectData)
+
+   self.disableThread("vehicleAttMnvrFSWThread")
+   self.disableThread("vehicleDVMnvrFSWThread")
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
@@ -315,14 +353,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    PMatrix = [0.0]*18*18
    PMatrix[0*18+0] = PMatrix[1*18+1] = PMatrix[2*18+2] = 10.0; #Position
    PMatrix[3*18+3] = PMatrix[4*18+4] = PMatrix[5*18+5] = 0.05; #Velocity
-   PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 5.0/3600.0*math.pi/180.0; #Attitude (sigma!)
-   PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.05*math.pi/180.0; #Attitude rate
+   PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 1.0/3600.0*math.pi/180.0; #Attitude (sigma!)
+   PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.001*math.pi/180.0; #Attitude rate
    PMatrix[12*18+12] = PMatrix[13*18+13] = PMatrix[14*18+14] = 0.1*math.pi/180.0; #Sun vector
    PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
-   errorBounds = [1000.0, 1000.0, 1000.0, #Position 
+   errorBounds = [1000.0, 1000.0, 1000.0, #Position
                   1.0, 1.0, 1.0, #Velocity
                   5E-3, 5E-3, 5E-3, #Attitude
-                  0.02, 0.02, 0.02, #Attitude Rate
+                  0.006, 0.006, 0.006, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
@@ -413,10 +451,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
  def SetsunSafeACS(self):
    self.sunSafeACSData.inputControlName = "sun_safe_control_request"
-   self.sunSafeACSData.outputDataName = "acs_thruster_cmds"
-   self.sunSafeACSData.minThrustRequest = 0.08
-   self.sunSafeACSData.numThrusters = 8
-   self.sunSafeACSData.maxNumCmds = 1
+   self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds"
+   self.sunSafeACSData.thrData.minThrustRequest = 0.1
+   self.sunSafeACSData.thrData.numEffectors = 8
+   self.sunSafeACSData.thrData.maxNumCmds = 1
    onTimeMap = [-1.0, 1.0, 1.0, 
                  -1.0, -1.0, -1.0,
                  1.0, -1.0, 1.0,
@@ -426,8 +464,47 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                  -1.0, 1.0, 1.0,
                  -1.0, -1.0, -1.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', 
-      self.sunSafeACSData.thrOnMap) 
-   
+      self.sunSafeACSData.thrData.thrOnMap)
+ def SetattMnvrPoint(self):
+   self.attMnvrPointData.inputNavStateName = "simple_nav_output" 
+   self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
+   self.attMnvrPointData.outputDataName = "nom_att_guid_out"
+   self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
+   self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
+   self.attMnvrPointData.maxAngAccel = 0.5/1000.0
+   self.attMnvrPointData.mnvrActive = 0
+
+ def SetattMnvrControl(self):
+   self.attMnvrControlData.K = 30.0
+   self.attMnvrControlData.P = 60.0
+   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
+ 
+ def SetdvAttEffect(self):
+   self.dvAttEffectData.inputControlName = "sun_safe_control_request"
+   self.dvAttEffectData.numThrGroups = 2
+   newThrGroup = dvAttEffect.ThrustGroupData()
+   newThrGroup.outputDataName = "acs_thruster_cmds"
+   newThrGroup.minThrustRequest = 0.1
+   newThrGroup.numEffectors = 8
+   newThrGroup.maxNumCmds = 1
+   onTimeMap = [0.0, 0.0, 1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, 1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, 1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, 1.0,
+                0.0, 0.0, -1.0]
+   SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
+   dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 0,
+                                       newThrGroup)
+   newThrGroup.numEffectors = 6
+   newThrGroup.maxNumCmds = 6
+   newThrGroup.nomThrustFrac = 0.5
+   newThrGroup.outputDataName = "dv_thruster_cmds"
+   dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
+                                     newThrGroup)
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -445,6 +522,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetsunSafePoint()
    self.SetsunSafeControl()
    self.SetsunSafeACS()
+   self.SetattMnvrPoint()
+   self.SetattMnvrControl()
+   self.SetdvAttEffect()
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
 #   i=0

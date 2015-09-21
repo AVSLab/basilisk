@@ -8,6 +8,12 @@
  * @{
  */
 
+/*! @brief Structure used to define the format of an attitude maneuver command */
+typedef struct {
+   double sigma_BR[3];      /*!< -- Commanded body wrt reference that we are tracking*/
+   double omega_BR[3];      /*!< r/s Body rate of that commanded attitude vector*/
+}attCmdOut;
+
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
     double intsigma_BR[3];   /*!< --  Current integral error of the MRPs*/

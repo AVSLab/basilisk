@@ -1,5 +1,6 @@
 
 #include "utilities/dyn_effector.h"
+#include <cstring>
 
 DynEffector::DynEffector()
 {

@@ -18,8 +18,8 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(vehEffectorOut));
+    ConfigData->thrData.outputMsgID = CreateNewMessage(
+        ConfigData->thrData.outputDataName, sizeof(vehEffectorOut));
     
 }
 
@@ -45,70 +45,16 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData)
 void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime)
 {
     
-    double unSortOnTime[MAX_NUM_EFFECTORS];
-    effPairs unSortPairs[MAX_NUM_EFFECTORS];
-    effPairs sortPairs[MAX_NUM_EFFECTORS];
     uint64_t ClockTime;
     uint32_t ReadSize;
-    uint32_t i;
     vehControlOut cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
                 sizeof(vehControlOut), (void*) &(cntrRequest));
+    computeSingleThrustBlock(&(ConfigData->thrData), callTime,
+                             &cntrRequest);
     
-    v3Scale(-1.0, cntrRequest.accelRequestBody, cntrRequest.accelRequestBody);
-    mMultV(ConfigData->thrOnMap, ConfigData->numThrusters, 3,
-           cntrRequest.accelRequestBody, unSortOnTime);
-    
-    for(i=0; i<ConfigData->numThrusters; i++)
-    {
-        if(unSortOnTime[i] < ConfigData->minThrustRequest)
-        {
-            unSortOnTime[i] = 0.0;
-        }
-    }
-    
-    for(i=0; i<ConfigData->numThrusters; i++)
-    {
-        unSortPairs[i].onTime = unSortOnTime[i];
-        unSortPairs[i].thrustIndex = i;
-    }
-    effectorVSort(unSortPairs, sortPairs, ConfigData->numThrusters);
-    memset(ConfigData->cmdRequests.effectorRequest, 0x0,
-           MAX_NUM_EFFECTORS*sizeof(double));
-    for(i=0; i<ConfigData->maxNumCmds; i=i+1)
-    {
-        ConfigData->cmdRequests.effectorRequest[sortPairs[i].thrustIndex] =
-        sortPairs[i].onTime;
-    }
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
-                 (void*) &(ConfigData->cmdRequests));
     return;
-}
-
-void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)
-{
-    int i, j;
-    int Swapped;
-    Swapped = 1;
-    memcpy(Output, Input, dim*sizeof(effPairs));
-    for(i=0; i<dim && Swapped > 0; i++)
-    {
-        Swapped = 0;
-        for(j=0; j<dim-1; j++)
-        {
-            if(Output[j].onTime<Output[j+1].onTime)
-            {
-                double tempOn = Output[j+1].onTime;
-                uint32_t tempIndex = Output[j+1].thrustIndex;
-                Output[j+1].onTime = Output[j].onTime;
-                Output[j+1].thrustIndex = Output[j].thrustIndex;
-                Output[j].onTime = tempOn;
-                Output[j].thrustIndex = tempIndex;
-                Swapped = 1;
-            }
-        }
-    }
 }

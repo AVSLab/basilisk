@@ -12,4 +12,5 @@
 %constant void CrossInit_sunSafeACS(void*);
 %ignore CrossInit_sunSafeACS;
 %include "vehEffectorOut.h"
+%include "dvAttEffect.h"
 %include "sunSafeACS.h"

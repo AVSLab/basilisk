@@ -2,6 +2,7 @@
 #include "messaging/static_messaging.h"
 #include "SimCode/architecture/messaging/system_messaging.h"
 #include <stdio.h>
+#include <iostream>
 
 /*! This algorithm initializes the messaging storage for the flight system
  @return void
@@ -65,8 +66,15 @@ int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize
  */
 int32_t FindMessageID(char *MessageName)
 {
-    return(SystemMessaging::GetInstance()->FindMessageID(
-                                                         MessageName));
+    int32_t localMsgID = SystemMessaging::GetInstance()->FindMessageID(
+                            MessageName);
+    if(localMsgID < 0)
+    {
+        std::cerr << "Warning, failed to find a message to link for: ";
+        std::cerr << MessageName << std::endl;
+        
+    }
+    return(localMsgID);
 }
 
 /*! This method find the message name associated with a given ID.
