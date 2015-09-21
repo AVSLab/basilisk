@@ -1,5 +1,5 @@
-import sys, os
-sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
+﻿import sys, os
+sys.path.append('../PythonModules/')
 import EMMSim
 import matplotlib.pyplot as plt
 import ctypes
@@ -102,4 +102,4 @@ if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):
       plt.show()
 
-sys.exit(accuracyFailCounter + controlFailCounter)
+#sys.exit(accuracyFailCounter + controlFailCounter)

@@ -1,8 +1,9 @@
-﻿
+
 #Import some architectural stuff that we will probably always use
 import sys, os, ast
 #Point the path to the module storage area
-sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import sim_model
 import sys_model_thread
 import MessagingAccess
@@ -10,6 +11,7 @@ import types
 import numpy
 import array
 import xml.etree.ElementTree as ET
+import inspect
 
 class ThreadBaseClass:
  def __init__(self, ThreadName, ThreadRate, InputDelay = 0, FirstStart=0):
@@ -17,6 +19,7 @@ class ThreadBaseClass:
    self.ThreadData = sys_model_thread.SysModelThread(ThreadRate, InputDelay, 
       FirstStart)
    self.ThreadModels = []
+   self.threadModules = set()
  def disable(self):
      self.ThreadData.disableThread();
  def enable(self):
@@ -95,6 +98,7 @@ class SimBaseClass:
    self.StopTime = 0
    self.NameReplace = {}
    self.VarLogList = {}
+   self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
    self.dataStructIndex = \
        os.environ['SIMULATION_BASE']+'/xml/index.xml'
    self.indexParsed = False
@@ -104,6 +108,7 @@ class SimBaseClass:
    for Thread in self.ThreadList:
        if Thread.Name == ThreadName:
           Thread.ThreadData.AddNewObject(NewModel)
+          Thread.threadModules.add(inspect.getmodule(NewModel))
           ThreadReplaceTag = 'self.ThreadList['+str(i) + ']'
           ThreadReplaceTag += '.ThreadModels[' + str(len(Thread.ThreadModels)) + ']'
           self.NameReplace[NewModel.ModelTag] = ThreadReplaceTag
