@@ -97,3 +97,13 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    TheArray = numpy.reshape(TheArray, (ArrayDim, TheArray.shape[0]/ArrayDim))
    return TheArray
 
+def findMessageMatches(searchString, SimContainer):
+    i=0
+    matchList = []
+    while i < SimContainer.getNumMessages():
+        localName = SimContainer.getMessageName(i)
+        if(localName.find(searchString) >= 0):
+           matchList.append(localName)
+        i+=1
+    return matchList
+    

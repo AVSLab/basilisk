@@ -5,9 +5,11 @@ import sys, os, ast
 sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
 import sim_model
 import sys_model_thread
+import MessagingAccess
 import types
 import numpy
 import array
+import xml.etree.ElementTree as ET
 
 class ThreadBaseClass:
  def __init__(self, ThreadName, ThreadRate, InputDelay = 0, FirstStart=0):
@@ -34,6 +36,58 @@ class LogBaseClass:
    self.PrevLogTime = None
    self.PrevValue = None
 
+class StructDocData:
+ class StructElementDef:
+     def __init__(self, type, name, argstring, desc=''):
+         self.type = type
+         self.name = name
+         self.argstring = argstring
+         self.desc = desc
+         
+ def __init__(self, strName):
+     self.strName = strName
+     self.structPopulated = False
+     self.structElements = {}
+ def clearItem(self):
+     self.structPopulated = False
+     self.structElements = {}
+ def populateElem(self, xmlSearchPath):
+     if(self.structPopulated == True):
+         return
+     xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
+     try:
+          xmlData = ET.parse(xmlFileUse)
+     except:
+          print "Failed to parse the XML structure for: " + self.strName
+          print "This file does not exist most likely: " + xmlFileUse
+          return
+     root = xmlData.getroot()
+     validElement = root.find("./compounddef[@id='" + self.strName + "']")
+     for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
+        typeUse = newVariable.find('type').text if newVariable.find('type') != None else \
+            None
+        nameUse = newVariable.find('name').text if newVariable.find('type') != None else \
+            None
+        argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') != None else \
+            None
+        descUse = newVariable.find('./detaileddescription/para').text if newVariable.find('./detaileddescription/para') != None else \
+            None
+        if(descUse == None):
+            descUse = newVariable.find('./briefdescription/para').text if newVariable.find('./briefdescription/para') != None else \
+            None
+        newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
+        self.structElements.update({nameUse: newElement})
+        self.structPopulated = True
+ def printElem(self):
+     print "    " + self.strName + " Structure Elements:"
+     for key, value in self.structElements.iteritems():
+         outputString = ''
+         outputString += value.type + " " + value.name
+         outputString += value.argstring if value.argstring != None else ''
+         outputString += ': ' + value.desc if value.desc != None else ''
+         print "      " + outputString
+
+
 class SimBaseClass:
  def __init__(self):
    self.TotalSim = sim_model.SimModel()
@@ -41,6 +95,9 @@ class SimBaseClass:
    self.StopTime = 0
    self.NameReplace = {}
    self.VarLogList = {}
+   self.dataStructIndex = \
+       os.environ['SIMULATION_BASE']+'/xml/index.xml'
+   self.indexParsed = False
 
  def AddModelToThread(self, ThreadName, NewModel, ModelData = None):
    i=0
@@ -174,6 +231,46 @@ class SimBaseClass:
      for Thread in self.ThreadList:
        if Thread.Name == threadName:
            Thread.enable()
+
+ def parseDataIndex(self):
+    self.dataStructureDictionary = {}
+    try:
+        xmlData = ET.parse(self.dataStructIndex)
+    except:
+        print "Failed to parse the XML index.  Likely that it isn't present"
+        return
+    root = xmlData.getroot()
+    for child in root:
+       newStruct = StructDocData(child.attrib['refid'])
+       self.dataStructureDictionary.update({child.find('name').text:
+                                           newStruct})
+    self.indexParsed = True
+
+ def findSimulationMessage(self, searchString):
+    searchComplete = False
+    msgMatchList = MessagingAccess.findMessageMatches(searchString,
+        self.TotalSim)
+    exactMessage = -1
+    for message in msgMatchList:
+        if message == searchString:
+            exactMessage = message
+            continue
+        print message
+
+    if(exactMessage == searchString):
+        searchComplete = True
+        headerData = sim_model.MessageHeaderData()
+        self.TotalSim.populateMessageHeader(exactMessage, headerData)
+        print headerData.MessageName + ": " + headerData.messageStruct
+        if self.indexParsed == False:
+            self.parseDataIndex()
+        if headerData.messageStruct in self.dataStructureDictionary:
+            xmlDataPath = os.path.dirname(self.dataStructIndex)
+            self.dataStructureDictionary[
+            headerData.messageStruct].populateElem(xmlDataPath)
+            self.dataStructureDictionary[
+             headerData.messageStruct].printElem()
+    return searchComplete
 
 def SetCArray(InputList, VarType, ArrayPointer):
    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
