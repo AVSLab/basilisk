@@ -5,7 +5,15 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
+/*! \addtogroup SimModelGroup
+ * @{
+ */
 
+//!@brief Container for gravitational body data
+/*! This structure is designed to hold all of the information for a gravity 
+    body.  The nominal use-case has it initialized at the python level and 
+    attached to dynamics using the AddGravityBody method.
+*/
 typedef struct {
     bool IsCentralBody;             //!< -- Flag indicating that object is center
     bool UseJParams;                //!< -- Flag indicating to use perturbations
@@ -17,6 +25,12 @@ typedef struct {
     int64_t BodyMsgID;              //!< -- ID for ephemeris data message
 } GravityBodyData;
 
+//!@brief The SixDofEOM class is used to handle all dynamics propagation for a spacecraft
+/*! It is designed to handle all gravitational effects and unforced attitude 
+    propagation internally.  All non-conservative effects are designed to be 
+    handled by the DynEffector class and attached to dynamics through the 
+    AddBodyEffector call.
+*/
 class SixDofEOM: public SysModel {
 public:
     SixDofEOM();
@@ -72,5 +86,7 @@ private:
     uint32_t NStates;                 //!< -- Count on states available
     std::vector<DynEffector*> BodyEffectors;  //!< -- Vector of effectors on body
 };
+
+/*! @} */
 
 #endif

@@ -7,6 +7,7 @@
 #include <iostream>
 #include "architecture/messaging/system_messaging.h"
 
+/*! This is the constructor for SixDofEOM.  It initializes a few variables*/
 SixDofEOM::SixDofEOM()
 {
     CallCounts = 0;
@@ -18,29 +19,48 @@ SixDofEOM::SixDofEOM()
     return;
 }
 
+/*! Destructor.  Nothing so far.*/
 SixDofEOM::~SixDofEOM()
 {
     return;
 }
 
+/*! This method exists to add a new gravitational body in to the simulation to 
+    be used to effect the spacecraft dynamics.  
+    @return void
+    @param NewBody A pointer to the gravitational body that is being added
+*/
 void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
 {
     GravData.push_back(*NewBody);
 }
 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The 
+    effector should be a derived class of the DynEffector abstract class and it 
+    should include a ComputeDynamics call which is operated by dynamics.
+    @return void
+    @param NewEffector The effector that we are adding to dynamics
+*/
 void SixDofEOM::AddBodyEffector(DynEffector *NewEffector)
 {
     BodyEffectors.push_back(NewEffector);
 }
 
+/*! This method initializes the state of the dynamics system to the init 
+    values passed in by the user.  There is potentially some value in removing 
+    the Init intermediary variables but they exist for now.
+    @return void
+*/
 void SixDofEOM::SelfInit()
 {
+    //! Begin method steps
+    //! - Zero out initial states prior to copying in init values
     NStates = 12 + RWACount;
     XState = new double[NStates]; // pos/vel/att/rate + rwa omegas
     memset(XState, 0x0, (NStates)*sizeof(double));
     TimePrev = 0;
-    mass = MassInit;
     
+    //! - Ensure that all init states were appropriately set by the caller
     if(PositionInit.size() != 3 || VelocityInit.size() != 3 ||
        AttitudeInit.size() != 3 || AttRateInit.size() != 3 ||
        InertiaInit.size() != 9 || CoMInit.size() != 3 ||
@@ -57,8 +77,10 @@ void SixDofEOM::SelfInit()
         return;
     }
     
+    //! - Zero out the accumulated DV (always starts at zero)
     memset(AccumDVBdy, 0x0, 3*sizeof(double));
     
+    //! - For remaining variables, grab iterators for each vector and assign internals
     std::vector<double>::iterator PosIt = PositionInit.begin();
     std::vector<double>::iterator VelIt = VelocityInit.begin();
     std::vector<double>::iterator AttIt = AttitudeInit.begin();
@@ -66,7 +88,6 @@ void SixDofEOM::SelfInit()
     std::vector<double>::iterator InertiaIt= InertiaInit.begin();
     std::vector<double>::iterator CoMIt= CoMInit.begin();
     std::vector<double>::iterator Str2BdyIt= T_Str2BdyInit.begin();
-    
     for(uint32_t i=0; i<3; i++)
     {
         XState[i] = *PosIt++;
@@ -80,8 +101,12 @@ void SixDofEOM::SelfInit()
             T_str2Bdy[i][j] = *Str2BdyIt++;
         }
     }
+    mass = MassInit;
+    
+    //! - Call computeOutputs to ensure that the outputs are available post-init
     computeOutputs();
     
+    //! - Write output messages for other modules that use the dynamics state in cross-init
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(OutputStateMessage, sizeof(OutputStateData),
         OutputBufferCount, "OutputStateData");
@@ -92,9 +117,16 @@ void SixDofEOM::SelfInit()
     
 }
 
+/*! This method links up all gravitational bodies with thei appropriate ephemeris
+    source data.  It alerts the user if any of the gravitational bodies fail to 
+    link correctly.
+    @return void
+*/
 void SixDofEOM::CrossInit()
 {
-    
+    //! Begin method steps
+    //! - For each gravity body in the data vector, find message ID
+    //! - If message ID is not found, alert the user and disable message
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
@@ -110,15 +142,22 @@ void SixDofEOM::CrossInit()
     
 }
 
+/*! This method reads in all of the gravity body state messages and saves off 
+    the position of the body used to compute gravitational forces and to set 
+    the output state correctly.
+    @return void
+*/
 void SixDofEOM::ReadInputs()
 {
     SpicePlanetState LocalPlanet;
     SingleMessageHeader LocalHeader;
     std::vector<GravityBodyData>::iterator it;
     
+    //! Begin method steps
+    //! - Loop through all valid gravity bodies and grab the ephem data
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
-        if(it->BodyMsgID > 0)
+        if(it->BodyMsgID >= 0)
         {
             SystemMessaging::GetInstance()->ReadMessage(it->BodyMsgID, &LocalHeader,
                                                         sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&LocalPlanet));
@@ -128,6 +167,16 @@ void SixDofEOM::ReadInputs()
     }
 }
 
+/*! This method computes the state derivatives at runtime for the state integration.  
+    It handles all gravitational effects and nominal attitude motion itself.  
+    All body effectors have their current force/torque computed via the 
+    ComputeDynamics call that is inherited from the DynEffector abstract class.
+    @return void
+    @param t The current simulation time as double precision
+    @param X The current state of the spacecraft
+    @param dX The computed derivatives that we output to caller
+    @param CentralBody The gravitational data for the central body
+*/
 void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                                   GravityBodyData *CentralBody)
 {
@@ -139,23 +188,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double r_N[3];
     double rmag;
     double v_N[3];
-    double accel[3];
-    double sunvec[3];
     double sigma[3];
     double omega[3];
-    //double Omega[RWACount];       /* RW speeds */
-    //double appliedU[RWACount];    /* Actual applied motor torques (wheel-speed limited) */
-    double hs;
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double d2[3];               /* intermediate variables */
     double d3[3];
-    double Lt[3];               /* Thrust torque */
-    double Ft[3];               /* Thrust force */
     double T_Irtl2Bdy[3][3];
     double LocalAccels[3];
     int    i;
-    int    j;
     
+    //! Begin method steps
+    
+    //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
     r_N[0] = X[i++];
@@ -170,56 +214,51 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omega[0] = X[i++];
     omega[1] = X[i++];
     omega[2] = X[i++];
-    //for(j = 0; j < RWACount; j++) {
-    //    Omega[j] = X[i++];
-    //}
-    /* Check for torque limits due to wheel speed */
-    //for(i = 0; i < NUM_RW; i++) {
-    //    if(this->rw[i].state == COMPONENT_ON) {
-    //        appliedU[i] = this->rw[i].u;
-    //    } else {
-    //        appliedU[i] = -this->rw[i].Js * this->rw[i].Omega * this->rwAll.frictionTimeConstant;
-    //    }
-    //}
+ 
     
+    //! - Get current position magnitude and compute the 2-body gravitational accels
     rmag = v3Norm(r_N);
     v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, dX + 3);
-    /// - Add in integrate-computed non-central bodies
+    
+    //! - Add in integrate-computed non-central bodies
     v3Add(dX+3, InertialAccels, dX+3);
     
-    /* compute derivative of position */
+    //! - compute derivative of position (velocity)
     v3Copy(v_N, dX);
     
-    /* compute dsigma/dt */
+    //! - compute dsigma/dt (see Schaub and Junkins)
     BmatMRP(sigma, B);
     m33Scale(0.25, B, B);
     m33MultV3(B, omega, dX + 6);
     
-    /* compute domega/dt */
+    //! - compute domega/dt (see Schaub and Junkins)
     v3Tilde(omega, B);                  /* [tilde(w)] */
     m33MultV3(this->I, omega, d2);     /* [I]w */
-    //for(i = 0; i < RWCount; i++) {
-    //    hs = this->rw[i].Js * (v3Dot(omega, this->rw[i].gs) + Omega[i]);
-    //    v3Scale(hs, this->rw[i].gs, d3);
-    //    v3Add(d3, d2, d2);
-    //}
     m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
     m33MultV3(Iinv, d3, dX + 9);  /* d(w)/dt = [I_RW]^-1 . (RHS) */
     
+    //! - Copy out the current state for DynEffector calls
     memcpy(StateCurrent.r_N, r_N, 3*sizeof(double));
     memcpy(StateCurrent.v_N, v_N, 3*sizeof(double));
     memcpy(StateCurrent.sigma, sigma, 3*sizeof(double));
     memcpy(StateCurrent.omega, omega, 3*sizeof(double));
     memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
+    //! - Copy out the current mass properties for DynEffector calls
     MassProps.Mass = mass;
     memcpy(MassProps.CoM, CoM, 3*sizeof(double));
     memcpy(MassProps.InertiaTensor, I, 9*sizeof(double));
     memcpy(MassProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
-    
+  
+    //! - Convert the current attitude to DCM for conversion in DynEffector loop
     MRP2C(sigma, T_Irtl2Bdy);
     
+    //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
+    
+    //! - Loop over the vector of body effectors and compute body force/torque
+    //! - Convert the body forces to inertial for inclusion in dynamics
+    //! - Scale the force/torque by the mass properties inverse to get accels
     for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
     {
         DynEffector *TheEff = *it;
@@ -235,6 +274,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     
 }
 
+/*! This method is used to integrate the state forward to the time specified. 
+    It is hardcoded to perform an RK4 against the current states.  We might want 
+    to think about abstracting that out to allow different integrators in the 
+    future.
+    @return void
+    @param CurrentTime The current simulation time in seconds with double precision
+*/
 void SixDofEOM::integrateState(double CurrentTime)
 {
     
@@ -252,13 +298,17 @@ void SixDofEOM::integrateState(double CurrentTime)
     double PlanetRelPos[3];
     double LocalDV[3];
     double rmag;
-    
+  
+    //! Begin method steps
+    //! - Get the dt from the previous time to the current
     TimeStep = CurrentTime - TimePrev;
-    GravityBodyData *CentralBody = NULL;
     
+    //! - Initialize the local states and invert the inertia tensor
     memcpy(X, XState, NStates*sizeof(double));
     m33Inverse(this->I, Iinv);
     
+    //! - Loop through gravitational bodies and find the central body to integrate around
+    GravityBodyData *CentralBody = NULL;
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
@@ -270,12 +320,14 @@ void SixDofEOM::integrateState(double CurrentTime)
         }
     }
     
+    //! - If we did not locate a central body, alert the user and prepare to explode.
     if(CentralBodyCount != 1)
     {
         std::cerr << "ERROR: I got a bad count on central bodies: " <<
         CentralBodyCount;
     }
     
+    //! - Zero the inertial accels and compute grav accel for all bodies other than central body
     v3SetZero(InertialAccels);
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
@@ -289,7 +341,8 @@ void SixDofEOM::integrateState(double CurrentTime)
         v3Scale(-it->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
         v3Add(InertialAccels, PlanetAccel, InertialAccels);
     }
-    /* do RK4 evaluations */
+    
+    //! - Perform RK4 steps.  Go ahead and look it up anywhere.  It's a standard thing
     equationsOfMotion(CurrentTime, X, k1, CentralBody);
     for(i = 0; i < NStates; i++) {
         X2[i] = X[i] + 0.5 * TimeStep * k1[i];
@@ -316,15 +369,17 @@ void SixDofEOM::integrateState(double CurrentTime)
     v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
     memcpy(XState, X, NStates*sizeof(double));
     
-    /* do MRP shadow set switching check */
+    
+    //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
     if((sMag = v3Norm(&XState[6])) > 1.0) {
         v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
         MRPSwitchCount++;
     }
     
+    //! - Clear out local allocations and set time for next cycle
     TimePrev = CurrentTime;
     delete[] X;
-    delete[]X2;
+    delete[] X2;
     delete[] k1;
     delete[] k2;
     delete[] k3;
@@ -332,6 +387,9 @@ void SixDofEOM::integrateState(double CurrentTime)
     
 }
 
+/*! This method computes the output states based on the current integrated state.  
+    @return void
+*/
 void SixDofEOM::computeOutputs()
 {
     memcpy(r_N, &(XState[0]), 3*sizeof(double));
@@ -340,33 +398,52 @@ void SixDofEOM::computeOutputs()
     memcpy(omega, &(XState[9]), 3*sizeof(double));
 }
 
+/*! This method writes out the current state and mass properties to their 
+    appropriate output messages.  It creates local copies and puts that copied 
+    data into the output stream.
+    @return void
+    @param CurrentClock The current simulation time in nanoseconds
+*/
 void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
 {
-    if(StateOutMsgID < 0)
+    //! Begin method steps
+    //! - If we have a valid state output message ID, copy over internals and write out
+    if(StateOutMsgID >= 0)
     {
-        return;
+        OutputStateData StateOut;
+        memcpy(StateOut.r_N, r_N, 3*sizeof(double));
+        memcpy(StateOut.v_N, v_N, 3*sizeof(double));
+        memcpy(StateOut.sigma, sigma, 3*sizeof(double));
+        memcpy(StateOut.omega, omega, 3*sizeof(double));
+        memcpy(StateOut.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
+        memcpy(StateOut.TotalAccumDVBdy, AccumDVBdy, 3*sizeof(double));
+        StateOut.MRPSwitchCount = MRPSwitchCount;
+        SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
+            sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut));
     }
-    OutputStateData StateOut;
-    memcpy(StateOut.r_N, r_N, 3*sizeof(double));
-    memcpy(StateOut.v_N, v_N, 3*sizeof(double));
-    memcpy(StateOut.sigma, sigma, 3*sizeof(double));
-    memcpy(StateOut.omega, omega, 3*sizeof(double));
-    memcpy(StateOut.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
-    memcpy(StateOut.TotalAccumDVBdy, AccumDVBdy, 3*sizeof(double));
-    StateOut.MRPSwitchCount = MRPSwitchCount;
-    SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-                                                 sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut));
     
-    MassPropsData massProps;
-    massProps.Mass = mass;
-    memcpy(massProps.CoM, CoM, 3*sizeof(double));
-    memcpy(&(massProps.InertiaTensor[0][0]), &(I[0][0]), 9*sizeof(double));
-    memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
-    SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
-                                                 sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps));
+    //! - If we have a valid mass props output message ID, copy over internals and write out
+    if(MassPropsMsgID >= 0)
+    {
+        
+        MassPropsData massProps;
+        massProps.Mass = mass;
+        memcpy(massProps.CoM, CoM, 3*sizeof(double));
+        memcpy(&(massProps.InertiaTensor[0][0]), &(I[0][0]), 9*sizeof(double));
+        memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
+        SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
+            sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps));
+    }
     
 }
 
+/*! This method is the main entry point for dynamics.  It reads the inputs, 
+    propagates the state, and then computes/writes the output messages.  Note that 
+    the integration call converts the input time to seconds as a double precision 
+    number
+    @return void
+    @param CurrentSimNanos The current simulation time in nanoseconds
+*/
 void SixDofEOM::UpdateState(uint64_t CurrentSimNanos)
 {
     ReadInputs();

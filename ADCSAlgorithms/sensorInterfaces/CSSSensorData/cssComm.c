@@ -1,5 +1,6 @@
 
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
+#include "messaging/static_messaging.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS sensor interface.

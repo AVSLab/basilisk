@@ -13,6 +13,10 @@
 
 #define N_DEBYE_PARAMETERS 37
 
+/*! \addtogroup Sim Utility Group
+ * @{
+ */
+
 /* Celestial object being orbited */
 typedef enum {
     CELESTIAL_MERCURY,
@@ -29,14 +33,18 @@ typedef enum {
     MAX_CELESTIAL
 } CelestialObject_t;
 
-typedef struct classicElem {
-    double a;
-    double alpha;
-    double e;
-    double i;
-    double Omega;
-    double omega;
-    double f;
+/*! This structure contains the set of Keplerian orbital elements that define the 
+    spacecraft translational state.  It is operated on by the orbital element 
+    routines and the OrbElemConvert module.
+*/
+typedef struct {
+    double a;         //!< (m) object semi-major axis
+    double alpha;     //!< (1/m) Inverted semi-major axis.  Not needed
+    double e;         //!< (-) Eccentricity of the orbit
+    double i;         //!< (r) inclination of the orbital plane
+    double Omega;     //!< (r) Right ascension of the ascending node
+    double omega;     //!< (r) Argument of periapsis of the orbit
+    double f;         //!< (r) True anomaly of the orbit
 } classicElements;
 
 #ifdef __cplusplus
@@ -62,4 +70,5 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+/*! @} */
 #endif
