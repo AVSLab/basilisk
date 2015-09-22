@@ -43,6 +43,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    #Schedule the first pyramid on the simulated sensor thread
    self.IMUSensor = imu_sensor.ImuSensor()
    self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
+   self.DVThrusterDynObject = thruster_dynamics.ThrusterDynamics()
    self.VehDynObject = six_dof_eom.SixDofEOM()
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
    self.SimpleNavObject = simple_nav.SimpleNav()
@@ -58,6 +59,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToThread("DynamicsThread", self.CSSPyramid2HeadD)
    self.AddModelToThread("DynamicsThread", self.IMUSensor)
    self.AddModelToThread("DynamicsThread", self.ACSThrusterDynObject)
+   self.AddModelToThread("DynamicsThread", self.DVThrusterDynObject)
    self.AddModelToThread("DynamicsThread", self.VehDynObject)
    self.AddModelToThread("DynamicsThread", self.VehOrbElemObject)
    self.AddModelToThread("DynamicsThread", self.SimpleNavObject)
@@ -179,44 +181,90 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
    Thruster1.MaxThrust = 0.9
+   Thruster1.MinOnTime = 0.020;
    Thruster2 = thruster_dynamics.ThrusterConfigData()
    Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
    Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
    Thruster2.MaxThrust = 0.9
+   Thruster2.MinOnTime = 0.020;
    Thruster3 = thruster_dynamics.ThrusterConfigData()
    Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
    Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
    Thruster3.MaxThrust = 0.9
+   Thruster3.MinOnTime = 0.020;
    Thruster4 = thruster_dynamics.ThrusterConfigData()
    Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
    Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
    Thruster4.MaxThrust = 0.9
+   Thruster4.MinOnTime = 0.020;
    Thruster5 = thruster_dynamics.ThrusterConfigData()
    Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
    Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
    Thruster5.MaxThrust = 0.9
+   Thruster5.MinOnTime = 0.020;
    Thruster6 = thruster_dynamics.ThrusterConfigData()
    Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
    Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
    Thruster6.MaxThrust = 0.9
+   Thruster6.MinOnTime = 0.020;
    Thruster7 = thruster_dynamics.ThrusterConfigData()
    Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
    Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
    Thruster7.MaxThrust = 0.9
+   Thruster7.MinOnTime = 0.020;
    Thruster8 = thruster_dynamics.ThrusterConfigData()
    Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
    Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([ 
       math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
    Thruster8.MaxThrust = 0.9
+   Thruster8.MinOnTime = 0.020;
    self.ACSThrusterDynObject.ThrusterData = \
       thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3, 
          Thruster4, Thruster5, Thruster6, Thruster7, Thruster8])
+ def SetDVThrusterDynObject(self):
+    self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
+    self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
+    self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
+    Thruster1 = thruster_dynamics.ThrusterConfigData()
+    Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(0), 0.256*math.sin(0), 0.0])
+    Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster1.MaxThrust = 111.33
+    Thruster1.MinOnTime = 0.020;
+    Thruster2 = thruster_dynamics.ThrusterConfigData()
+    Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(60)), 0.256*math.sin(math.radians(60)), 0.0])
+    Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster2.MaxThrust = 111.33
+    Thruster2.MinOnTime = 0.020;
+    Thruster3 = thruster_dynamics.ThrusterConfigData()
+    Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(120)), 0.256*math.sin(math.radians(120)), 0.0])
+    Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster3.MaxThrust = 111.33
+    Thruster3.MinOnTime = 0.020;
+    Thruster4 = thruster_dynamics.ThrusterConfigData()
+    Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(180)), 0.256*math.sin(math.radians(180)), 0.0])
+    Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster4.MaxThrust = 111.33
+    Thruster4.MinOnTime = 0.020;
+    Thruster5 = thruster_dynamics.ThrusterConfigData()
+    Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(240)), 0.256*math.sin(math.radians(240)), 0.0])
+    Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster5.MaxThrust = 111.33
+    Thruster5.MinOnTime = 0.020;
+    Thruster6 = thruster_dynamics.ThrusterConfigData()
+    Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(300)), 0.256*math.sin(math.radians(300)), 0.0])
+    Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+    Thruster6.MaxThrust = 111.33
+    Thruster6.MinOnTime = 0.020;
+
+    self.DVThrusterDynObject.ThrusterData = \
+        thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3,
+            Thruster4, Thruster5, Thruster6])
  def InitCSSHeads(self):
    #Note the re-use between different instances of the modules.  
    #Handy but not required.
@@ -343,6 +391,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    #vehicle dynamics.  Anything that is going to impact the dynamics of the vehicle 
    # should be one of these body effectors I think.
    self.VehDynObject.AddBodyEffector(self.ACSThrusterDynObject)
+   self.VehDynObject.AddBodyEffector(self.DVThrusterDynObject)
 
  def SetVehOrbElemObject(self):
    self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
@@ -511,6 +560,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetSpiceObject()
    self.SetIMUSensor()
    self.SetACSThrusterDynObject()
+   self.SetDVThrusterDynObject()
    self.SetVehDynObject()
    self.SetVehOrbElemObject()
    self.SetSimpleNavObject()

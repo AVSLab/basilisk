@@ -16,6 +16,8 @@ ThrusterDynamics::ThrusterDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+    memset(StrForce, 0x0, 3*sizeof(double));
+    memset(StrTorque, 0x0, 3*sizeof(double));
     return;
 }
 
