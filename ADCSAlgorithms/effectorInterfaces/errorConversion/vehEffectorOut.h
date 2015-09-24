@@ -12,7 +12,7 @@
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double effectorRequest[MAX_NUM_EFFECTORS];     /*!< -- Control request fraction array*/
+    double effectorRequest[MAX_NUM_EFFECTORS];     /*!< - Control request fraction array*/
 }vehEffectorOut;
 
 /*! @} */

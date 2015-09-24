@@ -22,9 +22,14 @@ if(WIN32)
 elseif(APPLE)
    set(library_dependencies 
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a)
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+   set(CMAKE_INSTALL_RPATH "@loader_path/")
 else()
-   set(library_dependencies 
+   set(library_dependencies
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.a)
+   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+   set(CMAKE_INSTALL_RPATH "\$ORIGIN/")
+
 endif()
 set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 

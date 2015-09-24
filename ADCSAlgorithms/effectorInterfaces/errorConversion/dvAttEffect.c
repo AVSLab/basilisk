@@ -83,7 +83,12 @@ vehControlOut *contrReq)
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);
     
-    for(i=0; i<thrData->numEffectors; i++)
+    for(i=0; i<thrData->numEffectors; i=i+1)
+    {
+        unSortOnTime[i] = unSortOnTime[i] + thrData->nomThrustOn;
+    }
+    
+    for(i=0; i<thrData->numEffectors; i=i+1)
     {
         if(unSortOnTime[i] < thrData->minThrustRequest)
         {

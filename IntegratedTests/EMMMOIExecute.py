@@ -29,6 +29,7 @@ TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E8))
 
+TheEMMSim.VehDynObject.CoMInit[0] = 0.03
 TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
 TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.0;
@@ -57,6 +58,14 @@ TheEMMSim.TotalSim.WriteMessageData("att_cmd_output", 6*8,
     TheEMMSim.TotalSim.CurrentNanos, CmdMessage);
 TheEMMSim.ConfigureStopTime(int(60*60*4*1E9))
 TheEMMSim.ExecuteSimulation()
+TheEMMSim.disableThread("vehicleAttMnvrFSWThread")
+TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
+TheEMMSim.ConfigureStopTime(int(60*60*4*1E9 + 2400*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.disableThread("vehicleDVMnvrFSWThread")
+TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
+TheEMMSim.ConfigureStopTime(int(60*60*5*1E9))
+TheEMMSim.ExecuteSimulation()
 
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
@@ -66,6 +75,7 @@ bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.bodyRateCmd')
 FSWControlOut = TheEMMSim.pullMessageLogData("sun_safe_control_request.accelRequestBody", range(3))
 bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
 DataSigma = TheEMMSim.pullMessageLogData("inertial_state_output.sigma", range(3))
+DataDV = TheEMMSim.pullMessageLogData("inertial_state_output.TotalAccumDVBdy", range(3))
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 #accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
@@ -99,7 +109,10 @@ plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,1], 'b--', bodyRateCmd[:,0]*1.0E
 plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,2], 'r--', bodyRateCmd[:,0]*1.0E-9, bodyRateCmd[:,2], 'r')
 plt.plot(bodyRateObs[:,0]*1.0E-9, bodyRateObs[:,3], 'g--', bodyRateCmd[:,0]*1.0E-9, bodyRateCmd[:,3], 'g')
 
-
+plt.figure(6)
+plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,1])
+plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,2])
+plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,3])
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):

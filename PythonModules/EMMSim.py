@@ -1,4 +1,4 @@
-﻿#Import some architectural stuff that we will probably always use
+#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
@@ -550,8 +550,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                                        newThrGroup)
    newThrGroup.numEffectors = 6
    newThrGroup.maxNumCmds = 6
-   newThrGroup.nomThrustFrac = 0.5
+   newThrGroup.nomThrustOn = 0.5
    newThrGroup.outputDataName = "dv_thruster_cmds"
+   
+   onTimeMap = [0.0, 0.1*5, 0.0,
+                -0.0866*5, 0.05*5, 0.0,
+                -0.0866*5, -0.05*5, 0.0,
+                0.0, -0.1*5, 0.0,
+                0.0866*5, -0.05*5, 0.0,
+                0.0866*5, 0.05*5, 0.0]
+   SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
    dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
                                      newThrGroup)
 
