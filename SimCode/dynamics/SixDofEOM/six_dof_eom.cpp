@@ -63,7 +63,7 @@ void SixDofEOM::SelfInit()
     //! - Ensure that all init states were appropriately set by the caller
     if(PositionInit.size() != 3 || VelocityInit.size() != 3 ||
        AttitudeInit.size() != 3 || AttRateInit.size() != 3 ||
-       InertiaInit.size() != 9 || CoMInit.size() != 3 ||
+       baseInertiaInit.size() != 9 || baseCoMInit.size() != 3 ||
        T_Str2BdyInit.size() != 9)
     {
         std::cerr << "Your initial conditions didn't match up with right sizes\n";
@@ -71,8 +71,8 @@ void SixDofEOM::SelfInit()
         std::cerr << "Velocity: "<< VelocityInit.size() << std::endl;
         std::cerr << "Attitude: "<< AttitudeInit.size() << std::endl;
         std::cerr << "Att-rate: "<< AttRateInit.size() << std::endl;
-        std::cerr << "Inertia: "<< InertiaInit.size() << std::endl;
-        std::cerr << "CoM: "<< CoMInit.size() << std::endl;
+        std::cerr << "Inertia: "<< baseInertiaInit.size() << std::endl;
+        std::cerr << "CoM: "<< baseCoMInit.size() << std::endl;
         std::cerr << "Str2Bdy: "<< T_Str2BdyInit.size() << std::endl;
         return;
     }
@@ -85,8 +85,8 @@ void SixDofEOM::SelfInit()
     std::vector<double>::iterator VelIt = VelocityInit.begin();
     std::vector<double>::iterator AttIt = AttitudeInit.begin();
     std::vector<double>::iterator RateIt= AttRateInit.begin();
-    std::vector<double>::iterator InertiaIt= InertiaInit.begin();
-    std::vector<double>::iterator CoMIt= CoMInit.begin();
+    std::vector<double>::iterator InertiaIt= baseInertiaInit.begin();
+    std::vector<double>::iterator CoMIt= baseCoMInit.begin();
     std::vector<double>::iterator Str2BdyIt= T_Str2BdyInit.begin();
     for(uint32_t i=0; i<3; i++)
     {
@@ -94,14 +94,13 @@ void SixDofEOM::SelfInit()
         XState[i+3] = *VelIt++;
         XState[i+6] = *AttIt++;
         XState[i+9] = *RateIt++;
-        CoM[i] = *CoMIt++;
+        baseCoM[i] = *CoMIt++;
         for(uint32_t j=0; j<3; j++)
         {
-            I[i][j] = *InertiaIt++;
+            baseI[i][j] = *InertiaIt++;
             T_str2Bdy[i][j] = *Str2BdyIt++;
         }
     }
-    mass = MassInit;
     
     //! - Call computeOutputs to ensure that the outputs are available post-init
     computeOutputs();
@@ -196,6 +195,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double T_Irtl2Bdy[3][3];
     double LocalAccels[3];
     int    i;
+    double scaledCoM[3];
+    double localCoM[3];
+    double identMatrix[3][3];
+    double diracMatrix[3][3], outerMatrix[3][3];
+    double CoMDiff[3], CoMDiffNormSquare;
+    double objInertia[3][3];
     
     //! Begin method steps
     
@@ -233,9 +238,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     
     //! - compute domega/dt (see Schaub and Junkins)
     v3Tilde(omega, B);                  /* [tilde(w)] */
-    m33MultV3(this->I, omega, d2);     /* [I]w */
+    m33MultV3(this->compI, omega, d2);     /* [I]w */
     m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
-    m33MultV3(Iinv, d3, dX + 9);  /* d(w)/dt = [I_RW]^-1 . (RHS) */
+    m33MultV3(compIinv, d3, dX + 9);  /* d(w)/dt = [I_RW]^-1 . (RHS) */
+  
+    //! - Convert the current attitude to DCM for conversion in DynEffector loop
+    MRP2C(sigma, T_Irtl2Bdy);
     
     //! - Copy out the current state for DynEffector calls
     memcpy(StateCurrent.r_N, r_N, 3*sizeof(double));
@@ -245,16 +253,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
     //! - Copy out the current mass properties for DynEffector calls
-    MassProps.Mass = mass;
-    memcpy(MassProps.CoM, CoM, 3*sizeof(double));
-    memcpy(MassProps.InertiaTensor, I, 9*sizeof(double));
+    MassProps.Mass = compMass;
+    memcpy(MassProps.CoM, compCoM, 3*sizeof(double));
+    memcpy(MassProps.InertiaTensor, compI, 9*sizeof(double));
     memcpy(MassProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
-  
-    //! - Convert the current attitude to DCM for conversion in DynEffector loop
-    MRP2C(sigma, T_Irtl2Bdy);
     
-    //! - Zero the non-conservative accel
-    memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
+    memset(scaledCoM, 0x0, 3*sizeof(double));
+    compMass = baseMass;
+    v3Scale(baseMass, baseCoM, scaledCoM);
     
     //! - Loop over the vector of body effectors and compute body force/torque
     //! - Convert the body forces to inertial for inclusion in dynamics
@@ -263,11 +269,44 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     {
         DynEffector *TheEff = *it;
         TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
-        v3Scale(1.0/mass, TheEff->GetBodyForces(), LocalAccels);
+        v3Scale(TheEff->objProps.Mass, TheEff->objProps.CoM, localCoM);
+        v3Add(scaledCoM, localCoM, scaledCoM);
+        compMass += TheEff->objProps.Mass;
+    }
+    v3Scale(1.0/compMass, scaledCoM, compCoM);
+    m33SetIdentity(identMatrix);
+    v3Subtract(baseCoM, compCoM, CoMDiff);
+    CoMDiffNormSquare = v3Norm(CoMDiff);
+    CoMDiffNormSquare *= CoMDiffNormSquare;
+    m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
+    v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
+    m33Subtract(diracMatrix, outerMatrix, objInertia);
+    m33Add(objInertia, baseI, compI);
+    
+    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    {
+        DynEffector *TheEff = *it;
+        v3Subtract(TheEff->objProps.CoM, compCoM, CoMDiff);
+        CoMDiffNormSquare = v3Norm(CoMDiff);
+        CoMDiffNormSquare *= CoMDiffNormSquare;
+        m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
+        v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
+        m33Subtract(diracMatrix, outerMatrix, objInertia);
+        m33Scale(TheEff->objProps.Mass, objInertia, objInertia);
+        vAdd(TheEff->objProps.InertiaTensor, 9, objInertia, objInertia);
+        m33Add(compI, objInertia, compI);
+    }
+    m33Inverse(compI, compIinv);
+    //! - Zero the non-conservative accel
+    memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
+    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    {
+        DynEffector *TheEff = *it;
+        v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels);
         v3Add(LocalAccels, NonConservAccelBdy, NonConservAccelBdy);
         m33tMultV3(T_Irtl2Bdy, LocalAccels, LocalAccels);
         v3Add(dX+3, LocalAccels, dX+3);
-        m33MultV3(Iinv, TheEff->GetBodyTorques(), LocalAccels);
+        m33MultV3(compIinv, TheEff->GetBodyTorques(), LocalAccels);
         v3Add(dX+9, LocalAccels, dX+9);
         
     }
@@ -305,7 +344,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     //! - Initialize the local states and invert the inertia tensor
     memcpy(X, XState, NStates*sizeof(double));
-    m33Inverse(this->I, Iinv);
     
     //! - Loop through gravitational bodies and find the central body to integrate around
     GravityBodyData *CentralBody = NULL;
@@ -427,9 +465,9 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     {
         
         MassPropsData massProps;
-        massProps.Mass = mass;
-        memcpy(massProps.CoM, CoM, 3*sizeof(double));
-        memcpy(&(massProps.InertiaTensor[0][0]), &(I[0][0]), 9*sizeof(double));
+        massProps.Mass = compMass;
+        memcpy(massProps.CoM, compCoM, 3*sizeof(double));
+        memcpy(&(massProps.InertiaTensor[0]), &(compI[0][0]), 9*sizeof(double));
         memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
         SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
             sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps));

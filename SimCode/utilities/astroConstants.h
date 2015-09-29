@@ -43,6 +43,10 @@
 #define SEC2DAY 1.0 / (60.0 * 60.0 * 24.0);
 #endif
 
+#ifndef EARTH_GRAV
+#define EARTH_GRAV 9.80665
+#endif
+
 /* Gravitational Constants mu = G*m, where m is the planet of the attracting planet.  All units are km^3/s^2.
  * Values are obtained from SPICE kernels in http://naif.jpl.nasa.gov/pub/naif/generic_kernels/
  */

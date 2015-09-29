@@ -194,14 +194,14 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
  @param DataHeader The message header that we are writing out to
  @param OutputBuffer The output message buffer we are writing out to
  */
-void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t MsgBytes,
+void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                         uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
-                                        uint8_t *OutputBuffer)
+                                        uint64_t maxReadBytes, uint8_t *OutputBuffer)
 {
     MsgBuffer += CurrentOffset * (sizeof(SingleMessageHeader) +
-                                  MsgBytes);
+                                  maxMsgBytes);
     memcpy(DataHeader, MsgBuffer, sizeof(SingleMessageHeader));
-    uint64_t ReadSize = MsgBytes < DataHeader->WriteSize ? MsgBytes :
+    uint64_t ReadSize = maxReadBytes < DataHeader->WriteSize ? maxReadBytes :
     DataHeader->WriteSize;
     MsgBuffer += sizeof(SingleMessageHeader);
     memcpy(OutputBuffer, MsgBuffer, ReadSize);
@@ -233,8 +233,8 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
                             StorageBuffer[MsgHdr->StartingOffset]);
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
     MsgHdr->MaxMessageSize;
-    AccessMessageData(ReadBuffer, MaxOutputBytes, CurrentIndex,
-                      DataHeader, MsgPayload);
+    AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, CurrentIndex,
+                      DataHeader, MaxOutputBytes, MsgPayload);
     return(true);
 }
 

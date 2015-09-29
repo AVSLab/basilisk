@@ -16,6 +16,7 @@
  for the entire ramp.*/
 typedef struct {
     double ThrustFactor;                 //!< -- Percentage of max thrust
+    double IspFactor;                    //!< s  fraction specific impulse 
     double TimeDelta;                    //!< s  Time delta from start of event
 }ThrusterTimePair;
 
@@ -25,12 +26,14 @@ typedef struct {
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct {
     double ThrustFactor;                 //!< -- Current Thrust Percentage
+    double IspFactor;                    //!< -- Current fractional ISP
     double ThrustOnRampTime;             //!< s  Time thruster has been on for
     double ThrustOnSteadyTime;           //!< s  Time thruster has been on steady
     double ThrustOffRampTime;            //!< s  Time thruster has been turning off
     double ThrusterStartTime;            //!< s  Time thruster has been executing total
     double ThrustOnCmd;                  //!< s  Time Thruster was requested
     double PreviousIterTime;             //!< s  Previous thruster int time
+    uint64_t fireCounter;                //!< (-) Number of times thruster fired
 }ThrusterOperationData;
 
 //! @brief Container for overall thruster configuration data for single thruster
@@ -44,6 +47,7 @@ typedef struct {
     std::vector<ThrusterTimePair> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
     std::vector<ThrusterTimePair> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
     double MaxThrust;                              //!< N  Steady state thrust of thruster
+    double steadyIsp;                              //!< s  Steady state specific impulse of thruster
     double MinOnTime;                              //!< s  Minimum allowable on-time
     ThrusterOperationData ThrustOps;               //!< -- Thruster operating data
 }ThrusterConfigData;
@@ -85,6 +89,7 @@ public:
                              double CurrentTime);
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
                              double CurrentTime);
+    void updateMassProperties(double CurrentTime);
     
 public:
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
@@ -94,6 +99,8 @@ public:
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double StrForce[3];                            //!< N  Computed force in str for thrusters
     double StrTorque[3];                           //!< Nm Computed torque in str for thrusters
+    double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
+    double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
     int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data

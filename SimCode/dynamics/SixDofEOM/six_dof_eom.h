@@ -46,17 +46,16 @@ public:
     void computeOutputs();
     void AddGravityBody(GravityBodyData *NewBody);
     void WriteOutputMessages(uint64_t CurrentClock);
-    void AddBodyEffector(DynEffector *NewEffector);
-    
+    void AddBodyEffector(DynEffector *NewEffector);    
 public:
     std::vector<double> PositionInit; //!< m  Initial position (inertial)
     std::vector<double> VelocityInit; //!< m/s Initial velocity (inertial)
     std::vector<double> AttitudeInit; //!< -- Inertial relative MRPs for attitude
     std::vector<double> AttRateInit;  //!< r/s Inertial relative body rate
-    std::vector<double> InertiaInit;  //!< kgm2 Inertia tensor at init
-    std::vector<double> CoMInit;      //!< m  Initial center of mass in structure
+    std::vector<double> baseInertiaInit;  //!< kgm2 Inertia tensor at init (dry)
+    std::vector<double> baseCoMInit;      //!< m  Initial center of mass in structure (dry)
     std::vector<double> T_Str2BdyInit;//!< --  Initial (perm) structure to bdy rotation
-    double MassInit;                  //!< kg Initial mass of vehicle
+    double ibaseMassInit;                  //!< kg Initial mass of vehicle (dry)
     
     std::string OutputStateMessage;   //!< -- Output state data
     std::string OutputMassPropsMsg;   //!< -- Output mass properties
@@ -64,10 +63,13 @@ public:
     std::vector<GravityBodyData> GravData; //!< -- Central body grav information
     bool MessagesLinked;              //!< -- Indicator for whether inputs bound
     uint64_t RWACount;                //!< -- Number of reaction wheels to model
-    double CoM[3];                    //!< m  Center of mass of spacecraft in str
-    double I[3][3];                   //!< kgm2 Inertia tensor for vehicle
-    double Iinv[3][3];                //!< m2/kg inverse of inertia tensor
-    double mass;                      //!< kg Mass of the vehicle
+    double baseCoM[3];                //!< m  center of mass of dry spacecraft str
+    double baseI[3][3];               //!< kgm2 Inertia tensor for base spacecraft str
+    double baseMass;                  //!< kg Mass of dry spacecraft structure
+    double compCoM[3];                //!< m  Center of mass of spacecraft in str
+    double compI[3][3];               //!< kgm2 Inertia tensor for vehicle
+    double compIinv[3][3];            //!< m2/kg inverse of inertia tensor
+    double compMass;                  //!< kg Mass of the vehicle
     double TimePrev;                  //!< s  Previous update time
     double r_N[3];                    //!< m  Current position vector (inertial)
     double v_N[3];                    //!< m/s Current velocity vector (inertial)

@@ -1,4 +1,4 @@
-import sys, os, inspect
+﻿import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -18,18 +18,22 @@ TheEMMSim = EMMSim.EMMSim()
 TheEMMSim.TotalSim.CreateNewMessage("att_cmd_output", 6*8, 2)
 
 TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("dv_thruster_cmds", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E9))
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E8))
+#TheEMMSim.AddVariableForLogging('DVThrusterDynamics.objProps.Mass', int(1E9))
+#TheEMMSim.AddVariableForLogging('DVThrusterDynamics.mDotTotal', int(1E7))
 
-TheEMMSim.VehDynObject.CoMInit[0] = 0.03
+TheEMMSim.VehDynObject.baseCoMInit[0] = 0.02
 TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
 TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.0;
@@ -73,9 +77,13 @@ numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
 attMnvrCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.sigmaCmd')
 bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.bodyRateCmd')
 FSWControlOut = TheEMMSim.pullMessageLogData("sun_safe_control_request.accelRequestBody", range(3))
+vehInertia = TheEMMSim.pullMessageLogData("spacecraft_mass_props.InertiaTensor", range(9))
 bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
 DataSigma = TheEMMSim.pullMessageLogData("inertial_state_output.sigma", range(3))
 DataDV = TheEMMSim.pullMessageLogData("inertial_state_output.TotalAccumDVBdy", range(3))
+thrustLog = TheEMMSim.pullMessageLogData("dv_thruster_cmds.effectorRequest", range(6))
+#dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.objProps.Mass")
+#dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.mDotTotal")
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 #accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
@@ -114,8 +122,21 @@ plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,1])
 plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,2])
 plt.plot(DataDV[:,0]*1.0E-9, DataDV[:,3])
 
+plt.figure(7)
+plt.plot(vehInertia[:,0]*1.0E-9, vehInertia[:,1])
+plt.plot(vehInertia[:,0]*1.0E-9, vehInertia[:,5])
+plt.plot(vehInertia[:,0]*1.0E-9, vehInertia[:,9])
+
+plt.figure(8)
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,1])
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,2])
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,3])
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,4])
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,5])
+plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,6])
+
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):
       plt.show()
 
-sys.exit()
+#sys.exit()

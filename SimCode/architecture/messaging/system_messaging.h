@@ -47,9 +47,9 @@ public:
                       uint8_t *MsgPayload);
     bool ReadMessage(uint64_t MessageID, SingleMessageHeader *DataHeader,
                      uint64_t MaxBytes, uint8_t *MsgPayload, uint64_t CurrentOffset=0);
-    static void AccessMessageData(uint8_t *MsgBuffer, uint64_t MsgBytes,
+    static void AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                   uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
-                                  uint8_t *OutputBuffer);
+                                  uint64_t maxReadBytes, uint8_t *OutputBuffer);
     MessageHeaderData* FindMsgHeader(uint64_t MessageID);
     void PrintAllMessageData();
     void PrintMessageStats(uint64_t MessageID);

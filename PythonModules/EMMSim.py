@@ -227,44 +227,69 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.ACSThrusterDynObject.ThrusterData = \
       thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3, 
          Thruster4, Thruster5, Thruster6, Thruster7, Thruster8])
+   ACSpropCM = [0.0, 0.0, 1.0]
+   ACSpropMass = 40 #Made up!!!!
+   ACSpropRadius = 46.0/2.0/3.2808399/12.0
+   sphereInerita = 2.0/5.0*ACSpropMass*ACSpropRadius*ACSpropRadius
+   ACSInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
+   self.ACSThrusterDynObject.objProps.Mass = ACSpropMass
+   SimulationBaseClass.SetCArray(ACSpropCM, 'double', self.ACSThrusterDynObject.objProps.CoM)
+   SimulationBaseClass.SetCArray(ACSInertia, 'double', self.ACSThrusterDynObject.objProps.InertiaTensor)
+   
  def SetDVThrusterDynObject(self):
     self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
     self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
     self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
+    DVIsp = 226.7
     Thruster1 = thruster_dynamics.ThrusterConfigData()
     Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(0), 0.256*math.sin(0), 0.0])
     Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster1.MaxThrust = 111.33
     Thruster1.MinOnTime = 0.020;
+    Thruster1.steadyIsp = DVIsp
     Thruster2 = thruster_dynamics.ThrusterConfigData()
     Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(60)), 0.256*math.sin(math.radians(60)), 0.0])
     Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster2.MaxThrust = 111.33
     Thruster2.MinOnTime = 0.020;
+    Thruster2.steadyIsp = DVIsp
     Thruster3 = thruster_dynamics.ThrusterConfigData()
     Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(120)), 0.256*math.sin(math.radians(120)), 0.0])
     Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster3.MaxThrust = 111.33
     Thruster3.MinOnTime = 0.020;
+    Thruster3.steadyIsp = DVIsp
     Thruster4 = thruster_dynamics.ThrusterConfigData()
     Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(180)), 0.256*math.sin(math.radians(180)), 0.0])
     Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster4.MaxThrust = 111.33
     Thruster4.MinOnTime = 0.020;
+    Thruster4.steadyIsp = DVIsp
     Thruster5 = thruster_dynamics.ThrusterConfigData()
     Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(240)), 0.256*math.sin(math.radians(240)), 0.0])
     Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster5.MaxThrust = 111.33
     Thruster5.MinOnTime = 0.020;
+    Thruster5.steadyIsp = DVIsp
     Thruster6 = thruster_dynamics.ThrusterConfigData()
     Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(300)), 0.256*math.sin(math.radians(300)), 0.0])
     Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster6.MaxThrust = 111.33
     Thruster6.MinOnTime = 0.020;
+    Thruster6.steadyIsp = DVIsp
 
     self.DVThrusterDynObject.ThrusterData = \
         thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3,
             Thruster4, Thruster5, Thruster6])
+
+    DVpropCM = [0.0, 0.0, 1.0]
+    DVpropMass = 812.3-40 #The 40 comes from the made up ACS number!
+    DVpropRadius = 46.0/2.0/3.2808399/12.0
+    sphereInerita = 2.0/5.0*DVpropMass*DVpropRadius*DVpropRadius
+    DVInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
+    self.DVThrusterDynObject.objProps.Mass = DVpropMass
+    SimulationBaseClass.SetCArray(DVpropCM, 'double', self.DVThrusterDynObject.objProps.CoM)
+    SimulationBaseClass.SetCArray(DVInertia, 'double', self.DVThrusterDynObject.objProps.InertiaTensor)
  def InitCSSHeads(self):
    #Note the re-use between different instances of the modules.  
    #Handy but not required.
@@ -375,14 +400,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject.VelocityInit = six_dof_eom.DoubleVector([2.896852053342327E+01*1000.0,  4.386175246767674E+00*1000.0, -3.469168621992313E-04*1000.0])
    self.VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.4, 0.2, 0.1])
    self.VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0001, 0.0, 0.0])
-   self.VehDynObject.MassInit = 1400.0
-   self.VehDynObject.InertiaInit = six_dof_eom.DoubleVector([1000, 0.0, 0.0,
-                                                             0.0, 1000.0, 0.0,
-                                                             0.0, 0.0, 1000.0])
+   self.VehDynObject.baseMass = 1500.0 - 812.3
+   self.VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
+                                                             0.0, 900.0, 0.0,
+                                                             0.0, 0.0, 900.0])
    self.VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
                                                                0.0, 1.0, 0.0,
                                                                0.0, 0.0, 1.0])
-   self.VehDynObject.CoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
+   self.VehDynObject.baseCoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
    #Add the three gravity bodies in to the simulation
    self.VehDynObject.AddGravityBody(self.SunGravBody)
    self.VehDynObject.AddGravityBody(self.EarthGravBody)
@@ -525,7 +550,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
  def SetattMnvrControl(self):
    self.attMnvrControlData.K = 30.0
-   self.attMnvrControlData.P = 60.0
+   self.attMnvrControlData.P = 40.0
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
@@ -550,15 +575,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                                        newThrGroup)
    newThrGroup.numEffectors = 6
    newThrGroup.maxNumCmds = 6
-   newThrGroup.nomThrustOn = 0.5
-   newThrGroup.outputDataName = "dv_thruster_cmds"
+   newThrGroup.nomThrustOn = 0.52
    
-   onTimeMap = [0.0, 0.1*5, 0.0,
-                -0.0866*5, 0.05*5, 0.0,
-                -0.0866*5, -0.05*5, 0.0,
-                0.0, -0.1*5, 0.0,
-                0.0866*5, -0.05*5, 0.0,
-                0.0866*5, 0.05*5, 0.0]
+   newThrGroup.outputDataName = "dv_thruster_cmds"
+   matMult = 2.0
+   onTimeMap = [0.0, 0.1*matMult, 0.0,
+                -0.0866*matMult, 0.05*matMult, 0.0,
+                -0.0866*matMult, -0.05*matMult, 0.0,
+                0.0, -0.1*matMult, 0.0,
+                0.0866*matMult, -0.05*matMult, 0.0,
+                0.0866*matMult, 0.05*matMult, 0.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
    dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
                                      newThrGroup)

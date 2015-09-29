@@ -1,6 +1,7 @@
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
+#include "utilities/astroConstants.h"
 #include <cstring>
 #include <iostream>
 
@@ -142,8 +143,10 @@ void ThrusterDynamics::ConfigureThrustRequests(double CurrentTime)
             it->ThrustOps.ThrustOnSteadyTime = 0.0;
             it->ThrustOps.ThrustOffRampTime = 0.0;
             it->ThrustOps.PreviousIterTime = CurrentTime;
+            it->ThrustOps.fireCounter += 1;
             if(it->ThrustOps.ThrustFactor > 0.0) /// - Check to see if we are already firing for active thrusters
             {
+                it->ThrustOps.fireCounter -= 1;
                 for(PairIt = it->ThrusterOnRamp.begin();
                     PairIt != it->ThrusterOnRamp.end(); PairIt++)
                 {
@@ -189,13 +192,14 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
             ops->ThrustFactor = it->ThrustFactor;
             ops->ThrustOnRampTime = LocalOnRamp;
             ops->PreviousIterTime = CurrentTime;
+            ops->IspFactor = it->IspFactor;
             return;
         }
     }
     //! - If we did not find the current time in the on-ramp, then we are at steady-state
     ops->ThrustOnSteadyTime += (CurrentTime - ops->PreviousIterTime);
     ops->PreviousIterTime = CurrentTime;
-    ops->ThrustFactor = 1.0;
+    ops->ThrustFactor = ops->IspFactor = 1.0;
 }
 
 /*! This method is used to go through the process of shutting down a thruster
@@ -224,12 +228,23 @@ void ThrusterDynamics::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
         if(LocalOffRamp < it->TimeDelta)
         {
             ops->ThrustFactor = it->ThrustFactor;
+            ops->IspFactor = it->IspFactor;
             ops->ThrustOffRampTime = LocalOffRamp;
             return;
         }
     }
     //! - If we did not find the location in the off-ramp, we've reached the end state and zero thrust
-    ops->ThrustFactor = 0.0;
+    ops->ThrustFactor = ops->IspFactor = 0.0;
+}
+
+void ThrusterDynamics::updateMassProperties(double CurrentTime)
+{
+    double dt = CurrentTime - prevFireTime;
+    double oldMass = objProps.Mass;
+    objProps.Mass = oldMass - mDotTotal*dt;
+    vScale(objProps.Mass/oldMass, objProps.InertiaTensor, 9,
+        objProps.InertiaTensor);
+    
 }
 
 /*! This method is used to compute all the dynamical effects for the thruster set.
@@ -251,11 +266,13 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     double SingleThrusterForce[3];
     double SingleThrusterTorque[3];
     double CoMRelPos[3];
+    double mDotSingle;
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
     memset(StrForce, 0x0, 3*sizeof(double));
     memset(StrTorque, 0x0, 3*sizeof(double));
+    mDotTotal = 0.0;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
@@ -280,10 +297,19 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         v3Subtract(it->ThrusterLocation.data(), Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);
         v3Add(StrTorque, SingleThrusterTorque, StrTorque);
+        mDotSingle = 0.0;
+        if(it->steadyIsp * ops->IspFactor > 0.0)
+        {
+            mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
+                it->steadyIsp * ops->IspFactor);
+        }
+        mDotTotal += mDotSingle;
     }
     //! - Once all thrusters have been checked, convert the structural force/torque to body for API
-    m33MultV3(Props->T_str2Bdy, StrForce, BodyForce);
-    m33MultV3(Props->T_str2Bdy, StrTorque, BodyTorque);
+    updateMassProperties(CurrentTime);
+    prevFireTime = CurrentTime;
+    mMultV(Props->T_str2Bdy, 3, 3, StrForce, BodyForce);
+    mMultV(Props->T_str2Bdy, 3, 3, StrTorque, BodyTorque);
     
 }
 
