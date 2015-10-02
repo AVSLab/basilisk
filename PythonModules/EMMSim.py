@@ -240,39 +240,40 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
     self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
     self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
     self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
+    dvRadius = 0.256
     DVIsp = 226.7
     Thruster1 = thruster_dynamics.ThrusterConfigData()
-    Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(0), 0.256*math.sin(0), 0.0])
+    Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(0), dvRadius*math.sin(0), 0.0])
     Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster1.MaxThrust = 111.33
     Thruster1.MinOnTime = 0.020;
     Thruster1.steadyIsp = DVIsp
     Thruster2 = thruster_dynamics.ThrusterConfigData()
-    Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(60)), 0.256*math.sin(math.radians(60)), 0.0])
+    Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(60)), dvRadius*math.sin(math.radians(60)), 0.0])
     Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster2.MaxThrust = 111.33
     Thruster2.MinOnTime = 0.020;
     Thruster2.steadyIsp = DVIsp
     Thruster3 = thruster_dynamics.ThrusterConfigData()
-    Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(120)), 0.256*math.sin(math.radians(120)), 0.0])
+    Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(120)), dvRadius*math.sin(math.radians(120)), 0.0])
     Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster3.MaxThrust = 111.33
     Thruster3.MinOnTime = 0.020;
     Thruster3.steadyIsp = DVIsp
     Thruster4 = thruster_dynamics.ThrusterConfigData()
-    Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(180)), 0.256*math.sin(math.radians(180)), 0.0])
+    Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(180)), dvRadius*math.sin(math.radians(180)), 0.0])
     Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster4.MaxThrust = 111.33
     Thruster4.MinOnTime = 0.020;
     Thruster4.steadyIsp = DVIsp
     Thruster5 = thruster_dynamics.ThrusterConfigData()
-    Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(240)), 0.256*math.sin(math.radians(240)), 0.0])
+    Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(240)), dvRadius*math.sin(math.radians(240)), 0.0])
     Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster5.MaxThrust = 111.33
     Thruster5.MinOnTime = 0.020;
     Thruster5.steadyIsp = DVIsp
     Thruster6 = thruster_dynamics.ThrusterConfigData()
-    Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([0.256*math.cos(math.radians(300)), 0.256*math.sin(math.radians(300)), 0.0])
+    Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(300)), dvRadius*math.sin(math.radians(300)), 0.0])
     Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
     Thruster6.MaxThrust = 111.33
     Thruster6.MinOnTime = 0.020;
@@ -373,8 +374,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetVehDynObject(self):
    self.SunGravBody = six_dof_eom.GravityBodyData()
    self.SunGravBody.BodyMsgName = "sun_planet_data"
+   self.SunGravBody.outputMsgName = "sun_display_frame_data"
    self.SunGravBody.mu = 132712440023.310*1000*1000*1000 #meters!
    self.SunGravBody.IsCentralBody = True
+   self.SunGravBody.IsDisplayBody = True
    self.SunGravBody.UseJParams = False
 
    JParamsSelect = [2, 3, 4, 5, 6]
@@ -383,6 +386,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    
    self.EarthGravBody = six_dof_eom.GravityBodyData()
    self.EarthGravBody.BodyMsgName = "earth_planet_data"
+   self.EarthGravBody.outputMsgName = "earth_display_frame_data"
    self.EarthGravBody.IsCentralBody = False
    self.EarthGravBody.UseJParams = False
    JParams = LoadGravFromFile(EarthGravFile, self.EarthGravBody, JParamsSelect)

@@ -398,7 +398,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     vVec[2] = mu / h * (elements->e * cos(elements->omega) + cos(theta)) * sin(elements->i);
 }
 #endif
-#if 1
+#if 0
 /*
  * Function: rv2elem
  * Purpose: Translates the orbit elements inertial Cartesian position
@@ -463,6 +463,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     
     /* compute orbit radius */
     r = v3Norm(rVec);
+    elements->rmag = r;
     v3Normalize(rVec, ir);
     
     /* compute the angular momentum vector */
@@ -576,6 +577,10 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     double eVec[3];
     double p;
     double rp;
+    double eps;
+    double twopiSigned;
+    
+    eps = 0.000000000001;
     
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
@@ -593,6 +598,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     v3Scale(v3Dot(rVec, vVec) / mu, vVec, v3);
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
+    elements->rmag = r;
     
     /* compute semi-major axis */
     elements->alpha = 2.0 / r - v*v / mu;
@@ -659,6 +665,11 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
         }
     } else {
         printf("Error: rv2elem couldn't identify orbit type.\n");
+    }
+    if(elements->e >= 1.0 && fabs(elements->f) > M_PI)
+    {
+        twopiSigned = copysign(2.0*M_PI, elements->f);
+        elements->f -= twopiSigned;
     }
 }
 #endif

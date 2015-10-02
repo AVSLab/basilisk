@@ -46,6 +46,28 @@ void SixDofEOM::AddBodyEffector(DynEffector *NewEffector)
     BodyEffectors.push_back(NewEffector);
 }
 
+/*! This method creates an output message for each planetary body that computes 
+    the planet's ephemeris information in the display reference frame.  Note that 
+    the underlying assumption is that the display reference frame is always 
+    oriented the same as the ECI axes and is always rotating the same as the 
+    ECI axes
+    @return void
+*/
+void SixDofEOM::initPlanetStateMessages()
+{
+ 
+    std::vector<GravityBodyData>::iterator it;
+    for(it = GravData.begin(); it != GravData.end(); it++)
+    {
+        it->outputMsgID = -1;
+        if(it->outputMsgName.size() > 0)
+        {
+            it->outputMsgID= SystemMessaging::GetInstance()->CreateNewMessage(
+                it->outputMsgName, sizeof(SpicePlanetState));
+        }
+    }
+}
+
 /*! This method initializes the state of the dynamics system to the init 
     values passed in by the user.  There is potentially some value in removing 
     the Init intermediary variables but they exist for now.
@@ -114,6 +136,8 @@ void SixDofEOM::SelfInit()
         CreateNewMessage(OutputMassPropsMsg, sizeof(MassPropsData),
         OutputBufferCount, "MassPropsData");
     
+    initPlanetStateMessages();
+    
 }
 
 /*! This method links up all gravitational bodies with thei appropriate ephemeris
@@ -162,6 +186,8 @@ void SixDofEOM::ReadInputs()
                                                         sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&LocalPlanet));
             memcpy(it->PosFromEphem, LocalPlanet.PositionVector, 3*sizeof(double));
             memcpy(it->VelFromEphem, LocalPlanet.VelocityVector, 3*sizeof(double));
+            it->ephemTime = LocalPlanet.J2000Current;
+            it->planetEphemName = LocalPlanet.PlanetName;
         }
     }
 }
@@ -363,6 +389,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     {
         std::cerr << "ERROR: I got a bad count on central bodies: " <<
         CentralBodyCount;
+        return;
     }
     
     //! - Zero the inertial accels and compute grav accel for all bodies other than central body
@@ -430,13 +457,52 @@ void SixDofEOM::integrateState(double CurrentTime)
 */
 void SixDofEOM::computeOutputs()
 {
+    GravityBodyData *centralBody = NULL;
+    GravityBodyData *displayBody = NULL;
+    std::vector<GravityBodyData>::iterator it;
+    double displayPos[3], displayVel[3];
+    
+    for(it = GravData.begin(); it != GravData.end(); it++)
+    {
+        if(it->IsCentralBody)
+        {
+            centralBody = &(*it);
+        }
+        if(it->IsDisplayBody)
+        {
+            displayBody = &(*it);
+        }
+    }
+    
     memcpy(r_N, &(XState[0]), 3*sizeof(double));
     memcpy(v_N, &(XState[3]), 3*sizeof(double));
     memcpy(sigma, &(XState[6]), 3*sizeof(double));
     memcpy(omega, &(XState[9]), 3*sizeof(double));
+    
+    if(centralBody != NULL)
+    {
+        v3Add(r_N, centralBody->PosFromEphem, r_N);
+        v3Add(v_N, centralBody->VelFromEphem, v_N);
+    }
+    
+    memset(displayPos, 0x0, 3*sizeof(double));
+    memset(displayVel, 0x0, 3*sizeof(double));
+    if(displayBody != NULL)
+    {
+        v3Subtract(r_N, displayBody->PosFromEphem, r_N);
+        v3Subtract(v_N, displayBody->VelFromEphem, v_N);
+        v3Copy(displayBody->PosFromEphem, displayPos);
+        v3Copy(displayBody->VelFromEphem, displayVel);
+    }
+    for(it = GravData.begin(); it != GravData.end(); it++)
+    {
+        v3Subtract(it->PosFromEphem, displayPos, it->posRelDisplay);
+        v3Subtract(it->VelFromEphem, displayVel, it->velRelDisplay);
+    }
+    
 }
 
-/*! This method writes out the current state and mass properties to their 
+/*! This method writes out the current state and mass properties to their
     appropriate output messages.  It creates local copies and puts that copied 
     data into the output stream.
     @return void
@@ -444,6 +510,8 @@ void SixDofEOM::computeOutputs()
 */
 void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
 {
+    std::vector<GravityBodyData>::iterator it;
+    SpicePlanetState localPlanet;
     //! Begin method steps
     //! - If we have a valid state output message ID, copy over internals and write out
     if(StateOutMsgID >= 0)
@@ -471,6 +539,23 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
         SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
             sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps));
+    }
+    
+    for(it = GravData.begin(); it != GravData.end(); it++)
+    {
+        if(it->outputMsgID < 0)
+        {
+            continue;
+        }
+        v3Copy(it->posRelDisplay, localPlanet.PositionVector);
+        v3Copy(it->velRelDisplay, localPlanet.VelocityVector);
+        localPlanet.J2000Current = it->ephemTime;
+        memset(localPlanet.PlanetName, 0x0, MAX_BODY_NAME_LENGTH*sizeof(char));
+        memcpy(localPlanet.PlanetName, it->planetEphemName.c_str(),
+               it->planetEphemName.size()*sizeof(char));
+        SystemMessaging::GetInstance()->
+            WriteMessage(it->outputMsgID, CurrentClock, sizeof(SpicePlanetState),
+            reinterpret_cast<uint8_t*> (&localPlanet));
     }
     
 }

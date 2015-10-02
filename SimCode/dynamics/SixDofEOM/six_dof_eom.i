@@ -15,6 +15,7 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
+   %template(GravityBodyDataVector) vector<GravityBodyData>;
 }
 %include "sys_model.h"
 %include "dyn_effector.h"

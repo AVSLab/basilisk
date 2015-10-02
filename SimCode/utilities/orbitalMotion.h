@@ -39,12 +39,13 @@ typedef enum {
 */
 typedef struct {
     double a;         //!< (m) object semi-major axis
-    double alpha;     //!< (1/m) Inverted semi-major axis.  Not needed
+    double alpha;     //!< (1/m) Inverted semi-major axis (extra)
     double e;         //!< (-) Eccentricity of the orbit
     double i;         //!< (r) inclination of the orbital plane
     double Omega;     //!< (r) Right ascension of the ascending node
     double omega;     //!< (r) Argument of periapsis of the orbit
     double f;         //!< (r) True anomaly of the orbit
+    double rmag;      //!< (m) Magnitude of the position vector
 } classicElements;
 
 #ifdef __cplusplus

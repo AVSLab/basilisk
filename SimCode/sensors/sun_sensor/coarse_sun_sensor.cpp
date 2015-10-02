@@ -14,7 +14,7 @@ CoarseSunSensor::CoarseSunSensor()
     InputSunID = -1;
     InputStateID = -1;
     InputStateMsg = "inertial_state_output";
-    InputSunMsg = "sun_planet_data";
+    InputSunMsg = "sun_display_frame_data";
     OutputDataMsg = "coarse_sun_data";
     
     this->faultState = MAX_CSSFAULT;
@@ -159,6 +159,7 @@ void CoarseSunSensor::ComputeSunData()
     double T_Irtl2Bdy[3][3];
     
     v3Scale(-1.0, StateCurrent.r_N, Sc2Sun_Inrtl);
+    v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
     MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
     m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);

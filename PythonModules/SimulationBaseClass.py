@@ -302,11 +302,18 @@ class SimBaseClass:
     bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
     messageCount = messageCount if messageCount > 0 else headerData.UpdateCounter
     messageCount = messageCount if numRecords < 0 else numRecords
+    if(len(indices) <= 0):
+        indices_use = [0]
+    else:
+        indices_use = indices
+    
     dataUse = MessagingAccess.obtainMessageVector(splitName[0], moduleFound,
         headerData.messageStruct, messageCount, self.TotalSim, resplit[1], 'double',
-        indices[0], indices[-1], bufferUse)
+        indices_use[0], indices_use[-1], bufferUse)
+
     indicesLocal = [0]
-    for indexUse in indices:
+
+    for indexUse in indices_use:
         indicesLocal.append(indexUse+1)
     return(dataUse[:, indicesLocal])
 

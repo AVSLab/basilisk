@@ -1,7 +1,9 @@
-﻿import sys, os, inspect
+import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
+import matplotlib
+matplotlib.use('TkAgg')
 import EMMSim
 import matplotlib.pyplot as plt
 import ctypes
@@ -33,13 +35,19 @@ TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(
 #TheEMMSim.AddVariableForLogging('DVThrusterDynamics.objProps.Mass', int(1E9))
 #TheEMMSim.AddVariableForLogging('DVThrusterDynamics.mDotTotal', int(1E7))
 
-TheEMMSim.VehDynObject.baseCoMInit[0] = 0.02
-TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
-TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
-TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.0;
-TheEMMSim.VehOrbElemObject.CurrentElem.Omega = 0.0;
-TheEMMSim.VehOrbElemObject.CurrentElem.omega = 0.0;
-TheEMMSim.VehOrbElemObject.CurrentElem.f = 70.0*math.pi/180.0
+TheEMMSim.VehDynObject.GravData[0].IsCentralBody = False
+TheEMMSim.VehDynObject.GravData[0].IsDisplayBody = False
+TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
+TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
+TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu
+
+TheEMMSim.VehDynObject.baseCoMInit[0] = 0.05
+TheEMMSim.VehOrbElemObject.CurrentElem.a = -5253.512142852398*1000.0;
+TheEMMSim.VehOrbElemObject.CurrentElem.e = 1.737401863285942;
+TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.07676135277528215;
+TheEMMSim.VehOrbElemObject.CurrentElem.Omega = 1.966373184970122;
+TheEMMSim.VehOrbElemObject.CurrentElem.omega = 2.990805413783388;
+TheEMMSim.VehOrbElemObject.CurrentElem.f = -1.980693284448144
 #Convert those OEs to cartesian
 TheEMMSim.VehOrbElemObject.Elements2Cartesian()
 PosVec = ctypes.cast(TheEMMSim.VehOrbElemObject.r_N.__long__(), 
@@ -48,6 +56,20 @@ VelVec = ctypes.cast(TheEMMSim.VehOrbElemObject.v_N.__long__(),
   ctypes.POINTER(ctypes.c_double))
 TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
 TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
+TheEMMSim.VehOrbElemObject.Cartesian2Elements()
+print TheEMMSim.VehOrbElemObject.CurrentElem.a
+print TheEMMSim.VehOrbElemObject.CurrentElem.e
+print TheEMMSim.VehOrbElemObject.CurrentElem.i
+print TheEMMSim.VehOrbElemObject.CurrentElem.f
+fLocal = TheEMMSim.VehOrbElemObject.CurrentElem.f
+aLocal = TheEMMSim.VehOrbElemObject.CurrentElem.a
+eLocal = TheEMMSim.VehOrbElemObject.CurrentElem.e
+hLocal = 2.0 * math.atanh(math.sqrt((eLocal - 1.0) / (eLocal + 1.0)) * math.tan(fLocal / 2.0));
+print hLocal
+tmT = math.sqrt(-aLocal*aLocal*aLocal/TheEMMSim.VehOrbElemObject.mu)
+tmT *= (TheEMMSim.VehOrbElemObject.CurrentElem.e*math.sinh(hLocal) - hLocal)
+print tmT
+#TheEMMSim.VehOrbElemObject.mu = TheEMMSim.SunGravBody.mu
 
 TheEMMSim.InitializeSimulation()
 TheEMMSim.ConfigureStopTime(int(60*60*1*1E9))
@@ -82,18 +104,12 @@ bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
 DataSigma = TheEMMSim.pullMessageLogData("inertial_state_output.sigma", range(3))
 DataDV = TheEMMSim.pullMessageLogData("inertial_state_output.TotalAccumDVBdy", range(3))
 thrustLog = TheEMMSim.pullMessageLogData("dv_thruster_cmds.effectorRequest", range(6))
+semiMajor = TheEMMSim.pullMessageLogData("OrbitalElements.a")
+posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 #dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.objProps.Mass")
 #dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.mDotTotal")
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
-#accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
-#   CSSEstAccuracyThresh)
-#
-#slewFinishTime = 150.0
-#desiredSunBdy = [0.0, 0.0, 1.0]
-#controlFailCounter =  checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
-#   slewFinishTime, desiredSunBdy)
-#
 plt.figure(1)
 plt.plot(FSWsHat[:,0]*1.0E-9, FSWsHat[:,1], 'b', DataCSSTruth[:,0]*1.0E-9, DataCSSTruth[:,1], 'b--')
 plt.plot(FSWsHat[:,0]*1.0E-9, FSWsHat[:,2], 'g', DataCSSTruth[:,0]*1.0E-9, DataCSSTruth[:,2], 'g--')
@@ -134,6 +150,12 @@ plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,3])
 plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,4])
 plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,5])
 plt.plot(thrustLog[:,0]*1.0E-9, thrustLog[:,6])
+
+plt.figure(9)
+plt.plot(semiMajor[:,0]*1.0E-9, semiMajor[:,1])
+
+plt.figure(10)
+plt.plot(posMag[:,0]*1.0E-9, posMag[:,1])
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):
