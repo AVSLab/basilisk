@@ -1496,7 +1496,7 @@ void C2Gibbs(double C[3][3], double *q)
  * C into the corresponding 3x1 MRP vector Q where the
  * MRP vector is chosen such that |Q| <= 1.
  */
-void C2MRP(double C[3][3], double *q)
+void C2MRP(double *C, double *q)
 {
     double b[4];
     

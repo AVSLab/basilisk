@@ -1,4 +1,4 @@
-import sys, os, inspect
+﻿import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -69,28 +69,56 @@ print hLocal
 tmT = math.sqrt(-aLocal*aLocal*aLocal/TheEMMSim.VehOrbElemObject.mu)
 tmT *= (TheEMMSim.VehOrbElemObject.CurrentElem.e*math.sinh(hLocal) - hLocal)
 print tmT
+TheEMMSim.VehOrbElemObject.CurrentElem.f = 0.0
+TheEMMSim.VehOrbElemObject.Elements2Cartesian()
+posArray = numpy.array([PosVec[0], PosVec[1], PosVec[2]])
+velArray = numpy.array([VelVec[0], VelVec[1], VelVec[2]])
+
+xaxis = posArray/numpy.linalg.norm(posArray)
+zaxis = numpy.cross(posArray, velArray)
+zaxis = zaxis/numpy.linalg.norm(zaxis)
+yaxis = numpy.cross(zaxis, xaxis)
+yaxis = yaxis/numpy.linalg.norm(yaxis)
+
+transMatBase = numpy.vstack((xaxis, yaxis, zaxis))
+hillTransMat = numpy.vstack(([1, 0, 0], [0, 0, -1], [0, 1, 0]))
+totalTransMat = numpy.dot(hillTransMat, transMatBase)
+
+transList = numpy.ndarray.tolist(totalTransMat[0,:])
+transList.extend(numpy.ndarray.tolist(totalTransMat[1,:]))
+transList.extend(numpy.ndarray.tolist(totalTransMat[2,:]))
+
+Carray = sim_model.new_doubleArray(9)
+MrpArray = sim_model.new_doubleArray(3)
+SimulationBaseClass.SetCArray(transList, 'double', Carray)
+sim_model.C2MRP(Carray, MrpArray)
+MrpCommand = []
+for index in range(3):
+    MrpCommand.append(sim_model.doubleArray_getitem(MrpArray, index))
+
+print transList
 #TheEMMSim.VehOrbElemObject.mu = TheEMMSim.SunGravBody.mu
 
 TheEMMSim.InitializeSimulation()
-TheEMMSim.ConfigureStopTime(int(60*60*1*1E9))
+TheEMMSim.ConfigureStopTime(int(60*30*1*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("sunSafeFSWThread")
 TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
 attMsgUse = [0.1, 0.3, -0.4]
 CmdMessage = attMnvrPoint.attCmdOut()
-SimulationBaseClass.SetCArray(attMsgUse, 'double', 
+SimulationBaseClass.SetCArray(MrpCommand, 'double', 
       CmdMessage.sigma_BR)
 TheEMMSim.TotalSim.WriteMessageData("att_cmd_output", 6*8, 
     TheEMMSim.TotalSim.CurrentNanos, CmdMessage);
-TheEMMSim.ConfigureStopTime(int(60*60*4*1E9))
+TheEMMSim.ConfigureStopTime(int(8184*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("vehicleAttMnvrFSWThread")
 TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int(60*60*4*1E9 + 2400*1E9))
+TheEMMSim.ConfigureStopTime(int((8184+37*60)*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("vehicleDVMnvrFSWThread")
 TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int(60*60*5*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*8*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
@@ -106,6 +134,9 @@ DataDV = TheEMMSim.pullMessageLogData("inertial_state_output.TotalAccumDVBdy", r
 thrustLog = TheEMMSim.pullMessageLogData("dv_thruster_cmds.effectorRequest", range(6))
 semiMajor = TheEMMSim.pullMessageLogData("OrbitalElements.a")
 posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
+radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
+radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
+
 #dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.objProps.Mass")
 #dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.mDotTotal")
 
@@ -156,6 +187,12 @@ plt.plot(semiMajor[:,0]*1.0E-9, semiMajor[:,1])
 
 plt.figure(10)
 plt.plot(posMag[:,0]*1.0E-9, posMag[:,1])
+
+plt.figure(11)
+plt.plot(radApo[:,0]*1.0E-9, radApo[:,1])
+
+plt.figure(12)
+plt.plot(radPeri[:,0]*1.0E-9, radPeri[:,1])
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):

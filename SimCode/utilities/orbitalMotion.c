@@ -579,12 +579,14 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     double rp;
     double eps;
     double twopiSigned;
+	double semiParam;
     
     eps = 0.000000000001;
     
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
+	semiParam = h*h / mu;
     
     /* Calculate the line of nodes */
     v3Set(0.0, 0.0, 1.0, v3);
@@ -599,17 +601,20 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
     elements->rmag = r;
-    
+	elements->rPeriap = semiParam / (1.0 + elements->e);
+
     /* compute semi-major axis */
     elements->alpha = 2.0 / r - v*v / mu;
     if(fabs(elements->alpha) > eps) {
         /* elliptic or hyperbolic case */
         elements->a = 1.0 / elements->alpha;
+		elements->rApoap = semiParam / (1.0 - elements->e);
     } else {
         /* parabolic case */
         p = h * h / mu;
         rp = p / 2.;
         elements->a = -rp;   /* a is not defined for parabola, so -rp is returned instead */
+		elements->rApoap = -1.0;
     }
     
     /* Calculate the inclination */

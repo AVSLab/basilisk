@@ -45,7 +45,9 @@ typedef struct {
     double Omega;     //!< (r) Right ascension of the ascending node
     double omega;     //!< (r) Argument of periapsis of the orbit
     double f;         //!< (r) True anomaly of the orbit
-    double rmag;      //!< (m) Magnitude of the position vector
+    double rmag;      //!< (m) Magnitude of the position vector (extra)
+	double rPeriap;   //!< (m) Radius of periapsis (extra)
+	double rApoap;    //!< (m) Radius if apoapsis (extra)
 } classicElements;
 
 #ifdef __cplusplus
