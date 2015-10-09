@@ -375,7 +375,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SunGravBody = six_dof_eom.GravityBodyData()
    self.SunGravBody.BodyMsgName = "sun_planet_data"
    self.SunGravBody.outputMsgName = "sun_display_frame_data"
-   self.SunGravBody.mu = 132712440023.310*1000*1000*1000 #meters!
+   self.SunGravBody.mu = 1.32712440018E20 #meters!
    self.SunGravBody.IsCentralBody = True
    self.SunGravBody.IsDisplayBody = True
    self.SunGravBody.UseJParams = False

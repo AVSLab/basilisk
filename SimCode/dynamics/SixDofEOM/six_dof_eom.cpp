@@ -5,6 +5,7 @@
 #include "utilities/rigidBodyKinematics.h"
 #include <cstring>
 #include <iostream>
+#include <math.h>
 #include "architecture/messaging/system_messaging.h"
 
 /*! This is the constructor for SixDofEOM.  It initializes a few variables*/
@@ -186,10 +187,74 @@ void SixDofEOM::ReadInputs()
                                                         sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&LocalPlanet));
             memcpy(it->PosFromEphem, LocalPlanet.PositionVector, 3*sizeof(double));
             memcpy(it->VelFromEphem, LocalPlanet.VelocityVector, 3*sizeof(double));
+            memcpy(it->J20002Pfix, LocalPlanet.J20002Pfix, 9*sizeof(double));
             it->ephemTime = LocalPlanet.J2000Current;
             it->planetEphemName = LocalPlanet.PlanetName;
         }
     }
+}
+
+void SixDofEOM::jPerturb(GravityBodyData *gravBody, double r_N[3],
+    double perturbAccel[3])
+{
+
+    double temp[3];
+    double temp2[3];
+    double planetPos[3];
+    m33MultV3(gravBody->J20002Pfix, r_N, planetPos);
+    double rmag = v3Norm(planetPos);
+    double x = planetPos[0];
+    double y = planetPos[1];
+    double z = planetPos[2];
+
+    memset(perturbAccel, 0x0, 3*sizeof(double));
+    /* Calculating the total acceleration based on user input */
+    if(gravBody->JParams.size() > 0)
+    {
+        std::vector<double>::iterator it = gravBody->JParams.begin();
+        perturbAccel[0] = 5.0*z*z/(rmag*rmag) - 1.0;
+        perturbAccel[1] = perturbAccel[0];
+        perturbAccel[2] = perturbAccel[0] - 2.0;
+        perturbAccel[0] *= x;
+        perturbAccel[1] *= y;
+        perturbAccel[2] *= z;
+        v3Scale(3.0/2.0*gravBody->mu * (*it) *
+                gravBody->radEquator*gravBody->radEquator / (rmag*rmag*rmag*rmag*rmag), perturbAccel, perturbAccel );
+    }
+    if(gravBody->JParams.size()> 1)
+    {
+        std::vector<double>::iterator it = gravBody->JParams.begin()+1;
+        v3Set(5.0 * (7.0 * pow(z / rmag, 3.0) - 3.0 * (z / rmag)) * (x / rmag),
+              5.0 * (7.0 * pow(z / rmag, 3.0) - 3.0 * (z / rmag)) * (y / rmag),
+              -3.0 * (10.0 * pow(z / rmag, 2.0) - (35.0 / 3.0)*pow(z / rmag, 4.0) - 1.0), temp);
+        v3Scale(1.0 / 2.0 * (*it) * (gravBody->mu / pow(rmag, 2.0))*pow(gravBody->radEquator / rmag, 3.0), temp, temp2);
+        v3Add(perturbAccel, temp2, perturbAccel);
+    }
+    if(gravBody->JParams.size()> 2) {
+        std::vector<double>::iterator it = gravBody->JParams.begin()+2;
+        v3Set((3.0 - 42.0 * pow(z / rmag, 2.0) + 63.0 * pow(z / rmag, 4.0)) * (x / rmag),
+              (3.0 - 42.0 * pow(z / rmag, 2.0) + 63.0 * pow(z / rmag, 4.0)) * (y / rmag),
+              (15.0 - 70.0 * pow(z / rmag, 2) + 63.0 * pow(z / rmag, 4.0)) * (z / rmag), temp);
+        v3Scale(5.0 / 8.0 * (*it) * (gravBody->mu / pow(rmag, 2.0))*pow(gravBody->radEquator / rmag, 4.0), temp, temp2);
+        v3Add(perturbAccel, temp2, perturbAccel);
+    }
+    if(gravBody->JParams.size()> 3) {
+    std::vector<double>::iterator it = gravBody->JParams.begin()+3;
+        v3Set(3.0 * (35.0 * (z / rmag) - 210.0 * pow(z / rmag, 3.0) + 231.0 * pow(z / rmag, 5.0)) * (x / rmag),
+              3.0 * (35.0 * (z / rmag) - 210.0 * pow(z / rmag, 3.0) + 231.0 * pow(z / rmag, 5.0)) * (y / rmag),
+              -(15.0 - 315.0 * pow(z / rmag, 2.0) + 945.0 * pow(z / rmag, 4.0) - 693.0 * pow(z / rmag, 6.0)), temp);
+        v3Scale(1.0 / 8.0 * (*it) * (gravBody->mu / pow(rmag, 2.0))*pow(gravBody->radEquator / rmag, 5.0), temp, temp2);
+        v3Add(perturbAccel, temp2, perturbAccel);
+    }
+    if(gravBody->JParams.size()> 4) {
+    std::vector<double>::iterator it = gravBody->JParams.begin()+4;
+        v3Set((35.0 - 945.0 * pow(z / rmag, 2) + 3465.0 * pow(z / rmag, 4.0) - 3003.0 * pow(z / rmag, 6.0)) * (x / rmag),
+              (35.0 - 945.0 * pow(z / rmag, 2.0) + 3465.0 * pow(z / rmag, 4.0) - 3003.0 * pow(z / rmag, 6.0)) * (y / rmag),
+              -(3003.0 * pow(z / rmag, 6.0) - 4851.0 * pow(z / rmag, 4.0) + 2205.0 * pow(z / rmag, 2.0) - 245.0) * (z / rmag), temp);
+        v3Scale(-1.0 / 16.0 * (*it) * (gravBody->mu / pow(rmag, 2.0))*pow(gravBody->radEquator / rmag, 6.0), temp, temp2);
+        v3Add(perturbAccel, temp2, perturbAccel);
+    }
+    m33tMultV3(gravBody->J20002Pfix, perturbAccel, perturbAccel);
 }
 
 /*! This method computes the state derivatives at runtime for the state integration.  
@@ -227,6 +292,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double diracMatrix[3][3], outerMatrix[3][3];
     double CoMDiff[3], CoMDiffNormSquare;
     double objInertia[3][3];
+    double PlanetRelPos[3];
+    double PlanetAccel[3];
+    double posVelComp[3];
+    double perturbAccel[3];
     
     //! Begin method steps
     
@@ -246,10 +315,47 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omega[1] = X[i++];
     omega[2] = X[i++];
  
+    std::vector<GravityBodyData>::iterator gravit;
+    /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
+        Gravity perturbation is acceleration on spacecraft+acceleration on central body.
+        Ephemeris information is propagated by Euler's method in substeps*/
+    v3SetZero(InertialAccels);
+    for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
+    {
+        if(gravit->IsCentralBody || gravit->BodyMsgID < 0)
+        {
+            continue;
+        }
+        v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+            posVelComp);
+        v3Add(r_N, CentralBody->PosFromEphem, PlanetRelPos);
+        v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
+        v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
+        v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
+        v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
+        rmag = v3Norm(PlanetRelPos);
+        v3Scale(-gravit->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
+        v3Add(InertialAccels, PlanetAccel, InertialAccels);
+        v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
+        v3Subtract(CentralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
+        v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
+        v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+                posVelComp);
+        v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
+        rmag = v3Norm(PlanetRelPos);
+        v3Scale(gravit->mu/rmag/rmag/rmag, PlanetRelPos, PlanetAccel);
+        v3Add(InertialAccels, PlanetAccel, InertialAccels);
+    }
+ 
     
     //! - Get current position magnitude and compute the 2-body gravitational accels
     rmag = v3Norm(r_N);
     v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, dX + 3);
+    if(CentralBody->UseJParams)
+    {
+        jPerturb(CentralBody, r_N, perturbAccel);
+        v3Add(dX+3, perturbAccel, dX+3);
+    }
     
     //! - Add in integrate-computed non-central bodies
     v3Add(dX+3, InertialAccels, dX+3);
@@ -288,9 +394,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     compMass = baseMass;
     v3Scale(baseMass, baseCoM, scaledCoM);
     
-    //! - Loop over the vector of body effectors and compute body force/torque
-    //! - Convert the body forces to inertial for inclusion in dynamics
-    //! - Scale the force/torque by the mass properties inverse to get accels
+    //! - Loop over the child mass bodies to compute composite center of mass
     for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
     {
         DynEffector *TheEff = *it;
@@ -299,7 +403,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Add(scaledCoM, localCoM, scaledCoM);
         compMass += TheEff->objProps.Mass;
     }
+    //! - Divide summation by total mass to get center of mass.
     v3Scale(1.0/compMass, scaledCoM, compCoM);
+    
+    //! - Compute the parallel axis theorem effects for the base body inertia tensor
     m33SetIdentity(identMatrix);
     v3Subtract(baseCoM, compCoM, CoMDiff);
     CoMDiffNormSquare = v3Norm(CoMDiff);
@@ -309,6 +416,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     m33Subtract(diracMatrix, outerMatrix, objInertia);
     m33Add(objInertia, baseI, compI);
     
+    /*! - For each child body, compute parallel axis theorem effectos for inertia tensor
+          and add that overall inertia back to obtain the composite inertia tensor.*/
     for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
     {
         DynEffector *TheEff = *it;
@@ -322,9 +431,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         vAdd(TheEff->objProps.InertiaTensor, 9, objInertia, objInertia);
         m33Add(compI, objInertia, compI);
     }
+    //! - Compute inertia inverse based off the computed inertia tensor
     m33Inverse(compI, compIinv);
     //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
+    //! - Loop over the vector of body effectors and compute body force/torque
+    //! - Convert the body forces to inertial for inclusion in dynamics
+    //! - Scale the force/torque by the mass properties inverse to get accels
     for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
     {
         DynEffector *TheEff = *it;
@@ -359,10 +472,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     double TimeStep;
     double sMag;
     uint32_t CentralBodyCount = 0;
-    double PlanetAccel[3];
-    double PlanetRelPos[3];
     double LocalDV[3];
-    double rmag;
   
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -376,11 +486,11 @@ void SixDofEOM::integrateState(double CurrentTime)
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
-        CentralBody = &(*it);
+        it->ephIntTime = CurrentTime;
         if(it->IsCentralBody)
         {
+            CentralBody = &(*it);
             CentralBodyCount++;
-            break;
         }
     }
     
@@ -390,21 +500,6 @@ void SixDofEOM::integrateState(double CurrentTime)
         std::cerr << "ERROR: I got a bad count on central bodies: " <<
         CentralBodyCount;
         return;
-    }
-    
-    //! - Zero the inertial accels and compute grav accel for all bodies other than central body
-    v3SetZero(InertialAccels);
-    for(it = GravData.begin(); it != GravData.end(); it++)
-    {
-        if(it->IsCentralBody || it->BodyMsgID < 0)
-        {
-            continue;
-        }
-        v3Add(r_N, CentralBody->PosFromEphem, PlanetRelPos);
-        v3Subtract(PlanetRelPos, it->PosFromEphem, PlanetRelPos);
-        rmag = v3Norm(PlanetRelPos);
-        v3Scale(-it->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
-        v3Add(InertialAccels, PlanetAccel, InertialAccels);
     }
     
     //! - Perform RK4 steps.  Go ahead and look it up anywhere.  It's a standard thing

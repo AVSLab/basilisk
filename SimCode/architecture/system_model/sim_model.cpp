@@ -202,6 +202,7 @@ void SimModel::ResetSimulation()
         it->ThreadPtr->ResetThread();
         it->NextThreadStart = it->ThreadPtr->FirstThreadTime;
     }
+    messageLogs.clearLogs();
     CurrentNanos = 0;
     NextThreadTime = 0;
 }

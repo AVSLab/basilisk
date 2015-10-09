@@ -2,6 +2,7 @@
 #include "architecture/system_model/message_logger.h"
 #include <cstring>
 #include <iostream>
+#include <map>
 
 /*! This constructor is used to initialize the message logging data.  It clears
  out the message log list and resets the logger to a clean state.
@@ -178,4 +179,24 @@ uint64_t messageLogger::getLogCount(int64_t messageID)
         return(messageCount);
     }
     return(messageCount);
+}
+
+void messageLogger::clearLogs()
+{
+    std::vector<messageLogContainer>::iterator it;
+    std::map<std::string, uint64_t> logMap;
+    std::map<std::string, uint64_t>::iterator mapIt;
+    for(it=logData.begin(); it != logData.end(); it++)
+    {
+        std::string messageName = it->messageName;
+        uint64_t writeDelta = it->writeDelta;
+        logMap.insert(std::pair<std::string, uint64_t>
+            (messageName, writeDelta));
+    }
+    logData.clear();
+    for(mapIt = logMap.begin(); mapIt != logMap.end(); mapIt++)
+    {
+        addMessageLog(mapIt->first, mapIt->second);
+    }
+    
 }

@@ -73,7 +73,9 @@ void SpiceInterface::SelfInit()
     }
     //! Set the zero time values that will be used to compute the system time
     InitTimeData();
+    J2000Current = J2000ETInit;
     //! Compute planetary data so that it is present at time zero
+    PlanetData.clear();
     ComputePlanetData();
     TimeDataInit = true;
 }
@@ -191,6 +193,9 @@ void SpiceInterface::ComputePlanetData()
     //! - Check to see if our planet vectors don't match (new planet requested)
     if(PlanetData.size() != PlanetNames.size())
     {
+        SpiceChar *name = new SpiceChar[CharBufferSize];
+        SpiceBoolean frmFound;
+        SpiceInt frmCode;
         //! - If we have a new planet, clear the old output vector and reset
         PlanetData.clear();
         //! - Loop over the planet names and create new data
@@ -212,9 +217,13 @@ void SpiceInterface::ComputePlanetData()
             uint32_t MsgID = SystemMessaging::GetInstance()->
                 CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
                 OutputBufferCount, "SpicePlanetState");
+            std::string planetFrame = *it;
+            cnmfrm_c(planetFrame.c_str(), CharBufferSize, &frmCode, name, &frmFound);
+            NewPlanet.computeOrient = frmFound;
             PlanetData.insert(std::pair<uint32_t, SpicePlanetState>
                               (MsgID, NewPlanet));
         }
+        delete [] name;
     }
     
     /*! - Loop over the PlanetData vector and compute values.
@@ -238,6 +247,13 @@ void SpiceInterface::ComputePlanetData()
             planit->second.VelocityVector[i]*=1000.0;
         }
         planit->second.J2000Current = J2000Current;
+        std::string planetFrame = "IAU_";
+        planetFrame += planit->second.PlanetName;
+        if(planit->second.computeOrient)
+        {
+            pxform_c ( "J2000", planetFrame.c_str(), J2000Current,
+                planit->second.J20002Pfix);
+        }
     }
     
 }

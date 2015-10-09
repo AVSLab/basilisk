@@ -1,4 +1,4 @@
-﻿import sys, os, inspect
+import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -19,24 +19,25 @@ TheEMMSim = EMMSim.EMMSim()
 
 TheEMMSim.TotalSim.CreateNewMessage("att_cmd_output", 6*8, 2)
 
-TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("dv_thruster_cmds", int(1E8))
-TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E8))
-TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
-TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E8))
-TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
-TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E8))
-TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E9))
-TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
-TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
-TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E8))
-TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E8))
-TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E8))
+TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E10))
+TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E10))
+TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E10))
 #TheEMMSim.AddVariableForLogging('DVThrusterDynamics.objProps.Mass', int(1E9))
 #TheEMMSim.AddVariableForLogging('DVThrusterDynamics.mDotTotal', int(1E7))
 
 TheEMMSim.VehDynObject.GravData[0].IsCentralBody = False
 TheEMMSim.VehDynObject.GravData[0].IsDisplayBody = False
+#TheEMMSim.VehDynObject.GravData[0].mu = 0.0
 TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
 TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
 TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu
@@ -114,11 +115,11 @@ TheEMMSim.ConfigureStopTime(int(8184*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("vehicleAttMnvrFSWThread")
 TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int((8184+37*60)*1E9))
+TheEMMSim.ConfigureStopTime(int((8184+37.25*60)*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("vehicleDVMnvrFSWThread")
 TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int(60*60*8*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*140*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))

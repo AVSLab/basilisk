@@ -21,10 +21,13 @@ typedef struct {
     std::vector<double> JParams;    //!< -- J perturbations to include
     double PosFromEphem[3];         //!< m  Position vector from central to body
     double VelFromEphem[3];         //!< m/s Velocity vector from central body
+    double J20002Pfix[3][3];        //!< (-) Transformation matrix from J2000 to planet-fixed
     double posRelDisplay[3];        //!< m  Position of planet relative to display frame
     double velRelDisplay[3];        //!< m  Velocity of planet relative to display frame
     double mu;                      //!< m3/s^2 central body gravitational param
     double ephemTime;               //!< s  Ephemeris time for the body in question
+    double ephIntTime;              //!< s  Integration time associated with the ephem data
+    double radEquator;              //!< m  Equatorial radius for the body
     std::string BodyMsgName;        //!< -- Gravitational body name
     std::string outputMsgName;      //!< -- Ephemeris information relative to display frame
     std::string planetEphemName;    //!< -- Ephemeris name for the planet
@@ -55,6 +58,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void AddBodyEffector(DynEffector *NewEffector);
     void initPlanetStateMessages();
+    void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
 public:
     std::vector<double> PositionInit; //!< m  Initial position (inertial)
     std::vector<double> VelocityInit; //!< m/s Initial velocity (inertial)
