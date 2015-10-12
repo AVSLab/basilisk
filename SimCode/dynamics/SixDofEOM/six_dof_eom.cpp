@@ -194,6 +194,15 @@ void SixDofEOM::ReadInputs()
     }
 }
 
+
+/*! This method is used to compute the non-spherical gravitational perturbation 
+    from a planet.  It is designed to use the J2-J6 parameters and determine the 
+    gravitational acceleration caused by those harmonics.
+    @return void
+    @param gravBody The data associated with the gravitational body
+    @param r_N The current position vector of the vehicle relative to body
+    @param perturbAccel The computed perturbation vector output from function
+*/
 void SixDofEOM::jPerturb(GravityBodyData *gravBody, double r_N[3],
     double perturbAccel[3])
 {
@@ -201,6 +210,7 @@ void SixDofEOM::jPerturb(GravityBodyData *gravBody, double r_N[3],
     double temp[3];
     double temp2[3];
     double planetPos[3];
+    
     m33MultV3(gravBody->J20002Pfix, r_N, planetPos);
     double rmag = v3Norm(planetPos);
     double x = planetPos[0];
