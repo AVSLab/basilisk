@@ -632,9 +632,11 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.dvGuidanceData.inputNavDataName = "simple_nav_output"
    self.dvGuidanceData.inputMassPropName = "adcs_config_data"
    desiredBurnDir = [1.0, 0.0, 0.0]
+   desiredOffAxis = [1.0, 0.0, 0.0]
    Tburn2Body = [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0]
    SimulationBaseClass.SetCArray(desiredBurnDir, 'double', self.dvGuidanceData.dvInrtlCmd)
    SimulationBaseClass.SetCArray(Tburn2Body, 'double', self.dvGuidanceData.Tburn2Bdy)
+   SimulationBaseClass.SetCArray(desiredOffAxis, 'double', self.dvGuidanceData.desiredOffAxis)
  def SetsunPoint(self):
    self.sunPointData.inputNavDataName = "simple_nav_output"
    self.sunPointData.inputCelMessName = "sun_display_frame_data"
