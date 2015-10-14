@@ -28,6 +28,7 @@ public:
     void ComputePlatformDR();
     void ComputePlatformDV(uint64_t CurrentTime);
     void ApplySensorErrors(uint64_t CurrentTime);
+    void ApplySensorDiscretization(uint64_t CurrentTime);
     
 public:
     std::string InputStateMsg;                  /*!< Message name for spacecraft state */
@@ -45,6 +46,8 @@ public:
     double AccelPlatform[3];        /// m/s2 Apparent acceleration of the platform
     double DRFramePlatform[3];      /// r  Accumulated DRs in platform
     double AngVelPlatform[3];       /// r/s Angular velocity in platform frame
+    double accelLSB;                //! (-) Discretization value (least significant bit) for accel data
+    double gyroLSB;                 //! (-) Discretization value for gyro data
 private:
     int64_t InputStateID;            /// -- Connect to input time message
     int64_t InputMassID;             /// -- Message ID for the mass properties

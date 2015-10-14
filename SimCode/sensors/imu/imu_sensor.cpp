@@ -101,6 +101,47 @@ void ImuSensor::WriteOutputs(uint64_t Clock)
                                                  sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput));
 }
 
+void ImuSensor::ApplySensorDiscretization(uint64_t CurrentTime)
+{
+    double scaledMeas[3];
+    double intMeas[3];
+    double dt;
+    
+    dt = (CurrentTime - PreviousTime)*1.0E-9;
+    
+    if(accelLSB > 0.0)
+    {
+        v3Scale(1.0/accelLSB, AccelPlatform, scaledMeas);
+        for(uint32_t i=0; i<3; i++)
+        {
+            scaledMeas[i] = fabs(scaledMeas[i]);
+            scaledMeas[i] = floor(scaledMeas[i]);
+            scaledMeas[i] = scaledMeas[i]*accelLSB;
+            scaledMeas[i] = copysign(scaledMeas[i], AccelPlatform[i]);
+        }
+        v3Subtract(AccelPlatform, scaledMeas, intMeas);
+        v3Copy(scaledMeas, AccelPlatform);
+        v3Scale(dt, intMeas, intMeas);
+        v3Subtract(DVFramePlatform, intMeas, DVFramePlatform);
+    }
+    if(gyroLSB > 0.0)
+    {
+        v3Scale(1.0/gyroLSB, AngVelPlatform, scaledMeas);
+        for(uint32_t i=0; i<3; i++)
+        {
+            scaledMeas[i] = fabs(scaledMeas[i]);
+            scaledMeas[i] = floor(scaledMeas[i]);
+            scaledMeas[i] = scaledMeas[i]*gyroLSB;
+            scaledMeas[i] = copysign(scaledMeas[i], AngVelPlatform[i]);
+        }
+        v3Subtract(AngVelPlatform, scaledMeas, intMeas);
+        v3Copy(scaledMeas, AngVelPlatform);
+        v3Scale(dt, intMeas, intMeas);
+        v3Subtract(DRFramePlatform, intMeas, DRFramePlatform);
+    }
+    
+}
+
 void ImuSensor::ApplySensorErrors(uint64_t CurrentTime)
 {
     double OmegaErrors[3];
@@ -187,6 +228,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         ComputePlatformDR();
         ComputePlatformDV(CurrentSimNanos);
         ApplySensorErrors(CurrentSimNanos);
+        ApplySensorDiscretization(CurrentSimNanos);
         WriteOutputs(CurrentSimNanos);
     }
     memcpy(&StatePrevious, &StateCurrent, sizeof(OutputStateData));

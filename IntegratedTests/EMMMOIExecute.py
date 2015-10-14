@@ -17,8 +17,6 @@ import SimulationBaseClass
 
 TheEMMSim = EMMSim.EMMSim()
 
-TheEMMSim.TotalSim.CreateNewMessage("att_cmd_output", 6*8, 2)
-
 TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("dv_thruster_cmds", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E10))
@@ -32,12 +30,12 @@ TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E10))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E10))
 TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E10))
 TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E10))
-#TheEMMSim.AddVariableForLogging('DVThrusterDynamics.objProps.Mass', int(1E9))
-#TheEMMSim.AddVariableForLogging('DVThrusterDynamics.mDotTotal', int(1E7))
+TheEMMSim.AddVariableForLogging('dvGuidance.burnExecuting', int(1E9))
+TheEMMSim.AddVariableForLogging('dvGuidance.burnComplete', int(1E9))
+
 
 TheEMMSim.VehDynObject.GravData[0].IsCentralBody = False
 TheEMMSim.VehDynObject.GravData[0].IsDisplayBody = False
-#TheEMMSim.VehDynObject.GravData[0].mu = 0.0
 TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
 TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
 TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu
@@ -58,68 +56,60 @@ VelVec = ctypes.cast(TheEMMSim.VehOrbElemObject.v_N.__long__(),
 TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
 TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
 TheEMMSim.VehOrbElemObject.Cartesian2Elements()
-print TheEMMSim.VehOrbElemObject.CurrentElem.a
-print TheEMMSim.VehOrbElemObject.CurrentElem.e
-print TheEMMSim.VehOrbElemObject.CurrentElem.i
-print TheEMMSim.VehOrbElemObject.CurrentElem.f
+
 fLocal = TheEMMSim.VehOrbElemObject.CurrentElem.f
 aLocal = TheEMMSim.VehOrbElemObject.CurrentElem.a
 eLocal = TheEMMSim.VehOrbElemObject.CurrentElem.e
 hLocal = 2.0 * math.atanh(math.sqrt((eLocal - 1.0) / (eLocal + 1.0)) * math.tan(fLocal / 2.0));
-print hLocal
 tmT = math.sqrt(-aLocal*aLocal*aLocal/TheEMMSim.VehOrbElemObject.mu)
 tmT *= (TheEMMSim.VehOrbElemObject.CurrentElem.e*math.sinh(hLocal) - hLocal)
-print tmT
+tmT *= -1.0
+totalBurnTime = 37.25*60
 TheEMMSim.VehOrbElemObject.CurrentElem.f = 0.0
 TheEMMSim.VehOrbElemObject.Elements2Cartesian()
 posArray = numpy.array([PosVec[0], PosVec[1], PosVec[2]])
 velArray = numpy.array([VelVec[0], VelVec[1], VelVec[2]])
 
-xaxis = posArray/numpy.linalg.norm(posArray)
-zaxis = numpy.cross(posArray, velArray)
-zaxis = zaxis/numpy.linalg.norm(zaxis)
-yaxis = numpy.cross(zaxis, xaxis)
-yaxis = yaxis/numpy.linalg.norm(yaxis)
-
-transMatBase = numpy.vstack((xaxis, yaxis, zaxis))
-hillTransMat = numpy.vstack(([1, 0, 0], [0, 0, -1], [0, 1, 0]))
-totalTransMat = numpy.dot(hillTransMat, transMatBase)
-
-transList = numpy.ndarray.tolist(totalTransMat[0,:])
-transList.extend(numpy.ndarray.tolist(totalTransMat[1,:]))
-transList.extend(numpy.ndarray.tolist(totalTransMat[2,:]))
-
-Carray = sim_model.new_doubleArray(9)
-MrpArray = sim_model.new_doubleArray(3)
-SimulationBaseClass.SetCArray(transList, 'double', Carray)
-sim_model.C2MRP(Carray, MrpArray)
-MrpCommand = []
-for index in range(3):
-    MrpCommand.append(sim_model.doubleArray_getitem(MrpArray, index))
-
-print transList
-#TheEMMSim.VehOrbElemObject.mu = TheEMMSim.SunGravBody.mu
+dvCmd = velArray*-1.0
+dvCmd = dvCmd/numpy.linalg.norm(dvCmd)
+dvCmd *= 1111.0
+print tmT
+SimulationBaseClass.SetCArray(dvCmd, 'double', TheEMMSim.dvGuidanceData.dvInrtlCmd)
+TheEMMSim.dvGuidanceData.burnStartTime = int((int(tmT - 1.0/2.0*totalBurnTime))*1E9)
+print TheEMMSim.dvGuidanceData.burnStartTime*1.0E-9
 
 TheEMMSim.InitializeSimulation()
 TheEMMSim.ConfigureStopTime(int(60*30*1*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.disableThread("sunSafeFSWThread")
+TheEMMSim.enableThread("sunPointTask")
 TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
-attMsgUse = [0.1, 0.3, -0.4]
-CmdMessage = attMnvrPoint.attCmdOut()
-SimulationBaseClass.SetCArray(MrpCommand, 'double', 
-      CmdMessage.sigma_BR)
-TheEMMSim.TotalSim.WriteMessageData("att_cmd_output", 6*8, 
-    TheEMMSim.TotalSim.CurrentNanos, CmdMessage);
-TheEMMSim.ConfigureStopTime(int(8184*1E9))
+TheEMMSim.ConfigureStopTime(int(TheEMMSim.dvGuidanceData.burnStartTime-600*1E9))
 TheEMMSim.ExecuteSimulation()
+TheEMMSim.ConfigureStopTime(int(TheEMMSim.dvGuidanceData.burnStartTime))
+TheEMMSim.attMnvrPointData.mnvrActive = False
 TheEMMSim.disableThread("vehicleAttMnvrFSWThread")
-TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int((8184+37.25*60)*1E9))
+TheEMMSim.disableThread("sunPointTask")
+TheEMMSim.enableThread("vehicleDVPrepFSWThread")
 TheEMMSim.ExecuteSimulation()
+TheEMMSim.disableThread("vehicleDVPrepFSWThread")
+TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
+clockStart = TheEMMSim.TotalSim.CurrentNanos
+DVFrame = ctypes.cast(TheEMMSim.IMUSensor.DVFramePlatform.__long__(),
+                      ctypes.POINTER(ctypes.c_double))
+DVTotal = numpy.array([0.0, 0.0, 0.0])
+while(TheEMMSim.dvGuidanceData.burnComplete == 0):
+   clockStart += int(1E8)
+   TheEMMSim.ConfigureStopTime(clockStart)
+   TheEMMSim.ExecuteSimulation()
+   DVTotal += numpy.array([DVFrame[0], DVFrame[1], DVFrame[2]])
+
+print DVTotal
 TheEMMSim.disableThread("vehicleDVMnvrFSWThread")
+TheEMMSim.attMnvrPointData.mnvrActive = False
+TheEMMSim.enableThread("sunPointTask")
 TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
-TheEMMSim.ConfigureStopTime(int(60*60*140*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*10*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
@@ -137,9 +127,8 @@ semiMajor = TheEMMSim.pullMessageLogData("OrbitalElements.a")
 posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
-
-#dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.objProps.Mass")
-#dvConsumption = TheEMMSim.GetLogVariableData("DVThrusterDynamics.mDotTotal")
+burnActive = TheEMMSim.GetLogVariableData('dvGuidance.burnExecuting')
+burnComplete = TheEMMSim.GetLogVariableData('dvGuidance.burnComplete')
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 plt.figure(1)
@@ -194,6 +183,10 @@ plt.plot(radApo[:,0]*1.0E-9, radApo[:,1])
 
 plt.figure(12)
 plt.plot(radPeri[:,0]*1.0E-9, radPeri[:,1])
+
+plt.figure(13)
+plt.plot(burnActive[:,0]*1.0E-9, burnActive[:,1])
+plt.plot(burnComplete[:,0]*1.0E-9, burnComplete[:,1], 'g--')
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):

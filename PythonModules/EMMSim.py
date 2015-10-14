@@ -28,6 +28,8 @@ import sunSafeControl
 import sunSafeACS
 import attMnvrPoint
 import dvAttEffect
+import dvGuidance
+import celestialBodyPoint
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
@@ -35,7 +37,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SimBaseClass.__init__(self)
    self.CreateNewThread("DynamicsThread", int(1E8))
    self.CreateNewThread("sunSafeFSWThread", int(5E8))
+   self.CreateNewThread("sunPointTask", int(5E8))
    self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
+   self.CreateNewThread("vehicleDVPrepFSWThread", int(5E8))
    self.CreateNewThread("vehicleDVMnvrFSWThread", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
@@ -110,13 +114,25 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
       sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
       sunSafeControl.CrossInit_sunSafeControl)
-   self.sunSafeControlWrap.ModelTag = "attMnvrControl"
+   self.attMnvrControlWrap.ModelTag = "attMnvrControl"
+   
+   self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
+   self.dvGuidanceWrap = alg_contain.AlgContain(self.dvGuidanceData,
+                                                 dvGuidance.Update_dvGuidance, dvGuidance.SelfInit_dvGuidance,
+                                                 dvGuidance.CrossInit_dvGuidance)
+   self.dvGuidanceWrap.ModelTag = "dvGuidance"
    
    self.dvAttEffectData = dvAttEffect.dvAttEffectConfig()
    self.dvAttEffectWrap = alg_contain.AlgContain(self.dvAttEffectData,
         dvAttEffect.Update_dvAttEffect, dvAttEffect.SelfInit_dvAttEffect,
         dvAttEffect.CrossInit_dvAttEffect)
-   self.sunSafeACSWrap.ModelTag = "dvAttEffect"
+   self.dvAttEffectWrap.ModelTag = "dvAttEffect"
+   
+   self.sunPointData = celestialBodyPoint.celestialBodyPointConfig()
+   self.sunPointWrap = alg_contain.AlgContain(self.sunPointData,
+       celestialBodyPoint.Update_celestialBodyPoint, celestialBodyPoint.SelfInit_celestialBodyPoint,
+       celestialBodyPoint.CrossInit_celestialBodyPoint)
+   self.sunPointWrap.ModelTag = "sunPoint"
 
    self.InitAllFSWObjects()
 
@@ -137,15 +153,31 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToThread("vehicleAttMnvrFSWThread", self.sunSafeACSWrap, 
       self.sunSafeACSData)
       
+   self.AddModelToThread("vehicleDVPrepFSWThread", self.dvGuidanceWrap,
+                            self.dvGuidanceData)
+   self.AddModelToThread("vehicleDVPrepFSWThread", self.attMnvrPointWrap,
+                            self.attMnvrPointData)
+   self.AddModelToThread("vehicleDVPrepFSWThread", self.attMnvrControlWrap,
+                            self.attMnvrControlData)
+   self.AddModelToThread("vehicleDVPrepFSWThread", self.sunSafeACSWrap,
+                             self.sunSafeACSData)
+      
+   self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvGuidanceWrap,
+                            self.dvGuidanceData)
    self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrPointWrap,
                             self.attMnvrPointData)
    self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrControlWrap,
                             self.attMnvrControlData)
    self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvAttEffectWrap,
                             self.dvAttEffectData)
+                            
+   self.AddModelToThread("sunPointTask", self.sunPointWrap,
+       self.sunPointData)
 
    self.disableThread("vehicleAttMnvrFSWThread")
    self.disableThread("vehicleDVMnvrFSWThread")
+   self.disableThread("vehicleDVPrepFSWThread")
+   self.disableThread("sunPointTask")
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
@@ -174,6 +206,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       'double', self.IMUSensor.senTransBias)
    SimulationBaseClass.SetCArray([TransNoiseStdValue, TransNoiseStdValue, TransNoiseStdValue], 
       'double', self.IMUSensor.senTransNoiseStd)
+   self.IMUSensor.accelLSB = 2.77E-4*9.80665
+   self.IMUSensor.gyroLSB = 8.75E-3*math.pi/180.0
+    
  def SetACSThrusterDynObject(self):
    self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
    Thruster1 = thruster_dynamics.ThrusterConfigData()
@@ -592,6 +627,21 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
    dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
                                      newThrGroup)
+ def SetdvGuidance(self):
+   self.dvGuidanceData.outputDataName = "att_cmd_output"
+   self.dvGuidanceData.inputNavDataName = "simple_nav_output"
+   self.dvGuidanceData.inputMassPropName = "adcs_config_data"
+   desiredBurnDir = [1.0, 0.0, 0.0]
+   Tburn2Body = [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0]
+   SimulationBaseClass.SetCArray(desiredBurnDir, 'double', self.dvGuidanceData.dvInrtlCmd)
+   SimulationBaseClass.SetCArray(Tburn2Body, 'double', self.dvGuidanceData.Tburn2Bdy)
+ def SetsunPoint(self):
+   self.sunPointData.inputNavDataName = "simple_nav_output"
+   self.sunPointData.inputCelMessName = "sun_display_frame_data"
+   self.sunPointData.outputDataName = "att_cmd_output"
+   self.sunPointData.inputSecMessName = "earth_display_frame_data"
+   TsunVec2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
+   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.sunPointData.TPoint2Bdy)
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -613,6 +663,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetattMnvrPoint()
    self.SetattMnvrControl()
    self.SetdvAttEffect()
+   self.SetdvGuidance()
+   self.SetsunPoint()
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
 #   i=0
