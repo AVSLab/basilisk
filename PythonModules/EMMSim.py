@@ -38,8 +38,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.CreateNewThread("DynamicsThread", int(1E8))
    self.CreateNewThread("sunSafeFSWThread", int(5E8))
    self.CreateNewThread("sunPointTask", int(5E8))
-   self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
    self.CreateNewThread("vehicleDVPrepFSWThread", int(5E8))
+   self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
    self.CreateNewThread("vehicleDVMnvrFSWThread", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
@@ -155,12 +155,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       
    self.AddModelToThread("vehicleDVPrepFSWThread", self.dvGuidanceWrap,
                             self.dvGuidanceData)
-   self.AddModelToThread("vehicleDVPrepFSWThread", self.attMnvrPointWrap,
-                            self.attMnvrPointData)
-   self.AddModelToThread("vehicleDVPrepFSWThread", self.attMnvrControlWrap,
-                            self.attMnvrControlData)
-   self.AddModelToThread("vehicleDVPrepFSWThread", self.sunSafeACSWrap,
-                             self.sunSafeACSData)
       
    self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvGuidanceWrap,
                             self.dvGuidanceData)
