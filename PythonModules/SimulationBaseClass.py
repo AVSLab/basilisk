@@ -1,4 +1,4 @@
-
+﻿
 #Import some architectural stuff that we will probably always use
 import sys, os, ast
 #Point the path to the module storage area
@@ -97,6 +97,7 @@ class SimBaseClass:
    self.StopTime = 0
    self.NameReplace = {}
    self.VarLogList = {}
+   self.eventMap = {}
    self.simModules = set()
    self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
    self.dataStructIndex = self.simBasePath+'/xml/index.xml'
@@ -316,6 +317,16 @@ class SimBaseClass:
     for indexUse in indices_use:
         indicesLocal.append(indexUse+1)
     return(dataUse[:, indicesLocal])
+ def createNewEvent(self, eventName, eventActive = False, 
+                    conditionList = [], actionList = []):
+    if(eventName in self.eventMap.keys()):
+       return
+    newEvent = sim_model.eventConditionData()
+    newEvent.eventName = eventName
+    newEvent.eventActive = eventActive
+    self.eventMap.update({eventName})
+    self.eventMap[eventName] = newEvent
+
 
 
 

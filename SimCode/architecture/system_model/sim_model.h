@@ -25,6 +25,14 @@ typedef enum varAccessType {
     logBuffer = 1
 }VarAccessType;
 
+typedef struct {
+	std::string eventName;             //!< Name of the event
+	std::vector<std::string> conditionList; //!< List of conditions that have to be met
+	std::vector<std::string> actionList; //!< List of the actions to take during event
+	bool eventActive; //!< Flag indicating if event is active
+	uint64_t eventCounter;  //!< Number of times  the event has occurred
+}eventConditionData;
+
 //! The top-level container for an entire simulation
 class SimModel
 {
