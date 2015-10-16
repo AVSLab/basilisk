@@ -60,6 +60,7 @@ TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
 
+
 TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
 TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.0;
@@ -76,6 +77,9 @@ TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[
 TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
 
 TheEMMSim.InitializeSimulation()
+TheEMMSim.ConfigureStopTime(int(30*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.modeRequest = 'safeMode'
 TheEMMSim.ConfigureStopTime(int(60*120*1E9))
 TheEMMSim.ExecuteSimulation()
 

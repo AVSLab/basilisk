@@ -50,9 +50,9 @@ allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewThread("sixDynTestThread", int(1E10))
-TotalSim.CreateNewThread("sixDynTestThreadMars", int(5E9))
-TotalSim.disableThread("sixDynTestThreadMars");
+TotalSim.CreateNewTask("sixDynTestTask", int(1E10))
+TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E9))
+TotalSim.disableTask("sixDynTestTaskMars");
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 VehDynObject = six_dof_eom.SixDofEOM()
@@ -139,10 +139,10 @@ VehDynObject.AddGravityBody(VenusGravBody)
 VehDynObject.AddGravityBody(MarsGravBody)
 VehDynObject.AddGravityBody(JupiterGravBody)
 
-TotalSim.AddModelToThread("sixDynTestThread", spiceObject)
-TotalSim.AddModelToThread("sixDynTestThread", VehDynObject)
-TotalSim.AddModelToThread("sixDynTestThreadMars", spiceObject)
-TotalSim.AddModelToThread("sixDynTestThreadMars", VehDynObject)
+TotalSim.AddModelToTask("sixDynTestTask", spiceObject)
+TotalSim.AddModelToTask("sixDynTestTask", VehDynObject)
+TotalSim.AddModelToTask("sixDynTestTaskMars", spiceObject)
+TotalSim.AddModelToTask("sixDynTestTaskMars", VehDynObject)
 
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E12))
 TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E12))
@@ -247,8 +247,8 @@ spiceObject.UTCCalInit = "2015 January 19, 03:00:00.0"
 spiceObject.PlanetNames = spice_interface.StringVector(
                                                        ["earth", "mars", "jupiter", "sun", "moon", "venus", "mars odyssey"])
 
-TotalSim.disableThread("sixDynTestThread")
-TotalSim.enableThread("sixDynTestThreadMars")
+TotalSim.disableTask("sixDynTestTask")
+TotalSim.enableTask("sixDynTestTaskMars")
 
 TotalSim.InitializeSimulation()
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E10))

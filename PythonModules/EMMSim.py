@@ -9,7 +9,7 @@ import csv
 import copy
 #Vehicle dynamics and avionics models
 import spice_interface
-import sys_model_thread
+import sys_model_task
 import sim_model
 import six_dof_eom
 import orb_elem_convert
@@ -35,16 +35,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
-   self.CreateNewThread("DynamicsThread", int(1E8))
-   self.CreateNewThread("sunSafeFSWThread", int(5E8))
-   self.CreateNewThread("sunPointTask", int(5E8))
-   self.CreateNewThread("vehicleDVPrepFSWThread", int(5E8))
-   self.CreateNewThread("vehicleAttMnvrFSWThread", int(5E8))
-   self.CreateNewThread("vehicleDVMnvrFSWThread", int(5E8))
+   self.modeRequest = 'None'
+   self.CreateNewTask("DynamicsTask", int(1E8))
+   self.CreateNewTask("sunSafeFSWTask", int(5E8))
+   self.CreateNewTask("sunPointTask", int(5E8))
+   self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8))
+   self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8))
+   self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
    self.InitCSSHeads()
-   #Schedule the first pyramid on the simulated sensor thread
+   #Schedule the first pyramid on the simulated sensor Task
    self.IMUSensor = imu_sensor.ImuSensor()
    self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
    self.DVThrusterDynObject = thruster_dynamics.ThrusterDynamics()
@@ -52,21 +53,21 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
    self.SimpleNavObject = simple_nav.SimpleNav()
    self.InitAllDynObjects()
-   self.AddModelToThread("DynamicsThread", self.SpiceObject)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid1HeadA)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid1HeadB)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid1HeadC)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid1HeadD)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid2HeadA)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid2HeadB)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid2HeadC)
-   self.AddModelToThread("DynamicsThread", self.CSSPyramid2HeadD)
-   self.AddModelToThread("DynamicsThread", self.IMUSensor)
-   self.AddModelToThread("DynamicsThread", self.ACSThrusterDynObject)
-   self.AddModelToThread("DynamicsThread", self.DVThrusterDynObject)
-   self.AddModelToThread("DynamicsThread", self.VehDynObject)
-   self.AddModelToThread("DynamicsThread", self.VehOrbElemObject)
-   self.AddModelToThread("DynamicsThread", self.SimpleNavObject)
+   self.AddModelToTask("DynamicsTask", self.SpiceObject)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadC)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadD)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadA)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadB)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadC)
+   self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadD)
+   self.AddModelToTask("DynamicsTask", self.IMUSensor)
+   self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject)
+   self.AddModelToTask("DynamicsTask", self.DVThrusterDynObject)
+   self.AddModelToTask("DynamicsTask", self.VehDynObject)
+   self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
+   self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -136,42 +137,68 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
    self.InitAllFSWObjects()
 
-   self.AddModelToThread("sunSafeFSWThread", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
-   self.AddModelToThread("sunSafeFSWThread", self.IMUCommWrap, self.IMUCommData)
-   self.AddModelToThread("sunSafeFSWThread", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
-   self.AddModelToThread("sunSafeFSWThread", self.sunSafePointWrap, 
+   self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
+   self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData)
+   self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
+   self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, 
       self.sunSafePointData)
-   self.AddModelToThread("sunSafeFSWThread", self.sunSafeControlWrap, 
+   self.AddModelToTask("sunSafeFSWTask", self.sunSafeControlWrap, 
       self.sunSafeControlData)
-   self.AddModelToThread("sunSafeFSWThread", self.sunSafeACSWrap, 
+   self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
 
-   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrPointWrap, 
+   self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, 
       self.attMnvrPointData)
-   self.AddModelToThread("vehicleAttMnvrFSWThread", self.attMnvrControlWrap, 
+   self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrControlWrap, 
       self.attMnvrControlData)
-   self.AddModelToThread("vehicleAttMnvrFSWThread", self.sunSafeACSWrap, 
+   self.AddModelToTask("vehicleAttMnvrFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
       
-   self.AddModelToThread("vehicleDVPrepFSWThread", self.dvGuidanceWrap,
+   self.AddModelToTask("vehicleDVPrepFSWTask", self.dvGuidanceWrap,
                             self.dvGuidanceData)
       
-   self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvGuidanceWrap,
+   self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvGuidanceWrap,
                             self.dvGuidanceData)
-   self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrPointWrap,
+   self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrPointWrap,
                             self.attMnvrPointData)
-   self.AddModelToThread("vehicleDVMnvrFSWThread", self.attMnvrControlWrap,
+   self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrControlWrap,
                             self.attMnvrControlData)
-   self.AddModelToThread("vehicleDVMnvrFSWThread", self.dvAttEffectWrap,
+   self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvAttEffectWrap,
                             self.dvAttEffectData)
                             
-   self.AddModelToThread("sunPointTask", self.sunPointWrap,
+   self.AddModelToTask("sunPointTask", self.sunPointWrap,
        self.sunPointData)
 
-   self.disableThread("vehicleAttMnvrFSWThread")
-   self.disableThread("vehicleDVMnvrFSWThread")
-   self.disableThread("vehicleDVPrepFSWThread")
-   self.disableThread("sunPointTask")
+   self.disableTask("vehicleAttMnvrFSWTask")
+   self.disableTask("vehicleDVMnvrFSWTask")
+   self.disableTask("vehicleDVPrepFSWTask")
+   self.disableTask("sunPointTask")
+   self.disableTask("sunSafeFSWTask")
+ 
+   self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
+                          ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
+                           "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                           "self.enableTask('sunSafeFSWTask')"])
+   self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
+                         ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                          "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False"])
+   self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
+                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.enableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                          "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False",
+                          "self.setEventActivity('startDV', True)"])
+   self.createNewEvent("initiateDVMnvr", int(1E9), True, ["self.modeRequest == 'DVMnvr'"],
+                         ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
+                          "self.disableTask('vehicleDVPrepFSWTask')", "self.enableTask('vehicleDVMnvrFSWTask')",
+                          "self.disableTask('sunSafeFSWTask')", "self.setEventActivity('completeDV', True)"])
+   self.createNewEvent("completeDV", int(1E8), False, ["self.dvGuidanceData.burnComplete != 0"],
+                    ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
+                     "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                     "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False",
+                     "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
+   self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
+                    ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
 
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]

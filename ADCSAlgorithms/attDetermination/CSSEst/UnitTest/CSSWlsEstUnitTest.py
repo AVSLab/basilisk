@@ -84,7 +84,7 @@ TestResults = {}
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
 #Create test thread
-TotalSim.CreateNewThread("wlsEstTestThread", int(1E8))
+TotalSim.CreateNewTask("wlsEstTestTask", int(1E8))
 
 #Construct algorithm and associated C++ container
 CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
@@ -94,7 +94,7 @@ CSSWlsWrap = alg_contain.AlgContain(CSSWlsEstFSWConfig,
 CSSWlsWrap.ModelTag = "CSSWlsEst"
 
 #Add module to runtime call list
-TotalSim.AddModelToThread("wlsEstTestThread", CSSWlsWrap, CSSWlsEstFSWConfig)
+TotalSim.AddModelToTask("wlsEstTestTask", CSSWlsWrap, CSSWlsEstFSWConfig)
 
 #Initialize the WLS estimator configuration data
 CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"

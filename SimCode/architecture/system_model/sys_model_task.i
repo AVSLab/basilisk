@@ -1,6 +1,6 @@
-%module sys_model_thread
+%module sys_model_task
 %{
-   #include "sys_model_thread.h"
+   #include "sys_model_task.h"
 %}
 
 %include "std_vector.i"
@@ -15,4 +15,4 @@ namespace std {
    %template(ConstCharVector) vector<const char*>;
 }
 %include "sys_model.h"
-%include "sys_model_thread.h"
+%include "sys_model_task.h"

@@ -24,7 +24,7 @@ namespace std {
    %template(ConstCharVector) vector<const char*>;
    %template(messsageLogVector) vector<messageLogContainer>;
 }
-%include "sys_model_thread.h"
+%include "sys_model_task.h"
 %include "message_logger.h"
 %include "../messaging/system_messaging.h"
 %include "linearAlgebra.h"

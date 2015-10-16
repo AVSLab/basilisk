@@ -72,43 +72,22 @@ velArray = numpy.array([VelVec[0], VelVec[1], VelVec[2]])
 
 dvCmd = velArray*-1.0
 dvCmd = dvCmd/numpy.linalg.norm(dvCmd)
-dvCmd *= 1111.0
+dvCmd *= 1095.0
 print tmT
 SimulationBaseClass.SetCArray(dvCmd, 'double', TheEMMSim.dvGuidanceData.dvInrtlCmd)
-TheEMMSim.dvGuidanceData.burnStartTime = int((int(tmT - 1.0/2.0*totalBurnTime))*1E9)
+TheEMMSim.dvGuidanceData.burnStartTime = int((int(tmT - 2.0/3.0*totalBurnTime))*1E9)
 print TheEMMSim.dvGuidanceData.burnStartTime*1.0E-9
 
 TheEMMSim.InitializeSimulation()
+TheEMMSim.ConfigureStopTime(int(30*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.modeRequest = 'safeMode'
 TheEMMSim.ConfigureStopTime(int(60*30*1*1E9))
 TheEMMSim.ExecuteSimulation()
-TheEMMSim.disableThread("sunSafeFSWThread")
-TheEMMSim.enableThread("sunPointTask")
-TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
+TheEMMSim.modeRequest = 'sunPoint'
 TheEMMSim.ConfigureStopTime(int(TheEMMSim.dvGuidanceData.burnStartTime-600*1E9))
 TheEMMSim.ExecuteSimulation()
-TheEMMSim.ConfigureStopTime(int(TheEMMSim.dvGuidanceData.burnStartTime))
-TheEMMSim.attMnvrPointData.mnvrActive = False
-TheEMMSim.disableThread("vehicleAttMnvrFSWThread")
-TheEMMSim.disableThread("sunPointTask")
-TheEMMSim.enableThread("vehicleDVPrepFSWThread")
-TheEMMSim.ExecuteSimulation()
-TheEMMSim.disableThread("vehicleDVPrepFSWThread")
-TheEMMSim.enableThread("vehicleDVMnvrFSWThread")
-clockStart = TheEMMSim.TotalSim.CurrentNanos
-DVFrame = ctypes.cast(TheEMMSim.IMUSensor.DVFramePlatform.__long__(),
-                      ctypes.POINTER(ctypes.c_double))
-DVTotal = numpy.array([0.0, 0.0, 0.0])
-while(TheEMMSim.dvGuidanceData.burnComplete == 0):
-   clockStart += int(1E8)
-   TheEMMSim.ConfigureStopTime(clockStart)
-   TheEMMSim.ExecuteSimulation()
-   DVTotal += numpy.array([DVFrame[0], DVFrame[1], DVFrame[2]])
-
-print DVTotal
-TheEMMSim.disableThread("vehicleDVMnvrFSWThread")
-TheEMMSim.attMnvrPointData.mnvrActive = False
-TheEMMSim.enableThread("sunPointTask")
-TheEMMSim.enableThread("vehicleAttMnvrFSWThread")
+TheEMMSim.modeRequest = 'DVPrep' #Note that this will maneuver to burn, burn, and go back to sunPoint
 TheEMMSim.ConfigureStopTime(int(60*60*10*1E9))
 TheEMMSim.ExecuteSimulation()
 

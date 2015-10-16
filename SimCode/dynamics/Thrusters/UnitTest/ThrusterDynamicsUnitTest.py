@@ -32,9 +32,9 @@ var1 = int(1E8) # call the thread at 10 Hz, let the thread do stuff at 10 Hz
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass()
-TotalSim.CreateNewThread("thrusterbasic", var1)
+TotalSim.CreateNewTask("thrusterbasic", var1)
 
-TotalSim.AddModelToThread("thrusterbasic", ACSThrusterDynObject)
+TotalSim.AddModelToTask("thrusterbasic", ACSThrusterDynObject)
 
 var2 = int(60*144.0*1E9) # stop after 144 minutes
 

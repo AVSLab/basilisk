@@ -33,11 +33,11 @@ TestResults = {}
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewThread("sNavTestThread", int(1E8))
+TotalSim.CreateNewTask("sNavTestTask", int(1E8))
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 sNavObject = simple_nav.SimpleNav()
-TotalSim.AddModelToThread("sNavTestThread", sNavObject)
+TotalSim.AddModelToTask("sNavTestTask", sNavObject)
 
 TotalSim.TotalSim.CreateNewMessage("inertial_state_output", 25*8, 2)
 TotalSim.TotalSim.CreateNewMessage("sun_planet_data", 7*8+64, 2)

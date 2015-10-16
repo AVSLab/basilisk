@@ -15,7 +15,7 @@ TestResults = {}
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewThread("TimeTestThread", int(1E9))
+TotalSim.CreateNewTask("TimeTestTask", int(1E9))
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 SpiceObject = spice_interface.SpiceInterface()
@@ -25,7 +25,7 @@ SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/External/Ephemeris
 SpiceObject.OutputBufferCount = 10000
 SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
 SpiceObject.UTCCalInit = "2016 June 16, 00:00:00.0 TDB"
-TotalSim.AddModelToThread("TimeTestThread", SpiceObject)
+TotalSim.AddModelToTask("TimeTestTask", SpiceObject)
 
 TotalSim.ConfigureStopTime(int(60.0*1E9))
 TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
