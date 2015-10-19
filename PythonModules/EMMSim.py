@@ -296,48 +296,26 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
     self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
     self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
     self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
+    allThrusters = []
     dvRadius = 0.256
     DVIsp = 226.7
-    Thruster1 = thruster_dynamics.ThrusterConfigData()
-    Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(0), dvRadius*math.sin(0), 0.0])
-    Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster1.MaxThrust = 111.33
-    Thruster1.MinOnTime = 0.020;
-    Thruster1.steadyIsp = DVIsp
-    Thruster2 = thruster_dynamics.ThrusterConfigData()
-    Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(60)), dvRadius*math.sin(math.radians(60)), 0.0])
-    Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster2.MaxThrust = 111.33
-    Thruster2.MinOnTime = 0.020;
-    Thruster2.steadyIsp = DVIsp
-    Thruster3 = thruster_dynamics.ThrusterConfigData()
-    Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(120)), dvRadius*math.sin(math.radians(120)), 0.0])
-    Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster3.MaxThrust = 111.33
-    Thruster3.MinOnTime = 0.020;
-    Thruster3.steadyIsp = DVIsp
-    Thruster4 = thruster_dynamics.ThrusterConfigData()
-    Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(180)), dvRadius*math.sin(math.radians(180)), 0.0])
-    Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster4.MaxThrust = 111.33
-    Thruster4.MinOnTime = 0.020;
-    Thruster4.steadyIsp = DVIsp
-    Thruster5 = thruster_dynamics.ThrusterConfigData()
-    Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(240)), dvRadius*math.sin(math.radians(240)), 0.0])
-    Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster5.MaxThrust = 111.33
-    Thruster5.MinOnTime = 0.020;
-    Thruster5.steadyIsp = DVIsp
-    Thruster6 = thruster_dynamics.ThrusterConfigData()
-    Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([dvRadius*math.cos(math.radians(300)), dvRadius*math.sin(math.radians(300)), 0.0])
-    Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
-    Thruster6.MaxThrust = 111.33
-    Thruster6.MinOnTime = 0.020;
-    Thruster6.steadyIsp = DVIsp
-
+    maxThrust = 111.33
+    minOnTime = 0.020
+    i=0
+    angleInc = math.radians(60.0)
+    while i < 6:
+       newThruster = thruster_dynamics.ThrusterConfigData()
+       newThruster.ThrusterLocation = thruster_dynamics.DoubleVector(
+           [dvRadius*math.cos(i*angleInc), dvRadius*math.sin(i*angleInc), 0.0])
+       newThruster.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+       newThruster.MaxThrust = maxThrust
+       newThruster.MinOnTime = minOnTime
+       newThruster.steadyIsp = DVIsp
+       allThrusters.append(newThruster)
+       i+=1
+ 
     self.DVThrusterDynObject.ThrusterData = \
-        thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3,
-            Thruster4, Thruster5, Thruster6])
+        thruster_dynamics.ThrusterConfigVector(allThrusters)
 
     DVpropCM = [0.0, 0.0, 1.0]
     DVpropMass = 812.3-40 #The 40 comes from the made up ACS number!

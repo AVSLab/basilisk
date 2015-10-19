@@ -40,7 +40,7 @@ TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
 TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
 TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu
 
-TheEMMSim.VehDynObject.baseCoMInit[0] = 0.05
+TheEMMSim.VehDynObject.baseCoMInit[0] = 0.0254*2.0
 TheEMMSim.VehOrbElemObject.CurrentElem.a = -5253.512142852398*1000.0;
 TheEMMSim.VehOrbElemObject.CurrentElem.e = 1.737401863285942;
 TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.07676135277528215;
