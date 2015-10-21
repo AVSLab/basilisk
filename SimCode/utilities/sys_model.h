@@ -17,9 +17,10 @@ public:
     virtual void UpdateState(uint64_t CurrentSimNanos);
     
 public:
-    std::string ModelTag;        /// -- name for the algorithm to base off of
-    uint64_t CallCounts=0;       /// -- Counts on the model being called
-    uint32_t RNGSeed;            /// -- Giving everyone a random seed for ease of MC
+    std::string ModelTag;        //!< -- name for the algorithm to base off of
+    uint64_t CallCounts=0;       //!< -- Counts on the model being called
+    uint32_t RNGSeed;            //!< -- Giving everyone a random seed for ease of MC
+    uint64_t moduleID;           //!< -- Module ID for this module
 };
 
 

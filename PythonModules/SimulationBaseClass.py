@@ -13,6 +13,13 @@ import array
 import xml.etree.ElementTree as ET
 import inspect
 
+class ProcessBaseClass:
+ def __init__(self, procName):
+    self.Name = procName
+    self.processData = sim_model.SysProcess(procName)
+ def addTask(self, newTask):
+    self.processData.addNewTask(newTask.TaskData)
+
 class TaskBaseClass:
  def __init__(self, TaskName, TaskRate, InputDelay = 0, FirstStart=0):
    self.Name = TaskName
@@ -131,6 +138,7 @@ class SimBaseClass:
  def __init__(self):
    self.TotalSim = sim_model.SimModel()
    self.TaskList = []
+   self.procList = []
    self.StopTime = 0
    self.NameReplace = {}
    self.VarLogList = {}
@@ -159,10 +167,16 @@ class SimBaseClass:
    print "Could not find a Task with name: %(TaskName)s"  % \
       {"TaskName": TaskName}
 
+ def CreateNewProcess(self, procName):
+    proc = ProcessBaseClass(procName)
+    self.procList.append(proc)
+    self.TotalSim.addNewProcess(proc.processData)
+    return proc
+
  def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
    Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
    self.TaskList.append(Task)
-   self.TotalSim.AddNewTask(Task.TaskData)
+   return Task
 
  def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
    SplitName = VarName.split('.')
@@ -228,7 +242,7 @@ class SimBaseClass:
 
  def InitializeSimulation(self):
    self.TotalSim.ResetSimulation()
-   self.TotalSim.InitTasks()
+   self.TotalSim.InitSimulation()
    for LogItem, LogValue in self.VarLogList.iteritems():
       LogValue.clearItem()
 
@@ -256,9 +270,9 @@ class SimBaseClass:
   
  def ExecuteSimulation(self):
    self.initializeEventChecks()
-   while(self.TotalSim.CurrentNanos < self.StopTime):
+   while(self.TotalSim.CurrentNanos <= self.StopTime):
       self.checkEvents()
-      self.TotalSim.StepUntilTime(self.TotalSim.NextTaskTime)
+      self.TotalSim.SingleStepProcesses()
       self.RecordLogVars()
 
  def GetLogVariableData(self, LogName):

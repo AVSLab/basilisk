@@ -12,9 +12,7 @@ SimModel::SimModel()
 {
     CurrentNanos = 0;
     NextTaskTime = 0;
-    MessageBucket.IncreaseStorage(20000); //! arbitrary init size, can be deltaed
-    SystemMessaging::GetInstance()->AttachStorageBucket(&MessageBucket);
-    SystemMessaging::GetInstance()->ClearMessageBuffer();
+    
 }
 
 /*! Nothing to destroy really */
@@ -74,74 +72,61 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     
 }
 
-/*! This method is used to place the task from the caller into the correct
- place in the simulation schedule.  The transaction for this model is that
- the caller will set the correct parameters in the calling argument and that
- the simulation will faithfully schedule it.
- @return void
- @param TaskCall Pointer to a struct that contains start time and task handle.
- */
-void SimModel::ScheduleTask(ModelScheduleEntry *TaskCall)
+/*! This method allows the user to attach a process to the simulation for 
+    execution.  Note that for a single time, processes will be executed in 
+    the order they were added in
+*/
+void SimModel::addNewProcess(SysProcess *newProc)
 {
-    
-    //! Begin Method steps
-    std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iteratre through all of the task models to find correct place
-    for(it = TaskModels.begin(); it != TaskModels.end(); it++)
-    {
-        /// - If the next Task starts after new Task, pop it on just prior
-        if(it->NextTaskStart > TaskCall->NextTaskStart)
-        {
-            TaskModels.insert(it, *TaskCall);
-            return;
-        }
-    }
-    //! - Default case is to put the Task at the end of the schedule
-    TaskModels.push_back(*TaskCall);
-}
-
-/*! This method adds a new Task to the system.  The main behavior of the code
- is to take a handle reference and schedule it for its first call.  All other
- subsequent calls are handled by the runtime logic.
- @return void
- @param NewTask Handle to the Task that is being added.
- */
-void SimModel::AddNewTask(SysModelTask *NewTask)
-{
-    ModelScheduleEntry NewEntry;
-    //! Begin Method steps
-    //! - Initialize the entry that is being added and call scheduler.
-    NewEntry.NextTaskStart = NewTask->NextStartTime;
-    NewEntry.TaskUpdatePeriod = NewTask->TaskPeriod;
-    NewEntry.TaskPtr = NewTask;
-    ScheduleTask(&NewEntry);
+    processList.push_back(newProc);
 }
 
 /*! This method goes through all of the Task models that have been added and
  calls those Tasks to init their lower level models.
  @return void
  */
-void SimModel::InitTasks()
+void SimModel::InitSimulation()
 {
-    //! Begin Method steps
-    std::vector<ModelScheduleEntry>::iterator it;
-    //! - Iterate through model list and call the Task model self-initializer
-    for(it = TaskModels.begin(); it != TaskModels.end(); it++)
+
+    std::vector<SysProcess *>::iterator it;
+    for(it=processList.begin(); it!= processList.end(); it++)
     {
-        SysModelTask *LocalTask = it->TaskPtr;
-        LocalTask->SelfInitTaskList();
+        (*it)->selfInitProcess();
     }
-    //! - Iterate through model list and call the Task model cross-initializer
-    for(it = TaskModels.begin(); it != TaskModels.end(); it++)
+    for(it=processList.begin(); it!= processList.end(); it++)
     {
-        SysModelTask *LocalTask = it->TaskPtr;
-        LocalTask->CrossInitTaskList();
+        (*it)->crossInitProcess();
     }
     //! - If a message has been added to logger, link the message IDs
     if(!messageLogs.messagesLinked())
     {
         messageLogs.linkMessages();
     }
+}
+/*! This method steps all of the processes forward to the current time.  It also 
+    increments the internal simulation time appropriately as the simulation 
+    processes are triggered
+    @return void
+*/
+void SimModel::SingleStepProcesses()
+{
+    uint64_t nextCallTime = ~0;
+    std::vector<SysProcess *>::iterator it = processList.begin();
+    while(it!= processList.end())
+    {
+        SysProcess *localProc = (*it);
+        while(localProc->nextTaskTime <= CurrentNanos)
+        {
+            localProc->singleStepNextTask(CurrentNanos);
+        }
+        if(localProc->getNextTime() < nextCallTime)
+        {
+            nextCallTime = localProc->getNextTime();
+        }
+        it++;
+    }
+    CurrentNanos = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
+    messageLogs.logAllMessages();
 }
 
 /*! This method steps the simulation until the specified stop time has been
@@ -154,9 +139,9 @@ void SimModel::StepUntilTime(uint64_t SimStopTime)
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future */
-    while(CurrentNanos < SimStopTime || NextTaskTime <= SimStopTime)
+    while(CurrentNanos <= SimStopTime)
     {
-        SingleStepNextTask();
+        SingleStepProcesses();
     }
 }
 /*! This method is used to push the current simulation forward in time by the
@@ -165,42 +150,14 @@ void SimModel::StepUntilTime(uint64_t SimStopTime)
  simulation time information.
  @return void
  */
-void SimModel::SingleStepNextTask()
-{
-    std::vector<ModelScheduleEntry>::iterator it;
-    //! Begin Method steps
-    //! - Check to make sure that there are models to be called.
-    it = TaskModels.begin();
-    if(it == TaskModels.end())
-    {
-        std::cerr << "Received a step command on sim that has no active Tasks.";
-        std::cerr << std::endl;
-        return;
-    }
-    //! - Call the next scheduled model, and set the time to its start
-    SysModelTask *LocalTask = it->TaskPtr;
-    CurrentNanos = it->NextTaskStart;
-    LocalTask->ExecuteTaskList(CurrentNanos);
-    
-    //! - Erase the current call from the stack and schedule the next call
-    TaskModels.erase(it);
-    AddNewTask(LocalTask);
-    
-    //! - Figure out when we are going to be called next for scheduling purposes
-    it = TaskModels.begin();
-    NextTaskTime = it->NextTaskStart;
-    messageLogs.logAllMessages();
-    
-}
 
 void SimModel::ResetSimulation()
 {
-    std::vector<ModelScheduleEntry>::iterator it;
+    std::vector<SysProcess *>::iterator it;
     //! - Iterate through model list and call the Task model initializer
-    for(it = TaskModels.begin(); it != TaskModels.end(); it++)
+    for(it = processList.begin(); it != processList.end(); it++)
     {
-        it->TaskPtr->ResetTask();
-        it->NextTaskStart = it->TaskPtr->FirstTaskTime;
+        (*it)->resetProcess();
     }
     messageLogs.clearLogs();
     CurrentNanos = 0;

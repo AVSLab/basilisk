@@ -7,10 +7,11 @@ SystemMessaging* SystemMessaging::TheInstance = NULL;
 
 SystemMessaging :: SystemMessaging()
 {
-    MessageStorage = NULL;
+    messageStorage = NULL;
     CreateFails = 0;
     WriteFails = 0;
     ReadFails = 0;
+    nextModuleID = 0;
 }
 
 SystemMessaging::~SystemMessaging()
@@ -26,35 +27,49 @@ SystemMessaging* SystemMessaging::GetInstance()
     return(TheInstance);
 }
 
-void SystemMessaging::AttachStorageBucket(BlankStorage *InputStorage)
+uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 {
-    MessageStorage = InputStorage;
-    MessageStorage->IncreaseStorage(sizeof(uint64_t));
-    return;
+    uint64_t bufferCount;
+    MessageStorageContainer *newContainer = new MessageStorageContainer();
+    newContainer->messageStorage.IncreaseStorage(sizeof(uint64_t)+20000);
+    dataBuffers.push_back(newContainer);
+    bufferCount = dataBuffers.size() - 1;
+    newContainer->bufferName = bufferName;
+    messageStorage = newContainer;
+    SetNumMessages(0);
+    return(bufferCount);
+}
+
+void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
+{
+    std::vector<MessageStorageContainer*>::iterator it;
+    it = dataBuffers.begin();
+    it += bufferUse;
+    messageStorage = (*it);
 }
 
 void SystemMessaging::SetNumMessages(uint64_t MessageCount)
 {
-    if(MessageStorage == NULL)
+    if(messageStorage == NULL)
     {
         std::cerr << "I received a request to set num messages for a NULL buffer";
         std::cerr << std::endl;
         return;
     }
-    memcpy(&(MessageStorage->StorageBuffer[0]), &MessageCount, sizeof(uint64_t));
+    memcpy(&(messageStorage->messageStorage.StorageBuffer[0]), &MessageCount, sizeof(uint64_t));
 }
 
 void SystemMessaging::ClearMessageBuffer()
 {
-    memset(&(MessageStorage->StorageBuffer[0]), 0x0,
-           MessageStorage->GetCurrentSize());
+    memset(&(messageStorage->messageStorage.StorageBuffer[0]), 0x0,
+           messageStorage->messageStorage.GetCurrentSize());
     SetNumMessages(0);
 }
 
 uint64_t SystemMessaging::GetMessageCount()
 {
     uint64_t *CurrentMessageCount = reinterpret_cast<uint64_t*>
-    (&MessageStorage->StorageBuffer[0]);
+    (&messageStorage->messageStorage.StorageBuffer[0]);
     return(*CurrentMessageCount);
 }
 
@@ -62,7 +77,7 @@ uint64_t SystemMessaging::GetCurrentSize()
 {
     uint64_t TotalBufferSize = sizeof(uint64_t); // -- The num-messages count;
     MessageHeaderData *MessHeader = reinterpret_cast<MessageHeaderData *>
-    (&MessageStorage->StorageBuffer[sizeof(uint64_t)]);
+    (&messageStorage->messageStorage.StorageBuffer[sizeof(uint64_t)]);
     uint64_t TotalMessageCount = GetMessageCount();
     uint64_t SingleHeaderSize = sizeof(SingleMessageHeader);
     for(uint64_t i=0; i<TotalMessageCount; i++)
@@ -79,12 +94,20 @@ uint64_t SystemMessaging::GetCurrentSize()
 }
 
 int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
-    uint64_t MaxSize, uint64_t NumMessageBuffers, std::string messageStruct)
+    uint64_t MaxSize, uint64_t NumMessageBuffers, std::string messageStruct,
+    int64_t moduleID)
 {
 	if (FindMessageID(MessageName) >= 0)
 	{
 		std::cerr << "The message " << MessageName << " was created more than once.";
 		std::cerr << std::endl;
+        if(moduleID >= 0)
+        {
+            std::vector<AllowAccessData>::iterator it;
+            it = messageStorage->pubData.begin();
+            it += FindMessageID(MessageName);
+            it->accessList.insert(moduleID);
+        }
 		return(FindMessageID(MessageName));
 	}
     if(NumMessageBuffers <= 0)
@@ -103,8 +126,8 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint64_t InitSize = GetCurrentSize();
     uint64_t StorageRequired = InitSize + sizeof(MessageHeaderData) +
     (MaxSize+sizeof(MessageHeaderData))*NumMessageBuffers;
-    MessageStorage->IncreaseStorage(StorageRequired);
-    uint8_t *MessagingStart = &(MessageStorage->StorageBuffer[GetMessageCount()*
+    messageStorage->messageStorage.IncreaseStorage(StorageRequired);
+    uint8_t *MessagingStart = &(messageStorage->messageStorage.StorageBuffer[GetMessageCount()*
                                                               sizeof(MessageHeaderData) + sizeof(uint64_t)]);
     if(GetMessageCount() > 0)
     {
@@ -140,15 +163,35 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     NewHeader->MaxMessageSize = MaxSize;
     NewHeader->CurrentReadSize = 0;
     NewHeader->CurrentReadTime = 0;
+    NewHeader->previousPublisher = -1;
     NewHeader->StartingOffset = InitSize + sizeof(MessageHeaderData);
-    memset(&(MessageStorage->StorageBuffer[NewHeader->StartingOffset]), 0x0,
+    memset(&(messageStorage->messageStorage.StorageBuffer[NewHeader->StartingOffset]), 0x0,
            NumMessageBuffers*(MaxSize + sizeof(SingleMessageHeader)));
     SetNumMessages(GetMessageCount() + 1);
+    AllowAccessData dataList;
+    messageStorage->subData.push_back(dataList); //!< No subscribers yet
+    dataList.accessList.insert(moduleID);
+    messageStorage->pubData.push_back(dataList);
     return(GetMessageCount() - 1);
 }
 
+int64_t SystemMessaging::subscribeToMessage(std::string messageName,
+    int64_t moduleID)
+{
+    int64_t messageID;
+    std::vector<AllowAccessData>::iterator it;
+    messageID = FindMessageID(messageName);
+    if(moduleID >= 0 && messageID >= 0)
+    {
+        it = messageStorage->subData.begin();
+        it += messageID;
+        it->accessList.insert(moduleID);
+    }
+    return(messageID);
+}
+
 bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
-                                   uint64_t MsgSize, uint8_t *MsgPayload)
+                                   uint64_t MsgSize, uint8_t *MsgPayload, int64_t moduleID)
 {
     if(MessageID >= GetMessageCount())
     {
@@ -158,14 +201,31 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
         return(false);
     }
     MessageHeaderData* MsgHdr = FindMsgHeader(MessageID);
-    if(MsgSize > MsgHdr->MaxMessageSize)
+    if(MsgHdr->previousPublisher != moduleID)
     {
-        std::cerr << "Received a write request that was too large for: " <<
+        std::vector<AllowAccessData>::iterator it;
+        it = messageStorage->pubData.begin();
+        it += MessageID;
+        if(it->accessList.find(MessageID) != it->accessList.end())
+        {
+            MsgHdr->previousPublisher = moduleID;
+        }
+        else
+        {
+            std::cerr << "Received a write request from a module that doesn't publish";
+            std::cerr << " for " << FindMessageName(MessageID)<<std::endl;
+            std::cerr << "You get nothing."<<std::endl;
+            return(false);
+        }
+    }
+    if(MsgSize != MsgHdr->MaxMessageSize)
+    {
+        std::cerr << "Received a write request that was incorrect size for: " <<
         MsgHdr->MessageName<<std::endl;
         WriteFails++;
         return(false);
     }
-    uint8_t *WriteDataBuffer = &(MessageStorage->StorageBuffer[MsgHdr->
+    uint8_t *WriteDataBuffer = &(messageStorage->messageStorage.StorageBuffer[MsgHdr->
                                                                StartingOffset]);
     uint64_t AccessIndex = (MsgHdr->UpdateCounter%MsgHdr->MaxNumberBuffers)*
     (sizeof(SingleMessageHeader) + MsgHdr->MaxMessageSize);
@@ -229,7 +289,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     {
         CurrentIndex += MsgHdr->MaxNumberBuffers;
     }
-    uint8_t *ReadBuffer = &(MessageStorage->
+    uint8_t *ReadBuffer = &(messageStorage->messageStorage.
                             StorageBuffer[MsgHdr->StartingOffset]);
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
     MsgHdr->MaxMessageSize;
@@ -255,7 +315,7 @@ MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID)
     {
         return NULL;
     }
-    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(MessageStorage->
+    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(messageStorage->messageStorage.
                                                      StorageBuffer[sizeof(uint64_t)]));
     MsgHdr += MessageID;
     return(MsgHdr);
@@ -300,4 +360,9 @@ int64_t SystemMessaging::FindMessageID(std::string MessageName)
         }
     }
     return(-1);
+}
+
+uint64_t SystemMessaging::checkoutModuleID()
+{
+    return(nextModuleID++);
 }

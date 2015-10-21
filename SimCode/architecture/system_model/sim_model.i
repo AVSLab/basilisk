@@ -25,6 +25,7 @@ namespace std {
    %template(messsageLogVector) vector<messageLogContainer>;
 }
 %include "sys_model_task.h"
+%include "sys_process.h"
 %include "message_logger.h"
 %include "../messaging/system_messaging.h"
 %include "linearAlgebra.h"
