@@ -12,13 +12,13 @@
  @return void
  @param ConfigData The configuration data associated with the delta-V maneuver guidance
  */
-void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData)
+void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(attCmdOut), "attCmdOut");
+        ConfigData->outputDataName, sizeof(attCmdOut), "attCmdOut", moduleID);
     return;
     
 }
@@ -29,7 +29,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the attitude maneuver guidance
  */
-void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData)
+void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
     ConfigData->inputMPID = FindMessageID(ConfigData->inputMassPropName);
     ConfigData->inputNavID = FindMessageID(ConfigData->inputNavDataName);
@@ -44,7 +44,8 @@ void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData)
  @param ConfigData The configuration data associated with the delta-V maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime)
+void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     double T_Inrtl2Burn[3][3];
     double T_Inrtl2Bdy[3][3];
@@ -91,7 +92,7 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime)
         ConfigData->burnExecuting == 1;
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
-        &ConfigData->attCmd);
+        &ConfigData->attCmd, moduleID);
     
     return;
 }

@@ -9,12 +9,12 @@
  @return void
  @param ConfigData The configuration data associated with the IMU sensor interface
  */
-void SelfInit_imuProcessTelem(IMUConfigData *ConfigData)
+void SelfInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
 {
     
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(IMUOutputData), "IMUOutputData");
+        sizeof(IMUOutputData), "IMUOutputData", moduleID);
     
 }
 
@@ -24,7 +24,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the IMU interface
  */
-void CrossInit_imuProcessTelem(IMUConfigData *ConfigData)
+void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
 {
     uint64_t UnusedClockTime;
     uint32_t ReadSize;
@@ -49,7 +49,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData)
  @param ConfigData The configuration data associated with the IMU interface
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime)
+void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     
     uint64_t UnusedClockTime;
@@ -68,7 +68,7 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime)
               ConfigData->LocalOutput.AngVelBody);
     
     WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUOutputData),
-                 (void*) &(ConfigData->LocalOutput));
+                 (void*) &(ConfigData->LocalOutput), moduleID);
     
     return;
 }

@@ -12,13 +12,13 @@
  @return void
  @param ConfigData The configuration data associated with the attitude maneuver guidance
  */
-void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData)
+void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(attGuidOut), "attGuidOut");
+        sizeof(attGuidOut), "attGuidOut", moduleID);
     return;
     
 }
@@ -29,7 +29,7 @@ void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the attitude maneuver guidance
  */
-void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData)
+void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Find the input IDs for each input message*/
     ConfigData->inputNavID = FindMessageID(ConfigData->inputNavStateName);
@@ -44,7 +44,8 @@ void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData)
  @param ConfigData The configuration data associated with the attitude maneuver guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime)
+void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     attCmdOut localCmd;
     NavStateOut localState;
@@ -113,7 +114,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime)
     ConfigData->attOut.omega_BR);
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
-		(void*)&(ConfigData->attOut));
+		(void*)&(ConfigData->attOut), moduleID);
     
     return;
 }

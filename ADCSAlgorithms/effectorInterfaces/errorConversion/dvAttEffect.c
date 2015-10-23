@@ -13,7 +13,7 @@
  @return void
  @param ConfigData The configuration data associated with the sun safe control
  */
-void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData)
+void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
 {
     uint32_t i;
     /*! Begin method steps */
@@ -22,7 +22,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData)
     {
         ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
             ConfigData->thrGroups[i].outputDataName, sizeof(vehEffectorOut),
-            "vehEffectorOut");
+            "vehEffectorOut", moduleID);
     }
  
     
@@ -34,7 +34,7 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData)
+void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = FindMessageID(ConfigData->inputControlName);
@@ -47,7 +47,8 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData)
  @param ConfigData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime)
+void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
 
     uint64_t ClockTime;
@@ -63,14 +64,14 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime)
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         computeSingleThrustBlock(&(ConfigData->thrGroups[i]), callTime,
-            &cntrRequest);
+            &cntrRequest, moduleID);
     }
     
     return;
 }
 
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-vehControlOut *contrReq)
+vehControlOut *contrReq, uint64_t moduleID)
 {
     double unSortOnTime[MAX_NUM_EFFECTORS];
     effPairs unSortPairs[MAX_NUM_EFFECTORS];
@@ -110,7 +111,7 @@ vehControlOut *contrReq)
         sortPairs[i].onTime;
     }
     WriteMessage(thrData->outputMsgID, callTime, sizeof(vehEffectorOut),
-                 (void*) &(thrData->cmdRequests));
+                 (void*) &(thrData->cmdRequests), moduleID);
 }
 
 void effectorVSort(effPairs *Input, effPairs *Output, size_t dim)

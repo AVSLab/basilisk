@@ -34,7 +34,6 @@ typedef struct {
 
 typedef struct {
     std::string bufferName;     // (-) Name of this message buffer for application access
-    int64_t nextModuleID;      // (-) Next module ID in this communication buffer
     BlankStorage messageStorage; // (-) The storage buffer associated with this module
     std::vector<AllowAccessData> pubData; // (-) Entry of publishers for each message ID
     std::vector<AllowAccessData> subData; // (-) Entry of subscribers for each message ID
@@ -72,6 +71,7 @@ public:
     int64_t subscribeToMessage(std::string messageName, int64_t moduleID);
     uint64_t checkoutModuleID();
     void selectMessageBuffer(uint64_t bufferUse);
+    uint64_t getProcessCount() {return(dataBuffers.size());}
     
     
 private:

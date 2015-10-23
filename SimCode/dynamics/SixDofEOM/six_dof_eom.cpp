@@ -64,7 +64,8 @@ void SixDofEOM::initPlanetStateMessages()
         if(it->outputMsgName.size() > 0)
         {
             it->outputMsgID= SystemMessaging::GetInstance()->CreateNewMessage(
-                it->outputMsgName, sizeof(SpicePlanetState));
+                it->outputMsgName, sizeof(SpicePlanetState), OutputBufferCount,
+                "SpicePlanetState",moduleID);
         }
     }
 }
@@ -131,11 +132,11 @@ void SixDofEOM::SelfInit()
     //! - Write output messages for other modules that use the dynamics state in cross-init
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(OutputStateMessage, sizeof(OutputStateData),
-        OutputBufferCount, "OutputStateData");
+        OutputBufferCount, "OutputStateData", moduleID);
     
     MassPropsMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(OutputMassPropsMsg, sizeof(MassPropsData),
-        OutputBufferCount, "MassPropsData");
+        OutputBufferCount, "MassPropsData", moduleID);
     
     initPlanetStateMessages();
     
@@ -630,7 +631,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(StateOut.TotalAccumDVBdy, AccumDVBdy, 3*sizeof(double));
         StateOut.MRPSwitchCount = MRPSwitchCount;
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-            sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut));
+            sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut), moduleID);
     }
     
     //! - If we have a valid mass props output message ID, copy over internals and write out
@@ -643,7 +644,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(&(massProps.InertiaTensor[0]), &(compI[0][0]), 9*sizeof(double));
         memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
         SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
-            sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps));
+            sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps), moduleID);
     }
     
     for(it = GravData.begin(); it != GravData.end(); it++)
@@ -660,7 +661,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
                it->planetEphemName.size()*sizeof(char));
         SystemMessaging::GetInstance()->
             WriteMessage(it->outputMsgID, CurrentClock, sizeof(SpicePlanetState),
-            reinterpret_cast<uint8_t*> (&localPlanet));
+            reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
     }
     
 }

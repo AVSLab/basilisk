@@ -10,8 +10,8 @@ AlgContain::AlgContain()
     return;
 }
 
-AlgContain::AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t),
-                       void (*SelfPtr)(void*), void (*CrossPtr)(void*))
+AlgContain::AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
+                       void (*SelfPtr)(void*, uint64_t), void (*CrossPtr)(void*, uint64_t))
 {
     DataPtr = DataIn;
     AlgSelfInit = SelfPtr;
@@ -28,7 +28,7 @@ void AlgContain::SelfInit()
 {
     if(AlgSelfInit != NULL)
     {
-        AlgSelfInit(DataPtr);
+        AlgSelfInit(DataPtr, moduleID);
     }
 }
 
@@ -36,7 +36,7 @@ void AlgContain::CrossInit()
 {
     if(AlgCrossInit != NULL)
     {
-        AlgCrossInit(DataPtr);
+        AlgCrossInit(DataPtr, moduleID);
     }
 }
 
@@ -44,6 +44,6 @@ void AlgContain::UpdateState(uint64_t CurrentSimNanos)
 {
     if(AlgUpdate != NULL)
     {
-        AlgUpdate(DataPtr, CurrentSimNanos);
+        AlgUpdate(DataPtr, CurrentSimNanos, moduleID);
     }
 }

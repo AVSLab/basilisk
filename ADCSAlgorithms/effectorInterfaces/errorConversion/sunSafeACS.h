@@ -25,9 +25,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData);
-    void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData);
-    void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime);
+    void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID);
+    void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
+        uint64_t moduleID);
     
 #ifdef __cplusplus
 }

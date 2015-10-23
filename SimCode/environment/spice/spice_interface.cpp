@@ -100,7 +100,7 @@ void SpiceInterface::InitTimeData()
     //! - Create the output time message for SPICE
     TimeOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(OutputTimePort, sizeof(SpiceTimeOutput),
-        OutputBufferCount, "SpiceTimeOutput");
+        OutputBufferCount, "SpiceTimeOutput", moduleID);
     
 }
 
@@ -216,7 +216,7 @@ void SpiceInterface::ComputePlanetData()
             //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
             uint32_t MsgID = SystemMessaging::GetInstance()->
                 CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
-                OutputBufferCount, "SpicePlanetState");
+                OutputBufferCount, "SpicePlanetState", moduleID);
             std::string planetFrame = *it;
             cnmfrm_c(planetFrame.c_str(), CharBufferSize, &frmCode, name, &frmFound);
             NewPlanet.computeOrient = frmFound;

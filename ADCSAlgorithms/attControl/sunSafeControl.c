@@ -13,13 +13,13 @@
  @return void
  @param ConfigData The configuration data associated with the sun safe control
  */
-void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData)
+void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(vehControlOut), "vehControlOut");
+        sizeof(vehControlOut), "vehControlOut", moduleID);
     
 }
 
@@ -29,7 +29,7 @@ void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the sun safe attitude control
  */
-void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData)
+void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = FindMessageID(ConfigData->inputGuidName);
@@ -42,7 +42,8 @@ void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData)
  @param ConfigData The configuration data associated with the sun safe attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t callTime)
+void Update_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     attGuidOut guidCmd;
     uint64_t clockTime;
@@ -60,7 +61,7 @@ void Update_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t callTime)
     v3Copy(Lr, ConfigData->controlOut.accelRequestBody);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
-                 (void*) &(ConfigData->controlOut));
+                 (void*) &(ConfigData->controlOut), moduleID);
     
     return;
 }

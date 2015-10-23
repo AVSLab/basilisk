@@ -14,13 +14,14 @@
  @return void
  @param ConfigData The configuration data associated with the celestial body guidance
  */
-void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData)
+void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
+    uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(attCmdOut), "attCmdOut");
+        ConfigData->outputDataName, sizeof(attCmdOut), "attCmdOut", moduleID);
     return;
     
 }
@@ -31,7 +32,8 @@ void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the attitude maneuver guidance
  */
-void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData)
+void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
+    uint64_t moduleID)
 {
     ConfigData->inputCelID = FindMessageID(ConfigData->inputCelMessName);
     ConfigData->inputNavID = FindMessageID(ConfigData->inputNavDataName);
@@ -53,7 +55,7 @@ void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData)
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
-    uint64_t callTime)
+    uint64_t callTime, uint64_t moduleID)
 {
     uint64_t writeTime;
     uint32_t writeSize;
@@ -94,7 +96,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     C2MRP(&(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
     v3SetZero(ConfigData->attCmd.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
-        &(ConfigData->attCmd));
+        &(ConfigData->attCmd), moduleID);
     
     return;
 }

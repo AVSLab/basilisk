@@ -13,14 +13,14 @@
  @return void
  @param ConfigData The configuration data associated with the sun safe control
  */
-void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData)
+void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrData.outputMsgID = CreateNewMessage(
         ConfigData->thrData.outputDataName, sizeof(vehEffectorOut),
-        "vehEffectorOut");
+        "vehEffectorOut", moduleID);
     
 }
 
@@ -30,7 +30,7 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the sun safe ACS control
  */
-void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData)
+void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = FindMessageID(ConfigData->inputControlName);
@@ -43,7 +43,8 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData)
  @param ConfigData The configuration data associated with the sun safe ACS control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime)
+void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     
     uint64_t ClockTime;
@@ -55,7 +56,7 @@ void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime)
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
                 sizeof(vehControlOut), (void*) &(cntrRequest));
     computeSingleThrustBlock(&(ConfigData->thrData), callTime,
-                             &cntrRequest);
+                             &cntrRequest, moduleID);
     
     return;
 }

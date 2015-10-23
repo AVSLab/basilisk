@@ -51,7 +51,7 @@ void SimpleNav::SelfInit()
     //! - Create a new message for the output simple nav state data
     outputDataID = SystemMessaging::GetInstance()->
         CreateNewMessage(outputNavName, sizeof(NavStateOut), outputBufferCount,
-        "NavStateOut");
+        "NavStateOut", moduleID);
     //! - Initialize the propagation matrix to default values for use in update
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
@@ -154,7 +154,7 @@ void SimpleNav::computeOutput(uint64_t Clock)
     //! - Write the composite information into the output state message.
     SystemMessaging::GetInstance()->
         WriteMessage(outputDataID, Clock, sizeof(NavStateOut),
-                     reinterpret_cast<uint8_t*> (&outState));
+                     reinterpret_cast<uint8_t*> (&outState), moduleID);
 }
 
 /*! This method performs all of the run-time operations for the simple nav model.

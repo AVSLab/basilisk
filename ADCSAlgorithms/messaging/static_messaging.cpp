@@ -19,10 +19,11 @@ void InitializeStorage(uint32_t StorageBytes)
  @param MessageName The name of the message that we are creating
  @param MaxSize The maximum size that a given message can be
  */
-int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct)
+int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct,
+    uint64_t moduleID)
 {
     return(SystemMessaging::GetInstance()->CreateNewMessage(
-        MessageName, MaxSize, 2, MessageStruct));
+        MessageName, MaxSize, 2, MessageStruct, moduleID));
 }
 
 /*! This method writes a new copy of the given message into the system.
@@ -33,10 +34,10 @@ int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruc
  @param MsgPayload A pointer to the message buffer that we are writing
  */
 int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
-                     void *MsgPayload)
+                     void *MsgPayload, uint64_t moduleID)
 {
     return(SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTimeNanos,
-                                                        MsgSize,  reinterpret_cast<uint8_t*> (MsgPayload)));
+        MsgSize,  reinterpret_cast<uint8_t*> (MsgPayload)), moduleID);
 }
 
 /*! This method reads the most recent message buffer from the messaging system

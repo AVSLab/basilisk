@@ -9,7 +9,7 @@
  @return void
  @param ConfigData The configuration data associated with the CSS sensor interface
  */
-void SelfInit_cssProcessTelem(CSSConfigData *ConfigData)
+void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
     /*! - Check to make sure that number of sensors is less than the max*/
@@ -19,7 +19,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData)
     }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(CSSOutputData)*MAX_NUM_CSS_SENSORS, "CSSOutputData");
+        sizeof(CSSOutputData)*MAX_NUM_CSS_SENSORS, "CSSOutputData", moduleID);
     
 }
 
@@ -29,7 +29,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the CSS interface
  */
-void CrossInit_cssProcessTelem(CSSConfigData *ConfigData)
+void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     uint32_t i;
     
@@ -52,7 +52,8 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData)
  @param ConfigData The configuration data associated with the CSS interface
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime)
+void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     uint32_t i, j;
     uint64_t ClockTime;
@@ -113,7 +114,8 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime)
     }
     /*! - Write aggregate output into output message */
     WriteMessage(ConfigData->OutputMsgID, callTime,
-                 MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), (void*) OutputBuffer);
+                 MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), (void*) OutputBuffer,
+                 moduleID);
     
     return;
 }

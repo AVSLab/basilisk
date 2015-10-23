@@ -38,9 +38,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData);
-    void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData);
-    void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime);
+    void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID);
+    void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
+        uint64_t moduleID);
     void computeNewAttMnvr(attMnvrPointConfig *ConfigData, attCmdOut *endState,
     NavStateOut *currState);
     

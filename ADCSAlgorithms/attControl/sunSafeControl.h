@@ -26,9 +26,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData);
-    void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData);
-    void Update_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t callTime);
+    void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData,
+        uint64_t moduleID);
+    void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData,
+        uint64_t moduleID);
+    void Update_sunSafeControl(sunSafeControlConfig *ConfigData,
+        uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

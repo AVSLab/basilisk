@@ -12,13 +12,13 @@
  @return void
  @param ConfigData The configuration data associated with the sun safe guidance
  */
-void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData)
+void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(attGuidOut), "attGuidOut");
+        sizeof(attGuidOut), "attGuidOut", moduleID);
     memset(ConfigData->attOut.intsigma_BR, 0x0, 3*sizeof(double));
     memset(ConfigData->attOut.omega_rB, 0x0, 3*sizeof(double));
     memset(ConfigData->attOut.domega_rB, 0x0, 3*sizeof(double));
@@ -31,7 +31,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the sun safe attitude guidance
  */
-void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData)
+void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->inputMsgID = FindMessageID(ConfigData->inputSunVecName);
@@ -45,7 +45,8 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData)
  @param ConfigData The configuration data associated with the sun safe attitude guidance
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime)
+void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     CSSWlsEstOut sunVecEst;
     uint64_t clockTime;
@@ -76,7 +77,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime)
     }
     v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
-                 (void*) &(ConfigData->attOut));
+                 (void*) &(ConfigData->attOut), moduleID);
     
     return;
 }

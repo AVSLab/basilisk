@@ -41,9 +41,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData);
-    void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData);
-    void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime);
+    void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID);
+    void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
+        uint64_t moduleID);
     int computeWlsmn(int numActiveCss, double *H, double *W,
                      double *y, double x[3]);
     

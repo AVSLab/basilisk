@@ -69,6 +69,7 @@ void messageLogger::linkMessages()
     {
         it->messageID = SystemMessaging::GetInstance()->
         FindMessageID(it->messageName);
+        it->processID = 0;
         //! - Warn the user if linking failed and note that logging won't work for that message
         if(it->messageID < 0)
         {
@@ -101,6 +102,7 @@ void messageLogger::logAllMessages()
         //! - Get the current message header and check to see if it is new and if enough time has elapsed since the last log
         MessageHeaderData* localHeader = SystemMessaging::GetInstance()->
         FindMsgHeader(it->messageID);
+        SystemMessaging::GetInstance()->selectMessageBuffer(it->processID);
         bool bufferNew = it->lastWriteCheck != localHeader->UpdateCounter;
         bufferNew = bufferNew ? (localHeader->CurrentReadTime - it->lastLogTime)
         >= it->writeDelta || it->lastWriteCheck == 0 : bufferNew;

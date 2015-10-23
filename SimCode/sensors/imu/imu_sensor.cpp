@@ -55,7 +55,7 @@ void ImuSensor::SelfInit()
     }
     OutputDataID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataMsg, sizeof(ImuSensorOutput),
-        OutputBufferCount, "ImuSensorOutput");
+        OutputBufferCount, "ImuSensorOutput", moduleID);
 }
 
 void ImuSensor::CrossInit()
@@ -98,7 +98,7 @@ void ImuSensor::WriteOutputs(uint64_t Clock)
     memcpy(LocalOutput.DRFramePlatform, DRFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AngVelPlatform, AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
-                                                 sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput));
+                                                 sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
 
 void ImuSensor::ApplySensorDiscretization(uint64_t CurrentTime)

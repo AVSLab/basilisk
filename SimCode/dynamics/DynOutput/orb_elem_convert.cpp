@@ -40,7 +40,7 @@ void OrbElemConvert::SelfInit()
     
     StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataString, OutputSize, OutputBufferCount,
-        messageType);
+        messageType, moduleID);
     
 }
 
@@ -76,12 +76,12 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(LocalState.r_N, r_N, 3*sizeof(double));
         memcpy(LocalState.v_N, v_N, 3*sizeof(double));
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-                                                     sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&LocalState));
+                                                     sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&LocalState), moduleID);
     }
     else
     {
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-                                                     sizeof(classicElements), reinterpret_cast<uint8_t*> (&CurrentElem));
+                                                     sizeof(classicElements), reinterpret_cast<uint8_t*> (&CurrentElem), moduleID);
     }
     
 }

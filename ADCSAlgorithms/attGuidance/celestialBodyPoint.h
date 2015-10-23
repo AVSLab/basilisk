@@ -28,10 +28,12 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData);
-    void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData);
+    void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
+        uint64_t moduleID);
+    void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
+        uint64_t moduleID);
     void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
-    uint64_t callTime);
+    uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

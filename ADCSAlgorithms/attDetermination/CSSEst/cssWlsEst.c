@@ -9,13 +9,13 @@
  @return void
  @param ConfigData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData)
+void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(CSSWlsEstOut), "CSSWlsEstOut");
+        sizeof(CSSWlsEstOut), "CSSWlsEstOut", moduleID);
     
 }
 
@@ -25,7 +25,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData)
  @return void
  @param ConfigData The configuration data associated with the CSS interface
  */
-void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData)
+void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->InputMsgID = FindMessageID(ConfigData->InputDataName);
@@ -89,7 +89,8 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
  @param ConfigData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime)
+void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
+    uint64_t moduleID)
 {
     
     uint64_t ClockTime;
@@ -156,6 +157,6 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime)
                           ConfigData->OutputData.sHatBdy);
     v3Normalize(ConfigData->OutputData.sHatBdy, ConfigData->OutputData.sHatBdy);
     WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(CSSWlsEstOut),
-                 &(ConfigData->OutputData));
+                 &(ConfigData->OutputData), moduleID);
     return;
 }
