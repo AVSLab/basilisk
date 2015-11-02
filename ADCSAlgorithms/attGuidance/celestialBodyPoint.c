@@ -62,6 +62,8 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     SpicePlanetState secPlanet;
     double secPointVector[3];
     double primPointVector[3];
+	double relVelVector[3];
+	double relPosVector[3];
     double T_Inrtl2Point[3][3];
     double T_Inrtl2Bdy[3][3];
     
@@ -79,8 +81,9 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     }
     else
     {
-        v3Cross(secPlanet.PositionVector, secPlanet.VelocityVector,
-                secPointVector);
+		v3Subtract(navData.vehPosition, primPlanet.PositionVector, relPosVector);
+		v3Subtract(navData.vehVelocity, primPlanet.VelocityVector, relVelVector);
+        v3Cross(relPosVector, relVelVector, secPointVector);
         v3Normalize(secPointVector, secPointVector);
     }
     v3Subtract(primPlanet.PositionVector, navData.vehPosition, primPointVector);
