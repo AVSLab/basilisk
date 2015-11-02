@@ -36,7 +36,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
    self.modeRequest = 'None'
-   dynProc = self.CreateNewProcess("DynamicsProcss")
+   dynProc = self.CreateNewProcess("FSWProcess")
+   dynProc = self.CreateNewProcess("DynamicsProcess")
    dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
    dynProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
    dynProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
