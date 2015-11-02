@@ -1,4 +1,4 @@
-#Import some architectural stuff that we will probably always use
+﻿#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
@@ -41,6 +41,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
    dynProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
    dynProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
+   dynProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)))
+   dynProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)))
    dynProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)))
    dynProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)))
    dynProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)))
@@ -137,6 +139,18 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
        celestialBodyPoint.CrossInit_celestialBodyPoint)
    self.sunPointWrap.ModelTag = "sunPoint"
 
+   self.earthPointData = celestialBodyPoint.celestialBodyPointConfig()
+   self.earthPointWrap = alg_contain.AlgContain(self.earthPointData,
+       celestialBodyPoint.Update_celestialBodyPoint, celestialBodyPoint.SelfInit_celestialBodyPoint,
+       celestialBodyPoint.CrossInit_celestialBodyPoint)
+   self.earthPointWrap.ModelTag = "earthPoint"
+
+   self.marsPointData = celestialBodyPoint.celestialBodyPointConfig()
+   self.marsPointWrap = alg_contain.AlgContain(self.marsPointData,
+       celestialBodyPoint.Update_celestialBodyPoint, celestialBodyPoint.SelfInit_celestialBodyPoint,
+       celestialBodyPoint.CrossInit_celestialBodyPoint)
+   self.marsPointWrap.ModelTag = "marsPoint"
+
    self.InitAllFSWObjects()
 
    self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
@@ -171,33 +185,56 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("sunPointTask", self.sunPointWrap,
        self.sunPointData)
 
+   self.AddModelToTask("earthPointTask", self.earthPointWrap,
+       self.earthPointData)
+
+   self.AddModelToTask("marsPointTask", self.marsPointWrap,
+       self.marsPointData)
+
    self.disableTask("vehicleAttMnvrFSWTask")
    self.disableTask("vehicleDVMnvrFSWTask")
    self.disableTask("vehicleDVPrepFSWTask")
    self.disableTask("sunPointTask")
    self.disableTask("sunSafeFSWTask")
+   self.disableTask("earthPointTask")
+   self.disableTask("marsPointTask")
  
    self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                           ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
                            "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                           "self.enableTask('sunSafeFSWTask')"])
+                           "self.enableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')",
+                           "self.disableTask('marsPointTask')"])
    self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
                          ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False"])
+                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
+                          "self.disableTask('marsPointTask')",  "self.attMnvrPointData.mnvrActive = False"])
+   self.createNewEvent("initiateEarthPoint", int(1E9), True, ["self.modeRequest == 'earthPoint'"],
+                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                          "self.disableTask('sunSafeFSWTask')", "self.enableTask('earthPointTask')",
+                          "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False"])
+   self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
+                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
+                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
+                          "self.enableTask('marsPointTask')",
+                          "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                          ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False",
+                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
+                          "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
                           "self.setEventActivity('startDV', True)"])
    self.createNewEvent("initiateDVMnvr", int(1E9), True, ["self.modeRequest == 'DVMnvr'"],
                          ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
                           "self.disableTask('vehicleDVPrepFSWTask')", "self.enableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.setEventActivity('completeDV', True)"])
+                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", "self.setEventActivity('completeDV', True)"])
    self.createNewEvent("completeDV", int(1E8), False, ["self.dvGuidanceData.burnComplete != 0"],
                     ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
                      "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                     "self.disableTask('sunSafeFSWTask')", "self.attMnvrPointData.mnvrActive = False",
+                     "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
+                     "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
                      "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
@@ -430,6 +467,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
    self.MarsGravBody = six_dof_eom.GravityBodyData()
    self.MarsGravBody.BodyMsgName = "mars_planet_data"
+   self.MarsGravBody.outputMsgName = "mars_display_frame_data"
    self.MarsGravBody.IsCentralBody = False
    self.MarsGravBody.UseJParams = False
    JParams = LoadGravFromFile(MarsGravFile, self.MarsGravBody, JParamsSelect)
@@ -646,6 +684,24 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    TsunVec2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
    SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.sunPointData.TPoint2Bdy)
 
+ def SetearthPoint(self):
+   self.earthPointData.inputNavDataName = "simple_nav_output"
+   self.earthPointData.inputCelMessName = "earth_display_frame_data"
+   self.earthPointData.outputDataName = "att_cmd_output"
+   self.earthPointData.inputSecMessName = "sun_display_frame_data"
+   angSin = math.sin(23.0*math.pi/180.0)
+   angCos = math.cos(23.0*math.pi/180.0)
+   #TsunVec2Body = [angSin, 0.0, -angCos, 0.0, 1.0, 0.0, angCos, 0.0, -angSin]
+   TsunVec2Body = [0.0, angSin, angCos, -0.0, -angCos, -angSin, 1.0, 0.0, 0.0]
+   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.earthPointData.TPoint2Bdy)
+
+ def SetmarsPoint(self):
+   self.marsPointData.inputNavDataName = "simple_nav_output"
+   self.marsPointData.inputCelMessName = "mars_display_frame_data"
+   self.marsPointData.outputDataName = "att_cmd_output"
+   TsunVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.marsPointData.TPoint2Bdy)
+
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
    self.SetSpiceObject()
@@ -668,6 +724,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetdvAttEffect()
    self.SetdvGuidance()
    self.SetsunPoint()
+   self.SetearthPoint()
+   self.SetmarsPoint()
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
 #   i=0
