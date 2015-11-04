@@ -198,50 +198,30 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("marsPointTask", self.marsPointWrap,
        self.marsPointData)
 
-   self.disableTask("vehicleAttMnvrFSWTask")
-   self.disableTask("vehicleDVMnvrFSWTask")
-   self.disableTask("vehicleDVPrepFSWTask")
-   self.disableTask("sunPointTask")
-   self.disableTask("sunSafeFSWTask")
-   self.disableTask("earthPointTask")
-   self.disableTask("marsPointTask")
+   self.fswProc.disableAllTasks()
  
    self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
-                          ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
-                           "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                           "self.enableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')",
-                           "self.disableTask('marsPointTask')"])
+                          ["self.fswProc.disableAllTasks()",
+                           "self.enableTask('sunSafeFSWTask')"])
    self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
-                         ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
-                          "self.disableTask('marsPointTask')",  "self.attMnvrPointData.mnvrActive = False"])
+                         [ "self.fswProc.disableAllTasks()", "self.enableTask('sunPointTask')",
+                           "self.enableTask('vehicleAttMnvrFSWTask')", "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateEarthPoint", int(1E9), True, ["self.modeRequest == 'earthPoint'"],
-                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.enableTask('earthPointTask')",
-                          "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False"])
+                         ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.enableTask('earthPointTask')", "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
-                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
-                          "self.enableTask('marsPointTask')",
-                          "self.attMnvrPointData.mnvrActive = False"])
+                         ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
-                         ["self.disableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.enableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
-                          "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
+                         ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
+                          "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
                           "self.setEventActivity('startDV', True)"])
    self.createNewEvent("initiateDVMnvr", int(1E9), True, ["self.modeRequest == 'DVMnvr'"],
-                         ["self.disableTask('sunPointTask')", "self.disableTask('vehicleAttMnvrFSWTask')",
-                          "self.disableTask('vehicleDVPrepFSWTask')", "self.enableTask('vehicleDVMnvrFSWTask')",
-                          "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", "self.setEventActivity('completeDV', True)"])
+                         ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleDVMnvrFSWTask')",
+                          "self.setEventActivity('completeDV', True)"])
    self.createNewEvent("completeDV", int(1E8), False, ["self.dvGuidanceData.burnComplete != 0"],
-                    ["self.enableTask('sunPointTask')", "self.enableTask('vehicleAttMnvrFSWTask')",
-                     "self.disableTask('vehicleDVPrepFSWTask')", "self.disableTask('vehicleDVMnvrFSWTask')",
-                     "self.disableTask('sunSafeFSWTask')", "self.disableTask('earthPointTask')", 
-                     "self.disableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
+                    ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
+                     "self.attMnvrPointData.mnvrActive = False",
                      "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])

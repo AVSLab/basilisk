@@ -23,6 +23,10 @@ class ProcessBaseClass:
     self.processData.addInterfaceRef(newInt)
  def discoverAllMessages(self):
     self.processData.discoverAllMessages()
+ def disableAllTasks(self):
+    self.processData.disableAllTasks()
+ def enableAllTasks(self):
+    self.processData.enableAllTasks()
 
 class TaskBaseClass:
  def __init__(self, TaskName, TaskRate, InputDelay = 0, FirstStart=0):

@@ -179,3 +179,34 @@ void SysProcess::routeInterfaces()
     }
 }
 
+/*! The name kind of says it all right?  It is a shotgun used to disable all of 
+    a process' tasks.  It is handy for a FSW scheme where you have tons of tasks
+    and you are really only turning one on at a time.
+    @return void
+*/
+void SysProcess::disableAllTasks()
+{
+    //! Begin Method steps
+    std::vector<ModelScheduleEntry>::iterator it;
+    //! - Iteratre through all of the task models to disable them
+    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    {
+        it->TaskPtr->disableTask();
+    }
+}
+/*! The name kind of says it all right?  It is a shotgun used to enable all of
+ a processes tasks.  It is handy for a process that starts out almost entirely 
+ inhibited but you want to turn it all on at once.
+ @return void
+ */
+void SysProcess::enableAllTasks()
+{
+    //! Begin Method steps
+    std::vector<ModelScheduleEntry>::iterator it;
+    //! - Iteratre through all of the task models to disable them
+    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    {
+        it->TaskPtr->enableTask();
+    }
+}
+

@@ -39,6 +39,8 @@ public:
     bool processEnabled() {return processActive;}
     void addInterfaceRef(SysInterface *newInt) {intRefs.push_back(newInt);}
     void routeInterfaces();
+    void disableAllTasks();
+    void enableAllTasks();
     
 public:
     std::vector<SysInterface*> intRefs;         //!< -- Interface references to move data to process
