@@ -9,6 +9,7 @@ SysProcess :: SysProcess()
 {
     nextTaskTime = 0;
     processActive = true;
+    disableProcess();
 }
 /*! A construction option that allows the user to set all Task parameters.
  Note that the only required argument is InputPeriod.
@@ -24,6 +25,7 @@ SysProcess :: SysProcess(std::string messageContainer)
     messageBuffer = SystemMessaging::GetInstance()->
         AttachStorageBucket(messageContainer);
     SystemMessaging::GetInstance()->ClearMessageBuffer();
+    disableProcess();
 }
 
 //! The destructor.  Everything is handled by STL.
@@ -93,6 +95,7 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     std::vector<ModelScheduleEntry>::iterator it;
     //! Begin Method steps
     //! - Check to make sure that there are models to be called.
+    routeInterfaces();
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     it = taskModels.begin();
     if(it == taskModels.end())
@@ -133,6 +136,7 @@ void SysProcess::addNewTask(SysModelTask *newTask)
     localEntry.TaskUpdatePeriod = newTask->TaskPeriod;
     localEntry.NextTaskStart = newTask->NextStartTime;
     scheduleTask(localEntry);
+    enableProcess();
 }
 
 /*! This method is used to place the task from the caller into the correct
@@ -159,5 +163,19 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     }
     //! - Default case is to put the Task at the end of the schedule
     taskModels.push_back(taskCall);
+}
+
+/*! This method is used to ensure that all necessary input messages are routed 
+    from their source buffer to the process' message buffer.  It needs to be 
+    executed prior to dispatching the process' models
+    @return void
+*/
+void SysProcess::routeInterfaces()
+{
+    std::vector<SysInterface *>::iterator it;
+    for(it=intRefs.begin(); it!= intRefs.end(); it++)
+    {
+        (*it)->routeInputs(messageBuffer);
+    }
 }
 

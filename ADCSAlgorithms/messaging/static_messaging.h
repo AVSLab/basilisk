@@ -20,7 +20,8 @@ extern "C" {
                          void *MsgPayload, uint64_t moduleID);
     int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
                         uint32_t MaxBytes, void *MsgPayload);
-    int32_t FindMessageID(char *MessageName);
+    int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
+        int64_t moduleID);
     const char * FindMessageName(uint32_t MessageID);
     
 #ifdef __cplusplus

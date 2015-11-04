@@ -65,10 +65,11 @@ int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize
  @return Returns an integer indicating failure (0) or success (1)
  @param MessageName The name of the message that we want to find the ID for
  */
-int32_t FindMessageID(char *MessageName)
+int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
+    int64_t moduleID)
 {
-    int32_t localMsgID = SystemMessaging::GetInstance()->FindMessageID(
-                            MessageName);
+    int32_t localMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
+        MessageName, messageSize, moduleID);
     if(localMsgID < 0)
     {
         std::cerr << "Warning, failed to find a message to link for: ";

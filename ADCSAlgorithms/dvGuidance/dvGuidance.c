@@ -31,8 +31,9 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
-    ConfigData->inputMPID = FindMessageID(ConfigData->inputMassPropName);
-    ConfigData->inputNavID = FindMessageID(ConfigData->inputNavDataName);
+    /*ConfigData->inputMPID = subscribeToMessage(ConfigData->inputMassPropName, sizeof() <#int64_t moduleID#>)(ConfigData->inputMassPropName);*/
+    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
+        sizeof(NavStateOut), moduleID);
     return;
     
 }

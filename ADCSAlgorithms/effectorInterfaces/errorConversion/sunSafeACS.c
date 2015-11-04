@@ -33,7 +33,8 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = FindMessageID(ConfigData->inputControlName);
+    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
+        sizeof(vehControlOut), moduleID);
     
 }
 

@@ -31,8 +31,10 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     vehicleConfigData LocalConfigData;
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
-    ConfigData->SensorMsgID = FindMessageID(ConfigData->InputDataName);
-    ConfigData->PropsMsgID = FindMessageID(ConfigData->InputPropsName);
+    ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
+        sizeof(IMUOutputData), moduleID);
+    ConfigData->PropsMsgID = subscribeToMessage(ConfigData->InputPropsName,
+        sizeof(vehicleConfigData), moduleID);
     if(ConfigData->PropsMsgID >= 0)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,

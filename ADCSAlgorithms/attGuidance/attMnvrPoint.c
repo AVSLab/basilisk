@@ -32,8 +32,10 @@ void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
 void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Find the input IDs for each input message*/
-    ConfigData->inputNavID = FindMessageID(ConfigData->inputNavStateName);
-    ConfigData->inputCmdID = FindMessageID(ConfigData->inputAttCmdName);
+    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavStateName,
+        sizeof(NavStateOut), moduleID);
+    ConfigData->inputCmdID = subscribeToMessage(ConfigData->inputAttCmdName,
+        sizeof(attCmdOut), moduleID);
     return;
     
 }

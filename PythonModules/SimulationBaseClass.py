@@ -19,6 +19,10 @@ class ProcessBaseClass:
     self.processData = sim_model.SysProcess(procName)
  def addTask(self, newTask):
     self.processData.addNewTask(newTask.TaskData)
+ def addInterfaceRef(self, newInt):
+    self.processData.addInterfaceRef(newInt)
+ def discoverAllMessages(self):
+    self.processData.discoverAllMessages()
 
 class TaskBaseClass:
  def __init__(self, TaskName, TaskRate, InputDelay = 0, FirstStart=0):
@@ -334,7 +338,7 @@ class SimBaseClass:
  def pullMessageLogData(self, varName, indices = [], numRecords = -1):
     splitName = varName.split('.')
     messageID = self.TotalSim.getMessageID(splitName[0])
-    if(messageID < 0):
+    if not(messageID.itemFound):
         print "Failed to pull log due to invalid ID for this message: " + splitName[0]
         return []
     headerData = sim_model.MessageHeaderData()
@@ -351,7 +355,7 @@ class SimBaseClass:
     if moduleFound == '':
         print "Failed to find valid message structure for: " + headerData.messageStruct
         return []
-    messageCount = self.TotalSim.messageLogs.getLogCount(messageID)
+    messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
     resplit = varName.split(splitName[0] + '.')
     bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
     messageCount = messageCount if messageCount > 0 else headerData.UpdateCounter

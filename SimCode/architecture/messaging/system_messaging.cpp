@@ -170,24 +170,60 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     SetNumMessages(GetMessageCount() + 1);
     AllowAccessData dataList;
     messageStorage->subData.push_back(dataList); //!< No subscribers yet
-    dataList.accessList.insert(moduleID);
+    if(moduleID >= 0)
+    {
+        dataList.accessList.insert(moduleID);
+    }
     messageStorage->pubData.push_back(dataList);
     return(GetMessageCount() - 1);
 }
 
 int64_t SystemMessaging::subscribeToMessage(std::string messageName,
-    int64_t moduleID)
+    uint64_t messageSize, int64_t moduleID)
 {
     int64_t messageID;
     std::vector<AllowAccessData>::iterator it;
     messageID = FindMessageID(messageName);
-    if(moduleID >= 0 && messageID >= 0)
+    if(messageID < 0)
+    {
+        messageID = CreateNewMessage(messageName, messageSize, 2);
+    }
+    if(moduleID >= 0)
     {
         it = messageStorage->subData.begin();
         it += messageID;
         it->accessList.insert(moduleID);
     }
     return(messageID);
+}
+
+messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
+{
+    int64_t messageID;
+    
+    messageIdentData dataFound;
+    memset(&dataFound, 0x0, sizeof(messageIdentData));
+    std::vector<MessageStorageContainer *>::iterator it;
+    for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
+    {
+        messageStorage = (*it);
+        messageID = FindMessageID(messageName);
+        if(messageID < 0)
+        {
+            continue;
+        }
+        std::vector<AllowAccessData>::iterator pubIt;
+        pubIt=messageStorage->pubData.begin() + messageID;
+        dataFound.itemFound = true;
+        dataFound.bufferName = messageStorage->bufferName;
+        dataFound.processBuffer = it - dataBuffers.begin();
+        dataFound.itemID = messageID;
+        if(pubIt->accessList.size() > 0)
+        {
+            return(dataFound);
+        }
+    }
+    return(dataFound);
 }
 
 bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
@@ -365,4 +401,35 @@ int64_t SystemMessaging::FindMessageID(std::string MessageName)
 uint64_t SystemMessaging::checkoutModuleID()
 {
     return(nextModuleID++);
+}
+
+int64_t SystemMessaging::findMessageBuffer(std::string bufferName)
+{
+    std::vector<MessageStorageContainer *>::iterator it;
+    for(it = dataBuffers.begin(); it!= dataBuffers.end(); it++)
+    {
+        MessageStorageContainer *localContainer = (*it);
+        if(localContainer->bufferName == bufferName)
+        {
+            return(it - dataBuffers.begin());
+        }
+    }
+    return(-1);
+}
+
+std::set<std::string> SystemMessaging::getUnpublishedMessages()
+{
+    std::set<std::string> unpublishedList;
+    std::vector<AllowAccessData>::iterator it;
+    for(it=messageStorage->pubData.begin(); it!=messageStorage->pubData.end();
+        it++)
+    {
+        if(it->accessList.size() <= 0)
+        {
+            std::string unknownPub = SystemMessaging::GetInstance()->
+            FindMessageName(it - messageStorage->pubData.begin());
+            unpublishedList.insert(unknownPub);
+        }
+    }
+    return(unpublishedList);
 }

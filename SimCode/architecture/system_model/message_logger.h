@@ -33,9 +33,9 @@ public:
     void linkMessages();
     bool messagesLinked() {return allLogsLinked;} //!< Getter for link success
     void logAllMessages();
-    bool readLog(int64_t messageID, SingleMessageHeader *dataHeader,
+    bool readLog(messageIdentData & messageID, SingleMessageHeader *dataHeader,
                  uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset=0);
-    uint64_t getLogCount(int64_t messageID);
+    uint64_t getLogCount(int64_t processID, int64_t messageID);
     void clearLogs();
     
 public:

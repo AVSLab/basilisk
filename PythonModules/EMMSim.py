@@ -36,16 +36,22 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
    self.modeRequest = 'None'
-   dynProc = self.CreateNewProcess("FSWProcess")
-   dynProc = self.CreateNewProcess("DynamicsProcess")
-   dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
-   dynProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)))
-   dynProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)))
+   self.fswProc = self.CreateNewProcess("FSWProcess")
+   self.dynProc = self.CreateNewProcess("DynamicsProcess")
+   self.dyn2FSWInterface = sim_model.SysInterface()
+   self.fsw2DynInterface = sim_model.SysInterface()
+   self.dyn2FSWInterface.addNewInterface("DynamicsProcess", "FSWProcess")
+   self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
+   self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
+   self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+   self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
+   self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)))
+   self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)))
    self.LocalConfigData = vehicleConfigData.vehicleConfigData()
    self.SpiceObject = spice_interface.SpiceInterface()
    self.InitCSSHeads()
@@ -72,6 +78,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("DynamicsTask", self.VehDynObject)
    self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
    self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
+   #self.AddModelToTask("DummyThrusterTask", self.ACSThrusterDynObject)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -239,10 +246,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
 
+ def InitializeSimulation(self):
+   SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
+   self.dyn2FSWInterface.discoverAllMessages()
+   self.fsw2DynInterface.discoverAllMessages()
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
    SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
-   self.TotalSim.CreateNewMessage("adcs_config_data", 8*9+4, 2)
+   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2)
    self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -606,7 +617,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds"
    self.sunSafeACSData.thrData.minThrustRequest = 0.1
    self.sunSafeACSData.thrData.numEffectors = 8
-   self.sunSafeACSData.thrData.maxNumCmds = 1
+   self.sunSafeACSData.thrData.maxNumCmds = 2
    onTimeMap = [-1.0, 1.0, 1.0, 
                  -1.0, -1.0, -1.0,
                  1.0, -1.0, 1.0,

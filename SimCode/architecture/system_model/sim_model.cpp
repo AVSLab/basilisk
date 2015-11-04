@@ -38,14 +38,14 @@ void SimModel::PrintSimulatedMessageData()
 uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 void *MessageData, VarAccessType logType, uint64_t LatestOffset)
 {
-    int64_t MessageID;
+    messageIdentData MessageID;
     SingleMessageHeader DataHeader;
     
     //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->FindMessageID(MessageName);
+    MessageID = SystemMessaging::GetInstance()->messagePublishSearch(MessageName);
     //! - If we got an invalid message ID back, alert the user and quit
-    if(MessageID < 0)
+    if(!MessageID.itemFound)
     {
         std::cerr << "You requested a message name: " << MessageName<<std::endl;
         std::cerr << "That message does not exist."<<std::endl;
@@ -55,7 +55,9 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     switch(logType)
     {
         case messageBuffer:
-            SystemMessaging::GetInstance()->ReadMessage(MessageID, &DataHeader,
+            SystemMessaging::GetInstance()->
+                selectMessageBuffer(MessageID.processBuffer);
+            SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader,
                                                         MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
             break;
         case logBuffer:
@@ -115,13 +117,16 @@ void SimModel::SingleStepProcesses()
     while(it!= processList.end())
     {
         SysProcess *localProc = (*it);
-        while(localProc->nextTaskTime <= CurrentNanos)
+        if(localProc->processEnabled())
         {
-            localProc->singleStepNextTask(CurrentNanos);
-        }
-        if(localProc->getNextTime() < nextCallTime)
-        {
-            nextCallTime = localProc->getNextTime();
+            while(localProc->nextTaskTime <= CurrentNanos)
+            {
+                localProc->singleStepNextTask(CurrentNanos);
+            }
+            if(localProc->getNextTime() < nextCallTime)
+            {
+                nextCallTime = localProc->getNextTime();
+            }
         }
         it++;
     }
@@ -170,11 +175,23 @@ void SimModel::ResetSimulation()
  @param MessageName String name for the message we are querying
  @param MessageSize Maximum size of the message that we can pull
  @param NumBuffers The count of message buffers to create*/
-void SimModel::CreateNewMessage(std::string MessageName, uint64_t MessageSize,
-                                uint64_t NumBuffers, std::string messageStruct)
+void SimModel::CreateNewMessage(std::string processName, std::string MessageName,
+    uint64_t MessageSize, uint64_t NumBuffers, std::string messageStruct)
 {
-    SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize,
+    int64_t processID = SystemMessaging::GetInstance()->
+        findMessageBuffer(processName);
+    if(processID >= 0)
+    {
+        SystemMessaging::GetInstance()->selectMessageBuffer(processID);
+        SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize,
                                                      NumBuffers, messageStruct);
+    }
+    else
+    {
+        std::cerr << "You tried to create a message in a process that doesn't exist.";
+        std::cerr << "  No dice."<<std::endl;
+    }
+        
 }
 
 /*! This method exists to provide a hook into the messaging system for writing
@@ -187,19 +204,22 @@ void SimModel::CreateNewMessage(std::string MessageName, uint64_t MessageSize,
 void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
                                 uint64_t ClockTime, void *MessageData)
 {
-    int64_t MessageID;
+    messageIdentData MessageID;
     
     //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
-    MessageID = SystemMessaging::GetInstance()->FindMessageID(MessageName);
+    //! - Note that if you are trying to write  a shared message with no publisher things will get weird
+    MessageID = SystemMessaging::GetInstance()->
+        messagePublishSearch(MessageName);
     //! - If we got an invalid message ID back, alert the user and quit
-    if(MessageID < 0)
+    if(!MessageID.itemFound)
     {
         std::cerr << "You requested a message name: " << MessageName<<std::endl;
         std::cerr << "That message does not exist."<<std::endl;
         return;
     }
-    SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTime,
+    SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
+    SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
                                                  MessageSize, reinterpret_cast<uint8_t*> (MessageData));
 }
 /*! This method functions as a pass-through to the message logging structure
@@ -244,10 +264,11 @@ std::string SimModel::getMessageName(uint64_t messageID)
 void SimModel::populateMessageHeader(std::string messageName,
                            MessageHeaderData* headerOut)
 {
-    uint64_t messageID = SystemMessaging::GetInstance()->
-        FindMessageID(messageName);
+    messageIdentData messageID = SystemMessaging::GetInstance()->
+        messagePublishSearch(messageName);
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
     MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
-        FindMsgHeader(messageID);
+        FindMsgHeader(messageID.itemID);
     memcpy(headerOut, locHeader, sizeof(MessageHeaderData));
 }
 
@@ -256,8 +277,9 @@ void SimModel::populateMessageHeader(std::string messageName,
     @return int64_t ID of the message associated with messageName
     @param messageName The name of the message that you want the ID for
 */
-int64_t SimModel::getMessageID(std::string messageName)
+messageIdentData SimModel::getMessageID(std::string messageName)
 {
-    return(SystemMessaging::GetInstance()->
-           FindMessageID(messageName));
+    messageIdentData messageID = SystemMessaging::GetInstance()->
+    messagePublishSearch(messageName);
+    return(messageID);
 }

@@ -49,7 +49,10 @@ void OrbElemConvert::SelfInit()
  */
 void OrbElemConvert::CrossInit()
 {
-    StateInMsgID = SystemMessaging::GetInstance()->FindMessageID(StateString);
+    uint64_t inputSize = Elements2Cart ? sizeof(classicElements) :
+        sizeof(OutputStateData);
+    StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
+                                                                      StateString, inputSize, moduleID);
     if(StateInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";

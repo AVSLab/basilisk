@@ -28,7 +28,8 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->InputMsgID = FindMessageID(ConfigData->InputDataName);
+    ConfigData->InputMsgID = subscribeToMessage(ConfigData->InputDataName,
+        MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), moduleID);
     
 }
 

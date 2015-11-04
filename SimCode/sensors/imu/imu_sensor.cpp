@@ -60,9 +60,10 @@ void ImuSensor::SelfInit()
 
 void ImuSensor::CrossInit()
 {
-    InputStateID = SystemMessaging::GetInstance()->FindMessageID(
-                                                                 InputStateMsg);
-    InputMassID = SystemMessaging::GetInstance()->FindMessageID(InputMassMsg);
+    InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
+        sizeof(OutputStateData), moduleID);
+    InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
+        sizeof(MassPropsData), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";

@@ -117,10 +117,11 @@ bool CoarseSunSensor::SpacecraftIlluminated()
 
 bool CoarseSunSensor::LinkMessages()
 {
-    InputSunID = SystemMessaging::GetInstance()->FindMessageID(
-                                                               InputSunMsg);
-    InputStateID = SystemMessaging::GetInstance()->FindMessageID(
-                                                                 InputStateMsg);
+    InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
+        sizeof(SpicePlanetState), moduleID);
+    InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
+        sizeof(OutputStateData), moduleID);
+        
     if(InputSunID >= 0 && InputStateID >= 0)
     {
         return(true);

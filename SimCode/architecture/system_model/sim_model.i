@@ -1,6 +1,7 @@
 %module sim_model
 %{
    #include "sim_model.h"
+   #include "sys_interface.h"
    #include "utilities/linearAlgebra.h"
    #include "utilities/rigidBodyKinematics.h"
 %}
@@ -26,6 +27,7 @@ namespace std {
 }
 %include "sys_model_task.h"
 %include "sys_process.h"
+%include "sys_interface.h"
 %include "message_logger.h"
 %include "../messaging/system_messaging.h"
 %include "linearAlgebra.h"

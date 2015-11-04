@@ -89,7 +89,7 @@ void SimpleNav::CrossInit()
     //! Begin method steps
     //! - Obtain the ID associated with the input state name and alert if not found.
     inputStateID = SystemMessaging::GetInstance()->
-        FindMessageID(inputStateName);
+    subscribeToMessage(inputStateName, sizeof(OutputStateData), moduleID);
     if(inputStateID < 0)
     {
         std::cerr << "Warning: input state message name: " << inputStateName;
@@ -97,7 +97,7 @@ void SimpleNav::CrossInit()
     }
     //! - Obtain the ID associated with the input Sun name and alert if not found.
     inputSunID =SystemMessaging::GetInstance()->
-    FindMessageID(inputSunName);
+    subscribeToMessage(inputSunName, sizeof(SpicePlanetState), moduleID);
     if(inputSunID < 0)
     {
         std::cerr << "Warning: input Sun message name: " << inputSunName;

@@ -2,6 +2,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
+#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include <cstring>
 #include <iostream>
 
@@ -57,7 +58,8 @@ void ThrusterDynamics::CrossInit()
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
-    CmdsInMsgID = SystemMessaging::GetInstance()->FindMessageID(InputCmds);
+    CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
+    MAX_NUM_EFFECTORS*sizeof(ThrustCmdStruct), moduleID);
     if(CmdsInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";

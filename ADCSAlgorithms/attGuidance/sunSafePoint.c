@@ -34,8 +34,10 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->inputMsgID = FindMessageID(ConfigData->inputSunVecName);
-    ConfigData->imuMsgID = FindMessageID(ConfigData->inputIMUDataName);
+    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputSunVecName,
+        sizeof(CSSWlsEstOut), moduleID);
+    ConfigData->imuMsgID = subscribeToMessage(ConfigData->inputIMUDataName,
+        sizeof(IMUOutputData), moduleID);
     
 }
 

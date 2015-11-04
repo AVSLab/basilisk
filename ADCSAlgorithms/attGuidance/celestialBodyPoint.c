@@ -35,12 +35,15 @@ void SelfInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
 void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     uint64_t moduleID)
 {
-    ConfigData->inputCelID = FindMessageID(ConfigData->inputCelMessName);
-    ConfigData->inputNavID = FindMessageID(ConfigData->inputNavDataName);
+    ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
+        sizeof(SpicePlanetState), moduleID);
+    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
+        sizeof(NavStateOut), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
-        ConfigData->inputSecID = FindMessageID(ConfigData->inputSecMessName);
+        ConfigData->inputSecID = subscribeToMessage(ConfigData->inputSecMessName,
+            sizeof(SpicePlanetState), moduleID);
     }
     return;
     
@@ -70,7 +73,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     double T_Inrtl2Bdy[3][3];
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(IMUOutputData), &navData);
+                sizeof(NavStateOut), &navData);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(SpicePlanetState), &primPlanet);
     if(ConfigData->inputSecID >= 0)

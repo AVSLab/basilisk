@@ -32,7 +32,8 @@ void SelfInit_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t moduleID
 void CrossInit_sunSafeControl(sunSafeControlConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = FindMessageID(ConfigData->inputGuidName);
+    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputGuidName,
+        sizeof(attGuidOut), moduleID);
     
 }
 

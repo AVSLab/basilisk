@@ -39,6 +39,13 @@ typedef struct {
     std::vector<AllowAccessData> subData; // (-) Entry of subscribers for each message ID
 }MessageStorageContainer;
 
+typedef struct {
+    std::string bufferName;     // (-) String associated with the message buffer
+    uint64_t processBuffer;     // (-) Buffer selection for this set of msg
+    uint64_t itemID;            // (-) ID associated with request
+    bool itemFound;             // (-) Indicator of whether the buffer was found
+}messageIdentData;
+
 #ifdef _WIN32
 class __declspec( dllexport) SystemMessaging
 #else
@@ -68,10 +75,14 @@ public:
     void PrintMessageStats(uint64_t MessageID);
     std::string FindMessageName(uint64_t MessageID);
     int64_t FindMessageID(std::string MessageName);
-    int64_t subscribeToMessage(std::string messageName, int64_t moduleID);
+    int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
+        int64_t moduleID);
     uint64_t checkoutModuleID();
     void selectMessageBuffer(uint64_t bufferUse);
     uint64_t getProcessCount() {return(dataBuffers.size());}
+    messageIdentData messagePublishSearch(std::string messageName);
+    int64_t findMessageBuffer(std::string bufferName);
+    std::set<std::string> getUnpublishedMessages();
     
     
 private:

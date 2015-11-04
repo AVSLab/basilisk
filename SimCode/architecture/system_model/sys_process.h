@@ -5,6 +5,7 @@
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
+#include "architecture/system_model/sys_interface.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -35,8 +36,12 @@ public:
     std::string getProcessName() { return(processName);}
     uint64_t getNextTime() { return(nextTaskTime);}
     void singleStepNextTask(uint64_t currentNanos);
+    bool processEnabled() {return processActive;}
+    void addInterfaceRef(SysInterface *newInt) {intRefs.push_back(newInt);}
+    void routeInterfaces();
     
 public:
+    std::vector<SysInterface*> intRefs;         //!< -- Interface references to move data to process
     std::vector<ModelScheduleEntry> taskModels; //!< -- Array that has pointers to all GNC laws
     uint64_t messageBuffer;                     //!< -- Message buffer for data
     uint64_t nextTaskTime;                      //!< ns time for the next Task

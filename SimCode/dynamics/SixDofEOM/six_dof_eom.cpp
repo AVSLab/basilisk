@@ -155,8 +155,8 @@ void SixDofEOM::CrossInit()
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
-        it->BodyMsgID = SystemMessaging::GetInstance()->FindMessageID(
-                                                                      it->BodyMsgName);
+        it->BodyMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
+            it->BodyMsgName, sizeof(SpicePlanetState), moduleID);
         if(it->BodyMsgID < 0)
         {
             std::cerr << "WARNING: Did not find a valid message with name: ";

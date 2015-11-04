@@ -42,7 +42,8 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
     /*! - Loop over the number of sensors and find IDs for each one */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        ConfigData->SensorMsgIDs[i] = FindMessageID(ConfigData->SensorList[i].SensorMsgName);
+        ConfigData->SensorMsgIDs[i] = subscribeToMessage(
+            ConfigData->SensorList[i].SensorMsgName, sizeof(double), moduleID);
     }
 }
 

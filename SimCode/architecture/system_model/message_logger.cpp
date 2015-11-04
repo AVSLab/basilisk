@@ -65,20 +65,22 @@ void messageLogger::linkMessages()
     std::vector<messageLogContainer>::iterator it;
     //! - Set the linker indicator to good and only falsify it if we don't find a message
     allLogsLinked = true;
+    messageIdentData messageData;
     for(it=logData.begin(); it != logData.end(); it++)
     {
-        it->messageID = SystemMessaging::GetInstance()->
-        FindMessageID(it->messageName);
-        it->processID = 0;
+        messageData = SystemMessaging::GetInstance()->
+        messagePublishSearch(it->messageName);
+        if(messageData.itemFound)
+        {
+            it->processID = messageData.processBuffer;
+            it->messageID = messageData.itemID;
+            it->messageBuffer.IncreaseStorage(initBufferSize);
+        }
         //! - Warn the user if linking failed and note that logging won't work for that message
-        if(it->messageID < 0)
+        else
         {
             std::cout << "Warning, failed to find message: " << it->messageName;
             std::cout << std::endl << "Disabling logging for it"<<std::endl;
-        }
-        else
-        {
-            it->messageBuffer.IncreaseStorage(initBufferSize);
         }
     }
 }
@@ -100,9 +102,9 @@ void messageLogger::logAllMessages()
             continue;
         }
         //! - Get the current message header and check to see if it is new and if enough time has elapsed since the last log
+        SystemMessaging::GetInstance()->selectMessageBuffer(it->processID);
         MessageHeaderData* localHeader = SystemMessaging::GetInstance()->
         FindMsgHeader(it->messageID);
-        SystemMessaging::GetInstance()->selectMessageBuffer(it->processID);
         bool bufferNew = it->lastWriteCheck != localHeader->UpdateCounter;
         bufferNew = bufferNew ? (localHeader->CurrentReadTime - it->lastLogTime)
         >= it->writeDelta || it->lastWriteCheck == 0 : bufferNew;
@@ -130,7 +132,7 @@ void messageLogger::logAllMessages()
         }
     }
 }
-bool messageLogger::readLog(int64_t messageID, SingleMessageHeader *dataHeader,
+bool messageLogger::readLog(messageIdentData & messageID, SingleMessageHeader *dataHeader,
                             uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset)
 {
     //! Begin  method steps
@@ -139,7 +141,8 @@ bool messageLogger::readLog(int64_t messageID, SingleMessageHeader *dataHeader,
     SingleMessageHeader *headPtr;
     for(it=logData.begin(); it != logData.end(); it++)
     {
-        if(it->messageID != messageID)
+        if(it->messageID != messageID.itemID ||
+            it->processID != messageID.processBuffer)
         {
             continue;
         }
@@ -165,7 +168,7 @@ bool messageLogger::readLog(int64_t messageID, SingleMessageHeader *dataHeader,
     return false;
 }
 
-uint64_t messageLogger::getLogCount(int64_t messageID)
+uint64_t messageLogger::getLogCount(int64_t processID, int64_t messageID)
 {
     std::vector<messageLogContainer>::iterator it;
     
@@ -173,7 +176,7 @@ uint64_t messageLogger::getLogCount(int64_t messageID)
 
     for(it=logData.begin(); it != logData.end(); it++)
     {
-        if(it->messageID != messageID)
+        if(it->messageID != messageID || it->processID != processID)
         {
             continue;
         }
