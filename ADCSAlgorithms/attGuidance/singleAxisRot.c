@@ -53,7 +53,28 @@ void Update_singleAxisRot(singleAxisRotConfig *ConfigData,
 {
     uint64_t writeTime;
     uint32_t writeSize;
+	double currMnvrTime;
+	double bdyPRV[3];
+	double bdyMRP[3];
+	attCmdOut baseCmd;
+
+	ReadMessage(ConfigData->inputAttID, &writeTime, &writeSize,
+		sizeof(attCmdOut), &baseCmd);
     
+	if (ConfigData->mnvrStartTime == 0)
+	{
+		ConfigData->mnvrStartTime = callTime;
+	}
+
+	currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
+	v3Scale(currMnvrTime, ConfigData->rotVector, bdyPRV);
+	PRV2MRP(bdyPRV, bdyMRP);
+	addMRP(baseCmd.sigma_BR, bdyMRP, ConfigData->attCmd.sigma_BR);
+	v3SetZero(ConfigData->attCmd.omega_BR);
+
+	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
+		&(ConfigData->attCmd), moduleID);
+
     return;
 }
 

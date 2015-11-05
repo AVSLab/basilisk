@@ -15,6 +15,7 @@ typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char inputAttCmdName[MAX_STAT_MSG_LENGTH];/*<! The name of the incoming att cmd message*/
     double rotVector[3];     /*!< (r/s) The vector we are rotating about*/
+	uint64_t mnvrStartTime;  /*! (ns) The time that the attitude maneuver started*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body command message*/
     int32_t inputAttID;       /*!< (-) ID for the incoming attitude command message*/
     attCmdOut attCmd;       /*!< (-) Output attitude command data to send*/
