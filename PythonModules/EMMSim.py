@@ -78,7 +78,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("DynamicsTask", self.VehDynObject)
    self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
    self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
-   #self.AddModelToTask("DummyThrusterTask", self.ACSThrusterDynObject)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
