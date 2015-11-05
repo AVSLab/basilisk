@@ -54,6 +54,9 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     double burnY[3];
     double burnAccum[3];
     double dvExecuteMag;
+	double burnTime;
+	double rotPRV[3];
+	double rotDCM[3][3];
     uint64_t writeTime;
     uint32_t writeSize;
     NavStateOut navData;
@@ -64,16 +67,22 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     ConfigData->dvMag = v3Norm(ConfigData->dvInrtlCmd);
     v3Normalize(ConfigData->dvInrtlCmd, dvUnit);
     v3Copy(dvUnit, T_Inrtl2Burn[0]);
-    v3Cross(dvUnit, ConfigData->desiredOffAxis, burnY);
+    v3Cross(ConfigData->dvRotVect, dvUnit, burnY);
     v3Normalize(burnY, T_Inrtl2Burn[1]);
     v3Cross(T_Inrtl2Burn[0], T_Inrtl2Burn[1], T_Inrtl2Burn[2]);
     v3Normalize(T_Inrtl2Burn[2], T_Inrtl2Burn[2]);
-    m33MultM33(ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
-    C2MRP(&T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
-    v3SetZero(ConfigData->attCmd.omega_BR);
+
+	burnTime = callTime - ConfigData->burnStartTime;
+	v3Scale(burnTime, ConfigData->dvRotVect, rotPRV);
+	PRV2C(rotPRV, rotDCM);
+	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
+
+	m33MultM33(ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
+	C2MRP(&T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
+	v3SetZero(ConfigData->attCmd.omega_BR);
     
     v3SetZero(burnAccum);
-    if((ConfigData->burnExecuting == 0 && callTime > ConfigData->burnStartTime)
+    if((ConfigData->burnExecuting == 0 && burnTime >= 0.0)
         && ConfigData->burnComplete != 1)
     {
         ConfigData->burnExecuting = 1;

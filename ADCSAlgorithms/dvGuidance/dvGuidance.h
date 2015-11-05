@@ -17,10 +17,10 @@ typedef struct {
     char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*<! The name of the incoming attitude command*/
     char inputMassPropName[MAX_STAT_MSG_LENGTH];/*<! The name of the mass properties message*/
     double dvInrtlCmd[3];    /*!< (m) The inertial DV we are going to execute*/
-    double desiredOffAxis[3];/*!< (-) Arbitrary constraint to hold during DV*/
     double Tburn2Bdy[9];     /*!< (-) transformation from burn frame to body*/
     double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
     double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
+	double dvRotVect[3];     /*! < (-) Rotation vector for the DV maneuver */
     uint64_t burnStartTime;  /*!< (ns) Vehicle clock time to start the burn at*/
     uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/
     uint32_t burnComplete;   /*!< (-) Flag indicating that burn has completed successfully*/
