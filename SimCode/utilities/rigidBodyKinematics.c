@@ -3708,6 +3708,12 @@ void PRV2C(double *q, double C[3][3])
     double sp;
     double d1;
     
+    if(v3Norm(q) == 0.0)
+    {
+        m33SetIdentity(C);
+        return;
+    }
+    
     q0 = sqrt(v3Dot(q, q));
     q1 = q[0] / q0;
     q2 = q[1] / q0;
