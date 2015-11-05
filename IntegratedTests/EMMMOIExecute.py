@@ -69,12 +69,18 @@ TheEMMSim.VehOrbElemObject.CurrentElem.f = 0.0
 TheEMMSim.VehOrbElemObject.Elements2Cartesian()
 posArray = numpy.array([PosVec[0], PosVec[1], PosVec[2]])
 velArray = numpy.array([VelVec[0], VelVec[1], VelVec[2]])
+hVec = numpy.cross(posArray, velArray)
+hVec = hVec/numpy.linalg.norm(hVec)
 
-dvCmd = velArray*-1.0
+vStartBurn = numpy.array([4341.2071605098472,-920.87582716674796,-280.6012005272342])
+#dvCmd = velArray*-1.0
+dvCmd = vStartBurn*-1.0
 dvCmd = dvCmd/numpy.linalg.norm(dvCmd)
-dvCmd *= 1095.0
+dvCmd *= 1050.0
 print tmT
 SimulationBaseClass.SetCArray(dvCmd, 'double', TheEMMSim.dvGuidanceData.dvInrtlCmd)
+SimulationBaseClass.SetCArray(hVec, 'double', TheEMMSim.dvGuidanceData.dvRotAxis)
+TheEMMSim.dvGuidanceData.dvRotMag = 0.0004048673159899027
 TheEMMSim.dvGuidanceData.burnStartTime = int((int(tmT - 2.0/3.0*totalBurnTime))*1E9)
 print TheEMMSim.dvGuidanceData.burnStartTime*1.0E-9
 

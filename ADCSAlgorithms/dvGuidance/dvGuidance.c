@@ -67,13 +67,13 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     ConfigData->dvMag = v3Norm(ConfigData->dvInrtlCmd);
     v3Normalize(ConfigData->dvInrtlCmd, dvUnit);
     v3Copy(dvUnit, T_Inrtl2Burn[0]);
-    v3Cross(ConfigData->dvRotVect, dvUnit, burnY);
+    v3Cross(ConfigData->dvRotAxis, dvUnit, burnY);
     v3Normalize(burnY, T_Inrtl2Burn[1]);
     v3Cross(T_Inrtl2Burn[0], T_Inrtl2Burn[1], T_Inrtl2Burn[2]);
     v3Normalize(T_Inrtl2Burn[2], T_Inrtl2Burn[2]);
 
-	burnTime = callTime - ConfigData->burnStartTime;
-	v3Scale(burnTime, ConfigData->dvRotVect, rotPRV);
+	burnTime = ((int64_t) callTime - (int64_t) ConfigData->burnStartTime)*1.0E-9;
+	v3Scale(burnTime*ConfigData->dvRotMag, ConfigData->dvRotAxis, rotPRV);
 	PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
 

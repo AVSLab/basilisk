@@ -110,6 +110,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     v3Scale(-1.0, ConfigData->sigmaCmd, ConfigData->sigmaCmd);
     addMRP(ConfigData->sigmaCmd, localState.vehSigma,
     ConfigData->attOut.sigma_BR);
+    MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
     
     v3Scale(phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
     v3Subtract(localState.vehBodyRate, ConfigData->bodyRateCmd,

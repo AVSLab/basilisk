@@ -76,6 +76,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
         v3Scale(tan(ConfigData->sunAngleErr*0.25), ConfigData->sunMnvrVec,
                 sigma_BR);
         v3Copy(sigma_BR, ConfigData->attOut.sigma_BR);
+        MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
     }
     v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
