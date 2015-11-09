@@ -3,6 +3,7 @@
 #define _DynEffector_HH_
 
 #include <string>
+#include <cstring>
 #include <stdint.h>
 /*! \addtogroup Sim Utility Group
  * @{

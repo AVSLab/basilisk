@@ -88,6 +88,7 @@ void ThrusterDynamics::ReadInputs()
     
     std::vector<double>::iterator CmdIt;
     uint64_t i;
+    bool dataGood;
     //! Begin method steps
     //! - If the input message ID is invalid, return without touching states
     if(CmdsInMsgID < 0)
@@ -98,12 +99,12 @@ void ThrusterDynamics::ReadInputs()
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader LocalHeader;
     memset(IncomingCmdBuffer, 0x0, ThrusterData.size()*sizeof(ThrustCmdStruct));
-    SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
+    dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
                                                 ThrusterData.size()*sizeof(ThrustCmdStruct),
                                                 reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
 
     //! - Check if message has already been read, if stale return
-    if(prevCommandTime==LocalHeader.WriteClockNanos) {
+    if(prevCommandTime==LocalHeader.WriteClockNanos || !dataGood) {
         return;
     }
     prevCommandTime = LocalHeader.WriteClockNanos;
@@ -183,6 +184,9 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
     //! - Set the current ramp time for the thruster firing
     double LocalOnRamp = (CurrentTime - ops->PreviousIterTime) +
     ops->ThrustOnRampTime;
+    double prevValidThrFactor = 0.0;
+    double prevValidIspFactor = 0.0;
+    double prevValidDelta = 0.0;
     
     //! - Iterate through the on-ramp for the thruster data to find where we are in ramp
     for(it = CurrentThruster->ThrusterOnRamp.begin();
@@ -191,12 +195,20 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
         //! - If the current on-time is less than the ramp delta, set that ramp thrust factor
         if(LocalOnRamp < it->TimeDelta)
         {
-            ops->ThrustFactor = it->ThrustFactor;
+            ops->ThrustFactor = (it->ThrustFactor - prevValidThrFactor)/
+            (it->TimeDelta - prevValidDelta) *
+            (LocalOnRamp - prevValidDelta) + prevValidThrFactor;
+            ops->IspFactor = (it->IspFactor - prevValidIspFactor)/
+            (it->TimeDelta - prevValidDelta) *
+            (LocalOnRamp - prevValidDelta) + prevValidIspFactor;
             ops->ThrustOnRampTime = LocalOnRamp;
             ops->PreviousIterTime = CurrentTime;
-            ops->IspFactor = it->IspFactor;
             return;
         }
+        prevValidThrFactor = it->ThrustFactor;
+        prevValidIspFactor = it->IspFactor;
+        prevValidDelta = it->TimeDelta;
+        
     }
     //! - If we did not find the current time in the on-ramp, then we are at steady-state
     ops->ThrustOnSteadyTime += (CurrentTime - ops->PreviousIterTime);
@@ -222,6 +234,9 @@ void ThrusterDynamics::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
     //! - Set the current off-ramp time based on the previous clock time and now
     double LocalOffRamp = (CurrentTime - ops->PreviousIterTime) +
     ops->ThrustOffRampTime;
+    double prevValidThrFactor = 1.0;
+    double prevValidIspFactor = 1.0;
+    double prevValidDelta = 0.0;
     //! - Iterate through the off-ramp to find the place where we are in the shutdown ramp
     for(it = CurrentThruster->ThrusterOffRamp.begin();
         it != CurrentThruster->ThrusterOffRamp.end(); it++)
@@ -229,11 +244,19 @@ void ThrusterDynamics::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
         //! - Once we find the location in the off-ramp, set that thrust factor to current
         if(LocalOffRamp < it->TimeDelta)
         {
-            ops->ThrustFactor = it->ThrustFactor;
-            ops->IspFactor = it->IspFactor;
+            ops->ThrustFactor = (it->ThrustFactor - prevValidThrFactor)/
+                (it->TimeDelta - prevValidDelta) *
+                (LocalOffRamp - prevValidDelta) + prevValidThrFactor;
+            ops->IspFactor = (it->IspFactor - prevValidIspFactor)/
+            (it->TimeDelta - prevValidDelta) *
+            (LocalOffRamp - prevValidDelta) + prevValidIspFactor;
             ops->ThrustOffRampTime = LocalOffRamp;
+            ops->PreviousIterTime = CurrentTime;
             return;
         }
+        prevValidThrFactor = it->ThrustFactor;
+        prevValidIspFactor = it->IspFactor;
+        prevValidDelta = it->TimeDelta;
     }
     //! - If we did not find the location in the off-ramp, we've reached the end state and zero thrust
     ops->ThrustFactor = ops->IspFactor = 0.0;

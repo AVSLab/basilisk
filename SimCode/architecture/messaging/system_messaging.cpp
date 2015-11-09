@@ -1,6 +1,7 @@
 
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
+#include <string>
 #include <iostream>
 
 SystemMessaging* SystemMessaging::TheInstance = NULL;
@@ -97,10 +98,10 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint64_t MaxSize, uint64_t NumMessageBuffers, std::string messageStruct,
     int64_t moduleID)
 {
-	if (FindMessageID(MessageName) >= 0)
-	{
-		std::cerr << "The message " << MessageName << " was created more than once.";
-		std::cerr << std::endl;
+    if (FindMessageID(MessageName) >= 0)
+    {
+    	std::cerr << "The message " << MessageName << " was created more than once.";
+    	std::cerr << std::endl;
         if(moduleID >= 0)
         {
             std::vector<AllowAccessData>::iterator it;
@@ -108,8 +109,8 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
             it += FindMessageID(MessageName);
             it->accessList.insert(moduleID);
         }
-		return(FindMessageID(MessageName));
-	}
+    	return(FindMessageID(MessageName));
+    }
     if(NumMessageBuffers <= 0)
     {
         std::cerr << "I can't create a message with zero buffers.  I refuse.";
@@ -202,7 +203,9 @@ messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
     int64_t messageID;
     
     messageIdentData dataFound;
-    memset(&dataFound, 0x0, sizeof(messageIdentData));
+    dataFound.itemFound = false;
+    dataFound.itemID = -1;
+    dataFound.processBuffer = ~0;
     std::vector<MessageStorageContainer *>::iterator it;
     for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
@@ -212,12 +215,12 @@ messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
         {
             continue;
         }
+        dataFound.itemFound = true;
+        dataFound.itemID = messageID;
+        dataFound.processBuffer = it - dataBuffers.begin();
+        dataFound.bufferName = messageStorage->bufferName;
         std::vector<AllowAccessData>::iterator pubIt;
         pubIt=messageStorage->pubData.begin() + messageID;
-        dataFound.itemFound = true;
-        dataFound.bufferName = messageStorage->bufferName;
-        dataFound.processBuffer = it - dataBuffers.begin();
-        dataFound.itemID = messageID;
         if(pubIt->accessList.size() > 0)
         {
             return(dataFound);
