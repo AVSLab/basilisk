@@ -105,25 +105,10 @@ up into several parts:\\
 
 \section{Test Results}
 \begin{enumerate}
-\item{Time Increment Check: The difference between the increments was checked 
-   to make sure that it was less than 1.0 microseconds which is less than our 
-   required time accuracy.  Check successful.}
-\item{Absolute Time Check: The difference between the truth GPS time at the UTC 
-   epoch (2016 June 16, 00:00:00.0 TDB) was within 1.0 microseconds of the 
-   simulated value.  Check successsful.}
-\item{Julian Date Time Check: The truth Julian date was within 0.1 seconds of 
-   the simulated Julian date which is near the precision of the Julian Date 
-   computation accuracy.  Check successful.}
-\item{Mars Position Check:  The Position of Mars from the Horizons ephemeris 
-   system only agreed with the simulation output to 1626 meters.  This is above 
-   the success criteria for the test.  \textcolor{red}{Check failed.}}
-\item{Earth Position Check:  The Position of Earth from the Horizons ephemeris 
-   system only agreed with the simulation output to 1626 meters.  This is above 
-   the success criteria for the test.  \textcolor{red}{Check failed.}}
-\item{Sun Position Check: The Position of the Sun from the Horizons ephemeris 
-   system was within 800 m of the simulated output.  This meets the success 
-   criteria for the test although it is believed that there are issues with the 
-   Sun similar to the Mars/Earth tests. Check successful.}
+\item{Thruster Force Orientation:}
+\item{Instantaneous On/Off Factor:}
+\item{Short Instantaneous Firing:}
+\item{Ramp On/Ramp Off Firing:}
 \end{enumerate}
 
 \section{Test Coverage}
@@ -138,32 +123,24 @@ module are tabulated in Table~\ref{tab:cov_met}
       \hline
       Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
       \hline
-      UpdateState & 100.0 & 0.03 & 24.2 \\
-      loadSpiceKernel & 100.0 & 0.0 & 0.0 \\
       SelfInit & 100.0 & 0.0 & 0.0 \\
-      InitTimeData & 100.0 & 0.0 & 0.0 \\
-      ComputeGPSData & 100.0 & 0.0 & 0.0 \\
-      ComputePlanetData & 100.0 & 0.18 & 13.26 \\
-      SendOutputData & 100.0 & 0.0 & 0.0 \\
+      CrossInit & 100.0 & 0.0 & 0.0 \\
+      AddThruster & 100.0 & 0.0 & 0.0 \\
+      UpdateState & 100.0 & 0.0 & 0.0 \\
+      WriteOutputMessages & 100.0 & 0.0 & 0.0 \\
+      ReadInputs & 100.0 & 0.0 & 0.0 \\
+      ConfigureThrustRequests & 100.0 & 0.0 & 0.0 \\
+      ComputeDynamics & 100.0 & 0.0 & 0.0 \\
+      ComputeThrusterFire & 100.0 & 0.0 & 0.0 \\
+      ComputeThrusterShut & 100.0 & 0.0 & 0.0 \\
+      updateMassProperties & 100.0 & 0.0 & 0.0 \\
       \hline
    \end{tabular}
 \end{table}
 
 For all of the methods in the spice\_interface modules, the code coverage 
-percentage is 100\% which meets our test requirements.  The CPU usage drawn by 
-the module is one of the highest percents in the entire test (24\%).  This is 
-being almost entirely driven by external components (JPL's SPICE and boost).  
-We could certainly look at building those modules with optimization to cut 
-down the CPU usage, or even call this module at a lower rate with another 
-module added to maintain the times/states at high rate.
+percentage is 100\% which meets our test requirements.  
 
 \section{Conclusions}
-The spice\_interface module requires further work.  We need to go and investigate 
-why the planetary ephemeris computations are different from what we obtained 
-from the Horizons system.  In all actuality those results are fine, but we do 
-need to go and figure out why the difference exists.  It could be a hidden time 
-error or other small effect that could impact our analysis going forward.  
-However, it is close enough that we can definitely proceed with PDR analysis 
-using the model as is.
 
 \end{document}

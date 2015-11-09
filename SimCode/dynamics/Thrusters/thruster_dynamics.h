@@ -81,7 +81,7 @@ public:
     void AddThruster(ThrusterConfigData *NewThruster) {ThrusterData.push_back(*NewThruster);}
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
-    void ReadInputs();
+    bool ReadInputs();
     void ConfigureThrustRequests(double CurrentTime);
     void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
                          double CurrentTime);
@@ -90,6 +90,8 @@ public:
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
                              double CurrentTime);
     void updateMassProperties(double CurrentTime);
+    double thrFactorToTime(ThrusterConfigData *thrData,
+        std::vector<ThrusterTimePair> *thrRamp);
     
 public:
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information

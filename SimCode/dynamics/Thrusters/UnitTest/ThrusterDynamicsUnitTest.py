@@ -21,6 +21,23 @@ import SimulationBaseClass
 import sim_model
 import thruster_dynamics
 
+def executeSimulationRun(stopTime, stepTime, TotalSim, ACSThrusterDynObject, 
+    massPropsData, outputState):
+    newStop = TotalSim.TotalSim.CurrentNanos
+    while(TotalSim.TotalSim.CurrentNanos < stopTime):
+        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
+            newStop*1.0E-9 - stepTime*1.0E-9)
+        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
+            newStop*1.0E-9 - stepTime/2*1.0E-9)
+        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
+            newStop*1.0E-9 - stepTime/2*1.0E-9)
+        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
+            newStop*1.0E-9)
+        newStop += var1
+        TotalSim.TotalSim.SingleStepProcesses()
+        TotalSim.RecordLogVars()
+
+
 #Instantiate a new set of thrusters using the thruster_dynamics module
 ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
 
@@ -34,10 +51,15 @@ Thruster1.MaxThrust = 1.0
 ACSThrusterDynObject.ThrusterData = thruster_dynamics.ThrusterConfigVector([Thruster1])
 
 #Set the test step (var1) and the various stop times (var2-var4)
-var1 = int(1E7) # call the thread at 1000 Hz, let the thread do stuff at 10 Hz
+var1 = int(1E6) # call the thread at 1000 Hz, let the thread do stuff at 10 Hz
 var2 = int(60*1E9) # stop after 60 seconds
 var3  = int(80*1E9) # next stop
 var4  = int(100*1E9) # next stop
+var5 = int(((110)*1E9)) #next stop
+var6 = int((110 + 0.02)*1E9) #next stop
+var7 = int(((120)*1E9)) #next stop
+var8 = int(((120+0.04)*1E9)) #next stop
+var9 = int(((130)*1E9)) #next stop
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass()
@@ -71,37 +93,15 @@ TotalSim.ExecuteSimulation()
 
 #Write firing command message and step the simulation
 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage);
-newStop = TotalSim.TotalSim.CurrentNanos
-while(TotalSim.TotalSim.CurrentNanos < var2):
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9)
-    newStop += var1 
-    TotalSim.TotalSim.SingleStepProcesses()
-    TotalSim.RecordLogVars()
+executeSimulationRun(var2, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
    
 #Configure a shorter firing command, execute it, and step simulation 
 ThrustMessage.OnTimeRequest = 0.1;
 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, int(30E9), ThrustMessage);
-newStop = TotalSim.TotalSim.CurrentNanos
-while(TotalSim.TotalSim.CurrentNanos < var3):
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9)
-    newStop += var1 
-    TotalSim.TotalSim.SingleStepProcesses()
-    TotalSim.RecordLogVars()
-   
+executeSimulationRun(var3, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+  
 #Setup thruster ramp on and ramp off configuration
 rampOnList = []
 rampOffList = []
@@ -127,19 +127,33 @@ ACSThrusterDynObject.ThrusterData[0].ThrusterOffRamp = \
 #Execute a new firing that will use the thruster ramps
 ThrustMessage.OnTimeRequest = 0.5;
 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 1, ThrustMessage);
-newStop = TotalSim.TotalSim.CurrentNanos
-while(TotalSim.TotalSim.CurrentNanos < var4):
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9 - var1/2*1.0E-9) 
-    ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState, 
-        newStop*1.0E-9)
-    newStop += var1 
-    TotalSim.TotalSim.SingleStepProcesses()
-    TotalSim.RecordLogVars()
+executeSimulationRun(var4, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.015;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 2, ThrustMessage);
+executeSimulationRun(var5, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.5;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 3, ThrustMessage);
+executeSimulationRun(var6, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.0;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 4, ThrustMessage);
+executeSimulationRun(var7, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.025;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 5, ThrustMessage);
+executeSimulationRun(var8, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.2;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 6, ThrustMessage);
+executeSimulationRun(var9, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
 
 #Extract log variables and plot the results
 thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.StrForce')

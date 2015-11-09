@@ -5,6 +5,7 @@
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include <cstring>
 #include <iostream>
+#include <cmath>
 
 /*! This is the constructor.  It sets some defaul initializers that can be
  overriden by the user.*/
@@ -83,7 +84,7 @@ void ThrusterDynamics::WriteOutputMessages(uint64_t CurrentClock)
  associated command structure for operating the thrusters.
  @return void
  */
-void ThrusterDynamics::ReadInputs()
+bool ThrusterDynamics::ReadInputs()
 {
     
     std::vector<double>::iterator CmdIt;
@@ -93,7 +94,7 @@ void ThrusterDynamics::ReadInputs()
     //! - If the input message ID is invalid, return without touching states
     if(CmdsInMsgID < 0)
     {
-        return;
+        return(false);
     }
     
     //! - Zero the command buffer and read the incoming command array
@@ -105,7 +106,7 @@ void ThrusterDynamics::ReadInputs()
 
     //! - Check if message has already been read, if stale return
     if(prevCommandTime==LocalHeader.WriteClockNanos || !dataGood) {
-        return;
+        return(false);
     }
     prevCommandTime = LocalHeader.WriteClockNanos;
     
@@ -116,6 +117,7 @@ void ThrusterDynamics::ReadInputs()
     {
         *CmdPtr = IncomingCmdBuffer[i].OnTimeRequest;
     }
+    return(true);
     
 }
 
@@ -137,7 +139,7 @@ void ThrusterDynamics::ConfigureThrustRequests(double CurrentTime)
     for(CmdIt=NewThrustCmds.begin(), it=ThrusterData.begin();
         it != ThrusterData.end(); it++, CmdIt++)
     {
-        if(*CmdIt > it->MinOnTime) /// - Check to see if we have met minimum for each thruster
+        if(*CmdIt >= it->MinOnTime) /// - Check to see if we have met minimum for each thruster
         {
             //! - For each case where we are above the minimum firing request, reset the thruster
             it->ThrustOps.ThrusterStartTime = CurrentTime;
@@ -147,20 +149,13 @@ void ThrusterDynamics::ConfigureThrustRequests(double CurrentTime)
             it->ThrustOps.ThrustOffRampTime = 0.0;
             it->ThrustOps.PreviousIterTime = CurrentTime;
             it->ThrustOps.fireCounter += 1;
-            if(it->ThrustOps.ThrustFactor > 0.0) /// - Check to see if we are already firing for active thrusters
-            {
-                it->ThrustOps.fireCounter -= 1;
-                for(PairIt = it->ThrusterOnRamp.begin();
-                    PairIt != it->ThrusterOnRamp.end(); PairIt++)
-                {
-                    //! - Find the point in the thrust curve to start with if we are already in the middle of a firing
-                    if(PairIt->ThrustFactor <= PairIt->ThrustFactor)
-                    {
-                        it->ThrustOps.ThrustOnRampTime = PairIt->TimeDelta;
-                        break;
-                    }
-                }
-            }
+        }
+        else
+        {
+            //! - Will ensure that thruster shuts down once this cmd expires
+            it->ThrustOps.ThrustOnCmd = *CmdIt;
+            it->ThrustOps.ThrusterStartTime = CurrentTime;
+            it->ThrustOps.PreviousIterTime = CurrentTime;
         }
         //! After we have assigned the firing to the internal thruster, zero the command request.
         *CmdIt = 0.0;
@@ -182,6 +177,12 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
     std::vector<ThrusterTimePair>::iterator it;
     ThrusterOperationData *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
+    if(ops->ThrustOnRampTime == 0.0 && 
+        CurrentThruster->ThrusterOnRamp.size() > 0)
+    {
+        ops->ThrustOnRampTime = thrFactorToTime(CurrentThruster, 
+            &(CurrentThruster->ThrusterOnRamp));
+    }
     double LocalOnRamp = (CurrentTime - ops->PreviousIterTime) +
     ops->ThrustOnRampTime;
     double prevValidThrFactor = 0.0;
@@ -214,6 +215,7 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
     ops->ThrustOnSteadyTime += (CurrentTime - ops->PreviousIterTime);
     ops->PreviousIterTime = CurrentTime;
     ops->ThrustFactor = ops->IspFactor = 1.0;
+    ops->ThrustOffRampTime = 0.0;
 }
 
 /*! This method is used to go through the process of shutting down a thruster
@@ -232,6 +234,12 @@ void ThrusterDynamics::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
     ThrusterOperationData *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
+    if(ops->ThrustOffRampTime == 0.0 && 
+        CurrentThruster->ThrusterOffRamp.size() > 0)
+    {
+        ops->ThrustOffRampTime = thrFactorToTime(CurrentThruster, 
+            &(CurrentThruster->ThrusterOffRamp));
+    }
     double LocalOffRamp = (CurrentTime - ops->PreviousIterTime) +
     ops->ThrustOffRampTime;
     double prevValidThrFactor = 1.0;
@@ -260,6 +268,7 @@ void ThrusterDynamics::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
     }
     //! - If we did not find the location in the off-ramp, we've reached the end state and zero thrust
     ops->ThrustFactor = ops->IspFactor = 0.0;
+    ops->ThrustOnRampTime = 0.0;
 }
 
 void ThrusterDynamics::updateMassProperties(double CurrentTime)
@@ -338,6 +347,55 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     
 }
 
+/*! This method finds the location in the time in the specified ramp that 
+    corresponds to the current thruster thrust factor.  It is designed to 
+    initialize the ramp-up and ramp-down effects to the appropriate point in 
+    their respective ramps based on the initial force
+    @return double The time in the ramp associated with the thrust factor
+    @param thrData The data for the thruster that we are currently firing
+    @param thrRamp This just allows us to avoid switching to figure out which ramp
+*/
+double ThrusterDynamics::thrFactorToTime(ThrusterConfigData *thrData,
+    std::vector<ThrusterTimePair> *thrRamp)
+{
+    //! Begin method steps
+    std::vector<ThrusterTimePair>::iterator it;
+    //! - Grab the last element in the ramp and determine if it goes up or down
+    it = thrRamp->end();
+    it--;
+    double rampTime = it->TimeDelta;
+    double rampDirection = std::copysign(1.0, 
+        it->ThrustFactor - thrData->ThrustOps.ThrustFactor);
+
+    //! - Initialize the time computation functiosn based on ramp direction
+    double prevValidThrFactor = rampDirection < 0 ? 1.0 : 0.0;
+    double prevValidDelta = 0.0;
+    for(it=thrRamp->begin(); it!=thrRamp->end(); it++)
+    {
+        //! - Determine if we haven't reached the right place in the ramp
+        bool pointCheck = rampDirection > 0 ? 
+            it->ThrustFactor <= thrData->ThrustOps.ThrustFactor : 
+            it->ThrustFactor >= thrData->ThrustOps.ThrustFactor;
+        //! - If we have not located the location in the ramp, continue
+        if(pointCheck)
+        {
+            prevValidThrFactor = it->ThrustFactor;
+            prevValidDelta = it->TimeDelta;
+            continue;
+        }
+
+        //! - Linearly interpolate between the points, check for numerical garbage, and return clean interpolation
+        rampTime = (it->TimeDelta - prevValidDelta)/(it->ThrustFactor - 
+            prevValidThrFactor) * (thrData->ThrustOps.ThrustFactor - 
+            prevValidThrFactor) + prevValidDelta;
+        rampTime = rampTime < 0.0 ? 0.0 : rampTime;
+        return(rampTime);
+    
+    }
+
+    return(rampTime);
+}
+
 /*! This method is the main cyclical call for the scheduled part of the thruster
  dynamics model.  It reads the current commands array and sets the thruster
  configuration data based on that incoming command set.  Note that the main
@@ -350,7 +408,9 @@ void ThrusterDynamics::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
-    ReadInputs();
-    ConfigureThrustRequests(CurrentSimNanos*1.0E-9);
+    if(ReadInputs())
+    {
+        ConfigureThrustRequests(CurrentSimNanos*1.0E-9);
+    }
     
 }
