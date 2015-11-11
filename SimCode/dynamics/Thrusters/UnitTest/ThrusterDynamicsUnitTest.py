@@ -48,7 +48,9 @@ Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
 Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([
     math.cos(30.0*math.pi/180.0), math.sin(30.0*math.pi/180.0), 0.0])
 Thruster1.MaxThrust = 1.0
-ACSThrusterDynObject.ThrusterData = thruster_dynamics.ThrusterConfigVector([Thruster1])
+Thruster1.steadyIsp = 226.7
+Thruster1.MinOnTime = 0.006
+ACSThrusterDynObject.AddThruster(Thruster1)
 
 #Set the test step (var1) and the various stop times (var2-var4)
 var1 = int(1E6) # call the thread at 1000 Hz, let the thread do stuff at 10 Hz
@@ -60,6 +62,7 @@ var6 = int((110 + 0.02)*1E9) #next stop
 var7 = int(((120)*1E9)) #next stop
 var8 = int(((120+0.04)*1E9)) #next stop
 var9 = int(((130)*1E9)) #next stop
+var10 = int(((140)*1E9)) #next stop
 
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass()
@@ -140,7 +143,7 @@ TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 3, ThrustMessage);
 executeSimulationRun(var6, var1, TotalSim, ACSThrusterDynObject,
     massPropsData, outputState)
 
-ThrustMessage.OnTimeRequest = 0.0;
+ThrustMessage.OnTimeRequest = 0.005;
 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 4, ThrustMessage);
 executeSimulationRun(var7, var1, TotalSim, ACSThrusterDynObject,
     massPropsData, outputState)
@@ -153,6 +156,11 @@ executeSimulationRun(var8, var1, TotalSim, ACSThrusterDynObject,
 ThrustMessage.OnTimeRequest = 0.2;
 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 6, ThrustMessage);
 executeSimulationRun(var9, var1, TotalSim, ACSThrusterDynObject,
+    massPropsData, outputState)
+
+ThrustMessage.OnTimeRequest = 0.001;
+TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 7, ThrustMessage);
+executeSimulationRun(var10, var1, TotalSim, ACSThrusterDynObject,
     massPropsData, outputState)
 
 #Extract log variables and plot the results
@@ -174,6 +182,11 @@ plt.figure(2)
 plt.plot(thrFactor[:,0]*1.0E-9, thrFactor[:,1])
 plt.xlabel('Time(s)')
 plt.ylabel('Thrust Factor (-)')
+
+ACSThrusterDynObject.InputCmds = "dummy_fire_not_work"
+TotalSim.InitializeSimulation()
+TotalSim.ConfigureStopTime(int(2E6))
+TotalSim.ExecuteSimulation()
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):

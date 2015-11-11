@@ -61,11 +61,6 @@ void ThrusterDynamics::CrossInit()
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
     MAX_NUM_EFFECTORS*sizeof(ThrustCmdStruct), moduleID);
-    if(CmdsInMsgID < 0)
-    {
-        std::cerr << "WARNING: Did not find a valid message with name: ";
-        std::cerr << InputCmds << "  :" << __FILE__ << std::endl;
-    }
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -91,11 +86,6 @@ bool ThrusterDynamics::ReadInputs()
     uint64_t i;
     bool dataGood;
     //! Begin method steps
-    //! - If the input message ID is invalid, return without touching states
-    if(CmdsInMsgID < 0)
-    {
-        return(false);
-    }
     
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader LocalHeader;
@@ -142,21 +132,20 @@ void ThrusterDynamics::ConfigureThrustRequests(double CurrentTime)
         if(*CmdIt >= it->MinOnTime) /// - Check to see if we have met minimum for each thruster
         {
             //! - For each case where we are above the minimum firing request, reset the thruster
-            it->ThrustOps.ThrusterStartTime = CurrentTime;
             it->ThrustOps.ThrustOnCmd = *CmdIt;
-            it->ThrustOps.ThrustOnRampTime = 0.0;
-            it->ThrustOps.ThrustOnSteadyTime = 0.0;
-            it->ThrustOps.ThrustOffRampTime = 0.0;
-            it->ThrustOps.PreviousIterTime = CurrentTime;
             it->ThrustOps.fireCounter += 1;
         }
         else
         {
             //! - Will ensure that thruster shuts down once this cmd expires
-            it->ThrustOps.ThrustOnCmd = *CmdIt;
-            it->ThrustOps.ThrusterStartTime = CurrentTime;
-            it->ThrustOps.PreviousIterTime = CurrentTime;
+            it->ThrustOps.ThrustOnCmd = it->ThrustOps.ThrustFactor > 0.0 
+                ? *CmdIt : 0.0;
         }
+        it->ThrustOps.ThrusterStartTime = CurrentTime;
+        it->ThrustOps.PreviousIterTime = CurrentTime;
+        it->ThrustOps.ThrustOnRampTime = 0.0;
+        it->ThrustOps.ThrustOnSteadyTime = 0.0;
+        it->ThrustOps.ThrustOffRampTime = 0.0;
         //! After we have assigned the firing to the internal thruster, zero the command request.
         *CmdIt = 0.0;
     }
@@ -389,8 +378,7 @@ double ThrusterDynamics::thrFactorToTime(ThrusterConfigData *thrData,
             prevValidThrFactor) * (thrData->ThrustOps.ThrustFactor - 
             prevValidThrFactor) + prevValidDelta;
         rampTime = rampTime < 0.0 ? 0.0 : rampTime;
-        return(rampTime);
-    
+        break; 
     }
 
     return(rampTime);
@@ -412,5 +400,6 @@ void ThrusterDynamics::UpdateState(uint64_t CurrentSimNanos)
     {
         ConfigureThrustRequests(CurrentSimNanos*1.0E-9);
     }
+    WriteOutputMessages(CurrentSimNanos);
     
 }

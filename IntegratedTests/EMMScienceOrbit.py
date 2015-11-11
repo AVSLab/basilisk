@@ -34,8 +34,8 @@ TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
 TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
 TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu #central body of OE object
 
-#Setting a 2-inch dry mass CoM offset to be conservative
-TheEMMSim.VehDynObject.baseCoMInit[0] = 0.0254*2.0
+#Setting a dry mass CoM offset to be conservative
+TheEMMSim.VehDynObject.baseCoMInit[0] = 0.05 #meters
 
 #These mass properties are built assuming that we have already emptied the tank
 #inserting into Mars orbit.  I'm assuming that we have 40% of the prop remaining 
@@ -117,7 +117,7 @@ plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,1], 'b', sigmaTruth[:,0]*1.0E-9, sigma
 plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,2], 'g', sigmaTruth[:,0]*1.0E-9, sigmaTruth[:,2], 'g--')
 plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,3], 'r', sigmaTruth[:,0]*1.0E-9, sigmaTruth[:,3], 'r--')
 plt.xlabel('Time (s)')
-plt.xlabel('Attitude MRP (-)')
+plt.ylabel('Attitude MRP (-)')
 
 
 
