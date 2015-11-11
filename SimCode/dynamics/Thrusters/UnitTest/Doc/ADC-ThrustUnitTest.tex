@@ -110,6 +110,9 @@ up into several parts:\\
 \item{Ramp down firing: A thruster is fired during the middle of its ramp down 
    to ensure that it picks up at that point in its ramp-up curve and reaches 
    steady state correctly.}
+\item{Propellant Consumption: The propellant consumption for the duration of the 
+    test is checked at each time step to ensure that it is correct for each 
+    point in time in the test.}
 \end{enumerate}
 
 
@@ -246,6 +249,12 @@ up into several parts:\\
     followed by a ramp down.  The total expected firing for this particular 
     sequence is 0.04 + 0.2 + 0.03 or 0.27 seconds which matches the observed 
     duration exactly.  	\textcolor{ForestGreen}{Test successful.}
+}
+\item{Propellant Consumption: This test was performed against each firing to 
+    ensure that the propellant consumed during the test was correct at each time 
+    step.  The propellant consumption was correct to less than 0.1\%.  That is 
+    sufficiently accurate compared to other modeling inaccuracies in the model.
+    \textcolor{ForestGreen}{Test successful.}
 }
 \end{enumerate}
 
