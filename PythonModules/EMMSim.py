@@ -262,57 +262,49 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetACSThrusterDynObject(self):
    self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
    Thruster1 = thruster_dynamics.ThrusterConfigData()
-   Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
-   Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550,  1.79070])
+   Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
    Thruster1.MaxThrust = 0.9
    Thruster1.MinOnTime = 0.020;
    Thruster2 = thruster_dynamics.ThrusterConfigData()
-   Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
-   Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360,  1.79070])
+   Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
    Thruster2.MaxThrust = 0.9
    Thruster2.MinOnTime = 0.020;
    Thruster3 = thruster_dynamics.ThrusterConfigData()
-   Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
-   Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550,  0.86360,  1.79070])
+   Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
    Thruster3.MaxThrust = 0.9
    Thruster3.MinOnTime = 0.020;
    Thruster4 = thruster_dynamics.ThrusterConfigData()
-   Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
-   Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360,  0.82550,  1.79070])
+   Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
    Thruster4.MaxThrust = 0.9
    Thruster4.MinOnTime = 0.020;
    Thruster5 = thruster_dynamics.ThrusterConfigData()
-   Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
-   Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550,  0.18288])
+   Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
    Thruster5.MaxThrust = 0.9
    Thruster5.MinOnTime = 0.020;
    Thruster6 = thruster_dynamics.ThrusterConfigData()
-   Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
-   Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360,  0.18288])
+   Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
    Thruster6.MaxThrust = 0.9
    Thruster6.MinOnTime = 0.020;
    Thruster7 = thruster_dynamics.ThrusterConfigData()
-   Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
-   Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550,  0.86360,  0.18288])
+   Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
    Thruster7.MaxThrust = 0.9
    Thruster7.MinOnTime = 0.020;
    Thruster8 = thruster_dynamics.ThrusterConfigData()
-   Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
-   Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360,  0.82550,  0.18288])
+   Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
    Thruster8.MaxThrust = 0.9
    Thruster8.MinOnTime = 0.020;
    self.ACSThrusterDynObject.ThrusterData = \
       thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3, 
          Thruster4, Thruster5, Thruster6, Thruster7, Thruster8])
-   ACSpropCM = [0.0, 0.0, 1.0]
+   ACSpropCM = [0.0, 0.0, 1.2]
    ACSpropMass = 40 #Made up!!!!
    ACSpropRadius = 46.0/2.0/3.2808399/12.0
    sphereInerita = 2.0/5.0*ACSpropMass*ACSpropRadius*ACSpropRadius
@@ -586,7 +578,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafePointData.sHatBdyCmd)
 
  def SetsunSafeControl(self):
-   self.sunSafeControlData.K = 4.0
+   self.sunSafeControlData.K = 8.0
    self.sunSafeControlData.P = 40.0
    self.sunSafeControlData.inputGuidName = "sun_safe_att_err"
    self.sunSafeControlData.outputDataName = "sun_safe_control_request"
@@ -597,14 +589,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.sunSafeACSData.thrData.minThrustRequest = 0.1
    self.sunSafeACSData.thrData.numEffectors = 8
    self.sunSafeACSData.thrData.maxNumCmds = 2
-   onTimeMap = [-1.0, 1.0, 1.0, 
-                 -1.0, -1.0, -1.0,
-                 1.0, -1.0, 1.0,
-                 1.0, 1.0, -1.0,
-                 1.0, -1.0, 1.0,
-                 1.0, 1.0, -1.0,
-                 -1.0, 1.0, 1.0,
-                 -1.0, -1.0, -1.0]
+   onTimeMap = [0.0, 1.0, 0.7, 
+                 -1.0, 0.0, -0.7,
+                 1.0, 0.0, -0.7,
+                 0.0, -1.0, 0.7,
+                 0.0, -1.0, 0.7,
+                 1.0, 0.0, -0.7,
+                 -1.0, 0.0, -0.7,
+                 0.0, 1.0, 0.7]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', 
       self.sunSafeACSData.thrData.thrOnMap)
  def SetattMnvrPoint(self):
@@ -617,8 +609,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.mnvrActive = 0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 30.0
-   self.attMnvrControlData.P = 40.0
+   self.attMnvrControlData.K = 40.0
+   self.attMnvrControlData.P = 50.0
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
@@ -632,12 +624,12 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    newThrGroup.maxNumCmds = 1
    onTimeMap = [0.0, 0.0, 1.0,
                 0.0, 0.0, -1.0,
-                0.0, 0.0, 1.0,
                 0.0, 0.0, -1.0,
                 0.0, 0.0, 1.0,
-                0.0, 0.0, -1.0,
                 0.0, 0.0, 1.0,
-                0.0, 0.0, -1.0]
+                0.0, 0.0, -1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, 1.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
    dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 0,
                                        newThrGroup)
