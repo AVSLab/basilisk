@@ -22,6 +22,9 @@ TheEMMSim.TotalSim.logThisMessage("att_cmd_output", int(1E10)) #inertial states
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E10)) #orbital elements
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E10)) #FSW weighted least squares sun-vector
 TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E10)) #spacecraft mass properties
+TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E10)) #solar array boresight angles
+TheEMMSim.TotalSim.logThisMessage("high_gain_earth_bore", int(1E10)) #solar array boresight angles
+TheEMMSim.TotalSim.logThisMessage("instrument_mars_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
 
 #Setup a time in the science orbit well past our transition to science
@@ -95,6 +98,9 @@ posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
 trueAnom = TheEMMSim.pullMessageLogData("OrbitalElements.f")
+solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
+highGainMiss = TheEMMSim.pullMessageLogData("high_gain_earth_bore.missAngle")
+instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 sigmaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.sigma', range(3))
 sigmaCMD = TheEMMSim.pullMessageLogData('att_cmd_output.sigma_BR', range(3))
@@ -119,6 +125,20 @@ plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,3], 'r', sigmaTruth[:,0]*1.0E-9, sigma
 plt.xlabel('Time (s)')
 plt.ylabel('Attitude MRP (-)')
 
+plt.figure(4)
+plt.plot(solarArrayMiss[:,0]*1.0E-9, solarArrayMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Solar Array Miss (d)')
+
+plt.figure(5)
+plt.plot(highGainMiss[:,0]*1.0E-9, highGainMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('High Gain Miss (d)')
+
+plt.figure(6)
+plt.plot(instrumentMiss[:,0]*1.0E-9, instrumentMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Instrument Nadir Miss (d)')
 
 
 #If requested, generate plots

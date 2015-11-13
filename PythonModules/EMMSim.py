@@ -64,6 +64,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
    self.SimpleNavObject = simple_nav.SimpleNav()
    self.solarArrayBore = bore_ang_calc.BoreAngCalc();
+   self.highGainBore = bore_ang_calc.BoreAngCalc();
+   self.instrumentBore = bore_ang_calc.BoreAngCalc();
    self.InitAllDynObjects()
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
@@ -81,6 +83,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
    self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
    self.AddModelToTask("DynamicsTask", self.solarArrayBore)
+   self.AddModelToTask("DynamicsTask", self.instrumentBore)
+   self.AddModelToTask("DynamicsTask", self.highGainBore)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -492,6 +496,23 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.solarArrayBore.OutputDataString = "solar_array_sun_bore"
    SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double',
                                  self.solarArrayBore.strBoreVec)
+ def SethighGainBore(self):
+    self.highGainBore.ModelTag = "highGainBoresight"
+    self.highGainBore.StateString = "inertial_state_output"
+    self.highGainBore.celBodyString = "earth_display_frame_data"
+    self.highGainBore.OutputDataString = "high_gain_earth_bore"
+    angSin = math.sin(23.0*math.pi/180.0)
+    angCos = math.cos(23.0*math.pi/180.0)
+    SimulationBaseClass.SetCArray([0.0, -angSin, angCos], 'double',
+                      self.highGainBore.strBoreVec)
+
+ def SetinstrumentBore(self):
+    self.instrumentBore.ModelTag = "instrumentBoresight"
+    self.instrumentBore.StateString = "inertial_state_output"
+    self.instrumentBore.celBodyString = "mars_display_frame_data"
+    self.instrumentBore.OutputDataString = "instrument_mars_bore"
+    SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double',
+       self.instrumentBore.strBoreVec)
  
  def SetSimpleNavObject(self):
    self.SimpleNavObject.ModelTag = "SimpleNavigation"
@@ -686,7 +707,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    angSin = math.sin(23.0*math.pi/180.0)
    angCos = math.cos(23.0*math.pi/180.0)
    #TsunVec2Body = [angSin, 0.0, -angCos, 0.0, 1.0, 0.0, angCos, 0.0, -angSin]
-   TsunVec2Body = [0.0, angSin, angCos, -0.0, -angCos, -angSin, 1.0, 0.0, 0.0]
+   #TsunVec2Body = [0.0, angSin, angCos, -0.0, -angCos, -angSin, 1.0, 0.0, 0.0]
+   TsunVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
    SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.earthPointData.TPoint2Bdy)
 
  def SetmarsPoint(self):
@@ -706,6 +728,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetVehOrbElemObject()
    self.SetSimpleNavObject()
    self.SetsolarArrayBore()
+   self.SetinstrumentBore()
+   self.SethighGainBore()
 
  def InitAllFSWObjects(self):
    self.SetCSSDecodeFSWConfig()
