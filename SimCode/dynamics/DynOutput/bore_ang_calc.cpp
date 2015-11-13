@@ -1,4 +1,4 @@
-#include "dynamics/SixDofEOM/six_dof_eom.h"
+
 #include "dynamics/DynOutput/bore_ang_calc.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"

@@ -5,6 +5,7 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
+#include "dynamics/SixDofEOM/six_dof_eom.h"
 
 /*! \addtogroup SimModelGroup
  * @{
