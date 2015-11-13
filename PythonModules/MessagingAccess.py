@@ -65,8 +65,8 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
 def findMessageMatches(searchString, SimContainer):
     i=0
     matchList = []
-    while i < SimContainer.getNumMessages():
-        localName = SimContainer.getMessageName(i)
+    totalList = SimContainer.getUniqueMessageNames()
+    for localName in totalList:
         if(localName.find(searchString) >= 0):
            matchList.append(localName)
         i+=1

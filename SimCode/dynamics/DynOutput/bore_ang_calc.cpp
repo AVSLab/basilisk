@@ -3,6 +3,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
+#include <math.h>
 #include <cstring>
 #include <iostream>
 
@@ -119,6 +120,19 @@ void BoreAngCalc::computeAxisPoint()
     m33tMultV3(T_Point2Bdy, bdyBoreVec, boreVecPoint);
     
 }
+/*! This method computes the output structure for messaging. The miss angle is 
+    absolute distance between the desired body point and the specified structural 
+    vector.  The aximuth angle is the angle between the y pointing axis and the 
+    desired pointing vector projected into the y/z plane.
+    @return void
+*/
+void BoreAngCalc::computeOutputData()
+{
+    double baselinePoint[3] = {1.0, 0.0, 0.0};
+    double dotValue = v3Dot(boreVecPoint, baselinePoint);
+    boresightAng.missAngle = fabs(acos(dotValue));
+    boresightAng.azimuth = atan2(boreVecPoint[2], boreVecPoint[1]);
+}
 
 /*! This method is the main carrier for the boresight calculation routine.  If it detects
  that it needs to re-init (direction change maybe) it will re-init itself.
@@ -140,6 +154,7 @@ void BoreAngCalc::UpdateState(uint64_t CurrentSimNanos)
     ReadInputs();
     
     computeAxisPoint();
+    computeOutputData();
     
     //! Write out the current output for current time
     WriteOutputMessages(CurrentSimNanos);

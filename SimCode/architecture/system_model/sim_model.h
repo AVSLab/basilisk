@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <stdint.h>
+#include <set>
 #include "architecture/system_model/sys_process.h"
 #include "architecture/messaging/system_messaging.h"
 #include "architecture/system_model/message_logger.h"
@@ -44,6 +45,7 @@ public:
     messageIdentData getMessageID(std::string messageName); //!< Get the ID associated with message name
     void populateMessageHeader(std::string messageName,
         MessageHeaderData* headerOut); //!< Get header data associated with msg
+    std::set<std::string> getUniqueMessageNames();
     
 public:
     std::vector<SysProcess *> processList;           //!< -- List of processes we've created

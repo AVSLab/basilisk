@@ -17,6 +17,7 @@ import thruster_dynamics
 import coarse_sun_sensor
 import imu_sensor
 import simple_nav
+import bore_ang_calc
 #FSW algorithms that we want to call
 import cssComm
 import alg_contain
@@ -62,6 +63,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject = six_dof_eom.SixDofEOM()
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
    self.SimpleNavObject = simple_nav.SimpleNav()
+   self.solarArrayBore = bore_ang_calc.BoreAngCalc();
    self.InitAllDynObjects()
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
@@ -78,6 +80,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("DynamicsTask", self.VehDynObject)
    self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
    self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
+   self.AddModelToTask("DynamicsTask", self.solarArrayBore)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -481,7 +484,15 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetVehOrbElemObject(self):
    self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
    self.VehOrbElemObject.mu = self.SunGravBody.mu
-
+ 
+ def SetsolarArrayBore(self):
+   self.solarArrayBore.ModelTag = "solarArrayBoresight"
+   self.solarArrayBore.StateString = "inertial_state_output"
+   self.solarArrayBore.celBodyString = "sun_display_frame_data"
+   self.solarArrayBore.OutputDataString = "solar_array_sun_bore"
+   SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double',
+                                 self.solarArrayBore.strBoreVec)
+ 
  def SetSimpleNavObject(self):
    self.SimpleNavObject.ModelTag = "SimpleNavigation"
    PMatrix = [0.0]*18*18
@@ -658,6 +669,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray(desiredBurnDir, 'double', self.dvGuidanceData.dvInrtlCmd)
    SimulationBaseClass.SetCArray(Tburn2Body, 'double', self.dvGuidanceData.Tburn2Bdy)
    SimulationBaseClass.SetCArray(desiredOffAxis, 'double', self.dvGuidanceData.dvRotAxis)
+ 
  def SetsunPoint(self):
    self.sunPointData.inputNavDataName = "simple_nav_output"
    self.sunPointData.inputCelMessName = "sun_display_frame_data"
@@ -693,6 +705,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetVehDynObject()
    self.SetVehOrbElemObject()
    self.SetSimpleNavObject()
+   self.SetsolarArrayBore()
 
  def InitAllFSWObjects(self):
    self.SetCSSDecodeFSWConfig()

@@ -436,3 +436,19 @@ std::set<std::string> SystemMessaging::getUnpublishedMessages()
     }
     return(unpublishedList);
 }
+
+std::set<std::string> SystemMessaging::getUniqueMessageNames()
+{
+    std::set<std::string> outputNames;
+    std::vector<MessageStorageContainer *>::iterator it;
+    for(it = dataBuffers.begin(); it != dataBuffers.end(); it++)
+    {
+        selectMessageBuffer(it - dataBuffers.begin());
+        for(uint64_t i=0; i<GetMessageCount(); i++)
+        {
+            outputNames.insert(FindMessageName(i));
+            
+        }
+    }
+    return(outputNames);
+}

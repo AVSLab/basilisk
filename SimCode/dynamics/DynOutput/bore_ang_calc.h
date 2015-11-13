@@ -12,8 +12,8 @@
  */
 
 typedef struct {
-   double azimuth;      //! (r) the azimuth angle of the object
-   double elevation;    //! (r) the elevation angle of the object
+   double azimuth;      //<! (r) the location angle to put the miss in a quadrant
+   double missAngle;    //<! (r) the angular distance between the boresight and body
 }AngOffValues;
 
 //! An orbital element/cartesian position and velocity converter
@@ -26,6 +26,7 @@ public:
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void computeAxisPoint();
+    void computeOutputData();
     void WriteOutputMessages(uint64_t CurrentClock);
     void ReadInputs();
     
