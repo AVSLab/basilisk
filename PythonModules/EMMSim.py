@@ -706,8 +706,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.earthPointData.inputSecMessName = "sun_display_frame_data"
    angSin = math.sin(23.0*math.pi/180.0)
    angCos = math.cos(23.0*math.pi/180.0)
-   #TsunVec2Body = [angSin, 0.0, -angCos, 0.0, 1.0, 0.0, angCos, 0.0, -angSin]
-   #TsunVec2Body = [0.0, angSin, angCos, -0.0, -angCos, -angSin, 1.0, 0.0, 0.0]
    TsunVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
    SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.earthPointData.TPoint2Bdy)
 
