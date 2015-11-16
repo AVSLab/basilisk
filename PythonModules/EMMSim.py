@@ -240,14 +240,15 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
                        ['self.initializeRaster()'])
 
-   self.asteriskAngles = [[15.0*math.pi/180.0, 0.0, 0.0],
-                          [-15.0*math.pi/180.0, 0.0, 0.0],
-                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [0.0, 0.0, 15.0*math.pi/180.0],
-                          [0.0, 0.0, -15.0*math.pi/180.0],
-                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
+   rastAngRad = 50.0*math.pi/180.0
+   self.asteriskAngles = [[rastAngRad, 0.0, 0.0],
+                          [-rastAngRad, 0.0, 0.0],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
+                          [0.0, 0.0, rastAngRad],
+                          [0.0, 0.0, -rastAngRad],
+                          [rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
                           [0.0, 0.0, 0.0]]
    self.asteriskSelector = 0
  def initializeRaster(self):
@@ -676,8 +677,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.mnvrActive = 0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 175.0
-   self.attMnvrControlData.P = 150.0
+   self.attMnvrControlData.K = 100.0
+   self.attMnvrControlData.P = 75.0
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
