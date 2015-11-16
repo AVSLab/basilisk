@@ -101,6 +101,7 @@ trueAnom = TheEMMSim.pullMessageLogData("OrbitalElements.f")
 solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
 highGainMiss = TheEMMSim.pullMessageLogData("high_gain_earth_bore.missAngle")
 instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")
+instrumentAz = TheEMMSim.pullMessageLogData("instrument_mars_bore.azimuth")
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 sigmaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.sigma', range(3))
 sigmaCMD = TheEMMSim.pullMessageLogData('att_cmd_output.sigma_BR', range(3))
@@ -136,9 +137,14 @@ plt.xlabel('Time (s)')
 plt.ylabel('High Gain Miss (d)')
 
 plt.figure(6)
-plt.plot(instrumentMiss[:,0]*1.0E-9, instrumentMiss[:,1]*180/math.pi)
+plt.plot(instrumentMiss[:,0]*1.0E-9, instrumentMiss[:,1]*180.0/math.pi)
 plt.xlabel('Time (s)')
 plt.ylabel('Instrument Nadir Miss (d)')
+
+plt.figure(7)
+plt.plot(instrumentAz[:,0]*1.0E-9, instrumentAz[:,1]*180.0/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Instrument Nadir Azimuth (d)')
 
 
 #If requested, generate plots

@@ -1,4 +1,4 @@
-import sys, os, inspect
+﻿import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -57,6 +57,7 @@ TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E8))
+TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E8))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
 
@@ -86,6 +87,7 @@ TheEMMSim.ExecuteSimulation()
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
+solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat, 
@@ -103,6 +105,12 @@ plt.plot(FSWsHat[:,0]*1.0E-9, FSWsHat[:,3], 'r', DataCSSTruth[:,0]*1.0E-9, DataC
 
 plt.figure(2)
 plt.plot(numCSSActive[:,0]*1.0E-9, numCSSActive[:,1])
+
+plt.figure(3)
+plt.plot(solarArrayMiss[:,0]*1.0E-9, solarArrayMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Solar Array Miss (d)')
+
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):
       plt.show()
