@@ -239,7 +239,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
    SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
-   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2)
+   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2, "vehicleConfigData")
    self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
