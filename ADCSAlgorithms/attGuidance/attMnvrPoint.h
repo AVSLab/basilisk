@@ -27,6 +27,7 @@ typedef struct {
     double mnvrStartTime;    /*!< s  The amount of time to spend accelerating into maneuver*/
     uint64_t startClockRead; /*!< ns the value of the previous clock read from the last call*/
     double maxAngAccel;      /*!< r/s2 The maximum angular acceleration to take spacecraft through*/
+	int32_t mnvrComplete;    /*!< (-) Helpful flag indicating if the current maneuver is complete*/
     int32_t mnvrActive;      /*!< -- Flag indicating if we are maneuvering */
     int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t inputNavID;      /*!< -- ID for the incoming nav state message*/
