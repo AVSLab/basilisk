@@ -2,6 +2,8 @@
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
+import RigidBodyKinematics
+import numpy
 
 #import regular python objects that we need
 import math
@@ -217,7 +219,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                           "self.enableTask('earthPointTask')", "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False"])
+                          "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
+                          "self.attMnvrPointData.mnvrComplete = False",
+                          "self.setEventActivity('mnvrToRaster', True)"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
@@ -231,7 +235,38 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                      "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
+   self.createNewEvent("mnvrToRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
+                       ['self.activateNextRaster()', "self.setEventActivity('completeRaster', True)"])
+   self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
+                       ['self.initializeRaster()'])
 
+   self.asteriskAngles = [[15.0*math.pi/180.0, 0.0, 0.0],
+                          [-15.0*math.pi/180.0, 0.0, 0.0],
+                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
+                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
+                          [0.0, 0.0, 15.0*math.pi/180.0],
+                          [0.0, 0.0, -15.0*math.pi/180.0],
+                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
+                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
+                          [0.0, 0.0, 0.0]]
+   self.asteriskSelector = 0
+ def initializeRaster(self):
+     if(self.asteriskSelector != 0):
+         self.setEventActivity('mnvrToRaster', True)
+
+ def activateNextRaster(self):
+     basePointMatrix = numpy.array(self.baseMarsTrans)
+     basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
+     offPointAngles = numpy.array(self.asteriskAngles[self.asteriskSelector])
+     self.asteriskSelector += 1
+     self.asteriskSelector = self.asteriskSelector % len(self.asteriskAngles)
+     offPointAngles = numpy.reshape(offPointAngles, (3,1))
+     offMatrix = RigidBodyKinematics.Euler1232C(offPointAngles)
+     newPointMatrix = numpy.dot(offMatrix, basePointMatrix)
+     newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
+     SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
+     self.attMnvrPointData.mnvrActive = False
+     
  def InitializeSimulation(self):
    SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
    self.dyn2FSWInterface.discoverAllMessages()
@@ -637,12 +672,12 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.outputDataName = "nom_att_guid_out"
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
    self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
-   self.attMnvrPointData.maxAngAccel = 0.5/1000.0
+   self.attMnvrPointData.maxAngAccel = 0.1/1000.0
    self.attMnvrPointData.mnvrActive = 0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 40.0
-   self.attMnvrControlData.P = 50.0
+   self.attMnvrControlData.K = 175.0
+   self.attMnvrControlData.P = 150.0
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
@@ -706,15 +741,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.earthPointData.inputSecMessName = "sun_display_frame_data"
    angSin = math.sin(23.0*math.pi/180.0)
    angCos = math.cos(23.0*math.pi/180.0)
-   TsunVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
-   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.earthPointData.TPoint2Bdy)
+   TearthVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
+   SimulationBaseClass.SetCArray(TearthVec2Body, 'double', self.earthPointData.TPoint2Bdy)
 
  def SetmarsPoint(self):
    self.marsPointData.inputNavDataName = "simple_nav_output"
    self.marsPointData.inputCelMessName = "mars_display_frame_data"
    self.marsPointData.outputDataName = "att_cmd_output"
-   TsunVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.marsPointData.TPoint2Bdy)
+   TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+   self.baseMarsTrans = TmarsVec2Body
+   SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
