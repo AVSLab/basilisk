@@ -586,8 +586,11 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafePointData.sHatBdyCmd)
 
  def SetsunSafeControl(self):
-   self.sunSafeControlData.K = 4.0
-   self.sunSafeControlData.P = 40.0
+   self.sunSafeControlData.K1 = 0.15            # rad/sec
+   self.sunSafeControlData.K3 = 1.0             # rad/sec
+   self.sunSafeControlData.P = 150.0            # N*m*sec
+   self.sunSafeControlData.Ki = 0.0             # N*m
+   self.sunSafeControlData.integralLimit = 0.15 # rad
    self.sunSafeControlData.inputGuidName = "sun_safe_att_err"
    self.sunSafeControlData.outputDataName = "sun_safe_control_request"
 
