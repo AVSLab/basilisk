@@ -283,3 +283,15 @@ messageIdentData SimModel::getMessageID(std::string messageName)
     messagePublishSearch(messageName);
     return(messageID);
 }
+
+/*! This method gets the list of unique message names present in the simulation 
+    so that the user can see what messages have been created with no duplicates 
+    from the shadow messages
+    @return set of strings that constitute the unique names
+*/
+std::set<std::string> SimModel::getUniqueMessageNames()
+{
+    std::set<std::string> outputSet;
+    outputSet = SystemMessaging::GetInstance()->getUniqueMessageNames();
+    return(outputSet);
+}

@@ -32,6 +32,7 @@ foreach(file ${file_src})
    set_source_files_properties(${file} PROPERTIES SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities")
    set_source_files_properties( ${swig_generated_file_fullname}
                PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
+   set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
    SWIG_ADD_MODULE(${FileBase} python ${file} ${impl_files})
    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
    foreach(LibFile ${LIBRARY_BUILD_LIST})

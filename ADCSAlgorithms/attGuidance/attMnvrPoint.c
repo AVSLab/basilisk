@@ -74,6 +74,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
         ConfigData->mnvrActive = 1;
         ConfigData->startClockRead = callTime;
     }
+	ConfigData->mnvrComplete = 0;
     
     ConfigData->currMnvrTime = (callTime*1.0E-9 -
         ConfigData->startClockRead*1.0E-9);
@@ -111,6 +112,10 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     addMRP(ConfigData->sigmaCmd, localState.vehSigma,
     ConfigData->attOut.sigma_BR);
     MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
+	if (ConfigData->currMnvrTime == ConfigData->totalMnvrTime)
+	{
+		ConfigData->mnvrComplete = 1;
+	}
     
     v3Scale(phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
     v3Subtract(localState.vehBodyRate, ConfigData->bodyRateCmd,

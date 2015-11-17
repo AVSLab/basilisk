@@ -1,7 +1,9 @@
-﻿#Import some architectural stuff that we will probably always use
+#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
+import RigidBodyKinematics
+import numpy
 
 #import regular python objects that we need
 import math
@@ -17,6 +19,7 @@ import thruster_dynamics
 import coarse_sun_sensor
 import imu_sensor
 import simple_nav
+import bore_ang_calc
 #FSW algorithms that we want to call
 import cssComm
 import alg_contain
@@ -62,6 +65,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject = six_dof_eom.SixDofEOM()
    self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
    self.SimpleNavObject = simple_nav.SimpleNav()
+   self.solarArrayBore = bore_ang_calc.BoreAngCalc();
+   self.highGainBore = bore_ang_calc.BoreAngCalc();
+   self.instrumentBore = bore_ang_calc.BoreAngCalc();
    self.InitAllDynObjects()
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
@@ -78,6 +84,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("DynamicsTask", self.VehDynObject)
    self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
    self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
+   self.AddModelToTask("DynamicsTask", self.solarArrayBore)
+   self.AddModelToTask("DynamicsTask", self.instrumentBore)
+   self.AddModelToTask("DynamicsTask", self.highGainBore)
 
    self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
    self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig, 
@@ -210,7 +219,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                           "self.enableTask('earthPointTask')", "self.attMnvrPointData.mnvrActive = False"])
    self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                          "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False"])
+                          "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
+                          "self.attMnvrPointData.mnvrComplete = False",
+                          "self.setEventActivity('mnvrToRaster', True)"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
@@ -224,7 +235,54 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                      "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
+   self.createNewEvent("mnvrToRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
+                       ['self.activateNextRaster()', "self.setEventActivity('completeRaster', True)"])
+   self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
+                       ['self.initializeRaster()'])
 
+   rastAngRad = 50.0*math.pi/180.0
+   self.asteriskAngles = [[rastAngRad, 0.0, 0.0],
+                          [-rastAngRad, 0.0, 0.0],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
+                          [0.0, 0.0, rastAngRad],
+                          [0.0, 0.0, -rastAngRad],
+                          [rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
+                          [0.0, 0.0, 0.0]]
+                          
+   rastAngRad = 11.0*math.pi/180.0
+   discAngleRad = 16.5*1.6*math.pi/180.0
+   self.sideScanAngles = [ \
+                            [rastAngRad, 0.0, discAngleRad],
+                            [rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [0.0, 0.0, discAngleRad],
+                            [0.0, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [-rastAngRad, 0.0, discAngleRad],
+                            [-rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0] \
+                            ]
+   self.scanSelector = 0
+   self.scanAnglesUse = self.asteriskAngles
+ def initializeRaster(self):
+     if(self.scanSelector != 0):
+         self.setEventActivity('mnvrToRaster', True)
+
+ def activateNextRaster(self):
+     basePointMatrix = numpy.array(self.baseMarsTrans)
+     basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
+     offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
+     self.scanSelector += 1
+     self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
+     offPointAngles = numpy.reshape(offPointAngles, (3,1))
+     offMatrix = RigidBodyKinematics.Euler1232C(offPointAngles)
+     newPointMatrix = numpy.dot(offMatrix, basePointMatrix)
+     newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
+     SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
+     self.attMnvrPointData.mnvrActive = False
+     
  def InitializeSimulation(self):
    SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
    self.dyn2FSWInterface.discoverAllMessages()
@@ -232,7 +290,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetLocalConfigData(self):
    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
    SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
-   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2)
+   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2, "vehicleConfigData")
    self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -262,57 +320,49 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetACSThrusterDynObject(self):
    self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
    Thruster1 = thruster_dynamics.ThrusterConfigData()
-   Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
-   Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550,  1.79070])
+   Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
    Thruster1.MaxThrust = 0.9
    Thruster1.MinOnTime = 0.020;
    Thruster2 = thruster_dynamics.ThrusterConfigData()
-   Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
-   Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360,  1.79070])
+   Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
    Thruster2.MaxThrust = 0.9
    Thruster2.MinOnTime = 0.020;
    Thruster3 = thruster_dynamics.ThrusterConfigData()
-   Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 2.0])
-   Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550,  0.86360,  1.79070])
+   Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
    Thruster3.MaxThrust = 0.9
    Thruster3.MinOnTime = 0.020;
    Thruster4 = thruster_dynamics.ThrusterConfigData()
-   Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
-   Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360,  0.82550,  1.79070])
+   Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
    Thruster4.MaxThrust = 0.9
    Thruster4.MinOnTime = 0.020;
    Thruster5 = thruster_dynamics.ThrusterConfigData()
-   Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
-   Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550,  0.18288])
+   Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
    Thruster5.MaxThrust = 0.9
    Thruster5.MinOnTime = 0.020;
    Thruster6 = thruster_dynamics.ThrusterConfigData()
-   Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
-   Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360,  0.18288])
+   Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
    Thruster6.MaxThrust = 0.9
    Thruster6.MinOnTime = 0.020;
    Thruster7 = thruster_dynamics.ThrusterConfigData()
-   Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.0])
-   Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      -math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550,  0.86360,  0.18288])
+   Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
    Thruster7.MaxThrust = 0.9
    Thruster7.MinOnTime = 0.020;
    Thruster8 = thruster_dynamics.ThrusterConfigData()
-   Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.0])
-   Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([ 
-      math.cos(45.0*math.pi/180.0), -math.sin(45.0*math.pi/180.0), 0.0])
+   Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360,  0.82550,  0.18288])
+   Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
    Thruster8.MaxThrust = 0.9
    Thruster8.MinOnTime = 0.020;
    self.ACSThrusterDynObject.ThrusterData = \
       thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3, 
          Thruster4, Thruster5, Thruster6, Thruster7, Thruster8])
-   ACSpropCM = [0.0, 0.0, 1.0]
+   ACSpropCM = [0.0, 0.0, 1.2]
    ACSpropMass = 40 #Made up!!!!
    ACSpropRadius = 46.0/2.0/3.2808399/12.0
    sphereInerita = 2.0/5.0*ACSpropMass*ACSpropRadius*ACSpropRadius
@@ -489,7 +539,32 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetVehOrbElemObject(self):
    self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
    self.VehOrbElemObject.mu = self.SunGravBody.mu
+ 
+ def SetsolarArrayBore(self):
+   self.solarArrayBore.ModelTag = "solarArrayBoresight"
+   self.solarArrayBore.StateString = "inertial_state_output"
+   self.solarArrayBore.celBodyString = "sun_display_frame_data"
+   self.solarArrayBore.OutputDataString = "solar_array_sun_bore"
+   SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double',
+                                 self.solarArrayBore.strBoreVec)
+ def SethighGainBore(self):
+    self.highGainBore.ModelTag = "highGainBoresight"
+    self.highGainBore.StateString = "inertial_state_output"
+    self.highGainBore.celBodyString = "earth_display_frame_data"
+    self.highGainBore.OutputDataString = "high_gain_earth_bore"
+    angSin = math.sin(23.0*math.pi/180.0)
+    angCos = math.cos(23.0*math.pi/180.0)
+    SimulationBaseClass.SetCArray([0.0, -angSin, angCos], 'double',
+                      self.highGainBore.strBoreVec)
 
+ def SetinstrumentBore(self):
+    self.instrumentBore.ModelTag = "instrumentBoresight"
+    self.instrumentBore.StateString = "inertial_state_output"
+    self.instrumentBore.celBodyString = "mars_display_frame_data"
+    self.instrumentBore.OutputDataString = "instrument_mars_bore"
+    SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double',
+       self.instrumentBore.strBoreVec)
+ 
  def SetSimpleNavObject(self):
    self.SimpleNavObject.ModelTag = "SimpleNavigation"
    PMatrix = [0.0]*18*18
@@ -600,14 +675,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.sunSafeACSData.thrData.minThrustRequest = 0.1
    self.sunSafeACSData.thrData.numEffectors = 8
    self.sunSafeACSData.thrData.maxNumCmds = 2
-   onTimeMap = [-1.0, 1.0, 1.0, 
-                 -1.0, -1.0, -1.0,
-                 1.0, -1.0, 1.0,
-                 1.0, 1.0, -1.0,
-                 1.0, -1.0, 1.0,
-                 1.0, 1.0, -1.0,
-                 -1.0, 1.0, 1.0,
-                 -1.0, -1.0, -1.0]
+   onTimeMap = [0.0, 1.0, 0.7, 
+                 -1.0, 0.0, -0.7,
+                 1.0, 0.0, -0.7,
+                 0.0, -1.0, 0.7,
+                 0.0, -1.0, 0.7,
+                 1.0, 0.0, -0.7,
+                 -1.0, 0.0, -0.7,
+                 0.0, 1.0, 0.7]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', 
       self.sunSafeACSData.thrData.thrOnMap)
  def SetattMnvrPoint(self):
@@ -616,12 +691,12 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.outputDataName = "nom_att_guid_out"
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
    self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
-   self.attMnvrPointData.maxAngAccel = 0.5/1000.0
+   self.attMnvrPointData.maxAngAccel = 0.1/1000.0
    self.attMnvrPointData.mnvrActive = 0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 30.0
-   self.attMnvrControlData.P = 40.0
+   self.attMnvrControlData.K = 100.0
+   self.attMnvrControlData.P = 75.0
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
@@ -635,12 +710,12 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    newThrGroup.maxNumCmds = 1
    onTimeMap = [0.0, 0.0, 1.0,
                 0.0, 0.0, -1.0,
-                0.0, 0.0, 1.0,
                 0.0, 0.0, -1.0,
                 0.0, 0.0, 1.0,
-                0.0, 0.0, -1.0,
                 0.0, 0.0, 1.0,
-                0.0, 0.0, -1.0]
+                0.0, 0.0, -1.0,
+                0.0, 0.0, -1.0,
+                0.0, 0.0, 1.0]
    SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
    dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 0,
                                        newThrGroup)
@@ -669,6 +744,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray(desiredBurnDir, 'double', self.dvGuidanceData.dvInrtlCmd)
    SimulationBaseClass.SetCArray(Tburn2Body, 'double', self.dvGuidanceData.Tburn2Bdy)
    SimulationBaseClass.SetCArray(desiredOffAxis, 'double', self.dvGuidanceData.dvRotAxis)
+ 
  def SetsunPoint(self):
    self.sunPointData.inputNavDataName = "simple_nav_output"
    self.sunPointData.inputCelMessName = "sun_display_frame_data"
@@ -684,16 +760,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.earthPointData.inputSecMessName = "sun_display_frame_data"
    angSin = math.sin(23.0*math.pi/180.0)
    angCos = math.cos(23.0*math.pi/180.0)
-   #TsunVec2Body = [angSin, 0.0, -angCos, 0.0, 1.0, 0.0, angCos, 0.0, -angSin]
-   TsunVec2Body = [0.0, angSin, angCos, -0.0, -angCos, -angSin, 1.0, 0.0, 0.0]
-   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.earthPointData.TPoint2Bdy)
+   TearthVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
+   SimulationBaseClass.SetCArray(TearthVec2Body, 'double', self.earthPointData.TPoint2Bdy)
 
  def SetmarsPoint(self):
    self.marsPointData.inputNavDataName = "simple_nav_output"
    self.marsPointData.inputCelMessName = "mars_display_frame_data"
    self.marsPointData.outputDataName = "att_cmd_output"
-   TsunVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-   SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.marsPointData.TPoint2Bdy)
+   TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+   self.baseMarsTrans = TmarsVec2Body
+   SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
  def InitAllDynObjects(self):
    self.SetLocalConfigData()
@@ -704,6 +780,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetVehDynObject()
    self.SetVehOrbElemObject()
    self.SetSimpleNavObject()
+   self.SetsolarArrayBore()
+   self.SetinstrumentBore()
+   self.SethighGainBore()
 
  def InitAllFSWObjects(self):
    self.SetCSSDecodeFSWConfig()

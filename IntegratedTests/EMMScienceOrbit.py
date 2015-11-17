@@ -16,13 +16,19 @@ import SimulationBaseClass #Need this to access some pointer manipulation
 #Instantiate a copy of the EMM vehicle/FSW
 TheEMMSim = EMMSim.EMMSim()
 
+
+
 #Log a handful of messages to examine vehicle performance
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10)) #inertial states
 TheEMMSim.TotalSim.logThisMessage("att_cmd_output", int(1E10)) #inertial states
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E10)) #orbital elements
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E10)) #FSW weighted least squares sun-vector
 TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E10)) #spacecraft mass properties
+TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E10)) #solar array boresight angles
+TheEMMSim.TotalSim.logThisMessage("high_gain_earth_bore", int(1E10)) #solar array boresight angles
+TheEMMSim.TotalSim.logThisMessage("instrument_mars_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('instrumentBoresight.boreVecPoint', 'double', 0, 2, int(1E9))
 
 #Setup a time in the science orbit well past our transition to science
 TheEMMSim.SpiceObject.UTCCalInit = "2021 June 15, 00:00:00.0"
@@ -34,8 +40,8 @@ TheEMMSim.VehDynObject.GravData[2].IsCentralBody = True
 TheEMMSim.VehDynObject.GravData[2].IsDisplayBody = True
 TheEMMSim.VehOrbElemObject.mu = TheEMMSim.MarsGravBody.mu #central body of OE object
 
-#Setting a 2-inch dry mass CoM offset to be conservative
-TheEMMSim.VehDynObject.baseCoMInit[0] = 0.0254*2.0
+#Setting a dry mass CoM offset to be conservative
+TheEMMSim.VehDynObject.baseCoMInit[0] = 0.05 #meters
 
 #These mass properties are built assuming that we have already emptied the tank
 #inserting into Mars orbit.  I'm assuming that we have 40% of the prop remaining 
@@ -86,7 +92,16 @@ TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
 TheEMMSim.ExecuteSimulation()
 #Take the vehicle into mars pointing mode and begin the science sequencing
 TheEMMSim.modeRequest = 'marsPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*3*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*2.75*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.setEventActivity('initiateSunPoint', True)
+TheEMMSim.setEventActivity('initiateMarsPoint', True)
+TheEMMSim.modeRequest = 'sunPoint'
+TheEMMSim.ConfigureStopTime(int(60*60*3.25*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.modeRequest = 'marsPoint'
+TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
+TheEMMSim.ConfigureStopTime(int(60*60*3.75*1E9))
 TheEMMSim.ExecuteSimulation()
 
 #Simulation complete.  Pull off a selected set of values from the variable logs
@@ -95,9 +110,14 @@ posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
 trueAnom = TheEMMSim.pullMessageLogData("OrbitalElements.f")
+solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
+highGainMiss = TheEMMSim.pullMessageLogData("high_gain_earth_bore.missAngle")
+instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")
+instrumentAz = TheEMMSim.pullMessageLogData("instrument_mars_bore.azimuth")
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 sigmaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.sigma', range(3))
 sigmaCMD = TheEMMSim.pullMessageLogData('att_cmd_output.sigma_BR', range(3))
+dataInstBore = TheEMMSim.GetLogVariableData('instrumentBoresight.boreVecPoint')
 
 #Plot true anomaly for the simulation
 plt.figure(1)
@@ -117,8 +137,32 @@ plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,1], 'b', sigmaTruth[:,0]*1.0E-9, sigma
 plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,2], 'g', sigmaTruth[:,0]*1.0E-9, sigmaTruth[:,2], 'g--')
 plt.plot(sigmaCMD[:,0]*1.0E-9, sigmaCMD[:,3], 'r', sigmaTruth[:,0]*1.0E-9, sigmaTruth[:,3], 'r--')
 plt.xlabel('Time (s)')
-plt.xlabel('Attitude MRP (-)')
+plt.ylabel('Attitude MRP (-)')
 
+plt.figure(4)
+plt.plot(solarArrayMiss[:,0]*1.0E-9, solarArrayMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Solar Array Miss (d)')
+
+plt.figure(5)
+plt.plot(highGainMiss[:,0]*1.0E-9, highGainMiss[:,1]*180/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('High Gain Miss (d)')
+
+plt.figure(6)
+plt.plot(instrumentMiss[:,0]*1.0E-9, instrumentMiss[:,1]*180.0/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Instrument Nadir Miss (d)')
+
+plt.figure(7)
+plt.plot(instrumentAz[:,0]*1.0E-9, instrumentAz[:,1]*180.0/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Instrument Nadir Azimuth (d)')
+
+plt.figure(8)
+plt.plot(dataInstBore[:,2], dataInstBore[:,3])
+plt.xlabel('y-component (-)')
+plt.ylabel('z-component (-)')
 
 
 #If requested, generate plots
