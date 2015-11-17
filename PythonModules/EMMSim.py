@@ -250,17 +250,32 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                           [rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
                           [-rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
                           [0.0, 0.0, 0.0]]
-   self.asteriskSelector = 0
+                          
+   rastAngRad = 11.0*math.pi/180.0
+   discAngleRad = 16.5*1.6*math.pi/180.0
+   self.sideScanAngles = [ \
+                            [rastAngRad, 0.0, discAngleRad],
+                            [rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [0.0, 0.0, discAngleRad],
+                            [0.0, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [-rastAngRad, 0.0, discAngleRad],
+                            [-rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0] \
+                            ]
+   self.scanSelector = 0
+   self.scanAnglesUse = self.asteriskAngles
  def initializeRaster(self):
-     if(self.asteriskSelector != 0):
+     if(self.scanSelector != 0):
          self.setEventActivity('mnvrToRaster', True)
 
  def activateNextRaster(self):
      basePointMatrix = numpy.array(self.baseMarsTrans)
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
-     offPointAngles = numpy.array(self.asteriskAngles[self.asteriskSelector])
-     self.asteriskSelector += 1
-     self.asteriskSelector = self.asteriskSelector % len(self.asteriskAngles)
+     offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
+     self.scanSelector += 1
+     self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
      offMatrix = RigidBodyKinematics.Euler1232C(offPointAngles)
      newPointMatrix = numpy.dot(offMatrix, basePointMatrix)

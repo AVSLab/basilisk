@@ -15,19 +15,7 @@ import SimulationBaseClass #Need this to access some pointer manipulation
 
 #Instantiate a copy of the EMM vehicle/FSW
 TheEMMSim = EMMSim.EMMSim()
-rastAngRad = 11.0*math.pi/180.0
-discAngleRad = 16.5*1.6*math.pi/180.0
-TheEMMSim.asteriskAngles = [ \
-                           [rastAngRad, 0.0, discAngleRad],
-                           [rastAngRad, 0.0, -discAngleRad],
-                           [0.0, 0.0, 0.0],
-                           [0.0, 0.0, discAngleRad],
-                           [0.0, 0.0, -discAngleRad],
-                           [0.0, 0.0, 0.0],
-                           [-rastAngRad, 0.0, discAngleRad],
-                           [-rastAngRad, 0.0, -discAngleRad],
-                           [0.0, 0.0, 0.0] \
-                           ]
+
 
 
 #Log a handful of messages to examine vehicle performance
@@ -104,7 +92,16 @@ TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
 TheEMMSim.ExecuteSimulation()
 #Take the vehicle into mars pointing mode and begin the science sequencing
 TheEMMSim.modeRequest = 'marsPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*3*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*2.75*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.setEventActivity('initiateSunPoint', True)
+TheEMMSim.setEventActivity('initiateMarsPoint', True)
+TheEMMSim.modeRequest = 'sunPoint'
+TheEMMSim.ConfigureStopTime(int(60*60*3.25*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.modeRequest = 'marsPoint'
+TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
+TheEMMSim.ConfigureStopTime(int(60*60*3.75*1E9))
 TheEMMSim.ExecuteSimulation()
 
 #Simulation complete.  Pull off a selected set of values from the variable logs
