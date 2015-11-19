@@ -40,7 +40,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
                     sizeof(vehicleConfigData), (void*) &LocalConfigData);
-        m33MultM33(RECAST3X3 LocalConfigData.T_str2body, RECAST3X3 ConfigData->platform2StrDCM,
+        m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->platform2StrDCM,
                    RECAST3X3 ConfigData->platform2BdyDCM);
     }
     

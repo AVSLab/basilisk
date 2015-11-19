@@ -293,8 +293,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  #
  def SetLocalConfigData(self):
     #
-    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-    SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
+    BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
 
     Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
     SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.I)
