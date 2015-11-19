@@ -1,6 +1,7 @@
 
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "SimCode/utilities/linearAlgebra.h"
+#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS WLS estimator.
@@ -66,7 +67,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         
         /*!   -# Find minimum norm solution */
         mMultMt(H, 2, 3, H, 2, 3, m22);
-        status = m22Inverse(m22, m22);
+        status = m22Inverse(RECAST2x2 m22, RECAST2x2 m22);
         mtMultM(H, 2, 3, m22, 2, 2, m32);
         /*!   -# Multiply the Ht(HtH)^-1 by the observation vector to get fit*/
         mMultV(m32, 3, 2, y, x);
@@ -74,7 +75,7 @@ int computeWlsmn(int numActiveCss, double *H, double *W,
         /*!    -# Use the weights to compute (HtWH)^-1HW*/
         mtMultM(H, numActiveCss, 3, W, numActiveCss, numActiveCss, m3N);
         mMultM(m3N, 3, numActiveCss, H, numActiveCss, 3, m33);
-        status = m33Inverse(m33, m33_2);
+        status = m33Inverse(RECAST3X3 m33, RECAST3X3 m33_2);
         mMultMt(m33_2, 3, 3, H, numActiveCss, 3, m3N);
         mMultM(m3N, 3, numActiveCss, W, numActiveCss, numActiveCss, m3N_2);
         /*!    -# Multiply the LSQ matrix by the obs vector for best fit*/

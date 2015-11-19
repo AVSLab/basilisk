@@ -40,7 +40,7 @@ class SysInterface
     
 public:
     SysInterface();
-    ~SysInterface();
+    virtual ~SysInterface();
     void addNewInterface(std::string from, std::string to);
     void addNewInterface(InterfaceDataExchange  *newInterface);
     //void addPassToCurrent(std::string messagePass);

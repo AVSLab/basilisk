@@ -5,6 +5,7 @@
 #include "SimCode/environment/spice/spice_planet_state.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "attDetermination/CSSEst/navStateOut.h"
+#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
 
@@ -98,8 +99,8 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     v3Normalize(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[2][0]));
     v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
             &(T_Inrtl2Point[1][0]));
-    m33MultM33(ConfigData->TPoint2Bdy, T_Inrtl2Point, T_Inrtl2Bdy);
-    C2MRP(&(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
+    m33MultM33(RECAST3X3 ConfigData->TPoint2Bdy, T_Inrtl2Point, T_Inrtl2Bdy);
+    C2MRP(RECAST3X3 &(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
     v3SetZero(ConfigData->attCmd.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
         &(ConfigData->attCmd), moduleID);
