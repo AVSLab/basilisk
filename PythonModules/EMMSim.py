@@ -27,7 +27,7 @@ import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
 import imuComm
-import sunSafeControl
+import MRP_Steering
 import sunSafeACS
 import attMnvrPoint
 import dvAttEffect
@@ -112,11 +112,11 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafePoint.CrossInit_sunSafePoint)
    self.sunSafePointWrap.ModelTag = "sunSafePoint"
 
-   self.sunSafeControlData = sunSafeControl.sunSafeControlConfig()
-   self.sunSafeControlWrap = alg_contain.AlgContain(self.sunSafeControlData,
-      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
-      sunSafeControl.CrossInit_sunSafeControl)
-   self.sunSafeControlWrap.ModelTag = "sunSafeControl"
+   self.MRP_SteeringData = MRP_Steering.MRP_SteeringConfig()
+   self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringData,
+      MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
+      MRP_Steering.CrossInit_MRP_Steering)
+   self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
  
    self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
    self.sunSafeACSWrap = alg_contain.AlgContain(self.sunSafeACSData,
@@ -130,10 +130,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       attMnvrPoint.CrossInit_attMnvrPoint)
    self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
-   self.attMnvrControlData = sunSafeControl.sunSafeControlConfig()
+   self.attMnvrControlData = MRP_Steering.MRP_SteeringConfig()
    self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
-      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
-      sunSafeControl.CrossInit_sunSafeControl)
+      MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
+      MRP_Steering.CrossInit_MRP_Steering)
    self.attMnvrControlWrap.ModelTag = "attMnvrControl"
    
    self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
@@ -173,8 +173,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
    self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, 
       self.sunSafePointData)
-   self.AddModelToTask("sunSafeFSWTask", self.sunSafeControlWrap, 
-      self.sunSafeControlData)
+   self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, 
+      self.MRP_SteeringData)
    self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
 
@@ -287,11 +287,24 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
    self.dyn2FSWInterface.discoverAllMessages()
    self.fsw2DynInterface.discoverAllMessages()
+   
+ # 
+ # Set the static spacecraft parameters 
+ #
  def SetLocalConfigData(self):
-   Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-   SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
-   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2, "vehicleConfigData")
-   self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
+    #
+    Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
+
+    Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
+    SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.I)
+
+    # adjust the message size by hand if needed 
+    msgSize = 8*9 + 8*9 + 4 + 8;    # the last 8 bytes are a required padding for now
+    self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
+    self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
+   
+   
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
    self.SpiceObject.SPICEDataPath = self.simBasePath + '/External/EphemerisData/'
@@ -519,9 +532,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.4, 0.2, 0.1])
    self.VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0001, 0.0, 0.0])
    self.VehDynObject.baseMass = 1500.0 - 812.3
-   self.VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
-                                                             0.0, 900.0, 0.0,
-                                                             0.0, 0.0, 900.0])
+   self.VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([1000, 0.0, 0.0,
+                                                             0.0, 800.0, 0.0,
+                                                             0.0, 0.0, 800.0])
    self.VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
                                                                0.0, 1.0, 0.0,
                                                                0.0, 0.0, 1.0])
@@ -660,14 +673,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', 
       self.sunSafePointData.sHatBdyCmd)
 
- def SetsunSafeControl(self):
-   self.sunSafeControlData.K1 = 0.15            # rad/sec
-   self.sunSafeControlData.K3 = 1.0             # rad/sec
-   self.sunSafeControlData.P = 150.0            # N*m*sec
-   self.sunSafeControlData.Ki = 0.0             # N*m
-   self.sunSafeControlData.integralLimit = 0.15 # rad
-   self.sunSafeControlData.inputGuidName = "sun_safe_att_err"
-   self.sunSafeControlData.outputDataName = "sun_safe_control_request"
+ def SetMRP_Steering(self):
+   self.MRP_SteeringData.K1 = 0.15            # rad/sec
+   self.MRP_SteeringData.K3 = 1.0             # rad/sec
+   self.MRP_SteeringData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.MRP_SteeringData.P = 150.0            # N*m*sec
+   self.MRP_SteeringData.Ki = -1.0             # N*m  - negative values turn off the integral feedback
+   self.MRP_SteeringData.integralLimit = 0.15 # rad
+   self.MRP_SteeringData.inputGuidName = "sun_safe_att_err"
+   self.MRP_SteeringData.inputVehicleConfigDataName = "adcs_config_data"
+   self.MRP_SteeringData.inputNavName = "simple_nav_output"
+   self.MRP_SteeringData.outputDataName = "sun_safe_control_request"
 
  def SetsunSafeACS(self):
    self.sunSafeACSData.inputControlName = "sun_safe_control_request"
@@ -789,7 +805,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetIMUCommData()
    self.SetCSSWlsEstFSWConfig()
    self.SetsunSafePoint()
-   self.SetsunSafeControl()
+   self.SetMRP_Steering()
    self.SetsunSafeACS()
    self.SetattMnvrPoint()
    self.SetattMnvrControl()
