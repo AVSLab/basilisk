@@ -326,11 +326,29 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omega[1] = X[i++];
     omega[2] = X[i++];
  
-    std::vector<GravityBodyData>::iterator gravit;
+    /* zero the derivative vector */
+    memset(dX, 0x0, NStates*sizeof(double));
+
+    //! - compute derivative of position (velocity)
+    v3Copy(v_N, dX);
+
+    //! - Get current position magnitude and compute the 2-body gravitational accels
+    rmag = v3Norm(r_N);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, d2);
+    v3Add(d2, dX+3, dX+3);
+
+    /* compute the gravitational zonal harmonics */
+    if(CentralBody->UseJParams)
+    {
+        jPerturb(CentralBody, r_N, perturbAccel);
+        v3Add(dX+3, perturbAccel, dX+3);
+    }
+
     /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
-        Gravity perturbation is acceleration on spacecraft+acceleration on central body.
-        Ephemeris information is propagated by Euler's method in substeps*/
+     Gravity perturbation is acceleration on spacecraft+acceleration on central body.
+     Ephemeris information is propagated by Euler's method in substeps*/
     v3SetZero(InertialAccels);
+    std::vector<GravityBodyData>::iterator gravit;
     for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
     {
         if(gravit->IsCentralBody || gravit->BodyMsgID < 0)
@@ -357,34 +375,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Scale(gravit->mu/rmag/rmag/rmag, PlanetRelPos, PlanetAccel);
         v3Add(InertialAccels, PlanetAccel, InertialAccels);
     }
- 
-    
-    //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_N);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, dX + 3);
-    if(CentralBody->UseJParams)
-    {
-        jPerturb(CentralBody, r_N, perturbAccel);
-        v3Add(dX+3, perturbAccel, dX+3);
-    }
-    
-    //! - Add in integrate-computed non-central bodies
+    //! - Add in inertial accelerations of the non-central bodies
     v3Add(dX+3, InertialAccels, dX+3);
     
-    //! - compute derivative of position (velocity)
-    v3Copy(v_N, dX);
-    
+
     //! - compute dsigma/dt (see Schaub and Junkins)
     BmatMRP(sigma, B);
     m33Scale(0.25, B, B);
     m33MultV3(B, omega, dX + 6);
     
-    //! - compute domega/dt (see Schaub and Junkins)
-    v3Tilde(omega, B);                  /* [tilde(w)] */
-    m33MultV3(this->compI, omega, d2);     /* [I]w */
-    m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
-    m33MultV3(compIinv, d3, dX + 9);  /* d(w)/dt = [I_RW]^-1 . (RHS) */
-  
+
     //! - Convert the current attitude to DCM for conversion in DynEffector loop
     MRP2C(sigma, T_Irtl2Bdy);
     
@@ -460,6 +460,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Add(dX+9, LocalAccels, dX+9);
         
     }
+
+    //! - compute domega/dt (see Schaub and Junkins)
+    v3Tilde(omega, B);                  /* [tilde(w)] */
+    m33MultV3(compI, omega, d2);        /* [I]w */
+    m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
+    //    for(i = 0; i < NUM_RW; i++) {
+    //        hs = this->rw[i].Js * (v3Dot(omega, this->rw[i].gs) + Omega[i]);
+    //        v3Scale(hs, this->rw[i].gs, d3);
+    //        v3Add(d3, d2, d2);
+    //    }
+    m33MultV3(compIinv, d3, d2);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
+    v3Add(dX+9, d2, dX+9);
     
 }
 
