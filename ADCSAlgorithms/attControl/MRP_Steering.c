@@ -117,7 +117,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     MRPSteeringLaw(ConfigData, guidCmd.sigma_BR, omega_BastR_B, omegap_BastR_B);
 
     /* compute the rate tracking error */
-    v3Add(omega_BastR_B, guidCmd.omega_rB, omega_BastN_B);
+    v3Add(omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
     v3Subtract(nav.vehBodyRate, omega_BastN_B, omega_BBast_B);
 
     /* integrate rate tracking error  */
@@ -151,8 +151,8 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     v3Add(L, Lr, Lr);                                       /* +L */
 
-    v3Cross(nav.vehBodyRate, guidCmd.omega_rB, v3);
-    v3Subtract(guidCmd.domega_rB, v3, v3_1);
+    v3Cross(nav.vehBodyRate, guidCmd.omega_RN_B, v3);
+    v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);
     v3Subtract(Lr, v3, Lr);                                 /* -[I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */

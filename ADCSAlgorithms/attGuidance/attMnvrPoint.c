@@ -119,7 +119,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     
     v3Scale(phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
     v3Subtract(localState.vehBodyRate, ConfigData->bodyRateCmd,
-    ConfigData->attOut.omega_BR);
+    ConfigData->attOut.omega_BR_B);
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
 		(void*)&(ConfigData->attOut), moduleID);

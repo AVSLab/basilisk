@@ -139,7 +139,7 @@ void SimpleNav::computeOutput(uint64_t Clock)
     //! - Add errors to the simple cases (everything except sun-pointing)
     v3Add(localState.r_N, &(navErrors.data()[0]), outState.vehPosition);
     v3Add(localState.v_N, &(navErrors.data()[3]), outState.vehVelocity);
-    addMRP(localState.sigma, &(navErrors.data()[6]), outState.vehSigma);
+    addMRP(localState.sigma, &(navErrors.data()[6]), outState.sigma_BN);
     v3Add(localState.omega, &(navErrors.data()[9]), outState.vehBodyRate);
     v3Add(localState.TotalAccumDVBdy, &(navErrors.data()[15]),
           outState.vehAccumDV);
