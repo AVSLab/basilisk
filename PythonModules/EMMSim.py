@@ -711,9 +711,20 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.mnvrActive = 0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 100.0
-   self.attMnvrControlData.P = 75.0
+#   self.attMnvrControlData.K = 100.0
+#   self.attMnvrControlData.P = 75.0
+#   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+#   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
+
+   self.attMnvrControlData.K1 = 1.0           # rad/sec
+   self.attMnvrControlData.K3 = 8.0           # rad/sec
+   self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.attMnvrControlData.P = 80.0            # N*m*sec
+   self.attMnvrControlData.Ki = 2.0            # N*m  - negative values turn off the integral feedback
+   self.attMnvrControlData.integralLimit = 0.3 # rad
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+   self.attMnvrControlData.inputVehicleConfigDataName = "adcs_config_data"
+   self.attMnvrControlData.inputNavName = "simple_nav_output"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
  def SetdvAttEffect(self):
@@ -740,7 +751,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    newThrGroup.nomThrustOn = 0.52
    
    newThrGroup.outputDataName = "dv_thruster_cmds"
-   matMult = 2.0
+   matMult = 1.5
    onTimeMap = [0.0, 0.1*matMult, 0.0,
                 -0.0866*matMult, 0.05*matMult, 0.0,
                 -0.0866*matMult, -0.05*matMult, 0.0,

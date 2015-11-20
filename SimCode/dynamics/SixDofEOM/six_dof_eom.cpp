@@ -385,6 +385,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
  
     /* zero the derivative vector */
     memset(dX, 0x0, NStates*sizeof(double));
+    //! - Set the current composite mass properties for later use in file
+    computeCompositeProperties();
 
     //! - compute derivative of position (velocity)
     v3Copy(v_N, dX);
