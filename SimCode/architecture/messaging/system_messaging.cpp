@@ -17,6 +17,8 @@ SystemMessaging :: SystemMessaging()
 
 SystemMessaging::~SystemMessaging()
 {
+    messageStorage = NULL;
+    
 }
 
 SystemMessaging* SystemMessaging::GetInstance()
@@ -36,7 +38,7 @@ uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
     dataBuffers.push_back(newContainer);
     bufferCount = dataBuffers.size() - 1;
     newContainer->bufferName = bufferName;
-    messageStorage = newContainer;
+    messageStorage = *(dataBuffers.end()-1);
     SetNumMessages(0);
     return(bufferCount);
 }
@@ -45,6 +47,13 @@ void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
 {
     std::vector<MessageStorageContainer*>::iterator it;
     it = dataBuffers.begin();
+    if(bufferUse >= dataBuffers.size())
+    {
+        std::cerr <<"You've attempted to access a message buffer that does not exist.  Yikes.";
+        std::cerr << std::endl;
+        messageStorage = *dataBuffers.begin();
+        return;
+    }
     it += bufferUse;
     messageStorage = (*it);
 }
@@ -65,6 +74,18 @@ void SystemMessaging::ClearMessageBuffer()
     memset(&(messageStorage->messageStorage.StorageBuffer[0]), 0x0,
            messageStorage->messageStorage.GetCurrentSize());
     SetNumMessages(0);
+}
+
+void SystemMessaging::clearMessaging()
+{
+    std::vector<MessageStorageContainer *>::iterator it;
+    for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
+    {
+        delete (*it);
+    }
+    dataBuffers.clear();
+    nextModuleID = 0;
+    messageStorage = NULL;
 }
 
 uint64_t SystemMessaging::GetMessageCount()

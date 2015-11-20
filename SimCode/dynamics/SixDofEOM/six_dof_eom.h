@@ -59,6 +59,7 @@ public:
     void AddBodyEffector(DynEffector *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
+    void computeCompositeProperties();
 public:
     std::vector<double> PositionInit; //!< [m]   Initial position (inertial)
     std::vector<double> VelocityInit; //!< [m/s] Initial velocity (inertial)

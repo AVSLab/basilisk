@@ -46,6 +46,7 @@ public:
     void populateMessageHeader(std::string messageName,
         MessageHeaderData* headerOut); //!< Get header data associated with msg
     std::set<std::string> getUniqueMessageNames();
+    void terminateSimulation();
     
 public:
     std::vector<SysProcess *> processList;           //!< -- List of processes we've created

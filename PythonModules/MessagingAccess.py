@@ -26,7 +26,6 @@ def getMessageContainers(MessageModule, MessageObj):
 def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    SimContainer, VarName, VarType, startIndex, stopIndex, 
    messageType = sim_model.messageBuffer):
-   
    ## Begin Method steps here
    LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
    ## - For each message, pull the buffer, and update the keys of the dictionary

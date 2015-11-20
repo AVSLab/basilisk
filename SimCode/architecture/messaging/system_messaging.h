@@ -84,6 +84,7 @@ public:
     int64_t findMessageBuffer(std::string bufferName);
     std::set<std::string> getUnpublishedMessages();
     std::set<std::string> getUniqueMessageNames();
+    void clearMessaging();
     
     
 private:
