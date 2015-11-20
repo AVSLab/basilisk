@@ -14,6 +14,7 @@ BlankStorage::~BlankStorage()
     if(StorageBuffer != NULL)
     {
         delete [] StorageBuffer;
+        StorageBuffer = NULL;
     }
     BufferStorageSize = 0;
 }

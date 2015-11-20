@@ -82,7 +82,7 @@ void SixDofEOM::SelfInit()
     NStates = 12 + RWACount;
     XState = new double[NStates]; // pos/vel/att/rate + rwa omegas
     memset(XState, 0x0, (NStates)*sizeof(double));
-    TimePrev = 0;
+    TimePrev = 0.0;
     
     //! - Ensure that all init states were appropriately set by the caller
     if(PositionInit.size() != 3 || VelocityInit.size() != 3 ||
@@ -268,6 +268,69 @@ void SixDofEOM::jPerturb(GravityBodyData *gravBody, double r_N[3],
     m33tMultV3(gravBody->J20002Pfix, perturbAccel, perturbAccel);
 }
 
+/*! This method is used to compute the composite mass properties of the vehicle 
+    for the current time.  It takes the base properties and the properties of 
+    all dyn effectors and computes the current composite properties.  It's hard 
+    to do this "right" because we aren't propagating the mass properties states 
+    but this is a good way to start
+    @return void
+*/
+void SixDofEOM::computeCompositeProperties()
+{
+
+    double scaledCoM[3];
+    double localCoM[3];
+    double identMatrix[3][3];
+    double diracMatrix[3][3], outerMatrix[3][3];
+    double CoMDiff[3], CoMDiffNormSquare;
+    double objInertia[3][3];
+
+    memset(scaledCoM, 0x0, 3*sizeof(double));
+    compMass = baseMass;
+    v3Scale(baseMass, baseCoM, scaledCoM);
+
+    std::vector<DynEffector*>::iterator it;
+    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    {
+        DynEffector *TheEff = *it;
+        v3Scale(TheEff->objProps.Mass, TheEff->objProps.CoM, localCoM);
+        v3Add(scaledCoM, localCoM, scaledCoM);
+        compMass += TheEff->objProps.Mass;
+    }
+    
+    //! - Divide summation by total mass to get center of mass.
+    v3Scale(1.0/compMass, scaledCoM, compCoM);
+    
+    //! - Compute the parallel axis theorem effects for the base body inertia tensor
+    m33SetIdentity(identMatrix);
+    v3Subtract(baseCoM, compCoM, CoMDiff);
+    CoMDiffNormSquare = v3Norm(CoMDiff);
+    CoMDiffNormSquare *= CoMDiffNormSquare;
+    m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
+    v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
+    m33Subtract(diracMatrix, outerMatrix, objInertia);
+    m33Add(objInertia, baseI, compI);
+    
+    /*! - For each child body, compute parallel axis theorem effectos for inertia tensor
+     and add that overall inertia back to obtain the composite inertia tensor.*/
+    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    {
+        DynEffector *TheEff = *it;
+        v3Subtract(TheEff->objProps.CoM, compCoM, CoMDiff);
+        CoMDiffNormSquare = v3Norm(CoMDiff);
+        CoMDiffNormSquare *= CoMDiffNormSquare;
+        m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
+        v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
+        m33Subtract(diracMatrix, outerMatrix, objInertia);
+        m33Scale(TheEff->objProps.Mass, objInertia, objInertia);
+        vAdd(TheEff->objProps.InertiaTensor, 9, objInertia, objInertia);
+        m33Add(compI, objInertia, compI);
+    }
+    //! - Compute inertia inverse based off the computed inertia tensor
+    m33Inverse(compI, compIinv);
+    
+}
+
 /*! This method computes the state derivatives at runtime for the state integration.  
     It handles all gravitational effects and nominal attitude motion itself.  
     All body effectors have their current force/torque computed via the 
@@ -286,23 +349,17 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
-    double r_N[3];
+    double r_NLoc[3];
     double rmag;
-    double v_N[3];
-    double sigma[3];
-    double omega[3];
+    double v_NLoc[3];
+    double sigmaLoc[3];
+    double omegaLoc[3];
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double d2[3];               /* intermediate variables */
     double d3[3];
     double T_Irtl2Bdy[3][3];
     double LocalAccels[3];
     int    i;
-    double scaledCoM[3];
-    double localCoM[3];
-    double identMatrix[3][3];
-    double diracMatrix[3][3], outerMatrix[3][3];
-    double CoMDiff[3], CoMDiffNormSquare;
-    double objInertia[3][3];
     double PlanetRelPos[3];
     double PlanetAccel[3];
     double posVelComp[3];
@@ -313,18 +370,20 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
-    r_N[0] = X[i++];
-    r_N[1] = X[i++];
-    r_N[2] = X[i++];
-    v_N[0] = X[i++];
-    v_N[1] = X[i++];
-    v_N[2] = X[i++];
-    sigma[0] = X[i++];
-    sigma[1] = X[i++];
-    sigma[2] = X[i++];
-    omega[0] = X[i++];
-    omega[1] = X[i++];
-    omega[2] = X[i++];
+    r_NLoc[0] = X[i++];
+    r_NLoc[1] = X[i++];
+    r_NLoc[2] = X[i++];
+    v_NLoc[0] = X[i++];
+    v_NLoc[1] = X[i++];
+    v_NLoc[2] = X[i++];
+    sigmaLoc[0] = X[i++];
+    sigmaLoc[1] = X[i++];
+    sigmaLoc[2] = X[i++];
+    omegaLoc[0] = X[i++];
+    omegaLoc[1] = X[i++];
+    omegaLoc[2] = X[i++];
+ 
+    computeCompositeProperties();
  
     std::vector<GravityBodyData>::iterator gravit;
     /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
@@ -339,7 +398,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
             posVelComp);
-        v3Add(r_N, CentralBody->PosFromEphem, PlanetRelPos);
+        v3Add(r_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
         v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
         v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
         v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
@@ -360,11 +419,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
  
     
     //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_N);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, dX + 3);
+    rmag = v3Norm(r_NLoc);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_NLoc, dX + 3);
     if(CentralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_N, perturbAccel);
+        jPerturb(CentralBody, r_NLoc, perturbAccel);
         v3Add(dX+3, perturbAccel, dX+3);
     }
     
@@ -372,27 +431,27 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     v3Add(dX+3, InertialAccels, dX+3);
     
     //! - compute derivative of position (velocity)
-    v3Copy(v_N, dX);
+    v3Copy(v_NLoc, dX);
     
     //! - compute dsigma/dt (see Schaub and Junkins)
-    BmatMRP(sigma, B);
+    BmatMRP(sigmaLoc, B);
     m33Scale(0.25, B, B);
-    m33MultV3(B, omega, dX + 6);
+    m33MultV3(B, omegaLoc, dX + 6);
     
     //! - compute domega/dt (see Schaub and Junkins)
-    v3Tilde(omega, B);                  /* [tilde(w)] */
-    m33MultV3(this->compI, omega, d2);     /* [I]w */
+    v3Tilde(omegaLoc, B);                  /* [tilde(w)] */
+    m33MultV3(this->compI, omegaLoc, d2);     /* [I]w */
     m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
     m33MultV3(compIinv, d3, dX + 9);  /* d(w)/dt = [I_RW]^-1 . (RHS) */
   
     //! - Convert the current attitude to DCM for conversion in DynEffector loop
-    MRP2C(sigma, T_Irtl2Bdy);
+    MRP2C(sigmaLoc, T_Irtl2Bdy);
     
     //! - Copy out the current state for DynEffector calls
-    memcpy(StateCurrent.r_N, r_N, 3*sizeof(double));
-    memcpy(StateCurrent.v_N, v_N, 3*sizeof(double));
-    memcpy(StateCurrent.sigma, sigma, 3*sizeof(double));
-    memcpy(StateCurrent.omega, omega, 3*sizeof(double));
+    memcpy(StateCurrent.r_N, r_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.v_N, v_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.sigma, sigmaLoc, 3*sizeof(double));
+    memcpy(StateCurrent.omega, omegaLoc, 3*sizeof(double));
     memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
     //! - Copy out the current mass properties for DynEffector calls
@@ -401,49 +460,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     memcpy(MassProps.InertiaTensor, compI, 9*sizeof(double));
     memcpy(MassProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
-    memset(scaledCoM, 0x0, 3*sizeof(double));
-    compMass = baseMass;
-    v3Scale(baseMass, baseCoM, scaledCoM);
-    
-    //! - Loop over the child mass bodies to compute composite center of mass
-    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
-    {
-        DynEffector *TheEff = *it;
-        TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
-        v3Scale(TheEff->objProps.Mass, TheEff->objProps.CoM, localCoM);
-        v3Add(scaledCoM, localCoM, scaledCoM);
-        compMass += TheEff->objProps.Mass;
-    }
-    //! - Divide summation by total mass to get center of mass.
-    v3Scale(1.0/compMass, scaledCoM, compCoM);
-    
-    //! - Compute the parallel axis theorem effects for the base body inertia tensor
-    m33SetIdentity(identMatrix);
-    v3Subtract(baseCoM, compCoM, CoMDiff);
-    CoMDiffNormSquare = v3Norm(CoMDiff);
-    CoMDiffNormSquare *= CoMDiffNormSquare;
-    m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
-    v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
-    m33Subtract(diracMatrix, outerMatrix, objInertia);
-    m33Add(objInertia, baseI, compI);
-    
-    /*! - For each child body, compute parallel axis theorem effectos for inertia tensor
-          and add that overall inertia back to obtain the composite inertia tensor.*/
-    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
-    {
-        DynEffector *TheEff = *it;
-        v3Subtract(TheEff->objProps.CoM, compCoM, CoMDiff);
-        CoMDiffNormSquare = v3Norm(CoMDiff);
-        CoMDiffNormSquare *= CoMDiffNormSquare;
-        m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
-        v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
-        m33Subtract(diracMatrix, outerMatrix, objInertia);
-        m33Scale(TheEff->objProps.Mass, objInertia, objInertia);
-        vAdd(TheEff->objProps.InertiaTensor, 9, objInertia, objInertia);
-        m33Add(compI, objInertia, compI);
-    }
-    //! - Compute inertia inverse based off the computed inertia tensor
-    m33Inverse(compI, compIinv);
     //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
     //! - Loop over the vector of body effectors and compute body force/torque
@@ -452,6 +468,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
     {
         DynEffector *TheEff = *it;
+        TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
         v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels);
         v3Add(LocalAccels, NonConservAccelBdy, NonConservAccelBdy);
         m33tMultV3(T_Irtl2Bdy, LocalAccels, LocalAccels);
@@ -479,6 +496,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     double  *k2 = new double[NStates];
     double  *k3 = new double[NStates];
     double  *k4 = new double[NStates];
+    memset(X, 0x0, NStates*sizeof(double));
+    memset(X2, 0x0, NStates*sizeof(double));
+    memset(k1, 0x0, NStates*sizeof(double));
+    memset(k2, 0x0, NStates*sizeof(double));
+    memset(k3, 0x0, NStates*sizeof(double));
+    memset(k4, 0x0, NStates*sizeof(double));
     uint32_t i;
     double TimeStep;
     double sMag;
@@ -542,7 +565,8 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
-    if((sMag = v3Norm(&XState[6])) > 1.0) {
+    sMag =  v3Norm(&XState[6]);
+    if(sMag > 1.0) {
         v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
         MRPSwitchCount++;
     }
@@ -579,12 +603,12 @@ void SixDofEOM::computeOutputs()
             displayBody = &(*it);
         }
     }
-    
+
     memcpy(r_N, &(XState[0]), 3*sizeof(double));
     memcpy(v_N, &(XState[3]), 3*sizeof(double));
     memcpy(sigma, &(XState[6]), 3*sizeof(double));
     memcpy(omega, &(XState[9]), 3*sizeof(double));
-    
+
     if(centralBody != NULL)
     {
         v3Add(r_N, centralBody->PosFromEphem, r_N);

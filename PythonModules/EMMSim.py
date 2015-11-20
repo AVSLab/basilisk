@@ -769,7 +769,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
  def InitAllDynObjects(self):
-   self.SetLocalConfigData()
    self.SetSpiceObject()
    self.SetIMUSensor()
    self.SetACSThrusterDynObject()
@@ -782,6 +781,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SethighGainBore()
 
  def InitAllFSWObjects(self):
+   self.SetLocalConfigData()
    self.SetCSSDecodeFSWConfig()
    self.SetIMUCommData()
    self.SetCSSWlsEstFSWConfig()

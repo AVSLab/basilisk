@@ -19,6 +19,7 @@ ThrusterDynamics::ThrusterDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+    prevFireTime = 0.0;
     memset(StrForce, 0x0, 3*sizeof(double));
     memset(StrTorque, 0x0, 3*sizeof(double));
     return;
@@ -90,6 +91,7 @@ bool ThrusterDynamics::ReadInputs()
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader LocalHeader;
     memset(IncomingCmdBuffer, 0x0, ThrusterData.size()*sizeof(ThrustCmdStruct));
+    memset(&LocalHeader, 0x0, sizeof(LocalHeader));
     dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
                                                 ThrusterData.size()*sizeof(ThrustCmdStruct),
                                                 reinterpret_cast<uint8_t*> (IncomingCmdBuffer));

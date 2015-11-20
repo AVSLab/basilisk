@@ -39,6 +39,7 @@ public:
     double strBoreVec[3];             //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     AngOffValues boresightAng;        //!< (-) Boresigt angles relative to target
+    bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     
 private:
     SpicePlanetState localPlanet;     //!< (-) planet that we are pointing at
