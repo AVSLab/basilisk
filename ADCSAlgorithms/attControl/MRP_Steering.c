@@ -118,7 +118,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     /* compute the rate tracking error */
     v3Add(omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
-    v3Subtract(nav.vehBodyRate, omega_BastN_B, omega_BBast_B);
+    v3Subtract(nav.omega_BN_B, omega_BastN_B, omega_BBast_B);
 
     /* integrate rate tracking error  */
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
@@ -140,7 +140,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, nav.vehBodyRate, v3);              /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.I, nav.omega_BN_B, v3);              /* - omega_BastN x ([I]omega + [Gs]h_s) */
 //    for(i = 0; i < NUM_RW; i++) {
 //        v3Scale(sc->rw[i].Js * (v3Dot(omega, sc->rw[i].gs) + sc->rw[i].Omega),
 //                sc->rw[i].gs, v3_1);
@@ -151,7 +151,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     v3Add(L, Lr, Lr);                                       /* +L */
 
-    v3Cross(nav.vehBodyRate, guidCmd.omega_RN_B, v3);
+    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);

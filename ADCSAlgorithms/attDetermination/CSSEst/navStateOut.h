@@ -10,12 +10,15 @@
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
-    double vehPosition[3];   /*!< m  Current position of the spacecraft*/
-    double vehVelocity[3];   /*!< m/s Current velocity of the spacecraft*/
-    double vehAccumDV[3];    /*!< m/s Total accumulated delta-velocity for s/c*/
-    double vehSigma[3];      /*!< -- Current spacecraft attitude (MRPs)*/
-    double vehBodyRate[3];   /*!< r/s Current spacecraft body rate wrt reference*/
-    double vehSunPntBdy[3];   /*!< -- Current sun pointing vector in body frame*/
+    double r_N[3];           /*!< [m]   Current inertial spacecraft position vector in
+                              inertial frame N components */
+    double v_N[3];           /*!< [m/s] Current inertial velocity of the spacecraft in
+                              inertial frame N components */
+    double vehAccumDV[3];    /*!< [m/s] Total accumulated delta-velocity for s/c*/
+    double sigma_BN[3];      /*!<       Current spacecraft attitude (MRPs) of body relative to inertial */
+    double omega_BN_B[3];    /*!< [r/s] Current spacecraft angular velocity vector of body
+                              frame B relative to inertial frame N, in B frame components */
+    double vehSunPntBdy[3];  /*!<       Current sun pointing vector in body frame*/
 }NavStateOut;
 
 /*! @} */

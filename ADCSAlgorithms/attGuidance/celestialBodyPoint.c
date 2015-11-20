@@ -81,18 +81,18 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize,
             sizeof(SpicePlanetState), &secPlanet);
-        v3Subtract(secPlanet.PositionVector, navData.vehPosition,
+        v3Subtract(secPlanet.PositionVector, navData.r_N,
                    secPointVector);
         v3Normalize(secPointVector, secPointVector);
     }
     else
     {
-		v3Subtract(navData.vehPosition, primPlanet.PositionVector, relPosVector);
-		v3Subtract(navData.vehVelocity, primPlanet.VelocityVector, relVelVector);
+		v3Subtract(navData.r_N, primPlanet.PositionVector, relPosVector);
+		v3Subtract(navData.v_N, primPlanet.VelocityVector, relVelVector);
         v3Cross(relPosVector, relVelVector, secPointVector);
         v3Normalize(secPointVector, secPointVector);
     }
-    v3Subtract(primPlanet.PositionVector, navData.vehPosition, primPointVector);
+    v3Subtract(primPlanet.PositionVector, navData.r_N, primPointVector);
     v3Normalize(primPointVector, primPointVector);
     v3Copy(primPointVector, &(T_Inrtl2Point[0][0]));
     v3Cross(primPointVector, secPointVector, &(T_Inrtl2Point[2][0]));
