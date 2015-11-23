@@ -13,6 +13,7 @@
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "attDetermination/CSSEst/navStateOut.h"
 #include "vehicleConfigData/ADCSAlgorithmMacros.h"
+#include "SimCode/utilities/astroConstants.h"
 #include <string.h>
 #include <math.h>
 
