@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt #plotting functions
 import MonteCarloBaseClass #monte-carlo module for running dispersed simulations
 import EMMSafeCapture #Startup script we are using
 import numpy #Who doesn't like numpy?
+import math #Got to have some math
 
 #instantiate a monte-carlo handler so that we can run a dispersed scenario
 monteCarloContainer = MonteCarloBaseClass.MonteCarloBaseClass()
@@ -20,13 +21,24 @@ monteCarloContainer.addNewDispersion(b1AttitudeDisp)
 monteCarloContainer.addNewDispersion(b2AttitudeDisp)
 monteCarloContainer.addNewDispersion(b3AttitudeDisp)
 
+b1RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[0]',
+    0.0, (math.pi/180.0,))
+b2RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[1]',
+    0.0, (math.pi/180.0,))
+b3RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[2]',
+    0.0, (math.pi/180.0,))
+monteCarloContainer.addNewDispersion(b1RateDisp)
+monteCarloContainer.addNewDispersion(b2RateDisp)
+monteCarloContainer.addNewDispersion(b3RateDisp)
+
+
 #Define the simulation type and the script that we will use to execute the simulations
 simulationModule = EMMSim.EMMSim
 executionModule = EMMSafeCapture.executeEMMSafeCapture
 
 #Configure the monte-carlo handler with the necessary parameter for a run
 monteCarloContainer.setSimulationObject(simulationModule) #simulation type to use
-monteCarloContainer.setExecutionCount(300) #Number of simulations to run
+monteCarloContainer.setExecutionCount(100) #Number of simulations to run
 monteCarloContainer.setRetainSimulationData(True) #Archive simulations as we go along
 monteCarloContainer.setExecutionModule(executionModule) #Define the script to use for the run
 

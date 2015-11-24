@@ -1,4 +1,4 @@
-﻿import sys, os, inspect
+import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -62,7 +62,7 @@ def executeEMMSafeCapture(TheEMMSim):
     TheEMMSim.ConfigureStopTime(int(30*1E9))
     TheEMMSim.ExecuteSimulation()
     TheEMMSim.modeRequest = 'safeMode'
-    TheEMMSim.ConfigureStopTime(int(60*5*1E9))
+    TheEMMSim.ConfigureStopTime(int(60*10*1E9))
     TheEMMSim.ExecuteSimulation()
 
 if __name__ == "__main__":
