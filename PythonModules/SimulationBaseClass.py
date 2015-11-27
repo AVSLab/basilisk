@@ -1,4 +1,4 @@
-
+﻿
 #Import some architectural stuff that we will probably always use
 import sys, os, ast
 #Point the path to the module storage area
@@ -38,6 +38,8 @@ class TaskBaseClass:
      self.TaskData.disableTask();
  def enable(self):
      self.TaskData.enableTask();
+ def updatePeriod(self, newPeriod):
+     self.TaskData.updatePeriod(newPeriod)
 
 class LogBaseClass:
  def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols = 1):
@@ -298,6 +300,11 @@ class SimBaseClass:
      for Task in self.TaskList:
        if Task.Name == TaskName:
            Task.enable()
+
+ def updateTaskPeriod(self, TaskName, newPeriod):
+     for Task in self.TaskList:
+         if Task.Name == TaskName:
+             Task.updatePeriod(newPeriod)
 
  def parseDataIndex(self):
     self.dataStructureDictionary = {}
