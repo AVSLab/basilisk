@@ -54,6 +54,7 @@ add_subdirectory("ADCSAlgorithms/attControl")
 add_subdirectory("ADCSAlgorithms/effectorInterfaces/errorConversion")
 add_subdirectory("SimCode/navigation/simple_nav")
 add_subdirectory("ADCSAlgorithms/dvGuidance")
+add_subdirectory("SimCode/sim_synch")
 
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)

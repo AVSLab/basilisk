@@ -1,4 +1,4 @@
-#Import some architectural stuff that we will probably always use
+﻿#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
@@ -33,6 +33,7 @@ import attMnvrPoint
 import dvAttEffect
 import dvGuidance
 import celestialBodyPoint
+import clock_synch
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
@@ -47,6 +48,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
    self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
    self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+   self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)))
    self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
    self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
    self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
@@ -68,7 +70,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.solarArrayBore = bore_ang_calc.BoreAngCalc();
    self.highGainBore = bore_ang_calc.BoreAngCalc();
    self.instrumentBore = bore_ang_calc.BoreAngCalc();
+   self.clockSynchData = clock_synch.ClockSynch();
    self.InitAllDynObjects()
+   self.AddModelToTask("SynchTask", self.clockSynchData)
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB)
@@ -597,6 +601,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
    self.SimpleNavObject.crossTrans = True
    self.SimpleNavObject.crossAtt = False
+ def SetclockSynchData(self):
+     self.clockSynchData.ModelTag = "ClockSynchModel"
  def SetCSSDecodeFSWConfig(self):
    self.CSSDecodeFSWConfig.NumSensors = 8
    self.CSSDecodeFSWConfig.MaxSensorValue = 500E-6
@@ -809,6 +815,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetsolarArrayBore()
    self.SetinstrumentBore()
    self.SethighGainBore()
+   self.SetclockSynchData()
 
  def InitAllFSWObjects(self):
    self.SetLocalConfigData()
