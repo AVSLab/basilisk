@@ -72,6 +72,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.instrumentBore = bore_ang_calc.BoreAngCalc();
    self.clockSynchData = clock_synch.ClockSynch();
    self.InitAllDynObjects()
+   self.disableTask("SynchTask")
    self.AddModelToTask("SynchTask", self.clockSynchData)
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
@@ -602,7 +603,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SimpleNavObject.crossTrans = True
    self.SimpleNavObject.crossAtt = False
  def SetclockSynchData(self):
-     self.clockSynchData.ModelTag = "ClockSynchModel"
+   self.clockSynchData.ModelTag = "ClockSynchModel"
+   self.clockSynchData.accelFactor = 1.0
+   self.clockSynchData.clockOutputName = "clock_synch_data"
+   self.clockSynchData.outputBufferCount = 2
  def SetCSSDecodeFSWConfig(self):
    self.CSSDecodeFSWConfig.NumSensors = 8
    self.CSSDecodeFSWConfig.MaxSensorValue = 500E-6
