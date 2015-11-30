@@ -726,11 +726,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 #   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
 #   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
 
-   self.attMnvrControlData.K1 = 1.0           # rad/sec
-   self.attMnvrControlData.K3 = 8.0           # rad/sec
+#   self.attMnvrControlData.K1 = 1.0           # rad/sec
+#   self.attMnvrControlData.K3 = 8.0           # rad/sec
+#   self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
+#   self.attMnvrControlData.P = 80.0            # N*m*sec
+#   self.attMnvrControlData.Ki = 2.0            # N*m  - negative values turn off the integral feedback
+#   self.attMnvrControlData.integralLimit = 0.3 # rad
+   self.attMnvrControlData.K1 = 0.15          # rad/sec
+   self.attMnvrControlData.K3 = 1.0          # rad/sec
    self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.attMnvrControlData.P = 80.0            # N*m*sec
-   self.attMnvrControlData.Ki = 2.0            # N*m  - negative values turn off the integral feedback
+   self.attMnvrControlData.P = 150.0            # N*m*sec
+   self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
    self.attMnvrControlData.integralLimit = 0.3 # rad
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.inputVehicleConfigDataName = "adcs_config_data"
