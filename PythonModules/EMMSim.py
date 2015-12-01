@@ -32,6 +32,7 @@ import sunSafeACS
 import attMnvrPoint
 import dvAttEffect
 import dvGuidance
+import attRefGen
 import celestialBodyPoint
 import clock_synch
 
@@ -129,10 +130,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafeACS.CrossInit_sunSafeACS)
    self.sunSafeACSWrap.ModelTag = "sunSafeACS"
 
-   self.attMnvrPointData = attMnvrPoint.attMnvrPointConfig()
+   self.attMnvrPointData = attRefGen.attRefGenConfig()
    self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
-      attMnvrPoint.Update_attMnvrPoint, attMnvrPoint.SelfInit_attMnvrPoint,
-      attMnvrPoint.CrossInit_attMnvrPoint)
+      attRefGen.Update_attRefGen, attRefGen.SelfInit_attRefGen,
+      attRefGen.CrossInit_attRefGen)
    self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
    self.attMnvrControlData = MRP_Steering.MRP_SteeringConfig()
@@ -716,9 +717,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
    self.attMnvrPointData.outputDataName = "nom_att_guid_out"
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
-   self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
-   self.attMnvrPointData.maxAngAccel = 0.1/1000.0
    self.attMnvrPointData.mnvrActive = 0
+   self.attMnvrPointData.totalMnvrTime = 1000.0
 
  def SetattMnvrControl(self):
 #   self.attMnvrControlData.K = 100.0
@@ -732,10 +732,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 #   self.attMnvrControlData.P = 80.0            # N*m*sec
 #   self.attMnvrControlData.Ki = 2.0            # N*m  - negative values turn off the integral feedback
 #   self.attMnvrControlData.integralLimit = 0.3 # rad
-   self.attMnvrControlData.K1 = 0.15          # rad/sec
-   self.attMnvrControlData.K3 = 1.0          # rad/sec
+   self.attMnvrControlData.K1 = 0.3          # rad/sec
+   self.attMnvrControlData.K3 = 3.0          # rad/sec
    self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.attMnvrControlData.P = 150.0            # N*m*sec
+   self.attMnvrControlData.P = 250.0            # N*m*sec
    self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
    self.attMnvrControlData.integralLimit = 0.3 # rad
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
