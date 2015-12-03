@@ -295,3 +295,13 @@ std::set<std::string> SimModel::getUniqueMessageNames()
     outputSet = SystemMessaging::GetInstance()->getUniqueMessageNames();
     return(outputSet);
 }
+
+/*! This method clears out the messaging interface so that the process can be 
+    used again for another run.  Note that once you do this, the simulation 
+    object itself is really dead.
+    @return void
+*/
+void SimModel::terminateSimulation()
+{
+    SystemMessaging::GetInstance()->clearMessaging();
+}

@@ -31,6 +31,7 @@ public:
     void ResetTask() {NextStartTime = FirstTaskTime;}
 	void enableTask() { taskActive = true; }
 	void disableTask() { taskActive = false; }
+	void updatePeriod(uint64_t newPeriod) { TaskPeriod = newPeriod; }
     
 public:
     std::vector<ModelPriorityPair> TaskModels; //!< -- Array that has pointers to all GNC laws

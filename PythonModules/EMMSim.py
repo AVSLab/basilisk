@@ -27,12 +27,14 @@ import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
 import imuComm
-import sunSafeControl
+import MRP_Steering
 import sunSafeACS
 import attMnvrPoint
 import dvAttEffect
 import dvGuidance
+import attRefGen
 import celestialBodyPoint
+import clock_synch
 
 class EMMSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
@@ -47,6 +49,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
    self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
    self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+   self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)))
    self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
    self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
    self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
@@ -68,7 +71,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.solarArrayBore = bore_ang_calc.BoreAngCalc();
    self.highGainBore = bore_ang_calc.BoreAngCalc();
    self.instrumentBore = bore_ang_calc.BoreAngCalc();
+   self.clockSynchData = clock_synch.ClockSynch();
    self.InitAllDynObjects()
+   self.disableTask("SynchTask")
+   self.AddModelToTask("SynchTask", self.clockSynchData)
    self.AddModelToTask("DynamicsTask", self.SpiceObject)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
    self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB)
@@ -112,11 +118,11 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafePoint.CrossInit_sunSafePoint)
    self.sunSafePointWrap.ModelTag = "sunSafePoint"
 
-   self.sunSafeControlData = sunSafeControl.sunSafeControlConfig()
-   self.sunSafeControlWrap = alg_contain.AlgContain(self.sunSafeControlData,
-      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
-      sunSafeControl.CrossInit_sunSafeControl)
-   self.sunSafeControlWrap.ModelTag = "sunSafeControl"
+   self.MRP_SteeringData = MRP_Steering.MRP_SteeringConfig()
+   self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringData,
+      MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
+      MRP_Steering.CrossInit_MRP_Steering)
+   self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
  
    self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
    self.sunSafeACSWrap = alg_contain.AlgContain(self.sunSafeACSData,
@@ -124,16 +130,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafeACS.CrossInit_sunSafeACS)
    self.sunSafeACSWrap.ModelTag = "sunSafeACS"
 
-   self.attMnvrPointData = attMnvrPoint.attMnvrPointConfig()
+   self.attMnvrPointData = attRefGen.attRefGenConfig()
    self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
-      attMnvrPoint.Update_attMnvrPoint, attMnvrPoint.SelfInit_attMnvrPoint,
-      attMnvrPoint.CrossInit_attMnvrPoint)
+      attRefGen.Update_attRefGen, attRefGen.SelfInit_attRefGen,
+      attRefGen.CrossInit_attRefGen)
    self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
-   self.attMnvrControlData = sunSafeControl.sunSafeControlConfig()
+   self.attMnvrControlData = MRP_Steering.MRP_SteeringConfig()
    self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
-      sunSafeControl.Update_sunSafeControl, sunSafeControl.SelfInit_sunSafeControl,
-      sunSafeControl.CrossInit_sunSafeControl)
+      MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
+      MRP_Steering.CrossInit_MRP_Steering)
    self.attMnvrControlWrap.ModelTag = "attMnvrControl"
    
    self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
@@ -173,8 +179,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
    self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, 
       self.sunSafePointData)
-   self.AddModelToTask("sunSafeFSWTask", self.sunSafeControlWrap, 
-      self.sunSafeControlData)
+   self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, 
+      self.MRP_SteeringData)
    self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
 
@@ -240,42 +246,74 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
                        ['self.initializeRaster()'])
 
-   self.asteriskAngles = [[15.0*math.pi/180.0, 0.0, 0.0],
-                          [-15.0*math.pi/180.0, 0.0, 0.0],
-                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [0.0, 0.0, 15.0*math.pi/180.0],
-                          [0.0, 0.0, -15.0*math.pi/180.0],
-                          [15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, -15.0/math.sqrt(2.0)*math.pi/180.0],
-                          [-15.0/math.sqrt(2.0)*math.pi/180.0, 0.0, 15.0/math.sqrt(2.0)*math.pi/180.0],
+   rastAngRad = 50.0*math.pi/180.0
+   self.asteriskAngles = [[rastAngRad, 0.0, 0.0],
+                          [-rastAngRad, 0.0, 0.0],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
+                          [0.0, 0.0, rastAngRad],
+                          [0.0, 0.0, -rastAngRad],
+                          [rastAngRad/math.sqrt(2.0), 0.0, -rastAngRad/math.sqrt(2.0)],
+                          [-rastAngRad/math.sqrt(2.0), 0.0, rastAngRad/math.sqrt(2.0)],
                           [0.0, 0.0, 0.0]]
-   self.asteriskSelector = 0
+                          
+   rastAngRad = 11.0*math.pi/180.0
+   discAngleRad = 16.5*1.6*math.pi/180.0
+   self.sideScanAngles = [ \
+                            [rastAngRad, 0.0, discAngleRad],
+                            [rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [0.0, 0.0, discAngleRad],
+                            [0.0, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0],
+                            [-rastAngRad, 0.0, discAngleRad],
+                            [-rastAngRad, 0.0, -discAngleRad],
+                            [0.0, 0.0, 0.0] \
+                            ]
+   self.scanSelector = 0
+   self.scanAnglesUse = self.asteriskAngles
  def initializeRaster(self):
-     if(self.asteriskSelector != 0):
+     if(self.scanSelector != 0):
          self.setEventActivity('mnvrToRaster', True)
 
  def activateNextRaster(self):
      basePointMatrix = numpy.array(self.baseMarsTrans)
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
-     offPointAngles = numpy.array(self.asteriskAngles[self.asteriskSelector])
-     self.asteriskSelector += 1
-     self.asteriskSelector = self.asteriskSelector % len(self.asteriskAngles)
+     offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
+     self.scanSelector += 1
+     self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
      offMatrix = RigidBodyKinematics.Euler1232C(offPointAngles)
      newPointMatrix = numpy.dot(offMatrix, basePointMatrix)
      newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
      SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
      self.attMnvrPointData.mnvrActive = False
+     self.attMnvrPointData.mnvrComplete = 0
+     print "Current Raster"
+     print [self.TotalSim.CurrentNanos, self.scanSelector]
      
  def InitializeSimulation(self):
    SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
    self.dyn2FSWInterface.discoverAllMessages()
    self.fsw2DynInterface.discoverAllMessages()
+   
+ # 
+ # Set the static spacecraft parameters 
+ #
  def SetLocalConfigData(self):
-   Tstr2Bdy = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-   SimulationBaseClass.SetCArray(Tstr2Bdy, 'double', self.LocalConfigData.T_str2body)
-   self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", 8*9+4, 2, "vehicleConfigData")
-   self.TotalSim.WriteMessageData("adcs_config_data", 8*9+4, 0, self.LocalConfigData)
+    #
+    BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+    SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
+
+    Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
+    SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.I)
+
+    # adjust the message size by hand if needed 
+    msgSize = 8*9 + 8*9 + 4 + 8;    # the last 8 bytes are a required padding for now
+    self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
+    self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
+   
+   
  def SetSpiceObject(self):
    self.SpiceObject.ModelTag = "SpiceInterfaceData"
    self.SpiceObject.SPICEDataPath = self.simBasePath + '/External/EphemerisData/'
@@ -503,9 +541,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.4, 0.2, 0.1])
    self.VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0001, 0.0, 0.0])
    self.VehDynObject.baseMass = 1500.0 - 812.3
-   self.VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
-                                                             0.0, 900.0, 0.0,
-                                                             0.0, 0.0, 900.0])
+   self.VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([1000, 0.0, 0.0,
+                                                             0.0, 800.0, 0.0,
+                                                             0.0, 0.0, 800.0])
    self.VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
                                                                0.0, 1.0, 0.0,
                                                                0.0, 0.0, 1.0])
@@ -568,6 +606,11 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
    self.SimpleNavObject.crossTrans = True
    self.SimpleNavObject.crossAtt = False
+ def SetclockSynchData(self):
+   self.clockSynchData.ModelTag = "ClockSynchModel"
+   self.clockSynchData.accelFactor = 1.0
+   self.clockSynchData.clockOutputName = "clock_synch_data"
+   self.clockSynchData.outputBufferCount = 2
  def SetCSSDecodeFSWConfig(self):
    self.CSSDecodeFSWConfig.NumSensors = 8
    self.CSSDecodeFSWConfig.MaxSensorValue = 500E-6
@@ -644,11 +687,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', 
       self.sunSafePointData.sHatBdyCmd)
 
- def SetsunSafeControl(self):
-   self.sunSafeControlData.K = 8.0
-   self.sunSafeControlData.P = 40.0
-   self.sunSafeControlData.inputGuidName = "sun_safe_att_err"
-   self.sunSafeControlData.outputDataName = "sun_safe_control_request"
+ def SetMRP_Steering(self):
+   self.MRP_SteeringData.K1 = 0.15            # rad/sec
+   self.MRP_SteeringData.K3 = 1.0             # rad/sec
+   self.MRP_SteeringData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.MRP_SteeringData.P = 150.0            # N*m*sec
+   self.MRP_SteeringData.Ki = -1.0             # N*m  - negative values turn off the integral feedback
+   self.MRP_SteeringData.integralLimit = 0.15 # rad
+   self.MRP_SteeringData.inputGuidName = "sun_safe_att_err"
+   self.MRP_SteeringData.inputVehicleConfigDataName = "adcs_config_data"
+   self.MRP_SteeringData.inputNavName = "simple_nav_output"
+   self.MRP_SteeringData.outputDataName = "sun_safe_control_request"
 
  def SetsunSafeACS(self):
    self.sunSafeACSData.inputControlName = "sun_safe_control_request"
@@ -671,14 +720,30 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
    self.attMnvrPointData.outputDataName = "nom_att_guid_out"
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
-   self.attMnvrPointData.mnvrCruiseRate = 0.75*math.pi/180.0
-   self.attMnvrPointData.maxAngAccel = 0.1/1000.0
    self.attMnvrPointData.mnvrActive = 0
+   self.attMnvrPointData.totalMnvrTime = 1000.0
 
  def SetattMnvrControl(self):
-   self.attMnvrControlData.K = 175.0
-   self.attMnvrControlData.P = 150.0
+#   self.attMnvrControlData.K = 100.0
+#   self.attMnvrControlData.P = 75.0
+#   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+#   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
+
+   self.attMnvrControlData.K1 = 4.0           # rad/sec
+   self.attMnvrControlData.K3 = 12.0           # rad/sec
+   self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.attMnvrControlData.P = 80.0            # N*m*sec
+   self.attMnvrControlData.Ki = 1.7         # N*m  - negative values turn off the integral feedback
+   self.attMnvrControlData.integralLimit = 0.3 # rad
+   #self.attMnvrControlData.K1 = 0.3          # rad/sec
+   #self.attMnvrControlData.K3 = 3.0          # rad/sec
+   #self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   #self.attMnvrControlData.P = 350.0            # N*m*sec
+   #self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
+   #self.attMnvrControlData.integralLimit = 0.3 # rad
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
+   self.attMnvrControlData.inputVehicleConfigDataName = "adcs_config_data"
+   self.attMnvrControlData.inputNavName = "simple_nav_output"
    self.attMnvrControlData.outputDataName = "sun_safe_control_request"
  
  def SetdvAttEffect(self):
@@ -705,7 +770,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    newThrGroup.nomThrustOn = 0.52
    
    newThrGroup.outputDataName = "dv_thruster_cmds"
-   matMult = 2.0
+   matMult = 1.5
    onTimeMap = [0.0, 0.1*matMult, 0.0,
                 -0.0866*matMult, 0.05*matMult, 0.0,
                 -0.0866*matMult, -0.05*matMult, 0.0,
@@ -753,7 +818,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
  def InitAllDynObjects(self):
-   self.SetLocalConfigData()
    self.SetSpiceObject()
    self.SetIMUSensor()
    self.SetACSThrusterDynObject()
@@ -764,13 +828,15 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetsolarArrayBore()
    self.SetinstrumentBore()
    self.SethighGainBore()
+   self.SetclockSynchData()
 
  def InitAllFSWObjects(self):
+   self.SetLocalConfigData()
    self.SetCSSDecodeFSWConfig()
    self.SetIMUCommData()
    self.SetCSSWlsEstFSWConfig()
    self.SetsunSafePoint()
-   self.SetsunSafeControl()
+   self.SetMRP_Steering()
    self.SetsunSafeACS()
    self.SetattMnvrPoint()
    self.SetattMnvrControl()

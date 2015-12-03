@@ -15,24 +15,24 @@
     attached to dynamics using the AddGravityBody method.
 */
 typedef struct {
-    bool IsCentralBody;             //!< -- Flag indicating that object is center
-    bool IsDisplayBody;             //!< -- Flag indicating that body is display
-    bool UseJParams;                //!< -- Flag indicating to use perturbations
-    std::vector<double> JParams;    //!< -- J perturbations to include
-    double PosFromEphem[3];         //!< m  Position vector from central to body
-    double VelFromEphem[3];         //!< m/s Velocity vector from central body
-    double J20002Pfix[3][3];        //!< (-) Transformation matrix from J2000 to planet-fixed
-    double posRelDisplay[3];        //!< m  Position of planet relative to display frame
-    double velRelDisplay[3];        //!< m  Velocity of planet relative to display frame
-    double mu;                      //!< m3/s^2 central body gravitational param
-    double ephemTime;               //!< s  Ephemeris time for the body in question
-    double ephIntTime;              //!< s  Integration time associated with the ephem data
-    double radEquator;              //!< m  Equatorial radius for the body
-    std::string BodyMsgName;        //!< -- Gravitational body name
-    std::string outputMsgName;      //!< -- Ephemeris information relative to display frame
-    std::string planetEphemName;    //!< -- Ephemeris name for the planet
-    int64_t outputMsgID;            //!< -- ID for output message data
-    int64_t BodyMsgID;              //!< -- ID for ephemeris data message
+    bool IsCentralBody;             //!<          Flag indicating that object is center
+    bool IsDisplayBody;             //!<          Flag indicating that body is display
+    bool UseJParams;                //!<          Flag indicating to use perturbations
+    std::vector<double> JParams;    //!<          J perturbations to include
+    double PosFromEphem[3];         //!< [m]      Position vector from central to body
+    double VelFromEphem[3];         //!< [m/s]    Velocity vector from central body
+    double J20002Pfix[3][3];        //!<          Transformation matrix from J2000 to planet-fixed
+    double posRelDisplay[3];        //!< [m]      Position of planet relative to display frame
+    double velRelDisplay[3];        //!< [m]      Velocity of planet relative to display frame
+    double mu;                      //!< [m3/s^2] central body gravitational param
+    double ephemTime;               //!< [s]      Ephemeris time for the body in question
+    double ephIntTime;              //!< [s]      Integration time associated with the ephem data
+    double radEquator;              //!< [m]      Equatorial radius for the body
+    std::string BodyMsgName;        //!<          Gravitational body name
+    std::string outputMsgName;      //!<          Ephemeris information relative to display frame
+    std::string planetEphemName;    //!<          Ephemeris name for the planet
+    int64_t outputMsgID;            //!<          ID for output message data
+    int64_t BodyMsgID;              //!<          ID for ephemeris data message
 } GravityBodyData;
 
 //!@brief The SixDofEOM class is used to handle all dynamics propagation for a spacecraft
@@ -59,46 +59,46 @@ public:
     void AddBodyEffector(DynEffector *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
+    void computeCompositeProperties();
 public:
-    std::vector<double> PositionInit; //!< m  Initial position (inertial)
-    std::vector<double> VelocityInit; //!< m/s Initial velocity (inertial)
-    std::vector<double> AttitudeInit; //!< -- Inertial relative MRPs for attitude
-    std::vector<double> AttRateInit;  //!< r/s Inertial relative body rate
-    std::vector<double> baseInertiaInit;  //!< kgm2 Inertia tensor at init (dry)
-    std::vector<double> baseCoMInit;      //!< m  Initial center of mass in structure (dry)
-    std::vector<double> T_Str2BdyInit;//!< --  Initial (perm) structure to bdy rotation
-    double ibaseMassInit;                  //!< kg Initial mass of vehicle (dry)
+    std::vector<double> PositionInit; //!< [m]   Initial position (inertial)
+    std::vector<double> VelocityInit; //!< [m/s] Initial velocity (inertial)
+    std::vector<double> AttitudeInit; //!<       Inertial relative MRPs for attitude
+    std::vector<double> AttRateInit;  //!< [r/s] Inertial relative body rate
+    std::vector<double> baseInertiaInit;//!< [kgm2] Inertia tensor at init (dry)
+    std::vector<double> baseCoMInit;  //!< [m]   Initial center of mass in structure (dry)
+    std::vector<double> T_Str2BdyInit;//!< []    Initial (perm) structure to bdy rotation
+    double ibaseMassInit;             //!< [kg]  Initial mass of vehicle (dry)
     
-    std::string OutputStateMessage;   //!< -- Output state data
-    std::string OutputMassPropsMsg;   //!< -- Output mass properties
+    std::string OutputStateMessage;   //!<       Output state data
+    std::string OutputMassPropsMsg;   //!<       Output mass properties
     uint64_t OutputBufferCount;
-    std::vector<GravityBodyData> GravData; //!< -- Central body grav information
-    bool MessagesLinked;              //!< -- Indicator for whether inputs bound
-    uint64_t RWACount;                //!< -- Number of reaction wheels to model
-    double baseCoM[3];                //!< m  center of mass of dry spacecraft str
-    double baseI[3][3];               //!< kgm2 Inertia tensor for base spacecraft str
-    double baseMass;                  //!< kg Mass of dry spacecraft structure
-    double compCoM[3];                //!< m  Center of mass of spacecraft in str
-    double compI[3][3];               //!< kgm2 Inertia tensor for vehicle
-    double compIinv[3][3];            //!< m2/kg inverse of inertia tensor
-    double compMass;                  //!< kg Mass of the vehicle
-    double TimePrev;                  //!< s  Previous update time
-    double r_N[3];                    //!< m  Current position vector (inertial)
-    double v_N[3];                    //!< m/s Current velocity vector (inertial)
-    double sigma[3];                  //!< -- Current MRPs (inertial)
-    double omega[3];                  //!< r/s Current angular velocity (inertial)
-    double InertialAccels[3];         //!< m/s2 Current calculated inertial accels
-    double NonConservAccelBdy[3];     //!< m/s2 Observed non-conservative body accel
-    double T_str2Bdy[3][3];           //!< -- Structure to body DCM matrix
-    double AccumDVBdy[3];             //!< m/s Accumulated DV in body
-    uint64_t MRPSwitchCount;          //!< -- Count on times we've shadowed
+    std::vector<GravityBodyData> GravData; //!<  Central body grav information
+    bool MessagesLinked;              //!<       Indicator for whether inputs bound
+    uint64_t RWACount;                //!<        Number of reaction wheels to model
+    double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
+    double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
+    double baseMass;                  //!< [kg]   Mass of dry spacecraft structure
+    double compCoM[3];                //!< [m]    Center of mass of spacecraft in str
+    double compI[3][3];               //!< [kgm2] Inertia tensor for vehicle
+    double compIinv[3][3];            //!< [m2/kg] inverse of inertia tensor
+    double compMass;                  //!< [kg]   Mass of the vehicle
+    double TimePrev;                  //!< [s]    Previous update time
+    double r_N[3];                    //!< [m]    Current position vector (inertial)
+    double v_N[3];                    //!< [m/s]  Current velocity vector (inertial)
+    double sigma[3];                  //!<        Current MRPs (inertial)
+    double omega[3];                  //!< [r/s]  Current angular velocity (inertial)
+    double InertialAccels[3];         //!< [m/s2] Current calculated inertial accels
+    double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
+    double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
+    double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
+    uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
 private:
-    double *XState;                   //!< -- Container for total state
-    int64_t InputTimeID;              //!< -- Connect to input time message
-    int64_t StateOutMsgID;            //!< -- Output message id for state data
-    int64_t MassPropsMsgID;           //!< -- Output message id for state data
-    uint32_t NStates;                 //!< -- Count on states available
-    std::vector<DynEffector*> BodyEffectors;  //!< -- Vector of effectors on body
+    double *XState;                   //!<        Container for total state
+    int64_t StateOutMsgID;            //!<        Output message id for state data
+    int64_t MassPropsMsgID;           //!<        Output message id for state data
+    uint32_t NStates;                 //!<        Count on states available
+    std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
 };
 
 /*! @} */

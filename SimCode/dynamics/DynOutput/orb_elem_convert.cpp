@@ -15,6 +15,9 @@ OrbElemConvert::OrbElemConvert()
     StateOutMsgID = -1;
     Elements2Cart = false;
     ReinitSelf = false;
+    inputsGood = false;
+    r_N[0] = r_N[1] = r_N[2] = 0.0;
+    v_N[0] = v_N[1] = v_N[2] = 0.0;
     return;
 }
 
@@ -127,7 +130,7 @@ void OrbElemConvert::ReadInputs()
     uint64_t InputSize = Elements2Cart ? sizeof(classicElements) :
     sizeof(OutputStateData);
     //! - Read the input message into the correct pointer
-    SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &LocalHeader,
+    inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &LocalHeader,
                                                 InputSize, InputPtr);
     //! - Depending on switch, either write into CurrentElem or pos/vel
     if(Elements2Cart)
@@ -160,11 +163,11 @@ void OrbElemConvert::UpdateState(uint64_t CurrentSimNanos)
     }
     //! - Read the input message and convert it over appropriately depending on switch
     ReadInputs();
-    if(Elements2Cart)
+    if(Elements2Cart && inputsGood)
     {
         Elements2Cartesian();
     }
-    else
+    else if(inputsGood)
     {
         Cartesian2Elements();
     }

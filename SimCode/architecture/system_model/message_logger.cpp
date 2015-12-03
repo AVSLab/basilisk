@@ -11,7 +11,7 @@ messageLogger::messageLogger()
 {
     logData.clear();
     allLogsLinked = true;
-    initBufferSize = 5000000;
+    initBufferSize = 50000;
 }
 
 /*! Nothing to destroy really */

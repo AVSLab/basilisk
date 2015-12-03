@@ -109,7 +109,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     PRV2MRP(attMnvrUse, attMnvrUse);
     addMRP(localCmd.sigma_BR, attMnvrUse, ConfigData->sigmaCmd);
     v3Scale(-1.0, ConfigData->sigmaCmd, ConfigData->sigmaCmd);
-    addMRP(ConfigData->sigmaCmd, localState.vehSigma,
+    addMRP(ConfigData->sigmaCmd, localState.sigma_BN,
     ConfigData->attOut.sigma_BR);
     MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
 	if (ConfigData->currMnvrTime == ConfigData->totalMnvrTime)
@@ -118,8 +118,8 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
 	}
     
     v3Scale(phiDot, ConfigData->attMnvrVec, ConfigData->bodyRateCmd);
-    v3Subtract(localState.vehBodyRate, ConfigData->bodyRateCmd,
-    ConfigData->attOut.omega_BR);
+    v3Subtract(localState.omega_BN_B, ConfigData->bodyRateCmd,
+    ConfigData->attOut.omega_BR_B);
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
 		(void*)&(ConfigData->attOut), moduleID);
@@ -141,7 +141,7 @@ void computeNewAttMnvr(attMnvrPointConfig *ConfigData, attCmdOut *endState,
     double MRPMnvr[3];
     double totalAngle;
     double startStopAng;
-    v3Scale(-1.0, currState->vehSigma, sigmaBcurr2BCmd);
+    v3Scale(-1.0, currState->sigma_BN, sigmaBcurr2BCmd);
     addMRP(sigmaBcurr2BCmd, endState->sigma_BR, MRPMnvr);
     MRP2PRV(MRPMnvr, ConfigData->attMnvrVec);
     totalAngle = v3Norm(ConfigData->attMnvrVec);

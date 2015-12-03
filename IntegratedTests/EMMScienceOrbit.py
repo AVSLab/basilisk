@@ -16,6 +16,8 @@ import SimulationBaseClass #Need this to access some pointer manipulation
 #Instantiate a copy of the EMM vehicle/FSW
 TheEMMSim = EMMSim.EMMSim()
 
+
+
 #Log a handful of messages to examine vehicle performance
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10)) #inertial states
 TheEMMSim.TotalSim.logThisMessage("att_cmd_output", int(1E10)) #inertial states
@@ -26,6 +28,7 @@ TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E10)) #solar arra
 TheEMMSim.TotalSim.logThisMessage("high_gain_earth_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.TotalSim.logThisMessage("instrument_mars_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('instrumentBoresight.boreVecPoint', 'double', 0, 2, int(1E9))
 
 #Setup a time in the science orbit well past our transition to science
 TheEMMSim.SpiceObject.UTCCalInit = "2021 June 15, 00:00:00.0"
@@ -89,7 +92,16 @@ TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
 TheEMMSim.ExecuteSimulation()
 #Take the vehicle into mars pointing mode and begin the science sequencing
 TheEMMSim.modeRequest = 'marsPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*3*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*2.75*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.setEventActivity('initiateSunPoint', True)
+TheEMMSim.setEventActivity('initiateMarsPoint', True)
+TheEMMSim.modeRequest = 'sunPoint'
+TheEMMSim.ConfigureStopTime(int(60*60*3.25*1E9))
+TheEMMSim.ExecuteSimulation()
+TheEMMSim.modeRequest = 'marsPoint'
+TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
+TheEMMSim.ConfigureStopTime(int(60*60*3.75*1E9))
 TheEMMSim.ExecuteSimulation()
 
 #Simulation complete.  Pull off a selected set of values from the variable logs
@@ -105,6 +117,7 @@ instrumentAz = TheEMMSim.pullMessageLogData("instrument_mars_bore.azimuth")
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 sigmaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.sigma', range(3))
 sigmaCMD = TheEMMSim.pullMessageLogData('att_cmd_output.sigma_BR', range(3))
+dataInstBore = TheEMMSim.GetLogVariableData('instrumentBoresight.boreVecPoint')
 
 #Plot true anomaly for the simulation
 plt.figure(1)
@@ -145,6 +158,11 @@ plt.figure(7)
 plt.plot(instrumentAz[:,0]*1.0E-9, instrumentAz[:,1]*180.0/math.pi)
 plt.xlabel('Time (s)')
 plt.ylabel('Instrument Nadir Azimuth (d)')
+
+plt.figure(8)
+plt.plot(dataInstBore[:,2], dataInstBore[:,3])
+plt.xlabel('y-component (-)')
+plt.ylabel('z-component (-)')
 
 
 #If requested, generate plots

@@ -3,6 +3,7 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
+#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
 
@@ -57,6 +58,7 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	double burnTime;
 	double rotPRV[3];
 	double rotDCM[3][3];
+	double omega_BR_N[3];
     uint64_t writeTime;
     uint32_t writeSize;
     NavStateOut navData;
@@ -77,9 +79,10 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
 
-	m33MultM33(ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
-	C2MRP(&T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
-	v3SetZero(ConfigData->attCmd.omega_BR);
+	m33MultM33(RECAST3X3 ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
+	C2MRP(RECAST3X3 &T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
+	v3Scale(ConfigData->dvRotMag, T_Inrtl2Burn[2], omega_BR_N);
+	m33MultV3(RECAST3X3 T_Inrtl2Bdy, omega_BR_N, ConfigData->attCmd.omega_BR);
     
     v3SetZero(burnAccum);
     if((ConfigData->burnExecuting == 0 && burnTime >= 0.0)

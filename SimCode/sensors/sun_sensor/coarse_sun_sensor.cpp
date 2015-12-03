@@ -181,7 +181,6 @@ void CoarseSunSensor::ComputeTruthOutput()
 
 void CoarseSunSensor::ComputeActualOutput()
 {
-    double prevValue = this->ScaledValue;
     double CurrentError = rnum(rgen);
     double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
     this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;

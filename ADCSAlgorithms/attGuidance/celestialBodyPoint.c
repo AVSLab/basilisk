@@ -5,6 +5,7 @@
 #include "SimCode/environment/spice/spice_planet_state.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "attDetermination/CSSEst/navStateOut.h"
+#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
 
@@ -80,26 +81,26 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize,
             sizeof(SpicePlanetState), &secPlanet);
-        v3Subtract(secPlanet.PositionVector, navData.vehPosition,
+        v3Subtract(secPlanet.PositionVector, navData.r_N,
                    secPointVector);
         v3Normalize(secPointVector, secPointVector);
     }
     else
     {
-		v3Subtract(navData.vehPosition, primPlanet.PositionVector, relPosVector);
-		v3Subtract(navData.vehVelocity, primPlanet.VelocityVector, relVelVector);
+		v3Subtract(navData.r_N, primPlanet.PositionVector, relPosVector);
+		v3Subtract(navData.v_N, primPlanet.VelocityVector, relVelVector);
         v3Cross(relPosVector, relVelVector, secPointVector);
         v3Normalize(secPointVector, secPointVector);
     }
-    v3Subtract(primPlanet.PositionVector, navData.vehPosition, primPointVector);
+    v3Subtract(primPlanet.PositionVector, navData.r_N, primPointVector);
     v3Normalize(primPointVector, primPointVector);
     v3Copy(primPointVector, &(T_Inrtl2Point[0][0]));
     v3Cross(primPointVector, secPointVector, &(T_Inrtl2Point[2][0]));
     v3Normalize(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[2][0]));
     v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
             &(T_Inrtl2Point[1][0]));
-    m33MultM33(ConfigData->TPoint2Bdy, T_Inrtl2Point, T_Inrtl2Bdy);
-    C2MRP(&(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
+    m33MultM33(RECAST3X3 ConfigData->TPoint2Bdy, T_Inrtl2Point, T_Inrtl2Bdy);
+    C2MRP(RECAST3X3 &(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
     v3SetZero(ConfigData->attCmd.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
         &(ConfigData->attCmd), moduleID);

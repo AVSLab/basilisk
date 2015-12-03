@@ -74,7 +74,7 @@ extern "C" {
     void   C2Euler321(double C[3][3], double *q);
     void   C2Euler323(double C[3][3], double *q);
     void   C2Gibbs(double C[3][3], double *q);
-    void   C2MRP(double *C, double *q);
+    void   C2MRP(double C[3][3], double *q);
     void   C2PRV(double C[3][3], double *q);
     void   dEP(double *q, double *w, double *dq);
     void   dEuler121(double *q, double *w, double *dq);

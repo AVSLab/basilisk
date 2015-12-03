@@ -34,6 +34,7 @@ public:
     uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output
     bool ReinitSelf;                  //!< -- Indicator to reset conversion type
     bool Elements2Cart;               //!< -- Flag saying which direction to go
+    bool inputsGood;                  //!< -- flag indicating that inputs are good
     
 private:
     int64_t StateInMsgID;              // -- MEssage ID for incoming data

@@ -1,6 +1,7 @@
 
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "SimCode/utilities/linearAlgebra.h"
+#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theIMU sensor interface.
@@ -39,8 +40,8 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
                     sizeof(vehicleConfigData), (void*) &LocalConfigData);
-        m33MultM33(LocalConfigData.T_str2body, ConfigData->platform2StrDCM,
-                   ConfigData->platform2BdyDCM);
+        m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->platform2StrDCM,
+                   RECAST3X3 ConfigData->platform2BdyDCM);
     }
     
 }
@@ -60,13 +61,13 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
                 sizeof(IMUOutputData), (void*) &LocalInput);
     
-    m33MultV3(ConfigData->platform2BdyDCM, LocalInput.DVFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.DVFrameBody,
               ConfigData->LocalOutput.DVFrameBody);
-    m33MultV3(ConfigData->platform2BdyDCM, LocalInput.AccelBody,
+    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.AccelBody,
               ConfigData->LocalOutput.AccelBody);
-    m33MultV3(ConfigData->platform2BdyDCM, LocalInput.DRFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.DRFrameBody,
               ConfigData->LocalOutput.DRFrameBody);
-    m33MultV3(ConfigData->platform2BdyDCM, LocalInput.AngVelBody,
+    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.AngVelBody,
               ConfigData->LocalOutput.AngVelBody);
     
     WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUOutputData),
