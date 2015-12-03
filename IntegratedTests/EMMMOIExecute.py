@@ -1,4 +1,4 @@
-import sys, os, inspect
+﻿import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
@@ -18,6 +18,7 @@ import SimulationBaseClass
 TheEMMSim = EMMSim.EMMSim()
 
 TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E9))
+TheEMMSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("dv_thruster_cmds", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E10))
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10))
@@ -27,8 +28,8 @@ TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E10))
 TheEMMSim.TotalSim.logThisMessage("spacecraft_mass_props", int(1E10))
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
 TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E10))
-TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd', 'double', 0, 2, int(1E10))
-TheEMMSim.AddVectorForLogging('attMnvrPoint.bodyRateCmd', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('attMnvrPoint.sigmaCmd_BR', 'double', 0, 2, int(1E10))
+TheEMMSim.AddVectorForLogging('attMnvrPoint.omegaCmd_BR_B', 'double', 0, 2, int(1E10))
 TheEMMSim.AddVectorForLogging('VehicleDynamicsData.omega', 'double', 0, 2,  int(1E10))
 TheEMMSim.AddVariableForLogging('dvGuidance.burnExecuting', int(1E9))
 TheEMMSim.AddVariableForLogging('dvGuidance.burnComplete', int(1E9))
@@ -100,8 +101,8 @@ TheEMMSim.ExecuteSimulation()
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
-attMnvrCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.sigmaCmd')
-bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.bodyRateCmd')
+attMnvrCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.sigmaCmd_BR')
+bodyRateCmd = TheEMMSim.GetLogVariableData('attMnvrPoint.omegaCmd_BR_B')
 FSWControlOut = TheEMMSim.pullMessageLogData("sun_safe_control_request.torqueRequestBody", range(3))
 vehInertia = TheEMMSim.pullMessageLogData("spacecraft_mass_props.InertiaTensor", range(9))
 bodyRateObs =  TheEMMSim.GetLogVariableData('VehicleDynamicsData.omega')
@@ -114,6 +115,7 @@ radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
 burnActive = TheEMMSim.GetLogVariableData('dvGuidance.burnExecuting')
 burnComplete = TheEMMSim.GetLogVariableData('dvGuidance.burnComplete')
+sigmaError = TheEMMSim.pullMessageLogData('nom_att_guid_out.sigma_BR', range(3))
 
 CSSEstAccuracyThresh = 17.5*math.pi/180.0
 plt.figure(1)
@@ -172,6 +174,13 @@ plt.plot(radPeri[:,0]*1.0E-9, radPeri[:,1])
 plt.figure(13)
 plt.plot(burnActive[:,0]*1.0E-9, burnActive[:,1])
 plt.plot(burnComplete[:,0]*1.0E-9, burnComplete[:,1], 'g--')
+
+plt.figure(14)
+plt.plot(sigmaError[:,0]*1.0E-9, sigmaError[:,1])
+plt.plot(sigmaError[:,0]*1.0E-9, sigmaError[:,2])
+plt.plot(sigmaError[:,0]*1.0E-9, sigmaError[:,3])
+
+
 
 if(len(sys.argv) > 1):
    if(sys.argv[1] == 'True'):

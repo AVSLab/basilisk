@@ -288,6 +288,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
      newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
      SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
      self.attMnvrPointData.mnvrActive = False
+     self.attMnvrPointData.mnvrComplete = 0
+     print "Current Raster"
+     print [self.TotalSim.CurrentNanos, self.scanSelector]
      
  def InitializeSimulation(self):
    SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
@@ -726,18 +729,18 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 #   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
 #   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
 
-#   self.attMnvrControlData.K1 = 1.0           # rad/sec
-#   self.attMnvrControlData.K3 = 8.0           # rad/sec
-#   self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-#   self.attMnvrControlData.P = 80.0            # N*m*sec
-#   self.attMnvrControlData.Ki = 2.0            # N*m  - negative values turn off the integral feedback
-#   self.attMnvrControlData.integralLimit = 0.3 # rad
-   self.attMnvrControlData.K1 = 0.3          # rad/sec
-   self.attMnvrControlData.K3 = 3.0          # rad/sec
+   self.attMnvrControlData.K1 = 4.0           # rad/sec
+   self.attMnvrControlData.K3 = 12.0           # rad/sec
    self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.attMnvrControlData.P = 250.0            # N*m*sec
-   self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
+   self.attMnvrControlData.P = 80.0            # N*m*sec
+   self.attMnvrControlData.Ki = 1.7         # N*m  - negative values turn off the integral feedback
    self.attMnvrControlData.integralLimit = 0.3 # rad
+   #self.attMnvrControlData.K1 = 0.3          # rad/sec
+   #self.attMnvrControlData.K3 = 3.0          # rad/sec
+   #self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   #self.attMnvrControlData.P = 350.0            # N*m*sec
+   #self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
+   #self.attMnvrControlData.integralLimit = 0.3 # rad
    self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
    self.attMnvrControlData.inputVehicleConfigDataName = "adcs_config_data"
    self.attMnvrControlData.inputNavName = "simple_nav_output"
