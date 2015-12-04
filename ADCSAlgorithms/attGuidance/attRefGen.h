@@ -17,6 +17,7 @@ typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char inputNavStateName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char inputAttCmdName[MAX_STAT_MSG_LENGTH]; /*<! The name of the incoming attitude command*/
+    double mnvrScanRate[3];  /*!< r/s the rate at which to scan over the target*/
     double zeroAngleTol;     /*!< r  The pointing error level to trigger maneuver on*/
     double sigmaCmd_BR[3];      /*!< -- The current attitude state command*/
     double omegaCmd_BR_B[3];   /*!< r/s The current body rate state command*/
