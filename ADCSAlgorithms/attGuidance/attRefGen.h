@@ -22,6 +22,7 @@ typedef struct {
     double omegaCmd_BR_B[3];   /*!< r/s The current body rate state command*/
     double totalMnvrTime;    /*!< s  The time it will take to maneuver the spacecraft*/
     double currMnvrTime;     /*!< s  The amount of time we've been maneuvering*/
+    uint32_t propagateReference; /*!< (-) Flag indicating whether or not to propagate the reference*/
     uint64_t startClockRead; /*!< ns the value of the previous clock read from the last call*/
     int32_t mnvrComplete;    /*!< (-) Helpful flag indicating if the current maneuver is complete*/
     int32_t mnvrActive;      /*!< -- Flag indicating if we are maneuvering */

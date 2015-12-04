@@ -21,7 +21,7 @@ TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("dv_thruster_cmds", int(1E8))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E10))
-TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10))
+TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
 TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E10))
 TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E10))
 TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E10))
@@ -95,7 +95,9 @@ TheEMMSim.modeRequest = 'sunPoint'
 TheEMMSim.ConfigureStopTime(int(TheEMMSim.dvGuidanceData.burnStartTime-600*1E9))
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.modeRequest = 'DVPrep' #Note that this will maneuver to burn, burn, and go back to sunPoint
-TheEMMSim.ConfigureStopTime(int(60*60*10*1E9))
+TheEMMSim.updateTaskPeriod("DynamicsTask", int(2.5E7))
+TheEMMSim.attMnvrPointData.propagateReference = 0;
+TheEMMSim.ConfigureStopTime(int(60*60*5*1E9))
 TheEMMSim.ExecuteSimulation()
 
 FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))

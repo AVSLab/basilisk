@@ -118,8 +118,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       sunSafePoint.CrossInit_sunSafePoint)
    self.sunSafePointWrap.ModelTag = "sunSafePoint"
 
-   self.MRP_SteeringData = MRP_Steering.MRP_SteeringConfig()
-   self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringData,
+   self.MRP_SteeringSafeData = MRP_Steering.MRP_SteeringConfig()
+   self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringSafeData,
       MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
       MRP_Steering.CrossInit_MRP_Steering)
    self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
@@ -136,11 +136,17 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       attRefGen.CrossInit_attRefGen)
    self.attMnvrPointWrap.ModelTag = "attMnvrPoint" 
 
-   self.attMnvrControlData = MRP_Steering.MRP_SteeringConfig()
-   self.attMnvrControlWrap = alg_contain.AlgContain(self.attMnvrControlData,
+   self.MRP_SteeringRWAData = MRP_Steering.MRP_SteeringConfig()
+   self.MRP_SteeringRWAWrap = alg_contain.AlgContain(self.MRP_SteeringRWAData,
       MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
       MRP_Steering.CrossInit_MRP_Steering)
-   self.attMnvrControlWrap.ModelTag = "attMnvrControl"
+   self.MRP_SteeringRWAData.ModelTag = "MRP_SteeringRWA"
+   
+   self.MRP_SteeringMOIData = MRP_Steering.MRP_SteeringConfig()
+   self.MRP_SteeringMOIWrap = alg_contain.AlgContain(self.MRP_SteeringMOIData,
+                                                    MRP_Steering.Update_MRP_Steering, MRP_Steering.SelfInit_MRP_Steering,
+                                                    MRP_Steering.CrossInit_MRP_Steering)
+   self.MRP_SteeringMOIWrap.ModelTag = "MRP_SteeringMOI"
    
    self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
    self.dvGuidanceWrap = alg_contain.AlgContain(self.dvGuidanceData,
@@ -180,14 +186,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, 
       self.sunSafePointData)
    self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, 
-      self.MRP_SteeringData)
+      self.MRP_SteeringSafeData)
    self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
 
    self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, 
       self.attMnvrPointData)
-   self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrControlWrap, 
-      self.attMnvrControlData)
+   self.AddModelToTask("vehicleAttMnvrFSWTask", self.MRP_SteeringRWAWrap, 
+      self.MRP_SteeringRWAData)
    self.AddModelToTask("vehicleAttMnvrFSWTask", self.sunSafeACSWrap, 
       self.sunSafeACSData)
       
@@ -198,8 +204,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                             self.dvGuidanceData)
    self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrPointWrap,
                             self.attMnvrPointData)
-   self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrControlWrap,
-                            self.attMnvrControlData)
+   self.AddModelToTask("vehicleDVMnvrFSWTask", self.MRP_SteeringMOIWrap,
+                            self.MRP_SteeringMOIData)
    self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvAttEffectWrap,
                             self.dvAttEffectData)
                             
@@ -688,16 +694,16 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
       self.sunSafePointData.sHatBdyCmd)
 
  def SetMRP_Steering(self):
-   self.MRP_SteeringData.K1 = 0.15            # rad/sec
-   self.MRP_SteeringData.K3 = 1.0             # rad/sec
-   self.MRP_SteeringData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.MRP_SteeringData.P = 150.0            # N*m*sec
-   self.MRP_SteeringData.Ki = -1.0             # N*m  - negative values turn off the integral feedback
-   self.MRP_SteeringData.integralLimit = 0.15 # rad
-   self.MRP_SteeringData.inputGuidName = "sun_safe_att_err"
-   self.MRP_SteeringData.inputVehicleConfigDataName = "adcs_config_data"
-   self.MRP_SteeringData.inputNavName = "simple_nav_output"
-   self.MRP_SteeringData.outputDataName = "sun_safe_control_request"
+   self.MRP_SteeringSafeData.K1 = 0.15            # rad/sec
+   self.MRP_SteeringSafeData.K3 = 1.0             # rad/sec
+   self.MRP_SteeringSafeData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.MRP_SteeringSafeData.P = 150.0            # N*m*sec
+   self.MRP_SteeringSafeData.Ki = -1.0             # N*m  - negative values turn off the integral feedback
+   self.MRP_SteeringSafeData.integralLimit = 0.15 # rad
+   self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
+   self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
+   self.MRP_SteeringSafeData.inputNavName = "simple_nav_output"
+   self.MRP_SteeringSafeData.outputDataName = "sun_safe_control_request"
 
  def SetsunSafeACS(self):
    self.sunSafeACSData.inputControlName = "sun_safe_control_request"
@@ -722,29 +728,31 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.attMnvrPointData.zeroAngleTol = 1.0*math.pi/180.0
    self.attMnvrPointData.mnvrActive = 0
    self.attMnvrPointData.totalMnvrTime = 1000.0
+   self.attMnvrPointData.propagateReference = 1
 
- def SetattMnvrControl(self):
-#   self.attMnvrControlData.K = 100.0
-#   self.attMnvrControlData.P = 75.0
-#   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
-#   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
-
-   self.attMnvrControlData.K1 = 4.0           # rad/sec
-   self.attMnvrControlData.K3 = 12.0           # rad/sec
-   self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.attMnvrControlData.P = 80.0            # N*m*sec
-   self.attMnvrControlData.Ki = 1.7         # N*m  - negative values turn off the integral feedback
-   self.attMnvrControlData.integralLimit = 0.3 # rad
-   #self.attMnvrControlData.K1 = 0.3          # rad/sec
-   #self.attMnvrControlData.K3 = 3.0          # rad/sec
-   #self.attMnvrControlData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   #self.attMnvrControlData.P = 350.0            # N*m*sec
-   #self.attMnvrControlData.Ki = -1.0            # N*m  - negative values turn off the integral feedback
-   #self.attMnvrControlData.integralLimit = 0.3 # rad
-   self.attMnvrControlData.inputGuidName = "nom_att_guid_out"
-   self.attMnvrControlData.inputVehicleConfigDataName = "adcs_config_data"
-   self.attMnvrControlData.inputNavName = "simple_nav_output"
-   self.attMnvrControlData.outputDataName = "sun_safe_control_request"
+ def SetMRP_SteeringRWA(self):
+   self.MRP_SteeringRWAData.K1 = 0.3         # rad/sec
+   self.MRP_SteeringRWAData.K3 = 3.0           # rad/sec
+   self.MRP_SteeringRWAData.omega_max = 1.5*(math.pi/180.) # rad/sec
+   self.MRP_SteeringRWAData.P = 250.0            # N*m*sec
+   self.MRP_SteeringRWAData.Ki = -1.0         # N*m  - negative values turn off the integral feedback
+   self.MRP_SteeringRWAData.integralLimit = 0.0 # rad
+   self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
+   self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
+   self.MRP_SteeringRWAData.inputNavName = "simple_nav_output"
+   self.MRP_SteeringRWAData.outputDataName = "sun_safe_control_request"
+ 
+ def SetMRP_SteeringMOI(self):
+    self.MRP_SteeringMOIData.K1 = 0.9         # rad/sec
+    self.MRP_SteeringMOIData.K3 = 3.0           # rad/sec
+    self.MRP_SteeringMOIData.omega_max = 1.5*(math.pi/180.) # rad/sec
+    self.MRP_SteeringMOIData.P = 200.0            # N*m*sec
+    self.MRP_SteeringMOIData.Ki = 11.7         # N*m  - negative values turn off the integral feedback
+    self.MRP_SteeringMOIData.integralLimit = 0.5 # rad
+    self.MRP_SteeringMOIData.inputGuidName = "nom_att_guid_out"
+    self.MRP_SteeringMOIData.inputVehicleConfigDataName = "adcs_config_data"
+    self.MRP_SteeringMOIData.inputNavName = "simple_nav_output"
+    self.MRP_SteeringMOIData.outputDataName = "sun_safe_control_request"
  
  def SetdvAttEffect(self):
    self.dvAttEffectData.inputControlName = "sun_safe_control_request"
@@ -770,7 +778,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    newThrGroup.nomThrustOn = 0.52
    
    newThrGroup.outputDataName = "dv_thruster_cmds"
-   matMult = 1.5
+   matMult = 0.7
    onTimeMap = [0.0, 0.1*matMult, 0.0,
                 -0.0866*matMult, 0.05*matMult, 0.0,
                 -0.0866*matMult, -0.05*matMult, 0.0,
@@ -839,7 +847,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SetMRP_Steering()
    self.SetsunSafeACS()
    self.SetattMnvrPoint()
-   self.SetattMnvrControl()
+   self.SetMRP_SteeringRWA()
+   self.SetMRP_SteeringMOI()
    self.SetdvAttEffect()
    self.SetdvGuidance()
    self.SetsunPoint()
