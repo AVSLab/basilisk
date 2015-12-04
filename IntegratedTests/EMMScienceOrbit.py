@@ -92,17 +92,18 @@ TheEMMSim.ConfigureStopTime(int(60*60*2*1E9))
 TheEMMSim.ExecuteSimulation()
 #Take the vehicle into mars pointing mode and begin the science sequencing
 TheEMMSim.modeRequest = 'marsPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*2.75*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*4.5*1E9))
+TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
 TheEMMSim.ExecuteSimulation()
 TheEMMSim.setEventActivity('initiateSunPoint', True)
 TheEMMSim.setEventActivity('initiateMarsPoint', True)
 TheEMMSim.modeRequest = 'sunPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*3.25*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*5.0*1E9))
 TheEMMSim.ExecuteSimulation()
-TheEMMSim.modeRequest = 'marsPoint'
-TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
-TheEMMSim.ConfigureStopTime(int(60*60*3.75*1E9))
-TheEMMSim.ExecuteSimulation()
+#TheEMMSim.modeRequest = 'marsPoint'
+#TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
+#TheEMMSim.ConfigureStopTime(int(60*60*8.0*1E9))
+#TheEMMSim.ExecuteSimulation()
 
 #Simulation complete.  Pull off a selected set of values from the variable logs
 semiMajor = TheEMMSim.pullMessageLogData("OrbitalElements.a")
@@ -116,6 +117,7 @@ instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")
 instrumentAz = TheEMMSim.pullMessageLogData("instrument_mars_bore.azimuth")
 DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
 sigmaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.sigma', range(3))
+omegaTruth = TheEMMSim.pullMessageLogData('inertial_state_output.omega', range(3))
 sigmaCMD = TheEMMSim.pullMessageLogData('att_cmd_output.sigma_BR', range(3))
 dataInstBore = TheEMMSim.GetLogVariableData('instrumentBoresight.boreVecPoint')
 
@@ -164,6 +166,12 @@ plt.plot(dataInstBore[:,2], dataInstBore[:,3])
 plt.xlabel('y-component (-)')
 plt.ylabel('z-component (-)')
 
+plt.figure(9)
+plt.plot(omegaTruth[:,0]*1.0E-9, omegaTruth[:,1]*180.0/math.pi)
+plt.plot(omegaTruth[:,0]*1.0E-9, omegaTruth[:,2]*180.0/math.pi)
+plt.plot(omegaTruth[:,0]*1.0E-9, omegaTruth[:,3]*180.0/math.pi)
+plt.xlabel('Time (s)')
+plt.ylabel('Body Rate (d/s)')
 
 #If requested, generate plots
 if(len(sys.argv) > 1):
