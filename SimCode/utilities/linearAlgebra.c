@@ -27,12 +27,12 @@ void vCopy(void *v, size_t dim,
 {
     double *m_v = (double *)v;
     double *m_result = ALLOC_DOUBLE(dim);
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         m_result[i] = m_v[i];
     }
-    
+
     MOVE_DOUBLE(m_result, dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -41,12 +41,12 @@ void vSetZero(void *v,
               size_t dim)
 {
     double *m_v = (double *)v;
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         m_v[i] = 0.0;
     }
-    
+
     MOVE_DOUBLE(m_v, dim, v);
 }
 
@@ -57,12 +57,12 @@ void vAdd(void *v1, size_t dim,
     double *m_v1 = (double *)v1;
     double *m_v2 = (double *)v2;
     double *m_result = ALLOC_DOUBLE(dim);
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         m_result[i] = m_v1[i] + m_v2[i];
     }
-    
+
     MOVE_DOUBLE(m_result, dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -74,12 +74,12 @@ void vSubtract(void *v1, size_t dim,
     double *m_v1 = (double *)v1;
     double *m_v2 = (double *)v2;
     double *m_result = ALLOC_DOUBLE(dim);
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         m_result[i] = m_v1[i] - m_v2[i];
     }
-    
+
     MOVE_DOUBLE(m_result, dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -90,12 +90,12 @@ void vScale(double scaleFactor, void *v,
 {
     double *m_v = (double *)v;
     double *m_result = ALLOC_DOUBLE(dim);
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         m_result[i] = m_v[i] * scaleFactor;
     }
-    
+
     MOVE_DOUBLE(m_result, dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -105,13 +105,13 @@ double vDot(void *v1, size_t dim,
 {
     double *m_v1 = (double *)v1;
     double *m_v2 = (double *)v2;
-    
+
     size_t i;
     double result = 0.0;
     for(i = 0; i < dim; i++) {
         result += m_v1[i] * m_v2[i];
     }
-    
+
     return result;
 }
 
@@ -122,7 +122,7 @@ void vOuterProduct(void *v1, size_t dim1,
     double *m_v1 = (double *)v1;
     double *m_v2 = (double *)v2;
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -130,7 +130,7 @@ void vOuterProduct(void *v1, size_t dim1,
             m_result[MXINDEX(dim2, i, j)] = m_v1[i] * m_v2[j];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -141,12 +141,12 @@ void vtMultM(void *v,
 {
     size_t dim11 = 1;
     size_t dim12 = dim1;
-    //    size_t dim21 = dim1;
+//    size_t dim21 = dim1;
     size_t dim22 = dim2;
     double *m_mx1 = (double *)v;
     double *m_mx2 = (double *)mx;
     double *m_result = ALLOC_DOUBLE(dim11 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -158,7 +158,7 @@ void vtMultM(void *v,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -169,12 +169,12 @@ void vtMultMt(void *v,
 {
     size_t dim11 = 1;
     size_t dim12 = dim2;
-    //    size_t dim21 = dim2;
+//    size_t dim21 = dim2;
     size_t dim22 = dim1;
     double *m_mx1 = (double *)v;
     double *m_mx2 = (double *)mx;
     double *m_result = ALLOC_DOUBLE(dim11 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -186,7 +186,7 @@ void vtMultMt(void *v,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -200,13 +200,13 @@ void vNormalize(void *v, size_t dim, void *result)
 {
     double *m_result = ALLOC_DOUBLE(dim);
     double norm = vNorm(v, dim);
-    
+
     if(norm > DB0_EPS) {
         vScale(1.0 / norm, v, dim, m_result);
     } else {
         vSetZero(m_result, dim);
     }
-    
+
     MOVE_DOUBLE(m_result, dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -217,7 +217,7 @@ int vIsEqual(void *v1, size_t dim,
 {
     double *m_v1 = (double *)v1;
     double *m_v2 = (double *)v2;
-    
+
     size_t i;
     for(i = 0; i < dim; i++) {
         if(fabs(m_v1[i] - m_v2[i]) > accuracy) {
@@ -230,7 +230,7 @@ int vIsEqual(void *v1, size_t dim,
 int vIsZero(void *v, size_t dim, double accuracy)
 {
     double *m_v = (double *)v;
-    
+
     size_t i;
     int result = 1;
     for(i = 0; i < dim; i++) {
@@ -239,14 +239,14 @@ int vIsZero(void *v, size_t dim, double accuracy)
             break;
         }
     }
-    
+
     return result;
 }
 
 void vPrint(FILE *pFile, const char *name, void *v, size_t dim)
 {
     double *m_v = (double *)v;
-    
+
     size_t i;
     fprintf(pFile, "%s = [", name);
     for(i = 0; i < dim; i++) {
@@ -722,7 +722,7 @@ void mCopy(void *mx, size_t dim1, size_t dim2,
 {
     double *m_mx = (double *)mx;
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -730,7 +730,7 @@ void mCopy(void *mx, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx[MXINDEX(dim2, i, j)];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -738,7 +738,7 @@ void mCopy(void *mx, size_t dim1, size_t dim2,
 void mSetZero(void *result, size_t dim1, size_t dim2)
 {
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -746,7 +746,7 @@ void mSetZero(void *result, size_t dim1, size_t dim2)
             m_result[MXINDEX(dim2, i, j)] = 0.0;
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -754,7 +754,7 @@ void mSetZero(void *result, size_t dim1, size_t dim2)
 void mSetIdentity(void *result, size_t dim1, size_t dim2)
 {
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -762,7 +762,7 @@ void mSetIdentity(void *result, size_t dim1, size_t dim2)
             m_result[MXINDEX(dim2, i, j)] = (i == j) ? 1.0 : 0.0;
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -771,7 +771,7 @@ void mDiag(void *v, size_t dim, void *result)
 {
     double *m_v = (double *)v;
     double *m_result = ALLOC_DOUBLE(dim * dim);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim; i++) {
@@ -779,7 +779,7 @@ void mDiag(void *v, size_t dim, void *result)
             m_result[MXINDEX(dim, i, j)] = (i == j) ? m_v[i] : 0.0;
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim * dim, result);
     FREE_DOUBLE(m_result);
 }
@@ -789,7 +789,7 @@ void mTranspose(void *mx, size_t dim1, size_t dim2,
 {
     double *m_mx = (double *)mx;
     double *m_result = ALLOC_DOUBLE(dim2 * dim1);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -797,7 +797,7 @@ void mTranspose(void *mx, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim1, j, i)] = m_mx[MXINDEX(dim2, i, j)];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim2 * dim1, result);
     FREE_DOUBLE(m_result);
 }
@@ -809,7 +809,7 @@ void mAdd(void *mx1, size_t dim1, size_t dim2,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -817,7 +817,7 @@ void mAdd(void *mx1, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] + m_mx2[MXINDEX(dim2, i, j)];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -829,7 +829,7 @@ void mSubtract(void *mx1, size_t dim1, size_t dim2,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -837,7 +837,7 @@ void mSubtract(void *mx1, size_t dim1, size_t dim2,
             m_result[MXINDEX(dim2, i, j)] = m_mx1[MXINDEX(dim2, i, j)] - m_mx2[MXINDEX(dim2, i, j)];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -848,7 +848,7 @@ void mScale(double scaleFactor,
 {
     double *m_mx = (double *)mx;
     double *m_result = ALLOC_DOUBLE(dim1 * dim2);
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -856,7 +856,7 @@ void mScale(double scaleFactor,
             m_result[MXINDEX(dim2, i, j)] = scaleFactor * m_mx[MXINDEX(dim2, i, j)];
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim1 * dim2, result);
     FREE_DOUBLE(m_result);
 }
@@ -868,7 +868,7 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim11 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -885,7 +885,7 @@ void mMultM(void *mx1, size_t dim11, size_t dim12,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -897,7 +897,7 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim12 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -914,7 +914,7 @@ void mtMultM(void *mx1, size_t dim11, size_t dim12,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -926,7 +926,7 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim11 * dim21);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -943,7 +943,7 @@ void mMultMt(void *mx1, size_t dim11, size_t dim12,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim11 * dim21, result);
     FREE_DOUBLE(m_result);
 }
@@ -955,7 +955,7 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
     double *m_result = ALLOC_DOUBLE(dim12 * dim21);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -972,7 +972,7 @@ void mtMultMt(void *mx1, size_t dim11, size_t dim12,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim12 * dim21, result);
     FREE_DOUBLE(m_result);
 }
@@ -983,12 +983,12 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
-    //    size_t dim21 = dim2;
+//    size_t dim21 = dim2;
     size_t dim22 = 1;
     double *m_mx1 = (double *)mx;
     double *m_mx2 = (double *)v;
     double *m_result = ALLOC_DOUBLE(dim11 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -1000,7 +1000,7 @@ void mMultV(void *mx, size_t dim1, size_t dim2,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim11 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -1011,12 +1011,12 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
 {
     size_t dim11 = dim1;
     size_t dim12 = dim2;
-    //    size_t dim21 = dim1;
+//    size_t dim21 = dim1;
     size_t dim22 = 1;
     double *m_mx1 = (double *)mx;
     double *m_mx2 = (double *)v;
     double *m_result = ALLOC_DOUBLE(dim12 * dim22);
-    
+
     size_t i;
     size_t j;
     size_t k;
@@ -1028,7 +1028,7 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
             }
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim12 * dim22, result);
     FREE_DOUBLE(m_result);
 }
@@ -1036,34 +1036,34 @@ void mtMultV(void *mx, size_t dim1, size_t dim2,
 double mTrace(void *mx, size_t dim)
 {
     double *m_mx = (double *)mx;
-    
+
     size_t i;
     double result = 0.0;
     for(i = 0; i < dim; i++) {
         result += m_mx[MXINDEX(dim, i, i)];
     }
-    
+
     return result;
 }
 
 double mDeterminant(void *mx, size_t dim)
 {
     double *m_mx = (double *)mx;
-    
+
     size_t i;
     size_t j;
     size_t k;
     size_t ii;
     double result = 0;
     double *mxTemp = NULL;
-    
+
     if(dim < 1) {
         return 0;
     } else if(dim == 1) {
         result = m_mx[MXINDEX(dim, 0, 0)];
     } else if(dim == 2) {
         result = m_mx[MXINDEX(dim, 0, 0)] * m_mx[MXINDEX(dim, 1, 1)]
-        - m_mx[MXINDEX(dim, 1, 0)] * m_mx[MXINDEX(dim, 0, 1)];
+                 - m_mx[MXINDEX(dim, 1, 0)] * m_mx[MXINDEX(dim, 0, 1)];
     } else {
         result = 0;
         for(k = 0; k < dim; k++) {
@@ -1088,7 +1088,7 @@ double mDeterminant(void *mx, size_t dim)
 void mCofactor(void *mx, size_t dim, void *result)
 {
     /* The (j,i)th cofactor of A is defined as (-1)^(i + j)*det(A_(i,j))
-     where A_(i,j) is the submatrix of A obtained from A by removing the ith row and jth column */
+       where A_(i,j) is the submatrix of A obtained from A by removing the ith row and jth column */
     size_t  i;
     size_t  i0;
     size_t  i1;
@@ -1099,7 +1099,7 @@ void mCofactor(void *mx, size_t dim, void *result)
     double *m_mxij = ALLOC_DOUBLE((dim - 1) * (dim - 1));
     double *m_result = ALLOC_DOUBLE(dim * dim);
     double  det;
-    
+
     for(i = 0; i < dim; i++) {
         for(j = 0; j < dim; j++) {
             /* Form mx_(i,j) */
@@ -1118,15 +1118,15 @@ void mCofactor(void *mx, size_t dim, void *result)
                 }
                 i1++;
             }
-            
+
             /* Calculate the determinant */
             det = mDeterminant(m_mxij, dim - 1);
-            
+
             /* Fill in the elements of the cofactor */
             m_result[MXINDEX(dim, i, j)] = pow(-1.0, i + j + 2.0) * det;
         }
     }
-    
+
     MOVE_DOUBLE(m_result, dim * dim, result);
     FREE_DOUBLE(m_result);
     FREE_DOUBLE(m_mxij);
@@ -1136,13 +1136,13 @@ int mInverse(void *mx, size_t dim, void *result)
 {
     /* Inverse of a square matrix A with non zero determinant is adjoint matrix divided by determinant */
     /* The adjoint matrix is the square matrix X such that the (i,j)th entry of X is the (j,i)th cofactor of A */
-    
+
     size_t  i;
     size_t  j;
     double  det = mDeterminant(mx, dim);
     double *m_result = ALLOC_DOUBLE(dim * dim);
     int     status = 0;
-    
+
     if(fabs(det) > DB0_EPS) {
         /* Find adjoint matrix */
         double *m_adjoint = ALLOC_DOUBLE(dim * dim);
@@ -1160,7 +1160,7 @@ int mInverse(void *mx, size_t dim, void *result)
         }
         status = 1;
     }
-    
+
     MOVE_DOUBLE(m_result, dim * dim, result);
     FREE_DOUBLE(m_result);
     return status;
@@ -1172,7 +1172,7 @@ int mIsEqual(void *mx1, size_t dim1, size_t dim2,
 {
     double *m_mx1 = (double *)mx1;
     double *m_mx2 = (double *)mx2;
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -1189,7 +1189,7 @@ int mIsZero(void *mx, size_t dim1, size_t dim2,
             double accuracy)
 {
     double *m_mx = (double *)mx;
-    
+
     size_t i;
     size_t j;
     for(i = 0; i < dim1; i++) {
@@ -1205,7 +1205,7 @@ int mIsZero(void *mx, size_t dim1, size_t dim2,
 void mPrint(FILE *pFile, const char *name, void *mx, size_t dim1, size_t dim2)
 {
     double *m_mx = (double *)mx;
-    
+
     size_t i;
     size_t j;
     fprintf(pFile, "%s = [", name);
@@ -1229,7 +1229,7 @@ void mGetSubMatrix(void *mx, size_t dim1, size_t dim2,
 {
     double *m_mx = (double *)mx;
     double *m_result = (double *)result;
-    
+
     size_t i;
     size_t j;
     for(i = dim1Start; i < dim1Start + dim1Result; i++) {
@@ -1245,7 +1245,7 @@ void mSetSubMatrix(void *mx, size_t dim1, size_t dim2,
 {
     double *m_mx = (double *)mx;
     double *m_result = (double *)result;
-    
+
     size_t i;
     size_t j;
     for(i = dim1Start; i < dim1Start + dim1; i++) {
@@ -1485,7 +1485,7 @@ double m22Trace(double mx[2][2])
     for(i = 0; i < dim; i++) {
         result += mx[i][i];
     }
-    
+
     return result;
 }
 
@@ -1558,7 +1558,7 @@ int m22Inverse(double mx[2][2], double result[2][2])
     double detInv;
     double m_result[2][2];
     int    status = 0;
-    
+
     if(fabs(det) > DB0_EPS) {
         detInv = 1.0 / det;
         m_result[0][0] =  mx[1][1] * detInv;
@@ -1810,7 +1810,7 @@ double m33Trace(double mx[3][3])
     for(i = 0; i < dim; i++) {
         result += mx[i][i];
     }
-    
+
     return result;
 }
 
@@ -1818,11 +1818,11 @@ double m33Determinant(double mx[3][3])
 {
     double value;
     value = mx[0][0] * mx[1][1] * mx[2][2]
-    + mx[0][1] * mx[1][2] * mx[2][0]
-    + mx[0][2] * mx[1][0] * mx[2][1]
-    - mx[0][0] * mx[1][2] * mx[2][1]
-    - mx[0][1] * mx[1][0] * mx[2][2]
-    - mx[0][2] * mx[1][1] * mx[2][0];
+            + mx[0][1] * mx[1][2] * mx[2][0]
+            + mx[0][2] * mx[1][0] * mx[2][1]
+            - mx[0][0] * mx[1][2] * mx[2][1]
+            - mx[0][1] * mx[1][0] * mx[2][2]
+            - mx[0][2] * mx[1][1] * mx[2][0];
     return value;
 }
 
@@ -1888,7 +1888,7 @@ int m33Inverse(double mx[3][3], double result[3][3])
     double detInv;
     double m_result[3][3];
     int    status = 0;
-    
+
     if(fabs(det) > DB0_EPS) {
         detInv = 1.0 / det;
         m_result[0][0] = (mx[1][1] * mx[2][2] - mx[1][2] * mx[2][1]) * detInv;
@@ -1918,24 +1918,24 @@ void m33SingularValues(double mx[3][3], double result[3])
     double a[3];
     double mxtmx[3][3];
     int    i;
-    
+
     m33tMultM33(mx, mx, mxtmx);
-    
+
     /* Compute characteristic polynomial */
     a[0] = -m33Determinant(mxtmx);
     a[1] = mxtmx[0][0] * mxtmx[1][1] - mxtmx[0][1] * mxtmx[1][0]
-    + mxtmx[0][0] * mxtmx[2][2] - mxtmx[0][2] * mxtmx[2][0]
-    + mxtmx[1][1] * mxtmx[2][2] - mxtmx[1][2] * mxtmx[2][1];
+           + mxtmx[0][0] * mxtmx[2][2] - mxtmx[0][2] * mxtmx[2][0]
+           + mxtmx[1][1] * mxtmx[2][2] - mxtmx[1][2] * mxtmx[2][1];
     a[2] = -mxtmx[0][0] - mxtmx[1][1] - mxtmx[2][2];
-    
+
     /* Solve cubic equation */
     cubicRoots(a, sv);
-    
+
     /* take square roots */
     for(i = 0; i < 3; i++) {
         sv[i] = sqrt(sv[i]);
     }
-    
+
     /* order roots */
     v3Sort(sv, result);
 }
@@ -1944,17 +1944,17 @@ void m33EigenValues(double mx[3][3], double result[3])
 {
     double sv[3];
     double a[3];
-    
+
     /* Compute characteristic polynomial */
     a[0] = -m33Determinant(mx);
     a[1] = mx[0][0] * mx[1][1] - mx[0][1] * mx[1][0]
-    + mx[0][0] * mx[2][2] - mx[0][2] * mx[2][0]
-    + mx[1][1] * mx[2][2] - mx[1][2] * mx[2][1];
+           + mx[0][0] * mx[2][2] - mx[0][2] * mx[2][0]
+           + mx[1][1] * mx[2][2] - mx[1][2] * mx[2][1];
     a[2] = -mx[0][0] - mx[1][1] - mx[2][2];
-    
+
     /* Solve cubic equation */
     cubicRoots(a, sv);
-    
+
     /* order roots */
     v3Sort(sv, result);
 }
@@ -2043,29 +2043,29 @@ double m44Determinant(double mx[4][4])
 {
     double value;
     value = mx[0][3] * mx[1][2] * mx[2][1] * mx[3][0]
-    - mx[0][2] * mx[1][3] * mx[2][1] * mx[3][0]
-    - mx[0][3] * mx[1][1] * mx[2][2] * mx[3][0]
-    + mx[0][1] * mx[1][3] * mx[2][2] * mx[3][0]
-    + mx[0][2] * mx[1][1] * mx[2][3] * mx[3][0]
-    - mx[0][1] * mx[1][2] * mx[2][3] * mx[3][0]
-    - mx[0][3] * mx[1][2] * mx[2][0] * mx[3][1]
-    + mx[0][2] * mx[1][3] * mx[2][0] * mx[3][1]
-    + mx[0][3] * mx[1][0] * mx[2][2] * mx[3][1]
-    - mx[0][0] * mx[1][3] * mx[2][2] * mx[3][1]
-    - mx[0][2] * mx[1][0] * mx[2][3] * mx[3][1]
-    + mx[0][0] * mx[1][2] * mx[2][3] * mx[3][1]
-    + mx[0][3] * mx[1][1] * mx[2][0] * mx[3][2]
-    - mx[0][1] * mx[1][3] * mx[2][0] * mx[3][2]
-    - mx[0][3] * mx[1][0] * mx[2][1] * mx[3][2]
-    + mx[0][0] * mx[1][3] * mx[2][1] * mx[3][2]
-    + mx[0][1] * mx[1][0] * mx[2][3] * mx[3][2]
-    - mx[0][0] * mx[1][1] * mx[2][3] * mx[3][2]
-    - mx[0][2] * mx[1][1] * mx[2][0] * mx[3][3]
-    + mx[0][1] * mx[1][2] * mx[2][0] * mx[3][3]
-    + mx[0][2] * mx[1][0] * mx[2][1] * mx[3][3]
-    - mx[0][0] * mx[1][2] * mx[2][1] * mx[3][3]
-    - mx[0][1] * mx[1][0] * mx[2][2] * mx[3][3]
-    + mx[0][0] * mx[1][1] * mx[2][2] * mx[3][3];
+            - mx[0][2] * mx[1][3] * mx[2][1] * mx[3][0]
+            - mx[0][3] * mx[1][1] * mx[2][2] * mx[3][0]
+            + mx[0][1] * mx[1][3] * mx[2][2] * mx[3][0]
+            + mx[0][2] * mx[1][1] * mx[2][3] * mx[3][0]
+            - mx[0][1] * mx[1][2] * mx[2][3] * mx[3][0]
+            - mx[0][3] * mx[1][2] * mx[2][0] * mx[3][1]
+            + mx[0][2] * mx[1][3] * mx[2][0] * mx[3][1]
+            + mx[0][3] * mx[1][0] * mx[2][2] * mx[3][1]
+            - mx[0][0] * mx[1][3] * mx[2][2] * mx[3][1]
+            - mx[0][2] * mx[1][0] * mx[2][3] * mx[3][1]
+            + mx[0][0] * mx[1][2] * mx[2][3] * mx[3][1]
+            + mx[0][3] * mx[1][1] * mx[2][0] * mx[3][2]
+            - mx[0][1] * mx[1][3] * mx[2][0] * mx[3][2]
+            - mx[0][3] * mx[1][0] * mx[2][1] * mx[3][2]
+            + mx[0][0] * mx[1][3] * mx[2][1] * mx[3][2]
+            + mx[0][1] * mx[1][0] * mx[2][3] * mx[3][2]
+            - mx[0][0] * mx[1][1] * mx[2][3] * mx[3][2]
+            - mx[0][2] * mx[1][1] * mx[2][0] * mx[3][3]
+            + mx[0][1] * mx[1][2] * mx[2][0] * mx[3][3]
+            + mx[0][2] * mx[1][0] * mx[2][1] * mx[3][3]
+            - mx[0][0] * mx[1][2] * mx[2][1] * mx[3][3]
+            - mx[0][1] * mx[1][0] * mx[2][2] * mx[3][3]
+            + mx[0][0] * mx[1][1] * mx[2][2] * mx[3][3];
     return value;
 }
 
@@ -2093,7 +2093,7 @@ int m44Inverse(double mx[4][4], double result[4][4])
     double detInv;
     double m_result[4][4];
     int    status = 0;
-    
+
     if(fabs(det) > DB0_EPS) {
         detInv = 1.0 / det;
         m_result[0][0] = (mx[1][2] * mx[2][3] * mx[3][1] - mx[1][3] * mx[2][2] * mx[3][1] + mx[1][3] * mx[2][1] * mx[3][2] - mx[1][1] * mx[2][3] * mx[3][2] - mx[1][2] * mx[2][1] * mx[3][3] + mx[1][1] * mx[2][2] * mx[3][3]) * detInv;
@@ -2466,7 +2466,7 @@ void cubicRoots(double a[3], double result[3])
     double Q = (3.0 * a[1] - a2sq) / 9.0;
     double R = (a[2] * (9 * a[1] - 2 * a2sq) - 27 * a[0]) / 54.0;
     double RdsqrtnQ3 = R / sqrt(-Q * Q * Q);
-    
+
     if(Q < 0.0 && fabs(RdsqrtnQ3) < 1.0) {
         /* A = 2*sqrt(-Q)
          * B = a[2]/3
@@ -2480,7 +2480,7 @@ void cubicRoots(double a[3], double result[3])
         double sqrt3d2 = sqrt(3) * 0.5;
         double temp1 = -0.5 * costd3;
         double temp2 = sqrt3d2 * sintd3;
-        
+
         result[0] = A * costd3 - a2d3;
         result[1] = A * (temp1 - temp2) - a2d3;
         result[2] = A * (temp1 + temp2) - a2d3;
@@ -2489,10 +2489,10 @@ void cubicRoots(double a[3], double result[3])
         double sqrtD = sqrt(D);
         double S = cbrt(R + sqrtD);
         double T = cbrt(R - sqrtD);
-        
+
         result[0] = -a2d3 + (S + T);
         result[1] = -a2d3 - 0.5 * (S + T);
         result[2] = result[1];
     }
-    
+
 }

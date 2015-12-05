@@ -24,6 +24,8 @@ typedef enum {
     CELESTIAL_EARTH,
     CELESTIAL_MOON,
     CELESTIAL_MARS,
+    CELESTIAL_PHOBOS,
+    CELESTIAL_DEIMOS,
     CELESTIAL_JUPITER,
     CELESTIAL_SATURN,
     CELESTIAL_URANUS,
@@ -38,21 +40,28 @@ typedef enum {
     routines and the OrbElemConvert module.
 */
 typedef struct {
-    double a;         //!< (m) object semi-major axis
-    double alpha;     //!< (1/m) Inverted semi-major axis (extra)
-    double e;         //!< (-) Eccentricity of the orbit
-    double i;         //!< (r) inclination of the orbital plane
-    double Omega;     //!< (r) Right ascension of the ascending node
-    double omega;     //!< (r) Argument of periapsis of the orbit
-    double f;         //!< (r) True anomaly of the orbit
-    double rmag;      //!< (m) Magnitude of the position vector (extra)
-	double rPeriap;   //!< (m) Radius of periapsis (extra)
-	double rApoap;    //!< (m) Radius if apoapsis (extra)
+    double a;         //!< object semi-major axis
+    double e;         //!< Eccentricity of the orbit
+    double i;         //!< inclination of the orbital plane
+    double Omega;     //!< Right ascension of the ascending node
+    double omega;     //!< Argument of periapsis of the orbit
+    double f;         //!< True anomaly of the orbit
+    double rmag;      //!< Magnitude of the position vector (extra)
+    double alpha;     //!< Inverted semi-major axis (extra)
+	double rPeriap;   //!< Radius of periapsis (extra)
+	double rApoap;    //!< Radius if apoapsis (extra)
 } classicElements;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+    /*
+     E = eccentric anomaly
+     f = true anomaly
+     M = mean anomaly
+     H = hyperbolic anomaly
+     N = mean hyperbolic anomaly
+     */
     double  E2f(double E, double e);
     double  E2M(double E, double e);
     double  f2E(double f, double e);
