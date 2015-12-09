@@ -40,8 +40,8 @@ void SelfInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t mo
 void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-//    ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
-//                                                 sizeof(attGuidOut), moduleID);
+    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+                                                 sizeof(subModuleOut), moduleID);
 
 }
 
@@ -55,8 +55,7 @@ void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData)
     ConfigData->dummy = 0;              /* reset any required variables */
 }
 
-/*! This method takes the attitude and rate errors relative to the Reference frame, as well as
-    the reference frame angular rates and acceleration, and computes the required control torque Lr.
+/*! Add a description of what this main Update() routine does for this module
  @return void
  @param ConfigData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)

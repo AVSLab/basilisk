@@ -20,7 +20,9 @@ To use this template:\
 \pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
 \ls1\ilvl0\cf0 {\listtext	\'95	}make a copy of this sub-folder\
 {\listtext	\'95	}rename the sub-folder name\
-{\listtext	\'95	}rename the *.c, *.h and *.i files inside this sub-folder with the same sum-module name\
+{\listtext	\'95	}rename the *.c, *.h and *.i files inside this sub-folder with the same sub-module name\
+{\listtext	\'95	}edit the main Basilisk CMakeList.txt to include this sub-module using the add_subdirectory command\
+{\listtext	\'95	}rerun Cmake on the Basilisk project to create an updated Xcode or MS Studio Project file\
 {\listtext	\'95	}edit the *.i file first\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
 \ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}replace \'93subModuleTemplate\'94 text inside this *.i file with the new sub-module name\
@@ -37,5 +39,6 @@ To use this template:\
 \pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
 \ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}replace \'93subModuleTemplate\'94 text inside this *.c file\
 {\listtext	\uc0\u8259 	}add any needed *.h inclusions at the top.  \
+{\listtext	\uc0\u8259 	}edit the  Update() routine introductory comment to describe what this module does\
 {\listtext	\uc0\u8259 	}\
 }
