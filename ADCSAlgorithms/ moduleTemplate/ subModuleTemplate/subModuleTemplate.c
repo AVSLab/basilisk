@@ -9,10 +9,6 @@
 /* modify the path to reflect the new module names */
 #include " moduleTemplate/ subModuleTemplate/subModuleTemplate.h"
 
-/*
- Pull in common Module support files
- */
-//#include "../_GeneralModuleFiles/dummy.h"
 
 /*
  Pull in supprt files from other modules.  Be sure to use the absolute path.
@@ -31,8 +27,8 @@ void SelfInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t mo
     
     /*! Begin method steps */
     /*! - Create output message for module */
-//    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-//        sizeof(vehControlOut), "vehControlOut", moduleID);
+    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+        sizeof(subModuleOut), "subModuleOut", moduleID);
 
 }
 

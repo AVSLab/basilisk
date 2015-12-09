@@ -4,6 +4,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
+#include "../_GeneralModuleFiles/subModuleOut.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -20,6 +21,8 @@ typedef struct {
     char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
     int32_t outputMsgID;                            /*!< [] ID for the outgoing body accel requests*/
     int32_t inputMsgID;                             /*!< [] ID for the incoming guidance errors*/
+
+    subModuleOut subModuleOut;   /*!< -- Control output requests */
 
 }subModuleTemplateConfig;
 
