@@ -714,10 +714,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
    self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
    self.MRP_SteeringSafeData.inputNavName = "simple_nav_output"
-   self.MRP_SteeringSafeData.outputDataName = "sun_safe_control_request"
+   self.MRP_SteeringSafeData.outputDataName = "controlTorqueRaw"
 
  def SetsunSafeACS(self):
-   self.sunSafeACSData.inputControlName = "sun_safe_control_request"
+   self.sunSafeACSData.inputControlName = "controlTorqueRaw"
    self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds"
    self.sunSafeACSData.thrData.minThrustRequest = 0.1
    self.sunSafeACSData.thrData.numEffectors = 8
@@ -751,7 +751,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
    self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
    self.MRP_SteeringRWAData.inputNavName = "simple_nav_output"
-   self.MRP_SteeringRWAData.outputDataName = "sun_safe_control_request"
+   self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
  
  def SetMRP_SteeringMOI(self):
     self.MRP_SteeringMOIData.K1 = 0.9         # rad/sec
@@ -763,10 +763,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
     self.MRP_SteeringMOIData.inputGuidName = "nom_att_guid_out"
     self.MRP_SteeringMOIData.inputVehicleConfigDataName = "adcs_config_data"
     self.MRP_SteeringMOIData.inputNavName = "simple_nav_output"
-    self.MRP_SteeringMOIData.outputDataName = "sun_safe_control_request"
+    self.MRP_SteeringMOIData.outputDataName = "controlTorqueRaw"
  
  def SetdvAttEffect(self):
-   self.dvAttEffectData.inputControlName = "sun_safe_control_request"
+   self.dvAttEffectData.inputControlName = "controlTorqueRaw"
    self.dvAttEffectData.numThrGroups = 2
    newThrGroup = dvAttEffect.ThrustGroupData()
    newThrGroup.outputDataName = "acs_thruster_cmds"
