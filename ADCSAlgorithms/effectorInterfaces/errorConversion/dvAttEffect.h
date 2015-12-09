@@ -3,7 +3,7 @@
 #define _DV_ATT_EFFECT_H_
 
 #include "messaging/static_messaging.h"
-#include "attControl/vehControlOut.h"
+#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include <stdint.h>
 #include <stdlib.h>

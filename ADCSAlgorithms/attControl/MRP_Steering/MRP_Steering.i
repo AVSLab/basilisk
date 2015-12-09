@@ -13,5 +13,5 @@
 %ignore CrossInit_MRP_Steering;
 %constant void Reset_MRP_Steering(void*);
 %ignore Reset_MRP_Steering;
-%include "vehControlOut.h"
+%include "../_GeneralModuleFiles/vehControlOut.h"
 %include "MRP_Steering.h"
