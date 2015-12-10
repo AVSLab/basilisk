@@ -1,6 +1,6 @@
 
 #include "effectorInterfaces/errorConversion/sunSafeACS.h"
-#include "attControl/vehControlOut.h"
+#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
