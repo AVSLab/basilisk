@@ -17,6 +17,9 @@ typedef struct {
     char inputCelMessName[MAX_STAT_MSG_LENGTH];/*<! The name of the celestial body message*/
     char inputSecMessName[MAX_STAT_MSG_LENGTH];/*<! The name of the secondary body to constrain point*/
     double TPoint2Bdy[9];     /*!< (-) transformation from burn frame to body*/
+	double singularityThresh; /*!< (r) Threshold for when to fix constraint axis*/
+	double prevConstraintAxis[3]; /*!< (-) Previous setting for constraint axis*/
+	uint32_t prevAvail;           /*!< (-) Flag indicating whether the previous constraint axis is populated*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
     int32_t inputNavID;      /*!< (-) ID for the incoming IMU data message*/
     int32_t inputCelID;       /*!< (-) ID for the incoming mass properties message*/

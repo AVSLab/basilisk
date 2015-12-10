@@ -66,10 +66,12 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     NavStateOut navData;
     SpicePlanetState primPlanet;
     SpicePlanetState secPlanet;
+	double platAngDiff;
     double secPointVector[3];
     double secVelVector[3];
     double primPointVector[3];
     double primVelVector[3];
+	double primHatPointVector[3];
 	double relVelVector[3];
 	double relPosVector[3];
     double T_Inrtl2Point[3][3];
@@ -81,11 +83,16 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     double omegVectrix[3][3];
     double vecMag, dotProd;
     double omegPointN_Point[3];
+	uint32_t noValidConstraint;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
                 sizeof(NavStateOut), &navData);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(SpicePlanetState), &primPlanet);
+	v3Subtract(primPlanet.PositionVector, navData.r_N, primPointVector);
+	v3Subtract(primPlanet.VelocityVector, navData.v_N, primVelVector);
+	v3Normalize(primPointVector, primHatPointVector);
+	noValidConstraint = 0;
     if(ConfigData->inputSecID >= 0)
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize,
@@ -99,9 +106,20 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
         v3Scale(-dotProd/(vecMag*vecMag*vecMag), secPointVector, omegVecComp2);
         v3Add(omegVecComp1, omegVecComp2, totalSecDeriv);
         v3Normalize(secPointVector, secPointVector);
-        
+		platAngDiff = acos(v3Dot(secPointVector, primHatPointVector));
+		if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvail == 1)
+		{
+			v3Copy(ConfigData->prevConstraintAxis, secPointVector);
+			v3SetZero(secVelVector);
+			v3SetZero(totalSecDeriv);
+		}
+		else if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvail != 1)
+		{
+			noValidConstraint = 1;
+		}
     }
-    else
+    
+	if(ConfigData->inputSecID < 0 || noValidConstraint == 1)
     {
 		v3Subtract(navData.r_N, primPlanet.PositionVector, relPosVector);
 		v3Subtract(navData.v_N, primPlanet.VelocityVector, relVelVector);
@@ -109,8 +127,6 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
         v3SetZero(totalSecDeriv);
         v3Normalize(secPointVector, secPointVector);
     }
-    v3Subtract(primPlanet.PositionVector, navData.r_N, primPointVector);
-    v3Subtract(primPlanet.VelocityVector, navData.v_N, primVelVector);
     vecMag = v3Norm(primPointVector);
     dotProd = v3Dot(primPointVector, primVelVector);
     v3Scale(1.0/vecMag, primVelVector, omegVecComp1);
@@ -132,6 +148,8 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     v3Normalize(b3CrossProd, &(T_Inrtl2Point[2][0]));
     v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
             &(T_Inrtl2Point[1][0]));
+	v3Copy(&(T_Inrtl2Point[2][0]), ConfigData->prevConstraintAxis);
+	ConfigData->prevAvail = 1;
     v3Cross(&(cDotMatrix[2][0]), primPointVector, omegVecComp1);
     v3Cross(&(T_Inrtl2Point[2][0]), &(cDotMatrix[0][0]), omegVecComp2);
     
