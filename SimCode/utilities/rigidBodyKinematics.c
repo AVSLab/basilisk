@@ -38,13 +38,13 @@ void addEuler121(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -64,13 +64,13 @@ void addEuler131(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -87,7 +87,7 @@ void addEuler123(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler1232C(e1, C1);
     Euler1232C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -104,7 +104,7 @@ void addEuler132(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler1322C(e1, C1);
     Euler1322C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -124,13 +124,13 @@ void addEuler212(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -147,7 +147,7 @@ void addEuler213(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler2132C(e1, C1);
     Euler2132C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -164,7 +164,7 @@ void addEuler231(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler2312C(e1, C1);
     Euler2312C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -184,13 +184,13 @@ void addEuler232(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -207,7 +207,7 @@ void addEuler312(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler3122C(e1, C1);
     Euler3122C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -227,13 +227,13 @@ void addEuler313(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -250,7 +250,7 @@ void addEuler321(double *e1, double *e2, double *result)
     double C1[3][3];
     double C2[3][3];
     double C[3][3];
-    
+
     Euler3212C(e1, C1);
     Euler3212C(e2, C2);
     m33MultM33(C2, C1, C);
@@ -270,13 +270,13 @@ void addEuler323(double *e1, double *e2, double *result)
     double sp2;
     double dum;
     double cp3;
-    
+
     cp1 = cos(e1[1]);
     cp2 = cos(e2[1]);
     sp1 = sin(e1[1]);
     sp2 = sin(e2[1]);
     dum = e1[2] + e2[0];
-    
+
     result[1] = acos(cp1 * cp2 - sp1 * sp2 * cos(dum));
     cp3 = cos(result[1]);
     result[0] = wrapToPi(e1[0] + atan2(sp1 * sp2 * sin(dum), cp2 - cp3 * cp1));
@@ -292,7 +292,7 @@ void addGibbs(double *q1, double *q2, double *result)
 {
     double v1[3];
     double v2[3];
-    
+
     v3Cross(q1, q2, v1);
     v3Add(q2, v1, v2);
     v3Add(q1, v2, v1);
@@ -308,14 +308,32 @@ void addMRP(double *q1, double *q2, double *result)
 {
     double v1[3];
     double v2[3];
-    
-    v3Cross(q1, q2, v1);
+    double s1[3];
+    double det;
+    double mag;
+
+    v3Copy(q1, s1);
+    det = (1 + v3Dot(s1, s1)*v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
+
+    if (fabs(det) < 0.1) {
+        mag = v3Dot(s1, s1);
+        v3Scale(-1./mag, s1, s1);
+        det = (1 + v3Dot(s1, s1)*v3Dot(q2, q2) - 2 * v3Dot(s1, q2));
+    }
+
+    v3Cross(s1, q2, v1);
     v3Scale(2., v1, v2);
-    v3Scale(1 - v3Dot(q2, q2), q1, result);
+    v3Scale(1 - v3Dot(q2, q2), s1, result);
     v3Add(result, v2, result);
-    v3Scale(1 - v3Dot(q1, q1), q2, v1);
+    v3Scale(1 - v3Dot(s1, s1), q2, v1);
     v3Add(result, v1, result);
-    v3Scale(1 / (1 + v3Dot(q1, q1)*v3Dot(q2, q2) - 2 * v3Dot(q1, q2)), result, result);
+    v3Scale(1 / det, result, result);
+
+    /* map MRP to inner set */
+    mag = v3Dot(result, result);
+    if (mag > 1.0){
+        v3Scale(-1./mag, result, result);
+    }
 }
 
 /*
@@ -335,7 +353,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     double e2[3];
     double q1[4];
     double q2[4];
-    
+
     PRV2elem(qq1, q1);
     PRV2elem(qq2, q2);
     cp1 = cos(q1[0] / 2.);
@@ -344,7 +362,7 @@ void addPRV(double *qq1, double *qq2, double *result)
     sp2 = sin(q2[0] / 2.);
     v3Set(q1[1], q1[2], q1[3], e1);
     v3Set(q2[1], q2[2], q2[3], e2);
-    
+
     p = 2 * acos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
     sp = sin(p / 2.);
     v3Scale(cp1 * sp2, e2, q1);
@@ -391,12 +409,12 @@ void BinvEuler121(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c2;
     B[0][1] = 0;
     B[0][2] = 1;
@@ -421,12 +439,12 @@ void BinvEuler123(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c2 * c3;
     B[0][1] = s3;
     B[0][2] = 0;
@@ -451,12 +469,12 @@ void BinvEuler131(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c2;
     B[0][1] = 0;
     B[0][2] = 1;
@@ -481,12 +499,12 @@ void BinvEuler132(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c2 * c3;
     B[0][1] = -s3;
     B[0][2] = 0;
@@ -511,12 +529,12 @@ void BinvEuler212(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s2 * s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -541,12 +559,12 @@ void BinvEuler213(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c2 * s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -571,12 +589,12 @@ void BinvEuler231(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s2;
     B[0][1] = 0;
     B[0][2] = 1;
@@ -601,12 +619,12 @@ void BinvEuler232(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s2 * c3;
     B[0][1] = -s3;
     B[0][2] = 0;
@@ -631,12 +649,12 @@ void BinvEuler323(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = -s2 * c3;
     B[0][1] = s3;
     B[0][2] = 0;
@@ -661,12 +679,12 @@ void BinvEuler313(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s2 * s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -691,12 +709,12 @@ void BinvEuler321(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = -s2;
     B[0][1] = 0;
     B[0][2] = 1;
@@ -721,12 +739,12 @@ void BinvEuler312(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = -c2 * s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -760,16 +778,16 @@ void BinvGibbs(double *q, double B[3][3])
 }
 
 /*
- * BinvMRP(Q,B) returns the 3x3 matrix which relates
- * the derivative of MRP vector Q to the
- * body angular velocity vector w.
- *
- * w = 4 [B(Q)]^(-1) dQ/dt
- */
+* BinvMRP(Q,B) returns the 3x3 matrix which relates
+* the derivative of MRP vector Q to the
+* body angular velocity vector w.
+*
+* w = 4 [B(Q)]^(-1) dQ/dt
+*/
 void BinvMRP(double *q, double B[3][3])
 {
     double s2;
-    
+
     s2 = v3Dot(q, q);
     B[0][0] = 1 - s2 + 2 * q[0] * q[0];
     B[0][1] = 2 * (q[0] * q[1] + q[2]);
@@ -795,11 +813,11 @@ void BinvPRV(double *q, double B[3][3])
     double p;
     double c1;
     double c2;
-    
+
     p = sqrt(v3Dot(q, q));
     c1 = (1 - cos(p)) / p / p;
     c2 = (p - sin(p)) / p / p / p;
-    
+
     B[0][0] = 1 - c2 * (q[1] * q[1] + q[2] * q[2]);
     B[0][1] = c1 * q[2] + c2 * q[0] * q[1];
     B[0][2] = -c1 * q[1] + c2 * q[0] * q[2];
@@ -847,12 +865,12 @@ void BmatEuler121(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = 0;
     B[0][1] = s3;
     B[0][2] = c3;
@@ -878,12 +896,12 @@ void BmatEuler131(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = 0;
     B[0][1] = -c3;
     B[0][2] = s3;
@@ -909,12 +927,12 @@ void BmatEuler123(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c3;
     B[0][1] = -s3;
     B[0][2] = 0;
@@ -940,12 +958,12 @@ void BmatEuler132(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c3;
     B[0][1] = 0;
     B[0][2] = s3;
@@ -971,12 +989,12 @@ void BmatEuler212(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s3;
     B[0][1] = 0;
     B[0][2] = -c3;
@@ -1002,12 +1020,12 @@ void BmatEuler213(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -1033,12 +1051,12 @@ void BmatEuler231(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = 0;
     B[0][1] = c3;
     B[0][2] = -s3;
@@ -1064,12 +1082,12 @@ void BmatEuler232(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = c3;
     B[0][1] = 0;
     B[0][2] = s3;
@@ -1095,12 +1113,12 @@ void BmatEuler312(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = -s3;
     B[0][1] = 0;
     B[0][2] = c3;
@@ -1126,12 +1144,12 @@ void BmatEuler313(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = s3;
     B[0][1] = c3;
     B[0][2] = 0;
@@ -1157,12 +1175,12 @@ void BmatEuler321(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
     c3 = cos(q[2]);
-    
+
     B[0][0] = 0;
     B[0][1] = s3;
     B[0][2] = c3;
@@ -1188,7 +1206,7 @@ void BmatEuler323(double *q, double B[3][3])
     double c2;
     double s3;
     double c3;
-    
+
     s2 = sin(q[1]);
     c2 = cos(q[1]);
     s3 = sin(q[2]);
@@ -1236,7 +1254,7 @@ void BmatGibbs(double *q, double B[3][3])
 void BmatMRP(double *q, double B[3][3])
 {
     double s2;
-    
+
     s2 = v3Dot(q, q);
     B[0][0] = 1 - s2 + 2 * q[0] * q[0];
     B[0][1] = 2 * (q[0] * q[1] - q[2]);
@@ -1288,13 +1306,13 @@ void C2EP(double C[3][3], double b[4])
     double max;
     int i;
     int j;
-    
+
     tr = C[0][0] + C[1][1] + C[2][2];
     b2[0] = (1 + tr) / 4.;
     b2[1] = (1 + 2 * C[0][0] - tr) / 4.;
     b2[2] = (1 + 2 * C[1][1] - tr) / 4.;
     b2[3] = (1 + 2 * C[2][2] - tr) / 4.;
-    
+
     i = 0;
     max = b2[0];
     for(j = 1; j < 4; j++) {
@@ -1303,7 +1321,7 @@ void C2EP(double C[3][3], double b[4])
             max = b2[j];
         }
     }
-    
+
     switch(i) {
         case 0:
             b[0] = sqrt(b2[0]);
@@ -1483,9 +1501,9 @@ void C2Euler323(double C[3][3], double *q)
 void C2Gibbs(double C[3][3], double *q)
 {
     double b[4];
-    
+
     C2EP(C, b);
-    
+
     q[0] = b[1] / b[0];
     q[1] = b[2] / b[0];
     q[2] = b[3] / b[0];
@@ -1499,9 +1517,9 @@ void C2Gibbs(double C[3][3], double *q)
 void C2MRP(double C[3][3], double *q)
 {
     double b[4];
-    
+
     C2EP(C, b);
-    
+
     q[0] = b[1] / (1 + b[0]);
     q[1] = b[2] / (1 + b[0]);
     q[2] = b[3] / (1 + b[0]);
@@ -1518,7 +1536,7 @@ void C2PRV(double C[3][3], double *q)
     double cp;
     double p;
     double sp;
-    
+
     cp = (C[0][0] + C[1][1] + C[2][2] - 1) / 2;
     p = acos(cp);
     sp = p / 2. / sin(p);
@@ -1539,7 +1557,7 @@ void dEP(double *q, double *w, double *dq)
     double B[4][3];
     int i;
     int j;
-    
+
     BmatEP(q, B);
     m33MultV3(B, w, dq);
     for(i = 0; i < 4; i++) {
@@ -1562,7 +1580,7 @@ void dEP(double *q, double *w, double *dq)
 void dEuler121(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler121(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1577,7 +1595,7 @@ void dEuler121(double *q, double *w, double *dq)
 void dEuler123(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler123(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1592,7 +1610,7 @@ void dEuler123(double *q, double *w, double *dq)
 void dEuler131(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler131(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1607,7 +1625,7 @@ void dEuler131(double *q, double *w, double *dq)
 void dEuler132(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler132(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1622,7 +1640,7 @@ void dEuler132(double *q, double *w, double *dq)
 void dEuler212(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler212(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1637,7 +1655,7 @@ void dEuler212(double *q, double *w, double *dq)
 void dEuler213(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler213(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1652,7 +1670,7 @@ void dEuler213(double *q, double *w, double *dq)
 void dEuler231(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler231(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1667,7 +1685,7 @@ void dEuler231(double *q, double *w, double *dq)
 void dEuler232(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler232(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1682,7 +1700,7 @@ void dEuler232(double *q, double *w, double *dq)
 void dEuler312(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler312(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1697,7 +1715,7 @@ void dEuler312(double *q, double *w, double *dq)
 void dEuler313(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler313(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1712,7 +1730,7 @@ void dEuler313(double *q, double *w, double *dq)
 void dEuler321(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler321(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1727,7 +1745,7 @@ void dEuler321(double *q, double *w, double *dq)
 void dEuler323(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatEuler323(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1742,7 +1760,7 @@ void dEuler323(double *q, double *w, double *dq)
 void dGibbs(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatGibbs(q, B);
     m33MultV3(B, w, dq);
     v3Scale(0.5, dq, dq);
@@ -1758,7 +1776,7 @@ void dGibbs(double *q, double *w, double *dq)
 void dMRP(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatMRP(q, B);
     m33MultV3(B, w, dq);
     v3Scale(0.25, dq, dq);
@@ -1774,7 +1792,7 @@ void dMRP(double *q, double *w, double *dq)
 void dPRV(double *q, double *w, double *dq)
 {
     double B[3][3];
-    
+
     BmatPRV(q, B);
     m33MultV3(B, w, dq);
 }
@@ -1804,12 +1822,12 @@ void EP2C(double *q, double C[3][3])
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     C[0][0] = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3;
     C[0][1] = 2 * (q1 * q2 + q0 * q3);
     C[0][2] = 2 * (q1 * q3 - q0 * q2);
@@ -1830,10 +1848,10 @@ void EP2Euler121(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[3], q[2]);
     t2 = atan2(q[1], q[0]);
-    
+
     e[0] = t1 + t2;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[1] * q[1]));
     e[2] = t2 - t1;
@@ -1849,12 +1867,12 @@ void EP2Euler123(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
     e[1] = asin(2 * (q1 * q3 + q0 * q2));
     e[2] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
@@ -1869,10 +1887,10 @@ void EP2Euler131(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[2], q[3]);
     t2 = atan2(q[1], q[0]);
-    
+
     e[0] = t2 - t1;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[1] * q[1]));
     e[2] = t2 + t1;
@@ -1888,12 +1906,12 @@ void EP2Euler132(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
     e[1] = asin(-2 * (q1 * q2 - q0 * q3));
     e[2] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
@@ -1908,10 +1926,10 @@ void EP2Euler212(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[3], q[1]);
     t2 = atan2(q[2], q[0]);
-    
+
     e[0] = t2 - t1;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[2] * q[2]));
     e[2] = t2 + t1;
@@ -1927,12 +1945,12 @@ void EP2Euler213(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(2 * (q1 * q3 + q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
     e[1] = asin(-2 * (q2 * q3 - q0 * q1));
     e[2] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
@@ -1948,12 +1966,12 @@ void EP2Euler231(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
     e[1] = asin(2 * (q1 * q2 + q0 * q3));
     e[2] = atan2(-2 * (q2 * q3 - q0 * q1), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
@@ -1968,10 +1986,10 @@ void EP2Euler232(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[1], q[3]);
     t2 = atan2(q[2], q[0]);
-    
+
     e[0] = t1 + t2;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[2] * q[2]));
     e[2] = t2 - t1;
@@ -1987,12 +2005,12 @@ void EP2Euler312(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(-2 * (q1 * q2 - q0 * q3), q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3);
     e[1] = asin(2 * (q2 * q3 + q0 * q1));
     e[2] = atan2(-2 * (q1 * q3 - q0 * q2), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
@@ -2007,10 +2025,10 @@ void EP2Euler313(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[2], q[1]);
     t2 = atan2(q[3], q[0]);
-    
+
     e[0] = t1 + t2;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[3] * q[3]));
     e[2] = t2 - t1;
@@ -2026,12 +2044,12 @@ void EP2Euler321(double *q, double *e)
     double q1;
     double q2;
     double q3;
-    
+
     q0 = q[0];
     q1 = q[1];
     q2 = q[2];
     q3 = q[3];
-    
+
     e[0] = atan2(2 * (q1 * q2 + q0 * q3), q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3);
     e[1] = asin(-2 * (q1 * q3 - q0 * q2));
     e[2] = atan2(2 * (q2 * q3 + q0 * q1), q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3);
@@ -2046,10 +2064,10 @@ void EP2Euler323(double *q, double *e)
 {
     double t1;
     double t2;
-    
+
     t1 = atan2(q[1], q[2]);
     t2 = atan2(q[3], q[0]);
-    
+
     e[0] = t2 - t1;
     e[1] = 2 * acos(sqrt(q[0] * q[0] + q[3] * q[3]));
     e[2] = t2 + t1;
@@ -2085,7 +2103,7 @@ void EP2PRV(double *q1, double *q)
 {
     double p;
     double sp;
-    
+
     p = 2 * acos(q1[0]);
     sp = sin(p / 2);
     q[0] = q1[1] / sp * p;
@@ -2148,14 +2166,14 @@ void Euler1212C(double *q, double C[3][3])
     double ct2;
     double st3;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct2;
     C[0][1] = st1 * st2;
     C[0][2] = -ct1 * st2;
@@ -2176,11 +2194,11 @@ void Euler1212EP(double *e, double *q)
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = cos(e2) * sin(e1 + e3);
     q[2] = sin(e2) * cos(e1 - e3);
@@ -2194,7 +2212,7 @@ void Euler1212EP(double *e, double *q)
 void Euler1212Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1212EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2206,7 +2224,7 @@ void Euler1212Gibbs(double *e, double *q)
 void Euler1212MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1212EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2218,7 +2236,7 @@ void Euler1212MRP(double *e, double *q)
 void Euler1212PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1212EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2236,14 +2254,14 @@ void Euler1232C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct2 * ct3;
     C[0][1] = ct3 * st1 * st2 + ct1 * st3;
     C[0][2] = st1 * st3 - ct1 * ct3 * st2;
@@ -2267,14 +2285,14 @@ void Euler1232EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = s1 * c2 * c3 + c1 * s2 * s3;
     q[2] = c1 * s2 * c3 - s1 * c2 * s3;
@@ -2288,7 +2306,7 @@ void Euler1232EP(double *e, double *q)
 void Euler1232Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1232EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2300,7 +2318,7 @@ void Euler1232Gibbs(double *e, double *q)
 void Euler1232MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1232EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2312,7 +2330,7 @@ void Euler1232MRP(double *e, double *q)
 void Euler1232PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1232EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2330,14 +2348,14 @@ void Euler1312C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct2;
     C[0][1] = ct1 * st2;
     C[0][2] = st1 * st2;
@@ -2358,11 +2376,11 @@ void Euler1312EP(double *e, double *q)
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = cos(e2) * sin(e1 + e3);
     q[2] = sin(e2) * sin(-e1 + e3);
@@ -2376,7 +2394,7 @@ void Euler1312EP(double *e, double *q)
 void Euler1312Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1312EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2388,7 +2406,7 @@ void Euler1312Gibbs(double *e, double *q)
 void Euler1312MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1312EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2400,7 +2418,7 @@ void Euler1312MRP(double *e, double *q)
 void Euler1312PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1312EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2418,14 +2436,14 @@ void Euler1322C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct2 * ct3;
     C[0][1] = ct1 * ct3 * st2 + st1 * st3;
     C[0][2] = ct3 * st1 * st2 - ct1 * st3;
@@ -2449,14 +2467,14 @@ void Euler1322EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = s1 * c2 * c3 - c1 * s2 * s3;
     q[2] = c1 * c2 * s3 - s1 * s2 * c3;
@@ -2470,7 +2488,7 @@ void Euler1322EP(double *e, double *q)
 void Euler1322Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1322EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2482,7 +2500,7 @@ void Euler1322Gibbs(double *e, double *q)
 void Euler1322MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1322EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2494,7 +2512,7 @@ void Euler1322MRP(double *e, double *q)
 void Euler1322PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler1322EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2512,14 +2530,14 @@ void Euler2122C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct3 - ct2 * st1 * st3;
     C[0][1] = st2 * st3;
     C[0][2] = -ct3 * st1 - ct1 * ct2 * st3;
@@ -2540,11 +2558,11 @@ void Euler2122EP(double *e, double *q)
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * cos(-e1 + e3);
     q[2] = cos(e2) * sin(e1 + e3);
@@ -2558,7 +2576,7 @@ void Euler2122EP(double *e, double *q)
 void Euler2122Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2122EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2570,7 +2588,7 @@ void Euler2122Gibbs(double *e, double *q)
 void Euler2122MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2122EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2582,7 +2600,7 @@ void Euler2122MRP(double *e, double *q)
 void Euler2122PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2122EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2600,14 +2618,14 @@ void Euler2132C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct3 + st1 * st2 * st3;
     C[0][1] = ct2 * st3;
     C[0][2] = -ct3 * st1 + ct1 * st2 * st3;
@@ -2631,14 +2649,14 @@ void Euler2132EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = c1 * s2 * c3 + s1 * c2 * s3;
     q[2] = s1 * c2 * c3 - c1 * s2 * s3;
@@ -2652,7 +2670,7 @@ void Euler2132EP(double *e, double *q)
 void Euler2132Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2132EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2664,7 +2682,7 @@ void Euler2132Gibbs(double *e, double *q)
 void Euler2132MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2132EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2676,7 +2694,7 @@ void Euler2132MRP(double *e, double *q)
 void Euler2132PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2132EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2694,14 +2712,14 @@ void Euler2312C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct2;
     C[0][1] = st2;
     C[0][2] = -ct2 * st1;
@@ -2725,14 +2743,14 @@ void Euler2312EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = c1 * c2 * s3 + s1 * s2 * c3;
     q[2] = s1 * c2 * c3 + c1 * s2 * s3;
@@ -2746,7 +2764,7 @@ void Euler2312EP(double *e, double *q)
 void Euler2312Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2312EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2758,7 +2776,7 @@ void Euler2312Gibbs(double *e, double *q)
 void Euler2312MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2312EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2770,7 +2788,7 @@ void Euler2312MRP(double *e, double *q)
 void Euler2312PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2312EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2788,14 +2806,14 @@ void Euler2322C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct2 * ct3 - st1 * st3;
     C[0][1] = ct3 * st2;
     C[0][2] = -ct2 * ct3 * st1 - ct1 * st3;
@@ -2808,19 +2826,19 @@ void Euler2322C(double *q, double C[3][3])
 }
 
 /*
- * Euler2322EP(E,Q) translates the 232 Euler angle
- * vector E into the Euler parameter vector Q.
- */
+* Euler2322EP(E,Q) translates the 232 Euler angle
+* vector E into the Euler parameter vector Q.
+*/
 void Euler2322EP(double *e, double *q)
 {
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * sin(e1 - e3);
     q[2] = cos(e2) * sin(e1 + e3);
@@ -2834,7 +2852,7 @@ void Euler2322EP(double *e, double *q)
 void Euler2322Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2322EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2846,7 +2864,7 @@ void Euler2322Gibbs(double *e, double *q)
 void Euler2322MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2322EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2858,7 +2876,7 @@ void Euler2322MRP(double *e, double *q)
 void Euler2322PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler2322EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2876,14 +2894,14 @@ void Euler3122C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct3 - st1 * st2 * st3;
     C[0][1] = ct3 * st1 + ct1 * st2 * st3;
     C[0][2] = -ct2 * st3;
@@ -2907,14 +2925,14 @@ void Euler3122EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 - s1 * s2 * s3;
     q[1] = c1 * s2 * c3 - s1 * c2 * s3;
     q[2] = c1 * c2 * s3 + s1 * s2 * c3;
@@ -2928,7 +2946,7 @@ void Euler3122EP(double *e, double *q)
 void Euler3122Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3122EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -2940,7 +2958,7 @@ void Euler3122Gibbs(double *e, double *q)
 void Euler3122MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3122EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -2952,7 +2970,7 @@ void Euler3122MRP(double *e, double *q)
 void Euler3122PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3122EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -2970,14 +2988,14 @@ void Euler3132C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct3 * ct1 - st3 * ct2 * st1;
     C[0][1] = ct3 * st1 + st3 * ct2 * ct1;
     C[0][2] = st3 * st2;
@@ -2998,11 +3016,11 @@ void Euler3132EP(double *e, double *q)
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * cos(e1 - e3);
     q[2] = sin(e2) * sin(e1 - e3);
@@ -3016,7 +3034,7 @@ void Euler3132EP(double *e, double *q)
 void Euler3132Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3132EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -3028,7 +3046,7 @@ void Euler3132Gibbs(double *e, double *q)
 void Euler3132MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3132EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -3040,7 +3058,7 @@ void Euler3132MRP(double *e, double *q)
 void Euler3132PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3132EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -3058,14 +3076,14 @@ void Euler3212C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct2 * ct1;
     C[0][1] = ct2 * st1;
     C[0][2] = -st2;
@@ -3089,14 +3107,14 @@ void Euler3212EP(double *e, double *q)
     double s1;
     double s2;
     double s3;
-    
+
     c1 = cos(e[0] / 2);
     s1 = sin(e[0] / 2);
     c2 = cos(e[1] / 2);
     s2 = sin(e[1] / 2);
     c3 = cos(e[2] / 2);
     s3 = sin(e[2] / 2);
-    
+
     q[0] = c1 * c2 * c3 + s1 * s2 * s3;
     q[1] = c1 * c2 * s3 - s1 * s2 * c3;
     q[2] = c1 * s2 * c3 + s1 * c2 * s3;
@@ -3110,7 +3128,7 @@ void Euler3212EP(double *e, double *q)
 void Euler3212Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3212EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -3122,7 +3140,7 @@ void Euler3212Gibbs(double *e, double *q)
 void Euler3212MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3212EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -3134,7 +3152,7 @@ void Euler3212MRP(double *e, double *q)
 void Euler3212PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3212EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -3152,14 +3170,14 @@ void Euler3232C(double *q, double C[3][3])
     double ct1;
     double ct2;
     double ct3;
-    
+
     st1 = sin(q[0]);
     ct1 = cos(q[0]);
     st2 = sin(q[1]);
     ct2 = cos(q[1]);
     st3 = sin(q[2]);
     ct3 = cos(q[2]);
-    
+
     C[0][0] = ct1 * ct2 * ct3 - st1 * st3;
     C[0][1] = ct2 * ct3 * st1 + ct1 * st3;
     C[0][2] = -ct3 * st2;
@@ -3180,11 +3198,11 @@ void Euler3232EP(double *e, double *q)
     double e1;
     double e2;
     double e3;
-    
+
     e1 = e[0] / 2;
     e2 = e[1] / 2;
     e3 = e[2] / 2;
-    
+
     q[0] = cos(e2) * cos(e1 + e3);
     q[1] = sin(e2) * sin(-e1 + e3);
     q[2] = sin(e2) * cos(-e1 + e3);
@@ -3198,7 +3216,7 @@ void Euler3232EP(double *e, double *q)
 void Euler3232Gibbs(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3232EP(e, ep);
     EP2Gibbs(ep, q);
 }
@@ -3210,7 +3228,7 @@ void Euler3232Gibbs(double *e, double *q)
 void Euler3232MRP(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3232EP(e, ep);
     EP2MRP(ep, q);
 }
@@ -3222,7 +3240,7 @@ void Euler3232MRP(double *e, double *q)
 void Euler3232PRV(double *e, double *q)
 {
     double ep[4];
-    
+
     Euler3232EP(e, ep);
     EP2PRV(ep, q);
 }
@@ -3237,11 +3255,11 @@ void Gibbs2C(double *q, double C[3][3])
     double q2;
     double q3;
     double d1;
-    
+
     q1 = q[0];
     q2 = q[1];
     q3 = q[2];
-    
+
     d1 = v3Dot(q, q);
     C[0][0] = 1 + 2 * q1 * q1 - d1;
     C[0][1] = 2 * (q1 * q2 + q3);
@@ -3274,7 +3292,7 @@ void Gibbs2EP(double *q1, double *q)
 void Gibbs2Euler121(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler121(ep, e);
 }
@@ -3286,7 +3304,7 @@ void Gibbs2Euler121(double *q, double *e)
 void Gibbs2Euler123(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler123(ep, e);
 }
@@ -3298,7 +3316,7 @@ void Gibbs2Euler123(double *q, double *e)
 void Gibbs2Euler131(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler131(ep, e);
 }
@@ -3310,7 +3328,7 @@ void Gibbs2Euler131(double *q, double *e)
 void Gibbs2Euler132(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler132(ep, e);
 }
@@ -3322,7 +3340,7 @@ void Gibbs2Euler132(double *q, double *e)
 void Gibbs2Euler212(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler212(ep, e);
 }
@@ -3334,7 +3352,7 @@ void Gibbs2Euler212(double *q, double *e)
 void Gibbs2Euler213(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler213(ep, e);
 }
@@ -3346,7 +3364,7 @@ void Gibbs2Euler213(double *q, double *e)
 void Gibbs2Euler231(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler231(ep, e);
 }
@@ -3358,7 +3376,7 @@ void Gibbs2Euler231(double *q, double *e)
 void Gibbs2Euler232(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler232(ep, e);
 }
@@ -3370,7 +3388,7 @@ void Gibbs2Euler232(double *q, double *e)
 void Gibbs2Euler312(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler312(ep, e);
 }
@@ -3382,7 +3400,7 @@ void Gibbs2Euler312(double *q, double *e)
 void Gibbs2Euler313(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler313(ep, e);
 }
@@ -3394,7 +3412,7 @@ void Gibbs2Euler313(double *q, double *e)
 void Gibbs2Euler321(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler321(ep, e);
 }
@@ -3406,7 +3424,7 @@ void Gibbs2Euler321(double *q, double *e)
 void Gibbs2Euler323(double *q, double *e)
 {
     double ep[4];
-    
+
     Gibbs2EP(q, ep);
     EP2Euler323(ep, e);
 }
@@ -3428,7 +3446,7 @@ void Gibbs2PRV(double *q1, double *q)
 {
     double tp;
     double p;
-    
+
     tp = sqrt(v3Dot(q1, q1));
     p = 2 * atan(tp);
     q[0] = q1[0] / tp * p;
@@ -3448,11 +3466,11 @@ void MRP2C(double *q, double C[3][3])
     double S;
     double d1;
     double d;
-    
+
     q1 = q[0];
     q2 = q[1];
     q3 = q[2];
-    
+
     d1 = v3Dot(q, q);
     S = 1 - d1;
     d = (1 + d1) * (1 + d1);
@@ -3475,7 +3493,7 @@ void MRP2C(double *q, double C[3][3])
 void MRP2EP(double *q1, double *q)
 {
     double ps;
-    
+
     ps = 1 + v3Dot(q1, q1);
     q[0] = (1 - v3Dot(q1, q1)) / ps;
     q[1] = 2 * q1[0] / ps;
@@ -3490,7 +3508,7 @@ void MRP2EP(double *q1, double *q)
 void MRP2Euler121(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler121(ep, e);
 }
@@ -3502,7 +3520,7 @@ void MRP2Euler121(double *q, double *e)
 void MRP2Euler123(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler123(ep, e);
 }
@@ -3514,7 +3532,7 @@ void MRP2Euler123(double *q, double *e)
 void MRP2Euler131(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler131(ep, e);
 }
@@ -3526,7 +3544,7 @@ void MRP2Euler131(double *q, double *e)
 void MRP2Euler132(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler132(ep, e);
 }
@@ -3538,7 +3556,7 @@ void MRP2Euler132(double *q, double *e)
 void MRP2Euler212(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler212(ep, e);
 }
@@ -3550,7 +3568,7 @@ void MRP2Euler212(double *q, double *e)
 void MRP2Euler213(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler213(ep, e);
 }
@@ -3562,7 +3580,7 @@ void MRP2Euler213(double *q, double *e)
 void MRP2Euler231(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler231(ep, e);
 }
@@ -3574,7 +3592,7 @@ void MRP2Euler231(double *q, double *e)
 void MRP2Euler232(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler232(ep, e);
 }
@@ -3586,7 +3604,7 @@ void MRP2Euler232(double *q, double *e)
 void MRP2Euler312(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler312(ep, e);
 }
@@ -3598,7 +3616,7 @@ void MRP2Euler312(double *q, double *e)
 void MRP2Euler313(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler313(ep, e);
 }
@@ -3610,7 +3628,7 @@ void MRP2Euler313(double *q, double *e)
 void MRP2Euler321(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler321(ep, e);
 }
@@ -3622,7 +3640,7 @@ void MRP2Euler321(double *q, double *e)
 void MRP2Euler323(double *q, double *e)
 {
     double ep[4];
-    
+
     MRP2EP(q, ep);
     EP2Euler323(ep, e);
 }
@@ -3644,7 +3662,7 @@ void MRP2PRV(double *q1, double *q)
 {
     double tp;
     double p;
-    
+
     tp = sqrt(v3Dot(q1, q1));
     if(tp == 0.0)
     {
@@ -3664,7 +3682,7 @@ void MRP2PRV(double *q1, double *q)
 void MRPswitch(double *q, double s2, double *s)
 {
     double q2;
-    
+
     q2 = v3Dot(q, q);
     if(q2 > s2 * s2) {
         v3Scale(-1. / q2, q, s);
@@ -3679,17 +3697,17 @@ void MRPswitch(double *q, double s2, double *s)
 double wrapToPi(double x)
 {
     double q;
-    
+
     q = x;
-    
+
     if(x >  M_PI) {
         q = x - 2 * M_PI;
     }
-    
+
     if(x < -M_PI) {
         q = x + 2 * M_PI;
     }
-    
+
     return q;
 }
 
@@ -3718,7 +3736,7 @@ void PRV2C(double *q, double C[3][3])
     q1 = q[0] / q0;
     q2 = q[1] / q0;
     q3 = q[2] / q0;
-    
+
     cp = cos(q0);
     sp = sin(q0);
     d1 = 1 - cp;
@@ -3760,7 +3778,7 @@ void PRV2EP(double *q0, double *q)
 {
     double q1[4];
     double sp;
-    
+
     PRV2elem(q0, q1);
     sp = sin(q1[0] / 2);
     q[0] = cos(q1[0] / 2);
@@ -3776,7 +3794,7 @@ void PRV2EP(double *q0, double *q)
 void PRV2Euler121(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler121(ep, e);
 }
@@ -3788,7 +3806,7 @@ void PRV2Euler121(double *q, double *e)
 void PRV2Euler123(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler123(ep, e);
 }
@@ -3800,7 +3818,7 @@ void PRV2Euler123(double *q, double *e)
 void PRV2Euler131(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler131(ep, e);
 }
@@ -3812,7 +3830,7 @@ void PRV2Euler131(double *q, double *e)
 void PRV2Euler132(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler132(ep, e);
 }
@@ -3824,7 +3842,7 @@ void PRV2Euler132(double *q, double *e)
 void PRV2Euler212(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler212(ep, e);
 }
@@ -3836,7 +3854,7 @@ void PRV2Euler212(double *q, double *e)
 void PRV2Euler213(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler213(ep, e);
 }
@@ -3848,7 +3866,7 @@ void PRV2Euler213(double *q, double *e)
 void PRV2Euler231(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler231(ep, e);
 }
@@ -3860,7 +3878,7 @@ void PRV2Euler231(double *q, double *e)
 void PRV2Euler232(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler232(ep, e);
 }
@@ -3872,7 +3890,7 @@ void PRV2Euler232(double *q, double *e)
 void PRV2Euler312(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler312(ep, e);
 }
@@ -3884,7 +3902,7 @@ void PRV2Euler312(double *q, double *e)
 void PRV2Euler313(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler313(ep, e);
 }
@@ -3896,7 +3914,7 @@ void PRV2Euler313(double *q, double *e)
 void PRV2Euler321(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler321(ep, e);
 }
@@ -3908,7 +3926,7 @@ void PRV2Euler321(double *q, double *e)
 void PRV2Euler323(double *q, double *e)
 {
     double ep[4];
-    
+
     PRV2EP(q, ep);
     EP2Euler323(ep, e);
 }
@@ -3921,7 +3939,7 @@ void PRV2Gibbs(double *q0, double *q)
 {
     double q1[4];
     double tp;
-    
+
     PRV2elem(q0, q1);
     tp = tan(q1[0] / 2.);
     q[0] = q1[1] * tp;
@@ -3937,7 +3955,7 @@ void PRV2MRP(double *q0, double *q)
 {
     double q1[4];
     double tp;
-    
+
     PRV2elem(q0, q1);
     tp = tan(q1[0] / 4.);
     q[0] = q1[1] * tp;
@@ -3970,13 +3988,13 @@ void subEuler121(double *e, double *e1, double *e2)
     double sp1;
     double cp2;
     double dum;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -3992,7 +4010,7 @@ void subEuler123(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler1232C(e, C);
     Euler1232C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4011,13 +4029,13 @@ void subEuler131(double *e, double *e1, double *e2)
     double sp1;
     double dum;
     double cp2;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -4033,7 +4051,7 @@ void subEuler132(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler1322C(e, C);
     Euler1322C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4052,13 +4070,13 @@ void subEuler212(double *e, double *e1, double *e2)
     double sp1;
     double dum;
     double cp2;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -4074,7 +4092,7 @@ void subEuler213(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler2132C(e, C);
     Euler2132C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4090,7 +4108,7 @@ void subEuler231(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler2312C(e, C);
     Euler2312C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4109,13 +4127,13 @@ void subEuler232(double *e, double *e1, double *e2)
     double sp1;
     double dum;
     double cp2;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -4131,7 +4149,7 @@ void subEuler312(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler3122C(e, C);
     Euler3122C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4150,13 +4168,13 @@ void subEuler313(double *e, double *e1, double *e2)
     double sp1;
     double dum;
     double cp2;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -4172,7 +4190,7 @@ void subEuler321(double *e, double *e1, double *e2)
     double C[3][3];
     double C1[3][3];
     double C2[3][3];
-    
+
     Euler3212C(e, C);
     Euler3212C(e1, C1);
     m33MultM33t(C, C1, C2);
@@ -4191,13 +4209,13 @@ void subEuler323(double *e, double *e1, double *e2)
     double sp1;
     double dum;
     double cp2;
-    
+
     cp = cos(e[1]);
     cp1 = cos(e1[1]);
     sp = sin(e[1]);
     sp1 = sin(e1[1]);
     dum = e[0] - e1[0];
-    
+
     e2[1] = acos(cp1 * cp + sp1 * sp * cos(dum));
     cp2 = cos(e2[1]);
     e2[0] = wrapToPi(-e1[2] + atan2(sp1 * sp * sin(dum), cp2 * cp1 - cp));
@@ -4212,7 +4230,7 @@ void subEuler323(double *e, double *e1, double *e2)
 void subGibbs(double *q1, double *q2, double *q)
 {
     double d1[3];
-    
+
     v3Cross(q1, q2, d1);
     v3Add(q1, d1, q);
     v3Subtract(q, q2, q);
@@ -4227,14 +4245,32 @@ void subGibbs(double *q1, double *q2, double *q)
 void subMRP(double *q1, double *q2, double *q)
 {
     double d1[3];
-    
-    v3Cross(q1, q2, d1);
+    double s1[3];
+    double det;
+    double mag;
+
+    v3Copy(q1, s1);
+    det = (1. + v3Dot(s1, s1)*v3Dot(q2, q2) + 2.*v3Dot(s1, q2));
+    if (fabs(det) < 0.1) {
+        mag = v3Dot(s1, s1);
+        v3Scale(-1.0/mag, s1, s1);
+        det = (1. + v3Dot(s1, s1)*v3Dot(q2, q2) + 2.*v3Dot(s1, q2));
+    }
+
+    v3Cross(s1, q2, d1);
     v3Scale(2., d1, q);
-    v3Scale(1. - v3Dot(q2, q2), q1, d1);
+    v3Scale(1. - v3Dot(q2, q2), s1, d1);
     v3Add(q, d1, q);
-    v3Scale(1. - v3Dot(q1, q1), q2, d1);
+    v3Scale(1. - v3Dot(s1, s1), q2, d1);
     v3Subtract(q, d1, q);
-    v3Scale(1. / (1. + v3Dot(q1, q1)*v3Dot(q2, q2) + 2.*v3Dot(q1, q2)), q, q);
+    v3Scale(1. / det, q, q);
+
+    /* map MRP to inner set */
+    mag = v3Dot(q, q);
+    if (mag > 1.0){
+        v3Scale(-1./mag, q, q);
+    }
+
 }
 
 /*
@@ -4254,7 +4290,7 @@ void subPRV(double *q10, double *q20, double *q)
     double e2[3];
     double p;
     double sp;
-    
+
     PRV2elem(q10, q1);
     PRV2elem(q20, q2);
     cp1 = cos(q1[0] / 2.);
@@ -4263,10 +4299,10 @@ void subPRV(double *q10, double *q20, double *q)
     sp2 = sin(q2[0] / 2.);
     v3Copy(&(q1[1]), e1);
     v3Copy(&(q2[1]), e2);
-    
+
     p = 2.*acos(cp1 * cp2 + sp1 * sp2 * v3Dot(e1, e2));
     sp = sin(p / 2.);
-    
+
     v3Cross(e1, e2, q1);
     v3Scale(sp1 * sp2, q1, q);
     v3Scale(cp2 * sp1, e1, q1);
@@ -4284,10 +4320,10 @@ void Mi(double theta, int a, double C[3][3])
 {
     double c;
     double s;
-    
+
     c = cos(theta);
     s = sin(theta);
-    
+
     switch(a) {
         case 1:
             C[0][0] = 1.;
@@ -4300,7 +4336,7 @@ void Mi(double theta, int a, double C[3][3])
             C[2][1] = -s;
             C[2][2] =  c;
             break;
-            
+
         case 2:
             C[0][0] =  c;
             C[0][1] = 0.;
@@ -4312,7 +4348,7 @@ void Mi(double theta, int a, double C[3][3])
             C[2][1] = 0.;
             C[2][2] =  c;
             break;
-            
+
         case 3:
             C[0][0] =  c;
             C[0][1] =  s;
@@ -4324,7 +4360,7 @@ void Mi(double theta, int a, double C[3][3])
             C[2][1] = 0.;
             C[2][2] = 1.;
             break;
-            
+
         default:
             printf("Mi() error: incorrect axis %d selected.\n", a);
     }

@@ -3,7 +3,7 @@
 #define _MRP_STEERING_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "attControl/vehControlOut.h"
+#include "../_GeneralModuleFiles/vehControlOut.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -31,7 +31,7 @@ typedef struct {
     int32_t inputGuidID;        /*!< [] ID for the incoming guidance errors*/
     int32_t inputVehicleConfigDataID;/*!< -- ID for the incoming static vehicle data */
     int32_t inputNavID;         /*!< [] ID for the incoming navigation message */
-    vehControlOut controlOut;   /*!< -- Control output requests for suSafe*/
+    vehControlOut controlOut;   /*!< -- Control output requests */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

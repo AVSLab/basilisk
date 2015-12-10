@@ -1,20 +1,23 @@
 #Very simple simulation.  Just sets up and calls the SPICE interface.  Could 
 #be the basis for a unit test of SPICE
-import sys, os
+import sys, os, inspect
 import matplotlib.pyplot as plt
 import numpy
 import ctypes
 import math
 import logging
-sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
-sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+splitPath = path.split('ADCSAlgorithms')
+sys.path.append(splitPath[0] + '/modules')
+sys.path.append(splitPath[0] + '/PythonModules')
 
 #Import all of the modules that we are going to call in this simulation
-import cssWlsEst
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import alg_contain
+import cssWlsEst
 
 
 # Function that takes a sun pointing vector and array of CSS normal vectors and 
@@ -84,7 +87,8 @@ TestResults = {}
 #Create a sim module as an empty container
 TotalSim = SimulationBaseClass.SimBaseClass() 
 #Create test thread
-TotalSim.CreateNewTask("wlsEstTestTask", int(1E8))
+testProc = TotalSim.CreateNewProcess("TestProcess")
+testProc.addTask(TotalSim.CreateNewTask("wlsEstTestTask", int(1E8)))
 
 #Construct algorithm and associated C++ container
 CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
@@ -126,7 +130,7 @@ for CSSHat in CSSOrientationList:
 
 #Create input message and size it because the regular creator of that message 
 #is not part of the test.
-TotalSim.TotalSim.CreateNewMessage(CSSWlsEstFSWConfig.InputDataName, 8*32, 2)
+TotalSim.TotalSim.CreateNewMessage("TestProcess", CSSWlsEstFSWConfig.InputDataName, 8*8, 2)
 
 #Initialize input data for above message
 cssDataMsg = sim_model.new_doubleArray(32)

@@ -114,6 +114,12 @@
 #define E_MARS            0.09341233
 #define OMEGA_MARS        0.00007262203     /* Mars' polar rotation rate, rad/sec */
 
+/* Phobos */
+#define REQ_PHOBOS     11.2               /* km */
+
+/* Deimos */
+#define REQ_DEIMOS     6.1              /* km */
+
 /* Jupiter */
 #define REQ_JUPITER   71492.
 #define J2_JUPITER    14736.e-6

@@ -31,7 +31,7 @@
 double E2f(double Ecc, double e)
 {
     double f;
-    
+
     if((e >= 0) && (e < 1)) {
         f = 2 * atan2(sqrt(1 + e) * sin(Ecc / 2), sqrt(1 - e) * cos(Ecc / 2));
     } else {
@@ -39,7 +39,7 @@ double E2f(double Ecc, double e)
         printf("ERROR: E2f() received e = %g. ", e);
         printf("The value of e should be 0 <= e < 1.\n");
     }
-    
+
     return f;
 }
 
@@ -57,7 +57,7 @@ double E2f(double Ecc, double e)
 double E2M(double Ecc, double e)
 {
     double M;
-    
+
     if((e >= 0) && (e < 1)) {
         M = Ecc - e * sin(Ecc);
     } else {
@@ -65,7 +65,7 @@ double E2M(double Ecc, double e)
         printf("ERROR: E2M() received e = %g. ", e);
         printf("The value of e should be 0 <= e < 1.\n");
     }
-    
+
     return M;
 }
 
@@ -83,7 +83,7 @@ double E2M(double Ecc, double e)
 double f2E(double f, double e)
 {
     double Ecc;
-    
+
     if((e >= 0) && (e < 1)) {
         Ecc = 2 * atan2(sqrt(1 - e) * sin(f / 2), sqrt(1 + e) * cos(f / 2));
     } else {
@@ -91,7 +91,7 @@ double f2E(double f, double e)
         printf("ERROR: f2E() received e = %g. ", e);
         printf("The value of e should be 0 <= e < 1.\n");
     }
-    
+
     return Ecc;
 }
 
@@ -108,7 +108,7 @@ double f2E(double f, double e)
 double f2H(double f, double e)
 {
     double H;
-    
+
     if(e > 1) {
         H = 2 * atanh(sqrt((e - 1) / (e + 1)) * tan(f / 2));
     } else {
@@ -116,7 +116,7 @@ double f2H(double f, double e)
         printf("ERROR: f2H() received e = %g. ", e);
         printf("The value of e should be 1 < e.\n");
     }
-    
+
     return H;
 }
 
@@ -133,7 +133,7 @@ double f2H(double f, double e)
 double H2f(double H, double e)
 {
     double f;
-    
+
     if(e > 1) {
         f = 2 * atan(sqrt((e + 1) / (e - 1)) * tanh(H / 2));
     } else {
@@ -141,7 +141,7 @@ double H2f(double H, double e)
         printf("ERROR: H2f() received e = %g. ", e);
         printf("The value of e should be 1 < e\n");
     }
-    
+
     return f;
 }
 
@@ -158,7 +158,7 @@ double H2f(double H, double e)
 double H2N(double H, double e)
 {
     double N;
-    
+
     if(e > 1) {
         N = e * sinh(H) - H;
     } else {
@@ -166,7 +166,7 @@ double H2N(double H, double e)
         printf("ERROR: H2N() received e = %g. ", e);
         printf("The value of e should be 1 < e.\n");
     }
-    
+
     return N;
 }
 
@@ -188,7 +188,7 @@ double M2E(double M, double e)
     double E1 = M;
     int    max = 200;
     int    count = 0;
-    
+
     if((e >= 0) && (e < 1)) {
         while(fabs(dE) > small) {
             dE = (E1 - e * sin(E1) - M) / (1 - e * cos(E1));
@@ -203,7 +203,7 @@ double M2E(double M, double e)
         printf("ERROR: M2E() received e = %g. ", e);
         printf("The value of e should be 0 <= e < 1.\n");
     }
-    
+
     return E1;
 }
 
@@ -224,7 +224,7 @@ double N2H(double N, double e)
     double H1 = N;
     int    max = 200;
     int    count = 0;
-    
+
     if(e > 1) {
         while(fabs(dH) > small) {
             dH = (e * sinh(H1) - H1 - N) / (e * cosh(H1) - 1);
@@ -239,7 +239,7 @@ double N2H(double N, double e)
         printf("ERROR: N2H() received e = %g. ", e);
         printf("The value of e should be e > 1\n");
     }
-    
+
     return H1;
 }
 
@@ -293,7 +293,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     double theta;
     double h;
     double ir[3];
-    
+
     /* map classical elements structure into local variables */
     a = elements->a;
     e = elements->e;
@@ -301,7 +301,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     AN = elements->Omega;
     AP = elements->omega;
     f = elements->f;
-    
+
     /* TODO: Might want to have an error band on this equality */
     if((e == 1.0) && (a > 0.0)) {   /* rectilinear elliptic orbit case */
         Ecc = f;                    /* f is treated as ecc. anomaly */
@@ -323,19 +323,19 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
         } else {                    /* elliptic and hyperbolic cases */
             p = a * (1 - e * e);    /* semi-latus rectum */
         }
-        
+
         r = p / (1 + e * cos(f));   /* orbit radius */
         theta = AP + f;             /* true latitude angle */
         h = sqrt(mu * p);           /* orbit ang. momentum mag. */
-        
+
         rVec[0] = r * (cos(AN) * cos(theta) - sin(AN) * sin(theta) * cos(i));
         rVec[1] = r * (sin(AN) * cos(theta) + cos(AN) * sin(theta) * cos(i));
         rVec[2] = r * (sin(theta) * sin(i));
-        
+
         vVec[0] = -mu / h * (cos(AN) * (sin(theta) + e * sin(AP)) + sin(AN) * (cos(
-                                                                                   theta) + e * cos(AP)) * cos(i));
+                                 theta) + e * cos(AP)) * cos(i));
         vVec[1] = -mu / h * (sin(AN) * (sin(theta) + e * sin(AP)) - cos(AN) * (cos(
-                                                                                   theta) + e * cos(AP)) * cos(i));
+                                 theta) + e * cos(AP)) * cos(i));
         vVec[2] = -mu / h * (-(cos(theta) + e * cos(AP)) * sin(i));
     }
 }
@@ -366,11 +366,11 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     double theta;
     double rp;
     double h;
-    
+
     if(1.0 + elements->e * cos(elements->f) < 1e-15) {
         printf("WARNING: Radius is near infinite in elem2rv conversion.\n");
     }
-    
+
     /* Calculate the semilatus rectum and the radius */
     p = elements->a * (1.0 - elements->e * elements->e);
     r = p / (1 + elements->e * cos(elements->f));
@@ -378,7 +378,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
     rVec[0] = r * (cos(theta) * cos(elements->Omega) - cos(elements->i) * sin(theta) * sin(elements->Omega));
     rVec[1] = r * (cos(theta) * sin(elements->Omega) + cos(elements->i) * sin(theta) * cos(elements->Omega));
     rVec[2] = r * (sin(theta) * sin(elements->i));
-    
+
     if(fabs(p) < 1e-15) {
         if(fabs(1.0 - elements->e) < 1e-15) {
             /* Rectilinear orbit */
@@ -389,7 +389,7 @@ void elem2rv(double mu, classicElements *elements, double *rVec, double *vVec)
         rp = -elements->a;
         p = 2 * rp;
     }
-    
+
     h = sqrt(mu * p);
     vVec[0] = -mu / h * (cos(elements->Omega) * (elements->e * sin(elements->omega) + sin(theta))
                          + cos(elements->i) * (elements->e * cos(elements->omega) + cos(theta)) * sin(elements->Omega));
@@ -457,38 +457,43 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     double ie[3];
     double ip[3];
     double dum2[3];
-    
+
     /* define a small number */
     eps = 0.000000000001;
-    
+
     /* compute orbit radius */
     r = v3Norm(rVec);
     elements->rmag = r;
     v3Normalize(rVec, ir);
-    
+
     /* compute the angular momentum vector */
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
-    
+
     /* compute the eccentricity vector */
     v3Cross(vVec, hVec, cVec);
     v3Scale(-mu / r, rVec, dum);
     v3Add(cVec, dum, cVec);
     elements->e = v3Norm(cVec) / mu;
-    
+
     /* compute semi-major axis */
     elements->alpha = 2.0 / r - v3Dot(vVec, vVec) / mu;
     if(fabs(elements->alpha) > eps) {
         /* elliptic or hyperbolic case */
         elements->a = 1.0 / elements->alpha;
+        elements->rPeriap = elements->a*(1-elements->e);
+        elements->rApoap  = elements->a*(1+elements->e);
     } else {
         /* parabolic case */
+        elements->alpha = 0.;
         p = h * h / mu;
         rp = p / 2;
         elements->a = -rp;   /* a is not defined for parabola, so -rp is returned instead */
         elements->e = 1.0;
+        elements->rPeriap = rp;
+        elements->rApoap  = -rp; /* periapses radius doesn't exist, returning -rp instead */
     }
-    
+
     if(h < eps) {   /* rectilinear motion case */
         v3Copy(ir, ie);
         /* ip and ih are arbitrary */
@@ -502,7 +507,7 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
             v3Normalize(ip, ih);
         }
         v3Cross(ih, ie, ip);
-        
+
     } else {
         /* compute perifocal frame unit direction vectors */
         v3Normalize(hVec, ih);
@@ -511,17 +516,22 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
             v3Scale(1. / mu / elements->e, cVec, ie);
         } else {
             /* circular orbit case.  Here ie, ip are arbitrary, as long as they
-             are perpenticular to the ih vector.  */
+            are perpenticular to the ih vector.  */
             v3Copy(ir, ie);
         }
         v3Cross(ih, ie, ip);
     }
-    
+
     /* compute the 3-1-3 orbit plane orientation angles */
-    elements->Omega = atan2(ih[0], -ih[1]);
     elements->i = acos(ih[2]);
-    elements->omega = atan2(ie[2], ip[2]);
-    
+    if (elements->i > eps && elements->i < M_PI - eps) {
+        elements->Omega = atan2(ih[0], -ih[1]);
+        elements->omega = atan2(ie[2], ip[2]);
+    } else {
+        elements->Omega = 0.;
+        elements->omega = atan2(ie[1], ie[0]);
+    }
+
     if(h < eps) {                       /* rectilinear motion case */
         if(elements->alpha > 0) {                    /* elliptic case */
             Ecc = acos(1 - r * elements->alpha);
@@ -579,20 +589,19 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     double rp;
     double eps;
     double twopiSigned;
-	double semiParam;
     
     eps = 0.000000000001;
     
     /* Calculate the specific angular momentum and its magnitude */
     v3Cross(rVec, vVec, hVec);
     h = v3Norm(hVec);
-	semiParam = h*h / mu;
+	p = h*h / mu;
     
     /* Calculate the line of nodes */
     v3Set(0.0, 0.0, 1.0, v3);
     v3Cross(v3, hVec, nVec);
     n = v3Norm(nVec);
-    
+
     /* Orbit eccentricity and energy */
     r = v3Norm(rVec);
     v = v3Norm(vVec);
@@ -601,25 +610,24 @@ void rv2elem(double mu, double *rVec, double *vVec, classicElements *elements)
     v3Subtract(eVec, v3, eVec);
     elements->e = v3Norm(eVec);
     elements->rmag = r;
-	elements->rPeriap = semiParam / (1.0 + elements->e);
+	elements->rPeriap = p / (1.0 + elements->e);
 
     /* compute semi-major axis */
     elements->alpha = 2.0 / r - v*v / mu;
     if(fabs(elements->alpha) > eps) {
         /* elliptic or hyperbolic case */
         elements->a = 1.0 / elements->alpha;
-		elements->rApoap = semiParam / (1.0 - elements->e);
+		elements->rApoap = p / (1.0 - elements->e);
     } else {
         /* parabolic case */
-        p = h * h / mu;
         rp = p / 2.;
         elements->a = -rp;   /* a is not defined for parabola, so -rp is returned instead */
 		elements->rApoap = -1.0;
     }
-    
+
     /* Calculate the inclination */
     elements->i = acos(hVec[2] / h);
-    
+
     if(elements->e >= 1e-11 && elements->i >= 1e-11) {
         /* Case 1: Non-cicular, inclined orbit */
         elements->Omega = acos(nVec[0] / n);
@@ -696,22 +704,22 @@ double atmosphericDensity(double alt)
     double logdensity;
     double density;
     double val;
-    
+
     /* Smooth exponential drop-off after 1000 km */
     if(alt > 1000.) {
         logdensity = (-7e-05) * alt - 14.464;
         density = pow(10., logdensity);
         return density;
     }
-    
+
     /* Calculating the density based on a scaled 6th order polynomial fit to the log of density */
     val = (alt - 526.8000) / 292.8563;
     logdensity = 0.34047 * pow(val, 6) - 0.5889 * pow(val, 5) - 0.5269 * pow(val, 4)
-    + 1.0036 * pow(val, 3) + 0.60713 * pow(val, 2) - 2.3024 * val - 12.575;
-    
+                 + 1.0036 * pow(val, 3) + 0.60713 * pow(val, 2) - 2.3024 * val - 12.575;
+
     /* Calculating density by raising 10 to the log of density */
     density = pow(10., logdensity);
-    
+
     return density;
 }
 
@@ -731,19 +739,19 @@ double debyeLength(double alt)
     double debyedist;
     double a;
     double X[N_DEBYE_PARAMETERS] = {200, 250, 300, 350, 400, 450, 500, 550,
-        600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150,
-        1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700,
-        1750, 1800, 1850, 1900, 1950, 2000
-    };
+                                    600, 650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150,
+                                    1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600, 1650, 1700,
+                                    1750, 1800, 1850, 1900, 1950, 2000
+                                   };
     double Y[N_DEBYE_PARAMETERS] = {5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03,
-        4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03, 7.30E-03, 8.31E-03,
-        8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
-        1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02,
-        2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02,
-        3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02
-    };
+                                    4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03, 7.30E-03, 8.31E-03,
+                                    8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
+                                    1.95E-02, 2.09E-02, 2.25E-02, 2.25E-02, 2.25E-02, 2.47E-02, 2.76E-02,
+                                    2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 2.76E-02, 3.21E-02,
+                                    3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02, 3.96E-02
+                                   };
     int i;
-    
+
     /* Flat debyeLength length for altitudes above 2000 km */
     if((alt > 2000.0) && (alt <= 30000.0)) {
         alt = 2000.0;
@@ -756,7 +764,7 @@ double debyeLength(double alt)
         debyedist = NAN;
         return debyedist;
     }
-    
+
     /* Interpolation of data */
     for(i = 0; i < N_DEBYE_PARAMETERS - 1; i++) {
         if(X[i + 1] > alt) {
@@ -765,7 +773,7 @@ double debyeLength(double alt)
     }
     a = (alt - X[i]) / (X[i + 1] - X[i]);
     debyedist = Y[i] + a * (Y[i + 1] - Y[i]);
-    
+
     return debyedist;
 }
 
@@ -794,12 +802,12 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
     double alt;
     double ad;
     double density;
-    
+
     /* find the altitude and velocity */
     r = v3Norm(rvec);
     v = v3Norm(vvec);
     alt = r - REQ_EARTH;
-    
+
     /* Checking if user supplied a orbital position is inside the earth */
     if(alt <= 0.) {
         printf("ERROR: atmosphericDrag() received rvec = [%g %g %g]\n", rvec[1],
@@ -808,13 +816,13 @@ void atmosphericDrag(double Cd, double A, double m, double *rvec, double *vvec,
         v3Set(NAN, NAN, NAN, advec);
         return;
     }
-    
+
     /* get the Atmospheric density at the given altitude in kg/m^3 */
     density = atmosphericDensity(alt);
-    
+
     /* compute the magnitude of the drag acceleration */
     ad = ((-0.5) * density * (Cd * A / m) * (pow(v * 1000., 2))) / 1000.;
-    
+
     /* computing the vector for drag acceleration */
     v3Scale(ad / v, vvec, advec);
 }
@@ -844,15 +852,15 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
     double r;
     double temp[3];
     double temp2[3];
-    
+
     CelestialObject_t planetID;
     va_list args;
     va_start(args, ajtot);
     planetID = (CelestialObject_t) va_arg(args, int);
     va_end(args);
-    
+
     v3SetZero(ajtot);
-    
+
     switch(planetID) {
         case CELESTIAL_MERCURY:
             mu  = MU_MERCURY;
@@ -863,7 +871,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_VENUS:
             mu  = MU_VENUS;
             req = REQ_VENUS;
@@ -873,7 +881,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_MOON:
             mu  = MU_MOON;
             req = REQ_MOON;
@@ -883,7 +891,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_MARS:
             mu  = MU_MARS;
             req = REQ_MARS;
@@ -893,7 +901,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_JUPITER:
             mu  = MU_JUPITER;
             req = REQ_JUPITER;
@@ -903,7 +911,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_URANUS:
             mu  = MU_URANUS;
             req = REQ_URANUS;
@@ -913,7 +921,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_NEPTUNE:
             mu  = MU_NEPTUNE;
             req = REQ_NEPTUNE;
@@ -923,11 +931,11 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J5 = 0.0;
             J6 = 0.0;
             break;
-            
+
         case CELESTIAL_PLUTO:
         case CELESTIAL_SUN:
             return;
-            
+
         default:
             mu  = MU_EARTH;
             req = REQ_EARTH;
@@ -938,14 +946,14 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
             J6  = J6_EARTH;
             break;
     }
-    
-    
+
+
     /* Calculate the J perturbations */
     x = rvec[0];
     y = rvec[1];
     z = rvec[2];
     r = v3Norm(rvec);
-    
+
     /* Error Checking */
     if((num < 2) || (num > 6)) {
         printf("ERROR: jPerturb() received num = %d\n", num);
@@ -953,7 +961,7 @@ void jPerturb(double *rvec, int num, double *ajtot, ...)
         v3Set(NAN, NAN, NAN, ajtot);
         return;
     }
-    
+
     /* Calculating the total acceleration based on user input */
     if(num >= 2) {
         v3Set((1.0 - 5.0 * pow(z / r, 2.0)) * (x / r),
@@ -1019,19 +1027,19 @@ void solarRad(double A, double m, double *sunvec, double *arvec)
     double c;
     double Cr;
     double sundist;
-    
+
     /* Solar Radiation Flux */
     flux = 1372.5398;           /* Watts/m^2 */
-    
+
     /* Speed of light */
     c = 299792458.;             /* m/s */
-    
+
     /* Radiation pressure coefficient */
     Cr = 1.3;
-    
+
     /* Magnitude of position vector */
     sundist = v3Norm(sunvec);   /* AU */
-    
+
     /* Computing the acceleration vector */
     v3Scale((-Cr * A * flux) / (m * c * pow(sundist, 3)) / 1000., sunvec, arvec);
 }
