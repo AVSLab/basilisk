@@ -12,11 +12,10 @@ import sim_model #Sometimes need utilities out of here
 import numpy #Lets us interact with nump objects which work like matlab arrays
 import logging #Handy logging feature for test issues
 import SimulationBaseClass #Need this to access some pointer manipulation
+import spice_interface #Need a local copy of the SPICE interface for file manipulation
 
 #Instantiate a copy of the EMM vehicle/FSW
 TheEMMSim = EMMSim.EMMSim()
-
-
 
 #Log a handful of messages to examine vehicle performance
 TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E10)) #inertial states
@@ -59,21 +58,26 @@ SimulationBaseClass.SetCArray(DVInertia, 'double', TheEMMSim.DVThrusterDynObject
 
 #General place in the science orbit.  These parameters were made up without access 
 #to any textbook or even the internet.  They are probably wrong.
-TheEMMSim.VehOrbElemObject.CurrentElem.a = 39900000.0; #Should be close I think
-TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.01; #wrong.  Look this up
-TheEMMSim.VehOrbElemObject.CurrentElem.i = 25.1*math.pi/180.0; #I think we're inclined this amount
-TheEMMSim.VehOrbElemObject.CurrentElem.Omega = 0.0; #Zero because it is somewhat arbitrary
-TheEMMSim.VehOrbElemObject.CurrentElem.omega = 0.0; #Zero because it is somewhat arbitrary
-TheEMMSim.VehOrbElemObject.CurrentElem.f = 340.0*math.pi/180.0 #Gets us to periapsis 1q minutes in
-#Convert those OEs to cartesian.  This is python-y.  Don't worry about it if it frightens you.
-TheEMMSim.VehOrbElemObject.Elements2Cartesian()
-PosVec = ctypes.cast(TheEMMSim.VehOrbElemObject.r_N.__long__(), 
-   ctypes.POINTER(ctypes.c_double))
-VelVec = ctypes.cast(TheEMMSim.VehOrbElemObject.v_N.__long__(), 
-  ctypes.POINTER(ctypes.c_double))
-TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
-TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
-TheEMMSim.VehOrbElemObject.Cartesian2Elements()
+spiceLocal = spice_interface.SpiceInterface()
+spiceLocal.loadSpiceKernel('Amal_LD0711_v151203.bsp',
+    '/Users/piggott/adcs_codebase/PDRVehicleTrajectories/')
+spiceLocal.SPICEDataPath = TheEMMSim.simBasePath + '/External/EphemerisData/'
+spiceLocal.UTCCalInit = "2021 June 14, 15:00:00.0"
+spiceLocal.OutputBufferCount = 2
+spiceLocal.PlanetNames = spice_interface.StringVector(["-62"])
+spiceLocal.referenceBase = "MARSIAU"
+spiceLocal.zeroBase = "MARS"
+spiceLocal.SelfInit()
+spiceLocal.UpdateState(0)
+amalName = "-62"  #Really???? Really.  No Really??????? Realz.
+spacecraftMessageName = amalName + "_planet_data"
+
+AmalPosition = TheEMMSim.pullMessageLogData(spacecraftMessageName + ".PositionVector", range(3))
+AmalVelocity = TheEMMSim.pullMessageLogData(spacecraftMessageName + ".VelocityVector", range(3))
+TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector(AmalPosition[0, 1:].tolist())
+TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector(AmalVelocity[0, 1:].tolist())
+print AmalPosition[0, :]
+print AmalVelocity[0, :]
 
 #Initialize simulation and free-drift for 30 seconds to let everything populate
 TheEMMSim.InitializeSimulation()
@@ -99,14 +103,14 @@ TheEMMSim.ExecuteSimulation()
 TheEMMSim.setEventActivity('initiateSunPoint', True)
 TheEMMSim.setEventActivity('initiateMarsPoint', True)
 TheEMMSim.modeRequest = 'sunPoint'
-TheEMMSim.ConfigureStopTime(int(60*60*5.0*1E9))
+TheEMMSim.ConfigureStopTime(int(60*60*7.0*1E9))
 TheEMMSim.ExecuteSimulation()
 #TheEMMSim.modeRequest = 'marsPoint'
 #TheEMMSim.scanAnglesUse = TheEMMSim.sideScanAngles
 #TheEMMSim.ConfigureStopTime(int(60*60*8.0*1E9))
 #TheEMMSim.ExecuteSimulation()
 
-#Simulation complete.  Pull off a selected set of values from the variable logs
+##Simulation complete.  Pull off a selected set of values from the variable logs
 semiMajor = TheEMMSim.pullMessageLogData("OrbitalElements.a")
 posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
@@ -125,7 +129,7 @@ dataInstBore = TheEMMSim.GetLogVariableData('instrumentBoresight.boreVecPoint')
 
 #Plot true anomaly for the simulation
 plt.figure(1)
-plt.plot(semiMajor[:,0]*1.0E-9, semiMajor[:,1])
+plt.plot(trueAnom[:,0]*1.0E-9, trueAnom[:,1]*180.0/math.pi)
 plt.xlabel('Time (s)')
 plt.ylabel('True Anomaly (d)')
 

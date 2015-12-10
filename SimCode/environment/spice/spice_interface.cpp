@@ -26,6 +26,8 @@ SpiceInterface::SpiceInterface()
     GPSEpochTime = "1980 January 6, 00:00:00.0";
     OutputTimePort = "spice_time_output_data";
     OutputBufferCount = 2;
+    referenceBase = "j2000";
+    zeroBase = "SSB";
     return;
 }
 
@@ -237,8 +239,8 @@ void SpiceInterface::ComputePlanetData()
     {
         double lighttime;
         double LocalState[6];
-        spkezr_c(planit->second.PlanetName, J2000Current, "j2000", "NONE", "SSB",
-                 LocalState, &lighttime);
+        spkezr_c(planit->second.PlanetName, J2000Current, referenceBase.c_str(),
+            "NONE", zeroBase.c_str(), LocalState, &lighttime);
         memcpy(planit->second.PositionVector, &LocalState[0], 3*sizeof(double));
         memcpy(planit->second.VelocityVector, &LocalState[3], 3*sizeof(double));
         for(uint32_t i=0; i<3; i++)
@@ -251,7 +253,7 @@ void SpiceInterface::ComputePlanetData()
         planetFrame += planit->second.PlanetName;
         if(planit->second.computeOrient)
         {
-            pxform_c ( "J2000", planetFrame.c_str(), J2000Current,
+            pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
                 planit->second.J20002Pfix);
         }
     }

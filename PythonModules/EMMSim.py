@@ -337,6 +337,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
    self.SpiceObject.OutputBufferCount = 2
    self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
+   self.SpiceObject.referenceBase = "MARSIAU"
  def SetIMUSensor(self):
    RotBiasValue = 0.0;
    RotNoiseStdValue = 0.000001;
@@ -615,8 +616,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
    errorBounds = [1000.0, 1000.0, 1000.0, #Position
                   1.0, 1.0, 1.0, #Velocity
-                  5E-3, 5E-3, 5E-3, #Attitude
-                  0.006, 0.006, 0.006, #Attitude Rate
+                  1.6E-2*math.pi/180.0, 1.6E-2*math.pi/180.0, 1.6E-2*math.pi/180.0, #Attitude
+                  0.001*math.pi/180.0, 0.001*math.pi/180.0, 0.001*math.pi/180.0, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
@@ -743,9 +744,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
  def SetMRP_SteeringRWA(self):
    self.MRP_SteeringRWAData.K1 = 0.3         # rad/sec
-   self.MRP_SteeringRWAData.K3 = 3.0           # rad/sec
+   self.MRP_SteeringRWAData.K3 = 1.0           # rad/sec
    self.MRP_SteeringRWAData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.MRP_SteeringRWAData.P = 250.0            # N*m*sec
+   self.MRP_SteeringRWAData.P = 150.0            # N*m*sec
    self.MRP_SteeringRWAData.Ki = -1.0         # N*m  - negative values turn off the integral feedback
    self.MRP_SteeringRWAData.integralLimit = 0.0 # rad
    self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
@@ -831,8 +832,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetmarsPoint(self):
    self.marsPointData.inputNavDataName = "simple_nav_output"
    self.marsPointData.inputCelMessName = "mars_display_frame_data"
+   self.marsPointData.inputSecMessName = "sun_display_frame_data"
    self.marsPointData.outputDataName = "att_cmd_output"
-   TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+   TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+   #TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
    self.baseMarsTrans = TmarsVec2Body
    SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
