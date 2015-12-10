@@ -27,11 +27,11 @@ TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E10)) #solar arra
 TheEMMSim.TotalSim.logThisMessage("high_gain_earth_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.TotalSim.logThisMessage("instrument_mars_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
-TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E9))
+TheEMMSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
 TheEMMSim.AddVectorForLogging('instrumentBoresight.boreVecPoint', 'double', 0, 2, int(1E9))
 
 #Setup a time in the science orbit well past our transition to science
-TheEMMSim.SpiceObject.UTCCalInit = "2021 June 15, 00:00:00.0"
+TheEMMSim.SpiceObject.UTCCalInit = "2021 December 25, 00:00:00.0"
 
 #Reset the dynamics to change the central body from Sun (index 0) to Mars (index 2)
 TheEMMSim.VehDynObject.GravData[0].IsCentralBody = False
@@ -62,7 +62,7 @@ spiceLocal = spice_interface.SpiceInterface()
 spiceLocal.loadSpiceKernel('Amal_LD0711_v151203.bsp',
     '/Users/piggott/adcs_codebase/PDRVehicleTrajectories/')
 spiceLocal.SPICEDataPath = TheEMMSim.simBasePath + '/External/EphemerisData/'
-spiceLocal.UTCCalInit = "2021 June 14, 15:00:00.0"
+spiceLocal.UTCCalInit = TheEMMSim.SpiceObject.UTCCalInit
 spiceLocal.OutputBufferCount = 2
 spiceLocal.PlanetNames = spice_interface.StringVector(["-62"])
 spiceLocal.referenceBase = "MARSIAU"
@@ -71,6 +71,8 @@ spiceLocal.SelfInit()
 spiceLocal.UpdateState(0)
 amalName = "-62"  #Really???? Really.  No Really??????? Realz.
 spacecraftMessageName = amalName + "_planet_data"
+TheEMMSim.MRP_SteeringRWAData.K1 = 1.5
+#TheEMMSim.MRP_SteeringRWAData.p = 300.0
 
 AmalPosition = TheEMMSim.pullMessageLogData(spacecraftMessageName + ".PositionVector", range(3))
 AmalVelocity = TheEMMSim.pullMessageLogData(spacecraftMessageName + ".VelocityVector", range(3))
@@ -116,7 +118,7 @@ posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
 trueAnom = TheEMMSim.pullMessageLogData("OrbitalElements.f")
-FSWControlOut = TheEMMSim.pullMessageLogData("sun_safe_control_request.torqueRequestBody", range(3))
+FSWControlOut = TheEMMSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
 solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
 highGainMiss = TheEMMSim.pullMessageLogData("high_gain_earth_bore.missAngle")
 instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")

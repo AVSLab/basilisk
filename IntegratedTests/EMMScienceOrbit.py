@@ -28,7 +28,7 @@ TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E10)) #solar arra
 TheEMMSim.TotalSim.logThisMessage("high_gain_earth_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.TotalSim.logThisMessage("instrument_mars_bore", int(1E10)) #solar array boresight angles
 TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E10))
-TheEMMSim.TotalSim.logThisMessage("sun_safe_control_request", int(1E9))
+TheEMMSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
 TheEMMSim.AddVectorForLogging('instrumentBoresight.boreVecPoint', 'double', 0, 2, int(1E9))
 
 #Setup a time in the science orbit well past our transition to science
@@ -112,7 +112,7 @@ posMag = TheEMMSim.pullMessageLogData("OrbitalElements.rmag")
 radApo = TheEMMSim.pullMessageLogData("OrbitalElements.rApoap")
 radPeri = TheEMMSim.pullMessageLogData("OrbitalElements.rPeriap")
 trueAnom = TheEMMSim.pullMessageLogData("OrbitalElements.f")
-FSWControlOut = TheEMMSim.pullMessageLogData("sun_safe_control_request.torqueRequestBody", range(3))
+FSWControlOut = TheEMMSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
 solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
 highGainMiss = TheEMMSim.pullMessageLogData("high_gain_earth_bore.missAngle")
 instrumentMiss = TheEMMSim.pullMessageLogData("instrument_mars_bore.missAngle")
@@ -125,7 +125,7 @@ dataInstBore = TheEMMSim.GetLogVariableData('instrumentBoresight.boreVecPoint')
 
 #Plot true anomaly for the simulation
 plt.figure(1)
-plt.plot(semiMajor[:,0]*1.0E-9, semiMajor[:,1])
+plt.plot(trueAnom[:,0]*1.0E-9, trueAnom[:,1]*180.0/math.pi)
 plt.xlabel('Time (s)')
 plt.ylabel('True Anomaly (d)')
 

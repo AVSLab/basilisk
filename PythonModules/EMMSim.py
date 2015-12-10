@@ -272,29 +272,34 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                             [0.0, 0.0, 0.0],
                             [0.0, 0.0, -discAngleRad],
                             [0.0, 0.0, 0.0],
-                            [-rastAngRad, 0.0, discAngleRad],
-                            [0.0, 0.0, 0.0] \
+                            [-rastAngRad, 0.0, discAngleRad] \
                             ]
    self.sideScanRate = [ \
                     [0.0, 0.0, -discAngRate],
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, -discAngRate],
                     [0.0, 0.0, 0.0],
-                    [0.0, 0.0, discAngRate],
-                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, discAngRate]\
                     ]
+   self.sideScanTimes = [ rasterTime, 0.0, rasterTime, 0.0, rasterTime]
    self.scanSelector = 0
    self.scanAnglesUse = self.asteriskAngles
    self.scanRate = self.sideScanRate
+   self.rasterTimes = self.sideScanTimes
  def initializeRaster(self):
      if(self.scanSelector != 0):
          self.setEventActivity('mnvrToRaster', True)
+     else:
+         SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
+         self.setEventActivity('initiateSunPoint', True)
+         self.modeRequest = 'sunPoint'
 
  def activateNextRaster(self):
      basePointMatrix = numpy.array(self.baseMarsTrans)
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
      offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
      newScanAngles = self.scanRate[self.scanSelector]
+     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]+ 300.0
      self.scanSelector += 1
      self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
@@ -303,7 +308,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
      newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
      SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
      SimulationBaseClass.SetCArray(newScanAngles, 'double', self.attMnvrPointData.mnvrScanRate)
-     self.attMnvrPointData.totalMnvrTime = 25*60.0 + 300.0
      self.attMnvrPointData.mnvrActive = False
      self.attMnvrPointData.mnvrComplete = 0
      print "Current Raster"
@@ -620,6 +624,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                   0.001*math.pi/180.0, 0.001*math.pi/180.0, 0.001*math.pi/180.0, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
+   PMatrix = [0.0]*18*18
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
    self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
    self.SimpleNavObject.crossTrans = True
