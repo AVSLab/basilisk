@@ -55,7 +55,6 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     uint32_t readSize;
 	double prvUse_BcBf[3];
     double MRP_BcBf[3];
-	double MRP_BcR[3];
 	double propDT;
 
     
@@ -77,9 +76,10 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
 
 	ConfigData->currMnvrTime = (callTime*1.0E-9 -
 		ConfigData->startClockRead*1.0E-9);
-	propDT = ConfigData->currMnvrTime - ConfigData->totalMnvrTime;
+    propDT = ConfigData->propagateReference == 0 ? 0.0 :
+        ConfigData->currMnvrTime - ConfigData->totalMnvrTime;
 
-	v3Scale(propDT, localCmd.omega_BR, prvUse_BcBf);
+	v3Scale(propDT, ConfigData->mnvrScanRate, prvUse_BcBf);
 	PRV2MRP(prvUse_BcBf, MRP_BcBf);
 
 	addMRP(localCmd.sigma_BR, MRP_BcBf, ConfigData->sigmaCmd_BR);
@@ -91,7 +91,8 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
 	{
 		ConfigData->mnvrComplete = 1;
 	}
-	v3Copy(localCmd.omega_BR, ConfigData->omegaCmd_BR_B);
+	v3Add(localCmd.omega_BR, ConfigData->mnvrScanRate,
+        ConfigData->omegaCmd_BR_B);
 	v3Subtract(localState.omega_BN_B, ConfigData->omegaCmd_BR_B,
 		ConfigData->attOut.omega_BR_B);
     

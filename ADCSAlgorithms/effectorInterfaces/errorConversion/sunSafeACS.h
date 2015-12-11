@@ -3,7 +3,7 @@
 #define _SUN_SAFE_ACS_H_
 
 #include "messaging/static_messaging.h"
-#include "attControl/vehControlOut.h"
+#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include <stdint.h>
 #include <stdlib.h>

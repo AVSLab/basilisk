@@ -6,7 +6,7 @@
 
  */
 
-#include "attControl/MRP_Steering.h"
+#include "attControl/MRP_Steering/MRP_Steering.h"
 #include "attGuidance/attGuidOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
@@ -66,7 +66,7 @@ void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData)
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
     the reference frame angular rates and acceleration, and computes the required control torque Lr.
  @return void
- @param ConfigData The configuration data associated with the MRP Sterring attitude control
+ @param ConfigData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
