@@ -624,7 +624,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                   0.001*math.pi/180.0, 0.001*math.pi/180.0, 0.001*math.pi/180.0, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
-   PMatrix = [0.0]*18*18
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
    self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
    self.SimpleNavObject.crossTrans = True
