@@ -299,7 +299,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
      offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
      newScanAngles = self.scanRate[self.scanSelector]
-     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]+ 300.0
+     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]+ 100.0
      self.scanSelector += 1
      self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
