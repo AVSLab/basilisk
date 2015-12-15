@@ -1,9 +1,7 @@
-\documentclass[]{LASPReportMemo}
+\documentclass[]{AVSSimReportMemo}
 
 
-\newcommand{\SubSystem}{ADCS}
-\newcommand{\MemoNumber}{XXX}
-\newcommand{\AgileRevisionNumber}{XXX}
+\newcommand{\ModuleName}{subTemplateModule}
 \newcommand{\subject}{Short Descriptive Title (12 words or less)}
 \newcommand{\status}{status description}
 \newcommand{\preparer}{J. Doe}
@@ -52,17 +50,9 @@ Draft & XXXXXX & X. XXXX \\
 Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as Figure~\ref{fig:Fig1}, reference earlier work if needed in a literature review.
 
 
-\section{Obtaining an ADCS Memo Number}
-To obtain an ADCS memo number, navigate to the shared EMX FTP folder:\\
+\section{Document ID}
+The technical document ID is setup through the module name.  For example, if the module name is ``subModuleTemplate'', then the  {\tt \ModuleName} parameter is set to this name.  The document ID then becomes {\tt AVS-SIM-subModuleTemplate}.  
 
-\noindent
-{\tt EMX/\\
-\indent 06 Spacecraft Bus (Landin)/\\
-\indent\indent Subsystems/\\
-\indent\indent\indent ADCS/Documents/ADCS Memos/EMM ADCS Memo Log.xlsx}
-\\
-
-\noindent Open the Microsoft Excel file ``EMM ADCS Memo Log.xlsx''.  In it, you find a list of all memo numbers, titles, authors, etc.  Pick the next slot, and fill in your report information.  Next, at the top of the \LaTeX\ template file, replace the default {\tt XXX} value of the {\tt MemoNumber} command with the actual value.  
 
 
 
