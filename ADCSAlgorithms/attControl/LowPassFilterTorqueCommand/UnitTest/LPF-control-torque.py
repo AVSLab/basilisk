@@ -71,7 +71,7 @@ unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                       inputMessageSize,
                                       2)        # number of buffers (leave at 2 as default, don't make zero)
 
-inputMessageData = MRP_Steering.vehControlOut() #Create a structure for the input message
+inputMessageData = MRP_Steering.vehControlOut() # Create a structure for the input message
 torqueRequest = [1.0, -0.5, 0.7]                # Set up a list as a 3-vector
 SimulationBaseClass.SetCArray(torqueRequest,                        # specify message variable
                               'double',                             # specify message variable type
@@ -97,14 +97,14 @@ unitTestSim.ExecuteSimulation()
 LrF = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.torqueRequestBody',
                                                 range(3))
 
-# set the filtered output truth states
+#   set the filtered output truth states
 LrFtrue = [
            [0.2734574719946391,-0.1367287359973196,0.1914202303962474],
            [0.4721359549995794,-0.2360679774997897,0.3304951684997055],
            [0.6164843223022588,-0.3082421611511294,0.4315390256115811]
            ]
 
-# compare the module and truth results
+#   compare the module and truth results
 for i in range(0,len(LrFtrue)):
     print i
     if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
@@ -113,15 +113,15 @@ for i in range(0,len(LrFtrue)):
 
 
 
-# If the argument "-plot" is passed along, plot all figures
+#   If the argument "-plot" is passed along, plot all figures
 inputArgs = sys.argv
 if len(inputArgs) > 1:
     if inputArgs[1] == '-plot':
       plt.show()
 
-# print out success message if no error were found
+#   print out success message if no error were found
 if testFailCount == 0:
     print   "Unit Test: " + moduleWrap.ModelTag + "() passed"
 
-# exit and return the number of errors found
+#   exit and return the number of errors found
 sys.exit(testFailCount)

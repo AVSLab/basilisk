@@ -96,14 +96,14 @@ dummyState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".dummy")
 
 print moduleOutput
 
-# set the filtered output truth states
+#   set the filtered output truth states
 trueVector = [
            [1.0, -0.5, 0.7],
            [1.0, -0.5, 0.7],
            [1.0, -0.5, 0.7]
            ]
 
-# compare the module results to the truth values
+#   compare the module results to the truth values
 accuracy = 1e-12
 for i in range(0,len(trueVector)):
     # check a vector values
@@ -121,7 +121,7 @@ for i in range(0,len(trueVector)):
 
 
 
-# plot a sample variable
+#   plot a sample variable
 plt.figure(1)
 plt.plot(dummyState[:,0]*unitTestSupport.NANO2SEC, dummyState[:,1], label='Sample Variable')
 plt.legend(loc='upper left')
@@ -131,21 +131,21 @@ plt.ylabel('Variable Description [unit]')
 
 
 
-# Note that we can continue to step the simulation however we feel like.
-# Just because we stop and query data does not mean everything has to stop for good
+#   Note that we can continue to step the simulation however we feel like.
+#   Just because we stop and query data does not mean everything has to stop for good
 unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(0.6))    # run an additional 0.6 seconds
 unitTestSim.ExecuteSimulation()
 
 
-# If the argument "-plot" is passed along, plot all figures
+#   If the argument "-plot" is passed along, plot all figures
 inputArgs = sys.argv
 if len(inputArgs) > 1:
    if inputArgs[1] == '-plot':
       plt.show()
 
-# print out success message if no error were found
+#   print out success message if no error were found
 if testFailCount == 0:
     print   "Unit Test: " + moduleWrap.ModelTag + "() passed"
 
-# exit and return the number of errors found
+#   exit and return the number of errors found
 sys.exit(testFailCount)

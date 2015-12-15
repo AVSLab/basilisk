@@ -5,17 +5,19 @@
 import math
 
 #
-# function to convert seconds to an integer nanoseconds value
+#   function to convert seconds to an integer nanoseconds value
 #
 def sec2nano(time):
     return int(time*1E9)
 
-# variable to convert nano-seconds to seconds
+#   variable to convert nano-seconds to seconds
 NANO2SEC = 1E-9
 
+#   variable to convert degrees to radians
+D2R = (math.pi/180.)
 
 #
-# function to check if an array of values is the same as the truth values
+#   function to check if an array of values is the same as the truth values
 #
 def isArrayEqual(result, truth, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
@@ -32,7 +34,7 @@ def isArrayEqual(result, truth, dim, accuracy):
 
 
 #
-# function to check if an array of values are zero
+#   function to check if an array of values are zero
 #
 def isArrayZero(result, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
@@ -48,7 +50,7 @@ def isArrayZero(result, dim, accuracy):
 
 
 #
-# function to check if a double equals a truth value
+#   function to check if a double equals a truth value
 #
 def isDoubleEqual(result, truth, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
