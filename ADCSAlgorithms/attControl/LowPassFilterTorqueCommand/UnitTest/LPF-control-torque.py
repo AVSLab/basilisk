@@ -106,7 +106,6 @@ LrFtrue = [
 
 #   compare the module and truth results
 for i in range(0,len(LrFtrue)):
-    print i
     if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
         testFailCount += 1
         print "WARNING: " + moduleWrap.ModelTag + " Module failed unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"

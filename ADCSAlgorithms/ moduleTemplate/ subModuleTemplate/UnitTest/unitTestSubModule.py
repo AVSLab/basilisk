@@ -94,7 +94,6 @@ moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.ou
                                                 range(3))
 dummyState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".dummy")
 
-print moduleOutput
 
 #   set the filtered output truth states
 trueVector = [
