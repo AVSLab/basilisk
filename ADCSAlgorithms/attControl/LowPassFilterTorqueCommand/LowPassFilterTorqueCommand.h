@@ -24,8 +24,7 @@ typedef struct {
     double   b[NUM_LPF];                            /*!<          filter coefficients for input */
     double   Lr[NUM_LPF][3];                        /*!< [Nm]     prior torque command */
     double   LrF[NUM_LPF][3];                       /*!< [Nm]     prior filtered torque command */
-    uint64_t priorTime;                             /*!< [ns]     Last time the filter is called */
-    int32_t  firstRun;                              /*!<          flag indicating the filter being started up */
+    int      reset;                                 /*!<          flag indicating the filter being started up */
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
