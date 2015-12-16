@@ -264,7 +264,7 @@ class SimBaseClass:
    for LogItem, LogValue in self.VarLogList.iteritems():
       LocalPrev = LogValue.PrevLogTime
       if(LocalPrev != None and (CurrSimTime -
-         LocalPrev) <= LogValue.Period):
+         LocalPrev) < LogValue.Period):
          continue
       CurrentVal = LogValue.CallableFunction(self)
       LocalTimeVal = LogValue.TimeValuePairs
@@ -281,9 +281,9 @@ class SimBaseClass:
  def ExecuteSimulation(self):
    self.initializeEventChecks()
    while(self.TotalSim.CurrentNanos < self.StopTime):
+      self.RecordLogVars()
       self.checkEvents()
       self.TotalSim.SingleStepProcesses()
-      self.RecordLogVars()
 
  def GetLogVariableData(self, LogName):
    TheArray = numpy.array(self.VarLogList[LogName].TimeValuePairs)
