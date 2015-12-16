@@ -114,6 +114,7 @@ void SimModel::SingleStepProcesses()
 {
     uint64_t nextCallTime = ~0;
     std::vector<SysProcess *>::iterator it = processList.begin();
+    CurrentNanos = NextTaskTime;
     while(it!= processList.end())
     {
         SysProcess *localProc = (*it);
@@ -130,7 +131,7 @@ void SimModel::SingleStepProcesses()
         }
         it++;
     }
-    CurrentNanos = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
+    NextTaskTime = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
     messageLogs.logAllMessages();
 }
 
