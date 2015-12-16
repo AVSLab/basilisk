@@ -264,7 +264,7 @@ class SimBaseClass:
    for LogItem, LogValue in self.VarLogList.iteritems():
       LocalPrev = LogValue.PrevLogTime
       if(LocalPrev != None and (CurrSimTime -
-         LocalPrev) <= LogValue.Period):
+         LocalPrev) < LogValue.Period):
          continue
       CurrentVal = LogValue.CallableFunction(self)
       LocalTimeVal = LogValue.TimeValuePairs
