@@ -9,11 +9,16 @@
 /* modify the path to reflect the new module names */
 #include " moduleTemplate/ subModuleTemplate/subModuleTemplate.h"
 
+/* update this include to reflect the required module input messages */
+#include "attControl/MRP_Steering/MRP_Steering.h"
+
+
 
 /*
- Pull in supprt files from other modules.  Be sure to use the absolute path.
+ Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-//#include "Utilities/rigidBodyKinematics.h"
+#include "SimCode/utilities/linearAlgebra.h"
+//#include "SimCode/utilities/rigidBodyKinematics.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -28,7 +33,9 @@ void SelfInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t mo
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(subModuleOut), "subModuleOut", moduleID);
+                                               sizeof(subModuleOut),
+                                               "subModuleOut",          /* add the output structure name */
+                                               moduleID);
 
 }
 
@@ -41,7 +48,8 @@ void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t m
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
-                                                 sizeof(subModuleOut), moduleID);
+                                                sizeof(subModuleOut),
+                                                moduleID);
 
 }
 
@@ -60,33 +68,33 @@ void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData)
  @param ConfigData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime,
-    uint64_t moduleID)
+void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-//    uint64_t            clockTime;
-//    uint32_t            readSize;
-//    double              variable;           /*!< [unit] variable description */
+    uint64_t            clockTime;
+    uint32_t            readSize;
+    double              Lr[3];              /*!< [unit] variable description */
 
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-//    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-//                sizeof(attGuidOut), (void*) &(guidCmd));
+    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+                sizeof(vehControlOut), (void*) &(ConfigData->inputVector));
 
 
 
     /*
         Add the module specific code
      */
-
+    v3Copy(ConfigData->inputVector, Lr);
+    ConfigData->dummy = 2.0;
 
     /*
      store the output message 
      */
-//    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-//    
-//    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
-//                 (void*) &(ConfigData->controlOut), moduleID);
+    v3Copy(Lr, ConfigData->subModuleOut.outputVector);                      /* populate the output message */
+
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(subModuleOut),   /* update module name */
+                 (void*) &(ConfigData->subModuleOut), moduleID);
 
     return;
 }

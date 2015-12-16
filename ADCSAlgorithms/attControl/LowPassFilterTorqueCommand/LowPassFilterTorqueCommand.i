@@ -16,4 +16,4 @@
 %include "LowPassFilterTorqueCommand.h"
 
 // sample Module supportfile to be included in this sub-module
-//%include "../_GeneralModuleFiles/dummy.h"
+%include "../_GeneralModuleFiles/vehControlOut.h"

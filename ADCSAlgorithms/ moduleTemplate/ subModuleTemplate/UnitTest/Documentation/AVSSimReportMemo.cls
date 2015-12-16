@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesClass{IAC}[2015/03/30 v1.0 LASP document class]
-\typeout{TYPESETTING in LASP System Engineering Report...}
+\ProvidesClass{IAC}[2015/03/30 v1.0 AVS Lab Software document class]
+\typeout{TYPESETTING in AVS Lab Software  Report...}
 
 \LoadClass[titlepage,11pt]{article}
 
@@ -39,8 +39,8 @@
 \RequirePackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[L]{\footnotesize ADCS-EMM-\MemoNumber}
-\fancyhead[R]{\footnotesize LASP Engineering Division\\ Page \thepage \ of \pageref{LastPage}}
+\fancyhead[L]{\footnotesize Doc. ID: AVS-Sim-\ModuleName}
+\fancyhead[R]{\footnotesize Page \thepage \ of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
@@ -51,25 +51,18 @@
 %
 \newcommand{\makeCover}{
 
-\begin{textblock*}{6.625in}(0.75in,0.975in)
-	\includegraphics[width=6.625in]{coverImage.pdf}
+\begin{textblock*}{6.625in}(2.25in,0.975in)
+	\includegraphics[width=3.5in]{Figures/AVSlogo.pdf}
 \end{textblock*}
 
-\begin{textblock*}{2in}(1in,10.15in)
-\small \noindent Form 139399 RevA:
-\end{textblock*}
 
-\begin{textblock*}{6.5in}(1in,2.3in)
-\centering
-\Large\bfseries \noindent Program Partners:
-\end{textblock*}
 
 \begin{textblock*}{6.5in}(1in,3.5in)
 \centering
-\LARGE\bfseries \noindent Emirates Mars Mission (EMM):\\
+\LARGE\bfseries \noindent Autonomous Vehicle Simulation (AVS) Laboratory\\
 \vskip 0.1in
-\noindent ADCS Subsystem Technical Memorandum\\
-\large\noindent ADCS-EMM-\MemoNumber\\
+\noindent AVS-Sim Technical Memorandum\\
+\large\noindent Document ID: AVS-SIM-\ModuleName\\
 \vskip 0.1in
 \noindent \MakeUppercase{\subject}
 \end{textblock*}
@@ -80,7 +73,7 @@
 \noindent
 \begin{tabular}{|p{1.6in}|p{4.7in}|}
 \hline
-~Prepared by & \preparer, \SubSystem\\
+~Prepared by & \preparer\\
 \hline
 \end{tabular}
 }

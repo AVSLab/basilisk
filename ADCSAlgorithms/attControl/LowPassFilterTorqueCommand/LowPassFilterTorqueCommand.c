@@ -55,8 +55,7 @@ void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigDa
 {
     int i;
 
-    ConfigData->priorTime = 0;              /* reset the prior time flag state. */
-    ConfigData->firstRun  = 1;              /* reset the first run flag */
+    ConfigData->reset  = 1;                 /* reset the first run flag */
 
     for (i=0;i<NUM_LPF;i++) {
         v3SetZero(ConfigData->Lr[i]);
@@ -83,55 +82,49 @@ void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(ConfigData->Lr[0]));
 
-    if (ConfigData->priorTime == 0) {
-        /* 
-            First call of the filter function.  Initialize the Filter 
-         */
+    /*
+        check if the filter states must be reset
+     */
+    if (ConfigData->reset) {
+        /* populate the filter history with 1st input */
         for (i=1;i<NUM_LPF;i++) {
-            v3Copy(ConfigData->Lr[0], ConfigData->Lr[i]);   /* populate the filter history with 1st input */
+            v3Copy(ConfigData->Lr[0], ConfigData->Lr[i]);
         }
+
+        /* zero the history of filtered outputs */
         for (i=0;i<NUM_LPF;i++) {
-            v3SetZero(ConfigData->LrF[i]);                  /* zero the history of filtered outputs */
-        }
-        ConfigData->firstRun = 1;                           /* reset the first run flag */
-        ConfigData->priorTime = callTime;                   /* store last call time */
-
-    } else {
-
-        if (ConfigData->firstRun) {
-            /* determine filter time step */
-            ConfigData->h = (callTime - ConfigData->priorTime)*NANO2SEC;
-            if (ConfigData->h > 10.0) ConfigData->h = 10.0;   /* cap the maximum control time step possible */
-            if (ConfigData->h < 0.0)  ConfigData->h = 0.0;    /* ensure no negative numbers are used */
-
-            /* compute h times the prewarped critical filter frequency */
-            ConfigData->hw = tan(ConfigData->wc * ConfigData->h / 2.0)*2.0;
-
-            /* determine 1st order low-pass filter coefficients */
-            ConfigData->a[0] = 2.0 + ConfigData->hw;
-            ConfigData->a[1] = 2.0 - ConfigData->hw;
-            ConfigData->b[0] = ConfigData->hw;
-            ConfigData->b[1] = ConfigData->hw;
-
-            /* turn off first run flag */
-            ConfigData->firstRun = 0;
+            v3SetZero(ConfigData->LrF[i]);
         }
 
-        /* 
-            regular filter run
-         */
+        /* compute h times the prewarped critical filter frequency */
+        ConfigData->hw = tan(ConfigData->wc * ConfigData->h / 2.0)*2.0;
 
-        v3SetZero(ConfigData->LrF[0]);
-        for (i=0;i<NUM_LPF;i++) {
-            v3Scale(ConfigData->b[i], ConfigData->Lr[i], v3);
-            v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
-        }
-        for (i=1;i<NUM_LPF;i++) {
-            v3Scale(ConfigData->a[i], ConfigData->LrF[i], v3);
-            v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
-        }
-        v3Scale(1.0/ConfigData->a[0], ConfigData->LrF[0], ConfigData->LrF[0]);
+        /* determine 1st order low-pass filter coefficients */
+        ConfigData->a[0] = 2.0 + ConfigData->hw;
+        ConfigData->a[1] = 2.0 - ConfigData->hw;
+        ConfigData->b[0] = ConfigData->hw;
+        ConfigData->b[1] = ConfigData->hw;
+
+        /* turn off first run flag */
+        ConfigData->reset = 0;
+
     }
+    
+    /*
+        regular filter run
+     */
+
+    v3SetZero(ConfigData->LrF[0]);
+    for (i=0;i<NUM_LPF;i++) {
+        v3Scale(ConfigData->b[i], ConfigData->Lr[i], v3);
+        v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
+    }
+    for (i=1;i<NUM_LPF;i++) {
+        v3Scale(ConfigData->a[i], ConfigData->LrF[i], v3);
+        v3Add(v3, ConfigData->LrF[0], ConfigData->LrF[0]);
+    }
+    v3Scale(1.0/ConfigData->a[0], ConfigData->LrF[0], ConfigData->LrF[0]);
+
 
     /* reset the filter state history */
     for (i=1;i<NUM_LPF;i++) {
@@ -146,7 +139,6 @@ void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
                  (void*) &(ConfigData->controlOut), moduleID);
-
 
     return;
 }

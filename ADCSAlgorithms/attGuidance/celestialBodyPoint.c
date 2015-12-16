@@ -89,17 +89,17 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
                 sizeof(NavStateOut), &navData);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(SpicePlanetState), &primPlanet);
-	v3Subtract(primPlanet.PositionVector, navData.r_N, primPointVector);
-	v3Subtract(primPlanet.VelocityVector, navData.v_N, primVelVector);
+	v3Subtract(primPlanet.PositionVector, navData.r_BN_N, primPointVector);
+	v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, primVelVector);
 	v3Normalize(primPointVector, primHatPointVector);
 	noValidConstraint = 0;
     if(ConfigData->inputSecID >= 0)
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize,
             sizeof(SpicePlanetState), &secPlanet);
-        v3Subtract(secPlanet.PositionVector, navData.r_N,
+        v3Subtract(secPlanet.PositionVector, navData.r_BN_N,
                    secPointVector);
-        v3Subtract(secPlanet.VelocityVector, navData.v_N, secVelVector);
+        v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, secVelVector);
         vecMag = v3Norm(secPointVector);
         dotProd = v3Dot(secPointVector, secVelVector);
         v3Scale(1.0/vecMag, secVelVector, omegVecComp1);
@@ -121,8 +121,8 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     
 	if(ConfigData->inputSecID < 0 || noValidConstraint == 1)
     {
-		v3Subtract(navData.r_N, primPlanet.PositionVector, relPosVector);
-		v3Subtract(navData.v_N, primPlanet.VelocityVector, relVelVector);
+		v3Subtract(navData.r_BN_N, primPlanet.PositionVector, relPosVector);
+		v3Subtract(navData.v_BN_N, primPlanet.VelocityVector, relVelVector);
         v3Cross(relPosVector, relVelVector, secPointVector);
         v3SetZero(totalSecDeriv);
         v3Normalize(secPointVector, secPointVector);
