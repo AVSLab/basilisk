@@ -150,13 +150,13 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Add(L, Lr, Lr);                                       /* +L */
-
     v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);
     v3Subtract(Lr, v3, Lr);                                 /* -[I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
+
+    v3Add(L, Lr, Lr);                                       /* +L */
 
 
     /*
