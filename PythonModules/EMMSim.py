@@ -233,7 +233,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
                           "self.attMnvrPointData.mnvrComplete = False",
-                          "self.setEventActivity('mnvrToRaster', True)"])
+                          "self.activateNextRaster()", "self.setEventActivity('completeRaster', True)"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
@@ -265,7 +265,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                           
    rastAngRad = 11.0*math.pi/180.0
    discAngleRad = 16.5*1.6*math.pi/180.0
-   rasterTime = 25.0*60.0
+   rasterTime = 25.0*60.0 + 100.0
    discAngRate = 2.0*discAngleRad/rasterTime
    self.sideScanAngles = [ \
                             [rastAngRad, 0.0, -discAngleRad],
@@ -281,7 +281,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, discAngRate]\
                     ]
-   self.sideScanTimes = [ rasterTime, 0.0, rasterTime, 0.0, rasterTime]
+   self.sideScanTimes = [ rasterTime, 200.0, rasterTime, 200.0, rasterTime]
    self.scanSelector = 0
    self.scanAnglesUse = self.asteriskAngles
    self.scanRate = self.sideScanRate
@@ -293,13 +293,14 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
          SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
          self.setEventActivity('initiateSunPoint', True)
          self.modeRequest = 'sunPoint'
+         self.setEventActivity('initiateMarsPoint', True)
 
  def activateNextRaster(self):
      basePointMatrix = numpy.array(self.baseMarsTrans)
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
      offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
      newScanAngles = self.scanRate[self.scanSelector]
-     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]+ 100.0
+     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]
      self.scanSelector += 1
      self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
