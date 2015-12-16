@@ -90,9 +90,11 @@ unitTestSim.ExecuteSimulation()
 
 #   This pulls the actual data log from the simulation run.
 #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.outputVector',
+moduleOutputName = "outputVector"
+moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                 range(3))
-dummyState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + ".dummy")
+variableName = "dummy"
+variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
 
 
 #   set the filtered output truth states
@@ -108,13 +110,13 @@ for i in range(0,len(trueVector)):
     # check a vector values
     if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
         testFailCount += 1
-        print "WARNING: " + moduleWrap.ModelTag + " Module failed outputVector unit test at t=" \
+        print "WARNING: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" \
             + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
 
     # check a scalar double value
     if not unitTestSupport.isDoubleEqual(dummyState[i],2.0,accuracy):
         testFailCount += 1
-        print "WARNING: " + moduleWrap.ModelTag + " Module failed dummy unit test at t=" \
+        print "WARNING: " + moduleWrap.ModelTag + " Module failed " + variableName + " unit test at t=" \
             + str(dummyState[i,0]*unitTestSupport.NANO2SEC) + "sec"
 
 

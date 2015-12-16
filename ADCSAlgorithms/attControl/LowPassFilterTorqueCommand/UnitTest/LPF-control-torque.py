@@ -94,7 +94,8 @@ unitTestSim.ExecuteSimulation()
 
 #   This pulls the actual data log from the simulation run.
 #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-LrF = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.torqueRequestBody',
+moduleOutputName = "torqueRequestBody"
+LrF = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                 range(3))
 
 #   set the filtered output truth states
@@ -108,7 +109,7 @@ LrFtrue = [
 for i in range(0,len(LrFtrue)):
     if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
         testFailCount += 1
-        print "WARNING: " + moduleWrap.ModelTag + " Module failed unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"
+        print "WARNING: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"
 
 
 
