@@ -110,13 +110,13 @@ for i in range(0,len(trueVector)):
     # check a vector values
     if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
         testFailCount += 1
-        print "WARNING: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" \
+        print "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" \
             + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
 
     # check a scalar double value
     if not unitTestSupport.isDoubleEqual(dummyState[i],2.0,accuracy):
         testFailCount += 1
-        print "WARNING: " + moduleWrap.ModelTag + " Module failed " + variableName + " unit test at t=" \
+        print "FAILED: " + moduleWrap.ModelTag + " Module failed " + variableName + " unit test at t=" \
             + str(dummyState[i,0]*unitTestSupport.NANO2SEC) + "sec"
 
 
