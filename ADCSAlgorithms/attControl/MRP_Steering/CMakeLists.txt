@@ -21,6 +21,9 @@ file(GLOB impl_files
     "*.cpp"
     "*.c"
     "*.h"
+	"../_GeneralModuleFiles/*.h"
+	"../_GeneralModuleFiles/*.cpp"
+	"../_GeneralModuleFiles/*.c"
 )
 
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)

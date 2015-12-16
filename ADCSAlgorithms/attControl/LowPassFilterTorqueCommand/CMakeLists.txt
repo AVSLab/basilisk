@@ -21,9 +21,9 @@ file(GLOB impl_files
     "*.cpp"
     "*.c"
     "*.h"
-	"../_GeneralModuleFiles/*.h"
-	"../_GeneralModuleFiles/*.cpp"
-	"../_GeneralModuleFiles/*.c"
+    "../_GeneralModuleFiles/*.h"
+    "../_GeneralModuleFiles/*.cpp"
+    "../_GeneralModuleFiles/*.c"
 )
 
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
@@ -53,3 +53,4 @@ foreach(file ${file_src})
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
          COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/ADCSAlgorithms")
 endforeach()
+

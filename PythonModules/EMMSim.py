@@ -233,7 +233,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
                           "self.attMnvrPointData.mnvrComplete = False",
-                          "self.setEventActivity('mnvrToRaster', True)"])
+                          "self.activateNextRaster()", "self.setEventActivity('completeRaster', True)"])
    self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                          ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
                           "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
@@ -265,36 +265,42 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
                           
    rastAngRad = 11.0*math.pi/180.0
    discAngleRad = 16.5*1.6*math.pi/180.0
-   rasterTime = 25.0*60.0
+   rasterTime = 25.0*60.0 + 100.0
    discAngRate = 2.0*discAngleRad/rasterTime
    self.sideScanAngles = [ \
                             [rastAngRad, 0.0, -discAngleRad],
                             [0.0, 0.0, 0.0],
                             [0.0, 0.0, -discAngleRad],
                             [0.0, 0.0, 0.0],
-                            [-rastAngRad, 0.0, discAngleRad],
-                            [0.0, 0.0, 0.0] \
+                            [-rastAngRad, 0.0, discAngleRad] \
                             ]
    self.sideScanRate = [ \
                     [0.0, 0.0, -discAngRate],
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, -discAngRate],
                     [0.0, 0.0, 0.0],
-                    [0.0, 0.0, discAngRate],
-                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, discAngRate]\
                     ]
+   self.sideScanTimes = [ rasterTime, 200.0, rasterTime, 200.0, rasterTime]
    self.scanSelector = 0
    self.scanAnglesUse = self.asteriskAngles
    self.scanRate = self.sideScanRate
+   self.rasterTimes = self.sideScanTimes
  def initializeRaster(self):
      if(self.scanSelector != 0):
          self.setEventActivity('mnvrToRaster', True)
+     else:
+         SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
+         self.setEventActivity('initiateSunPoint', True)
+         self.modeRequest = 'sunPoint'
+         self.setEventActivity('initiateMarsPoint', True)
 
  def activateNextRaster(self):
      basePointMatrix = numpy.array(self.baseMarsTrans)
      basePointMatrix = numpy.reshape(basePointMatrix, (3,3))
      offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
      newScanAngles = self.scanRate[self.scanSelector]
+     self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]
      self.scanSelector += 1
      self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
      offPointAngles = numpy.reshape(offPointAngles, (3,1))
@@ -303,7 +309,6 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
      newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
      SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)
      SimulationBaseClass.SetCArray(newScanAngles, 'double', self.attMnvrPointData.mnvrScanRate)
-     self.attMnvrPointData.totalMnvrTime = 25*60.0 + 300.0
      self.attMnvrPointData.mnvrActive = False
      self.attMnvrPointData.mnvrComplete = 0
      print "Current Raster"
@@ -337,6 +342,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
    self.SpiceObject.OutputBufferCount = 2
    self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
+   self.SpiceObject.referenceBase = "MARSIAU"
  def SetIMUSensor(self):
    RotBiasValue = 0.0;
    RotNoiseStdValue = 0.000001;
@@ -615,8 +621,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
    errorBounds = [1000.0, 1000.0, 1000.0, #Position
                   1.0, 1.0, 1.0, #Velocity
-                  5E-3, 5E-3, 5E-3, #Attitude
-                  0.006, 0.006, 0.006, #Attitude Rate
+                  1.6E-2*math.pi/180.0, 1.6E-2*math.pi/180.0, 1.6E-2*math.pi/180.0, #Attitude
+                  0.001*math.pi/180.0, 0.001*math.pi/180.0, 0.001*math.pi/180.0, #Attitude Rate
                   5.0*math.pi/180.0, 5.0*math.pi/180.0, 5.0*math.pi/180.0, #Sun vector
                   0.053, 0.053, 0.053] #Accumulated DV
    self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
@@ -743,9 +749,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
 
  def SetMRP_SteeringRWA(self):
    self.MRP_SteeringRWAData.K1 = 0.3         # rad/sec
-   self.MRP_SteeringRWAData.K3 = 3.0           # rad/sec
+   self.MRP_SteeringRWAData.K3 = 1.0           # rad/sec
    self.MRP_SteeringRWAData.omega_max = 1.5*(math.pi/180.) # rad/sec
-   self.MRP_SteeringRWAData.P = 250.0            # N*m*sec
+   self.MRP_SteeringRWAData.P = 150.0            # N*m*sec
    self.MRP_SteeringRWAData.Ki = -1.0         # N*m  - negative values turn off the integral feedback
    self.MRP_SteeringRWAData.integralLimit = 0.0 # rad
    self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
@@ -831,8 +837,10 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
  def SetmarsPoint(self):
    self.marsPointData.inputNavDataName = "simple_nav_output"
    self.marsPointData.inputCelMessName = "mars_display_frame_data"
+   self.marsPointData.inputSecMessName = "sun_display_frame_data"
    self.marsPointData.outputDataName = "att_cmd_output"
-   TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+   TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+   #TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
    self.baseMarsTrans = TmarsVec2Body
    SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 

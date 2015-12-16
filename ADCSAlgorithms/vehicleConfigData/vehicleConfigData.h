@@ -10,7 +10,7 @@
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double BS[9];       /*!< -- DCM from vehicle structure frame S to ADCS body frame B (row major)*/
+    double BS[9];               /*!< -- DCM from vehicle structure frame S to ADCS body frame B (row major)*/
     uint32_t CurrentADCSState;  /*!< -- Current ADCS state for subsystem */
     double I[9];                /*!< kg m^2 Spacecraft Inertia */
 }vehicleConfigData;
