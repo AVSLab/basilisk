@@ -22,6 +22,7 @@ foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
     set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_SOURCE_DIR}/modules )
 endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 # Create list of libraries depending on system
+# Test code change to be removed: Pat
 if(WIN32)
    set(library_dependencies 
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib)
