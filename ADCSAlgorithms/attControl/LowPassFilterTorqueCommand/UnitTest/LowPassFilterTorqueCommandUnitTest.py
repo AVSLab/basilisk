@@ -124,6 +124,8 @@ def runUnitTest():
     if testFailCount == 0:
         print   "PASSED: " + moduleWrap.ModelTag
 
+    return testFailCount
+
 #
 #   This statement below ensures that the unitTestScript can be run as a stand-along python scripts
 #   authmatically executes the runUnitTest() method
