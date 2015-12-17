@@ -32,11 +32,14 @@ import vehicleConfigData                # import module(s) that creates the need
 def runUnitTest():
 
     testFailCount = 0                       # zero unit test result counter
+    testResults = ""                        # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
+                                                        # this create a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
@@ -172,8 +175,9 @@ def runUnitTest():
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            print "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" \
-                + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
+            testMessage =  "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
+            print testMessage
+            testResults += testMessage + "\n"
 
 
 
