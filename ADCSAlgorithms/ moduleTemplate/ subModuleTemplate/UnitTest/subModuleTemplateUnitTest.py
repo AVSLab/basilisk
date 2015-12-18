@@ -38,7 +38,7 @@ def runUnitTest():
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
-                                                        # this create a fresh and consistent simulation environment for each test run
+                                                        # this creates a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
