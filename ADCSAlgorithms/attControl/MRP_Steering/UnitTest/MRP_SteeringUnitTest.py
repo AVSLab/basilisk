@@ -152,7 +152,7 @@ def runUnitTest():
     unitTestSim.InitializeSimulation()
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     #   This pulls the actual data log from the simulation run.
