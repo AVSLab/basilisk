@@ -14,7 +14,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double dummy;                                   /*!< [rad/sec] sample module variable declaration */
+    double dummy;                                   /*!< [units] sample module variable declaration */
+    double dumVector[3];                            /*!< [units] sample vector variable */
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/

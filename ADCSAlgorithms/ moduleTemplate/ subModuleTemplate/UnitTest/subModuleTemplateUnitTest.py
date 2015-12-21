@@ -61,7 +61,10 @@ def runUnitTest():
     moduleConfig.inputDataName  = "sampleInput"         # update with current values
     moduleConfig.outputDataName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
-
+    vector = [1., 2., 3.]
+    SimulationBaseClass.SetCArray(vector,
+                                  'double',
+                                  moduleConfig.dumVector)
 
 
     #   Create input message and size it because the regular creator of that message
