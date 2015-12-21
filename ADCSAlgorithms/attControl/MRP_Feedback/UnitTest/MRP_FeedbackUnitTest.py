@@ -1,8 +1,8 @@
 #
 #   Unit Test Script
-#   Module Name:        MRP_Steering
+#   Module Name:        MRP_Feedback
 #   Author:             Hanspeter Schaub
-#   Creation Date:      December 15, 2015
+#   Creation Date:      December 18, 2015
 #
 import sys, os, inspect
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ import SimulationBaseClass
 import sim_model
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import MRP_Steering                     # import the module that is to be tested
+import MRP_Feedback                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
@@ -39,7 +39,7 @@ def runUnitTest():
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
-                                                        # this create a fresh and consistent simulation environment for each test run
+                                                        # this creates a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
@@ -48,12 +48,12 @@ def runUnitTest():
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = MRP_Steering.MRP_SteeringConfig()
+    moduleConfig = MRP_Feedback.MRP_FeedbackConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        MRP_Steering.Update_MRP_Steering,
-                                        MRP_Steering.SelfInit_MRP_Steering,
-                                        MRP_Steering.CrossInit_MRP_Steering)
-    moduleWrap.ModelTag = "MRP_Steering"
+                                        MRP_Feedback.Update_MRP_Feedback,
+                                        MRP_Feedback.SelfInit_MRP_Feedback,
+                                        MRP_Feedback.CrossInit_MRP_Feedback)
+    moduleWrap.ModelTag = "MRP_Feedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -64,12 +64,14 @@ def runUnitTest():
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
     moduleConfig.outputDataName = "outputName"
 
-    moduleConfig.K1 =   0.15
-    moduleConfig.K3 =   1.0
+    moduleConfig.K  =   0.15
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
-    moduleConfig.omega_max = 1.5*unitTestSupport.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
+    domega0 = [0., 0., 0.]
+    SimulationBaseClass.SetCArray(domega0,
+                                  'double',
+                                  moduleConfig.domega0)
 
 
     #   Create input message and size it because the regular creator of that message
@@ -164,9 +166,9 @@ def runUnitTest():
 
     # set the filtered output truth states
     trueVector = [
-               [3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
+               [15.815,-25.14,23.521]
+              ,[15.815,-25.14,23.521]
+              ,[15.84521,-25.187475,23.607535]
                ]
 
     # compare the module results to the truth values
