@@ -5,6 +5,7 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
+#include "dynamics/Thrusters/thruster_dynamics.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -56,7 +57,7 @@ public:
     void computeOutputs();
     void AddGravityBody(GravityBodyData *NewBody);
     void WriteOutputMessages(uint64_t CurrentClock);
-    void AddBodyEffector(DynEffector *NewEffector);
+    void addThrusterSet(ThrusterDynamics *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
     void computeCompositeProperties();
@@ -98,7 +99,8 @@ private:
     int64_t StateOutMsgID;            //!<        Output message id for state data
     int64_t MassPropsMsgID;           //!<        Output message id for state data
     uint32_t NStates;                 //!<        Count on states available
-    std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
+    //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
+    std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
 };
 
 /*! @} */
