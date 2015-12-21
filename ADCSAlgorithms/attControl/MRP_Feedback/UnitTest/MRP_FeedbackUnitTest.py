@@ -68,7 +68,10 @@ def runUnitTest():
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
-#    moduleConfig.domega0 = 
+    domega0 = [0., 0., 0.]
+    SimulationBaseClass.SetCArray(domega0,
+                                  'double',
+                                  moduleConfig.domega0)
 
 
     #   Create input message and size it because the regular creator of that message
