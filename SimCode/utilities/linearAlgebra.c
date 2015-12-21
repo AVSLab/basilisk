@@ -1966,6 +1966,15 @@ double m33ConditionNumber(double mx[3][3])
     return (sv[0] / sv[2]);
 }
 
+void    m33PrintScreen(const char *name, double mx[3][3])
+{
+    int i;
+    printf("%s:\n", name);
+    for (i=0;i<3;i++) {
+        printf("%20.15g, %20.15g, %20.15g\n", mx[i][0], mx[i][1], mx[i][2]);
+    }
+}
+
 void m44Set(double m00, double m01, double m02, double m03,
             double m10, double m11, double m12, double m13,
             double m20, double m21, double m22, double m23,

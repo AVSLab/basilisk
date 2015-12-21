@@ -171,7 +171,8 @@ extern "C" {
     void    m33SingularValues(double mx[3][3], double result[3]);
     void    m33EigenValues(double mx[3][3], double result[3]);
     double  m33ConditionNumber(double mx[3][3]);
-    
+    void    m33PrintScreen(const char *name, double mx[3][3]);
+
     /* 4x4 matrices */
     void    m44Set(double m00, double m01, double m02, double m03,
                    double m10, double m11, double m12, double m13,
