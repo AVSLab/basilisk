@@ -31,6 +31,7 @@ public:
     
     void UpdateState(uint64_t CurrentSimNanos);
     int loadSpiceKernel(char *kernelName, const char *dataPath);
+	std::string getCurrentTimeString();
     void SelfInit();
     void InitTimeData();
     void ComputeGPSData();
@@ -41,6 +42,7 @@ public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data
     std::string referenceBase;           //!< -- Base reference frame to use
     std::string zeroBase;                //!< -- Base zero point to use for states
+	std::string timeOutPicture;          //!< -- Optional parameter used to extract time strings
     bool SPICELoaded;                    //!< -- Boolean indicating to reload spice
     uint32_t CharBufferSize;    //!< -- avert your eyes we're getting SPICE
     uint8_t *SpiceBuffer;       //!< -- General buffer to pass down to spice

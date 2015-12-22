@@ -28,6 +28,7 @@ SpiceInterface::SpiceInterface()
     OutputBufferCount = 2;
     referenceBase = "j2000";
     zeroBase = "SSB";
+	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
     return;
 }
 
@@ -291,4 +292,28 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
         return 1;
     }
     return 0;
+}
+
+std::string SpiceInterface::getCurrentTimeString()
+{
+	char *spiceOutputBuffer;
+	int64_t allowedOutputLength;
+
+	allowedOutputLength = (int64_t)timeOutPicture.size() - 5;
+
+	if (allowedOutputLength < 0)
+	{
+		std::cerr << "The output format string is not long enough.  ";
+		std::cerr << "It should be much larger than 5 characters.  It is currently: ";
+		std::cerr << std::endl << timeOutPicture << std::endl;
+		return("");
+	}
+
+	spiceOutputBuffer = new char[allowedOutputLength];
+	timout_c(J2000Current, timeOutPicture.c_str(), allowedOutputLength, 
+		spiceOutputBuffer);
+	std::string returnTimeString = spiceOutputBuffer;
+	delete[] spiceOutputBuffer;
+	return(returnTimeString);
+
 }
