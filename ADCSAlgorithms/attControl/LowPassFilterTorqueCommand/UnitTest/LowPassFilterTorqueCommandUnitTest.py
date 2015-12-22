@@ -32,12 +32,15 @@ def runUnitTest():
 
 
     #   zero all unit test result gather variables
-    testFailCount = 0
+    testFailCount = 0                       # zero unit test result counter
+    testResults = ""                        # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
+                                                        # this create a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = unitTestSupport.sec2nano(0.5)         # process rate update time
@@ -106,11 +109,14 @@ def runUnitTest():
                [0.6164843223022588,-0.3082421611511294,0.4315390256115811]
                ]
 
+
     #   compare the module and truth results
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
             testFailCount += 1
-            print "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"
+            testMessage = "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"
+            print testMessage
+            testResults += testMessage + "\n"
 
 
 
@@ -123,6 +129,7 @@ def runUnitTest():
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED: " + moduleWrap.ModelTag
+
 
     return testFailCount
 

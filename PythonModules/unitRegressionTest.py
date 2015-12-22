@@ -34,9 +34,9 @@ totalError += subModuleTemplateUnitTest.runUnitTest()
 #
 #   Summarize the regression test results
 #
-print "---------------------------------------------------"
+print "-------------------------------------------------------"
 if  totalError:
     print "FAILED: " + str(totalError) + " Errors were found"
 else:
     print "SUCCESS: all unit tests were completed successfully."
-print "---------------------------------------------------"
+print "-------------------------------------------------------"

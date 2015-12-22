@@ -7,7 +7,7 @@
  */
 
 /* modify the path to reflect the new module names */
-#include " moduleTemplate/ subModuleTemplate/subModuleTemplate.h"
+#include "_moduleTemplate/subModuleTemplate/subModuleTemplate.h"
 
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"

@@ -14,7 +14,6 @@
 typedef struct {
     /* declare module private variables */
     double K;                   /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double omega_max;           /*!< [rad/sec] Maximum rate command of steering control */
     double P;                   /*!< [N*m*s]   Rate error feedback gain applied  */
     double Ki;                  /*!< [N*m]     Integration feedback error on rate error  */
     double integralLimit;       /*!< [N*m]     Integration limit to avoid wind-up issue */

@@ -1,4 +1,4 @@
-﻿#Import some architectural stuff that we will probably always use
+#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
@@ -248,9 +248,9 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.createNewEvent("startDV", int(1E8), False, ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
                     ["self.modeRequest = 'DVMnvr'", "self.setEventActivity('initiateDVMnvr', True)"])
    self.createNewEvent("mnvrToRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
-                       ['self.activateNextRaster()', "self.setEventActivity('completeRaster', True)"])
+                       ["self.activateNextRaster()", "self.setEventActivity('completeRaster', True)"])
    self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
-                       ['self.initializeRaster()'])
+                       ["self.initializeRaster()"])
 
    rastAngRad = 50.0*math.pi/180.0
    self.asteriskAngles = [[rastAngRad, 0.0, 0.0],
@@ -292,7 +292,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
      else:
          SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
          self.setEventActivity('initiateSunPoint', True)
-         self.modeRequest = 'sunPoint'
+         if(self.modeRequest != 'earthPoint'):
+             self.modeRequest = 'sunPoint'
          self.setEventActivity('initiateMarsPoint', True)
 
  def activateNextRaster(self):
@@ -554,7 +555,7 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    self.MarsGravBody.BodyMsgName = "mars_planet_data"
    self.MarsGravBody.outputMsgName = "mars_display_frame_data"
    self.MarsGravBody.IsCentralBody = False
-   self.MarsGravBody.UseJParams = False
+   self.MarsGravBody.UseJParams = True
    JParams = LoadGravFromFile(MarsGravFile, self.MarsGravBody, JParamsSelect)
    self.MarsGravBody.JParams = six_dof_eom.DoubleVector(JParams)   
   
@@ -578,8 +579,8 @@ class EMMSim(SimulationBaseClass.SimBaseClass):
    #Here is where the thruster dynamics are attached/scheduled to the overall 
    #vehicle dynamics.  Anything that is going to impact the dynamics of the vehicle 
    # should be one of these body effectors I think.
-   self.VehDynObject.AddBodyEffector(self.ACSThrusterDynObject)
-   self.VehDynObject.AddBodyEffector(self.DVThrusterDynObject)
+   self.VehDynObject.addThrusterSet(self.ACSThrusterDynObject)
+   self.VehDynObject.addThrusterSet(self.DVThrusterDynObject)
 
  def SetVehOrbElemObject(self):
    self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"

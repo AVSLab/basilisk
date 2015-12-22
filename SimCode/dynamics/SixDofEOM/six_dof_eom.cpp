@@ -42,12 +42,12 @@ void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
     @return void
     @param NewEffector The effector that we are adding to dynamics
 */
-void SixDofEOM::AddBodyEffector(DynEffector *NewEffector)
+void SixDofEOM::addThrusterSet(ThrusterDynamics *NewEffector)
 {
-    BodyEffectors.push_back(NewEffector);
+    thrusters.push_back(NewEffector);
 }
 
-/*! This method creates an output message for each planetary body that computes 
+/*! This method creates an output message for each planetary body that computes
     the planet's ephemeris information in the display reference frame.  Note that 
     the underlying assumption is that the display reference frame is always 
     oriented the same as the ECI axes and is always rotating the same as the 
@@ -289,8 +289,8 @@ void SixDofEOM::computeCompositeProperties()
     compMass = baseMass;
     v3Scale(baseMass, baseCoM, scaledCoM);
 
-    std::vector<DynEffector*>::iterator it;
-    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    std::vector<ThrusterDynamics*>::iterator it;
+    for(it=thrusters.begin(); it != thrusters.end(); it++)
     {
         DynEffector *TheEff = *it;
         v3Scale(TheEff->objProps.Mass, TheEff->objProps.CoM, localCoM);
@@ -313,7 +313,7 @@ void SixDofEOM::computeCompositeProperties()
     
     /*! - For each child body, compute parallel axis theorem effectos for inertia tensor
      and add that overall inertia back to obtain the composite inertia tensor.*/
-    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    for(it=thrusters.begin(); it != thrusters.end(); it++)
     {
         DynEffector *TheEff = *it;
         v3Subtract(TheEff->objProps.CoM, compCoM, CoMDiff);
@@ -345,7 +345,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                                   GravityBodyData *CentralBody)
 {
     
-    std::vector<DynEffector*>::iterator it;
+    std::vector<ThrusterDynamics*>::iterator it;
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
@@ -462,10 +462,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     
     //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
-    //! - Loop over the vector of body effectors and compute body force/torque
+    //! - Loop over the vector of thrusters and compute body force/torque
     //! - Convert the body forces to inertial for inclusion in dynamics
     //! - Scale the force/torque by the mass properties inverse to get accels
-    for(it=BodyEffectors.begin(); it != BodyEffectors.end(); it++)
+    for(it=thrusters.begin(); it != thrusters.end(); it++)
     {
         DynEffector *TheEff = *it;
         TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);

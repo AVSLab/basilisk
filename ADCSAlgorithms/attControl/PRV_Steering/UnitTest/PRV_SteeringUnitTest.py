@@ -1,8 +1,8 @@
 #
 #   Unit Test Script
-#   Module Name:        MRP_Steering
+#   Module Name:        PRV_Steering
 #   Author:             Hanspeter Schaub
-#   Creation Date:      December 15, 2015
+#   Creation Date:      December 18, 2015
 #
 import sys, os, inspect
 import matplotlib.pyplot as plt
@@ -23,7 +23,7 @@ import SimulationBaseClass
 import sim_model
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import MRP_Steering                     # import the module that is to be tested
+import PRV_Steering                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
@@ -48,12 +48,12 @@ def runUnitTest():
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = MRP_Steering.MRP_SteeringConfig()
+    moduleConfig = PRV_Steering.PRV_SteeringConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        MRP_Steering.Update_MRP_Steering,
-                                        MRP_Steering.SelfInit_MRP_Steering,
-                                        MRP_Steering.CrossInit_MRP_Steering)
-    moduleWrap.ModelTag = "MRP_Steering"
+                                        PRV_Steering.Update_PRV_Steering,
+                                        PRV_Steering.SelfInit_PRV_Steering,
+                                        PRV_Steering.CrossInit_PRV_Steering)
+    moduleWrap.ModelTag = "PRV_Steering"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -164,9 +164,9 @@ def runUnitTest():
 
     # set the filtered output truth states
     trueVector = [
-               [3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
+               [1.960095897557112,-3.055301311042272,2.523751394819517]
+              ,[1.960095897557112,-3.055301311042272,2.523751394819517]
+              ,[1.96016398446522,-3.055383122555785,2.523851930938435]
                ]
 
     # compare the module results to the truth values
