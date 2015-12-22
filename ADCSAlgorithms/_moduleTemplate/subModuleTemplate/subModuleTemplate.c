@@ -19,6 +19,8 @@
  */
 #include "SimCode/utilities/linearAlgebra.h"
 //#include "SimCode/utilities/rigidBodyKinematics.h"
+//#include "SimCode/utilities/astroConstants.h"
+//#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -56,7 +58,7 @@ void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t m
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param ConfigData The configuration data associated with the module
  */
 void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData)
 {
@@ -65,7 +67,7 @@ void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData)
 
 /*! Add a description of what this main Update() routine does for this module
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)

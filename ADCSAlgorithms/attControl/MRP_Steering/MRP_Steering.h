@@ -23,15 +23,15 @@ typedef struct {
     double z[3];                /*!< [rad]     integral state of delta_omega */
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];  /*!< The name of the Input message*/
-    char inputNavName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Navigation 6Input message*/
+    char outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
+    int32_t outputMsgID;                        /*!< [] ID for the outgoing body accel requests*/
+    char inputGuidName[MAX_STAT_MSG_LENGTH];    /*!< The name of the Input message*/
+    int32_t inputGuidID;                        /*!< [] ID for the incoming guidance errors*/
+    char inputNavName[MAX_STAT_MSG_LENGTH];     /*!< The name of the Navigation 6Input message*/
+    int32_t inputNavID;                         /*!< [] ID for the incoming navigation message */
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    int32_t outputMsgID;        /*!< [] ID for the outgoing body accel requests*/
-    int32_t inputGuidID;        /*!< [] ID for the incoming guidance errors*/
-    int32_t inputVehicleConfigDataID;/*!< -- ID for the incoming static vehicle data */
-    int32_t inputNavID;         /*!< [] ID for the incoming navigation message */
-    vehControlOut controlOut;   /*!< -- Control output requests */
+    int32_t inputVehicleConfigDataID;           /*!< -- ID for the incoming static vehicle data */
+    vehControlOut controlOut;                   /*!< -- Control output requests */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

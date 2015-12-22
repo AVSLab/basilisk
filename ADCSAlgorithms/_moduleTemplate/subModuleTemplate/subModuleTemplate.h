@@ -19,8 +19,8 @@ typedef struct {
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
     int32_t outputMsgID;                            /*!< ID for the outgoing message */
+    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
     int32_t inputMsgID;                             /*!< ID for the incoming message */
 
     double  inputVector[3];                         /*!< [units]  vector description */
