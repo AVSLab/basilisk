@@ -10,6 +10,7 @@
 #include "attControl/LowPassFilterTorqueCommand/LowPassFilterTorqueCommand.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "vehicleConfigData/ADCSAlgorithmMacros.h"
+#include "ADCSUtilities/ADCSDefinitions.h"
 #include "math.h"
 
 
@@ -55,7 +56,7 @@ void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigDa
 {
     int i;
 
-    ConfigData->reset  = 1;                 /* reset the first run flag */
+    ConfigData->reset  = BOOL_TRUE;         /* reset the first run flag */
 
     for (i=0;i<NUM_LPF;i++) {
         v3SetZero(ConfigData->Lr[i]);
@@ -106,7 +107,7 @@ void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
         ConfigData->b[1] = ConfigData->hw;
 
         /* turn off first run flag */
-        ConfigData->reset = 0;
+        ConfigData->reset = BOOL_FALSE;
 
     }
     
