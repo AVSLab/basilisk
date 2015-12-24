@@ -4,7 +4,7 @@
 
 #include "messaging/static_messaging.h"
 #include "attDetermination/CSSEst/cssWlsEst.h"
-#include "attGuidance/attGuidOut.h"
+#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "attDetermination/CSSEst/navStateOut.h"
 #include <stdint.h>
 

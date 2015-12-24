@@ -11,4 +11,5 @@
 %ignore SelfInit_singleAxisRot;
 %constant void CrossInit_singleAxisRot(void*, uint64_t);
 %ignore CrossInit_singleAxisRot;
+%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "singleAxisRot.h"

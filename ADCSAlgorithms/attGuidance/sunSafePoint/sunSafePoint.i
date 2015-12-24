@@ -12,5 +12,5 @@
 %constant void CrossInit_sunSafePoint(void*, uint64_t);
 %ignore CrossInit_sunSafePoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "attGuidOut.h"
+%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "sunSafePoint.h"

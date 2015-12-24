@@ -12,5 +12,5 @@
 %constant void CrossInit_attMnvrPoint(void*, uint64_t);
 %ignore CrossInit_attMnvrPoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "attGuidOut.h"
+%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "attMnvrPoint.h"

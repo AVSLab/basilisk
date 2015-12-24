@@ -12,5 +12,5 @@
 %constant void CrossInit_attRefGen(void*, uint64_t);
 %ignore CrossInit_attRefGen;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "attGuidOut.h"
+%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "attRefGen.h"

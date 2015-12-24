@@ -3,7 +3,7 @@
 #define _DV_GUIDANCE_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "attGuidance/attGuidOut.h"
+#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "attDetermination/CSSEst/navStateOut.h"
 #include <stdint.h>
 

@@ -11,4 +11,5 @@
 %ignore SelfInit_celestialBodyPoint;
 %constant void CrossInit_celestialBodyPoint(void*, uint64_t);
 %ignore CrossInit_celestialBodyPoint;
+%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "celestialBodyPoint.h"

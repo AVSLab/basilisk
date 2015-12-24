@@ -1,5 +1,5 @@
 
-#include "attGuidance/singleAxisRot.h"
+#include "attGuidance/singleAxisRot/singleAxisRot.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "SimCode/environment/spice/spice_planet_state.h"

@@ -1,5 +1,5 @@
 
-#include "attGuidance/attMnvrPoint.h"
+#include "attGuidance/attMnvrPoint/attMnvrPoint.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"

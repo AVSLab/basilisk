@@ -1,5 +1,5 @@
 
-#include "attGuidance/celestialBodyPoint.h"
+#include "attGuidance/celestialBodyPoint/celestialBodyPoint.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "SimCode/environment/spice/spice_planet_state.h"

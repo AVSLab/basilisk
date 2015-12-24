@@ -467,7 +467,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Scale the force/torque by the mass properties inverse to get accels
     for(it=thrusters.begin(); it != thrusters.end(); it++)
     {
-        DynEffector *TheEff = *it;
+        ThrusterDynamics *TheEff = *it;
         TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
         v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels);
         v3Add(LocalAccels, NonConservAccelBdy, NonConservAccelBdy);
