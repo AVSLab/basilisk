@@ -29,7 +29,7 @@ def mrp_steering_tracking(show_plots):
     __tracebackhide__ = True
 
     testFailCount = 0                       # zero unit test result counter
-    testMessage = []                        # create empty list to store test log messages
+    testMessages = []                        # create empty list to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -165,7 +165,7 @@ def mrp_steering_tracking(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
                                " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                "sec \n")
 
@@ -176,7 +176,7 @@ def mrp_steering_tracking(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    return [testFailCount, ''.join(testMessage)]
+    return [testFailCount, ''.join(testMessages)]
 
 
 if __name__ == "__main__":
