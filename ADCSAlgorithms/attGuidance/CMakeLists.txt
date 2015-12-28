@@ -10,7 +10,6 @@ set(CMAKE_SWIG_FLAGS "")
 
 FILE(GLOB sub_directories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
-MESSAGE(${CMAKE_CURRENT_SOURCE_DIR})
 STRING(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
 MATH(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
 STRING(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
@@ -28,6 +27,9 @@ FOREACH(subdir ${sub_directories})
         "${subdir}/*.cpp"
         "${subdir}/*.c"
         "${subdir}/*.h"
+		"_GeneralModuleFiles/*.cpp"
+		"_GeneralModuleFiles/*.c"
+		"_GeneralModuleFiles/*.h"
     )
     
     get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)

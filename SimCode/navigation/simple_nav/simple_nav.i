@@ -17,4 +17,4 @@ namespace std {
 }
 %include "sys_model.h"
 %include "simple_nav.h"
-%include "../../ADCSAlgorithms/attDetermination/CSSEst/navStateOut.h"
+%include "../../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"

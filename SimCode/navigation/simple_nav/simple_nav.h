@@ -6,7 +6,7 @@
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
 #include "utilities/gauss_markov.h"
-#include "../ADCSAlgorithms/attDetermination/CSSEst/navStateOut.h"
+#include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
 /*! \addtogroup SimModelGroup
  * @{
  */

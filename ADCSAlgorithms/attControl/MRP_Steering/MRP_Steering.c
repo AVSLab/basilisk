@@ -11,7 +11,7 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "attDetermination/CSSEst/navStateOut.h"
+#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
 #include <string.h>
