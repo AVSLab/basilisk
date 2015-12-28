@@ -4,7 +4,7 @@
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "SimCode/environment/spice/spice_planet_state.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "attDetermination/CSSEst/navStateOut.h"
+#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "vehicleConfigData/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>

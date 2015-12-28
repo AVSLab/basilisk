@@ -4,7 +4,7 @@
 
 #include "messaging/static_messaging.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
-#include "attDetermination/CSSEst/navStateOut.h"
+#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
