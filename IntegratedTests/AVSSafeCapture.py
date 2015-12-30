@@ -1,8 +1,8 @@
-import sys, os, inspect
+﻿import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
-import EMMSim
+import AVSSim
 import matplotlib.pyplot as plt
 import ctypes
 import math
@@ -51,49 +51,49 @@ def checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
       counterStart += 1
    return controlFailCounter
 
-def executeEMMSafeCapture(TheEMMSim):
-    TheEMMSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
-    TheEMMSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
-    TheEMMSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9)) #solar array boresight angles
-    TheEMMSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E9))
+def executeAVSSafeCapture(TheAVSSim):
+    TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9)) #solar array boresight angles
+    TheAVSSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E9))
     
 
-    TheEMMSim.InitializeSimulation()
-    TheEMMSim.ConfigureStopTime(int(30*1E9))
-    TheEMMSim.ExecuteSimulation()
-    TheEMMSim.modeRequest = 'safeMode'
-    TheEMMSim.ConfigureStopTime(int(60*10*1E9))
-    TheEMMSim.ExecuteSimulation()
+    TheAVSSim.InitializeSimulation()
+    TheAVSSim.ConfigureStopTime(int(30*1E9))
+    TheAVSSim.ExecuteSimulation()
+    TheAVSSim.modeRequest = 'safeMode'
+    TheAVSSim.ConfigureStopTime(int(60*10*1E9))
+    TheAVSSim.ExecuteSimulation()
 
 if __name__ == "__main__":
 
-    TheEMMSim = EMMSim.EMMSim()
-    TheEMMSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
-    TheEMMSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
-    TheEMMSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
-    TheEMMSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
+    TheAVSSim = AVSSim.AVSSim()
+    TheAVSSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
+    TheAVSSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
+    TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
+    TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
 
-    TheEMMSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
-    TheEMMSim.VehOrbElemObject.CurrentElem.e = 0.207501;
-    TheEMMSim.VehOrbElemObject.CurrentElem.i = 0.0;
-    TheEMMSim.VehOrbElemObject.CurrentElem.Omega = 0.0;
-    TheEMMSim.VehOrbElemObject.CurrentElem.omega = 0.0;
-    TheEMMSim.VehOrbElemObject.CurrentElem.f = 70.0*math.pi/180.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
+    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501;
+    TheAVSSim.VehOrbElemObject.CurrentElem.i = 0.0;
+    TheAVSSim.VehOrbElemObject.CurrentElem.Omega = 0.0;
+    TheAVSSim.VehOrbElemObject.CurrentElem.omega = 0.0;
+    TheAVSSim.VehOrbElemObject.CurrentElem.f = 70.0*math.pi/180.0
     #Convert those OEs to cartesian
-    TheEMMSim.VehOrbElemObject.Elements2Cartesian()
-    PosVec = ctypes.cast(TheEMMSim.VehOrbElemObject.r_N.__long__(), 
+    TheAVSSim.VehOrbElemObject.Elements2Cartesian()
+    PosVec = ctypes.cast(TheAVSSim.VehOrbElemObject.r_N.__long__(), 
        ctypes.POINTER(ctypes.c_double))
-    VelVec = ctypes.cast(TheEMMSim.VehOrbElemObject.v_N.__long__(), 
+    VelVec = ctypes.cast(TheAVSSim.VehOrbElemObject.v_N.__long__(), 
       ctypes.POINTER(ctypes.c_double))
-    TheEMMSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
-    TheEMMSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
+    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
+    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
 
-    executeEMMSafeCapture(TheEMMSim)
+    executeAVSSafeCapture(TheAVSSim)
 
-    DataCSSTruth = TheEMMSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
-    FSWsHat = TheEMMSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
-    solarArrayMiss = TheEMMSim.pullMessageLogData("solar_array_sun_bore.missAngle")
-    numCSSActive = TheEMMSim.GetLogVariableData('CSSWlsEst.numActiveCss')
+    DataCSSTruth = TheAVSSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
+    FSWsHat = TheAVSSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
+    solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
+    numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
 
 
     CSSEstAccuracyThresh = 17.5*math.pi/180.0

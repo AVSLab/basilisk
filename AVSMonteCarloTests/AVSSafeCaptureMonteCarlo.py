@@ -1,12 +1,12 @@
-import sys, os, inspect #following lines are to get all necessary files on search path
+﻿import sys, os, inspect #following lines are to get all necessary files on search path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 sys.path.append(path + '/../IntegratedTests/')
-import EMMSim #simulation type we are running
+import AVSSim #simulation type we are running
 import matplotlib.pyplot as plt #plotting functions
 import MonteCarloBaseClass #monte-carlo module for running dispersed simulations
-import EMMSafeCapture #Startup script we are using
+import AVSSafeCapture #Startup script we are using
 import numpy #Who doesn't like numpy?
 import math #Got to have some math
 
@@ -33,12 +33,12 @@ monteCarloContainer.addNewDispersion(b3RateDisp)
 
 
 #Define the simulation type and the script that we will use to execute the simulations
-simulationModule = EMMSim.EMMSim
-executionModule = EMMSafeCapture.executeEMMSafeCapture
+simulationModule = AVSSim.AVSSim
+executionModule = AVSSafeCapture.executeAVSSafeCapture
 
 #Configure the monte-carlo handler with the necessary parameter for a run
 monteCarloContainer.setSimulationObject(simulationModule) #simulation type to use
-monteCarloContainer.setExecutionCount(100) #Number of simulations to run
+monteCarloContainer.setExecutionCount(25) #Number of simulations to run
 monteCarloContainer.setRetainSimulationData(True) #Archive simulations as we go along
 monteCarloContainer.setExecutionModule(executionModule) #Define the script to use for the run
 
