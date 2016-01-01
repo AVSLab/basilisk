@@ -1,4 +1,4 @@
-#Import some architectural stuff that we will probably always use
+﻿#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
@@ -36,7 +36,7 @@ import attRefGen
 import celestialBodyPoint
 import clock_synch
 
-class EMMSim(SimulationBaseClass.SimBaseClass):
+class AVSSim(SimulationBaseClass.SimBaseClass):
  def __init__(self):
    #Create a sim module as an empty container
    SimulationBaseClass.SimBaseClass.__init__(self)
