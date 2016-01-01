@@ -11,6 +11,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2")
 if(NOT WIN32)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}  -Wall")
 endif()
+
+# @TODO: remove the below definition line supresses a range of warnings 
+# in the clang compiler for boost. Remove when boost is upgraded to 1.60.0
+add_definitions ("-Wno-unused-local-typedefs")
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_58_0")
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
