@@ -1,4 +1,4 @@
-# this is the initial version of the thruster unit test
+﻿# this is the initial version of the thruster unit test
 #Very simple simulation.
 
 from ctypes import*
@@ -146,6 +146,10 @@ TorqueArray = TwoFloats(10.0,20.0);
 
 TorquePointer = cast(TorqueArray,POINTER(c_float))
 
+cmdArray = sim_model.new_doubleArray(2)
+sim_model.doubleArray_setitem(cmdArray, 0, 10.0)
+sim_model.doubleArray_setitem(cmdArray, 1, 20.0)
+
 #TorqueArray = reactionwheel_dynamics.DoubleVector([10.0,20.0])
 
 
@@ -175,7 +179,7 @@ outputState = six_dof_eom.OutputStateData()
 
 #Write firing command message and step the simulation
 #TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8, 0, RWMessage);
-TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, TorquePointer );
+TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, cmdArray );
 executeSimulationRun(var2, var1, TotalSim, RWDynObject,
     massPropsData, outputState)
    
