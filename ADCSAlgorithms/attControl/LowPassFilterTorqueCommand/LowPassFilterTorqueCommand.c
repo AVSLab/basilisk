@@ -9,7 +9,7 @@
 /* modify the path to reflect the new module names */
 #include "attControl/LowPassFilterTorqueCommand/LowPassFilterTorqueCommand.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "vehicleConfigData/ADCSAlgorithmMacros.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "math.h"
 
