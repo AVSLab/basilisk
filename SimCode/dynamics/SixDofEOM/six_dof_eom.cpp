@@ -12,7 +12,7 @@
 SixDofEOM::SixDofEOM()
 {
     CallCounts = 0;
-    RWACount = 0;
+    RWACount = reactWheels.size();
     OutputStateMessage = "inertial_state_output";
     OutputMassPropsMsg = "spacecraft_mass_props";
     OutputBufferCount = 2;

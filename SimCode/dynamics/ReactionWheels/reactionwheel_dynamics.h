@@ -22,7 +22,9 @@ typedef struct {
 // std::vector<ThrusterTimePair> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
 // std::vector<ThrusterTimePair> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
  double MaxTorque;                              //!< N  Steady state thrust of thruster
-// double steadyIsp;                              //!< s  Steady state specific impulse of thruster
+ double currentTorque;                          //!< Nm Current reaction wheel motor torque
+ double rwOmega;                                //!< r/s Current Reaction wheel angular velocity
+												// double steadyIsp;                              //!< s  Steady state specific impulse of thruster
 // double MinOnTime;                              //!< s  Minimum allowable on-time
 // ThrusterOperationData ThrustOps;               //!< -- Thruster operating data
 }ReactionWheelConfigData;

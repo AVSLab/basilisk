@@ -6,6 +6,7 @@
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
+#include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -101,6 +102,7 @@ private:
     uint32_t NStates;                 //!<        Count on states available
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
+	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of thrusters in body
 };
 
 /*! @} */
