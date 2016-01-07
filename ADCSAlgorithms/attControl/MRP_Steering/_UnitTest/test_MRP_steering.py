@@ -17,6 +17,11 @@ import simple_nav                       # import module(s) that creates the need
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
 
 
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+# @pytest.mark.skipif(conditionstring)
+# uncomment this line if this test has an expected failure, adjust message as needed
+# @pytest.mark.xfail(conditionstring)
+# provide a unique test method name, starting with test_
 def test_mrp_steering_tracking(show_plots):
     [testResults, testMessage] = mrp_steering_tracking(show_plots)
     assert testResults < 1, testMessage
