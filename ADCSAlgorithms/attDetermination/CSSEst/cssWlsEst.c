@@ -1,7 +1,7 @@
 
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "vehicleConfigData/ADCSAlgorithmMacros.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theCSS WLS estimator.
