@@ -29,9 +29,10 @@ import MRP_Steering                     # import module(s) that creates the need
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_mrp_steering_tracking(show_plots):
+def test_subModule(show_plots):     # update "subModule" in this funciton name to reflect the module name
     # each test method requires a single assert method to be called
-    assert subModuleTestFunction(show_plots) == 5
+    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    assert testResults < 1, testMessage
 
 
 def subModuleTestFunction(show_plots):
@@ -150,7 +151,6 @@ def subModuleTestFunction(show_plots):
     # plot all figures
     if show_plots:
         # plot a sample variable.
-        # NOTE: the plots are only shown if the argument -plot is provided when the script is called
         plt.figure(1)
         plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
         plt.legend(loc='upper left')
@@ -165,7 +165,7 @@ def subModuleTestFunction(show_plots):
 
 #
 # This statement below ensures that the unitTestScript can be run as a
-# stand-along python scripts automatically executes the runUnitTest() method
+# stand-along python script
 #
 if __name__ == "__main__":
-    test_mrp_steering_tracking()
+    test_subModule(False)           # update "subModule" in function name
