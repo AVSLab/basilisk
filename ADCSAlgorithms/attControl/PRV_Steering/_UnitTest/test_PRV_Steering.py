@@ -4,12 +4,15 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 18, 2015
 #
+import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
+# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy
 import ctypes
 import math
 import logging
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('ADCSAlgorithms')
@@ -29,10 +32,15 @@ import simple_nav                       # import module(s) that creates the need
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
 
 
-def runUnitTest():
+def test_PRV_Steering(show_plots):     # update "subModule" in this function name to reflect the module name
+    # each test method requires a single assert method to be called
+    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    assert testResults < 1, testMessage
 
+
+def subModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
-    testResults = ""                        # create empty array to store test log messages
+    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -175,9 +183,7 @@ def runUnitTest():
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage =  "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
-            print testMessage
-            testResults += testMessage + "\n"
+            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
@@ -194,17 +200,15 @@ def runUnitTest():
 
 
 
-    # If the argument "-plot" is passed along, plot all figures
-    inputArgs = sys.argv
-    if len(inputArgs) > 1:
-       if inputArgs[1] == '-plot':
+    # If the argument provided at commandline "--show_plots" evaluates as true,
+    # plot all figures
+    if show_plots:
           plt.show()
 
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print   "PASSED: " + moduleWrap.ModelTag
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
 
-    return testFailCount
 
 
 
@@ -214,4 +218,4 @@ def runUnitTest():
 #   authmatically executes the runUnitTest() method
 #
 if __name__ == "__main__":
-    runUnitTest()
+    test_PRV_Steering()
