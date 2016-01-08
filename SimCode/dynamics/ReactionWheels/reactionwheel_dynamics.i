@@ -14,6 +14,7 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
+   %template(RWDynamicsVector) vector<ReactionWheelConfigData>;
 }
 %include "sys_model.h"
 %include "dyn_effector.h"
