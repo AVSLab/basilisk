@@ -121,9 +121,7 @@ def subModuleTestFunction(show_plots):
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
             testFailCount += 1
-            testMessage = "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec"
-            print testMessage
-            testResults += testMessage + "\n"
+            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
