@@ -4,12 +4,12 @@
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 9, 2015
 #
+import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
-import numpy
-import ctypes
 import math
-import logging
+# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('ADCSAlgorithms')
@@ -28,12 +28,19 @@ import MRP_Steering                     # import a sample module that creates th
 
 
 
-def runUnitTest():
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+# @pytest.mark.skipif(conditionstring)
+# uncomment this line if this test has an expected failure, adjust message as needed
+# @pytest.mark.xfail(conditionstring)
+# provide a unique test method name, starting with test_
+def test_lowPassFilterControlTorque(show_plots):     # update "subModule" in this function name to reflect the module name
+    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    assert testResults < 1, testMessage
 
-
+def subModuleTestFunction(show_plots):
     #   zero all unit test result gather variables
     testFailCount = 0                       # zero unit test result counter
-    testResults = ""                        # create empty array to store test log messages
+    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
@@ -120,10 +127,9 @@ def runUnitTest():
 
 
 
-    #   If the argument "-plot" is passed along, plot all figures
-    inputArgs = sys.argv
-    if len(inputArgs) > 1:
-        if inputArgs[1] == '-plot':
+    # If the argument provided at commandline "--show_plots" evaluates as true,
+    # plot all figures
+    if show_plots:
           plt.show()
 
     #   print out success message if no error were found
@@ -131,11 +137,14 @@ def runUnitTest():
         print   "PASSED: " + moduleWrap.ModelTag
 
 
-    return testFailCount
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
+
 
 #
-#   This statement below ensures that the unitTestScript can be run as a stand-along python scripts
-#   authmatically executes the runUnitTest() method
+# This statement below ensures that the unitTestScript can be run as a
+# stand-along python script
 #
 if __name__ == "__main__":
-    runUnitTest()
+    test_lowPassFilterControlTorque()
