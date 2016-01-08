@@ -29,7 +29,7 @@ import MRP_Steering                     # import module(s) that creates the need
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_subModule(show_plots):     # update "subModule" in this function name to reflect the module name
+def test_subModule(show_plots):     # update "subModule" in this funciton name to reflect the module name
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
