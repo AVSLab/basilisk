@@ -10,34 +10,27 @@
  * @{
  */
 
-//! @brief Container for overall thruster configuration data for single thruster
+//! @brief Container for overall RW configuration data for single RW
 /*! This structure is used to define the overall configuration of an entire
- thruster.  It holds the current operational data for the thruster, the
+ RW.  It holds the current operational data for the RW, the
  ramp/max/min configuration data, and the physical location/orientation data for
- a thruster.*/
+ a RW.*/
 typedef struct {
- std::vector<double> ReactionWheelLocation;          //!< m Location of thruster in structural
- std::vector<double> ReactionWheelDirection;         //!< -- Unit vector of thruster pointing
-// double ReactionWheelDirection[3];
-// std::vector<ThrusterTimePair> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
-// std::vector<ThrusterTimePair> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
- double MaxTorque;                              //!< N  Steady state thrust of thruster
-// double steadyIsp;                              //!< s  Steady state specific impulse of thruster
-// double MinOnTime;                              //!< s  Minimum allowable on-time
-// ThrusterOperationData ThrustOps;               //!< -- Thruster operating data
+ std::vector<double> r_S; //!< m, position vector of the RW relative to the spacecraft structural frame
+ std::vector<double> gsHat_S; //!< spin axis unit vector in structural frame
+ std::vector<double> gtHat0_S; //!< initial torque axis unit vector in structural frame
+ std::vector<double> ggHat0_S; //!< initial gimbal axis unit vector in structural frame
+ double u_max; //!< N-m, Max torque
+ double u_f; //!< N-m, Coulomb friction torque magnitude
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
-/*! This structure is used for the array of thruster commands.  It is pretty
+/*! This structure is used for the array of RW commands.  It is pretty
  sparse, but it is included as a structure for growth and for clear I/O
  definitions.*/
 typedef struct {
- double TorqueRequest;                //!< s Requested on-time for thruster
+ double u_c; //!< N-m, torque command for RW
 }RWCmdStruct;
-
-typedef struct {
-
-}RWMisc;
 
 //! @brief Thruster dynamics class used to provide thruster effects on body
 /*! This class is used to hold and operate a set of thrusters that are located
@@ -75,8 +68,8 @@ public:
     std::string OutputDataString;                  //!< -- port to use for output data
     uint64_t OutputBufferCount;                    //!< -- Count on number of buffers to output
     std::vector<RWCmdStruct> NewRWCmds;                 //!< -- Incoming thrust commands
-    double StrForce[3];                            //!< N  Computed force in str for thrusters
-    double StrTorque[3];                           //!< Nm Computed torque in str for thrusters
+    double F_S[3];                            //!< N  Computed force in str
+    double tau_S[3];                           //!< N-m Computed torque in str
     
 private:
     int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data

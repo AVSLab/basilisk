@@ -16,8 +16,8 @@ ReactionWheelDynamics::ReactionWheelDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    memset(StrForce, 0x0, 3*sizeof(double));
-    memset(StrTorque, 0x0, 3*sizeof(double));
+    memset(F_S, 0x0, 3*sizeof(double));
+    memset(tau_S, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -27,21 +27,21 @@ ReactionWheelDynamics::~ReactionWheelDynamics()
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firings
+/*! This method is used to clear out the current RW states and make sure
+ that the overall model is ready
  @return void
  */
 void ReactionWheelDynamics::SelfInit()
 {
 
     RWCmdStruct RWCmdInitializer;
-    RWCmdInitializer.TorqueRequest = 0.0;
+    RWCmdInitializer.u_c = 0.0;
 
     //! Begin method steps
-    //! - Clear out any currently firing thrusters and re-init cmd array
+    //! - Clear out any currently firing RWs and re-init cmd array
     NewRWCmds.clear();
     NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
-//    ! - Clear out the incoming command buffer and resize to max thrusters
+//    ! - Clear out the incoming command buffer and resize to max RWs
     if(IncomingCmdBuffer != NULL)
     {
         delete [] IncomingCmdBuffer;
@@ -50,7 +50,7 @@ void ReactionWheelDynamics::SelfInit()
 
 }
 
-/*! This method is used to connect the input command message to the thrusters.
+/*! This method is used to connect the input command message to the RWs.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
  @return void
@@ -81,7 +81,7 @@ void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
+ associated command structure for operating the RWs.
  @return void
  */
 void ReactionWheelDynamics::ReadInputs()
@@ -114,16 +114,14 @@ void ReactionWheelDynamics::ReadInputs()
     for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
         CmdPtr++, i++)
     {
-        CmdPtr->TorqueRequest = IncomingCmdBuffer[i].TorqueRequest;
+        CmdPtr->u_c = IncomingCmdBuffer[i].u_c;
     }
 
 }
 
-///*! This method is used to read the new commands vector and set the thruster
+///*! This method is used to read the new commands vector and set the RW
 // firings appropriately.  It assumes that the ReadInputs method has already been
-// run successfully.  It honors all previous thruster firings if they are still
-// active.  Note that for unit testing purposes you can insert firings directly
-// into NewRWCmds.
+// run successfully.
 // @return void
 // @param CurrentTime The current simulation time converted to a double
 // */
@@ -134,29 +132,26 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 
  for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
  {
-  v3Scale(CmdIt->TorqueRequest, &(ReactionWheelData[0].ReactionWheelDirection[0]), StrTorque);
+  v3Scale(CmdIt->u_c, &(ReactionWheelData[0].gsHat_S[0]), tau_S);
  }
-
+// v3Set(CmdIt->u_c, 0, 0, tau_S);
 
 }
 
-/*! This method is used to compute all the dynamical effects for the thruster set.
+/*! This method is used to compute all the dynamical effects for the RW set.
  It is an inherited method from the DynEffector class and is designed to be called
- by the dynamics plant for the simulation.  It uses the thruster force magnitude
- computed for the current time as well as the current vehicle state and mass
- properties to get the current body force/torque which serve as the API to
- dynamics
+ by the dynamics plant for the simulation.
  @return void
  @param Props Current mass properties of the vehicle (using center of mass and str2bdy transformation
- @param Bstate Current state of the vehicle (not used by thruster dynamics)
+ @param Bstate Current state of the vehicle (not used by RW dynamics)
  @param CurrentTime Current simulation time converted to double precision
  */
 void ReactionWheelDynamics::ComputeDynamics(MassPropsData *Props,
                                        OutputStateData *Bstate, double CurrentTime)
 {}
 
-/*! This method is the main cyclical call for the scheduled part of the thruster
- dynamics model.  It reads the current commands array and sets the thruster
+/*! This method is the main cyclical call for the scheduled part of the RW
+ dynamics model.  It reads the current commands array and sets the RW
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
@@ -166,8 +161,9 @@ void ReactionWheelDynamics::ComputeDynamics(MassPropsData *Props,
 void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
-    //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
+    //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(CurrentSimNanos*1.0E-9);
+
 
 }
