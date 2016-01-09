@@ -1,15 +1,18 @@
 #
 #   Unit Test Script
-#   Module Name:        PRV_Steering
+#   Module Name:        MRP_Feedback
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 18, 2015
 #
+import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
+# import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy
 import ctypes
 import math
 import logging
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('ADCSAlgorithms')
@@ -23,23 +26,35 @@ import SimulationBaseClass
 import sim_model
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import PRV_Steering                     # import the module that is to be tested
+import MRP_Feedback                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
 
 
-def runUnitTest():
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+# @pytest.mark.skipif(conditionstring)
+# uncomment this line if this test has an expected failure, adjust message as needed
+# @pytest.mark.xfail(conditionstring)
+# provide a unique test method name, starting with test_
+def test_MRP_Feedback(show_plots):     
+    # each test method requires a single assert method to be called
+    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    assert testResults < 1, testMessage
 
+
+
+
+def subModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
-    testResults = ""                        # create empty array to store test log messages
+    testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()          # this is needed if multiple unit test scripts are run
-                                                        # this create a fresh and consistent simulation environment for each test run
+                                                        # this creates a fresh and consistent simulation environment for each test run
 
     #   Create test thread
     testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
@@ -48,12 +63,12 @@ def runUnitTest():
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = PRV_Steering.PRV_SteeringConfig()
+    moduleConfig = MRP_Feedback.MRP_FeedbackConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        PRV_Steering.Update_PRV_Steering,
-                                        PRV_Steering.SelfInit_PRV_Steering,
-                                        PRV_Steering.CrossInit_PRV_Steering)
-    moduleWrap.ModelTag = "PRV_Steering"
+                                        MRP_Feedback.Update_MRP_Feedback,
+                                        MRP_Feedback.SelfInit_MRP_Feedback,
+                                        MRP_Feedback.CrossInit_MRP_Feedback)
+    moduleWrap.ModelTag = "MRP_Feedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -64,12 +79,14 @@ def runUnitTest():
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
     moduleConfig.outputDataName = "outputName"
 
-    moduleConfig.K1 =   0.15
-    moduleConfig.K3 =   1.0
+    moduleConfig.K  =   0.15
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
-    moduleConfig.omega_max = 1.5*unitTestSupport.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
+    domega0 = [0., 0., 0.]
+    SimulationBaseClass.SetCArray(domega0,
+                                  'double',
+                                  moduleConfig.domega0)
 
 
     #   Create input message and size it because the regular creator of that message
@@ -164,9 +181,9 @@ def runUnitTest():
 
     # set the filtered output truth states
     trueVector = [
-               [1.960095897557112,-3.055301311042272,2.523751394819517]
-              ,[1.960095897557112,-3.055301311042272,2.523751394819517]
-              ,[1.96016398446522,-3.055383122555785,2.523851930938435]
+               [15.815,-25.14,23.521]
+              ,[15.815,-25.14,23.521]
+              ,[15.84521,-25.187475,23.607535]
                ]
 
     # compare the module results to the truth values
@@ -175,9 +192,7 @@ def runUnitTest():
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage =  "FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec"
-            print testMessage
-            testResults += testMessage + "\n"
+            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 
@@ -194,17 +209,18 @@ def runUnitTest():
 
 
 
-    # If the argument "-plot" is passed along, plot all figures
-    inputArgs = sys.argv
-    if len(inputArgs) > 1:
-       if inputArgs[1] == '-plot':
+    # If the argument provided at commandline "--show_plots" evaluates as true,
+    # plot all figures
+    if show_plots:
           plt.show()
 
     # print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED: " + moduleWrap.ModelTag
 
-    return testFailCount
+    # each test method requires a single assert method to be called
+    # this check below just makes sure no sub-test failures were found
+    return [testFailCount, ''.join(testMessages)]
 
 
 
@@ -214,4 +230,4 @@ def runUnitTest():
 #   authmatically executes the runUnitTest() method
 #
 if __name__ == "__main__":
-    runUnitTest()
+    test_MRP_Feedback()
