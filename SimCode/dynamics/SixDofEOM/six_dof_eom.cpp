@@ -47,6 +47,17 @@ void SixDofEOM::addThrusterSet(ThrusterDynamics *NewEffector)
     thrusters.push_back(NewEffector);
 }
 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The
+effector should be a derived class of the DynEffector abstract class and it
+should include a ComputeDynamics call which is operated by dynamics.
+@return void
+@param NewEffector The effector that we are adding to dynamics
+*/
+void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
+{
+	reactWheels.push_back(NewEffector);
+}
+
 /*! This method creates an output message for each planetary body that computes
     the planet's ephemeris information in the display reference frame.  Note that 
     the underlying assumption is that the display reference frame is always 
@@ -79,6 +90,17 @@ void SixDofEOM::SelfInit()
 {
     //! Begin method steps
     //! - Zero out initial states prior to copying in init values
+	RWACount = 0;
+	std::vector<ReactionWheelDynamics *>::iterator it;
+	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
+	{
+		std::vector<ReactionWheelConfigData>::iterator rwIt;
+		for (rwIt = (*it)->ReactionWheelData.begin();
+		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
+		{
+			RWACount++;
+		}
+	}
     NStates = 12 + RWACount;
     XState = new double[NStates]; // pos/vel/att/rate + rwa omegas
     memset(XState, 0x0, (NStates)*sizeof(double));
@@ -125,6 +147,18 @@ void SixDofEOM::SelfInit()
             T_str2Bdy[i][j] = *Str2BdyIt++;
         }
     }
+
+	uint32_t rwCount = 0;
+	for (it=reactWheels.begin(); it != reactWheels.end(); it++)
+	{
+		std::vector<ReactionWheelConfigData>::iterator rwIt;
+		for (rwIt = (*it)->ReactionWheelData.begin();
+		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
+		{
+			XState[12 + rwCount] = rwIt->rwOmega;
+			rwCount++;
+		}
+	}
     
     //! - Call computeOutputs to ensure that the outputs are available post-init
     computeOutputs();
@@ -364,6 +398,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double PlanetAccel[3];
     double posVelComp[3];
     double perturbAccel[3];
+	double *rwOmegas;
     
     //! Begin method steps
     
@@ -382,6 +417,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omegaLoc[0] = X[i++];
     omegaLoc[1] = X[i++];
     omegaLoc[2] = X[i++];
+	rwOmegas = NULL;
+	if (RWACount > 0)
+	{
+		rwOmegas = &X[i];
+	}
  
     /* zero the derivative vector */
     memset(dX, 0x0, NStates*sizeof(double));
@@ -481,15 +521,47 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - compute domega/dt (see Schaub and Junkins)
     v3Tilde(omega, B);                  /* [tilde(w)] */
     m33MultV3(compI, omega, d2);        /* [I]w */
-    m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
-    //    for(i = 0; i < NUM_RW; i++) {
-    //        hs = this->rw[i].Js * (v3Dot(omega, this->rw[i].gs) + Omega[i]);
-    //        v3Scale(hs, this->rw[i].gs, d3);
-    //        v3Add(d3, d2, d2);
-    //    }
+	v3Copy(d2, d3);
+ 
+
+	uint32_t rwCount = 0;
+	std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
+	double rwTorque[3];
+	double rwSumTorque[3];
+	v3SetZero(rwSumTorque);
+	double spinAxisBody[3];
+	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+	{
+		std::vector<ReactionWheelConfigData>::iterator rwIt;
+		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+		{
+			m33MultV3(T_str2Bdy, rwIt->ReactionWheelDirection.data(), spinAxisBody);
+			double hs =  rwIt->Js * (v3Dot(omega, spinAxisBody) + rwOmegas[rwCount]);
+			v3Scale(hs, spinAxisBody, d2);
+			v3Add(d3, d2, d3);
+			v3Scale(rwIt->currentTorque, spinAxisBody, rwTorque);
+			v3Subtract(rwSumTorque, rwTorque, rwSumTorque);          /* subtract [Gs]u */
+			rwCount++;
+		}
+	}
+	m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
+	v3Add(d3, rwSumTorque, d3);
     m33MultV3(compIinv, d3, d2);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
     v3Add(dX+9, d2, dX+9);
-    
+	rwCount = 0;
+	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+	{
+		std::vector<ReactionWheelConfigData>::iterator rwIt;
+		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+		{
+			m33MultV3(T_str2Bdy, rwIt->ReactionWheelDirection.data(), spinAxisBody);
+			dX[12 + rwCount] = rwIt->currentTorque / rwIt->Js
+				- v3Dot(spinAxisBody, dX + 9);
+			rwCount++;
+		}
+	}
 }
 
 /*! This method is used to integrate the state forward to the time specified. 
@@ -575,6 +647,18 @@ void SixDofEOM::integrateState(double CurrentTime)
     v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
     memcpy(XState, X, NStates*sizeof(double));
     
+	uint32_t rwCount = 0;
+	std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
+	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+	{
+		std::vector<ReactionWheelConfigData>::iterator rwIt;
+		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+		{
+			rwIt->rwOmega = XState[12 + rwCount];
+			rwCount++;
+		}
+	}
     
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
     sMag =  v3Norm(&XState[6]);

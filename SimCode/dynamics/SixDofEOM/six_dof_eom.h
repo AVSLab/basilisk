@@ -59,6 +59,7 @@ public:
     void AddGravityBody(GravityBodyData *NewBody);
     void WriteOutputMessages(uint64_t CurrentClock);
     void addThrusterSet(ThrusterDynamics *NewEffector);
+	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
     void computeCompositeProperties();
