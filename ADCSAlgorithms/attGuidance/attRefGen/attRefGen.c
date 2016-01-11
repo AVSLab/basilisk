@@ -40,6 +40,18 @@ void CrossInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
     
 }
 
+/*! This method resets the reference generation algorithm back to a pristine 
+    state so that the algorithm is primed to begin computing a new reference 
+	for the vehicle to follow
+	@return void
+	@param ConfigData The configuration data associated with the attitude maneuver guidance
+	@param moduleID The module ID associated with this instance of the algorithm
+*/
+void Reset_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
+{
+	ConfigData->mnvrActive = 0;
+}
+
 /*! This method takes the estimated state and commanded attitude and computes the
  current attitude/attitude rate errors to pass on to control.
  @return void

@@ -13,20 +13,24 @@ public:
     ~AlgContain();
     AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
         void (*SelfPtr)(void*, uint64_t)=NULL,
-        void (*CrossPtr)(void*, uint64_t)=NULL);
+        void (*CrossPtr)(void*, uint64_t)=NULL,
+		void(*ResetPtr)(void*, uint64_t) = NULL);
     
     void UseData(void *IncomingData) {DataPtr = IncomingData;}
     void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;}
     void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;}
     void UseCrossInit(void (*LocPtr)(void*, uint64_t)) {AlgCrossInit = LocPtr;}
+	void UseReset(void(*LocPtr)(void*, uint64_t)) { AlgReset = LocPtr; }
     void CrossInit();
     void SelfInit();
     void UpdateState(uint64_t CurrentSimNanos);
+	void Reset();
     
 private:
     void *DataPtr;
     AlgPtr AlgSelfInit;
     AlgPtr AlgCrossInit;
+	AlgPtr AlgReset;
     AlgUpdatePtr AlgUpdate;
 };
 

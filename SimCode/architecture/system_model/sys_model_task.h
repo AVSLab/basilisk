@@ -28,6 +28,7 @@ public:
     void SelfInitTaskList();
     void CrossInitTaskList();
     void ExecuteTaskList(uint64_t CurrentSimTime);
+	void ResetTaskList();
     void ResetTask() {NextStartTime = FirstTaskTime;}
 	void enableTask() { taskActive = true; }
 	void disableTask() { taskActive = false; }

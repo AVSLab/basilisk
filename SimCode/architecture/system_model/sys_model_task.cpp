@@ -77,6 +77,21 @@ void SysModelTask::CrossInitTaskList()
     return;
 }
 
+/*! This method resets all of the models that have been added to the Task.
+@return void
+*/
+void SysModelTask::ResetTaskList()
+{
+
+	std::vector<ModelPriorityPair>::iterator ModelPair;
+	for (ModelPair = TaskModels.begin(); ModelPair != TaskModels.end();
+	ModelPair++)
+	{
+		(*ModelPair).ModelPtr->Reset();
+	}
+
+}
+
 /*! This method executes all of the models on the Task during runtime.
  Once they have all been iterated through it sets itself up for scheduling
  @return void

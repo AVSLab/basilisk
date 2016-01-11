@@ -15,6 +15,7 @@ public:
     virtual void CrossInit();
     virtual void IntegratedInit();
     virtual void UpdateState(uint64_t CurrentSimNanos);
+	virtual void Reset();
     
 public:
     std::string ModelTag;        //!< -- name for the algorithm to base off of

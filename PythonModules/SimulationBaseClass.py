@@ -40,6 +40,8 @@ class TaskBaseClass:
      self.TaskData.enableTask();
  def updatePeriod(self, newPeriod):
      self.TaskData.updatePeriod(newPeriod)
+ def resetTask(self):
+     self.TaskData.ResetTaskList()
 
 class LogBaseClass:
  def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols = 1):
@@ -250,6 +252,10 @@ class SimBaseClass:
       print "Could not find a structure that has the ModelTag: %(ModName)s" % \
          {"ModName": SplitName[0]}
 
+ def ResetTask(self, taskName):
+     for Task in self.TaskList:
+       if Task.Name == taskName:
+           Task.resetTask()
  def InitializeSimulation(self):
    self.TotalSim.ResetSimulation()
    self.TotalSim.InitSimulation()

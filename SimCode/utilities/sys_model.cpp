@@ -31,3 +31,8 @@ void SysModel :: UpdateState(uint64_t CurrentSimNanos)
 {
     return;
 }
+
+void SysModel::Reset()
+{
+	return;
+}

@@ -6,17 +6,20 @@ AlgContain::AlgContain()
     AlgCrossInit = NULL;
     AlgUpdate = NULL;
     DataPtr = NULL;
+	AlgReset = NULL;
     CallCounts = 0;
     return;
 }
 
 AlgContain::AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
-                       void (*SelfPtr)(void*, uint64_t), void (*CrossPtr)(void*, uint64_t))
+                       void (*SelfPtr)(void*, uint64_t), void (*CrossPtr)(void*, uint64_t),
+	                   void (*ResetPtr) (void*, uint64_t))
 {
     DataPtr = DataIn;
     AlgSelfInit = SelfPtr;
     AlgCrossInit = CrossPtr;
     AlgUpdate = UpPtr;
+	AlgReset = ResetPtr;
 }
 
 AlgContain::~AlgContain()
@@ -46,4 +49,12 @@ void AlgContain::UpdateState(uint64_t CurrentSimNanos)
     {
         AlgUpdate(DataPtr, CurrentSimNanos, moduleID);
     }
+}
+
+void AlgContain::Reset()
+{
+	if (AlgReset != NULL)
+	{
+		AlgReset(DataPtr, moduleID);
+	}
 }

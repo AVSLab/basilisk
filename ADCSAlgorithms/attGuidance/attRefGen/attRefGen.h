@@ -39,6 +39,7 @@ extern "C" {
     
     void SelfInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID);
     void CrossInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID);
+	void Reset_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID);
     void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
     
