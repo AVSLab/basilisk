@@ -1,4 +1,5 @@
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include <cstring>
@@ -60,11 +61,12 @@ void ReactionWheelDynamics::CrossInit()
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
-    CmdsInMsgID = SystemMessaging::GetInstance()->FindMessageID(InputCmds);
+    CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
+		MAX_NUM_EFFECTORS*sizeof(RWCmdStruct), moduleID);
     if(CmdsInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";
-        std::cerr << InputCmds << "  :" << __FILE__ << std::endl;
+		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
     }
 }
 
@@ -138,6 +140,11 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  {
 	 //! - Just set the motor torque equal to the torque request for now
 	 it->currentTorque = CmdIt->TorqueRequest;
+	 if (fabs(it->currentTorque) > it->MaxTorque)
+	 {
+		 it->currentTorque /= fabs(it->currentTorque);
+		 it->currentTorque *= it->MaxTorque;
+	 }
 	 v3Scale(CmdIt->TorqueRequest, &(ReactionWheelData[0].ReactionWheelDirection[0]), StrTorque);
 
  }

@@ -521,7 +521,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - compute domega/dt (see Schaub and Junkins)
     v3Tilde(omega, B);                  /* [tilde(w)] */
     m33MultV3(compI, omega, d2);        /* [I]w */
-    m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
+	v3Copy(d2, d3);
  
 
 	uint32_t rwCount = 0;
@@ -539,12 +539,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 			m33MultV3(T_str2Bdy, rwIt->ReactionWheelDirection.data(), spinAxisBody);
 			double hs =  rwIt->Js * (v3Dot(omega, spinAxisBody) + rwOmegas[rwCount]);
 			v3Scale(hs, spinAxisBody, d2);
-			//v3Add(d3, d2, d3);
+			v3Add(d3, d2, d3);
 			v3Scale(rwIt->currentTorque, spinAxisBody, rwTorque);
 			v3Subtract(rwSumTorque, rwTorque, rwSumTorque);          /* subtract [Gs]u */
 			rwCount++;
 		}
 	}
+	m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
 	v3Add(d3, rwSumTorque, d3);
     m33MultV3(compIinv, d3, d2);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
     v3Add(dX+9, d2, dX+9);
