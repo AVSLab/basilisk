@@ -16,13 +16,18 @@
  ramp/max/min configuration data, and the physical location/orientation data for
  a RW.*/
 typedef struct {
- std::vector<double> r_S; //!< m, position vector of the RW relative to the spacecraft structural frame
- std::vector<double> gsHat_S; //!< spin axis unit vector in structural frame
- std::vector<double> gtHat0_S; //!< initial torque axis unit vector in structural frame
- std::vector<double> ggHat0_S; //!< initial gimbal axis unit vector in structural frame
+ double r_S[3]; //!< m, position vector of the RW relative to the spacecraft structural frame
+ double gsHat_S[3]; //!< spin axis unit vector in structural frame
+ double gtHat0_S[3]; //!< initial torque axis unit vector in structural frame
+ double ggHat0_S[3]; //!< initial gimbal axis unit vector in structural frame
+ double theta; //!< wheel angle
  double u_max; //!< N-m, Max torque
  double u_min; //!< N-m, Max torque
  double u_f; //!< N-m, Coulomb friction torque magnitude
+ double Omega; //!< rad/s, wheel speed
+ double Js; //!< kg-m^2, spin axis moment of inertia
+ double U_s; //!< kg-m, static imbalance
+ double U_d; //!< kg-m^2, dynamic imbalance
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.

@@ -133,6 +133,14 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  int RWIter = 0;
  double tau_S_temp[3];
  double u_s;
+ double cosw;
+ double sinw;
+ double ggHat_S[3];
+ double temp1[3];
+ double temp2[3];
+ double temp3[3];
+ double Fi[3];
+ double Li[3];
 
  // zero previous torque vector
  v3Set(0,0,0,tau_S);
@@ -142,41 +150,50 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  {
 
   // saturation
-  if(CmdIt->u_c > ReactionWheelData[RWIter].u_max)
-  {
+  if(CmdIt->u_c > ReactionWheelData[RWIter].u_max) {
    CmdIt->u_c = ReactionWheelData[RWIter].u_max;
-  }
-  else if(CmdIt->u_c < -ReactionWheelData[RWIter].u_max)
-  {
+  } else if(CmdIt->u_c < -ReactionWheelData[RWIter].u_max) {
    CmdIt->u_c = -ReactionWheelData[RWIter].u_max;
   }
 
   // minimum torque
-  if( std::abs(CmdIt->u_c) < ReactionWheelData[RWIter].u_min)
-  {
+  if( std::abs(CmdIt->u_c) < ReactionWheelData[RWIter].u_min) {
    CmdIt->u_c = 0;
   }
 
   // coulomb friction
-  if(CmdIt->u_c > ReactionWheelData[RWIter].u_f)
-  {
+  if(CmdIt->u_c > ReactionWheelData[RWIter].u_f) {
    u_s = CmdIt->u_c - ReactionWheelData[RWIter].u_f;
-  }
-  else if (CmdIt->u_c < -ReactionWheelData[RWIter].u_f)
-  {
+  } else if(CmdIt->u_c < -ReactionWheelData[RWIter].u_f) {
    u_s = CmdIt->u_c + ReactionWheelData[RWIter].u_f;
-  }
-  else {
+  } else {
    u_s = 0;
   }
 
   v3Set(0,0,0,tau_S_temp); // zero torque vector for current RW
-  v3Scale(u_s, &(ReactionWheelData[RWIter].gsHat_S[0]), tau_S_temp); // torque vector for current RW
+  v3Scale(u_s, ReactionWheelData[RWIter].gsHat_S, tau_S_temp); // torque vector for current RW
   v3Add(tau_S,tau_S_temp,tau_S); // sum with other RW torque vectors
 
+  cosw = cos(ReactionWheelData[RWIter].theta);
+  sinw = sin(ReactionWheelData[RWIter].theta);
+  
+  v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_S, temp1);
+  v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_S, temp2);
+  v3Add(temp1, temp2, ggHat_S); // current gimbal axis vector represented in body frame
+
+  v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S,Fi); /* Fs = Us * Omega^2 */ // calculate static imbalance force
+  v3Cross(ReactionWheelData[RWIter].r_S, Fi, Li); /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+  v3Add(Li, temp3, temp3); // add in static imbalance torque
+  v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S, Li); /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+  v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
+
+  v3Add(tau_S, temp3, tau_S);
+  
   RWIter++;
 
  }
+
+
 
 }
 

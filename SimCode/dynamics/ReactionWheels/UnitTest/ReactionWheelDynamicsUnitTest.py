@@ -40,6 +40,28 @@ def executeSimulationRun(stopTime, stepTime, TotalSim, RWDynObject,
         TotalSim.TotalSim.SingleStepProcesses()
         TotalSim.RecordLogVars()
 
+def v3DoubleSet(v1,v2,v3):
+ vout = sim_model.new_doubleArray(3)
+ sim_model.doubleArray_setitem(vout, 0, v1)
+ sim_model.doubleArray_setitem(vout, 1, v2)
+ sim_model.doubleArray_setitem(vout, 2, v3)
+ return vout
+
+def defaultReactionWheel():
+ RW = reactionwheel_dynamics.ReactionWheelConfigData()
+ RW.r_S = v3DoubleSet(0.9,0.0,0.0)
+ RW.gsHat_S = v3DoubleSet(1.0,0.0,0.0)
+ RW.ggHat0_S = v3DoubleSet(0.0,1.0,0.0)
+ RW.gtHat0_S = v3DoubleSet(0.0,0.0,1.0)
+ RW.u_max = 1.0 # arbitrary
+ RW.u_min = 0.1 # arbitrary
+ RW.u_f = 0.01 # arbitrary
+ RW.U_s = 8.5E-6; # kg-m, Honeywell HR-16 100 Nms standard balance option EOL
+ RW.U_s *= 1000
+ RW.U_d = 28.3E-7; # kg-m^2, Honeywell HR-16 100 Nms standard balance option EOL
+ RW.U_d *= 1000
+ return RW
+
 
 # get dyn object from RW class
 RWDynObject = reactionwheel_dynamics.ReactionWheelDynamics()
@@ -51,30 +73,23 @@ RWDynObject.ModelTag = "RWDynamics"
 numReactionWheels = 3
 
 #x-axis reaction wheel
-RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
-RW1.r_S = reactionwheel_dynamics.DoubleVector([0.0, 0.0, 0.0])
-RW1.gsHat_S = reactionwheel_dynamics.DoubleVector([1.0, 0.0, 0.0])
-RW1.u_max = 1.0
-RW1.u_min = 0.1
-RW1.u_f = 0.01
+RW1 = defaultReactionWheel()
 RWDynObject.AddReactionWheel(RW1)
 
 #y-axis reaction wheel
-RW2 = reactionwheel_dynamics.ReactionWheelConfigData()
-RW2.r_S = reactionwheel_dynamics.DoubleVector([0.0, 0.0, 0.0])
-RW2.gsHat_S = reactionwheel_dynamics.DoubleVector([0.0, 1.0, 0.0])
-RW2.u_max = 1.0
-RW2.u_min = 0.1
-RW2.u_f = 0.01
+RW2 = defaultReactionWheel()
+RW2.r_S = v3DoubleSet(0.0,0.9,0.0)
+RW2.gsHat_S = v3DoubleSet(0.0,1.0,0.0)
+RW2.ggHat0_S = v3DoubleSet(1.0,0.0,0.0)
+RW2.gtHat0_S = v3DoubleSet(0.0,0.0,-1.0)
 RWDynObject.AddReactionWheel(RW2)
 
 #z-axis reaction wheel
-RW3 = reactionwheel_dynamics.ReactionWheelConfigData()
-RW3.r_S = reactionwheel_dynamics.DoubleVector([0.0, 0.0, 0.0])
-RW3.gsHat_S = reactionwheel_dynamics.DoubleVector([0.0, 0.0, 1.0])
-RW3.u_max = 1.0
-RW3.u_min = 0.1
-RW3.u_f = 0.01
+RW3 = defaultReactionWheel()
+RW3.r_S = v3DoubleSet(0.0,0.0,0.9)
+RW3.gsHat_S = v3DoubleSet(0.0,0.0,1.0)
+RW3.ggHat0_S = v3DoubleSet(1.0,0.0,0.0)
+RW3.gtHat0_S = v3DoubleSet(0.0,1.0,0.0)
 RWDynObject.AddReactionWheel(RW3)
 
 
@@ -104,10 +119,7 @@ SimulationBaseClass.SetCArray(T_str2Bdy, 'double', massPropsData.T_str2Bdy)
 outputState = six_dof_eom.OutputStateData()
 
 
-cmdArray = sim_model.new_doubleArray(3)
-sim_model.doubleArray_setitem(cmdArray, 0, 0.09)
-sim_model.doubleArray_setitem(cmdArray, 1, 0.20)
-sim_model.doubleArray_setitem(cmdArray, 2, 1.30)
+cmdArray = v3DoubleSet(0.09,0.20,1.30)
 
 
 #Configure command message
@@ -123,10 +135,7 @@ TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0,
 executeSimulationRun(stopTime1, threadCallPeriod, TotalSim, RWDynObject,
     massPropsData, outputState)
 
-cmdArray2 = sim_model.new_doubleArray(3)
-sim_model.doubleArray_setitem(cmdArray2, 0, -0.09)
-sim_model.doubleArray_setitem(cmdArray2, 1, -0.20)
-sim_model.doubleArray_setitem(cmdArray2, 2, -1.30)
+cmdArray2 = v3DoubleSet(-0.09,-0.20,-1.30)
 
 TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, cmdArray2 );
 executeSimulationRun(stopTime2, threadCallPeriod, TotalSim, RWDynObject,
@@ -141,8 +150,8 @@ plt.plot(StrTorque[:,0]*1.0E-9, StrTorque[:,1], 'b', label='x Str')
 plt.plot(StrTorque[:,0]*1.0E-9, StrTorque[:,2], 'g', label='y Str')
 plt.plot(StrTorque[:,0]*1.0E-9, StrTorque[:,3], 'r', label = 'z Str')
 plt.legend()
-plt.xlabel('Time (s)')
-plt.ylabel('Force (N)')
+plt.xlabel('Time  [ s ]')
+plt.ylabel('Torque  [ N-m ]')
 plt.show()
 
 print('goin'' to mars')
