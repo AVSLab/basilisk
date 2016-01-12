@@ -3,6 +3,7 @@
 #include "utilities/linearAlgebra.h"
 #include <cstring>
 #include <iostream>
+#include <cmath>
 
 /*! This is the constructor.  It sets some defaul initializers that can be
  overriden by the user.*/
@@ -104,9 +105,9 @@ void ReactionWheelDynamics::ReadInputs()
                                                 reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
 
     //! - Check if message has already been read, if stale return
-    if(prevCommandTime==LocalHeader.WriteClockNanos) {
-        return;
-    }
+//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
+//        return;
+//    }
     prevCommandTime = LocalHeader.WriteClockNanos;
     
     //! - Set the NewRWCmds vector.  Using the data() method for raw speed
@@ -129,12 +130,53 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 {
  //! Begin method steps
  std::vector<RWCmdStruct>::iterator CmdIt;
+ int RWIter = 0;
+ double tau_S_temp[3];
+ double u_s;
 
+ // zero previous torque vector
+ v3Set(0,0,0,tau_S);
+
+ // loop through commands
  for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
  {
-  v3Scale(CmdIt->u_c, &(ReactionWheelData[0].gsHat_S[0]), tau_S);
+
+  // saturation
+  if(CmdIt->u_c > ReactionWheelData[RWIter].u_max)
+  {
+   CmdIt->u_c = ReactionWheelData[RWIter].u_max;
+  }
+  else if(CmdIt->u_c < -ReactionWheelData[RWIter].u_max)
+  {
+   CmdIt->u_c = -ReactionWheelData[RWIter].u_max;
+  }
+
+  // minimum torque
+  if( std::abs(CmdIt->u_c) < ReactionWheelData[RWIter].u_min)
+  {
+   CmdIt->u_c = 0;
+  }
+
+  // coulomb friction
+  if(CmdIt->u_c > ReactionWheelData[RWIter].u_f)
+  {
+   u_s = CmdIt->u_c - ReactionWheelData[RWIter].u_f;
+  }
+  else if (CmdIt->u_c < -ReactionWheelData[RWIter].u_f)
+  {
+   u_s = CmdIt->u_c + ReactionWheelData[RWIter].u_f;
+  }
+  else {
+   u_s = 0;
+  }
+
+  v3Set(0,0,0,tau_S_temp); // zero torque vector for current RW
+  v3Scale(u_s, &(ReactionWheelData[RWIter].gsHat_S[0]), tau_S_temp); // torque vector for current RW
+  v3Add(tau_S,tau_S_temp,tau_S); // sum with other RW torque vectors
+
+  RWIter++;
+
  }
-// v3Set(CmdIt->u_c, 0, 0, tau_S);
 
 }
 
@@ -164,6 +206,4 @@ void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(CurrentSimNanos*1.0E-9);
-
-
 }

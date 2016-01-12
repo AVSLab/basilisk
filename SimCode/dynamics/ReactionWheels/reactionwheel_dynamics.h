@@ -21,6 +21,7 @@ typedef struct {
  std::vector<double> gtHat0_S; //!< initial torque axis unit vector in structural frame
  std::vector<double> ggHat0_S; //!< initial gimbal axis unit vector in structural frame
  double u_max; //!< N-m, Max torque
+ double u_min; //!< N-m, Max torque
  double u_f; //!< N-m, Coulomb friction torque magnitude
 }ReactionWheelConfigData;
 
