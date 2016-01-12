@@ -1,5 +1,4 @@
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include <cstring>
@@ -11,7 +10,7 @@ ReactionWheelDynamics::ReactionWheelDynamics()
 {
     CallCounts = 0;
     InputCmds = "reactionwheel_cmds";
-    OutputDataString = "reactionwheel_output";
+    OutputDataString = "reactionwheel_output_states";
     OutputBufferCount = 2;
     CmdsInMsgID = -1;
     StateOutMsgID = -1;
@@ -42,12 +41,16 @@ void ReactionWheelDynamics::SelfInit()
     //! - Clear out any currently firing thrusters and re-init cmd array
     NewRWCmds.clear();
     NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
-//    ! - Clear out the incoming command buffer and resize to max thrusters
+    //! - Clear out the incoming command buffer and resize to max thrusters
     if(IncomingCmdBuffer != NULL)
     {
         delete [] IncomingCmdBuffer;
     }
     IncomingCmdBuffer = new RWCmdStruct[ReactionWheelData.size()];
+
+	StateOutMsgID = SystemMessaging::GetInstance()->
+		CreateNewMessage(OutputDataString, sizeof(RWOutputData), 
+			OutputBufferCount, "RWOutputData", moduleID);
 
 }
 
@@ -62,7 +65,7 @@ void ReactionWheelDynamics::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-		MAX_NUM_EFFECTORS*sizeof(RWCmdStruct), moduleID);
+		sizeof(RWCmdStruct)*MAX_NUM_EFFECTORS, moduleID);
     if(CmdsInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";
@@ -79,7 +82,15 @@ void ReactionWheelDynamics::CrossInit()
  */
 void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 {
-    
+	std::vector<ReactionWheelConfigData>::iterator it;
+
+	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+	{
+		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->rwOmega;
+	}
+
+	SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
+		sizeof(RWOutputData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -181,5 +192,6 @@ void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(CurrentSimNanos*1.0E-9);
+	WriteOutputMessages(CurrentSimNanos);
 
 }
