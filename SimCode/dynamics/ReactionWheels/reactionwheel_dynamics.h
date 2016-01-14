@@ -6,6 +6,7 @@
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -33,10 +34,6 @@ typedef struct {
 typedef struct {
  double TorqueRequest;                //!< s Requested on-time for thruster
 }RWCmdStruct;
-
-typedef struct {
-	double wheelSpeeds[MAX_NUM_EFFECTORS];                //!< r/s The current angular velocity of the wheel
-}RWOutputData;
 
 //! @brief Thruster dynamics class used to provide thruster effects on body
 /*! This class is used to hold and operate a set of thrusters that are located
@@ -72,7 +69,7 @@ public:
     std::vector<RWCmdStruct> NewRWCmds;                 //!< -- Incoming thrust commands
     double StrForce[3];                            //!< N  Computed force in str for thrusters
     double StrTorque[3];                           //!< Nm Computed torque in str for thrusters
-	RWOutputData outputStates;  //!< (-) Output data from the reaction wheels
+	RWSpeedData outputStates;  //!< (-) Output data from the reaction wheels
     
 private:
     int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data

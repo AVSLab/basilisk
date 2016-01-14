@@ -545,10 +545,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 			rwCount++;
 		}
 	}
-	m33MultV3(B, d2, d3);               /* [tilde(w)]([I]w + [Gs]hs) */
-	v3Add(d3, rwSumTorque, d3);
-    m33MultV3(compIinv, d3, d2);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
-    v3Add(dX+9, d2, dX+9);
+	m33MultV3(B, d3, d2);               /* [tilde(w)]([I]w + [Gs]hs) */
+	v3Subtract(rwSumTorque, d2, d2);
+    m33MultV3(compIinv, d2, d3);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
+    v3Add(dX+9, d3, dX+9);
 	rwCount = 0;
 	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 	{

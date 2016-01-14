@@ -4,7 +4,7 @@
 #include <cstring>
 #include <iostream>
 
-/*! This is the constructor.  It sets some defaul initializers that can be
+/*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
 ReactionWheelDynamics::ReactionWheelDynamics()
 {
@@ -49,8 +49,8 @@ void ReactionWheelDynamics::SelfInit()
     IncomingCmdBuffer = new RWCmdStruct[ReactionWheelData.size()];
 
 	StateOutMsgID = SystemMessaging::GetInstance()->
-		CreateNewMessage(OutputDataString, sizeof(RWOutputData), 
-			OutputBufferCount, "RWOutputData", moduleID);
+		CreateNewMessage(OutputDataString, sizeof(RWSpeedData), 
+			OutputBufferCount, "RWSpeedData", moduleID);
 
 }
 
@@ -90,7 +90,7 @@ void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 	}
 
 	SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-		sizeof(RWOutputData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+		sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
