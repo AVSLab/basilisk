@@ -39,7 +39,9 @@ void SelfInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attGuidOut),
                                                "attGuidOut",
                                                moduleID);
-    v3SetZero(ConfigData->attGuidOut.domega_RN_B);      /* the inertial spin rate is assumed to be constant */
+    /* set reference rates to zero */
+    v3SetZero(ConfigData->attGuidOut.omega_RN_B);
+    v3SetZero(ConfigData->attGuidOut.domega_RN_B);
 
     ConfigData->sigma_BcB = ConfigData->sigma_R0R;      /* these two relative orientations labels are the same */
 
@@ -62,7 +64,7 @@ void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
 /*! This method performs a complete reset of the module.  Local module variables that retain
  time varying states between function calls are reset to their default values.
  @return void
- @param ConfigData The configuration data associated with the MRP steering control
+ @param ConfigData The configuration data associated
  */
 void Reset_inertial3D(inertial3DConfig *ConfigData)
 {
@@ -80,7 +82,7 @@ void Reset_inertial3D(inertial3DConfig *ConfigData)
 
 /*! Add a description of what this main Update() routine does for this module
  @return void
- @param ConfigData The configuration data associated with the MRP Steering attitude control
+ @param ConfigData The configuration data associated
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
@@ -131,18 +133,14 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
 
 
 /*
- * Function: computeInertialSpinAttitudeError
+ * Function: computeInertial3DAttitudeError
  * Purpose: compute the attitude and rate errors for the Inertial 3D spin control mode.  This function is
  designed to work both here in FSW to compute estimated pointing errors, as well as in the
  simulation code to compute true pointing errors
  * Inputs:
- *   sigma = MRP attitude of body relative to inertial
- *   omega = body rate vector
+ *   sigma_BN = MRP attitude of body relative to inertial
+ *   omega_BN_B = body rate vector
      ConfigData = module configuration data
- *   integrateFlag = flag to reset the reference orientation
- *                   0 - integrate & evaluate
- *                  -1 - evalute but not integrate)
- *   dt = integration time step (control update period )
  * Outputs:
  *   sigma_BR = MRP attitude error of body relative to reference
  *   omega_BR_B = angular velocity vector error of body relative to reference

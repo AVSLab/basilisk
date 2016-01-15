@@ -1,7 +1,7 @@
 #
 #   Unit Test Script
 #   Module Name:        inertial3D
-#   Author:             Hanspeter Schaub
+#   Author:             Mar Cols
 #   Creation Date:      January 6, 2015
 #
 
