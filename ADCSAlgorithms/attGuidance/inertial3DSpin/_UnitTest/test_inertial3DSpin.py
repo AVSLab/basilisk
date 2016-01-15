@@ -2,7 +2,7 @@
 #   Unit Test Script
 #   Module Name:        inertial3DSpin
 #   Author:             Hanspeter Schaub
-#   Creation Date:      January 6, 2015
+#   Creation Date:      January 6, 2016
 #
 
 import pytest
@@ -21,7 +21,6 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import inertial3DSpin                   # import the module that is to be tested
-import simple_nav                       # import module(s) that creates the needed input message declaration
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -66,44 +65,18 @@ def subModuleTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputNavName  = "inputNavName"
     moduleConfig.outputDataName = "outputName"
 
     vector = [0.1, 0.2, 0.3]
     SimulationBaseClass.SetCArray(vector,
                                   'double',
-                                  moduleConfig.sigma_R0N)
-    vector = [0.01, 0.05, -0.05]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.sigma_R0R)
+                                  moduleConfig.sigma_RN)
     vector = [1.*unitTestSupport.D2R, -1.*unitTestSupport.D2R, 0.5*unitTestSupport.D2R]
     SimulationBaseClass.SetCArray(vector,
                                   'double',
                                   moduleConfig.omega_RN_N)
 
 
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    inputMessageSize = 18*8                             # 6x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    sigma_BN = [0.25, -0.45, 0.75]
-    SimulationBaseClass.SetCArray(sigma_BN,
-                                  'double',
-                                  NavStateOutData.sigma_BN)
-    omega_BN_B = [-0.015, -0.012, 0.005]
-    SimulationBaseClass.SetCArray(omega_BN_B,
-                                  'double',
-                                  NavStateOutData.omega_BN_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          0,
-                                          NavStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -125,15 +98,15 @@ def subModuleTestFunction(show_plots):
     #
     # check sigma_BR
     #
-    moduleOutputName = "sigma_BR"
+    moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
     # set the filtered output truth states
     trueVector = [
-               [0.25,-0.45,0.75],
-               [0.25,-0.45,0.75],
-               [0.2507334254787293,-0.4448014521101621,0.7471652106429141]
+               [0.1, 0.2, 0.3],
+               [0.1, 0.2, 0.3],
+               [0.1001527163095495,0.1970765735029095,0.3023125612588925]
                ]
 
     # compare the module results to the truth values
@@ -147,45 +120,22 @@ def subModuleTestFunction(show_plots):
                                 str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                 "sec\n")
 
-    #
-    # check omega_BR_B
-    #
-    moduleOutputName = "omega_BR_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-
-    # set the filtered output truth states
-    trueVector = [
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357]
-               ]
-
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
-                                "sec\n")
 
     #
     # check omega_RN_B
     #
-    moduleOutputName = "omega_RN_B"
+    moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
     # set the filtered output truth states
     trueVector = [
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357]
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648]
                ]
-
+    print moduleOutput
+    
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -200,7 +150,7 @@ def subModuleTestFunction(show_plots):
     #
     # check domega_RN_B
     #
-    moduleOutputName = "domega_RN_B"
+    moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
