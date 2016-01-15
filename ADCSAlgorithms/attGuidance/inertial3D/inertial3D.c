@@ -106,17 +106,16 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
     } else {
         dt = 0.;                            /* set dt to zero to not use integration on first function call */
     }
+    
     ConfigData->priorTime = callTime;
 
 
     /*
      compute and store output message 
      */
-    computeInertialSpinAttitudeError(nav.sigma_BN,
+    computeInertial3DAttitudeError(nav.sigma_BN,
                                      nav.omega_BN_B,
                                      ConfigData,
-                                     BOOL_TRUE,         /* integrate and update */
-                                     dt,
                                      ConfigData->attGuidOut.sigma_BR,
                                      ConfigData->attGuidOut.omega_BR_B,
                                      ConfigData->attGuidOut.omega_RN_B,
@@ -150,41 +149,19 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
  *   omega_RN_B = reference angluar velocity vector in body frame components
  *   domega_RN_B = reference angular acceleration vector in body frame componets
  */
-void computeInertialSpinAttitudeError(double sigma_BN[3],
+void computeInertial3DAttitudeError(double sigma_BN[3],
                                       double omega_BN_B[3],
                                       inertial3DConfig *ConfigData,
-                                      int    integrateFlag,
-                                      double dt,
                                       double sigma_BR[3],
                                       double omega_BR_B[3],
                                       double omega_RN_B[3],
                                       double domega_RN_B[3])
 {
-    double  BN[3][3];               /*!< DCM from inertial to body frame */
-    double  RN[3][3];               /*!< DCM from inertial to reference frame */
-    double  B[3][3];                /*!< MRP rate matrix */
-    double  v3Temp[3];              /*!< temporary 3x1 matrix */
-    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
-
-
-    if (integrateFlag == BOOL_TRUE) {
-        /* integrate reference attitude motion */
-        MRP2C(ConfigData->sigma_RN, RN);
-        m33MultV3(RN, ConfigData->omega_RN_N, omega_RN_R);
-        BmatMRP(ConfigData->sigma_RN, B);
-        m33Scale(0.25*dt, B, B);
-        m33MultV3(B, omega_RN_R, v3Temp);
-        v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
-        MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
-    }
-
     /* compute attitude error */
     subMRP(sigma_BN, ConfigData->sigma_RN, sigma_BR);
+    v3Copy(omega_BN_B, omega_BR_B);
 
-    /* compute rate errors */
-    MRP2C(sigma_BN, BN);                                        /* [BN] */
-    m33MultV3(BN, ConfigData->omega_RN_N, omega_RN_B);          /* compute reference omega in body frame components */
-    v3Subtract(omega_BN_B, omega_RN_B, omega_BR_B);             /* delta_omega = omega_B - [BR].omega.r */
-    v3SetZero(domega_RN_B);                                     /* the inertial spin is assumed to be constant */
-    
+    /* set rate errors to zero */
+    v3SetZero(omega_RN_B);
+    v3SetZero(domega_RN_B);
 }

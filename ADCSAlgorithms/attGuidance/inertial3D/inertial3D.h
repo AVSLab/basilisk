@@ -46,11 +46,9 @@ extern "C" {
     void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_inertial3D(inertial3DConfig *ConfigData);
 
-    void computeInertialSpinAttitudeError(double sigma_BN[3],
+    void computeInertial3DAttitudeError(double sigma_BN[3],
                                           double omega_BN_B[3],
                                           inertial3DConfig *ConfigData,
-                                          int    integrateFlag,
-                                          double dt,
                                           double sigma_BR[3],
                                           double omega_BR_B[3],
                                           double omega_RN_B[3],
