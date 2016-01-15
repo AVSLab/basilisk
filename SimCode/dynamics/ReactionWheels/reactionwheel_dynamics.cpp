@@ -149,15 +149,16 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  for(it = ReactionWheelData.begin(), CmdIt=NewRWCmds.begin();
      CmdIt!=NewRWCmds.end(); CmdIt++, it++)
  {
+     /*
 	 //! - Just set the motor torque equal to the torque request for now
 	 it->currentTorque = CmdIt->TorqueRequest;
 	 if (fabs(it->currentTorque) > it->MaxTorque)
 	 {
 		 it->currentTorque /= fabs(it->currentTorque);
 		 it->currentTorque *= it->MaxTorque;
-	 }
+	 }*/
 	 v3Scale(CmdIt->TorqueRequest, &(ReactionWheelData[0].ReactionWheelDirection[0]), StrTorque);
-
+      
  }
 
 
