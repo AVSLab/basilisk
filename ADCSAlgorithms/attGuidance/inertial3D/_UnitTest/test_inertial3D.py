@@ -133,7 +133,7 @@ def subModuleTestFunction(show_plots):
     trueVector = [
                [0.25,-0.45,0.75],
                [0.25,-0.45,0.75],
-               [0.2507334254787293,-0.4448014521101621,0.7471652106429141]
+               [0.25,-0.45,0.75]
                ]
 
     # compare the module results to the truth values
@@ -156,9 +156,9 @@ def subModuleTestFunction(show_plots):
 
     # set the filtered output truth states
     trueVector = [
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357]
+               [-0.015, -0.012, 0.005],
+               [-0.015, -0.012, 0.005],
+               [-0.015, -0.012, 0.005]
                ]
 
     # compare the module results to the truth values
@@ -181,9 +181,9 @@ def subModuleTestFunction(show_plots):
 
     # set the filtered output truth states
     trueVector = [
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357]
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0]
                ]
 
     # compare the module results to the truth values
