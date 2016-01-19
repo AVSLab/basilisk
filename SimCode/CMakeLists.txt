@@ -31,6 +31,7 @@ FOREACH(module ${swig_modules})
 	    "${FileDir}/../_GeneralModuleFiles/*.h"
 	    "${FileDir}/../_GeneralModuleFiles/*.c")
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
     set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
     #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-includeall")
     #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities")
