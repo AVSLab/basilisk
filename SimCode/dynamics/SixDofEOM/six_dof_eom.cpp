@@ -223,6 +223,7 @@ void SixDofEOM::ReadInputs()
             memcpy(it->PosFromEphem, LocalPlanet.PositionVector, 3*sizeof(double));
             memcpy(it->VelFromEphem, LocalPlanet.VelocityVector, 3*sizeof(double));
             memcpy(it->J20002Pfix, LocalPlanet.J20002Pfix, 9*sizeof(double));
+            memcpy(it->J20002Pfix_dot, LocalPlanet.J20002Pfix_dot, 9*sizeof(double));
             it->ephemTime = LocalPlanet.J2000Current;
             it->planetEphemName = LocalPlanet.PlanetName;
         }
@@ -436,10 +437,37 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, d2);
     v3Add(d2, dX+3, dX+3);
 
-    /* compute the gravitational zonal harmonics */
+    /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
     if(CentralBody->UseJParams)
     {
         jPerturb(CentralBody, r_N, perturbAccel);
+        v3Add(dX+3, perturbAccel, dX+3);
+    }
+    else if (CentralBody->UseSphericalHarmParams)
+    {
+        unsigned int max_degree = CentralBody->spherHarm->getMaxDegree(); // Maximum degree to include
+        double posBodyFix[3]; // [m] Position in planet-fixed frame
+        double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
+
+        double aux[3], aux1[3], aux2[3], aux3[3];
+        
+        m33MultV3(CentralBody->J20002Pfix, r_N, posBodyFix);
+        CentralBody->spherHarm->computeField(posBodyFix, max_degree, gravField, false);
+        
+        m33tMultV3(CentralBody->J20002Pfix, gravField, aux1);
+        
+        m33MultV3(CentralBody->J20002Pfix_dot, v_N, aux2);
+        m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);
+        v3Scale(2.0, aux2, aux2);
+        
+        m33MultV3(CentralBody->J20002Pfix_dot, r_N, aux3);
+        m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);
+        m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3);
+        m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);
+        
+        v3Subtract(aux1, aux2, aux);
+        v3Subtract(aux, aux3, perturbAccel);
+        
         v3Add(dX+3, perturbAccel, dX+3);
     }
 

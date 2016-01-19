@@ -5,6 +5,7 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
+#include "utilities/linearAlgebra.h"
 #include <map>
 
 /*! \addtogroup SimModelGroup

@@ -7,6 +7,7 @@
 #include "utilities/dyn_effector.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+#include "dynamics/SphericalHarmonics/sphericalHarmonics.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -20,10 +21,14 @@ typedef struct {
     bool IsCentralBody;             //!<          Flag indicating that object is center
     bool IsDisplayBody;             //!<          Flag indicating that body is display
     bool UseJParams;                //!<          Flag indicating to use perturbations
+    bool UseSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
     std::vector<double> JParams;    //!<          J perturbations to include
     double PosFromEphem[3];         //!< [m]      Position vector from central to body
     double VelFromEphem[3];         //!< [m/s]    Velocity vector from central body
     double J20002Pfix[3][3];        //!<          Transformation matrix from J2000 to planet-fixed
+    double J20002Pfix_dot[3][3];    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
+    sphericalHarmonics* spherHarm;  //!<          Object which computes the spherical harmonics gravity field
+    coeffLoader* coeff_loader;      //!<          Object which loads the coefficients
     double posRelDisplay[3];        //!< [m]      Position of planet relative to display frame
     double velRelDisplay[3];        //!< [m]      Velocity of planet relative to display frame
     double mu;                      //!< [m3/s^2] central body gravitational param

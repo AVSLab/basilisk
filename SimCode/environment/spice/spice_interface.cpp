@@ -254,8 +254,16 @@ void SpiceInterface::ComputePlanetData()
         planetFrame += planit->second.PlanetName;
         if(planit->second.computeOrient)
         {
-            pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
-                planit->second.J20002Pfix);
+            //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
+            //    planit->second.J20002Pfix);
+            
+            double aux[6][6];
+            
+            sxform_c(referenceBase.c_str(), planetFrame.c_str(), J2000Current, aux);
+            
+            m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
+            
+            m66Get33Matrix(1, 0, aux, planit->second.J20002Pfix_dot);
         }
     }
     
