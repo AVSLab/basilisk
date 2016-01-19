@@ -6,75 +6,61 @@
 
  */
 
-/* modify the path to reflect the new module names */
+
 #include "attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
-/* update this include to reflect the required module input messages */
+/* Required module input messages */
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
-
-
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
+/* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 
 
-/*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
- @return void
- @param ConfigData The configuration data associated with this module
- */
+
 void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(attGuidOut),
                                                "attGuidOut",
                                                moduleID);
-    v3SetZero(ConfigData->attGuidOut.domega_RN_B);      /* the inertial spin rate is assumed to be constant */
-
-    ConfigData->sigma_BcB = ConfigData->sigma_R0R;      /* these two relative orientations labels are the same */
-
+    
+    /* these two relative orientations labels are the same */
+    ConfigData->sigma_BcB = ConfigData->sigma_R0R;
+    
+    /* Obit frame states. #NOTE: should they go here or in Python? */
+    ConfigData->OrbitFrameStates.i_r = 0; // x-axis
+    ConfigData->OrbitFrameStates.i_theta = 1; // y-axis
+    ConfigData->OrbitFrameStates.i_h = 2; // z-axis
+    
+    ConfigData->OrbitFrameStates.i_hSign = 1;
+    ConfigData->OrbitFrameStates.i_rSign = 1;
+    ConfigData->OrbitFrameStates.i_thetaSign = ConfigData->OrbitFrameStates.i_rSign * ConfigData->OrbitFrameStates.i_hSign;
+    
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param ConfigData The configuration data associated with this module
- */
 void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
                                                 sizeof(NavStateOut),
                                                 moduleID);
-
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param ConfigData The configuration data associated with the MRP steering control
- */
 void Reset_hillPoint(hillPointConfig *ConfigData)
 {
-    double sigma_RR0[3];            /*!< MRP from the original reference frame R0 to the corrected reference frame R */
+    double sigma_RR0[3];
 
     /* compute the initial reference frame orientation that takes the corrected body frame into account */
     v3Scale(-1.0, ConfigData->sigma_R0R, sigma_RR0);
     addMRP(ConfigData->sigma_R0N, sigma_RR0, ConfigData->sigma_RN);
-
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
+    
+    /* reset the prior time flag state.  If set to zero, the control time step is not evaluated on thefirst function call */
+    ConfigData->priorTime = 0;
 
 }
 
@@ -112,11 +98,11 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     /*
      compute and store output message 
      */
-    computeInertialSpinAttitudeError(nav.sigma_BN,
+    computeHillPointAttitudeError(nav.sigma_BN,
                                      nav.omega_BN_B,
+                                     nav.r_BN_N,
+                                     nav.v_BN_N,
                                      ConfigData,
-                                     BOOL_TRUE,         /* integrate and update */
-                                     dt,
                                      ConfigData->attGuidOut.sigma_BR,
                                      ConfigData->attGuidOut.omega_BR_B,
                                      ConfigData->attGuidOut.omega_RN_B,
@@ -133,58 +119,94 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
 
 /*
  * Function: computeInertialSpinAttitudeError
- * Purpose: compute the attitude and rate errors for the Inertial 3D spin control mode.  This function is
- designed to work both here in FSW to compute estimated pointing errors, as well as in the
- simulation code to compute true pointing errors
+ *  Purpose: compute the attitude and rate errors. This function is designed to work both in:
+ *      FSW to compute estimated pointing errors
+ *      Simulation code to compute true pointing errors
  * Inputs:
- *   sigma = MRP attitude of body relative to inertial
- *   omega = body rate vector
-     ConfigData = module configuration data
- *   integrateFlag = flag to reset the reference orientation
- *                   0 - integrate & evaluate
- *                  -1 - evalute but not integrate)
- *   dt = integration time step (control update period )
+ *   sigma_BN = MRP attitude of body relative to inertial
+ *   omega_BN_B = body rate vector
+ *   r_BN_B = inertial position vector of the spacecraft in body frame components
+ *   v_BN_B = inertial velocity vector of the spacecraft in body frame components
+ *   ConfigData = module configuration data
  * Outputs:
  *   sigma_BR = MRP attitude error of body relative to reference
  *   omega_BR_B = angular velocity vector error of body relative to reference
  *   omega_RN_B = reference angluar velocity vector in body frame components
  *   domega_RN_B = reference angular acceleration vector in body frame componets
  */
-void computeInertialSpinAttitudeError(double sigma_BN[3],
+void computeHillPointAttitudeError(double sigma_BN[3],
                                       double omega_BN_B[3],
+                                      double r_BN_N[3],
+                                      double v_BN_N[3],
                                       hillPointConfig *ConfigData,
-                                      int    integrateFlag,
-                                      double dt,
                                       double sigma_BR[3],
                                       double omega_BR_B[3],
                                       double omega_RN_B[3],
                                       double domega_RN_B[3])
 {
+    
+    
     double  BN[3][3];               /*!< DCM from inertial to body frame */
     double  RN[3][3];               /*!< DCM from inertial to reference frame */
-    double  B[3][3];                /*!< MRP rate matrix */
-    double  v3Temp[3];              /*!< temporary 3x1 matrix */
-    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
-
-
-    if (integrateFlag == BOOL_TRUE) {
-        /* integrate reference attitude motion */
-        MRP2C(ConfigData->sigma_RN, RN);
-        m33MultV3(RN, ConfigData->omega_RN_N, omega_RN_R);
-        BmatMRP(ConfigData->sigma_RN, B);
-        m33Scale(0.25*dt, B, B);
-        m33MultV3(B, omega_RN_R, v3Temp);
-        v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
-        MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
-    }
-
-    /* compute attitude error */
-    subMRP(sigma_BN, ConfigData->sigma_RN, sigma_BR);
-
-    /* compute rate errors */
-    MRP2C(sigma_BN, BN);                                        /* [BN] */
-    m33MultV3(BN, ConfigData->omega_RN_N, omega_RN_B);          /* compute reference omega in body frame components */
-    v3Subtract(omega_BN_B, omega_RN_B, omega_BR_B);             /* delta_omega = omega_B - [BR].omega.r */
-    v3SetZero(domega_RN_B);                                     /* the inertial spin is assumed to be constant */
+    double  BR[3][3];               /*!< DCM from reference to body frame */
+    double  temp33[3][3];
     
+    double rm;                      /*!< orbit radius */
+    double h[3];                    /*!< orbit angular momentum vector */
+    double hm;                      /*!< module of the orbit angular momentum vector */
+    double dfdt;                    /*!< rotational rate of the orbit frame */
+    double ddfdt2;                  /*!< rotational acceleration of the frame */
+
+    
+    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
+    double  domega_RN_R[3];          /*!< reference angular acceleration vector in Reference frame R components */
+
+
+    /* Compute reference attitude states assuming the reference orientation is Nadir pointing*/
+
+    /* Compute BN */
+    MRP2C(sigma_BN, BN);
+    
+    /* Compute RN */
+        /* i_r */
+    v3Normalize(r_BN_N, RN[ConfigData->OrbitFrameStates.i_r]);
+    if(ConfigData->OrbitFrameStates.i_rSign < 0) {
+        v3Scale(-1.0, RN[ConfigData->OrbitFrameStates.i_r], RN[ConfigData->OrbitFrameStates.i_r]);
+    }
+        /* i_h */
+    v3Cross(r_BN_N, v_BN_N, h);
+    v3Normalize(h, RN[ConfigData->OrbitFrameStates.i_h]);
+    if(ConfigData->OrbitFrameStates.i_hSign < 0) {
+        v3Scale(-1.0, RN[ConfigData->OrbitFrameStates.i_h], RN[ConfigData->OrbitFrameStates.i_h]);
+    }
+        /* i_theta = i_h x i_r */
+    v3Cross(RN[ConfigData->OrbitFrameStates.i_h], RN[ConfigData->OrbitFrameStates.i_r], RN[ConfigData->OrbitFrameStates.i_theta]);
+    
+    /* Compute BR */
+    m33Transpose(RN, temp33);
+    m33MultM33(BN, temp33, BR);
+    
+    /* compute relative orientation error */
+    C2MRP(BR, sigma_BR); // #NEW: subMRP(sigma_BN, ConfigData->sigma_RN, sigma_BR);
+    
+    /* compute R-frame inertial rate and acceleration */
+    rm = v3Norm(r_BN_N);
+    hm = v3Norm(h);
+    if(rm > 1.) {
+        dfdt = hm / (rm * rm);  // n = h / r^2
+        ddfdt2 = - 2.0 * v3Dot(v_BN_N, RN[ConfigData->OrbitFrameStates.i_r - 1]) / rm * dfdt;
+    } else {
+        /* an error has occured, radius shouldn't be less than 1km */
+        dfdt   = 0.;
+        ddfdt2 = 0.;
+    }
+    v3SetZero(omega_RN_R);
+    v3SetZero(domega_RN_R);
+    omega_RN_R[ConfigData->OrbitFrameStates.i_h]  = dfdt * ConfigData->OrbitFrameStates.i_hSign;
+    domega_RN_R[ConfigData->OrbitFrameStates.i_h] = ddfdt2 * ConfigData->OrbitFrameStates.i_hSign;
+    
+    /* compute angular velocity tracking errors */
+    m33MultV3(BR, omega_RN_R, omega_RN_B); // #NEW: m33MultV3(BN, ConfigData->omega_RN_N, omega_RN_B);
+    m33MultV3(BR, domega_RN_R, domega_RN_B); // #NEW: m33MultV3(BN, ConfigData->domega_RN_N, domega_RN_B);
+    v3Subtract(omega_BN_B, omega_RN_B, omega_BR_B);
 }
