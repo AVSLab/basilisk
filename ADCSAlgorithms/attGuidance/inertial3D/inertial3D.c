@@ -17,41 +17,32 @@
 
 
 
-/*
- Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
- */
+/* Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 
 
-/*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
- @return void
- @param ConfigData The configuration data associated with this module
- */
 void SelfInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
 {
-    
-    /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(attGuidOut),
                                                "attGuidOut",
                                                moduleID);
-    /* set reference rates to zero */
-    v3SetZero(ConfigData->attGuidOut.omega_RN_B);
+    /* Reference rates are assumed to be zero */
+    v3SetZero(ConfigData->attGuidOut.omega_RN_B); /* #WHY? Isn't this redundant? */
     v3SetZero(ConfigData->attGuidOut.domega_RN_B);
-
-    ConfigData->sigma_BcB = ConfigData->sigma_R0R;      /* these two relative orientations labels are the same */
+    
+    /* these two relative orientations labels are the same */
+    ConfigData->sigma_BcB = ConfigData->sigma_R0R;
+    
+    /* Input ConfigData parameters are set in python:
+    ConfigData->sigma_RR0
+    ConfigData->sigma_R0N
+    ConfigData->omega_RN_N */
 
 }
 
-/*! This method performs the second stage of initialization for this module.
- It's primary function is to link the input messages that were created elsewhere.
- @return void
- @param ConfigData The configuration data associated with this module
- */
 void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
@@ -61,30 +52,18 @@ void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
 
 }
 
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param ConfigData The configuration data associated
- */
 void Reset_inertial3D(inertial3DConfig *ConfigData)
 {
-    double sigma_RR0[3];            /*!< MRP from the original reference frame R0 to the corrected reference frame R */
-
     /* compute the initial reference frame orientation that takes the corrected body frame into account */
+    double sigma_RR0[3];
     v3Scale(-1.0, ConfigData->sigma_R0R, sigma_RR0);
     addMRP(ConfigData->sigma_R0N, sigma_RR0, ConfigData->sigma_RN);
-
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
-
+    /* #NOTE: Shouldn't this go to Init function? */
+    
+    /* reset the prior time flag state.  If set to zero, the control time step is not evaluated on the first function call */
+    ConfigData->priorTime = 0;
 }
 
-/*! Add a description of what this main Update() routine does for this module
- @return void
- @param ConfigData The configuration data associated
- @param callTime The clock time at which the function was called (nanoseconds)
- */
 void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t            clockTime;
@@ -93,7 +72,6 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
     double              dt;                 /*!< [s] module update period */
 
 
-    /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavStateOut), (void*) &(nav));
@@ -112,9 +90,7 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
     ConfigData->priorTime = callTime;
 
 
-    /*
-     compute and store output message 
-     */
+    /* compute and store output message */
     computeInertial3DAttitudeError(nav.sigma_BN,
                                      nav.omega_BN_B,
                                      ConfigData,
@@ -122,8 +98,6 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
                                      ConfigData->attGuidOut.omega_BR_B,
                                      ConfigData->attGuidOut.omega_RN_B,
                                      ConfigData->attGuidOut.domega_RN_B);
-
-
 
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),   /* update module name */
                  (void*) &(ConfigData->attGuidOut), moduleID);
@@ -134,9 +108,9 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
 
 /*
  * Function: computeInertial3DAttitudeError
- * Purpose: compute the attitude and rate errors for the Inertial 3D spin control mode.  This function is
- designed to work both here in FSW to compute estimated pointing errors, as well as in the
- simulation code to compute true pointing errors
+ * Purpose: compute the attitude and rate errors. This function is designed to work both in:
+ *      FSW to compute estimated pointing errors
+ *      Simulation code to compute true pointing errors
  * Inputs:
  *   sigma_BN = MRP attitude of body relative to inertial
  *   omega_BN_B = body rate vector
