@@ -3,6 +3,7 @@
 #include "utilities/linearAlgebra.h"
 #include <cstring>
 #include <iostream>
+#include <math.h>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
