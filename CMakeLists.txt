@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 project("AVS basilisk")
 
+find_package(PythonLibs 2.7 REQUIRED)
+find_package(PythonInterp 2.7 REQUIRED)
+
 set(CMAKE_MACOSX_RPATH 1)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -gdwarf-3")
 if(NOT WIN32)
