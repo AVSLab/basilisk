@@ -1,8 +1,8 @@
 #
 #   Unit Test Script
-#   Module Name:        inertial3DSpin
+#   Module Name:        attTrackingError
 #   Author:             Hanspeter Schaub
-#   Creation Date:      January 6, 2016
+#   Creation Date:      January 15, 2016
 #
 
 import pytest
@@ -20,15 +20,16 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import inertial3DSpin                   # import the module that is to be tested
-
+import attTrackingError                  # import the module that is to be tested
+import simple_nav                         # import module(s) that creates the needed input message declaration
+import inertial3DSpin                     # import module(s) that creates the needed input message declaration
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_inertial3DSpin(show_plots):
+def test_attTrackingError(show_plots):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
@@ -54,29 +55,78 @@ def subModuleTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = inertial3DSpin.inertial3DSpinConfig()
+    moduleConfig = attTrackingError.attTrackingErrorConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        inertial3DSpin.Update_inertial3DSpin,
-                                        inertial3DSpin.SelfInit_inertial3DSpin,
-                                        inertial3DSpin.CrossInit_inertial3DSpin)
-    moduleWrap.ModelTag = "inertial3DSpin"
+                                        attTrackingError.Update_attTrackingError,
+                                        attTrackingError.SelfInit_attTrackingError,
+                                        attTrackingError.CrossInit_attTrackingError)
+    moduleWrap.ModelTag = "attTrackingError"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
+    moduleConfig.inputNavName  = "inputNavName"
+    moduleConfig.inputRefName  = "inputRefName"
     moduleConfig.outputDataName = "outputName"
 
-    vector = [0.1, 0.2, 0.3]
+    vector = [0.01, 0.05, -0.55]
     SimulationBaseClass.SetCArray(vector,
                                   'double',
-                                  moduleConfig.sigma_RN)
-    vector = [1.*unitTestSupport.D2R, -1.*unitTestSupport.D2R, 0.5*unitTestSupport.D2R]
-    SimulationBaseClass.SetCArray(vector,
+                                  moduleConfig.sigma_R0R)
+
+
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+    #
+    # Navigation Message
+    #
+    inputMessageSize = 18*8                             # 6x3 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputNavName,
+                                          inputMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+
+    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
+    sigma_BN = [0.25, -0.45, 0.75]
+    SimulationBaseClass.SetCArray(sigma_BN,
                                   'double',
-                                  moduleConfig.omega_RN_N)
+                                  NavStateOutData.sigma_BN)
+    omega_BN_B = [-0.015, -0.012, 0.005]
+    SimulationBaseClass.SetCArray(omega_BN_B,
+                                  'double',
+                                  NavStateOutData.omega_BN_B)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
+                                          inputMessageSize,
+                                          0,
+                                          NavStateOutData)
 
+    #
+    # Reference Frame Message
+    #
+    inputMessageSize = 12*8                             # 4x3 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRefName,
+                                          inputMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
 
+    RefStateOutData = inertial3DSpin.attRefOut()          # Create a structure for the input message
+    sigma_RN = [0.35, -0.25, 0.15]
+    SimulationBaseClass.SetCArray(sigma_RN,
+                                  'double',
+                                  RefStateOutData.sigma_RN)
+    omega_RN_N = [0.018, -0.032, 0.015]
+    SimulationBaseClass.SetCArray(omega_RN_N,
+                                  'double',
+                                  RefStateOutData.omega_RN_N)
+    domega_RN_N = [0.048, -0.022, 0.025]
+    SimulationBaseClass.SetCArray(domega_RN_N,
+                                  'double',
+                                  RefStateOutData.domega_RN_N)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
+                                          inputMessageSize,
+                                          0,
+                                          RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -88,7 +138,7 @@ def subModuleTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(0.3))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -98,17 +148,15 @@ def subModuleTestFunction(show_plots):
     #
     # check sigma_BR
     #
-    moduleOutputName = "sigma_RN"
+    moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
     # set the filtered output truth states
     trueVector = [
-               [0.1, 0.2, 0.3],
-               [0.1, 0.2, 0.3],
-               [0.1001527163095495,0.1970765735029095,0.3023125612588925]
+               [0.1836841481753408,-0.0974447769418166,-0.09896069560518146],
                ]
-
+   
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -120,22 +168,42 @@ def subModuleTestFunction(show_plots):
                                 str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                 "sec\n")
 
-
     #
-    # check omega_RN_B
+    # check omega_BR_B
     #
-    moduleOutputName = "omega_RN_N"
+    moduleOutputName = "omega_BR_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
     # set the filtered output truth states
     trueVector = [
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648]
+               [-0.01181207648013235,-0.008916032420030655,-0.0344122606253076],
                ]
-    print moduleOutput
+
     
+    # compare the module results to the truth values
+    accuracy = 1e-12
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                moduleOutputName + " unit test at t=" +
+                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
+                                "sec\n")
+
+    #
+    # check omega_RN_B
+    #
+    moduleOutputName = "omega_RN_B"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+                                                  range(3))
+
+    # set the filtered output truth states
+    trueVector = [
+               [-0.003187923519867655,-0.003083967579969345,0.0394122606253076],
+               ]
+
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -150,15 +218,13 @@ def subModuleTestFunction(show_plots):
     #
     # check domega_RN_B
     #
-    moduleOutputName = "domega_RN_N"
+    moduleOutputName = "domega_RN_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
     # set the filtered output truth states
     trueVector = [
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0]
+               [-0.02388623421245188,-0.02835600277714878,0.04514847640452802],
                ]
 
     # compare the module results to the truth values
@@ -198,4 +264,4 @@ def subModuleTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_inertial3DSpin(False)
+    test_attTrackingError(False)

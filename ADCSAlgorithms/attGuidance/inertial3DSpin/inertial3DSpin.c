@@ -36,12 +36,10 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut),
-                                               "attGuidOut",
+                                               sizeof(attRefOut),
+                                               "attRefOut",
                                                moduleID);
-    v3SetZero(ConfigData->attGuidOut.domega_RN_B);      /* the inertial spin rate is assumed to be constant */
-
-    ConfigData->sigma_BcB = ConfigData->sigma_R0R;      /* these two relative orientations labels are the same */
+    v3SetZero(ConfigData->attRefOut.domega_RN_N);      /* the inertial spin rate is assumed to be constant */
 
 }
 
@@ -53,9 +51,6 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
 void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
-                                                sizeof(NavStateOut),
-                                                moduleID);
 
 }
 
@@ -66,11 +61,6 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
  */
 void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData)
 {
-    double sigma_RR0[3];            /*!< MRP from the original reference frame R0 to the corrected reference frame R */
-
-    /* compute the initial reference frame orientation that takes the corrected body frame into account */
-    v3Scale(-1.0, ConfigData->sigma_R0R, sigma_RR0);
-    addMRP(ConfigData->sigma_R0N, sigma_RR0, ConfigData->sigma_RN);
 
     ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
@@ -85,17 +75,7 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData)
  */
 void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
-    NavStateOut         nav;                /*!< navigation message */
     double              dt;                 /*!< [s] module update period */
-
-
-    /*! Begin method steps*/
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav));
-
 
 
     /* compute control update time */
@@ -112,55 +92,45 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
     /*
      compute and store output message 
      */
-    computeInertialSpinAttitudeError(nav.sigma_BN,
-                                     nav.omega_BN_B,
-                                     ConfigData,
-                                     BOOL_TRUE,         /* integrate and update */
-                                     dt,
-                                     ConfigData->attGuidOut.sigma_BR,
-                                     ConfigData->attGuidOut.omega_BR_B,
-                                     ConfigData->attGuidOut.omega_RN_B,
-                                     ConfigData->attGuidOut.domega_RN_B);
+    computeInertialSpinReference(ConfigData,
+                                 BOOL_TRUE,         /* integrate and update */
+                                 dt,
+                                 ConfigData->attRefOut.sigma_RN,
+                                 ConfigData->attRefOut.omega_RN_N,
+                                 ConfigData->attRefOut.domega_RN_N);
 
 
 
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),   /* update module name */
-                 (void*) &(ConfigData->attGuidOut), moduleID);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
+                 (void*) &(ConfigData->attRefOut), moduleID);
 
     return;
 }
 
 
 /*
- * Function: computeInertialSpinAttitudeError
- * Purpose: compute the attitude and rate errors for the Inertial 3D spin control mode.  This function is
+ * Function: computeInertialSpinReference
+ * Purpose: compute the reference frame states for the Inertial 3D spin control mode.  This function is
  designed to work both here in FSW to compute estimated pointing errors, as well as in the
  simulation code to compute true pointing errors
  * Inputs:
- *   sigma = MRP attitude of body relative to inertial
- *   omega = body rate vector
      ConfigData = module configuration data
  *   integrateFlag = flag to reset the reference orientation
  *                   0 - integrate & evaluate
  *                  -1 - evalute but not integrate)
  *   dt = integration time step (control update period )
  * Outputs:
- *   sigma_BR = MRP attitude error of body relative to reference
- *   omega_BR_B = angular velocity vector error of body relative to reference
- *   omega_RN_B = reference angluar velocity vector in body frame components
- *   domega_RN_B = reference angular acceleration vector in body frame componets
+ *   sigma_RN = MRP attitude error of body relative to reference
+ *   omega_RN_N = reference angluar velocity vector in body frame components
+ *   domega_RN_N = reference angular acceleration vector in body frame componets
  */
-void computeInertialSpinAttitudeError(double sigma_BN[3],
-                                      double omega_BN_B[3],
-                                      inertial3DSpinConfig *ConfigData,
-                                      int    integrateFlag,
-                                      double dt,
-                                      double sigma_BR[3],
-                                      double omega_BR_B[3],
-                                      double omega_RN_B[3],
-                                      double domega_RN_B[3])
+void computeInertialSpinReference(inertial3DSpinConfig *ConfigData,
+                                  int    integrateFlag,
+                                  double dt,
+                                  double sigma_RN[3],
+                                  double omega_RN_N[3],
+                                  double domega_RN_N[3])
 {
-    double  BN[3][3];               /*!< DCM from inertial to body frame */
     double  RN[3][3];               /*!< DCM from inertial to reference frame */
     double  B[3][3];                /*!< MRP rate matrix */
     double  v3Temp[3];              /*!< temporary 3x1 matrix */
@@ -178,13 +148,8 @@ void computeInertialSpinAttitudeError(double sigma_BN[3],
         MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
     }
 
-    /* compute attitude error */
-    subMRP(sigma_BN, ConfigData->sigma_RN, sigma_BR);
+    v3Copy(ConfigData->sigma_RN, sigma_RN);
+    v3Copy(ConfigData->omega_RN_N, omega_RN_N);
+    v3SetZero(domega_RN_N);
 
-    /* compute rate errors */
-    MRP2C(sigma_BN, BN);                                        /* [BN] */
-    m33MultV3(BN, ConfigData->omega_RN_N, omega_RN_B);          /* compute reference omega in body frame components */
-    v3Subtract(omega_BN_B, omega_RN_B, omega_BR_B);             /* delta_omega = omega_B - [BR].omega.r */
-    v3SetZero(domega_RN_B);                                     /* the inertial spin is assumed to be constant */
-    
 }
