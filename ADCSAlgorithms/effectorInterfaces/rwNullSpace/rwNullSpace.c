@@ -4,6 +4,7 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
 
@@ -27,7 +28,7 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 	mTranspose(ConfigData->GsMatrix, 3, ConfigData->numWheels, GsTranspose);
 	mMultM(ConfigData->GsMatrix, 3, ConfigData->numWheels, GsTranspose, 
 		ConfigData->numWheels, 3, GsInvHalf);
-	m33Inverse(GsInvHalf, GsInvHalf);
+	m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);
 	mMultM(GsInvHalf, 3, 3, ConfigData->GsMatrix, 3, ConfigData->numWheels,
 		ConfigData->GsInverse);
 	mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->GsInverse, 3,
