@@ -118,9 +118,8 @@ T_str2Bdy = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0]
 SimulationBaseClass.SetCArray(T_str2Bdy, 'double', massPropsData.T_str2Bdy)
 outputState = six_dof_eom.OutputStateData()
 
-
+#first set of commands
 cmdArray = v3DoubleSet(0.09,0.20,1.30)
-
 
 #Configure command message
 TotalSim.TotalSim.CreateNewMessage("RWUnitTestProcess", "reactionwheel_cmds", 8*numReactionWheels, 2)
@@ -135,6 +134,7 @@ TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0,
 executeSimulationRun(stopTime1, threadCallPeriod, TotalSim, RWDynObject,
     massPropsData, outputState)
 
+#second set of commands
 cmdArray2 = v3DoubleSet(-0.09,-0.20,-1.30)
 
 TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, cmdArray2 );

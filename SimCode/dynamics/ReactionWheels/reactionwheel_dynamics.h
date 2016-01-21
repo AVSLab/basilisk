@@ -21,13 +21,16 @@ typedef struct {
  double gtHat0_S[3]; //!< initial torque axis unit vector in structural frame
  double ggHat0_S[3]; //!< initial gimbal axis unit vector in structural frame
  double theta; //!< wheel angle
+ double u_current; //!< N-m, current motor torque
  double u_max; //!< N-m, Max torque
- double u_min; //!< N-m, Max torque
+ double u_min; //!< N-m, Min torque
  double u_f; //!< N-m, Coulomb friction torque magnitude
  double Omega; //!< rad/s, wheel speed
+ double Omega_max; //!< rad/s, max wheel speed
  double Js; //!< kg-m^2, spin axis moment of inertia
  double U_s; //!< kg-m, static imbalance
  double U_d; //!< kg-m^2, dynamic imbalance
+ bool usingRWJitter; //!< flag for using imbalance torques
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -35,7 +38,7 @@ typedef struct {
  sparse, but it is included as a structure for growth and for clear I/O
  definitions.*/
 typedef struct {
- double u_c; //!< N-m, torque command for RW
+ double u_cmd; //!< N-m, torque command for RW
 }RWCmdStruct;
 
 //! @brief Thruster dynamics class used to provide thruster effects on body
