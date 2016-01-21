@@ -3,7 +3,7 @@
 #include "utilities/linearAlgebra.h"
 #include <cstring>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -17,8 +17,8 @@ ReactionWheelDynamics::ReactionWheelDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    memset(StrForce, 0x0, 3*sizeof(double));
-    memset(StrTorque, 0x0, 3*sizeof(double));
+    memset(F_S, 0x0, 3*sizeof(double));
+    memset(tau_S, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -28,21 +28,21 @@ ReactionWheelDynamics::~ReactionWheelDynamics()
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firings
+/*! This method is used to clear out the current RW states and make sure
+ that the overall model is ready
  @return void
  */
 void ReactionWheelDynamics::SelfInit()
 {
 
     RWCmdStruct RWCmdInitializer;
-    RWCmdInitializer.TorqueRequest = 0.0;
+    RWCmdInitializer.u_cmd = 0.0;
 
     //! Begin method steps
-    //! - Clear out any currently firing thrusters and re-init cmd array
+    //! - Clear out any currently firing RWs and re-init cmd array
     NewRWCmds.clear();
     NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
-    //! - Clear out the incoming command buffer and resize to max thrusters
+//    ! - Clear out the incoming command buffer and resize to max RWs
     if(IncomingCmdBuffer != NULL)
     {
         delete [] IncomingCmdBuffer;
@@ -55,7 +55,7 @@ void ReactionWheelDynamics::SelfInit()
 
 }
 
-/*! This method is used to connect the input command message to the thrusters.
+/*! This method is used to connect the input command message to the RWs.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
  @return void
@@ -95,7 +95,7 @@ void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
+ associated command structure for operating the RWs.
  @return void
  */
 void ReactionWheelDynamics::ReadInputs()
@@ -118,9 +118,9 @@ void ReactionWheelDynamics::ReadInputs()
                                                 reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
 
     //! - Check if message has already been read, if stale return
-    if(prevCommandTime==LocalHeader.WriteClockNanos) {
-        return;
-    }
+//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
+//        return;
+//    }
     prevCommandTime = LocalHeader.WriteClockNanos;
     
     //! - Set the NewRWCmds vector.  Using the data() method for raw speed
@@ -128,16 +128,14 @@ void ReactionWheelDynamics::ReadInputs()
     for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
         CmdPtr++, i++)
     {
-        CmdPtr->TorqueRequest = IncomingCmdBuffer[i].TorqueRequest;
+        CmdPtr->u_cmd = IncomingCmdBuffer[i].u_cmd;
     }
 
 }
 
-///*! This method is used to read the new commands vector and set the thruster
+///*! This method is used to read the new commands vector and set the RW
 // firings appropriately.  It assumes that the ReadInputs method has already been
-// run successfully.  It honors all previous thruster firings if they are still
-// active.  Note that for unit testing purposes you can insert firings directly
-// into NewRWCmds.
+// run successfully.
 // @return void
 // @param CurrentTime The current simulation time converted to a double
 // */
@@ -145,42 +143,92 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 {
  //! Begin method steps
  std::vector<RWCmdStruct>::iterator CmdIt;
- std::vector<ReactionWheelConfigData>::iterator it;
+ int RWIter = 0;
+ double tau_S_temp[3];
+ double u_s;
+ double cosw;
+ double sinw;
+ double ggHat_S[3];
+ double temp1[3];
+ double temp2[3];
+ double temp3[3];
+ double Fi[3];
+ double Li[3];
 
- for(it = ReactionWheelData.begin(), CmdIt=NewRWCmds.begin();
-     CmdIt!=NewRWCmds.end(); CmdIt++, it++)
+ // zero previous torque vector
+ v3Set(0,0,0,tau_S);
+
+ // loop through commands
+ for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
  {
-	 //! - Just set the motor torque equal to the torque request for now
-	 it->currentTorque = CmdIt->TorqueRequest;
-	 if (fabs(it->currentTorque) > it->MaxTorque)
-	 {
-		 it->currentTorque /= fabs(it->currentTorque);
-		 it->currentTorque *= it->MaxTorque;
-	 }
-	 v3Scale(CmdIt->TorqueRequest, &(ReactionWheelData[0].ReactionWheelDirection[0]), StrTorque);
+
+  // saturation
+  if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_max) {
+   CmdIt->u_cmd = ReactionWheelData[RWIter].u_max;
+  } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_max) {
+   CmdIt->u_cmd = -ReactionWheelData[RWIter].u_max;
+  }
+
+  // minimum torque
+  if( std::abs(CmdIt->u_cmd) < ReactionWheelData[RWIter].u_min) {
+   CmdIt->u_cmd = 0;
+  }
+
+  // coulomb friction
+  if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_f) {
+   u_s = CmdIt->u_cmd - ReactionWheelData[RWIter].u_f;
+  } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_f) {
+   u_s = CmdIt->u_cmd + ReactionWheelData[RWIter].u_f;
+  } else {
+   u_s = 0;
+  }
+
+  ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
+
+  if (ReactionWheelData[RWIter].usingRWJitter) {
+   // imbalance torque
+   v3Set(0,0,0,tau_S_temp); // zero torque vector for current RW
+   v3Scale(u_s, ReactionWheelData[RWIter].gsHat_S, tau_S_temp); // torque vector for current RW
+   v3Add(tau_S,tau_S_temp,tau_S); // sum with other RW torque vectors
+
+   cosw = cos(ReactionWheelData[RWIter].theta);
+   sinw = sin(ReactionWheelData[RWIter].theta);
+   
+   v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_S, temp1);
+   v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_S, temp2);
+   v3Add(temp1, temp2, ggHat_S); // current gimbal axis vector represented in body frame
+
+   v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S,Fi); /* Fs = Us * Omega^2 */ // calculate static imbalance force
+   v3Cross(ReactionWheelData[RWIter].r_S, Fi, Li); /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+   v3Add(Li, temp3, temp3); // add in static imbalance torque
+   v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S, Li); /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+   v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
+
+   v3Add(tau_S, temp3, tau_S);
+  }
+  
+  RWIter++;
 
  }
 
 
+
 }
 
-/*! This method is used to compute all the dynamical effects for the thruster set.
+/*! This method is used to compute all the dynamical effects for the RW set.
  It is an inherited method from the DynEffector class and is designed to be called
- by the dynamics plant for the simulation.  It uses the thruster force magnitude
- computed for the current time as well as the current vehicle state and mass
- properties to get the current body force/torque which serve as the API to
- dynamics
+ by the dynamics plant for the simulation.
  @return void
  @param Props Current mass properties of the vehicle (using center of mass and str2bdy transformation
- @param Bstate Current state of the vehicle (not used by thruster dynamics)
+ @param Bstate Current state of the vehicle (not used by RW dynamics)
  @param CurrentTime Current simulation time converted to double precision
  */
 void ReactionWheelDynamics::ComputeDynamics(MassPropsData *Props,
                                        OutputStateData *Bstate, double CurrentTime)
 {}
 
-/*! This method is the main cyclical call for the scheduled part of the thruster
- dynamics model.  It reads the current commands array and sets the thruster
+/*! This method is the main cyclical call for the scheduled part of the RW
+ dynamics model.  It reads the current commands array and sets the RW
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
@@ -190,7 +238,7 @@ void ReactionWheelDynamics::ComputeDynamics(MassPropsData *Props,
 void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
-    //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
+    //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(CurrentSimNanos*1.0E-9);
 	WriteOutputMessages(CurrentSimNanos);
