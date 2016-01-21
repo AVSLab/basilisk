@@ -87,7 +87,7 @@ void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
-		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->rwOmega;
+		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
 	}
 
 	SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
@@ -185,12 +185,14 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 
   ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
-  if (ReactionWheelData[RWIter].usingRWJitter) {
-   // imbalance torque
+
+
    v3Set(0,0,0,tau_S_temp); // zero torque vector for current RW
    v3Scale(u_s, ReactionWheelData[RWIter].gsHat_S, tau_S_temp); // torque vector for current RW
    v3Add(tau_S,tau_S_temp,tau_S); // sum with other RW torque vectors
 
+  // imbalance torque
+  if (ReactionWheelData[RWIter].usingRWJitter) {
    cosw = cos(ReactionWheelData[RWIter].theta);
    sinw = sin(ReactionWheelData[RWIter].theta);
    

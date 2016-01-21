@@ -155,7 +155,7 @@ void SixDofEOM::SelfInit()
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
-			XState[12 + rwCount] = rwIt->rwOmega;
+			XState[12 + rwCount] = rwIt->Omega;
 			rwCount++;
 		}
 	}
@@ -398,7 +398,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double PlanetAccel[3];
     double posVelComp[3];
     double perturbAccel[3];
-	double *rwOmegas;
+	double *Omegas;
     
     //! Begin method steps
     
@@ -417,10 +417,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     omegaLoc[0] = X[i++];
     omegaLoc[1] = X[i++];
     omegaLoc[2] = X[i++];
-	rwOmegas = NULL;
+	Omegas = NULL;
 	if (RWACount > 0)
 	{
-		rwOmegas = &X[i];
+		Omegas = &X[i];
 	}
  
     /* zero the derivative vector */
@@ -536,11 +536,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
-			m33MultV3(T_str2Bdy, rwIt->ReactionWheelDirection.data(), spinAxisBody);
-			double hs =  rwIt->Js * (v3Dot(omega, spinAxisBody) + rwOmegas[rwCount]);
+			m33MultV3(T_str2Bdy, rwIt->gsHat_S, spinAxisBody);
+			double hs =  rwIt->Js * (v3Dot(omega, spinAxisBody) + Omegas[rwCount]);
 			v3Scale(hs, spinAxisBody, d2);
 			v3Add(d3, d2, d3);
-			v3Scale(rwIt->currentTorque, spinAxisBody, rwTorque);
+			v3Scale(rwIt->u_current, spinAxisBody, rwTorque);
 			v3Subtract(rwSumTorque, rwTorque, rwSumTorque);          /* subtract [Gs]u */
 			rwCount++;
 		}
@@ -556,8 +556,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
-			m33MultV3(T_str2Bdy, rwIt->ReactionWheelDirection.data(), spinAxisBody);
-			dX[12 + rwCount] = rwIt->currentTorque / rwIt->Js
+			m33MultV3(T_str2Bdy, rwIt->gsHat_S, spinAxisBody);
+			dX[12 + rwCount] = rwIt->u_current / rwIt->Js
 				- v3Dot(spinAxisBody, dX + 9);
 			rwCount++;
 		}
@@ -655,7 +655,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
-			rwIt->rwOmega = XState[12 + rwCount];
+			rwIt->Omega = XState[12 + rwCount];
 			rwCount++;
 		}
 	}

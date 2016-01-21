@@ -41,7 +41,7 @@ def executeSimulationRun(stopTime, stepTime, TotalSim, RWDynObject,
         TotalSim.RecordLogVars()
 
 def v3DoubleSet(v1,v2,v3):
- vout = sim_model.new_doubleArray(3)
+ vout = sim_model.new_doubleArray(36)
  sim_model.doubleArray_setitem(vout, 0, v1)
  sim_model.doubleArray_setitem(vout, 1, v2)
  sim_model.doubleArray_setitem(vout, 2, v3)
@@ -122,7 +122,7 @@ outputState = six_dof_eom.OutputStateData()
 cmdArray = v3DoubleSet(0.09,0.20,1.30)
 
 #Configure command message
-TotalSim.TotalSim.CreateNewMessage("RWUnitTestProcess", "reactionwheel_cmds", 8*numReactionWheels, 2)
+TotalSim.TotalSim.CreateNewMessage("RWUnitTestProcess", "reactionwheel_cmds", 8*36, 2)
 
 ##Step the simulation for a bit to get clear of any init funnies
 TotalSim.InitializeSimulation()
@@ -130,14 +130,14 @@ TotalSim.ConfigureStopTime(int(10*1E9-threadCallPeriod))
 TotalSim.ExecuteSimulation()
 
 #Write firing command message and step the simulation
-TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, cmdArray );
+TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*36, 1, cmdArray );
 executeSimulationRun(stopTime1, threadCallPeriod, TotalSim, RWDynObject,
     massPropsData, outputState)
 
 #second set of commands
 cmdArray2 = v3DoubleSet(-0.09,-0.20,-1.30)
 
-TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*numReactionWheels, 0, cmdArray2 );
+TotalSim.TotalSim.WriteMessageData("reactionwheel_cmds", 8*36, 2, cmdArray2 );
 executeSimulationRun(stopTime2, threadCallPeriod, TotalSim, RWDynObject,
                      massPropsData, outputState)
 
