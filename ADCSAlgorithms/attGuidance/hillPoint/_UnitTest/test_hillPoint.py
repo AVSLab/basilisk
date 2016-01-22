@@ -1,8 +1,8 @@
 #
 #   Unit Test Script
 #   Module Name:        hillPoint
-#   Author:             Hanspeter Schaub
-#   Creation Date:      January 6, 2015
+#   Author:             Mar Cols
+#   Creation Date:      January 22, 2016
 #
 
 import pytest
@@ -20,8 +20,9 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import hillPoint                   # import the module that is to be tested
+import hillPoint                        # import the module that is to be tested
 import simple_nav                       # import module(s) that creates the needed input message declaration
+import spice_interface
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -31,11 +32,11 @@ import simple_nav                       # import module(s) that creates the need
 # provide a unique test method name, starting with test_
 def test_hillPoint(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots)
+    [testResults, testMessage] = hillPointTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots):
+def hillPointTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -66,44 +67,59 @@ def subModuleTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputNavName  = "inputNavName"
+    moduleConfig.inputNavDataName  = "inputNavName"
+    moduleConfig.inputCelMessName = "inputCelName"
     moduleConfig.outputDataName = "outputName"
-
-    vector = [0.1, 0.2, 0.3]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.sigma_R0N)
-    vector = [0.01, 0.05, -0.05]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.sigma_R0R)
-    vector = [1.*unitTestSupport.D2R, -1.*unitTestSupport.D2R, 0.5*unitTestSupport.D2R]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.omega_RN_N)
 
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageSize = 18*8                             # 6x3 doubles
+    #
+    #   Navigation Input Message
+    #
+    inputNavMessageSize = 18*8                             # 6x3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavName,
-                                          inputMessageSize,
+                                          moduleConfig.inputNavDataName,
+                                          inputNavMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-
     NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    sigma_BN = [0.25, -0.45, 0.75]
-    SimulationBaseClass.SetCArray(sigma_BN,
+    r_BN_N = [1., 1., 1.]
+    SimulationBaseClass.SetCArray(r_BN_N,
                                   'double',
-                                  NavStateOutData.sigma_BN)
-    omega_BN_B = [-0.015, -0.012, 0.005]
-    SimulationBaseClass.SetCArray(omega_BN_B,
+                                  NavStateOutData.r_BN_N)
+    v_BN_N = [1., 1., 1.]
+    SimulationBaseClass.SetCArray(v_BN_N,
                                   'double',
-                                  NavStateOutData.omega_BN_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
-                                          inputMessageSize,
+                                  NavStateOutData.v_BN_N)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
+                                          inputNavMessageSize,
                                           0,
                                           NavStateOutData)
+    #
+    #   Spice Input Message
+    #
+    inputCelMessageSize = 18*8 # !!! Size of SpicePlanetState ???
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputCelMessName,
+                                          inputCelMessageSize,
+                                          2)  
+    CelBodyData = spice_interface.SpicePlanetState()
+    planetPos = [0., 0., 0.]
+    SimulationBaseClass.SetCArray(planetPos,
+                                  'double',
+                                  CelBodyData.PositionVector)
+    planetVel = [0., 0., 0.]
+    SimulationBaseClass.SetCArray(planetVel,
+                                  'double',
+                                  CelBodyData.VelocityVector)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
+                                          inputCelMessageSize,
+                                          0,
+                                          CelBodyData)
+    #TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
+    #EarthPosVec = ctypes.cast(FinalEarthMessage.PositionVector.__long__(),
+    #ctypes.POINTER(ctypes.c_double))
+
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -123,19 +139,13 @@ def subModuleTestFunction(show_plots):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     #
-    # check sigma_BR
+    # check sigma_RN
     #
-    moduleOutputName = "sigma_BR"
+    moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
     # set the filtered output truth states
-    trueVector = [
-               [0.25,-0.45,0.75],
-               [0.25,-0.45,0.75],
-               [0.2507334254787293,-0.4448014521101621,0.7471652106429141]
-               ]
-
+    trueVector = []
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -146,21 +156,14 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                 "sec\n")
-
     #
-    # check omega_BR_B
+    # check omega_RN_N
     #
-    moduleOutputName = "omega_BR_B"
+    moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
     # set the filtered output truth states
-    trueVector = [
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357],
-               [-0.007200349949809324,-0.00666430499353348,-0.0194148522914357]
-               ]
-
+    trueVector = []
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -171,46 +174,14 @@ def subModuleTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                 "sec\n")
-
     #
-    # check omega_RN_B
+    # check domega_RN_N
     #
-    moduleOutputName = "omega_RN_B"
+    moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
     # set the filtered output truth states
-    trueVector = [
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357],
-               [-0.007799650050190675,-0.005335695006466521,0.0244148522914357]
-               ]
-
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
-                                "sec\n")
-
-    #
-    # check domega_RN_B
-    #
-    moduleOutputName = "domega_RN_B"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-
-    # set the filtered output truth states
-    trueVector = [
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0]
-               ]
-
+    trueVector = []
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
