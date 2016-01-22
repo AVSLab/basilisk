@@ -17,23 +17,8 @@
 /*! @brief Top level structure for the sub-module routines. */
 
 
-typedef struct {
-    unsigned int        i_r;                        /* body axis index that lines up with i_r */
-    unsigned int        i_theta;                    /* body axis index that lines up with i_theta */
-    unsigned int        i_h;                        /* body axis index that lines up with i_h */
-    int                 i_rSign;                    /* sign of the i_r axis alignment */
-    int                 i_thetaSign;                /* sign of the i_theta axis alignment */
-    int                 i_hSign;                    /* sign of the i_h axis alignment */
-    int                 o_spin;                     /* orbit frame axis about which to spin */
-    unsigned int        b_spin;                     /* principal body frame axis about which to spin */
-    double              omega_spin;                 /* desired spin rate */
-} OrbitFrameStates;
 
 typedef struct {
-    /* declare module private variables */
-    OrbitFrameStates OrbitFrameStates;              /*!<        Nadir pointing states */
-    uint64_t priorTime;                             /*!< [ns]   Last time the guidance module is called */
-
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message*/
