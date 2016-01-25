@@ -60,6 +60,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	double singleSpeedVec[3];     /* The speed vector for a single wheel*/
 	double bestMatch;
 	double currentMatch;
+    double fireValue;
 	vehEffectorOut outputData;
     
 	if ((callTime - ConfigData->previousFiring)*1.0E-9 < 
@@ -85,14 +86,15 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	bestMatch = 0.0;
 	for (i = 0; i < ConfigData->numThrusters; i++)
 	{
-		currentMatch = v3Dot(observedSpeedVec, 
+    
+		fireValue = v3Dot(observedSpeedVec,
 			&(ConfigData->thrTorqueMap[i * 3]));
-		currentMatch -= v3Dot(ConfigData->accumulatedImp,
+		currentMatch = v3Dot(ConfigData->accumulatedImp,
 			&(ConfigData->thrAlignMap[i * 3]));
-		if (currentMatch > bestMatch)
+		if (fireValue - currentMatch > bestMatch && fireValue > 0.0)
 		{
 			selectedThruster = i;
-			bestMatch = currentMatch;
+			bestMatch = fireValue - currentMatch;
 		}
 	}
 
@@ -106,6 +108,10 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 			ConfigData->maxFiring : outputData.effectorRequest[selectedThruster];
 		ConfigData->previousFiring = callTime;
 		ConfigData->totalAccumFiring += outputData.effectorRequest[selectedThruster];
+        v3Scale(outputData.effectorRequest[selectedThruster],
+                &(ConfigData->thrAlignMap[selectedThruster * 3]), singleSpeedVec);
+        v3Add(ConfigData->accumulatedImp, singleSpeedVec,
+            ConfigData->accumulatedImp);
 	}
  
 	WriteMessage(ConfigData->outputThrID, callTime, sizeof(vehEffectorOut),
