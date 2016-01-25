@@ -56,6 +56,7 @@ add_subdirectory("SimCode/architecture/messaging")
 add_subdirectory("SimCode")
 add_subdirectory("ADCSAlgorithms/messaging")
 add_subdirectory("ADCSAlgorithms")
+add_subdirectory("Utilities/pyswice")
 
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)
