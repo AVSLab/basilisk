@@ -54,26 +54,28 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t i;
-	int32_t selectedThruster;
-    RWSpeedData rwSpeeds;
+	int32_t selectedThruster;     /* Thruster index to fire */
+    RWSpeedData rwSpeeds;         /* Local reaction wheel speeds */
 	double observedSpeedVec[3];   /* The total summed speed of RWAs*/
 	double singleSpeedVec[3];     /* The speed vector for a single wheel*/
-	double bestMatch;
-	double currentMatch;
-    double fireValue;
-	vehEffectorOut outputData;
-    
+	double bestMatch;             /* The current best thruster/wheel matching*/
+	double currentMatch;          /* Assessment of the current match */
+    double fireValue;             /* Amount of time to fire the jet for */
+	vehEffectorOut outputData;    /* Local output firings */
+  
+    /*! Begin method steps*/
+    /*! - If we haven't met the cooldown threshold, do nothing */
 	if ((callTime - ConfigData->previousFiring)*1.0E-9 < 
 		ConfigData->thrFiringPeriod)
 	{
 		return;
 	}
 
-    /*! Begin method steps*/
-    /*! - Read the input requested torque from the feedback controller*/
+    /*! - Read the input rwheel speeds from the reaction wheels*/
     ReadMessage(ConfigData->inputSpeedID, &ClockTime, &ReadSize,
                 sizeof(RWSpeedData), (void*) &(rwSpeeds));
     
+    /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);
 	for (i = 0; i < ConfigData->numRWAs; i++)
 	{
@@ -82,6 +84,9 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 		v3Subtract(observedSpeedVec, singleSpeedVec, observedSpeedVec);
 	}
 
+    /*! - Iterate through the list of thrusters and find the "best" match for the 
+          observed momentum vector that does not continue to perturb the velocity 
+          in the same direction as previous aggregate firings */
 	selectedThruster = -1;
 	bestMatch = 0.0;
 	for (i = 0; i < ConfigData->numThrusters; i++)
@@ -97,8 +102,17 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 			bestMatch = fireValue - currentMatch;
 		}
 	}
-
+    
+    /*! - Zero out the thruster commands prior to setting the selected thruster.
+          Only apply thruster firing if the best match is non-zero.
+    */
 	memset(&outputData, 0x0, sizeof(vehEffectorOut));
+    
+    /*! - If we have a valid match: 
+          - Set firing based on the best counter to the observed momentum.
+          - Saturate based on the maximum allowable firing
+          - Accumulate impulse and the total firing
+          - Set the previous call time value for cooldown check */
 	if (bestMatch > 0.0)
 	{
 		outputData.effectorRequest[selectedThruster] = v3Dot(observedSpeedVec,
@@ -113,7 +127,8 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
         v3Add(ConfigData->accumulatedImp, singleSpeedVec,
             ConfigData->accumulatedImp);
 	}
- 
+   
+    /*! - Write the output message to the thruster system */
 	WriteMessage(ConfigData->outputThrID, callTime, sizeof(vehEffectorOut),
 		&(outputData), moduleID);
 

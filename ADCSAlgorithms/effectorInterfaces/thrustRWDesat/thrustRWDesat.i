@@ -11,5 +11,7 @@
 %ignore SelfInit_thrustRWDesat;
 %constant void CrossInit_thrustRWDesat(void*, uint64_t);
 %ignore CrossInit_thrustRWDesat;
+%constant void Reset_thrustRWDesat(void*, uint64_t);
+%ignore Reset_thrustRWDesat;
 %include "vehEffectorOut.h"
 %include "thrustRWDesat.h"
