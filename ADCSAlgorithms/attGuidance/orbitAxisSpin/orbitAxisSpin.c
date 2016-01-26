@@ -136,18 +136,18 @@ void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
 {
     double  relPosVector[3];
     double  relVelVector[3];
-    double  RN[3][3];                /*!< DCM from inertial to reference frame */
+    double  R0N[3][3];               /*!< DCM from inertial to pointing reference frame */
+    double  RR0[3][3];               /*!< DCM from pointing reference frame to spin ref-frame */
     
-    double  rm;                      /*!< orbit radius */
+
     double  h[3];                    /*!< orbit angular momentum vector */
-    double  hm;                      /*!< module of the orbit angular momentum vector */
     
     double  dfdt;                    /*!< rotational rate of the orbit frame */
-    double  v3[3];                  /*!< temp 3x1 vector */
+    double  v3[3];                   /*!< temp 3x1 vector */
 
     int     o1,o2;
     
-    /* Set up orbit frame indicies*/
+    /* Set up orbit frame indicies */
     o1 = ConfigData->o_spin;
     o2 = o1 + 1;
     if ( o2 > 2 ) { o2 = 0; }
@@ -156,35 +156,35 @@ void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
     v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
     
-    /* Compute RN */
-    v3Normalize(relPosVector, RN[0]);
+    /* Compute R0N */
+    v3Normalize(relPosVector, R0N[0]);
     v3Cross(relPosVector, relVelVector, h);
-    v3Normalize(h, RN[2]);
-    v3Cross(RN[2], RN[0], RN[1]);
+    v3Normalize(h, R0N[2]);
+    v3Cross(R0N[2], R0N[0], R0N[1]);
     
-    /* Compute R-frame orientation */
-    C2MRP(RN, sigma_RN);
+    /* Get true anomaly rate */
+    dfdt = omega_R0N_N[2];
     
-    /* Compute R-frame inertial rate */
-    rm = v3Norm(relPosVector);
-    hm = v3Norm(h);
-    if(rm > 1.) {
-        dfdt = hm / (rm * rm);  /* true anomaly rate */
-    } else { dfdt   = 0.; }
+    /* Compute reference frame rate */
+    double omega_RR0_N[3];
+    v3Scale(ConfigData->omega_spin, R0N[o1], omega_RR0_N);
+    v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
     
+    /* Compute reference frame acceleration */
+    double domega_RR0_N[3];
+    v3Cross(R0N[2], R0N[o1], v3);
+    v3Scale(dfdt*ConfigData->omega_spin, v3, domega_RR0_N);
+    v3Add(domega_R0N_N, domega_RR0_N, domega_RN_N);
     
-    double omega_R0R_N[3];
-    v3Scale(ConfigData->omega_spin, RN[o1], omega_R0R_N);
-    v3Add(omega_R0N_N, omega_R0R_N, omega_RN_N);
-    
-    double domega_R0R_N[3];
-    v3Cross(RN[2], RN[o1], v3);
-    v3Scale(dfdt*ConfigData->omega_spin, v3, domega_R0R_N);
-    v3Add(domega_R0N_N, domega_R0R_N, domega_RN_N);
-    
-    if (integrateFlag == BOOL_TRUE) { /* integrate the spin angle*/
+    /* Compute MRP attitude error */
+    double sigma_RR0[3];
+    m33SetZero(RR0);
+    if (integrateFlag == BOOL_TRUE) { /* integrate the spin angle */
         ConfigData->phi_spin += dt * ConfigData->omega_spin;
+    } else { /* initialize  spin angle */
+        /* #TODO */
     }
-    
-    
+    Mi(ConfigData->phi_spin, o1, RR0);
+    MRP2C(sigma_RR0, RR0);
+    v3Add(sigma_RR0, sigma_R0N, sigma_RN);
 }
