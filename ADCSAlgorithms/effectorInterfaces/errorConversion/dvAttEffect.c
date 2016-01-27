@@ -74,9 +74,9 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
 vehControlOut *contrReq, uint64_t moduleID)
 {
-    double unSortOnTime[MAX_NUM_EFFECTORS];
-    effPairs unSortPairs[MAX_NUM_EFFECTORS];
-    effPairs sortPairs[MAX_NUM_EFFECTORS];
+    double unSortOnTime[MAX_EFF_CNT];
+    effPairs unSortPairs[MAX_EFF_CNT];
+    effPairs sortPairs[MAX_EFF_CNT];
     uint32_t i;
     double localRequest[3];
     
@@ -105,7 +105,7 @@ vehControlOut *contrReq, uint64_t moduleID)
     }
     effectorVSort(unSortPairs, sortPairs, thrData->numEffectors);
     memset(thrData->cmdRequests.effectorRequest, 0x0,
-           MAX_NUM_EFFECTORS*sizeof(double));
+           MAX_EFF_CNT*sizeof(double));
     for(i=0; i<thrData->maxNumCmds; i=i+1)
     {
         thrData->cmdRequests.effectorRequest[sortPairs[i].thrustIndex] =

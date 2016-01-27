@@ -19,9 +19,9 @@
 typedef struct {
     char inputSpeedName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the input RW speeds message*/
 	char outputThrName[MAX_STAT_MSG_LENGTH];  /*!< (-) The name of the output thrust command block*/
-	double rwAlignMap[3 * MAX_NUM_EFFECTORS]; /*!< (-) Alignment of the reaction wheel spin axes*/
-	double thrAlignMap[3 * MAX_NUM_EFFECTORS]; /*!< (-) Alignment of the vehicle thrusters*/
-	double thrTorqueMap[3 * MAX_NUM_EFFECTORS]; /*!< (-) Alignment of the vehicle thruster torques*/
+	double rwAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the reaction wheel spin axes*/
+	double thrAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thrusters*/
+	double thrTorqueMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thruster torques*/
 	double maxFiring;          /*!< (s) Maximum time to fire a jet for*/
 	double thrFiringPeriod;    /*!< (s) The amount of time to rest between thruster firings*/
 	uint32_t numRWAs;          /*!< (-) Number of reaction wheels being desaturated*/

@@ -15,10 +15,10 @@
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 {
-	double GsTranspose[3 * MAX_NUM_EFFECTORS];
+	double GsTranspose[3 * MAX_EFF_CNT];
 	double GsInvHalf[3 * 3];
-	double identMatrix[MAX_NUM_EFFECTORS*MAX_NUM_EFFECTORS];
-	double GsTemp[MAX_NUM_EFFECTORS*MAX_NUM_EFFECTORS];
+	double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];
+	double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
@@ -72,7 +72,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     vehEffectorOut cntrRequest;
 	RWSpeedData rwSpeeds;
 	vehEffectorOut finalControl;
-	double dVector[MAX_NUM_EFFECTORS];
+	double dVector[MAX_EFF_CNT];
     
     /*! Begin method steps*/
     /*! - Read the input RW commands to get the raw RW requests*/

@@ -28,7 +28,7 @@ typedef struct {
     uint32_t maxNumCmds;         /*!< - The maximum number of commands to output*/
     uint32_t numEffectors;       /*!< - The number of effectors we have access to*/
     double minThrustRequest;     /*!< - The minimum allowable on-time for a thruster*/
-    double thrOnMap[3*MAX_NUM_EFFECTORS]; /*!< - Mapping between on-times and torque requests*/
+    double thrOnMap[3*MAX_EFF_CNT]; /*!< - Mapping between on-times and torque requests*/
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the output message*/
     char outputMsgID;            /*!< - ID for the outgoing command messages*/
     vehEffectorOut cmdRequests; /*!< - The array of command requests sent to effectors*/

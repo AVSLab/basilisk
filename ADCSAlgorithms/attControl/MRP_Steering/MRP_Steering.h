@@ -4,6 +4,7 @@
 
 #include "messaging/static_messaging.h"
 #include "../_GeneralModuleFiles/vehControlOut.h"
+#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -13,25 +14,30 @@
 /*! @brief Top level structure for the MRP Steering attitude control routine. */
 typedef struct {
     /* declare module private variables */
-    double K1;                  /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double K3;                  /*!< [rad/sec] Cubic gain applied to MRP error in steering saturation function */
-    double omega_max;           /*!< [rad/sec] Maximum rate command of steering control */
-    double P;                   /*!< [N*m*s]   Rate error feedback gain applied  */
-    double Ki;                  /*!< [N*m]     Integration feedback error on rate error  */
-    double integralLimit;       /*!< [N*m]     Integration limit to avoid wind-up issue */
-    uint64_t priorTime;         /*!< [ns]      Last time the attitude control is called */
-    double z[3];                /*!< [rad]     integral state of delta_omega */
+    double K1;                     /*!< [rad/sec] Proportional gain applied to MRP errors */
+    double K3;                     /*!< [rad/sec] Cubic gain applied to MRP error in steering saturation function */
+    double omega_max;              /*!< [rad/sec] Maximum rate command of steering control */
+    double P;                      /*!< [N*m*s]   Rate error feedback gain applied  */
+    double Ki;                     /*!< [N*m]     Integration feedback error on rate error  */
+    double integralLimit;          /*!< [N*m]     Integration limit to avoid wind-up issue */
+    uint64_t priorTime;            /*!< [ns]      Last time the attitude control is called */
+    double z[3];                   /*!< [rad]     integral state of delta_omega */
+    double GsMatrix[3*MAX_EFF_CNT];/*!< []        The spin axis matrix used for RWAs*/
+    double JsList[3*MAX_EFF_CNT];  /*!< [kgm2]    The spin axis inertia for RWAs*/
+    uint32_t numRWAs;              /*!< []        The number of reaction wheels available on vehicle */
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
     int32_t outputMsgID;                        /*!< [] ID for the outgoing body accel requests*/
     char inputGuidName[MAX_STAT_MSG_LENGTH];    /*!< The name of the Input message*/
     int32_t inputGuidID;                        /*!< [] ID for the incoming guidance errors*/
-    char inputNavName[MAX_STAT_MSG_LENGTH];     /*!< The name of the Navigation 6Input message*/
+    char inputNavName[MAX_STAT_MSG_LENGTH];     /*!< The name of the Navigation Input message*/
     int32_t inputNavID;                         /*!< [] ID for the incoming navigation message */
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    int32_t inputVehicleConfigDataID;           /*!< -- ID for the incoming static vehicle data */
-    vehControlOut controlOut;                   /*!< -- Control output requests */
+    int32_t inputVehicleConfigDataID;           /*!< [] ID for the incoming static vehicle data */
+    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
+    int32_t inputRWSpeedsID;                    /*!< [] The ID for the reaction wheel speeds message*/
+    vehControlOut controlOut;                   /*!< [] Control output requests */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

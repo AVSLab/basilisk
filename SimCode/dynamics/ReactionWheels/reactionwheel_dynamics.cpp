@@ -66,7 +66,7 @@ void ReactionWheelDynamics::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-		sizeof(RWCmdStruct)*MAX_NUM_EFFECTORS, moduleID);
+		sizeof(RWCmdStruct)*MAX_EFF_CNT, moduleID);
     if(CmdsInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";

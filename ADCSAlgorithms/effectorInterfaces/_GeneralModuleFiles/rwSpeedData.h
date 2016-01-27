@@ -12,7 +12,7 @@
 
 /*! @brief Structure used to define the output definition for reaction wheel speeds*/
 typedef struct {
-	double wheelSpeeds[MAX_NUM_EFFECTORS];                //!< r/s The current angular velocity of the wheel
+	double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocity of the wheel
 }RWSpeedData;
 
 /*! @} */

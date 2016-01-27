@@ -14,6 +14,7 @@
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include <string.h>
 #include <math.h>
 
@@ -40,13 +41,15 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - Get the control data message IDs*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                  sizeof(vehicleConfigData), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
                                                 sizeof(NavStateOut), moduleID);
+    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+                                                   sizeof(RWSpeedData), moduleID);
 
 }
 
@@ -75,6 +78,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
     NavStateOut         nav;                /*!< navigation message */
+    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -89,6 +93,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
                                              body frame B and desired B^ast frame */
     int                 i;
     double              temp;
+    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
 
     /* compute control update time */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
@@ -109,6 +114,8 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(vehicleConfigData), (void*) &(sc));
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavStateOut), (void*) &(nav));
+    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                sizeof(RWSpeedData), (void*) &(wheelSpeeds));
 
 
     /* compute known external torque */
@@ -142,11 +149,13 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
     m33MultV3(RECAST3X3 sc.I, omega_BastN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
-//    for(i = 0; i < NUM_RW; i++) {
-//        v3Scale(sc->rw[i].Js * (v3Dot(omega, sc->rw[i].gs) + sc->rw[i].Omega),
-//                sc->rw[i].gs, v3_1);
-//        v3Add(v3_1, v3, v3);
-//    }
+    for(i = 0; i < ConfigData->numRWAs; i++)
+    {
+        wheelGs = &(ConfigData->GsMatrix[i*3]);
+        v3Scale(ConfigData->JsList[i] * (v3Dot(nav.omega_BN_B, wheelGs) +
+            wheelSpeeds.wheelSpeeds[i]), wheelGs, v3_1);
+        v3Add(v3_1, v3, v3);
+    }
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 

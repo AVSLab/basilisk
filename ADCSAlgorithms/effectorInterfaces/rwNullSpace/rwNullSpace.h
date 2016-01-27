@@ -19,8 +19,8 @@ typedef struct {
     char inputRWCommands[MAX_STAT_MSG_LENGTH]; /*!< -- The name of the Input message*/
 	char inputRWSpeeds[MAX_STAT_MSG_LENGTH];   /*!< (-) The name of the input RW speeds*/
 	char outputControlName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the output message*/
-	double GsMatrix[3*MAX_NUM_EFFECTORS]; /*!< (-) The spin axis matrix used to find null space*/
-	double GsInverse[MAX_NUM_EFFECTORS * MAX_NUM_EFFECTORS];    /*!< (-) Pseudo-inverse of the spin axis matrix*/
+	double GsMatrix[3*MAX_EFF_CNT]; /*!< (-) The spin axis matrix used to find null space*/
+	double GsInverse[MAX_EFF_CNT * MAX_EFF_CNT];    /*!< (-) Pseudo-inverse of the spin axis matrix*/
 	double OmegaGain;           /*!< (-) The gain factor applied to the RW speeds*/
 	uint32_t numWheels;         /*!< (-) The number of reaction wheels we have*/
     int32_t inputRWCmdsID;      /*!< -- ID for the incoming RW commands*/

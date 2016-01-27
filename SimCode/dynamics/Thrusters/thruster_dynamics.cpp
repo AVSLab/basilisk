@@ -61,7 +61,7 @@ void ThrusterDynamics::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-    MAX_NUM_EFFECTORS*sizeof(ThrustCmdStruct), moduleID);
+    MAX_EFF_CNT*sizeof(ThrustCmdStruct), moduleID);
 }
 
 /*! This method is here to write the output message structure into the specified
