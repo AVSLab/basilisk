@@ -77,7 +77,6 @@ void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navDa
     
     double  relPosVector[3];
     double  relVelVector[3];
-    double  BN[3][3];                /*!< DCM from inertial to body frame */
     double  RN[3][3];                /*!< DCM from inertial to reference frame */
     double  temp33[3][3];
     
@@ -93,9 +92,6 @@ void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navDa
     /* Compute relative position and velocity of the spacecraft with respect to the main celestial body */
     v3Subtract(navData.r_BN_N, primPlanet.PositionVector, relPosVector);
     v3Subtract(navData.v_BN_N, primPlanet.VelocityVector, relVelVector);
-    
-    /* Compute BN */
-    MRP2C(navData.sigma_BN, BN);
     
     /* Compute RN */
     v3Normalize(relPosVector, RN[0]);
@@ -121,6 +117,8 @@ void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navDa
     v3SetZero(domega_RN_R);
     omega_RN_R[2]  = dfdt;
     domega_RN_R[2] = ddfdt2;
+    
+
     m33Transpose(RN, temp33);
     m33MultV3(temp33, omega_RN_R, omega_RN_N);
     m33MultV3(temp33, domega_RN_R, domega_RN_N);

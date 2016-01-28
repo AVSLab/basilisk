@@ -162,13 +162,14 @@ void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     v3Normalize(h, R0N[2]);
     v3Cross(R0N[2], R0N[0], R0N[1]);
     
-    /* Get true anomaly rate */
-    dfdt = omega_R0N_N[2];
-    
     /* Compute reference frame rate */
     double omega_RR0_N[3];
     v3Scale(ConfigData->omega_spin, R0N[o1], omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
+    
+    
+    /* Get true anomaly rate */
+    dfdt = omega_R0N_N[2];
     
     /* Compute reference frame acceleration */
     double domega_RR0_N[3];

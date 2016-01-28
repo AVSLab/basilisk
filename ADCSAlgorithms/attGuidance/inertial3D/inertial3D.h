@@ -19,7 +19,7 @@ typedef struct {
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message */
-    int32_t outputMsgID;                            /*!<        ID for the outgoing message */
+    int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */
     
     /* copy of the output message */
     attRefOut attRefOut;
