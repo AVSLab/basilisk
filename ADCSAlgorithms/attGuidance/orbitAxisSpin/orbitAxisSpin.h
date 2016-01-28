@@ -14,8 +14,11 @@ typedef struct {
     /* declare module private variables */
     int o_spin;                                     /*!< [0,1,2]   Orbit axis around which to spin */
     double omega_spin;                              /*!< [rad/sec] Desired spinning rate */
-    double phi_spin;                              /*!< [rad]     Initial  spin angle */
-    uint64_t priorTime;                             /*!< [ns]   Last time the guidance module is called */
+    double phi_spin;                                /*!< [rad]     Initial  spin angle */
+    uint64_t priorTime;                             /*!< [ns]      Last time the guidance module is called */
+    
+    int b_spin;                                     /*!< #TEMP     [0,1,2]  Orbit axis around which to spin */
+    double sigma_B0N;                                /*!< #TEMP     This should come from a message at some point */
 
     
     /* declare module IO interfaces */
@@ -55,7 +58,9 @@ extern "C" {
                                   double sigma_RN[3],
                                   double omega_RN_N[3],
                                   double domega_RN_N[3]);
-
+    
+    double computeInitialSpinAngle(orbitAxisSpinConfig *ConfigData,
+                                   double sigma_ON);
 #ifdef __cplusplus
 }
 #endif

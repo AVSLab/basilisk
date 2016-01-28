@@ -9,6 +9,7 @@
 /* modify the path to reflect the new module names */
 #include "attGuidance/orbitAxisSpin/orbitAxisSpin.h"
 #include <string.h>
+#include "math.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
@@ -28,6 +29,9 @@ void SelfInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
+    /*! - #TEMP: Initialize variable */
+    v3SetZero(&ConfigData->sigma_B0N);
+    ConfigData->b_spin = 0;
 }
 
 void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
@@ -99,6 +103,55 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
     return;
 }
 
+double computeInitialSpinAngle(orbitAxisSpinConfig *ConfigData, double sigma_ON)
+{
+    double phi_spin_0;
+    double spin_align_angle;
+    double spin_align_axis[3];
+    
+    double ON[3][3];
+    double BN[3][3];
+    double B0N[3][3];
+    double OB[3][3];
+    
+    double BB0[3][3];
+    double PRV_align[3];
+    
+    double temp33[3][3];
+    double v3temp[3];
+    
+    int b1, b2, b3;
+    
+    b1 = ConfigData->b_spin;
+    b2 = b1 + 1;
+    if (b2 > 2) {b2 = 0;}
+    b3 = b2 + 1;
+    if (b3 > 2) {b3 = 0;}
+    
+    MRP2C(&ConfigData->sigma_B0N, B0N);
+    MRP2C(&sigma_ON, temp33);
+    v3Copy(temp33[0], ON[b1]);
+    v3Copy(temp33[1], ON[b2]);
+    v3Cross(ON[b1], ON[b2], ON[b3]);
+    
+    
+    spin_align_angle = acos(v3Dot(B0N[b1],ON[b1])); /* ON[b1] = desired b-spin axis orientation
+                                                      B0N[0] = initial b-spin axis orientation */
+    v3Cross(B0N[b1], ON[b1], v3temp);
+    v3Normalize(v3temp, spin_align_axis);
+    v3Scale(spin_align_angle, spin_align_axis, spin_align_axis);
+    PRV2C(spin_align_axis, BB0);
+    
+    /* [OB] = [ON] x transpose([BB0][B0N]) = [ON]xtranspose([BN]) = [ON][NB]*/
+    m33tMultM33(BB0, B0N, BN);
+    m33MultM33t(ON, BN, OB);
+    C2PRV(OB, PRV_align);
+    phi_spin_0 = v3Norm(PRV_align);
+    if (v3Dot(PRV_align, ON[b1])<0) { phi_spin_0 = - phi_spin_0;}
+
+    return phi_spin_0;
+}
+
 /*
  * Function: computeorbitAxisSpinReference
  * Purpose: compute the reference frame states for the Hill Frame spin control mode.  This function is
@@ -137,6 +190,7 @@ void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     double  relPosVector[3];
     double  relVelVector[3];
     double  R0N[3][3];               /*!< DCM from inertial to pointing reference frame */
+    double  ON[3][3];                /*!< DCM from orbit frame to pointing reference frame */
     double  RR0[3][3];               /*!< DCM from pointing reference frame to spin ref-frame */
     
 
@@ -182,10 +236,17 @@ void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     m33SetZero(RR0);
     if (integrateFlag == BOOL_TRUE) { /* integrate the spin angle */
         ConfigData->phi_spin += dt * ConfigData->omega_spin;
-    } else { /* initialize  spin angle */
-        /* #TODO */
+    } else {
+        /* initialize  spin angle */
+        double sigma_ON;
+        v3Copy(R0N[o1], ON[0]);
+        v3Copy(R0N[o2], ON[1]);
+        v3Cross(ON[0],ON[1],ON[2]);
+        C2MRP(ON, &sigma_ON);
+        ConfigData->phi_spin = computeInitialSpinAngle(ConfigData, sigma_ON);
+        
     }
-    Mi(ConfigData->phi_spin, o1, RR0);
+    Mi(ConfigData->phi_spin, o1+1, RR0);
     MRP2C(sigma_RR0, RR0);
     v3Add(sigma_RR0, sigma_R0N, sigma_RN);
 }
