@@ -58,7 +58,8 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    TimeValues.reverse()
    TheArray = numpy.array(TimeValues)
    ArrayDim = MessageCount
-   TheArray = numpy.reshape(TheArray, (ArrayDim, TheArray.shape[0]/ArrayDim))
+   if ArrayDim > 0:
+      TheArray = numpy.reshape(TheArray, (ArrayDim, TheArray.shape[0]/ArrayDim))
    return TheArray
 
 def findMessageMatches(searchString, SimContainer):

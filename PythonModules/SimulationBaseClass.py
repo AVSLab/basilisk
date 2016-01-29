@@ -387,7 +387,8 @@ class SimBaseClass:
         indices_use[0], indices_use[-1], bufferUse)
 
     indicesLocal = [0]
-
+    if(len(dataUse) == 0):
+       return dataUse
     for indexUse in indices_use:
         indicesLocal.append(indexUse+1)
     return(dataUse[:, indicesLocal])
