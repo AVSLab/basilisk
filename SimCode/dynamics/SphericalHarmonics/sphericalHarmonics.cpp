@@ -10,7 +10,6 @@
 
 #include <string>
 #include <math.h>
-#include "coeffLoader.h"
 
 
 ///---------------------------Constructors-------------------------///
@@ -23,7 +22,7 @@
  @param[in] mu Gravitational parameter.
  @param[in] reference_radius Radius of reference with which the coefficients are computed. It must be given along with the coefficients.
  */
-sphericalHarmonics::sphericalHarmonics(coeffLoader* loader, const string& filename, const unsigned int max_degree, const double mu, const double reference_radius) :
+sphericalHarmonics::sphericalHarmonics(coeffLoader* loader, const std::string& filename, const unsigned int max_degree, const double mu, const double reference_radius) :
     _maxDegree(max_degree),
     _referenceRadius(reference_radius),
     _mu(mu),
@@ -282,7 +281,7 @@ void sphericalHarmonics::computeField(const double pos[3], unsigned int degree, 
  @brief Use this method to get the last error message.
  @return A string with the message.
  */
-string sphericalHarmonics::getLastErrorMessage(void)
+std::string sphericalHarmonics::getLastErrorMessage(void)
 {
     return this->_errorMessage;
 }

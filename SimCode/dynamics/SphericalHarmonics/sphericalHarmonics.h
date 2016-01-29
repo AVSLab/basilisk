@@ -18,7 +18,7 @@
 #define DEBUG_SPHERICAL_HARM
 #endif
 ////////////////////////////////////////////////////////
-using namespace std;
+//using namespace std;
 
 /*!
  @brief Implents the computation of a field represented using spherical harmonics. Two methods are needed:
@@ -28,7 +28,7 @@ using namespace std;
 class sphericalHarmonics
 {
 public:
-    sphericalHarmonics(coeffLoader* loader, const string& filename, const unsigned int max_degree, const double mu, const double reference_radius);
+    sphericalHarmonics(coeffLoader* loader, const std::string& filename, const unsigned int max_degree, const double mu, const double reference_radius);
     sphericalHarmonics(const sphericalHarmonics& x);
     virtual ~sphericalHarmonics();
     
@@ -42,7 +42,7 @@ public:
     // The important method!!
     void            computeField(const double pos[3], unsigned int degree, double  acc[3], bool include_zero_degree) const;
     
-    string getLastErrorMessage(void);
+    std::string getLastErrorMessage(void);
 
 #ifdef DEBUG_SPHERICAL_HARM
     void printCoefficients() const;
@@ -64,7 +64,7 @@ protected:
     
     coeffLoader*  _coeffLoader;
     
-    string _errorMessage;
+    std::string _errorMessage;
     
     bool initialize();
     void deallocate();

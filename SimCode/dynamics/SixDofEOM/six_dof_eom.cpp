@@ -8,6 +8,50 @@
 #include <math.h>
 #include "architecture/messaging/system_messaging.h"
 
+
+/*--------------------------------------------------------------------------------------------------*/
+// GravityBodyData implementation
+
+/* Use this constructor to use the class as the old structure */
+GravityBodyData::GravityBodyData()
+{
+    this->UseSphericalHarmParams = false;
+    this->_coeff_loader = nullptr;
+    this->_spherHarm = nullptr;
+}
+
+/* Constructor used only for bodies with an associated spherical harmonics model */
+GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const std::string& file_format, const unsigned int max_degree, const double mu, const double reference_radius)
+{
+    this->UseSphericalHarmParams = true;
+    
+    //if (file_format.compare("CSV") == 0) { //CSV are the only possible files by now
+    this->_coeff_loader = new coeffLoaderCSV(' ');
+    //}
+    
+    this->_spherHarm = new sphericalHarmonics(this->_coeff_loader, sphHarm_filename, max_degree, mu, reference_radius);
+    
+    this->mu = mu;
+}
+
+
+GravityBodyData::~GravityBodyData()
+{
+    if (this->_spherHarm != nullptr)
+        delete this->_spherHarm;
+    
+    if (this->_coeff_loader != nullptr)
+        delete this->_coeff_loader;
+}
+
+sphericalHarmonics* GravityBodyData::getSphericalHarmonicsModel(void)
+{
+    return this->_spherHarm;
+}
+
+/*--------------------------------------------------------------------------------------------------*/
+
+
 /*! This is the constructor for SixDofEOM.  It initializes a few variables*/
 SixDofEOM::SixDofEOM()
 {
@@ -445,14 +489,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     }
     else if (CentralBody->UseSphericalHarmParams)
     {
-        unsigned int max_degree = CentralBody->spherHarm->getMaxDegree(); // Maximum degree to include
+        unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
         double posBodyFix[3]; // [m] Position in planet-fixed frame
         double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
 
         double aux[3], aux1[3], aux2[3], aux3[3];
         
         m33MultV3(CentralBody->J20002Pfix, r_N, posBodyFix);
-        CentralBody->spherHarm->computeField(posBodyFix, max_degree, gravField, false);
+        CentralBody->getSphericalHarmonicsModel()->computeField(posBodyFix, max_degree, gravField, false);
         
         m33tMultV3(CentralBody->J20002Pfix, gravField, aux1);
         

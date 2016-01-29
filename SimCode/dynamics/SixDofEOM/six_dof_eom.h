@@ -8,6 +8,7 @@
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 #include "dynamics/SphericalHarmonics/sphericalHarmonics.h"
+#include "dynamics/SphericalHarmonics/coeffLoader.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -17,7 +18,12 @@
     body.  The nominal use-case has it initialized at the python level and 
     attached to dynamics using the AddGravityBody method.
 */
-typedef struct {
+class GravityBodyData
+{
+public:
+    // TO-DO: modified by MANUEL.
+    // This class used to be a structure. For backwards compatibility, all attributes will remain PUBLIC, even though this is not conceptually correct.
+    // New attributes are added as Private.
     bool IsCentralBody;             //!<          Flag indicating that object is center
     bool IsDisplayBody;             //!<          Flag indicating that body is display
     bool UseJParams;                //!<          Flag indicating to use perturbations
@@ -27,8 +33,6 @@ typedef struct {
     double VelFromEphem[3];         //!< [m/s]    Velocity vector from central body
     double J20002Pfix[3][3];        //!<          Transformation matrix from J2000 to planet-fixed
     double J20002Pfix_dot[3][3];    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
-    sphericalHarmonics* spherHarm;  //!<          Object which computes the spherical harmonics gravity field
-    coeffLoader* coeff_loader;      //!<          Object which loads the coefficients
     double posRelDisplay[3];        //!< [m]      Position of planet relative to display frame
     double velRelDisplay[3];        //!< [m]      Velocity of planet relative to display frame
     double mu;                      //!< [m3/s^2] central body gravitational param
@@ -40,7 +44,20 @@ typedef struct {
     std::string planetEphemName;    //!<          Ephemeris name for the planet
     int64_t outputMsgID;            //!<          ID for output message data
     int64_t BodyMsgID;              //!<          ID for ephemeris data message
-} GravityBodyData;
+    
+    // Default constructor
+    GravityBodyData();
+    
+    // Constructor to be used for creating bodies with a spherical harmonic model
+    GravityBodyData(const std::string& sphHarm_filename, const std::string& file_format, const unsigned int max_degree, const double mu, const double reference_radius);
+    virtual ~GravityBodyData();
+    
+    sphericalHarmonics* getSphericalHarmonicsModel(void);
+private:
+    sphericalHarmonics* _spherHarm;  //!<          Object that computes the spherical harmonics gravity field
+    coeffLoader* _coeff_loader;      //!<          Object that loads the coefficients
+    
+};
 
 //!@brief The SixDofEOM class is used to handle all dynamics propagation for a spacecraft
 /*! It is designed to handle all gravitational effects and unforced attitude 

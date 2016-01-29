@@ -17,19 +17,19 @@
 ///-------------------------------coeffLoader--------------------------------///
 coeffLoader::coeffLoader()
 {
-    this->_errorMessage = string("");
+    this->_errorMessage = std::string("");
 }
 
 coeffLoader::~coeffLoader()
 {
-    this->_errorMessage = string("");
+    this->_errorMessage = std::string("");
 }
 
 /*!
  @brief Use this method to get the last error message.
  @return A string with the message.
  */
-string coeffLoader::getLastErrorMessage(void)
+std::string coeffLoader::getLastErrorMessage(void)
 {
     return this->_errorMessage;
 }
@@ -37,9 +37,9 @@ string coeffLoader::getLastErrorMessage(void)
 /*!
  @brief Transforms the exponent character from D to E. Some coefficient files use D instead of E.
  */
-void coeffLoader::replaceExpDesignator(string& str)
+void coeffLoader::replaceExpDesignator(std::string& str)
 {
-    string::iterator cii;
+    std::string::iterator cii;
     
     for (cii = str.begin(); cii < str.end(); cii++)
     {
@@ -62,7 +62,7 @@ coeffLoaderTest::~coeffLoaderTest()
     
 }
 
-bool coeffLoaderTest::load(const string& filename, double** C_bar, double** S_bar, unsigned int* degree)
+bool coeffLoaderTest::load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* degree)
 {
     *degree = 10;
     
@@ -99,12 +99,12 @@ coeffLoaderCSV::~coeffLoaderCSV()
  @param[out] S_bar Array where the S coefficients are to be loaded. The array must be pre-allocated.
  @param[in-out] max_degree It specifies the maximum degree to be loaded. If the maximum degree present in the file is smaller, max_degree is modified.
  */
-bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar, unsigned int* max_degree)
+bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree)
 {
-    ifstream f;
-    string line;
-    string::iterator cii;
-    string::iterator initial;
+    std::ifstream f;
+    std::string line;
+    std::string::iterator cii;
+    std::string::iterator initial;
     
     int param_nmber;
     unsigned int degree = 0;
@@ -112,10 +112,10 @@ bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar
     double C_lm = 0;
     double S_lm = 0;
     long index;
-    string aux;
-    string::size_type sz;     // alias of size_t
+    std::string aux;
+    std::string::size_type sz;     // alias of size_t
     
-    f.open(filename, ifstream::in);
+    f.open(filename, std::ifstream::in);
     if (f.fail())
     {
         this->_errorMessage = "ERROR: The file could not be open.";
@@ -145,7 +145,7 @@ bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar
             if (param_nmber == 0)       // Degree
             {
                 index = distance(initial, cii);
-                aux = line.substr(index, string::npos);
+                aux = line.substr(index, std::string::npos);
                 degree = (unsigned int) stod(aux, &sz);
                 if (degree > *max_degree)
                     break;
@@ -155,7 +155,7 @@ bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar
             else if (param_nmber == 1)  // Order
             {
                 index = distance(initial, cii);
-                aux = line.substr(index, string::npos);
+                aux = line.substr(index, std::string::npos);
                 order = stod(aux, &sz);
                 cii += sz;
                 param_nmber++;
@@ -163,7 +163,7 @@ bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar
             else if (param_nmber == 2)  //C_bar
             {
                 index = distance(initial, cii);
-                aux = line.substr(index, string::npos);
+                aux = line.substr(index, std::string::npos);
                 C_lm = stod(aux, &sz);
                 cii += sz;
                 param_nmber++;
@@ -171,7 +171,7 @@ bool coeffLoaderCSV::load(const string& filename, double** C_bar, double** S_bar
             else if (param_nmber == 3)  //S_bar
             {
                 index = distance(initial, cii);
-                aux = line.substr(index, string::npos);
+                aux = line.substr(index, std::string::npos);
                 S_lm = stod(aux, &sz);
                 cii += sz;
                 param_nmber++;

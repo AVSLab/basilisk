@@ -11,7 +11,7 @@
 
 #include <string>
 
-using namespace std;
+//using namespace std;
 
 /*!
  @brief Abstract class that must be inherited to process files with spherical harmonics coefficients.
@@ -21,13 +21,13 @@ class coeffLoader
 public:
     coeffLoader();
     virtual ~coeffLoader();
-    virtual bool load(const string& filename, double** C_bar, double** S_bar, unsigned int* max_degree) = 0;
+    virtual bool load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree) = 0;
     
-    string getLastErrorMessage(void);
+    std::string getLastErrorMessage(void);
     
 protected:
-    string _errorMessage;
-    void replaceExpDesignator(string& str);
+    std::string _errorMessage;
+    void replaceExpDesignator(std::string& str);
 };
 
 /*!
@@ -38,7 +38,7 @@ class coeffLoaderTest : public coeffLoader
 public:
     coeffLoaderTest();
     virtual ~coeffLoaderTest();
-    virtual bool load(const string& filename, double** C_bar, double** S_bar, unsigned int* max_degree);
+    virtual bool load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree);
 };
 
 /*!
@@ -49,7 +49,7 @@ class coeffLoaderCSV : public coeffLoader
 public:
     coeffLoaderCSV(const unsigned char separation_char);
     virtual ~coeffLoaderCSV();
-    virtual bool load(const string& filename, double** C_bar, double** S_bar, unsigned int* max_degree);
+    virtual bool load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree);
     
 private:
     unsigned char _separationChar;
