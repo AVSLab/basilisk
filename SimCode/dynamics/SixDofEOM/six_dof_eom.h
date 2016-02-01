@@ -5,10 +5,10 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
+#include "utilities/sphericalHarmonics.h"
+#include "utilities/coeffLoader.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "dynamics/SphericalHarmonics/sphericalHarmonics.h"
-#include "dynamics/SphericalHarmonics/coeffLoader.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -49,14 +49,19 @@ public:
     GravityBodyData();
     
     // Constructor to be used for creating bodies with a spherical harmonic model
-    GravityBodyData(const std::string& sphHarm_filename, const std::string& file_format, const unsigned int max_degree, const double mu, const double reference_radius);
+    GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu, const double reference_radius);
     virtual ~GravityBodyData();
+    
+    // Copy constructor
+    GravityBodyData(const GravityBodyData& gravBody);
+    
+    // Overloaded operators
+    GravityBodyData& operator=(const GravityBodyData& gravBody);
     
     sphericalHarmonics* getSphericalHarmonicsModel(void);
 private:
     sphericalHarmonics* _spherHarm;  //!<          Object that computes the spherical harmonics gravity field
-    coeffLoader* _coeff_loader;      //!<          Object that loads the coefficients
-    
+    coeffLoaderCSV* _coeff_loader;      //!<          Object that loads the coefficients
 };
 
 //!@brief The SixDofEOM class is used to handle all dynamics propagation for a spacecraft

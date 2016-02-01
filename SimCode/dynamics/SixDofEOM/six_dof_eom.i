@@ -9,9 +9,6 @@
 %include "stdint.i"
 %include "carrays.i"
 
-%include "../SphericalHarmonics/coeffLoader.i"
-%include "../SphericalHarmonics/sphericalHarmonics.i"
-
 // Instantiate templates used by example
 namespace std {
    %template(IntVector) vector<int>;
@@ -20,6 +17,9 @@ namespace std {
    %template(ConstCharVector) vector<const char*>;
    %template(GravityBodyDataVector) vector<GravityBodyData>;
 }
+
+%include "../utilities/coeffLoader.h"
+%include "../utilities/sphericalHarmonics.h"
 
 %include "sys_model.h"
 %include "dyn_effector.h"

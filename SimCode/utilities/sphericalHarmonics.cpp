@@ -9,10 +9,34 @@
 #include "sphericalHarmonics.h"
 
 #include <string>
+#include <vector>
 #include <math.h>
+#include "coeffLoader.h"
 
 
 ///---------------------------Constructors-------------------------///
+
+/*!
+ @brief Default constructor.
+ */
+sphericalHarmonics::sphericalHarmonics(void) :
+    _maxDegree(0),
+    _referenceRadius(0),
+    _mu(0),
+    _C_bar(nullptr),
+    _S_bar(nullptr),
+    _A_bar(nullptr),
+    _Re(nullptr),
+    _Im(nullptr),
+    _N1(nullptr),
+    _N2(nullptr),
+    _Nquot_1(nullptr),
+    _Nquot_2(nullptr),
+    _coeffLoader(nullptr),
+    _errorMessage("")
+{
+    return;
+}
 
 /*!
  @brief Constructor using parameters. Check getLastError() after calling.
@@ -34,7 +58,8 @@ sphericalHarmonics::sphericalHarmonics(coeffLoader* loader, const std::string& f
     _N1(nullptr),
     _N2(nullptr),
     _Nquot_1(nullptr),
-    _Nquot_2(nullptr)
+    _Nquot_2(nullptr),
+    _errorMessage("")
 {
     bool ret = true;
     
@@ -63,7 +88,7 @@ sphericalHarmonics::sphericalHarmonics(coeffLoader* loader, const std::string& f
 }
 
 /*!
- @ Constructor using copy.
+ @ Copy constructor.
  @param hg Object to be copied.
  */
 sphericalHarmonics::sphericalHarmonics(const sphericalHarmonics& hg) :
@@ -76,9 +101,12 @@ sphericalHarmonics::sphericalHarmonics(const sphericalHarmonics& hg) :
     _N1(nullptr),
     _N2(nullptr),
     _Nquot_1(nullptr),
-    _Nquot_2(nullptr)
+    _Nquot_2(nullptr),
+    _errorMessage(hg._errorMessage)
 {
     bool ret = true;
+    
+    _coeffLoader = hg._coeffLoader; // Only copies the pointer (same object)
     
     ret &= sphericalHarmonics::allocateArray(&this->_C_bar, this->_maxDegree);
     ret &= sphericalHarmonics::allocateArray(&this->_S_bar, this->_maxDegree);
@@ -94,7 +122,7 @@ sphericalHarmonics::sphericalHarmonics(const sphericalHarmonics& hg) :
         return;
     }
     
-    sphericalHarmonics::copy(hg);
+    this->copy(hg);
     
     return;
 }
@@ -104,6 +132,25 @@ sphericalHarmonics::sphericalHarmonics(const sphericalHarmonics& hg) :
 sphericalHarmonics::~sphericalHarmonics()
 {
     this->deallocate();
+}
+
+///----------------------------Overloaded operators--------------------------///
+sphericalHarmonics& sphericalHarmonics::operator=(const sphericalHarmonics& hg)
+{
+    if (&hg == this)
+        return *this;
+    
+    this->_maxDegree = hg._maxDegree;
+    this->_referenceRadius = hg._referenceRadius;
+    this->_mu = hg._mu;
+    
+    this->_errorMessage = hg._errorMessage;
+    
+    this->_coeffLoader = hg._coeffLoader; // Only copies the pointer
+    
+    this->copy(hg);
+    
+    return *this;
 }
 
 ///------------------------------------Getters--------------------------------///
@@ -131,6 +178,15 @@ double sphericalHarmonics::getReferenceRadius() const
 double sphericalHarmonics::getGravitationalParameter() const
 {
     return this->_mu;
+}
+
+///------------------------------------Setters--------------------------------///
+/*
+ @brief This setter does not destroy the loader since its life is independent of the spherical harmonics existance. It's an aggregation more than a composition.
+ */
+void sphericalHarmonics::setCoefficientLoader(coeffLoader* loader)
+{
+    this->_coeffLoader = loader;
 }
 
 ///---------------------------------Main Interface----------------------------///
@@ -274,6 +330,32 @@ void sphericalHarmonics::computeField(const double pos[3], unsigned int degree, 
     acc[0] = a1 + s * a4;
     acc[1] = a2 + t * a4;
     acc[2] = a3 + u * a4;
+}
+
+/*!
+ @brief Use to compute the field in position pos, given in a body frame (uses Vectors instead of arrays). It's a wrapper of computeField().
+ @param[in] pos Position in which the field is to be computed.
+ @param[in] degree used to compute the field.
+ @param[out] acc Vector including the computed field.
+ @param[in] include_zero_degree Boolean that determines whether the zero-degree term is included.
+ @return acc
+ */
+std::vector<double> sphericalHarmonics::getFieldVector(const std::vector<double>& pos, unsigned int degree, std::vector<double>& acc, bool include_zero_degree) const
+{
+    double pos_array[3];
+    double acc_array[3];
+    
+    pos_array[0] = pos[0];
+    pos_array[1] = pos[1];
+    pos_array[2] = pos[2];
+    
+    this->computeField(pos_array, degree, acc_array, include_zero_degree);
+    
+    acc[0] = acc_array[0];
+    acc[1] = acc_array[1];
+    acc[2] = acc_array[2];
+    
+    return acc;
 }
 
 
@@ -496,7 +578,7 @@ void sphericalHarmonics::deallocateArray(double** a, const unsigned int degree)
             }
         }
         delete[] a;
-        *a = nullptr;
+        a = nullptr;
     }
     
     return;

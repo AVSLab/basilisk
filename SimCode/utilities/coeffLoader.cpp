@@ -12,6 +12,7 @@
 // basic file operations
 #include <iostream>
 #include <fstream>
+#include <ctype.h>
 
 
 ///-------------------------------coeffLoader--------------------------------///
@@ -20,16 +21,31 @@ coeffLoader::coeffLoader()
     this->_errorMessage = std::string("");
 }
 
+coeffLoader::coeffLoader(const coeffLoader& x)
+{
+    this->_errorMessage = x.getLastErrorMessage();
+}
+
 coeffLoader::~coeffLoader()
 {
-    this->_errorMessage = std::string("");
+    
+}
+
+coeffLoader& coeffLoader::operator=(const coeffLoader& x)
+{
+    if (&x == this)
+        return *this;
+    
+    this->_errorMessage = x.getLastErrorMessage();
+    
+    return *this;
 }
 
 /*!
  @brief Use this method to get the last error message.
  @return A string with the message.
  */
-std::string coeffLoader::getLastErrorMessage(void)
+std::string coeffLoader::getLastErrorMessage(void) const
 {
     return this->_errorMessage;
 }
@@ -80,9 +96,14 @@ bool coeffLoaderTest::load(const std::string& filename, double** C_bar, double**
 }
 
 ///----------------------------coeffLoaderCSV------------------------------///
-coeffLoaderCSV::coeffLoaderCSV(const unsigned char separation_char) :
-    coeffLoader(),
-    _separationChar(separation_char)
+coeffLoaderCSV::coeffLoaderCSV() :
+    coeffLoader()
+{
+    
+}
+
+coeffLoaderCSV::coeffLoaderCSV(const coeffLoaderCSV& x) :
+    coeffLoader(x)
 {
     
 }
@@ -136,7 +157,8 @@ bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** 
         cii = initial;
         while (cii != line.end())
         {
-            if (*cii == this->_separationChar)
+//            if (*cii == this->_separationChar || *cii == this->_separationChar)
+            if (!isdigit(*cii) and *cii != '-')
             {
                 cii++;
                 continue;
@@ -144,9 +166,18 @@ bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** 
             
             if (param_nmber == 0)       // Degree
             {
+                double entry;
+                
                 index = distance(initial, cii);
                 aux = line.substr(index, std::string::npos);
-                degree = (unsigned int) stod(aux, &sz);
+                entry = stod(aux, &sz);
+                degree = (unsigned int) entry;
+                
+                if (entry - degree != 0) { // Line doesn't have the degree first
+                    degree = 0;
+                    break;
+                }
+                
                 if (degree > *max_degree)
                     break;
                 cii += sz;

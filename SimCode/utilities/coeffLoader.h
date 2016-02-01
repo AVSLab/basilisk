@@ -1,5 +1,5 @@
 //
-//  coeffLoader.hpp
+//  coeffLoader.h
 //  SphericalHarmonics
 //
 //  Created by Manuel Diaz Ramos on 12/19/15.
@@ -11,8 +11,6 @@
 
 #include <string>
 
-//using namespace std;
-
 /*!
  @brief Abstract class that must be inherited to process files with spherical harmonics coefficients.
  */
@@ -20,10 +18,14 @@ class coeffLoader
 {
 public:
     coeffLoader();
+    coeffLoader(const coeffLoader& x);
     virtual ~coeffLoader();
     virtual bool load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree) = 0;
     
-    std::string getLastErrorMessage(void);
+    //Overloaded operators
+    coeffLoader& operator=(const coeffLoader& x);
+    
+    std::string getLastErrorMessage(void) const;
     
 protected:
     std::string _errorMessage;
@@ -47,12 +49,13 @@ public:
 class coeffLoaderCSV : public coeffLoader
 {
 public:
-    coeffLoaderCSV(const unsigned char separation_char);
+    coeffLoaderCSV();
+    coeffLoaderCSV(const coeffLoaderCSV& x);
     virtual ~coeffLoaderCSV();
     virtual bool load(const std::string& filename, double** C_bar, double** S_bar, unsigned int* max_degree);
-    
+
 private:
-    unsigned char _separationChar;
+    //unsigned char _separationChar;
 };
 
 #endif /* coeffLoader_hpp */
