@@ -84,9 +84,16 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 		v3Subtract(observedSpeedVec, singleSpeedVec, observedSpeedVec);
 	}
 
+	/*! - If we are within the specified threshold for the momentum, stop desaturation.*/
+	if (v3Norm(observedSpeedVec) < ConfigData->DMThresh)
+	{
+		return;
+	}
+
     /*! - Iterate through the list of thrusters and find the "best" match for the 
           observed momentum vector that does not continue to perturb the velocity 
-          in the same direction as previous aggregate firings */
+          in the same direction as previous aggregate firings.  Only do this once we have 
+		  removed the specified momentum accuracy from the current direction.*/
 	selectedThruster = -1;
 	bestMatch = 0.0;
 	if (v3Dot(ConfigData->currDMDir, observedSpeedVec) <= ConfigData->DMThresh)
@@ -113,7 +120,8 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	}
     
     /*! - Zero out the thruster commands prior to setting the selected thruster.
-          Only apply thruster firing if the best match is non-zero.
+          Only apply thruster firing if the best match is non-zero.  Find the thruster 
+		  that best matches the current specified direction.
     */
 	memset(&outputData, 0x0, sizeof(vehEffectorOut));
 	selectedThruster = -1;
