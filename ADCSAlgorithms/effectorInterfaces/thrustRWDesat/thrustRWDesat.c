@@ -89,10 +89,39 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
           in the same direction as previous aggregate firings */
 	selectedThruster = -1;
 	bestMatch = 0.0;
+	if (v3Dot(ConfigData->currDMDir, observedSpeedVec) <= ConfigData->DMThresh)
+	{
+		uint32_t lowTime = callTime*1.0E-9;
+		for (i = 0; i < ConfigData->numThrusters; i++)
+		{
+
+			fireValue = v3Dot(observedSpeedVec,
+				&(ConfigData->thrTorqueMap[i * 3]));
+			currentMatch = v3Dot(ConfigData->accumulatedImp,
+				&(ConfigData->thrAlignMap[i * 3]));
+			if (fireValue - currentMatch > bestMatch && fireValue > 0.0)
+			{
+				selectedThruster = i;
+				bestMatch = fireValue - currentMatch;
+			}
+		}
+		if (selectedThruster >= 0)
+		{
+			v3Normalize(&ConfigData->thrTorqueMap[selectedThruster * 3],
+				ConfigData->currDMDir);
+		}
+	}
+    
+    /*! - Zero out the thruster commands prior to setting the selected thruster.
+          Only apply thruster firing if the best match is non-zero.
+    */
+	memset(&outputData, 0x0, sizeof(vehEffectorOut));
+	selectedThruster = -1;
+	bestMatch = 0.0;
 	for (i = 0; i < ConfigData->numThrusters; i++)
 	{
-    
-		fireValue = v3Dot(observedSpeedVec,
+
+		fireValue = v3Dot(ConfigData->currDMDir,
 			&(ConfigData->thrTorqueMap[i * 3]));
 		currentMatch = v3Dot(ConfigData->accumulatedImp,
 			&(ConfigData->thrAlignMap[i * 3]));
@@ -102,12 +131,6 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 			bestMatch = fireValue - currentMatch;
 		}
 	}
-    
-    /*! - Zero out the thruster commands prior to setting the selected thruster.
-          Only apply thruster firing if the best match is non-zero.
-    */
-	memset(&outputData, 0x0, sizeof(vehEffectorOut));
-    
     /*! - If we have a valid match: 
           - Set firing based on the best counter to the observed momentum.
           - Saturate based on the maximum allowable firing
@@ -115,7 +138,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
           - Set the previous call time value for cooldown check */
 	if (bestMatch > 0.0)
 	{
-		outputData.effectorRequest[selectedThruster] = v3Dot(observedSpeedVec,
+		outputData.effectorRequest[selectedThruster] = v3Dot(ConfigData->currDMDir,
 			&(ConfigData->thrTorqueMap[selectedThruster * 3]));
 		outputData.effectorRequest[selectedThruster] =
 			outputData.effectorRequest[selectedThruster] > ConfigData->maxFiring ?

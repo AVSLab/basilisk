@@ -27,7 +27,9 @@ typedef struct {
 	uint32_t numRWAs;          /*!< (-) Number of reaction wheels being desaturated*/
 	uint32_t numThrusters;     /*!< (-) Number of thrusters available in the align map*/
 	double accumulatedImp[3];  /*!< (s) The accumulated firing in the body frame*/
+	double currDMDir[3];       /*!< (-) The current direction of momentum reduction*/
 	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
+	double DMThresh;           /*!< (r/s) The point at which to stop decrementing momentum*/
 	uint64_t previousFiring;   /*!< (ns) Time that the last firing command was given*/
     int32_t inputSpeedID;      /*!< (-) ID for the incoming RW speeds*/
 	int32_t outputThrID;       /*!< (-) ID for the outgoing thruster commands*/
