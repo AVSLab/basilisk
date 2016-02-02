@@ -76,14 +76,14 @@ SunGravBody = six_dof_eom.GravityBodyData()
 SunGravBody.BodyMsgName = "sun_planet_data"
 SunGravBody.outputMsgName = "sun_display_frame_data"
 SunGravBody.mu = 1.32712440018E20 #meters!
-SunGravBody.IsCentralBody = True
+SunGravBody.IsCentralBody = False
 SunGravBody.IsDisplayBody = False
 SunGravBody.UseJParams = False
 
 EarthGravBody = six_dof_eom.GravityBodyData()
 EarthGravBody.BodyMsgName = "earth_planet_data"
 EarthGravBody.outputMsgName = "earth_display_frame_data"
-EarthGravBody.IsCentralBody = False
+EarthGravBody.IsCentralBody = True
 EarthGravBody.UseJParams = False
 JParams = LoadGravFromFile(EarthGravFile,  EarthGravBody, JParamsSelect)
 EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)   

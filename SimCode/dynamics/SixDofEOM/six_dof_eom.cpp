@@ -611,13 +611,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     else if (CentralBody->UseSphericalHarmParams)
     {
         unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
-        double posBodyFix[3]; // [m] Position in planet-fixed frame
+        double posPlanetFix[3]; // [m] Position in planet-fixed frame
         double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
 
         double aux[3], aux1[3], aux2[3], aux3[3];
         
-        m33MultV3(CentralBody->J20002Pfix, r_N, posBodyFix); // r_E = [EN]*r_N
-        CentralBody->getSphericalHarmonicsModel()->computeField(posBodyFix, max_degree, gravField, false);
+        m33MultV3(CentralBody->J20002Pfix, r_N, posPlanetFix); // r_E = [EN]*r_N
+        CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
         m33tMultV3(CentralBody->J20002Pfix, gravField, aux1); // [EN]^T * gravField
         
@@ -636,6 +636,34 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Subtract(aux, aux3, perturbAccel);
         
         v3Add(dX+3, perturbAccel, dX+3);
+        
+//#ifdef _DEBUG
+//        printf("Paste this into python terminal:\n");
+//        printf("r_N = np.array([%.15e, %.15e, %.15e])\n", r_N[0], r_N[1], r_N[2]);
+//        printf("v_N = np.array([%.15e, %.15e, %.15e])\n", v_N[0], v_N[1], v_N[2]);
+//        printf("r_E = np.array([%.15e, %.15e, %.15e])\n", posPlanetFix[0], posPlanetFix[1], posPlanetFix[2]);
+//        
+//        printf("g_E = np.array([%.15e, %.15e, %.15e])\n", gravField[0], gravField[1], gravField[2]);
+//        
+//        printf("EN = np.array([");
+//        for (unsigned int i = 0; i < 3; i++) {
+//            printf("[%.15e, %.15e, %.15e]", CentralBody->J20002Pfix[i][0], CentralBody->J20002Pfix[i][1], CentralBody->J20002Pfix[i][2]);
+//            if (i < 2)
+//                printf(",");
+//        }
+//        printf("])\n");
+//        
+//        printf("EN_dot = np.array([");
+//        for (unsigned int i = 0; i < 3; i++) {
+//            printf("[%.15e, %.15e, %.15e]", CentralBody->J20002Pfix_dot[i][0], CentralBody->J20002Pfix_dot[i][1], CentralBody->J20002Pfix_dot[i][2]);
+//            if (i < 2)
+//                printf(",");
+//        }
+//        printf("])\n");
+//        printf("g_N_computed = EN.T.dot(g_E)-2*EN.T.dot(EN_dot).dot(v_N)-EN.T.dot(EN_dot).dot(EN.T).dot(EN_dot).dot(r_N)\n");
+//        printf("g_N = np.array([%.15e, %.15e, %.15e])\n", perturbAccel[0], perturbAccel[1], perturbAccel[2]);
+//        printf("print g_N_computed - g_N\n");
+//#endif
     }
 
     /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.

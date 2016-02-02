@@ -14,7 +14,7 @@
  */
 
 //!@brief Container for gravitational body data
-/*! This structure is designed to hold all of the information for a gravity 
+/*! This class is designed to hold all of the information for a gravity 
     body.  The nominal use-case has it initialized at the python level and 
     attached to dynamics using the AddGravityBody method.
 */
@@ -22,7 +22,7 @@ class GravityBodyData
 {
 public:
     // TO-DO: modified by MANUEL.
-    // This class used to be a structure. For backwards compatibility, all attributes will remain PUBLIC, even though this is not conceptually correct.
+    // This class used to be a structure. For backwards compatibility, all attributes will remain PUBLIC.
     // New attributes are added as Private.
     bool IsCentralBody;             //!<          Flag indicating that object is center
     bool IsDisplayBody;             //!<          Flag indicating that body is display
@@ -60,7 +60,7 @@ public:
     
     sphericalHarmonics* getSphericalHarmonicsModel(void);
 private:
-    sphericalHarmonics* _spherHarm;  //!<          Object that computes the spherical harmonics gravity field
+    sphericalHarmonics* _spherHarm;     //!<          Object that computes the spherical harmonics gravity field
     coeffLoaderCSV* _coeff_loader;      //!<          Object that loads the coefficients
 };
 

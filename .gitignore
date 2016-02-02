@@ -5,3 +5,4 @@ xml/*
 *.swp
 *.pyc
 lastfailed
+.idea
