@@ -1,6 +1,6 @@
 #
 #   Unit Test Script
-#   Module Name:        hillPoint
+#   Module Name:        orbitAxisSpin
 #   Author:             Mar Cols
 #   Creation Date:      January 22, 2016
 #
@@ -8,6 +8,7 @@
 import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
+import numpy as np
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -20,9 +21,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import hillPoint                        # import the module that is to be tested
-import simple_nav                       # import module(s) that creates the needed input message declaration
-import spice_interface
+import orbitAxisSpin                        # import the module that is to be tested
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -30,13 +29,13 @@ import spice_interface
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_hillPoint(show_plots):
+def test_orbitAxisSpin(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = hillPointTestFunction(show_plots)
+    [testResults, testMessage] = orbitAxisSpinTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def hillPointTestFunction(show_plots):
+def orbitAxisSpinTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -49,77 +48,64 @@ def hillPointTestFunction(show_plots):
     # consistent simulation environment for each test run.
     unitTestSim.TotalSim.terminateSimulation()
 
+    # Test times
+    updateTime = 0.5     # update process rate update time
+    totalTestSimTime = 1.
+
     # Create test thread
-    testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
+    testProcessRate = unitTestSupport.sec2nano(updateTime)
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = hillPoint.hillPointConfig()
+    moduleConfig = orbitAxisSpin.orbitAxisSpinConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        hillPoint.Update_hillPoint,
-                                        hillPoint.SelfInit_hillPoint,
-                                        hillPoint.CrossInit_hillPoint)
-    moduleWrap.ModelTag = "hillPoint"
+                                        orbitAxisSpin.Update_orbitAxisSpin,
+                                        orbitAxisSpin.SelfInit_orbitAxisSpin,
+                                        orbitAxisSpin.CrossInit_orbitAxisSpin)
+    moduleWrap.ModelTag = "orbitAxisSpin"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputNavDataName  = "inputNavName"
-    moduleConfig.inputCelMessName = "inputCelName"
+    moduleConfig.inputRefName = "inputRefName"
     moduleConfig.outputDataName = "outputName"
 
+    moduleConfig.o_spin = 0
+    moduleConfig.phi_spin = np.pi/4
+    moduleConfig.omega_spin = np.pi/8
+    moduleConfig.dt = updateTime
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
-    #   Navigation Input Message
+    # Reference Frame Message
     #
-    inputNavMessageSize = 18*8                             # 6x3 doubles
+    inputMessageSize = 12*8                             # 4x3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavDataName,
-                                          inputNavMessageSize,
+                                          moduleConfig.inputRefName,
+                                          inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    r_BN_N = [500., 500., 1000.]
-    SimulationBaseClass.SetCArray(r_BN_N,
-                                  'double',
-                                  NavStateOutData.r_BN_N)
-    v_BN_N = [0., 20., 0.]
-    SimulationBaseClass.SetCArray(v_BN_N,
-                                  'double',
-                                  NavStateOutData.v_BN_N)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
-                                          inputNavMessageSize,
-                                          0,
-                                          NavStateOutData)
-    #
-    #   Spice Input Message
-    #
-    inputCelMessageSize = (1 + 2*(3) + (3*3))*8 + 4 + 1*64 # Size of SpicePlanetState:
-                                                           # (1, 2*v3, M33) doubles[8]
-                                                           # 1 int[4]
-                                                           # 1 char[1] with maxLength = 64
 
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputCelMessName,
-                                          inputCelMessageSize,
-                                          2)  
-    CelBodyData = spice_interface.SpicePlanetState()
-    planetPos = [-500.,-500., 0.]
-    SimulationBaseClass.SetCArray(planetPos,
+    RefStateOutData = orbitAxisSpin.attRefOut()          # Create a structure for the input message
+    sigma_R0N = [ -0.16367330847620223, -0.39514232112172260, -0.16367330847620221 ]
+    SimulationBaseClass.SetCArray(sigma_R0N,
                                   'double',
-                                  CelBodyData.PositionVector)
-    planetVel = [0., 0., 0.]
-    SimulationBaseClass.SetCArray(planetVel,
+                                  RefStateOutData.sigma_RN)
+    omega_R0N_N = [ -0.00383553448372837, 0.00383553448372837, 0.00000000000000000 ]
+    SimulationBaseClass.SetCArray(omega_R0N_N,
                                   'double',
-                                  CelBodyData.VelocityVector)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
-                                          inputCelMessageSize,
+                                  RefStateOutData.omega_RN_N)
+    domega_RN_N =[ 0.00001786539057109, -0.00001786539057109, 0.00000000000000000 ]
+    SimulationBaseClass.SetCArray(domega_RN_N,
+                                  'double',
+                                  RefStateOutData.domega_RN_N)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
+                                          inputMessageSize,
                                           0,
-                                          CelBodyData)
+                                          RefStateOutData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -131,7 +117,7 @@ def hillPointTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(totalTestSimTime))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -146,10 +132,10 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ]
-               ]
+             [ 0.035239058903, -0.395142321122, -0.163673308476 ],
+             [ 0.086813651715, -0.395142321122, -0.163673308476 ],
+             [ 0.139673375131, -0.395142321122, -0.163673308476 ]
+    ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -168,11 +154,10 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ]
-               ]
-
+               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ] ,
+               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ],
+               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ]
+    ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -191,10 +176,10 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ]
-               ]
+            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ] ,
+            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ],
+            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ]
+    ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -232,4 +217,4 @@ def hillPointTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_hillPoint(False)
+    test_orbitAxisSpin(False)

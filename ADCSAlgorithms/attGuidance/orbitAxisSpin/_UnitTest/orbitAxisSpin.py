@@ -1,8 +1,8 @@
 #
 #   Unit Test Script
-#   Module Name:        hillPoint
-#   Author:             Mar Cols
-#   Creation Date:      January 22, 2016
+#   Module Name:        inertial3DSpin
+#   Author:             Hanspeter Schaub
+#   Creation Date:      January 6, 2016
 #
 
 import pytest
@@ -20,9 +20,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import hillPoint                        # import the module that is to be tested
-import simple_nav                       # import module(s) that creates the needed input message declaration
-import spice_interface
+import inertial3DSpin                   # import the module that is to be tested
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -30,13 +28,13 @@ import spice_interface
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_hillPoint(show_plots):
+def test_inertial3DSpin(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = hillPointTestFunction(show_plots)
+    [testResults, testMessage] = subModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def hillPointTestFunction(show_plots):
+def subModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -56,70 +54,29 @@ def hillPointTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = hillPoint.hillPointConfig()
+    moduleConfig = inertial3DSpin.inertial3DSpinConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        hillPoint.Update_hillPoint,
-                                        hillPoint.SelfInit_hillPoint,
-                                        hillPoint.CrossInit_hillPoint)
-    moduleWrap.ModelTag = "hillPoint"
+                                        inertial3DSpin.Update_inertial3DSpin,
+                                        inertial3DSpin.SelfInit_inertial3DSpin,
+                                        inertial3DSpin.CrossInit_inertial3DSpin)
+    moduleWrap.ModelTag = "inertial3DSpin"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputNavDataName  = "inputNavName"
-    moduleConfig.inputCelMessName = "inputCelName"
     moduleConfig.outputDataName = "outputName"
 
+    vector = [0.1, 0.2, 0.3]
+    SimulationBaseClass.SetCArray(vector,
+                                  'double',
+                                  moduleConfig.sigma_RN)
+    vector = [1.*unitTestSupport.D2R, -1.*unitTestSupport.D2R, 0.5*unitTestSupport.D2R]
+    SimulationBaseClass.SetCArray(vector,
+                                  'double',
+                                  moduleConfig.omega_RN_N)
 
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    #
-    #   Navigation Input Message
-    #
-    inputNavMessageSize = 18*8                             # 6x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavDataName,
-                                          inputNavMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    r_BN_N = [500., 500., 1000.]
-    SimulationBaseClass.SetCArray(r_BN_N,
-                                  'double',
-                                  NavStateOutData.r_BN_N)
-    v_BN_N = [0., 20., 0.]
-    SimulationBaseClass.SetCArray(v_BN_N,
-                                  'double',
-                                  NavStateOutData.v_BN_N)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
-                                          inputNavMessageSize,
-                                          0,
-                                          NavStateOutData)
-    #
-    #   Spice Input Message
-    #
-    inputCelMessageSize = (1 + 2*(3) + (3*3))*8 + 4 + 1*64 # Size of SpicePlanetState:
-                                                           # (1, 2*v3, M33) doubles[8]
-                                                           # 1 int[4]
-                                                           # 1 char[1] with maxLength = 64
 
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputCelMessName,
-                                          inputCelMessageSize,
-                                          2)  
-    CelBodyData = spice_interface.SpicePlanetState()
-    planetPos = [-500.,-500., 0.]
-    SimulationBaseClass.SetCArray(planetPos,
-                                  'double',
-                                  CelBodyData.PositionVector)
-    planetVel = [0., 0., 0.]
-    SimulationBaseClass.SetCArray(planetVel,
-                                  'double',
-                                  CelBodyData.VelocityVector)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
-                                          inputCelMessageSize,
-                                          0,
-                                          CelBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -139,38 +96,17 @@ def hillPointTestFunction(show_plots):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     #
-    # check sigma_RN
+    # check sigma_BR
     #
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
+
     # set the filtered output truth states
     trueVector = [
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ]
-               ]
-    # compare the module results to the truth values
-    accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
-                                "sec\n")
-    #
-    # check omega_RN_N
-    #
-    moduleOutputName = "omega_RN_N"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    # set the filtered output truth states
-    trueVector = [
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ]
+               [0.1, 0.2, 0.3],
+               [0.1, 0.2, 0.3],
+               [0.1001527163095495,0.1970765735029095,0.3023125612588925]
                ]
 
     # compare the module results to the truth values
@@ -183,18 +119,48 @@ def hillPointTestFunction(show_plots):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
                                 "sec\n")
+
+
     #
-    # check domega_RN_N
+    # check omega_RN_B
+    #
+    moduleOutputName = "omega_RN_N"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+                                                  range(3))
+
+    # set the filtered output truth states
+    trueVector = [
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
+               [0.0174532925199433,-0.0174532925199433,0.008726646259971648]
+               ]
+    print moduleOutput
+    
+    # compare the module results to the truth values
+    accuracy = 1e-12
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
+                                moduleOutputName + " unit test at t=" +
+                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
+                                "sec\n")
+
+    #
+    # check domega_RN_B
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
+
     # set the filtered output truth states
     trueVector = [
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ]
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0]
                ]
+
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -232,4 +198,4 @@ def hillPointTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_hillPoint(False)
+    test_inertial3DSpin(False)

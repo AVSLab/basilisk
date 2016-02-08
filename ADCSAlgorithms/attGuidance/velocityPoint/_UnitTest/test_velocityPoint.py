@@ -1,6 +1,6 @@
 #
 #   Unit Test Script
-#   Module Name:        hillPoint
+#   Module Name:        velocityPoint
 #   Author:             Mar Cols
 #   Creation Date:      January 22, 2016
 #
@@ -20,7 +20,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import hillPoint                        # import the module that is to be tested
+import velocityPoint                        # import the module that is to be tested
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import spice_interface
 
@@ -30,13 +30,13 @@ import spice_interface
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_hillPoint(show_plots):
+def test_velocityPoint(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = hillPointTestFunction(show_plots)
+    [testResults, testMessage] = velocityPointTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def hillPointTestFunction(show_plots):
+def velocityPointTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -56,12 +56,12 @@ def hillPointTestFunction(show_plots):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = hillPoint.hillPointConfig()
+    moduleConfig = velocityPoint.velocityPointConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        hillPoint.Update_hillPoint,
-                                        hillPoint.SelfInit_hillPoint,
-                                        hillPoint.CrossInit_hillPoint)
-    moduleWrap.ModelTag = "hillPoint"
+                                        velocityPoint.Update_velocityPoint,
+                                        velocityPoint.SelfInit_velocityPoint,
+                                        velocityPoint.CrossInit_velocityPoint)
+    moduleWrap.ModelTag = "velocityPoint"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -87,7 +87,7 @@ def hillPointTestFunction(show_plots):
     SimulationBaseClass.SetCArray(r_BN_N,
                                   'double',
                                   NavStateOutData.r_BN_N)
-    v_BN_N = [0., 20., 0.]
+    v_BN_N = [10., 10., 0.]
     SimulationBaseClass.SetCArray(v_BN_N,
                                   'double',
                                   NavStateOutData.v_BN_N)
@@ -146,9 +146,9 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ]
+               [ -0.16367330847620223, -0.39514232112172260, -0.16367330847620221 ] ,
+               [ -0.16367330847620223, -0.39514232112172260, -0.16367330847620221 ] ,
+               [ -0.16367330847620223, -0.39514232112172260, -0.16367330847620221 ]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -168,11 +168,10 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ]
+               [ -0.00383553448372837, 0.00383553448372837, 0.00000000000000000 ] ,
+               [ -0.00383553448372837, 0.00383553448372837, 0.00000000000000000 ] ,
+               [ -0.00383553448372837, 0.00383553448372837, 0.00000000000000000 ]
                ]
-
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -191,9 +190,9 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ]
+               [ 0.00001786539057109, -0.00001786539057109, 0.00000000000000000 ],
+               [ 0.00001786539057109, -0.00001786539057109, 0.00000000000000000 ],
+               [ 0.00001786539057109, -0.00001786539057109, 0.00000000000000000 ]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -232,4 +231,4 @@ def hillPointTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_hillPoint(False)
+    test_velocityPoint(False)

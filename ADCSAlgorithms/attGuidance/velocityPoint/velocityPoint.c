@@ -1,5 +1,4 @@
 /*
-    Inertial 3D Spin Module
  
  * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
  * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
@@ -7,27 +6,31 @@
  */
 
 
-#include "attGuidance/hillPoint/hillPoint.h"
+#include "attGuidance/velocityPoint/velocityPoint.h"
 #include <string.h>
+#include <math.h>
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
+#include "SimCode/utilities/orbitalMotion.h"
+#include "SimCode/utilities/astroConstants.h"
 
 
-
-void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
+void SelfInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
+    /*! - Initialize variables for module */
+    ConfigData->mu = MU_EARTH;
 }
 
-void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
+void CrossInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
@@ -36,13 +39,13 @@ void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
                                                 sizeof(NavStateOut), moduleID);
 }
 
-void Reset_hillPoint(hillPointConfig *ConfigData)
+void Reset_velocityPoint(velocityPointConfig *ConfigData)
 {
     
 }
 
 
-void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
     uint64_t            writeTime;
@@ -57,13 +60,14 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     
     
     /*! - Compute and store output message */
-    computeHillPointingReference(navData.r_BN_N,
-                                 navData.v_BN_N,
-                                 primPlanet.PositionVector,
-                                 primPlanet.VelocityVector,
-                                 ConfigData->attRefOut.sigma_RN,
-                                 ConfigData->attRefOut.omega_RN_N,
-                                 ConfigData->attRefOut.domega_RN_N);
+    computeVelocityPointingReference(ConfigData,
+                                     navData.r_BN_N,
+                                     navData.v_BN_N,
+                                     primPlanet.PositionVector,
+                                     primPlanet.VelocityVector,
+                                     ConfigData->attRefOut.sigma_RN,
+                                     ConfigData->attRefOut.omega_RN_N,
+                                     ConfigData->attRefOut.domega_RN_N);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
@@ -72,22 +76,23 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
 }
 
 
-void computeHillPointingReference(double r_BN_N[3],
-                                  double v_BN_N[3],
-                                  double celBdyPositonVector[3],
-                                  double celBdyVelocityVector[3],
-                                  double sigma_RN[3],
-                                  double omega_RN_N[3],
-                                  double domega_RN_N[3])
+void computeVelocityPointingReference(velocityPointConfig *ConfigData,
+                                      double r_BN_N[3],
+                                      double v_BN_N[3],
+                                      double celBdyPositonVector[3],
+                                      double celBdyVelocityVector[3],
+                                      double sigma_RN[3],
+                                      double omega_RN_N[3],
+                                      double domega_RN_N[3])
 {
     
-    double  relPosVector[3];
-    double  relVelVector[3];
-    double  RN[3][3];                /*!< DCM from inertial to reference frame */
-    double  temp33[3][3];
     
-    double  rm;                      /*!< orbit radius */
+    double  RN[3][3];                /*!< DCM from inertial to reference frame */
+    
+    double  r[3];                    /*!< relative position vector of the spacecraft with respect to the orbited planet */
+    double  v[3];                    /*!< relative velocity vector of the spacecraft with respect to the orbited planet  */
     double  h[3];                    /*!< orbit angular momentum vector */
+    double  rm;                      /*!< orbit radius */
     double  hm;                      /*!< module of the orbit angular momentum vector */
     
     double  dfdt;                    /*!< rotational rate of the orbit frame */
@@ -95,37 +100,42 @@ void computeHillPointingReference(double r_BN_N[3],
     double  omega_RN_R[3];           /*!< reference angular velocity vector in Reference frame R components */
     double  domega_RN_R[3];          /*!< reference angular acceleration vector in Reference frame R components */
     
+    double  temp33[3][3];
+    double  temp;
+    double  denom;
+    
+    
     /* Compute relative position and velocity of the spacecraft with respect to the main celestial body */
-    v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
-    v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
+    v3Subtract(r_BN_N, celBdyPositonVector, r);
+    v3Subtract(v_BN_N, celBdyVelocityVector, v);
     
     /* Compute RN */
-    v3Normalize(relPosVector, RN[0]);
-    v3Cross(relPosVector, relVelVector, h);
+    v3Normalize(v, RN[1]);
+    v3Cross(r, v, h);
     v3Normalize(h, RN[2]);
-    v3Cross(RN[2], RN[0], RN[1]);
+    v3Cross(RN[1], RN[2], RN[0]);
     
     /* Compute R-frame orientation */
     C2MRP(RN, sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
-    rm = v3Norm(relPosVector);
+    rv2elem(ConfigData->mu, r, v, &ConfigData->oe);
+    rm = v3Norm(r);
     hm = v3Norm(h);
     if(rm > 1.) {
         dfdt = hm / (rm * rm);  /* true anomaly rate */
-        ddfdt2 = - 2.0 * v3Dot(relVelVector, RN[0]) / rm * dfdt; /* derivative of true anomaly rate */
+        ddfdt2    = - 2.0 * (v3Dot(v, r) / (rm * rm)) * dfdt;
+        denom = 1 + ConfigData->oe.e * ConfigData->oe.e + 2 * ConfigData->oe.e * cos(ConfigData->oe.f);
+        temp = (1 + ConfigData->oe.e * cos(ConfigData->oe.f)) / denom;
+        omega_RN_R[2]  = dfdt * temp;
+        domega_RN_R[2] = ddfdt2 * temp - dfdt*dfdt* ConfigData->oe.e *(ConfigData->oe.e*ConfigData->oe.e - 1)*sin(ConfigData->oe.f) / (denom*denom);
     } else {
-        /* an error has occured, radius shouldn't be less than 1km #WHY?? */
         dfdt   = 0.;
         ddfdt2 = 0.;
     }
-    v3SetZero(omega_RN_R);
-    v3SetZero(domega_RN_R);
-    omega_RN_R[2]  = dfdt;
-    domega_RN_R[2] = ddfdt2;
-
     m33Transpose(RN, temp33);
     m33MultV3(temp33, omega_RN_R, omega_RN_N);
     m33MultV3(temp33, domega_RN_R, domega_RN_N);
+    
     
 }
