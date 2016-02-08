@@ -1,39 +1,43 @@
 
-#ifndef _HILL_SPIN_
-#define _HILL_SPIN_
+#ifndef _orbitAxis_SPIN_
+#define _orbitAxis_SPIN_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/attGuidOut.h"
 
+/* Required module input messages */
+#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "SimCode/environment/spice/spice_planet_state.h"
+
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
+/*! @brief Top level structure for the sub-module routines. */
+
+
+
 typedef struct {
     /* declare module private variables */
-    int o_spin;                                     /*!< [0,1,2]   Orbit axis around which to spin */
-    double omega_spin;                              /*!< [rad/sec] Desired spinning rate */
-    double phi_spin;                                /*!< [rad]     Initial  spin angle */
-    uint64_t priorTime;                             /*!< [ns]      Last time the guidance module is called */
+    int     o_spin;                                  /*!< [0,1,2]   Orbit axis around which to spin */
+    double  omega_spin;                              /*!< [rad/sec] Desired spinning rate */
+    double  phi_spin;                                /*!< [rad]     Current  spin angle */
+    double  phi_spin_0;                              /*!< [rad]     Initial  spin angle */
+    double  dt;                                      /*!< [rad]     Module update time */
     
-    int b_spin;                                     /*!< #TEMP     [0,1,2]  Orbit axis around which to spin */
-    double sigma_B0N;                                /*!< #TEMP     This should come from a message at some point */
-
+    int     b_spin;                                  /*!< [0,1,2]   Body axis around which to spin */
+    double  sigma_BN[3];                             /*!<           MRP from body B-frame to inertial */
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message*/
     int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */
-    char inputNavDataName[MAX_STAT_MSG_LENGTH];     /*<!        The name of the incoming attitude command*/
-    int32_t inputNavID;                             /*!< (-)    ID for the incoming IMU data message*/
-    char inputCelMessName[MAX_STAT_MSG_LENGTH];     /*<!        The name of the celestial body message */
-    int32_t inputCelID;                             /*!< (-)    ID for the planet input message */
-    char inputPointRefName[MAX_STAT_MSG_LENGTH];     /*<!       The name of the celestial body message */
-    int32_t inputRefID;                             /*!< (-)    ID for the planet input message */
+    char inputRefName[MAX_STAT_MSG_LENGTH];         /*!< The name of the guidance reference Input message */
+    int32_t inputRefID;                             /*!< ID for the incoming guidance reference message */
     
     /*  copy of the output message */
     attRefOut attRefOut;
-
+    
 }orbitAxisSpinConfig;
 
 #ifdef __cplusplus
@@ -44,12 +48,7 @@ extern "C" {
     void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID);
     void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData);
-
-    void computeorbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
-                                  double r_BN_N[3],
-                                  double v_BN_N[3],
-                                  double celBdyPositonVector[3],
-                                  double celBdyVelocityVector[3],
+    void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
                                   double sigma_R0N[3],
                                   double omega_R0N_N[3],
                                   double domega_R0N_N[3],
@@ -60,7 +59,8 @@ extern "C" {
                                   double domega_RN_N[3]);
     
     double computeInitialSpinAngle(orbitAxisSpinConfig *ConfigData,
-                                   double sigma_ON);
+                                   double sigma_ON[3]);
+    
 #ifdef __cplusplus
 }
 #endif
