@@ -83,11 +83,11 @@ def hillPointTestFunction(show_plots):
                                           inputNavMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
     NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    r_BN_N = [1., 1., 1.]
+    r_BN_N = [500., 500., 1000.]
     SimulationBaseClass.SetCArray(r_BN_N,
                                   'double',
                                   NavStateOutData.r_BN_N)
-    v_BN_N = [1., 1., 1.]
+    v_BN_N = [0., 20., 0.]
     SimulationBaseClass.SetCArray(v_BN_N,
                                   'double',
                                   NavStateOutData.v_BN_N)
@@ -98,13 +98,17 @@ def hillPointTestFunction(show_plots):
     #
     #   Spice Input Message
     #
-    inputCelMessageSize = 18*8 # !!! Size of SpicePlanetState ???
+    inputCelMessageSize = (1 + 2*(3) + (3*3))*8 + 4 + 1*64 # Size of SpicePlanetState:
+                                                           # (1, 2*v3, M33) doubles[8]
+                                                           # 1 int[4]
+                                                           # 1 char[1] with maxLength = 64
+
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputCelMessName,
                                           inputCelMessageSize,
                                           2)  
     CelBodyData = spice_interface.SpicePlanetState()
-    planetPos = [0., 0., 0.]
+    planetPos = [-500.,-500., 0.]
     SimulationBaseClass.SetCArray(planetPos,
                                   'double',
                                   CelBodyData.PositionVector)
@@ -116,10 +120,6 @@ def hillPointTestFunction(show_plots):
                                           inputCelMessageSize,
                                           0,
                                           CelBodyData)
-    #TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
-    #EarthPosVec = ctypes.cast(FinalEarthMessage.PositionVector.__long__(),
-    #ctypes.POINTER(ctypes.c_double))
-
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -145,7 +145,11 @@ def hillPointTestFunction(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    trueVector = []
+    trueVector = [
+               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
+               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
+               [ -0.061642308231, -0.193942998069, 0.148817696548 ]
+               ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -163,7 +167,12 @@ def hillPointTestFunction(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    trueVector = []
+    trueVector = [
+               [ -0.006666666667, 0., 0.006666666667 ],
+               [ -0.006666666667, 0., 0.006666666667 ],
+               [ -0.006666666667, 0., 0.006666666667 ]
+               ]
+
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -177,11 +186,15 @@ def hillPointTestFunction(show_plots):
     #
     # check domega_RN_N
     #
-    moduleOutputName = "omega_RN_N"
+    moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
     # set the filtered output truth states
-    trueVector = []
+    trueVector = [
+               [ 0.000088888889, 0., -0.000088888889 ],
+               [ 0.000088888889, 0., -0.000088888889 ],
+               [ 0.000088888889, 0., -0.000088888889 ]
+               ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):

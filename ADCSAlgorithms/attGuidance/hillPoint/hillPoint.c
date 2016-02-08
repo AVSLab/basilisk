@@ -57,7 +57,10 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     
     
     /*! - Compute and store output message */
-    computeHillPointingReference(ConfigData, navData, primPlanet,
+    computeHillPointingReference(navData.r_BN_N,
+                                 navData.v_BN_N,
+                                 primPlanet.PositionVector,
+                                 primPlanet.VelocityVector,
                                  ConfigData->attRefOut.sigma_RN,
                                  ConfigData->attRefOut.omega_RN_N,
                                  ConfigData->attRefOut.domega_RN_N);
@@ -69,7 +72,10 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
 }
 
 
-void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navData, SpicePlanetState primPlanet,
+void computeHillPointingReference(double r_BN_N[3],
+                                  double v_BN_N[3],
+                                  double celBdyPositonVector[3],
+                                  double celBdyVelocityVector[3],
                                   double sigma_RN[3],
                                   double omega_RN_N[3],
                                   double domega_RN_N[3])
@@ -90,8 +96,8 @@ void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navDa
     double  domega_RN_R[3];          /*!< reference angular acceleration vector in Reference frame R components */
     
     /* Compute relative position and velocity of the spacecraft with respect to the main celestial body */
-    v3Subtract(navData.r_BN_N, primPlanet.PositionVector, relPosVector);
-    v3Subtract(navData.v_BN_N, primPlanet.VelocityVector, relVelVector);
+    v3Subtract(r_BN_N, celBdyPositonVector, relPosVector);
+    v3Subtract(v_BN_N, celBdyVelocityVector, relVelVector);
     
     /* Compute RN */
     v3Normalize(relPosVector, RN[0]);
@@ -117,7 +123,6 @@ void computeHillPointingReference(hillPointConfig *ConfigData, NavStateOut navDa
     v3SetZero(domega_RN_R);
     omega_RN_R[2]  = dfdt;
     domega_RN_R[2] = ddfdt2;
-    
 
     m33Transpose(RN, temp33);
     m33MultV3(temp33, omega_RN_R, omega_RN_N);
