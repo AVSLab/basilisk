@@ -33,6 +33,7 @@ typedef struct {
     double ThrusterStartTime;            //!< s  Time thruster has been executing total
     double ThrustOnCmd;                  //!< s  Time Thruster was requested
     double PreviousIterTime;             //!< s  Previous thruster int time
+    double totalOnTime;                  //!< s  Total amount of time thruster has fired
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
 }ThrusterOperationData;
 
