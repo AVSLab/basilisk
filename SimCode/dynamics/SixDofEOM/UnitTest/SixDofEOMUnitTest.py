@@ -49,9 +49,10 @@ allowPosError = 50000 #Allow for a 50 km error over 10 days of propagation
 allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 
 #Create a sim module as an empty container
-TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewTask("sixDynTestTask", int(1E10))
-TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E9))
+TotalSim = SimulationBaseClass.SimBaseClass()
+DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E9)))
 TotalSim.disableTask("sixDynTestTaskMars");
 
 #Now initialize the modules that we are using.  I got a little better as I went along
@@ -76,22 +77,27 @@ SunGravBody = six_dof_eom.GravityBodyData()
 SunGravBody.BodyMsgName = "sun_planet_data"
 SunGravBody.outputMsgName = "sun_display_frame_data"
 SunGravBody.mu = 1.32712440018E20 #meters!
-SunGravBody.IsCentralBody = False
+SunGravBody.IsCentralBody = True
 SunGravBody.IsDisplayBody = False
 SunGravBody.UseJParams = False
 
-EarthGravBody = six_dof_eom.GravityBodyData()
+mu_earth = 0.3986004415E+15 # [m^3/s^2]
+reference_radius_earth = 0.6378136300E+07 # [m]
+max_degree_earth = 10
+EarthGravBody = six_dof_eom.GravityBodyData(EarthGravFile, max_degree_earth, mu_earth, reference_radius_earth)
 EarthGravBody.BodyMsgName = "earth_planet_data"
 EarthGravBody.outputMsgName = "earth_display_frame_data"
-EarthGravBody.IsCentralBody = True
-EarthGravBody.UseJParams = False
+EarthGravBody.IsCentralBody = False
 JParams = LoadGravFromFile(EarthGravFile,  EarthGravBody, JParamsSelect)
 EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)   
 
-MarsGravBody = six_dof_eom.GravityBodyData()
+
+mu_mars= 4.2828371901284001E+13 # [m^3/s^2]
+reference_radius_mars = 3.3970000000000000E+06 # [m]
+max_degree_mars = 10
+MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile, max_degree_mars, mu_mars, reference_radius_mars)
 MarsGravBody.BodyMsgName = "mars_planet_data"
 MarsGravBody.IsCentralBody = False
-MarsGravBody.UseJParams = False
 JParams = LoadGravFromFile(MarsGravFile,  MarsGravBody, JParamsSelect)
 MarsGravBody.JParams = six_dof_eom.DoubleVector(JParams)
 
@@ -240,7 +246,6 @@ print initPosError
 
 VehDynObject.GravData[0].IsCentralBody = False
 VehDynObject.GravData[4].IsCentralBody = True
-VehDynObject.GravData[4].UseJParams = True
 spiceObject.loadSpiceKernel('m01_ext42.bsp', path + '/')
 spiceObject.UTCCalInit = "2015 January 19, 03:00:00.0"
 
@@ -294,6 +299,7 @@ mavenVel = TotalSim.pullMessageLogData("mars odyssey_planet_data.VelocityVector"
 
 vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
+print vehiclePosition.shape
 
 finalPosError = mavenPos[1, :] - vehiclePosition[1, :]
 finalVelError = mavenVel[1,:] - vehicleVelocity[1,:]

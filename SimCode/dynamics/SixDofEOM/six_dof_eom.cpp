@@ -839,7 +839,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     if(CentralBodyCount != 1)
     {
         std::cerr << "ERROR: I got a bad count on central bodies: " <<
-        CentralBodyCount;
+        CentralBodyCount <<std::endl;
         return;
     }
     

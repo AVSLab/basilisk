@@ -158,7 +158,7 @@ bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** 
         while (cii != line.end())
         {
 //            if (*cii == this->_separationChar || *cii == this->_separationChar)
-            if (!isdigit(*cii) and *cii != '-')
+            if (!isdigit(*cii) && *cii != '-')
             {
                 cii++;
                 continue;

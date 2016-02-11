@@ -218,7 +218,7 @@ void sphericalHarmonics::computeField(const double pos[3], unsigned int degree, 
         degree = this->_maxDegree;
     
     order = degree;
-    double rhol[degree+1];
+    double *rhol = new double[degree+1];
     
     for (unsigned int l = 1; l <= degree; l++)
     {
@@ -330,6 +330,7 @@ void sphericalHarmonics::computeField(const double pos[3], unsigned int degree, 
     acc[0] = a1 + s * a4;
     acc[1] = a2 + t * a4;
     acc[2] = a3 + u * a4;
+	delete[] rhol;
 }
 
 /*!
