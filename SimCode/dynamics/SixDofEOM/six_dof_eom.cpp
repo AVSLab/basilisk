@@ -598,14 +598,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     v3Copy(v_N, dX);
 
     //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_N);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, d2);
+    rmag = v3Norm(r_NLoc);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_NLoc, d2);
     v3Add(d2, dX+3, dX+3);
 
     /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
     if(CentralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_N, perturbAccel);
+        jPerturb(CentralBody, r_NLoc, perturbAccel);
         v3Add(dX+3, perturbAccel, dX+3);
     }
     else if (CentralBody->UseSphericalHarmParams)
@@ -616,16 +616,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
         double aux[3], aux1[3], aux2[3], aux3[3];
         
-        m33MultV3(CentralBody->J20002Pfix, r_N, posPlanetFix); // r_E = [EN]*r_N
+        m33MultV3(CentralBody->J20002Pfix, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
         CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
         m33tMultV3(CentralBody->J20002Pfix, gravField, aux1); // [EN]^T * gravField
         
-        m33MultV3(CentralBody->J20002Pfix_dot, v_N, aux2);  // [EN_dot] * v_N
+        m33MultV3(CentralBody->J20002Pfix_dot, v_NLoc, aux2);  // [EN_dot] * v_N
         m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);    // [EN]^T * [EN_dot] * v_N
         v3Scale(2.0, aux2, aux2);                           // 2 * [EN]^T * [EN_dot] * v_N
         
-        m33MultV3(CentralBody->J20002Pfix_dot, r_N, aux3);  // [EN_dot] * r_N
+        m33MultV3(CentralBody->J20002Pfix_dot, r_NLoc, aux3);  // [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * r_N
         m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3); // [EN_dot] * [EN]^T * [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N

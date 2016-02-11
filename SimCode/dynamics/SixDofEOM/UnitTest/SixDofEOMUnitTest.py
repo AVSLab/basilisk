@@ -1,4 +1,4 @@
-#Very simple simulation.  Just sets up and calls the SPICE interface.  Could
+﻿#Very simple simulation.  Just sets up and calls the SPICE interface.  Could
 #be the basis for a unit test of SPICE
 import sys, os, inspect
 import matplotlib
@@ -255,7 +255,7 @@ VehDynObject.GravData[0].IsDisplayBody = False
 VehDynObject.GravData[4].IsDisplayBody = True
 VehDynObject.GravData[4].IsCentralBody = True
 spiceObject.loadSpiceKernel('m01_ext42.bsp', path + '/')
-spiceObject.UTCCalInit = "2015 January 19, 03:00:00.0"
+spiceObject.UTCCalInit = "2015 January 19, 02:00:00.0"
 
 spiceObject.PlanetNames = spice_interface.StringVector(
                                                        ["earth", "mars", "jupiter", "sun", "moon", "venus", "mars odyssey"])
@@ -289,55 +289,76 @@ velInit = mavenVel[0, 1:] - marsVel[0, 1:]
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
+modysseyPropTime = int(12000E9)
 spiceObject.zeroBase = "mars"
 
+VehDynObject.GravData[4].UseSphericalHarmParams = False
+VehDynObject.GravData[4].UseJParams = False
 TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(5000E9)
+TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
 
 mavenPos = TotalSim.pullMessageLogData("mars odyssey_planet_data.PositionVector",
                                        range(3))
-#marsPos = TotalSim.pullMessageLogData("mars_planet_data.PositionVector",
-#                                      range(3))
-#sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
-#                                     range(3))
 mavenVel = TotalSim.pullMessageLogData("mars odyssey_planet_data.VelocityVector",
                                        range(3))
-#marsVel = TotalSim.pullMessageLogData("mars_planet_data.VelocityVector",
-#                                      range(3))
 
 vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
-print vehiclePosition.shape
 
-print mavenPos[0,:]
-print vehiclePosition[0,:]
-finalPosError = mavenPos[-1, :] - vehiclePosition[-1, :]
-finalVelError = mavenVel[-1,:] - vehicleVelocity[-1,:]
+velocityDiffsph = mavenVel - vehicleVelocity
+positionDiffsph = mavenPos - vehiclePosition
 
-velocityDiff = mavenVel - vehicleVelocity
-positionDiff = mavenPos - vehiclePosition
+VehDynObject.GravData[4].UseSphericalHarmParams = False
+VehDynObject.GravData[4].UseJParams = True
+TotalSim.InitializeSimulation()
+TotalSim.ConfigureStopTime(modysseyPropTime)
+TotalSim.ExecuteSimulation()
 
-print finalPosError
-print finalVelError
-print velocityDiff[1,:]
-print (mavenPos[-1,:])
-print mavenVel[1, :] - mavenVel[0,:]
-print vehicleVelocity[1,:] - vehicleVelocity[0,:]
-#
-#
-##plt.figure(1)
-##plt.plot(newHorPos[:,1], newHorPos[:,2], 'b', newHorPos[-1, 1], newHorPos[-1, 2], 'bx')
-##
-#plt.figure(2)
-#plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,1])
-#plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,2])
-#plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,3])
-#
-#plt.figure(3)
-#plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,1])
-#plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,2])
-#plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,3])
-#
-#plt.show()
+vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
 
+velocityDiffjPar = mavenVel - vehicleVelocity
+positionDiffjPar = mavenPos - vehiclePosition
+
+VehDynObject.GravData[4].UseSphericalHarmParams = True
+VehDynObject.GravData[4].UseJParams = False
+TotalSim.InitializeSimulation()
+TotalSim.ConfigureStopTime(modysseyPropTime)
+TotalSim.ExecuteSimulation()
+
+vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
+
+velocityDiffsHar = mavenVel - vehicleVelocity
+positionDiffsHar = mavenPos - vehiclePosition
+
+plt.figure()
+plt.subplot(3,1,1)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,1])
+plt.subplot(3,1,2)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,2])
+plt.subplot(3,1,3)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,3])
+
+plt.figure()
+plt.subplot(3,1,1)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,1])
+plt.subplot(3,1,2)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,2])
+plt.subplot(3,1,3)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,3])
+
+plt.show()
