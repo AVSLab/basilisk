@@ -135,7 +135,8 @@ void ThrusterDynamics::ConfigureThrustRequests(double CurrentTime)
         {
             //! - For each case where we are above the minimum firing request, reset the thruster
             it->ThrustOps.ThrustOnCmd = *CmdIt;
-            it->ThrustOps.fireCounter += 1;
+            it->ThrustOps.fireCounter += it->ThrustOps.ThrustFactor > 0.0
+                ? 0 : 1;
         }
         else
         {
@@ -194,16 +195,18 @@ void ThrusterDynamics::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
             (it->TimeDelta - prevValidDelta) *
             (LocalOnRamp - prevValidDelta) + prevValidIspFactor;
             ops->ThrustOnRampTime = LocalOnRamp;
+            ops->totalOnTime += (CurrentTime - ops->PreviousIterTime);
             ops->PreviousIterTime = CurrentTime;
             return;
         }
         prevValidThrFactor = it->ThrustFactor;
         prevValidIspFactor = it->IspFactor;
         prevValidDelta = it->TimeDelta;
-        
     }
     //! - If we did not find the current time in the on-ramp, then we are at steady-state
+    
     ops->ThrustOnSteadyTime += (CurrentTime - ops->PreviousIterTime);
+    ops->totalOnTime += (CurrentTime - ops->PreviousIterTime);
     ops->PreviousIterTime = CurrentTime;
     ops->ThrustFactor = ops->IspFactor = 1.0;
     ops->ThrustOffRampTime = 0.0;
