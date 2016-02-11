@@ -42,6 +42,8 @@ void SysProcess::selfInitProcess()
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
+    SystemMessaging::GetInstance()->ClearMessageBuffer();
+    nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
     for(it = taskModels.begin(); it != taskModels.end(); it++)
     {

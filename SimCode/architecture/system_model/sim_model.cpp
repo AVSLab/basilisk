@@ -104,6 +104,8 @@ void SimModel::InitSimulation()
     {
         messageLogs.linkMessages();
     }
+    NextTaskTime = 0;
+    CurrentNanos = 0;
 }
 /*! This method steps all of the processes forward to the current time.  It also 
     increments the internal simulation time appropriately as the simulation 
