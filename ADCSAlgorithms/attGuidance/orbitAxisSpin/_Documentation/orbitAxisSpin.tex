@@ -39,75 +39,73 @@ Draft & initial copy & M. Cols \\
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[width=5cm]{Figures/orbitSpin}
+	\includegraphics[width=5cm]{Figures/Fig1}
 	}
-	\caption{Illustration of having $\hat{r}_{3}$ aligned with $\hat{o}_{1}$ and spinning about it at a constant rate $\omega_{spin}$.}
+	\caption{Illustration of spinning about the nadir orbit axis $\bm\hat{\imath}_{r}$ of the Hill orbit frame $\mathcal{H}$  at a constant rate $\omega_{\textrm{spin}}$.}
 	\label{fig:Fig1}
 \end{figure}
 
 \section{Introduction}
-In this note a method is discussed on how to compute the reference frame angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ to achieve a particular family of stabilized spin motion. A reference is already aligned with a principal orbit axis and the purpose of this module is to have the refernce spinning at a desired rate about the axis at which is pointing. Note that the presented method is general enough to use any of the Hill or Velocity orbit frames.\par
-Figure 1 illustrates the following example. Here the reference axis $\hat{r}_{3}$ is to spin about $\hat{o}_{spin} = \hat{o}_{spin}$, which has been chosen to be the nadir axis $\hat{\imath}_{r}$ of the Hill reference frame.
+In this note a method is discussed on how to compute the reference frame angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$ to achieve a particular family of stabilized spin motion. This module receives as input the generated reference for a constaint pointing towards an orbit reference frame. Let us call the input reference $\mathcal{R}_{0}$. The goal is now to create a new reference $\mathcal{R}$ that spins about any of the orbit axes, $\hat {o}_{\textrm{spin}}$, at a constant rate $\omega_{\textrm{spin}}$. Note that the presented method is general enough to use any of the Hill $\mathcal{H}:\{ \hat{\bm\imath}_{r}, \hat{\bm\imath}_{\theta}, \hat{\bm\imath}_{h} \}$ or Velocity $\mathcal{V}:\{ \hat{\bm\imath}_{n}, \hat{\bm\imath}_{v}, \hat{\bm\imath}_{h} \}$ orbit frame orientations as the input reference. Figure 1 illustrates the case in which $\mathcal{R}_{0}$ is aligned with $\mathcal{H}$ and the spinning is about the nadir axis $\hat{\bm\imath}_{r}$.
 
 \section{Angular Velocity and Acceleration Descriptions}
 The reference frame $\mathcal{R}$ is defined above, and the attitude reference frame tracking control requires the angular rate $\bm\omega_{R/N}$ and acceleration $\dot{\bm\omega}_{R/N}$. 
-Let the MRP attitude set, angular velocity vector and angular acceleration vector associated with a constant pointing be $\bm\sigma_{O/N}$, $\bm\omega_{O/N}$ and $\bm\dot{\omega}_{O/N}$ respectively.
-As proved in Orbit Axis Pointing documentation,
-\begin{equation}
-	\label{eq:dbeta}
-	\bm\omega_{O/N} = \dot f \hat{\bm\imath}_{h} 
-\end{equation}
-\begin{equation}
-	\label{eq:dbeta}
-	\bm{\dot\omega}_{O/N} = \ddot{f} \hat{\bm\imath}_{h}
-\end{equation}
+Let the MRP attitude set, angular velocity vector and angular acceleration vector associated with the constant pointing reference be $\bm\sigma_{
+R_{0}/N}$, $\bm\omega_{R_{0}/N}$ and $\bm\dot{\omega}_{R_{0}/N}$ respectively.
 The angular velocity of the spinning reference frame is thus given by:
-\begin{equation}
-	\label{eq:dbeta}
-	\bm\omega_{R/N} = \bm\omega_{spin} + \bm\omega_{O/N} = \omega_{spin}\bm\hat{o}_{spin} + \dot f \hat{\bm\imath}_{h} 
-\end{equation}
-Using the transport theorem, the angular acceleration vector is found to be
-\begin{equation}
-	\label{eq:dbeta}
-	\bm{\dot\omega}_{R/N} = \frac{^\mathcal{O} d}{dt} (\omega_{spin}\bm\hat{o}_{spin}) + \bm\omega_{O/N}\times (\omega_{spin}\bm\hat{o}_{spin}) + \bm{\dot\omega}_{O/N}
-\end{equation}
-\begin{equation}
-	\label{eq:dbeta}
-	\bm{\dot\omega}_{R/N} = \bm\dot\omega_{spin}\bm\hat{o}_{spin} +  \dot{f}\omega_{spin}(\bm\hat{\imath}_{h} \times \bm\hat{o}_{spin})+ \ddot f \hat{\bm\imath}_{h} 
-\end{equation}
-
+\begin{subequations}
+	\label{eq:omegaRN}
+	\begin{equation}
+		\bm\omega_{R/N} = \bm\omega_{\textrm{spin}} + \bm\omega_{R_{0}/N} 
+	\end{equation}
+	\begin{equation}
+		\bm\omega_{R/N} = {\omega}_{\textrm{spin}}\hat{o}_{\textrm{spin}} + \bm\omega_{R_{0}/N}
+	\end{equation}
+\end{subequations}
+Since $\hat {o}_{\textrm{spin}}$ is aligned with one of the orbit axis defining $\mathcal{R}_{0}$, taking the inertial derivative of ~\eqref{eq:omegaRN}:
+\begin{subequations}
+	\label{eq:domegaRN}
+	\begin{equation}
+		\dot{\bm\omega}_{R/N} = \dot{\bm\omega}_{\textrm{spin}} +\dot{\bm\omega}_{R_{0}/N} 
+	\end{equation}
+	\begin{equation}
+		\dot{\bm\omega}_{R/N} = \frac{^{\mathcal{R}_{0}} \textrm{d}}{\textrm{dt}} (\omega_{\textrm{spin}}\bm\hat{o}_{\textrm{spin}}) + \bm\omega_{R_{0}/N}\times (\omega_{\textrm{spin}}\bm\hat{o}_{\textrm{spin}}) + \bm{\dot\omega}_{R_{0}/N}
+	\end{equation}
+\end{subequations}
 \section{MRP Attitude Set}
-Let be $\phi_{spin}$ be the current spin angle that the reference frame has rotated about its spin axis $\hat r_{spin}$. The final reference frame orientation is eventually given by
+Let be $\phi_{\textrm{spin}}$ be the current spin angle that the reference frame has rotated about its spin axis $\hat o_{\textrm{spin}}$. The final reference frame orientation is eventually given by
 \begin{equation}
 	\label{eq:dbeta}
-	[RN] =  [M_{r_{spin}} (\phi_{spin})][ON]
+	[RN] =  [M_{\hat{o}_{\textrm{spin}}} (\phi_{\textrm{spin}})][R_{0}N]
 \end{equation}
-where [ON] is the Direction Cosine Matrix associated with the orbit axis pointing attitude set, and $M_{r_{spin}}$ is the principal axis rotation matrix about $\hat r_{spin}$. Assuming a constant spin rate, the spin angle is propagated using the simple Euler integration scheme
+where $[R_{0}N]$ is the Direction Cosine Matrix associated with the orbit axis pointing attitude set, and $M_{\hat{o}_{\textrm{spin}}}$ is the principal axis rotation matrix about $\hat o_{\textrm{spin}}$. Assuming a constant spin rate, the spin angle is propagated using the simple Euler integration scheme
 \begin{equation}
 	\label{eq:dbeta}
-	\phi_{spin, n+1} = \phi_{spin, n} + \omega_{spin}\Delta t
+	\phi_{\textrm{spin, n+1}} = \phi_{\textrm{spin, n}} + \omega_{\textrm{spin}}\Delta t
 \end{equation}
-With [RN] defined, the MRP attitude set $\sigma_{R/N}$ can readily be computed.
+With $[RN]$ defined, the MRP attitude set $\sigma_{R/N}$ can readily be computed.
 
 \section{Spin Angle Initialization Process}
-The question remains on how to initialize the spin angle $\phi_{spin}$. At this point, the generalization of the method must be sacrificed, since the actual body axis that is about to spin is needed. Given the relative orientation between two frames, the current $\mathcal{B}$ and the desired $\mathcal{R}$, the principal rotation to achieve the aligmnent could be done along the principal rotation angle $\phi$ or $2\pi - \phi$. The aim of this process is to ensure that the path followed to achieve the frame alignment is the shortest.
-\subsection{Algorithm Outline}
-A separate algorithm is used to compute the initial spin angle. In this independent method, the frames are as follows:\par
-Being $\hat{b}_{spin}$ the principal body axis that is to be aligned with the principal orbit frame axis $\hat{o}_{spin}$, the orbit frame is defined such that $\hat{o}_{1} = \hat{o}_{spin}$, while $\hat{o}_{2}$ and $\hat{o}_{3}$ are defined following either the LVLH or velocity orbit, i.e. $\mathcal{H}$ and $\mathcal{V}$ definitions. Note that the enumeration of the axes order rolls over to keep a right-handed coordinate frame. Similary, the principal reference axes indices are labeled using $\hat b_{i}$, where the first index $\hat b_{1}$ determines which reference axis is the final spin axis, i.e. $\hat b_{1} =\hat b_{spin}$. The remaining two indices are set to yield a right-handed coordinate frame.\par
-To define the orbit frame orientation to line up the $\hat o_{1}$ orbit axis and $\hat b_{1}$ body axis, let us use the definition where ON($i$) is the $i_{th}$ row of the [ON] DCM matrix. We then set
+Any alignment between reference frames, say $\mathcal{B}$ and $\mathcal{R}$, can be achieved through a single rotation about a principal rotation axis. If $\phi_{\textrm{align}}$ is the principal rotation angle, then the alignment can be achieved through a rotation of whether $\phi_{\textrm{align}}$ or $( 2\pi - \phi_{\textrm{align}})$. In order to determine the initial spin angle and assure that the chosen path is always the shortest rotation, the original $\mathcal{B}$ and final $\mathcal{R}$ frame orientations must be known.\par
+
+\subsection{Algorithm Outlines}
+The question remains on how to initialize the spin angle $\phi_{\textrm{spin}}$. Since the initialization of the spin angle does not allow further generality in the generatiton of reference attitudes, a separate algorithm is used.
+Being $\mathcal{B}$ the body frame and $\mathcal{R}_{0}$ the orbit frame orientations, let us set $\hat{b}_{\textrm{spin}}$ as the principal body axis that is to be aligned with the principal orbit axis $\hat{o}_{\textrm{spin}}$. The triodes of axes $\hat b_{i}$ and $\hat o_{i}$ are labeled so that the first index determines the spin axis, i.e. $\hat b_{1} =\hat b_{\textrm{spin}}$ and $\hat o_{1} =\hat o_{\textrm{spin}}$. The remaining two indices are set to yield a right-handed coordinate frame. Note that $\mathcal{R}_{0}$ could reference to either Hill orbit frame $\mathcal{H}$ or Velocity $\mathcal{V}$.\par
+
+Let $\mathcal{R}$ be the reference orientation in which $\hat o_{1}$ orbit axis and $\hat b_{1}$ body axis are lined up. Using the definition where $RN(i)$ is the $i_{th}$ row of the $[RN]$ DCM matrix:
 \begin{equation}
 	\label{eq:dbeta}
-	ON(\hat b_{1}) = ON(\hat o_{1}) = \bm\hat\imath_{o_{1}}
+	RN(\hat b_{1}) = R_{0}N(\hat o_{1}) 
 \end{equation}
 \begin{equation}
 	\label{eq:dbeta}
-	ON(\hat b_{2}) = ON(\hat o_{2}) = \bm\hat\imath_{o_{2}}
+	RN(\hat b_{2}) = R_{0}N(\hat o_{2}) 
 \end{equation}
 \begin{equation}
 	\label{eq:dbeta}
-	ON(\hat b_{3}) = \bm\hat\imath_{o_{1}} \times \bm\hat\imath_{o_{2}}
+	RN(\hat b_{3}) = RN(\hat b_{1}) \times RN(\hat b_{2})
 \end{equation}
-Having [ON] defined for a specific body frame and [BN], the computations are straightforward. First, the spin axis alignment angle is computed as the relative orientation between $\hat b_{spin}$ and $\hat o_{spin}$. Next, the body frame is rotated about a principal rotation angle to align these two axes. Eventually, the initial spin angle is defined as the angle to align the remaining 2 axes. This process results in the desired spin axis being the closes to the current body frame arrangement.
+Having $[RN]$ and $[BN]$ defined, the spin axis alignment angle $\phi_{\textrm{align}}$ is computed as the relative orientation between $\hat b_{\textrm{spin}}$ and $\hat o_{\textrm{spin}}$. Next, the body frame is rotated about a principal rotation angle to align these two axes. Eventually, the initial spin angle $\phi_{\textrm{spin}}$ is defined as the smallest angle to align the remaining two.
 
 \bibliographystyle{unsrt}
 \bibliography{references}

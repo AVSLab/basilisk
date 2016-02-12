@@ -22,6 +22,7 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import orbitAxisSpin                        # import the module that is to be tested
+import simple_nav
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -70,16 +71,36 @@ def orbitAxisSpinTestFunction(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
+    moduleConfig.inputNavName = "inputNavName"
     moduleConfig.inputRefName = "inputRefName"
     moduleConfig.outputDataName = "outputName"
 
     moduleConfig.o_spin = 0
+    moduleConfig.b_spin = 0
     moduleConfig.phi_spin = np.pi/4
     moduleConfig.omega_spin = np.pi/8
     moduleConfig.dt = updateTime
+    moduleConfig.integrateFlag = 1
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
+    #
+    #   Navigation Input Message
+    #
+    inputNavMessageSize = 18*8                             # 6x3 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputNavName,
+                                          inputNavMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
+    sigma_BN = [0.25, -0.45, 0.75]
+    SimulationBaseClass.SetCArray(sigma_BN,
+                                  'double',
+                                  NavStateOutData.sigma_BN)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
+                                          inputNavMessageSize,
+                                          0,
+                                          NavStateOutData)
     #
     # Reference Frame Message
     #
