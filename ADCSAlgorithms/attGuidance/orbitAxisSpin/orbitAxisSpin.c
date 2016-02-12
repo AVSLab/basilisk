@@ -104,9 +104,10 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
 {
     
     double  R0N[3][3];                                      /*!< DCM from inertial to reference pointing frame */
-    double  orbitRate;                                      /*!< rotational rate of the orbit frame */
     int     o1, o2;                                         /*!< orbit axis indices */
-    double  m33[3][3], v3[3], temp3[3], v3temp[3];          /*!< temporary variables */
+    
+    double  v3[3], v3temp[3], temp3[3];                     /*!< temporary variables */
+    double  m33[3][3];
     
     o1 = ConfigData->o_spin;
     o2 = o1 + 1;
@@ -117,15 +118,13 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     v3Scale(ConfigData->omega_spin, R0N[o1], v3);
     v3Add(v3, omega_R0N_N, omega_RN_N);
     /* Compute acceleration */
-    orbitRate = v3Norm(omega_R0N_N);
-    v3Cross(R0N[2], R0N[o1], temp3);
-    v3Scale(orbitRate*ConfigData->omega_spin, temp3, v3temp);
+    v3Cross(omega_R0N_N, v3, v3temp);
     v3Add(v3temp, domega_R0N_N, domega_RN_N);
     /* Compute orientation */
     ConfigData->phi_spin += dt * ConfigData->omega_spin;
     Mi(ConfigData->phi_spin, o1+1, m33);
-    C2MRP(m33, v3);
-    v3Add(v3, sigma_R0N, sigma_RN);
+    C2MRP(m33, temp3);
+    v3Add(temp3, sigma_R0N, sigma_RN);
     
 }
 
