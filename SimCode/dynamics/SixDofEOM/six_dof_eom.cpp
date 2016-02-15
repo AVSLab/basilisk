@@ -615,11 +615,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
 
         double aux[3], aux1[3], aux2[3], aux3[3];
+        double planetDt = t - CentralBody->ephIntTime;
+        double J2000PfixCurrent[3][3];
         
-        m33MultV3(CentralBody->J20002Pfix, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
+        m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
+        m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
+        m33MultV3(J2000PfixCurrent, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
         CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
-        m33tMultV3(CentralBody->J20002Pfix, gravField, aux1); // [EN]^T * gravField
+        m33tMultV3(J2000PfixCurrent, gravField, aux1); // [EN]^T * gravField
         
         m33MultV3(CentralBody->J20002Pfix_dot, v_NLoc, aux2);  // [EN_dot] * v_N
         m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);    // [EN]^T * [EN_dot] * v_N
@@ -630,9 +634,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3); // [EN_dot] * [EN]^T * [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
         
+        v3SetZero(aux2);
         v3Subtract(aux1, aux2, aux);    // [EN]^T * gravField - 2 * [EN]^T * [EN_dot] * v_N
         
         // perturbAccel = [EN]^T * gravField - 2 * [EN]^T * [EN_dot] * v_N - [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
+        v3SetZero(aux3);
         v3Subtract(aux, aux3, perturbAccel);
         
         v3Add(dX+3, perturbAccel, dX+3);

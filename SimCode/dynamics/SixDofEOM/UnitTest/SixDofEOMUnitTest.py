@@ -52,7 +52,7 @@ allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 TotalSim = SimulationBaseClass.SimBaseClass()
 DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
 DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E8)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(1E7)))
 TotalSim.disableTask("sixDynTestTaskMars");
 
 #Now initialize the modules that we are using.  I got a little better as I went along
@@ -96,7 +96,7 @@ EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)
 mu_mars= 4.2828371901284001E+13 # [m^3/s^2]
 reference_radius_mars = 3.3970000000000000E+06 # [m]
 max_degree_mars = 10
-MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile, max_degree_mars, mu_mars, reference_radius_mars)
+MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile+'bleck', max_degree_mars, mu_mars, reference_radius_mars)
 #MarsGravBody.mu = mu_mars
 MarsGravBody.BodyMsgName = "mars_planet_data"
 MarsGravBody.IsCentralBody = False
@@ -264,11 +264,11 @@ TotalSim.disableTask("sixDynTestTask")
 TotalSim.enableTask("sixDynTestTaskMars")
 
 #TotalSim.InitializeSimulation()
-TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E8))
-TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E8))
-TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E8))
-TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E8))
-TotalSim.TotalSim.logThisMessage("mars odyssey_planet_data", int(1E8))
+TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E10))
+TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E10))
+TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E10))
+TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E10))
+TotalSim.TotalSim.logThisMessage("mars odyssey_planet_data", int(1E10))
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(60*1e9) #Just a simple run to get initial conditions from ephem
 TotalSim.ExecuteSimulation()
@@ -289,7 +289,7 @@ velInit = mavenVel[0, 1:] - marsVel[0, 1:]
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
-modysseyPropTime = int(12000E9)
+modysseyPropTime = int(90000E9)
 spiceObject.zeroBase = "mars"
 
 VehDynObject.GravData[4].UseSphericalHarmParams = False
@@ -297,6 +297,8 @@ VehDynObject.GravData[4].UseJParams = False
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
+
+print "Case 1 complete"
 
 mavenPos = TotalSim.pullMessageLogData("mars odyssey_planet_data.PositionVector",
                                        range(3))
@@ -314,6 +316,8 @@ VehDynObject.GravData[4].UseJParams = True
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
+
+print "Case 2 complete"
 
 vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
