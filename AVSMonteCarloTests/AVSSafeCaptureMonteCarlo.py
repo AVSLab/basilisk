@@ -5,35 +5,22 @@ sys.path.append(path + '/../PythonModules/')
 sys.path.append(path + '/../IntegratedTests/')
 import AVSSim #simulation type we are running
 import matplotlib.pyplot as plt #plotting functions
-import MonteCarloBaseClass #monte-carlo module for running dispersed simulations
+import MonteCarloBaseClass as mbc #monte-carlo module for running dispersed simulations
 import AVSSafeCapture #Startup script we are using
 import numpy #Who doesn't like numpy?
 import math #Got to have some math
 
 #instantiate a monte-carlo handler so that we can run a dispersed scenario
-monteCarloContainer = MonteCarloBaseClass.MonteCarloBaseClass()
+monteCarloContainer = mbc.MonteCarloBaseClass()
 
 #Default initialization in this case is a gaussian distribution from -1,1
-b1AttitudeDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttitudeInit[0]')
-b2AttitudeDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttitudeInit[1]')
-b3AttitudeDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttitudeInit[2]')
-monteCarloContainer.addNewDispersion(b1AttitudeDisp)
-monteCarloContainer.addNewDispersion(b2AttitudeDisp)
-monteCarloContainer.addNewDispersion(b3AttitudeDisp)
-
-b1RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[0]',
-    0.0, (math.pi/180.0,))
-b2RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[1]',
-    0.0, (math.pi/180.0,))
-b3RateDisp = MonteCarloBaseClass.VariableDispersion('VehDynObject.AttRateInit[2]',
-    0.0, (math.pi/180.0,))
-monteCarloContainer.addNewDispersion(b1RateDisp)
-monteCarloContainer.addNewDispersion(b2RateDisp)
-monteCarloContainer.addNewDispersion(b3RateDisp)
-
+attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit',0.0, 1.0, ([-0.5,0.5]))
+monteCarloContainer.addNewDispersion(attitudeDisp)
+rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.7,0.7]))
+monteCarloContainer.addNewDispersion(rateDisp)
 
 #Define the simulation type and the script that we will use to execute the simulations
-simulationModule = AVSSim.AVSSim
+simulationModule = AVSSim.AVSSim()
 executionModule = AVSSafeCapture.executeAVSSafeCapture
 
 #Configure the monte-carlo handler with the necessary parameter for a run
