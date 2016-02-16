@@ -73,11 +73,11 @@ if __name__ == "__main__":
     TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
     TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
 
-    TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0;
-    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501;
-    TheAVSSim.VehOrbElemObject.CurrentElem.i = 0.0;
-    TheAVSSim.VehOrbElemObject.CurrentElem.Omega = 0.0;
-    TheAVSSim.VehOrbElemObject.CurrentElem.omega = 0.0;
+    TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18*1000.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501
+    TheAVSSim.VehOrbElemObject.CurrentElem.i = 0.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.Omega = 0.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.omega = 0.0
     TheAVSSim.VehOrbElemObject.CurrentElem.f = 70.0*math.pi/180.0
     #Convert those OEs to cartesian
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
