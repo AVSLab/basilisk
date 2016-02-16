@@ -333,7 +333,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.I)
 
         # adjust the message size by hand if needed
-        msgSize = 8*9 + 8*9 + 4 + 8;    # the last 8 bytes are a required padding for now
+        msgSize = 8*9 + 8*9 + 4 + 8    # the last 8 bytes are a required padding for now
         self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
         self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
 
@@ -346,8 +346,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
        self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
        self.SpiceObject.referenceBase = "MARSIAU"
      def SetIMUSensor(self):
-       RotBiasValue = 0.0;
-       RotNoiseStdValue = 0.000001;
+       RotBiasValue = 0.0
+       RotNoiseStdValue = 0.000001
        TransBiasValue = 0.0
        TransNoiseStdValue = 1.0E-6
        self.IMUSensor = imu_sensor.ImuSensor()
@@ -615,11 +615,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
      def SetSimpleNavObject(self):
        self.SimpleNavObject.ModelTag = "SimpleNavigation"
        PMatrix = [0.0]*18*18
-       PMatrix[0*18+0] = PMatrix[1*18+1] = PMatrix[2*18+2] = 10.0; #Position
-       PMatrix[3*18+3] = PMatrix[4*18+4] = PMatrix[5*18+5] = 0.05; #Velocity
-       PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 1.0/3600.0*math.pi/180.0; #Attitude (sigma!)
-       PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.001*math.pi/180.0; #Attitude rate
-       PMatrix[12*18+12] = PMatrix[13*18+13] = PMatrix[14*18+14] = 0.1*math.pi/180.0; #Sun vector
+       PMatrix[0*18+0] = PMatrix[1*18+1] = PMatrix[2*18+2] = 10.0  #Position
+       PMatrix[3*18+3] = PMatrix[4*18+4] = PMatrix[5*18+5] = 0.05  #Velocity
+       PMatrix[6*18+6] = PMatrix[7*18+7] = PMatrix[8*18+8] = 1.0/3600.0*math.pi/180.0  #Attitude (sigma!)
+       PMatrix[9*18+9] = PMatrix[10*18+10] = PMatrix[11*18+11] = 0.001*math.pi/180.0  #Attitude rate
+       PMatrix[12*18+12] = PMatrix[13*18+13] = PMatrix[14*18+14] = 0.1*math.pi/180.0  #Sun vector
        PMatrix[15*18+15] = PMatrix[16*18+16] = PMatrix[17*18+17] = 0.003; #Accumulated DV
        errorBounds = [1000.0, 1000.0, 1000.0, #Position
                       1.0, 1.0, 1.0, #Velocity
