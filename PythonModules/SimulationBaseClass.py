@@ -75,7 +75,8 @@ class EventHandlerClass:
      funcString += '    if('
      for condValue in self.conditionList:
          funcString += ' ' + condValue + ' and'
-         funcString = funcString[:-3] + '):\n'
+         
+     funcString = funcString[:-3] + '):\n'
      for actionValue in self.actionList:
          funcString += '        ';
          funcString += actionValue + '\n'
@@ -159,6 +160,7 @@ class SimBaseClass:
    self.simBasePath = os.path.dirname(os.path.realpath(__file__)) + '/../'
    self.dataStructIndex = self.simBasePath+'/xml/index.xml'
    self.indexParsed = False
+   self.simulationInitialized = False
 
  def AddModelToTask(self, TaskName, NewModel, ModelData = None):
    i=0
@@ -261,6 +263,7 @@ class SimBaseClass:
    self.TotalSim.InitSimulation()
    for LogItem, LogValue in self.VarLogList.iteritems():
       LogValue.clearItem()
+   self.simulationInitialized = True
 
  def ConfigureStopTime(self, TimeStop):
    self.StopTime = TimeStop

@@ -1965,8 +1965,7 @@ def MRP2EP(q1):
     	Q = MRP2EP(Q1) translates the MRP vector Q1
     	into the Euler parameter vector Q.
     """
-
-    ps = 1+(q1.T*q1)[0,0];
+    ps = 1+(np.dot(q1.T,q1));
     q = np.matrix("0.;0.;0.;0.");
     q[0,0] = (1-(q1.T*q1)[0,0])/ps;
     q[1,0] = 2*q1[0,0]/ps;
