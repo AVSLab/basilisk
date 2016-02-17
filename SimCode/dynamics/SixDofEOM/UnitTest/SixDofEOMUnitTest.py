@@ -52,8 +52,10 @@ allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 TotalSim = SimulationBaseClass.SimBaseClass()
 DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
 DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(1E7)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(1E8)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(2E7)))
 TotalSim.disableTask("sixDynTestTaskMars");
+TotalSim.disableTask("sixDynTestTaskMarsTime");
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 VehDynObject = six_dof_eom.SixDofEOM()
@@ -102,7 +104,7 @@ MarsGravBody.BodyMsgName = "mars_planet_data"
 MarsGravBody.IsCentralBody = False
 JParams = LoadGravFromFile(MarsGravFile,  MarsGravBody, JParamsSelect)
 MarsGravBody.JParams = six_dof_eom.DoubleVector(JParams)
-MarsGravBody.UseSphericalHarmParams = True
+MarsGravBody.UseSphericalHarmParams = False
 MarsGravBody.UseJParams = False
 
 JupiterGravBody = six_dof_eom.GravityBodyData()
@@ -151,7 +153,7 @@ VehDynObject.AddGravityBody(JupiterGravBody)
 
 TotalSim.AddModelToTask("sixDynTestTask", spiceObject)
 TotalSim.AddModelToTask("sixDynTestTask", VehDynObject)
-TotalSim.AddModelToTask("sixDynTestTaskMars", spiceObject)
+TotalSim.AddModelToTask("sixDynTestTaskMarsTime", spiceObject)
 TotalSim.AddModelToTask("sixDynTestTaskMars", VehDynObject)
 
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E12))
@@ -261,6 +263,7 @@ spiceObject.PlanetNames = spice_interface.StringVector(
                                                        ["earth", "mars", "jupiter", "sun", "moon", "venus", "mars odyssey"])
 
 TotalSim.disableTask("sixDynTestTask")
+TotalSim.enableTask("sixDynTestTaskMarsTime")
 TotalSim.enableTask("sixDynTestTaskMars")
 
 #TotalSim.InitializeSimulation()
@@ -289,7 +292,7 @@ velInit = mavenVel[0, 1:] - marsVel[0, 1:]
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
-modysseyPropTime = int(90000E9)
+modysseyPropTime = int(4000E9)
 spiceObject.zeroBase = "mars"
 
 VehDynObject.GravData[4].UseSphericalHarmParams = False

@@ -391,6 +391,7 @@ void SixDofEOM::ReadInputs()
             memcpy(it->J20002Pfix_dot, LocalPlanet.J20002Pfix_dot, 9*sizeof(double));
             it->ephemTime = LocalPlanet.J2000Current;
             it->planetEphemName = LocalPlanet.PlanetName;
+            it->ephemTimeSimNanos = LocalHeader.WriteClockNanos;
         }
     }
 }
@@ -833,7 +834,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
-        it->ephIntTime = CurrentTime;
+        it->ephIntTime = it->ephemTimeSimNanos * 1.0E-9;
         if(it->IsCentralBody)
         {
             CentralBody = &(*it);
