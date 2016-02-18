@@ -52,8 +52,8 @@ allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 TotalSim = SimulationBaseClass.SimBaseClass()
 DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
 DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(1E8)))
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(2E7)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(1E9)), 1)
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E5)), 0)
 TotalSim.disableTask("sixDynTestTaskMars");
 TotalSim.disableTask("sixDynTestTaskMarsTime");
 
@@ -97,7 +97,7 @@ EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)
 
 mu_mars= 4.2828371901284001E+13 # [m^3/s^2]
 reference_radius_mars = 3.3970000000000000E+06 # [m]
-max_degree_mars = 10
+max_degree_mars = 20
 MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile+'bleck', max_degree_mars, mu_mars, reference_radius_mars)
 #MarsGravBody.mu = mu_mars
 MarsGravBody.BodyMsgName = "mars_planet_data"
@@ -292,7 +292,7 @@ velInit = mavenVel[0, 1:] - marsVel[0, 1:]
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
-modysseyPropTime = int(4000E9)
+modysseyPropTime = int(9000E9)
 spiceObject.zeroBase = "mars"
 
 VehDynObject.GravData[4].UseSphericalHarmParams = False

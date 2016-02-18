@@ -14,6 +14,7 @@
 typedef struct {
     uint64_t NextTaskStart;  /*!< Time to call Task next*/
     uint64_t TaskUpdatePeriod;   /*!< Period of update for Task*/
+    int32_t taskPriority;   /*!< [-] Priority level for the task*/
     SysModelTask *TaskPtr;  /*!< Handle to the Task that needs to be called*/
 }ModelScheduleEntry;
 
@@ -25,7 +26,7 @@ public:
     SysProcess();
     SysProcess(std::string messageContainer);
     ~SysProcess();
-    void addNewTask(SysModelTask *newTask);
+    void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1);
     void selfInitProcess();
     void crossInitProcess();
     void resetProcess();

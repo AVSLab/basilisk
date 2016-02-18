@@ -17,8 +17,8 @@ class ProcessBaseClass:
  def __init__(self, procName):
     self.Name = procName
     self.processData = sim_model.SysProcess(procName)
- def addTask(self, newTask):
-    self.processData.addNewTask(newTask.TaskData)
+ def addTask(self, newTask, taskPriority = -1):
+    self.processData.addNewTask(newTask.TaskData, taskPriority)
  def addInterfaceRef(self, newInt):
     self.processData.addInterfaceRef(newInt)
  def discoverAllMessages(self):
