@@ -5,6 +5,8 @@
 #include <vector>
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
+#include "utilities/sphericalHarmonics.h"
+#include "utilities/coeffLoader.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 /*! \addtogroup SimModelGroup
@@ -12,30 +14,56 @@
  */
 
 //!@brief Container for gravitational body data
-/*! This structure is designed to hold all of the information for a gravity 
+/*! This class is designed to hold all of the information for a gravity 
     body.  The nominal use-case has it initialized at the python level and 
     attached to dynamics using the AddGravityBody method.
 */
-typedef struct {
+class GravityBodyData
+{
+public:
+    // TO-DO: modified by MANUEL.
+    // This class used to be a structure. For backwards compatibility, all attributes will remain PUBLIC.
+    // New attributes are added as Private.
     bool IsCentralBody;             //!<          Flag indicating that object is center
     bool IsDisplayBody;             //!<          Flag indicating that body is display
     bool UseJParams;                //!<          Flag indicating to use perturbations
+    bool UseSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
     std::vector<double> JParams;    //!<          J perturbations to include
     double PosFromEphem[3];         //!< [m]      Position vector from central to body
     double VelFromEphem[3];         //!< [m/s]    Velocity vector from central body
     double J20002Pfix[3][3];        //!<          Transformation matrix from J2000 to planet-fixed
+    double J20002Pfix_dot[3][3];    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
     double posRelDisplay[3];        //!< [m]      Position of planet relative to display frame
     double velRelDisplay[3];        //!< [m]      Velocity of planet relative to display frame
     double mu;                      //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
+    uint64_t ephemTimeSimNanos;     //!< [ns]     Simulation nanoseconds associated with Ephemeris time
     std::string BodyMsgName;        //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
     std::string planetEphemName;    //!<          Ephemeris name for the planet
     int64_t outputMsgID;            //!<          ID for output message data
     int64_t BodyMsgID;              //!<          ID for ephemeris data message
-} GravityBodyData;
+    
+    // Default constructor
+    GravityBodyData();
+    
+    // Constructor to be used for creating bodies with a spherical harmonic model
+    GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu, const double reference_radius);
+    virtual ~GravityBodyData();
+    
+    // Copy constructor
+    GravityBodyData(const GravityBodyData& gravBody);
+    
+    // Overloaded operators
+    GravityBodyData& operator=(const GravityBodyData& gravBody);
+    
+    sphericalHarmonics* getSphericalHarmonicsModel(void);
+private:
+    sphericalHarmonics* _spherHarm;     //!<          Object that computes the spherical harmonics gravity field
+    coeffLoaderCSV* _coeff_loader;      //!<          Object that loads the coefficients
+};
 
 //!@brief The SixDofEOM class is used to handle all dynamics propagation for a spacecraft
 /*! It is designed to handle all gravitational effects and unforced attitude 

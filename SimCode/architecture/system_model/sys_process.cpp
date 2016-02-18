@@ -42,6 +42,7 @@ void SysProcess::selfInitProcess()
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
+    nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
     for(it = taskModels.begin(); it != taskModels.end(); it++)
     {
@@ -71,20 +72,21 @@ void SysProcess::resetProcess()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
-    std::vector<SysModelTask *> taskPtrs;
-    std::vector<SysModelTask *>::iterator taskIt;
+    std::vector<ModelScheduleEntry> taskPtrs;
+    std::vector<ModelScheduleEntry>::iterator taskIt;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     for(it = taskModels.begin(); it != taskModels.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->ResetTask();
-        taskPtrs.push_back(localTask);
     }
+    taskPtrs = taskModels;
     taskModels.clear();
     for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
     {
-        addNewTask(*(taskIt));
+        addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
     }
+    //SystemMessaging::GetInstance()->ClearMessageBuffer();
     
     
     return;
@@ -93,6 +95,7 @@ void SysProcess::resetProcess()
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
     std::vector<ModelScheduleEntry>::iterator it;
+    int32_t localPriority;
     //! Begin Method steps
     //! - Check to make sure that there are models to be called.
     routeInterfaces();
@@ -115,8 +118,9 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     localTask->ExecuteTaskList(currentNanos);
     
     //! - Erase the current call from the stack and schedule the next call
+    localPriority = it->taskPriority;
     taskModels.erase(it);
-    addNewTask(localTask);
+    addNewTask(localTask, localPriority);
     
     //! - Figure out when we are going to be called next for scheduling purposes
     it = taskModels.begin();
@@ -129,12 +133,13 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
  @param NewModel The new model that we are adding to the Task
  @param Priority The selected priority of the model being added
  */
-void SysProcess::addNewTask(SysModelTask *newTask)
+void SysProcess::addNewTask(SysModelTask *newTask, int32_t taskPriority)
 {
     ModelScheduleEntry localEntry;
     localEntry.TaskPtr = newTask;
     localEntry.TaskUpdatePeriod = newTask->TaskPeriod;
     localEntry.NextTaskStart = newTask->NextStartTime;
+    localEntry.taskPriority = taskPriority;
     scheduleTask(localEntry);
     enableProcess();
 }
@@ -155,7 +160,9 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     for(it = taskModels.begin(); it != taskModels.end(); it++)
     {
         /// - If the next Task starts after new Task, pop it on just prior
-        if(it->NextTaskStart > taskCall.NextTaskStart)
+        if(it->NextTaskStart > taskCall.NextTaskStart ||
+           (it->NextTaskStart == taskCall.NextTaskStart &&
+            taskCall.taskPriority > it->taskPriority))
         {
             taskModels.insert(it, taskCall);
             return;

@@ -1,4 +1,4 @@
-#Very simple simulation.  Just sets up and calls the SPICE interface.  Could
+﻿#Very simple simulation.  Just sets up and calls the SPICE interface.  Could
 #be the basis for a unit test of SPICE
 import sys, os, inspect
 import matplotlib
@@ -49,10 +49,13 @@ allowPosError = 50000 #Allow for a 50 km error over 10 days of propagation
 allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 
 #Create a sim module as an empty container
-TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewTask("sixDynTestTask", int(1E10))
-TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E9))
+TotalSim = SimulationBaseClass.SimBaseClass()
+DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(1E9)), 1)
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E5)), 0)
 TotalSim.disableTask("sixDynTestTaskMars");
+TotalSim.disableTask("sixDynTestTaskMarsTime");
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 VehDynObject = six_dof_eom.SixDofEOM()
@@ -67,6 +70,7 @@ spiceObject.PlanetNames = spice_interface.StringVector(
     ["earth", "mars", "jupiter", "sun", "moon", "venus", "maven"])
 spiceObject.loadSpiceKernel('maven_cru_rec_131118_140923_v1.bsp', path + '/')
 spiceObject.loadSpiceKernel('jup260.bsp', path + '/')
+spiceObject.zeroBase = "sun"
 
 JParamsSelect = [2, 3, 4, 5, 6]
 EarthGravFile = splitPath[0] + '/External/LocalGravData/GGM03S.txt'
@@ -78,22 +82,30 @@ SunGravBody.outputMsgName = "sun_display_frame_data"
 SunGravBody.mu = 1.32712440018E20 #meters!
 SunGravBody.IsCentralBody = True
 SunGravBody.IsDisplayBody = False
-SunGravBody.UseJParams = False
+SunGravBody.UseJParams = True
 
-EarthGravBody = six_dof_eom.GravityBodyData()
+mu_earth = 0.3986004415E+15 # [m^3/s^2]
+reference_radius_earth = 0.6378136300E+07 # [m]
+max_degree_earth = 10
+EarthGravBody = six_dof_eom.GravityBodyData(EarthGravFile, max_degree_earth, mu_earth, reference_radius_earth)
 EarthGravBody.BodyMsgName = "earth_planet_data"
 EarthGravBody.outputMsgName = "earth_display_frame_data"
 EarthGravBody.IsCentralBody = False
-EarthGravBody.UseJParams = False
 JParams = LoadGravFromFile(EarthGravFile,  EarthGravBody, JParamsSelect)
 EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)   
 
-MarsGravBody = six_dof_eom.GravityBodyData()
+
+mu_mars= 4.2828371901284001E+13 # [m^3/s^2]
+reference_radius_mars = 3.3970000000000000E+06 # [m]
+max_degree_mars = 20
+MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile+'bleck', max_degree_mars, mu_mars, reference_radius_mars)
+#MarsGravBody.mu = mu_mars
 MarsGravBody.BodyMsgName = "mars_planet_data"
 MarsGravBody.IsCentralBody = False
-MarsGravBody.UseJParams = False
 JParams = LoadGravFromFile(MarsGravFile,  MarsGravBody, JParamsSelect)
 MarsGravBody.JParams = six_dof_eom.DoubleVector(JParams)
+MarsGravBody.UseSphericalHarmParams = False
+MarsGravBody.UseJParams = False
 
 JupiterGravBody = six_dof_eom.GravityBodyData()
 JupiterGravBody.BodyMsgName = "jupiter_planet_data"
@@ -141,7 +153,7 @@ VehDynObject.AddGravityBody(JupiterGravBody)
 
 TotalSim.AddModelToTask("sixDynTestTask", spiceObject)
 TotalSim.AddModelToTask("sixDynTestTask", VehDynObject)
-TotalSim.AddModelToTask("sixDynTestTaskMars", spiceObject)
+TotalSim.AddModelToTask("sixDynTestTaskMarsTime", spiceObject)
 TotalSim.AddModelToTask("sixDynTestTaskMars", VehDynObject)
 
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E12))
@@ -149,108 +161,112 @@ TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E12))
 TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E12))
 TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E12))
 
-TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(60*1e9) #Just a simple run to get initial conditions from ephem
-TotalSim.ExecuteSimulation()
-
-mavenPos = TotalSim.pullMessageLogData("maven_planet_data.PositionVector",
-                                       range(3))
-sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
-                                         range(3))
-mavenVel = TotalSim.pullMessageLogData("maven_planet_data.VelocityVector",
-                                           range(3))
-sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
-                                         range(3))
-posInit = mavenPos[0, 1:] - sunPos[0, 1:]
-velInit = mavenVel[0, 1:] - sunVel[0, 1:]
-#Re-init the vehicle position/velocity to the MAVEN ephemeris data
-VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
-VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
-
-TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(propTime)
-TotalSim.ExecuteSimulation()
-
-
-mavenPos = TotalSim.pullMessageLogData("maven_planet_data.PositionVector",
-    range(3))
-marsPos = TotalSim.pullMessageLogData("mars_planet_data.PositionVector",
-                                       range(3))
-sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
-                                          range(3))
-mavenVel = TotalSim.pullMessageLogData("maven_planet_data.VelocityVector",
-                                           range(3))
-marsVel = TotalSim.pullMessageLogData("mars_planet_data.VelocityVector",
-                                      range(3))
-sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
-                                     range(3))
-jupiterPos = TotalSim.pullMessageLogData("jupiter_planet_data.PositionVector",
-                                     range(3))
-
-vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
-vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
-
-finalPosError = mavenPos[-1, :] - vehiclePosition[-1, :]
-finalVelError = mavenVel[-1,:] - vehicleVelocity[-1,:]
-
-spiceObject.PlanetNames = spice_interface.StringVector(
-                                                       ["earth", "mars", "jupiter", "sun", "moon", "venus", "new horizons"])
-spiceObject.loadSpiceKernel('nh_pred_od077.bsp', path + '/')
-spiceObject.UTCCalInit = "2008 September 19, 04:00:00.0"
-
-velocityDiff = mavenVel - vehicleVelocity
-
-TotalSim.TotalSim.logThisMessage("new horizons_planet_data", int(1E12))
-TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(60*1e9) #Just a simple run to get initial conditions from ephem
-TotalSim.ExecuteSimulation()
-
-newHorPos = TotalSim.pullMessageLogData("new horizons_planet_data.PositionVector",
-                                       range(3))
-sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
-                                     range(3))
-newHorVel = TotalSim.pullMessageLogData("new horizons_planet_data.VelocityVector",
-                                       range(3))
-sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
-                                     range(3))
-posInit = newHorPos[0, 1:] - sunPos[0, 1:]
-velInit = newHorVel[0, 1:] - sunVel[0, 1:]
-#Re-init the vehicle position/velocity to the MAVEN ephemeris data
-VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
-VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
-
-TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(propTime)
-TotalSim.ExecuteSimulation()
-
-newHorPos = TotalSim.pullMessageLogData("new horizons_planet_data.PositionVector",
-                                       range(3))
-vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
-newHorVel = TotalSim.pullMessageLogData("new horizons_planet_data.VelocityVector",
-                                        range(3))
-vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
-finalPosError = newHorPos[-1, :] - vehiclePosition[-1, :]
-finalVelError = newHorVel[-1,:] - vehicleVelocity[-1,:]
-initVelError = newHorVel[0,:] - vehicleVelocity[0,:]
-initPosError = newHorPos[0,:] - vehiclePosition[0,:]
-velocityDiff = newHorVel - vehicleVelocity
-print finalPosError
-print finalVelError
-print initPosError
+#TotalSim.InitializeSimulation()
+#TotalSim.ConfigureStopTime(60*1e9) #Just a simple run to get initial conditions from ephem
+#TotalSim.ExecuteSimulation()
+#
+#mavenPos = TotalSim.pullMessageLogData("maven_planet_data.PositionVector",
+#                                       range(3))
+#sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
+#                                         range(3))
+#mavenVel = TotalSim.pullMessageLogData("maven_planet_data.VelocityVector",
+#                                           range(3))
+#sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
+#                                         range(3))
+#posInit = mavenPos[0, 1:] - sunPos[0, 1:]
+#velInit = mavenVel[0, 1:] - sunVel[0, 1:]
+##Re-init the vehicle position/velocity to the MAVEN ephemeris data
+#VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
+#VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
+#
+#TotalSim.InitializeSimulation()
+#TotalSim.ConfigureStopTime(propTime)
+#TotalSim.ExecuteSimulation()
+#
+#
+#mavenPos = TotalSim.pullMessageLogData("maven_planet_data.PositionVector",
+#    range(3))
+#marsPos = TotalSim.pullMessageLogData("mars_planet_data.PositionVector",
+#                                       range(3))
+#sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
+#                                          range(3))
+#mavenVel = TotalSim.pullMessageLogData("maven_planet_data.VelocityVector",
+#                                           range(3))
+#marsVel = TotalSim.pullMessageLogData("mars_planet_data.VelocityVector",
+#                                      range(3))
+#sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
+#                                     range(3))
+#jupiterPos = TotalSim.pullMessageLogData("jupiter_planet_data.PositionVector",
+#                                     range(3))
+#
+#vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+#vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
+#
+#finalPosError = mavenPos[-1, :] - vehiclePosition[-1, :]
+#finalVelError = mavenVel[-1,:] - vehicleVelocity[-1,:]
+#print vehiclePosition[-1,:]
+#print mavenPos[-1, :]
+#print sunPos[2,:]
+#print finalPosError
+#spiceObject.PlanetNames = spice_interface.StringVector(
+#                                                       ["earth", "mars", "jupiter", "sun", "moon", "venus", "new horizons"])
+#spiceObject.loadSpiceKernel('nh_pred_od077.bsp', path + '/')
+#spiceObject.UTCCalInit = "2008 September 19, 04:00:00.0"
+#
+#TotalSim.TotalSim.logThisMessage("new horizons_planet_data", int(1E12))
+#TotalSim.InitializeSimulation()
+#TotalSim.ConfigureStopTime(60*1e9) #Just a simple run to get initial conditions from ephem
+#TotalSim.ExecuteSimulation()
+#
+#newHorPos = TotalSim.pullMessageLogData("new horizons_planet_data.PositionVector",
+#                                       range(3))
+#sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
+#                                     range(3))
+#newHorVel = TotalSim.pullMessageLogData("new horizons_planet_data.VelocityVector",
+#                                       range(3))
+#sunVel = TotalSim.pullMessageLogData("sun_planet_data.VelocityVector",
+#                                     range(3))
+#posInit = newHorPos[0, 1:] - sunPos[0, 1:]
+#velInit = newHorVel[0, 1:] - sunVel[0, 1:]
+##Re-init the vehicle position/velocity to the MAVEN ephemeris data
+#VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
+#VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
+#
+#TotalSim.InitializeSimulation()
+#TotalSim.ConfigureStopTime(propTime)
+#TotalSim.ExecuteSimulation()
+#
+#newHorPos = TotalSim.pullMessageLogData("new horizons_planet_data.PositionVector",
+#                                       range(3))
+#vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+#newHorVel = TotalSim.pullMessageLogData("new horizons_planet_data.VelocityVector",
+#                                        range(3))
+#vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
+#finalPosError = newHorPos[-1, :] - vehiclePosition[-1, :]
+#finalVelError = newHorVel[-1,:] - vehicleVelocity[-1,:]
+#initVelError = newHorVel[0,:] - vehicleVelocity[0,:]
+#initPosError = newHorPos[0,:] - vehiclePosition[0,:]
+#velocityDiff = newHorVel - vehicleVelocity
+#print finalPosError
+#print finalVelError
+#print initPosError
+#print vehiclePosition.shape
 
 VehDynObject.GravData[0].IsCentralBody = False
+VehDynObject.GravData[0].IsDisplayBody = False
+VehDynObject.GravData[4].IsDisplayBody = True
 VehDynObject.GravData[4].IsCentralBody = True
-VehDynObject.GravData[4].UseJParams = True
 spiceObject.loadSpiceKernel('m01_ext42.bsp', path + '/')
-spiceObject.UTCCalInit = "2015 January 19, 03:00:00.0"
+spiceObject.UTCCalInit = "2015 January 19, 02:00:00.0"
 
 spiceObject.PlanetNames = spice_interface.StringVector(
                                                        ["earth", "mars", "jupiter", "sun", "moon", "venus", "mars odyssey"])
 
 TotalSim.disableTask("sixDynTestTask")
+TotalSim.enableTask("sixDynTestTaskMarsTime")
 TotalSim.enableTask("sixDynTestTaskMars")
 
-TotalSim.InitializeSimulation()
+#TotalSim.InitializeSimulation()
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E10))
 TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E10))
 TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E10))
@@ -269,56 +285,87 @@ mavenVel = TotalSim.pullMessageLogData("mars odyssey_planet_data.VelocityVector"
 marsVel = TotalSim.pullMessageLogData("mars_planet_data.VelocityVector",
                                      range(3))
 
-print mavenPos.shape
-print mavenVel.shape
 posInit = mavenPos[0, 1:] - marsPos[0, 1:]
 velInit = mavenVel[0, 1:] - marsVel[0, 1:]
+
 #Re-init the vehicle position/velocity to the MAVEN ephemeris data
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
+modysseyPropTime = int(9000E9)
+spiceObject.zeroBase = "mars"
+
+VehDynObject.GravData[4].UseSphericalHarmParams = False
+VehDynObject.GravData[4].UseJParams = False
 TotalSim.InitializeSimulation()
-TotalSim.ConfigureStopTime(propTime/2)
+TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
+
+print "Case 1 complete"
 
 mavenPos = TotalSim.pullMessageLogData("mars odyssey_planet_data.PositionVector",
                                        range(3))
-#marsPos = TotalSim.pullMessageLogData("mars_planet_data.PositionVector",
-#                                      range(3))
-#sunPos = TotalSim.pullMessageLogData("sun_planet_data.PositionVector",
-#                                     range(3))
 mavenVel = TotalSim.pullMessageLogData("mars odyssey_planet_data.VelocityVector",
                                        range(3))
-#marsVel = TotalSim.pullMessageLogData("mars_planet_data.VelocityVector",
-#                                      range(3))
 
 vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
 
-finalPosError = mavenPos[1, :] - vehiclePosition[1, :]
-finalVelError = mavenVel[1,:] - vehicleVelocity[1,:]
+velocityDiffsph = mavenVel - vehicleVelocity
+positionDiffsph = mavenPos - vehiclePosition
 
-velocityDiff = mavenVel - vehicleVelocity
-positionDiff = mavenPos - vehiclePosition
+VehDynObject.GravData[4].UseSphericalHarmParams = False
+VehDynObject.GravData[4].UseJParams = True
+TotalSim.InitializeSimulation()
+TotalSim.ConfigureStopTime(modysseyPropTime)
+TotalSim.ExecuteSimulation()
 
-print finalPosError
-print finalVelError
-print velocityDiff[1,:]
-print (mavenPos[2,0] - mavenPos[1,0])*1.0E-9
+print "Case 2 complete"
 
+vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
 
-#plt.figure(1)
-#plt.plot(newHorPos[:,1], newHorPos[:,2], 'b', newHorPos[-1, 1], newHorPos[-1, 2], 'bx')
-#
-plt.figure(2)
-plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,1])
-plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,2])
-plt.plot(mavenVel[:,0]*1.0E-9, velocityDiff[:,3])
+velocityDiffjPar = mavenVel - vehicleVelocity
+positionDiffjPar = mavenPos - vehiclePosition
 
-plt.figure(3)
-plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,1])
-plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,2])
-plt.plot(mavenPos[:,0]*1.0E-9, positionDiff[:,3])
+VehDynObject.GravData[4].UseSphericalHarmParams = True
+VehDynObject.GravData[4].UseJParams = False
+TotalSim.InitializeSimulation()
+TotalSim.ConfigureStopTime(modysseyPropTime)
+TotalSim.ExecuteSimulation()
+
+vehiclePosition = TotalSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range(3))
+
+velocityDiffsHar = mavenVel - vehicleVelocity
+positionDiffsHar = mavenPos - vehiclePosition
+
+plt.figure()
+plt.subplot(3,1,1)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,1])
+plt.subplot(3,1,2)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,2])
+plt.subplot(3,1,3)
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsph[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffjPar[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, positionDiffsHar[:,3])
+
+plt.figure()
+plt.subplot(3,1,1)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,1])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,1])
+plt.subplot(3,1,2)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,2])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,2])
+plt.subplot(3,1,3)
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsph[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffjPar[:,3])
+plt.plot(vehiclePosition[:,0]*1.0E-9, velocityDiffsHar[:,3])
 
 plt.show()
-

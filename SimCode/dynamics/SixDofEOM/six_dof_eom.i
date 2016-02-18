@@ -1,4 +1,5 @@
 %module six_dof_eom
+#pragma SWIG nowarn=362
 %{
    #include "six_dof_eom.h"
 %}
@@ -17,6 +18,11 @@ namespace std {
    %template(ConstCharVector) vector<const char*>;
    %template(GravityBodyDataVector) vector<GravityBodyData>;
 }
+
+
+%include "../utilities/coeffLoader.h"
+%include "../utilities/sphericalHarmonics.h"
+
 %include "sys_model.h"
 %include "dyn_effector.h"
 %include "six_dof_eom.h"

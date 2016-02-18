@@ -8,6 +8,171 @@
 #include <math.h>
 #include "architecture/messaging/system_messaging.h"
 
+
+/*--------------------------------------------------------------------------------------------------*/
+// GravityBodyData implementation
+
+/*!
+ @brief Use this constructor to use the class as the old structure. Should be deprecated soon.
+ */
+GravityBodyData::GravityBodyData()
+{
+    this->UseSphericalHarmParams = false;
+    this->_coeff_loader = nullptr;
+    this->_spherHarm = nullptr;
+}
+
+/*!
+ @brief Constructor used only for bodies with an associated spherical harmonics model 
+ @param[in] sphHarm_filename Filename of the coefficients file.
+ @param[in] max_degree Maximum degree that the model will use. If it's larger than the maximum degree contained in the file, max_degree will be truncated by the loader.
+ @param[in] mu Gravitational parameter.
+ @param[in] reference_radius Radius of reference with which the coefficients were estimated. Usually, a mean radius at Equator, but it could be other number. It should be given along with the coefficients file.
+ */
+GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu, const double reference_radius)
+{
+    this->UseSphericalHarmParams = true;
+    this->UseJParams = false;
+    
+    //if (file_format.compare("CSV") == 0) { //CSV are the only possible files by now
+    this->_coeff_loader = new coeffLoaderCSV();
+    //}
+    
+    this->_spherHarm = new sphericalHarmonics(this->_coeff_loader, sphHarm_filename, max_degree, mu, reference_radius);
+    
+    this->mu = mu;
+    this->radEquator = reference_radius;
+    
+    return;
+}
+
+/*!
+ @brief Copy constructor.
+ */
+GravityBodyData::GravityBodyData(const GravityBodyData& gravBody)
+{
+    this->IsCentralBody = gravBody.IsCentralBody;
+    this->IsDisplayBody = gravBody.IsDisplayBody;
+    this->UseJParams = gravBody.UseJParams;
+    this->UseSphericalHarmParams = gravBody.UseSphericalHarmParams;
+    this->JParams = gravBody.JParams;
+
+    for(unsigned int i = 0; i < 3; i++){
+        this->PosFromEphem[i] = gravBody.PosFromEphem[i];
+        this->VelFromEphem[i] = gravBody.VelFromEphem[i];
+        
+        this->posRelDisplay[i] = gravBody.posRelDisplay[i];
+        this->velRelDisplay[i] = gravBody.posRelDisplay[i];
+        
+        for(unsigned int j = 0; j < 3; j++) {
+            this->J20002Pfix[i][j] = gravBody.J20002Pfix[i][j];
+            this->J20002Pfix_dot[i][j] = gravBody.J20002Pfix_dot[i][j];
+        }
+    }
+    
+    this->mu = gravBody.mu;
+    this->ephemTime = gravBody.ephemTime;
+    this->ephIntTime = gravBody.ephIntTime;
+    this->radEquator = gravBody.radEquator;
+    this->BodyMsgName = gravBody.BodyMsgName;
+    this->outputMsgName = gravBody.outputMsgName;
+    this->planetEphemName = gravBody.planetEphemName;
+    this->outputMsgID = gravBody.outputMsgID;
+    this->BodyMsgID = gravBody.BodyMsgID;
+    
+    if (gravBody._coeff_loader != nullptr) {
+        this->_coeff_loader = new coeffLoaderCSV(*(gravBody._coeff_loader));
+    }
+    else
+        this->_coeff_loader = nullptr;
+    
+    if (gravBody._spherHarm != nullptr) {
+        this->_spherHarm = new sphericalHarmonics(*(gravBody._spherHarm));
+        this->_spherHarm->setCoefficientLoader(this->_coeff_loader);
+    }
+    else
+        this->_spherHarm = nullptr;
+    
+    return;
+}
+
+/*! 
+ @brief Destructor.
+ */
+GravityBodyData::~GravityBodyData()
+{
+    if (this->_spherHarm != nullptr)
+        delete this->_spherHarm;
+    
+    if (this->_coeff_loader != nullptr)
+        delete this->_coeff_loader;
+}
+
+/*!
+ @brief Operator = overloaded.
+ */
+GravityBodyData& GravityBodyData::operator=(const GravityBodyData& gravBody)
+{
+    if (this == &gravBody) {
+        return *this;
+    }
+    
+    this->IsCentralBody = gravBody.IsCentralBody;
+    this->IsDisplayBody = gravBody.IsDisplayBody;
+    this->UseJParams = gravBody.UseJParams;
+    this->UseSphericalHarmParams = gravBody.UseSphericalHarmParams;
+    this->JParams = gravBody.JParams;
+    
+    for(unsigned int i = 0; i < 3; i++){
+        this->PosFromEphem[i] = gravBody.PosFromEphem[i];
+        this->VelFromEphem[i] = gravBody.VelFromEphem[i];
+        
+        this->posRelDisplay[i] = gravBody.posRelDisplay[i];
+        this->velRelDisplay[i] = gravBody.posRelDisplay[i];
+        
+        for(unsigned int j = 0; j < 3; j++) {
+            this->J20002Pfix[i][j] = gravBody.J20002Pfix[i][j];
+            this->J20002Pfix_dot[i][j] = gravBody.J20002Pfix_dot[i][j];
+        }
+    }
+    
+    this->mu = gravBody.mu;
+    this->ephemTime = gravBody.ephemTime;
+    this->ephIntTime = gravBody.ephIntTime;
+    this->radEquator = gravBody.radEquator;
+    this->BodyMsgName = gravBody.BodyMsgName;
+    this->outputMsgName = gravBody.outputMsgName;
+    this->planetEphemName = gravBody.planetEphemName;
+    this->outputMsgID = gravBody.outputMsgID;
+    this->BodyMsgID = gravBody.BodyMsgID;
+    
+    if (gravBody._coeff_loader != nullptr) {
+        this->_coeff_loader = new coeffLoaderCSV(*(gravBody._coeff_loader));
+    }
+    else
+        this->_coeff_loader = nullptr;
+    
+    if (gravBody._spherHarm != nullptr) {
+        this->_spherHarm = new sphericalHarmonics(*(gravBody._spherHarm));
+        this->_spherHarm->setCoefficientLoader(this->_coeff_loader);
+    }
+    else
+        this->_spherHarm = nullptr;
+    
+    return *this;
+}
+
+/*!
+ @brief Returns the sphericalHarmonics object.
+ */
+sphericalHarmonics* GravityBodyData::getSphericalHarmonicsModel(void)
+{
+    return this->_spherHarm;
+}
+
+/*--------------------------------------------------------------------------------------------------*/
+
+
 /*! This is the constructor for SixDofEOM.  It initializes a few variables*/
 SixDofEOM::SixDofEOM()
 {
@@ -223,8 +388,10 @@ void SixDofEOM::ReadInputs()
             memcpy(it->PosFromEphem, LocalPlanet.PositionVector, 3*sizeof(double));
             memcpy(it->VelFromEphem, LocalPlanet.VelocityVector, 3*sizeof(double));
             memcpy(it->J20002Pfix, LocalPlanet.J20002Pfix, 9*sizeof(double));
+            memcpy(it->J20002Pfix_dot, LocalPlanet.J20002Pfix_dot, 9*sizeof(double));
             it->ephemTime = LocalPlanet.J2000Current;
             it->planetEphemName = LocalPlanet.PlanetName;
+            it->ephemTimeSimNanos = LocalHeader.WriteClockNanos;
         }
     }
 }
@@ -432,15 +599,78 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     v3Copy(v_N, dX);
 
     //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_N);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_N, d2);
+    rmag = v3Norm(r_NLoc);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_NLoc, d2);
     v3Add(d2, dX+3, dX+3);
 
-    /* compute the gravitational zonal harmonics */
+    /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
     if(CentralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_N, perturbAccel);
+        jPerturb(CentralBody, r_NLoc, perturbAccel);
         v3Add(dX+3, perturbAccel, dX+3);
+    }
+    else if (CentralBody->UseSphericalHarmParams)
+    {
+        unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
+        double posPlanetFix[3]; // [m] Position in planet-fixed frame
+        double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
+
+        double aux[3], aux1[3], aux2[3], aux3[3];
+        double planetDt = t - CentralBody->ephIntTime;
+        double J2000PfixCurrent[3][3];
+        
+        m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
+        m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
+        m33MultV3(J2000PfixCurrent, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
+        CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
+        
+        m33tMultV3(J2000PfixCurrent, gravField, aux1); // [EN]^T * gravField
+        
+        m33MultV3(CentralBody->J20002Pfix_dot, v_NLoc, aux2);  // [EN_dot] * v_N
+        m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);    // [EN]^T * [EN_dot] * v_N
+        v3Scale(2.0, aux2, aux2);                           // 2 * [EN]^T * [EN_dot] * v_N
+        
+        m33MultV3(CentralBody->J20002Pfix_dot, r_NLoc, aux3);  // [EN_dot] * r_N
+        m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * r_N
+        m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3); // [EN_dot] * [EN]^T * [EN_dot] * r_N
+        m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
+        
+        v3SetZero(aux2);
+        v3Subtract(aux1, aux2, aux);    // [EN]^T * gravField - 2 * [EN]^T * [EN_dot] * v_N
+        
+        // perturbAccel = [EN]^T * gravField - 2 * [EN]^T * [EN_dot] * v_N - [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
+        v3SetZero(aux3);
+        v3Subtract(aux, aux3, perturbAccel);
+        
+        v3Add(dX+3, perturbAccel, dX+3);
+        
+//#ifdef _DEBUG
+//        printf("Paste this into python terminal:\n");
+//        printf("r_N = np.array([%.15e, %.15e, %.15e])\n", r_N[0], r_N[1], r_N[2]);
+//        printf("v_N = np.array([%.15e, %.15e, %.15e])\n", v_N[0], v_N[1], v_N[2]);
+//        printf("r_E = np.array([%.15e, %.15e, %.15e])\n", posPlanetFix[0], posPlanetFix[1], posPlanetFix[2]);
+//        
+//        printf("g_E = np.array([%.15e, %.15e, %.15e])\n", gravField[0], gravField[1], gravField[2]);
+//        
+//        printf("EN = np.array([");
+//        for (unsigned int i = 0; i < 3; i++) {
+//            printf("[%.15e, %.15e, %.15e]", CentralBody->J20002Pfix[i][0], CentralBody->J20002Pfix[i][1], CentralBody->J20002Pfix[i][2]);
+//            if (i < 2)
+//                printf(",");
+//        }
+//        printf("])\n");
+//        
+//        printf("EN_dot = np.array([");
+//        for (unsigned int i = 0; i < 3; i++) {
+//            printf("[%.15e, %.15e, %.15e]", CentralBody->J20002Pfix_dot[i][0], CentralBody->J20002Pfix_dot[i][1], CentralBody->J20002Pfix_dot[i][2]);
+//            if (i < 2)
+//                printf(",");
+//        }
+//        printf("])\n");
+//        printf("g_N_computed = EN.T.dot(g_E)-2*EN.T.dot(EN_dot).dot(v_N)-EN.T.dot(EN_dot).dot(EN.T).dot(EN_dot).dot(r_N)\n");
+//        printf("g_N = np.array([%.15e, %.15e, %.15e])\n", perturbAccel[0], perturbAccel[1], perturbAccel[2]);
+//        printf("print g_N_computed - g_N\n");
+//#endif
     }
 
     /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
@@ -604,7 +834,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
-        it->ephIntTime = CurrentTime;
+        it->ephIntTime = it->ephemTimeSimNanos * 1.0E-9;
         if(it->IsCentralBody)
         {
             CentralBody = &(*it);
@@ -616,7 +846,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     if(CentralBodyCount != 1)
     {
         std::cerr << "ERROR: I got a bad count on central bodies: " <<
-        CentralBodyCount;
+        CentralBodyCount <<std::endl;
         return;
     }
     
