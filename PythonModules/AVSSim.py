@@ -1,4 +1,4 @@
-﻿#Import some architectural stuff that we will probably always use
+#Import some architectural stuff that we will probably always use
 import sys, os
 #Simulation base class is needed because we inherit from it
 import SimulationBaseClass
