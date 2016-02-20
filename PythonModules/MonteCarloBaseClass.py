@@ -204,7 +204,7 @@ class MonteCarloBaseClass:
 
             if previousSimulation is not None:
                 previousSimulation.TotalSim.terminateSimulation()
-            newSim = self.simulationObject
+            newSim = self.simulationObject()
 
             for disp in self.varDisp:
                 nextValue = disp.generate()
