@@ -45,9 +45,6 @@ uint64_t SystemMessaging::AttachStorageBucket(std::string bufferName)
 
 void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
 {
-
-    std::cout << __FUNCTION__ << ": " << bufferUse << std::endl;
-
     std::vector<MessageStorageContainer*>::iterator it;
     it = dataBuffers.begin();
 
@@ -85,8 +82,6 @@ void SystemMessaging::clearMessaging()
     std::vector<MessageStorageContainer *>::iterator it;
     for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        std::cout << "In: " << __FUNCTION__ << ": " <<  (*it)->bufferName << std::endl;
-
         delete (*it);
     }
     dataBuffers.clear();
@@ -416,14 +411,12 @@ std::string SystemMessaging::FindMessageName(uint64_t MessageID)
 
 int64_t SystemMessaging::FindMessageID(std::string MessageName)
 {
-    std::cout << "Pats: FindMessageID sought messageName: " << MessageName <<std::endl;
     MessageHeaderData* MsgHdr;
     for(uint64_t i=0; i<GetMessageCount(); i++)
     {
         MsgHdr = FindMsgHeader(i);
         if(MessageName == std::string(MsgHdr->MessageName))
         {
-            std::cout << "Pats: FindMessageID found messageName: " << std::string(MsgHdr->MessageName) <<std::endl;
             return(i);
         }
     }
@@ -472,8 +465,6 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
     std::vector<MessageStorageContainer *>::iterator it;
     for(it = dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        std::cout << __FUNCTION__ << std::endl;
-
         selectMessageBuffer(it - dataBuffers.begin());
         for(uint64_t i=0; i<GetMessageCount(); i++)
         {

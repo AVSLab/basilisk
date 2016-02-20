@@ -39,8 +39,6 @@ SysProcess :: ~SysProcess()
  */
 void SysProcess::selfInitProcess()
 {
-    std::cout << __FUNCTION__ << ": " << this->getProcessName() << std::endl;
-
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
@@ -59,8 +57,6 @@ void SysProcess::selfInitProcess()
 void SysProcess::crossInitProcess()
 {
     //! Begin Method steps
-    std::cout << __FUNCTION__ << std::endl;
-
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     for(it = taskModels.begin(); it != taskModels.end(); it++)
@@ -75,8 +71,6 @@ void SysProcess::crossInitProcess()
 void SysProcess::resetProcess()
 {
     //! Begin Method steps
-    std::cout << __FUNCTION__ << ": " << this->getProcessName() << std::endl;
-
     std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
     std::vector<ModelScheduleEntry>::iterator taskIt;
@@ -100,8 +94,6 @@ void SysProcess::resetProcess()
 
 void SysProcess::singleStepNextTask(uint64_t currentNanos)
 {
-    std::cout << __FUNCTION__ << std::endl;
-
     std::vector<ModelScheduleEntry>::iterator it;
     int32_t localPriority;
     //! Begin Method steps

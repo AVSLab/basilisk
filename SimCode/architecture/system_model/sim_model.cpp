@@ -55,8 +55,6 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
     switch(logType)
     {
         case messageBuffer:
-            std::cout << __FUNCTION__ << std::endl;
-
             SystemMessaging::GetInstance()->
                 selectMessageBuffer(MessageID.processBuffer);
             SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader,
@@ -91,23 +89,19 @@ void SimModel::addNewProcess(SysProcess *newProc)
  */
 void SimModel::InitSimulation()
 {
-    std::cout << "SimModel::InitSimulation()" <<std::endl;
     std::vector<SysProcess *>::iterator it;
     for(it=processList.begin(); it!= processList.end(); it++)
     {
         (*it)->selfInitProcess();
-        std::cout << "(*it)->selfInitProcess();" << std::endl;
     }
     for(it=processList.begin(); it!= processList.end(); it++)
     {
         (*it)->crossInitProcess();
-        std::cout << "(*it)->crossInitProcess();" << std::endl;
     }
     //! - If a message has been added to logger, link the message IDs
     if(!messageLogs.messagesLinked())
     {
         messageLogs.linkMessages();
-        std::cout << "messageLogs.linkMessages();" << std::endl;
     }
     NextTaskTime = 0;
     CurrentNanos = 0;
@@ -191,8 +185,6 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
 
     if(processID >= 0)
     {
-        std::cout << __FUNCTION__ << std::endl;
-
         SystemMessaging::GetInstance()->selectMessageBuffer(processID);
         SystemMessaging::GetInstance()->CreateNewMessage(MessageName, MessageSize,
                                                      NumBuffers, messageStruct);
@@ -229,8 +221,6 @@ void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
         std::cerr << "That message does not exist."<<std::endl;
         return;
     }
-    std::cout << __FUNCTION__ << std::endl;
-
     SystemMessaging::GetInstance()->selectMessageBuffer(MessageID.processBuffer);
     SystemMessaging::GetInstance()->WriteMessage(MessageID.itemID, ClockTime,
                                                  MessageSize, reinterpret_cast<uint8_t*> (MessageData));
@@ -277,8 +267,6 @@ std::string SimModel::getMessageName(uint64_t messageID)
 void SimModel::populateMessageHeader(std::string messageName,
                            MessageHeaderData* headerOut)
 {
-    std::cout << __FUNCTION__ << std::endl;
-
     messageIdentData messageID = SystemMessaging::GetInstance()->
         messagePublishSearch(messageName);
     SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);

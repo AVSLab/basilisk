@@ -47,8 +47,6 @@ void InterfaceDataExchange::discoverMessages()
 {
     std::set<std::string> unknownPublisher;
     std::set<std::string>::iterator it;
-    std::cout << __FUNCTION__ << std::endl;
-
     SystemMessaging::GetInstance()->selectMessageBuffer(processData.destination);
     unknownPublisher = SystemMessaging::GetInstance()->getUnpublishedMessages();
     SystemMessaging::GetInstance()->selectMessageBuffer(processData.source);
@@ -81,8 +79,6 @@ bool InterfaceDataExchange::linkMessages()
             FindMessageID(it->messageSource);
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.source);
-        std::cout << __FUNCTION__ << std::endl;
-
         it->source = SystemMessaging::GetInstance()->
         FindMessageID(it->messageSource);
         if(it->destination < 0 || it->source < 0)
@@ -99,8 +95,6 @@ void InterfaceDataExchange::routeMessages()
     std::vector<MessageInterfaceMatch>::iterator it;
     for(it=messageTraffic.begin(); it != messageTraffic.end(); it++)
     {
-        std::cout << __FUNCTION__ << std::endl;
-
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.source);
         MessageHeaderData* localHdr = SystemMessaging::GetInstance()->
@@ -123,8 +117,6 @@ void InterfaceDataExchange::routeMessages()
             localHdr->MaxMessageSize, msgBuffer);
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.destination);
-        std::cout << __FUNCTION__ << "2" << std::endl;
-
         SystemMessaging::GetInstance()->WriteMessage(it->destination,
             dataHeader.WriteClockNanos, dataHeader.WriteSize, msgBuffer);
         it->updateCounter = localHdr->UpdateCounter;
