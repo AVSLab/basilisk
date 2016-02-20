@@ -43,14 +43,20 @@ typedef struct {
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
 typedef struct {
-    std::vector<double> ThrusterLocation;          //!< m Location of thruster in structural
-    std::vector<double> ThrusterDirection;         //!< -- Unit vector of thruster pointing
-    std::vector<ThrusterTimePair> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
-    std::vector<ThrusterTimePair> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
-    double MaxThrust;                              //!< N  Steady state thrust of thruster
-    double steadyIsp;                              //!< s  Steady state specific impulse of thruster
-    double MinOnTime;                              //!< s  Minimum allowable on-time
-    ThrusterOperationData ThrustOps;               //!< -- Thruster operating data
+    std::vector<double> ThrusterLocation;           //!< m Location of thruster in structural
+    std::vector<double> ThrusterDirection;          //!< -- Unit vector of thruster pointing
+    std::vector<ThrusterTimePair> ThrusterOnRamp;   //!< -- Percentage of max thrust for ramp up
+    std::vector<ThrusterTimePair> ThrusterOffRamp;  //!< -- Percentage of max thrust for ramp down
+    double MaxThrust;                               //!< N  Steady state thrust of thruster
+    double steadyIsp;                               //!< s  Steady state specific impulse of thruster
+    double MinOnTime;                               //!< s  Minimum allowable on-time
+    ThrusterOperationData ThrustOps;                //!< -- Thruster operating data
+    double thrustThetaStd;                          //!< -- Thruster standard deviation theta
+    double thrustThetaMean;                         //!< -- Thruster standard deviation theta
+    double thrustPhiStd;                            //!< -- Thruster standard deviation phi
+    double thrustPhiMean;                           //!< -- Thruster standard deviation phi
+    double thrusterMagStd;                          //!< -- Thruster standard deviation magnitude
+    
 }ThrusterConfigData;
 
 //! @brief Input container for thruster firing requests.

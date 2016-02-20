@@ -3,36 +3,36 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 sys.path.append(path + '/../IntegratedTests/')
-import AVSSim #simulation type we are running
-import matplotlib.pyplot as plt #plotting functions
-import MonteCarloBaseClass as mbc #monte-carlo module for running dispersed simulations
-import AVSSafeCapture #Startup script we are using
-import numpy #Who doesn't like numpy?
-import math #Got to have some math
+import AVSSim  # simulation type we are running
+import matplotlib.pyplot as plt  # plotting functions
+import MonteCarloBaseClass as mbc  # monte-carlo module for running dispersed simulations
+import AVSSafeCapture  # Startup script we are using
+import numpy  # Who doesn't like numpy?
+import math  # Got to have some math
 
-#instantiate a monte-carlo handler so that we can run a dispersed scenario
+# instantiate a monte-carlo handler so that we can run a dispersed scenario
 monteCarloContainer = mbc.MonteCarloBaseClass()
 
-#Default initialization in this case is a gaussian distribution from -1,1
-attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit',0.0, 1.0, ([-0.5,0.5]))
-monteCarloContainer.addNewDispersion(attitudeDisp)
-rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.7,0.7]))
-monteCarloContainer.addNewDispersion(rateDisp)
+# Default initialization in this case is a gaussian distribution from -1,1
+# attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit',0.0, 1.0, ([-0.5,0.5]))
+# monteCarloContainer.addNewDispersion(attitudeDisp)
+# rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.7,0.7]))
+# monteCarloContainer.addNewDispersion(rateDisp)
 
-#Define the simulation type and the script that we will use to execute the simulations
-simulationModule = AVSSim.AVSSim()
+# Define the simulation type and the script that we will use to execute the simulations
+simulationModule = AVSSim.AVSSim
 executionModule = AVSSafeCapture.executeAVSSafeCapture
 
-#Configure the monte-carlo handler with the necessary parameter for a run
-monteCarloContainer.setSimulationObject(simulationModule) #simulation type to use
-monteCarloContainer.setExecutionCount(25) #Number of simulations to run
-monteCarloContainer.setRetainSimulationData(True) #Archive simulations as we go along
-monteCarloContainer.setExecutionModule(executionModule) #Define the script to use for the run
+# Configure the monte-carlo handler with the necessary parameter for a run
+monteCarloContainer.setSimulationObject(simulationModule)  # simulation type to use
+monteCarloContainer.setExecutionCount(25)  # Number of simulations to run
+monteCarloContainer.setRetainSimulationData(True)  # Archive simulations as we go along
+monteCarloContainer.setExecutionModule(executionModule)  # Define the script to use for the run
 
-#Command to go and execute the simulation configuration we have defined
+# Command to go and execute the simulation configuration we have defined
 monteCarloContainer.executeSimulations()
 
-#Set up to plot the archived data from each simulation run
+# Set up to plot the archived data from each simulation run
 plt.figure(1)
 
 for sim in monteCarloContainer.simList:
