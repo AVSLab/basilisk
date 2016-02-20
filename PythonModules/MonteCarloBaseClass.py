@@ -1,8 +1,8 @@
-import sys, os, inspect #Don't worry about this, standard stuff plus file discovery
+import sys, os, inspect  # Don't worry about this, standard stuff plus file discovery
 import SimulationBaseClass
 import random
 import abc
-import math
+import numpy
 import SimulationBaseClass
 
 random.seed(0x1badcad1)
@@ -15,7 +15,8 @@ class SingleVariableDispersion(object):
         self.varName = varName
 
     @abc.abstractmethod
-    def generate(self): pass
+    def generate(self):
+        pass
 
     @staticmethod
     def checkBounds(value, bounds):
@@ -33,7 +34,7 @@ class UniformDispersion(SingleVariableDispersion):
             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     def generate(self):
-        dispValue = random.uniform(self.bounds[0],self.bounds[1])
+        dispValue = random.uniform(self.bounds[0], self.bounds[1])
         return dispValue
 
 
@@ -60,7 +61,8 @@ class VectorVariableDispersion(object):
         return
 
     @abc.abstractmethod
-    def generate(self): pass
+    def generate(self):
+        pass
 
     @staticmethod
     def checkBounds(value, bounds):
@@ -70,11 +72,12 @@ class VectorVariableDispersion(object):
             value = bounds[1]
         return value
 
+
 class UniformVectorAngleDispersion(VectorVariableDispersion):
     def __init__(self, varName, phiBounds=None, thetaBounds=None):
         super(UniformVectorAngleDispersion, self).__init__(varName)
         if phiBounds is None:
-            self.phiBounds = ([0.0, 2*math.pi])
+            self.phiBounds = ([0.0, 2 * numpy.pi])
         else:
             self.phiBounds = phiBounds
         if thetaBounds is None:
@@ -85,14 +88,13 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
     def generate(self):
         phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
         thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
-        dispVec = ([math.sin(phiRnd)*math.cos(thetaRnd),
-                   math.sin(phiRnd)*math.sin(thetaRnd),
-                   phiRnd])
+        dispVec = ([numpy.sin(phiRnd) * numpy.cos(thetaRnd),
+                    numpy.sin(phiRnd) * numpy.sin(thetaRnd),
+                    phiRnd])
         return dispVec
 
 
 class NormalVectorAngleDispersion(VectorVariableDispersion):
-
     def __init__(self, varName, phiStd=0.0, thetaStd=0.0, phiBounds=None, thetaBounds=None):
         super(NormalVectorAngleDispersion, self).__init__(varName)
         self.phiMean = 0.0
@@ -101,7 +103,7 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         self.thetaStd = thetaStd  # (rad) angular standard deviation
 
         if phiBounds is None:
-            self.phiBounds = ([0.0, 2*math.pi])
+            self.phiBounds = ([0.0, 2 * numpy.pi])
         else:
             self.phiBounds = phiBounds
         if thetaBounds is None:
@@ -114,14 +116,13 @@ class NormalVectorAngleDispersion(VectorVariableDispersion):
         phiRnd = self.checkBounds(phiRnd, self.phiBounds)
         thetaRnd = random.gauss(self.thetaMean, self.thetaStd)
         thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
-        dispVec = ([math.sin(phiRnd)*math.cos(thetaRnd),
-                    math.sin(phiRnd)*math.sin(thetaRnd),
+        dispVec = ([numpy.sin(phiRnd) * numpy.cos(thetaRnd),
+                    numpy.sin(phiRnd) * numpy.sin(thetaRnd),
                     phiRnd])
         return dispVec
 
 
 class NormalVectorCartDispersion(VectorVariableDispersion):
-
     def __init__(self, varName, mean=0.0, stdDeviation=0.0, bounds=None):
         super(NormalVectorCartDispersion, self).__init__(varName)
         self.mean = mean
@@ -132,6 +133,34 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
 
     def generate(self):
         dispVec = []
+        for i in range(3):
+            rnd = random.gauss(self.mean, self.stdDeviation)
+            rnd = self.checkBounds(rnd, self.bounds)
+            dispVec.append(rnd)
+        return dispVec
+
+
+class TensorDispersion:
+    def __init__(self, varName):
+        self.varName = varName
+
+
+class InertiaTensorDispersion(TensorDispersion):
+    def __init__(self, varName, means=None, stdDeviations=None, bounds=None):
+        super(InertiaTensorDispersion, self).__init__(varName)
+        self.means = means
+        if self.means is None:
+            self.means = ([0.0, 0.0, 0.0])
+        self.stdDeviations = stdDeviations
+        if self.stdDeviations is None:
+            self.stdDeviations = ([0.0, 0.0, 0.0])
+        self.bounds = bounds
+        if self.bounds is None:
+            self.bounds = ([-1.0, 1.0])
+
+    def generate(self):
+        dispVec = []
+
         for i in range(3):
             rnd = random.gauss(self.mean, self.stdDeviation)
             rnd = self.checkBounds(rnd, self.bounds)
