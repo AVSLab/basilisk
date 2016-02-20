@@ -102,6 +102,7 @@ void messageLogger::logAllMessages()
             continue;
         }
         //! - Get the current message header and check to see if it is new and if enough time has elapsed since the last log
+        std::cout << __FUNCTION__ << std::endl;
         SystemMessaging::GetInstance()->selectMessageBuffer(it->processID);
         MessageHeaderData* localHeader = SystemMessaging::GetInstance()->
         FindMsgHeader(it->messageID);

@@ -271,6 +271,7 @@ class SimBaseClass:
      for Task in self.TaskList:
        if Task.Name == taskName:
            Task.resetTask()
+
  def InitializeSimulation(self):
    self.TotalSim.ResetSimulation()
    self.TotalSim.InitSimulation()
