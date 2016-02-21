@@ -11,27 +11,27 @@ random.seed(0x1badcad1)
 class SingleVariableDispersion(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, varName):
+    def __init__(self, varName, bounds):
         self.varName = varName
+        self.bounds = bounds
+        if bounds is None:
+            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     @abc.abstractmethod
     def generate(self):
         pass
 
-    @staticmethod
-    def checkBounds(value, bounds):
-        if value <= bounds[0]:
-            return bounds[0]
-        if value >= bounds[1]:
-            return bounds[1]
+    def checkBounds(self, value):
+        if value <= self.bounds[0]:
+            value = self.bounds[0]
+        if value >= self.bounds[1]:
+            value = self.bounds[1]
+        return value
 
 
 class UniformDispersion(SingleVariableDispersion):
     def __init__(self, varName, bounds=None):
-        SingleVariableDispersion.__init__(self, varName)
-        self.varName = varName
-        if bounds is None:
-            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
+        SingleVariableDispersion.__init__(self, varName, bounds)
 
     def generate(self):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
@@ -39,17 +39,14 @@ class UniformDispersion(SingleVariableDispersion):
 
 
 class NormalDispersion(SingleVariableDispersion):
-    def __init__(self, varName, bounds=None, mean=0.0, stdDeviation=0.5):
-        SingleVariableDispersion.__init__(self, varName)
-        self.varName = varName
-        if bounds is None:
-            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
+    def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
+        SingleVariableDispersion.__init__(self, varName, bounds)
         self.mean = mean
         self.stdDeviation = stdDeviation
 
     def generate(self):
         dispValue = random.gauss(self.mean, self.stdDeviation)
-        dispValue = self.checkBounds(dispValue, self.bounds)
+        dispValue = self.checkBounds(dispValue)
         return dispValue
 
 
@@ -197,10 +194,10 @@ class MonteCarloBaseClass:
         self.varDisp.append(disp)
 
     def executeSimulations(self):
-        i = 0
+        simRunCounter = 0
         previousSimulation = None
 
-        while i < self.executionCount:
+        while simRunCounter < self.executionCount:
 
             if previousSimulation is not None:
                 previousSimulation.TotalSim.terminateSimulation()
@@ -222,5 +219,5 @@ class MonteCarloBaseClass:
                 self.simList.append(newSim)
 
             previousSimulation = newSim
-            i += 1
-            print i
+            simRunCounter += 1
+            print simRunCounter
