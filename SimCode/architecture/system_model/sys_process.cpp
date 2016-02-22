@@ -86,7 +86,6 @@ void SysProcess::resetProcess()
     {
         addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
     }
-    //SystemMessaging::GetInstance()->ClearMessageBuffer();
     
     
     return;

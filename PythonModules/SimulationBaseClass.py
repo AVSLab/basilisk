@@ -162,11 +162,11 @@ class SimBaseClass:
    self.indexParsed = False
    self.simulationInitialized = False
 
- def AddModelToTask(self, TaskName, NewModel, ModelData = None):
+ def AddModelToTask(self, TaskName, NewModel, ModelData = None, ModelPriority = -1):
    i=0
    for Task in self.TaskList:
        if Task.Name == TaskName:
-          Task.TaskData.AddNewObject(NewModel)
+          Task.TaskData.AddNewObject(NewModel, ModelPriority)
           TaskReplaceTag = 'self.TaskList['+str(i) + ']'
           TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
           self.NameReplace[NewModel.ModelTag] = TaskReplaceTag
