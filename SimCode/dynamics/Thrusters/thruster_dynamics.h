@@ -51,12 +51,8 @@ typedef struct {
     double steadyIsp;                               //!< s  Steady state specific impulse of thruster
     double MinOnTime;                               //!< s  Minimum allowable on-time
     ThrusterOperationData ThrustOps;                //!< -- Thruster operating data
-    double thrustThetaStd;                          //!< -- Thruster standard deviation theta
-    double thrustThetaMean;                         //!< -- Thruster standard deviation theta
-    double thrustPhiStd;                            //!< -- Thruster standard deviation phi
-    double thrustPhiMean;                           //!< -- Thruster standard deviation phi
-    double thrusterMagStd;                          //!< -- Thruster standard deviation magnitude
-    
+    double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
+    std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 }ThrusterConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -112,7 +108,7 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
-    int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data
+    int64_t CmdsInMsgID;                           //!< -- Message ID for incoming data
     int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
     ThrustCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                      //!< -- Time for previous valid thruster firing

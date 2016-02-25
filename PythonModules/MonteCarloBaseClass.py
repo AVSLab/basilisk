@@ -2,8 +2,7 @@ import sys, os, inspect  # Don't worry about this, standard stuff plus file disc
 import SimulationBaseClass
 import random
 import abc
-import numpy
-import SimulationBaseClass
+import numpy as np
 
 random.seed(0x1badcad1)
 
@@ -14,14 +13,15 @@ class SingleVariableDispersion(object):
     def __init__(self, varName, bounds):
         self.varName = varName
         self.bounds = bounds
-        if bounds is None:
-            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
     @abc.abstractmethod
-    def generate(self):
+    def generate(self, sim):
         pass
 
     def checkBounds(self, value):
+        if self.bounds is None:
+            return value
+
         if value <= self.bounds[0]:
             value = self.bounds[0]
         if value >= self.bounds[1]:
@@ -32,8 +32,10 @@ class SingleVariableDispersion(object):
 class UniformDispersion(SingleVariableDispersion):
     def __init__(self, varName, bounds=None):
         SingleVariableDispersion.__init__(self, varName, bounds)
+        if self.bounds is None:
+            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
 
-    def generate(self):
+    def generate(self, sim):
         dispValue = random.uniform(self.bounds[0], self.bounds[1])
         return dispValue
 
@@ -44,7 +46,7 @@ class NormalDispersion(SingleVariableDispersion):
         self.mean = mean
         self.stdDeviation = stdDeviation
 
-    def generate(self):
+    def generate(self, sim):
         dispValue = random.gauss(self.mean, self.stdDeviation)
         dispValue = self.checkBounds(dispValue)
         return dispValue
@@ -53,13 +55,38 @@ class NormalDispersion(SingleVariableDispersion):
 class VectorVariableDispersion(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, varName):
+    def __init__(self, varName, bounds):
         self.varName = varName
+        self.bounds = bounds
         return
 
     @abc.abstractmethod
-    def generate(self):
+    def generate(self, sim):
         pass
+
+    def perturbVectorByAngle(self, vector, angle):
+        rndVec = np.random.rand(3)
+        if np.dot(rndVec, vector) > 0.95:
+            rndVec[0] *= -1
+        eigenAxis = np.cross(vector, rndVec)
+        thrusterMisalignDCM = self.eigAxisAndAngleToDCM(angle, eigenAxis)
+        self.dispersedUnitVector = np.dot(thrusterMisalignDCM,vector)
+
+    @staticmethod
+    def eigAxisAndAngleToDCM(axis, angle):
+        axis = axis/np.linalg.norm(axis)
+        sigma = 1 - np.cos(angle)
+        dcm = np.zeros((3,3))
+        dcm[0,0] = axis[0]**2 * sigma + np.cos(angle)
+        dcm[0,1] = axis[0] * axis[1] * sigma + axis[2] * np.sin(angle)
+        dcm[0,2] = axis[0] * axis[2] * sigma - axis[1] * np.sin(angle)
+        dcm[1,0] = axis[1] * axis[0] * sigma - axis[2] * np.sin(angle)
+        dcm[1,1] = axis[1]**2 * sigma + np.cos(angle)
+        dcm[1,2] = axis[1] * axis[2] * sigma + axis[0] * np.sin(angle)
+        dcm[2,0] = axis[2] * axis[0] * sigma + axis[1] * np.sin(angle)
+        dcm[2,1] = axis[2] * axis[1] * sigma - axis[0] * np.sin(angle)
+        dcm[2,2] = axis[2]**2 * sigma + np.cos(angle)
+        return dcm
 
     @staticmethod
     def checkBounds(value, bounds):
@@ -72,9 +99,9 @@ class VectorVariableDispersion(object):
 
 class UniformVectorAngleDispersion(VectorVariableDispersion):
     def __init__(self, varName, phiBounds=None, thetaBounds=None):
-        super(UniformVectorAngleDispersion, self).__init__(varName)
+        super(UniformVectorAngleDispersion, self).__init__(varName, None)
         if phiBounds is None:
-            self.phiBounds = ([0.0, 2 * numpy.pi])
+            self.phiBounds = ([0.0, 2 * np.pi])
         else:
             self.phiBounds = phiBounds
         if thetaBounds is None:
@@ -82,53 +109,57 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         else:
             self.thetaBounds = thetaBounds
 
-    def generate(self):
+    def generate(self, sim):
         phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
         thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
-        dispVec = ([numpy.sin(phiRnd) * numpy.cos(thetaRnd),
-                    numpy.sin(phiRnd) * numpy.sin(thetaRnd),
+        dispVec = ([np.sin(phiRnd) * np.cos(thetaRnd),
+                    np.sin(phiRnd) * np.sin(thetaRnd),
                     phiRnd])
         return dispVec
 
 
-class NormalVectorAngleDispersion(VectorVariableDispersion):
-    def __init__(self, varName, phiStd=0.0, thetaStd=0.0, phiBounds=None, thetaBounds=None):
-        super(NormalVectorAngleDispersion, self).__init__(varName)
-        self.phiMean = 0.0
+class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
+    def __init__(self, varName, thrusterIndex=0, phiStd=0.1745, bounds=None):
+        """
+        Args:
+            varName (str): A string representation of the variable to be dispersed
+                e.g. 'ACSThrusterDynObject.ThrusterData[0].thrusterDirectionDisp'.
+            thrusterIndex (int): The index of the thruster to be used in array references.
+            phiStd (float): The 1 sigma standard deviation of the dispersion angle in radians.
+            bounds (Array[float, float]): defines lower and upper cut offs for generated dispersion values.
+        """
+        super(NormalThrusterUnitDirectionVectorDispersion, self).__init__(varName, bounds)
+        self.varNameComponents = self.varName.split(".")
         self.phiStd = phiStd  # (rad) angular standard deviation
-        self.thetaMean = 0.0
-        self.thetaStd = thetaStd  # (rad) angular standard deviation
+        self.bound = bounds
+        # Limit dispersion to a hemisphere around the vector being dispersed
+        if self.bounds is None:
+            self.bounds = ([-np.pi/2, np.pi/2])
+        self.thrusterIndex = thrusterIndex
 
-        if phiBounds is None:
-            self.phiBounds = ([0.0, 2 * numpy.pi])
+    def generate(self, sim=None):
+        if sim is None:
+            print("No simulation object parameter set in '" + self.generate.__name__ + "()'"
+                  " dispersions will not be set for variable " + self.varName)
+            return
         else:
-            self.phiBounds = phiBounds
-        if thetaBounds is None:
-            self.thetaBounds = self.phiBounds
-        else:
-            self.thetaBounds = thetaBounds
-
-    def generate(self):
-        phiRnd = random.gauss(self.phiMean, self.phiStd)
-        phiRnd = self.checkBounds(phiRnd, self.phiBounds)
-        thetaRnd = random.gauss(self.thetaMean, self.thetaStd)
-        thetaRnd = self.checkBounds(thetaRnd, self.thetaBounds)
-        dispVec = ([numpy.sin(phiRnd) * numpy.cos(thetaRnd),
-                    numpy.sin(phiRnd) * numpy.sin(thetaRnd),
-                    phiRnd])
+            thrusterObject = getattr(sim, self.varNameComponents[0])
+            dirVec = thrusterObject.ThrusterData[self.thrusterIndex].ThrusterDirection
+            angle = np.random.normal(0, self.phiStd, 1)
+            dispVec = self.perturbVectorByAngle(angle, dirVec)
         return dispVec
 
 
-class NormalVectorCartDispersion(VectorVariableDispersion):
+class UniformVectorCartDispersion(VectorVariableDispersion):
     def __init__(self, varName, mean=0.0, stdDeviation=0.0, bounds=None):
-        super(NormalVectorCartDispersion, self).__init__(varName)
+        super(UniformVectorCartDispersion, self).__init__(varName, bounds)
         self.mean = mean
         self.stdDeviation = stdDeviation
         self.bounds = bounds
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])
 
-    def generate(self):
+    def generate(self, sim):
         dispVec = []
         for i in range(3):
             rnd = random.gauss(self.mean, self.stdDeviation)
@@ -204,8 +235,13 @@ class MonteCarloBaseClass:
             newSim = self.simulationObject()
 
             for disp in self.varDisp:
-                nextValue = disp.generate()
-                if isinstance(nextValue, list):
+                nextValue = disp.generate(newSim)
+
+                if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
+                    for i in range(3):
+                        execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(disp.dispersedUnitVector[i])
+                        exec(execString)
+                elif isinstance(nextValue, list):
                     for i in range(3):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[0])
                         exec(execString)
