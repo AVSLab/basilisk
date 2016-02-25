@@ -32,8 +32,10 @@ public:
     std::string StateString;          //!< -- port to use for conversion
     std::string OutputDataString;     //!< -- port to use for output data
     uint64_t OutputBufferCount;       //!< -- Count on number of buffers to output
+	uint64_t stateMsgSize;            //!< -- Size of the state message to use
     bool ReinitSelf;                  //!< -- Indicator to reset conversion type
     bool Elements2Cart;               //!< -- Flag saying which direction to go
+	bool useEphemFormat;              //!< -- Flag indicating whether to use state or ephem
     bool inputsGood;                  //!< -- flag indicating that inputs are good
     
 private:

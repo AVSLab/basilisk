@@ -1,6 +1,7 @@
 #include "dynamics/SixDofEOM/six_dof_eom.h"
 #include "dynamics/DynOutput/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
+#include "environment/spice/spice_planet_state.h"
 #include <cstring>
 #include <iostream>
 
@@ -16,6 +17,7 @@ OrbElemConvert::OrbElemConvert()
     Elements2Cart = false;
     ReinitSelf = false;
     inputsGood = false;
+	useEphemFormat = false;
     r_N[0] = r_N[1] = r_N[2] = 0.0;
     v_N[0] = v_N[1] = v_N[2] = 0.0;
     return;
@@ -36,7 +38,11 @@ void OrbElemConvert::SelfInit()
     
     //! Begin method steps
     //! - Determine what the size of the output should be and create the message
-    uint64_t OutputSize = Elements2Cart ? sizeof(OutputStateData) :
+	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetState) :
+		sizeof(OutputStateData);
+	std::string stateMsgType = useEphemFormat ? "SpicePlanetState" :
+		"OutputStateData";
+    uint64_t OutputSize = Elements2Cart ? stateMsgSize :
     sizeof(classicElements);
     std::string messageType = Elements2Cart ? "OutputStateData" :
         "classicElements";
@@ -53,7 +59,7 @@ void OrbElemConvert::SelfInit()
 void OrbElemConvert::CrossInit()
 {
     uint64_t inputSize = Elements2Cart ? sizeof(classicElements) :
-        sizeof(OutputStateData);
+        stateMsgSize;
     StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
                                                                       StateString, inputSize, moduleID);
     if(StateInMsgID < 0)
@@ -73,16 +79,28 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     
     OutputStateData LocalState;
+	SpicePlanetState localPlanet;
+	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
+		reinterpret_cast<uint8_t *> (&LocalState);
     //! Begin method steps
     //! - If it is outputting cartesian, create a StateData struct and write out.
     //! - If it is outputting elements, just write the current elements out
     if(Elements2Cart)
     {
-        memset(&LocalState, 0x0, sizeof(OutputStateData));
-        memcpy(LocalState.r_N, r_N, 3*sizeof(double));
-        memcpy(LocalState.v_N, v_N, 3*sizeof(double));
+		if (useEphemFormat)
+		{
+			memset(&localPlanet, 0x0, sizeof(SpicePlanetState));
+			memcpy(localPlanet.PositionVector, r_N, 3 * sizeof(double));
+			memcpy(localPlanet.VelocityVector, v_N, 3 * sizeof(double));
+		}
+		else
+		{
+			memset(&LocalState, 0x0, sizeof(OutputStateData));
+			memcpy(LocalState.r_N, r_N, 3 * sizeof(double));
+			memcpy(LocalState.v_N, v_N, 3 * sizeof(double));
+		}
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-                                                     sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&LocalState), moduleID);
+                                                     stateMsgSize, msgPtr, moduleID);
     }
     else
     {
@@ -122,13 +140,17 @@ void OrbElemConvert::ReadInputs()
     }
     classicElements LocalElements;
     OutputStateData LocalState;
+	SpicePlanetState localPlanet;
     SingleMessageHeader LocalHeader;
+
+	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
+		reinterpret_cast<uint8_t *> (&LocalState);
     
     //! - Set the input pointer and size appropriately based on input type
     uint8_t *InputPtr = Elements2Cart ? reinterpret_cast<uint8_t *>
-    (&LocalElements) : reinterpret_cast<uint8_t *> (&LocalState);
+    (&LocalElements) : msgPtr;
     uint64_t InputSize = Elements2Cart ? sizeof(classicElements) :
-    sizeof(OutputStateData);
+    stateMsgSize;
     //! - Read the input message into the correct pointer
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &LocalHeader,
                                                 InputSize, InputPtr);
@@ -139,8 +161,16 @@ void OrbElemConvert::ReadInputs()
     }
     else
     {
-        memcpy(r_N, LocalState.r_N, 3*sizeof(double));
-        memcpy(v_N, LocalState.v_N, 3*sizeof(double));
+		if (useEphemFormat)
+		{
+			memcpy(r_N, localPlanet.PositionVector, 3 * sizeof(double));
+			memcpy(v_N, localPlanet.VelocityVector, 3 * sizeof(double));
+		}
+		else
+		{
+			memcpy(r_N, LocalState.r_N, 3 * sizeof(double));
+			memcpy(v_N, LocalState.v_N, 3 * sizeof(double));
+		}
     }
     
 }
