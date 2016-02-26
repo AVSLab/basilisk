@@ -23,10 +23,10 @@ monteCarloContainer.setRetainSimulationData(True)  # Archive simulations as we g
 monteCarloContainer.setExecutionModule(executionModule)  # Define the script to use for the run
 
 # Default initialization in this case is a gaussian distribution from -0.5, 0.5
-attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit', 0.0, 1.0, ([-0.5, 0.5]))
+attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit', 0.0, 0.5, ([-1.0, 1.0]))
 monteCarloContainer.addNewDispersion(attitudeDisp)
 
-rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.5, 0.5]))
+rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 0.017, ([-0.5, 0.5]))
 monteCarloContainer.addNewDispersion(rateDisp)
 
 tankMassDisp = mbc.UniformDispersion('DVThrusterDynObject.objProps.Mass', ([500, 800]))
