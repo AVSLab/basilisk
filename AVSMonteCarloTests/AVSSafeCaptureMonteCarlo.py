@@ -1,4 +1,4 @@
-﻿import sys, os, inspect #following lines are to get all necessary files on search path
+import sys, os, inspect #following lines are to get all necessary files on search path
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')

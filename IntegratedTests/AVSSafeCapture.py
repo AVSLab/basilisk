@@ -1,4 +1,4 @@
-﻿import sys, os, inspect
+import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
