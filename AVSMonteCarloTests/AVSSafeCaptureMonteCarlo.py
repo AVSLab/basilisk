@@ -7,17 +7,10 @@ import AVSSim  # simulation type we are running
 import matplotlib.pyplot as plt  # plotting functions
 import MonteCarloBaseClass as mbc  # monte-carlo module for running dispersed simulations
 import AVSSafeCapture  # Startup script we are using
-import numpy  # Who doesn't like numpy?
-import math  # Got to have some math
+import numpy as np  # Who doesn't like numpy?
 
 # instantiate a monte-carlo handler so that we can run a dispersed scenario
 monteCarloContainer = mbc.MonteCarloBaseClass()
-
-# Default initialization in this case is a gaussian distribution from -1,1
-# attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit',0.0, 1.0, ([-0.5,0.5]))
-# monteCarloContainer.addNewDispersion(attitudeDisp)
-# rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.7,0.7]))
-# monteCarloContainer.addNewDispersion(rateDisp)
 
 # Define the simulation type and the script that we will use to execute the simulations
 simulationModule = AVSSim.AVSSim
@@ -25,9 +18,38 @@ executionModule = AVSSafeCapture.executeAVSSafeCapture
 
 # Configure the monte-carlo handler with the necessary parameter for a run
 monteCarloContainer.setSimulationObject(simulationModule)  # simulation type to use
-monteCarloContainer.setExecutionCount(25)  # Number of simulations to run
+monteCarloContainer.setExecutionCount(20)  # Number of simulations to run
 monteCarloContainer.setRetainSimulationData(True)  # Archive simulations as we go along
 monteCarloContainer.setExecutionModule(executionModule)  # Define the script to use for the run
+
+# Default initialization in this case is a gaussian distribution from -0.5, 0.5
+attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit', 0.0, 1.0, ([-0.5, 0.5]))
+monteCarloContainer.addNewDispersion(attitudeDisp)
+
+rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 1.0, ([-0.5, 0.5]))
+monteCarloContainer.addNewDispersion(rateDisp)
+
+tankMassDisp = mbc.UniformDispersion('DVThrusterDynObject.objProps.Mass', ([500, 800]))
+monteCarloContainer.addNewDispersion(tankMassDisp)
+
+dryMassDisp = mbc.UniformDispersion('VehDynObject.baseMass', ([400, 700]))
+monteCarloContainer.addNewDispersion(dryMassDisp)
+
+# Generate thruster dispersions
+thrustInd = 0
+while thrustInd < 8:
+    # Thrusters thrust directions are dispersed by angle in radians off center of nozzle bore line.
+    tmpVarName = "ACSThrusterDynObject.ThrusterData[" + str(thrustInd) + "].thrusterDirectionDisp"
+    tmpThrusterDisp = mbc.NormalThrusterUnitDirectionVectorDispersion(tmpVarName, thrustInd, 0.1745, ([-0.1745, 0.1745]))
+    monteCarloContainer.addNewDispersion(tmpThrusterDisp)
+
+    # Thrusters magnitudes are dispersed by percentage of max thrust.
+    # E.g. a dispersion of 1.0 is 100% error.
+    tmpVarName = "ACSThrusterDynObject.ThrusterData[" + str(thrustInd) + "].thrusterMagDisp"
+    tmpThrusterDisp = mbc.NormalDispersion(tmpVarName, 0.0, 0.1, ([-0.1, 0.1]))
+    monteCarloContainer.addNewDispersion(tmpThrusterDisp)
+
+    thrustInd += 1
 
 # Command to go and execute the simulation configuration we have defined
 monteCarloContainer.executeSimulations()

@@ -63,9 +63,9 @@ def executeAVSSafeCapture(TheAVSSim):
     TheAVSSim.InitializeSimulation()
     TheAVSSim.ConfigureStopTime(int(30 * 1E9))
     TheAVSSim.ExecuteSimulation()
-    # TheAVSSim.modeRequest = 'safeMode'
-    # TheAVSSim.ConfigureStopTime(int(60 * 10 * 1E9))
-    # TheAVSSim.ExecuteSimulation()
+    TheAVSSim.modeRequest = 'safeMode'
+    TheAVSSim.ConfigureStopTime(int(60 * 10 * 1E9))
+    TheAVSSim.ExecuteSimulation()
 
 
 if __name__ == "__main__":

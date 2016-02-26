@@ -69,14 +69,14 @@ class VectorVariableDispersion(object):
         if np.dot(rndVec, vector) > 0.95:
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
-        thrusterMisalignDCM = self.eigAxisAndAngleToDCM(angle, eigenAxis)
-        self.dispersedUnitVector = np.dot(thrusterMisalignDCM,vector)
+        thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
+        return np.dot(thrusterMisalignDCM,vector)
 
     @staticmethod
     def eigAxisAndAngleToDCM(axis, angle):
         axis = axis/np.linalg.norm(axis)
         sigma = 1 - np.cos(angle)
-        dcm = np.zeros((3,3))
+        dcm = np.zeros((3, 3))
         dcm[0,0] = axis[0]**2 * sigma + np.cos(angle)
         dcm[0,1] = axis[0] * axis[1] * sigma + axis[2] * np.sin(angle)
         dcm[0,2] = axis[0] * axis[2] * sigma - axis[1] * np.sin(angle)
@@ -88,6 +88,7 @@ class VectorVariableDispersion(object):
         dcm[2,2] = axis[2]**2 * sigma + np.cos(angle)
         return dcm
 
+    # @TODO This should be a @classmethod.
     @staticmethod
     def checkBounds(value, bounds):
         if value < bounds[0]:
@@ -100,14 +101,13 @@ class VectorVariableDispersion(object):
 class UniformVectorAngleDispersion(VectorVariableDispersion):
     def __init__(self, varName, phiBounds=None, thetaBounds=None):
         super(UniformVectorAngleDispersion, self).__init__(varName, None)
+        # @TODO these bounds are not currently being applied to the generated values
+        self.phiBounds = phiBounds
         if phiBounds is None:
             self.phiBounds = ([0.0, 2 * np.pi])
-        else:
-            self.phiBounds = phiBounds
+        self.thetaBounds = thetaBounds
         if thetaBounds is None:
             self.thetaBounds = self.phiBounds
-        else:
-            self.thetaBounds = thetaBounds
 
     def generate(self, sim):
         phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
@@ -131,10 +131,9 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
         super(NormalThrusterUnitDirectionVectorDispersion, self).__init__(varName, bounds)
         self.varNameComponents = self.varName.split(".")
         self.phiStd = phiStd  # (rad) angular standard deviation
-        self.bound = bounds
         # Limit dispersion to a hemisphere around the vector being dispersed
-        if self.bounds is None:
-            self.bounds = ([-np.pi/2, np.pi/2])
+        # if self.bounds is None:
+        #     self.bounds = ([-np.pi/2, np.pi/2])
         self.thrusterIndex = thrusterIndex
 
     def generate(self, sim=None):
@@ -146,49 +145,33 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             thrusterObject = getattr(sim, self.varNameComponents[0])
             dirVec = thrusterObject.ThrusterData[self.thrusterIndex].ThrusterDirection
             angle = np.random.normal(0, self.phiStd, 1)
-            dispVec = self.perturbVectorByAngle(angle, dirVec)
+            dispVec = self.perturbVectorByAngle(dirVec, angle)
         return dispVec
 
 
 class UniformVectorCartDispersion(VectorVariableDispersion):
-    def __init__(self, varName, mean=0.0, stdDeviation=0.0, bounds=None):
+    def __init__(self, varName, bounds=None):
         super(UniformVectorCartDispersion, self).__init__(varName, bounds)
-        self.mean = mean
-        self.stdDeviation = stdDeviation
-        self.bounds = bounds
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])
 
-    def generate(self, sim):
+    def generate(self, sim=None):
         dispVec = []
         for i in range(3):
-            rnd = random.gauss(self.mean, self.stdDeviation)
+            rnd = random.uniform(self.bounds[0], self.bounds[1])
             rnd = self.checkBounds(rnd, self.bounds)
             dispVec.append(rnd)
         return dispVec
 
 
-class TensorDispersion:
-    def __init__(self, varName):
-        self.varName = varName
+class NormalVectorCartDispersion(VectorVariableDispersion):
+    def __init__(self, varName, mean=0.0, stdDeviation=0.0, bounds=None):
+        super(NormalVectorCartDispersion, self).__init__(varName, bounds)
+        self.mean = mean
+        self.stdDeviation = stdDeviation
 
-
-class InertiaTensorDispersion(TensorDispersion):
-    def __init__(self, varName, means=None, stdDeviations=None, bounds=None):
-        super(InertiaTensorDispersion, self).__init__(varName)
-        self.means = means
-        if self.means is None:
-            self.means = ([0.0, 0.0, 0.0])
-        self.stdDeviations = stdDeviations
-        if self.stdDeviations is None:
-            self.stdDeviations = ([0.0, 0.0, 0.0])
-        self.bounds = bounds
-        if self.bounds is None:
-            self.bounds = ([-1.0, 1.0])
-
-    def generate(self):
+    def generate(self, sim=None):
         dispVec = []
-
         for i in range(3):
             rnd = random.gauss(self.mean, self.stdDeviation)
             rnd = self.checkBounds(rnd, self.bounds)
@@ -236,14 +219,13 @@ class MonteCarloBaseClass:
 
             for disp in self.varDisp:
                 nextValue = disp.generate(newSim)
-
                 if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
                     for i in range(3):
-                        execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(disp.dispersedUnitVector[i])
+                        execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                 elif isinstance(nextValue, list):
                     for i in range(3):
-                        execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[0])
+                        execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
