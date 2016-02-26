@@ -3465,34 +3465,35 @@ def Euler3132C(q):
 
     return C;
 
+
 def Euler3212C(q):
     """
     Euler3212C
-
     	C = Euler3212C(Q) returns the direction cosine
     	matrix in terms of the 3-2-1 Euler angles.
     	Input Q must be a 3x1 vector of Euler angles.
     """
 
-    st1 = math.sin(q[0,0]);
-    ct1 = math.cos(q[0,0]);
-    st2 = math.sin(q[1,0]);
-    ct2 = math.cos(q[1,0]);
-    st3 = math.sin(q[2,0]);
-    ct3 = math.cos(q[2,0]);
+    st1 = math.sin(q[0])
+    ct1 = math.cos(q[0])
+    st2 = math.sin(q[1])
+    ct2 = math.cos(q[1])
+    st3 = math.sin(q[2])
+    ct3 = math.cos(q[2])
 
-    C = np.matrix("1. 0. 0.;0. 1. 0.;0. 0. 1.");
-    C[0,0] = ct2*ct1;
-    C[0,1] = ct2*st1;
-    C[0,2] = -st2;
-    C[1,0] = st3*st2*ct1-ct3*st1;
-    C[1,1] = st3*st2*st1+ct3*ct1;
-    C[1,2] = st3*ct2;
-    C[2,0] = ct3*st2*ct1+st3*st1;
-    C[2,1] = ct3*st2*st1-st3*ct1;
-    C[2,2] = ct3*ct2;
+    C = np.identity(3)
+    C[0,0] = ct2*ct1
+    C[0,1] = ct2*st1
+    C[0,2] = -st2
+    C[1,0] = st3*st2*ct1-ct3*st1
+    C[1,1] = st3*st2*st1+ct3*ct1
+    C[1,2] = st3*ct2
+    C[2,0] = ct3*st2*ct1+st3*st1
+    C[2,1] = ct3*st2*st1-st3*ct1
+    C[2,2] = ct3*ct2
 
-    return C;
+    return C
+
 
 def Euler3232C(q):
     """

@@ -35,6 +35,9 @@ monteCarloContainer.addNewDispersion(tankMassDisp)
 dryMassDisp = mbc.UniformDispersion('VehDynObject.baseMass', ([400, 700]))
 monteCarloContainer.addNewDispersion(dryMassDisp)
 
+inertiaDisp = mbc.InertiaTensorDispersion("VehDynObject.baseInertiaInit", 1.0, [-2.0, 2.0])
+monteCarloContainer.addNewDispersion(inertiaDisp)
+
 # Generate thruster dispersions
 thrustInd = 0
 while thrustInd < 8:

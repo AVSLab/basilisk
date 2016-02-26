@@ -3,6 +3,7 @@ import SimulationBaseClass
 import random
 import abc
 import numpy as np
+import RigidBodyKinematics as rbk
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
@@ -180,6 +181,49 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
         return dispVec
 
 
+class InertiaTensorDispersion:
+    def __init__(self, varName, stdDeviation=None, bounds=None):
+        """
+        Args:
+            varName (str): A string representation of the variable to be dispersed
+                e.g. 'LocalConfigData.I'.
+            stdDeviation (float): The 1 sigma standard deviation of the diagonal element dispersions in kg*m^2.
+            bounds (Array[float, float]): defines lower and upper cut offs for generated dispersion values kg*m^2.
+        """
+        self.varName = varName
+        self.varNameComponents = self.varName.split(".")
+        self.stdDev = stdDeviation
+        if self.stdDev is None:
+            self.stdDev = 1.0
+        self.bounds = bounds
+        if self.bounds is None:
+            self.bounds = ([-1.0, 1.0])
+
+    def generate(self, sim=None):
+        if sim is None:
+            print("No simulation object parameter set in '" + self.generate.__name__ + "()'"
+                  " dispersions will not be set for variable " + self.varName)
+            return
+        else:
+            vehDynObject = getattr(sim, self.varNameComponents[0])
+            I = np.array(vehDynObject.baseInertiaInit).reshape(3, 3)
+
+            # generate random values for the diagonals
+            # @TODO should we add a bounds check on these values?
+            dispIdentityMatrix = np.identity(3)*np.random.normal(0, self.stdDev, 3)
+            # generate random values for the similarity transform to produce off-diagonal terms
+            angles = np.random.normal(0, 0.1, 3)
+            disp321Matrix = rbk.Euler3212C(angles)
+
+            # disperse the diagonal elements
+            dispI = I + dispIdentityMatrix
+            # disperse the off diagonals with a slight similarity transform of the inertia tensor
+            dispI = np.dot(np.dot(disp321Matrix, dispI), disp321Matrix.T)
+
+            # return as a single row shape so it's easier for the executeSimulation runner to read
+        return dispI.reshape(9)
+
+
 class MonteCarloBaseClass:
     def __init__(self):
         self.simList = []
@@ -224,7 +268,11 @@ class MonteCarloBaseClass:
                     for i in range(3):
                         execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
-                elif isinstance(nextValue, list):
+                elif isinstance(disp, InertiaTensorDispersion):
+                    for i in range(9):
+                        execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
+                        exec(execString)
+                elif isinstance(disp, VectorVariableDispersion):
                     for i in range(3):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
