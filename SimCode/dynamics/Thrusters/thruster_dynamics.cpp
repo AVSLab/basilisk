@@ -295,6 +295,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     double SingleThrusterTorque[3];
     double CoMRelPos[3];
     double mDotSingle;
+    double tmpThrustMag = 0;
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
@@ -318,9 +319,13 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
             ComputeThrusterShut(&(*it), CurrentTime);
         }
         //! - For each thruster, aggregate the current thrust direction into composite structural force
-        v3Scale(it->MaxThrust*ops->ThrustFactor, it->ThrusterDirection.data(),
+        tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
+        // Apply dispersion to magnitude
+        tmpThrustMag *= (1. + it->thrusterMagDisp);
+        v3Scale(tmpThrustMag, it->ThrusterDirection.data(),
                 SingleThrusterForce);
         v3Add(StrForce, SingleThrusterForce, StrForce);
+        
         //! - Compute the center-of-mass relative torque and aggregate into the composite structural torque
         v3Subtract(it->ThrusterLocation.data(), Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);

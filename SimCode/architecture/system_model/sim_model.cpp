@@ -89,7 +89,6 @@ void SimModel::addNewProcess(SysProcess *newProc)
  */
 void SimModel::InitSimulation()
 {
-
     std::vector<SysProcess *>::iterator it;
     for(it=processList.begin(); it!= processList.end(); it++)
     {
@@ -183,6 +182,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
 {
     int64_t processID = SystemMessaging::GetInstance()->
         findMessageBuffer(processName);
+
     if(processID >= 0)
     {
         SystemMessaging::GetInstance()->selectMessageBuffer(processID);

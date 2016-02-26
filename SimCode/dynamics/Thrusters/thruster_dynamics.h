@@ -43,14 +43,16 @@ typedef struct {
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
 typedef struct {
-    std::vector<double> ThrusterLocation;          //!< m Location of thruster in structural
-    std::vector<double> ThrusterDirection;         //!< -- Unit vector of thruster pointing
-    std::vector<ThrusterTimePair> ThrusterOnRamp;  //!< -- Percentage of max thrust for ramp up
-    std::vector<ThrusterTimePair> ThrusterOffRamp; //!< -- Percentage of max thrust for ramp down
-    double MaxThrust;                              //!< N  Steady state thrust of thruster
-    double steadyIsp;                              //!< s  Steady state specific impulse of thruster
-    double MinOnTime;                              //!< s  Minimum allowable on-time
-    ThrusterOperationData ThrustOps;               //!< -- Thruster operating data
+    std::vector<double> ThrusterLocation;           //!< m Location of thruster in structural
+    std::vector<double> ThrusterDirection;          //!< -- Unit vector of thruster pointing
+    std::vector<ThrusterTimePair> ThrusterOnRamp;   //!< -- Percentage of max thrust for ramp up
+    std::vector<ThrusterTimePair> ThrusterOffRamp;  //!< -- Percentage of max thrust for ramp down
+    double MaxThrust;                               //!< N  Steady state thrust of thruster
+    double steadyIsp;                               //!< s  Steady state specific impulse of thruster
+    double MinOnTime;                               //!< s  Minimum allowable on-time
+    ThrusterOperationData ThrustOps;                //!< -- Thruster operating data
+    double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
+    std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 }ThrusterConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -106,7 +108,7 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
-    int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data
+    int64_t CmdsInMsgID;                           //!< -- Message ID for incoming data
     int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
     ThrustCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                      //!< -- Time for previous valid thruster firing

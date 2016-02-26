@@ -1,4 +1,4 @@
-﻿
+
 #Import some architectural stuff that we will probably always use
 import sys, os, ast
 #Point the path to the module storage area
@@ -12,13 +12,14 @@ import numpy
 import array
 import xml.etree.ElementTree as ET
 import inspect
+import MonteCarloBaseClass
 
 class ProcessBaseClass:
  def __init__(self, procName):
     self.Name = procName
     self.processData = sim_model.SysProcess(procName)
  def addTask(self, newTask, taskPriority = -1):
-    self.processData.addNewTask(newTask.TaskData, taskPriority)
+    self.processData.addNewTask(newTask.TaskData)
  def addInterfaceRef(self, newInt):
     self.processData.addInterfaceRef(newInt)
  def discoverAllMessages(self):
@@ -28,123 +29,135 @@ class ProcessBaseClass:
  def enableAllTasks(self):
     self.processData.enableAllTasks()
 
+
 class TaskBaseClass:
- def __init__(self, TaskName, TaskRate, InputDelay = 0, FirstStart=0):
-   self.Name = TaskName
-   self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
-      FirstStart)
-   self.TaskModels = []
- def disable(self):
-     self.TaskData.disableTask();
- def enable(self):
-     self.TaskData.enableTask();
- def updatePeriod(self, newPeriod):
-     self.TaskData.updatePeriod(newPeriod)
- def resetTask(self):
-     self.TaskData.ResetTaskList()
+    def __init__(self, TaskName, TaskRate, InputDelay = 0, FirstStart=0):
+          self.Name = TaskName
+          self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
+              FirstStart)
+          self.TaskModels = []
+
+    def disable(self):
+         self.TaskData.disableTask()
+
+    def enable(self):
+         self.TaskData.enableTask()
+
+    def updatePeriod(self, newPeriod):
+         self.TaskData.updatePeriod(newPeriod)
+
+    def resetTask(self):
+         self.TaskData.ResetTaskList()
+
 
 class LogBaseClass:
- def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols = 1):
-   self.Period = LogPeriod
-   self.Name = ReplaceName
-   self.PrevLogTime = None
-   self.PrevValue = None
-   self.TimeValuePairs = array.array('d')
-   self.ArrayDim = DataCols+1
-   self.CallableFunction = RefFunction
- def clearItem(self):
-   self.TimeValuePairs = array.array('d')
-   self.PrevLogTime = None
-   self.PrevValue = None
- 
+    def __init__(self, ReplaceName, LogPeriod, RefFunction, DataCols = 1):
+        self.Period = LogPeriod
+        self.Name = ReplaceName
+        self.PrevLogTime = None
+        self.PrevValue = None
+        self.TimeValuePairs = array.array('d')
+        self.ArrayDim = DataCols+1
+        self.CallableFunction = RefFunction
+
+    def clearItem(self):
+        self.TimeValuePairs = array.array('d')
+        self.PrevLogTime = None
+        self.PrevValue = None
+
+
 class EventHandlerClass:
-  def __init__(self, eventName, eventRate = int(1E9),  eventActive = False,
+    def __init__(self, eventName, eventRate = int(1E9),  eventActive = False,
                 conditionList = [], actionList = []):
-    self.eventName = eventName
-    self.eventActive = eventActive
-    self.eventRate = eventRate
-    self.conditionList = conditionList
-    self.actionList = actionList
-    self.occurCounter = 0
-    self.prevTime = -1
-    self.methodCall = None
-  def methodizeEvent(self):
-     if(self.methodCall != None):
-        return
-     funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
-     funcString += '    if('
-     for condValue in self.conditionList:
-         funcString += ' ' + condValue + ' and'
-         
-     funcString = funcString[:-3] + '):\n'
-     for actionValue in self.actionList:
-         funcString += '        ';
-         funcString += actionValue + '\n'
-     funcString += '        return 1\n'
-     funcString += '    return 0'
-     exec(funcString)
-     self.methodCall = eval('EVENT_check_' + self.eventName)
-  def checkEvent(self, parentSim):
-    if(self.eventActive == False):
-        return
-    if(self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate):
-        eventCount = self.methodCall(parentSim)
-        self.prevTime = parentSim.TotalSim.CurrentNanos
-        if eventCount > 0:
-            self.eventActive = False
-            self.occurCounter += 1
+        self.eventName = eventName
+        self.eventActive = eventActive
+        self.eventRate = eventRate
+        self.conditionList = conditionList
+        self.actionList = actionList
+        self.occurCounter = 0
+        self.prevTime = -1
+        self.methodCall = None
+
+    def methodizeEvent(self):
+        if self.methodCall != None:
+            return
+        funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
+        funcString += '    if('
+        for condValue in self.conditionList:
+            funcString += ' ' + condValue + ' and'
+            funcString = funcString[:-3] + '):\n'
+        for actionValue in self.actionList:
+            funcString += '        '
+            funcString += actionValue + '\n'
+        funcString += '        return 1\n'
+        funcString += '    return 0'
+        exec(funcString)
+        self.methodCall = eval('EVENT_check_' + self.eventName)
+
+    def checkEvent(self, parentSim):
+        if self.eventActive == False:
+            return
+        if self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate:
+            eventCount = self.methodCall(parentSim)
+            self.prevTime = parentSim.TotalSim.CurrentNanos
+            if eventCount > 0:
+                self.eventActive = False
+                self.occurCounter += 1
 
 
 class StructDocData:
- class StructElementDef:
-     def __init__(self, type, name, argstring, desc=''):
-         self.type = type
-         self.name = name
-         self.argstring = argstring
-         self.desc = desc
-         
- def __init__(self, strName):
-     self.strName = strName
-     self.structPopulated = False
-     self.structElements = {}
- def clearItem(self):
-     self.structPopulated = False
-     self.structElements = {}
- def populateElem(self, xmlSearchPath):
-     if(self.structPopulated == True):
-         return
-     xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
-     try:
-          xmlData = ET.parse(xmlFileUse)
-     except:
-          print "Failed to parse the XML structure for: " + self.strName
-          print "This file does not exist most likely: " + xmlFileUse
-          return
-     root = xmlData.getroot()
-     validElement = root.find("./compounddef[@id='" + self.strName + "']")
-     for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
-        typeUse = newVariable.find('type').text if newVariable.find('type') != None else \
-            None
-        nameUse = newVariable.find('name').text if newVariable.find('type') != None else \
-            None
-        argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') != None else \
-            None
-        descUse = newVariable.find('./detaileddescription/para').text if newVariable.find('./detaileddescription/para') != None else \
-            None
-        if(descUse == None):
-            descUse = newVariable.find('./briefdescription/para').text if newVariable.find('./briefdescription/para') != None else \
-            None
-        newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
-        self.structElements.update({nameUse: newElement})
-        self.structPopulated = True
- def printElem(self):
-     print "    " + self.strName + " Structure Elements:"
-     for key, value in self.structElements.iteritems():
-         outputString = ''
-         outputString += value.type + " " + value.name
-         outputString += value.argstring if value.argstring != None else ''
-         outputString += ': ' + value.desc if value.desc != None else ''
-         print "      " + outputString
+    class StructElementDef:
+        def __init__(self, type, name, argstring, desc=''):
+            self.type = type
+            self.name = name
+            self.argstring = argstring
+            self.desc = desc
+
+    def __init__(self, strName):
+        self.strName = strName
+        self.structPopulated = False
+        self.structElements = {}
+
+    def clearItem(self):
+        self.structPopulated = False
+        self.structElements = {}
+
+    def populateElem(self, xmlSearchPath):
+        if self.structPopulated == True:
+            return
+        xmlFileUse = xmlSearchPath + '/' + self.strName + '.xml'
+        try:
+            xmlData = ET.parse(xmlFileUse)
+        except:
+            print "Failed to parse the XML structure for: " + self.strName
+            print "This file does not exist most likely: " + xmlFileUse
+            return
+        root = xmlData.getroot()
+        validElement = root.find("./compounddef[@id='" + self.strName + "']")
+        for newVariable in validElement.findall(".//memberdef[@kind='variable']"):
+            typeUse = newVariable.find('type').text if newVariable.find('type') != None else \
+                None
+            nameUse = newVariable.find('name').text if newVariable.find('type') != None else \
+                None
+            argstringUse = newVariable.find('argsstring').text if newVariable.find('argsstring') != None else \
+                None
+            descUse = newVariable.find('./detaileddescription/para').text if newVariable.find('./detaileddescription/para') != None else \
+                None
+            if descUse == None:
+                descUse = newVariable.find('./briefdescription/para').text if newVariable.find('./briefdescription/para') != None else \
+                None
+            newElement = StructDocData.StructElementDef(typeUse, nameUse, argstringUse, descUse)
+            self.structElements.update({nameUse: newElement})
+            self.structPopulated = True
+
+    def printElem(self):
+        print "    " + self.strName + " Structure Elements:"
+        for key, value in self.structElements.iteritems():
+            outputString = ''
+            outputString += value.type + " " + value.name
+            outputString += value.argstring if value.argstring != None else ''
+            outputString += ': ' + value.desc if value.desc != None else ''
+        print "      " + outputString
 
 
 class SimBaseClass:
@@ -258,6 +271,7 @@ class SimBaseClass:
      for Task in self.TaskList:
        if Task.Name == taskName:
            Task.resetTask()
+
  def InitializeSimulation(self):
    self.TotalSim.ResetSimulation()
    self.TotalSim.InitSimulation()
@@ -269,7 +283,7 @@ class SimBaseClass:
    self.StopTime = TimeStop
 
  def RecordLogVars(self):
-   CurrSimTime = self.TotalSim.CurrentNanos;
+   CurrSimTime = self.TotalSim.CurrentNanos
    for LogItem, LogValue in self.VarLogList.iteritems():
       LocalPrev = LogValue.PrevLogTime
       if(LocalPrev != None and (CurrSimTime -
@@ -424,5 +438,3 @@ def SetCArray(InputList, VarType, ArrayPointer):
    for CurrElem in InputList:
       exec(CmdString)
       CurrIndex += 1
-   
-

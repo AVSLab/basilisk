@@ -47,9 +47,10 @@ void SystemMessaging::selectMessageBuffer(uint64_t bufferUse)
 {
     std::vector<MessageStorageContainer*>::iterator it;
     it = dataBuffers.begin();
+
     if(bufferUse >= dataBuffers.size())
     {
-        std::cerr <<"You've attempted to access a message buffer that does not exist.  Yikes.";
+        std::cerr << "You've attempted to access a message buffer that does not exist. Yikes.";
         std::cerr << std::endl;
         messageStorage = *dataBuffers.begin();
         return;
