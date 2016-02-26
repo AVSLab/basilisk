@@ -5,6 +5,7 @@ import abc
 import numpy as np
 
 random.seed(0x1badcad1)
+np.random.seed(0x1badcad1)
 
 
 class SingleVariableDispersion(object):

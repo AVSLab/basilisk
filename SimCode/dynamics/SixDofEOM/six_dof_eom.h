@@ -50,7 +50,7 @@ public:
     GravityBodyData();
     
     // Constructor to be used for creating bodies with a spherical harmonic model
-    GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu, const double reference_radius);
+    GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu_in, const double reference_radius);
     virtual ~GravityBodyData();
     
     // Copy constructor

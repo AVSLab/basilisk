@@ -20,6 +20,21 @@ GravityBodyData::GravityBodyData()
     this->UseSphericalHarmParams = false;
     this->_coeff_loader = nullptr;
     this->_spherHarm = nullptr;
+	IsCentralBody = false;
+	IsDisplayBody = false;
+	UseJParams = false;
+	UseSphericalHarmParams = false;
+	memset(PosFromEphem, 0x0, 3 * sizeof(double));
+	memset(VelFromEphem, 0x0, 3 * sizeof(double));
+	memset(J20002Pfix, 0x0, 9*sizeof(double));        //!<          Transformation matrix from J2000 to planet-fixed
+	memset(J20002Pfix_dot, 0x0, 9 * sizeof(double));    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
+	memset(posRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Position of planet relative to display frame
+	memset(velRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Velocity of planet relative to display frame
+	mu=0;                      //!< [m3/s^2] central body gravitational param
+	ephemTime=0;               //!< [s]      Ephemeris time for the body in question
+	ephIntTime=0;              //!< [s]      Integration time associated with the ephem data
+	radEquator=0;              //!< [m]      Equatorial radius for the body
+	ephemTimeSimNanos=0;
 }
 
 /*!
@@ -29,8 +44,23 @@ GravityBodyData::GravityBodyData()
  @param[in] mu Gravitational parameter.
  @param[in] reference_radius Radius of reference with which the coefficients were estimated. Usually, a mean radius at Equator, but it could be other number. It should be given along with the coefficients file.
  */
-GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu, const double reference_radius)
+GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const unsigned int max_degree, const double mu_in, const double reference_radius)
 {
+	IsCentralBody = false;
+	IsDisplayBody = false;
+	UseJParams = false;
+	UseSphericalHarmParams = false;
+	memset(PosFromEphem, 0x0, 3 * sizeof(double));
+	memset(VelFromEphem, 0x0, 3 * sizeof(double));
+	memset(J20002Pfix, 0x0, 9 * sizeof(double));        //!<          Transformation matrix from J2000 to planet-fixed
+	memset(J20002Pfix_dot, 0x0, 9 * sizeof(double));    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
+	memset(posRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Position of planet relative to display frame
+	memset(velRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Velocity of planet relative to display frame
+	mu = 0;                      //!< [m3/s^2] central body gravitational param
+	ephemTime = 0;               //!< [s]      Ephemeris time for the body in question
+	ephIntTime = 0;              //!< [s]      Integration time associated with the ephem data
+	radEquator = 0;              //!< [m]      Equatorial radius for the body
+	ephemTimeSimNanos = 0;
     this->UseSphericalHarmParams = true;
     this->UseJParams = false;
     
@@ -40,7 +70,7 @@ GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const unsi
     
     this->_spherHarm = new sphericalHarmonics(this->_coeff_loader, sphHarm_filename, max_degree, mu, reference_radius);
     
-    this->mu = mu;
+    this->mu = mu_in;
     this->radEquator = reference_radius;
     
     return;
