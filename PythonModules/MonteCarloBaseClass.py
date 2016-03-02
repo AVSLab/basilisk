@@ -198,7 +198,7 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
 
 
 class InertiaTensorDispersion:
-    def __init__(self, varName, stdDeviation=None, bounds=None):
+    def __init__(self, varName, stdDiag=None, boundsDiag=None, stdAngle=None):
         """
         Args:
             varName (str): A string representation of the variable to be dispersed
@@ -208,12 +208,15 @@ class InertiaTensorDispersion:
         """
         self.varName = varName
         self.varNameComponents = self.varName.split(".")
-        self.stdDev = stdDeviation
-        if self.stdDev is None:
-            self.stdDev = 1.0
-        self.bounds = bounds
+        self.stdDiag = stdDiag
+        self.stdAngle = stdAngle
+        self.bounds = boundsDiag
+        if self.stdDiag is None:
+            self.stdDiag = 1.0
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])
+        if self.stdAngle is None:
+            self.stdAngle = 1.0
 
     def generate(self, sim=None):
         if sim is None:
@@ -225,10 +228,14 @@ class InertiaTensorDispersion:
             I = np.array(vehDynObject.baseInertiaInit).reshape(3, 3)
 
             # generate random values for the diagonals
-            # @TODO should we add a bounds check on these values?
-            dispIdentityMatrix = np.identity(3)*np.random.normal(0, self.stdDev, 3)
+            temp = []
+            for i in range(3):
+                rnd = random.gauss(0, self.stdDiag)
+                rnd = self.checkBounds(rnd)
+                temp.append(rnd)
+            dispIdentityMatrix = np.identity(3)*temp
             # generate random values for the similarity transform to produce off-diagonal terms
-            angles = np.random.normal(0, 0.1, 3)
+            angles = np.random.normal(0, self.stdAngle, 3)
             disp321Matrix = rbk.Euler3212C(angles)
 
             # disperse the diagonal elements
@@ -238,6 +245,13 @@ class InertiaTensorDispersion:
 
             # return as a single row shape so it's easier for the executeSimulation runner to read
         return dispI.reshape(9)
+
+    def checkBounds(self, value):
+        if value < self.bounds[0]:
+            value = self.bounds[0]
+        if value > self.bounds[1]:
+            value = self.bounds[1]
+        return value
 
 
 class MonteCarloBaseClass:
