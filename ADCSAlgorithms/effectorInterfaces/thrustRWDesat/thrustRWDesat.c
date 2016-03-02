@@ -98,7 +98,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	bestMatch = 0.0;
 	if (v3Dot(ConfigData->currDMDir, observedSpeedVec) <= ConfigData->DMThresh)
 	{
-		uint32_t lowTime = callTime*1.0E-9;
+//		uint32_t lowTime = callTime*1.0E-9;
 		for (i = 0; i < ConfigData->numThrusters; i++)
 		{
 
