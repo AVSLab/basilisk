@@ -1,3 +1,19 @@
+/*
+Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+*/
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
@@ -295,6 +311,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     double SingleThrusterTorque[3];
     double CoMRelPos[3];
     double mDotSingle;
+    double tmpThrustMag = 0;
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
@@ -318,9 +335,13 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
             ComputeThrusterShut(&(*it), CurrentTime);
         }
         //! - For each thruster, aggregate the current thrust direction into composite structural force
-        v3Scale(it->MaxThrust*ops->ThrustFactor, it->ThrusterDirection.data(),
+        tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
+        // Apply dispersion to magnitude
+        tmpThrustMag *= (1. + it->thrusterMagDisp);
+        v3Scale(tmpThrustMag, it->ThrusterDirection.data(),
                 SingleThrusterForce);
         v3Add(StrForce, SingleThrusterForce, StrForce);
+        
         //! - Compute the center-of-mass relative torque and aggregate into the composite structural torque
         v3Subtract(it->ThrusterLocation.data(), Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);

@@ -1,3 +1,19 @@
+'''
+Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+'''
 
 # Import required modules:
 import numpy as np
@@ -21,6 +37,7 @@ def Picheck(x):
 		return x+2* M_PI
 	return x
 
+
 def C2EP(C):
     """
     C2EP
@@ -31,48 +48,44 @@ def C2EP(C):
     	Euler parameter Beta_0 >= 0. Transformation is done
         using the Stanley method.
     """
-
-    tr = np.trace(C);
-    b2 = np.matrix('1.;0.;0.;0.');
-    b2[0,0] = (1+tr)/4;
-    b2[1,0] = (1+2*C[0,0]-tr)/4;
-    b2[2,0] = (1+2*C[1,1]-tr)/4;
-    b2[3,0] = (1+2*C[2,2]-tr)/4;
-
-    case = np.argmax(b2);
-    b = b2;
-    if   case == 0:
-            b[0,0] = math.sqrt(b2[0,0]);
-            print b;
-            b[1,0] = (C[1,2]-C[2,1])/4/b[0,0];
-            b[2,0] = (C[2,0]-C[0,2])/4/b[0,0];
-            b[3,0] = (C[0,1]-C[1,0])/4/b[0,0];
+    tr = np.trace(C)
+    b2 = np.array([(1 + tr) / 4,
+                   (1 + 2 * C[0, 0] - tr) / 4,
+                   (1 + 2 * C[1, 1] - tr) / 4,
+                   (1 + 2 * C[2, 2] - tr) / 4
+                   ])
+    case = np.argmax(b2)
+    b = b2
+    if case == 0:
+        b[0] = np.sqrt(b2[0])
+        b[1] = (C[1, 2] - C[2, 1]) / 4 / b[0]
+        b[2] = (C[2, 0] - C[0, 2]) / 4 / b[0]
+        b[3] = (C[0, 1] - C[1, 0]) / 4 / b[0]
     elif case == 1:
-            b[1,0] = math.sqrt(b2[1,0]);
-            b[0,0] = (C[1,2]-C[2,1])/4/b[1,0];
-            if b[0,0]<0:
-                b[1,0] = -b[1,0];
-                b[0,0] = -b[0,0];
-            b[2,0] = (C[0,1]+C[1,0])/4/b[1,0];
-            b[3,0] = (C[2,0]+C[0,2])/4/b[1,0];
+        b[1] = np.sqrt(b2[1])
+        b[0] = (C[1, 2] - C[2, 1]) / 4 / b[1]
+        if b[0] < 0:
+            b[1] = -b[1]
+            b[0] = -b[0];
+        b[2] = (C[0, 1] + C[1, 0]) / 4 / b[1]
+        b[3] = (C[2, 0] + C[0, 2]) / 4 / b[1]
     elif case == 2:
-            b[2,0] = math.sqrt(b2[2,0]);
-            b[0,0] = (C[2,0]-C[0,2])/4/b[2,0];
-            if b[0,0]<0:
-                b[2,0] = -b[2,0];
-                b[0,0] = -b[0,0];
-            b[1,0] = (C[0,1]+C[1,0])/4/b[2,0];
-            b[3,0] = (C[1,2]+C[2,1])/4/b[2,0];
+        b[2] = np.sqrt(b2[2]);
+        b[0] = (C[2, 0] - C[0, 2]) / 4 / b[2]
+        if b[0] < 0:
+            b[2] = -b[2]
+            b[0] = -b[0]
+        b[1] = (C[0, 1] + C[1, 0]) / 4 / b[2]
+        b[3] = (C[1, 2] + C[2, 1]) / 4 / b[2]
     elif case == 3:
-            b[3,0] = math.sqrt(b2[3,0]);
-            b[0,0] = (C[0,1]-C[1,0])/4/b[3,0];
-            if b[0,0]<0:
-                b[3,0] = -b[3,0];
-                b[0,0] = -b[0,0];
-            b[1,0] = (C[2,0]+C[0,2])/4/b[3,0];
-            b[2,0] = (C[1,2]+C[2,1])/4/b[3,0];
-
-    return b;
+        b[3] = np.sqrt(b2[3]);
+        b[0] = (C[0, 1] - C[1, 0]) / 4 / b[3]
+        if b[0] < 0:
+            b[3] = -b[3]
+            b[0] = -b[0]
+        b[1] = (C[2, 0] + C[0, 2]) / 4 / b[3]
+        b[2] = (C[1, 2] + C[2, 1]) / 4 / b[3]
+    return b
 
 def C2Euler121(C):
     """
@@ -256,14 +269,13 @@ def C2MRP(C):
     	MRP vector is chosen such that |Q| <= 1.
     """
 
-    b = C2EP(C);
-
-    q = np.matrix('0.;0.;0.');
-    q[0,0] = b[1,0]/(1+b[0,0]);
-    q[1,0] = b[2,0]/(1+b[0,0]);
-    q[2,0] = b[3,0]/(1+b[0,0]);
-
-    return q;
+    b = C2EP(C)
+    q = np.array([
+        b[1]/(1+b[0]),
+        b[2]/(1+b[0]),
+        b[3]/(1+b[0])
+    ])
+    return q
 
 def C2PRV(C):
     """
@@ -275,15 +287,15 @@ def C2PRV(C):
     	phi (0<= phi <= Pi)
     """
 
-    cp = (np.trace(C)-1)/2;
-    p = math.acos(cp);
-    sp = p/2/math.sin(p);
-    q = np.matrix('0.;0.;0.');
-    q[0,0] = (C[1,2]-C[2,1])*sp;
-    q[1,0] = (C[2,0]-C[0,2])*sp;
-    q[2,0] = (C[0,1]-C[1,0])*sp;
-
-    return q;
+    cp = (np.trace(C) - 1) / 2
+    p = np.arccos(cp)
+    sp = p / 2. / np.sin(p)
+    q = np.array([
+        (C[1, 2] - C[2, 1]) * sp,
+        (C[2, 0] - C[0, 2]) * sp,
+        (C[0, 1] - C[1, 0]) * sp
+    ])
+    return q
 
 
 
@@ -1746,24 +1758,23 @@ def Gibbs2C(q):
     	matrix in terms of the 3x1 Gibbs vector Q.
     """
 
-    q1 = q[0,0];
-    q2 = q[1,0];
-    q3 = q[2,0];
-
-    d1 = (q.T*q)[0,0];
-    C = np.matrix("0. 0. 0.;0. 0. 0.;0. 0. 0.");
-    C[0,0] = 1+2*q1*q1-d1;
-    C[0,1] = 2*(q1*q2+q3);
-    C[0,2] = 2*(q1*q3-q2);
-    C[1,0] = 2*(q2*q1-q3);
-    C[1,1] = 1+2*q2*q2-d1;
-    C[1,2] = 2*(q2*q3+q1);
-    C[2,0] = 2*(q3*q1+q2);
-    C[2,1] = 2*(q3*q2-q1);
-    C[2,2] = 1+2*q3*q3-d1;
-    C = C/(1+d1);
-
-    return C;
+    q1 = q[0]
+    q2 = q[1]
+    q3 = q[2]
+    qm = np.linalg.norm(q)
+    d1 = qm * qm
+    C = np.zeros([3, 3])
+    C[0, 0] = 1 + 2 * q1 * q1 - d1
+    C[0, 1] = 2 * (q1 * q2 + q3)
+    C[0, 2] = 2 * (q1 * q3 - q2)
+    C[1, 0] = 2 * (q2 * q1 - q3)
+    C[1, 1] = 1 + 2 * q2 * q2 - d1
+    C[1, 2] = 2 * (q2 * q3 + q1)
+    C[2, 0] = 2 * (q3 * q1 + q2)
+    C[2, 1] = 2 * (q3 * q2 - q1)
+    C[2, 2] = 1 + 2 * q3 * q3 - d1
+    C = C / (1 + d1)
+    return C
 
 def Gibbs2EP(q1):
     """
@@ -1773,13 +1784,15 @@ def Gibbs2EP(q1):
     	into the Euler parameter vector Q.
     """
 
-    q = np.matrix("0.;0.;0.;0.");
-    q[0,0] = 1/math.sqrt(1+(q1.T*q1)[0,0]);
-    q[1,0] = q1[0,0]*q[0,0];
-    q[2,0] = q1[1,0]*q[0,0];
-    q[3,0] = q1[2,0]*q[0,0];
-
-    return q;
+    qm = np.linalg.norm(q1)
+    ps = np.sqrt(1 + qm * qm)
+    q = np.array([
+        1 / ps,
+        q1[0] / ps,
+        q1[1] / ps,
+        q1[2] / ps
+    ])
+    return q
 
 def Gibbs2Euler121(q):
     """
@@ -1937,26 +1950,25 @@ def MRP2C(q):
     	matrix in terms of the 3x1 MRP vector Q.
     """
 
-    q1 = q[0,0];
-    q2 = q[1,0];
-    q3 = q[2,0];
-
-    d1 = np.dot(q.T, q);
-    S = 1-d1;
-    d = (1+d1)*(1+d1);
-    C = np.matrix("0. 0. 0.;0. 0. 0.;0. 0. 0.");
-    C[0,0] = 4*(2*q1*q1-d1)+S*S;
-    C[0,1] = 8*q1*q2+4*q3*S;
-    C[0,2] = 8*q1*q3-4*q2*S;
-    C[1,0] = 8*q2*q1-4*q3*S;
-    C[1,1] = 4*(2*q2*q2-d1)+S*S;
-    C[1,2] = 8*q2*q3+4*q1*S;
-    C[2,0] = 8*q3*q1+4*q2*S;
-    C[2,1] = 8*q3*q2-4*q1*S;
-    C[2,2] = 4*(2*q3*q3-d1)+S*S;
-    C = C/d;
-
-    return C;
+    q1 = q[0]
+    q2 = q[1]
+    q3 = q[2]
+    qm = np.linalg.norm(q)
+    d1 = qm * qm
+    S = 1 - d1
+    d = (1 + d1) * (1 + d1)
+    C = np.zeros((3, 3))
+    C[0, 0] = 4 * (2 * q1 * q1 - d1) + S * S
+    C[0, 1] = 8 * q1 * q2 + 4 * q3 * S
+    C[0, 2] = 8 * q1 * q3 - 4 * q2 * S
+    C[1, 0] = 8 * q2 * q1 - 4 * q3 * S
+    C[1, 1] = 4 * (2 * q2 * q2 - d1) + S * S
+    C[1, 2] = 8 * q2 * q3 + 4 * q1 * S
+    C[2, 0] = 8 * q3 * q1 + 4 * q2 * S
+    C[2, 1] = 8 * q3 * q2 - 4 * q1 * S
+    C[2, 2] = 4 * (2 * q3 * q3 - d1) + S * S
+    C = C / d
+    return C
 
 def MRP2EP(q1):
     """
@@ -1965,14 +1977,15 @@ def MRP2EP(q1):
     	Q = MRP2EP(Q1) translates the MRP vector Q1
     	into the Euler parameter vector Q.
     """
-    ps = 1+(np.dot(q1.T,q1));
-    q = np.matrix("0.;0.;0.;0.");
-    q[0,0] = (1-(q1.T*q1)[0,0])/ps;
-    q[1,0] = 2*q1[0,0]/ps;
-    q[2,0] = 2*q1[1,0]/ps;
-    q[3,0] = 2*q1[2,0]/ps;
-
-    return q;
+    qm = np.linalg.norm(q1)
+    ps = 1 + qm * qm
+    q = np.array([
+        (1 - qm) / ps,
+        2 * q1[0] / ps,
+        2 * q1[1] / ps,
+        2 * q1[2] / ps
+    ])
+    return q
 
 def MRP2Euler121(q):
     """
@@ -2146,26 +2159,24 @@ def PRV2C(q):
     	Q.
     """
 
-    q0 = math.sqrt(q.T*q);
-    q1 = q[0,0]/q0;
-    q2 = q[1,0]/q0;
-    q3 = q[2,0]/q0;
-
-    cp= math.cos(q0);
-    sp= math.sin(q0);
-    d1 = 1-cp;
-    C = np.matrix("0.,0.,0.;0.,0.,0.;0.,0.,0.");
-    C[0,0] = q1*q1*d1+cp;
-    C[0,1] = q1*q2*d1+q3*sp;
-    C[0,2] = q1*q3*d1-q2*sp;
-    C[1,0] = q2*q1*d1-q3*sp;
-    C[1,1] = q2*q2*d1+cp;
-    C[1,2] = q2*q3*d1+q1*sp;
-    C[2,0] = q3*q1*d1+q2*sp;
-    C[2,1] = q3*q2*d1-q1*sp;
-    C[2,2] = q3*q3*d1+cp;
-
-    return C;
+    q0 = np.linalg.norm(q)
+    q1 = q[0] / q0
+    q2 = q[1] / q0
+    q3 = q[2] / q0
+    cp = np.cos(q0)
+    sp = np.sin(q0)
+    d1 = 1 - cp
+    C = np.zeros((3, 3))
+    C[0, 0] = q1 * q1 * d1 + cp
+    C[0, 1] = q1 * q2 * d1 + q3 * sp
+    C[0, 2] = q1 * q3 * d1 - q2 * sp
+    C[1, 0] = q2 * q1 * d1 - q3 * sp
+    C[1, 1] = q2 * q2 * d1 + cp
+    C[1, 2] = q2 * q3 * d1 + q1 * sp
+    C[2, 0] = q3 * q1 * d1 + q2 * sp
+    C[2, 1] = q3 * q2 * d1 - q1 * sp
+    C[2, 2] = q3 * q3 * d1 + cp
+    return C
 
 def PRV2EP(qq1):
     """"
@@ -2630,33 +2641,32 @@ def subPRV(q1,q2):
 
 
 def EP2C(q):
-	"""
-	EP2C	
-	
+    """
+	EP2C
+
         C = EP2C(Q) returns the direction math.cosine
         matrix in terms of the 4x1 Euler parameter vector
         Q.  The first element is the non-dimensional Euler
-        parameter, while the remain three elements form 
+        parameter, while the remain three elements form
         the Eulerparameter vector.
 	"""
-	
-	q0 = q[0,0];
-	q1 = q[1,0];
-	q2 = q[2,0];
-	q3 = q[3,0];
-	
-	C = np.matrix("1. 0. 0.;0. 1. 0.;0. 0. 1.");
-	C[0,0] = q0*q0+q1*q1-q2*q2-q3*q3;
-	C[0,1] = 2*(q1*q2+q0*q3);
-	C[0,2] = 2*(q1*q3-q0*q2);
-	C[1,0] = 2*(q1*q2-q0*q3);
-	C[1,1] = q0*q0-q1*q1+q2*q2-q3*q3;
-	C[1,2] = 2*(q2*q3+q0*q1);
-	C[2,0] = 2*(q1*q3 + q0*q2);
-	C[2,1] = 2*(q2*q3-q0*q1);
-	C[2,2] = q0*q0-q1*q1-q2*q2+q3*q3;
-	
-	return C;
+    q0 = q[0]
+    q1 = q[1]
+    q2 = q[2]
+    q3 = q[3]
+    C = np.zeros([3, 3])
+    C[0, 0] = q0 * q0 + q1 * q1 - q2 * q2 - q3 * q3
+    C[0, 1] = 2 * (q1 * q2 + q0 * q3)
+    C[0, 2] = 2 * (q1 * q3 - q0 * q2)
+    C[1, 0] = 2 * (q1 * q2 - q0 * q3)
+    C[1, 1] = q0 * q0 - q1 * q1 + q2 * q2 - q3 * q3
+    C[1, 2] = 2 * (q2 * q3 + q0 * q1)
+    C[2, 0] = 2 * (q1 * q3 + q0 * q2)
+    C[2, 1] = 2 * (q2 * q3 - q0 * q1)
+    C[2, 2] = q0 * q0 - q1 * q1 - q2 * q2 + q3 * q3
+    return C
+
+
 
 
 def EP2Euler121(q):
@@ -3465,34 +3475,35 @@ def Euler3132C(q):
 
     return C;
 
+
 def Euler3212C(q):
     """
     Euler3212C
-
     	C = Euler3212C(Q) returns the direction cosine
     	matrix in terms of the 3-2-1 Euler angles.
     	Input Q must be a 3x1 vector of Euler angles.
     """
 
-    st1 = math.sin(q[0,0]);
-    ct1 = math.cos(q[0,0]);
-    st2 = math.sin(q[1,0]);
-    ct2 = math.cos(q[1,0]);
-    st3 = math.sin(q[2,0]);
-    ct3 = math.cos(q[2,0]);
+    st1 = math.sin(q[0])
+    ct1 = math.cos(q[0])
+    st2 = math.sin(q[1])
+    ct2 = math.cos(q[1])
+    st3 = math.sin(q[2])
+    ct3 = math.cos(q[2])
 
-    C = np.matrix("1. 0. 0.;0. 1. 0.;0. 0. 1.");
-    C[0,0] = ct2*ct1;
-    C[0,1] = ct2*st1;
-    C[0,2] = -st2;
-    C[1,0] = st3*st2*ct1-ct3*st1;
-    C[1,1] = st3*st2*st1+ct3*ct1;
-    C[1,2] = st3*ct2;
-    C[2,0] = ct3*st2*ct1+st3*st1;
-    C[2,1] = ct3*st2*st1-st3*ct1;
-    C[2,2] = ct3*ct2;
+    C = np.identity(3)
+    C[0,0] = ct2*ct1
+    C[0,1] = ct2*st1
+    C[0,2] = -st2
+    C[1,0] = st3*st2*ct1-ct3*st1
+    C[1,1] = st3*st2*st1+ct3*ct1
+    C[1,2] = st3*ct2
+    C[2,0] = ct3*st2*ct1+st3*st1
+    C[2,1] = ct3*st2*st1-st3*ct1
+    C[2,2] = ct3*ct2
 
-    return C;
+    return C
+
 
 def Euler3232C(q):
     """
@@ -3928,4 +3939,41 @@ def Euler3232PRV(e):
     return EP2PRV(Euler3232EP(e));
 
 
-
+def Mi(theta, i):
+    c = np.cos(theta)
+    s = np.sin(theta)
+    case = i
+    C = np.zeros((3, 3))
+    if case == 1:
+        C[0][0] = 1.
+        C[0][1] = 0.
+        C[0][2] = 0.
+        C[1][0] = 0.
+        C[1][1] = c
+        C[1][2] = s
+        C[2][0] = 0.
+        C[2][1] = -s
+        C[2][2] = c
+    elif case == 2:
+        C[0][0] = c
+        C[0][1] = 0.
+        C[0][2] = -s
+        C[1][0] = 0.
+        C[1][1] = 1.
+        C[1][2] = 0.
+        C[2][0] = s
+        C[2][1] = 0.
+        C[2][2] = c
+    elif case == 3:
+        C[0][0] = c
+        C[0][1] = s
+        C[0][2] = 0.
+        C[1][0] = -s
+        C[1][1] = c
+        C[1][2] = 0.
+        C[2][0] = 0.
+        C[2][1] = 0.
+        C[2][2] = 1.
+    else:
+        print 'Mi() error: incorrect axis', i, 'selected'
+    return C
