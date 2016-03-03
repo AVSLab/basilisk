@@ -30,9 +30,18 @@ FOREACH(module ${swig_modules})
 	    "${FileDir}/../_GeneralModuleFiles/*.cpp"
 	    "${FileDir}/../_GeneralModuleFiles/*.h"
 	    "${FileDir}/../_GeneralModuleFiles/*.c")
+	file(GLOB cpp_files
+	    "${FileDir}/*.cpp"
+		"${FileDir}/../_GeneralModuleFiles/*.cpp")
+
+	set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
+	FOREACH(localFile ${cpp_files})
+	    MESSAGE(${module})
+	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
+	ENDFOREACH()
+	
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
-    set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files})
