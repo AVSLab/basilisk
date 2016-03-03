@@ -20,6 +20,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <vector>
 #include "utilities/sys_model.h"
+#include "utilities/gauss_markov.h"
+#include "utilities/dyn_effector.h"
+
+typedef struct {
+    double timeTag;               //!< [s] Time tag placed on the output state
+    double qInrtl2Case[4];        //!< [-] Quaternion to go from the inertial to case
+}StarTrackerOutput;
 
 class StarTracker: public SysModel {
 public:
@@ -28,22 +35,29 @@ public:
     
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
+    void SelfInit();
+    void CrossInit();
+    void computeOutputs(uint64_t CurrentSimNanos);
     
 public:
-    std::vector<double> NoiseSigma;   // r  Standard deviation on noise (3vec)
-    std::vector<double> WalkBound;    // r  Random walk bound (3vec)
-    std::vector<double> WalkTau;      // s  Time constant for random walk (3vec)
-    std::vector<double> QStr2STCase;  // -- Quaternion from struct to case (4vec)
-    std::vector<double> QMisalign;    // -- Quaternion for misalignment
     
-    std::vector<double> ErrorVec;     // r  Current error vector to append
-    
-    std::vector<double> QuatOut;      // -- Quaternion output for tracker
-    double SensorTimeTag;             // s Current time tag for sensor out
-    std::string InputTimeMessage;     // -- String for time input msg
-    bool MessagesLinked;              // -- Indicator for whether inputs bound
+    double sensorTimeTag;             //!< [s] Current time tag for sensor out
+    std::string inputStateMessage;    //!< [-] String for the input state message
+    std::string inputTimeMessage;     //!< [-] String for time input msg
+    std::string outputStateMessage;   //!< [-] String for the output state message
+    bool messagesLinked;              //!< [-] Indicator for whether inputs bound
+    std::vector<double> PMatrix;      //!< [-] Covariance matrix used to perturb state
+    std::vector<double> walkBounds;   //!< [-] "3-sigma" errors to permit for states
+    std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
+    uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
+    double T_CaseStr[9];              //!< [-] Transformation matrix from case to body
+    StarTrackerOutput localOutput;    //!< [-] Class-local storage for output message
 private:
-    int64_t InputTimeID;              // -- Connect to input time message
+    std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
+    int64_t inputTimeID;              //!< [-] Connect to input time message
+    int64_t inputStateID;             //!< [-] Connection to input state message
+    int64_t outputStateID;            //!< [-] Connection to outgoing state message
+    GaussMarkov errorModel;           //!< [-] Gauss-markov error states
 };
 
 #endif

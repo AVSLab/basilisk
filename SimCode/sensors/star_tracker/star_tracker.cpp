@@ -17,13 +17,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "sensors/star_tracker/star_tracker.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_interface.h"
+#include "utilities/RigidBodyKinematics.h"
+#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
+#include <iostream>
 
 StarTracker::StarTracker()
 {
     CallCounts = 0;
-    MessagesLinked = false;
-    InputTimeID = -1;
-    InputTimeMessage = "spice_time_output_data";
+    messagesLinked = false;
+    inputTimeID = -1;
+    inputStateID = -1;
+    inputTimeMessage = "spice_time_output_data";
+    inputStateMessage = "inertial_state_output";
+    outputStateMessage = "star_tracker_state";
+    OutputBufferCount = 2;
+    m33SetIdentity(RECAST3X3 T_CaseStr);
     return;
 }
 
@@ -34,35 +42,97 @@ StarTracker::~StarTracker()
 
 bool StarTracker::LinkMessages()
 {
-    int64_t LocalID = SystemMessaging::GetInstance()->FindMessageID(
-                                                                    InputTimeMessage);
-    if(LocalID >= 0)
+    inputTimeID = SystemMessaging::GetInstance()->subscribeToMessage(
+        inputTimeMessage, sizeof(SpiceTimeOutput), moduleID);
+    inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
+        inputStateMessage, sizeof(OutputStateData), moduleID);
+    
+    
+    return(inputTimeID >=0 && inputStateID >= 0);
+}
+
+void StarTracker::SelfInit()
+{
+    //! Begin method steps
+    uint64_t numStates = 3;
+    std::vector<double>::iterator it;
+    outputStateID = SystemMessaging::GetInstance()->
+        CreateNewMessage(outputStateMessage, sizeof(StarTrackerOutput),
+        OutputBufferCount, "StarTrackerOutput", moduleID);
+    
+    AMatrix.clear();
+    AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
+    mSetIdentity(AMatrix.data(), numStates, numStates);
+    it = AMatrix.begin();
+    for(uint32_t i=0; i<3; i++)
     {
-        InputTimeID = LocalID;
-        return(true);
+        *it = 1.0;
+        it += 4;
     }
-    return(false);
+    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+    if(PMatrix.size() != numStates*numStates)
+    {
+        std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 18*18.";
+        std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
+        PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
+                       0.0);
+    }
+    errorModel.setNoiseMatrix(PMatrix);
+    errorModel.setRNGSeed(RNGSeed);
+    errorModel.setUpperBounds(walkBounds);
+}
+
+void StarTracker::CrossInit()
+{
+    messagesLinked = LinkMessages();
 }
 
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
+    
+    errorModel.setPropMatrix(AMatrix);
+    errorModel.computeNextState();
+    navErrors = errorModel.getCurrentState();
+    computeOutputs(CurrentSimNanos);
+}
+
+void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
+{
+    OutputStateData localState;
+    SingleMessageHeader localHeader;
+    SpiceTimeOutput timeState;
     std::vector<double>::iterator it;
+    double sigma_BNLocal[3];
+    double T_BdyInrtl[3][3];
+    double T_StrInrtl[3][3];
+    double T_CaseInrtl[3][3];
+    double localTime = 0.0;
     
-    if(!MessagesLinked)
+    if(!messagesLinked)
     {
-        MessagesLinked = LinkMessages();
+        messagesLinked = LinkMessages();
     }
     
-    for(it = NoiseSigma.begin(); it != NoiseSigma.end(); it++)
+    memset(&timeState, 0x0, sizeof(SpiceTimeOutput));
+    memset(&localState, 0x0, sizeof(OutputStateData));
+    if(inputStateID >= 0)
     {
-        *it = *it*2.0;
+        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState));
     }
-    if(MessagesLinked)
+    if(inputTimeID >= 0)
     {
-        SpiceTimeOutput TimeMessage;
-        SingleMessageHeader LocalHeader;
-        SystemMessaging::GetInstance()->ReadMessage(InputTimeID, &LocalHeader,
-                                                    sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t *> (&TimeMessage));
-        SensorTimeTag = TimeMessage.J2000Current;
+        SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
+                                                    sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState));
+        localTime = timeState.J2000Current;
+        localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
     }
+    addMRP(localState.sigma, &(navErrors.data()[0]), sigma_BNLocal);
+    MRP2C(sigma_BNLocal, T_BdyInrtl);
+    m33tMultM33(localState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
+    m33MultM33(RECAST3X3 T_CaseStr, T_StrInrtl, T_CaseInrtl);
+    localOutput.timeTag = localTime;
+    C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
+    SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
+        sizeof(StarTrackerOutput), reinterpret_cast<uint8_t *>(&localOutput));
 }

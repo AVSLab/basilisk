@@ -141,7 +141,7 @@ void SimpleNav::computeOutput(uint64_t Clock)
     //! Begin method steps
     //! - Obtain the messages associated with the vehicle state and the sun state
     memset(&sunState, 0x0, sizeof(SpicePlanetState));
-    memset(&localState, 0x0, sizeof(SpicePlanetState));
+    memset(&localState, 0x0, sizeof(OutputStateData));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
