@@ -15,15 +15,17 @@
  
  */
 
-#include "ADCSAlgorithms/attDetermination/InertialUKF/attitude_ukf.h"
+#include "attDetermination/InertialUKF/attitude_ukf.h"
+#include "messaging/static_messaging.h"
+#include "sensorInterfaces/STSensorData/stComm.h"
 #include <math.h>
 #include <string.h>
 
 STInertialUKF::STInertialUKF() 
 {
-   AccInputName = "AccFilterData";
-   BVecInputPortName = "BVecBufferData";
-   NEDOutputPortName = "NEDOutputData";
+   stInputName = "star_tracker_data";
+   wheelSpeedsName = "RWASpeeds";
+   InertialUKFStateName = "InertialStateEst";
    return;
 }
 
@@ -125,7 +127,7 @@ void STInertialUKF::CheckForUpdate(
    return;
 }
 
-void STInertialUKF::GNC_alg()
+void STInertialUKF::UpdateState(uint64_t callTime)
 {
 //   bool MeasAvail, BVecNewest, Valid, Unread;
 //   double TimeTagArray[2];
@@ -261,22 +263,22 @@ void STInertialUKF::DetermineConvergence(
    return;
 }
 
-void STInertialUKF::GNC_config()
+void STInertialUKF::SelfInit()
 {
    if(ReInitFilter)
    {
-      NumStates = 3;
-      CountHalfSPs = 3;
+      NumStates = 6;
+      CountHalfSPs = 6;
       NumObs = 3;
       Q_obs.MatOps_init(3,3);
-      Q_obs.MatOps_VecSet(&QRateObs[0][0]);
-      state.MatOps_init(4,1);
-      state.MatOps_VecSet(&QNED2Bdy[0]);
-      state.MatOps_Quat2MRP(state);
-      Qnoise.MatOps_init(3,3);
-      Qnoise.MatOps_VecSet(&QNoiseInit[0][0]);
-      Covar.MatOps_init(3,3);
-      Covar.MatOps_VecSet(&CovarInit[0][0]);
+      Q_obs.MatOps_VecSet(&QStObs[0]);
+      state.MatOps_init(6,1);
+      /*state.MatOps_VecSet(&QNED2Bdy[0]);
+      state.MatOps_Quat2MRP(state);*/
+      Qnoise.MatOps_init(6,6);
+      Qnoise.MatOps_VecSet(&QNoiseInit[0]);
+      Covar.MatOps_init(6,6);
+      Covar.MatOps_VecSet(&CovarInit[0]);
       lambdaVal = alpha*alpha*(NumStates+kappa)-NumStates;
       gamma = sqrt(NumStates+lambdaVal);
       UKFInit();
@@ -284,17 +286,13 @@ void STInertialUKF::GNC_config()
       ConvCounter = 0;
       ReInitFilter = false;
    }
-   
+   InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(AttOutputStruct), 
+	   "AttOutputStruct", moduleID);
    return;
 }
-void STInertialUKF::GNC_alg_init()
+void STInertialUKF::CrossInit()
 {
-//   AccInputPortID = SamplingPortSingleton::GetInstance()->FindPortID(
-//      AccInputName.c_str());
-//   BVecInputPortID = SamplingPortSingleton::GetInstance()->FindPortID(
-//      BVecInputPortName.c_str());
-//   NEDOutputPortID = SamplingPortSingleton::GetInstance()->CreateSamplingPort(
-//		   sizeof(NEDOutputStruct), 1E9, NEDOutputPortName.c_str());
-   return;
+	stInputID = subscribeToMessage((char*)stInputName.c_str(), sizeof(STOutputData), moduleID);
+    return;
 }
 

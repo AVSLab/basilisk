@@ -33,20 +33,20 @@ class  STInertialUKF : public SysModel, public UnscentKalFilt {
 public:
    STInertialUKF();
    ~STInertialUKF();
-   void GNC_alg();
-   void GNC_config();
-   void GNC_alg_init();
-   virtual void StateProp(MatrixOperations &StateCurr);
-   virtual void ComputeMeasModel();
+   void UpdateState(uint64_t callTime);
+   void SelfInit();
+   void CrossInit();
+   void StateProp(MatrixOperations &StateCurr);
+   void ComputeMeasModel();
    void CheckForUpdate(double TimeLatest);
    void DetermineConvergence(double CovarNorm);
        
 public:
    
    bool ReInitFilter;       // -- Command to reset filter
-   double QNoiseInit[3][3]; // -- Qnoise matrix to init with
-   double CovarInit[3][3];  // -- Covariance matrix to start out with
-   double QRateObs[3][3];   // -- observation noise matrix
+   double QNoiseInit[6*6]; // -- Qnoise matrix to init with
+   double CovarInit[6*6];  // -- Covariance matrix to start out with
+   double QStObs[3*3];   // -- observation noise matrix
    double ConvThresh;       // -- Required level of covariance convergence
    int ConvTestCounter;     // -- Number of sequential passes that must satisfy
    double HTolerance;       // s  Level of agreement required for time-tagging
@@ -54,22 +54,18 @@ public:
    int ConvCounter;         // -- Current counter of Convergence Values
    bool FilterConverged;    // -- Indicator that filter has converged
 
-   double QNED2Bdy[4];       // -- Estimate of the measurement deriv
-   double BVecObs[3];        // -- Compass measurement
-   double AccVecObs[3];      // -- Filtered acceleration data
-   double LastAccTime;       // -- Last Accelerometer time-tag
-   double LastBVecTime;      // -- Last Magnetometer time-tag
-   double MagTolerance;      // -- Small definition for mag output
-   double AccTolerance;      // -- Small definition for mag output
-   double BVecExpNED[3];     // -- Expected env magnetic field
-   double CovarEst[3][3];   // -- Covariance estimate output from filter
+   double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
+   double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
+   double LastStTime;       // -- Last Accelerometer time-tag
 
-   std::string AccInputName; // -- Input port name for DV
-   uint32_t AccInputPortID;  // -- Input port ID
-   std::string BVecInputPortName; // -- Bvec input port name
-   uint32_t BVecInputPortID; // -- Input port ID for BVec
-   std::string NEDOutputPortName; // -- Output sampling port name
-   uint32_t NEDOutputPortID; // -- Output port ID for NED value
+   double CovarEst[3*3];   // -- Covariance estimate output from filter
+
+   std::string stInputName; // -- Input message name for star tracker data
+   uint64_t stInputID;  // -- Input port ID
+   std::string wheelSpeedsName; // -- Name for reaction wheel speed measurement
+   uint64_t wheelSpeedsID; // -- Input message for the wheel speeds
+   std::string InertialUKFStateName; // -- Output sampling port name
+   uint32_t InertialUKFStateID; // -- Output port ID for NED value
 };
 
 
