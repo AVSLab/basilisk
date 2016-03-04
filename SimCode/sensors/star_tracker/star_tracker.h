@@ -22,11 +22,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "utilities/dyn_effector.h"
+#include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
 
-typedef struct {
-    double timeTag;               //!< [s] Time tag placed on the output state
-    double qInrtl2Case[4];        //!< [-] Quaternion to go from the inertial to case
-}StarTrackerOutput;
 
 class StarTracker: public SysModel {
 public:
@@ -51,7 +48,7 @@ public:
     std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     double T_CaseStr[9];              //!< [-] Transformation matrix from case to body
-    StarTrackerOutput localOutput;    //!< [-] Class-local storage for output message
+    StarTrackerHWOutput localOutput;    //!< [-] Class-local storage for output message
 private:
     std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputTimeID;              //!< [-] Connect to input time message

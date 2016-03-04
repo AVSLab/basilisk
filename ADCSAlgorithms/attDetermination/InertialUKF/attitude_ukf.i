@@ -16,5 +16,6 @@ namespace std {
    %template(ConstCharVector) vector<const char*>;
 }
 %include "sys_model.h"
+%include "../_GeneralModuleFiles/unscent_kalfilt.h"
 %include "attitude_ukf.h"
 

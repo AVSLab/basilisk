@@ -57,8 +57,8 @@ void StarTracker::SelfInit()
     uint64_t numStates = 3;
     std::vector<double>::iterator it;
     outputStateID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputStateMessage, sizeof(StarTrackerOutput),
-        OutputBufferCount, "StarTrackerOutput", moduleID);
+        CreateNewMessage(outputStateMessage, sizeof(StarTrackerHWOutput),
+        OutputBufferCount, "StarTrackerHWOutput", moduleID);
     
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
@@ -106,6 +106,7 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
     double T_BdyInrtl[3][3];
     double T_StrInrtl[3][3];
     double T_CaseInrtl[3][3];
+    double mrpErrors[3];
     double localTime = 0.0;
     
     if(!messagesLinked)
@@ -127,12 +128,13 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
         localTime = timeState.J2000Current;
         localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
     }
-    addMRP(localState.sigma, &(navErrors.data()[0]), sigma_BNLocal);
+    PRV2MRP(&(navErrors.data()[0]), mrpErrors);
+    addMRP(localState.sigma, mrpErrors, sigma_BNLocal);
     MRP2C(sigma_BNLocal, T_BdyInrtl);
     m33tMultM33(localState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
     m33MultM33(RECAST3X3 T_CaseStr, T_StrInrtl, T_CaseInrtl);
     localOutput.timeTag = localTime;
     C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-        sizeof(StarTrackerOutput), reinterpret_cast<uint8_t *>(&localOutput));
+        sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput));
 }

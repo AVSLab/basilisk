@@ -36,7 +36,6 @@ FOREACH(module ${swig_modules})
 
 	set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
 	FOREACH(localFile ${cpp_files})
-	    MESSAGE(${module})
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 	ENDFOREACH()
 	
