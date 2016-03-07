@@ -17,7 +17,8 @@
 
 #include "attDetermination/InertialUKF/attitude_ukf.h"
 #include "messaging/static_messaging.h"
-#include "sensorInterfaces/STSensorData/stComm.h"
+#include "SimCode/utilities/rigidBodyKinematics.h"
+#include "SimCode/utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>
 
@@ -37,81 +38,54 @@ STInertialUKF::~STInertialUKF()
 
 void STInertialUKF::StateProp(MatrixOperations &StateCurr)
 {
-   //Assume zero torque acting on body
-   return;
+    //Assume zero torque acting on body
+    double BMatrix[3][3];
+	double qDot[3];
+	BmatMRP(StateCurr.vec_vals, BMatrix);
+	m33MultV3(BMatrix, &(StateCurr.vec_vals[3]), qDot);
+	v3Scale(0.25*dt, qDot, qDot);
+	v3Add(StateCurr.vec_vals, qDot, StateCurr.vec_vals);
+    return;
 }
 
 void STInertialUKF::ComputeMeasModel()
 {
-//	   int i;
-//	   uint32_t index;
-//	   MatrixOperations StateComp, ExpVec;
-//	   YMeas = new MatrixOperations[CountHalfSPs*2+1];
-//	   index = CurrUpd == ACC_UPDATE ? 6 : 0;
-//	   for(i=0; i<CountHalfSPs*2+1; i++)
-//	   {
-//	     StateComp.MatOps_MRP2Quat(SP[i]);
-//	     StateComp.MatOps_Quat2DCM(StateComp);
-//	     YMeas[i].MatOps_init(3, 1);
-//	     if(CurrUpd == ACC_UPDATE)
-//	     {
-//	    	StateComp.MatOps_transpose(StateComp);
-//	        YMeas[i].MatOps_VecSet(&StateComp.vec_vals[index]);
-//	     }
-//	     else
-//	     {
-//
-//	        ExpVec.MatOps_init(3,1);
-//	        ExpVec.MatOps_VecSet(BVecExpNED);
-//	        //ExpVec.vec_vals[2] = 0.0;
-//	        ExpVec.MatOps_mult(StateComp, ExpVec);
-//	        ExpVec.MatOps_scale(1.0/ExpVec.MatOps_twonorm());
-//	        YMeas[i] = ExpVec;
-//	     }
-//	   }
-//	   obs.MatOps_init(3,1);
-//	   if(CurrUpd == ACC_UPDATE)
-//	   {
-//		   StateComp.MatOps_MRP2Quat(SP[0]);
-//		   	     StateComp.MatOps_Quat2DCM(StateComp);
-//	      obs.MatOps_VecSet(AccVecObs);
-//	      obs.MatOps_scale(-1.0/obs.MatOps_twonorm());
-//	      StateComp.MatOps_transpose(StateComp);
-//	     // __android_log_print(ANDROID_LOG_INFO, "Native", "NED Down = %f %f %f",
-//	     // 	        	    			 StateComp.vec_vals[6], StateComp.vec_vals[7], StateComp.vec_vals[8]);
-//	     // __android_log_print(ANDROID_LOG_INFO, "Native", "NED Accel = %f %f %f",
-//	     // 	        	    			 obs.vec_vals[0], obs.vec_vals[1], obs.vec_vals[2]);
-//	   }
-//	   else
-//	   {
-//		   StateComp.MatOps_MRP2Quat(SP[0]);
-//		   StateComp.MatOps_Quat2DCM(StateComp);
-//		   StateComp.MatOps_transpose(StateComp);
-//		   ExpVec.MatOps_init(3,1);
-//		   ExpVec.MatOps_VecSet(&(StateComp.vec_vals[6]));
-//
-//	      obs.MatOps_VecSet(BVecObs);
-//	      obs.MatOps_scale(1.0/obs.MatOps_twonorm());
-//	      ExpVec.MatOps_scale(-obs.MatOps_dotprod(ExpVec));
-//	      obs.MatOps_add(obs, ExpVec);
-//
-//	      obs.MatOps_VecSet(BVecObs);
-//	      obs.MatOps_scale(1.0/obs.MatOps_twonorm());
-//
-//	      StateComp.MatOps_transpose(StateComp);
-//	      ExpVec.MatOps_VecSet(BVecExpNED);
-//	      //ExpVec.vec_vals[2] = 0.0;
-//	      ExpVec.MatOps_mult(StateComp, ExpVec);
-//	      		   ExpVec.MatOps_scale(1.0/ExpVec.MatOps_twonorm());
-////	      __android_log_print(ANDROID_LOG_INFO, "Native", "NED BVEC = %f %f %f",
-////	      	        	    			 obs.vec_vals[0], obs.vec_vals[1], obs.vec_vals[2]);
-////	      __android_log_print(ANDROID_LOG_INFO, "Native", "NED North = %f %f %f",
-////	     	      	        	    			 ExpVec.vec_vals[0], ExpVec.vec_vals[1], ExpVec.vec_vals[2]);
-//	   }
+	   int i;
+	   uint32_t index;
+	   MatrixOperations StateComp, ExpVec;
+	   for(i=0; i<CountHalfSPs*2+1; i++)
+	   {
+		   YMeas[i].MatOps_init(3, 1);
+		   YMeas[i].MatOps_VecSet(SP[i].vec_vals);
+	   }
+	   obs.MatOps_VecSet(stMeas.MRP_BdyInrtl);
+	   NumObs = 3;
 	   return;
 }
 
-
+//MatrixOperations STInertialUKF::ComputeSPVector(
+//	MatrixOperations SPError,
+//	MatrixOperations StateIn)
+//{
+//	MatrixOperations StateSum, CompQuat, localMRP;
+//	MatrixOperations ErrorQuat(3, 1, SPError.vec_vals);
+//	MatrixOperations StateQuat(3, 1, StateIn.vec_vals);
+//	ErrorQuat.MatOps_MRP2Quat(ErrorQuat);
+//	StateQuat.MatOps_MRP2Quat(StateQuat);
+//	//ErrorQuat.MatOps_QuatTrans(ErrorQuat);
+//	int SignState = StateQuat.vec_vals[0] < 0.0 ? -1 : 1;
+//	int SignErr = ErrorQuat.vec_vals[0] < 0.0 ? -1 : 1;
+//	if (SignState != SignErr)
+//	{
+//		ErrorQuat.MatOps_scale(-1.0);
+//	}
+//	CompQuat.MatOps_QuatMult(ErrorQuat, StateQuat);
+//	localMRP.MatOps_Quat2MRP(CompQuat);
+//	StateSum.MatOps_init(6, 1);
+//	memcpy(StateSum.vec_vals, localMRP.vec_vals, 3 * sizeof(double));
+//	v3Add(&(StateIn.vec_vals[3]), &(SPError.vec_vals[3]), &(StateSum.vec_vals[3]));
+//	return(StateSum);
+//}
 
 void STInertialUKF::CheckForUpdate(
    double TimeLatest)
@@ -127,119 +101,82 @@ void STInertialUKF::CheckForUpdate(
    return;
 }
 
+//MatrixOperations STInertialUKF::ComputeObsError(
+//	MatrixOperations SPError,
+//	MatrixOperations StateIn)
+//{
+//	//   MatrixOperations StateSum;
+//	//   StateSum.MatOps_add(SPError, StateIn);
+//	MatrixOperations StateSum, CompQuat;
+//	MatrixOperations ErrorQuat(3, 1, SPError.vec_vals);
+//	MatrixOperations StateQuat(3, 1, StateIn.vec_vals);
+//
+//	ErrorQuat.MatOps_MRP2Quat(ErrorQuat);
+//	StateQuat.MatOps_MRP2Quat(StateQuat);
+//	//ErrorQuat.MatOps_QuatTrans(ErrorQuat);
+//	CompQuat.MatOps_QuatMult(ErrorQuat, StateQuat);
+//	StateSum.MatOps_Quat2MRP(CompQuat);
+//	if (StateSum.MatOps_twonorm_square() > 1.0)
+//	{
+//		StateSum.MatOps_ShadowMRP(StateSum);
+//	}
+//	return(StateSum);
+//}
+
 void STInertialUKF::UpdateState(uint64_t callTime)
 {
-//   bool MeasAvail, BVecNewest, Valid, Unread;
-//   double TimeTagArray[2];
-//   double **UpdTimeArray;
-//   double CovarNorm;
-//   uint32_t i;
-//   ImuMeasEntry LastBVec;
-//   MatrixOperations QCurrent, CovarMat, AccCurrent, MagCurrent, MatProd;
-//   NEDUpdateSelector UpdList[2] = {NO_UPDATE, NO_UPDATE};
-//   DerivOutputStruct *FiltAccelOutput;
-//   SamplingPortSingleton::SamplingMessageReturn BlankPort, BlankPort2;
-//   RingBuffer <ImuMeasEntry> BVecBuffer;
-//   NEDOutputStruct NEDOut;
-//
-//   SamplingPortSingleton::GetInstance()->ReadSamplingMessage(
-//      AccInputPortID, BlankPort, Valid, Unread);
-//   if(!Valid)
-//   {
-//	   return;
-//   }
-//   FiltAccelOutput = reinterpret_cast<DerivOutputStruct *>
-//      (BlankPort.SamplingData);
-//   SamplingPortSingleton::GetInstance()->ReadSamplingMessage(
-//         BVecInputPortID, BlankPort2, Valid, Unread);
-//   if(!Valid)
-//   {
-//      return;
-//   }
-//   BVecBuffer.RingBufferUnPacketize(BlankPort2.SamplingData);
-//   if(!BVecBuffer.BufferFull)
-//   {
-//	   return;
-//   }
-//
-//   LastBVec = BVecBuffer.GetNewest();
-//
-//   AccCurrent.MatOps_init(3,1);
-//   AccCurrent.MatOps_VecSet(FiltAccelOutput->CurrentDerivVec);
-//   MagCurrent.MatOps_init(3,1);
-//   MagCurrent.MatOps_VecSet(LastBVec.AccumulatedMeas);
-//   if((LastBVec.TimeTag <= LastBVecTime || FiltAccelOutput->TimeTag<=LastAccTime) ||
-//      (AccCurrent.MatOps_twonorm() < AccTolerance ||
-//      MagCurrent.MatOps_twonorm() < MagTolerance))
-//   {
-//      return;
-//   }
-//   QCurrent.MatOps_init(3,3);
-//   AccCurrent.MatOps_scale(-1.0/AccCurrent.MatOps_twonorm());
-//   memcpy(&(QCurrent.vec_vals[6]), AccCurrent.vec_vals, 3*sizeof(double));
-//   MagCurrent.MatOps_scale(1.0/MagCurrent.MatOps_twonorm());
-//   MagCurrent.MatOps_crossprod(AccCurrent, MagCurrent);
-//   MagCurrent.MatOps_scale(1.0/MagCurrent.MatOps_twonorm());
-//   memcpy(&(QCurrent.vec_vals[3]), MagCurrent.vec_vals, 3*sizeof(double));
-//   MagCurrent.MatOps_crossprod(MagCurrent, AccCurrent);
-//   MagCurrent.MatOps_scale(1.0/MagCurrent.MatOps_twonorm());
-//   memcpy(&(QCurrent.vec_vals[0]), MagCurrent.vec_vals, 3*sizeof(double));
-//   QCurrent.MatOps_transpose(QCurrent);
-//   QCurrent.MatOps_DCM2Quat(QCurrent);
-//   TimeTag = LastBVec.TimeTag < FiltAccelOutput->TimeTag ?
-//		   LastBVec.TimeTag : FiltAccelOutput->TimeTag;
+   bool MeasAvail, BVecNewest, Valid, Unread;
+   double TimeTagArray[2];
+   double **UpdTimeArray;
+   double CovarNorm;
+   uint32_t i;
+   uint64_t ClockTime;
+   uint32_t ReadSize;
+   double EPSum[4];
+   double mrpSum[3];
+   double quatTranspose[4];
+   double quatMeas[4];
+   MatrixOperations inputMatrix;
 
-//   BVecNewest = LastBVec.TimeTag > FiltAccelOutput->TimeTag ? true : false;
-//
-//   TimeTagArray[1] = BVecNewest ? LastBVec.TimeTag : FiltAccelOutput->TimeTag;
-//   TimeTagArray[0] = !BVecNewest ? LastBVec.TimeTag : FiltAccelOutput->TimeTag;
-//   //CheckForUpdate(TimeTagArray[1]);
-//
-//   UpdList[0] = BVecNewest ? ACC_UPDATE : BVEC_UPDATE;
-//   UpdList[1] = BVecNewest ? BVEC_UPDATE : ACC_UPDATE;
-//
-//   UpdTimeArray = new double*[2];
-//   UpdTimeArray[1] = BVecNewest ? &LastBVecTime : &LastAccTime;
-//   UpdTimeArray[0] = !BVecNewest ? &LastBVecTime : &LastAccTime;
-//   memcpy(BVecObs, LastBVec.AccumulatedMeas, 3*sizeof(double));
-//   memcpy(AccVecObs, AccCurrent.vec_vals, 3*sizeof(double));
-//   for(i=0; i<2; i++)
-//   {
-////	  if(UpdList[i] == BVEC_UPDATE)
-////	  {
-////		  continue;
-////	  }
-//      CurrUpd = UpdList[i];
-//      if(TimeTagArray[i] > *(UpdTimeArray[i]))
-//      {
-//    	 TimeUpdateFilter(TimeTagArray[i]);
-//         MeasurementUpdate();
-//         *UpdTimeArray[i] = TimeTagArray[i];
-//
-//         delete [] YMeas;
-//      }
-//   }
-//   QCurrent.MatOps_MRP2Quat(state);
-//   memcpy(QNED2Bdy, QCurrent.vec_vals, 4*sizeof(double));
-//   __android_log_print(ANDROID_LOG_INFO, "Native", "NED GROUND = %f %f %f %f",
-//		   QNED2Bdy[0], QNED2Bdy[1], QNED2Bdy[2], QNED2Bdy[3]);
-////		   LastBVecTime, LastAccTime, TimeTagArray[0], TimeTagArray[1]);
-//   __android_log_print(ANDROID_LOG_INFO, "Native", "NED GROUND = %f %f %f",
-//		   LastBVec.AccumulatedMeas[0], LastBVec.AccumulatedMeas[1], LastBVec.AccumulatedMeas[2]);
-//   NEDOut.TimeTag = TimeTag;
-//   memcpy(NEDOut.NEDOutputQuat, QNED2Bdy, 4*sizeof(double));
-//   SamplingPortSingleton::GetInstance()->WriteSamplingMessage(NEDOutputPortID,
-//		   sizeof(NEDOutputStruct), reinterpret_cast<uint8_t *>(&NEDOut));
-//   memcpy(fsw_cast->AlignQNED2Bdy, QNED2Bdy, 4*sizeof(double));
-//   CovarMat.MatOps_transpose(Sbar);
-//   CovarMat.MatOps_mult(Sbar, CovarMat);
-//   CovarNorm = CovarMat.MatOps_onenorm();
-//   memcpy(CovarEst, CovarMat.vec_vals, 9*sizeof(double));
-//   DetermineConvergence(CovarNorm);
-//   fsw_cast->GroundCovarNorm = CovarNorm;
-//   fsw_cast->AlignTimeTag = TimeTag;
-//   fsw_cast->AlignmentConverged = FilterConverged;
-   
+   ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas);
+
+   if (initToMeas && stMeas.timeTag != 0.0)
+   {
+	   memcpy(state.vec_vals, stMeas.MRP_BdyInrtl, 3*sizeof(double));
+	   memset(&(state.vec_vals[3]), 0x0, 3 * sizeof(double));
+	   TimeTag = stMeas.timeTag;
+	   initToMeas = false;
+	   return;
+   }
+   MatrixOperations localMRP;
+   localMRP.MatOps_init(3, 1);
+   localMRP.MatOps_VecSet(state.vec_vals);
+
+   if (localMRP.MatOps_twonorm_square() > 1.5) //Little extra margin
+   {
+	   localMRP.MatOps_ShadowMRP(localMRP);
+	   memcpy(state.vec_vals, localMRP.vec_vals, 3*sizeof(double));
+   }
+   this->TimeUpdateFilter(stMeas.timeTag);
+   MRP2EP(state.vec_vals, quatTranspose);
+   v3Scale(-1.0, &(quatTranspose[1]), &(quatTranspose[1]));
+   MRP2EP(stMeas.MRP_BdyInrtl, quatMeas);
+   addEP(quatTranspose, quatMeas, EPSum);
+   EP2MRP(EPSum, mrpSum);
+   if (v3Norm(mrpSum) > 1.0)
+   {
+	   inputMatrix.MatOps_init(3, 1);
+	   inputMatrix.MatOps_VecSet(stMeas.MRP_BdyInrtl);
+	   inputMatrix.MatOps_ShadowMRP(inputMatrix);
+	   memcpy(stMeas.MRP_BdyInrtl, inputMatrix.vec_vals, 3 * (sizeof(double)));
+   }
+   MeasurementUpdate();
+   memcpy(CovarEst, Covar.vec_vals, NumStates*NumStates*sizeof(double));
+   memcpy(localOutput.MRP_BdyInrtl, state.vec_vals, 3 * sizeof(double));
+   localOutput.TimeTag = TimeTag;
+   memcpy(localOutput.w_BdyInrtl_Bdy, &(state.vec_vals[3]), 3 * sizeof(double));
+   WriteMessage(InertialUKFStateID, callTime, sizeof(AttOutputStruct), &localOutput,
+	   moduleID);
    return;
 }
 
@@ -270,17 +207,23 @@ void STInertialUKF::SelfInit()
       NumStates = 6;
       CountHalfSPs = 6;
       NumObs = 3;
+	  obs.MatOps_init(NumObs, 1);
       Q_obs.MatOps_init(3,3);
       Q_obs.MatOps_VecSet(&QStObs[0]);
       state.MatOps_init(6,1);
-      /*state.MatOps_VecSet(&QNED2Bdy[0]);
-      state.MatOps_Quat2MRP(state);*/
+	  memcpy(state.vec_vals, MRP_BdyInrtl_Init, 3 * sizeof(double));
+	  memcpy(&(state.vec_vals[3]), w_BdyInrtl_Bdy, 3 * sizeof(double));
       Qnoise.MatOps_init(6,6);
       Qnoise.MatOps_VecSet(&QNoiseInit[0]);
       Covar.MatOps_init(6,6);
       Covar.MatOps_VecSet(&CovarInit[0]);
       lambdaVal = alpha*alpha*(NumStates+kappa)-NumStates;
       gamma = sqrt(NumStates+lambdaVal);
+	  YMeas = new MatrixOperations[CountHalfSPs * 2 + 1];
+	  for (int i = 0; i < CountHalfSPs * 2 + 1; i++)
+	  {
+		  YMeas[i].MatOps_init(3, 1);
+	  }
       UKFInit();
       FilterConverged = false;
       ConvCounter = 0;

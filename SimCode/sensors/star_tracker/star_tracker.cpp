@@ -63,11 +63,9 @@ void StarTracker::SelfInit()
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
     mSetIdentity(AMatrix.data(), numStates, numStates);
-    it = AMatrix.begin();
     for(uint32_t i=0; i<3; i++)
     {
-        *it = 1.0;
-        it += 4;
+		AMatrix.data()[i * 3 + i] = 1.0;
     }
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(PMatrix.size() != numStates*numStates)

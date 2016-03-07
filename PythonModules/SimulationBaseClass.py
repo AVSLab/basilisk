@@ -1,4 +1,4 @@
-'''
+﻿'''
 Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -37,7 +37,7 @@ class ProcessBaseClass:
         self.processData = sim_model.SysProcess(procName)
 
     def addTask(self, newTask, taskPriority=-1):
-        self.processData.addNewTask(newTask.TaskData)
+        self.processData.addNewTask(newTask.TaskData, taskPriority)
 
     def addInterfaceRef(self, newInt):
         self.processData.addInterfaceRef(newInt)
@@ -57,6 +57,7 @@ class TaskBaseClass:
         self.Name = TaskName
         self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
                                                     FirstStart)
+        self.TaskData.TaskName = TaskName
         self.TaskModels = []
 
     def disable(self):

@@ -22,10 +22,12 @@
 #include <vector>
 #include "SimCode/Utilities/sys_model.h"
 #include "../_GeneralModuleFiles/unscent_kalfilt.h"
+#include "sensorInterfaces/STSensorData/stComm.h"
 
 typedef struct {
 	double TimeTag;          // s  Current Seconds elapsed since start
-	double NEDOutputQuat[4]; // -- Current NED2Bdy Quaternion est
+	double MRP_BdyInrtl[3];   //-- Current NED2Bdy Quaternion est
+	double w_BdyInrtl_Bdy[3]; // -- Current estimated body rate
 }AttOutputStruct;
 
 
@@ -40,10 +42,18 @@ public:
    void ComputeMeasModel();
    void CheckForUpdate(double TimeLatest);
    void DetermineConvergence(double CovarNorm);
+  /* MatrixOperations ComputeSPVector(
+	   MatrixOperations SPError,
+	   MatrixOperations StateIn);*/
+  /* MatrixOperations ComputeObsError(
+	   MatrixOperations SPError,
+	   MatrixOperations StateIn);*/
+
        
 public:
    
    bool ReInitFilter;       // -- Command to reset filter
+   bool initToMeas;         // -- Command to initialize to measurement
    double QNoiseInit[6*6]; // -- Qnoise matrix to init with
    double CovarInit[6*6];  // -- Covariance matrix to start out with
    double QStObs[3*3];   // -- observation noise matrix
@@ -56,9 +66,11 @@ public:
 
    double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
    double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
+   STOutputData stMeas;     //!< [-] Current star tracker measurement
    double LastStTime;       // -- Last Accelerometer time-tag
 
-   double CovarEst[3*3];   // -- Covariance estimate output from filter
+   double CovarEst[6*6];   // -- Covariance estimate output from filter
+   AttOutputStruct localOutput; //! -- Current output state estimate
 
    std::string stInputName; // -- Input message name for star tracker data
    uint64_t stInputID;  // -- Input port ID
