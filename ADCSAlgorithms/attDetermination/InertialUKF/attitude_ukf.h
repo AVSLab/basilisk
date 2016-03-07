@@ -25,59 +25,60 @@
 #include "sensorInterfaces/STSensorData/stComm.h"
 
 typedef struct {
-	double TimeTag;          // s  Current Seconds elapsed since start
-	double MRP_BdyInrtl[3];   //-- Current NED2Bdy Quaternion est
-	double w_BdyInrtl_Bdy[3]; // -- Current estimated body rate
+    double TimeTag;          // s  Current Seconds elapsed since start
+    double MRP_BdyInrtl[3];   //-- Current NED2Bdy Quaternion est
+    double w_BdyInrtl_Bdy[3]; // -- Current estimated body rate
 }AttOutputStruct;
 
 
 class  STInertialUKF : public SysModel, public UnscentKalFilt {
 public:
-   STInertialUKF();
-   ~STInertialUKF();
-   void UpdateState(uint64_t callTime);
-   void SelfInit();
-   void CrossInit();
-   void StateProp(MatrixOperations &StateCurr);
-   void ComputeMeasModel();
-   void CheckForUpdate(double TimeLatest);
-   void DetermineConvergence(double CovarNorm);
-  /* MatrixOperations ComputeSPVector(
-	   MatrixOperations SPError,
-	   MatrixOperations StateIn);*/
-  /* MatrixOperations ComputeObsError(
-	   MatrixOperations SPError,
-	   MatrixOperations StateIn);*/
-
-       
+    STInertialUKF();
+    ~STInertialUKF();
+    void UpdateState(uint64_t callTime);
+    void SelfInit();
+    void CrossInit();
+    void StateProp(MatrixOperations &StateCurr);
+    void ComputeMeasModel();
+    void CheckForUpdate(double TimeLatest);
+    void DetermineConvergence(double CovarNorm);
+    MatrixOperations ComputeSPVector(
+                                     MatrixOperations SPError,
+                                     MatrixOperations StateIn);
+    MatrixOperations ComputeObsError(
+                                     MatrixOperations SPError,
+                                     MatrixOperations StateIn);
+    
+    
 public:
-   
-   bool ReInitFilter;       // -- Command to reset filter
-   bool initToMeas;         // -- Command to initialize to measurement
-   double QNoiseInit[6*6]; // -- Qnoise matrix to init with
-   double CovarInit[6*6];  // -- Covariance matrix to start out with
-   double QStObs[3*3];   // -- observation noise matrix
-   double ConvThresh;       // -- Required level of covariance convergence
-   int ConvTestCounter;     // -- Number of sequential passes that must satisfy
-   double HTolerance;       // s  Level of agreement required for time-tagging
-   
-   int ConvCounter;         // -- Current counter of Convergence Values
-   bool FilterConverged;    // -- Indicator that filter has converged
-
-   double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
-   double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
-   STOutputData stMeas;     //!< [-] Current star tracker measurement
-   double LastStTime;       // -- Last Accelerometer time-tag
-
-   double CovarEst[6*6];   // -- Covariance estimate output from filter
-   AttOutputStruct localOutput; //! -- Current output state estimate
-
-   std::string stInputName; // -- Input message name for star tracker data
-   uint64_t stInputID;  // -- Input port ID
-   std::string wheelSpeedsName; // -- Name for reaction wheel speed measurement
-   uint64_t wheelSpeedsID; // -- Input message for the wheel speeds
-   std::string InertialUKFStateName; // -- Output sampling port name
-   uint32_t InertialUKFStateID; // -- Output port ID for NED value
+    
+    bool ReInitFilter;       // -- Command to reset filter
+    bool initToMeas;         // -- Command to initialize to measurement
+    double QNoiseInit[6*6]; // -- Qnoise matrix to init with
+    double CovarInit[6*6];  // -- Covariance matrix to start out with
+    double QStObs[3*3];   // -- observation noise matrix
+    double ConvThresh;       // -- Required level of covariance convergence
+    int ConvTestCounter;     // -- Number of sequential passes that must satisfy
+    double HTolerance;       // s  Level of agreement required for time-tagging
+    
+    int ConvCounter;         // -- Current counter of Convergence Values
+    bool FilterConverged;    // -- Indicator that filter has converged
+    
+    double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
+    double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
+    double MRPPrevious[3];
+    STOutputData stMeas;     //!< [-] Current star tracker measurement
+    double LastStTime;       // -- Last Accelerometer time-tag
+    
+    double CovarEst[6*6];   // -- Covariance estimate output from filter
+    AttOutputStruct localOutput; //! -- Current output state estimate
+    
+    std::string stInputName; // -- Input message name for star tracker data
+    uint64_t stInputID;  // -- Input port ID
+    std::string wheelSpeedsName; // -- Name for reaction wheel speed measurement
+    uint64_t wheelSpeedsID; // -- Input message for the wheel speeds
+    std::string InertialUKFStateName; // -- Output sampling port name
+    uint32_t InertialUKFStateID; // -- Output port ID for NED value
 };
 
 
