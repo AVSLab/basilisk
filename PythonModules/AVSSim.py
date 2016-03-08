@@ -331,7 +331,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.scanSelector += 1
         self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
         offPointAngles = numpy.reshape(offPointAngles, (3, 1))
-        offMatrix = RigidBodyKinematics.Euler1232C(offPointAngles)
+        offMatrix = RigidBodyKinematics.euler1232C(offPointAngles)
         newPointMatrix = numpy.dot(offMatrix, basePointMatrix)
         newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
         SimulationBaseClass.SetCArray(newPointMatrix[0], 'double', self.marsPointData.TPoint2Bdy)

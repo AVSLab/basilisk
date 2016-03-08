@@ -79,11 +79,11 @@ class VectorVariableDispersion(object):
         return
 
     @abc.abstractmethod
-    def generate(self, sim):
+    def generate(self, sim=None):
         pass
 
     def perturbVectorByAngle(self, vector, angle):
-        rndVec = np.random.rand(3)
+        rndVec = np.random.random(3)
         if np.dot(rndVec, vector) > 0.95:
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
@@ -127,13 +127,34 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         if thetaBounds is None:
             self.thetaBounds = self.phiBounds
 
-    def generate(self, sim):
+    def generate(self, sim=None):
         phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
         thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
         dispVec = ([np.sin(phiRnd) * np.cos(thetaRnd),
                     np.sin(phiRnd) * np.sin(thetaRnd),
                     phiRnd])
         return dispVec
+
+
+class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        """
+        Args:
+            varName (str): A string representation of the variable to be dispersed
+                e.g. 'VehDynObject.AttitudeInit'.
+            bounds (Array[float, float]): defines lower and upper cut offs for generated dispersion values radians.
+        """
+        super(UniformEulerAngleMRPDispersion, self).__init__(varName, bounds)
+        if self.bounds is None:
+            self.bounds = ([0, 2*np.pi])
+
+    def generate(self, sim=None):
+        rndAngles = np.zeros((3,1))
+        for i in range(3):
+            rndAngles[i] = (self.bounds[1] - self.bounds[0]) * np.random.random() + self.bounds[0]
+        dispMRP = rbk.euler3232MRP(rndAngles)
+        dispMRP = dispMRP.reshape(3)
+        return dispMRP
 
 
 class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
@@ -236,7 +257,7 @@ class InertiaTensorDispersion:
             dispIdentityMatrix = np.identity(3)*temp
             # generate random values for the similarity transform to produce off-diagonal terms
             angles = np.random.normal(0, self.stdAngle, 3)
-            disp321Matrix = rbk.Euler3212C(angles)
+            disp321Matrix = rbk.euler3212C(angles)
 
             # disperse the diagonal elements
             dispI = I + dispIdentityMatrix
