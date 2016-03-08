@@ -180,8 +180,7 @@ void UnscentKalFilt::MeasurementUpdate()
     QChol.MatOps_CholDecomp(this->Q_obs);
     memcpy(&AT.vec_vals[2*this->CountHalfSPs*this->NumObs],
            QChol.vec_vals, QChol.dim_array[0]*QChol.dim_array[1]*sizeof(double));
-    AT.MatOps_QRDecomp(QAT, RAT);
-    //RAT.MatOps_QRD_JustR(QChol);
+    RAT.MatOps_QRD_JustR(AT);
     SyT.MatOps_init(this->NumObs, this->NumObs);
     SyT.MatOps_VecSet(RAT.vec_vals);
     Sy.MatOps_transpose(SyT);
