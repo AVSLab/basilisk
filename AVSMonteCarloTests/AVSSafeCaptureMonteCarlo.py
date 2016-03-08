@@ -38,8 +38,8 @@ monteCarloContainer.setExecutionCount(20)  # Number of simulations to run
 monteCarloContainer.setRetainSimulationData(True)  # Archive simulations as we go along
 monteCarloContainer.setExecutionModule(executionModule)  # Define the script to use for the run
 
-# Default initialization in this case is a gaussian distribution from -0.5, 0.5
-attitudeDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttitudeInit', 0.0, 0.5, ([-1.0, 1.0]))
+# Default initialization in this case is a uniform distribution from 0 to 2*pi for each 3-2-1 angles
+attitudeDisp = mbc.UniformEulerAngleMRPDispersion('VehDynObject.AttitudeInit')
 monteCarloContainer.addNewDispersion(attitudeDisp)
 
 rateDisp = mbc.NormalVectorCartDispersion('VehDynObject.AttRateInit', 0.0, 0.017, ([-0.5, 0.5]))
