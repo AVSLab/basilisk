@@ -123,6 +123,7 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
         ConfigData->omegaCmd_BR_B);
 	v3Subtract(localState.omega_BN_B, ConfigData->omegaCmd_BR_B,
 		ConfigData->attOut.omega_BR_B);
+	v3Copy(ConfigData->omegaCmd_BR_B, ConfigData->attOut.omega_RN_B);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
         (void*)&(ConfigData->attOut), moduleID);
