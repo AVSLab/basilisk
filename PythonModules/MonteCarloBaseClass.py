@@ -284,6 +284,7 @@ class MonteCarloBaseClass:
         self.simulationObject = None
         self.executionCount = 0
         self.retainSimulationData = False
+        self.disperseSeeds = False
 
     def setRandomizeSeeds(self, seedSet):
         self.randomizeSeeds = seedSet
@@ -302,6 +303,8 @@ class MonteCarloBaseClass:
 
     def addNewDispersion(self, disp):
         self.varDisp.append(disp)
+    def setDisperseSeeds(self, seedDisp):
+        self.disperseSeeds = seedDisp
 
     def executeSimulations(self):
         simRunCounter = 0
@@ -330,6 +333,11 @@ class MonteCarloBaseClass:
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
                     exec(execString)
+
+            if self.disperseSeeds == True:
+                for Task in newSim.TaskList:
+                    for model in Task.TaskModels:
+                        model.RNGSeed = random.randint(0, 1<<32-1)
 
             self.executionModule(newSim)
 
