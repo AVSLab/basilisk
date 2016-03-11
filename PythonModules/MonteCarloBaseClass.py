@@ -66,7 +66,8 @@ class NormalDispersion(SingleVariableDispersion):
 
     def generate(self, sim):
         dispValue = random.gauss(self.mean, self.stdDeviation)
-        dispValue = self.checkBounds(dispValue)
+        if self.bounds is not None:
+            dispValue = self.checkBounds(dispValue)
         return dispValue
 
 
@@ -213,7 +214,8 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
         dispVec = []
         for i in range(3):
             rnd = random.gauss(self.mean, self.stdDeviation)
-            rnd = self.checkBounds(rnd, self.bounds)
+            if self.bounds is not None:
+                rnd = self.checkBounds(rnd, self.bounds)
             dispVec.append(rnd)
         return dispVec
 
