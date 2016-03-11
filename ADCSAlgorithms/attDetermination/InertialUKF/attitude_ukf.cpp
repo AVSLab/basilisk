@@ -76,13 +76,7 @@ MatrixOperations STInertialUKF::ComputeSPVector(
     MatrixOperations StateQuat(3, 1, StateIn.vec_vals);
     ErrorQuat.MatOps_MRP2Quat(ErrorQuat);
     StateQuat.MatOps_MRP2Quat(StateQuat);
-    //ErrorQuat.MatOps_QuatTrans(ErrorQuat);
-    int SignState = StateQuat.vec_vals[0] < 0.0 ? -1 : 1;
-    int SignErr = ErrorQuat.vec_vals[0] < 0.0 ? -1 : 1;
-    if (SignState != SignErr)
-    {
-        ErrorQuat.MatOps_scale(-1.0);
-    }
+
     CompQuat.MatOps_QuatMult(ErrorQuat, StateQuat);
     localMRP.MatOps_Quat2MRP(CompQuat);
     StateSum.MatOps_init(NumStates, 1);
@@ -98,7 +92,7 @@ void STInertialUKF::CheckForUpdate(
     {
         TimeUpdateFilter(TimeLatest);
     }
-    if(state.MatOps_twonorm_square() > 1.5) //Little extra margin
+    if(state.MatOps_twonorm_square() > 1.2) //Little extra margin
     {
         state.MatOps_ShadowMRP(state);
     }
@@ -160,10 +154,15 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     localMRP.MatOps_init(3, 1);
     localMRP.MatOps_VecSet(state.vec_vals);
     
-    if (localMRP.MatOps_twonorm_square() > 1.5) //Little extra margin
+    if (localMRP.MatOps_twonorm_square() > 1.2) //Little extra margin
     {
         localMRP.MatOps_ShadowMRP(localMRP);
         memcpy(state.vec_vals, localMRP.vec_vals, 3*sizeof(double));
+        double BMatrix[3][3];
+        double localMRPDer[3];
+        BmatMRP(state.vec_vals, BMatrix);
+        m33MultV3(BMatrix, localOutput.w_BdyInrtl_Bdy, localMRPDer);
+        v3Scale(0.25, localMRPDer, &(state.vec_vals[3]));
     }
     this->TimeUpdateFilter(stMeas.timeTag);
     MRP2EP(state.vec_vals, quatTranspose);
@@ -178,6 +177,17 @@ void STInertialUKF::UpdateState(uint64_t callTime)
         inputMatrix.MatOps_ShadowMRP(inputMatrix);
         memcpy(stMeas.MRP_BdyInrtl, inputMatrix.vec_vals, 3 * (sizeof(double)));
     }
+    MRP2EP(MRPPrevious, quatMeas);
+    addEP(quatTranspose, quatMeas, EPSum);
+    EP2MRP(EPSum, mrpSum);
+    if (v3Norm(mrpSum) > 1.0)
+    {
+        inputMatrix.MatOps_init(3, 1);
+        inputMatrix.MatOps_VecSet(MRPPrevious);
+        inputMatrix.MatOps_ShadowMRP(inputMatrix);
+        memcpy(MRPPrevious, inputMatrix.vec_vals, 3*sizeof(double));
+    }
+    
     MeasurementUpdate();
     memcpy(CovarEst, Covar.vec_vals, NumStates*NumStates*sizeof(double));
     memcpy(localOutput.MRP_BdyInrtl, state.vec_vals, 3 * sizeof(double));
