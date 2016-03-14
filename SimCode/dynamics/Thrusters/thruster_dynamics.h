@@ -113,6 +113,9 @@ public:
         std::vector<ThrusterTimePair> *thrRamp);
     
 public:
+    std::string ConfigDataOutMsgName;
+    int stepsInRamp;
+    
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string OutputDataString;                  //!< -- port to use for output data
@@ -124,6 +127,8 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
+    int64_t ConfigDataOutMsgID;
+    
     int64_t CmdsInMsgID;                           //!< -- Message ID for incoming data
     int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
     ThrustCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
