@@ -27,6 +27,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! \addtogroup SimModelGroup
  * @{
  */
+typedef struct {
+    double wheelPositions[MAX_EFF_CNT];                
+}RWConfigOutputData;
 
 //! @brief Container for overall RW configuration data for single RW
 /*! This structure is used to define the overall configuration of an entire
@@ -34,21 +37,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  ramp/max/min configuration data, and the physical location/orientation data for
  a RW.*/
 typedef struct {
- double r_S[3]; //!< m, position vector of the RW relative to the spacecraft structural frame
- double gsHat_S[3]; //!< spin axis unit vector in structural frame
- double gtHat0_S[3]; //!< initial torque axis unit vector in structural frame
- double ggHat0_S[3]; //!< initial gimbal axis unit vector in structural frame
- double theta; //!< wheel angle
- double u_current; //!< N-m, current motor torque
- double u_max; //!< N-m, Max torque
- double u_min; //!< N-m, Min torque
- double u_f; //!< N-m, Coulomb friction torque magnitude
- double Omega; //!< rad/s, wheel speed
- double Omega_max; //!< rad/s, max wheel speed
- double Js; //!< kg-m^2, spin axis moment of inertia
- double U_s; //!< kg-m, static imbalance
- double U_d; //!< kg-m^2, dynamic imbalance
- bool usingRWJitter; //!< flag for using imbalance torques
+ double r_S[3];             //!< m, position vector of the RW relative to the spacecraft structural frame
+ double gsHat_S[3];         //!< spin axis unit vector in structural frame
+ double gtHat0_S[3];        //!< initial torque axis unit vector in structural frame
+ double ggHat0_S[3];        //!< initial gimbal axis unit vector in structural frame
+ double theta;              //!< wheel angle
+ double u_current;          //!< N-m, current motor torque
+ double u_max;              //!< N-m, Max torque
+ double u_min;              //!< N-m, Min torque
+ double u_f;                //!< N-m, Coulomb friction torque magnitude
+ double Omega;              //!< rad/s, wheel speed
+ double Omega_max;          //!< rad/s, max wheel speed
+ double Js;                 //!< kg-m^2, spin axis moment of inertia
+ double U_s;                //!< kg-m, static imbalance
+ double U_d;                //!< kg-m^2, dynamic imbalance
+ bool usingRWJitter;        //!< flag for using imbalance torques
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -86,20 +89,24 @@ public:
                          double CurrentTime);
 
 public:
-    std::vector<ReactionWheelConfigData> ReactionWheelData;  //!< -- Thruster information
-    std::string InputCmds;                         //!< -- message used to read command inputs
-    std::string OutputDataString;                  //!< -- port to use for output data
-    uint64_t OutputBufferCount;                    //!< -- Count on number of buffers to output
-    std::vector<RWCmdStruct> NewRWCmds;                 //!< -- Incoming thrust commands
-	RWSpeedData outputStates;  //!< (-) Output data from the reaction wheels
-    double F_S[3];                            //!< N  Computed force in str
-    double tau_S[3];                           //!< N-m Computed torque in str
+    std::string ConfigDataOutMsgName;
+    
+    std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
+    std::string InputCmds;                                      //!< -- message used to read command inputs
+    std::string OutputDataString;                               //!< -- port to use for output data
+    uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
+    std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
+	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
+    double F_S[3];                                              //!< N  Computed force in str
+    double tau_S[3];                                            //!< N-m Computed torque in str
     
 private:
-    int64_t CmdsInMsgID;                           //!< -- MEssage ID for incoming data
-    int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
-    RWCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                      //!< -- Time for previous valid thruster firing
+    int64_t ConfigDataOutMsgID;
+    
+    int64_t CmdsInMsgID;                                        //!< -- MEssage ID for incoming data
+    int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
+    RWCmdStruct *IncomingCmdBuffer;                             //!< -- One-time allocation for savings
+    uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 };
 
 /*! @} */

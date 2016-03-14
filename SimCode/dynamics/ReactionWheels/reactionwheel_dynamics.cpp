@@ -25,6 +25,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  overriden by the user.*/
 ReactionWheelDynamics::ReactionWheelDynamics()
 {
+    this->ConfigDataOutMsgName = "reactionwheel_config_data_output";
+    this->ConfigDataOutMsgID = -1;
     CallCounts = 0;
     InputCmds = "reactionwheel_cmds";
     OutputDataString = "reactionwheel_output_states";
@@ -68,6 +70,10 @@ void ReactionWheelDynamics::SelfInit()
 	StateOutMsgID = SystemMessaging::GetInstance()->
 		CreateNewMessage(OutputDataString, sizeof(RWSpeedData), 
 			OutputBufferCount, "RWSpeedData", moduleID);
+    
+    ConfigDataOutMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(ConfigDataOutMsgName, sizeof(ReactionWheelData),
+                         OutputBufferCount, "RWConfigData", moduleID);
 
 }
 
@@ -108,6 +114,15 @@ void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 
 	SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
 		sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+    
+    std::vector<ReactionWheelConfigData> localOutput;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
+        memcpy(&localOutput[it - ReactionWheelData.begin()], &it, (4*3+10)*sizeof(double)+sizeof(bool));
+    }
+    
+    SystemMessaging::GetInstance()->WriteMessage(ConfigDataOutMsgID, CurrentClock,
+        sizeof(localOutput), reinterpret_cast<uint8_t*> (&localOutput), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
