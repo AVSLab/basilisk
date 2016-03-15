@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Structure used to define the output definition for attitude guidance*/
 typedef struct {
+    double timeTag;          /*!< [s]   Current vehicle time-tag associated with measurements*/
     double r_BN_N[3];        /*!< [m]   Current inertial spacecraft position vector in
                               inertial frame N components */
     double v_BN_N[3];        /*!< [m/s] Current inertial velocity of the spacecraft in

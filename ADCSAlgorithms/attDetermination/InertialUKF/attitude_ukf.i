@@ -17,5 +17,6 @@ namespace std {
 }
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/unscent_kalfilt.h"
+%include "../_GeneralModuleFiles/navStateOut.h"
 %include "attitude_ukf.h"
 

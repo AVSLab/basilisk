@@ -23,12 +23,7 @@
 #include "SimCode/Utilities/sys_model.h"
 #include "../_GeneralModuleFiles/unscent_kalfilt.h"
 #include "sensorInterfaces/STSensorData/stComm.h"
-
-typedef struct {
-    double TimeTag;          // s  Current Seconds elapsed since start
-    double MRP_BdyInrtl[3];   //-- Current NED2Bdy Quaternion est
-    double w_BdyInrtl_Bdy[3]; // -- Current estimated body rate
-}AttOutputStruct;
+#include "../_GeneralModuleFiles/navStateOut.h"
 
 
 class  STInertialUKF : public SysModel, public UnscentKalFilt {
@@ -71,7 +66,7 @@ public:
     double LastStTime;       // -- Last Accelerometer time-tag
     
     double CovarEst[6*6];   // -- Covariance estimate output from filter
-    AttOutputStruct localOutput; //! -- Current output state estimate
+    NavStateOut localOutput; //! -- Current output state estimate
     
     std::string stInputName; // -- Input message name for star tracker data
     uint64_t stInputID;  // -- Input port ID

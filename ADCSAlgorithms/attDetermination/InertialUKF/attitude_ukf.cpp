@@ -161,7 +161,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
         double BMatrix[3][3];
         double localMRPDer[3];
         BmatMRP(state.vec_vals, BMatrix);
-        m33MultV3(BMatrix, localOutput.w_BdyInrtl_Bdy, localMRPDer);
+        m33MultV3(BMatrix, localOutput.omega_BN_B, localMRPDer);
         v3Scale(0.25, localMRPDer, &(state.vec_vals[3]));
     }
     this->TimeUpdateFilter(stMeas.timeTag);
@@ -190,12 +190,12 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     
     MeasurementUpdate();
     memcpy(CovarEst, Covar.vec_vals, NumStates*NumStates*sizeof(double));
-    memcpy(localOutput.MRP_BdyInrtl, state.vec_vals, 3 * sizeof(double));
-    localOutput.TimeTag = TimeTag;
-    BinvMRP(localOutput.MRP_BdyInrtl, BMatInv);
-    m33MultV3(BMatInv, &(state.vec_vals[3]), localOutput.w_BdyInrtl_Bdy);
-    v3Scale(4.0, localOutput.w_BdyInrtl_Bdy, localOutput.w_BdyInrtl_Bdy);
-    WriteMessage(InertialUKFStateID, callTime, sizeof(AttOutputStruct), &localOutput,
+    memcpy(localOutput.sigma_BN, state.vec_vals, 3 * sizeof(double));
+    localOutput.timeTag = TimeTag;
+    BinvMRP(localOutput.sigma_BN, BMatInv);
+    m33MultV3(BMatInv, &(state.vec_vals[3]), localOutput.omega_BN_B);
+    v3Scale(4.0, localOutput.omega_BN_B, localOutput.omega_BN_B);
+    WriteMessage(InertialUKFStateID, callTime, sizeof(NavStateOut), &localOutput,
                  moduleID);
     memcpy(MRPPrevious, stMeas.MRP_BdyInrtl, 3*sizeof(double));
     return;
@@ -250,8 +250,8 @@ void STInertialUKF::SelfInit()
         ConvCounter = 0;
         ReInitFilter = false;
     }
-    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(AttOutputStruct), 
-                                          "AttOutputStruct", moduleID);
+    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavStateOut),
+                                          "NavStateOut", moduleID);
     return;
 }
 void STInertialUKF::CrossInit()
