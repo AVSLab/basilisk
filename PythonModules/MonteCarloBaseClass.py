@@ -239,7 +239,7 @@ class InertiaTensorDispersion:
         if self.bounds is None:
             self.bounds = ([-1.0, 1.0])
         if self.stdAngle is None:
-            self.stdAngle = 1.0
+            self.stdAngle = 0.0
 
     def generate(self, sim=None):
         if sim is None:
