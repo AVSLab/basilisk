@@ -67,9 +67,9 @@ void ThrusterDynamics::SelfInit()
     }
     IncomingCmdBuffer = new ThrustCmdStruct[ThrusterData.size()];
     
-    ConfigDataOutMsgID = SystemMessaging::GetInstance()->
-    CreateNewMessage(ConfigDataOutMsgName, sizeof(ThrusterData),
-                     OutputBufferCount, "ThrusterConfigData", moduleID);
+//    ConfigDataOutMsgID = SystemMessaging::GetInstance()->
+//    CreateNewMessage(ConfigDataOutMsgName, sizeof(ThrusterData),
+//                     OutputBufferCount, "ThrusterConfigData", moduleID);
     
 }
 
@@ -96,18 +96,18 @@ void ThrusterDynamics::CrossInit()
  */
 void ThrusterDynamics::WriteOutputMessages(uint64_t CurrentClock)
 {
-    std::vector<ThrusterTimePair>::iterator iter;
-    
-    std::vector<ThrusterConfigData>::iterator it;
-    std::vector<ThrusterConfigData> localOutput;
-    for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
-    {
-        memcpy(&localOutput[it - ThrusterData.begin()], &it, sizeof(it));
-        // int s = (3*3+4)*sizeof(double)+sizeof(ThrusterOperationData)+ sizeof(it->ThrusterOnRamp)+sizeof(it->ThrusterOffRamp);
-    }
-    
-    SystemMessaging::GetInstance()->WriteMessage(ConfigDataOutMsgID, CurrentClock,
-                                                 sizeof(localOutput), reinterpret_cast<uint8_t*> (&localOutput), moduleID);
+//    std::vector<ThrusterTimePair>::iterator iter;
+//    
+//    std::vector<ThrusterConfigData>::iterator it;
+//    std::vector<ThrusterConfigData> localOutput;
+//    for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
+//    {
+//        memcpy(&localOutput[it - ThrusterData.begin()], &it, sizeof(it));
+//        // int s = (3*3+4)*sizeof(double)+sizeof(ThrusterOperationData)+ sizeof(it->ThrusterOnRamp)+sizeof(it->ThrusterOffRamp);
+//    }
+//    
+//    SystemMessaging::GetInstance()->WriteMessage(ConfigDataOutMsgID, CurrentClock,
+//                                                 sizeof(localOutput), reinterpret_cast<uint8_t*> (&localOutput), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
