@@ -15,7 +15,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
 # Import some architectural stuff that we will probably always use
-import sys, os
+import sys
+import os
+import inspect
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+# This part definitely needs work.  Need to detect Basilisk somehow.
+sys.path.append(path + '/../../Basilisk/PythonModules')
+sys.path.append(path + '/../../Basilisk/modules')
 # Simulation base class is needed because we inherit from it
 import SimulationBaseClass
 import RigidBodyKinematics
@@ -36,6 +44,10 @@ import coarse_sun_sensor
 import imu_sensor
 import simple_nav
 import bore_ang_calc
+import clock_synch
+import reactionwheel_dynamics
+# import radiation_pressure
+import star_tracker
 # FSW algorithms that we want to call
 import cssComm
 import alg_contain
@@ -43,6 +55,7 @@ import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
 import imuComm
+import stComm
 import MRP_Steering
 import sunSafeACS
 import attMnvrPoint
@@ -50,7 +63,9 @@ import dvAttEffect
 import dvGuidance
 import attRefGen
 import celestialBodyPoint
-import clock_synch
+import rwNullSpace
+import thrustRWDesat
+import attitude_ukf
 
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
@@ -66,15 +81,18 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
-        self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)))
-        self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)))
-        self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)))
-        self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)))
+        self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)), 2000)
+        self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)), 1000)
+        self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)), 999)
+        self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)), 106)
+        self.fswProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)), 105)
+        self.fswProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)), 104)
+        self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
+        self.fswProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)), 103)
+        self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
+        self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
+        self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
+        self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
         self.LocalConfigData = vehicleConfigData.vehicleConfigData()
         self.SpiceObject = spice_interface.SpiceInterface()
         self.InitCSSHeads()
@@ -83,33 +101,39 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
         self.DVThrusterDynObject = thruster_dynamics.ThrusterDynamics()
         self.VehDynObject = six_dof_eom.SixDofEOM()
+        # self.radiationPressure = radiation_pressure.RadiationPressure()
         self.VehOrbElemObject = orb_elem_convert.OrbElemConvert()
         self.SimpleNavObject = simple_nav.SimpleNav()
         self.solarArrayBore = bore_ang_calc.BoreAngCalc()
         self.highGainBore = bore_ang_calc.BoreAngCalc()
         self.instrumentBore = bore_ang_calc.BoreAngCalc()
         self.clockSynchData = clock_synch.ClockSynch()
+        self.rwDynObject = reactionwheel_dynamics.ReactionWheelDynamics()
+        self.trackerA = star_tracker.StarTracker()
         self.InitAllDynObjects()
         self.disableTask("SynchTask")
         self.AddModelToTask("SynchTask", self.clockSynchData)
-        self.AddModelToTask("DynamicsTask", self.SpiceObject)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadC)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadD)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadA)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadB)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadC)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadD)
-        self.AddModelToTask("DynamicsTask", self.IMUSensor)
-        self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject)
-        self.AddModelToTask("DynamicsTask", self.DVThrusterDynObject)
-        self.AddModelToTask("DynamicsTask", self.VehDynObject)
-        self.AddModelToTask("DynamicsTask", self.VehOrbElemObject)
-        self.AddModelToTask("DynamicsTask", self.SimpleNavObject)
-        self.AddModelToTask("DynamicsTask", self.solarArrayBore)
-        self.AddModelToTask("DynamicsTask", self.instrumentBore)
-        self.AddModelToTask("DynamicsTask", self.highGainBore)
+        self.AddModelToTask("DynamicsTask", self.SpiceObject, None, 202)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA, None, 101)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB, None, 102)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadC, None, 103)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadD, None, 104)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadA, None, 105)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadB, None, 106)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadC, None, 107)
+        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadD, None, 108)
+        self.AddModelToTask("DynamicsTask", self.IMUSensor, None, 100)
+        # self.AddModelToTask("DynamicsTask", self.radiationPressure, None, 303)
+        self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject, None, 302)
+        self.AddModelToTask("DynamicsTask", self.DVThrusterDynObject, None, 301)
+        self.AddModelToTask("DynamicsTask", self.rwDynObject, None, 300)
+        self.AddModelToTask("DynamicsTask", self.VehDynObject, None, 201)
+        self.AddModelToTask("DynamicsTask", self.VehOrbElemObject, None, 200)
+        self.AddModelToTask("DynamicsTask", self.SimpleNavObject, None, 109)
+        self.AddModelToTask("DynamicsTask", self.solarArrayBore, None, 110)
+        self.AddModelToTask("DynamicsTask", self.instrumentBore, None, 111)
+        self.AddModelToTask("DynamicsTask", self.highGainBore, None, 112)
+        self.AddModelToTask("DynamicsTask", self.trackerA, None, 113)
 
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
         self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig,
@@ -122,6 +146,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                   imuComm.Update_imuProcessTelem, imuComm.SelfInit_imuProcessTelem,
                                                   imuComm.CrossInit_imuProcessTelem)
         self.IMUCommWrap.ModelTag = "imuSensorDecode"
+
+        self.STCommData = stComm.STConfigData()
+        self.STCommWrap = alg_contain.AlgContain(self.STCommData,
+                                                 stComm.Update_stProcessTelem, stComm.SelfInit_stProcessTelem,
+                                                 stComm.CrossInit_stProcessTelem)
+        self.STCommWrap.ModelTag = "stSensorDecode"
 
         self.CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
         self.CSSWlsWrap = alg_contain.AlgContain(self.CSSWlsEstFSWConfig,
@@ -149,10 +179,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                      sunSafeACS.CrossInit_sunSafeACS)
         self.sunSafeACSWrap.ModelTag = "sunSafeACS"
 
+        self.AttUKF = attitude_ukf.STInertialUKF()
+
         self.attMnvrPointData = attRefGen.attRefGenConfig()
         self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
                                                        attRefGen.Update_attRefGen, attRefGen.SelfInit_attRefGen,
-                                                       attRefGen.CrossInit_attRefGen)
+                                                       attRefGen.CrossInit_attRefGen, attRefGen.Reset_attRefGen)
         self.attMnvrPointWrap.ModelTag = "attMnvrPoint"
 
         self.MRP_SteeringRWAData = MRP_Steering.MRP_SteeringConfig()
@@ -202,36 +234,66 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                     celestialBodyPoint.CrossInit_celestialBodyPoint)
         self.marsPointWrap.ModelTag = "marsPoint"
 
+        self.RWAMappingData = dvAttEffect.dvAttEffectConfig()
+        self.RWAMappingDataWrap = alg_contain.AlgContain(self.RWAMappingData,
+                                                         dvAttEffect.Update_dvAttEffect,
+                                                         dvAttEffect.SelfInit_dvAttEffect,
+                                                         dvAttEffect.CrossInit_dvAttEffect)
+        self.RWAMappingDataWrap.ModelTag = "RWAMappingData"
+
+        self.RWANullSpaceData = rwNullSpace.rwNullSpaceConfig()
+        self.RWANullSpaceDataWrap = alg_contain.AlgContain(self.RWANullSpaceData,
+                                                           rwNullSpace.Update_rwNullSpace,
+                                                           rwNullSpace.SelfInit_rwNullSpace,
+                                                           rwNullSpace.CrossInit_rwNullSpace)
+        self.RWANullSpaceDataWrap.ModelTag = "RWNullSpace"
+
+        self.thrustRWADesatData = thrustRWDesat.thrustRWDesatConfig()
+        self.thrustRWADesatDataWrap = alg_contain.AlgContain(self.thrustRWADesatData,
+                                                             thrustRWDesat.Update_thrustRWDesat,
+                                                             thrustRWDesat.SelfInit_thrustRWDesat,
+                                                             thrustRWDesat.CrossInit_thrustRWDesat,
+                                                             thrustRWDesat.Reset_thrustRWDesat)
+        self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
+
         self.InitAllFSWObjects()
 
-        self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig)
-        self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData)
-        self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig)
+        self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
+        self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
+        self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig, 8)
         self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap,
-                            self.sunSafePointData)
+                            self.sunSafePointData, 7)
         self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap,
-                            self.MRP_SteeringSafeData)
+                            self.MRP_SteeringSafeData, 6)
         self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap,
-                            self.sunSafeACSData)
+                            self.sunSafeACSData, 5)
+
+        self.AddModelToTask("sensorProcessing", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
+        self.AddModelToTask("sensorProcessing", self.IMUCommWrap, self.IMUCommData, 10)
+        self.AddModelToTask("sensorProcessing", self.STCommWrap, self.STCommData, 11)
+
+        self.AddModelToTask("attitudeNav", self.AttUKF, None, 10)
 
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap,
-                            self.attMnvrPointData)
+                            self.attMnvrPointData, 10)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.MRP_SteeringRWAWrap,
-                            self.MRP_SteeringRWAData)
-        self.AddModelToTask("vehicleAttMnvrFSWTask", self.sunSafeACSWrap,
-                            self.sunSafeACSData)
+                            self.MRP_SteeringRWAData, 9)
+        self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWAMappingDataWrap,
+                            self.RWAMappingData, 8)
+        self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWANullSpaceDataWrap,
+                            self.RWANullSpaceData, 7)
 
         self.AddModelToTask("vehicleDVPrepFSWTask", self.dvGuidanceWrap,
                             self.dvGuidanceData)
 
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvGuidanceWrap,
-                            self.dvGuidanceData)
+                            self.dvGuidanceData, 10)
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrPointWrap,
-                            self.attMnvrPointData)
+                            self.attMnvrPointData, 9)
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.MRP_SteeringMOIWrap,
-                            self.MRP_SteeringMOIData)
+                            self.MRP_SteeringMOIData, 8)
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvAttEffectWrap,
-                            self.dvAttEffectData)
+                            self.dvAttEffectData, 7)
 
         self.AddModelToTask("sunPointTask", self.sunPointWrap,
                             self.sunPointData)
@@ -242,32 +304,52 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("marsPointTask", self.marsPointWrap,
                             self.marsPointData)
 
+        self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap,
+                            self.thrustRWADesatData)
+
         self.fswProc.disableAllTasks()
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sunSafeFSWTask')"])
         self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('sunPointTask')",
-                             "self.enableTask('vehicleAttMnvrFSWTask')", "self.attMnvrPointData.mnvrActive = False"])
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('sunPointTask')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')", "self.ResetTask('vehicleAttMnvrFSWTask')"])
         self.createNewEvent("initiateEarthPoint", int(1E9), True, ["self.modeRequest == 'earthPoint'"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.enableTask('earthPointTask')", "self.attMnvrPointData.mnvrActive = False"])
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')",
+                             "self.enableTask('earthPointTask')", "self.ResetTask('vehicleAttMnvrFSWTask')"])
         self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.enableTask('marsPointTask')", "self.attMnvrPointData.mnvrActive = False",
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')",
+                             "self.enableTask('marsPointTask')", "self.ResetTask('vehicleAttMnvrFSWTask')",
                              "self.attMnvrPointData.mnvrComplete = False",
                              "self.activateNextRaster()", "self.setEventActivity('completeRaster', True)"])
         self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.enableTask('vehicleDVPrepFSWTask')", "self.attMnvrPointData.mnvrActive = False",
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')",
+                             "self.enableTask('vehicleDVPrepFSWTask')", "self.ResetTask('vehicleAttMnvrFSWTask')",
                              "self.setEventActivity('startDV', True)"])
         self.createNewEvent("initiateDVMnvr", int(1E9), True, ["self.modeRequest == 'DVMnvr'"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleDVMnvrFSWTask')",
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')", "self.enableTask('vehicleDVMnvrFSWTask')",
                              "self.setEventActivity('completeDV', True)"])
+        self.createNewEvent("initiateRWADesat", int(1E9), True, ["self.modeRequest == 'rwaDesat'"],
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('sunPointTask')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')", "self.enableTask('RWADesatTask')",
+                             "self.ResetTask('RWADesatTask')"])
         self.createNewEvent("completeDV", int(1E8), False, ["self.dvGuidanceData.burnComplete != 0"],
-                            ["self.fswProc.disableAllTasks()", "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.attMnvrPointData.mnvrActive = False",
+                            ["self.fswProc.disableAllTasks()", "self.enableTask('sensorProcessing')",
+                             "self.enableTask('attitudeNav')",
+                             "self.enableTask('vehicleAttMnvrFSWTask')",
+                             "self.ResetTask('vehicleAttMnvrFSWTask')",
                              "self.setEventActivity('initiateSunPoint', True)", "self.modeRequest = 'sunPoint'"])
         self.createNewEvent("startDV", int(1E8), False,
                             ["self.dvGuidanceData.burnStartTime <= self.TotalSim.CurrentNanos"],
@@ -389,6 +471,71 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.IMUSensor.accelLSB = 2.77E-4 * 9.80665
         self.IMUSensor.gyroLSB = 8.75E-3 * math.pi / 180.0
 
+    def SetReactionWheelDynObject(self):
+        rwMaxTorque = 0.2
+        rwMinTorque = 0.001  # arbitrary
+        rwStaticFrictionTorque = 0.0005  # arbitrary
+        rwStaticImbalance = 7.0E-6  # kg-m, based on rough industry reference
+        rwDynamicImbalance = 20.0E-7  # kg-m^2, based on rough industry reference
+        rwJs = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        self.rwDynObject.ModelTag = "ReactionWheels"
+        RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
+        SimulationBaseClass.SetCArray([0.8, 0.8, 1.79070], 'double', RW1.r_S)
+        SimulationBaseClass.SetCArray(
+            [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+             -math.cos(rwElAngle)], 'double', RW1.gsHat_S)
+        RW1.u_max = rwMaxTorque
+        RW1.u_min = rwMinTorque
+        RW1.u_f = rwStaticFrictionTorque
+        RW1.Js = rwJs
+        RW1.U_s = rwStaticImbalance
+        RW1.U_d = rwDynamicImbalance
+        self.rwDynObject.AddReactionWheel(RW1)
+
+        rwClockAngle += 90.0 * math.pi / 180.0
+        RW2 = reactionwheel_dynamics.ReactionWheelConfigData()
+        SimulationBaseClass.SetCArray([0.8, -0.8, 1.79070], 'double', RW2.r_S)
+        SimulationBaseClass.SetCArray(
+            [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+             -math.cos(rwElAngle)], 'double', RW2.gsHat_S)
+        RW2.u_max = rwMaxTorque
+        RW2.u_min = rwMinTorque
+        RW2.u_f = rwStaticFrictionTorque
+        RW2.Js = rwJs
+        RW2.U_s = rwStaticImbalance
+        RW2.U_d = rwDynamicImbalance
+        self.rwDynObject.AddReactionWheel(RW2)
+
+        rwClockAngle += 90.0 * math.pi / 180.0
+        RW3 = reactionwheel_dynamics.ReactionWheelConfigData()
+        SimulationBaseClass.SetCArray([-0.8, -0.8, 1.79070], 'double', RW3.r_S)
+        SimulationBaseClass.SetCArray(
+            [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+             -math.cos(rwElAngle)], 'double', RW3.gsHat_S)
+        RW3.u_max = rwMaxTorque
+        RW3.u_min = rwMinTorque
+        RW3.u_f = rwStaticFrictionTorque
+        RW3.Js = rwJs
+        RW3.U_s = rwStaticImbalance
+        RW3.U_d = rwDynamicImbalance
+        self.rwDynObject.AddReactionWheel(RW3)
+
+        rwClockAngle += 90.0 * math.pi / 180.0
+        RW4 = reactionwheel_dynamics.ReactionWheelConfigData()
+        SimulationBaseClass.SetCArray([-0.8, 0.8, 1.79070], 'double', RW4.r_S)
+        SimulationBaseClass.SetCArray(
+            [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+             -math.cos(rwElAngle)], 'double', RW4.gsHat_S)
+        RW4.u_max = rwMaxTorque
+        RW4.u_min = rwMinTorque
+        RW4.u_f = rwStaticFrictionTorque
+        RW4.Js = rwJs
+        RW4.U_s = rwStaticImbalance
+        RW4.U_d = rwDynamicImbalance
+        self.rwDynObject.AddReactionWheel(RW4)
+
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
         Thruster1 = thruster_dynamics.ThrusterConfigData()
@@ -448,9 +595,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
         self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
         allThrusters = []
-        dvRadius = 0.256
-        DVIsp = 226.7
-        maxThrust = 111.33
+        dvRadius = 0.4
+        DVIsp = 200.0
+        maxThrust = 111.0
         minOnTime = 0.020
         i = 0
         angleInc = math.radians(60.0)
@@ -458,7 +605,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             newThruster = thruster_dynamics.ThrusterConfigData()
             newThruster.ThrusterLocation = thruster_dynamics.DoubleVector(
                 [dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0])
-            newThruster.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, -1.0])
+            newThruster.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, 1.0])
             newThruster.MaxThrust = maxThrust
             newThruster.MinOnTime = minOnTime
             newThruster.steadyIsp = DVIsp
@@ -606,10 +753,20 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.VehDynObject.AddGravityBody(self.EarthGravBody)
         self.VehDynObject.AddGravityBody(self.MarsGravBody)
         # Here is where the thruster dynamics are attached/scheduled to the overall
-        # vehicle dynamics.  Anything that is going to impact the dynamics of the vehicle
+        # vehicle dynamics.  Anything that is going to impact the dynamics of the
+        # vehicle
         # should be one of these body effectors I think.
         self.VehDynObject.addThrusterSet(self.ACSThrusterDynObject)
         self.VehDynObject.addThrusterSet(self.DVThrusterDynObject)
+        # self.VehDynObject.addBodyEffector(self.radiationPressure)
+        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
+
+    def setRadiationPressure(self):
+        self.radiationPressure.ModelTag = "RadiationPressureDynamics"
+        self.radiationPressure.m_srpDataPath = self.simBasePath + 'External/RadiationPressureData/lookup_EMM_boxAndWing.txt'
+        self.radiationPressure.setUseCannonballModel(False)
+        self.radiationPressure.m_area = 4.0  # m^2
+        self.radiationPressure.m_coeffReflection = 1.2  # no units
 
     def SetVehOrbElemObject(self):
         self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
@@ -648,19 +805,27 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         PMatrix[3 * 18 + 3] = PMatrix[4 * 18 + 4] = PMatrix[5 * 18 + 5] = 0.05  # Velocity
         PMatrix[6 * 18 + 6] = PMatrix[7 * 18 + 7] = PMatrix[
             8 * 18 + 8] = 1.0 / 3600.0 * math.pi / 180.0  # Attitude (sigma!)
-        PMatrix[9 * 18 + 9] = PMatrix[10 * 18 + 10] = PMatrix[11 * 18 + 11] = 0.001 * math.pi / 180.0  # Attitude rate
+        PMatrix[9 * 18 + 9] = PMatrix[10 * 18 + 10] = PMatrix[11 * 18 + 11] = 0.0001 * math.pi / 180.0  # Attitude rate
         PMatrix[12 * 18 + 12] = PMatrix[13 * 18 + 13] = PMatrix[14 * 18 + 14] = 0.1 * math.pi / 180.0  # Sun vector
-        PMatrix[15 * 18 + 15] = PMatrix[16 * 18 + 16] = PMatrix[17 * 18 + 17] = 0.003;  # Accumulated DV
+        PMatrix[15 * 18 + 15] = PMatrix[16 * 18 + 16] = PMatrix[17 * 18 + 17] = 0.003  # Accumulated DV
         errorBounds = [1000.0, 1000.0, 1000.0,  # Position
                        1.0, 1.0, 1.0,  # Velocity
                        1.6E-2 * math.pi / 180.0, 1.6E-2 * math.pi / 180.0, 1.6E-2 * math.pi / 180.0,  # Attitude
-                       0.001 * math.pi / 180.0, 0.001 * math.pi / 180.0, 0.001 * math.pi / 180.0,  # Attitude Rate
+                       0.0004 * math.pi / 180.0, 0.0004 * math.pi / 180.0, 0.0004 * math.pi / 180.0,  # Attitude Rate
                        5.0 * math.pi / 180.0, 5.0 * math.pi / 180.0, 5.0 * math.pi / 180.0,  # Sun vector
                        0.053, 0.053, 0.053]  # Accumulated DV
         self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
         self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
         self.SimpleNavObject.crossTrans = True
         self.SimpleNavObject.crossAtt = False
+
+    def SetStarTrackerData(self):
+        self.trackerA.ModelTag = "StarTrackerA"
+        PMatrix = [0.0] * 3 * 3
+        PMatrix[0 * 3 + 0] = PMatrix[1 * 3 + 1] = PMatrix[2 * 3 + 2] = 0.5 / 3600.0 * math.pi / 180.0  # 20 arcsecs?
+        errorBounds = [5.0 / 3600 * math.pi / 180.0] * 3
+        self.trackerA.walkBounds = sim_model.DoubleVector(errorBounds)
+        self.trackerA.PMatrix = sim_model.DoubleVector(PMatrix)
 
     def SetclockSynchData(self):
         self.clockSynchData.ModelTag = "ClockSynchModel"
@@ -684,16 +849,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                       self.CSSDecodeFSWConfig.KellyCheby)
         CurrentName = cssComm.SensorMsgNameCarrier()
         # Arrays of c-strings are hard for SWIG/python.  Required a bit of care.
-        SensorListUse = [
-            "coarse_sun_data_pyramid1_headA",
-            "coarse_sun_data_pyramid1_headB",
-            "coarse_sun_data_pyramid1_headC",
-            "coarse_sun_data_pyramid1_headD",
-            "coarse_sun_data_pyramid2_headA",
-            "coarse_sun_data_pyramid2_headB",
-            "coarse_sun_data_pyramid2_headC",
-            "coarse_sun_data_pyramid2_headD"
-        ]
+        SensorListUse = ["coarse_sun_data_pyramid1_headA",
+                         "coarse_sun_data_pyramid1_headB",
+                         "coarse_sun_data_pyramid1_headC",
+                         "coarse_sun_data_pyramid1_headD",
+                         "coarse_sun_data_pyramid2_headA",
+                         "coarse_sun_data_pyramid2_headB",
+                         "coarse_sun_data_pyramid2_headC",
+                         "coarse_sun_data_pyramid2_headD"]
 
         i = 0
         for Name in SensorListUse:
@@ -710,6 +873,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(platform2str, 'double',
                                       self.IMUCommData.platform2StrDCM)
 
+    def SetSTCommData(self):
+        self.STCommData.InputDataName = "star_tracker_state"
+        self.STCommData.InputPropsName = "adcs_config_data"
+        self.STCommData.OutputDataName = "parsed_st_data"
+        platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        SimulationBaseClass.SetCArray(platform2str, 'double',
+                                      self.STCommData.T_StrPlatform)
+
     def SetCSSWlsEstFSWConfig(self):
         self.CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
         self.CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
@@ -719,16 +890,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         CSSConfigElement = cssWlsEst.SingleCSSConfig()
         CSSConfigElement.CBias = 1.0
         CSSConfigElement.cssNoiseStd = 0.2
-        CSSOrientationList = [
-            [0.70710678118654746, -0.5, 0.5],
-            [0.70710678118654746, -0.5, -0.5],
-            [0.70710678118654746, 0.5, -0.5],
-            [0.70710678118654746, 0.5, 0.5],
-            [-0.70710678118654746, 0, 0.70710678118654757],
-            [-0.70710678118654746, 0.70710678118654757, 0.0],
-            [-0.70710678118654746, 0, -0.70710678118654757],
-            [-0.70710678118654746, -0.70710678118654757, 0.0],
-        ]
+        CSSOrientationList = [[0.70710678118654746, -0.5, 0.5],
+                              [0.70710678118654746, -0.5, -0.5],
+                              [0.70710678118654746, 0.5, -0.5],
+                              [0.70710678118654746, 0.5, 0.5],
+                              [-0.70710678118654746, 0, 0.70710678118654757],
+                              [-0.70710678118654746, 0.70710678118654757, 0.0],
+                              [-0.70710678118654746, 0, -0.70710678118654757],
+                              [-0.70710678118654746, -0.70710678118654757, 0.0], ]
         i = 0
         for CSSHat in CSSOrientationList:
             SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
@@ -745,11 +914,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                       self.sunSafePointData.sHatBdyCmd)
 
     def SetMRP_Steering(self):
-        self.MRP_SteeringSafeData.K1 = 0.15  # rad/sec
+        self.MRP_SteeringSafeData.omega_max = 0.4 * (math.pi / 180.)
+        self.MRP_SteeringSafeData.K1 = 0.05
         self.MRP_SteeringSafeData.K3 = 1.0  # rad/sec
-        self.MRP_SteeringSafeData.omega_max = 1.5 * (math.pi / 180.)  # rad/sec
         self.MRP_SteeringSafeData.P = 150.0  # N*m*sec
-        self.MRP_SteeringSafeData.Ki = -1.0  # N*m  - negative values turn off the integral feedback
+        self.MRP_SteeringSafeData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringSafeData.integralLimit = 0.15  # rad
         self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
         self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
@@ -787,19 +956,36 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.K3 = 1.0  # rad/sec
         self.MRP_SteeringRWAData.omega_max = 1.5 * (math.pi / 180.)  # rad/sec
         self.MRP_SteeringRWAData.P = 150.0  # N*m*sec
-        self.MRP_SteeringRWAData.Ki = -1.0  # N*m  - negative values turn off the integral feedback
+        self.MRP_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringRWAData.integralLimit = 0.0  # rad
+        self.MRP_SteeringRWAData.numRWAs = 4
+        RWAGsMatrix = []
+        RWAJsList = []
+        i = 0
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        RWAlignScale = 1.0 / 25.0
+        while (i < self.MRP_SteeringRWAData.numRWAs):
+            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
+            rwClockAngle += 90.0 * math.pi / 180.0
+            RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
+            i += 1
+        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.MRP_SteeringRWAData.GsMatrix)
+        SimulationBaseClass.SetCArray(RWAJsList, 'double', self.MRP_SteeringRWAData.JsList)
+
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
         self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringRWAData.inputNavName = "simple_nav_output"
         self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
+        self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
 
     def SetMRP_SteeringMOI(self):
-        self.MRP_SteeringMOIData.K1 = 0.9  # rad/sec
+        self.MRP_SteeringMOIData.K1 = 0.5  # rad/sec
         self.MRP_SteeringMOIData.K3 = 3.0  # rad/sec
         self.MRP_SteeringMOIData.omega_max = 1.5 * (math.pi / 180.)  # rad/sec
-        self.MRP_SteeringMOIData.P = 200.0  # N*m*sec
-        self.MRP_SteeringMOIData.Ki = 11.7  # N*m  - negative values turn off the integral feedback
+        self.MRP_SteeringMOIData.P = 100.0  # N*m*sec
+        self.MRP_SteeringMOIData.Ki = 11.7  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringMOIData.integralLimit = 0.5  # rad
         self.MRP_SteeringMOIData.inputGuidName = "nom_att_guid_out"
         self.MRP_SteeringMOIData.inputVehicleConfigDataName = "adcs_config_data"
@@ -831,15 +1017,63 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         newThrGroup.outputDataName = "dv_thruster_cmds"
         matMult = 0.7
-        onTimeMap = [0.0, 0.1 * matMult, 0.0,
-                     -0.0866 * matMult, 0.05 * matMult, 0.0,
-                     -0.0866 * matMult, -0.05 * matMult, 0.0,
-                     0.0, -0.1 * matMult, 0.0,
+        onTimeMap = [0.0, -0.1 * matMult, 0.0,
                      0.0866 * matMult, -0.05 * matMult, 0.0,
-                     0.0866 * matMult, 0.05 * matMult, 0.0]
+                     0.0866 * matMult, 0.05 * matMult, 0.0,
+                     0.0, 0.1 * matMult, 0.0,
+                     -0.0866 * matMult, 0.05 * matMult, 0.0,
+                     -0.0866 * matMult, -0.05 * matMult, 0.0]
         SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
         dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
                                              newThrGroup)
+
+    def SetRWAMappingData(self):
+        self.RWAMappingData.inputControlName = "controlTorqueRaw"
+        self.RWAMappingData.numThrGroups = 1
+        newThrGroup = dvAttEffect.ThrustGroupData()
+        newThrGroup.outputDataName = "reactionwheel_cmds_raw"
+        newThrGroup.minThrustRequest = -10.0
+        newThrGroup.numEffectors = 4
+        newThrGroup.maxNumCmds = 4
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        onTimeMap = [math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
+                     math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
+                     math.cos(rwElAngle),
+                     math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
+                     math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
+                     math.cos(rwElAngle),
+                     math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
+                     math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
+                     math.cos(rwElAngle),
+                     math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
+                     math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
+                     math.cos(rwElAngle)]
+        SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
+        dvAttEffect.ThrustGroupArray_setitem(self.RWAMappingData.thrGroups, 0,
+                                             newThrGroup)
+
+    def SetRWANullSpaceData(self):
+        self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"
+        self.RWANullSpaceData.inputRWSpeeds = "reactionwheel_output_states"
+        self.RWANullSpaceData.outputControlName = "reactionwheel_cmds"
+        self.RWANullSpaceData.numWheels = 4
+        self.RWANullSpaceData.OmegaGain = 0.002
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        GsMatrixList = [-math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
+                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
+                        -math.cos(rwElAngle),
+                        -math.cos(rwElAngle),
+                        -math.cos(rwElAngle),
+                        -math.cos(rwElAngle)]
+        SimulationBaseClass.SetCArray(GsMatrixList, 'double', self.RWANullSpaceData.GsMatrix)
 
     def SetdvGuidance(self):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
@@ -847,7 +1081,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.dvGuidanceData.inputMassPropName = "adcs_config_data"
         desiredBurnDir = [1.0, 0.0, 0.0]
         desiredOffAxis = [0.0, 1.0, 0.0]
-        Tburn2Body = [0.0, 0.0, 1.0, 0.0, 1.0, 0.0, -1.0, 0.0, 0.0]
+        Tburn2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
         SimulationBaseClass.SetCArray(desiredBurnDir, 'double', self.dvGuidanceData.dvInrtlCmd)
         SimulationBaseClass.SetCArray(Tburn2Body, 'double', self.dvGuidanceData.Tburn2Bdy)
         SimulationBaseClass.SetCArray(desiredOffAxis, 'double', self.dvGuidanceData.dvRotAxis)
@@ -880,23 +1114,82 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.baseMarsTrans = TmarsVec2Body
         SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
+    def SetthrustRWDesat(self):
+        self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
+        self.thrustRWADesatData.outputThrName = "acs_thruster_cmds"
+        self.thrustRWADesatData.maxFiring = 0.5
+        self.thrustRWADesatData.numThrusters = 8
+        self.thrustRWADesatData.numRWAs = 4
+        self.thrustRWADesatData.thrFiringPeriod = 1.9
+        RWAlignScale = 1.0 / 25.0
+        self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
+        RWAGsMatrix = []
+        i = 0
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        while (i < self.thrustRWADesatData.numRWAs):
+            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle) * RWAlignScale,
+                                -math.sin(rwElAngle) * math.cos(rwClockAngle) * RWAlignScale,
+                                -math.cos(rwElAngle) * RWAlignScale])
+            rwClockAngle += 90.0 * math.pi / 180.0
+            i += 1
+        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.thrustRWADesatData.rwAlignMap)
+        thrustDirMatrix = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0,
+                           1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0]
+        SimulationBaseClass.SetCArray(thrustDirMatrix, 'double', self.thrustRWADesatData.thrAlignMap)
+        thrTorqMap = [0.0, 1.0, 0.7,
+                      -1.0, 0.0, -0.7,
+                      1.0, 0.0, -0.7,
+                      0.0, -1.0, 0.7,
+                      0.0, -1.0, 0.7,
+                      1.0, 0.0, -0.7,
+                      -1.0, 0.0, -0.7,
+                      0.0, 1.0, 0.7]
+        SimulationBaseClass.SetCArray(thrTorqMap, 'double', self.thrustRWADesatData.thrTorqueMap)
+
+    def SetAttUKF(self):
+        self.AttUKF.ModelTag = "AttitudeUKF"
+        initialCovariance = [0.0] * 6 * 6
+        initialCovariance[0 * 6 + 0] = initialCovariance[1 * 6 + 1] = initialCovariance[2 * 6 + 2] = 0.02
+        initialCovariance[3 * 6 + 3] = initialCovariance[4 * 6 + 4] = initialCovariance[5 * 6 + 5] = 0.0006
+        SimulationBaseClass.SetCArray(initialCovariance, 'double', self.AttUKF.CovarInit)
+        obsNoise = [0.0] * 6 * 6
+        obsNoise[0 * 6 + 0] = obsNoise[1 * 6 + 1] = obsNoise[2 * 6 + 2] = 0.062
+        obsNoise[3 * 6 + 3] = obsNoise[4 * 6 + 4] = obsNoise[5 * 6 + 5] = 0.008
+        SimulationBaseClass.SetCArray(obsNoise, 'double', self.AttUKF.QStObs)
+        Qnoise = [0.0] * 6 * 6
+        Qnoise[0 * 6 + 0] = Qnoise[1 * 6 + 1] = Qnoise[2 * 6 + 2] = 0.00002
+        Qnoise[3 * 6 + 3] = Qnoise[4 * 6 + 4] = Qnoise[5 * 6 + 5] = 0.002
+        SimulationBaseClass.SetCArray(Qnoise, 'double', self.AttUKF.QNoiseInit)
+        self.AttUKF.stInputName = "parsed_st_data"
+        self.AttUKF.InertialUKFStateName = "attitude_filter_state"
+        self.AttUKF.alpha = 0.1
+        self.AttUKF.beta = 2.1
+        self.AttUKF.kappa = 2.0
+        self.AttUKF.ReInitFilter = True
+        self.AttUKF.initToMeas = True
+
     def InitAllDynObjects(self):
         self.SetSpiceObject()
         self.SetIMUSensor()
         self.SetACSThrusterDynObject()
         self.SetDVThrusterDynObject()
         self.SetVehDynObject()
+        # self.setRadiationPressure()
         self.SetVehOrbElemObject()
         self.SetSimpleNavObject()
         self.SetsolarArrayBore()
         self.SetinstrumentBore()
         self.SethighGainBore()
         self.SetclockSynchData()
+        self.SetReactionWheelDynObject()
+        self.SetStarTrackerData()
 
     def InitAllFSWObjects(self):
         self.SetLocalConfigData()
         self.SetCSSDecodeFSWConfig()
         self.SetIMUCommData()
+        self.SetSTCommData()
         self.SetCSSWlsEstFSWConfig()
         self.SetsunSafePoint()
         self.SetMRP_Steering()
@@ -909,6 +1202,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetsunPoint()
         self.SetearthPoint()
         self.SetmarsPoint()
+        self.SetRWAMappingData()
+        self.SetRWANullSpaceData()
+        self.SetthrustRWDesat()
+        self.SetAttUKF()
 
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):
@@ -920,39 +1217,42 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 #   NoDotName = NoDotName.join(SplitName)
 #   NoDotName = NoDotName.translate(None, '[]')
 #   #if SplitName[0] in self.NameReplace:
-#   #   LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+#   # LogName = self.NameReplace[SplitName[0]] + '.' + Subname
 #   if(VarName not in self.VarLogList):
 #      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += '   return self.'+ VarName
+#      RefFunctionString += ' return self.'+ VarName
 #      exec(RefFunctionString)
 #      methodHandle = eval('Get' + NoDotName)
-#      self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName, LogPeriod,
+#      self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName,
+#      LogPeriod,
 #         methodHandle )
 #
-# def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
+# def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0,
+# LogPeriod=0):
 #   SplitName = VarName.split('.')
 #   Subname = '.'
 #   Subname = Subname.join(SplitName[1:])
 #   NoDotName = ''
-#   NoDotName = NoDotName.join(SplitName) 
+#   NoDotName = NoDotName.join(SplitName)
 #   NoDotName = NoDotName.translate(None, '[]')
 #   #LogName = self.NameReplace[SplitName[0]] + '.' + Subname
 #   if(VarName in self.VarLogList):
 #      return
 #   if(type(eval('self.'+VarName)).__name__ == 'SwigPyObject'):
 #      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += '   return ['
+#      RefFunctionString += ' return ['
 #      LoopTerminate = False
 #      i=0
 #      while not LoopTerminate:
 #         RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
-#         RefFunctionString += 'self.'+VarName + ', ' + str(StartIndex + i) + '),'
-#         i+=1 
+#         RefFunctionString += 'self.'+VarName + ', ' + str(StartIndex + i) +
+#         '),'
+#         i+=1
 #         if(i > StopIndex-StartIndex):
 #            LoopTerminate = True
 #   else:
 #      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += '   return ['
+#      RefFunctionString += ' return ['
 #      LoopTerminate = False
 #      i=0
 #      while not LoopTerminate:
@@ -963,9 +1263,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 #   RefFunctionString = RefFunctionString[:-1] + ']'
 #   exec(RefFunctionString)
 #   methodHandle = eval('Get' + NoDotName)
-#   self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName, LogPeriod,
+#   self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName,
+#   LogPeriod,
 #      methodHandle, StopIndex - StartIndex+1)
-
 def LoadGravFromFile(FileName, GravBody, JParamsSelect):
     csvfile = open(FileName, 'rb')
     csvreader = csv.reader(csvfile)
@@ -975,6 +1275,7 @@ def LoadGravFromFile(FileName, GravBody, JParamsSelect):
     for row in csvreader:
         if (FirstLine == True):
             GravBody.mu = float(row[1])
+            GravBody.radEquator = float(row[0])
             FirstLine = False
         elif (int(row[0]) == JParamsSelect[NextJindex]):
             LocalJParam = -math.sqrt(2 * JParamsSelect[NextJindex] + 1) * float(row[2])
