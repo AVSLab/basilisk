@@ -870,10 +870,10 @@ void SixDofEOM::integrateState(double CurrentTime)
     double sigmaLoc[3];
     double BN[3][3];
     double gsHat_B[3];                       /* spin axis in body frame */
-    double intermediate_vector[3];           /* intermediate vector needed for calculation */
-    double omega_BLoc[3];                    /* local angular velocity vector in body frame */
-    double rws_Js;                           /* Spin Axis Inertias of RWs */
-    double Omegas_Loc;                       /* current wheel speeds of RWs */
+    double intermediateVector[3];           /* intermediate vector needed for calculation */
+    double omegaLoc_B[3];                    /* local angular velocity vector in body frame */
+    double rwsJs;                           /* Spin Axis Inertias of RWs */
+    double rwsOmega;                       /* current wheel speeds of RWs */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -931,10 +931,10 @@ void SixDofEOM::integrateState(double CurrentTime)
     memcpy(XState, X, NStates*sizeof(double));
     
 	uint32_t rwCount = 0;
-    tot_rws_rel_kin_energy = 0.0;
-    tot_rws_rel_ang_momentum_B[0] = 0.0;
-    tot_rws_rel_ang_momentum_B[1] = 0.0;
-    tot_rws_rel_ang_momentum_B[2] = 0.0;
+    totRwsRelKinEnergy = 0.0;
+    totRwsRelAngMomentum_B[0] = 0.0;
+    totRwsRelAngMomentum_B[1] = 0.0;
+    totRwsRelAngMomentum_B[2] = 0.0;
 	std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
 	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 	{
@@ -943,15 +943,15 @@ void SixDofEOM::integrateState(double CurrentTime)
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
             /* Gather values needed for energy and momentum calculations */
-            rws_Js = rwIt->Js;
+            rwsJs = rwIt->Js;
 			m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
-            Omegas_Loc = XState[12 + rwCount];
-            tot_rws_rel_kin_energy += 1.0/2.0*rws_Js*Omegas_Loc*Omegas_Loc;
-            v3Scale(rws_Js, gsHat_B, intermediate_vector);
-            v3Scale(Omegas_Loc, intermediate_vector, intermediate_vector);
-            v3Add(tot_rws_rel_ang_momentum_B, intermediate_vector, tot_rws_rel_ang_momentum_B);
+            rwsOmega = XState[12 + rwCount];
+            totRwsRelKinEnergy += 1.0/2.0*rwsJs*rwsOmega*rwsOmega;
+            v3Scale(rwsJs, gsHat_B, intermediateVector);
+            v3Scale(rwsOmega, intermediateVector, intermediateVector);
+            v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
             /* Set current reaction wheel speed */
-            rwIt->Omega = Omegas_Loc;
+            rwIt->Omega = rwsOmega;
 			rwCount++;
 		}
 	}
@@ -965,20 +965,20 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
     //! - Find rotational kinetic energy of spacecraft
-    omega_BLoc[0] = XState[9];
-    omega_BLoc[1] = XState[10];
-    omega_BLoc[2] = XState[11];
-    m33MultV3(compI, omega_BLoc, tot_sc_ang_momentum_B);
-    tot_sc_rot_kin_energy = 1.0/2.0*v3Dot(omega_BLoc, tot_sc_ang_momentum_B);
-    v3Add(tot_rws_rel_ang_momentum_B, tot_sc_ang_momentum_B, tot_sc_ang_momentum_B);
-    tot_sc_ang_momentum = v3Dot(tot_sc_ang_momentum_B, tot_sc_ang_momentum_B);
+    omegaLoc_B[0] = XState[9];
+    omegaLoc_B[1] = XState[10];
+    omegaLoc_B[2] = XState[11];
+    m33MultV3(compI, omegaLoc_B, totScAngMomentum_B);
+    totScRotKinEnergy = 1.0/2.0*v3Dot(omegaLoc_B, totScAngMomentum_B);
+    v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
+    totScAngMomentum = v3Dot(totScAngMomentum_B, totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
     sigmaLoc[0] = XState[6];
     sigmaLoc[1] = XState[7];
     sigmaLoc[2] = XState[8];
     MRP2C(sigmaLoc, BN);
-    m33tMultV3(BN, tot_sc_ang_momentum_B, tot_sc_ang_momentum_N);
-    tot_sc_rot_kin_energy += tot_rws_rel_kin_energy;
+    m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
+    totScRotKinEnergy += totRwsRelKinEnergy;
 
     //! - Clear out local allocations and set time for next cycle
     TimePrev = CurrentTime;

@@ -140,12 +140,12 @@ public:
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
-    double tot_rws_rel_kin_energy;    //!< [J]    Total relative rotational kinetic energy of all rws
-    double tot_rws_rel_ang_momentum_B[3];//!< [J]    Total relative rotational kinetic energy of all rws
-    double tot_sc_rot_kin_energy;     //!< [J]    Total rotational kinetic energy of spacecraft
-    double tot_sc_ang_momentum_B[3];  //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
-    double tot_sc_ang_momentum_N[3];  //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
-    double tot_sc_ang_momentum;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
+    double totRwsRelKinEnergy;    //!< [J]    Total relative rotational kinetic energy of all rws
+    double totRwsRelAngMomentum_B[3];//!< [J]    Total relative rotational kinetic energy of all rws
+    double totScRotKinEnergy;     //!< [J]    Total rotational kinetic energy of spacecraft
+    double totScAngMomentum_B[3];  //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
+    double totScAngMomentum_N[3];  //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
+    double totScAngMomentum;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data
