@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_MRP_Steering;
 %constant void CrossInit_MRP_Steering(void*, uint64_t);
 %ignore CrossInit_MRP_Steering;
-%constant void Reset_MRP_Steering(void*);
+%constant void Reset_MRP_Steering(void*, uint64_t);
 %ignore Reset_MRP_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "MRP_Steering.h"
