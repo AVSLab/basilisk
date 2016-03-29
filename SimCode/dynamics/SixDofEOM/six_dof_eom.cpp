@@ -930,21 +930,29 @@ void SixDofEOM::integrateState(double CurrentTime)
     v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
     memcpy(XState, X, NStates*sizeof(double));
     
-	uint32_t rwCount = 0;
+    //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
+    sMag =  v3Norm(&XState[6]);
+    if(sMag > 1.0) {
+        v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
+        MRPSwitchCount++;
+    }
+
+    uint32_t rwCount = 0;
     totRwsRelKinEnergy = 0.0;
     totRwsRelAngMomentum_B[0] = 0.0;
     totRwsRelAngMomentum_B[1] = 0.0;
     totRwsRelAngMomentum_B[2] = 0.0;
-	std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
-	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
-	{
-		std::vector<ReactionWheelConfigData>::iterator rwIt;
-		for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
-		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
-		{
+    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
+    for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+
+    {
+        std::vector<ReactionWheelConfigData>::iterator rwIt;
+        for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+        {
             /* Gather values needed for energy and momentum calculations */
             rwsJs = rwIt->Js;
-			m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
+            m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
             rwsOmega = XState[12 + rwCount];
             totRwsRelKinEnergy += 1.0/2.0*rwsJs*rwsOmega*rwsOmega;
             v3Scale(rwsJs, gsHat_B, intermediateVector);
@@ -952,15 +960,8 @@ void SixDofEOM::integrateState(double CurrentTime)
             v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
             /* Set current reaction wheel speed */
             rwIt->Omega = rwsOmega;
-			rwCount++;
-		}
-	}
-    
-    //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
-    sMag =  v3Norm(&XState[6]);
-    if(sMag > 1.0) {
-        v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
-        MRPSwitchCount++;
+            rwCount++;
+        }
     }
 
     //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
@@ -971,13 +972,15 @@ void SixDofEOM::integrateState(double CurrentTime)
     m33MultV3(compI, omegaLoc_B, totScAngMomentum_B);
     totScRotKinEnergy = 1.0/2.0*v3Dot(omegaLoc_B, totScAngMomentum_B);
     v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
-    totScAngMomentum = v3Dot(totScAngMomentum_B, totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
     sigmaLoc[0] = XState[6];
     sigmaLoc[1] = XState[7];
     sigmaLoc[2] = XState[8];
     MRP2C(sigmaLoc, BN);
     m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
+    //! - Find magnitude of spacecraft angular momentum
+    totScAngMomentum = v3Norm(totScAngMomentum_N);
+    //! - Add the reaction wheel relative kinetic energy to the sc energy
     totScRotKinEnergy += totRwsRelKinEnergy;
 
     //! - Clear out local allocations and set time for next cycle
