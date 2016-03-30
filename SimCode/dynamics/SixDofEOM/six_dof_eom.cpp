@@ -971,7 +971,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     m33MultV3(compI, omegaLoc_B, totScAngMomentum_B);
     totScRotKinEnergy = 1.0/2.0*v3Dot(omegaLoc_B, totScAngMomentum_B);
     v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
-    totScAngMomentum = v3Dot(totScAngMomentum_B, totScAngMomentum_B);
+    totScAngMomentum = sqrt(v3Dot(totScAngMomentum_B, totScAngMomentum_B));
     //! - Find angular momentum vector in inertial frame
     sigmaLoc[0] = XState[6];
     sigmaLoc[1] = XState[7];
