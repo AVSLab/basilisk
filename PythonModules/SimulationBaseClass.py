@@ -99,32 +99,39 @@ class EventHandlerClass:
         self.actionList = actionList
         self.occurCounter = 0
         self.prevTime = -1
-        self.methodCall = None
+        self.checkCall = None
+        self.operateCall = None
 
     def methodizeEvent(self):
-        if self.methodCall != None:
+        if self.checkCall != None:
             return
         funcString = 'def EVENT_check_' + self.eventName + '(self):\n'
         funcString += '    if('
         for condValue in self.conditionList:
             funcString += ' ' + condValue + ' and'
             funcString = funcString[:-3] + '):\n'
-        for actionValue in self.actionList:
-            funcString += '        '
-            funcString += actionValue + '\n'
         funcString += '        return 1\n'
         funcString += '    return 0'
+        
         exec (funcString)
-        self.methodCall = eval('EVENT_check_' + self.eventName)
+        self.checkCall = eval('EVENT_check_' + self.eventName)
+        funcString = 'def EVENT_operate_' + self.eventName + '(self):\n'
+        for actionValue in self.actionList:
+            funcString += '    '
+            funcString += actionValue + '\n'
+        funcString += '    return 0'
+        exec (funcString)
+        self.operateCall = eval('EVENT_operate_' + self.eventName)
 
     def checkEvent(self, parentSim):
         if self.eventActive == False:
             return
         if self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate:
-            eventCount = self.methodCall(parentSim)
+            eventCount = self.checkCall(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
             if eventCount > 0:
                 self.eventActive = False
+                self.operateCall(parentSim)
                 self.occurCounter += 1
 
 
