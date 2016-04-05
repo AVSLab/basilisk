@@ -19,6 +19,8 @@
 #include "messaging/static_messaging.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "SimCode/utilities/linearAlgebra.h"
+#include "vehicleConfigData/vehicleConfigData.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <math.h>
 #include <string.h>
 
@@ -41,9 +43,32 @@ void STInertialUKF::StateProp(MatrixOperations &StateCurr)
 {
     //Assume zero torque acting on body
     double qDot[3];
+    double torqueTotal[3];
+    double torqueSingle[3];
+    double angAccelTotal[3];
+    double omegVecLocal[3];
+    double BMatInv[3][3];
+    double wheelAccel;
     v3Copy(&(StateCurr.vec_vals[3]), qDot);
     v3Scale(dt, qDot, qDot);
     v3Add(StateCurr.vec_vals, qDot, StateCurr.vec_vals);
+    v3SetZero(torqueTotal);
+    std::vector<RWConfigElement>::iterator it;
+    for(it=rwData.begin(); it!=rwData.end(); it++)
+    {
+        wheelAccel = currentSpeeds.wheelSpeeds[it-rwData.begin()] -
+           previousSpeeds.wheelSpeeds[it-rwData.begin()];
+        wheelAccel /= dt/it->Js;
+        v3Scale(wheelAccel, it->gsAxBdy, torqueSingle);
+        v3Subtract(torqueTotal, torqueSingle, torqueTotal);
+    }
+    m33MultV3(RECAST3X3 IInv, torqueTotal, angAccelTotal);
+    BinvMRP(StateCurr.vec_vals, BMatInv);
+    m33MultV3(BMatInv, &(StateCurr.vec_vals[3]), omegVecLocal);
+    v3Scale(dt, angAccelTotal, angAccelTotal);
+    v3Add(omegVecLocal, angAccelTotal, omegVecLocal);
+    BmatMRP(StateCurr.vec_vals, BMatInv);
+    //m33MultV3(BMatInv, omegVecLocal, &(StateCurr.vec_vals[3]));
     return;
 }
 
@@ -138,8 +163,13 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     double quatMeas[4];
     double BMatInv[3][3];
     MatrixOperations inputMatrix;
+    vehicleConfigData localConfig;
     
     ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas);
+    ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds);
+    ReadMessage(inputVehicleConfigDataID, &ClockTime, &ReadSize,
+        sizeof(vehicleConfigData), &localConfig);
+    m33Inverse(RECAST3X3 localConfig.I, RECAST3X3 IInv);
     
     if (initToMeas && stMeas.timeTag != 0.0)
     {
@@ -148,6 +178,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
         memset(&(state.vec_vals[3]), 0x0, 3 * sizeof(double));
         TimeTag = stMeas.timeTag;
         initToMeas = false;
+        memcpy(&previousSpeeds, &currentSpeeds, sizeof(RWSpeedData));
         return;
     }
     MatrixOperations localMRP;
@@ -198,6 +229,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     WriteMessage(InertialUKFStateID, callTime, sizeof(NavStateOut), &localOutput,
                  moduleID);
     memcpy(MRPPrevious, stMeas.MRP_BdyInrtl, 3*sizeof(double));
+    memcpy(&previousSpeeds, &currentSpeeds, sizeof(RWSpeedData));
     return;
 }
 
@@ -257,6 +289,10 @@ void STInertialUKF::SelfInit()
 void STInertialUKF::CrossInit()
 {
     stInputID = subscribeToMessage((char*)stInputName.c_str(), sizeof(STOutputData), moduleID);
+    inputSpeedsID = subscribeToMessage((char *) inputRWSpeeds.c_str(),
+                                                   sizeof(RWSpeedData), moduleID);
+    inputVehicleConfigDataID = subscribeToMessage((char*)inputVehicleConfigDataName.c_str(),
+                                                              sizeof(vehicleConfigData), moduleID);
     return;
 }
 

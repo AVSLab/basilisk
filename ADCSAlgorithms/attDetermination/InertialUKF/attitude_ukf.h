@@ -24,7 +24,11 @@
 #include "../_GeneralModuleFiles/unscent_kalfilt.h"
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "../_GeneralModuleFiles/navStateOut.h"
-
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+typedef struct {
+    double gsAxBdy[3];      //! [-] Spin axis for RWA in body frame
+    double Js;              //! [kgm2] Spin axis inertia for the RWA
+} RWConfigElement;
 
 class  STInertialUKF : public SysModel, public UnscentKalFilt {
 public:
@@ -43,6 +47,7 @@ public:
     MatrixOperations ComputeObsError(
                                      MatrixOperations SPError,
                                      MatrixOperations StateIn);
+    void appendRWInformation(RWConfigElement *newElement) {rwData.push_back(*newElement);}
     
     
 public:
@@ -62,11 +67,16 @@ public:
     double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
     double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
     double MRPPrevious[3];
+    double IInv[9];          //!< [-] Inverse of the spacecraft inertia tensor
     STOutputData stMeas;     //!< [-] Current star tracker measurement
     double LastStTime;       // -- Last Accelerometer time-tag
     
     double CovarEst[6*6];   // -- Covariance estimate output from filter
     NavStateOut localOutput; //! -- Current output state estimate
+    RWSpeedData currentSpeeds; //! [-] Current estimate of the wheel speeds
+    RWSpeedData previousSpeeds; //! [-] Previous set of wheel speeds
+    std::vector<RWConfigElement> rwData; //! [-] Vector of reaction wheel configuration data
+    
     
     std::string stInputName; // -- Input message name for star tracker data
     uint64_t stInputID;  // -- Input port ID
@@ -74,6 +84,10 @@ public:
     uint64_t wheelSpeedsID; // -- Input message for the wheel speeds
     std::string InertialUKFStateName; // -- Output sampling port name
     uint32_t InertialUKFStateID; // -- Output port ID for NED value
+    std::string inputRWSpeeds; //! [-] Input RWA speeds message name
+    uint32_t inputSpeedsID; //! [-] Input port ID for RWA speeds
+    std::string inputVehicleConfigDataName; //! [-] Input vehicle configuration name
+    uint32_t inputVehicleConfigDataID; //! [-] Input vehicle configuration ID
 };
 
 
