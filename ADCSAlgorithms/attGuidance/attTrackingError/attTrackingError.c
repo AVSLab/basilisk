@@ -82,7 +82,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_attTrackingError(attTrackingErrorConfig *ConfigData)
+void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID)
 {
 
 }
@@ -101,6 +101,8 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
 
     /*! Begin method steps*/
     /*! - Read the input messages */
+    memset(&ref, 0x0, sizeof(attRefOut));
+    memset(&nav, 0x0, sizeof(NavStateOut));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
                 sizeof(attRefOut), (void*) &(ref));
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,

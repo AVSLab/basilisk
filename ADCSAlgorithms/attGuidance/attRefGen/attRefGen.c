@@ -35,6 +35,8 @@ void SelfInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(attGuidOut), "attGuidOut", moduleID);
+    ConfigData->outputRefID = CreateNewMessage(ConfigData->outputRefName,
+        sizeof(attRefOut), "attRefOut", moduleID);
     return;
     
 }
@@ -83,12 +85,15 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     uint32_t readSize;
 	double prvUse_BcBf[3];
     double MRP_BcBf[3];
+    double BN[3][3];
 	double propDT;
+    attRefOut localRef;
 
     
     memset(&localCmd, 0x0, sizeof(attCmdOut));
     memset(&localState, 0x0, sizeof(NavStateOut));
 	memset(&(ConfigData->attOut), 0x0, sizeof(attGuidOut));
+    memset(&localRef, 0x0, sizeof(attRefOut));
     
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavStateOut), (void*) &(localState));
@@ -125,8 +130,14 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
 		ConfigData->attOut.omega_BR_B);
 	v3Copy(ConfigData->omegaCmd_BR_B, ConfigData->attOut.omega_RN_B);
     
+    v3Scale(-1.0, ConfigData->sigmaCmd_BR, localRef.sigma_RN);
+    MRP2C(localState.sigma_BN, BN);
+    m33tMultV3(BN, ConfigData->omegaCmd_BR_B, localRef.omega_RN_N);
+    
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
         (void*)&(ConfigData->attOut), moduleID);
+    WriteMessage(ConfigData->outputRefID, callTime, sizeof(attRefOut),
+        (void*) &localRef, moduleID);
     
     return;
 }

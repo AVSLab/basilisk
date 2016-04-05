@@ -31,6 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the nominal attitude maneuver guidance routine.*/
 typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
+    char outputRefName[MAX_STAT_MSG_LENGTH];  /*!< The name of the output reference message*/
     char inputNavStateName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char inputAttCmdName[MAX_STAT_MSG_LENGTH]; /*<! The name of the incoming attitude command*/
     double mnvrScanRate[3];  /*!< r/s the rate at which to scan over the target*/
@@ -44,6 +45,7 @@ typedef struct {
     int32_t mnvrComplete;    /*!< (-) Helpful flag indicating if the current maneuver is complete*/
     int32_t mnvrActive;      /*!< -- Flag indicating if we are maneuvering */
     int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
+    int32_t outputRefID;     /*!< -- ID for the outgoing reference message*/
     int32_t inputNavID;      /*!< -- ID for the incoming nav state message*/
     int32_t inputCmdID;      /*!< -- ID for the incoming attitude command message*/
     attGuidOut attOut;       /*!< -- The output data that we compute*/

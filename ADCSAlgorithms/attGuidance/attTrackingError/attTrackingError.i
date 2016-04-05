@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_attTrackingError;
 %constant void CrossInit_attTrackingError(void*, uint64_t);
 %ignore CrossInit_attTrackingError;
-%constant void Reset_attTrackingError(void*);
+%constant void Reset_attTrackingError(void*, uint64_t);
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"
 

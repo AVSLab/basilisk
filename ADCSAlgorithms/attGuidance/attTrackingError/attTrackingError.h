@@ -56,7 +56,7 @@ extern "C" {
     void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID);
     void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID);
     void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_attTrackingError(attTrackingErrorConfig *ConfigData);
+    void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID);
 
     void computeAttitudeError(double sigma_BN[3],
                               double omega_BN_B[3],
