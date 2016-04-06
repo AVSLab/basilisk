@@ -27,23 +27,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * @{
  */
 
+/*! @brief Input burn command structure used to configure the burn*/
+typedef struct {
+    double dvInrtlCmd[3];    /*!< [m/s] The commanded DV we need in inertial */
+    double dvRotVecUnit[3];  /*!< [-] The commanded vector we need to rotate about */
+    double dvRotVecMag;      /*!< [r/s] The commanded rotation rate for the vector*/
+    uint64_t burnStartTime;  /*!< [ns]  The commanded time to start the burn */
+}DvBurnCmdData;
+
 /*! @brief Top level structure for the nominal delta-V guidance*/
 typedef struct {
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*<! The name of the incoming attitude command*/
     char inputMassPropName[MAX_STAT_MSG_LENGTH];/*<! The name of the mass properties message*/
-    double dvInrtlCmd[3];    /*!< (m) The inertial DV we are going to execute*/
-    double dvRotAxis[3];     /*! < (-) Rotation vector for the DV maneuver */
-    double dvRotMag;         /*! < (r/s) Magnitude of the mnvr rotation vector*/
+    char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*<! Input message that configures the vehicle burn*/
     double Tburn2Bdy[9];     /*!< (-) transformation from burn frame to body*/
     double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
-    double dvInit[3];        /*!< (m/s) DV reading off the accelerometers at burn start*/
-    uint64_t burnStartTime;  /*!< (ns) Vehicle clock time to start the burn at*/
-    uint32_t burnExecuting;  /*!< (-) Flag indicating whether the burn is in progress or not*/
-    uint32_t burnComplete;   /*!< (-) Flag indicating that burn has completed successfully*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
     int32_t inputNavID;      /*!< (-) ID for the incoming IMU data message*/
     int32_t inputMPID;       /*!< (-) ID for the incoming mass properties message*/
+    int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
     attCmdOut attCmd;       /*!< (-) Output attitude command data to send*/
 }dvGuidanceConfig;
 

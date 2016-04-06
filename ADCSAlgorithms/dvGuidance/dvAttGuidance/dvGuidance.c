@@ -15,7 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#include "dvGuidance/dvGuidance.h"
+#include "dvGuidance/dvAttGuidance/dvGuidance.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
@@ -51,6 +51,8 @@ void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
     /*ConfigData->inputMPID = subscribeToMessage(ConfigData->inputMassPropName, sizeof() <#int64_t moduleID#>)(ConfigData->inputMassPropName);*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
         sizeof(NavStateOut), moduleID);
+    ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
+                                                    sizeof(DvBurnCmdData), moduleID);
     return;
     
 }
@@ -69,8 +71,6 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     double T_Inrtl2Bdy[3][3];
     double dvUnit[3];
     double burnY[3];
-    double burnAccum[3];
-    double dvExecuteMag;
 	double burnTime;
 	double rotPRV[3];
 	double rotDCM[3][3];
@@ -78,47 +78,30 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t writeTime;
     uint32_t writeSize;
     NavStateOut navData;
+    DvBurnCmdData localBurnData;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
         sizeof(NavStateOut), &navData);
+    ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
+                sizeof(DvBurnCmdData), &localBurnData);
     
-    ConfigData->dvMag = v3Norm(ConfigData->dvInrtlCmd);
-    v3Normalize(ConfigData->dvInrtlCmd, dvUnit);
+    ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
+    v3Normalize(localBurnData.dvInrtlCmd, dvUnit);
     v3Copy(dvUnit, T_Inrtl2Burn[0]);
-    v3Cross(ConfigData->dvRotAxis, dvUnit, burnY);
+    v3Cross(localBurnData.dvRotVecUnit, dvUnit, burnY);
     v3Normalize(burnY, T_Inrtl2Burn[1]);
     v3Cross(T_Inrtl2Burn[0], T_Inrtl2Burn[1], T_Inrtl2Burn[2]);
     v3Normalize(T_Inrtl2Burn[2], T_Inrtl2Burn[2]);
 
-	burnTime = ((int64_t) callTime - (int64_t) ConfigData->burnStartTime)*1.0E-9;
-	v3Scale(burnTime*ConfigData->dvRotMag, ConfigData->dvRotAxis, rotPRV);
+	burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
+	v3Scale(burnTime*localBurnData.dvRotVecMag, localBurnData.dvRotVecUnit, rotPRV);
 	PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
 
 	m33MultM33(RECAST3X3 ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
 	C2MRP(RECAST3X3 &T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
-	v3Scale(ConfigData->dvRotMag, T_Inrtl2Burn[2], omega_BR_N);
+	v3Scale(localBurnData.dvRotVecMag, T_Inrtl2Burn[2], omega_BR_N);
 	m33MultV3(RECAST3X3 T_Inrtl2Bdy, omega_BR_N, ConfigData->attCmd.omega_BR);
-    
-    v3SetZero(burnAccum);
-    if((ConfigData->burnExecuting == 0 && burnTime >= 0.0)
-        && ConfigData->burnComplete != 1)
-    {
-        ConfigData->burnExecuting = 1;
-        v3Copy(navData.vehAccumDV, ConfigData->dvInit);
-        ConfigData->burnComplete = 0;
-    }
-
-    if(ConfigData->burnExecuting)
-    {
-        v3Subtract(navData.vehAccumDV, ConfigData->dvInit, burnAccum);
-    }
-    
-    dvExecuteMag = v3Norm(burnAccum);
-    ConfigData->burnComplete = ConfigData->burnComplete == 1 ||
-        dvExecuteMag > ConfigData->dvMag;
-    ConfigData->burnExecuting = ConfigData->burnComplete != 1 &&
-        ConfigData->burnExecuting == 1;
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
         &ConfigData->attCmd, moduleID);
