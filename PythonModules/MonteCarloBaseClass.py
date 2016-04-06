@@ -20,6 +20,7 @@ import random
 import abc
 import numpy as np
 import RigidBodyKinematics as rbk
+import shutil
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
@@ -287,6 +288,7 @@ class MonteCarloBaseClass:
         self.executionCount = 0
         self.retainSimulationData = False
         self.disperseSeeds = False
+        self.archiveSettings = False
 
     def setRandomizeSeeds(self, seedSet):
         self.randomizeSeeds = seedSet
@@ -307,13 +309,22 @@ class MonteCarloBaseClass:
         self.varDisp.append(disp)
     def setDisperseSeeds(self, seedDisp):
         self.disperseSeeds = seedDisp
+    def archiveICs(self, dirName):
+        self.archiveDir = dirName + '_MonteCarloICs'
+        if(os.path.exists(self.archiveDir)):
+            shutil.rmtree(self.archiveDir)
+        os.mkdir(self.archiveDir)
+        self.archiveSettings = True
+           
 
     def executeSimulations(self):
         simRunCounter = 0
         previousSimulation = None
 
         while simRunCounter < self.executionCount:
-
+            fHandle = None
+            if(self.archiveSettings):
+                fHandle = open(self.archiveDir + '/Run' + str(simRunCounter) + '.py', 'w')
             if previousSimulation is not None:
                 previousSimulation.TotalSim.terminateSimulation()
             newSim = self.simulationObject()
@@ -324,22 +335,36 @@ class MonteCarloBaseClass:
                     for i in range(3):
                         execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
+                        fHandle.write(execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
                     for i in range(9):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
+                        fHandle.write(execString + '\n')
                 elif isinstance(disp, VectorVariableDispersion):
                     for i in range(3):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
+                        fHandle.write(execString + '\n')
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
                     exec(execString)
+                    fHandle.write(execString + '\n')
 
             if self.disperseSeeds == True:
+                i=0
                 for Task in newSim.TaskList:
+                    execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
+                    j=0;
                     for model in Task.TaskModels:
+                        execString += '[' + str(j) + '].RNGSeed = '
                         model.RNGSeed = random.randint(0, 1<<32-1)
+                        execString += str(model.RNGSeed)
+                        fHandle.write(execString + '\n')
+                        j+=1
+                    i+=1
+
+            fHandle.close()
 
             self.executionModule(newSim)
 
