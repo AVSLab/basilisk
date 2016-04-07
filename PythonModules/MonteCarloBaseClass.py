@@ -354,9 +354,9 @@ class MonteCarloBaseClass:
             if self.disperseSeeds == True:
                 i=0
                 for Task in newSim.TaskList:
-                    execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
                     j=0;
                     for model in Task.TaskModels:
+                        execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
                         execString += '[' + str(j) + '].RNGSeed = '
                         model.RNGSeed = random.randint(0, 1<<32-1)
                         execString += str(model.RNGSeed)
