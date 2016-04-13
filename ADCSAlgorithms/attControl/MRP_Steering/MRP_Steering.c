@@ -168,14 +168,14 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
-        v3Scale(ConfigData->JsList[i] * (v3Dot(nav.omega_BN_B, wheelGs) +
+        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BastN_B, wheelGs) +
             wheelSpeeds.wheelSpeeds[i]), wheelGs, v3_1);
         v3Add(v3_1, v3, v3);
     }
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
+    v3Cross(omega_BastN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);
@@ -231,6 +231,6 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
         value          = (3*configData->K3*sigma_i*sigma_i + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
         omega_ast_p[i] = - value*sigma_p[i];
     }
-    
+    v3SetZero(omega_ast_p);
     return;
 }
