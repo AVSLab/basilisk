@@ -318,6 +318,34 @@ int SpiceInterface::loadSpiceKernel(char *kernelName, const char *dataPath)
     return 0;
 }
 
+/*! This method unloads a requested SPICE kernel into the system memory.  It is
+ its own method because we have to load several SPICE kernels in for our
+ application.  Note that they are stored in the SPICE library and are not
+ held locally in this object.
+ @return int Zero for success one for failure
+ @param kernelName The name of the kernel we are unloading
+ @param dataPath The path to the data area on the filesystem
+ */
+int SpiceInterface::unloadSpiceKernel(char *kernelName, const char *dataPath)
+{
+    char *fileName = new char[CharBufferSize];
+    SpiceChar *name = new SpiceChar[CharBufferSize];
+    
+    //! Begin method steps
+    //! - The required calls come from the SPICE documentation.
+    //! - The most critical call is furnsh_c
+    strcpy(name, "REPORT");
+    erract_c("SET", CharBufferSize, name);
+    strcpy(fileName, dataPath);
+    strcat(fileName, kernelName);
+    unload_c(fileName);
+    if(failed_c()) {
+        return 1;
+    }
+    return 0;
+
+}
+
 std::string SpiceInterface::getCurrentTimeString()
 {
 	char *spiceOutputBuffer;
