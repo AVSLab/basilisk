@@ -296,6 +296,9 @@ class MonteCarloBaseClass:
 
     def setExecutionModule(self, newModule):
         self.executionModule = newModule
+    
+    def setConfigureModule(self, newModule):
+        self.configureModule = newModule
 
     def setSimulationObject(self, newObject):
         self.simulationObject = newObject
