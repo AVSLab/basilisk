@@ -187,7 +187,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 @param ConfigData The configuration data associated with the thruster desat
 @param moduleID The module ID associated with ConfigData
 */
-void Reset_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
+void Reset_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 	ConfigData->previousFiring = 0;
 	v3SetZero(ConfigData->accumulatedImp);

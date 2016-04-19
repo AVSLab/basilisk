@@ -60,7 +60,7 @@ void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
                                                 moduleID);
 }
 
-void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData)
+void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->phi_spin = 0.;
 }

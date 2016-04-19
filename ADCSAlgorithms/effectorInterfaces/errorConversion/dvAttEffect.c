@@ -57,6 +57,24 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
         sizeof(vehControlOut), moduleID);
     
 }
+void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+                        uint64_t moduleID)
+{
+    uint32_t i;
+    vehEffectorOut nullEffect;
+    
+    memset(&(nullEffect), 0x0, sizeof(vehEffectorOut));
+    
+    for(i=0; i<ConfigData->numThrGroups; i=i+1)
+    {
+        memcpy(&(ConfigData->thrGroups[i].cmdRequests), &nullEffect,
+            sizeof(vehEffectorOut));
+        WriteMessage(ConfigData->thrGroups[i].outputMsgID, callTime,
+            sizeof(vehEffectorOut), (void*)
+            &(ConfigData->thrGroups[i].cmdRequests), moduleID);
+    }
+
+}
 
 /*! This method takes the estimated body-observed sun vector and computes the
  current attitude/attitude rate errors to pass on to control.

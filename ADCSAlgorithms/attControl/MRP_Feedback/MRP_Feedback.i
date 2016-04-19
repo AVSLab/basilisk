@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_MRP_Feedback;
 %constant void CrossInit_MRP_Feedback(void*, uint64_t);
 %ignore CrossInit_MRP_Feedback;
-%constant void Reset_MRP_Feedback(void*);
+%constant void Reset_MRP_Feedback(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Feedback;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "MRP_Feedback.h"

@@ -27,5 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_rwNullSpace;
 %constant void CrossInit_rwNullSpace(void*, uint64_t);
 %ignore CrossInit_rwNullSpace;
+%constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
+%ignore Reset_rwNullSpace;
 %include "rwNullSpace.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"

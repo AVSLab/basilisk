@@ -82,7 +82,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t moduleID)
+void Reset_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
 }

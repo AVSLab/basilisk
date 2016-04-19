@@ -55,7 +55,7 @@ void CrossInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
                                                 sizeof(NavStateOut), moduleID);
 }
 
-void Reset_velocityPoint(velocityPointConfig *ConfigData)
+void Reset_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     
 }

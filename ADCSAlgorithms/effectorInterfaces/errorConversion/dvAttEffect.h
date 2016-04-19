@@ -46,7 +46,7 @@ typedef struct {
     double minThrustRequest;     /*!< - The minimum allowable on-time for a thruster*/
     double thrOnMap[3*MAX_EFF_CNT]; /*!< - Mapping between on-times and torque requests*/
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the output message*/
-    char outputMsgID;            /*!< - ID for the outgoing command messages*/
+    int32_t outputMsgID;            /*!< - ID for the outgoing command messages*/
     vehEffectorOut cmdRequests; /*!< - The array of command requests sent to effectors*/
 }ThrustGroupData;
 
@@ -68,6 +68,8 @@ extern "C" {
     void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID);
     void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
+    void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
+                           uint64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
                                   vehControlOut *contrReq, uint64_t moduleID);

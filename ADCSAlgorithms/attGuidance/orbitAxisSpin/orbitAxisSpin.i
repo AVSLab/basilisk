@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_orbitAxisSpin;
 %constant void CrossInit_orbitAxisSpin(void*, uint64_t);
 %ignore CrossInit_orbitAxisSpin;
-%constant void Reset_orbitAxisSpin(void*);
+%constant void Reset_orbitAxisSpin(void*, uint64_t, uint64_t);
 %ignore Reset_orbitAxisSpin;
 %include "orbitAxisSpin.h"
 

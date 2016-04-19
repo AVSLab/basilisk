@@ -58,7 +58,7 @@ extern "C" {
     void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID);
     void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID);
     void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData);
+    void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
 
     void PRVSteeringLaw(PRV_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 

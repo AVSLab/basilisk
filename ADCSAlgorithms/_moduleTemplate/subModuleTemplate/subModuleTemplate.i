@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_subModuleTemplate;
 %constant void CrossInit_subModuleTemplate(void*, uint64_t);
 %ignore CrossInit_subModuleTemplate;
-%constant void Reset_subModuleTemplate(void*);
+%constant void Reset_subModuleTemplate(void*, uint64_t, uint64_t);
 %ignore Reset_subModuleTemplate;
 %include "subModuleTemplate.h"
 

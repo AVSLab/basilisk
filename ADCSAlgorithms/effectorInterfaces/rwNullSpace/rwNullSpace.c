@@ -72,12 +72,32 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     
 }
 
+/*! This method nulls the outputs of the RWA null space data.  It is used primarily 
+    when inhibiting RWA control where we want to zero the RWA command prior to switching 
+    to another effector set.
+    @return void
+    @param ConfigData The configuration data associated with the null space control
+    @param callTime The clock time at which the function was called (nanoseconds)
+    @param moduleID The ID associated with the ConfigData
+ */
+void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+                        uint64_t moduleID)
+{
+    vehEffectorOut finalControl;
+    
+    memset(&finalControl, 0x0, sizeof(vehEffectorOut));
+    
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
+                 &finalControl, moduleID);
+}
+
 /*! This method takes the input reaction wheel commands as well as the observed 
     reaction wheel speeds and balances the commands so that the overall vehicle 
 	momentum is minimized.
  @return void
  @param ConfigData The configuration data associated with the null space control
  @param callTime The clock time at which the function was called (nanoseconds)
+ @param moduleID The ID associated with the ConfigData
  */
 void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)

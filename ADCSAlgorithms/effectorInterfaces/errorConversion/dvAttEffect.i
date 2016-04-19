@@ -27,6 +27,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_dvAttEffect;
 %constant void CrossInit_dvAttEffect(void*, uint64_t);
 %ignore CrossInit_dvAttEffect;
+%constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
+%ignore Reset_dvAttEffect;
 %array_functions(ThrustGroupData, ThrustGroupArray);
 %include "vehEffectorOut.h"
 %include "dvAttEffect.h"

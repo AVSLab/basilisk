@@ -11,7 +11,7 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+OR  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
@@ -30,23 +30,23 @@ public:
     AlgContain(void *DataIn, void(*UpPtr) (void*, uint64_t, uint64_t),
         void (*SelfPtr)(void*, uint64_t)=NULL,
         void (*CrossPtr)(void*, uint64_t)=NULL,
-		void(*ResetPtr)(void*, uint64_t) = NULL);
+		void(*ResetPtr)(void*, uint64_t, uint64_t) = NULL);
     
     void UseData(void *IncomingData) {DataPtr = IncomingData;}
     void UseUpdate(void (*LocPtr)(void*, uint64_t, uint64_t)) {AlgUpdate = LocPtr;}
     void UseSelfInit(void (*LocPtr)(void*, uint64_t)) {AlgSelfInit = LocPtr;}
     void UseCrossInit(void (*LocPtr)(void*, uint64_t)) {AlgCrossInit = LocPtr;}
-	void UseReset(void(*LocPtr)(void*, uint64_t)) { AlgReset = LocPtr; }
+	void UseReset(void(*LocPtr)(void*, uint64_t, uint64_t)) { AlgReset = LocPtr; }
     void CrossInit();
     void SelfInit();
     void UpdateState(uint64_t CurrentSimNanos);
-	void Reset();
+	void Reset(uint64_t CurrentSimNanos);
     
 private:
     void *DataPtr;
     AlgPtr AlgSelfInit;
     AlgPtr AlgCrossInit;
-	AlgPtr AlgReset;
+	AlgUpdatePtr AlgReset;
     AlgUpdatePtr AlgUpdate;
 };
 

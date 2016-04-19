@@ -63,7 +63,7 @@ extern "C" {
     void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID);
     void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID);
     void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID);
+    void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
 
     void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3]);
 

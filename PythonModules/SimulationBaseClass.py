@@ -51,6 +51,9 @@ class ProcessBaseClass:
     def enableAllTasks(self):
         self.processData.enableAllTasks()
 
+    def selectProcess(self):
+        self.processData.selectProcess()
+
 
 class TaskBaseClass:
     def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
@@ -69,8 +72,8 @@ class TaskBaseClass:
     def updatePeriod(self, newPeriod):
         self.TaskData.updatePeriod(newPeriod)
 
-    def resetTask(self):
-        self.TaskData.ResetTaskList()
+    def resetTask(self, callTime):
+        self.TaskData.ResetTaskList(callTime)
 
 
 class LogBaseClass:
@@ -302,7 +305,7 @@ class SimBaseClass:
     def ResetTask(self, taskName):
         for Task in self.TaskList:
             if Task.Name == taskName:
-                Task.resetTask()
+                Task.resetTask(self.TotalSim.CurrentNanos)
 
     def InitializeSimulation(self):
         self.TotalSim.ResetSimulation()

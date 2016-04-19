@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_velocityPoint;
 %constant void CrossInit_velocityPoint(void*, uint64_t);
 %ignore CrossInit_velocityPoint;
-%constant void Reset_velocityPoint(void*);
+%constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
 

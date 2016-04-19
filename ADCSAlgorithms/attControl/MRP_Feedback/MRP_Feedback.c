@@ -71,7 +71,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData)
+void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the

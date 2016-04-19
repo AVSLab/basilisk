@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_LowPassFilterTorqueCommand;
 %constant void CrossInit_LowPassFilterTorqueCommand(void*, uint64_t);
 %ignore CrossInit_LowPassFilterTorqueCommand;
-%constant void Reset_LowPassFilterTorqueCommand(void*);
+%constant void Reset_LowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
 %ignore Reset_LowPassFilterTorqueCommand;
 %include "LowPassFilterTorqueCommand.h"
 

@@ -76,7 +76,7 @@ void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t m
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData)
+void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->dummy = 0;              /* reset any required variables */
 }

@@ -60,7 +60,7 @@ extern "C" {
     void SelfInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID);
     void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID);
     void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData);
+    void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
                                        double sigma_R0N[3],
                                        double omega_R0N_N[3],

@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_inertial3D;
 %constant void CrossInit_inertial3D(void*, uint64_t);
 %ignore CrossInit_inertial3D;
-%constant void Reset_inertial3D(void*);
+%constant void Reset_inertial3D(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3D;
 %include "inertial3D.h"
 

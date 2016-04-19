@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
 #include "architecture/system_model/sys_interface.h"
+#include "architecture/messaging/system_messaging.h"
 /*! \addtogroup SimArchGroup
  * @{
  */
@@ -49,6 +50,8 @@ public:
     void enableProcess() { processActive = true; }
     void disableProcess() { processActive = false; }
     void scheduleTask(ModelScheduleEntry & taskCall);
+    void selectProcess()
+    {SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);}
     void setProcessName(std::string newName){processName = newName;}
     std::string getProcessName() { return(processName);}
     uint64_t getNextTime() { return(nextTaskTime);}

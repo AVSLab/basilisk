@@ -56,7 +56,7 @@ extern "C" {
     void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID);
     void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID);
     void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_hillPoint(hillPointConfig *ConfigData);
+    void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
 
     void computeHillPointingReference(double r_BN_N[3],
                                       double v_BN_N[3],

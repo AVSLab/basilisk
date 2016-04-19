@@ -96,14 +96,14 @@ void SysModelTask::CrossInitTaskList()
 /*! This method resets all of the models that have been added to the Task.
 @return void
 */
-void SysModelTask::ResetTaskList()
+void SysModelTask::ResetTaskList(uint64_t CurrentSimTime)
 {
 
 	std::vector<ModelPriorityPair>::iterator ModelPair;
 	for (ModelPair = TaskModels.begin(); ModelPair != TaskModels.end();
 	ModelPair++)
 	{
-		(*ModelPair).ModelPtr->Reset();
+		(*ModelPair).ModelPtr->Reset(CurrentSimTime);
 	}
 
 }

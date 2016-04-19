@@ -65,7 +65,7 @@ void CrossInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
 	@param ConfigData The configuration data associated with the attitude maneuver guidance
 	@param moduleID The module ID associated with this instance of the algorithm
 */
-void Reset_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
+void Reset_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 	ConfigData->mnvrActive = 0;
 }

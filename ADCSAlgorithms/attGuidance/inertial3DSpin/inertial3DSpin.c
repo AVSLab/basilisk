@@ -75,7 +75,7 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData)
+void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
     ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set

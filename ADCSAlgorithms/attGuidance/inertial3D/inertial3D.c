@@ -55,7 +55,7 @@ void CrossInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
     /*! - Get the control data message ID*/
 }
 
-void Reset_inertial3D(inertial3DConfig *ConfigData)
+void Reset_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->priorTime = 0;               /*!< reset the prior time flag state.  If set
                                               to zero, the control time step is not evaluated on the

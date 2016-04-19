@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_hillPoint;
 %constant void CrossInit_hillPoint(void*, uint64_t);
 %ignore CrossInit_hillPoint;
-%constant void Reset_hillPoint(void*);
+%constant void Reset_hillPoint(void*, uint64_t, uint64_t);
 %ignore Reset_hillPoint;
 %include "hillPoint.h"
 

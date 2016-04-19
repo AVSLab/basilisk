@@ -59,7 +59,7 @@ extern "C" {
     void SelfInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
     void CrossInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
     void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData);
+    void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

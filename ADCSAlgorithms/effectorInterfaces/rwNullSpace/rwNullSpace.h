@@ -52,6 +52,8 @@ extern "C" {
     void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID);
     void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
+    void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
+                            uint64_t moduleID);
     
 #ifdef __cplusplus
 }

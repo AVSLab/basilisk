@@ -68,7 +68,7 @@ void CrossInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Conf
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData)
+void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     int i;
 

@@ -52,7 +52,7 @@ void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
                                                 sizeof(NavStateOut), moduleID);
 }
 
-void Reset_hillPoint(hillPointConfig *ConfigData)
+void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     
 }

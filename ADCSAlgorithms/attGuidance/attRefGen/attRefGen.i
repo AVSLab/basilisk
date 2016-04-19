@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_attRefGen;
 %constant void CrossInit_attRefGen(void*, uint64_t);
 %ignore CrossInit_attRefGen;
-%constant void Reset_attRefGen(void*, uint64_t);
+%constant void Reset_attRefGen(void*, uint64_t, uint64_t);
 %ignore Reset_attRefGen;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"

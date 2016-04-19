@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_PRV_Steering;
 %constant void CrossInit_PRV_Steering(void*, uint64_t);
 %ignore CrossInit_PRV_Steering;
-%constant void Reset_PRV_Steering(void*);
+%constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_PRV_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "PRV_Steering.h"
