@@ -22,7 +22,7 @@ sys.path.append(path + '/../IntegratedTests/')
 import AVSSim  # simulation type we are running
 import matplotlib.pyplot as plt  # plotting functions
 import MonteCarloBaseClass as mbc  # monte-carlo module for running dispersed simulations
-import AVSSafeCapture  # Startup script we are using
+import AVSSafeCaptureScenario  # Startup script we are using
 import numpy as np  # Who doesn't like numpy?
 
 # instantiate a monte-carlo handler so that we can run a dispersed scenario
@@ -30,7 +30,7 @@ monteCarloContainer = mbc.MonteCarloBaseClass()
 
 # Define the simulation type and the script that we will use to execute the simulations
 simulationModule = AVSSim.AVSSim
-executionModule = AVSSafeCapture.executeAVSSafeCapture
+executionModule = AVSSafeCaptureScenario.executeAVSSafeCapture
 
 # Configure the monte-carlo handler with the necessary parameter for a run
 monteCarloContainer.setSimulationObject(simulationModule)  # simulation type to use
