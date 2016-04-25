@@ -642,7 +642,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     computeCompositeProperties();
 
     //! - compute derivative of position (velocity)
-    v3Copy(v_N, dX);
+    v3Copy(v_NLoc, dX);
 
     //! - Get current position magnitude and compute the 2-body gravitational accels
     rmag = v3Norm(r_NLoc);
