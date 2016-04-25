@@ -72,10 +72,10 @@ GravityBodyData::GravityBodyData(const std::string& sphHarm_filename, const unsi
 	memset(J20002Pfix_dot, 0x0, 9 * sizeof(double));    //!<          Derivative of the transformation matrix from J2000 to planet-fixed
 	memset(posRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Position of planet relative to display frame
 	memset(velRelDisplay, 0x0, 3 * sizeof(double));        //!< [m]      Velocity of planet relative to display frame
-	mu = 0;                      //!< [m3/s^2] central body gravitational param
+	mu = mu_in;                      //!< [m3/s^2] central body gravitational param
 	ephemTime = 0;               //!< [s]      Ephemeris time for the body in question
 	ephIntTime = 0;              //!< [s]      Integration time associated with the ephem data
-	radEquator = 0;              //!< [m]      Equatorial radius for the body
+	radEquator = reference_radius;              //!< [m]      Equatorial radius for the body
 	ephemTimeSimNanos = 0;
     this->UseSphericalHarmParams = true;
     this->UseJParams = false;
