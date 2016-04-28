@@ -151,6 +151,7 @@ bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** 
     long index;
     std::string aux;
     std::string::size_type sz;     // alias of size_t
+    bool degreeLocked = false;
     
     f.open(filename, std::ifstream::in);
     if (f.fail())
@@ -195,7 +196,12 @@ bool coeffLoaderCSV::load(const std::string& filename, double** C_bar, double** 
                 }
                 
                 if (degree > *max_degree)
+                {
+                    degree = degreeLocked ? degree : 0;
                     break;
+                }
+
+                degreeLocked = true;
                 cii += sz;
                 param_nmber++;
             }

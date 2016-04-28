@@ -68,8 +68,8 @@ allowVelError = 0.1 #Allow for the velocity to degrade by 10 cm/s
 TotalSim = SimulationBaseClass.SimBaseClass()
 DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
 DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(1E9)), 1)
-DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E5)), 0)
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMarsTime", int(5E9)), 1)
+DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTaskMars", int(5E9)), 0)
 TotalSim.disableTask("sixDynTestTaskMars");
 TotalSim.disableTask("sixDynTestTaskMarsTime");
 
@@ -80,12 +80,12 @@ spiceObject = spice_interface.SpiceInterface()
 #Initialize the ephemeris module
 spiceObject.ModelTag = "SpiceInterfaceData"
 spiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
-spiceObject.UTCCalInit = "2014 March 27, 14:00:00.0"
+spiceObject.UTCCalInit = "2014 March 23, 14:00:00.0"
 spiceObject.OutputBufferCount = 2
 spiceObject.PlanetNames = spice_interface.StringVector(
-    ["earth", "mars", "jupiter", "sun", "moon", "venus", "maven"])
+    ["earth", "mars", "jupiter barycenter", "sun","maven"])
 spiceObject.loadSpiceKernel('maven_cru_rec_131118_140923_v1.bsp', path + '/')
-spiceObject.loadSpiceKernel('jup260.bsp', path + '/')
+#spiceObject.loadSpiceKernel('jup260.bsp', path + '/')
 spiceObject.zeroBase = "sun"
 
 JParamsSelect = [2, 3, 4, 5, 6]
@@ -113,8 +113,8 @@ EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)
 
 mu_mars= 4.2828371901284001E+13 # [m^3/s^2]
 reference_radius_mars = 3.3970000000000000E+06 # [m]
-max_degree_mars = 20
-MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile+'bleck', max_degree_mars, mu_mars, reference_radius_mars)
+max_degree_mars = 30
+MarsGravBody = six_dof_eom.GravityBodyData(MarsGravFile, max_degree_mars, mu_mars, reference_radius_mars)
 #MarsGravBody.mu = mu_mars
 MarsGravBody.BodyMsgName = "mars_planet_data"
 MarsGravBody.IsCentralBody = False
@@ -124,26 +124,26 @@ MarsGravBody.UseSphericalHarmParams = False
 MarsGravBody.UseJParams = False
 
 JupiterGravBody = six_dof_eom.GravityBodyData()
-JupiterGravBody.BodyMsgName = "jupiter_planet_data"
-JupiterGravBody.outputMsgName = "jupiter_display_frame_data"
+JupiterGravBody.BodyMsgName = "jupiter barycenter_planet_data"
+JupiterGravBody.outputMsgName = "jupiter barycenter_display_frame_data"
 JupiterGravBody.mu = 1.266865349093058E17 #meters!
 JupiterGravBody.IsCentralBody = False
 JupiterGravBody.IsDisplayBody = False
 JupiterGravBody.UseJParams = False
 
-MoonGravBody = six_dof_eom.GravityBodyData()
-MoonGravBody.BodyMsgName = "moon_planet_data"
-MoonGravBody.mu = 4902.799*1000*1000*1000 #meters!
-MoonGravBody.IsCentralBody = False
-MoonGravBody.IsDisplayBody = False
-MoonGravBody.UseJParams = False
+#MoonGravBody = six_dof_eom.GravityBodyData()
+#MoonGravBody.BodyMsgName = "moon_planet_data"
+#MoonGravBody.mu = 4902.799*1000*1000*1000 #meters!
+#MoonGravBody.IsCentralBody = False
+#MoonGravBody.IsDisplayBody = False
+#MoonGravBody.UseJParams = False
 
-VenusGravBody = six_dof_eom.GravityBodyData()
-VenusGravBody.BodyMsgName = "venus_planet_data"
-VenusGravBody.mu = 3.257E14 #meters!
-VenusGravBody.IsCentralBody = False
-VenusGravBody.IsDisplayBody = False
-VenusGravBody.UseJParams = False
+#VenusGravBody = six_dof_eom.GravityBodyData()
+#VenusGravBody.BodyMsgName = "venus_planet_data"
+#VenusGravBody.mu = 3.257E14 #meters!
+#VenusGravBody.IsCentralBody = False
+#VenusGravBody.IsDisplayBody = False
+#VenusGravBody.UseJParams = False
 
 VehDynObject.ModelTag = "VehicleDynamicsData"
 VehDynObject.PositionInit = six_dof_eom.DoubleVector([-1.784938418967935e+11, -1.609707049168820e+10, -1.627664958116536e+09])
@@ -162,8 +162,8 @@ VehDynObject.baseCoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
 #Add the three gravity bodies in to the simulation
 VehDynObject.AddGravityBody(SunGravBody)
 VehDynObject.AddGravityBody(EarthGravBody)
-VehDynObject.AddGravityBody(MoonGravBody)
-VehDynObject.AddGravityBody(VenusGravBody)
+#VehDynObject.AddGravityBody(MoonGravBody)
+#VehDynObject.AddGravityBody(VenusGravBody)
 VehDynObject.AddGravityBody(MarsGravBody)
 VehDynObject.AddGravityBody(JupiterGravBody)
 
@@ -174,7 +174,7 @@ TotalSim.AddModelToTask("sixDynTestTaskMars", VehDynObject)
 
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E12))
 TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E12))
-TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E12))
+TotalSim.TotalSim.logThisMessage("jupiter barycenter_planet_data", int(1E12))
 TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E12))
 
 #TotalSim.InitializeSimulation()
@@ -270,13 +270,13 @@ TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E12))
 
 VehDynObject.GravData[0].IsCentralBody = False
 VehDynObject.GravData[0].IsDisplayBody = False
-VehDynObject.GravData[4].IsDisplayBody = True
-VehDynObject.GravData[4].IsCentralBody = True
+VehDynObject.GravData[2].IsDisplayBody = True
+VehDynObject.GravData[2].IsCentralBody = True
 spiceObject.loadSpiceKernel('m01_ext42.bsp', path + '/')
 spiceObject.UTCCalInit = "2015 January 19, 02:00:00.0"
 
 spiceObject.PlanetNames = spice_interface.StringVector(
-                                                       ["earth", "mars", "jupiter", "sun", "moon", "venus", "mars odyssey"])
+                                                       ["earth", "mars", "jupiter barycenter", "sun", "mars odyssey"])
 
 TotalSim.disableTask("sixDynTestTask")
 TotalSim.enableTask("sixDynTestTaskMarsTime")
@@ -285,7 +285,7 @@ TotalSim.enableTask("sixDynTestTaskMars")
 #TotalSim.InitializeSimulation()
 TotalSim.TotalSim.logThisMessage("maven_planet_data", int(1E10))
 TotalSim.TotalSim.logThisMessage("mars_planet_data", int(1E10))
-TotalSim.TotalSim.logThisMessage("jupiter_planet_data", int(1E10))
+TotalSim.TotalSim.logThisMessage("jupiter barycenter_planet_data", int(1E10))
 TotalSim.TotalSim.logThisMessage("inertial_state_output", int(1E10))
 TotalSim.TotalSim.logThisMessage("mars odyssey_planet_data", int(1E10))
 TotalSim.InitializeSimulation()
@@ -308,11 +308,11 @@ velInit = mavenVel[0, 1:] - marsVel[0, 1:]
 VehDynObject.PositionInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(posInit))
 VehDynObject.VelocityInit = six_dof_eom.DoubleVector(numpy.ndarray.tolist(velInit))
 
-modysseyPropTime = int(9000E9)
+modysseyPropTime = int((86400*7)*1E9)
 spiceObject.zeroBase = "mars"
 
-VehDynObject.GravData[4].UseSphericalHarmParams = False
-VehDynObject.GravData[4].UseJParams = False
+VehDynObject.GravData[2].UseSphericalHarmParams = False
+VehDynObject.GravData[2].UseJParams = False
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
@@ -330,8 +330,8 @@ vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range
 velocityDiffsph = mavenVel - vehicleVelocity
 positionDiffsph = mavenPos - vehiclePosition
 
-VehDynObject.GravData[4].UseSphericalHarmParams = False
-VehDynObject.GravData[4].UseJParams = True
+VehDynObject.GravData[2].UseSphericalHarmParams = False
+VehDynObject.GravData[2].UseJParams = True
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
@@ -344,8 +344,8 @@ vehicleVelocity = TotalSim.pullMessageLogData("inertial_state_output.v_N", range
 velocityDiffjPar = mavenVel - vehicleVelocity
 positionDiffjPar = mavenPos - vehiclePosition
 
-VehDynObject.GravData[4].UseSphericalHarmParams = True
-VehDynObject.GravData[4].UseJParams = False
+VehDynObject.GravData[2].UseSphericalHarmParams = True
+VehDynObject.GravData[2].UseJParams = False
 TotalSim.InitializeSimulation()
 TotalSim.ConfigureStopTime(modysseyPropTime)
 TotalSim.ExecuteSimulation()
