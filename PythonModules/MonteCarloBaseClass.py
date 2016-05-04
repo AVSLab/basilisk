@@ -21,6 +21,7 @@ import abc
 import numpy as np
 import RigidBodyKinematics as rbk
 import shutil
+import imp
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
@@ -315,16 +316,40 @@ class MonteCarloBaseClass:
         self.disperseSeeds = seedDisp
     def archiveICs(self, dirName):
         self.archiveDir = dirName + '_MonteCarloICs'
-        if(os.path.exists(self.archiveDir)):
-            shutil.rmtree(self.archiveDir)
-        os.mkdir(self.archiveDir)
         self.archiveSettings = True
-           
+        
+    def reRunCases(self, caseList):
+        previousSimulation = None
+        for caseNumber in caseList:
+            if not os.path.exists(self.archiveDir + "/Run" +str(caseNumber) + ".py"):
+                print "ERROR re-running case: " + self.archiveDir + "/Run" + \
+                    str(caseNumber) + ".py"
+                continue
+            if previousSimulation is not None:
+                previousSimulation.TotalSim.terminateSimulation()
+        
+            newSim = self.simulationObject()
+            if self.configureModule is not None:
+                self.configureModule(newSim)
+            updateModule = imp.load_source("disperseVariables",
+                self.archiveDir + "/Run" +str(caseNumber) + ".py")
+            updateModule.disperseVariables(newSim)
+            self.executionModule(newSim)
+            if self.retainSimulationData:
+                self.simList.append(newSim)
+                
+            previousSimulation = newSim
+            print caseNumber
+
 
     def executeSimulations(self):
         simRunCounter = 0
         previousSimulation = None
 
+        if(self.archiveSettings):
+            if(os.path.exists(self.archiveDir)):
+                shutil.rmtree(self.archiveDir)
+            os.mkdir(self.archiveDir)
         while simRunCounter < self.executionCount:
             fHandle = None
             if(self.archiveSettings):
@@ -336,6 +361,9 @@ class MonteCarloBaseClass:
             if self.configureModule is not None:
                 self.configureModule(newSim)
 
+            execString = "def disperseVariables(newSim): \n"
+            if fHandle is not None:
+                fHandle.write(execString + '\n')
             for disp in self.varDisp:
                 nextValue = disp.generate(newSim)
                 if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
@@ -343,24 +371,24 @@ class MonteCarloBaseClass:
                         execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                         if fHandle is not None:
-                            fHandle.write(execString + '\n')
+                            fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
                     for i in range(9):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                         if fHandle is not None:
-                            fHandle.write(execString + '\n')
+                            fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, VectorVariableDispersion):
                     for i in range(3):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                         if fHandle is not None:
-                            fHandle.write(execString + '\n')
+                            fHandle.write('    ' + execString + '\n')
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
                     exec(execString)
                     if fHandle is not None:
-                        fHandle.write(execString + '\n')
+                        fHandle.write('    ' + execString + '\n')
 
             if self.disperseSeeds == True:
                 i=0
@@ -372,7 +400,7 @@ class MonteCarloBaseClass:
                         model.RNGSeed = random.randint(0, 1<<32-1)
                         execString += str(model.RNGSeed)
                         if fHandle is not None:
-                            fHandle.write(execString + '\n')
+                            fHandle.write('    ' + execString + '\n')
                         j+=1
                     i+=1
             if fHandle is not None:

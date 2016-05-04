@@ -806,6 +806,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 	double rwSumTorque[3];
 	v3SetZero(rwSumTorque);
 	double spinAxisBody[3];
+    v3SetZero(rwaGyroTorqueBdy);
 	for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 	{
 		std::vector<ReactionWheelConfigData>::iterator rwIt;
@@ -816,12 +817,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 			double hs =  rwIt->Js * (v3Dot(omegaLoc, spinAxisBody) + Omegas[rwCount]);
 			v3Scale(hs, spinAxisBody, d2);
 			v3Add(d3, d2, d3);
+            v3Add(rwaGyroTorqueBdy, d2, rwaGyroTorqueBdy);
 			v3Scale(rwIt->u_current, spinAxisBody, rwTorque);
 			v3Subtract(rwSumTorque, rwTorque, rwSumTorque);          /* subtract [Gs]u */
 			rwCount++;
 		}
 	}
 	m33MultV3(B, d3, d2);               /* [tilde(w)]([I]w + [Gs]hs) */
+    m33MultV3(B, rwaGyroTorqueBdy, rwaGyroTorqueBdy);
 	v3Subtract(rwSumTorque, d2, d2);
     m33MultV3(compIinv, d2, d3);        /* d(w)/dt = [I_RW]^-1 . (RHS) */
     v3Add(dX+9, d3, dX+9);

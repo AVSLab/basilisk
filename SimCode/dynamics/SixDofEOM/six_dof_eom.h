@@ -139,6 +139,7 @@ public:
     double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
+    double rwaGyroTorqueBdy[3];       //!<
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
     double totRwsRelKinEnergy;    //!< [J]    Total relative rotational kinetic energy of all rws
     double totRwsRelAngMomentum_B[3];//!< [J]    Total relative rotational kinetic energy of all rws
