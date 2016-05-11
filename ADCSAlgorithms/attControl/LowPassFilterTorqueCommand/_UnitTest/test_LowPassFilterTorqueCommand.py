@@ -161,4 +161,4 @@ def subModuleTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_lowPassFilterControlTorque()
+    test_lowPassFilterControlTorque(False)
