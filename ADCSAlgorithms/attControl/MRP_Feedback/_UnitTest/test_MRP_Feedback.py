@@ -246,4 +246,4 @@ def subModuleTestFunction(show_plots):
 #   authmatically executes the runUnitTest() method
 #
 if __name__ == "__main__":
-    test_MRP_Feedback()
+    test_MRP_Feedback(False)
