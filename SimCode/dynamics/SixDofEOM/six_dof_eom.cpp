@@ -942,12 +942,13 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     uint32_t rwCount = 0;
     totRwsRelKinEnergy = 0.0;
-    totRwsRelAngMomentum_B[0] = 0.0;
-    totRwsRelAngMomentum_B[1] = 0.0;
-    totRwsRelAngMomentum_B[2] = 0.0;
+    v3SetZero(totRwsRelAngMomentum_B);
     omegaBN_BLoc[0] = XState[9];
     omegaBN_BLoc[1] = XState[10];
     omegaBN_BLoc[2] = XState[11];
+    sigmaBNLoc[0] = XState[6];
+    sigmaBNLoc[1] = XState[7];
+    sigmaBNLoc[2] = XState[8];
     std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
     for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 
@@ -976,9 +977,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, totScAngMomentum_B);
     v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
-    sigmaBNLoc[0] = XState[6];
-    sigmaBNLoc[1] = XState[7];
-    sigmaBNLoc[2] = XState[8];
     MRP2C(sigmaBNLoc, BN);
     m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
     //! - Find magnitude of spacecraft angular momentum
