@@ -882,10 +882,10 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
-    TimeStep = CurrentTime - TimePrev;
+    TimeStep = CurrentTime - this->TimePrev;
     
     //! - Initialize the local states and invert the inertia tensor
-    memcpy(X, XState, NStates*sizeof(double));
+    memcpy(X, this->XState, this->NStates*sizeof(double));
     
     //! - Loop through gravitational bodies and find the central body to integrate around
     GravityBodyData *CentralBody = NULL;
@@ -910,36 +910,36 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     //! - Perform RK4 steps.  Go ahead and look it up anywhere.  It's a standard thing
     equationsOfMotion(CurrentTime, X, k1, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + 0.5 * TimeStep * k1[i];
     }
-    v3Scale(TimeStep/6.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k2, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + 0.5 * TimeStep * k2[i];
     }
-    v3Scale(TimeStep/3.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k3, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + TimeStep * k3[i];
     }
-    v3Scale(TimeStep/3.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep, X2, k4, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X[i] += TimeStep / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
     }
-    v3Scale(TimeStep/6.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
-    memcpy(XState, X, NStates*sizeof(double));
+    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
+    memcpy(this->XState, X, this->NStates*sizeof(double));
     
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
-    sMag =  v3Norm(&XState[6]);
+    sMag =  v3Norm(&this->XState[6]);
     if(sMag > 1.0) {
         v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
-        MRPSwitchCount++;
+        this->MRPSwitchCount++;
     }
 
     uint32_t rwCount = 0;
@@ -947,12 +947,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Energy, Power, and Momentum Calculations
     totRwsKinEnergy = 0.0;
     v3SetZero(totRwsAngMomentum_B);
-    sigmaBNLoc[0] = XState[6];
-    sigmaBNLoc[1] = XState[7];
-    sigmaBNLoc[2] = XState[8];
-    omegaBN_BLoc[0] = XState[9];
-    omegaBN_BLoc[1] = XState[10];
-    omegaBN_BLoc[2] = XState[11];
+    sigmaBNLoc[0] = this->XState[6];
+    sigmaBNLoc[1] = this->XState[7];
+    sigmaBNLoc[2] = this->XState[8];
+    omegaBN_BLoc[0] = this->XState[9];
+    omegaBN_BLoc[1] = this->XState[10];
+    omegaBN_BLoc[2] = this->XState[11];
     std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
     for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 
