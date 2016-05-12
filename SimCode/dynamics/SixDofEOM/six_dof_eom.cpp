@@ -870,11 +870,11 @@ void SixDofEOM::integrateState(double CurrentTime)
     double sMag;
     uint32_t CentralBodyCount = 0;
     double LocalDV[3];
-    double sigmaLoc[3];
+    double sigmaBNLoc[3];
     double BN[3][3];
     double gsHat_B[3];                       /* spin axis in body frame */
     double intermediateVector[3];           /* intermediate vector needed for calculation */
-    double omegaLoc_B[3];                    /* local angular velocity vector in body frame */
+    double omegaBN_BLoc[3];                    /* local angular velocity vector in body frame */
     double rwsJs;                           /* Spin Axis Inertias of RWs */
     double rwsOmega;                       /* current wheel speeds of RWs */
 
@@ -969,17 +969,17 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
     //! - Find rotational kinetic energy of spacecraft
-    omegaLoc_B[0] = XState[9];
-    omegaLoc_B[1] = XState[10];
-    omegaLoc_B[2] = XState[11];
-    m33MultV3(compI, omegaLoc_B, totScAngMomentum_B);
-    totScRotKinEnergy = 1.0/2.0*v3Dot(omegaLoc_B, totScAngMomentum_B);
+    omegaBN_BLoc[0] = XState[9];
+    omegaBN_BLoc[1] = XState[10];
+    omegaBN_BLoc[2] = XState[11];
+    m33MultV3(compI, omegaBN_BLoc, totScAngMomentum_B);
+    totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, totScAngMomentum_B);
     v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
-    sigmaLoc[0] = XState[6];
-    sigmaLoc[1] = XState[7];
-    sigmaLoc[2] = XState[8];
-    MRP2C(sigmaLoc, BN);
+    sigmaBNLoc[0] = XState[6];
+    sigmaBNLoc[1] = XState[7];
+    sigmaBNLoc[2] = XState[8];
+    MRP2C(sigmaBNLoc, BN);
     m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
     //! - Find magnitude of spacecraft angular momentum
     totScAngMomentum = v3Norm(totScAngMomentum_N);
