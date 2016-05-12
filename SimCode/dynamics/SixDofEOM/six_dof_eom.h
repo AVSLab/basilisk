@@ -141,8 +141,6 @@ public:
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
-    double totRwsRelKinEnergy;    //!< [J]    Total relative rotational kinetic energy of all rws
-    double totRwsRelAngMomentum_B[3];//!< [J]    Total relative rotational kinetic energy of all rws
     double totScRotKinEnergy;     //!< [J]    Total rotational kinetic energy of spacecraft
     double totScAngMomentum_B[3];  //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
     double totScAngMomentum_N[3];  //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components

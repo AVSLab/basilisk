@@ -872,11 +872,13 @@ void SixDofEOM::integrateState(double CurrentTime)
     double LocalDV[3];
     double sigmaBNLoc[3];
     double BN[3][3];
-    double gsHat_B[3];                       /* spin axis in body frame */
-    double intermediateVector[3];           /* intermediate vector needed for calculation */
-    double omegaBN_BLoc[3];                    /* local angular velocity vector in body frame */
-    double rwsJs;                           /* Spin Axis Inertias of RWs */
-    double rwsOmega;                       /* current wheel speeds of RWs */
+    double gsHat_B[3];                        /* spin axis in body frame */
+    double intermediateVector[3];             /* intermediate vector needed for calculation */
+    double omegaBN_BLoc[3];                   /* local angular velocity vector in body frame */
+    double rwsJs;                             /* Spin Axis Inertias of RWs */
+    double rwsOmega;                          /* current wheel speeds of RWs */
+    double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
+    double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -941,8 +943,8 @@ void SixDofEOM::integrateState(double CurrentTime)
     }
 
     uint32_t rwCount = 0;
-    totRwsRelKinEnergy = 0.0;
-    v3SetZero(totRwsRelAngMomentum_B);
+    totRwsKinEnergy = 0.0;
+    v3SetZero(totRwsAngMomentum_B);
     omegaBN_BLoc[0] = XState[9];
     omegaBN_BLoc[1] = XState[10];
     omegaBN_BLoc[2] = XState[11];
@@ -961,10 +963,10 @@ void SixDofEOM::integrateState(double CurrentTime)
             rwsJs = rwIt->Js;
             m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
             rwsOmega = XState[12 + rwCount];
-            totRwsRelKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S));
+            totRwsKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S));
             v3Scale(rwsJs, gsHat_B, intermediateVector);
             v3Scale((rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B)), intermediateVector, intermediateVector);
-            v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
+            v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
             /* Set current reaction wheel speed */
             rwIt->Omega = rwsOmega;
             rwCount++;
@@ -975,14 +977,14 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Find rotational kinetic energy of spacecraft
     m33MultV3(compI, omegaBN_BLoc, totScAngMomentum_B);
     totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, totScAngMomentum_B);
-    v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
+    v3Add(totRwsAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
     MRP2C(sigmaBNLoc, BN);
     m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
     //! - Find magnitude of spacecraft angular momentum
     totScAngMomentum = v3Norm(totScAngMomentum_N);
     //! - Add the reaction wheel relative kinetic energy to the sc energy
-    totScRotKinEnergy += totRwsRelKinEnergy;
+    totScRotKinEnergy += totRwsKinEnergy;
 
     //! - Clear out local allocations and set time for next cycle
     TimePrev = CurrentTime;
