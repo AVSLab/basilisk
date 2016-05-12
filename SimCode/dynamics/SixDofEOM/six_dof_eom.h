@@ -145,7 +145,8 @@ public:
     double totScAngMomentum_B[3];     //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
     double totScAngMomentum_N[3];     //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
     double totScAngMomentumMag;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
-    double scPower;                   //!< [W] Energy rate or power of the spacecraft
+    double scPower;                   //!< [W] Mechanical Power of the spacecraft
+    double scEnergyRate;              //!< [W] Rate of change of energy to check with power
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data

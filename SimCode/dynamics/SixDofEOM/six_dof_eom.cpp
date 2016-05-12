@@ -880,6 +880,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     double gsHat_B[3];                        /* spin axis of RWs in body frame */
     double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
     double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
+    double prevTotScRotKinEnergy;             /* The last kinetic energy calculation from time step before */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -982,6 +983,9 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
     //! - Find rotational kinetic energy of spacecraft
     m33MultV3(this->compI, omegaBN_BLoc, this->totScAngMomentum_B);
+    //! - Grab previous energy value
+    prevTotScRotKinEnergy = this->totScRotKinEnergy;
+    //! - Caluclate rotational kinetic energy minus the RWs
     this->totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, this->totScAngMomentum_B);
     v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
     //! - Find angular momentum vector in inertial frame
@@ -991,6 +995,8 @@ void SixDofEOM::integrateState(double CurrentTime)
     this->totScAngMomentumMag = v3Norm(this->totScAngMomentum_N);
     //! - Add the reaction wheel relative kinetic energy to the sc energy
     this->totScRotKinEnergy += totRwsKinEnergy;
+    //! - Calulate rate of change of energy
+    this->scEnergyRate = (this->totScRotKinEnergy-prevTotScRotKinEnergy)/TimeStep;
 
     //! - Clear out local allocations and set time for next cycle
     this->TimePrev = CurrentTime;
