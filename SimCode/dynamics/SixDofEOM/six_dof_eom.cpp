@@ -596,15 +596,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
-    double r_NLoc[3];
+    double rBN_NLoc[3];
     double rmag;
-    double v_NLoc[3];
-    double sigmaLoc[3];
-    double omegaLoc[3];
+    double vBN_NLoc[3];
+    double sigmaBNLoc[3];
+    double omegaBN_BLoc[3];
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double d2[3];               /* intermediate variables */
     double d3[3];
-    double T_Irtl2Bdy[3][3];
+    double BN[3][3];
     double LocalAccels[3];
     int    i;
     double PlanetRelPos[3];
@@ -618,18 +618,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
-    r_NLoc[0] = X[i++];
-    r_NLoc[1] = X[i++];
-    r_NLoc[2] = X[i++];
-    v_NLoc[0] = X[i++];
-    v_NLoc[1] = X[i++];
-    v_NLoc[2] = X[i++];
-    sigmaLoc[0] = X[i++];
-    sigmaLoc[1] = X[i++];
-    sigmaLoc[2] = X[i++];
-    omegaLoc[0] = X[i++];
-    omegaLoc[1] = X[i++];
-    omegaLoc[2] = X[i++];
+    rBN_NLoc[0] = X[i++];
+    rBN_NLoc[1] = X[i++];
+    rBN_NLoc[2] = X[i++];
+    vBN_NLoc[0] = X[i++];
+    vBN_NLoc[1] = X[i++];
+    vBN_NLoc[2] = X[i++];
+    sigmaBNLoc[0] = X[i++];
+    sigmaBNLoc[1] = X[i++];
+    sigmaBNLoc[2] = X[i++];
+    omegaBN_BLoc[0] = X[i++];
+    omegaBN_BLoc[1] = X[i++];
+    omegaBN_BLoc[2] = X[i++];
 	Omegas = NULL;
 	if (RWACount > 0)
 	{
@@ -642,17 +642,17 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     computeCompositeProperties();
 
     //! - compute derivative of position (velocity)
-    v3Copy(v_NLoc, dX);
+    v3Copy(vBN_NLoc, dX);
 
     //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_NLoc);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_NLoc, d2);
+    rmag = v3Norm(rBN_NLoc);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, rBN_NLoc, d2);
     v3Add(d2, dX+3, dX+3);
 
     /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
     if(CentralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_NLoc, perturbAccel);
+        jPerturb(CentralBody, rBN_NLoc, perturbAccel);
         v3Add(dX+3, perturbAccel, dX+3);
     }
     else if (CentralBody->UseSphericalHarmParams)
@@ -667,16 +667,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         
         m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
         m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
-        m33MultV3(J2000PfixCurrent, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
+        m33MultV3(J2000PfixCurrent, rBN_NLoc, posPlanetFix); // r_E = [EN]*r_N
         CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
         m33tMultV3(J2000PfixCurrent, gravField, aux1); // [EN]^T * gravField
         
-        m33MultV3(CentralBody->J20002Pfix_dot, v_NLoc, aux2);  // [EN_dot] * v_N
+        m33MultV3(CentralBody->J20002Pfix_dot, vBN_NLoc, aux2);  // [EN_dot] * v_N
         m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);    // [EN]^T * [EN_dot] * v_N
         v3Scale(2.0, aux2, aux2);                           // 2 * [EN]^T * [EN_dot] * v_N
         
-        m33MultV3(CentralBody->J20002Pfix_dot, r_NLoc, aux3);  // [EN_dot] * r_N
+        m33MultV3(CentralBody->J20002Pfix_dot, rBN_NLoc, aux3);  // [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * r_N
         m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3); // [EN_dot] * [EN]^T * [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
@@ -732,7 +732,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
             posVelComp);
-        v3Add(r_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
+        v3Add(rBN_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
         v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
         v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
         v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
@@ -755,19 +755,19 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     
 
     //! - compute dsigma/dt (see Schaub and Junkins)
-    BmatMRP(sigmaLoc, B);
+    BmatMRP(sigmaBNLoc, B);
     m33Scale(0.25, B, B);
-    m33MultV3(B, omegaLoc, dX + 6);
+    m33MultV3(B, omegaBN_BLoc, dX + 6);
     
 
     //! - Convert the current attitude to DCM for conversion in DynEffector loop
-    MRP2C(sigmaLoc, T_Irtl2Bdy);
+    MRP2C(sigmaBNLoc, BN);
     
     //! - Copy out the current state for DynEffector calls
-    memcpy(StateCurrent.r_N, r_NLoc, 3*sizeof(double));
-    memcpy(StateCurrent.v_N, v_NLoc, 3*sizeof(double));
-    memcpy(StateCurrent.sigma, sigmaLoc, 3*sizeof(double));
-    memcpy(StateCurrent.omega, omegaLoc, 3*sizeof(double));
+    memcpy(StateCurrent.r_N, rBN_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.v_N, vBN_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.sigma, sigmaBNLoc, 3*sizeof(double));
+    memcpy(StateCurrent.omega, omegaBN_BLoc, 3*sizeof(double));
     memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
     //! - Copy out the current mass properties for DynEffector calls
@@ -787,7 +787,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
         v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels);
         v3Add(LocalAccels, NonConservAccelBdy, NonConservAccelBdy);
-        m33tMultV3(T_Irtl2Bdy, LocalAccels, LocalAccels);
+        m33tMultV3(BN, LocalAccels, LocalAccels);
         v3Add(dX+3, LocalAccels, dX+3);
         m33MultV3(compIinv, TheEff->GetBodyTorques(), LocalAccels);
         v3Add(dX+9, LocalAccels, dX+9);
@@ -795,8 +795,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     }
 
     //! - compute domega/dt (see Schaub and Junkins)
-    v3Tilde(omegaLoc, B);                  /* [tilde(w)] */
-    m33MultV3(compI, omegaLoc, d2);        /* [I]w */
+    v3Tilde(omegaBN_BLoc, B);                  /* [tilde(w)] */
+    m33MultV3(compI, omegaBN_BLoc, d2);        /* [I]w */
 	v3Copy(d2, d3);
  
 
@@ -814,7 +814,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
 			m33MultV3(T_str2Bdy, rwIt->gsHat_S, spinAxisBody);
-			double hs =  rwIt->Js * (v3Dot(omegaLoc, spinAxisBody) + Omegas[rwCount]);
+			double hs =  rwIt->Js * (v3Dot(omegaBN_BLoc, spinAxisBody) + Omegas[rwCount]);
 			v3Scale(hs, spinAxisBody, d2);
 			v3Add(d3, d2, d3);
             v3Add(rwaGyroTorqueBdy, d2, rwaGyroTorqueBdy);
