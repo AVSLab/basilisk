@@ -876,6 +876,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     double omegaBN_BLoc[3];                   /* local angular velocity vector in body frame */
     double rwsJs;                             /* Spin Axis Inertias of RWs */
     double rwsOmega;                          /* current wheel speeds of RWs */
+    double rwsU;                              /* Current torque of RWs */
     double gsHat_B[3];                        /* spin axis of RWs in body frame */
     double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
     double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
@@ -947,6 +948,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Energy, Power, and Momentum Calculations
     totRwsKinEnergy = 0.0;
     v3SetZero(totRwsAngMomentum_B);
+    this->scPower = 0.0;
     sigmaBNLoc[0] = this->XState[6];
     sigmaBNLoc[1] = this->XState[7];
     sigmaBNLoc[2] = this->XState[8];
@@ -963,6 +965,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         {
             /* Gather values needed for energy and momentum calculations */
             rwsJs = rwIt->Js;
+            rwsU = rwIt->u_current;
             m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
             rwsOmega = this->XState[12 + rwCount];
             totRwsKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S));
@@ -972,6 +975,7 @@ void SixDofEOM::integrateState(double CurrentTime)
             /* Set current reaction wheel speed */
             rwIt->Omega = rwsOmega;
             rwCount++;
+            this->scPower += rwsU*rwsOmega;
         }
     }
 
@@ -984,7 +988,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     MRP2C(sigmaBNLoc, BN);
     m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);
     //! - Find magnitude of spacecraft angular momentum
-    this->totScAngMomentum = v3Norm(this->totScAngMomentum_N);
+    this->totScAngMomentumMag = v3Norm(this->totScAngMomentum_N);
     //! - Add the reaction wheel relative kinetic energy to the sc energy
     this->totScRotKinEnergy += totRwsKinEnergy;
 
