@@ -945,6 +945,9 @@ void SixDofEOM::integrateState(double CurrentTime)
     totRwsRelAngMomentum_B[0] = 0.0;
     totRwsRelAngMomentum_B[1] = 0.0;
     totRwsRelAngMomentum_B[2] = 0.0;
+    omegaBN_BLoc[0] = XState[9];
+    omegaBN_BLoc[1] = XState[10];
+    omegaBN_BLoc[2] = XState[11];
     std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
     for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
 
@@ -957,9 +960,9 @@ void SixDofEOM::integrateState(double CurrentTime)
             rwsJs = rwIt->Js;
             m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
             rwsOmega = XState[12 + rwCount];
-            totRwsRelKinEnergy += 1.0/2.0*rwsJs*rwsOmega*rwsOmega;
+            totRwsRelKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S));
             v3Scale(rwsJs, gsHat_B, intermediateVector);
-            v3Scale(rwsOmega, intermediateVector, intermediateVector);
+            v3Scale((rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B)), intermediateVector, intermediateVector);
             v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
             /* Set current reaction wheel speed */
             rwIt->Omega = rwsOmega;
@@ -969,9 +972,6 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
     //! - Find rotational kinetic energy of spacecraft
-    omegaBN_BLoc[0] = XState[9];
-    omegaBN_BLoc[1] = XState[10];
-    omegaBN_BLoc[2] = XState[11];
     m33MultV3(compI, omegaBN_BLoc, totScAngMomentum_B);
     totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, totScAngMomentum_B);
     v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
