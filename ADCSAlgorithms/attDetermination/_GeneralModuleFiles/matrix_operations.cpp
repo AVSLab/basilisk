@@ -656,7 +656,7 @@ void MatrixOperations::MatOps_VecSet(
 void MatrixOperations::MatOps_QuatTrans(
                                         MatrixOperations Q_A)              // -- Quaternion to transpose
 {
-    int i;
+//    int i;
     if(Q_A.dim_length >2 || Q_A.dim_length < 2)
     {
         cout << "Only a 2D matrix can be inverted!" << endl;
@@ -956,7 +956,7 @@ void MatrixOperations::MatOps_MRP2Quat(
 }
 void MatrixOperations::MatOps_Quat2MRP(MatrixOperations Q_A)
 {
-    int i;
+//    int i;
     double scalefactor;
     MatrixOperations QALocal;
     if(Q_A.dim_length >2 || Q_A.dim_length < 2)
