@@ -107,9 +107,9 @@ def C2Euler123(C):
     	Q = C2Euler123(C) translates the 3x3 direction cosine matrix
     	C into the corresponding (1-2-3) euler angle set.
     """
-    q0 = np.atan2(-C[2, 1], C[2, 2])
-    q1 = np.asin(C[2, 0])
-    q2 = np.atan2(-C[1, 0], C[0, 0])
+    q0 = np.arctan2(-C[2, 1], C[2, 2])
+    q1 = np.arcsin(C[2, 0])
+    q2 = np.arctan2(-C[1, 0], C[0, 0])
     q = np.array([q0, q1, q2])
     return q
 
