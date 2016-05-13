@@ -195,6 +195,10 @@ def mrp_steering_tracking(show_plots):
     if show_plots:
         plt.show()
 
+    #   print out success message if no error were found
+    if testFailCount == 0:
+        print   "PASSED: " + moduleWrap.ModelTag
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
