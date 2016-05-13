@@ -97,7 +97,7 @@ void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(ConfigData->Lr[0]));
+                sizeof(vehControlOut), (void*) &(ConfigData->Lr[0]), moduleID);
 
     /*
         check if the filter states must be reset

@@ -56,7 +56,7 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     if(ConfigData->PropsMsgID >= 0)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
-                    sizeof(vehicleConfigData), (void*) &LocalConfigData);
+                    sizeof(vehicleConfigData), (void*) &LocalConfigData, moduleID);
         m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->T_StrPlatform,
                    RECAST3X3 ConfigData->T_BdyPlatform);
     }
@@ -78,7 +78,7 @@ void Update_stProcessTelem(STConfigData *ConfigData, uint64_t callTime, uint64_t
     double T_BdyInrtl[3][3];
     StarTrackerHWOutput LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
-                sizeof(StarTrackerHWOutput), (void*) &LocalInput);
+                sizeof(StarTrackerHWOutput), (void*) &LocalInput, moduleID);
     EP2C(LocalInput.qInrtl2Case, T_CaseInrtl);
     m33MultM33(RECAST3X3 ConfigData->T_BdyPlatform, T_CaseInrtl, T_BdyInrtl);
     C2MRP(T_BdyInrtl, ConfigData->LocalOutput.MRP_BdyInrtl);

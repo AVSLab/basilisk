@@ -324,3 +324,34 @@ void SimModel::terminateSimulation()
 {
     SystemMessaging::GetInstance()->clearMessaging();
 }
+
+std::set<std::pair<int64_t, int64_t>>
+    SimModel::getMessageExchangeData(std::string messageName)
+{
+    std::set<std::pair<int64_t, int64_t>> returnPairs;
+    bool messageFound = false;
+    for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
+    {
+        SystemMessaging::GetInstance()->
+            selectMessageBuffer(i);
+        int64_t messageID = SystemMessaging::GetInstance()->
+            FindMessageID(messageName);
+        if(messageID >= 0)
+        {
+            std::set<std::pair<int64_t, int64_t>> localPairs;
+            localPairs =SystemMessaging::GetInstance()->
+                getMessageExchangeData(messageID);
+            returnPairs.insert(localPairs.begin(), localPairs.end());
+            messageFound = true;
+        }
+        
+    }
+    
+    if(!messageFound)
+    {
+        std::cerr << "I couldn't find a message with the name: " << messageName;
+        std::cerr << std::endl << "Can't give you exchange pairs for it" << std::endl;
+    }
+    return(returnPairs);
+    
+}

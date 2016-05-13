@@ -117,12 +117,12 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState));
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState), moduleID);
     }
     if(inputTimeID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
-                                                    sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState));
+                                                    sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState), moduleID);
         localTime = timeState.J2000Current;
         localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
     }

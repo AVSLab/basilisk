@@ -96,9 +96,9 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     memset(&localRef, 0x0, sizeof(attRefOut));
     
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(localState));
+                sizeof(NavStateOut), (void*) &(localState), moduleID);
     ReadMessage(ConfigData->inputCmdID, &clockTime, &readSize,
-                sizeof(attCmdOut), (void*) &(localCmd));
+                sizeof(attCmdOut), (void*) &(localCmd), moduleID);
     
     if(ConfigData->mnvrActive != 1)
     {

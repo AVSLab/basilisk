@@ -169,7 +169,7 @@ void OrbElemConvert::ReadInputs()
     stateMsgSize;
     //! - Read the input message into the correct pointer
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &LocalHeader,
-                                                InputSize, InputPtr);
+                                                InputSize, InputPtr, moduleID);
     //! - Depending on switch, either write into CurrentElem or pos/vel
     if(Elements2Cart)
     {

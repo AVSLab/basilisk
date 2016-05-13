@@ -98,7 +98,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     for(i=0; i<ConfigData->NumSensors; i++)
     {
         ReadMessage(ConfigData->SensorMsgIDs[i], &ClockTime, &ReadSize,
-                    sizeof(double), (void*) &(InputValues[i]));
+                    sizeof(double), (void*) &(InputValues[i]), moduleID);
         if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] >= 0.0)
         {
             /* Scale sensor */

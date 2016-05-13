@@ -104,9 +104,9 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
     memset(&ref, 0x0, sizeof(attRefOut));
     memset(&nav, 0x0, sizeof(NavStateOut));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
-                sizeof(attRefOut), (void*) &(ref));
+                sizeof(attRefOut), (void*) &(ref), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav));
+                sizeof(NavStateOut), (void*) &(nav), moduleID);
 
 
     computeAttitudeError(nav.sigma_BN,

@@ -63,7 +63,7 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     for(i=0; i<ConfigData->msgCount; i=i+1)
     {
         ReadMessage(ConfigData->navMsgs[i].inputNavID, &writeTime, &writeSize,
-                    sizeof(NavStateOut), &(ConfigData->navMsgs[i].msgStorage));
+                    sizeof(NavStateOut), &(ConfigData->navMsgs[i].msgStorage), moduleID);
     }
     
     /*! - Copy out each part of the source message into the target output message*/

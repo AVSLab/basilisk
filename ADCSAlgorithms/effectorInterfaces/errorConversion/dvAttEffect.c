@@ -94,7 +94,7 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(vehControlOut), (void*) &(cntrRequest));
+                sizeof(vehControlOut), (void*) &(cntrRequest), moduleID);
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {

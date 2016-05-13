@@ -68,7 +68,7 @@ void STInertialUKF::StateProp(MatrixOperations &StateCurr)
     v3Scale(dt, angAccelTotal, angAccelTotal);
     v3Add(omegVecLocal, angAccelTotal, omegVecLocal);
     BmatMRP(StateCurr.vec_vals, BMatInv);
-    //m33MultV3(BMatInv, omegVecLocal, &(StateCurr.vec_vals[3]));
+    m33MultV3(BMatInv, omegVecLocal, &(StateCurr.vec_vals[3]));
     return;
 }
 
@@ -165,10 +165,10 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     MatrixOperations inputMatrix;
     vehicleConfigData localConfig;
     
-    ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas);
-    ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds);
+    ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas, moduleID);
+    ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds, moduleID);
     ReadMessage(inputVehicleConfigDataID, &ClockTime, &ReadSize,
-        sizeof(vehicleConfigData), &localConfig);
+        sizeof(vehicleConfigData), &localConfig, moduleID);
     m33Inverse(RECAST3X3 localConfig.I, RECAST3X3 IInv);
     
     if (initToMeas && stMeas.timeTag != 0.0)

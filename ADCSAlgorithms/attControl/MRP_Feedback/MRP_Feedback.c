@@ -116,11 +116,11 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(attGuidOut), (void*) &(guidCmd));
+                sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(sc));
+                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav));
+                sizeof(NavStateOut), (void*) &(nav), moduleID);
 
 
     /* compute known external torque */

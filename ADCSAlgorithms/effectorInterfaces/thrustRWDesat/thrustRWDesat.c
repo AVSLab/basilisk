@@ -89,7 +89,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
     ReadMessage(ConfigData->inputSpeedID, &ClockTime, &ReadSize,
-                sizeof(RWSpeedData), (void*) &(rwSpeeds));
+                sizeof(RWSpeedData), (void*) &(rwSpeeds), moduleID);
     
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);

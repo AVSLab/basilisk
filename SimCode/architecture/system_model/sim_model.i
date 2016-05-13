@@ -25,6 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_vector.i"
 %include "std_string.i"
 %include "std_set.i"
+%include "std_pair.i"
 %include "stdint.i"
 %include "carrays.i"
 
@@ -42,6 +43,8 @@ namespace std {
    %template(StringSet) set<string>;
    %template(ConstCharVector) vector<const char*>;
    %template(messsageLogVector) vector<messageLogContainer>;
+   %template() std::pair<int64_t,int64_t>;
+   %template(exchangeSet) std::set<std::pair<int64_t, int64_t>>;
 }
 %include "sys_model_task.h"
 %include "sys_process.h"

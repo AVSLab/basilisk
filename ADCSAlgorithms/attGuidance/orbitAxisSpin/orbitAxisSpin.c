@@ -76,7 +76,7 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
     
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
-                sizeof(attRefOut), (void*) &(ref));
+                sizeof(attRefOut), (void*) &(ref), moduleID);
     
     double dt;
     if (callTime*NANO2SEC == 0.) { dt = 0.; }
@@ -87,7 +87,7 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
     {
         NavStateOut nav;                           /*!< navigation message */
         ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                    sizeof(NavStateOut), (void*) &(nav));
+                    sizeof(NavStateOut), (void*) &(nav), moduleID);
         
         ConfigData->phi_spin = computeInitialSpinAngle(ConfigData,
                                                        ref.sigma_RN,

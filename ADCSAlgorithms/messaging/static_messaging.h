@@ -35,7 +35,7 @@ extern "C" {
     int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSize,
                          void *MsgPayload, uint64_t moduleID);
     int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
-                        uint32_t MaxBytes, void *MsgPayload);
+                        uint32_t MaxBytes, void *MsgPayload, int64_t moduleID);
     int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
         int64_t moduleID);
     const char * FindMessageName(uint32_t MessageID);

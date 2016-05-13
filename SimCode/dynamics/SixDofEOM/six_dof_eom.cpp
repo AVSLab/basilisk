@@ -430,7 +430,7 @@ void SixDofEOM::ReadInputs()
         if(it->BodyMsgID >= 0)
         {
             SystemMessaging::GetInstance()->ReadMessage(it->BodyMsgID, &LocalHeader,
-                                                        sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&LocalPlanet));
+                                                        sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&LocalPlanet), moduleID);
             memcpy(it->PosFromEphem, LocalPlanet.PositionVector, 3*sizeof(double));
             memcpy(it->VelFromEphem, LocalPlanet.VelocityVector, 3*sizeof(double));
             memcpy(it->J20002Pfix, LocalPlanet.J20002Pfix, 9*sizeof(double));

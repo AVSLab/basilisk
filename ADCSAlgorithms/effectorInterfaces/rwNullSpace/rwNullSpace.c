@@ -113,9 +113,9 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input RW commands to get the raw RW requests*/
     ReadMessage(ConfigData->inputRWCmdsID, &ClockTime, &ReadSize,
-                sizeof(vehEffectorOut), (void*) &(cntrRequest));
+                sizeof(vehEffectorOut), (void*) &(cntrRequest), moduleID);
 	ReadMessage(ConfigData->inputSpeedsID, &ClockTime, &ReadSize,
-		sizeof(RWSpeedData), (void*)&(rwSpeeds));
+		sizeof(RWSpeedData), (void*)&(rwSpeeds), moduleID);
     
 	memset(&finalControl, 0x0, sizeof(vehEffectorOut));
 	vScale(-ConfigData->OmegaGain, rwSpeeds.wheelSpeeds,
