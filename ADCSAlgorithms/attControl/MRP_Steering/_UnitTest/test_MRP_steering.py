@@ -91,6 +91,18 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5*unitTestSupport.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
+    SimulationBaseClass.SetCArray([.1,.1,.1,.1],        # set RW spin inertia Js values
+                                  'double',
+                                  moduleConfig.JsList)
+    SimulationBaseClass.SetCArray([
+                                1,0,0,
+                                0,1,0,
+                                0,0,1,
+                                0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+                                ],        # set RW spin axes unit vector g_s
+                                  'double',
+                                  moduleConfig.GsMatrix)
+                             
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -150,7 +162,7 @@ def mrp_steering_tracking(show_plots):
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
     rwSpeedMessage = rwNullSpace.RWSpeedData()
-    Omega = [10.0, 25.0, 50.0, 75.0];
+    Omega = [10.0, 25.0, 50.0, 100.0];
     SimulationBaseClass.SetCArray(Omega,
                                   'double',
                                   rwSpeedMessage.wheelSpeeds)
@@ -198,17 +210,14 @@ def mrp_steering_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
-
-    print moduleOutput
     
     # set the filtered output truth states
     trueVector = [
-               [3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
-              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
+               [3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.519426975703996,-5.043376767319374,3.475597633355197]
+              ,[3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.519426975703996,-5.043376767319374,3.475597633355197]
                ]
 
     # compare the module results to the truth values
