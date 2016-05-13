@@ -167,12 +167,16 @@ def subModuleTestFunction(show_plots):
     # plot all figures
     if show_plots:
         # plot a sample variable.
-        plt.figure(1)
-        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Variable Description [unit]')
-        plt.show()
+#        plt.figure(1)
+#        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
+#        plt.legend(loc='upper left')
+#        plt.xlabel('Time [s]')
+#        plt.ylabel('Variable Description [unit]')
+#        plt.show()
+
+    #   print out success message if no error were found
+    if testFailCount == 0:
+        print   "PASSED: " + moduleWrap.ModelTag
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
