@@ -167,18 +167,18 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, omega_BastN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.I, nav.omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
-        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BastN_B, wheelGs) +
+        v3Scale(ConfigData->JsList[i] * (v3Dot(nav.omega_BN_B, wheelGs) +
             wheelSpeeds.wheelSpeeds[i]), wheelGs, v3_1);
         v3Add(v3_1, v3, v3);
     }
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Cross(omega_BastN_B, guidCmd.omega_RN_B, v3);
+    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);
