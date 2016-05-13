@@ -106,7 +106,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     double              omegap_BastR_B[3];  /*!< body frame derivative of omega_BastR */
     double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /*!< angular velocity tracking error between actual 
-                                             body frame B and desired B^ast frame */
+                                                 body frame B and desired B^ast frame */
     int                 i;
     double              temp;
     double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
