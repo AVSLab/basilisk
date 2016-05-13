@@ -31,7 +31,7 @@ import MRP_Steering                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
-
+import rwNullSpace
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -69,7 +69,8 @@ def mrp_steering_tracking(show_plots):
     moduleWrap = alg_contain.AlgContain(moduleConfig,
                                         MRP_Steering.Update_MRP_Steering,
                                         MRP_Steering.SelfInit_MRP_Steering,
-                                        MRP_Steering.CrossInit_MRP_Steering)
+                                        MRP_Steering.CrossInit_MRP_Steering,
+                                        MRP_Steering.Reset_MRP_Steering)
     moduleWrap.ModelTag = "MRP_Steering"
 
     # Add test module to runtime call list
@@ -79,12 +80,15 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.inputGuidName  = "inputGuidName"
     moduleConfig.inputNavName = "inputNavName"
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
+    moduleConfig.wheelSpeedsName  = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
+    
 
     moduleConfig.K1 = 0.15
     moduleConfig.K3 = 1.0
     moduleConfig.Ki = 0.01
     moduleConfig.P = 150.0
+    moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5*unitTestSupport.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
 
@@ -139,6 +143,23 @@ def mrp_steering_tracking(show_plots):
                                           0,
                                           NavStateOutData)
 
+    # wheelSpeeds Message
+    inputMessageSize = 36*8                               # 36 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    Omega = [10.0, 25.0, 50.0, 75.0];
+    SimulationBaseClass.SetCArray(Omega,
+                                  'double',
+                                  rwSpeedMessage.wheelSpeeds)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          0,
+                                          rwSpeedMessage)
+    
+    
     # vehicleConfigData Message:
     inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -164,7 +185,12 @@ def mrp_steering_tracking(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+    
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
@@ -173,9 +199,14 @@ def mrp_steering_tracking(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
+
+    print moduleOutput
+    
     # set the filtered output truth states
     trueVector = [
                [3.848737485003551,-4.725796580650879,3.024672988058504]
+              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
+              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
               ,[3.848737485003551,-4.725796580650879,3.024672988058504]
               ,[3.848874428449078,-4.725930551908788,3.024800788983047]
                ]
