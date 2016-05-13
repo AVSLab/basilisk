@@ -93,10 +93,11 @@ def orbitAxisSpinTestFunction(show_plots):
 
     moduleConfig.o_spin = 0
     moduleConfig.b_spin = 0
-    moduleConfig.phi_spin = np.pi/4
+    moduleConfig.phi_spin0 = np.pi/4
     moduleConfig.omega_spin = np.pi/8
     moduleConfig.dt = updateTime
     moduleConfig.integrateFlag = 1
+    moduleConfig.mnvrStartTime = 0
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -169,10 +170,11 @@ def orbitAxisSpinTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-             [ 0.035239058903, -0.395142321122, -0.163673308476 ],
-             [ 0.086813651715, -0.395142321122, -0.163673308476 ],
-             [ 0.139673375131, -0.395142321122, -0.163673308476 ]
+             [ 0.035239058903, -0.395142321122, -0.163673308476],
+             [ 0.035239058903, -0.395142321122, -0.163673308476],
+             [ 0.086813651715, -0.395142321122, -0.163673308476]
     ]
+
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -191,9 +193,9 @@ def orbitAxisSpinTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ] ,
-               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ],
-               [ -0.00383553448372837, 0.00383553448372837, 0.39269908169872414 ]
+               [-0.003835534484, 0.003835534484, 0.392699081699],
+               [-0.003835534484, 0.003835534484, 0.392699081699],
+               [-0.003835534484, 0.003835534484, 0.392699081699]
     ]
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -213,9 +215,9 @@ def orbitAxisSpinTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ] ,
-            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ],
-            [ 0.00152407626015501, 0.00148834547901283, 0.00000000000000000 ]
+            [1.524076260155e-03, 1.488345479013e-03, -5.713465681702e-19],
+            [1.524076260155e-03, 1.488345479013e-03, -5.713465681702e-19],
+            [1.524076260155e-03, 1.488345479013e-03, -5.713465681702e-19]
     ]
     # compare the module results to the truth values
     accuracy = 1e-12
