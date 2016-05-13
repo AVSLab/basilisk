@@ -946,7 +946,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     uint32_t rwCount = 0;
     
-    //! - Energy, Power, and Momentum Calculations, T = 1/2*omega^T*I*omega + sum_over_RWs(1/2*Js*(omega_si + Omega_i)^2) - Schaub pg. 4.5.1, H = I*omega + sum_over_RWs(g_s*J_s(omega_si + Omega)) - Schaub 4.5.1, P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2
+    /*! - Energy, Power, and Momentum Calculations, T = 1/2*omega^T*I*omega + sum_over_RWs(1/2*Js*(omega_si + Omega_i)^2) - Schaub pg. 4.5.1, H = I*omega + sum_over_RWs(g_s*J_s(omega_si + Omega)) - Schaub 4.5.1, P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2 */
     totRwsKinEnergy = 0.0;
     v3SetZero(totRwsAngMomentum_B);
     this->scPower = 0.0;
