@@ -76,7 +76,8 @@ def subModuleTestFunction(show_plots):
     moduleWrap = alg_contain.AlgContain(moduleConfig,
                                         LowPassFilterTorqueCommand.Update_LowPassFilterTorqueCommand,
                                         LowPassFilterTorqueCommand.SelfInit_LowPassFilterTorqueCommand,
-                                        LowPassFilterTorqueCommand.CrossInit_LowPassFilterTorqueCommand)
+                                        LowPassFilterTorqueCommand.CrossInit_LowPassFilterTorqueCommand,
+                                        LowPassFilterTorqueCommand.Reset_LowPassFilterTorqueCommand)
     moduleWrap.ModelTag = "LowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
@@ -116,7 +117,12 @@ def subModuleTestFunction(show_plots):
     unitTestSim.InitializeSimulation()
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.1))    # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))    # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     #   This pulls the actual data log from the simulation run.
@@ -129,9 +135,10 @@ def subModuleTestFunction(show_plots):
     LrFtrue = [
                [0.2734574719946391,-0.1367287359973196,0.1914202303962474],
                [0.4721359549995794,-0.2360679774997897,0.3304951684997055],
-               [0.6164843223022588,-0.3082421611511294,0.4315390256115811]
+               [0.6164843223022588,-0.3082421611511294,0.4315390256115811],
+               [0.2734574719946391,-0.1367287359973196,0.1914202303962474],
+               [0.4721359549995794,-0.2360679774997897,0.3304951684997055],
                ]
-
 
     #   compare the module and truth results
     for i in range(0,len(LrFtrue)):
