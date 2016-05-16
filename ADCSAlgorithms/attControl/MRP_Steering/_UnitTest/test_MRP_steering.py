@@ -31,7 +31,7 @@ import MRP_Steering                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
-
+import rwNullSpace
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -69,7 +69,8 @@ def mrp_steering_tracking(show_plots):
     moduleWrap = alg_contain.AlgContain(moduleConfig,
                                         MRP_Steering.Update_MRP_Steering,
                                         MRP_Steering.SelfInit_MRP_Steering,
-                                        MRP_Steering.CrossInit_MRP_Steering)
+                                        MRP_Steering.CrossInit_MRP_Steering,
+                                        MRP_Steering.Reset_MRP_Steering)
     moduleWrap.ModelTag = "MRP_Steering"
 
     # Add test module to runtime call list
@@ -79,14 +80,29 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.inputGuidName  = "inputGuidName"
     moduleConfig.inputNavName = "inputNavName"
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
+    moduleConfig.wheelSpeedsName  = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
+    
 
     moduleConfig.K1 = 0.15
     moduleConfig.K3 = 1.0
     moduleConfig.Ki = 0.01
     moduleConfig.P = 150.0
+    moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5*unitTestSupport.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
+    SimulationBaseClass.SetCArray([.1,.1,.1,.1],        # set RW spin inertia Js values
+                                  'double',
+                                  moduleConfig.JsList)
+    SimulationBaseClass.SetCArray([
+                                1,0,0,
+                                0,1,0,
+                                0,0,1,
+                                0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+                                ],        # set RW spin axes unit vector g_s
+                                  'double',
+                                  moduleConfig.GsMatrix)
+                             
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -139,6 +155,23 @@ def mrp_steering_tracking(show_plots):
                                           0,
                                           NavStateOutData)
 
+    # wheelSpeeds Message
+    inputMessageSize = 36*8                               # 36 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    Omega = [10.0, 25.0, 50.0, 100.0];
+    SimulationBaseClass.SetCArray(Omega,
+                                  'double',
+                                  rwSpeedMessage.wheelSpeeds)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          0,
+                                          rwSpeedMessage)
+    
+    
     # vehicleConfigData Message:
     inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -164,7 +197,12 @@ def mrp_steering_tracking(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+    
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.
@@ -172,12 +210,14 @@ def mrp_steering_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
+    
     # set the filtered output truth states
     trueVector = [
-               [3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848737485003551,-4.725796580650879,3.024672988058504]
-              ,[3.848874428449078,-4.725930551908788,3.024800788983047]
+               [3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.519426975703996,-5.043376767319374,3.475597633355197]
+              ,[3.51929003225847,-5.043242796061465,3.475469832430654]
+              ,[3.519426975703996,-5.043376767319374,3.475597633355197]
                ]
 
     # compare the module results to the truth values
@@ -194,6 +234,10 @@ def mrp_steering_tracking(show_plots):
     # plot all figures
     if show_plots:
         plt.show()
+
+    #   print out success message if no error were found
+    if testFailCount == 0:
+        print   "PASSED: " + moduleWrap.ModelTag
 
     # return fail count and join into a single string all messages in the list
     # testMessage

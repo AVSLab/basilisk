@@ -55,6 +55,7 @@ void SelfInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t mo
                                                "subModuleOut",          /* add the output structure name */
                                                moduleID);
 
+    ConfigData->dummy = 0.0;
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -78,7 +79,7 @@ void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t m
  */
 void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->dummy = 0;              /* reset any required variables */
+    ConfigData->dummy = 0.0;              /* reset any required variables */
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -104,7 +105,8 @@ void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t call
         Add the module specific code
      */
     v3Copy(ConfigData->inputVector, Lr);
-    ConfigData->dummy = 2.0;
+    ConfigData->dummy += 1.0;
+    Lr[0] += ConfigData->dummy;
 
     /*
      store the output message 
