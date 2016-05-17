@@ -596,15 +596,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
-    double r_NLoc[3];
+    double rBN_NLoc[3];
     double rmag;
-    double v_NLoc[3];
-    double sigmaLoc[3];
-    double omegaLoc[3];
+    double vBN_NLoc[3];
+    double sigmaBNLoc[3];
+    double omegaBN_BLoc[3];
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double d2[3];               /* intermediate variables */
     double d3[3];
-    double T_Irtl2Bdy[3][3];
+    double BN[3][3];
     double LocalAccels[3];
     int    i;
     double PlanetRelPos[3];
@@ -618,18 +618,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
-    r_NLoc[0] = X[i++];
-    r_NLoc[1] = X[i++];
-    r_NLoc[2] = X[i++];
-    v_NLoc[0] = X[i++];
-    v_NLoc[1] = X[i++];
-    v_NLoc[2] = X[i++];
-    sigmaLoc[0] = X[i++];
-    sigmaLoc[1] = X[i++];
-    sigmaLoc[2] = X[i++];
-    omegaLoc[0] = X[i++];
-    omegaLoc[1] = X[i++];
-    omegaLoc[2] = X[i++];
+    rBN_NLoc[0] = X[i++];
+    rBN_NLoc[1] = X[i++];
+    rBN_NLoc[2] = X[i++];
+    vBN_NLoc[0] = X[i++];
+    vBN_NLoc[1] = X[i++];
+    vBN_NLoc[2] = X[i++];
+    sigmaBNLoc[0] = X[i++];
+    sigmaBNLoc[1] = X[i++];
+    sigmaBNLoc[2] = X[i++];
+    omegaBN_BLoc[0] = X[i++];
+    omegaBN_BLoc[1] = X[i++];
+    omegaBN_BLoc[2] = X[i++];
 	Omegas = NULL;
 	if (RWACount > 0)
 	{
@@ -642,17 +642,17 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     computeCompositeProperties();
 
     //! - compute derivative of position (velocity)
-    v3Copy(v_NLoc, dX);
+    v3Copy(vBN_NLoc, dX);
 
     //! - Get current position magnitude and compute the 2-body gravitational accels
-    rmag = v3Norm(r_NLoc);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_NLoc, d2);
+    rmag = v3Norm(rBN_NLoc);
+    v3Scale(-CentralBody->mu / rmag / rmag / rmag, rBN_NLoc, d2);
     v3Add(d2, dX+3, dX+3);
 
     /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
     if(CentralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_NLoc, perturbAccel);
+        jPerturb(CentralBody, rBN_NLoc, perturbAccel);
         v3Add(dX+3, perturbAccel, dX+3);
     }
     else if (CentralBody->UseSphericalHarmParams)
@@ -667,16 +667,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         
         m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
         m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
-        m33MultV3(J2000PfixCurrent, r_NLoc, posPlanetFix); // r_E = [EN]*r_N
+        m33MultV3(J2000PfixCurrent, rBN_NLoc, posPlanetFix); // r_E = [EN]*r_N
         CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
         m33tMultV3(J2000PfixCurrent, gravField, aux1); // [EN]^T * gravField
         
-        m33MultV3(CentralBody->J20002Pfix_dot, v_NLoc, aux2);  // [EN_dot] * v_N
+        m33MultV3(CentralBody->J20002Pfix_dot, vBN_NLoc, aux2);  // [EN_dot] * v_N
         m33tMultV3(CentralBody->J20002Pfix, aux2, aux2);    // [EN]^T * [EN_dot] * v_N
         v3Scale(2.0, aux2, aux2);                           // 2 * [EN]^T * [EN_dot] * v_N
         
-        m33MultV3(CentralBody->J20002Pfix_dot, r_NLoc, aux3);  // [EN_dot] * r_N
+        m33MultV3(CentralBody->J20002Pfix_dot, rBN_NLoc, aux3);  // [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * r_N
         m33MultV3(CentralBody->J20002Pfix_dot, aux3, aux3); // [EN_dot] * [EN]^T * [EN_dot] * r_N
         m33tMultV3(CentralBody->J20002Pfix, aux3, aux3);    // [EN]^T * [EN_dot] * [EN]^T * [EN_dot] * r_N
@@ -732,7 +732,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
             posVelComp);
-        v3Add(r_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
+        v3Add(rBN_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
         v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
         v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
         v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
@@ -755,19 +755,19 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     
 
     //! - compute dsigma/dt (see Schaub and Junkins)
-    BmatMRP(sigmaLoc, B);
+    BmatMRP(sigmaBNLoc, B);
     m33Scale(0.25, B, B);
-    m33MultV3(B, omegaLoc, dX + 6);
+    m33MultV3(B, omegaBN_BLoc, dX + 6);
     
 
     //! - Convert the current attitude to DCM for conversion in DynEffector loop
-    MRP2C(sigmaLoc, T_Irtl2Bdy);
+    MRP2C(sigmaBNLoc, BN);
     
     //! - Copy out the current state for DynEffector calls
-    memcpy(StateCurrent.r_N, r_NLoc, 3*sizeof(double));
-    memcpy(StateCurrent.v_N, v_NLoc, 3*sizeof(double));
-    memcpy(StateCurrent.sigma, sigmaLoc, 3*sizeof(double));
-    memcpy(StateCurrent.omega, omegaLoc, 3*sizeof(double));
+    memcpy(StateCurrent.r_N, rBN_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.v_N, vBN_NLoc, 3*sizeof(double));
+    memcpy(StateCurrent.sigma, sigmaBNLoc, 3*sizeof(double));
+    memcpy(StateCurrent.omega, omegaBN_BLoc, 3*sizeof(double));
     memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
     
     //! - Copy out the current mass properties for DynEffector calls
@@ -787,7 +787,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
         v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels);
         v3Add(LocalAccels, NonConservAccelBdy, NonConservAccelBdy);
-        m33tMultV3(T_Irtl2Bdy, LocalAccels, LocalAccels);
+        m33tMultV3(BN, LocalAccels, LocalAccels);
         v3Add(dX+3, LocalAccels, dX+3);
         m33MultV3(compIinv, TheEff->GetBodyTorques(), LocalAccels);
         v3Add(dX+9, LocalAccels, dX+9);
@@ -795,8 +795,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     }
 
     //! - compute domega/dt (see Schaub and Junkins)
-    v3Tilde(omegaLoc, B);                  /* [tilde(w)] */
-    m33MultV3(compI, omegaLoc, d2);        /* [I]w */
+    v3Tilde(omegaBN_BLoc, B);                  /* [tilde(w)] */
+    m33MultV3(compI, omegaBN_BLoc, d2);        /* [I]w */
 	v3Copy(d2, d3);
  
 
@@ -814,7 +814,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 		rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
 		{
 			m33MultV3(T_str2Bdy, rwIt->gsHat_S, spinAxisBody);
-			double hs =  rwIt->Js * (v3Dot(omegaLoc, spinAxisBody) + Omegas[rwCount]);
+			double hs =  rwIt->Js * (v3Dot(omegaBN_BLoc, spinAxisBody) + Omegas[rwCount]);
 			v3Scale(hs, spinAxisBody, d2);
 			v3Add(d3, d2, d3);
             v3Add(rwaGyroTorqueBdy, d2, rwaGyroTorqueBdy);
@@ -870,20 +870,24 @@ void SixDofEOM::integrateState(double CurrentTime)
     double sMag;
     uint32_t CentralBodyCount = 0;
     double LocalDV[3];
-    double sigmaLoc[3];
-    double BN[3][3];
-    double gsHat_B[3];                       /* spin axis in body frame */
-    double intermediateVector[3];           /* intermediate vector needed for calculation */
-    double omegaLoc_B[3];                    /* local angular velocity vector in body frame */
-    double rwsJs;                           /* Spin Axis Inertias of RWs */
-    double rwsOmega;                       /* current wheel speeds of RWs */
+    double sigmaBNLoc[3];                     /* MRP from inertial to body */
+    double BN[3][3];                          /* DCM from inertial to body */
+    double intermediateVector[3];             /* intermediate vector needed for calculation */
+    double omegaBN_BLoc[3];                   /* local angular velocity vector in body frame */
+    double rwsJs;                             /* Spin Axis Inertias of RWs */
+    double rwsOmega;                          /* current wheel speeds of RWs */
+    double rwsU;                              /* Current torque of RWs */
+    double gsHat_B[3];                        /* spin axis of RWs in body frame */
+    double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
+    double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
+    double prevTotScRotKinEnergy;             /* The last kinetic energy calculation from time step before */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
-    TimeStep = CurrentTime - TimePrev;
+    TimeStep = CurrentTime - this->TimePrev;
     
     //! - Initialize the local states and invert the inertia tensor
-    memcpy(X, XState, NStates*sizeof(double));
+    memcpy(X, this->XState, this->NStates*sizeof(double));
     
     //! - Loop through gravitational bodies and find the central body to integrate around
     GravityBodyData *CentralBody = NULL;
@@ -908,93 +912,108 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     //! - Perform RK4 steps.  Go ahead and look it up anywhere.  It's a standard thing
     equationsOfMotion(CurrentTime, X, k1, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + 0.5 * TimeStep * k1[i];
     }
-    v3Scale(TimeStep/6.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k2, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + 0.5 * TimeStep * k2[i];
     }
-    v3Scale(TimeStep/3.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k3, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X2[i] = X[i] + TimeStep * k3[i];
     }
-    v3Scale(TimeStep/3.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
+    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     equationsOfMotion(CurrentTime + TimeStep, X2, k4, CentralBody);
-    for(i = 0; i < NStates; i++) {
+    for(i = 0; i < this->NStates; i++) {
         X[i] += TimeStep / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
     }
-    v3Scale(TimeStep/6.0, NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, AccumDVBdy, AccumDVBdy);
-    memcpy(XState, X, NStates*sizeof(double));
+    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
+    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
+    memcpy(this->XState, X, this->NStates*sizeof(double));
     
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow
-    sMag =  v3Norm(&XState[6]);
+    sMag =  v3Norm(&this->XState[6]);
     if(sMag > 1.0) {
         v3Scale(-1.0 / sMag / sMag, &this->XState[6], &this->XState[6]);
-        MRPSwitchCount++;
+        this->MRPSwitchCount++;
     }
 
     uint32_t rwCount = 0;
-    totRwsRelKinEnergy = 0.0;
-    totRwsRelAngMomentum_B[0] = 0.0;
-    totRwsRelAngMomentum_B[1] = 0.0;
-    totRwsRelAngMomentum_B[2] = 0.0;
-    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
-    for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
-
+    
+    /*! - Energy, Power, and Momentum Calculations, T = 1/2*omega^T*I*omega + sum_over_RWs(1/2*Js*(omega_si + Omega_i)^2) - Schaub pg. 4.5.1, H = I*omega + sum_over_RWs(g_s*J_s(omega_si + Omega)) - Schaub 4.5.1, P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2 */
+    totRwsKinEnergy = 0.0;
+    v3SetZero(totRwsAngMomentum_B);
+    this->scPower = 0.0;
+    sigmaBNLoc[0] = this->XState[6];
+    sigmaBNLoc[1] = this->XState[7];
+    sigmaBNLoc[2] = this->XState[8];
+    omegaBN_BLoc[0] = this->XState[9];
+    omegaBN_BLoc[1] = this->XState[10];
+    omegaBN_BLoc[2] = this->XState[11];
+    
+    //! Loop through Thrusters to get power
+    std::vector<ThrusterDynamics*>::iterator itThruster;
+    ThrusterDynamics *theEff;
+    for(itThruster = thrusters.begin(); itThruster != thrusters.end(); itThruster++)
+    {
+        theEff = *itThruster;
+        this->scPower += v3Dot(omegaBN_BLoc, theEff->GetBodyTorques()); /* omega^T*L */
+    }
+    
+    //! - Loop through RWs to get energy, momentum and power information
+    std::vector<ReactionWheelDynamics *>::iterator rWPackIt;
+    for (rWPackIt = reactWheels.begin(); rWPackIt != reactWheels.end(); rWPackIt++)
     {
         std::vector<ReactionWheelConfigData>::iterator rwIt;
-        for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
-             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+        for (rwIt = (*rWPackIt)->ReactionWheelData.begin();
+             rwIt != (*rWPackIt)->ReactionWheelData.end(); rwIt++)
         {
             /* Gather values needed for energy and momentum calculations */
             rwsJs = rwIt->Js;
-            m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
-            rwsOmega = XState[12 + rwCount];
-            totRwsRelKinEnergy += 1.0/2.0*rwsJs*rwsOmega*rwsOmega;
+            rwsU = rwIt->u_current;
+            m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
+            rwsOmega = this->XState[12 + rwCount];
+            totRwsKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S)); /* 1/2*Js*(omega_si + Omega_i)^2 */
             v3Scale(rwsJs, gsHat_B, intermediateVector);
-            v3Scale(rwsOmega, intermediateVector, intermediateVector);
-            v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
+            v3Scale((rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B)), intermediateVector, intermediateVector);
+            v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
             /* Set current reaction wheel speed */
             rwIt->Omega = rwsOmega;
             rwCount++;
+            this->scPower += rwsU*rwsOmega; /* u*Omega */
         }
     }
 
-    //! - Rotational Kinetic Energy and Momentum Calculations - this calculation assumes the spacecraft is a rigid body with RW's
-    //! - Find rotational kinetic energy of spacecraft
-    omegaLoc_B[0] = XState[9];
-    omegaLoc_B[1] = XState[10];
-    omegaLoc_B[2] = XState[11];
-    m33MultV3(compI, omegaLoc_B, totScAngMomentum_B);
-    totScRotKinEnergy = 1.0/2.0*v3Dot(omegaLoc_B, totScAngMomentum_B);
-    v3Add(totRwsRelAngMomentum_B, totScAngMomentum_B, totScAngMomentum_B);
-    //! - Find angular momentum vector in inertial frame
-    sigmaLoc[0] = XState[6];
-    sigmaLoc[1] = XState[7];
-    sigmaLoc[2] = XState[8];
-    MRP2C(sigmaLoc, BN);
-    m33tMultV3(BN, totScAngMomentum_B, totScAngMomentum_N);
-    //! - Find magnitude of spacecraft angular momentum
-    totScAngMomentum = v3Norm(totScAngMomentum_N);
+    m33MultV3(this->compI, omegaBN_BLoc, this->totScAngMomentum_B); /* I*omega */
+    //! - Grab previous energy value for rate of change of energy
+    prevTotScRotKinEnergy = this->totScRotKinEnergy;
+    //! 1/2*omega^T*I*omega
+    this->totScRotKinEnergy = 1.0/2.0*v3Dot(omegaBN_BLoc, this->totScAngMomentum_B);
     //! - Add the reaction wheel relative kinetic energy to the sc energy
-    totScRotKinEnergy += totRwsRelKinEnergy;
+    this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
+    v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
+    //! - Find angular momentum vector in inertial frame
+    MRP2C(sigmaBNLoc, BN);
+    m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);
+    //! - Find magnitude of spacecraft angular momentum
+    this->totScAngMomentumMag = v3Norm(this->totScAngMomentum_N);
+    //! - Calulate rate of change of energy
+    this->scEnergyRate = (this->totScRotKinEnergy-prevTotScRotKinEnergy)/TimeStep;
 
     //! - Clear out local allocations and set time for next cycle
-    TimePrev = CurrentTime;
+    this->TimePrev = CurrentTime;
     delete[] X;
     delete[] X2;
     delete[] k1;
     delete[] k2;
     delete[] k3;
     delete[] k4;
-    
 }
 
 /*! This method computes the output states based on the current integrated state.  
