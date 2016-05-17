@@ -959,19 +959,20 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     //! Loop through Thrusters to get power
     std::vector<ThrusterDynamics*>::iterator itThruster;
-    for(itThruster=thrusters.begin(); itThruster != thrusters.end(); itThruster++)
+    ThrusterDynamics *theEff;
+    for(itThruster = thrusters.begin(); itThruster != thrusters.end(); itThruster++)
     {
-        ThrusterDynamics *TheEff = *itThruster;
-        this->scPower += v3Dot(omegaBN_BLoc, TheEff->GetBodyTorques()); /* omega^T*L */
+        theEff = *itThruster;
+        this->scPower += v3Dot(omegaBN_BLoc, theEff->GetBodyTorques()); /* omega^T*L */
     }
     
     //! - Loop through RWs to get energy, momentum and power information
-    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
-    for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+    std::vector<ReactionWheelDynamics *>::iterator rWPackIt;
+    for (rWPackIt = reactWheels.begin(); rWPackIt != reactWheels.end(); rWPackIt++)
     {
         std::vector<ReactionWheelConfigData>::iterator rwIt;
-        for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
-             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+        for (rwIt = (*rWPackIt)->ReactionWheelData.begin();
+             rwIt != (*rWPackIt)->ReactionWheelData.end(); rwIt++)
         {
             /* Gather values needed for energy and momentum calculations */
             rwsJs = rwIt->Js;
@@ -979,7 +980,6 @@ void SixDofEOM::integrateState(double CurrentTime)
             m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
             rwsOmega = this->XState[12 + rwCount];
             totRwsKinEnergy += 1.0/2.0*rwsJs*(rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B))*(rwsOmega + v3Dot(omegaBN_BLoc, rwIt->gsHat_S)); /* 1/2*Js*(omega_si + Omega_i)^2 */
-            /* 1/2*Js*(omega_si + Omega_i)^2 */
             v3Scale(rwsJs, gsHat_B, intermediateVector);
             v3Scale((rwsOmega + v3Dot(omegaBN_BLoc, gsHat_B)), intermediateVector, intermediateVector);
             v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
@@ -1014,7 +1014,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     delete[] k2;
     delete[] k3;
     delete[] k4;
-    
 }
 
 /*! This method computes the output states based on the current integrated state.  
