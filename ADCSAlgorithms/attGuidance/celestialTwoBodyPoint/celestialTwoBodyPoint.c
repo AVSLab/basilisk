@@ -69,6 +69,9 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->prevAvail = 0;
+    v3SetZero(ConfigData->prevConstraintAxis);
+    v3SetZero(ConfigData->prevConstraintAxisDot);
+    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
     return;
 }
 
