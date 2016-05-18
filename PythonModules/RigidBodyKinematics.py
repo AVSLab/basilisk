@@ -604,8 +604,9 @@ def PRV2elem(r):
     	Q = PRV2elem(R) translates a prinicpal rotation vector R
     	into the corresponding principal rotation element set Q.
     """
-    rm = np.linalg.norm(r)
-    q0 = rm
+    q0 = np.linalg.norm(r)
+    if q0 < 1e-12:
+        return np.zeros(4)
     q1 = r[0] / q0
     q2 = r[1] / q0
     q3 = r[2] / q0
@@ -624,17 +625,17 @@ def addPRV(qq1, qq2):
 
     q1 = PRV2elem(qq1)
     q2 = PRV2elem(qq2)
-    cp1 = math.cos(q1[0] / 2)
-    cp2 = math.cos(q2[0] / 2)
-    sp1 = math.sin(q1[0] / 2)
-    sp2 = math.sin(q2[0] / 2)
+    cp1 = math.cos(q1[0] / 2.)
+    cp2 = math.cos(q2[0] / 2.)
+    sp1 = math.sin(q1[0] / 2.)
+    sp2 = math.sin(q2[0] / 2.)
     e1 = q1[1:4]
     e2 = q2[1:4]
 
-    p = 2 * math.acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
-    sp = math.sin(p / 2)
-    e = (cp1 * sp2 * q2 + cp2 * sp1 * q1 + sp1 * sp2 * np.cross(e1, e2)) / sp
-    q = p * e
+    p = 2. * math.acos(cp1 * cp2 - sp1 * sp2 * np.dot(e1, e2))
+    sp = math.sin(p / 2.)
+    e = (cp1 * sp2 * e2 + cp2 * sp1 * e1 + sp1 * sp2 * np.cross(e1, e2))
+    q = (p / sp) * e
 
     return q
 
@@ -2295,13 +2296,13 @@ def PRV2EP(qq1):
     	into the euler parameter vector Q.
     """
 
-    q = np.matrix("0.;0.;0.;0.")
+    q = np.zeros(4)
     q1 = PRV2elem(qq1)
-    sp = math.sin(q1[0, 0] / 2)
-    q[0, 0] = math.cos(q1[0, 0] / 2)
-    q[1, 0] = q1[1, 0] * sp
-    q[2, 0] = q1[2, 0] * sp
-    q[3, 0] = q1[3, 0] * sp
+    sp = math.sin(q1[0] / 2)
+    q[0] = math.cos(q1[0] / 2)
+    q[1] = q1[1] * sp
+    q[2] = q1[2] * sp
+    q[3] = q1[3] * sp
 
     return q
 
