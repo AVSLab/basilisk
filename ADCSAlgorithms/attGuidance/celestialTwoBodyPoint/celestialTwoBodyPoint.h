@@ -30,7 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef struct {
     /* Declare module private variables */
     double singularityThresh;                       /*!< (r) Threshold for when to fix constraint axis*/
-    uint32_t prevAvail;                             /*!< (-) Flag indicating whether the previous constraint axis is populated*/
+    uint32_t prevAvailFlag;                         /*!< (-) Flag indicating whether the previous constraint axis is populated*/
 	double prevConstraintAxis[3];                   /*!< (-) Previous setting for constraint axis*/
     double prevConstraintAxisDot[3];                /*!< (-) First time-derivative of previous constraint axis */
     double prevConstraintAxisDoubleDot[3];          /*!< (-) Secod time-derivative of previous constraint axis */

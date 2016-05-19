@@ -68,7 +68,7 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 }
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->prevAvail = 0;
+    ConfigData->prevAvailFlag = 0;
     v3SetZero(ConfigData->prevConstraintAxis);
     v3SetZero(ConfigData->prevConstraintAxisDot);
     v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
@@ -130,13 +130,13 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
         } else {
             platAngDiff = acos(dotProduct);
         }
-        if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvail == 1)
+        if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvailFlag == 1)
         {
             v3Copy(ConfigData->prevConstraintAxis, R_P2);
             v3Copy(ConfigData->prevConstraintAxisDot, v_P2);
             v3Copy(ConfigData->prevConstraintAxisDoubleDot, a_P2);
         }
-        else if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvail != 1)
+        else if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvailFlag != 1)
         {
             noValidConstraint = 1;
         }
@@ -155,7 +155,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     v3Copy(ConfigData->prevConstraintAxis, R_P2);
     v3Copy(ConfigData->prevConstraintAxisDot, v_P2);
     v3Copy(ConfigData->prevConstraintAxisDoubleDot, a_P2);
-    ConfigData->prevAvail = 1;
+    ConfigData->prevAvailFlag = 1;
     
     /* Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
