@@ -141,12 +141,12 @@ public:
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
-    double totRwsRelKinEnergy;    //!< [J]    Total relative rotational kinetic energy of all rws
-    double totRwsRelAngMomentum_B[3];//!< [J]    Total relative rotational kinetic energy of all rws
-    double totScRotKinEnergy;     //!< [J]    Total rotational kinetic energy of spacecraft
-    double totScAngMomentum_B[3];  //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
-    double totScAngMomentum_N[3];  //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
-    double totScAngMomentum;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
+    double totScRotKinEnergy;         //!< [J]    Total rotational kinetic energy of spacecraft
+    double totScAngMomentum_B[3];     //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
+    double totScAngMomentum_N[3];     //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
+    double totScAngMomentumMag;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
+    double scPower;                   //!< [W] Mechanical Power of the spacecraft
+    double scEnergyRate;              //!< [W] Rate of change of energy to check with power
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data

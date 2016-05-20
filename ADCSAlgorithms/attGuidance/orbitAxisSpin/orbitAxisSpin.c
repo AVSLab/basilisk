@@ -22,7 +22,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  
  */
 
-
 #include "attGuidance/orbitAxisSpin/orbitAxisSpin.h"
 #include <string.h>
 #include <math.h>
@@ -60,9 +59,11 @@ void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
                                                 moduleID);
 }
 
-void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 {
-    ConfigData->phi_spin = 0.;
+    ConfigData->phi_spin0 = 0.;
+    ConfigData->mnvrStartTime = 0;
+    ConfigData->initializeAngle = BOOL_TRUE;
 }
 
 
@@ -71,37 +72,32 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
     /*! - Read input message */
     uint64_t            writeTime;
     uint32_t            writeSize;
-    attRefOut           ref;                        /*!< reference guidance message */
-    
-    
-    /*! - Read the input messages */
+    attRefOut           ref;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
                 sizeof(attRefOut), (void*) &(ref), moduleID);
     
-    double dt;
-    if (callTime*NANO2SEC == 0.) { dt = 0.; }
-    else (dt = ConfigData->dt);
-    
-    /*! - Compute and store output message */
-    if (ConfigData->integrateFlag == BOOL_FALSE)
+    /*! - Compute output variables */
+    if (ConfigData->initializeAngle == BOOL_TRUE)
     {
         NavStateOut nav;                           /*!< navigation message */
         ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
                     sizeof(NavStateOut), (void*) &(nav), moduleID);
         
-        ConfigData->phi_spin = computeInitialSpinAngle(ConfigData,
+        ConfigData->phi_spin0 = computeInitialSpinAngle(ConfigData,
                                                        ref.sigma_RN,
                                                        nav.sigma_BN);
+        ConfigData->initializeAngle = BOOL_FALSE;
     }
     computeOrbitAxisSpinReference(ConfigData,
                                   ref.sigma_RN,
                                   ref.omega_RN_N,
                                   ref.domega_RN_N,
-                                  dt,
+                                  callTime,
                                   ConfigData->attRefOut.sigma_RN,
                                   ConfigData->attRefOut.omega_RN_N,
                                   ConfigData->attRefOut.domega_RN_N);
     
+    /*! - Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
                  (void*) &(ConfigData->attRefOut), moduleID);
     
@@ -113,7 +109,7 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
                                    double sigma_R0N[3],
                                    double omega_R0N_N[3],
                                    double domega_R0N_N[3],
-                                   double dt,
+                                   uint64_t callTime,
                                    double sigma_RN[3],
                                    double omega_RN_N[3],
                                    double domega_RN_N[3])
@@ -122,8 +118,18 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     double  R0N[3][3];                                      /*!< DCM from inertial to reference pointing frame */
     int     o1, o2;                                         /*!< orbit axis indices */
     
-    double  v3[3], v3temp[3], temp3[3];                     /*!< temporary variables */
-    double  m33[3][3];
+    double phi_spin;
+    double  omega_spin_vec[3];
+    double  sigma_spin[3];                     
+    double  M_spin[3][3];
+    double  v3[3];
+    
+    double currMnvrTime;
+    if (ConfigData->mnvrStartTime == 0)
+    {
+        ConfigData->mnvrStartTime = callTime;
+    }
+    currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
     
     o1 = ConfigData->o_spin;
     o2 = o1 + 1;
@@ -131,16 +137,17 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     /* Get Orbit Frame DCM */
     MRP2C(sigma_R0N, R0N);
     /* Compute rate */
-    v3Scale(ConfigData->omega_spin, R0N[o1], v3);
-    v3Add(v3, omega_R0N_N, omega_RN_N);
+    v3Scale(ConfigData->omega_spin, R0N[o1], omega_spin_vec);
+    v3Add(omega_spin_vec, omega_R0N_N, omega_RN_N);
     /* Compute acceleration */
-    v3Cross(omega_R0N_N, v3, v3temp);
-    v3Add(v3temp, domega_R0N_N, domega_RN_N);
+    v3Cross(omega_R0N_N, omega_spin_vec, v3);
+    v3Add(v3, domega_R0N_N, domega_RN_N);
     /* Compute orientation */
-    ConfigData->phi_spin += dt * ConfigData->omega_spin;
-    Mi(ConfigData->phi_spin, o1+1, m33);
-    C2MRP(m33, temp3);
-    v3Add(temp3, sigma_R0N, sigma_RN);
+    phi_spin = ConfigData->phi_spin0 + currMnvrTime * ConfigData->omega_spin;
+    Mi(phi_spin, o1+1, M_spin);
+    C2MRP(M_spin, sigma_spin);
+    v3Add(sigma_spin, sigma_R0N, sigma_RN);
+    
     
 }
 

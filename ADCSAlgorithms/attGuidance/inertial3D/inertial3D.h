@@ -30,9 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double sigma_RN[3];                             /*!<        MRP from inertial frame N to corrected reference frame R */
-    uint64_t priorTime;                             /*!<        [ns]   Last time the guidance module is called */
-    
+    double sigma_R0N[3];                             /*!<        MRP from inertial frame N to corrected reference frame R */
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message */
     int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */

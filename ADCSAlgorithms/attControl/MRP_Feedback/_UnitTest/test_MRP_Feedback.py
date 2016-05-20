@@ -83,7 +83,8 @@ def subModuleTestFunction(show_plots):
     moduleWrap = alg_contain.AlgContain(moduleConfig,
                                         MRP_Feedback.Update_MRP_Feedback,
                                         MRP_Feedback.SelfInit_MRP_Feedback,
-                                        MRP_Feedback.CrossInit_MRP_Feedback)
+                                        MRP_Feedback.CrossInit_MRP_Feedback,
+                                        MRP_Feedback.Reset_MRP_Feedback)
     moduleWrap.ModelTag = "MRP_Feedback"
 
     #   Add test module to runtime call list
@@ -187,17 +188,24 @@ def subModuleTestFunction(show_plots):
     #   Step the simulation to 3*process rate so 4 total steps including zero
     unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
+    
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
 
     #   This pulls the actual data log from the simulation run.
     #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                     range(3))
-
-
+    
     # set the filtered output truth states
     trueVector = [
                [15.815,-25.14,23.521]
+              ,[15.815,-25.14,23.521]
+              ,[15.84521,-25.187475,23.607535]
               ,[15.815,-25.14,23.521]
               ,[15.84521,-25.187475,23.607535]
                ]
@@ -208,7 +216,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 

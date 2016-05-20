@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "ADCSUtilities/ADCSDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include <string.h>
@@ -47,7 +48,9 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(vehControlOut), "vehControlOut", moduleID);
-    
+
+    ConfigData->useOuterLoopFeedforward = BOOL_TRUE;
+
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -164,18 +167,18 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, omega_BastN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.I, nav.omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
-        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BastN_B, wheelGs) +
+        v3Scale(ConfigData->JsList[i] * (v3Dot(nav.omega_BN_B, wheelGs) +
             wheelSpeeds.wheelSpeeds[i]), wheelGs, v3_1);
         v3Add(v3_1, v3, v3);
     }
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Cross(omega_BastN_B, guidCmd.omega_RN_B, v3);
+    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);
@@ -205,7 +208,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
  @param omega_ast   Commanded body rates
  @param omega_ast_p Body frame derivative of the commanded body rates
  */
-void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
+void MRPSteeringLaw(MRP_SteeringConfig *ConfigData, double sigma_BR[3], double omega_ast[3], double omega_ast_p[3])
 {
     double  sigma_i;        /*!< ith component of sigma_B/R */
     double  B[3][3];        /*!< B-matrix of MRP differential kinematic equations */
@@ -216,21 +219,24 @@ void MRPSteeringLaw(MRP_SteeringConfig *configData, double sigma_BR[3], double o
     /* Determine the desired steering rates  */
     for (i=0;i<3;i++) {
         sigma_i      = sigma_BR[i];
-        value        = atan(M_PI_2/configData->omega_max*(configData->K1*sigma_i
-                       + configData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*configData->omega_max;
+        value        = atan(M_PI_2/ConfigData->omega_max*(ConfigData->K1*sigma_i
+                       + ConfigData->K3*sigma_i*sigma_i*sigma_i))/M_PI_2*ConfigData->omega_max;
         omega_ast[i] = -value;
 
     }
 
-    /* Determine the body frame derivative of the steering rates */
-    BmatMRP(sigma_BR, B);
-    m33MultV3(B, omega_ast, sigma_p);
-    v3Scale(0.25, sigma_p, sigma_p);
-    for (i=0;i<3;i++) {
-        sigma_i        = sigma_BR[i];
-        value          = (3*configData->K3*sigma_i*sigma_i + configData->K1)/(pow(M_PI_2/configData->omega_max*(configData->K1*sigma_i + configData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
-        omega_ast_p[i] = - value*sigma_p[i];
+    if (ConfigData->useOuterLoopFeedforward) {
+        /* Determine the body frame derivative of the steering rates */
+        BmatMRP(sigma_BR, B);
+        m33MultV3(B, omega_ast, sigma_p);
+        v3Scale(0.25, sigma_p, sigma_p);
+        for (i=0;i<3;i++) {
+            sigma_i        = sigma_BR[i];
+            value          = (3*ConfigData->K3*sigma_i*sigma_i + ConfigData->K1)/(pow(M_PI_2/ConfigData->omega_max*(ConfigData->K1*sigma_i + ConfigData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
+            omega_ast_p[i] = - value*sigma_p[i];
+        }
+    } else {
+        v3SetZero(omega_ast_p);
     }
-    v3SetZero(omega_ast_p);
     return;
 }

@@ -162,9 +162,9 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ],
-               [ -0.061642308231, -0.193942998069, 0.148817696548 ]
+               [-0.061642308231, -0.193942998069,  0.148817696548],
+               [-0.061642308231, -0.193942998069,  0.148817696548],
+               [-0.061642308231, -0.193942998069,  0.148817696548]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -184,9 +184,9 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ],
-               [ -0.006666666667, 0., 0.006666666667 ]
+               [-0.006666666667, 0., 0.006666666667],
+               [-0.006666666667, 0., 0.006666666667],
+               [-0.006666666667, 0., 0.006666666667]
                ]
 
     # compare the module results to the truth values
@@ -207,9 +207,9 @@ def hillPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ],
-               [ 0.000088888889, 0., -0.000088888889 ]
+               [8.888888888889e-05, -0., -8.888888888889e-05],
+               [8.888888888889e-05, -0., -8.888888888889e-05],
+               [8.888888888889e-05, -0., -8.888888888889e-05]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12

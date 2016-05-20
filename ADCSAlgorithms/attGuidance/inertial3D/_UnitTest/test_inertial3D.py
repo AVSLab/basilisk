@@ -85,7 +85,7 @@ def subModuleTestFunction(show_plots):
     vector = [0.1, 0.2, 0.3]
     SimulationBaseClass.SetCArray(vector,
                                   'double',
-                                  moduleConfig.sigma_RN)
+                                  moduleConfig.sigma_R0N)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)

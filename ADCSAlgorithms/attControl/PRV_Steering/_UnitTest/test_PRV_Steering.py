@@ -81,7 +81,8 @@ def subModuleTestFunction(show_plots):
     moduleWrap = alg_contain.AlgContain(moduleConfig,
                                         PRV_Steering.Update_PRV_Steering,
                                         PRV_Steering.SelfInit_PRV_Steering,
-                                        PRV_Steering.CrossInit_PRV_Steering)
+                                        PRV_Steering.CrossInit_PRV_Steering,
+                                        PRV_Steering.Reset_PRV_Steering)
     moduleWrap.ModelTag = "PRV_Steering"
 
     #   Add test module to runtime call list
@@ -184,6 +185,12 @@ def subModuleTestFunction(show_plots):
     unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
+    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
+    
+    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
+
     #   This pulls the actual data log from the simulation run.
     #   Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
@@ -194,6 +201,8 @@ def subModuleTestFunction(show_plots):
     # set the filtered output truth states
     trueVector = [
                [1.960095897557112,-3.055301311042272,2.523751394819517]
+              ,[1.960095897557112,-3.055301311042272,2.523751394819517]
+              ,[1.96016398446522,-3.055383122555785,2.523851930938435]
               ,[1.960095897557112,-3.055301311042272,2.523751394819517]
               ,[1.96016398446522,-3.055383122555785,2.523851930938435]
                ]

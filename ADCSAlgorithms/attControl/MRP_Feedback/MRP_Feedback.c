@@ -77,6 +77,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
                                              to zero, the control time step is not evaluated on the
                                              first function call */
     v3SetZero(ConfigData->z);               /* reset the integral measure of the rate tracking error */
+    v3SetZero(ConfigData->int_sigma);
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
@@ -99,7 +100,6 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     double              v3[3];
     double              v3_1[3];
     double              v3_2[3];
-//    int                 i;
     double              temp;
 
     /* compute control update time */
