@@ -25,7 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*
  Declare common ADCS macros
  */
-#define NANO2SEC        1e-9
+#define NANO2SEC        1.0E-9
 
 
 #endif
