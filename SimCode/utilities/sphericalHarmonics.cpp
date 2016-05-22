@@ -12,15 +12,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 */
-//
-//  sphericalHarmonics.cpp
-//  SphericalHarmonics
-//
-//  Created by Manuel Diaz Ramos on 12/19/15.
-//  Copyright © 2015 Manuel Diaz Ramos. All rights reserved.
-//
 
 #include "sphericalHarmonics.h"
 

@@ -12,14 +12,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 */
-/*
- *  linearAlgebra.c
- *  Provides functions for performing linear algebra on various sizes of matrices and vectors
- *
- *  Created by Steve O'Keefe.
- */
 
 #include "linearAlgebra.h"
 

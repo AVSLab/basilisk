@@ -12,15 +12,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 */
-/*
- * RigidBodyKinematics.c
- * Created by Hanspeter Schaub on Thu Nov 10 2005.
- * Copyright (c) 2005 Hanspeter Schaub. All rights reserved.
- *
- * Provides a library for doing 3D matrix algebra.
- */
 
 #include "utilities/rigidBodyKinematics.h"
 

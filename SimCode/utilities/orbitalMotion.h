@@ -12,17 +12,7 @@ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
 */
-/*
- *  orbitalMotion.h
- *
- *  Created by Hanspeter Schaub on 6/19/05.
- *
- *  This package provides various orbital
- *  mechanics subroutines using in astrodynamics calculations.
- *
- */
 
 #ifndef _ORBITAL_MOTION_0_H_
 #define _ORBITAL_MOTION_0_H_
