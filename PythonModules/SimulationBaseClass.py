@@ -29,6 +29,7 @@ import array
 import xml.etree.ElementTree as ET
 import inspect
 import MonteCarloBaseClass
+import sets
 
 
 class ProcessBaseClass:
@@ -194,6 +195,12 @@ class StructDocData:
             outputString += ': ' + value.desc if value.desc is not None else ''
         print "      " + outputString
 
+class DataPairClass:
+    def __init__(self):
+        self.outputMessages = sets.Set([])
+        self.inputMessages = sets.Set([])
+        self.name = ""
+        self.outputDict = {}
 
 class SimBaseClass:
     def __init__(self):
@@ -469,7 +476,92 @@ class SimBaseClass:
             print "You asked me to set the status of an event that I don't have."
             return
         self.eventMap[eventName].eventActive = activityCommand
+    def findMessagePairs(self, messageName, processList):
+        dataPairs = self.TotalSim.getMessageExchangeData(messageName, processList)
+        outputDataPairs = []
+        for messagePair in dataPairs:
+            namePairs = [None, None]
+            for proc in self.procList:
+                for intDef in proc.processData.intRefs:
+                    for singInt in intDef.interfaceDef:
+                        for i in range(2):
+                            if singInt.moduleID == messagePair[i]:
+                                if singInt.ModelTag is not "":
+                                    namePairs[i] = singInt.ModelTag
+                                else:
+                                    namePairs[i] = singInt.moduleID
+            for task in self.TaskList:
+                for module in task.TaskData.TaskModels:
+                    for i in range(2):
+                        if module.ModelPtr.moduleID == messagePair[i]:
+                            if namePairs[i] == None:
+                                if module.ModelPtr.ModelTag is not "":
+                                    namePairs[i] = module.ModelPtr.ModelTag
+                                else:
+                                    namePairs[i] = module.ModelPtr.moduleID
+            outputDataPairs.append(namePairs)
+        return(outputDataPairs)
+    def getDataMap(self, processList):
+        mapDict = {}
+        messNames = self.TotalSim.getUniqueMessageNames()
+        for name in messNames:
+            print processList
+            dataPairs = self.findMessagePairs(name, processList)
+            for transPair in dataPairs:
+                if transPair[0] in mapDict:
+                    if name not in mapDict[transPair[0]].outputMessages and name is not None:
+                        mapDict[transPair[0]].outputDict[name] = [transPair[1]]
+                    elif name is not None:
+                        mapDict[transPair[0]].outputDict[name].append(transPair[1])
+                    mapDict[transPair[0]].outputMessages.add(name)
+                else:
+                    newElem = DataPairClass()
+                    newElem.outputMessages.add(name)
+                    newElem.name = transPair[0]
+                    newElem.outputDict[name] = [transPair[1]]
+                    mapDict[transPair[0]] = newElem
+                if transPair[1] in mapDict:
+                    mapDict[transPair[1]].inputMessages.add(name)
+                else:
+                    newElem = DataPairClass()
+                    newElem.inputMessages.add(name)
+                    newElem.name = transPair[1]
+                    mapDict[transPair[1]] = newElem
+        return(mapDict)
+    def writeDataMapDot(self, processList = [], outputFileName='SimDataMap.dot'):
+        fDesc = open(outputFileName, 'w')
+        messageDataMap = self.getDataMap(processList)
+        fDesc.write('digraph messages {\n')
+        fDesc.write('node [shape=record];\n')
+        for key, value in messageDataMap.iteritems():
+            if(str(key) == 'None'):
+                continue
+            fDesc.write('    ' + str(key))
+            fDesc.write('[shape=record,label="{')
+            i=1
+            for input in value.inputMessages:
+                fDesc.write('{<' + input + 'In> ' + input + '}')
+                if i < len(value.inputMessages):
+                    fDesc.write(' | ')
+                i += 1
+            fDesc.write('} | ' + str(key) + ' | {')
+            i=1
+            for output in value.outputMessages:
+                fDesc.write('{<' + output + 'Out> ' + output + '}')
+                if i < len(value.outputMessages):
+                    fDesc.write(' | ')
+                i += 1
+            fDesc.write('}"];\n')
+            for outputConn, ConnValue in value.outputDict.iteritems():
+                for outputModule in ConnValue:
+                    if(outputModule == None):
+                        continue
+                    fDesc.write('    ' + str(key) + ':' + outputConn + 'Out')
+                    fDesc.write(' -> ' + str(outputModule) + ':' + outputConn +'In;\n')
+        
 
+        fDesc.write('\n}')
+        fDesc.close()
 
 def SetCArray(InputList, VarType, ArrayPointer):
     CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'

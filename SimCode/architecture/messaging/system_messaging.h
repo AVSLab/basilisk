@@ -47,6 +47,7 @@ typedef struct {
 
 typedef struct {
     std::set<uint64_t> accessList; // (-) List of modules who are allowed to access message
+    bool publishedHere;            // (-) Indicator about whether or not the message is published here
 }AllowAccessData;
 
 typedef struct {
@@ -109,6 +110,8 @@ public:
     std::set<std::pair<int64_t, int64_t>>
         getMessageExchangeData(uint64_t messageID);
     void clearMessaging();
+    bool obtainWriteRights(uint64_t messageID, int64_t moduleID);
+    bool obtainReadRights(uint64_t messageID, int64_t moduleID);
     
     
 private:

@@ -33,7 +33,7 @@ typedef struct {
     uint64_t updateCounter;  //!< (-) The previous update counter that was routed
 }MessageInterfaceMatch;
 
-class  InterfaceDataExchange{
+class  InterfaceDataExchange : public SysModel{
 public:
     InterfaceDataExchange();
     virtual ~InterfaceDataExchange();
@@ -57,7 +57,7 @@ class SysInterface
 public:
     SysInterface();
     virtual ~SysInterface();
-    void addNewInterface(std::string from, std::string to);
+    void addNewInterface(std::string from, std::string to, std::string intName="");
     void addNewInterface(InterfaceDataExchange  *newInterface);
     //void addPassToCurrent(std::string messagePass);
     void enableInterface() { interfaceActive = true; }

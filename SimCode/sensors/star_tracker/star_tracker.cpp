@@ -134,5 +134,5 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
     localOutput.timeTag = localTime;
     C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-        sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput));
+        sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput), moduleID);
 }

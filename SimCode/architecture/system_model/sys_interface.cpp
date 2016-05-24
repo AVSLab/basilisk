@@ -93,10 +93,20 @@ bool InterfaceDataExchange::linkMessages()
             selectMessageBuffer(processData.destination);
         it->destination = SystemMessaging::GetInstance()->
             FindMessageID(it->messageSource);
+        if(it->destination >= 0)
+        {
+            SystemMessaging::GetInstance()->obtainWriteRights(it->destination,
+                                                              moduleID);
+        }
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.source);
         it->source = SystemMessaging::GetInstance()->
         FindMessageID(it->messageSource);
+        if(it->source >= 0)
+        {
+            SystemMessaging::GetInstance()->obtainReadRights(it->source,
+                moduleID);
+        }
         if(it->destination < 0 || it->source < 0)
         {
             messagesLinked = false;
@@ -130,11 +140,11 @@ void InterfaceDataExchange::routeMessages()
             continue;
         }
         SystemMessaging::GetInstance()->ReadMessage(it->source, &dataHeader,
-            localHdr->MaxMessageSize, msgBuffer);
+            localHdr->MaxMessageSize, msgBuffer, moduleID);
         SystemMessaging::GetInstance()->
         selectMessageBuffer(processData.destination);
         SystemMessaging::GetInstance()->WriteMessage(it->destination,
-            dataHeader.WriteClockNanos, dataHeader.WriteSize, msgBuffer);
+            dataHeader.WriteClockNanos, dataHeader.WriteSize, msgBuffer, moduleID);
         it->updateCounter = localHdr->UpdateCounter;
         
     }
@@ -170,13 +180,18 @@ void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
     }
     interfacesLinked = false;
 }
-void SysInterface::addNewInterface(std::string from, std::string to)
+void SysInterface::addNewInterface(std::string from, std::string to, std::string intName)
 {
 
     InterfaceDataExchange *newInterface = new InterfaceDataExchange();
     std::vector<InterfaceDataExchange*>::iterator it;
     newInterface->processData.messageSource = from;
     newInterface->processData.messageDest = to;
+    if(intName == "")
+    {
+        intName = from + "2" + to + "Interface";
+    }
+    newInterface->ModelTag = intName;
     interfaceDef.push_back(newInterface);
     interfacesLinked = false;
     it = interfaceDef.end() - 1;

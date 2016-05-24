@@ -24,6 +24,13 @@ SysModel::SysModel()
     moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
 }
 
+SysModel::SysModel(const SysModel &obj)
+{
+    ModelTag = obj.ModelTag;
+    RNGSeed = obj.RNGSeed;
+    moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
+}
+
 SysModel::~SysModel()
 {
 }

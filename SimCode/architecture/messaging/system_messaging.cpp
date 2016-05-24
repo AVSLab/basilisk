@@ -147,6 +147,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
             it = messageStorage->pubData.begin();
             it += FindMessageID(MessageName);
             it->accessList.insert(moduleID);
+            it->publishedHere = true;
         }
     	return(FindMessageID(MessageName));
     }
@@ -210,10 +211,12 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     SetNumMessages(GetMessageCount() + 1);
     AllowAccessData dataList;
     MessageExchangeData exList;
+    dataList.publishedHere = false;
     messageStorage->subData.push_back(dataList); //!< No subscribers yet
     if(moduleID >= 0)
     {
         dataList.accessList.insert(moduleID);
+        dataList.publishedHere = true;
     }
     messageStorage->pubData.push_back(dataList);
     messageStorage->exchangeData.push_back(exList);
@@ -235,8 +238,43 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
         it = messageStorage->subData.begin();
         it += messageID;
         it->accessList.insert(moduleID);
+        it->publishedHere = false;
     }
     return(messageID);
+}
+
+bool SystemMessaging::obtainWriteRights(uint64_t messageID, int64_t moduleID)
+{
+    bool rightsObtained = false;
+    
+    if(moduleID >= 0 && messageID < GetMessageCount())
+    {
+        std::vector<AllowAccessData>::iterator it;
+        it = messageStorage->pubData.begin();
+        it += messageID;
+        it->accessList.insert(moduleID);
+        rightsObtained = true;
+    }
+    
+    return(rightsObtained);
+}
+
+bool SystemMessaging::obtainReadRights(uint64_t messageID, int64_t moduleID)
+{
+ 
+    bool rightsObtained = false;
+    
+    if(moduleID >= 0 && messageID < GetMessageCount())
+    {
+        std::vector<AllowAccessData>::iterator it;
+        it = messageStorage->subData.begin();
+        it += messageID;
+        it->accessList.insert(moduleID);
+        rightsObtained = true;
+    }
+    
+    return(rightsObtained);
+    
 }
 
 messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
@@ -262,7 +300,7 @@ messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
         dataFound.bufferName = messageStorage->bufferName;
         std::vector<AllowAccessData>::iterator pubIt;
         pubIt=messageStorage->pubData.begin() + messageID;
-        if(pubIt->accessList.size() > 0)
+        if(pubIt->accessList.size() > 0 && pubIt->publishedHere)
         {
             return(dataFound);
         }
