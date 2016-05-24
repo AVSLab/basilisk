@@ -365,6 +365,14 @@ void SixDofEOM::SelfInit()
     std::vector<double>::iterator InertiaIt= baseInertiaInit.begin();
     std::vector<double>::iterator CoMIt= baseCoMInit.begin();
     std::vector<double>::iterator Str2BdyIt= T_Str2BdyInit.begin();
+
+    /* initialize some spacecraft states to default values.  The user should always override these values
+        with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
+    m33SetIdentity(baseI);
+    m33SetIdentity(T_str2Bdy);
+    v3SetZero(baseCoM);
+
+    /* set the simulation specific initial conditions */
     for(uint32_t i=0; i<3; i++)
     {
         uint32_t c = 0;
