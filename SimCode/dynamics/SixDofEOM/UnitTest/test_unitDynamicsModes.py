@@ -67,12 +67,14 @@ def unitDynamicsModesTestFunction(show_plots):
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
 
-    TotalSim = SimulationBaseClass.SimBaseClass()
-    DynUnitTestProc = TotalSim.CreateNewProcess("DynUnitTestProcess")
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask("sixDynTestTask", int(1E10)))
+    scSim = SimulationBaseClass.SimBaseClass()
+    DynUnitTestProc = scSim.CreateNewProcess("DynUnitTestProcess")
+    DynUnitTestProc.addTask(scSim.CreateNewTask("sixDynTestTask", unitTestSupport.sec2nano(10.)))
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
+
+    testName = "dynamicsTest"
     
     #Initialize the ephemeris module
     spiceObject.ModelTag = "SpiceInterfaceData"
@@ -92,15 +94,15 @@ def unitDynamicsModesTestFunction(show_plots):
     EarthGravBody.mu = mu_earth
     
     VehDynObject.ModelTag = "VehicleDynamicsData"
-    VehDynObject.PositionInit = six_dof_eom.DoubleVector([-1.784938418967935e+11, -1.609707049168820e+10, -1.627664958116536e+09])
-    VehDynObject.VelocityInit = six_dof_eom.DoubleVector([-3.120111634914843e+03, -2.471539811502987e+04, -1.119615706657671e+04])
+    VehDynObject.PositionInit = six_dof_eom.DoubleVector([-4020338.690396649,	7490566.741852513,	5248299.211589362])
+    VehDynObject.VelocityInit = six_dof_eom.DoubleVector([-5199.77710904224,	-3436.681645356935,	1041.576797498721])
     #Note that the above position/velocity get overwritten by the ICs from the target ephemeris
-    VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.4, 0.2, 0.1])
-    VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.0001, 0.0, 0.0])
+    VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.1, 0.2, -.3])
+    VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.001, -0.01, 0.03])
     VehDynObject.baseMass = 1500.0 - 812.3
     VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
-                                                         0.0, 900.0, 0.0,
-                                                         0.0, 0.0, 900.0])
+                                                         0.0, 800.0, 0.0,
+                                                         0.0, 0.0, 600.0])
     VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
                                                            0.0, 1.0, 0.0,
                                                            0.0, 0.0, 1.0])
@@ -108,18 +110,55 @@ def unitDynamicsModesTestFunction(show_plots):
     
     VehDynObject.AddGravityBody(EarthGravBody)
     
-    VehDynObject.useTranslation = 1;        # turn on translational mode 
-    VehDynObject.useRotation = 1;            # turn on rotational mode 
+    VehDynObject.useTranslation = True;        # turn on translational mode 
+    VehDynObject.useRotation = True;            # turn on rotational mode 
     
-    TotalSim.AddModelToTask("sixDynTestTask", spiceObject)
-    TotalSim.AddModelToTask("sixDynTestTask", VehDynObject)
+    scSim.AddModelToTask("sixDynTestTask", spiceObject)
+    scSim.AddModelToTask("sixDynTestTask", VehDynObject)
+
+    scSim.TotalSim.logThisMessage("inertial_state_output", unitTestSupport.sec2nano(120.))
     
-    TotalSim.InitializeSimulation()
-    TotalSim.ConfigureStopTime(unitTestSupport.sec2nano(60.)) #Just a simple run to get initial conditions from ephem
-    TotalSim.ExecuteSimulation()
+    scSim.InitializeSimulation()
+    scSim.ConfigureStopTime(unitTestSupport.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
+    scSim.ExecuteSimulation()
     
-    #moduleOutput = TotalSim.pullMessageLogData('OutputStateData' + '.' + 'r_N', range(3))
-    #print moduleOutput
+
+    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
+    # set the  output truth states
+    trueVector = [
+            [1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
+            ,[-3.38910364e-02,  -3.38797083e-01,   5.85609793e-01]
+            ,[ 2.61448620e-01,   6.34606900e-02,   4.70235970e-02]
+            ,[  2.04905958e-01,   1.61547221e-01,  -7.03976039e-01]
+            ,[ 2.92542438e-01,  -2.01505526e-01,   3.73255634e-01]
+            ,[1.31470762e-01,   3.85881471e-02,  -2.48570742e-01]
+               ]    
+    # compare the module results to the truth values
+    accuracy = 1e-9
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(dataSigma[i],trueVector[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  attitude unit test at t=" + str(dataSigma[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+    
+    
+    scPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    # set the  output truth states
+    trueVector = [
+            [-4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+            ,[ -4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+            ,[ -5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
+            ,[ -5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
+            ,[ -6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
+            ,[ -6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
+               ]    
+    # compare the module results to the truth values
+    accuracy = 1e-2
+    for i in range(0,len(trueVector)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqual(scPos[i],trueVector[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  pos unit test at t=" + str(scPos[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
