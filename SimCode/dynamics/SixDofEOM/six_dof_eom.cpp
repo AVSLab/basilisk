@@ -222,15 +222,15 @@ sphericalHarmonics* GravityBodyData::getSphericalHarmonicsModel(void)
 /*! This is the constructor for SixDofEOM.  It initializes a few variables*/
 SixDofEOM::SixDofEOM()
 {
-    CallCounts = 0;
-    RWACount = reactWheels.size();
-    OutputStateMessage = "inertial_state_output";
-    OutputMassPropsMsg = "spacecraft_mass_props";
-    OutputBufferCount = 2;
-    MRPSwitchCount = 0;
+    this->CallCounts = 0;
+    this->RWACount = reactWheels.size();
+    this->OutputStateMessage = "inertial_state_output";
+    this->OutputMassPropsMsg = "spacecraft_mass_props";
+    this->OutputBufferCount = 2;
+    this->MRPSwitchCount = 0;
 
-    useTranslation = false;
-    useRotation    = false;
+    this->useTranslation = false;
+    this->useRotation    = false;
 
     return;
 }
@@ -305,7 +305,7 @@ void SixDofEOM::SelfInit()
 {
     //! Begin method steps
     //! - Zero out initial states prior to copying in init values
-	RWACount = 0;
+	this->RWACount = 0;
 	std::vector<ReactionWheelDynamics *>::iterator it;
 	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
 	{
@@ -313,23 +313,23 @@ void SixDofEOM::SelfInit()
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
-			RWACount++;
+			this->RWACount++;
 		}
 	}
-    NStates = 0;
-    if(useTranslation) NStates += 6;
-    if(useRotation)    NStates += 6;
-    NStates += RWACount;
-    if(NStates==0) {
+    this->NStates = 0;
+    if(this->useTranslation) this->NStates += 6;
+    if(this->useRotation)    this->NStates += 6;
+    this-> NStates += this->RWACount;
+    if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
 
-    XState = new double[NStates]; // pos/vel/att/rate + rwa omegas
-    memset(XState, 0x0, (NStates)*sizeof(double));
+    this->XState = new double[this->NStates]; // pos/vel/att/rate + rwa omegas
+    memset(this->XState, 0x0, (this->NStates)*sizeof(double));
     TimePrev = 0.0;
     
     //! - Ensure that all init states were appropriately set by the caller
-    if(useTranslation){
+    if(this->useTranslation){
         if(PositionInit.size() != 3 || VelocityInit.size() != 3)
         {
             std::cerr << "Your initial translational states didn't match up with right sizes\n";
@@ -339,7 +339,7 @@ void SixDofEOM::SelfInit()
         }
 
     }
-    if(useRotation){
+    if(this->useRotation){
         if(AttitudeInit.size() != 3 || AttRateInit.size() != 3 ||
            baseInertiaInit.size() != 9 || baseCoMInit.size() != 3 ||
            T_Str2BdyInit.size() != 9)
@@ -355,7 +355,7 @@ void SixDofEOM::SelfInit()
     }
 
     //! - Zero out the accumulated DV (always starts at zero)
-    memset(AccumDVBdy, 0x0, 3*sizeof(double));
+    memset(this->AccumDVBdy, 0x0, 3*sizeof(double));
     
     //! - For remaining variables, grab iterators for each vector and assign internals
     std::vector<double>::iterator PosIt = PositionInit.begin();
@@ -368,27 +368,27 @@ void SixDofEOM::SelfInit()
 
     /* initialize some spacecraft states to default values.  The user should always override these values
         with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
-    m33SetIdentity(baseI);
-    m33SetIdentity(T_str2Bdy);
-    v3SetZero(baseCoM);
+    m33SetIdentity(this->baseI);
+    m33SetIdentity(this->T_str2Bdy);
+    v3SetZero(this->baseCoM);
 
     /* set the simulation specific initial conditions */
     for(uint32_t i=0; i<3; i++)
     {
         uint32_t c = 0;
-        if (useTranslation){
-            XState[i] = *PosIt++;
-            XState[i+3] = *VelIt++;
+        if (this->useTranslation){
+            this->XState[i] = *PosIt++;
+            this->XState[i+3] = *VelIt++;
             c += 6;
         }
-        if (useRotation){
-            XState[i+c]   = *AttIt++;
-            XState[i+c+3] = *RateIt++;
-            baseCoM[i]    = *CoMIt++;
+        if (this->useRotation){
+            this->XState[i+c]   = *AttIt++;
+            this->XState[i+c+3] = *RateIt++;
+            this->baseCoM[i]    = *CoMIt++;
             for(uint32_t j=0; j<3; j++)
             {
-                baseI[i][j] = *InertiaIt++;
-                T_str2Bdy[i][j] = *Str2BdyIt++;
+                this->baseI[i][j] = *InertiaIt++;
+                this->T_str2Bdy[i][j] = *Str2BdyIt++;
             }
 
         }
@@ -401,7 +401,7 @@ void SixDofEOM::SelfInit()
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
-			XState[useTranslation*6 + useRotation*6 + rwCount] = rwIt->Omega;
+			this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->Omega;
 			rwCount++;
 		}
 	}
@@ -568,8 +568,8 @@ void SixDofEOM::computeCompositeProperties()
     double objInertia[3][3];
 
     memset(scaledCoM, 0x0, 3*sizeof(double));
-    compMass = baseMass;
-    v3Scale(baseMass, baseCoM, scaledCoM);
+    this->compMass = baseMass;
+    v3Scale(this->baseMass, this->baseCoM, scaledCoM);
 
     std::vector<ThrusterDynamics*>::iterator it;
     for(it=thrusters.begin(); it != thrusters.end(); it++)
@@ -577,28 +577,28 @@ void SixDofEOM::computeCompositeProperties()
         DynEffector *TheEff = *it;
         v3Scale(TheEff->objProps.Mass, TheEff->objProps.CoM, localCoM);
         v3Add(scaledCoM, localCoM, scaledCoM);
-        compMass += TheEff->objProps.Mass;
+        this->compMass += TheEff->objProps.Mass;
     }
     
     //! - Divide summation by total mass to get center of mass.
-    v3Scale(1.0/compMass, scaledCoM, compCoM);
+    v3Scale(1.0/this->compMass, scaledCoM, this->compCoM);
     
     //! - Compute the parallel axis theorem effects for the base body inertia tensor
     m33SetIdentity(identMatrix);
-    v3Subtract(baseCoM, compCoM, CoMDiff);
+    v3Subtract(this->baseCoM, this->compCoM, CoMDiff);
     CoMDiffNormSquare = v3Norm(CoMDiff);
     CoMDiffNormSquare *= CoMDiffNormSquare;
     m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
     v3OuterProduct(CoMDiff, CoMDiff, outerMatrix);
     m33Subtract(diracMatrix, outerMatrix, objInertia);
-    m33Add(objInertia, baseI, compI);
+    m33Add(objInertia, this->baseI, this->compI);
     
     /*! - For each child body, compute parallel axis theorem effectos for inertia tensor
      and add that overall inertia back to obtain the composite inertia tensor.*/
     for(it=thrusters.begin(); it != thrusters.end(); it++)
     {
         DynEffector *TheEff = *it;
-        v3Subtract(TheEff->objProps.CoM, compCoM, CoMDiff);
+        v3Subtract(TheEff->objProps.CoM, this->compCoM, CoMDiff);
         CoMDiffNormSquare = v3Norm(CoMDiff);
         CoMDiffNormSquare *= CoMDiffNormSquare;
         m33Scale(CoMDiffNormSquare, identMatrix, diracMatrix);
@@ -606,10 +606,10 @@ void SixDofEOM::computeCompositeProperties()
         m33Subtract(diracMatrix, outerMatrix, objInertia);
         m33Scale(TheEff->objProps.Mass, objInertia, objInertia);
         vAdd(TheEff->objProps.InertiaTensor, 9, objInertia, objInertia);
-        m33Add(compI, objInertia, compI);
+        m33Add(this->compI, objInertia, this->compI);
     }
     //! - Compute inertia inverse based off the computed inertia tensor
-    m33Inverse(compI, compIinv);
+    m33Inverse(this->compI, this->compIinv);
     
 }
 
@@ -657,7 +657,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
-    if(useTranslation){
+    if(this->useTranslation){
         rBN_NLoc[0] = X[i++];
         rBN_NLoc[1] = X[i++];
         rBN_NLoc[2] = X[i++];
@@ -665,7 +665,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         vBN_NLoc[1] = X[i++];
         vBN_NLoc[2] = X[i++];
     }
-    if(useRotation){
+    if(this->useRotation){
         sigmaBNLoc[0] = X[i++];
         sigmaBNLoc[1] = X[i++];
         sigmaBNLoc[2] = X[i++];
@@ -673,11 +673,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         omegaBN_BLoc[1] = X[i++];
         omegaBN_BLoc[2] = X[i++];
         Omegas = NULL;
-        if (RWACount > 0)
+        if (this->RWACount > 0)
         {
             Omegas = &X[i];
         }
-        omegaBNDot_B = dX + 3 + useTranslation*6;
+        omegaBNDot_B = dX + 3 + this->useTranslation*6;
     }
 
     /* zero the derivative vector */
@@ -685,7 +685,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     //! - Set the current composite mass properties for later use in file
     computeCompositeProperties();
 
-    if (useTranslation){
+    if (this->useTranslation){
         //! - compute inertial velocity
         v3Copy(vBN_NLoc, dX);
 
@@ -767,7 +767,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
          Gravity perturbation is acceleration on spacecraft+acceleration on central body.
          Ephemeris information is propagated by Euler's method in substeps*/
-        v3SetZero(InertialAccels);
+        v3SetZero(this->InertialAccels);
         std::vector<GravityBodyData>::iterator gravit;
         for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
         {
@@ -784,7 +784,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
             rmag = v3Norm(PlanetRelPos);
             v3Scale(-gravit->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
-            v3Add(InertialAccels, PlanetAccel, InertialAccels);
+            v3Add(this->InertialAccels, PlanetAccel, InertialAccels);
             v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
             v3Subtract(CentralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
             v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
@@ -793,20 +793,20 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
             rmag = v3Norm(PlanetRelPos);
             v3Scale(gravit->mu/rmag/rmag/rmag, PlanetRelPos, PlanetAccel);
-            v3Add(InertialAccels, PlanetAccel, InertialAccels);
+            v3Add(this->InertialAccels, PlanetAccel, this->InertialAccels);
         }
         //! - Add in inertial accelerations of the non-central bodies
-        v3Add(dX+3, InertialAccels, dX+3);
+        v3Add(dX+3, this->InertialAccels, dX+3);
     }
 
-    if(useRotation){
+    if(this->useRotation){
         //! - Zero the external torque
         v3SetZero(extSumTorque_B);
 
         //! - compute dsigma/dt (see Schaub and Junkins)
         BmatMRP(sigmaBNLoc, B);
         m33Scale(0.25, B, B);
-        m33MultV3(B, omegaBN_BLoc, dX + useTranslation*6);
+        m33MultV3(B, omegaBN_BLoc, dX + this->useTranslation*6);
         
 
         //! - Convert the current attitude to DCM for conversion in DynEffector loop
@@ -820,13 +820,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
         
         //! - Copy out the current mass properties for DynEffector calls
-        MassProps.Mass = compMass;
-        memcpy(MassProps.CoM, compCoM, 3*sizeof(double));
-        memcpy(MassProps.InertiaTensor, compI, 9*sizeof(double));
-        memcpy(MassProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
+        MassProps.Mass = this->compMass;
+        memcpy(MassProps.CoM, this->compCoM, 3*sizeof(double));
+        memcpy(MassProps.InertiaTensor, this->compI, 9*sizeof(double));
+        memcpy(MassProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         
         //! - Zero the non-conservative accel
-        memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
+        memset(this->NonConservAccelBdy, 0x0, 3*sizeof(double));
         //! - Loop over the vector of thrusters and compute body force/torque
         //! - Convert the body forces to inertial for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
@@ -834,9 +834,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         {
             ThrusterDynamics *TheEff = *it;
             TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
-            if(useTranslation){
-                v3Scale(1.0/compMass, TheEff->GetBodyForces(), LocalAccels_B);
-                v3Add(LocalAccels_B, NonConservAccelBdy, NonConservAccelBdy);
+            if(this->useTranslation){
+                v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
+                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX+3, LocalAccels_N, dX+3);
             }
@@ -845,7 +845,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
         //! - compute domega/dt (see Schaub and Junkins)
         v3Tilde(omegaBN_BLoc, omegaTilde);         /* [tilde(w)] */
-        m33MultV3(compI, omegaBN_BLoc, d3);        /* [I]w */
+        m33MultV3(this->compI, omegaBN_BLoc, d3);        /* [I]w */
 
 
         uint32_t rwCount = 0;
@@ -854,29 +854,29 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         double rwSumTorque[3];
         v3SetZero(rwSumTorque);
         double gsHat_B[3];                          /* RW spin axis unit direction vector in B-frame components */
-        v3SetZero(rwaGyroTorqueBdy);
+        v3SetZero(this->rwaGyroTorqueBdy);
         for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
         {
             std::vector<ReactionWheelConfigData>::iterator rwIt;
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
+                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 double hs =  rwIt->Js * (v3Dot(omegaBN_BLoc, gsHat_B) + Omegas[rwCount]);
                 v3Scale(hs, gsHat_B, d2);
                 v3Add(d3, d2, d3);
-                v3Add(rwaGyroTorqueBdy, d2, rwaGyroTorqueBdy);
+                v3Add(this->rwaGyroTorqueBdy, d2, this->rwaGyroTorqueBdy);
                 v3Scale(rwIt->u_current, gsHat_B, rwTorque);
                 v3Subtract(rwSumTorque, rwTorque, rwSumTorque);         /* subtract [Gs]u */
                 rwCount++;
             }
         }
         m33MultV3(omegaTilde, d3, d2);                                  /* [tilde(w)]([I]w + [Gs]hs) */
-        m33MultV3(omegaTilde, rwaGyroTorqueBdy, rwaGyroTorqueBdy);
+        m33MultV3(omegaTilde, this->rwaGyroTorqueBdy, this->rwaGyroTorqueBdy);
         v3Subtract(rwSumTorque, d2, d2);
         v3Add(d2, extSumTorque_B, d2);                                  /* add external torques */
 
-        m33MultV3(compIinv, d2, omegaBNDot_B);                           /* d(w)/dt = [I_RW]^-1 . (RHS) */
+        m33MultV3(this->compIinv, d2, omegaBNDot_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
         /* RW motor torque equations to solve for d(Omega)/dt */
         rwCount = 0;
@@ -887,7 +887,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
                 m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
-                dX[useTranslation*6 + useRotation*6 + rwCount] = rwIt->u_current / rwIt->Js
+                dX[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->u_current / rwIt->Js
                     - v3Dot(gsHat_B, omegaBNDot_B);
                 rwCount++;
             }
@@ -905,18 +905,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 void SixDofEOM::integrateState(double CurrentTime)
 {
     
-    double  *X = new double[NStates];         /* integration state space */
-    double  *X2 = new double[NStates];        /* integration state space */
-    double  *k1 = new double[NStates];        /* intermediate RK results */
-    double  *k2 = new double[NStates];
-    double  *k3 = new double[NStates];
-    double  *k4 = new double[NStates];
-    memset(X, 0x0, NStates*sizeof(double));
-    memset(X2, 0x0, NStates*sizeof(double));
-    memset(k1, 0x0, NStates*sizeof(double));
-    memset(k2, 0x0, NStates*sizeof(double));
-    memset(k3, 0x0, NStates*sizeof(double));
-    memset(k4, 0x0, NStates*sizeof(double));
+    double  *X = new double[this->NStates];         /* integration state space */
+    double  *X2 = new double[this->NStates];        /* integration state space */
+    double  *k1 = new double[this->NStates];        /* intermediate RK results */
+    double  *k2 = new double[this->NStates];
+    double  *k3 = new double[this->NStates];
+    double  *k4 = new double[this->NStates];
+    memset(X, 0x0, this->NStates*sizeof(double));
+    memset(X2, 0x0, this->NStates*sizeof(double));
+    memset(k1, 0x0, this->NStates*sizeof(double));
+    memset(k2, 0x0, this->NStates*sizeof(double));
+    memset(k3, 0x0, this->NStates*sizeof(double));
+    memset(k4, 0x0, this->NStates*sizeof(double));
     uint32_t i;
     double TimeStep;
     double sMag;
@@ -988,8 +988,8 @@ void SixDofEOM::integrateState(double CurrentTime)
     memcpy(this->XState, X, this->NStates*sizeof(double));
 
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow set
-    if (useRotation){
-        attStates = &this->XState[useTranslation*6];
+    if (this->useRotation){
+        attStates = &this->XState[this->useTranslation*6];
         sMag =  v3Norm(attStates);
         if(sMag > 1.0) {
             v3Scale(-1.0 / sMag / sMag, attStates, attStates);
@@ -1105,29 +1105,29 @@ void SixDofEOM::computeOutputs()
     }
 
     if (this->useTranslation){
-        memcpy(this->r_N, &(XState[0]), 3*sizeof(double));
-        memcpy(this->v_N, &(XState[3]), 3*sizeof(double));
+        memcpy(this->r_BN_N, &(this->XState[0]), 3*sizeof(double));
+        memcpy(this->v_BN_N, &(this->XState[3]), 3*sizeof(double));
     } else {
-        v3Set(1.0, 0.0, 0.0, r_N);
-        v3Set(1.0, 0.0, 0.0, v_N);
+        v3Set(1.0, 0.0, 0.0, this->r_BN_N);
+        v3Set(1.0, 0.0, 0.0, this->v_BN_N);
     }
     if (this->useRotation){
-        memcpy(sigma, &(XState[this->useTranslation*6]), 3*sizeof(double));
-        memcpy(omega, &(XState[this->useTranslation*6+3]), 3*sizeof(double));
+        memcpy(this->sigma_BN, &(this->XState[this->useTranslation*6]), 3*sizeof(double));
+        memcpy(this->omega_BN_B, &(this->XState[this->useTranslation*6+3]), 3*sizeof(double));
     }
 
     if(centralBody != NULL)
     {
-        v3Add(this->r_N, centralBody->PosFromEphem, this->r_N);
-        v3Add(this->v_N, centralBody->VelFromEphem, this->v_N);
+        v3Add(this->r_BN_N, centralBody->PosFromEphem, this->r_BN_N);
+        v3Add(this->v_BN_N, centralBody->VelFromEphem, this->v_BN_N);
     }
     
     memset(displayPos, 0x0, 3*sizeof(double));
     memset(displayVel, 0x0, 3*sizeof(double));
     if(displayBody != NULL)
     {
-        v3Subtract(this->r_N, displayBody->PosFromEphem, this->r_N);
-        v3Subtract(this->v_N, displayBody->VelFromEphem, this->v_N);
+        v3Subtract(this->r_BN_N, displayBody->PosFromEphem, this->r_BN_N);
+        v3Subtract(this->v_BN_N, displayBody->VelFromEphem, this->v_BN_N);
         v3Copy(displayBody->PosFromEphem, displayPos);
         v3Copy(displayBody->VelFromEphem, displayVel);
     }
@@ -1154,13 +1154,13 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     if(StateOutMsgID >= 0)
     {
         OutputStateData StateOut;
-        memcpy(StateOut.r_N, r_N, 3*sizeof(double));
-        memcpy(StateOut.v_N, v_N, 3*sizeof(double));
-        memcpy(StateOut.sigma, sigma, 3*sizeof(double));
-        memcpy(StateOut.omega, omega, 3*sizeof(double));
-        memcpy(StateOut.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
-        memcpy(StateOut.TotalAccumDVBdy, AccumDVBdy, 3*sizeof(double));
-        StateOut.MRPSwitchCount = MRPSwitchCount;
+        memcpy(StateOut.r_N, this->r_BN_N, 3*sizeof(double));
+        memcpy(StateOut.v_N, this->v_BN_N, 3*sizeof(double));
+        memcpy(StateOut.sigma, this->sigma_BN, 3*sizeof(double));
+        memcpy(StateOut.omega, this->omega_BN_B, 3*sizeof(double));
+        memcpy(StateOut.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(StateOut.TotalAccumDVBdy, this->AccumDVBdy, 3*sizeof(double));
+        StateOut.MRPSwitchCount = this->MRPSwitchCount;
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
             sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut), moduleID);
     }
@@ -1170,10 +1170,10 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     {
         
         MassPropsData massProps;
-        massProps.Mass = compMass;
-        memcpy(massProps.CoM, compCoM, 3*sizeof(double));
-        memcpy(&(massProps.InertiaTensor[0]), &(compI[0][0]), 9*sizeof(double));
-        memcpy(massProps.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
+        massProps.Mass = this->compMass;
+        memcpy(massProps.CoM, this->compCoM, 3*sizeof(double));
+        memcpy(&(massProps.InertiaTensor[0]), &(this->compI[0][0]), 9*sizeof(double));
+        memcpy(massProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
             sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps), moduleID);
     }

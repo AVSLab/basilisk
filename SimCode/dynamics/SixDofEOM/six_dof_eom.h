@@ -132,10 +132,10 @@ public:
     double compIinv[3][3];            //!< [m2/kg] inverse of inertia tensor
     double compMass;                  //!< [kg]   Mass of the vehicle
     double TimePrev;                  //!< [s]    Previous update time
-    double r_N[3];                    //!< [m]    Current position vector (inertial)
-    double v_N[3];                    //!< [m/s]  Current velocity vector (inertial)
-    double sigma[3];                  //!<        Current MRPs (inertial)
-    double omega[3];                  //!< [r/s]  Current angular velocity (inertial)
+    double r_BN_N[3];                 //!< [m]    Current position vector (inertial)
+    double v_BN_N[3];                 //!< [m/s]  Current velocity vector (inertial)
+    double sigma_BN[3];               //!<        Current MRPs (inertial)
+    double omega_BN_B[3];             //!< [r/s]  Current angular velocity (inertial)
     double InertialAccels[3];         //!< [m/s2] Current calculated inertial accels
     double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
