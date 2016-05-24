@@ -73,8 +73,6 @@ def unitDynamicsModesTestFunction(show_plots):
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
-
-    testName = "dynamicsTest"
     
     #Initialize the ephemeris module
     spiceObject.ModelTag = "SpiceInterfaceData"
@@ -159,7 +157,7 @@ def unitDynamicsModesTestFunction(show_plots):
         if not unitTestSupport.isArrayEqual(scPos[i],trueVector[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  pos unit test at t=" + str(scPos[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
-
+    
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED " 
