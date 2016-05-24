@@ -26,6 +26,7 @@ class SysModel
     
 public:
     SysModel();
+    SysModel(const SysModel &obj);
     virtual ~SysModel();
     virtual void SelfInit();
     virtual void CrossInit();

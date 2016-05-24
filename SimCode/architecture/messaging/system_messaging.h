@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define MAX_MESSAGE_SIZE 512
 
 
+
 typedef struct {
     char MessageName[MAX_MESSAGE_SIZE];// -- It pains me, but let's fix name
     char messageStruct[MAX_MESSAGE_SIZE]; // -- Again, pain, but it's better
@@ -46,13 +47,19 @@ typedef struct {
 
 typedef struct {
     std::set<uint64_t> accessList; // (-) List of modules who are allowed to access message
+    bool publishedHere;            // (-) Indicator about whether or not the message is published here
 }AllowAccessData;
+
+typedef struct {
+    std::set<std::pair<int64_t, int64_t>> exchangeList; // (-) List of modules allowed to access message
+}MessageExchangeData;
 
 typedef struct {
     std::string bufferName;     // (-) Name of this message buffer for application access
     BlankStorage messageStorage; // (-) The storage buffer associated with this module
     std::vector<AllowAccessData> pubData; // (-) Entry of publishers for each message ID
     std::vector<AllowAccessData> subData; // (-) Entry of subscribers for each message ID
+    std::vector<MessageExchangeData> exchangeData; // [-] List of write/read pairs
 }MessageStorageContainer;
 
 typedef struct {
@@ -82,7 +89,7 @@ public:
     bool WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
                       uint8_t *MsgPayload, int64_t moduleID = -1);
     bool ReadMessage(uint64_t MessageID, SingleMessageHeader *DataHeader,
-                     uint64_t MaxBytes, uint8_t *MsgPayload, uint64_t CurrentOffset=0);
+                     uint64_t MaxBytes, uint8_t *MsgPayload, int64_t moduleID=-1, uint64_t CurrentOffset=0);
     static void AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                   uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
                                   uint64_t maxReadBytes, uint8_t *OutputBuffer);
@@ -100,7 +107,11 @@ public:
     int64_t findMessageBuffer(std::string bufferName);
     std::set<std::string> getUnpublishedMessages();
     std::set<std::string> getUniqueMessageNames();
+    std::set<std::pair<int64_t, int64_t>>
+        getMessageExchangeData(uint64_t messageID);
     void clearMessaging();
+    bool obtainWriteRights(uint64_t messageID, int64_t moduleID);
+    bool obtainReadRights(uint64_t messageID, int64_t moduleID);
     
     
 private:

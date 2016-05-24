@@ -99,9 +99,9 @@ void BoreAngCalc::ReadInputs()
     //! - Set the input pointer and size appropriately based on input type
     //! - Read the input message into the correct pointer
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &localHeader,
-        sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&localState));
+        sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&localState), moduleID);
     inputsGood &= SystemMessaging::GetInstance()->ReadMessage(celInMsgID, &localHeader,
-        sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&localPlanet));
+        sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
     
 }
 

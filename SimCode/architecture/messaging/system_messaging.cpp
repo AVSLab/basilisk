@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <string>
 #include <iostream>
 
+
 SystemMessaging* SystemMessaging::TheInstance = NULL;
 
 SystemMessaging :: SystemMessaging()
@@ -146,6 +147,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
             it = messageStorage->pubData.begin();
             it += FindMessageID(MessageName);
             it->accessList.insert(moduleID);
+            it->publishedHere = true;
         }
     	return(FindMessageID(MessageName));
     }
@@ -208,12 +210,16 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
            NumMessageBuffers*(MaxSize + sizeof(SingleMessageHeader)));
     SetNumMessages(GetMessageCount() + 1);
     AllowAccessData dataList;
+    MessageExchangeData exList;
+    dataList.publishedHere = false;
     messageStorage->subData.push_back(dataList); //!< No subscribers yet
     if(moduleID >= 0)
     {
         dataList.accessList.insert(moduleID);
+        dataList.publishedHere = true;
     }
     messageStorage->pubData.push_back(dataList);
+    messageStorage->exchangeData.push_back(exList);
     return(GetMessageCount() - 1);
 }
 
@@ -232,8 +238,43 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
         it = messageStorage->subData.begin();
         it += messageID;
         it->accessList.insert(moduleID);
+        it->publishedHere = false;
     }
     return(messageID);
+}
+
+bool SystemMessaging::obtainWriteRights(uint64_t messageID, int64_t moduleID)
+{
+    bool rightsObtained = false;
+    
+    if(moduleID >= 0 && messageID < GetMessageCount())
+    {
+        std::vector<AllowAccessData>::iterator it;
+        it = messageStorage->pubData.begin();
+        it += messageID;
+        it->accessList.insert(moduleID);
+        rightsObtained = true;
+    }
+    
+    return(rightsObtained);
+}
+
+bool SystemMessaging::obtainReadRights(uint64_t messageID, int64_t moduleID)
+{
+ 
+    bool rightsObtained = false;
+    
+    if(moduleID >= 0 && messageID < GetMessageCount())
+    {
+        std::vector<AllowAccessData>::iterator it;
+        it = messageStorage->subData.begin();
+        it += messageID;
+        it->accessList.insert(moduleID);
+        rightsObtained = true;
+    }
+    
+    return(rightsObtained);
+    
 }
 
 messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
@@ -259,7 +300,7 @@ messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
         dataFound.bufferName = messageStorage->bufferName;
         std::vector<AllowAccessData>::iterator pubIt;
         pubIt=messageStorage->pubData.begin() + messageID;
-        if(pubIt->accessList.size() > 0)
+        if(pubIt->accessList.size() > 0 && pubIt->publishedHere)
         {
             return(dataFound);
         }
@@ -345,7 +386,7 @@ void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes
 }
 
 bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
-                                  *DataHeader, uint64_t MaxBytes, uint8_t *MsgPayload, uint64_t CurrentOffset)
+                                  *DataHeader, uint64_t MaxBytes, uint8_t *MsgPayload, int64_t moduleID, uint64_t CurrentOffset)
 {
     if(MessageID >= GetMessageCount())
     {
@@ -366,6 +407,23 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     {
         CurrentIndex += MsgHdr->MaxNumberBuffers;
     }
+    std::vector<MessageExchangeData>::iterator exIt;
+    std::vector<AllowAccessData>::iterator accIt;
+    accIt = messageStorage->subData.begin();
+    exIt = messageStorage->exchangeData.begin();
+    accIt += MessageID;
+    exIt += MessageID;
+    if(accIt->accessList.find(moduleID) == accIt->accessList.end()
+        && moduleID != -1)
+    {
+        std::cerr << "WARNING: Message " << MsgHdr->MessageName;
+        std::cerr << " was read by module ID " << moduleID;
+        std::cerr << " who is not on access list." << std::endl;
+    }
+    
+    exIt->exchangeList.insert(std::pair<int64_t, int64_t>
+        (MsgHdr->previousPublisher, moduleID));
+    
     uint8_t *ReadBuffer = &(messageStorage->messageStorage.
                             StorageBuffer[MsgHdr->StartingOffset]);
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
@@ -489,4 +547,13 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
         }
     }
     return(outputNames);
+}
+
+std::set<std::pair<int64_t, int64_t>>
+    SystemMessaging::getMessageExchangeData(uint64_t messageID)
+{
+    std::vector<MessageExchangeData>::iterator it;
+    it = messageStorage->exchangeData.begin();
+    it += messageID;
+    return(it->exchangeList);
 }

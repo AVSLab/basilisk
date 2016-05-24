@@ -128,7 +128,7 @@ bool ThrusterDynamics::ReadInputs()
     memset(&LocalHeader, 0x0, sizeof(LocalHeader));
     dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
                                                 ThrusterData.size()*sizeof(ThrustCmdStruct),
-                                                reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
+                                                reinterpret_cast<uint8_t*> (IncomingCmdBuffer), moduleID);
 
     //! - Check if message has already been read, if stale return
     if(prevCommandTime==LocalHeader.WriteClockNanos || !dataGood) {

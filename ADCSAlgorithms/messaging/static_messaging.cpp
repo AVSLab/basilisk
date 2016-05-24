@@ -53,7 +53,7 @@ int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSi
                      void *MsgPayload, uint64_t moduleID)
 {
     return(SystemMessaging::GetInstance()->WriteMessage(MessageID, ClockTimeNanos,
-        MsgSize,  reinterpret_cast<uint8_t*> (MsgPayload)), moduleID);
+        MsgSize,  reinterpret_cast<uint8_t*> (MsgPayload), moduleID));
 }
 
 /*! This method reads the most recent message buffer from the messaging system
@@ -66,12 +66,12 @@ int32_t WriteMessage(uint32_t MessageID, uint64_t ClockTimeNanos, uint32_t MsgSi
  @param WriteSize The number of bytes that get read out
  */
 int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize,
-                    uint32_t MaxBytes, void *MsgPayload)
+                    uint32_t MaxBytes, void *MsgPayload, int64_t moduleID)
 {
     SingleMessageHeader LocalHeader;
     
     bool TestResult = SystemMessaging::GetInstance()->ReadMessage(MessageID,
-                                                                  &LocalHeader, MaxBytes, reinterpret_cast<uint8_t*> (MsgPayload));
+                                                                  &LocalHeader, MaxBytes, reinterpret_cast<uint8_t*> (MsgPayload), moduleID);
     *WriteTime = LocalHeader.WriteClockNanos;
     *WriteSize = LocalHeader.WriteSize;
     return(TestResult);

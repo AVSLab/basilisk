@@ -75,7 +75,7 @@ void Update_singleAxisRot(singleAxisRotConfig *ConfigData,
 	attCmdOut baseCmd;
 
 	ReadMessage(ConfigData->inputAttID, &writeTime, &writeSize,
-		sizeof(attCmdOut), &baseCmd);
+		sizeof(attCmdOut), &baseCmd, moduleID);
     
 	if (ConfigData->mnvrStartTime == 0)
 	{

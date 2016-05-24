@@ -81,9 +81,9 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     DvBurnCmdData localBurnData;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-        sizeof(NavStateOut), &navData);
+        sizeof(NavStateOut), &navData, moduleID);
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
-                sizeof(DvBurnCmdData), &localBurnData);
+                sizeof(DvBurnCmdData), &localBurnData, moduleID);
     
     ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
     v3Normalize(localBurnData.dvInrtlCmd, dvUnit);

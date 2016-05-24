@@ -97,13 +97,13 @@ void ImuSensor::ReadInputs()
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateCurrent));
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateCurrent), moduleID);
     }
     memset(&MassCurrent, 0x0, sizeof(MassPropsData));
     if(InputMassID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&MassCurrent));
+                                                    sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&MassCurrent), moduleID);
     }
 }
 

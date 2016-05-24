@@ -67,9 +67,9 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     SpicePlanetState    primPlanet;
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
-                sizeof(SpicePlanetState), &primPlanet);
+                sizeof(SpicePlanetState), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(NavStateOut), &navData);
+                sizeof(NavStateOut), &navData, moduleID);
     
     
     /*! - Compute and store output message */

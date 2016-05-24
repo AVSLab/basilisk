@@ -145,12 +145,12 @@ void SimpleNav::computeOutput(uint64_t Clock)
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-            sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState));
+            sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState), moduleID);
     }
     if(inputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-            sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&sunState));
+            sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&sunState), moduleID);
     }
     
     //! - Add errors to the simple cases (everything except sun-pointing)

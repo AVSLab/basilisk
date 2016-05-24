@@ -82,9 +82,9 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     vehEffectorOut effCmd;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-        sizeof(NavStateOut), &navData);
+        sizeof(NavStateOut), &navData, moduleID);
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
-                sizeof(DvBurnCmdData), &localBurnData);
+                sizeof(DvBurnCmdData), &localBurnData, moduleID);
     
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
     v3SetZero(burnAccum);

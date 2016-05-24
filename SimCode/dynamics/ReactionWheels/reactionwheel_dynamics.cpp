@@ -146,7 +146,7 @@ void ReactionWheelDynamics::ReadInputs()
     memset(IncomingCmdBuffer, 0x0, ReactionWheelData.size()*sizeof(RWCmdStruct));
     SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
                                                 ReactionWheelData.size()*sizeof(RWCmdStruct),
-                                                reinterpret_cast<uint8_t*> (IncomingCmdBuffer));
+                                                reinterpret_cast<uint8_t*> (IncomingCmdBuffer), moduleID);
 
     //! - Check if message has already been read, if stale return
 //    if(prevCommandTime==LocalHeader.WriteClockNanos) {

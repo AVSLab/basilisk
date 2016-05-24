@@ -125,7 +125,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     memset(InputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData));
     ReadMessage(ConfigData->InputMsgID, &ClockTime, &ReadSize,
                 MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData),
-                (void*) (InputBuffer));
+                (void*) (InputBuffer), moduleID);
     
     /*! - Zero the observed active CSS count*/
     ConfigData->numActiveCss = 0;

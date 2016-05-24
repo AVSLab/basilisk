@@ -97,7 +97,7 @@ void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t call
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(ConfigData->inputVector));
+                sizeof(vehControlOut), (void*) &(ConfigData->inputVector), moduleID);
 
 
 

@@ -163,13 +163,13 @@ void SpiceInterface::SendOutputData(uint64_t CurrentClock)
     OutputData.GPSWeek = GPSWeek;
     OutputData.GPSRollovers = GPSRollovers;
     SystemMessaging::GetInstance()->WriteMessage(TimeOutMsgID, CurrentClock,
-                                                 sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&OutputData));
+                                                 sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&OutputData), moduleID);
     
     //! - Iterate through all of the planets that are on and write their outputs
     for(planit = PlanetData.begin(); planit != PlanetData.end(); planit++)
     {
         SystemMessaging::GetInstance()->WriteMessage(planit->first, CurrentClock,
-                                                     sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&planit->second));
+                                                     sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&planit->second), moduleID);
     }
     
 }

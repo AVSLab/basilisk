@@ -71,7 +71,7 @@ void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(vehControlOut), (void*) &(cntrRequest));
+                sizeof(vehControlOut), (void*) &(cntrRequest), moduleID);
     computeSingleThrustBlock(&(ConfigData->thrData), callTime,
                              &cntrRequest, moduleID);
     

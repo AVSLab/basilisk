@@ -55,7 +55,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     if(ConfigData->PropsMsgID >= 0)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
-                    sizeof(vehicleConfigData), (void*) &LocalConfigData);
+                    sizeof(vehicleConfigData), (void*) &LocalConfigData, moduleID);
         m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->platform2StrDCM,
                    RECAST3X3 ConfigData->platform2BdyDCM);
     }
@@ -75,7 +75,7 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     uint32_t ReadSize;
     IMUOutputData LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
-                sizeof(IMUOutputData), (void*) &LocalInput);
+                sizeof(IMUOutputData), (void*) &LocalInput, moduleID);
     
     m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.DVFrameBody,
               ConfigData->LocalOutput.DVFrameBody);

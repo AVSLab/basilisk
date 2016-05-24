@@ -102,9 +102,9 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
 	uint32_t noValidConstraint;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(NavStateOut), &navData);
+                sizeof(NavStateOut), &navData, moduleID);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
-                sizeof(SpicePlanetState), &primPlanet);
+                sizeof(SpicePlanetState), &primPlanet, moduleID);
 	v3Subtract(primPlanet.PositionVector, navData.r_BN_N, primPointVector);
 	v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, primVelVector);
 	v3Normalize(primPointVector, primHatPointVector);
@@ -112,7 +112,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     if(ConfigData->inputSecID >= 0)
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize,
-            sizeof(SpicePlanetState), &secPlanet);
+            sizeof(SpicePlanetState), &secPlanet, moduleID);
         v3Subtract(secPlanet.PositionVector, navData.r_BN_N,
                    secPointVector);
         v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, secVelVector);

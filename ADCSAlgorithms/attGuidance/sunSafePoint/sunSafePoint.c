@@ -75,9 +75,9 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(CSSWlsEstOut), (void*) &(sunVecEst));
+                sizeof(CSSWlsEstOut), (void*) &(sunVecEst), moduleID);
     ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
-                sizeof(IMUOutputData), (void*) &(LocalIMUData));
+                sizeof(IMUOutputData), (void*) &(LocalIMUData), moduleID);
     
     /*! - Compute the current error vector if it is valid*/
     if(v3Norm(sunVecEst.sHatBdy) > ConfigData->minUnitMag)

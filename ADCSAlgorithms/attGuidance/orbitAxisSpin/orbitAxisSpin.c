@@ -74,14 +74,14 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
     uint32_t            writeSize;
     attRefOut           ref;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
-                sizeof(attRefOut), (void*) &(ref));
+                sizeof(attRefOut), (void*) &(ref), moduleID);
     
     /*! - Compute output variables */
     if (ConfigData->initializeAngle == BOOL_TRUE)
     {
         NavStateOut nav;                           /*!< navigation message */
         ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                    sizeof(NavStateOut), (void*) &(nav));
+                    sizeof(NavStateOut), (void*) &(nav), moduleID);
         
         ConfigData->phi_spin0 = computeInitialSpinAngle(ConfigData,
                                                        ref.sigma_RN,

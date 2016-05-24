@@ -324,3 +324,46 @@ void SimModel::terminateSimulation()
 {
     SystemMessaging::GetInstance()->clearMessaging();
 }
+
+/*! This method returns all of the read/write pairs for the entire simulation 
+    for a given message.  That alloww us to capture and analyze our data flow in
+    a very clean manner.
+    @return Write/Read pairs for the entire simulation run
+    @param messageName The name of the message to find pairs for
+*/
+std::set<std::pair<int64_t, int64_t>>
+SimModel::getMessageExchangeData(std::string messageName,
+     std::set<uint64_t> procList)
+{
+    std::set<std::pair<int64_t, int64_t>> returnPairs;
+    bool messageFound = false;
+    std::cout << "Your process list length is: " << procList.size() << std::endl;
+    for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
+    {
+        if(procList.find(i) == procList.end() && procList.size() > 0)
+        {
+            continue;
+        }
+        SystemMessaging::GetInstance()->
+            selectMessageBuffer(i);
+        int64_t messageID = SystemMessaging::GetInstance()->
+            FindMessageID(messageName);
+        if(messageID >= 0)
+        {
+            std::set<std::pair<int64_t, int64_t>> localPairs;
+            localPairs =SystemMessaging::GetInstance()->
+                getMessageExchangeData(messageID);
+            returnPairs.insert(localPairs.begin(), localPairs.end());
+            messageFound = true;
+        }
+        
+    }
+    
+    if(!messageFound)
+    {
+        std::cerr << "I couldn't find a message with the name: " << messageName;
+        std::cerr << std::endl << "Can't give you exchange pairs for it" << std::endl;
+    }
+    return(returnPairs);
+    
+}
