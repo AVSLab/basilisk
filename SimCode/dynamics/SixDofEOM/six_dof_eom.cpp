@@ -1104,23 +1104,30 @@ void SixDofEOM::computeOutputs()
         }
     }
 
-    memcpy(r_N, &(XState[0]), 3*sizeof(double));
-    memcpy(v_N, &(XState[3]), 3*sizeof(double));
-    memcpy(sigma, &(XState[6]), 3*sizeof(double));
-    memcpy(omega, &(XState[9]), 3*sizeof(double));
+    if (this->useTranslation){
+        memcpy(this->r_N, &(XState[0]), 3*sizeof(double));
+        memcpy(this->v_N, &(XState[3]), 3*sizeof(double));
+    } else {
+        v3Set(1.0, 0.0, 0.0, r_N);
+        v3Set(1.0, 0.0, 0.0, v_N);
+    }
+    if (this->useRotation){
+        memcpy(sigma, &(XState[this->useTranslation*6]), 3*sizeof(double));
+        memcpy(omega, &(XState[this->useTranslation*6+3]), 3*sizeof(double));
+    }
 
     if(centralBody != NULL)
     {
-        v3Add(r_N, centralBody->PosFromEphem, r_N);
-        v3Add(v_N, centralBody->VelFromEphem, v_N);
+        v3Add(this->r_N, centralBody->PosFromEphem, this->r_N);
+        v3Add(this->v_N, centralBody->VelFromEphem, this->v_N);
     }
     
     memset(displayPos, 0x0, 3*sizeof(double));
     memset(displayVel, 0x0, 3*sizeof(double));
     if(displayBody != NULL)
     {
-        v3Subtract(r_N, displayBody->PosFromEphem, r_N);
-        v3Subtract(v_N, displayBody->VelFromEphem, v_N);
+        v3Subtract(this->r_N, displayBody->PosFromEphem, this->r_N);
+        v3Subtract(this->v_N, displayBody->VelFromEphem, this->v_N);
         v3Copy(displayBody->PosFromEphem, displayPos);
         v3Copy(displayBody->VelFromEphem, displayVel);
     }
