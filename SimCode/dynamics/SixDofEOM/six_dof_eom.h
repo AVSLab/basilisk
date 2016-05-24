@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/dyn_effector.h"
 #include "utilities/sphericalHarmonics.h"
 #include "utilities/coeffLoader.h"
+#include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 /*! \addtogroup SimModelGroup
@@ -145,8 +146,10 @@ public:
     double totScAngMomentum_B[3];     //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
     double totScAngMomentum_N[3];     //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
     double totScAngMomentumMag;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
-    double scPower;                   //!< [W] Mechanical Power of the spacecraft
-    double scEnergyRate;              //!< [W] Rate of change of energy to check with power
+    double scRotPower;                //!< [W] Mechanical Power of the spacecraft rotational motion (analytical work-energy theorem)
+    double scEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
+    bool   useTranslation;            //!<        Flag indicating to use translation dynamics
+    bool   useRotation;               //!<        Flag indicating to use rotational dynamics
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data
