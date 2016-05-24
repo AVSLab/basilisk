@@ -147,7 +147,7 @@ def subModuleTestFunction(show_plots):
                [3.0, -0.5, 0.7],
                [4.0, -0.5, 0.7],
                [2.0, -0.5, 0.7],
-               [3.0, -0.5, 0.7],
+               [3.0, -0.5, 0.7]
                ]
 
     # compare the module results to the truth values
@@ -177,14 +177,14 @@ def subModuleTestFunction(show_plots):
  
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
-#    if show_plots:
-#        # plot a sample variable.
-#        plt.figure(1)
-#        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
-#        plt.legend(loc='upper left')
-#        plt.xlabel('Time [s]')
-#        plt.ylabel('Variable Description [unit]')
-#        plt.show()
+    if show_plots:
+        # plot a sample variable.
+        plt.figure(1)
+        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
+        plt.legend(loc='upper left')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Variable Description [unit]')
+        plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
