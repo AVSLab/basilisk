@@ -68,8 +68,6 @@ def unitDynamicsModesTestFunction(show_plots):
 
 
     scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
-
     DynUnitTestProc = scSim.CreateNewProcess("DynUnitTestProcess")
     DynUnitTestProc.addTask(scSim.CreateNewTask("sixDynTestTask", unitTestSupport.sec2nano(10.)))
     
