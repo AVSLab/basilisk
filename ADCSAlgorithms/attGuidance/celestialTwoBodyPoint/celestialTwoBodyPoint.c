@@ -107,8 +107,8 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     
     double dotProduct;              /* Temporary scalar variable */
     
-    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavStateOut), &navData);
-    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(SpicePlanetState), &primPlanet);
+    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavStateOut), &navData, moduleID);
+    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(SpicePlanetState), &primPlanet, moduleID);
     
     v3Subtract(primPlanet.PositionVector, navData.r_BN_N, R_P1);
     v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, v_P1);
@@ -118,7 +118,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     noValidConstraint = 0;
     if(ConfigData->inputSecID >= 0)
     {
-        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet);
+        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet, moduleID);
         v3Subtract(secPlanet.PositionVector, navData.r_BN_N, R_P2);
         v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, v_P2);
         v3Normalize(R_P1, R_P1_hat);
