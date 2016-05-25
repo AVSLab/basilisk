@@ -760,6 +760,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.VehDynObject.addThrusterSet(self.DVThrusterDynObject)
         # self.VehDynObject.addBodyEffector(self.radiationPressure)
         self.VehDynObject.addReactionWheelSet(self.rwDynObject)
+        self.VehDynObject.useTranslation = True
+        self.VehDynObject.useRotation = True
 
     def setRadiationPressure(self):
         self.radiationPressure.ModelTag = "RadiationPressureDynamics"
