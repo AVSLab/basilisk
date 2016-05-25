@@ -232,6 +232,16 @@ SixDofEOM::SixDofEOM()
     this->useTranslation = false;
     this->useRotation    = false;
 
+    /* initialize some spacecraft states to default values.  The user should always override these values
+     with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
+    m33SetIdentity(this->baseI);
+    m33SetIdentity(this->T_str2Bdy);
+    v3SetZero(this->baseCoM);
+    v3SetZero(this->sigma_BN);
+    v3SetZero(this->omega_BN_B);
+    v3Set(1.0, 0.0, 0.0, this->r_BN_N);
+    v3Set(1.0, 0.0, 0.0, this->v_BN_N);
+
     return;
 }
 
@@ -366,15 +376,6 @@ void SixDofEOM::SelfInit()
     std::vector<double>::iterator CoMIt= baseCoMInit.begin();
     std::vector<double>::iterator Str2BdyIt= T_Str2BdyInit.begin();
 
-    /* initialize some spacecraft states to default values.  The user should always override these values
-        with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
-    m33SetIdentity(this->baseI);
-    m33SetIdentity(this->T_str2Bdy);
-    v3SetZero(this->baseCoM);
-    v3SetZero(this->sigma_BN);
-    v3SetZero(this->omega_BN_B);
-    v3Set(1.0, 0.0, 0.0, this->r_BN_N);
-    v3Set(1.0, 0.0, 0.0, this->v_BN_N);
 
     /* set the simulation specific initial conditions */
     for(uint32_t i=0; i<3; i++)
