@@ -655,7 +655,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double posVelComp[3];
     double perturbAccel[3];
 	double *Omegas;
-    double *omegaBNDot_B;       /* pointer to inertial body angular acceleration vector in B-frame components */
+    double *omegaDot_BN_B;       /* pointer to inertial body angular acceleration vector in B-frame components */
     
     //! Begin method steps
     
@@ -682,7 +682,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         {
             Omegas = &X[i];
         }
-        omegaBNDot_B = dX + 3 + this->useTranslation*6;
+        omegaDot_BN_B = dX + 3 + this->useTranslation*6;
     }
 
     /* zero the derivative vector */
@@ -881,7 +881,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Subtract(rwSumTorque, d2, d2);
         v3Add(d2, extSumTorque_B, d2);                                  /* add external torques */
 
-        m33MultV3(this->compIinv, d2, omegaBNDot_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
+        m33MultV3(this->compIinv, d2, omegaDot_BN_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
         /* RW motor torque equations to solve for d(Omega)/dt */
         rwCount = 0;
@@ -893,7 +893,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             {
                 m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 dX[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->u_current / rwIt->Js
-                    - v3Dot(gsHat_B, omegaBNDot_B);
+                    - v3Dot(gsHat_B, omegaDot_BN_B);
                 rwCount++;
             }
         }
