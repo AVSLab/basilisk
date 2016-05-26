@@ -54,13 +54,13 @@ import MRP_Steering                     # import module(s) that creates the need
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(param1, param2, show_plots):
+def test_module(show_plots, param1, param2):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = subModuleTestFunction(show_plots, param1, param2)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots=0, param1=0, param2=0):
+def subModuleTestFunction(show_plots, param1, param2):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -236,4 +236,8 @@ def subModuleTestFunction(show_plots=0, param1=0, param2=0):
 # stand-along python script
 #
 if __name__ == "__main__":
-    subModuleTestFunction()           # update "module" in function name
+    test_module(              # update "module" in function name
+                 True,
+                 1,           # param1 value
+                 1            # param2 value
+               )
