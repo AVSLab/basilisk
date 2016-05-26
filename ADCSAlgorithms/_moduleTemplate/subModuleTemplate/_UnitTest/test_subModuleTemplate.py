@@ -51,7 +51,7 @@ def test_subModule(show_plots):     # update "subModule" in this function name t
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots):
+def subModuleTestFunction(show_plots=0):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -200,4 +200,4 @@ def subModuleTestFunction(show_plots):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_subModule(False)           # update "subModule" in function name
+    subModuleTestFunction()           # update "subModule" in function name
