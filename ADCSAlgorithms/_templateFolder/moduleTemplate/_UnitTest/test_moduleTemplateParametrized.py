@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        subModuleTemplateParametrized
+#   Module Name:        moduleTemplateParametrized
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -36,7 +36,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import subModuleTemplate                # import the module that is to be tested
+import moduleTemplate                 # import the module that is to be tested
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
 
 
@@ -56,11 +56,11 @@ import MRP_Steering                     # import module(s) that creates the need
 # update "module" in this function name to reflect the module name
 def test_module(show_plots, param1, param2):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots, param1, param2)
+    [testResults, testMessage] = moduleTestFunction(show_plots, param1, param2)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots, param1, param2):
+def moduleTestFunction(show_plots, param1, param2):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -80,13 +80,13 @@ def subModuleTestFunction(show_plots, param1, param2):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = subModuleTemplate.subModuleTemplateConfig()                          # update with current values
+    moduleConfig = moduleTemplate.moduleTemplateConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        subModuleTemplate.Update_subModuleTemplate,     # update with current values
-                                        subModuleTemplate.SelfInit_subModuleTemplate,   # update with current values
-                                        subModuleTemplate.CrossInit_subModuleTemplate,  # update with current values
-                                        subModuleTemplate.Reset_subModuleTemplate)      # update with current values
-    moduleWrap.ModelTag = "subModuleTemplate"                                        # update python name of test module
+                                        moduleTemplate.Update_moduleTemplate,     # update with current values
+                                        moduleTemplate.SelfInit_moduleTemplate,   # update with current values
+                                        moduleTemplate.CrossInit_moduleTemplate,  # update with current values
+                                        moduleTemplate.Reset_moduleTemplate)      # update with current values
+    moduleWrap.ModelTag = "moduleTemplate"                                        # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
