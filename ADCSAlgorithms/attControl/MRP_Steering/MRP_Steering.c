@@ -49,7 +49,6 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
         sizeof(vehControlOut), "vehControlOut", moduleID);
 
-    ConfigData->useOuterLoopFeedforward = BOOL_TRUE;
 
 }
 
@@ -225,7 +224,7 @@ void MRPSteeringLaw(MRP_SteeringConfig *ConfigData, double sigma_BR[3], double o
 
     }
 
-    if (ConfigData->useOuterLoopFeedforward) {
+    if (!ConfigData->ignoreOuterLoopFeedforward) {
         /* Determine the body frame derivative of the steering rates */
         BmatMRP(sigma_BR, B);
         m33MultV3(B, omega_ast, sigma_p);
