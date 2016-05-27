@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        moduleTemplate
+#   Module Name:        fswModuleTemplate
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -36,7 +36,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import moduleTemplate                 # import the module that is to be tested
+import fswModuleTemplate                 # import the module that is to be tested
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
 
 
@@ -47,11 +47,11 @@ import MRP_Steering                     # import module(s) that creates the need
 # provide a unique test method name, starting with test_
 def test_module(show_plots):     # update "module" in this function name to reflect the module name
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = moduleTestFunction(show_plots)
+    [testResults, testMessage] = fswModuleTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def moduleTestFunction(show_plots=0):
+def fswModuleTestFunction(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -71,13 +71,13 @@ def moduleTestFunction(show_plots=0):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = moduleTemplate.moduleTemplateConfig()                          # update with current values
+    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        moduleTemplate.Update_moduleTemplate,     # update with current values
-                                        moduleTemplate.SelfInit_moduleTemplate,   # update with current values
-                                        moduleTemplate.CrossInit_moduleTemplate, # update with current values
-                                        moduleTemplate.Reset_moduleTemplate)  # update with current values
-    moduleWrap.ModelTag = "moduleTemplate"           # update python name of test module
+                                        fswModuleTemplate.Update_fswModuleTemplate,     # update with current values
+                                        fswModuleTemplate.SelfInit_fswModuleTemplate,   # update with current values
+                                        fswModuleTemplate.CrossInit_fswModuleTemplate, # update with current values
+                                        fswModuleTemplate.Reset_fswModuleTemplate)  # update with current values
+    moduleWrap.ModelTag = "fswModuleTemplate"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -200,4 +200,6 @@ def moduleTestFunction(show_plots=0):
 # stand-along python script
 #
 if __name__ == "__main__":
-    moduleTestFunction()           # update "subModule" in function name
+    test_module(            # update "subModule" in function name
+               False        # show_plots
+    )
