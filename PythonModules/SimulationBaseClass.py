@@ -505,7 +505,6 @@ class SimBaseClass:
         mapDict = {}
         messNames = self.TotalSim.getUniqueMessageNames()
         for name in messNames:
-            print processList
             dataPairs = self.findMessagePairs(name, processList)
             for transPair in dataPairs:
                 if transPair[0] in mapDict:

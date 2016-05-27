@@ -337,7 +337,6 @@ SimModel::getMessageExchangeData(std::string messageName,
 {
     std::set<std::pair<int64_t, int64_t>> returnPairs;
     bool messageFound = false;
-    std::cout << "Your process list length is: " << procList.size() << std::endl;
     for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
     {
         if(procList.find(i) == procList.end() && procList.size() > 0)
