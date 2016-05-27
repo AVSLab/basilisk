@@ -15,8 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef _MODULE_TEMPLATE_OUT_H_
-#define _MODULE_TEMPLATE_OUT_H_
+#ifndef _FSW_MODULE_TEMPLATE_OUT_H_
+#define _FSW_MODULE_TEMPLATE_OUT_H_
 
 #include <stdint.h>
 
@@ -28,7 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     output message that is used by all sub-modules in the module folder. */
 typedef struct {
     double outputVector[3];     /*!< [units] sample output vector*/
-}moduleTemplateOut;
+}fswModuleTemplateOut;
 
 /*! @} */
 
