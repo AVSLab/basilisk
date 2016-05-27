@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        subModuleTemplateParametrized
+#   Module Name:        moduleTemplate
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
 #
@@ -36,31 +36,22 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import subModuleTemplate                # import the module that is to be tested
+import moduleTemplate                 # import the module that is to be tested
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
 
 
-# Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
-# Uncomment this line if this test has an expected failure, adjust message as needed.
+# uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
-# Provide a unique test method name, starting with 'test_'.
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("param1, param2", [
-    (1, 1),
-    (1, 3),
-    (2, 2),
-])
-
-# update "module" in this function name to reflect the module name
-def test_module(show_plots, param1, param2):
+# provide a unique test method name, starting with test_
+def test_module(show_plots):     # update "module" in this function name to reflect the module name
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = subModuleTestFunction(show_plots, param1, param2)
+    [testResults, testMessage] = moduleTestFunction(show_plots)
     assert testResults < 1, testMessage
 
 
-def subModuleTestFunction(show_plots, param1, param2):
+def moduleTestFunction(show_plots=0):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -80,19 +71,19 @@ def subModuleTestFunction(show_plots, param1, param2):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = subModuleTemplate.subModuleTemplateConfig()                          # update with current values
+    moduleConfig = moduleTemplate.moduleTemplateConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        subModuleTemplate.Update_subModuleTemplate,     # update with current values
-                                        subModuleTemplate.SelfInit_subModuleTemplate,   # update with current values
-                                        subModuleTemplate.CrossInit_subModuleTemplate,  # update with current values
-                                        subModuleTemplate.Reset_subModuleTemplate)      # update with current values
-    moduleWrap.ModelTag = "subModuleTemplate"                                        # update python name of test module
+                                        moduleTemplate.Update_moduleTemplate,     # update with current values
+                                        moduleTemplate.SelfInit_moduleTemplate,   # update with current values
+                                        moduleTemplate.CrossInit_moduleTemplate, # update with current values
+                                        moduleTemplate.Reset_moduleTemplate)  # update with current values
+    moduleWrap.ModelTag = "moduleTemplate"           # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputDataName = "sampleInput"          # update with current values
+    moduleConfig.inputDataName  = "sampleInput"         # update with current values
     moduleConfig.outputDataName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
     vector = [1., 2., 3.]
@@ -109,7 +100,7 @@ def subModuleTestFunction(show_plots, param1, param2):
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    sampleInputMessageVariable = [param1, param2, 0.7]       # Set up a list as a 3-vector
+    sampleInputMessageVariable = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
     SimulationBaseClass.SetCArray(sampleInputMessageVariable,           # specify message variable
                                   'double',                             # specify message variable type
                                   inputMessageData.torqueRequestBody)   # write torque request to input message
@@ -151,47 +142,20 @@ def subModuleTestFunction(show_plots, param1, param2):
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
     
     # set the filtered output truth states
-    trueVector=[];
-    if param1==1:
-        if param2==1:
-            trueVector = [
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7],
-                       [4.0, 1.0, 0.7],
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7]
-                       ]
-        else:
-            if param2==3:
-                trueVector = [
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7],
-                       [4.0, 3.0, 0.7],
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7]
-                       ]
-            else:
-                testFailCount+=1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
-    else:
-        if param1==2:
-            trueVector = [
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7],
-                       [5.0, 2.0, 0.7],
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7]
-                       ]
-        else:
-            testFailCount+=1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+    trueVector = [
+               [2.0, -0.5, 0.7],
+               [3.0, -0.5, 0.7],
+               [4.0, -0.5, 0.7],
+               [2.0, -0.5, 0.7],
+               [3.0, -0.5, 0.7]
+               ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
@@ -199,7 +163,7 @@ def subModuleTestFunction(show_plots, param1, param2):
                                 "sec\n")
 
         # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableState[i], dummyTrue[i], accuracy):
+        if not unitTestSupport.isDoubleEqual(variableState[i],dummyTrue[i],accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
@@ -224,7 +188,7 @@ def subModuleTestFunction(show_plots, param1, param2):
 
     #   print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print   "PASSED: " + moduleWrap.ModelTag
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -236,8 +200,4 @@ def subModuleTestFunction(show_plots, param1, param2):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_module(              # update "module" in function name
-                 True,
-                 1,           # param1 value
-                 1            # param2 value
-               )
+    moduleTestFunction()           # update "subModule" in function name

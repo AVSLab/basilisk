@@ -14,22 +14,22 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
+%module moduleTemplate
+%{
+   #include "moduleTemplate.h"
+%}
 
-#ifndef _SUB_MODULE_OUT_H_
-#define _SUB_MODULE_OUT_H_
+%include "carrays.i"
+%include "stdint.i"
+%constant void Update_moduleTemplate(void*, uint64_t, uint64_t);
+%ignore Update_moduleTemplate;
+%constant void SelfInit_moduleTemplate(void*, uint64_t);
+%ignore SelfInit_moduleTemplate;
+%constant void CrossInit_moduleTemplate(void*, uint64_t);
+%ignore CrossInit_moduleTemplate;
+%constant void Reset_moduleTemplate(void*, uint64_t, uint64_t);
+%ignore Reset_moduleTemplate;
+%include "moduleTemplate.h"
 
-#include <stdint.h>
-
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
-
-/*! @brief Structure used to define the output of the sub-module.  This is the same
-    output message that is used by all sub-modules in the module folder. */
-typedef struct {
-    double outputVector[3];     /*!< [units] sample output vector*/
-}subModuleOut;
-
-/*! @} */
-
-#endif
+// sample Module supportfile to be included in this sub-module
+%include "../_GeneralModuleFiles/moduleTemplateOut.h"
