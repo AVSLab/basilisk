@@ -14,22 +14,18 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
+//
+//  simMacros.h
+//  Defines commonly used macros in the simulation code
+////
 
-#ifndef _SUB_MODULE_OUT_H_
-#define _SUB_MODULE_OUT_H_
+#ifndef simMacros_H
+#define simMacros_H
 
-#include <stdint.h>
-
-/*! \addtogroup ADCSAlgGroup
- * @{
+/*
+ Declare common ADCS macros
  */
+#define NANO2SEC        1.0E-9
 
-/*! @brief Structure used to define the output of the sub-module.  This is the same
-    output message that is used by all sub-modules in the module folder. */
-typedef struct {
-    double outputVector[3];     /*!< [units] sample output vector*/
-}subModuleOut;
-
-/*! @} */
 
 #endif

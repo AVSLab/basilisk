@@ -15,12 +15,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef _SUB_MODULE_TEMPLATE_H_
-#define _SUB_MODULE_TEMPLATE_H_
+#ifndef _FSW_MODULE_TEMPLATE_H_
+#define _FSW_MODULE_TEMPLATE_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/subModuleOut.h"
+#include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -41,18 +41,18 @@ typedef struct {
 
     double  inputVector[3];                         /*!< [units]  vector description */
 
-    subModuleOut subModuleOut;                      /*!< -- copy of the output message */
+    fswModuleTemplateOut fswModuleOut;              /*!< -- copy of the output message */
 
-}subModuleTemplateConfig;
+}fswModuleTemplateConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void Update_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_subModuleTemplate(subModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
+    void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

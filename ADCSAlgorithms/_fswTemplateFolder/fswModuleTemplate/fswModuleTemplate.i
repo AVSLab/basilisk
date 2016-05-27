@@ -14,22 +14,22 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module subModuleTemplate
+%module fswModuleTemplate
 %{
-   #include "subModuleTemplate.h"
+   #include "fswModuleTemplate.h"
 %}
 
 %include "carrays.i"
 %include "stdint.i"
-%constant void Update_subModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Update_subModuleTemplate;
-%constant void SelfInit_subModuleTemplate(void*, uint64_t);
-%ignore SelfInit_subModuleTemplate;
-%constant void CrossInit_subModuleTemplate(void*, uint64_t);
-%ignore CrossInit_subModuleTemplate;
-%constant void Reset_subModuleTemplate(void*, uint64_t, uint64_t);
-%ignore Reset_subModuleTemplate;
-%include "subModuleTemplate.h"
+%constant void Update_fswModuleTemplate(void*, uint64_t, uint64_t);
+%ignore Update_fswModuleTemplate;
+%constant void SelfInit_fswModuleTemplate(void*, uint64_t);
+%ignore SelfInit_fswModuleTemplate;
+%constant void CrossInit_fswModuleTemplate(void*, uint64_t);
+%ignore CrossInit_fswModuleTemplate;
+%constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
+%ignore Reset_fswModuleTemplate;
+%include "fswModuleTemplate.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/subModuleOut.h"
+%include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
