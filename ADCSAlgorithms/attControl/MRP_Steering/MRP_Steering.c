@@ -224,7 +224,9 @@ void MRPSteeringLaw(MRP_SteeringConfig *ConfigData, double sigma_BR[3], double o
 
     }
 
-    if (!ConfigData->ignoreOuterLoopFeedforward) {
+    if (ConfigData->ignoreOuterLoopFeedforward) {
+        v3SetZero(omega_ast_p);
+    } else {
         /* Determine the body frame derivative of the steering rates */
         BmatMRP(sigma_BR, B);
         m33MultV3(B, omega_ast, sigma_p);
@@ -234,8 +236,6 @@ void MRPSteeringLaw(MRP_SteeringConfig *ConfigData, double sigma_BR[3], double o
             value          = (3*ConfigData->K3*sigma_i*sigma_i + ConfigData->K1)/(pow(M_PI_2/ConfigData->omega_max*(ConfigData->K1*sigma_i + ConfigData->K3*sigma_i*sigma_i*sigma_i),2) + 1);
             omega_ast_p[i] = - value*sigma_p[i];
         }
-    } else {
-        v3SetZero(omega_ast_p);
     }
     return;
 }
