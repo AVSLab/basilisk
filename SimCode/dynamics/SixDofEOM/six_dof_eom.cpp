@@ -410,6 +410,10 @@ void SixDofEOM::SelfInit()
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
 			this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->Omega;
+            m33MultV3(this->T_str2Bdy, rwIt->gsHat_S,  rwIt->gsHat_B);
+            m33MultV3(this->T_str2Bdy, rwIt->gtHat0_S, rwIt->gtHat0_B);
+            m33MultV3(this->T_str2Bdy, rwIt->ggHat0_S, rwIt->ggHat0_B);
+            m33MultV3(this->T_str2Bdy, rwIt->r_S, rwIt->r_B);
 			rwCount++;
 		}
 	}
@@ -816,7 +820,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         double rwTorque[3];
         double rwSumTorque[3];
         v3SetZero(rwSumTorque);
-        double gsHat_B[3];                          /* RW spin axis unit direction vector in B-frame components */
         v3SetZero(this->rwaGyroTorqueBdy);
         for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
         {
@@ -824,12 +827,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
-                double hs =  rwIt->Js * (v3Dot(omega_BN_BLoc, gsHat_B) + Omegas[rwCount]);
-                v3Scale(hs, gsHat_B, d2);
+                double hs =  rwIt->Js * (v3Dot(omega_BN_BLoc, rwIt->gsHat_B) + Omegas[rwCount]);
+                v3Scale(hs, rwIt->gsHat_B, d2);
                 v3Add(d3, d2, d3);
                 v3Add(this->rwaGyroTorqueBdy, d2, this->rwaGyroTorqueBdy);
-                v3Scale(rwIt->u_current, gsHat_B, rwTorque);
+                v3Scale(rwIt->u_current, rwIt->gsHat_B, rwTorque);
                 v3Subtract(rwSumTorque, rwTorque, rwSumTorque);         /* subtract [Gs]u */
                 rwCount++;
             }
@@ -849,9 +851,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 dX[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->u_current / rwIt->Js
-                    - v3Dot(gsHat_B, omegaDot_BN_B);
+                    - v3Dot(rwIt->gsHat_B, omegaDot_BN_B);
                 rwCount++;
             }
         }
@@ -888,7 +889,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     double BN[3][3];                          /* DCM from inertial to body */
     double intermediateVector[3];             /* intermediate vector needed for calculation */
     double Omega;                             /* current wheel speeds of RWs */
-    double gsHat_B[3];                        /* spin axis of RWs in body frame */
     double omega_s;                           /* body rate about the g_s RW axis */
     double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
     double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
@@ -990,13 +990,12 @@ void SixDofEOM::integrateState(double CurrentTime)
                  rwIt != (*rWPackIt)->ReactionWheelData.end(); rwIt++)
             {
                 /* Gather values needed for energy and momentum calculations */
-                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 Omega = this->XState[useTranslation*6 + useRotation*6 + rwCount];
-                omega_s = v3Dot(&attStates[3], gsHat_B);
+                omega_s = v3Dot(&attStates[3], rwIt->gsHat_B);
 
                 /* RW energy */
                 totRwsKinEnergy += 0.5*rwIt->Js*(Omega + omega_s)*(Omega + omega_s); /* 1/2*Js*(omega_si + Omega_i)^2 */
-                v3Scale(rwIt->Js, gsHat_B, intermediateVector);
+                v3Scale(rwIt->Js, rwIt->gsHat_B, intermediateVector);
 
                 /* RW power */
                 this->scRotPower += rwIt->u_current*Omega; /* u*Omega */

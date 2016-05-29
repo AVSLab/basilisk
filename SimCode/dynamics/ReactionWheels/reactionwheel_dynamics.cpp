@@ -35,8 +35,8 @@ ReactionWheelDynamics::ReactionWheelDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    memset(F_S, 0x0, 3*sizeof(double));
-    memset(tau_S, 0x0, 3*sizeof(double));
+    memset(F_B, 0x0, 3*sizeof(double));
+    memset(tau_B, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -175,11 +175,11 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  //! Begin method steps
  std::vector<RWCmdStruct>::iterator CmdIt;
  int RWIter = 0;
- double tau_S_temp[3];
+ double tau_B_temp[3];
  double u_s;
  double cosw;
  double sinw;
- double ggHat_S[3];
+ double ggHat_B[3];
  double temp1[3];
  double temp2[3];
  double temp3[3];
@@ -187,7 +187,7 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  double Li[3];
 
  // zero previous torque vector
- v3Set(0,0,0,tau_S);
+ v3Set(0,0,0,tau_B);
 
  // loop through commands
  for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
@@ -218,26 +218,27 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 
 
 
-   v3Set(0,0,0,tau_S_temp); // zero torque vector for current RW
-   v3Scale(u_s, ReactionWheelData[RWIter].gsHat_S, tau_S_temp); // torque vector for current RW
-   v3Add(tau_S,tau_S_temp,tau_S); // sum with other RW torque vectors
+   v3Set(0,0,0,tau_B_temp); // zero torque vector for current RW
+   v3Scale(u_s, ReactionWheelData[RWIter].gsHat_B, tau_B_temp); // torque vector for current RW
+   v3Add(tau_B,tau_B_temp,tau_B); // sum with other RW torque vectors
 
   // imbalance torque
   if (ReactionWheelData[RWIter].usingRWJitter) {
    cosw = cos(ReactionWheelData[RWIter].theta);
    sinw = sin(ReactionWheelData[RWIter].theta);
    
-   v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_S, temp1);
-   v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_S, temp2);
-   v3Add(temp1, temp2, ggHat_S); // current gimbal axis vector represented in body frame
+   v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_B, temp1);
+   v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_B, temp2);
+   v3Add(temp1, temp2, ggHat_B); // current ggHat axis vector represented in body frame
 
-   v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S,Fi); /* Fs = Us * Omega^2 */ // calculate static imbalance force
-   v3Cross(ReactionWheelData[RWIter].r_S, Fi, Li); /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+   /* Fs = Us * Omega^2 */ // calculate static imbalance force
+   v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B,Fi);
+   v3Cross(ReactionWheelData[RWIter].r_B, Fi, Li); /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
    v3Add(Li, temp3, temp3); // add in static imbalance torque
-   v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_S, Li); /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+   v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B, Li); /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
    v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
 
-   v3Add(tau_S, temp3, tau_S);
+   v3Add(tau_B, temp3, tau_B);
   }
   
   RWIter++;
@@ -273,7 +274,7 @@ void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
     //! Begin method steps
     //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
-    ConfigureRWRequests(CurrentSimNanos*1.0E-9);
+    ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
 	WriteOutputMessages(CurrentSimNanos);
 
 }
