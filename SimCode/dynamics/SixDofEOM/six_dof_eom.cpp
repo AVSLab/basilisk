@@ -777,7 +777,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         memcpy(StateCurrent.v_N, v_BN_NLoc, 3*sizeof(double));
         memcpy(StateCurrent.sigma, sigma_BNLoc, 3*sizeof(double));
         memcpy(StateCurrent.omega, omega_BN_BLoc, 3*sizeof(double));
-        memcpy(StateCurrent.T_str2Bdy, T_str2Bdy, 9*sizeof(double));
+        memcpy(StateCurrent.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         
         //! - Copy out the current mass properties for DynEffector calls
         MassProps.Mass = this->compMass;
