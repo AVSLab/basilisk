@@ -122,9 +122,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
                                                          0.0, 800.0, 0.0,
                                                          0.0, 0.0, 600.0])
-    VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
-                                                           0.0, 1.0, 0.0,
-                                                           0.0, 0.0, 1.0])
     VehDynObject.baseCoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
     
     VehDynObject.AddGravityBody(EarthGravBody)
