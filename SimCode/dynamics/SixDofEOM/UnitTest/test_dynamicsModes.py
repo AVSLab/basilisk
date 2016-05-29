@@ -225,14 +225,13 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 1.31470762e-01,  3.85881471e-02, -2.48570742e-01]
                         ]
 
-    print dataSigma
     # compare the module results to the truth values
     accuracy = 1e-9
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
 
     # compare the module results to the truth values
@@ -241,7 +240,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # check a vector values
         if not unitTestSupport.isArrayEqual(scPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  pos unit test at t=" + str(scPos[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(scPos[i,0]*macros.NANO2SEC) + "sec\n")
     
     #   print out success message if no error were found
     if testFailCount == 0:
