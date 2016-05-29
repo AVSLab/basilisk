@@ -20,17 +20,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import math
 
-#
-#   function to convert seconds to an integer nanoseconds value
-#
-def sec2nano(time):
-    return int(time*1E9)
-
-#   variable to convert nano-seconds to seconds
-NANO2SEC = 1E-9
-
-#   variable to convert degrees to radians
-D2R = (math.pi/180.)
 
 #
 #   function to check if an array of values is the same as the truth values

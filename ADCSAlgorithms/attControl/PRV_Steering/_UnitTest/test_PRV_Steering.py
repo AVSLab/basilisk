@@ -45,7 +45,7 @@ import unitTestSupport                  # general support file with common unit 
 import PRV_Steering                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
-
+import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -70,7 +70,7 @@ def subModuleTestFunction(show_plots):
                                                         # this create a fresh and consistent simulation environment for each test run
 
     #   Create test thread
-    testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -96,7 +96,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.K3 =   1.0
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
-    moduleConfig.omega_max = 1.5*unitTestSupport.D2R
+    moduleConfig.omega_max = 1.5*macros.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
 
 
@@ -160,12 +160,12 @@ def subModuleTestFunction(show_plots):
     unitTestSim.InitializeSimulation()
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
     
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
 
@@ -191,7 +191,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
 
 
 
@@ -199,7 +199,7 @@ def subModuleTestFunction(show_plots):
 
     ## plot a sample variable
     #plt.figure(1)
-    #plt.plot(dummyState[:,0]*unitTestSupport.NANO2SEC, dummyState[:,1], label='Sample Variable')
+    #plt.plot(dummyState[:,0]*macros.NANO2SEC, dummyState[:,1], label='Sample Variable')
     #plt.legend(loc='upper left')
     #plt.xlabel('Time [s]')
     #plt.ylabel('Variable Description [unit]')

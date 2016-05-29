@@ -41,7 +41,7 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import LowPassFilterTorqueCommand       # import the module that is to be tested
 import MRP_Steering                     # import a sample module that creates the neede input message declaration
-
+import macros
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -66,7 +66,7 @@ def subModuleTestFunction(show_plots):
                                                         # this create a fresh and consistent simulation environment for each test run
 
     #   Create test thread
-    testProcessRate = unitTestSupport.sec2nano(0.5)         # process rate update time
+    testProcessRate = macros.sec2nano(0.5)         # process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -117,12 +117,12 @@ def subModuleTestFunction(show_plots):
     unitTestSim.InitializeSimulation()
 
     #   Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))    # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))    # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
     
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     #   This pulls the actual data log from the simulation run.
