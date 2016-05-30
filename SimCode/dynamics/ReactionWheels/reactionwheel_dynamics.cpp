@@ -204,13 +204,18 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
             CmdIt->u_cmd = 0;
         }
 
-        // coulomb friction
-        if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_f) {
-            u_s = CmdIt->u_cmd - ReactionWheelData[RWIter].u_f;
-        } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_f) {
-            u_s = CmdIt->u_cmd + ReactionWheelData[RWIter].u_f;
+        // Coulomb friction
+        if(this->ReactionWheelData[RWIter].Omega > 0.0) {
+            u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
+        } else if(this->ReactionWheelData[RWIter].Omega < 0.0) {
+            u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
         } else {
-            u_s = 0;
+            if (fabs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_f) {
+                // stickage
+                u_s = 0;
+            } else {
+                u_s = CmdIt->u_cmd;
+            }
         }
 
         ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
