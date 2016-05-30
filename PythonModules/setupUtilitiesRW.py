@@ -67,6 +67,7 @@ def createRW(
         r_S = [0,0,0]
     ):
     global rwList
+    global options
 
     # create the blank RW object
     RW = reactionwheel_dynamics.ReactionWheelConfigData()
@@ -102,8 +103,9 @@ def createRW(
     # set RW position vector
     SimulationBaseClass.SetCArray(r_S, 'double', RW.r_S)
 
-    # set RW initial speed in RPM
+    # set initial RW states
     RW.Omega = Omega*macros.RPM
+    RW.theta = 0.0*macros.D2R
 
     # enforce some RW options
     RW.usingRWJitter = options.useRWJitter
@@ -135,6 +137,14 @@ def addRWToSpacecraft(rwDynObject, VehDynObject):
 
     return
 
+def clearRWSetup():
+    global rwList
+    global options
+
+    rwList = []
+    options = rwOptions()
+
+    return
 
 #
 #   Honeywell HR16 (100Nm, 75Nm, 50Nm)

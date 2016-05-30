@@ -595,7 +595,7 @@ void SixDofEOM::computeCompositeProperties()
     double objInertia[3][3];
 
     memset(scaledCoM, 0x0, 3*sizeof(double));
-    this->compMass = baseMass;
+    this->compMass = this->baseMass;
     v3Scale(this->baseMass, this->baseCoM, scaledCoM);
 
     std::vector<ThrusterDynamics*>::iterator it;
@@ -655,6 +655,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 {
     
     std::vector<ThrusterDynamics*>::iterator it;
+    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
@@ -709,6 +710,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
     /* zero the derivative vector */
     memset(dX, 0x0, NStates*sizeof(double));
+
+    //! - Convert the current attitude to DCM for conversion in DynEffector loop
+    MRP2C(sigma_BNLoc, BN);
+
     //! - Set the current composite mass properties for later use in file
     computeCompositeProperties();
 
@@ -779,6 +784,22 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
+
+        if (this->useRotation){
+            for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+            {
+                std::vector<ReactionWheelConfigData>::iterator rwIt;
+                for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+                     rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+                {
+                    // convert RW jitter force from B to N frame */
+                    m33tMultV3(BN, rwIt->F_B, d2);
+                    // add RW jitter force to net inertial acceleration
+                    v3Scale(1.0/this->compMass, d2, d2);
+                    v3Add(dX+3, d2, dX+3);
+                }
+            }
+        }
     }
 
     if(this->useRotation){
@@ -789,10 +810,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         BmatMRP(sigma_BNLoc, B);
         m33Scale(0.25, B, B);
         m33MultV3(B, omega_BN_BLoc, dX + this->useTranslation*6);
-        
-
-        //! - Convert the current attitude to DCM for conversion in DynEffector loop
-        MRP2C(sigma_BNLoc, BN);
 
         //! - Copy out the current state for DynEffector calls
         memcpy(StateCurrent.r_N, r_BN_NLoc, 3*sizeof(double));
@@ -831,7 +848,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
 
         uint32_t rwCount = 0;
-        std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         double rwTorque[3];
         double rwSumTorque[3];
         v3SetZero(rwSumTorque);
@@ -848,6 +864,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 v3Add(this->rwaGyroTorqueBdy, d2, this->rwaGyroTorqueBdy);
                 v3Scale(rwIt->u_current, rwIt->gsHat_B, rwTorque);
                 v3Subtract(rwSumTorque, rwTorque, rwSumTorque);         /* subtract [Gs]u */
+                v3Add(rwSumTorque, rwIt->tau_B, rwSumTorque);           /* add simple jitter torque */
                 rwCount++;
             }
         }

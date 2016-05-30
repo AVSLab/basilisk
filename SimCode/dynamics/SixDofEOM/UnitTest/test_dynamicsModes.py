@@ -62,22 +62,26 @@ import macros
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW", [
-    (True, True, False),
-    (False, True, False),
-    (True, False, False),
-    (False, True, True)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter", [
+    (True, True, False, False),
+    (False, True, False, False),
+    (True, False, False, False),
+    (False, True, True, False),
+    (False, True, True, True),
+    (True, True, True, False),
+    (True, True, True, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW)
+    [testResults, testMessage] = unitDynamicsModesTestFunction(
+            show_plots, useTranslation, useRotation, useRW, useJitter)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -89,7 +93,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
 
     DynUnitTestProc = scSim.CreateNewProcess(unitProcessName)
-    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(10.)))
+    # create the dynamics task and specify the integration update time
+    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
@@ -132,7 +137,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     if useRW:
         # add RW devices
-        # setupUtilitiesRW.options.useRWJitter = True
+        # The clearRWSetup() is critical if the script is to run multiple times
+        setupUtilitiesRW.clearRWSetup()
+        setupUtilitiesRW.options.useRWJitter = useJitter
         setupUtilitiesRW.options.maxMomentum = 100
         setupUtilitiesRW.createRW(
                 'Honeywell_HR16',
@@ -177,7 +184,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     # log the data
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    scPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 
     # set expected results
     trueSigma = [
@@ -197,34 +204,55 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                 ,[1.0, 0.0, 0.0]
                 ]
     if useTranslation==True:
-        truePos = [
-                    [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
-                    ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
-                    ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
-                    ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
-                    ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
-                    ,[-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
-                    ]
-    if useRotation==True:
-        if useRW==True:
-            trueSigma = [
-                        [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
-                        ,[-1.76609551e-01,  -4.44698619e-01,   7.55828533e-01]
-                        ,[ 1.12843880e-01,  -3.22803805e-01,   6.84203249e-01]
-                        ,[-2.29266332e-01,  -3.85841747e-01,   8.28630390e-01]
-                        ,[ 2.20109110e-01,   2.51068213e-01,  -2.08895814e-01]
-                        ,[-2.26186156e-02,  -1.91687117e-01,   4.93029399e-01]
+        if useRotation==True and useJitter==True and useRW==True:
+            truePos = [
+                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        ,[-5.21739173e+06,   6.58298551e+06,   5.43711328e+06]
+                        ,[-5.77274670e+06,   6.07124005e+06,   5.48500544e+06]
+                        ,[-6.29511742e+06,   5.52480250e+06,   5.50155643e+06]
+                        ,[-6.78159907e+06,   4.94686541e+06,   5.48674158e+06]
                         ]
         else:
+            truePos = [
+                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
+                        ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
+                        ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
+                        ,[-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
+                        ]
+    if useRotation==True:
+        if useRW==True:
+            if useJitter==True:
+                trueSigma = [
+                            [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
+                            ,[-1.76605784e-01,  -4.44704093e-01,   7.55827723e-01]
+                            ,[ 1.12657513e-01,  -3.22384766e-01,   6.84477126e-01]
+                            ,[-2.30681415e-01,  -3.85671984e-01,   8.28509679e-01]
+                            ,[ 2.20353426e-01,   2.53161438e-01,  -2.07145579e-01]
+                            ,[-2.29364684e-02,  -1.88866583e-01,   4.93018690e-01]
+                            ]
+            else: # RW without jitter
+                trueSigma = [
+                            [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
+                            ,[-1.76605732e-01,  -4.44704074e-01,   7.55827747e-01]
+                            ,[ 1.12871954e-01,  -3.22785341e-01,   6.84227007e-01]
+                            ,[-2.29339679e-01,  -3.85768465e-01,   8.28686730e-01]
+                            ,[ 2.19957201e-01,   2.51216907e-01,  -2.08736029e-01]
+                            ,[-2.33052298e-02,  -1.91126954e-01,   4.93555923e-01]
+                            ]
+        else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
-                        ,[-3.38910364e-02, -3.38797083e-01,  5.85609793e-01]
-                        ,[ 2.61448620e-01,  6.34606900e-02,  4.70235970e-02]
-                        ,[ 2.04905958e-01,  1.61547221e-01, -7.03976039e-01]
-                        ,[ 2.92542438e-01, -2.01505526e-01,  3.73255634e-01]
-                        ,[ 1.31470762e-01,  3.85881471e-02, -2.48570742e-01]
+                        ,[-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
+                        ,[ 2.61447681e-01,   6.34635269e-02,   4.70247303e-02]
+                        ,[ 2.04899804e-01,   1.61548495e-01,  -7.03973359e-01]
+                        ,[ 2.92545849e-01,  -2.01501819e-01,   3.73256986e-01]
+                        ,[ 1.31464989e-01,   3.85929801e-02,  -2.48566440e-01]
                         ]
-
+    print dataSigma
+    print dataPos
     # compare the module results to the truth values
     accuracy = 1e-9
     for i in range(0,len(trueSigma)):
@@ -238,9 +266,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     accuracy = 1e-2
     for i in range(0,len(truePos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(scPos[i],truePos[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(scPos[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
     
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -257,8 +285,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           True,        # useTranslation
+                           False,        # useTranslation
                            True,        # useRotation
-                           False        # useRW
+                           True,        # useRW
+                           True,        # useJitter
                            )
 

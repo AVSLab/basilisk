@@ -47,7 +47,7 @@ typedef struct {
     double gsHat_B[3];         //!< spin axis unit vector in body frame
     double gtHat0_B[3];        //!< initial torque axis unit vector in body frame
     double ggHat0_B[3];        //!< initial gimbal axis unit vector in body frame
-    double theta;              //!< wheel angle
+    double theta;              //!< rad, wheel angle
     double u_current;          //!< N-m, current motor torque
     double u_max;              //!< N-m, Max torque
     double u_min;              //!< N-m, Min torque
