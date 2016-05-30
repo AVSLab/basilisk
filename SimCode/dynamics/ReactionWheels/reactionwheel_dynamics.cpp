@@ -176,12 +176,11 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
     std::vector<RWCmdStruct>::iterator CmdIt;
     int RWIter = 0;
     double u_s;
-    double cosw;
-    double sinw;
-    double ggHat_B[3];
+    double cosTheta;
+    double sinTheta;
+    double gtHat_B[3];
     double temp1[3];
     double temp2[3];
-    double temp3[3];
 
     // zero the sum vectors of RW jitter torque and force
     v3SetZero(this->sumTau_B);
@@ -224,16 +223,16 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
         // imbalance torque
         if (this->ReactionWheelData[RWIter].usingRWJitter) {
 
-            cosw = cos(this->ReactionWheelData[RWIter].theta);
-            sinw = sin(this->ReactionWheelData[RWIter].theta);
+            cosTheta = cos(this->ReactionWheelData[RWIter].theta);
+            sinTheta = sin(this->ReactionWheelData[RWIter].theta);
 
-            v3Scale(cosw, this->ReactionWheelData[RWIter].gtHat0_B, temp1);
-            v3Scale(sinw, this->ReactionWheelData[RWIter].ggHat0_B, temp2);
-            v3Add(temp1, temp2, ggHat_B); // current ggHat axis vector represented in body frame
+            v3Scale(cosTheta, this->ReactionWheelData[RWIter].gtHat0_B, temp1);
+            v3Scale(sinTheta, this->ReactionWheelData[RWIter].ggHat0_B, temp2);
+            v3Add(temp1, temp2, gtHat_B); // current gtHat axis vector represented in body frame
 
             /* Fs = Us * Omega^2 */ // calculate static imbalance force
             v3Scale(this->ReactionWheelData[RWIter].U_s*pow(this->ReactionWheelData[RWIter].Omega,2),
-                    ggHat_B,
+                    gtHat_B,
                     this->ReactionWheelData[RWIter].F_B);
             v3Add(this->ReactionWheelData[RWIter].F_B, this->sumF_B, this->sumF_B);
 
@@ -241,13 +240,12 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
             v3Cross(this->ReactionWheelData[RWIter].r_B,
                     this->ReactionWheelData[RWIter].F_B,
                     this->ReactionWheelData[RWIter].tau_B);
-            // v3Add(Li, temp3, temp3); // add in static imbalance torque
             /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
             v3Scale(this->ReactionWheelData[RWIter].U_d*pow(this->ReactionWheelData[RWIter].Omega,2),
-                    ggHat_B,
-                    temp3);
+                    gtHat_B,
+                    temp2);
             // add in dynamic imbalance torque
-            v3Add(this->ReactionWheelData[RWIter].tau_B, temp3, this->ReactionWheelData[RWIter].tau_B);
+            v3Add(this->ReactionWheelData[RWIter].tau_B, temp2, this->ReactionWheelData[RWIter].tau_B);
             v3Add(this->ReactionWheelData[RWIter].tau_B, this->sumTau_B, this->sumTau_B);
         }
 
