@@ -15,7 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
 #
-#   Simulation Setup Utilities
+#   Simulation Setup Utilities for RW
 #
 
 import sys, os, inspect
@@ -40,9 +40,6 @@ class rwOptions:
     maxMomentum = 0.0
 
 
-#
-#   add a Reaction Wheel (RW) device to the simulation
-#
 rwList = []
 options = rwOptions()
 
@@ -126,10 +123,10 @@ def createRW(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def addRWToSpacecraft(rwDynObject, VehDynObject):
+def addRWToSpacecraft(modelTag, rwDynObject, VehDynObject):
     global rwList
 
-    rwDynObject.ModelTag = "ReactionWheels"
+    rwDynObject.ModelTag = modelTag
     for item in rwList:
         rwDynObject.AddReactionWheel(item)
 
@@ -157,6 +154,7 @@ def clearRWSetup():
 #       options.maxMomentum = 100, 75 or 50
 #
 def Honeywell_HR16(RW):
+    global options
     # maximum allowable wheel speed
     RW.Omega_max = 6000.0*macros.RPM
     # maximum RW torque [Nm]
@@ -209,6 +207,7 @@ def Honeywell_HR16(RW):
 #       options.maxMomentum = 75, 50 or 25
 #
 def Honeywell_HR14(RW):
+    global options
     # maximum allowable wheel speed
     RW.Omega_max = 6000.0*macros.RPM
     # maximum RW torque [Nm]
@@ -261,6 +260,7 @@ def Honeywell_HR14(RW):
 #       options.maxMomentum = 12, 25 or 50
 #
 def Honeywell_HR12(RW):
+    global options
     # maximum allowable wheel speed
     RW.Omega_max = 6000.0*macros.RPM
     # maximum RW torque [Nm]
