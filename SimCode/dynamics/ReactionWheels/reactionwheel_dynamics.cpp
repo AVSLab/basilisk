@@ -88,7 +88,7 @@ void ReactionWheelDynamics::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-		sizeof(RWCmdStruct)*MAX_EFF_CNT, moduleID);
+                                                                     sizeof(RWCmdStruct)*MAX_EFF_CNT, moduleID);
     if(CmdsInMsgID < 0)
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";
@@ -105,15 +105,15 @@ void ReactionWheelDynamics::CrossInit()
  */
 void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 {
-	std::vector<ReactionWheelConfigData>::iterator it;
+    std::vector<ReactionWheelConfigData>::iterator it;
 
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
-	{
-		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
-	}
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
+        outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+    }
 
-	SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-		sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+    SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
+                                                 sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
     
 //    std::vector<ReactionWheelConfigData> localOutput;
 //    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
@@ -172,81 +172,79 @@ void ReactionWheelDynamics::ReadInputs()
 // */
 void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
 {
- //! Begin method steps
- std::vector<RWCmdStruct>::iterator CmdIt;
- int RWIter = 0;
- double tau_B_temp[3];
- double u_s;
- double cosw;
- double sinw;
- double ggHat_B[3];
- double temp1[3];
- double temp2[3];
- double temp3[3];
- double Fi[3];
- double Li[3];
+    //! Begin method steps
+    std::vector<RWCmdStruct>::iterator CmdIt;
+    int RWIter = 0;
+    double tau_B_temp[3];
+    double u_s;
+    double cosw;
+    double sinw;
+    double ggHat_B[3];
+    double temp1[3];
+    double temp2[3];
+    double temp3[3];
+    double Fi[3];
+    double Li[3];
 
- // zero previous torque vector
- v3Set(0,0,0,tau_B);
+    // zero previous torque vector
+    v3Set(0,0,0,tau_B);
 
- // loop through commands
- for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
- {
+    // loop through commands
+    for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
+    {
+        // saturation
+        if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_max) {
+            CmdIt->u_cmd = ReactionWheelData[RWIter].u_max;
+        } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_max) {
+            CmdIt->u_cmd = -ReactionWheelData[RWIter].u_max;
+        }
 
-  // saturation
-  if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_max) {
-   CmdIt->u_cmd = ReactionWheelData[RWIter].u_max;
-  } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_max) {
-   CmdIt->u_cmd = -ReactionWheelData[RWIter].u_max;
-  }
+        // minimum torque
+        if( std::abs(CmdIt->u_cmd) < ReactionWheelData[RWIter].u_min) {
+            CmdIt->u_cmd = 0;
+        }
 
-  // minimum torque
-  if( std::abs(CmdIt->u_cmd) < ReactionWheelData[RWIter].u_min) {
-   CmdIt->u_cmd = 0;
-  }
+        // coulomb friction
+        if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_f) {
+            u_s = CmdIt->u_cmd - ReactionWheelData[RWIter].u_f;
+        } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_f) {
+            u_s = CmdIt->u_cmd + ReactionWheelData[RWIter].u_f;
+        } else {
+            u_s = 0;
+        }
 
-  // coulomb friction
-  if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_f) {
-   u_s = CmdIt->u_cmd - ReactionWheelData[RWIter].u_f;
-  } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_f) {
-   u_s = CmdIt->u_cmd + ReactionWheelData[RWIter].u_f;
-  } else {
-   u_s = 0;
-  }
-
-  ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
-
-
-
-   v3Set(0,0,0,tau_B_temp); // zero torque vector for current RW
-   v3Scale(u_s, ReactionWheelData[RWIter].gsHat_B, tau_B_temp); // torque vector for current RW
-   v3Add(tau_B,tau_B_temp,tau_B); // sum with other RW torque vectors
-
-  // imbalance torque
-  if (ReactionWheelData[RWIter].usingRWJitter) {
-   cosw = cos(ReactionWheelData[RWIter].theta);
-   sinw = sin(ReactionWheelData[RWIter].theta);
-   
-   v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_B, temp1);
-   v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_B, temp2);
-   v3Add(temp1, temp2, ggHat_B); // current ggHat axis vector represented in body frame
-
-   /* Fs = Us * Omega^2 */ // calculate static imbalance force
-   v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B,Fi);
-   v3Cross(ReactionWheelData[RWIter].r_B, Fi, Li); /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
-   v3Add(Li, temp3, temp3); // add in static imbalance torque
-   v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B, Li); /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
-   v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
-
-   v3Add(tau_B, temp3, tau_B);
-  }
-  
-  RWIter++;
-
- }
+        ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
 
 
+        v3Set(0,0,0,tau_B_temp); // zero torque vector for current RW
+        v3Scale(u_s, ReactionWheelData[RWIter].gsHat_B, tau_B_temp); // torque vector for current RW
+        v3Add(tau_B,tau_B_temp,tau_B); // sum with other RW torque vectors
+
+        // imbalance torque
+        if (ReactionWheelData[RWIter].usingRWJitter) {
+            cosw = cos(ReactionWheelData[RWIter].theta);
+            sinw = sin(ReactionWheelData[RWIter].theta);
+
+            v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_B, temp1);
+            v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_B, temp2);
+            v3Add(temp1, temp2, ggHat_B); // current ggHat axis vector represented in body frame
+
+            /* Fs = Us * Omega^2 */ // calculate static imbalance force
+            v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B,Fi);
+            /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+            v3Cross(ReactionWheelData[RWIter].r_B, Fi, Li);
+            v3Add(Li, temp3, temp3); // add in static imbalance torque
+            /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+            v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B, Li);
+            v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
+
+            v3Add(tau_B, temp3, tau_B);
+        }
+
+        RWIter++;
+
+    }
 }
 
 /*! This method is used to compute all the dynamical effects for the RW set.
@@ -275,6 +273,6 @@ void ReactionWheelDynamics::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureRWRequests to set up dynamics
     ReadInputs();
     ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
-	WriteOutputMessages(CurrentSimNanos);
+    WriteOutputMessages(CurrentSimNanos);
 
 }

@@ -65,7 +65,7 @@ bool usingRWJitter;        //!< flag for using imbalance torques
  sparse, but it is included as a structure for growth and for clear I/O
  definitions.*/
 typedef struct {
- double u_cmd; //!< N-m, torque command for RW
+    double u_cmd; //!< N-m, torque command for RW
 }RWCmdStruct;
 
 //! @brief Thruster dynamics class used to provide thruster effects on body
