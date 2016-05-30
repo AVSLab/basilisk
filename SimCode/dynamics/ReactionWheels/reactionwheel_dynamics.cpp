@@ -35,8 +35,8 @@ ReactionWheelDynamics::ReactionWheelDynamics()
     StateOutMsgID = -1;
     IncomingCmdBuffer = NULL;
     prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-    memset(F_B, 0x0, 3*sizeof(double));
-    memset(tau_B, 0x0, 3*sizeof(double));
+    memset(this->sumF_B, 0x0, 3*sizeof(double));
+    memset(this->sumTau_B, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -175,7 +175,6 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
     //! Begin method steps
     std::vector<RWCmdStruct>::iterator CmdIt;
     int RWIter = 0;
-    double tau_B_temp[3];
     double u_s;
     double cosw;
     double sinw;
@@ -183,24 +182,23 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
     double temp1[3];
     double temp2[3];
     double temp3[3];
-    double Fi[3];
-    double Li[3];
 
-    // zero previous torque vector
-    v3Set(0,0,0,tau_B);
+    // zero the sum vectors of RW jitter torque and force
+    v3SetZero(this->sumTau_B);
+    v3SetZero(this->sumF_B);
 
     // loop through commands
     for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
     {
         // saturation
-        if(CmdIt->u_cmd > ReactionWheelData[RWIter].u_max) {
-            CmdIt->u_cmd = ReactionWheelData[RWIter].u_max;
-        } else if(CmdIt->u_cmd < -ReactionWheelData[RWIter].u_max) {
-            CmdIt->u_cmd = -ReactionWheelData[RWIter].u_max;
+        if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
+            CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
+        } else if(CmdIt->u_cmd < -this->ReactionWheelData[RWIter].u_max) {
+            CmdIt->u_cmd = -this->ReactionWheelData[RWIter].u_max;
         }
 
         // minimum torque
-        if( std::abs(CmdIt->u_cmd) < ReactionWheelData[RWIter].u_min) {
+        if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_min) {
             CmdIt->u_cmd = 0;
         }
 
@@ -218,33 +216,39 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
             }
         }
 
-        ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
+        this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
-
-
-        v3Set(0,0,0,tau_B_temp); // zero torque vector for current RW
-        v3Scale(u_s, ReactionWheelData[RWIter].gsHat_B, tau_B_temp); // torque vector for current RW
-        v3Add(tau_B,tau_B_temp,tau_B); // sum with other RW torque vectors
-
+        // zero previous RW jitter torque/force vector
+        v3SetZero(this->ReactionWheelData[RWIter].tau_B);
+        v3SetZero(this->ReactionWheelData[RWIter].F_B);
         // imbalance torque
-        if (ReactionWheelData[RWIter].usingRWJitter) {
-            cosw = cos(ReactionWheelData[RWIter].theta);
-            sinw = sin(ReactionWheelData[RWIter].theta);
+        if (this->ReactionWheelData[RWIter].usingRWJitter) {
 
-            v3Scale(cosw, ReactionWheelData[RWIter].gtHat0_B, temp1);
-            v3Scale(sinw, ReactionWheelData[RWIter].ggHat0_B, temp2);
+            cosw = cos(this->ReactionWheelData[RWIter].theta);
+            sinw = sin(this->ReactionWheelData[RWIter].theta);
+
+            v3Scale(cosw, this->ReactionWheelData[RWIter].gtHat0_B, temp1);
+            v3Scale(sinw, this->ReactionWheelData[RWIter].ggHat0_B, temp2);
             v3Add(temp1, temp2, ggHat_B); // current ggHat axis vector represented in body frame
 
             /* Fs = Us * Omega^2 */ // calculate static imbalance force
-            v3Scale(ReactionWheelData[RWIter].U_s*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B,Fi);
-            /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
-            v3Cross(ReactionWheelData[RWIter].r_B, Fi, Li);
-            v3Add(Li, temp3, temp3); // add in static imbalance torque
-            /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
-            v3Scale(ReactionWheelData[RWIter].U_d*pow(ReactionWheelData[RWIter].Omega,2),ggHat_B, Li);
-            v3Add(Li, temp3, temp3); // add in dynamic imbalance torque
+            v3Scale(this->ReactionWheelData[RWIter].U_s*pow(this->ReactionWheelData[RWIter].Omega,2),
+                    ggHat_B,
+                    this->ReactionWheelData[RWIter].F_B);
+            v3Add(this->ReactionWheelData[RWIter].F_B, this->sumF_B, this->sumF_B);
 
-            v3Add(tau_B, temp3, tau_B);
+            /* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+            v3Cross(this->ReactionWheelData[RWIter].r_B,
+                    this->ReactionWheelData[RWIter].F_B,
+                    this->ReactionWheelData[RWIter].tau_B);
+            // v3Add(Li, temp3, temp3); // add in static imbalance torque
+            /* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+            v3Scale(this->ReactionWheelData[RWIter].U_d*pow(this->ReactionWheelData[RWIter].Omega,2),
+                    ggHat_B,
+                    temp3);
+            // add in dynamic imbalance torque
+            v3Add(this->ReactionWheelData[RWIter].tau_B, temp3, this->ReactionWheelData[RWIter].tau_B);
+            v3Add(this->ReactionWheelData[RWIter].tau_B, this->sumTau_B, this->sumTau_B);
         }
 
         RWIter++;
@@ -261,7 +265,8 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
  @param CurrentTime Current simulation time converted to double precision
  */
 void ReactionWheelDynamics::ComputeDynamics(MassPropsData *Props,
-                                       OutputStateData *Bstate, double CurrentTime)
+                                            OutputStateData *Bstate,
+                                            double CurrentTime)
 {}
 
 /*! This method is the main cyclical call for the scheduled part of the RW

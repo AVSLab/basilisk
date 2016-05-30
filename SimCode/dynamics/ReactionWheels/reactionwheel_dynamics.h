@@ -57,7 +57,9 @@ typedef struct {
     double U_s;                //!< kg-m, static imbalance
     double U_d;                //!< kg-m^2, dynamic imbalance
     double mass;               //!< kg, reaction wheel rotor mass
-bool usingRWJitter;        //!< flag for using imbalance torques
+    double F_B[3];             //!< N, single RW force with simple jitter model
+    double tau_B[3];           //!< N-m, single RW torque with simple jitter model
+    bool usingRWJitter;        //!< flag for using imbalance torques
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -103,8 +105,8 @@ public:
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
     std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
-    double F_B[3];                                              //!< N  Computed jitter force in body frame
-    double tau_B[3];                                            //!< N-m Computed jitter torque in body frame
+    double sumF_B[3];                                              //!< N  Computed jitter force in body frame
+    double sumTau_B[3];                                            //!< N-m Computed jitter torque in body frame
     
 private:
     int64_t ConfigDataOutMsgID;
