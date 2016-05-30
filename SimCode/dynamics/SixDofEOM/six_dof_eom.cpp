@@ -410,9 +410,24 @@ void SixDofEOM::SelfInit()
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
 			this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->Omega;
-            m33MultV3(this->T_str2Bdy, rwIt->gsHat_S,  rwIt->gsHat_B);
-            m33MultV3(this->T_str2Bdy, rwIt->gtHat0_S, rwIt->gtHat0_B);
-            m33MultV3(this->T_str2Bdy, rwIt->ggHat0_S, rwIt->ggHat0_B);
+            if (v3Norm(rwIt->gsHat_S) > 0.01) {
+                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S,  rwIt->gsHat_B);
+            } else {
+                std::cerr << "Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
+            }
+
+            if (rwIt->usingRWJitter) {
+                if (v3Norm(rwIt->gtHat0_S) > 0.01) {
+                    m33MultV3(this->T_str2Bdy, rwIt->gtHat0_S,  rwIt->gtHat0_B);
+                } else {
+                    std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
+                }
+                if (v3Norm(rwIt->ggHat0_S) > 0.01) {
+                    m33MultV3(this->T_str2Bdy, rwIt->ggHat0_S,  rwIt->ggHat0_B);
+                } else {
+                    std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
+                }
+            }
             m33MultV3(this->T_str2Bdy, rwIt->r_S, rwIt->r_B);
 			rwCount++;
 		}
