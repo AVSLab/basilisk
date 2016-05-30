@@ -166,6 +166,8 @@ VehDynObject.AddGravityBody(EarthGravBody)
 #VehDynObject.AddGravityBody(VenusGravBody)
 VehDynObject.AddGravityBody(MarsGravBody)
 VehDynObject.AddGravityBody(JupiterGravBody)
+VehDynObject.useTranslation = True
+VehDynObject.useRotation = True
 
 TotalSim.AddModelToTask("sixDynTestTask", spiceObject)
 TotalSim.AddModelToTask("sixDynTestTask", VehDynObject)
