@@ -74,6 +74,7 @@ def createRW(
     # populate the RW object with the type specific parameters
     try:
         eval(rwType + '(RW)')
+        RW.typeName = rwType
     except:
         print 'ERROR: RW type ' + rwType + ' is not implemented'
         exit(1)

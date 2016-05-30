@@ -38,6 +38,7 @@ typedef struct {
  ramp/max/min configuration data, and the physical location/orientation data for
  a RW.*/
 typedef struct {
+    std::string typeName;      //!< [], string containing the RW type name
     double r_S[3];             //!< m, position vector of the RW relative to the spacecraft structural frame
     double gsHat_S[3];         //!< spin axis unit vector in structural frame
     double gtHat0_S[3];        //!< initial torque axis unit vector in structural frame
