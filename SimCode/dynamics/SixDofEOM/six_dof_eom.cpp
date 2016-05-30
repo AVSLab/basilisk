@@ -1019,8 +1019,9 @@ void SixDofEOM::integrateState(double CurrentTime)
                 v3Scale((Omega + omega_s), intermediateVector, intermediateVector);
                 v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
 
-                /* Set current reaction wheel speed */
+                /* Set current reaction wheel speed and angle */
                 rwIt->Omega = Omega;
+                rwIt->theta += Omega*TimeStep;
                 rwCount++;
             }
         }
