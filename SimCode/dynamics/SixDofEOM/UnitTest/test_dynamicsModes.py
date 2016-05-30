@@ -45,7 +45,9 @@ import SimulationBaseClass
 import sim_model
 import unitTestSupport                  # general support file with common unit test functions
 import setupUtilitiesRW                 # RW simulation setup utilties
+import setupUtilitiesThruster           # Thruster simulation setup utilties
 import reactionwheel_dynamics
+import thruster_dynamics
 import macros
 
 
@@ -62,26 +64,27 @@ import macros
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter", [
-    (True, True, False, False),
-    (False, True, False, False),
-    (True, False, False, False),
-    (False, True, True, False),
-    (False, True, True, True),
-    (True, True, True, False),
-    (True, True, True, True)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster", [
+    (True, True, False, False, False),
+    (False, True, False, False, False),
+    (True, False, False, False, False),
+    (False, True, True, False, False),
+    (False, True, True, True, False),
+    (True, True, True, False, False),
+    (True, True, True, True, False)
+    # (True, True, False, False, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useRW, useJitter)
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -134,6 +137,23 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     VehDynObject.useTranslation = useTranslation
     VehDynObject.useRotation = useRotation
 
+    if useThruster:
+        # add thruster devices
+        # The clearThrusterSetup() is critical if the script is to run multiple times
+        setupUtilitiesThruster.clearThrusterSetup()
+        setupUtilitiesThruster.createThruster(
+                'MOOG_Monarc_1',
+                [1,0,0],                # location in S frame
+                [0,1,0]                 # direction in S frame
+                )
+
+        # create thruster object container and tie to spacecraft object
+        thrustersDynObject = thruster_dynamics.ThrusterDynamics()
+        setupUtilitiesThruster.addThrustersToSpacecraft("Thrusters",
+                                                       thrustersDynObject,
+                                                       VehDynObject)
+        # set thruster commands (TBD)
+
 
     if useRW:
         # add RW devices
@@ -173,6 +193,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # add objects to the task process
     if useRW:
         scSim.AddModelToTask(unitTaskName, rwDynObject)
+    if useThruster:
+        scSim.AddModelToTask(unitTaskName, thrustersDynObject)
     scSim.AddModelToTask(unitTaskName, spiceObject)
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
@@ -285,9 +307,10 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           False,        # useTranslation
+                           False,       # useTranslation
                            True,        # useRotation
                            True,        # useRW
                            True,        # useJitter
+                           False        # useThruster
                            )
 
