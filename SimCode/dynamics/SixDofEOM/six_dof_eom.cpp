@@ -272,7 +272,7 @@ void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
 */
 void SixDofEOM::addThrusterSet(ThrusterDynamics *NewEffector)
 {
-    thrusters.push_back(NewEffector);
+    this->thrusters.push_back(NewEffector);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The
@@ -283,7 +283,7 @@ should include a ComputeDynamics call which is operated by dynamics.
 */
 void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
 {
-	reactWheels.push_back(NewEffector);
+	this->reactWheels.push_back(NewEffector);
 }
 
 /*! This method creates an output message for each planetary body that computes
