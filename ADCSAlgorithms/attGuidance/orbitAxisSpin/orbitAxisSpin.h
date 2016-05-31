@@ -36,9 +36,11 @@ typedef struct {
     int     o_spin;                                  /*!< [0,1,2]   Orbit axis around which to spin */
     int     b_spin;                                  /*!< [0,1,2]   Body axis around which to spin */
     double  omega_spin;                              /*!< [rad/sec] Desired spinning rate */
-    double  phi_spin0;                                /*!< [rad]     Initial  spin angle */
+    double  phi_spin0;                               /*!< [rad]     Initial  spin angle */
+    double  phi_spin;                                /*!< [rad]     Current  spin angle */
     int     initializeAngle;                         /* Flag to initialize Phi spin or not */
-    uint64_t mnvrStartTime;                          /*! (ns) The time that the spinning maneuver started*/
+    uint64_t currMnvrTime;                           /*! (ns) The time passed since the spinning maneuver started */
+    uint64_t mnvrStartTime;                          /*! (ns) The time that the spinning maneuver started */
     
     /* Declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message*/
