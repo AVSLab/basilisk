@@ -33,10 +33,10 @@ void SelfInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
+//    ConfigData->outputRefID = CreateNewMessage(ConfigData->outputRefName,
+//                                               sizeof(attRefOut), "attRefOut", moduleID);
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(attGuidOut), "attGuidOut", moduleID);
-    ConfigData->outputRefID = CreateNewMessage(ConfigData->outputRefName,
-        sizeof(attRefOut), "attRefOut", moduleID);
+                                               sizeof(attGuidOut), "attGuidOut", moduleID);
     return;
     
 }
@@ -136,8 +136,8 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
         (void*)&(ConfigData->attOut), moduleID);
-    WriteMessage(ConfigData->outputRefID, callTime, sizeof(attRefOut),
-        (void*) &localRef, moduleID);
+//    WriteMessage(ConfigData->outputRefID, callTime, sizeof(attRefOut),
+//        (void*) &localRef, moduleID);
     
     return;
 }
