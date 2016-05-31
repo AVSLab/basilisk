@@ -40,6 +40,11 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
+
+    ConfigData->prevAvailFlag = 0;
+    v3SetZero(ConfigData->prevConstraintAxis);
+    v3SetZero(ConfigData->prevConstraintAxisDot);
+    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
     return;
     
 }
@@ -152,9 +157,9 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
                                  ConfigData->attRefOut.omega_RN_N,
                                  ConfigData->attRefOut.domega_RN_N);
     
-    v3Copy(ConfigData->prevConstraintAxis, R_P2);
-    v3Copy(ConfigData->prevConstraintAxisDot, v_P2);
-    v3Copy(ConfigData->prevConstraintAxisDoubleDot, a_P2);
+    v3Copy(R_P2, ConfigData->prevConstraintAxis);
+    v3Copy(v_P2, ConfigData->prevConstraintAxisDot);
+    v3Copy(a_P2, ConfigData->prevConstraintAxisDoubleDot);
     ConfigData->prevAvailFlag = 1;
     
     /* Write output message */
