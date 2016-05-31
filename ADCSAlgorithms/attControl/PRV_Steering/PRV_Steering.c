@@ -62,8 +62,6 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                  sizeof(vehicleConfigData), moduleID);
-    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
-                                                sizeof(NavStateOut), moduleID);
 
 }
 
@@ -91,7 +89,6 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
-    NavStateOut         nav;                /*!< navigation message */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -104,6 +101,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /*!< angular velocity tracking error between actual 
                                              body frame B and desired B^ast frame */
+    double              omega_BN_B[3];
     int                 i;
     double              temp;
 
@@ -124,9 +122,9 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav), moduleID);
-
+    
+    /* compute body rate */
+    v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
     /* compute known external torque */
     v3SetZero(L);
@@ -136,7 +134,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
 
     /* compute the rate tracking error */
     v3Add(omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
-    v3Subtract(nav.omega_BN_B, omega_BastN_B, omega_BBast_B);
+    v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
     /* integrate rate tracking error  */
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
@@ -158,7 +156,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, nav.omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
 //    for(i = 0; i < NUM_RW; i++) {
 //        v3Scale(sc->rw[i].Js * (v3Dot(omega, sc->rw[i].gs) + sc->rw[i].Omega),
 //                sc->rw[i].gs, v3_1);
@@ -167,7 +165,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);

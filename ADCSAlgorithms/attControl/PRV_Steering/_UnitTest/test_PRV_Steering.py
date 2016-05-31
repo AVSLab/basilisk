@@ -24,7 +24,7 @@ import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-import numpy
+import numpy as np
 import ctypes
 import math
 import logging
@@ -44,7 +44,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import PRV_Steering                     # import the module that is to be tested
 import sunSafePoint                     # import module(s) that creates the needed input message declaration
-import simple_nav                       # import module(s) that creates the needed input message declaration
 import vehicleConfigData                # import module(s) that creates the needed input message declaration
 
 
@@ -90,7 +89,6 @@ def subModuleTestFunction(show_plots):
 
     #   Initialize the test module configuration data
     moduleConfig.inputGuidName  = "inputGuidName"
-    moduleConfig.inputNavName = "inputNavName"
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
     moduleConfig.outputDataName = "outputName"
 
@@ -113,19 +111,19 @@ def subModuleTestFunction(show_plots):
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     guidCmdData = sunSafePoint.attGuidOut()             # Create a structure for the input message
-    sigma_BR = [0.3, -0.5, 0.7]
+    sigma_BR = np.array([0.3, -0.5, 0.7])
     SimulationBaseClass.SetCArray(sigma_BR,
                                   'double',
                                   guidCmdData.sigma_BR)
-    omega_BR_B = [0.010, -0.020, 0.015]
+    omega_BR_B = np.array([0.010, -0.020, 0.015])
     SimulationBaseClass.SetCArray(omega_BR_B,
                                   'double',
                                   guidCmdData.omega_BR_B)
-    omega_RN_B = [-0.02, -0.01, 0.005]
+    omega_RN_B = np.array([-0.02, -0.01, 0.005])
     SimulationBaseClass.SetCArray(omega_RN_B,
                                   'double',
                                   guidCmdData.omega_RN_B)
-    domega_RN_B = [0.0002, 0.0003, 0.0001]
+    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     SimulationBaseClass.SetCArray(domega_RN_B,
                                   'double',
                                   guidCmdData.domega_RN_B)
@@ -134,26 +132,6 @@ def subModuleTestFunction(show_plots):
                                           0,
                                           guidCmdData)
 
-
-    #   NavStateOut Message:
-    inputMessageSize = 18*8                             # 6x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    sigma_BN = [0.25, -0.45, 0.75]
-    SimulationBaseClass.SetCArray(sigma_BN,
-                                  'double',
-                                  NavStateOutData.sigma_BN)
-    omega_BN_B = [-0.015, -0.012, 0.005]
-    SimulationBaseClass.SetCArray(omega_BN_B,
-                                  'double',
-                                  NavStateOutData.omega_BN_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          0,
-                                          NavStateOutData)
 
     # vehicleConfigData Message:
     inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
@@ -200,11 +178,11 @@ def subModuleTestFunction(show_plots):
 
     # set the filtered output truth states
     trueVector = [
-               [1.960095897557112,-3.055301311042272,2.523751394819517]
-              ,[1.960095897557112,-3.055301311042272,2.523751394819517]
-              ,[1.96016398446522,-3.055383122555785,2.523851930938435]
-              ,[1.960095897557112,-3.055301311042272,2.523751394819517]
-              ,[1.96016398446522,-3.055383122555785,2.523851930938435]
+               [2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
+              ,[2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
+              ,[2.9353853745179044, -6.2833455830962901, 4.0556481491012084]
+              ,[2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
+              ,[2.9353853745179044, -6.2833455830962901, 4.0556481491012084]
                ]
 
     # compare the module results to the truth values
