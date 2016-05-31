@@ -25,6 +25,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/coeffLoader.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+#include "utilities/dynObject.h"
+#include "utilities/integrator.h"
+#include "utilities/rk4Integrator.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -87,7 +90,7 @@ private:
     handled by the DynEffector class and attached to dynamics through the 
     AddBodyEffector call.
 */
-class SixDofEOM: public SysModel {
+class SixDofEOM: public SysModel, public dynObject {
 public:
     SixDofEOM();
     ~SixDofEOM();
@@ -96,8 +99,7 @@ public:
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void ReadInputs();
-    void equationsOfMotion(double t, double *X, double *dX,
-                           GravityBodyData *CentralBody);
+    virtual void equationsOfMotion(double t, double *X, double *dX);
     void integrateState(double CurrentTime);
     void computeOutputs();
     void AddGravityBody(GravityBodyData *NewBody);
@@ -121,6 +123,7 @@ public:
     std::string OutputMassPropsMsg;   //!<       Output mass properties
     uint64_t OutputBufferCount;
     std::vector<GravityBodyData> GravData; //!<  Central body grav information
+    GravityBodyData* centralBody;         //!<  Central body
     bool MessagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
@@ -137,6 +140,7 @@ public:
     double omega[3];                  //!< [r/s]  Current angular velocity (inertial)
     double InertialAccels[3];         //!< [m/s2] Current calculated inertial accels
     double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
+    double ConservAccel[3];           //!< [m/s2] Observed conservative body accel
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
@@ -155,6 +159,7 @@ private:
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
 	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of thrusters in body
+    integrator* Integrator;            //!<          Integrator used to integrate the EOM
 };
 
 /*! @} */
