@@ -26,6 +26,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+#include "dynamics/SolarPanels/solar_panels.h"
+
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -105,6 +107,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void addThrusterSet(ThrusterDynamics *NewEffector);
 	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
+    void addSolarPanelSet(SolarPanels *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
     void computeCompositeProperties();
