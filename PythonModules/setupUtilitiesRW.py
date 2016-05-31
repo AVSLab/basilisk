@@ -109,7 +109,7 @@ def createRW(
     if not options.useRWfriction:
         RW.u_f = 0.0
     if not options.useMaxTorque:
-        RW.u_max = 10000.0
+        RW.u_max = -1       # a negative value turns of RW torque saturation
     if not options.useMinTorque:
         RW.u_min = 0.0
 

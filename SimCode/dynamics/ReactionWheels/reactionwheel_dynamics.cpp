@@ -190,10 +190,12 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
     for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
     {
         // saturation
-        if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
-            CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
-        } else if(CmdIt->u_cmd < -this->ReactionWheelData[RWIter].u_max) {
-            CmdIt->u_cmd = -this->ReactionWheelData[RWIter].u_max;
+        if (this->ReactionWheelData[RWIter].u_max > 0) {
+            if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
+                CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
+            } else if(CmdIt->u_cmd < -this->ReactionWheelData[RWIter].u_max) {
+                CmdIt->u_cmd = -this->ReactionWheelData[RWIter].u_max;
+            }
         }
 
         // minimum torque
