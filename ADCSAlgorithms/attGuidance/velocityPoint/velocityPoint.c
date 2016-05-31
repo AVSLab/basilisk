@@ -43,7 +43,6 @@ void SelfInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
                                                "attRefOut",
                                                moduleID);
     /*! - Initialize variables for module */
-    ConfigData->mu = MU_EARTH;
 }
 
 void CrossInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
