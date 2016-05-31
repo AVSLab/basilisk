@@ -34,6 +34,7 @@ namespace std {
 %include "sys_model.h"
 %include "dyn_effector.h"
 %include "six_dof_eom.h"
+%include "dynObject.h"
 
 %pythoncode %{
 import sys
