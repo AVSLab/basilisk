@@ -124,6 +124,7 @@ public:
     std::vector<GravityBodyData> GravData; //!<  Central body grav information
     bool MessagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
+    uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
     double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
     double baseMass;                  //!< [kg]   Mass of dry spacecraft structure
