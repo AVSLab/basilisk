@@ -32,6 +32,8 @@ typedef struct {
  double c;                  //!< N-m-s/rad, rotational damping coefficient of solar panel hinge
  double r_HB_B[3];          //!< m, vector pointing from body frame origin to Hinge location
  double HB[3][3];           //!< DCM from body frame to hinge frame
+ double theta;              //!< rad, solar panel angle
+ double thetaDot;           //!< rad/s, solar panel angle rate
  bool usingHingedDynamics;  //!< flag for using hinged dynamics
 }SolarPanelConfigData;
 

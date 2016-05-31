@@ -224,6 +224,7 @@ SixDofEOM::SixDofEOM()
 {
     this->CallCounts = 0;
     this->RWACount = reactWheels.size();
+    this->SPCount = solarPanels.size(); //! Get number of solar panels
     this->OutputStateMessage = "inertial_state_output";
     this->OutputMassPropsMsg = "spacecraft_mass_props";
     this->OutputBufferCount = 2;
@@ -286,6 +287,17 @@ void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
 	this->reactWheels.push_back(NewEffector);
 }
 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The
+ effector should be a derived class of the DynEffector abstract class and it
+ should include a ComputeDynamics call which is operated by dynamics.
+ @return void
+ @param NewEffector The effector that we are adding to dynamics
+ */
+void SixDofEOM::addSolarPanelSet(SolarPanels *NewEffector)
+{
+    solarPanels.push_back(NewEffector);
+}
+
 /*! This method creates an output message for each planetary body that computes
     the planet's ephemeris information in the display reference frame.  Note that 
     the underlying assumption is that the display reference frame is always 
@@ -331,15 +343,29 @@ void SixDofEOM::SelfInit()
             if (rwIt->usingRWJitter) this->numRWJitter++;
 		}
 	}
+
+    this->SPCount = 0;
+    std::vector<SolarPanels *>::iterator itSP;
+    for (itSP = solarPanels.begin(); itSP != solarPanels.end(); itSP++)
+    {
+        std::vector<SolarPanelConfigData>::iterator SPIt;
+        for (SPIt = (*itSP)->SolarPanelData.begin();
+             SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
+        {
+            this->SPCount++;
+        }
+    }
+
     this->NStates = 0;
     if(this->useTranslation) this->NStates += 6;
     if(this->useRotation)    this->NStates += 6;
     this-> NStates += this->RWACount + this->numRWJitter;
+    this-> NStates += this->SPCount*2;
     if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
 
-    this->XState = new double[this->NStates]; // pos/vel/att/rate + rwa omegas
+    this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot)*/
     memset(this->XState, 0x0, (this->NStates)*sizeof(double));
     TimePrev = 0.0;
     
@@ -440,6 +466,20 @@ void SixDofEOM::SelfInit()
 			rwCount++;
 		}
 	}
+
+    uint32_t spIterator = 0;
+    for (itSP=solarPanels.begin(); itSP != solarPanels.end(); itSP++)
+    {
+        std::vector<SolarPanelConfigData>::iterator SPIt;
+        for (SPIt = (*itSP)->SolarPanelData.begin();
+             SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
+        {
+            this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount + spIterator] = SPIt->theta;
+            spIterator++;
+            this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount + spIterator] = SPIt->thetaDot;
+            spIterator++;
+        }
+    }
     
     //! - Call computeOutputs to ensure that the outputs are available post-init
     computeOutputs();
