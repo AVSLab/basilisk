@@ -64,8 +64,6 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                  sizeof(vehicleConfigData), moduleID);
-    ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
-                                                sizeof(NavStateOut), moduleID);
     ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                    sizeof(RWSpeedData), moduleID);
 
@@ -95,7 +93,6 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
-    NavStateOut         nav;                /*!< navigation message */
     RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     uint64_t            clockTime;
     uint32_t            readSize;
@@ -109,10 +106,12 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
     double              omega_BBast_B[3];   /*!< angular velocity tracking error between actual 
                                                  body frame B and desired B^ast frame */
+    double              omega_BN_B[3];
     int                 i;
     double              temp;
     double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
 
+    
     /* compute control update time */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
         dt = (callTime - ConfigData->priorTime)*NANO2SEC;
@@ -130,11 +129,11 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav), moduleID);
     ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
                 sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
-
+    
+    /* compute body rate */
+    v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
     /* compute known external torque */
     v3SetZero(L);
@@ -144,7 +143,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     /* compute the rate tracking error */
     v3Add(omega_BastR_B, guidCmd.omega_RN_B, omega_BastN_B);
-    v3Subtract(nav.omega_BN_B, omega_BastN_B, omega_BBast_B);
+    v3Subtract(omega_BN_B, omega_BastN_B, omega_BBast_B);
 
     /* integrate rate tracking error  */
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
@@ -166,18 +165,18 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, nav.omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
-        v3Scale(ConfigData->JsList[i] * (v3Dot(nav.omega_BN_B, wheelGs) +
+        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) +
             wheelSpeeds.wheelSpeeds[i]), wheelGs, v3_1);
         v3Add(v3_1, v3, v3);
     }
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
-    v3Cross(nav.omega_BN_B, guidCmd.omega_RN_B, v3);
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
     m33MultV3(RECAST3X3 sc.I, v3_1, v3);

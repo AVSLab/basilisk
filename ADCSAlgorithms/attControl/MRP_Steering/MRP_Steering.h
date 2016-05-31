@@ -48,8 +48,6 @@ typedef struct {
     int32_t outputMsgID;                        /*!< [] ID for the outgoing body accel requests*/
     char inputGuidName[MAX_STAT_MSG_LENGTH];    /*!< The name of the Input message*/
     int32_t inputGuidID;                        /*!< [] ID for the incoming guidance errors*/
-    char inputNavName[MAX_STAT_MSG_LENGTH];     /*!< The name of the Navigation Input message*/
-    int32_t inputNavID;                         /*!< [] ID for the incoming navigation message */
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;           /*!< [] ID for the incoming static vehicle data */
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */

@@ -16,6 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 import sys, os, inspect
 import matplotlib.pyplot as plt
+import numpy as np
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -29,7 +30,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import MRP_Steering  # import the module that is to be tested
 import sunSafePoint  # import module(s) that creates the needed input message declaration
-import simple_nav  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import rwNullSpace
 
@@ -78,7 +78,6 @@ def mrp_steering_tracking(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.inputNavName = "inputNavName"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
     moduleConfig.wheelSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
@@ -112,19 +111,19 @@ def mrp_steering_tracking(show_plots):
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
 
     guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
-    sigma_BR = [0.3, -0.5, 0.7]
+    sigma_BR = np.array([0.3, -0.5, 0.7])
     SimulationBaseClass.SetCArray(sigma_BR,
                                   'double',
                                   guidCmdData.sigma_BR)
-    omega_BR_B = [0.010, -0.020, 0.015]
+    omega_BR_B = np.array([0.010, -0.020, 0.015])
     SimulationBaseClass.SetCArray(omega_BR_B,
                                   'double',
                                   guidCmdData.omega_BR_B)
-    omega_RN_B = [-0.02, -0.01, 0.005]
+    omega_RN_B = np.array([-0.02, -0.01, 0.005])
     SimulationBaseClass.SetCArray(omega_RN_B,
                                   'double',
                                   guidCmdData.omega_RN_B)
-    domega_RN_B = [0.0002, 0.0003, 0.0001]
+    domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     SimulationBaseClass.SetCArray(domega_RN_B,
                                   'double',
                                   guidCmdData.domega_RN_B)
@@ -133,25 +132,6 @@ def mrp_steering_tracking(show_plots):
                                           0,
                                           guidCmdData)
 
-    # NavStateOut Message:
-    inputMessageSize = 18 * 8  # 6x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    NavStateOutData = simple_nav.NavStateOut()  # Create a structure for the input message
-    sigma_BN = [0.25, -0.45, 0.75]
-    SimulationBaseClass.SetCArray(sigma_BN,
-                                  'double',
-                                  NavStateOutData.sigma_BN)
-    omega_BN_B = [-0.015, -0.012, 0.005]
-    SimulationBaseClass.SetCArray(omega_BN_B,
-                                  'double',
-                                  NavStateOutData.omega_BN_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
-                                          inputMessageSize,
-                                          0,
-                                          NavStateOutData)
 
     # wheelSpeeds Message
     inputMessageSize = 36 * 8  # 36 doubles
@@ -210,11 +190,11 @@ def mrp_steering_tracking(show_plots):
 
     # set the filtered output truth states
     trueVector = [
-        [3.51929003225847, -5.043242796061465, 3.475469832430654]
-        , [3.51929003225847, -5.043242796061465, 3.475469832430654]
-        , [3.519426975703996, -5.043376767319374, 3.475597633355197]
-        , [3.51929003225847, -5.043242796061465, 3.475469832430654]
-        , [3.519426975703996, -5.043376767319374, 3.475597633355197]
+        [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
+        , [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
+        , [4.4480000793994314, -8.4093848702156535, 4.8611816778282186]
+        , [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
+        , [4.4480000793994314, -8.4093848702156535, 4.8611816778282186]
     ]
 
     # compare the module results to the truth values
