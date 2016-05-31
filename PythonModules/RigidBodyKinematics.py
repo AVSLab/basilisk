@@ -17,7 +17,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 # Import required modules:
 import numpy as np
+from numpy import linalg as la
 import math
+
 
 M_PI = np.pi
 D2R = M_PI / 180.
@@ -1091,7 +1093,7 @@ def BinvPRV(q):
     		w = [B(Q)]^(-1) dQ/dt
     """
 
-    p = math.sqrt(q.T * q)
+    p = la.norm(q)
     c1 = (1 - math.cos(p)) / p / p
     c2 = (p - math.sin(p)) / p / p / p
 
@@ -1123,11 +1125,11 @@ def BmatEP(q):
     B = np.zeros([4, 3])
     B[0, 0] = -q[1]
     B[0, 1] = -q[2]
-    B[0, 2] = -q[3, 0]
+    B[0, 2] = -q[3]
     B[1, 0] = q[0]
-    B[1, 1] = -q[3, 0]
+    B[1, 1] = -q[3]
     B[1, 2] = q[2]
-    B[2, 0] = q[3, 0]
+    B[2, 0] = q[3]
     B[2, 1] = q[0]
     B[2, 2] = -q[1]
     B[3, 0] = -q[2]
@@ -2017,19 +2019,19 @@ def gibbs2MRP(q1):
     return q1 / (1 + math.sqrt(1 + np.dot(q1, q1)))
 
 
-def gibbs2PRV(q1):
+def gibbs2PRV(q):
     """
-    gibbs2PRV(Q1)
+    gibbs2PRV(Q)
 
     	Q = gibbs2PRV(Q1) translates the gibbs vector Q1
     	into the principal rotation vector Q.
     """
 
-    tp = np.linalg.norm(q1)
+    tp = np.linalg.norm(q)
     p = 2 * math.atan(tp)
-    q0 = q1[0, 0] / tp * p
-    q1 = q1[1, 0] / tp * p
-    q2 = q1[2, 0] / tp * p
+    q0 = q[0] / tp * p
+    q1 = q[1] / tp * p
+    q2 = q[2] / tp * p
     q = np.array([q0, q1, q2])
     return q
 
@@ -2073,7 +2075,7 @@ def MRP2EP(q1):
     qm = np.linalg.norm(q1)
     ps = 1 + qm * qm
     q = np.array([
-        (1 - qm) / ps,
+        (1 - qm * qm) / ps,
         2 * q1[0] / ps,
         2 * q1[1] / ps,
         2 * q1[2] / ps
@@ -2224,7 +2226,7 @@ def MRP2Gibbs(q1):
     return 2 * q1 / (1 - np.dot(q1, q1))
 
 
-def MRP2PRV(q1):
+def MRP2PRV(q):
     """
     MRP2PRV(Q1)
 
@@ -2232,11 +2234,11 @@ def MRP2PRV(q1):
     	into the principal rotation vector Q.
     """
 
-    tp = np.linalg.norm(q1)
+    tp = np.linalg.norm(q)
     p = 4 * math.atan(tp)
-    q0 = q1[0] / tp * p
-    q1 = q1[1] / tp * p
-    q2 = q1[2] / tp * p
+    q0 = q[0] / tp * p
+    q1 = q[1] / tp * p
+    q2 = q[2] / tp * p
     q = np.array([q0, q1, q2])
 
     return q
@@ -2439,7 +2441,7 @@ def PRV2Euler323(q):
     return EP2Euler323(PRV2EP(q))
 
 
-def PRV2Gibbs(q1):
+def PRV2Gibbs(q):
     """
     PRV2Gibbs(Q1)
 
@@ -2447,17 +2449,17 @@ def PRV2Gibbs(q1):
     	into the gibbs vector Q.
     """
 
-    q1 = PRV2elem(q1)
-    tp = math.tan(q1[0] / 2)
-    q0 = q1[1] * tp
-    q1 = q1[2] * tp
-    q2 = q1[3] * tp
+    q = PRV2elem(q)
+    tp = math.tan(q[0] / 2)
+    q0 = q[1] * tp
+    q1 = q[2] * tp
+    q2 = q[3] * tp
     q = np.array([q0, q1, q2])
 
     return q
 
 
-def PRV2MRP(q1):
+def PRV2MRP(q):
     """
      PRV2MRP(Q1)
 
@@ -2465,11 +2467,11 @@ def PRV2MRP(q1):
     	into the MRP vector Q.
     """
 
-    q1 = PRV2elem(q1)
-    tp = math.tan(q1[0] / 4)
-    q0 = q1[1] * tp
-    q1 = q1[2] * tp
-    q2 = q1[3] * tp
+    q = PRV2elem(q)
+    tp = math.tan(q[0] / 4)
+    q0 = q[1] * tp
+    q1 = q[2] * tp
+    q2 = q[3] * tp
 
     q = np.array([q0, q1, q2])
     return q
@@ -2735,8 +2737,7 @@ def subGibbs(q1, q2):
     	which corresponds to relative rotation from Q2
     	to Q1.
     """
-
-    return (q1 - q2 + np.cross(q1.T, q2.T).T) / (1 + (q1.T * q2)[0, 0])
+    return (q1 - q2 + np.cross(q1, q2)) / (1. + np.dot(q1, q2))
 
 
 def subMRP(q1, q2):
