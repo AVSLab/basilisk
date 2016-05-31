@@ -14,9 +14,9 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module reactionwheel_dynamics
+%module solar_panels
 %{
-   #include "reactionwheel_dynamics.h"
+   #include "solar_panels.h"
 %}
 
 %include "std_vector.i"
@@ -30,8 +30,6 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
-   %template(RWDynamicsVector) vector<ReactionWheelConfigData>;
 }
 %include "sys_model.h"
-%include "dyn_effector.h"
-%include "reactionwheel_dynamics.h"
+%include "solar_panels.h"

@@ -32,22 +32,3 @@ SolarPanels::~SolarPanels()
 {
     return;
 }
-
-void SolarPanels::SelfInit()
-{
-}
-
-void SolarPanels::CrossInit()
-{
-}
-
-/*! This method is used to compute all the dynamical effects for the SP set.
- It is an inherited method from the DynEffector class and is designed to be called
- by the dynamics plant for the simulation.
- @return void
- @param Props Current mass properties of the vehicle (using center of mass and str2bdy transformation
- @param Bstate Current state of the vehicle (not used by RW dynamics)
- @param CurrentTime Current simulation time converted to double precision
- */
-void SolarPanels::ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate, double CurrentTime)
-{}

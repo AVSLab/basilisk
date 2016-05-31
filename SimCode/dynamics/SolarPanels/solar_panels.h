@@ -37,18 +37,13 @@ typedef struct {
  bool usingHingedDynamics;  //!< flag for using hinged dynamics
 }SolarPanelConfigData;
 
-class SolarPanels: public SysModel, public DynEffector {
+class SolarPanels {
 public:
     SolarPanels();
     ~SolarPanels();
-    
-    void SelfInit();
-    void CrossInit();
+
     //! Add a new solar panel to solar panel set
-    void AddSolarPanel(SolarPanelConfigData *NewSP) {SolarPanelData.push_back(*NewSP);
-    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
-                             double CurrentTime);
-}
+    void AddSolarPanel(SolarPanelConfigData *NewSP) {SolarPanelData.push_back(*NewSP);}
 
 public:
     std::vector<SolarPanelConfigData> SolarPanelData;     //!< -- RW information
