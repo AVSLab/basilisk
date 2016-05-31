@@ -42,7 +42,10 @@ public:
     void SelfInit();
     void CrossInit();
     //! Add a new solar panel to solar panel set
-    void AddSolarPanel(SolarPanelConfigData *NewSP) {SolarPanelData.push_back(*NewSP);}
+    void AddSolarPanel(SolarPanelConfigData *NewSP) {SolarPanelData.push_back(*NewSP);
+    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
+                             double CurrentTime);
+}
 
 public:
     std::vector<SolarPanelConfigData> SolarPanelData;     //!< -- RW information
