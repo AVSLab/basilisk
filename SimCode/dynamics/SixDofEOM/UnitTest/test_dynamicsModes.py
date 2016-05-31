@@ -71,8 +71,8 @@ import macros
     (False, True, True, False, False),
     (False, True, True, True, False),
     (True, True, True, False, False),
-    (True, True, True, True, False)
-    # (True, True, False, False, True)
+    (True, True, True, True, False),
+    (True, True, False, False, True)
 ])
 
 # provide a unique test method name, starting with test_
