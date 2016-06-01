@@ -46,9 +46,7 @@ void SelfInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
-    ConfigData->phi_spin0 = 0.;
-    ConfigData->mnvrStartTime = 0;
-    ConfigData->initializeAngle = BOOL_TRUE;
+    ConfigData->phi_spin = ConfigData->phi_spin0;
 }
 
 void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
@@ -64,9 +62,8 @@ void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 
 void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 {
-    ConfigData->phi_spin0 = 0.;
-    ConfigData->mnvrStartTime = 0;
     ConfigData->initializeAngle = BOOL_TRUE;
+    ConfigData->phi_spin = ConfigData->phi_spin0;
 }
 
 
@@ -120,18 +117,13 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     
     double  R0N[3][3];                                      /*!< DCM from inertial to reference pointing frame */
     int     o1, o2;                                         /*!< orbit axis indices */
-    
     double  omega_spin_vec[3];
     double  sigma_spin[3];                     
     double  M_spin[3][3];
     double  v3[3];
+    double  currMnvrTime;
     
-    if (ConfigData->mnvrStartTime == 0)
-    {
-        ConfigData->mnvrStartTime = callTime;
-    }
-    ConfigData->currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
-    
+    currMnvrTime = callTime * 1.0E-9;
     o1 = ConfigData->o_spin;
     o2 = o1 + 1;
     if (o2 > 2) { o2 = 0; }
@@ -144,17 +136,10 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     v3Cross(omega_R0N_N, omega_spin_vec, v3);
     v3Add(v3, domega_R0N_N, domega_RN_N);
     /* Compute orientation */
-    
-    /* PROVISIONAL */
-    ConfigData->phi_spin0 = 0.0;
-    
-    ConfigData->phi_spin = ConfigData->phi_spin0 + ConfigData->currMnvrTime * ConfigData->omega_spin;
+    ConfigData->phi_spin = ConfigData->phi_spin0 + currMnvrTime * ConfigData->omega_spin;
     Mi(ConfigData->phi_spin, o1+1, M_spin);
     C2MRP(M_spin, sigma_spin);
-    
     v3Add(sigma_spin, sigma_R0N, sigma_RN);
-    
-    
 }
 
 

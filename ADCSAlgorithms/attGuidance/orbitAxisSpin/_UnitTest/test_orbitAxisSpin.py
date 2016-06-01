@@ -95,9 +95,7 @@ def orbitAxisSpinTestFunction(show_plots):
     moduleConfig.b_spin = 0
     moduleConfig.phi_spin0 = np.pi/4
     moduleConfig.omega_spin = np.pi/8
-    moduleConfig.dt = updateTime
-    moduleConfig.integrateFlag = 1
-    moduleConfig.mnvrStartTime = 0
+    moduleConfig.initializeAngle = False
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -171,8 +169,9 @@ def orbitAxisSpinTestFunction(show_plots):
     # set the filtered output truth states
     trueVector = [
              [ 0.035239058903, -0.395142321122, -0.163673308476],
-             [ 0.035239058903, -0.395142321122, -0.163673308476],
-             [ 0.086813651715, -0.395142321122, -0.163673308476]
+             [ 0.086813651715, -0.395142321122, -0.163673308476],
+             [ 0.139673375131, -0.395142321122, -0.163673308476]
+
     ]
 
     # compare the module results to the truth values

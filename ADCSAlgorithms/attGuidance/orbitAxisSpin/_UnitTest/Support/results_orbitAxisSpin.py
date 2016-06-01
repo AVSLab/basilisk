@@ -107,6 +107,9 @@ printResults_orbitAxisSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, params)
 callTime = 0.5 #sec
 params = (o_spin, omega_spin, bool_initialize, phi_spin0, callTime)
 printResults_orbitAxisSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, params)
+callTime = 1. #sec
+params = (o_spin, omega_spin, bool_initialize, phi_spin0, callTime)
+printResults_orbitAxisSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, params)
 
 
 
