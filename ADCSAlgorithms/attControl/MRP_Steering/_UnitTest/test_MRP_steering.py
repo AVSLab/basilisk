@@ -32,7 +32,7 @@ import MRP_Steering  # import the module that is to be tested
 import sunSafePoint  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import rwNullSpace
-
+import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -60,7 +60,7 @@ def mrp_steering_tracking(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = unitTestSupport.sec2nano(0.5)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -87,7 +87,7 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.Ki = 0.01
     moduleConfig.P = 150.0
     moduleConfig.numRWAs = 4
-    moduleConfig.omega_max = 1.5 * unitTestSupport.D2R
+    moduleConfig.omega_max = 1.5 * macros.D2R
     moduleConfig.integralLimit = 2. / moduleConfig.Ki * 0.1
     SimulationBaseClass.SetCArray([.1, .1, .1, .1],  # set RW spin inertia Js values
                                   'double',
@@ -174,12 +174,12 @@ def mrp_steering_tracking(show_plots):
     unitTestSim.InitializeSimulation()
 
     # Step the simulation to 3*process rate so 4 total steps including zero
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     moduleWrap.Reset(1)  # this module reset function needs a time input (in NanoSeconds)
 
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))  # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))  # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
     # This pulls the actual data log from the simulation run.

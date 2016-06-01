@@ -59,6 +59,7 @@ typedef struct {
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
 typedef struct {
+    std::string typeName;                           //!< [], string containing the thruster type name
     std::vector<double> ThrusterLocation;           //!< m Location of thruster in structural
     std::vector<double> ThrusterDirection;          //!< -- Unit vector of thruster pointing
     std::vector<ThrusterTimePair> ThrusterOnRamp;   //!< -- Percentage of max thrust for ramp up

@@ -44,6 +44,15 @@ import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import unitTestSupport                  # general support file with common unit test functions
+import setupUtilitiesRW                 # RW simulation setup utilties
+import setupUtilitiesThruster           # Thruster simulation setup utilties
+import reactionwheel_dynamics
+import thruster_dynamics
+import macros
+
+
+
+
 
 
 
@@ -51,39 +60,48 @@ import unitTestSupport                  # general support file with common unit 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
-# provide a unique test method name, starting with test_
+# @pytest.mark.xfail(True)
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation", [
-    (True, True),
-    (False, True),
-    (True, False)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster", [
+    (True, True, False, False, False),
+    (False, True, False, False, False),
+    (True, False, False, False, False),
+    (False, True, True, False, False),
+    (False, True, True, True, False),
+    (True, True, True, False, False),
+    (True, True, True, True, False),
+    (True, True, False, False, True)
 ])
 
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation):
+# provide a unique test method name, starting with test_
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation)
+    [testResults, testMessage] = unitDynamicsModesTestFunction(
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
-
+    rwCommandName = "reactionwheel_cmds"
 
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
 
-    DynUnitTestProc = scSim.CreateNewProcess("DynUnitTestProcess")
-    DynUnitTestProc.addTask(scSim.CreateNewTask("sixDynTestTask", unitTestSupport.sec2nano(10.)))
+
+    DynUnitTestProc = scSim.CreateNewProcess(unitProcessName)
+    # create the dynamics task and specify the integration update time
+    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
-    
+
     #Initialize the ephemeris module
     spiceObject.ModelTag = "SpiceInterfaceData"
     spiceObject.SPICEDataPath = splitPath[0] + '/Basilisk/External/EphemerisData/'
@@ -100,39 +118,96 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation):
     EarthGravBody.outputMsgName = "earth_display_frame_data"
     EarthGravBody.IsCentralBody = True
     EarthGravBody.mu = mu_earth
-    
+
+    # Initialize Spacecraft Data
     VehDynObject.ModelTag = "VehicleDynamicsData"
     VehDynObject.PositionInit = six_dof_eom.DoubleVector([-4020338.690396649,	7490566.741852513,	5248299.211589362])
     VehDynObject.VelocityInit = six_dof_eom.DoubleVector([-5199.77710904224,	-3436.681645356935,	1041.576797498721])
     #Note that the above position/velocity get overwritten by the ICs from the target ephemeris
     VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.1, 0.2, -.3])
     VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.001, -0.01, 0.03])
-    VehDynObject.baseMass = 1500.0 - 812.3
+    VehDynObject.baseMass = 750.0
     VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
                                                          0.0, 800.0, 0.0,
                                                          0.0, 0.0, 600.0])
-    VehDynObject.T_Str2BdyInit = six_dof_eom.DoubleVector([1.0, 0.0, 0.0,
-                                                           0.0, 1.0, 0.0,
-                                                           0.0, 0.0, 1.0])
     VehDynObject.baseCoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
     
     VehDynObject.AddGravityBody(EarthGravBody)
     
     VehDynObject.useTranslation = useTranslation
     VehDynObject.useRotation = useRotation
-    
-    scSim.AddModelToTask("sixDynTestTask", spiceObject)
-    scSim.AddModelToTask("sixDynTestTask", VehDynObject)
 
-    scSim.TotalSim.logThisMessage("inertial_state_output", unitTestSupport.sec2nano(120.))
+    if useThruster:
+        # add thruster devices
+        # The clearThrusterSetup() is critical if the script is to run multiple times
+        setupUtilitiesThruster.clearThrusterSetup()
+        setupUtilitiesThruster.createThruster(
+                'MOOG_Monarc_1',
+                [1,0,0],                # location in S frame
+                [0,1,0]                 # direction in S frame
+                )
+
+        # create thruster object container and tie to spacecraft object
+        thrustersDynObject = thruster_dynamics.ThrusterDynamics()
+        setupUtilitiesThruster.addThrustersToSpacecraft("Thrusters",
+                                                       thrustersDynObject,
+                                                       VehDynObject)
+        # set thruster commands (TBD)
+
+
+    if useRW:
+        # add RW devices
+        # The clearRWSetup() is critical if the script is to run multiple times
+        setupUtilitiesRW.clearRWSetup()
+        setupUtilitiesRW.options.useRWJitter = useJitter
+        setupUtilitiesRW.options.maxMomentum = 100
+        setupUtilitiesRW.createRW(
+                'Honeywell_HR16',
+                [1,0,0],                # gsHat_S
+                0.0                     # RPM
+                )
+        setupUtilitiesRW.createRW(
+                'Honeywell_HR16',
+                [0,1,0],                # gsHat_S
+                0.0                     # RPM
+                )
+        setupUtilitiesRW.createRW(
+                'Honeywell_HR16',
+                [0,0,1],                # gsHat_S
+                0.0,                    # RPM
+                [0.5,0.5,0.5]           # r_S (optional)
+                )
+
+        # create RW object container and tie to spacecraft object
+        rwDynObject = reactionwheel_dynamics.ReactionWheelDynamics()
+        setupUtilitiesRW.addRWToSpacecraft("ReactionWheels", rwDynObject, VehDynObject)
+
+        # set RW torque command
+        scSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*macros.MAX_EFF_CNT, 2)
+        cmdArray = sim_model.new_doubleArray(macros.MAX_EFF_CNT)
+        sim_model.doubleArray_setitem(cmdArray, 0, 0.020) # RW-1 [Nm]
+        sim_model.doubleArray_setitem(cmdArray, 1, 0.010) # RW-2 [Nm]
+        sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
+        scSim.TotalSim.WriteMessageData(rwCommandName, 8*macros.MAX_EFF_CNT, 1, cmdArray );
+
+
+    # add objects to the task process
+    if useRW:
+        scSim.AddModelToTask(unitTaskName, rwDynObject)
+    if useThruster:
+        scSim.AddModelToTask(unitTaskName, thrustersDynObject)
+    scSim.AddModelToTask(unitTaskName, spiceObject)
+    scSim.AddModelToTask(unitTaskName, VehDynObject)
+
+    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(unitTestSupport.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    scPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 
     # set expected results
     trueSigma = [
@@ -152,23 +227,53 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation):
                 ,[1.0, 0.0, 0.0]
                 ]
     if useTranslation==True:
-        truePos = [
-                    [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
-                    ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
-                    ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
-                    ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
-                    ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
-                    ,[-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
-                    ]
+        if useRotation==True and useJitter==True and useRW==True:
+            truePos = [
+                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
+                        ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
+                        ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
+                        ,[-6.78159910e+06,   4.94686540e+06,   5.48674158e+06]
+                        ]
+        else:
+            truePos = [
+                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
+                        ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
+                        ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
+                        ,[-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
+                        ]
     if useRotation==True:
-        trueSigma = [
-                    [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
-                    ,[-3.38910364e-02, -3.38797083e-01,  5.85609793e-01]
-                    ,[ 2.61448620e-01,  6.34606900e-02,  4.70235970e-02]
-                    ,[ 2.04905958e-01,  1.61547221e-01, -7.03976039e-01]
-                    ,[ 2.92542438e-01, -2.01505526e-01,  3.73255634e-01]
-                    ,[ 1.31470762e-01,  3.85881471e-02, -2.48570742e-01]
-                    ]
+        if useRW==True:
+            if useJitter==True:
+                trueSigma = [
+                            [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
+                            ,[-1.76619266e-01,  -4.44699723e-01,   7.55840721e-01]
+                            ,[ 1.12928565e-01,  -3.22813869e-01,   6.84202587e-01]
+                            ,[-2.29499571e-01,  -3.85736903e-01,   8.28533890e-01]
+                            ,[ 2.20071244e-01,   2.50915185e-01,  -2.08747767e-01]
+                            ,[-2.35107113e-02,  -1.91559847e-01,   4.92859991e-01]
+                            ]
+            else: # RW without jitter
+                trueSigma = [
+                            [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
+                            ,[-1.76605732e-01,  -4.44704074e-01,   7.55827747e-01]
+                            ,[ 1.12871954e-01,  -3.22785341e-01,   6.84227007e-01]
+                            ,[-2.29339679e-01,  -3.85768465e-01,   8.28686730e-01]
+                            ,[ 2.19957201e-01,   2.51216907e-01,  -2.08736029e-01]
+                            ,[-2.33052298e-02,  -1.91126954e-01,   4.93555923e-01]
+                            ]
+        else: # natural dynamics without RW or thrusters
+            trueSigma = [
+                        [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
+                        ,[-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
+                        ,[ 2.61447681e-01,   6.34635269e-02,   4.70247303e-02]
+                        ,[ 2.04899804e-01,   1.61548495e-01,  -7.03973359e-01]
+                        ,[ 2.92545849e-01,  -2.01501819e-01,   3.73256986e-01]
+                        ,[ 1.31464989e-01,   3.85929801e-02,  -2.48566440e-01]
+                        ]
 
     # compare the module results to the truth values
     accuracy = 1e-9
@@ -176,16 +281,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  attitude unit test at t=" + str(dataSigma[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
-    
-    
+            testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+
+
     # compare the module results to the truth values
     accuracy = 1e-2
     for i in range(0,len(truePos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(scPos[i],truePos[i],3,accuracy):
+        if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode (Trans+Rot) failed  pos unit test at t=" + str(scPos[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
     
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -202,7 +307,10 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation):
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           True,        # useTranslation
-                           True         # useRotation
+                           False,       # useTranslation
+                           True,        # useRotation
+                           True,        # useRW
+                           True,        # useJitter
+                           False        # useThruster
                            )
 

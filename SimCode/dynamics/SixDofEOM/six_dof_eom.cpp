@@ -235,12 +235,15 @@ SixDofEOM::SixDofEOM()
     /* initialize some spacecraft states to default values.  The user should always override these values
      with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
     m33SetIdentity(this->baseI);
-    m33SetIdentity(this->T_str2Bdy);
     v3SetZero(this->baseCoM);
     v3SetZero(this->sigma_BN);
     v3SetZero(this->omega_BN_B);
     v3Set(1.0, 0.0, 0.0, this->r_BN_N);
     v3Set(1.0, 0.0, 0.0, this->v_BN_N);
+    /* default to an idendity BS DCM */
+    m33SetIdentity(this->T_str2Bdy);
+    this->T_Str2BdyInit.assign(9, 0);
+    this->T_Str2BdyInit[0] = this->T_Str2BdyInit[4] = this->T_Str2BdyInit[8] = 1.0;
 
     return;
 }
@@ -269,7 +272,7 @@ void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
 */
 void SixDofEOM::addThrusterSet(ThrusterDynamics *NewEffector)
 {
-    thrusters.push_back(NewEffector);
+    this->thrusters.push_back(NewEffector);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The
@@ -280,7 +283,7 @@ should include a ComputeDynamics call which is operated by dynamics.
 */
 void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
 {
-	reactWheels.push_back(NewEffector);
+	this->reactWheels.push_back(NewEffector);
 }
 
 /*! This method creates an output message for each planetary body that computes
@@ -316,6 +319,7 @@ void SixDofEOM::SelfInit()
     //! Begin method steps
     //! - Zero out initial states prior to copying in init values
 	this->RWACount = 0;
+    this->numRWJitter = 0;
 	std::vector<ReactionWheelDynamics *>::iterator it;
 	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
 	{
@@ -324,12 +328,13 @@ void SixDofEOM::SelfInit()
 		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
 			this->RWACount++;
+            if (rwIt->usingRWJitter) this->numRWJitter++;
 		}
 	}
     this->NStates = 0;
     if(this->useTranslation) this->NStates += 6;
     if(this->useRotation)    this->NStates += 6;
-    this-> NStates += this->RWACount;
+    this-> NStates += this->RWACount + this->numRWJitter;
     if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
@@ -399,7 +404,8 @@ void SixDofEOM::SelfInit()
         }
     }
 
-	uint32_t rwCount = 0;
+    uint32_t rwCount = 0;
+    uint32_t rwJitterCount = 0;
 	for (it=reactWheels.begin(); it != reactWheels.end(); it++)
 	{
 		std::vector<ReactionWheelConfigData>::iterator rwIt;
@@ -407,6 +413,30 @@ void SixDofEOM::SelfInit()
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
 			this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->Omega;
+            if (rwIt->usingRWJitter) {    // set initial RW angle to zero
+                this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + rwJitterCount] = 0.0;
+                rwJitterCount++;
+            }
+
+            if (v3Norm(rwIt->gsHat_S) > 0.01) {
+                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S,  rwIt->gsHat_B);
+            } else {
+                std::cerr << "Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
+            }
+
+            if (rwIt->usingRWJitter) {
+                if (v3Norm(rwIt->gtHat0_S) > 0.01) {
+                    m33MultV3(this->T_str2Bdy, rwIt->gtHat0_S,  rwIt->gtHat0_B);
+                } else {
+                    std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
+                }
+                if (v3Norm(rwIt->ggHat0_S) > 0.01) {
+                    m33MultV3(this->T_str2Bdy, rwIt->ggHat0_S,  rwIt->ggHat0_B);
+                } else {
+                    std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
+                }
+            }
+            m33MultV3(this->T_str2Bdy, rwIt->r_S, rwIt->r_B);
 			rwCount++;
 		}
 	}
@@ -573,7 +603,7 @@ void SixDofEOM::computeCompositeProperties()
     double objInertia[3][3];
 
     memset(scaledCoM, 0x0, 3*sizeof(double));
-    this->compMass = baseMass;
+    this->compMass = this->baseMass;
     v3Scale(this->baseMass, this->baseCoM, scaledCoM);
 
     std::vector<ThrusterDynamics*>::iterator it;
@@ -633,6 +663,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 {
     
     std::vector<ThrusterDynamics*>::iterator it;
+    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
@@ -654,8 +685,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double PlanetAccel[3];
     double posVelComp[3];
     double perturbAccel_N[3];
-	double *Omegas;
-    double *omegaDot_BN_B;       /* pointer to inertial body angular acceleration vector in B-frame components */
+	double *Omegas;             /* pointer to the RW speeds */
+    double *omegaDot_BN_B;      /* pointer to inertial body angular acceleration vector in B-frame components */
+    double rwF_N[3];            /* simple RW jitter force in inertial frame */
+    double rwA_N[3];            /* inertial simple RW jitter acceleration in inertial frame components */
     
     //! Begin method steps
     
@@ -686,7 +719,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     }
 
     /* zero the derivative vector */
-    memset(dX, 0x0, NStates*sizeof(double));
+    memset(dX, 0x0, this->NStates*sizeof(double));
+
+    //! - Convert the current attitude to DCM for conversion in DynEffector loop
+    MRP2C(sigma_BNLoc, BN);
+
     //! - Set the current composite mass properties for later use in file
     computeCompositeProperties();
 
@@ -757,6 +794,22 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
+
+        if (this->useRotation){
+            for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
+            {
+                std::vector<ReactionWheelConfigData>::iterator rwIt;
+                for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
+                     rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
+                {
+                    // convert RW jitter force from B to N frame */
+                    m33tMultV3(BN, rwIt->F_B, rwF_N);
+                    // add RW jitter force to net inertial acceleration
+                    v3Scale(1.0/this->compMass, rwF_N, rwA_N);
+                    v3Add(dX+3, rwA_N, dX+3);
+                }
+            }
+        }
     }
 
     if(this->useRotation){
@@ -767,10 +820,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         BmatMRP(sigma_BNLoc, B);
         m33Scale(0.25, B, B);
         m33MultV3(B, omega_BN_BLoc, dX + this->useTranslation*6);
-        
-
-        //! - Convert the current attitude to DCM for conversion in DynEffector loop
-        MRP2C(sigma_BNLoc, BN);
 
         //! - Copy out the current state for DynEffector calls
         memcpy(StateCurrent.r_N, r_BN_NLoc, 3*sizeof(double));
@@ -809,11 +858,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
 
         uint32_t rwCount = 0;
-        std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         double rwTorque[3];
         double rwSumTorque[3];
         v3SetZero(rwSumTorque);
-        double gsHat_B[3];                          /* RW spin axis unit direction vector in B-frame components */
         v3SetZero(this->rwaGyroTorqueBdy);
         for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
         {
@@ -821,13 +868,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
-                double hs =  rwIt->Js * (v3Dot(omega_BN_BLoc, gsHat_B) + Omegas[rwCount]);
-                v3Scale(hs, gsHat_B, d2);
+                double hs =  rwIt->Js * (v3Dot(omega_BN_BLoc, rwIt->gsHat_B) + Omegas[rwCount]);
+                v3Scale(hs, rwIt->gsHat_B, d2);
                 v3Add(d3, d2, d3);
                 v3Add(this->rwaGyroTorqueBdy, d2, this->rwaGyroTorqueBdy);
-                v3Scale(rwIt->u_current, gsHat_B, rwTorque);
+                v3Scale(rwIt->u_current, rwIt->gsHat_B, rwTorque);
                 v3Subtract(rwSumTorque, rwTorque, rwSumTorque);         /* subtract [Gs]u */
+                v3Add(rwSumTorque, rwIt->tau_B, rwSumTorque);           /* add simple jitter torque */
                 rwCount++;
             }
         }
@@ -839,16 +886,24 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         m33MultV3(this->compIinv, d2, omegaDot_BN_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
         /* RW motor torque equations to solve for d(Omega)/dt */
+        /* if RW jitter is on, solve for wheel angle derivative */
         rwCount = 0;
+        uint32_t rwJitterCount = 0;
         for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
         {
             std::vector<ReactionWheelConfigData>::iterator rwIt;
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                m33MultV3(T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 dX[this->useTranslation*6 + this->useRotation*6 + rwCount] = rwIt->u_current / rwIt->Js
-                    - v3Dot(gsHat_B, omegaDot_BN_B);
+                    - v3Dot(rwIt->gsHat_B, omegaDot_BN_B);
+
+                if (rwIt->usingRWJitter) {
+                    /* compute d(theta)/dt for the RW angle */
+                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + rwJitterCount] = Omegas[rwCount];
+                    rwJitterCount++;
+                }
+
                 rwCount++;
             }
         }
@@ -885,7 +940,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     double BN[3][3];                          /* DCM from inertial to body */
     double intermediateVector[3];             /* intermediate vector needed for calculation */
     double Omega;                             /* current wheel speeds of RWs */
-    double gsHat_B[3];                        /* spin axis of RWs in body frame */
     double omega_s;                           /* body rate about the g_s RW axis */
     double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
     double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
@@ -980,6 +1034,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - Loop through RWs to get energy, momentum and power information
         std::vector<ReactionWheelDynamics *>::iterator rWPackIt;
         uint32_t rwCount = 0;
+        uint32_t rwJitterCount = 0;
         for (rWPackIt = reactWheels.begin(); rWPackIt != reactWheels.end(); rWPackIt++)
         {
             std::vector<ReactionWheelConfigData>::iterator rwIt;
@@ -987,13 +1042,12 @@ void SixDofEOM::integrateState(double CurrentTime)
                  rwIt != (*rWPackIt)->ReactionWheelData.end(); rwIt++)
             {
                 /* Gather values needed for energy and momentum calculations */
-                m33MultV3(this->T_str2Bdy, rwIt->gsHat_S, gsHat_B);
                 Omega = this->XState[useTranslation*6 + useRotation*6 + rwCount];
-                omega_s = v3Dot(&attStates[3], gsHat_B);
+                omega_s = v3Dot(&attStates[3], rwIt->gsHat_B);
 
                 /* RW energy */
                 totRwsKinEnergy += 0.5*rwIt->Js*(Omega + omega_s)*(Omega + omega_s); /* 1/2*Js*(omega_si + Omega_i)^2 */
-                v3Scale(rwIt->Js, gsHat_B, intermediateVector);
+                v3Scale(rwIt->Js, rwIt->gsHat_B, intermediateVector);
 
                 /* RW power */
                 this->scRotPower += rwIt->u_current*Omega; /* u*Omega */
@@ -1002,8 +1056,12 @@ void SixDofEOM::integrateState(double CurrentTime)
                 v3Scale((Omega + omega_s), intermediateVector, intermediateVector);
                 v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
 
-                /* Set current reaction wheel speed */
+                /* Set current reaction wheel speed and angle */
                 rwIt->Omega = Omega;
+                if (rwIt->usingRWJitter) {
+                    rwIt->theta = this->XState[useTranslation*6 + useRotation*6 + rwCount + rwJitterCount];
+                    rwJitterCount++;
+                }
                 rwCount++;
             }
         }

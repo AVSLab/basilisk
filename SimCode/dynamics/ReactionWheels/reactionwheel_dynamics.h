@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/dyn_effector.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "utilities/simMacros.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -37,21 +38,31 @@ typedef struct {
  ramp/max/min configuration data, and the physical location/orientation data for
  a RW.*/
 typedef struct {
- double r_S[3];             //!< m, position vector of the RW relative to the spacecraft structural frame
- double gsHat_S[3];         //!< spin axis unit vector in structural frame
- double gtHat0_S[3];        //!< initial torque axis unit vector in structural frame
- double ggHat0_S[3];        //!< initial gimbal axis unit vector in structural frame
- double theta;              //!< wheel angle
- double u_current;          //!< N-m, current motor torque
- double u_max;              //!< N-m, Max torque
- double u_min;              //!< N-m, Min torque
- double u_f;                //!< N-m, Coulomb friction torque magnitude
- double Omega;              //!< rad/s, wheel speed
- double Omega_max;          //!< rad/s, max wheel speed
- double Js;                 //!< kg-m^2, spin axis moment of inertia
- double U_s;                //!< kg-m, static imbalance
- double U_d;                //!< kg-m^2, dynamic imbalance
- bool usingRWJitter;        //!< flag for using imbalance torques
+    std::string typeName;      //!< [], string containing the RW type name
+    double r_S[3];             //!< m, position vector of the RW relative to the spacecraft structural frame
+    double gsHat_S[3];         //!< spin axis unit vector in structural frame
+    double gtHat0_S[3];        //!< initial torque axis unit vector in structural frame
+    double ggHat0_S[3];        //!< initial gimbal axis unit vector in structural frame
+    double r_B[3];             //!< m, position vector of the RW relative to the spacecraft body frame
+    double gsHat_B[3];         //!< spin axis unit vector in body frame
+    double gtHat0_B[3];        //!< initial torque axis unit vector in body frame
+    double ggHat0_B[3];        //!< initial gimbal axis unit vector in body frame
+    double theta;              //!< rad, wheel angle
+    double u_current;          //!< N-m, current motor torque
+    double u_max;              //!< N-m, Max torque
+    double u_min;              //!< N-m, Min torque
+    double u_f;                //!< N-m, Coulomb friction torque magnitude
+    double Omega;              //!< rad/s, wheel speed
+    double Omega_max;          //!< rad/s, max wheel speed
+    double Js;                 //!< kg-m^2, spin axis gsHat rotor moment of inertia
+    double Jt;                 //!< kg-m^2, gtHat axis rotor moment of inertia
+    double Jg;                 //!< kg-m^2, ggHat axis rotor moment of inertia
+    double U_s;                //!< kg-m, static imbalance
+    double U_d;                //!< kg-m^2, dynamic imbalance
+    double mass;               //!< kg, reaction wheel rotor mass
+    double F_B[3];             //!< N, single RW force with simple jitter model
+    double tau_B[3];           //!< N-m, single RW torque with simple jitter model
+    bool usingRWJitter;        //!< flag for using imbalance torques
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
@@ -59,7 +70,7 @@ typedef struct {
  sparse, but it is included as a structure for growth and for clear I/O
  definitions.*/
 typedef struct {
- double u_cmd; //!< N-m, torque command for RW
+    double u_cmd; //!< N-m, torque command for RW
 }RWCmdStruct;
 
 //! @brief Thruster dynamics class used to provide thruster effects on body
@@ -97,8 +108,8 @@ public:
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
     std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
-    double F_S[3];                                              //!< N  Computed force in str
-    double tau_S[3];                                            //!< N-m Computed torque in str
+    double sumF_B[3];                                              //!< N  Computed jitter force in body frame
+    double sumTau_B[3];                                            //!< N-m Computed jitter torque in body frame
     
 private:
     int64_t ConfigDataOutMsgID;

@@ -76,6 +76,7 @@ def defaultReactionWheel():
  RW.U_s *= 1000
  RW.U_d = 28.3E-7; # kg-m^2, Honeywell HR-16 100 Nms standard balance option EOL
  RW.U_d *= 1000
+ RW.usingRWJitter = True
  return RW
 
 
@@ -123,7 +124,7 @@ RWUnitTestProc.addTask(TotalSim.CreateNewTask("reactionwheelbasic", threadCallPe
 TotalSim.AddModelToTask("reactionwheelbasic", RWDynObject)
 
 #Setup variables for logging
-TotalSim.AddVectorForLogging('RWDynamics.tau_S', 'double', 0, 2, int(1E2))
+TotalSim.AddVectorForLogging('RWDynamics.sumTau_B', 'double', 0, 2, int(1E2))
 
 
 #Configure the vehicle mass properties to use in the simulation
@@ -158,7 +159,7 @@ executeSimulationRun(stopTime2, threadCallPeriod, TotalSim, RWDynObject,
                      massPropsData, outputState)
 
 #Extract log variables and plot the results
-StrTorque = TotalSim.GetLogVariableData('RWDynamics.tau_S')
+StrTorque = TotalSim.GetLogVariableData('RWDynamics.sumTau_B')
 
 #Plot the results
 plt.figure(1)

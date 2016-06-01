@@ -38,7 +38,7 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import fswModuleTemplate                 # import the module that is to be tested
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
-
+import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -65,7 +65,7 @@ def fswModuleTestFunction(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = unitTestSupport.sec2nano(0.5)     # update process rate update time
+    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -121,7 +121,7 @@ def fswModuleTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -130,7 +130,7 @@ def fswModuleTestFunction(show_plots):
     moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
 
     # run the module again for an additional 1.0 seconds
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
         
 
@@ -159,7 +159,7 @@ def fswModuleTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
+                                str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
         # check a scalar double value
@@ -167,12 +167,12 @@ def fswModuleTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
-                                str(variableState[i,0]*unitTestSupport.NANO2SEC) +
+                                str(variableState[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(unitTestSupport.sec2nano(0.6))    # run an additional 0.6 seconds
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
  
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -180,7 +180,7 @@ def fswModuleTestFunction(show_plots):
     if show_plots:
         # plot a sample variable.
         plt.figure(1)
-        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
+        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
         plt.legend(loc='upper left')
         plt.xlabel('Time [s]')
         plt.ylabel('Variable Description [unit]')
