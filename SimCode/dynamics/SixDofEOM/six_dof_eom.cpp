@@ -729,6 +729,20 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double *omegaDot_BN_B;      /* pointer to inertial body angular acceleration vector in B-frame components */
     double rwF_N[3];            /* simple RW jitter force in inertial frame */
     double rwA_N[3];            /* inertial simple RW jitter acceleration in inertial frame components */
+    double rDDot_CN_N[3];        /* inertial accelerration of the center of mass of the sc */
+    double matrixA[this->SPCount][this->SPCount]; /* Matrix A needed for hinged SP dynamics */
+    double matrixE[this->SPCount][this->SPCount]; /* Matrix E needed for hinged SP dynamics */
+    double matrixF[this->SPCount][3]; /* Matrix F needed for hinged SP dynamics */
+    double vectorP[this->SPCount]; /* Vector P needed for hinged SP dynamics */
+    double matrixR[this->SPCount][3]; /* Matrix R needed for hinged SP dynamics */
+    double matrixS[this->SPCount][3]; /* Matrix S needed for hinged SP dynamics */
+    double matrixZ[3][3]; /* Matrix Z needed for hinged SP dynamics */
+    double vectorV[3]; /* vector needed for hinged SP dynamics */
+    double mSC; /* Mass of the space craft including solar panels */
+    double c_B[3]; /* vector c in B frame components needed for SP dynamics */
+    double cTilde_B[3][3]; /* Tilde matrix of c_B */
+    double cPrime_B[3]; /* body time derivative of c_B */
+    
     
     //! Begin method steps
     
@@ -850,6 +864,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 }
             }
         }
+        //! - Copy acceleration center of mass acceleration
+        v3Copy(dX + 3, rDDot_CN_N);
     }
 
     if(this->useRotation){
@@ -887,10 +903,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
                 v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
-                v3Add(dX+3, LocalAccels_N, dX+3);
+                v3Add(rDDot_CN_N, LocalAccels_N, rDDot_CN_N);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
+
+        //! - Compute hinged solar panel dynamics
+
 
         //! - compute domega/dt (see Schaub and Junkins)
         v3Tilde(omega_BN_BLoc, omegaTilde);         /* [tilde(w)] */
@@ -947,6 +966,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 rwCount++;
             }
         }
+        v3Copy(rDDot_CN_N, dX + 3);
     }
 }
 

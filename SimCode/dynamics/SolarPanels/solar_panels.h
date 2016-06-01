@@ -31,7 +31,15 @@ typedef struct {
  double k;                  //!< N-m/rad, torsional spring constant of solar panel hinge
  double c;                  //!< N-m-s/rad, rotational damping coefficient of solar panel hinge
  double r_HB_B[3];          //!< m, vector pointing from body frame origin to Hinge location
+ double rTilde_HB_B[3][3];  //!< Tilde matrix of r_HB_B
  double HB[3][3];           //!< DCM from body frame to hinge frame
+ double SH[3][3];           //!< DCM from hinge to solar panel (S) frame
+ double SB[3][3];           //!< DCM from body to S frame
+ double sHat_B[9];          /*!< Vectrix storing the 3 unit direction vectors defining the S frame in body frame components */
+ double r_SB_B[3];          //!< Vector pointing from body origin to CoM of solar panel in B frame comp
+ double rTilde_SB_B[3][3];  //!< Tilde matrix of r_SB_B
+ double rPrime_SB_B[3];     //!< Body time derivative of r_SB_B
+ double rPrimeTilde_SB_B[3];//!< Tilde matrix of rPrime_SB_B
  double theta;              //!< rad, solar panel angle
  double thetaDot;           //!< rad/s, solar panel angle rate
  bool usingHingedDynamics;  //!< flag for using hinged dynamics
