@@ -19,8 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "celestialTwoBodyPoint.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
+
 %constant void Update_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
 %ignore Update_celestialTwoBodyPoint;
 %constant void SelfInit_celestialTwoBodyPoint(void*, uint64_t);
@@ -29,3 +29,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_celestialTwoBodyPoint;
 %include "../_GeneralModuleFiles/attGuidOut.h"
 %include "celestialTwoBodyPoint.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

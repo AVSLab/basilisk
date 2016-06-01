@@ -4,6 +4,7 @@ file(GLOB basilisk_src
     "*.h"
     "*.cpp"
     "*.c"
+    "*.i"
 )
 
 add_library(SimUtilities STATIC ${basilisk_src})

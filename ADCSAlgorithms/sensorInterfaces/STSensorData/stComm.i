@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "stComm.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_stProcessTelem(void*, uint64_t, uint64_t);
 %ignore Update_stProcessTelem;
 %constant void SelfInit_stProcessTelem(void*, uint64_t);
@@ -29,3 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_stProcessTelem;
 %include "stHwInterface.h"
 %include "stComm.h"
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

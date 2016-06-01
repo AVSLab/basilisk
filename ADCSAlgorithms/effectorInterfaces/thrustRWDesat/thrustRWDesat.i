@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "thrustRWDesat.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Update_thrustRWDesat;
 %constant void SelfInit_thrustRWDesat(void*, uint64_t);
@@ -31,3 +30,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore Reset_thrustRWDesat;
 %include "vehEffectorOut.h"
 %include "thrustRWDesat.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+
+

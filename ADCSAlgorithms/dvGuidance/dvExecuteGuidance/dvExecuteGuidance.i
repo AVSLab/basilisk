@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "dvExecuteGuidance.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_dvExecuteGuidance(void*, uint64_t, uint64_t);
 %ignore Update_dvExecuteGuidance;
 %constant void SelfInit_dvExecuteGuidance(void*, uint64_t);
@@ -28,3 +27,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void CrossInit_dvExecuteGuidance(void*, uint64_t);
 %ignore CrossInit_dvExecuteGuidance;
 %include "dvExecuteGuidance.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+

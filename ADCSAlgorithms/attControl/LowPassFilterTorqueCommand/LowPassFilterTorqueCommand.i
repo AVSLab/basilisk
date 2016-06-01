@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "LowPassFilterTorqueCommand.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_LowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
 %ignore Update_LowPassFilterTorqueCommand;
 %constant void SelfInit_LowPassFilterTorqueCommand(void*, uint64_t);
@@ -33,3 +32,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/vehControlOut.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "sunSafeACS.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_sunSafeACS(void*, uint64_t, uint64_t);
 %ignore Update_sunSafeACS;
 %constant void SelfInit_sunSafeACS(void*, uint64_t);
@@ -29,3 +28,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_sunSafeACS;
 %include "dvAttEffect.h"
 %include "sunSafeACS.h"
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+

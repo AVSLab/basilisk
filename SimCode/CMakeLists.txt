@@ -23,6 +23,9 @@ get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 FOREACH(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+        continue()
+    endif()
     file(GLOB impl_files
 	    "${FileDir}/*.cpp"
 	    "${FileDir}/*.c"

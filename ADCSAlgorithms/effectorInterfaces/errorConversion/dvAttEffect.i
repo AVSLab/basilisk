@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "dvAttEffect.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Update_dvAttEffect;
 %constant void SelfInit_dvAttEffect(void*, uint64_t);
@@ -32,3 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %array_functions(ThrustGroupData, ThrustGroupArray);
 %include "vehEffectorOut.h"
 %include "dvAttEffect.h"
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

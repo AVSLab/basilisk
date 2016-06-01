@@ -19,8 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "orbitAxisSpin.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
+
 %constant void Update_orbitAxisSpin(void*, uint64_t, uint64_t);
 %ignore Update_orbitAxisSpin;
 %constant void SelfInit_orbitAxisSpin(void*, uint64_t);
@@ -33,3 +33,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 // supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/attGuidOut.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
