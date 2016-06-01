@@ -274,8 +274,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 2.92545849e-01,  -2.01501819e-01,   3.73256986e-01]
                         ,[ 1.31464989e-01,   3.85929801e-02,  -2.48566440e-01]
                         ]
-    print dataSigma
-    print dataPos
+
     # compare the module results to the truth values
     accuracy = 1e-9
     for i in range(0,len(trueSigma)):
