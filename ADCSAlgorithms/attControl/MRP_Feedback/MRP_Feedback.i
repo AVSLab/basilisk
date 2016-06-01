@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "MRP_Feedback.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_MRP_Feedback(void*, uint64_t, uint64_t);
 %ignore Update_MRP_Feedback;
 %constant void SelfInit_MRP_Feedback(void*, uint64_t);
@@ -31,3 +30,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore Reset_MRP_Feedback;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "MRP_Feedback.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+

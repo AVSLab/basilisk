@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "navAggregate.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_aggregateNav(void*, uint64_t, uint64_t);
 %ignore Update_aggregateNav;
 %constant void SelfInit_aggregateNav(void*, uint64_t);
@@ -29,3 +28,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_aggregateNav;
 %array_functions(AggregateMsgInput, AggMsgArray);
 %include "navAggregate.h"
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+

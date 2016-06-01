@@ -19,6 +19,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "vehicleConfigData.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %include "vehicleConfigData.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

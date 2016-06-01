@@ -19,8 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "attRefGen.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
+
 %constant void Update_attRefGen(void*, uint64_t, uint64_t);
 %ignore Update_attRefGen;
 %constant void SelfInit_attRefGen(void*, uint64_t);
@@ -32,3 +32,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
 %include "attRefGen.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "PRV_Steering.h"
 %}
 
-%include "carrays.i"
-%include "stdint.i"
+%include "swig_conly_data.i"
 %constant void Update_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Update_PRV_Steering;
 %constant void SelfInit_PRV_Steering(void*, uint64_t);
@@ -31,3 +30,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore Reset_PRV_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "PRV_Steering.h"
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
+
