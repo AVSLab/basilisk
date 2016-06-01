@@ -231,7 +231,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                           MRP_Steering.Update_MRP_Steering,
                                                           MRP_Steering.SelfInit_MRP_Steering,
                                                           MRP_Steering.CrossInit_MRP_Steering)
-        self.MRP_SteeringRWAData.ModelTag = "MRP_SteeringRWA"
+        self.MRP_SteeringRWAWrap.ModelTag = "MRP_SteeringRWA"
 
         self.MRP_SteeringMOIData = MRP_Steering.MRP_SteeringConfig()
         self.MRP_SteeringMOIWrap = alg_contain.AlgContain(self.MRP_SteeringMOIData,
@@ -1072,7 +1072,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringSafeData.integralLimit = 0.15  # rad
         self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
         self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
-        self.MRP_SteeringSafeData.inputNavName = "simple_nav_output"
         self.MRP_SteeringSafeData.outputDataName = "controlTorqueRaw"
 
     def SetsunSafeACS(self):
@@ -1130,7 +1129,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.orbitAxisSpinData.o_spin = 0
         self.orbitAxisSpinData.b_spin = 0
         self.orbitAxisSpinData.omega_spin = numpy.pi / 4.0
-        self.orbitAxisSpinData.mnvrStartTime = 0
     def setAttTrackingError(self):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
@@ -1167,7 +1165,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
         self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
-        self.MRP_SteeringRWAData.inputNavName = "simple_nav_output"
         self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
 
@@ -1180,7 +1177,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringMOIData.integralLimit = 0.5  # rad
         self.MRP_SteeringMOIData.inputGuidName = "nom_att_guid_out"
         self.MRP_SteeringMOIData.inputVehicleConfigDataName = "adcs_config_data"
-        self.MRP_SteeringMOIData.inputNavName = "simple_nav_output"
         self.MRP_SteeringMOIData.outputDataName = "controlTorqueRaw"
 
     def SetdvAttEffect(self):
