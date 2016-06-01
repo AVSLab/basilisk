@@ -174,7 +174,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         setupUtilitiesRW.createRW(
                 'Honeywell_HR16',
                 [0,0,1],                # gsHat_S
-                0.0                     # RPM
+                0.0,                    # RPM
+                [0.5,0.5,0.5]           # r_S (optional)
                 )
 
         # create RW object container and tie to spacecraft object
@@ -249,11 +250,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
             if useJitter==True:
                 trueSigma = [
                             [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
-                            ,[-1.76618817e-01,  -4.44699075e-01,   7.55841016e-01]
-                            ,[ 1.12928552e-01,  -3.22813489e-01,   6.84201884e-01]
-                            ,[-2.29498401e-01,  -3.85736070e-01,   8.28533617e-01]
-                            ,[ 2.20071288e-01,   2.50915434e-01,  -2.08748820e-01]
-                            ,[-2.35099548e-02,  -1.91558921e-01,   4.92859281e-01]
+                            ,[-1.76619266e-01,  -4.44699723e-01,   7.55840721e-01]
+                            ,[ 1.12928565e-01,  -3.22813869e-01,   6.84202587e-01]
+                            ,[-2.29499571e-01,  -3.85736903e-01,   8.28533890e-01]
+                            ,[ 2.20071244e-01,   2.50915185e-01,  -2.08747767e-01]
+                            ,[-2.35107113e-02,  -1.91559847e-01,   4.92859991e-01]
                             ]
             else: # RW without jitter
                 trueSigma = [
