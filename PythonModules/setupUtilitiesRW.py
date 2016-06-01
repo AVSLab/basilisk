@@ -77,6 +77,11 @@ def createRW(
         print 'ERROR: RW type ' + rwType + ' is not implemented'
         exit(1)
 
+    # spin axis gs inertia [kg*m^2]
+    RW.Js = options.maxMomentum / (RW.Omega_max)
+    RW.Jt = 0.5*RW.Js
+    RW.Jg = RW.Jt
+
     # set RW spin axis gsHat
     norm = numpy.linalg.norm(gsHat_S)
     if norm>1e-10:
@@ -190,8 +195,6 @@ def Honeywell_HR16(RW):
             print 'ERROR: ' + sys._getframe().f_code.co_name \
                   + '() maxMomentum option must be set prior to calling createRW()'
         exit(1)
-    # spin axis gs inertia [kg*m^2]
-    RW.Js = options.maxMomentum / (RW.Omega_max)
 
     return
 
@@ -243,8 +246,6 @@ def Honeywell_HR14(RW):
             print 'ERROR: ' + sys._getframe().f_code.co_name \
                   + '() maxMomentum option must be set prior to calling createRW()'
         exit(1)
-    # spin axis gs inertia [kg*m^2]
-    RW.Js = options.maxMomentum / (RW.Omega_max)
 
     return
 
@@ -296,8 +297,6 @@ def Honeywell_HR12(RW):
             print 'ERROR: ' + sys._getframe().f_code.co_name \
                   + '() maxMomentum option must be set prior to calling createRW()'
         exit(1)
-    # spin axis gs inertia [kg*m^2]
-    RW.Js = options.maxMomentum / (RW.Omega_max)
 
     return
 

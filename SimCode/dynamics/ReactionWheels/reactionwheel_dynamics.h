@@ -54,7 +54,9 @@ typedef struct {
     double u_f;                //!< N-m, Coulomb friction torque magnitude
     double Omega;              //!< rad/s, wheel speed
     double Omega_max;          //!< rad/s, max wheel speed
-    double Js;                 //!< kg-m^2, spin axis moment of inertia
+    double Js;                 //!< kg-m^2, spin axis gsHat rotor moment of inertia
+    double Jt;                 //!< kg-m^2, gtHat axis rotor moment of inertia
+    double Jg;                 //!< kg-m^2, ggHat axis rotor moment of inertia
     double U_s;                //!< kg-m, static imbalance
     double U_d;                //!< kg-m^2, dynamic imbalance
     double mass;               //!< kg, reaction wheel rotor mass
