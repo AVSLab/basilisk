@@ -686,7 +686,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double posVelComp[3];
     double perturbAccel_N[3];
 	double *Omegas;             /* pointer to the RW speeds */
-    double *omegaDot_BN_B;       /* pointer to inertial body angular acceleration vector in B-frame components */
+    double *omegaDot_BN_B;      /* pointer to inertial body angular acceleration vector in B-frame components */
+    double rwF_N[3];            /* simple RW jitter force in inertial frame */
+    double rwA_N[3];            /* inertial simple RW jitter acceleration in inertial frame components */
     
     //! Begin method steps
     
@@ -801,10 +803,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                      rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
                 {
                     // convert RW jitter force from B to N frame */
-                    m33tMultV3(BN, rwIt->F_B, d2);
+                    m33tMultV3(BN, rwIt->F_B, rwF_N);
                     // add RW jitter force to net inertial acceleration
-                    v3Scale(1.0/this->compMass, d2, d2);
-                    v3Add(dX+3, d2, dX+3);
+                    v3Scale(1.0/this->compMass, rwF_N, rwA_N);
+                    v3Add(dX+3, rwA_N, dX+3);
                 }
             }
         }
