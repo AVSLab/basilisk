@@ -715,7 +715,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double omegaTilde_BN_B[3][3];    /* tilde matrix of the omega B-frame components */
     double d2[3];               /* intermediate variables */
-    double d3[3];
     double BN[3][3];
     double LocalAccels_B[3];
     double LocalAccels_N[3];
@@ -729,9 +728,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double *omegaDot_BN_B;      /* pointer to inertial body angular acceleration vector in B-frame components */
     double rwF_N[3];            /* simple RW jitter force in inertial frame */
     double rwA_N[3];            /* inertial simple RW jitter acceleration in inertial frame components */
-    double *thetasSP;            /* array of theta values for hinged SP dynamics */
-    double *thetaDotsSP;           /* array of inertial thetaDots for hinged dynamics */
-    double rDDot_CN_N[3];        /* inertial accelerration of the center of mass of the sc */
+    double *thetasSP;           /* pointer of theta values for hinged SP dynamics */
+    double *thetaDotsSP;        /* pointer of inertial derivatives of thetas for hinged dynamics */
+    double *thetaDDotsSP;       /* pointer of 2nd inertial derivatives of thetas for hinged dynamics */
+    double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
+    double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
+    double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
     double matrixA[this->SPCount][this->SPCount]; /* Matrix A needed for hinged SP dynamics */
     double matrixE[this->SPCount][this->SPCount]; /* Matrix E needed for hinged SP dynamics */
     double matrixF[this->SPCount][3]; /* Matrix F needed for hinged SP dynamics */
@@ -774,9 +776,20 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         omega_BN_BLoc[1] = X[i++];
         omega_BN_BLoc[2] = X[i++];
         Omegas = NULL;
+        thetasSP = NULL;
+        thetaDotsSP = NULL;
+        thetaDDotsSP = NULL;
         if (this->RWACount > 0)
         {
             Omegas = &X[i];
+        }
+        if (this->SPCount > 0) {
+            if (!this->useTranslation) {
+                std::cerr << "WARNING: Cannot have solar panel hinged dynamics w/o translation";
+            }
+            thetasSP = &X[i + this->RWACount + this->numRWJitter];
+            thetaDotsSP = &X[i + this->RWACount + this->numRWJitter + this->SPCount];
+            thetaDDotsSP = dX + i + this->RWACount + this->numRWJitter + this->SPCount;
         }
         omegaDot_BN_B = dX + 3 + this->useTranslation*6;
     }
@@ -918,6 +931,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
 
+        //! Rotate rDDot_CN_N into the body frame
+        m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
+
         //! - Compute hinged solar panel dynamics
         v3SetZero(c_B);
         v3SetZero(cPrime_B);
@@ -1046,7 +1062,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     v3Scale(1.0/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
                     m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
                     v3Scale(2.0, intermediateVector, intermediateVector);
-                    v3Subtract(rDDot_CN_N, intermediateVector, intermediateVector);
+                    v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
                     v3Subtract(c_B, SPIti->r_HB_B, intermediateVector2);
                     m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
                     m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
@@ -1095,7 +1111,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             //! - Modify tauRHS to include hinged solar panel dynamics
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
             v3Scale(2.0, intermediateVector, intermediateVector);
-            v3Subtract(rDDot_CN_N, intermediateVector, intermediateVector);
+            v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
             m33MultV3(omegaTilde_BN_B, c_B, intermediateVector2);
             m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
             v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
@@ -1161,7 +1177,29 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Subtract(tauRHS, this->rwaGyroTorqueBdy, tauRHS);
         v3Add(tauRHS, rwSumTorque, tauRHS);  /* add RWs torque to RHS of equation */
 
-        m33MultV3(this->compIinv, d2, omegaDot_BN_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
+        m33Inverse(ILHS, intermediateMatrix);
+        m33MultV3(intermediateMatrix, tauRHS, omegaDot_BN_B);            /* d(w)/dt = [I_RW]^-1 . (RHS) */
+
+        //! - Back solve for solar panel motion
+        mMultV(matrixF, this->SPCount, 3, omegaDot_BN_B, intermediateVector);
+        if (this->SPCount > 0) {
+            spCount = 0;
+            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
+            {
+                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
+                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+                {
+                    if (SPIt->usingHingedDynamics) {
+                        //! Set trivial derivative thetaDot = thetaDot
+                        dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount] = thetaDotsSP[spCount];
+                        //! Solve for thetaDDot
+                        vtMultM(matrixE[spCount], matrixF, this->SPCount, 3, intermediateVector);
+                        dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(matrixE[spCount], this->SPCount, vectorP);
+                        spCount++;
+                    }
+                }
+            }
+        }
 
         /* RW motor torque equations to solve for d(Omega)/dt */
         /* if RW jitter is on, solve for wheel angle derivative */
@@ -1185,8 +1223,42 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 rwCount++;
             }
         }
-        
-        v3Copy(rDDot_CN_N, dX + 3);
+
+        //! - Back solve to find translational acceleration
+        v3SetZero(vectorSumHingeDynamics);
+        v3SetZero(vectorSum2HingeDynamics);
+        if (this->SPCount > 0) {
+            spCount = 0;
+            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
+            {
+                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
+                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+                {
+                    if (SPIt->usingHingedDynamics) {
+                        v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount], SPIt->sHat3_B, intermediateVector);
+                        v3Add(intermediateVector, vectorSumHingeDynamics, vectorSumHingeDynamics);
+                        v3Scale(SPIt->massSP*SPIt->d*thetaDotsSP[spCount]*thetaDotsSP[spCount], SPIt->sHat1_B, intermediateVector);
+                        v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
+                        spCount++;
+                    }
+                }
+            }
+        }
+        v3Scale(1/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
+        v3Scale(1/mSC, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
+        v3Subtract(rDDot_CN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+        v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+        m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+        v3Scale(2.0, intermediateVector, intermediateVector);
+        v3Subtract(rDDot_BN_B, intermediateVector, intermediateVector);
+        m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
+        v3Add(rDDot_BN_B, intermediateVector, intermediateVector);
+        m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
+        m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+        v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+        //! - Rotate rDDot_BN_B back into the inertial frame
+        m33tMultV3(BN, rDDot_BN_B, dX + 3);
+
     }
 }
 
