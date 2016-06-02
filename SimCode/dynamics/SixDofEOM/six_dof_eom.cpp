@@ -352,7 +352,9 @@ void SixDofEOM::SelfInit()
         for (SPIt = (*itSP)->SolarPanelData.begin();
              SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
         {
-            this->SPCount++;
+            if (SPIt->usingHingedDynamics) {
+                this->SPCount++;
+            }
         }
     }
 
@@ -1394,7 +1396,7 @@ void SixDofEOM::integrateState(double CurrentTime)
                  rwIt != (*rWPackIt)->ReactionWheelData.end(); rwIt++)
             {
                 /* Gather values needed for energy and momentum calculations */
-                Omega = this->XState[useTranslation*6 + useRotation*6 + rwCount];
+                Omega = this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount];
                 omega_s = v3Dot(&attStates[3], rwIt->gsHat_B);
 
                 /* RW energy */
@@ -1417,6 +1419,23 @@ void SixDofEOM::integrateState(double CurrentTime)
                 rwCount++;
             }
         }
+
+        std::vector<SolarPanels *>::iterator SPPackIt;
+        std::vector<SolarPanelConfigData>::iterator SPIt;
+        uint64_t spCount = 0;
+        for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
+        {
+            for (SPIt = (*SPPackIt)->SolarPanelData.begin();
+                 SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+            {
+                if (SPIt->usingHingedDynamics) {
+                    SPIt->theta = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount];
+                    SPIt->thetaDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount + spCount];
+                    spCount++;
+                }
+            }
+        }
+
 
         //! - Grab previous energy value for rate of change of energy
         prevTotScRotKinEnergy = this->totScRotKinEnergy;
