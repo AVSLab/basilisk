@@ -79,7 +79,7 @@ def mrp_steering_tracking(show_plots):
     # Initialize the test module configuration data
     moduleConfig.inputGuidName = "inputGuidName"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.wheelSpeedsName = "reactionwheel_speeds"
+    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K1 = 0.15
