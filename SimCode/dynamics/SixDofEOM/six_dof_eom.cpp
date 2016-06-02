@@ -476,9 +476,8 @@ void SixDofEOM::SelfInit()
         for (SPIt = (*itSP)->SolarPanelData.begin();
              SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
         {
-            this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount + spIterator] = SPIt->theta;
-            spIterator++;
-            this->XState[this->useTranslation*6 + this->useRotation*6 + rwCount + spIterator] = SPIt->thetaDot;
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spIterator] = SPIt->theta;
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spIterator] = SPIt->thetaDot;
             spIterator++;
         }
     }
