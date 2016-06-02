@@ -737,9 +737,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double matrixF[this->SPCount][3]; /* Matrix F needed for hinged SP dynamics */
     double vectorP[this->SPCount]; /* Vector P needed for hinged SP dynamics */
     double matrixR[this->SPCount][3]; /* Matrix R needed for hinged SP dynamics */
-    double vectorS[3]; /* Matrix S needed for hinged SP dynamics */
-    double matrixZ[3][3]; /* Matrix Z needed for hinged SP dynamics */
-    double vectorV[3]; /* vector needed for hinged SP dynamics */
+    double tauRHS[3]; /* RHS of omegaDot equation */
+    double ILHS[3][3]; /* Inertia of left hand side of omegaDot equaion */
     double mSC; /* Mass of the space craft including solar panels */
     double ISCPntB_B[3][3]; /* Inertia of the spacecraft about point B in B frame comp. including SPs */
     double IPrimeSCPntB_B[3][3]; /* body derivative of ISCPntB_B */
@@ -1062,7 +1061,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     v3Scale(SPIti->ISPPntS_S[1][1], SPIti->sHat2_B, intermediateVector2);
                     v3Add(intermediateVector, intermediateVector2, matrixR[spCounti]);
 
-                    //! - Define a vector that will be used for S vector
+                    //! - Define a vector that will be used for tauRHS
                     m33MultV3(SPIti->rTilde_SB_B, SPIti->sHat3_B, intermediateVector);
                     v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
                     v3Scale(SPIti->ISPPntS_S[1][1], SPIti->sHat2_B, intermediateVector2);
@@ -1082,26 +1081,53 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         //! - Find E matrix for hinged solar panel dynamics
         mInverse(matrixA, this->SPCount, matrixE);
 
-        //! - Define S vector needed for hinged solar panel dynamics
-        m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-        v3Scale(2.0, intermediateVector, intermediateVector);
-        v3Subtract(rDDot_CN_N, intermediateVector, intermediateVector);
-        m33MultV3(omegaTilde_BN_B, c_B, intermediateVector2);
-        m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
-        v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
-        m33MultV3(cTilde_B, intermediateVector, intermediateVector);
-        v3Scale(mSC, intermediateVector, intermediateVector);
-        v3Subtract(extSumTorque_B, intermediateVector, vectorS);
+        /*! - compute domega/dt (see Schaub and Junkins) When the spacecraft is a rigid body with no reaction wheels, the equation is: I*omega = -omegaTilde*I*omega + L */
+        /*! - Populate inertia for LHS of the equation (this is done with intention of adding RWs/Flex/Slosh */
+        m33Copy(ISCPntB_B, ILHS);
+
+        //! - Populate the RHS of the equation
         m33MultV3(ISCPntB_B, omega_BN_BLoc, intermediateVector);
         m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-        v3Subtract(vectorS, intermediateVector, vectorS);
-        m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
-        v3Subtract(vectorS, intermediateVector, vectorS);
-        v3Subtract(vectorS, vectorSum2HingeDynamics, vectorS);
+        v3Subtract(extSumTorque_B, intermediateVector, tauRHS);
 
-        //! - compute domega/dt (see Schaub and Junkins)
-        m33MultV3(this->compI, omega_BN_BLoc, d3);        /* [I]w */
+        //! - Modify RHS of the equation with hinged solar panel dynamics
+        if (this->SPCount > 0) {
+            //! - Modify tauRHS to include hinged solar panel dynamics
+            m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+            v3Scale(2.0, intermediateVector, intermediateVector);
+            v3Subtract(rDDot_CN_N, intermediateVector, intermediateVector);
+            m33MultV3(omegaTilde_BN_B, c_B, intermediateVector2);
+            m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
+            v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
+            m33MultV3(cTilde_B, intermediateVector, intermediateVector);
+            v3Scale(mSC, intermediateVector, intermediateVector);
+            v3Subtract(tauRHS, intermediateVector, tauRHS);
+            m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
+            v3Subtract(tauRHS, intermediateVector, tauRHS);
+            v3Subtract(tauRHS, vectorSum2HingeDynamics, tauRHS);
 
+            //! Modify inertia of left hand side of the equation
+            m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
+            m33Scale(mSC, intermediateMatrix, intermediateMatrix);
+            m33Add(ILHS, intermediateMatrix, ILHS);
+            spCount = 0;
+            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
+            {
+                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
+                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+                {
+                    if (SPIt->usingHingedDynamics) {
+                        vtMultM(matrixE[spCount], matrixF, this->SPCount, 3, intermediateVector);
+                        v3OuterProduct(matrixR[spCount], intermediateVector, intermediateMatrix);
+                        m33Add(ILHS, intermediateMatrix, ILHS);
+                        spCount++;
+                    }
+                }
+            }
+
+        }
+
+        //! - Modify RHS of the equation with RWs
         uint32_t rwCount = 0;
         double rwTorque[3];
         double rwSumTorque[3];
@@ -1113,20 +1139,27 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             for (rwIt = (*RWPackIt)->ReactionWheelData.begin();
             rwIt != (*RWPackIt)->ReactionWheelData.end(); rwIt++)
             {
-                double hs =  rwIt->Js * (v3Dot(omega_BN_BLoc, rwIt->gsHat_B) + Omegas[rwCount]);
-                v3Scale(hs, rwIt->gsHat_B, d2);
-                v3Add(d3, d2, d3);
-                v3Add(this->rwaGyroTorqueBdy, d2, this->rwaGyroTorqueBdy);
+                //! - Modify inertia matrix of LHS of the omegaDot equation
+                v3OuterProduct(rwIt->gsHat_B, rwIt->gsHat_B, intermediateMatrix);
+                m33Scale(rwIt->Js, intermediateMatrix, intermediateMatrix);
+                m33Subtract(ILHS, intermediateMatrix, ILHS);
+                /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way */
+                double hs =  rwIt->Js * Omegas[rwCount];
+
+                //! - calculate RW gyro torque - omegaTilde*Gs*hs
+                v3Scale(hs, rwIt->gsHat_B, intermediateVector);
+                v3Add(this->rwaGyroTorqueBdy, intermediateVector, this->rwaGyroTorqueBdy); /* omegaTilde is premultiplied outside of the loop */
                 v3Scale(rwIt->u_current, rwIt->gsHat_B, rwTorque);
                 v3Subtract(rwSumTorque, rwTorque, rwSumTorque);         /* subtract [Gs]u */
                 v3Add(rwSumTorque, rwIt->tau_B, rwSumTorque);           /* add simple jitter torque */
                 rwCount++;
             }
         }
-        m33MultV3(omegaTilde_BN_B, d3, d2);                                  /* [tilde(w)]([I]w + [Gs]hs) */
+
+        //! - Complete rwaGyroTorque
         m33MultV3(omegaTilde_BN_B, this->rwaGyroTorqueBdy, this->rwaGyroTorqueBdy);
-        v3Subtract(rwSumTorque, d2, d2);
-        v3Add(d2, extSumTorque_B, d2);                                  /* add external torques */
+        v3Subtract(tauRHS, this->rwaGyroTorqueBdy, tauRHS);
+        v3Add(tauRHS, rwSumTorque, tauRHS);  /* add RWs torque to RHS of equation */
 
         m33MultV3(this->compIinv, d2, omegaDot_BN_B);                    /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
@@ -1152,6 +1185,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 rwCount++;
             }
         }
+        
         v3Copy(rDDot_CN_N, dX + 3);
     }
 }
