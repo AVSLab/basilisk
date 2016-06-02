@@ -90,6 +90,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
     rwCommandName = "reactionwheel_cmds"
+    thrusterCommandName = "acs_thruster_cmds"
 
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
@@ -152,8 +153,22 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         setupUtilitiesThruster.addThrustersToSpacecraft("Thrusters",
                                                        thrustersDynObject,
                                                        VehDynObject)
-        # set thruster commands (TBD)
 
+        # setup the thruster mass properties
+        thrusterPropCM = [0.0, 0.0, 1.2]
+        thrusterPropMass = 40.0
+        thrusterPropRadius = 46.0 / 2.0 / 3.2808399 / 12.0
+        sphereInerita = 2.0 / 5.0 * thrusterPropMass * thrusterPropRadius * thrusterPropRadius
+        thrusterPropInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
+        thrustersDynObject.objProps.Mass = thrusterPropMass
+        SimulationBaseClass.SetCArray(thrusterPropCM, 'double', thrustersDynObject.objProps.CoM)
+        SimulationBaseClass.SetCArray(thrusterPropInertia, 'double', thrustersDynObject.objProps.InertiaTensor)
+
+        # set thruster commands
+        ThrustMessage = thruster_dynamics.ThrustCmdStruct()
+        ThrustMessage.OnTimeRequest = 10.0
+        scSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
+        scSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
 
     if useRW:
         # add RW devices
@@ -236,7 +251,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
                         ,[-6.78159910e+06,   4.94686540e+06,   5.48674158e+06]
                         ]
-        else:
+        elif useThruster: # thrusters with no RW
+            truePos = [
+                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
+                        ,[-4.63215747e+06,   7.05703053e+06,   5.35808358e+06]
+                        ,[-5.21738942e+06,   6.58298678e+06,   5.43711335e+06]
+                        ,[-5.77274323e+06,   6.07124197e+06,   5.48500554e+06]
+                        ,[-6.29511282e+06,   5.52480503e+06,   5.50155656e+06]
+                        ,[-6.78159336e+06,   4.94686853e+06,   5.48674175e+06]
+                        ]
+        else: # natural translation
             truePos = [
                         [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
                         ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
@@ -265,6 +289,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                             ,[ 2.19957201e-01,   2.51216907e-01,  -2.08736029e-01]
                             ,[-2.33052298e-02,  -1.91126954e-01,   4.93555923e-01]
                             ]
+        elif useThruster==True: # thrusters with no RW
+            trueSigma = [
+                        [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
+                        ,[ 1.19430832e-01,  4.59254882e-01, -3.89066833e-01]
+                        ,[ 2.08138788e-01,  4.05119853e-01, -7.15382716e-01]
+                        ,[-1.20724242e-01,  2.93740864e-01, -8.36793478e-01]
+                        ,[ 3.07086772e-01, -5.36449617e-01,  6.59728850e-01]
+                        ,[ 1.18593650e-01, -3.64833149e-01,  4.52223736e-01]
+                        ]
+
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
