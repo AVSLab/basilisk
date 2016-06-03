@@ -1145,7 +1145,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
         }
 
-        //! - Modify RHS of the equation with RWs
+        //! - Modify RHS and LHS of the equation with RWs
         uint32_t rwCount = 0;
         double rwTorque[3];
         double rwSumTorque[3];
