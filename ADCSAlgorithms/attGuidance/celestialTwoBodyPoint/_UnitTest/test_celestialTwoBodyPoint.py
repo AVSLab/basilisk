@@ -141,7 +141,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     moduleConfig.singularityThresh = np.pi / 4.0
 
-    moduleConfig.prevAvail = 0
+    moduleConfig.prevAvailFlag = 0
 
     # Create input message and size it because the regular creator of that message
 
