@@ -927,11 +927,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
                 v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
-                v3Add(rDDot_CN_N, LocalAccels_N, rDDot_CN_N);
+                v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
 
+        v3Copy(dX + 3, rDDot_CN_N);
         //! Rotate rDDot_CN_N into the body frame
         m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
 
@@ -1245,20 +1246,22 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 }
             }
         }
-        v3Scale(1/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
-        v3Scale(1/mSC, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
-        v3Subtract(rDDot_CN_B, vectorSum2HingeDynamics, rDDot_BN_B);
-        v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
-        m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-        v3Scale(2.0, intermediateVector, intermediateVector);
-        v3Subtract(rDDot_BN_B, intermediateVector, intermediateVector);
-        m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
-        v3Add(rDDot_BN_B, intermediateVector, intermediateVector);
-        m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
-        m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-        v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-        //! - Rotate rDDot_BN_B back into the inertial frame
-        m33tMultV3(BN, rDDot_BN_B, dX + 3);
+        if (this->SPCount > 0) {
+            v3Scale(1/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
+            v3Scale(1/mSC, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
+            v3Subtract(rDDot_CN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+            v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+            m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+            v3Scale(2.0, intermediateVector, intermediateVector);
+            v3Subtract(rDDot_BN_B, intermediateVector, intermediateVector);
+            m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
+            v3Add(rDDot_BN_B, intermediateVector, intermediateVector);
+            m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
+            m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+            v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+            //! - Rotate rDDot_BN_B back into the inertial frame
+            m33tMultV3(BN, rDDot_BN_B, dX + 3);
+        }
 
     }
 }
