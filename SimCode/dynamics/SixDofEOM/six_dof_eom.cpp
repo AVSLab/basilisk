@@ -1095,9 +1095,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             }
         }
 
-        //! - Find E matrix for hinged solar panel dynamics
-        mInverse(matrixA, this->SPCount, matrixE);
-
         /*! - compute domega/dt (see Schaub and Junkins) When the spacecraft is a rigid body with no reaction wheels, the equation is: I*omega = -omegaTilde*I*omega + L */
         /*! - Populate inertia for LHS of the equation (this is done with intention of adding RWs/Flex/Slosh */
         m33Copy(ISCPntB_B, ILHS);
@@ -1109,6 +1106,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
         //! - Modify RHS of the equation with hinged solar panel dynamics
         if (this->SPCount > 0) {
+            //! - Find E matrix for hinged solar panel dynamics
+            mInverse(matrixA, this->SPCount, matrixE);
+
             //! - Modify tauRHS to include hinged solar panel dynamics
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
             v3Scale(2.0, intermediateVector, intermediateVector);
