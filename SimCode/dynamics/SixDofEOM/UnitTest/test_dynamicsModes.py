@@ -49,6 +49,7 @@ import setupUtilitiesThruster           # Thruster simulation setup utilties
 import reactionwheel_dynamics
 import thruster_dynamics
 import macros
+import solar_panels
 
 
 
@@ -64,27 +65,28 @@ import macros
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster", [
-    (True, True, False, False, False),
-    (False, True, False, False, False),
-    (True, False, False, False, False),
-    (False, True, True, False, False),
-    (False, True, True, True, False),
-    (True, True, True, False, False),
-    (True, True, True, True, False),
-    (True, True, False, False, True)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP", [
+    (True, True, False, False, False, False),
+    (False, True, False, False, False, False),
+    (True, False, False, False, False, False),
+    (False, True, True, False, False, False),
+    (False, True, True, True, False, False),
+    (True, True, True, False, False, False),
+    (True, True, True, True, False, False),
+    (True, True, False, False, True, False),
+    (True, True, False, False, False, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster)
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -203,7 +205,48 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         sim_model.doubleArray_setitem(cmdArray, 0, 0.020) # RW-1 [Nm]
         sim_model.doubleArray_setitem(cmdArray, 1, 0.010) # RW-2 [Nm]
         sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
-        scSim.TotalSim.WriteMessageData(rwCommandName, 8*macros.MAX_EFF_CNT, 1, cmdArray );
+        scSim.TotalSim.WriteMessageData(rwCommandName, 8*macros.MAX_EFF_CNT, 1, cmdArray )
+
+    if useHingedSP:
+        # add SPs
+        VehDynObject.PositionInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
+        VehDynObject.VelocityInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
+        VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.0, 0.0, 0.0])
+        VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.1, -0.1, 0.1])
+        panelSet1 = solar_panels.SolarPanels()
+        panel1 = solar_panels.SolarPanelConfigData()
+        panel2 = solar_panels.SolarPanelConfigData()
+
+        # Define Variable for panel 1
+        panel1.massSP = 100
+        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel1.ISPPntS_S)
+        panel1.d = 1.5
+        panel1.k = 100.0
+        panel1.c = 0.0
+        SimulationBaseClass.SetCArray([0.5, 0, 1], "double", panel1.r_HB_B)
+        SimulationBaseClass.SetCArray([-1, 0, 0, 0, -1, 0, 0, 0, 1], "double", panel1.HB)
+        panel1.theta = 5.0*numpy.pi/180
+        panel1.thetaDot = 0.0
+        panel1.usingHingedDynamics = True
+
+        # Define Variables for panel 2
+        panel2.massSP = 100.0
+        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel2.ISPPntS_S)
+        panel2.d = 1.5
+        panel2.k = 100
+        panel2.c = 0.0
+        SimulationBaseClass.SetCArray([-0.5, 0, 1], "double", panel2.r_HB_B)
+        SimulationBaseClass.SetCArray([1, 0, 0, 0, 1, 0, 0, 0, 1], "double", panel2.HB)
+        panel2.theta = 0.0
+        panel2.thetaDot = 0.0
+        panel2.usingHingedDynamics = True
+
+        panelSet1.AddSolarPanel(panel1)
+        panelSet1.AddSolarPanel(panel2)
+        VehDynObject.addSolarPanelSet(panelSet1)
+
+        VehDynObject.useGravity = False
+
 
 
     # add objects to the task process
@@ -214,11 +257,19 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     scSim.AddModelToTask(unitTaskName, spiceObject)
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
+    if useHingedSP:
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].SolarPanelData[0].theta", macros.sec2nano(120.))
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].SolarPanelData[1].theta", macros.sec2nano(120.))
+
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
+
+    if useHingedSP:
+        theta1 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].SolarPanelData[0].theta")
+        theta2 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].SolarPanelData[1].theta")
 
     # log the data
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
@@ -260,6 +311,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511282e+06,   5.52480503e+06,   5.50155656e+06]
                         ,[-6.78159336e+06,   4.94686853e+06,   5.48674175e+06]
                         ]
+        elif useRotation==True and useHingedSP==True: # Hinged Solar Panel Dynamics
+            truePos = [
+                        [0.0,                0.0,               0.0]
+                        ,[-2.53742996478815, -2.84830940967875, 0.216182452815001]
+                        ,[-5.38845294582063, -5.29411572920721, 0.0214874807180885]
+                        ,[-7.8808739903179,  -8.17415157897987, 0.15545245637636]
+                        ,[-10.5787631792684, -10.7111009304237, 0.143079770048844]
+                        ,[-13.3842058040891, -13.2968874812058, 0.155873769585104]
+                        ]
         else: # natural translation
             truePos = [
                         [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
@@ -298,7 +358,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 3.07086772e-01, -5.36449617e-01,  6.59728850e-01]
                         ,[ 1.18593650e-01, -3.64833149e-01,  4.52223736e-01]
                         ]
-
+        elif useHingedSP==True and useTranslation==True: #Hinged Solar Panel Dynamics
+                        trueSigma = [
+                        [0.0,             0.0,            0.0]
+                        ,[-0.394048228873186, -0.165364626297029, 0.169133385881799]
+                        ,[0.118117327421145,  -0.0701596164151959, 0.295067094904904]
+                        ,[-0.128038074707568, -0.325975851032536, -0.00401165652329442]
+                        ,[-0.163301363833482, -0.366780426316819, 0.384007061361585]
+                        ,[0.228198675962671, -0.329880460528557,  0.266599868549938]
+                        ]
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
@@ -319,7 +387,10 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
 
     # compare the module results to the truth values
-    accuracy = 1e-2
+    if useHingedSP==True:
+        accuracy = 1e-9
+    else:
+        accuracy = 1e-2
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
@@ -345,6 +416,7 @@ if __name__ == "__main__":
                            True,        # useRotation
                            True,        # useRW
                            True,        # useJitter
-                           False        # useThruster
+                           False,       # useThruster
+                           False         # useHingedSP
                            )
 
