@@ -1128,7 +1128,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 mInverse(matrixA, this->SPCount, matrixE);
             }
 
-            //! - Modify tauRHS ILHS to include hinged solar panel dynamics
+            //! - Modify tauRHS and ILHS to include hinged dynamics
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
             v3Scale(2.0, intermediateVector, intermediateVector);
             v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
@@ -1154,6 +1154,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                         vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
                         v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
                         m33Add(ILHS, intermediateMatrix, ILHS);
+
+                        //! - Define vector needed for modification of tauRHS
                         v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP), &matrixR[spCount*3], intermediateVector);
                         v3Add(vectorSum3HingeDynamics, intermediateVector, vectorSum3HingeDynamics);
                         spCount++;
@@ -1162,6 +1164,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             }
 
         }
+        //! Modify tauRHS with Hinged dynamics 
         v3Subtract(tauRHS, vectorSum3HingeDynamics, tauRHS);
 
         //! - Modify RHS and LHS of the equation with RWs
