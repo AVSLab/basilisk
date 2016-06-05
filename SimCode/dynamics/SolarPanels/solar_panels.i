@@ -27,6 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // Instantiate templates used by example
 namespace std {
    %template(IntVector) vector<int>;
+   %template(SolarPanelVector) std::vector<SolarPanelConfigData>;
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;

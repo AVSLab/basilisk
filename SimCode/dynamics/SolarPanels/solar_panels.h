@@ -26,13 +26,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //! @brief Container for Solar Panel information for hinged solar panel dynamics*/
 typedef struct {
     double massSP;             //!< kg, mass of solar panel
-    double ISPPntS_S[3][3];    //!< kg-m^2, Inertia of solar panel about point S in S frame components
+    double ISPPntS_S[9];    //!< kg-m^2, Inertia of solar panel about point S in S frame components
     double d;                  //!< m, distance from hinge point to solar panel center of mass
     double k;                  //!< N-m/rad, torsional spring constant of solar panel hinge
     double c;                  //!< N-m-s/rad, rotational damping coefficient of solar panel hinge
     double r_HB_B[3];          //!< m, vector pointing from body frame origin to Hinge location
     double rTilde_HB_B[3][3];  //!< Tilde matrix of r_HB_B
-    double HB[3][3];           //!< DCM from body frame to hinge frame
+    double HB[9];           //!< DCM from body frame to hinge frame
     double SH[3][3];           //!< DCM from hinge to solar panel (S) frame
     double SB[3][3];           //!< DCM from body to S frame
     double omega_BN_S[3];      //!< omega_BN in S frame components

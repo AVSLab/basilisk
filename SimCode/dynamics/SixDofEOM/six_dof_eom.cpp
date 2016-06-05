@@ -24,7 +24,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <math.h>
 #include "architecture/messaging/system_messaging.h"
 
-
 /*--------------------------------------------------------------------------------------------------*/
 // GravityBodyData implementation
 
@@ -232,6 +231,7 @@ SixDofEOM::SixDofEOM()
 
     this->useTranslation = false;
     this->useRotation    = false;
+    this->useGravity     = true;  /* By default gravity will be on, but is only enable if translation is on as well */
 
     /* initialize some spacecraft states to default values.  The user should always override these values
      with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
@@ -715,7 +715,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double omega_BN_BLoc[3];
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double omegaTilde_BN_B[3][3];    /* tilde matrix of the omega B-frame components */
-    double d2[3];               /* intermediate variables */
+    double intermediateVector[3];               /* intermediate variables */
+    double intermediateVector2[3];              /* intermediate variables */
+    double intermediateMatrix[3][3];            /* intermediate variables */
+    double intermediateMatrix2[3][3];           /* intermediate variables */
     double BN[3][3];
     double LocalAccels_B[3];
     double LocalAccels_N[3];
@@ -735,11 +738,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
-    double matrixA[this->SPCount][this->SPCount]; /* Matrix A needed for hinged SP dynamics */
-    double matrixE[this->SPCount][this->SPCount]; /* Matrix E needed for hinged SP dynamics */
-    double matrixF[this->SPCount][3]; /* Matrix F needed for hinged SP dynamics */
-    double vectorP[this->SPCount]; /* Vector P needed for hinged SP dynamics */
-    double matrixR[this->SPCount][3]; /* Matrix R needed for hinged SP dynamics */
+    double *matrixA; /* Matrix A needed for hinged SP dynamics */
+    double *matrixE; /* Matrix E needed for hinged SP dynamics */
+    double *matrixF; /* Matrix F needed for hinged SP dynamics */
+    double *vectorP; /* Vector P needed for hinged SP dynamics */
+    double *matrixR; /* Matrix R needed for hinged SP dynamics */
     double tauRHS[3]; /* RHS of omegaDot equation */
     double ILHS[3][3]; /* Inertia of left hand side of omegaDot equaion */
     double mSC; /* Mass of the space craft including solar panels */
@@ -748,14 +751,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double c_B[3]; /* vector c in B frame components needed for SP dynamics */
     double cTilde_B[3][3]; /* Tilde matrix of c_B */
     double cPrime_B[3]; /* body time derivative of c_B */
-    double intermediateVector[3];
-    double intermediateVector2[3];
-    double intermediateMatrix[3][3];
-    double intermediateMatrix2[3][3];
-    double vectorSumHingeDynamics[3];
-    double vectorSum2HingeDynamics[3];
+    double vectorSumHingeDynamics[3];           /* intermediate variables */
+    double vectorSum2HingeDynamics[3];          /* intermediate variables */
+    double vectorSum3HingeDynamics[3];          /* intermediate variables */
+    //! Populate variable size matrices and arrays
+    matrixA = new double[this->SPCount*this->SPCount];
+    matrixE = new double[this->SPCount*this->SPCount];
+    matrixF = new double[this->SPCount*3];
+    vectorP = new double[this->SPCount];
+    matrixR = new double[this->SPCount*3];
 
-    
     //! Begin method steps
     
     //! - Set local state variables based on the input state
@@ -805,14 +810,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     computeCompositeProperties();
 
     v3SetZero(rDDot_CN_N);
-    if (this->useTranslation){
+    if (this->useTranslation && this->useGravity){
         //! - compute inertial velocity
         v3Copy(v_BN_NLoc, dX);
 
         //! - Get current position magnitude and compute the 2-body gravitational accels
         rmag = v3Norm(r_BN_NLoc);
-        v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, d2);
-        v3Add(d2, dX+3, dX+3);
+        v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, intermediateVector);
+        v3Add(intermediateVector, dX+3, dX+3);
 
         /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
         if(CentralBody->UseJParams)
@@ -888,8 +893,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                 }
             }
         }
-        //! - Copy acceleration center of mass acceleration
-        v3Copy(dX + 3, rDDot_CN_N);
+    }
+
+    //! - Need to perform same vdot = xdot for non gravity cases
+    if (this->useTranslation && !useGravity) {
+        v3Copy(v_BN_NLoc, dX);
     }
 
     if(this->useRotation){
@@ -932,7 +940,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
 
+        //! - Copy acceleration center of mass acceleration
         v3Copy(dX + 3, rDDot_CN_N);
+
         //! Rotate rDDot_CN_N into the body frame
         m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
 
@@ -958,7 +968,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     Mi(thetasSP[spCount], 2, SPIt->SH);
 
                     //! - Define DCM from body to S
-                    m33MultM33(SPIt->SH, SPIt->HB, SPIt->SB);
+                    mMultM(SPIt->SH, 3, 3, SPIt->HB, 3, 3, SPIt->SB);
 
                     //! - Define unit direction vectors
                     v3Copy(SPIt->SB[0], SPIt->sHat1_B);
@@ -983,7 +993,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     m33MultV3(SPIt->SB, omega_BN_BLoc, SPIt->omega_BN_S);
 
                     //! - Find inertia of the spacecraft including solar panels
-                    m33MultM33(SPIt->ISPPntS_S, SPIt->SB, intermediateMatrix);
+                    mMultM(SPIt->ISPPntS_S, 3, 3, SPIt->SB, 3, 3, intermediateMatrix);
                     m33tMultM33(SPIt->SB, intermediateMatrix, intermediateMatrix);
                     m33MultM33t(SPIt->rTilde_SB_B, SPIt->rTilde_SB_B, intermediateMatrix2);
                     m33Scale(SPIt->massSP, intermediateMatrix2, intermediateMatrix2);
@@ -994,7 +1004,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     v3OuterProduct(SPIt->sHat1_B, SPIt->sHat3_B, intermediateMatrix);
                     v3OuterProduct(SPIt->sHat3_B, SPIt->sHat1_B, intermediateMatrix2);
                     m33Add(intermediateMatrix, intermediateMatrix2, intermediateMatrix);
-                    m33Scale(thetaDotsSP[spCount]*(SPIt->ISPPntS_S[2][2] - SPIt->ISPPntS_S[0][0]), intermediateMatrix, IPrimeSCPntB_B);
+                    m33Scale(thetaDotsSP[spCount]*(SPIt->ISPPntS_S[8] - SPIt->ISPPntS_S[0]), intermediateMatrix, intermediateMatrix);
+                    m33Add(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
                     v3Scale(SPIt->d*thetaDotsSP[spCount], SPIt->sHat3_B, SPIt->rPrime_SB_B);
                     v3Tilde(SPIt->rPrime_SB_B, SPIt->rPrimeTilde_SB_B);
                     m33MultM33(SPIt->rTilde_SB_B, SPIt->rPrimeTilde_SB_B, intermediateMatrix);
@@ -1016,7 +1027,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
         //! Define matrices needed for hinged solar panel dynamics
         uint32_t spCounti = 0;
-        uint32_t spCountj = 0;
+        uint32_t spCountj;
         v3SetZero(vectorSumHingeDynamics);
         v3SetZero(vectorSum2HingeDynamics);
         std::vector<SolarPanelConfigData>::iterator SPIti;
@@ -1029,6 +1040,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                  SPIti != (*SPPackIti)->SolarPanelData.end(); SPIti++)
             {
                 if (SPIti->usingHingedDynamics) {
+                    spCountj = 0;
                     for (SPPackItj = solarPanels.begin(); SPPackItj != solarPanels.end(); SPPackItj++)
                     {
                         for (SPItj = (*SPPackItj)->SolarPanelData.begin();
@@ -1037,7 +1049,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                             if (SPItj->usingHingedDynamics) {
                                 if (spCounti != spCountj) {
                                     // - Define off diagonal elements of A
-                                    matrixA[spCounti][spCountj] = - SPIti->massSP*SPIti->d*SPItj->massSP*SPItj->d/mSC*v3Dot(SPIti->sHat3_B, SPItj->sHat3_B);
+                                    matrixA[spCounti*this->SPCount+spCountj] = - SPIti->massSP*SPIti->d*SPItj->massSP*SPItj->d/mSC*v3Dot(SPIti->sHat3_B, SPItj->sHat3_B);
 
                                     // - Define vector that is needed for P vector
                                     v3Scale(SPItj->massSP*SPItj->d*thetaDotsSP[spCountj]*thetaDotsSP[spCountj], SPItj->sHat1_B, intermediateVector);
@@ -1050,15 +1062,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
                     }
                     //! - Define diagonal elements of A matrix
-                    matrixA[spCounti][spCounti] = SPIti->ISPPntS_S[1][1] + (SPIti->massSP - SPIti->massSP*SPIti->massSP/mSC)*SPIti->d*SPIti->d;
+                    matrixA[spCounti*this->SPCount + spCounti] = SPIti->ISPPntS_S[4] + (SPIti->massSP - SPIti->massSP*SPIti->massSP/mSC)*SPIti->d*SPIti->d;
 
                     //! - Define F matrix
                     m33Subtract(cTilde_B, SPIti->rTilde_HB_B, intermediateMatrix);
                     v3tMultM33(SPIti->sHat3_B, intermediateMatrix, intermediateVector);
                     v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                    v3Scale(SPIti->ISPPntS_S[1][1] + SPIti->massSP*SPIti->d+SPIti->d, SPIti->sHat2_B, intermediateVector2);
+                    v3Scale(SPIti->ISPPntS_S[4] + SPIti->massSP*SPIti->d*SPIti->d, SPIti->sHat2_B, intermediateVector2);
                     v3Add(intermediateVector, intermediateVector2, intermediateVector);
-                    v3Scale(-1.0, intermediateVector, matrixF[spCounti]);
+                    v3Scale(-1.0, intermediateVector, &matrixF[spCounti*3]);
 
                     //! - Define P vector
                     v3Scale(1.0/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
@@ -1070,19 +1082,19 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
                     v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
                     v3Subtract(intermediateVector, vectorSumHingeDynamics, intermediateVector);
-                    vectorP[spCounti] = - SPIti->k*thetasSP[spCounti] - SPIti->c*thetaDotsSP[spCounti] + (SPIti->ISPPntS_S[2] - SPIti->ISPPntS_S[0] + SPIti->massSP*SPIti->d*SPIti->d)*SPIti->omega_BN_S[2]*SPIti->omega_BN_S[0] - SPIti->massSP*SPIti->d*v3Dot(SPIti->sHat3_B, intermediateVector);
+                    vectorP[spCounti] = - SPIti->k*thetasSP[spCounti] - SPIti->c*thetaDotsSP[spCounti] + (SPIti->ISPPntS_S[8] - SPIti->ISPPntS_S[0] + SPIti->massSP*SPIti->d*SPIti->d)*SPIti->omega_BN_S[2]*SPIti->omega_BN_S[0] - SPIti->massSP*SPIti->d*v3Dot(SPIti->sHat3_B, intermediateVector);
 
                     //! - Define R matrix
                     m33Subtract(SPIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
                     m33MultV3(intermediateMatrix, SPIti->sHat3_B, intermediateVector);
                     v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                    v3Scale(SPIti->ISPPntS_S[1][1], SPIti->sHat2_B, intermediateVector2);
-                    v3Add(intermediateVector, intermediateVector2, matrixR[spCounti]);
+                    v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, &matrixR[spCounti*3]);
 
                     //! - Define a vector that will be used for tauRHS
                     m33MultV3(SPIti->rTilde_SB_B, SPIti->sHat3_B, intermediateVector);
                     v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                    v3Scale(SPIti->ISPPntS_S[1][1], SPIti->sHat2_B, intermediateVector2);
+                    v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
                     v3Add(intermediateVector, intermediateVector2, intermediateVector);
                     m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
                     v3Scale(thetaDotsSP[spCounti], intermediateVector, intermediateVector);
@@ -1105,12 +1117,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
         v3Subtract(extSumTorque_B, intermediateVector, tauRHS);
 
-        //! - Modify RHS of the equation with hinged solar panel dynamics
+        //! - Modify equation with hinged solar panel dynamics
+        v3SetZero(vectorSum3HingeDynamics);
         if (this->SPCount > 0) {
             //! - Find E matrix for hinged solar panel dynamics
             mInverse(matrixA, this->SPCount, matrixE);
 
-            //! - Modify tauRHS to include hinged solar panel dynamics
+            //! - Modify tauRHS ILHS to include hinged solar panel dynamics
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
             v3Scale(2.0, intermediateVector, intermediateVector);
             v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
@@ -1123,8 +1136,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
             v3Subtract(tauRHS, intermediateVector, tauRHS);
             v3Subtract(tauRHS, vectorSum2HingeDynamics, tauRHS);
-
-            //! Modify inertia of left hand side of the equation
             m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
             m33Scale(mSC, intermediateMatrix, intermediateMatrix);
             m33Add(ILHS, intermediateMatrix, ILHS);
@@ -1135,15 +1146,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                      SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
                 {
                     if (SPIt->usingHingedDynamics) {
-                        vtMultM(matrixE[spCount], matrixF, this->SPCount, 3, intermediateVector);
-                        v3OuterProduct(matrixR[spCount], intermediateVector, intermediateMatrix);
+                        vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
+                        v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
                         m33Add(ILHS, intermediateMatrix, ILHS);
+                        v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP), &matrixR[spCount*3], intermediateVector);
+                        v3Add(vectorSum3HingeDynamics, intermediateVector, vectorSum3HingeDynamics);
                         spCount++;
                     }
                 }
             }
 
         }
+        v3Subtract(tauRHS, vectorSum3HingeDynamics, tauRHS);
 
         //! - Modify RHS and LHS of the equation with RWs
         uint32_t rwCount = 0;
@@ -1179,10 +1193,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3Subtract(tauRHS, this->rwaGyroTorqueBdy, tauRHS);
         v3Add(tauRHS, rwSumTorque, tauRHS);  /* add RWs torque to RHS of equation */
 
+        //! - Solve for d(w)/dt
         m33Inverse(ILHS, intermediateMatrix);
         m33MultV3(intermediateMatrix, tauRHS, omegaDot_BN_B);            /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
         //! - Back solve for solar panel motion
+        v3SetZero(vectorSumHingeDynamics);
+        v3SetZero(vectorSum2HingeDynamics);
         mMultV(matrixF, this->SPCount, 3, omegaDot_BN_B, intermediateVector);
         if (this->SPCount > 0) {
             spCount = 0;
@@ -1195,8 +1212,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                         //! Set trivial derivative thetaDot = thetaDot
                         dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount] = thetaDotsSP[spCount];
                         //! Solve for thetaDDot
-                        vtMultM(matrixE[spCount], matrixF, this->SPCount, 3, intermediateVector);
-                        dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(matrixE[spCount], this->SPCount, vectorP);
+                        vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
+                        dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP);
+                        //! - Solve for two vectors needed for translation
+                        v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount]/mSC, SPIt->sHat3_B, intermediateVector);
+                        v3Add(intermediateVector, vectorSumHingeDynamics, vectorSumHingeDynamics);
+                        v3Scale(SPIt->massSP*SPIt->d*thetaDotsSP[spCount]*thetaDotsSP[spCount]/mSC, SPIt->sHat1_B, intermediateVector);
+                        v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
                         spCount++;
                     }
                 }
@@ -1227,43 +1249,26 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
 
         //! - Back solve to find translational acceleration
-        v3SetZero(vectorSumHingeDynamics);
-        v3SetZero(vectorSum2HingeDynamics);
         if (this->SPCount > 0) {
-            spCount = 0;
-            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
-            {
-                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
-                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
-                {
-                    if (SPIt->usingHingedDynamics) {
-                        v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount], SPIt->sHat3_B, intermediateVector);
-                        v3Add(intermediateVector, vectorSumHingeDynamics, vectorSumHingeDynamics);
-                        v3Scale(SPIt->massSP*SPIt->d*thetaDotsSP[spCount]*thetaDotsSP[spCount], SPIt->sHat1_B, intermediateVector);
-                        v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
-                        spCount++;
-                    }
-                }
-            }
-        }
-        if (this->SPCount > 0) {
-            v3Scale(1/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
-            v3Scale(1/mSC, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
-            v3Subtract(rDDot_CN_B, vectorSum2HingeDynamics, rDDot_BN_B);
-            v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
             v3Scale(2.0, intermediateVector, intermediateVector);
-            v3Subtract(rDDot_BN_B, intermediateVector, intermediateVector);
-            m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
-            v3Add(rDDot_BN_B, intermediateVector, intermediateVector);
+            v3Subtract(rDDot_CN_B, intermediateVector, rDDot_BN_B);
             m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
             m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
             v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-            //! - Rotate rDDot_BN_B back into the inertial frame
+            v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+            v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+            m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
+            v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
             m33tMultV3(BN, rDDot_BN_B, dX + 3);
         }
 
     }
+    delete [] matrixA;
+    delete [] matrixE;
+    delete [] matrixF;
+    delete [] vectorP;
+    delete [] matrixR;
 }
 
 /*! This method is used to integrate the state forward to the time specified.
@@ -1432,7 +1437,7 @@ void SixDofEOM::integrateState(double CurrentTime)
             {
                 if (SPIt->usingHingedDynamics) {
                     SPIt->theta = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount];
-                    SPIt->thetaDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount + spCount];
+                    SPIt->thetaDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spCount];
                     spCount++;
                 }
             }

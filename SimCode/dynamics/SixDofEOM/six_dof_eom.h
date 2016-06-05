@@ -155,6 +155,8 @@ public:
     double scEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
     bool   useTranslation;            //!<        Flag indicating to use translation dynamics
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
+    bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
+    std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data
@@ -163,7 +165,6 @@ private:
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
 	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RWs in body
-    std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
 };
 
 /*! @} */

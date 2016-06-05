@@ -25,6 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // Instantiate templates used by example
 namespace std {
    %template(GravityBodyDataVector) vector<GravityBodyData>;
+   %template(SolarPanelCollection) std::vector<SolarPanels *>;
 }
 
 
