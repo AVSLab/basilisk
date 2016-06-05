@@ -733,8 +733,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double rwF_N[3];            /* simple RW jitter force in inertial frame */
     double rwA_N[3];            /* inertial simple RW jitter acceleration in inertial frame components */
     double *thetasSP;           /* pointer of theta values for hinged SP dynamics */
-    double *thetaDotsSP;        /* pointer of inertial derivatives of thetas for hinged dynamics */
-    double *thetaDDotsSP;       /* pointer of 2nd inertial derivatives of thetas for hinged dynamics */
+    double *thetaDotsSP;        /* pointer of time derivatives of thetas for hinged dynamics */
+    double *thetaDDotsSP;       /* pointer of 2nd time derivatives of thetas for hinged dynamics */
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
@@ -743,10 +743,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
     double *matrixF; /* Matrix F needed for hinged SP dynamics */
     double *vectorP; /* Vector P needed for hinged SP dynamics */
     double *matrixR; /* Matrix R needed for hinged SP dynamics */
-    double tauRHS[3]; /* RHS of omegaDot equation */
-    double ILHS[3][3]; /* Inertia of left hand side of omegaDot equaion */
+    double tauRHS[3]; /* Right hand side of omegaDot equation */
+    double ILHS[3][3]; /* Left hand side of omegaDot equaion */
     double mSC; /* Mass of the space craft including solar panels */
-    double ISCPntB_B[3][3]; /* Inertia of the spacecraft about point B in B frame comp. including SPs */
+    double ISCPntB_B[3][3]; /* Inertia of the spacecraft about point B in B frame comp. including flexing SPs */
     double IPrimeSCPntB_B[3][3]; /* body derivative of ISCPntB_B */
     double c_B[3]; /* vector c in B frame components needed for SP dynamics */
     double cTilde_B[3][3]; /* Tilde matrix of c_B */
@@ -1121,7 +1121,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         v3SetZero(vectorSum3HingeDynamics);
         if (this->SPCount > 0) {
             //! - Find E matrix for hinged solar panel dynamics
-            mInverse(matrixA, this->SPCount, matrixE);
+            if (this->SPCount == 1) {
+                matrixE[0] = 1.0/matrixA[0];
+            }
+            else {
+                mInverse(matrixA, this->SPCount, matrixE);
+            }
 
             //! - Modify tauRHS ILHS to include hinged solar panel dynamics
             m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
