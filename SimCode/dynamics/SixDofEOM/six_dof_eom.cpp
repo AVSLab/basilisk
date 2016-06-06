@@ -702,9 +702,7 @@ void SixDofEOM::computeCompositeProperties()
 void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                                   GravityBodyData *CentralBody)
 {
-    
-    std::vector<ThrusterDynamics*>::iterator it;
-    std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
+
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
@@ -878,6 +876,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
 
+        std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         if (this->useRotation){
             for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
             {
@@ -927,6 +926,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         //! - Loop over the vector of thrusters and compute body force/torque
         //! - Convert the body forces to inertial for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
+        std::vector<ThrusterDynamics*>::iterator it;
         for(it=thrusters.begin(); it != thrusters.end(); it++)
         {
             ThrusterDynamics *TheEff = *it;
