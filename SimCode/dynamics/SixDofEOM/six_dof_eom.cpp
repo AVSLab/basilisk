@@ -1173,6 +1173,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         double rwSumTorque[3];
         v3SetZero(rwSumTorque);
         v3SetZero(this->rwaGyroTorqueBdy);
+        std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
         {
             std::vector<ReactionWheelConfigData>::iterator rwIt;
