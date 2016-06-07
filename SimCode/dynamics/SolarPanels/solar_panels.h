@@ -54,10 +54,10 @@ public:
     ~SolarPanels();
 
     //! Add a new solar panel to solar panel set
-    void AddSolarPanel(SolarPanelConfigData *NewSP) {SolarPanelData.push_back(*NewSP);}
+    void addSolarPanel(SolarPanelConfigData *newSP) {solarPanelData.push_back(*newSP);}
 
 public:
-    std::vector<SolarPanelConfigData> SolarPanelData;     //!< -- RW information
+    std::vector<SolarPanelConfigData> solarPanelData;
     
 private:
 };

@@ -346,11 +346,11 @@ void SixDofEOM::SelfInit()
 
     this->SPCount = 0;
     std::vector<SolarPanels *>::iterator itSP;
+    std::vector<SolarPanelConfigData>::iterator SPIt;
     for (itSP = solarPanels.begin(); itSP != solarPanels.end(); itSP++)
     {
-        std::vector<SolarPanelConfigData>::iterator SPIt;
-        for (SPIt = (*itSP)->SolarPanelData.begin();
-             SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
+        for (SPIt = (*itSP)->solarPanelData.begin();
+             SPIt != (*itSP)->solarPanelData.end(); SPIt++)
         {
             if (SPIt->usingHingedDynamics) {
                 this->SPCount++;
@@ -361,8 +361,8 @@ void SixDofEOM::SelfInit()
     this->NStates = 0;
     if(this->useTranslation) this->NStates += 6;
     if(this->useRotation)    this->NStates += 6;
-    this-> NStates += this->RWACount + this->numRWJitter;
-    this-> NStates += this->SPCount*2;
+    this->NStates += this->RWACount + this->numRWJitter;
+    this->NStates += this->SPCount*2;
     if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
@@ -473,8 +473,8 @@ void SixDofEOM::SelfInit()
     for (itSP=solarPanels.begin(); itSP != solarPanels.end(); itSP++)
     {
         std::vector<SolarPanelConfigData>::iterator SPIt;
-        for (SPIt = (*itSP)->SolarPanelData.begin();
-             SPIt != (*itSP)->SolarPanelData.end(); SPIt++)
+        for (SPIt = (*itSP)->solarPanelData.begin();
+             SPIt != (*itSP)->solarPanelData.end(); SPIt++)
         {
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spIterator] = SPIt->theta;
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spIterator] = SPIt->thetaDot;
@@ -789,7 +789,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         if (this->SPCount > 0) {
             if (!this->useTranslation) {
-                std::cerr << "WARNING: Cannot have solar panel hinged dynamics w/o translation";
+                std::cerr << "WARNING: Cannot have solar panel hinged dynamics w/o translation" << std::endl;
             }
             thetasSP = &X[i + this->RWACount + this->numRWJitter];
             thetaDotsSP = &X[i + this->RWACount + this->numRWJitter + this->SPCount];
@@ -957,8 +957,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         std::vector<SolarPanelConfigData>::iterator SPIt;
         for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
         {
-            for (SPIt = (*SPPackIt)->SolarPanelData.begin();
-                 SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+            for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                 SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
             {
                 if (SPIt->usingHingedDynamics) {
                     //! - Define tilde matrix of r_HB_B
@@ -1036,15 +1036,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         std::vector<SolarPanels *>::iterator SPPackItj;
         for (SPPackIti = solarPanels.begin(); SPPackIti != solarPanels.end(); SPPackIti++)
         {
-            for (SPIti = (*SPPackIti)->SolarPanelData.begin();
-                 SPIti != (*SPPackIti)->SolarPanelData.end(); SPIti++)
+            for (SPIti = (*SPPackIti)->solarPanelData.begin();
+                 SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
             {
                 if (SPIti->usingHingedDynamics) {
                     spCountj = 0;
                     for (SPPackItj = solarPanels.begin(); SPPackItj != solarPanels.end(); SPPackItj++)
                     {
-                        for (SPItj = (*SPPackItj)->SolarPanelData.begin();
-                             SPItj != (*SPPackItj)->SolarPanelData.end(); SPItj++)
+                        for (SPItj = (*SPPackItj)->solarPanelData.begin();
+                             SPItj != (*SPPackItj)->solarPanelData.end(); SPItj++)
                         {
                             if (SPItj->usingHingedDynamics) {
                                 if (spCounti != spCountj) {
@@ -1147,8 +1147,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             spCount = 0;
             for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
             {
-                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
-                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+                for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                     SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                 {
                     if (SPIt->usingHingedDynamics) {
                         vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
@@ -1214,15 +1214,17 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             spCount = 0;
             for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
             {
-                for (SPIt = (*SPPackIt)->SolarPanelData.begin();
-                     SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+                for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                     SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                 {
                     if (SPIt->usingHingedDynamics) {
                         //! Set trivial derivative thetaDot = thetaDot
                         dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount] = thetaDotsSP[spCount];
+
                         //! Solve for thetaDDot
                         vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
                         dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP);
+
                         //! - Solve for two vectors needed for translation
                         v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount]/mSC, SPIt->sHat3_B, intermediateVector);
                         v3Add(intermediateVector, vectorSumHingeDynamics, vectorSumHingeDynamics);
@@ -1438,7 +1440,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
-        uint64_t spCount = 0;
+        uint32_t spCount = 0;
         for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
         {
             for (SPIt = (*SPPackIt)->SolarPanelData.begin();

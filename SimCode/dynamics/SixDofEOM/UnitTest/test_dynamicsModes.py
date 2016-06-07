@@ -241,8 +241,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         panel2.thetaDot = 0.0
         panel2.usingHingedDynamics = True
 
-        panelSet1.AddSolarPanel(panel1)
-        panelSet1.AddSolarPanel(panel2)
+        panelSet1.addSolarPanel(panel1)
+        panelSet1.addSolarPanel(panel2)
         VehDynObject.addSolarPanelSet(panelSet1)
 
         VehDynObject.useGravity = False
