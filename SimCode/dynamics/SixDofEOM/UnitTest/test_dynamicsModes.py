@@ -258,8 +258,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
     if useHingedSP:
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].SolarPanelData[0].theta", macros.sec2nano(120.))
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].SolarPanelData[1].theta", macros.sec2nano(120.))
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta", macros.sec2nano(120.))
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta", macros.sec2nano(120.))
 
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
@@ -268,8 +268,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     scSim.ExecuteSimulation()
 
     if useHingedSP:
-        theta1 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].SolarPanelData[0].theta")
-        theta2 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].SolarPanelData[1].theta")
+        theta1 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta")
+        theta2 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta")
 
     # log the data
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))

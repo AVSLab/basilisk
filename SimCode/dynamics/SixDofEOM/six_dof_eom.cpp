@@ -1443,8 +1443,8 @@ void SixDofEOM::integrateState(double CurrentTime)
         uint32_t spCount = 0;
         for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
         {
-            for (SPIt = (*SPPackIt)->SolarPanelData.begin();
-                 SPIt != (*SPPackIt)->SolarPanelData.end(); SPIt++)
+            for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                 SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
             {
                 if (SPIt->usingHingedDynamics) {
                     SPIt->theta = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount];
