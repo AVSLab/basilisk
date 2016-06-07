@@ -1348,9 +1348,16 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
-    v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
-    v3Scale(TimeStep, ConservAccel, DVconservative);
-    v3Subtract(DVtot, DVconservative, LocalDV);
+    //v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
+    
+    // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this count to account for the translational/rotational flags!
+    
+    if (this->useTranslation) {
+        v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
+        v3Scale(TimeStep, ConservAccel, DVconservative);
+        v3Subtract(DVtot, DVconservative, LocalDV);
+    }
+    
     //-------------------------------------------------------
     
     v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);

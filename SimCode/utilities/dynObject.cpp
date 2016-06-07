@@ -16,16 +16,15 @@
  */
 
 
-#ifndef DYNOBJECT_H
-#define DYNOBJECT_H
+#include "utilities/dynObject.h"
 
-/*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
- */
-class dynObject {
-public:
-    dynObject();
-    virtual ~dynObject();
-    virtual void equationsOfMotion(double t, double *X, double *dX) = 0;
-};
+dynObject::dynObject()
+{
+    return;
+}
 
-#endif /* DYNOBJECT_H */
+
+dynObject::~dynObject()
+{
+    return;
+}
