@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %}
 
 %include "swig_conly_data.i"
+%array_functions(RWConfigurationElement, RWConfigArray);
 %include "vehicleConfigData.h"
 
 %pythoncode %{

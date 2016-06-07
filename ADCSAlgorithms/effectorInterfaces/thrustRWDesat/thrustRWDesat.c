@@ -52,9 +52,27 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 {
+    RWConstellation localRWData;
+    int i, j;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+    
     /*! - Get the control data message ID*/
     ConfigData->inputSpeedID = subscribeToMessage(ConfigData->inputSpeedName,
         sizeof(RWSpeedData), moduleID);
+    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+                                                   sizeof(RWConstellation), moduleID);
+    
+    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
+    
+    for(i=0; i<ConfigData->numRWAs; i=i+1)
+    {
+        for(j=0; j<3; j=j+1)
+        {
+            ConfigData->rwAlignMap[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
+        }
+    }
     
 }
 

@@ -19,8 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define _VEH_EFFECTOR_OUT_H_
 
 #include <stdint.h>
-
-#define MAX_EFF_CNT 36
+#include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

@@ -590,6 +590,29 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
         self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
         self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
+    
+        self.RWAGsMatrix = []
+        self.RWAJsList = []
+        i = 0
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        RWAlignScale = 1.0 / 25.0
+        rwClass = vehicleConfigData.RWConstellation()
+        rwPointer = vehicleConfigData.RWConfigurationElement()
+        while (i < 4):
+            self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
+            rwClockAngle += 90.0 * math.pi / 180.0
+            self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
+            SimulationBaseClass.SetCArray([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                           -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)], 'double',
+                                           rwPointer.Gs_S)
+            rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
+            vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+            i += 1
+        self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
+            vehicleConfigData.MAX_EFF_CNT*7*8, 2, "RWConstellation")
+        self.TotalSim.WriteMessageData("rwa_config_data", vehicleConfigData.MAX_EFF_CNT*7*8, 0, rwClass)
 
     def SetSpiceObject(self):
         self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -1148,22 +1171,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringRWAData.integralLimit = 0.0  # rad
         self.MRP_SteeringRWAData.numRWAs = 4
-        RWAGsMatrix = []
-        RWAJsList = []
-        i = 0
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        RWAlignScale = 1.0 / 25.0
-        while (i < self.MRP_SteeringRWAData.numRWAs):
-            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-            rwClockAngle += 90.0 * math.pi / 180.0
-            RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
-            i += 1
-        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.MRP_SteeringRWAData.GsMatrix)
-        SimulationBaseClass.SetCArray(RWAJsList, 'double', self.MRP_SteeringRWAData.JsList)
 
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
+        self.MRP_SteeringRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
@@ -1222,20 +1232,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         newThrGroup.minThrustRequest = -10.0
         newThrGroup.numEffectors = 4
         newThrGroup.maxNumCmds = 4
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        onTimeMap = [math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle)]
+        onTimeMap = []
+        for i in range(4):
+            for j in range(3):
+                onTimeMap.append(-self.RWAGsMatrix[i*3+j])
         SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
         dvAttEffect.ThrustGroupArray_setitem(self.RWAMappingData.thrGroups, 0,
                                              newThrGroup)
@@ -1244,23 +1244,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"
         self.RWANullSpaceData.inputRWSpeeds = "reactionwheel_output_states"
         self.RWANullSpaceData.outputControlName = "reactionwheel_cmds"
+        self.RWANullSpaceData.inputRWConfigData = "rwa_config_data"
         self.RWANullSpaceData.numWheels = 4
         self.RWANullSpaceData.OmegaGain = 0.002
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        GsMatrixList = [-math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle)]
-        SimulationBaseClass.SetCArray(GsMatrixList, 'double', self.RWANullSpaceData.GsMatrix)
 
     def SetdvGuidance(self):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
@@ -1301,6 +1287,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetthrustRWDesat(self):
         self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
         self.thrustRWADesatData.outputThrName = "acs_thruster_cmds"
+        self.thrustRWADesatData.inputRWConfigData = "rwa_config_data"
         self.thrustRWADesatData.maxFiring = 0.5
         self.thrustRWADesatData.numThrusters = 8
         self.thrustRWADesatData.numRWAs = 4
