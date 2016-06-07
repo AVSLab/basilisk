@@ -227,7 +227,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         SimulationBaseClass.SetCArray([-1, 0, 0, 0, -1, 0, 0, 0, 1], "double", panel1.HB)
         panel1.theta = 5.0*numpy.pi/180
         panel1.thetaDot = 0.0
-        panel1.usingHingedDynamics = True
 
         # Define Variables for panel 2
         panel2.massSP = 100.0
@@ -239,7 +238,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         SimulationBaseClass.SetCArray([1, 0, 0, 0, 1, 0, 0, 0, 1], "double", panel2.HB)
         panel2.theta = 0.0
         panel2.thetaDot = 0.0
-        panel2.usingHingedDynamics = True
 
         panelSet1.addSolarPanel(panel1)
         panelSet1.addSolarPanel(panel2)

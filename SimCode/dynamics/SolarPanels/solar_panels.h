@@ -45,7 +45,6 @@ typedef struct {
     double rPrimeTilde_SB_B[3][3];//!< Tilde matrix of rPrime_SB_B
     double theta;              //!< rad, solar panel angle
     double thetaDot;           //!< rad/s, solar panel angle rate
-    bool usingHingedDynamics;  //!< flag for using hinged dynamics
 }SolarPanelConfigData;
 
 class SolarPanels {
