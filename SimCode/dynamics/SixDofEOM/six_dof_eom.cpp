@@ -1297,7 +1297,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     double  *Xnext = new double[NStates];        /* integration state space */
     memset(X, 0x0, NStates*sizeof(double));
     memset(Xnext, 0x0, NStates*sizeof(double));
-    
+
     double TimeStep;
     double sMag;
     uint32_t CentralBodyCount = 0;
@@ -1345,7 +1345,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     }
     
     Integrator->integrate(CurrentTime, TimeStep, X, Xnext, this->NStates);
-    
+
     // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
     //v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)

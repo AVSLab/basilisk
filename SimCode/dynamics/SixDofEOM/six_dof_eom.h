@@ -26,11 +26,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+<<<<<<< HEAD
 #include "dynamics/SolarPanels/solar_panels.h"
 #include "utilities/dynObject.h"
 #include "utilities/integrator.h"
 #include "utilities/rk4Integrator.h"
 
+=======
+#include "utilities/dynObject.h"
+#include "utilities/integrator.h"
+#include "utilities/rk4Integrator.h"
+>>>>>>> eb0e8f4d0e2a332b606b91c7f24fa43bdcc2565d
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -168,7 +174,6 @@ private:
     uint32_t NStates;                 //!<        Count on states available
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
-
 	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RW in body
     integrator* Integrator;            //!<          Integrator used to integrate the EOM
 };
