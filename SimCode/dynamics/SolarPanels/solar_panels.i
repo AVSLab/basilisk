@@ -14,28 +14,23 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module six_dof_eom
-#pragma SWIG nowarn=362
+%module solar_panels
 %{
-   #include "six_dof_eom.h"
+   #include "solar_panels.h"
 %}
 
-%include "swig_common_model.i"
+%include "std_vector.i"
+%include "std_string.i"
+%include "std_map.i"
+%include "stdint.i"
 
 // Instantiate templates used by example
 namespace std {
-   %template(GravityBodyDataVector) vector<GravityBodyData>;
-   %template(SolarPanelCollection) std::vector<SolarPanels *>;
+   %template(IntVector) vector<int>;
+   %template(SolarPanelVector) std::vector<SolarPanelConfigData>;
+   %template(DoubleVector) vector<double>;
+   %template(StringVector) vector<string>;
+   %template(ConstCharVector) vector<const char*>;
 }
-
-
-%include "../utilities/coeffLoader.h"
-%include "../utilities/sphericalHarmonics.h"
 %include "sys_model.h"
-%include "dyn_effector.h"
-%include "six_dof_eom.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+%include "solar_panels.h"

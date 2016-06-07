@@ -26,6 +26,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
+#include "dynamics/SolarPanels/solar_panels.h"
+
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -105,6 +107,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void addThrusterSet(ThrusterDynamics *NewEffector);
 	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
+    void addSolarPanelSet(SolarPanels *NewEffector);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
     void computeCompositeProperties();
@@ -125,6 +128,7 @@ public:
     bool MessagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
+    uint64_t SPCount;                 //!<        Number of solar panels to model
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
     double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
     double baseMass;                  //!< [kg]   Mass of dry spacecraft structure
@@ -151,6 +155,8 @@ public:
     double scEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
     bool   useTranslation;            //!<        Flag indicating to use translation dynamics
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
+    bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
+    std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data
@@ -158,7 +164,7 @@ private:
     uint32_t NStates;                 //!<        Count on states available
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
-	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RW in body
+	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RWs in body
 };
 
 /*! @} */
