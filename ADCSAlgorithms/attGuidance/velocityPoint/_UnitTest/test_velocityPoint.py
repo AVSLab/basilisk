@@ -40,6 +40,8 @@ import velocityPoint                        # import the module that is to be te
 import simple_nav                       # import module(s) that creates the needed input message declaration
 import spice_interface
 import macros
+import numpy as np
+import astroFunctions as af
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -87,6 +89,17 @@ def velocityPointTestFunction(show_plots):
     moduleConfig.inputCelMessName = "inputCelName"
     moduleConfig.outputDataName = "outputName"
 
+    a = af.E_radius * 2.8
+    e = 0.0
+    i = 0.0
+    Omega = 0.0
+    omega = 0.0
+    f = 60 * af.D2R
+    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    r_BN_N = r
+    v_BN_N = v
+    planetPos = np.array([0.0, 0.0, 0.0])
+    planetVel = np.array([0.0, 0.0, 0.0])
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -99,11 +112,11 @@ def velocityPointTestFunction(show_plots):
                                           inputNavMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
     NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    r_BN_N = [500., 500., 1000.]
+    #r_BN_N = [500., 500., 1000.]
     SimulationBaseClass.SetCArray(r_BN_N,
                                   'double',
                                   NavStateOutData.r_BN_N)
-    v_BN_N = [10., 10., 0.]
+    #v_BN_N = [10., 10., 0.]
     SimulationBaseClass.SetCArray(v_BN_N,
                                   'double',
                                   NavStateOutData.v_BN_N)
@@ -124,11 +137,11 @@ def velocityPointTestFunction(show_plots):
                                           inputCelMessageSize,
                                           2)  
     CelBodyData = spice_interface.SpicePlanetState()
-    planetPos = [-500.,-500., 0.]
+    #planetPos = [-500.,-500., 0.]
     SimulationBaseClass.SetCArray(planetPos,
                                   'double',
                                   CelBodyData.PositionVector)
-    planetVel = [0., 0., 0.]
+    #planetVel = [0., 0., 0.]
     SimulationBaseClass.SetCArray(planetVel,
                                   'double',
                                   CelBodyData.VelocityVector)
@@ -162,9 +175,9 @@ def velocityPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [-0.163673308476, -0.395142321122, -0.163673308476],
-               [-0.163673308476, -0.395142321122, -0.163673308476],
-               [-0.163673308476, -0.395142321122, -0.163673308476]
+               [0.,              0.,              0.267949192431],
+               [0.,              0.,              0.267949192431],
+               [0.,              0.,              0.267949192431]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
@@ -184,10 +197,11 @@ def velocityPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [-0.003835534484, 0.003835534484,  0.],
-               [-0.003835534484, 0.003835534484,  0.],
-               [-0.003835534484, 0.003835534484,  0.]
+               [0.,              0.,              0.000264539877],
+               [0.,              0.,              0.000264539877],
+               [0.,              0.,              0.000264539877]
                ]
+
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -206,9 +220,9 @@ def velocityPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [1.786539057109e-05, -1.786539057109e-05, 0.],
-               [1.786539057109e-05, -1.786539057109e-05, 0.],
-               [1.786539057109e-05, -1.786539057109e-05, 0.]
+               [0.0, 0.0, 1.315647475046e-23],
+               [0.0, 0.0, 1.315647475046e-23],
+               [0.0, 0.0, 1.315647475046e-23]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12

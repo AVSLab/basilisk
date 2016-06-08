@@ -20,6 +20,7 @@ def normalize(v):
 def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu):
     r = r_BN_N - celBodyPosVec
     v = v_BN_N - celBodyVelVec
+
     h = np.cross(r, v)
     i_r = af.normalize(r)
     i_v = normalize(v)
@@ -51,10 +52,16 @@ def printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, mu)
 
 # MAIN
 # Initial Conditions (IC)
-MU_EARTH = 398600.436
-r_BN_N = np.array([500., 500., 1000.])
-v_BN_N = np.array([10., 10., 0.])
-celBodyPosVec = np.array([-500., -500., 0.])
-celBodyVelVec = np.array([0., 0., 0.])
+a = af.E_radius * 2.8
+e = 0.8
+i = 0.0
+Omega = 0.0
+omega = 0.0
+f = 60 * af.D2R
+(r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+r_BN_N = r
+v_BN_N = v
+celBodyPosVec = np.array([0.0, 0.0, 0.0])
+celBodyVelVec = np.array([0.0, 0.0, 0.0])
 # Print generated Velocity Frame for the given IC
-printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, MU_EARTH)
+printResults_VelocityPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec, af.mu_E)
