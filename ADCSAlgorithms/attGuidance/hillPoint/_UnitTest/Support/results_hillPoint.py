@@ -8,6 +8,7 @@ splitPath = path.split('ADCSAlgorithms')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 import RigidBodyKinematics as rbk
+import astroFunctions as af
 
 def normalize(v):
     norm=np.linalg.norm(v)
@@ -38,13 +39,24 @@ def printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec):
     print 'omega_HN_N = ', omega_HN_N
     print 'domega_HN_N = ', domega_HN_N
 
+    HN = rbk.MRP2C(sigma_HN)
+    M = rbk.Mi(0.5*np.pi, 1)
+    sigma = rbk.C2MRP(np.dot(M, HN))
+    print sigma
     return (sigma_HN, omega_HN_N, domega_HN_N)
 
 # MAIN
 # Initial Conditions (IC)
-r_BN_N = np.array([500., 500., 1000.])
-v_BN_N = np.array([0., 20., 0.])
-celBodyPosVec = np.array([-500., -500., 0.])
-celBodyVelVec = np.array([0., 0., 0.])
+a = af.E_radius * 2.8
+e = 0.0
+i = 0.0
+Omega = 0.0
+omega = 0.0
+f = 60 * af.D2R
+(r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+r_BN_N = r
+v_BN_N = v
+celBodyPosVec = np.array([0.0, 0.0, 0.0])
+celBodyVelVec = np.array([0.0, 0.0, 0.0])
 # Print generated Hill Frame for the given IC
 printResults_HillPoint(r_BN_N, v_BN_N, celBodyPosVec, celBodyVelVec)
