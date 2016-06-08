@@ -67,9 +67,9 @@ def printResults_orbitAxisSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, params):
         phi_spin = phi_spin0 + callTime * omega_spin
     else:
         phi_spin = computeInitialSpinAngle(o_spin, b_spin, sigma_R0N, sigma_BN)
-    Mi = rbk.Mi(phi_spin, o_spin + 1)
-    sigma_RR0 = rbk.C2MRP(Mi)
-    sigma_RN = sigma_RR0 + sigma_R0N
+    M = rbk.Mi(phi_spin, o_spin + 1)
+    RN = np.dot(M, R0N)
+    sigma_RN = rbk.C2MRP(RN)
 
     print 'callTime = ', callTime
     print 'phi_spin = ', phi_spin

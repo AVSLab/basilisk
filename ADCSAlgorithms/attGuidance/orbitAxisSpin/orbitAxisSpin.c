@@ -62,7 +62,6 @@ void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 
 void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 {
-    ConfigData->initializeAngle = BOOL_TRUE;
     ConfigData->phi_spin = ConfigData->phi_spin0;
 }
 
@@ -114,8 +113,8 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
                                    double omega_RN_N[3],
                                    double domega_RN_N[3])
 {
-    
-    double  R0N[3][3];                                      /*!< DCM from inertial to reference pointing frame */
+    double  R0N[3][3];                                      /*!< DCM from inertial to hill pointing frame */
+    double  RN[3][3];                                       /*!< DCM from inertial to hill spining current frame */
     int     o1, o2;                                         /*!< orbit axis indices */
     double  omega_spin_vec[3];
     double  sigma_spin[3];                     
@@ -139,7 +138,8 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     ConfigData->phi_spin = ConfigData->phi_spin0 + currMnvrTime * ConfigData->omega_spin;
     Mi(ConfigData->phi_spin, o1+1, M_spin);
     C2MRP(M_spin, sigma_spin);
-    v3Add(sigma_spin, sigma_R0N, sigma_RN);
+    m33MultM33(M_spin, R0N, RN);
+    C2MRP(RN, sigma_RN);
 }
 
 
