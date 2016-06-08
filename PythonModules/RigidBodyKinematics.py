@@ -594,8 +594,10 @@ def addMRP(q1, q2):
     """
 
     num = (1 - np.dot(q1, q1)) * q2 + (1 - np.dot(q2, q2)) * q1 + 2 * np.cross(q1, q2)
-    q = num / (1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2))
-
+    den = 1 + np.dot(q1, q1) * np.dot(q2, q2) - 2 * np.dot(q1, q2)
+    if np.abs(den) < 1e-5:
+        return subMRP(q1, -q2)
+    q = num / den
     return q
 
 
@@ -2271,9 +2273,14 @@ def PRV2C(q):
     """
 
     q0 = np.linalg.norm(q)
-    q1 = q[0] / q0
-    q2 = q[1] / q0
-    q3 = q[2] / q0
+    if q0 == 0.0:
+        q1 = q[0]
+        q2 = q[1]
+        q3 = q[2]
+    else:
+        q1 = q[0] / q0
+        q2 = q[1] / q0
+        q3 = q[2] / q0
     cp = np.cos(q0)
     sp = np.sin(q0)
     d1 = 1 - cp
@@ -2752,8 +2759,10 @@ def subMRP(q1, q2):
     q1m = np.linalg.norm(q1)
 
     num = (1 - q2m * q2m) * q1 - (1 - q1m * q1m) * q2 + 2 * np.cross(q1, q2)
-    q = num / (1 + (q1m * q1m) * (q2m * q2m) + 2 * np.dot(q1, q2))
-
+    den = 1 + (q1m * q1m) * (q2m * q2m) + 2 * np.dot(q1, q2)
+    if den < 1e-5:
+        return addMRP(q1, -q2)
+    q = num / den
     return q
 
 
