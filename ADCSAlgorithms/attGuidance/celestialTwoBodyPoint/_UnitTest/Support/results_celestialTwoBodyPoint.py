@@ -88,14 +88,26 @@ secPositionVec = np.array([500., 500., 500.])
 secVelocityVec = np.array([0., 0., 0.])
 singularityThresh = np.pi / 4.0
 
+a = af.E_radius * 2.8
+e = 0.0
+i = 0.0
+Omega = 0.0
+omega = 0.0
+f = 60 * af.D2R
+(r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+r_BN_N = np.array([0., 0., 0.])
+v_BN_N = np.array([0., 0., 0.])
+celPositionVec = r
+celVelocityVec = v
+
 # Begin Method
 R_P1 = celPositionVec - r_BN_N
 v_P1 = celVelocityVec - v_BN_N
 a_P1 = np.array([0., 0., 0.])
 a_P2 = np.array([0., 0., 0.])
-
 boolSecondBody = True
 
+boolSecondBody = False
 boolValidConstraint = True
 
 if (boolSecondBody == True):

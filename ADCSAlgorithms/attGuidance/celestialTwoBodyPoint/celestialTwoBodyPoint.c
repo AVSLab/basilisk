@@ -40,11 +40,6 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
-
-    ConfigData->prevAvailFlag = 0;
-    v3SetZero(ConfigData->prevConstraintAxis);
-    v3SetZero(ConfigData->prevConstraintAxisDot);
-    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
     return;
     
 }
@@ -73,10 +68,10 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 }
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->prevAvailFlag = 0;
-    v3SetZero(ConfigData->prevConstraintAxis);
-    v3SetZero(ConfigData->prevConstraintAxisDot);
-    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
+//    ConfigData->prevAvailFlag = 0;
+//    v3SetZero(ConfigData->prevConstraintAxis);
+//    v3SetZero(ConfigData->prevConstraintAxisDot);
+//    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
     return;
 }
 
@@ -98,7 +93,6 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     SpicePlanetState secPlanet;
     
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
-    uint32_t noValidConstraint;     /* Flag to know whether there is a valid constraint to point towards a secondary body */
     
     double R_P1[3];                 /* Relative position vector of the primary planet wrt the spacecraft point */
     double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
@@ -117,13 +111,14 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     
     v3Subtract(primPlanet.PositionVector, navData.r_BN_N, R_P1);
     v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, v_P1);
+    
     v3SetZero(a_P1);
     v3SetZero(a_P2);
     
-    noValidConstraint = 0;
     if(ConfigData->inputSecID >= 0)
     {
         ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet, moduleID);
+        
         v3Subtract(secPlanet.PositionVector, navData.r_BN_N, R_P2);
         v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, v_P2);
         v3Normalize(R_P1, R_P1_hat);
@@ -135,18 +130,9 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
         } else {
             platAngDiff = acos(dotProduct);
         }
-        if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvailFlag == 1)
-        {
-            v3Copy(ConfigData->prevConstraintAxis, R_P2);
-            v3Copy(ConfigData->prevConstraintAxisDot, v_P2);
-            v3Copy(ConfigData->prevConstraintAxisDoubleDot, a_P2);
-        }
-        else if (fabs(platAngDiff) < ConfigData->singularityThresh && ConfigData->prevAvailFlag != 1)
-        {
-            noValidConstraint = 1;
-        }
     }
-    if(ConfigData->inputSecID < 0 || noValidConstraint == 1)
+
+    if(ConfigData->inputSecID < 0 || fabs(platAngDiff) < ConfigData->singularityThresh)
     {
         v3Cross(R_P1, v_P1, R_P2);
         v3Cross(R_P1, a_P1, v_P2);
@@ -156,11 +142,6 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
                                  ConfigData->attRefOut.sigma_RN,
                                  ConfigData->attRefOut.omega_RN_N,
                                  ConfigData->attRefOut.domega_RN_N);
-    
-    v3Copy(R_P2, ConfigData->prevConstraintAxis);
-    v3Copy(v_P2, ConfigData->prevConstraintAxisDot);
-    v3Copy(a_P2, ConfigData->prevConstraintAxisDoubleDot);
-    ConfigData->prevAvailFlag = 1;
     
     /* Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),

@@ -49,17 +49,13 @@ sys.path.append(splitPath[0] + '/PythonModules')
 # Import all of the modules that we are going to be called in this simulation
 
 import SimulationBaseClass
-
 import alg_contain
-
 import unitTestSupport  # general support file with common unit test functions
-
 import celestialTwoBodyPoint  # module that is to be tested
-
 import simple_nav  # module that creates needed input
-
 import spice_interface  # module that creates needed input
 import macros
+import astroFunctions as af
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -135,13 +131,25 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     moduleConfig.inputCelMessName = "inputCelMessName"
 
-    moduleConfig.inputSecMessName = "inputSecMessName"
+    #moduleConfig.inputSecMessName = "inputSecMessName"
 
     moduleConfig.outputDataName = "outputName"
 
-    moduleConfig.singularityThresh = np.pi / 4.0
+    moduleConfig.singularityThresh = 1.0 * af.D2R
 
-    moduleConfig.prevAvailFlag = 0
+
+    # Previous Computation of Initial Conditions for the test
+    a = af.E_radius * 2.8
+    e = 0.0
+    i = 0.0
+    Omega = 0.0
+    omega = 0.0
+    f = 60 * af.D2R
+    (r, v) = af.OE2RV(af.mu_E, a, e, i, Omega, omega, f)
+    r_BN_N = np.array([0., 0., 0.])
+    v_BN_N = np.array([0., 0., 0.])
+    celPositionVec = r
+    celVelocityVec = v
 
     # Create input message and size it because the regular creator of that message
 
@@ -158,19 +166,10 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                           inputNavMessageSize, 2)
 
     NavStateOutData = simple_nav.NavStateOut()  # Create a structure for the input message
-
-    r_BN_N = [500., 500., 1000.]
-
     SimulationBaseClass.SetCArray(r_BN_N, 'double', NavStateOutData.r_BN_N)
-
-    v_BN_N = [0., 20., 0.]
-
     SimulationBaseClass.SetCArray(v_BN_N, 'double', NavStateOutData.v_BN_N)
-
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
-
                                           inputNavMessageSize,
-
                                           0, NavStateOutData)
 
     #   Spice Input Message of Primary Body
@@ -186,13 +185,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                           inputSpiceMessageSize, 2)
 
     CelBodyData = spice_interface.SpicePlanetState()
-
-    celPositionVec = [-500., -500., 0.]
-
     SimulationBaseClass.SetCArray(celPositionVec, 'double', CelBodyData.PositionVector)
-
-    celVelocityVec = [0., 0., 0.]
-
     SimulationBaseClass.SetCArray(celVelocityVec, 'double', CelBodyData.VelocityVector)
 
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
@@ -203,27 +196,27 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Spice Input Message of Secondary Body
 
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-
-                                          moduleConfig.inputSecMessName,
-
-                                          inputSpiceMessageSize, 2)
-
-    SecBodyData = spice_interface.SpicePlanetState()
-
-    secPositionVec = [500., 500., 500.]
-
-    SimulationBaseClass.SetCArray(secPositionVec, 'double', SecBodyData.PositionVector)
-
-    secVelocityVec = [0., 0., 0.]
-
-    SimulationBaseClass.SetCArray(secVelocityVec, 'double', SecBodyData.VelocityVector)
-
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputSecMessName,
-
-                                          inputSpiceMessageSize,
-
-                                          0, SecBodyData)
+    # unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+    #
+    #                                       moduleConfig.inputSecMessName,
+    #
+    #                                       inputSpiceMessageSize, 2)
+    #
+    # SecBodyData = spice_interface.SpicePlanetState()
+    #
+    # secPositionVec = [500., 500., 500.]
+    #
+    # SimulationBaseClass.SetCArray(secPositionVec, 'double', SecBodyData.PositionVector)
+    #
+    # secVelocityVec = [0., 0., 0.]
+    #
+    # SimulationBaseClass.SetCArray(secVelocityVec, 'double', SecBodyData.VelocityVector)
+    #
+    # unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputSecMessName,
+    #
+    #                                       inputSpiceMessageSize,
+    #
+    #                                       0, SecBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it
 
@@ -259,9 +252,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-        [-0.041217418601, 0.48397569102, -0.371367609246],
-        [-0.041217418601, 0.48397569102, -0.371367609246],
-        [-0.041217418601, 0.48397569102, -0.371367609246]
+        [0.379795897113, 0.219275263435, 0.219275263435],
+        [0.379795897113, 0.219275263435, 0.219275263435],
+        [0.379795897113, 0.219275263435, 0.219275263435]
     ]
 
     # compare the module results to the truth values
@@ -295,9 +288,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # set the filtered output truth states
 
     trueVector = [
-        [-0.023333333333, -0.016666666667, -0.01],
-        [-0.023333333333, -0.016666666667, -0.01],
-        [-0.023333333333, -0.016666666667, -0.01]
+        [0.0, 0.0, 0.000264539877],
+        [0.0, 0.0, 0.000264539877],
+        [0.0, 0.0, 0.000264539877]
     ]
 
     # compare the module results to the truth values
@@ -331,9 +324,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # set the filtered output truth states
 
     trueVector = [
-        [-0.000158637794, -0.000976447301, 0.00033830776],
-        [-0.000158637794, -0.000976447301, 0.00033830776],
-        [-0.000158637794, -0.000976447301, 0.00033830776]
+        [-6.998134641547e-08, -6.506313905857e-24, 0.0],
+        [-6.998134641547e-08, -6.506313905857e-24, 0.0],
+        [-6.998134641547e-08, -6.506313905857e-24, 0.0]
     ]
 
     # compare the module results to the truth values
