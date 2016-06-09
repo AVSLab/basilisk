@@ -25,8 +25,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! This is the constructor.  It sets some defaul initializers that can be
  overriden by the user.*/
-ThrusterDynamics::ThrusterDynamics():
-    stepsInRamp(30) // I think this would be equivalent to num.CurrentThruster->ThrusterOffRamp.size()
+ThrusterDynamics::ThrusterDynamics()
+    : stepsInRamp(30) // I think this would be equivalent to num.CurrentThruster->ThrusterOffRamp.size()
     , InputCmds("acs_thruster_cmds")
     , thrusterOutMsgNameBufferCount(2)
     , prevFireTime(0.0)
@@ -64,8 +64,8 @@ void ThrusterDynamics::SelfInit()
     IncomingCmdBuffer = new ThrustCmdStruct[ThrusterData.size()];
     
     std::vector<ThrusterConfigData>::iterator it;
-    uint64_t localThrustMsgId;
-    std::string localThrustMsgName;
+    uint64_t tmpThrustMsgId;
+    std::string tmpThrustMsgName;
     int thrustIdx = 0;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
@@ -73,17 +73,16 @@ void ThrusterDynamics::SelfInit()
          In the future a better way to handle this distinction should be implemented - Mar Cols */
         if (std::strcmp(this->ModelTag.c_str(), "ACSThrusterDynamics") == 0)
         {
-            localThrustMsgName = "acs_thruster_" + std::to_string(thrustIdx) + "_data";
-            localThrustMsgId = SystemMessaging::GetInstance()->
-            CreateNewMessage(localThrustMsgName, sizeof(ThrusterOutputData), this->thrusterOutMsgNameBufferCount, "ThrusterOutputData", moduleID);
+            tmpThrustMsgName = "acs_thruster_" + std::to_string(thrustIdx) + "_data";
+            tmpThrustMsgId = SystemMessaging::GetInstance()->
+            CreateNewMessage(tmpThrustMsgName, sizeof(ThrusterOutputData), this->thrusterOutMsgNameBufferCount, "ThrusterOutputData", moduleID);
             
-            this->thrusterOutMsgNames.push_back(localThrustMsgName);
-            this->thrusterOutMsgIds.push_back(localThrustMsgId);
+            this->thrusterOutMsgNames.push_back(tmpThrustMsgName);
+            this->thrusterOutMsgIds.push_back(tmpThrustMsgId);
             
             thrustIdx++;
         }
     }
-    
 }
 
 /*! This method is used to connect the input command message to the thrusters.
@@ -112,21 +111,21 @@ void ThrusterDynamics::WriteOutputMessages(uint64_t CurrentClock)
     int idx = 0;
     std::vector<ThrusterConfigData>::iterator it;
 //    std::vector<ThrusterOutputData>acsThrusters;
-    ThrusterOutputData tempThruster;
+    ThrusterOutputData tmpThruster;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
         /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
          In the future a better way to handle this distinction should be implemented - Mar Cols */
         if (std::strcmp(this->ModelTag.c_str(), "ACSThrusterDynamics") == 0)
         {
-            tempThruster.thrusterLocation[0] = it->ThrusterLocation[0];
-            tempThruster.thrusterLocation[1] = it->ThrusterLocation[1];
-            tempThruster.thrusterLocation[2] = it->ThrusterLocation[2];
-            tempThruster.thrusterDirection[0] = it->ThrusterDirection[0];
-            tempThruster.thrusterDirection[1] = it->ThrusterDirection[1];
-            tempThruster.thrusterDirection[2] = it->ThrusterDirection[2];
-            tempThruster.maxThrust = it->MaxThrust;
-            tempThruster.thrustFactor = it->ThrustOps.ThrustFactor;
+            tmpThruster.thrusterLocation[0] = it->ThrusterLocation[0];
+            tmpThruster.thrusterLocation[1] = it->ThrusterLocation[1];
+            tmpThruster.thrusterLocation[2] = it->ThrusterLocation[2];
+            tmpThruster.thrusterDirection[0] = it->ThrusterDirection[0];
+            tmpThruster.thrusterDirection[1] = it->ThrusterDirection[1];
+            tmpThruster.thrusterDirection[2] = it->ThrusterDirection[2];
+            tmpThruster.maxThrust = it->MaxThrust;
+            tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
             //            if (it->ThrustOps.ThrustFactor > 0.0)
             //            {
             //                std::cout << it->ThrustOps.ThrustFactor <<std::endl;
@@ -135,7 +134,7 @@ void ThrusterDynamics::WriteOutputMessages(uint64_t CurrentClock)
             SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
                                                          CurrentClock,
                                                          sizeof(ThrusterOutputData),
-                                                         reinterpret_cast<uint8_t*>(&tempThruster),
+                                                         reinterpret_cast<uint8_t*>(&tmpThruster),
                                                          moduleID);
 //            acsThrusters.push_back(tempThruster);
             idx ++;

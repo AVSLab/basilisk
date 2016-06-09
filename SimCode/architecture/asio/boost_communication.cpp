@@ -293,7 +293,6 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
         v3Copy(thrusters[i].thrusterDirection, this->scSim->thrusters[i].gt_B);
         scSim->thrusters[i].maxThrust = thrusters[i].maxThrust;
         scSim->thrusters[i].level = thrusters[i].thrustFactor;
-
     }
     
     for (i = 0; i < this->reactionWheels.size(); i++)
