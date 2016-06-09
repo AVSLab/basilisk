@@ -86,12 +86,7 @@ void Reset_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t callTime, u
 void Update_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Compute output */
-    computeSingleAxisSpinReference(ConfigData,
-                                   ConfigData->sigma_R0N,
-                                   callTime,
-                                   ConfigData->attRefOut.sigma_RN,
-                                   ConfigData->attRefOut.omega_RN_N,
-                                   ConfigData->attRefOut.domega_RN_N);
+    computeSingleAxisSpinReference(ConfigData, callTime);
     
     /*! - Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
@@ -102,12 +97,7 @@ void Update_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t callTime, 
 
 
 /* Function: computeSingleAxisSpinReference */
-void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData,
-                                    double sigma_R0N[3],
-                                    uint64_t callTime,
-                                    double sigma_RN[3],
-                                    double omega_RN_N[3],
-                                    double domega_RN_N[3])
+void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData, uint64_t callTime)
 {
     double currMnvrTime;
     double PRV_spin[3];
@@ -121,9 +111,9 @@ void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData,
     currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
     v3Scale(currMnvrTime, ConfigData->rotVector, PRV_spin);
     PRV2C(PRV_spin, C_spin);
-    MRP2C(sigma_R0N, R0N);
+    MRP2C(ConfigData->sigma_R0N, R0N);
     m33MultM33(C_spin, R0N, RN);
-    C2MRP(RN, sigma_RN);
-    v3Copy(ConfigData->rotVector, omega_RN_N);
-    v3SetZero(domega_RN_N);
+    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
+    v3Copy(ConfigData->rotVector, ConfigData->attRefOut.omega_RN_N);
+    v3SetZero(ConfigData->attRefOut.domega_RN_N);
 }

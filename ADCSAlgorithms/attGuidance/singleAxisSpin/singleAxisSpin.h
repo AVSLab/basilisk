@@ -50,13 +50,8 @@ extern "C" {
     void CrossInit_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t moduleID);
     void Update_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_singleAxisSpin(singleAxisSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-
-    void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData,
-                                        double sigma_R0N[3],
-                                        uint64_t callTime,
-                                        double sigma_RN[3],
-                                        double omega_RN_N[3],
-                                        double domega_RN_N[3]);
+    
+    void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData, uint64_t callTime);
     
 #ifdef __cplusplus
 }

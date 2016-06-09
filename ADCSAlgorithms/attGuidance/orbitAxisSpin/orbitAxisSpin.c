@@ -46,7 +46,7 @@ void SelfInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
-    ConfigData->phi_spin = ConfigData->phi_spin0;
+    ConfigData->mnvrStartTime = -1;
 }
 
 void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
@@ -62,7 +62,7 @@ void CrossInit_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 
 void Reset_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t moduleID)
 {
-    ConfigData->phi_spin = ConfigData->phi_spin0;
+    ConfigData->mnvrStartTime = -1;
 }
 
 
@@ -91,10 +91,7 @@ void Update_orbitAxisSpin(orbitAxisSpinConfig *ConfigData, uint64_t callTime, ui
                                   ref.sigma_RN,
                                   ref.omega_RN_N,
                                   ref.domega_RN_N,
-                                  callTime,
-                                  ConfigData->attRefOut.sigma_RN,
-                                  ConfigData->attRefOut.omega_RN_N,
-                                  ConfigData->attRefOut.domega_RN_N);
+                                  callTime);
     
     /*! - Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
@@ -108,10 +105,7 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
                                    double sigma_R0N[3],
                                    double omega_R0N_N[3],
                                    double domega_R0N_N[3],
-                                   uint64_t callTime,
-                                   double sigma_RN[3],
-                                   double omega_RN_N[3],
-                                   double domega_RN_N[3])
+                                   uint64_t callTime)
 {
     double  R0N[3][3];                                      /*!< DCM from inertial to hill pointing frame */
     double  RN[3][3];                                       /*!< DCM from inertial to hill spining current frame */
@@ -122,7 +116,12 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     double  v3[3];
     double  currMnvrTime;
     
-    currMnvrTime = callTime * 1.0E-9;
+    if (ConfigData->mnvrStartTime == -1)
+    {
+        ConfigData->mnvrStartTime = callTime;
+    }
+    currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
+    
     o1 = ConfigData->o_spin;
     o2 = o1 + 1;
     if (o2 > 2) { o2 = 0; }
@@ -130,16 +129,16 @@ void computeOrbitAxisSpinReference(orbitAxisSpinConfig *ConfigData,
     MRP2C(sigma_R0N, R0N);
     /* Compute rate */
     v3Scale(ConfigData->omega_spin, R0N[o1], omega_spin_vec);
-    v3Add(omega_spin_vec, omega_R0N_N, omega_RN_N);
+    v3Add(omega_spin_vec, omega_R0N_N, ConfigData->attRefOut.omega_RN_N);
     /* Compute acceleration */
     v3Cross(omega_R0N_N, omega_spin_vec, v3);
-    v3Add(v3, domega_R0N_N, domega_RN_N);
+    v3Add(v3, domega_R0N_N, ConfigData->attRefOut.domega_RN_N);
     /* Compute orientation */
     ConfigData->phi_spin = ConfigData->phi_spin0 + currMnvrTime * ConfigData->omega_spin;
     Mi(ConfigData->phi_spin, o1+1, M_spin);
     C2MRP(M_spin, sigma_spin);
     m33MultM33(M_spin, R0N, RN);
-    C2MRP(RN, sigma_RN);
+    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
 }
 
 
@@ -178,8 +177,8 @@ double computeInitialSpinAngle(orbitAxisSpinConfig *ConfigData,
     v3Copy(R0N[o2], RN[b2]);
     v3Cross(RN[b1], RN[b2], RN[b3]);
     
-    spin_align_angle = acos(v3Dot(BN[b1], RN[b1])); /* RN[b1] = desired b-spin axis orientation
-                                                     BN[b1] = initial b-spin axis orientation */
+    spin_align_angle = acos(v3Dot(BN[b1], RN[b1])); /*  RN[b1] = desired b-spin axis orientation
+                                                        BN[b1] = initial b-spin axis orientation */
     v3Cross(BN[b1], RN[b1], v3temp);
     v3Normalize(v3temp, spin_align_axis);
     v3Scale(spin_align_angle, spin_align_axis, spin_align_axis);
