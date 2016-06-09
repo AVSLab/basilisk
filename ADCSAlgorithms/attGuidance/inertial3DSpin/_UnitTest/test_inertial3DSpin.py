@@ -85,14 +85,14 @@ def subModuleTestFunction(show_plots):
     # Initialize the test module configuration data
     moduleConfig.outputDataName = "outputName"
     moduleConfig.integrateFlag = 1
-    sigma_RN = [0.1, 0.2, 0.3]
-    SimulationBaseClass.SetCArray(sigma_RN,
+    sigma_R0N = [0.1, 0.2, 0.3]
+    SimulationBaseClass.SetCArray(sigma_R0N,
                                   'double',
-                                  moduleConfig.sigma_RN)
-    omega_RN_N = np.array([1., -1., 0.5]) * mc.D2R
-    SimulationBaseClass.SetCArray(omega_RN_N,
+                                  moduleConfig.sigma_R0N)
+    omega_R0N_N = np.array([1., -1., 0.5]) * mc.D2R
+    SimulationBaseClass.SetCArray(omega_R0N_N,
                                   'double',
-                                  moduleConfig.omega_RN_N)
+                                  moduleConfig.omega_R0N_N)
 
 
 

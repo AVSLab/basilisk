@@ -99,15 +99,9 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
     else {
         dt = (callTime - ConfigData->priorTime)*NANO2SEC;
     }
-    
     ConfigData->priorTime = callTime;
     /* compute and store output message */
-    computeInertialSpinReference(ConfigData,
-                                 ConfigData->integrateFlag,
-                                 dt,
-                                 ConfigData->attRefOut.sigma_RN,
-                                 ConfigData->attRefOut.omega_RN_N,
-                                 ConfigData->attRefOut.domega_RN_N);
+    computeInertialSpinReference(ConfigData, dt);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
 
@@ -131,12 +125,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
  *   omega_RN_N = reference angluar velocity vector in body frame components
  *   domega_RN_N = reference angular acceleration vector in body frame componets
  */
-void computeInertialSpinReference(inertial3DSpinConfig *ConfigData,
-                                  int    integrateFlag,
-                                  double dt,
-                                  double sigma_RN[3],
-                                  double omega_RN_N[3],
-                                  double domega_RN_N[3])
+void computeInertialSpinReference(inertial3DSpinConfig *ConfigData, double dt)
 {
     double  RN[3][3];               /*!< DCM from inertial to reference frame */
     double  B[3][3];                /*!< MRP rate matrix */
@@ -144,19 +133,19 @@ void computeInertialSpinReference(inertial3DSpinConfig *ConfigData,
     double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
 
 
-    if (integrateFlag == BOOL_TRUE) {
+    if (ConfigData->integrateFlag == BOOL_TRUE) {
         /* integrate reference attitude motion */
-        MRP2C(ConfigData->sigma_RN, RN);
-        m33MultV3(RN, ConfigData->omega_RN_N, omega_RN_R);
-        BmatMRP(ConfigData->sigma_RN, B);
+        MRP2C(ConfigData->sigma_R0N, RN);
+        m33MultV3(RN, ConfigData->omega_R0N_N, omega_RN_R);
+        BmatMRP(ConfigData->sigma_R0N, B);
         m33Scale(0.25*dt, B, B);
         m33MultV3(B, omega_RN_R, v3Temp);
-        v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
-        MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
+        v3Add(ConfigData->sigma_R0N, v3Temp, ConfigData->sigma_R0N);
+        MRPswitch(ConfigData->sigma_R0N, 1.0, ConfigData->sigma_R0N);
     }
 
-    v3Copy(ConfigData->sigma_RN, sigma_RN);
-    v3Copy(ConfigData->omega_RN_N, omega_RN_N);
-    v3SetZero(domega_RN_N);
+    v3Copy(ConfigData->sigma_R0N, ConfigData->attRefOut.sigma_RN);
+    v3Copy(ConfigData->omega_R0N_N, ConfigData->attRefOut.omega_RN_N);
+    v3SetZero(ConfigData->attRefOut.domega_RN_N);
 
 }
