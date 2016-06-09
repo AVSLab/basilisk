@@ -72,6 +72,15 @@ typedef struct {
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 }ThrusterConfigData;
 
+/*! This structure is used in the messaging system to communicate what the
+ state of the vehicle is currently.*/
+typedef struct {
+    double thrusterLocation[3];                     //!< m  Current position vector (inertial)
+    double thrusterDirection[3];                    //!< -- Unit vector of thruster pointing
+    double maxThrust;                               //!< N  Steady state thrust of thruster
+    double thrustFactor;                            //!< -- Current Thrust Percentage
+}ThrusterOutputData;
+
 //! @brief Input container for thruster firing requests.
 /*! This structure is used for the array of thruster commands.  It is pretty
  sparse, but it is included as a structure for growth and for clear I/O
@@ -114,13 +123,11 @@ public:
         std::vector<ThrusterTimePair> *thrRamp);
     
 public:
-    std::string ConfigDataOutMsgName;
     int stepsInRamp;
-    
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
-    std::string OutputDataString;                  //!< -- port to use for output data
-    uint64_t OutputBufferCount;                    //!< -- Count on number of buffers to output
+    uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
+    std::vector<std::string> thrusterOutMsgNames;                //!< -- Message name for all thruster data
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double StrForce[3];                            //!< N  Computed force in str for thrusters
     double StrTorque[3];                           //!< Nm Computed torque in str for thrusters
@@ -128,12 +135,11 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
-    int64_t ConfigDataOutMsgID;
-    
-    int64_t CmdsInMsgID;                           //!< -- Message ID for incoming data
-    int64_t StateOutMsgID;                         //!< -- Message ID for outgoing data
-    ThrustCmdStruct *IncomingCmdBuffer;            //!< -- One-time allocation for savings
-    uint64_t prevCommandTime;                      //!< -- Time for previous valid thruster firing
+    std::vector<uint64_t> thrusterOutMsgIds;                      //!< -- Message ID of each thruster
+    std::vector<ThrusterOutputData> thrusterOutBuffer; //!< -- Message buffer for thruster data
+    int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
+    ThrustCmdStruct *IncomingCmdBuffer;             //!< -- One-time allocation for savings
+    uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 };
 
 /*! @} */

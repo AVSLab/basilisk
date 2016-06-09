@@ -100,21 +100,19 @@ public:
                          double CurrentTime);
 
 public:
-    std::string ConfigDataOutMsgName;
-    
     std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
     std::string InputCmds;                                      //!< -- message used to read command inputs
     std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
     std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
-    double sumF_B[3];                                              //!< N  Computed jitter force in body frame
-    double sumTau_B[3];                                            //!< N-m Computed jitter torque in body frame
+    double sumF_B[3];                                           //!< N  Computed jitter force in body frame
+    double sumTau_B[3];                                         //!< N-m Computed jitter torque in body frame
     
 private:
-    int64_t ConfigDataOutMsgID;
-    
-    int64_t CmdsInMsgID;                                        //!< -- MEssage ID for incoming data
+    std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
+    std::vector<uint64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
+    int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
     int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
     RWCmdStruct *IncomingCmdBuffer;                             //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing

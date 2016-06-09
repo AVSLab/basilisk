@@ -25,8 +25,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  overriden by the user.*/
 ReactionWheelDynamics::ReactionWheelDynamics()
 {
-    this->ConfigDataOutMsgName = "reactionwheel_config_data_output";
-    this->ConfigDataOutMsgID = -1;
     CallCounts = 0;
     InputCmds = "reactionwheel_cmds";
     OutputDataString = "reactionwheel_output_states";
@@ -52,7 +50,7 @@ ReactionWheelDynamics::~ReactionWheelDynamics()
  */
 void ReactionWheelDynamics::SelfInit()
 {
-
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
     RWCmdStruct RWCmdInitializer;
     RWCmdInitializer.u_cmd = 0.0;
 
@@ -60,21 +58,27 @@ void ReactionWheelDynamics::SelfInit()
     //! - Clear out any currently firing RWs and re-init cmd array
     NewRWCmds.clear();
     NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
-//    ! - Clear out the incoming command buffer and resize to max RWs
+    //! - Clear out the incoming command buffer and resize to max RWs
     if(IncomingCmdBuffer != NULL)
     {
         delete [] IncomingCmdBuffer;
     }
     IncomingCmdBuffer = new RWCmdStruct[ReactionWheelData.size()];
 
-	StateOutMsgID = SystemMessaging::GetInstance()->
-		CreateNewMessage(OutputDataString, sizeof(RWSpeedData), 
-			OutputBufferCount, "RWSpeedData", moduleID);
+    // Reserve a message ID for each reaction wheel config output message
+    uint64_t tmpWheeltMsgId;
+    std::string tmpWheelMsgName;
+    std::vector<ReactionWheelConfigData>::iterator it;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
+        tmpWheelMsgName = "rw_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
+        tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(ReactionWheelConfigData), OutputBufferCount, "ReactionWheelConfigData", moduleID);
+        this->rwOutMsgNames.push_back(tmpWheelMsgName);
+        this->rwOutMsgIds.push_back(tmpWheeltMsgId);
+    }
     
-//    ConfigDataOutMsgID = SystemMessaging::GetInstance()->
-//        CreateNewMessage(ConfigDataOutMsgName, sizeof(ReactionWheelData),
-//                         OutputBufferCount, "RWConfigData", moduleID);
-
+	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedData),
+			OutputBufferCount, "RWSpeedData", moduleID);
 }
 
 /*! This method is used to connect the input command message to the RWs.
@@ -105,24 +109,39 @@ void ReactionWheelDynamics::CrossInit()
  */
 void ReactionWheelDynamics::WriteOutputMessages(uint64_t CurrentClock)
 {
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    ReactionWheelConfigData tmpRW;
     std::vector<ReactionWheelConfigData>::iterator it;
-
     for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
     {
         outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+        
+        v3Copy(it->r_S, tmpRW.r_S);
+        v3Copy(it->gsHat_S, tmpRW.gsHat_S);
+        v3Copy(it->gtHat0_S, tmpRW.gtHat0_S);
+        v3Copy(it->ggHat0_S, tmpRW.ggHat0_S);
+        tmpRW.theta = it->theta;
+        tmpRW.u_current = it->u_current;
+        tmpRW.u_max = it->u_max;
+        tmpRW.u_min = it->u_min;
+        tmpRW.u_f = it->u_f;
+        tmpRW.Omega = it->Omega;
+        tmpRW.Omega_max = it->Omega_max;
+        tmpRW.Js = it->Js;
+        tmpRW.U_s = it->U_s;
+        tmpRW.U_d = it->U_d;
+        tmpRW.usingRWJitter = it->usingRWJitter;
+        // Write out config data for eachreaction wheel
+        messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
+                                                     CurrentClock,
+                                                     sizeof(ReactionWheelConfigData),
+                                                     reinterpret_cast<uint8_t*> (&tmpRW),
+                                                     moduleID);
     }
-
-    SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
-                                                 sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
     
-//    std::vector<ReactionWheelConfigData> localOutput;
-//    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
-//    {
-//        memcpy(&localOutput[it - ReactionWheelData.begin()], &it, (4*3+10)*sizeof(double)+sizeof(bool));
-//    }
-//    
-//    SystemMessaging::GetInstance()->WriteMessage(ConfigDataOutMsgID, CurrentClock,
-//        sizeof(localOutput), reinterpret_cast<uint8_t*> (&localOutput), moduleID);
+    // Write this message once for all reaction wheels
+    messageSys->WriteMessage(StateOutMsgID, CurrentClock,
+                             sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
