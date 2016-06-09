@@ -61,10 +61,7 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
 {
     
     /*! - Compute and store output message */
-    computeInertialPointingReference(ConfigData,
-                                     ConfigData->attRefOut.sigma_RN,
-                                     ConfigData->attRefOut.omega_RN_N,
-                                     ConfigData->attRefOut.domega_RN_N);
+    computeInertialPointingReference(ConfigData);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
@@ -83,12 +80,9 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
  *   omega_RN_N = [r/s]  Reference frame rate vector of the of R relative to N in N frame components
  *   domega_RN_N = [r/s2] Reference frame inertial acceleration of  R relative to N in N frame components
  */
-void computeInertialPointingReference(inertial3DConfig *ConfigData,
-                                      double sigma_RN[3],
-                                      double omega_RN_N[3],
-                                      double domega_RN_N[3])
+void computeInertialPointingReference(inertial3DConfig *ConfigData)
 {
-    v3Copy(ConfigData->sigma_R0N, sigma_RN);
-    v3SetZero(omega_RN_N);
-    v3SetZero(domega_RN_N);
+    v3Copy(ConfigData->sigma_R0N, ConfigData->attRefOut.sigma_RN);
+    v3SetZero(ConfigData->attRefOut.omega_RN_N);
+    v3SetZero(ConfigData->attRefOut.domega_RN_N);
 }

@@ -49,10 +49,7 @@ extern "C" {
     void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
 
-    void computeInertialPointingReference(inertial3DConfig *ConfigData,
-                                          double sigma_RN[3],
-                                          double omega_RN_N[3],
-                                          double domega_RN_N[3]);
+    void computeInertialPointingReference(inertial3DConfig *ConfigData);
 
 #ifdef __cplusplus
 }
