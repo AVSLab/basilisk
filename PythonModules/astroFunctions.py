@@ -125,14 +125,31 @@ def RV2OE(mu, r_IJK, v_IJK):
     else:
         a = 0.
         p = h*h/mu
-    i = np.arccos(h[2]/hm)
-    Omega = np.arccos(n[0]/nm)
+
+    if h[2] == 0:
+        i = 0.0
+    else:
+        i = np.arccos(h[2]/hm)
+    if n[0] == 0:
+        Omega = 0.0
+    else:
+        Omega = np.arccos(n[0]/nm)
     if n[1] < 0:
         Omega = quadrant4(Omega)
-    omega = np.arccos(np.dot(n, e_vec) / (nm * e))
+
+    dotProd = np.dot(n, e_vec)
+    if dotProd == 0:
+        omega = 0.0
+    else:
+        omega = np.arccos(np.dot(n, e_vec) / (nm * e))
     if e_vec[2] < 0:
         omega = quadrant4(omega)
-    nu = np.arccos(np.dot(e_vec, r)/(e*rm))
+
+    dotProd = np.dot(e_vec, r)
+    if dotProd == 0:
+        nu = 0.0
+    else:
+        nu = np.arccos(np.dot(e_vec, r)/(e*rm))
     if np.dot(r, v) < 0:
         nu = quadrant4(nu)
     return (a, e, i, Omega, omega, nu)
