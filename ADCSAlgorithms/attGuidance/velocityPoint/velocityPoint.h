@@ -36,8 +36,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef struct {
     
     /* declare module private variables */
-    double mu;                                      /*!< #TEMP  Planet gravitational parameter */
-    classicElements oe;                             /*!<        structure for the Orbit Elements set */
+    double mu;                                      /*!< Planet gravitational parameter */
+    classicElements oe;                             /*!< Orbit Elements set */
    
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!<        The name of the output message */
@@ -65,10 +65,7 @@ extern "C" {
                                           double r_BN_N[3],
                                           double v_BN_N[3],
                                           double celBdyPositonVector[3],
-                                          double celBdyVelocityVector[3],
-                                          double sigma_RN[3],
-                                          double omega_RN_N[3],
-                                          double domega_RN_N[3]);
+                                          double celBdyVelocityVector[3]);
 
 #ifdef __cplusplus
 }

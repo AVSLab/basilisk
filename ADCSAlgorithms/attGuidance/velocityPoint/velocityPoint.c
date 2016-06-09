@@ -79,10 +79,7 @@ void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, ui
                                      navData.r_BN_N,
                                      navData.v_BN_N,
                                      primPlanet.PositionVector,
-                                     primPlanet.VelocityVector,
-                                     ConfigData->attRefOut.sigma_RN,
-                                     ConfigData->attRefOut.omega_RN_N,
-                                     ConfigData->attRefOut.domega_RN_N);
+                                     primPlanet.VelocityVector);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
@@ -95,13 +92,8 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
                                       double r_BN_N[3],
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],
-                                      double celBdyVelocityVector[3],
-                                      double sigma_RN[3],
-                                      double omega_RN_N[3],
-                                      double domega_RN_N[3])
+                                      double celBdyVelocityVector[3])
 {
-    
-    
     double  RN[3][3];                /*!< DCM from inertial to reference frame */
     
     double  r[3];                    /*!< relative position vector of the spacecraft with respect to the orbited planet */
@@ -131,12 +123,13 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
     v3Cross(RN[1], RN[2], RN[0]);
     
     /* Compute R-frame orientation */
-    C2MRP(RN, sigma_RN);
+    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
     rv2elem(ConfigData->mu, r, v, &ConfigData->oe);
     rm = v3Norm(r);
     hm = v3Norm(h);
+    /* Robustness check */
     if(rm > 1.) {
         dfdt = hm / (rm * rm);  /* true anomaly rate */
         ddfdt2    = - 2.0 * (v3Dot(v, r) / (rm * rm)) * dfdt;
@@ -149,8 +142,6 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
         ddfdt2 = 0.;
     }
     m33Transpose(RN, temp33);
-    m33MultV3(temp33, omega_RN_R, omega_RN_N);
-    m33MultV3(temp33, domega_RN_R, domega_RN_N);
-    
-    
+    m33MultV3(temp33, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
+    m33MultV3(temp33, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
 }
