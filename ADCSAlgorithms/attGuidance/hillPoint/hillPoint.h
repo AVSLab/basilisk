@@ -58,13 +58,11 @@ extern "C" {
     void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
 
-    void computeHillPointingReference(double r_BN_N[3],
+    void computeHillPointingReference(hillPointConfig *ConfigData,
+                                      double r_BN_N[3],
                                       double v_BN_N[3],
                                       double celBdyPositonVector[3],
-                                      double celBdyVelocityVector[3],
-                                      double sigma_RN[3],
-                                      double omega_RN_N[3],
-                                      double domega_RN_N[3]);
+                                      double celBdyVelocityVector[3]);
 
 #ifdef __cplusplus
 }

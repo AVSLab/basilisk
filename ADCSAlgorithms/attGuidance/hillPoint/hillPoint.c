@@ -73,13 +73,11 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     
     
     /*! - Compute and store output message */
-    computeHillPointingReference(navData.r_BN_N,
+    computeHillPointingReference(ConfigData,
+                                 navData.r_BN_N,
                                  navData.v_BN_N,
                                  primPlanet.PositionVector,
-                                 primPlanet.VelocityVector,
-                                 ConfigData->attRefOut.sigma_RN,
-                                 ConfigData->attRefOut.omega_RN_N,
-                                 ConfigData->attRefOut.domega_RN_N);
+                                 primPlanet.VelocityVector);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
@@ -88,13 +86,11 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
 }
 
 
-void computeHillPointingReference(double r_BN_N[3],
+void computeHillPointingReference(hillPointConfig *ConfigData,
+                                  double r_BN_N[3],
                                   double v_BN_N[3],
                                   double celBdyPositonVector[3],
-                                  double celBdyVelocityVector[3],
-                                  double sigma_RN[3],
-                                  double omega_RN_N[3],
-                                  double domega_RN_N[3])
+                                  double celBdyVelocityVector[3])
 {
     
     double  relPosVector[3];
@@ -122,16 +118,17 @@ void computeHillPointingReference(double r_BN_N[3],
     v3Cross(RN[2], RN[0], RN[1]);
     
     /* Compute R-frame orientation */
-    C2MRP(RN, sigma_RN);
+    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
     rm = v3Norm(relPosVector);
     hm = v3Norm(h);
+    /* Robustness check */
     if(rm > 1.) {
         dfdt = hm / (rm * rm);  /* true anomaly rate */
         ddfdt2 = - 2.0 * v3Dot(relVelVector, RN[0]) / rm * dfdt; /* derivative of true anomaly rate */
     } else {
-        /* an error has occured, radius shouldn't be less than 1km #WHY?? */
+        /* an error has occured, radius shouldn't be less than 1km  */
         dfdt   = 0.;
         ddfdt2 = 0.;
     }
@@ -141,7 +138,7 @@ void computeHillPointingReference(double r_BN_N[3],
     domega_RN_R[2] = ddfdt2;
 
     m33Transpose(RN, temp33);
-    m33MultV3(temp33, omega_RN_R, omega_RN_N);
-    m33MultV3(temp33, domega_RN_R, domega_RN_N);
+    m33MultV3(temp33, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
+    m33MultV3(temp33, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
     
 }
