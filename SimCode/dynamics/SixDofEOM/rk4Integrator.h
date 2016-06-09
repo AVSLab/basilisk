@@ -12,19 +12,22 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
  */
 
+#ifndef rk4Integrator_h
+#define rk4Integrator_h
 
-#include "utilities/dynObject.h"
+#include "integrator.h"
 
-dynObject::dynObject()
+/*!
+ @brief RK4 integrator. It only implements the method integrate() to advance one time step.
+ */
+class rk4Integrator : public integrator
 {
-    return;
-}
+public:
+    rk4Integrator(dynObject* dyn);
+    virtual ~rk4Integrator();
+    virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
+};
 
-
-dynObject::~dynObject()
-{
-    return;
-}
+#endif /* rk4Integrator_h */

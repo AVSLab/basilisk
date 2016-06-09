@@ -246,7 +246,8 @@ SixDofEOM::SixDofEOM()
     this->T_Str2BdyInit.assign(9, 0);
     this->T_Str2BdyInit[0] = this->T_Str2BdyInit[4] = this->T_Str2BdyInit[8] = 1.0;
 
-    this->Integrator = new rk4integrator(this); // Default integrator
+    this->Integrator = new rk4Integrator(this); // Default integrator: RK4
+    this->DefaultIntegrator = true;
     return;
 }
 
@@ -257,13 +258,13 @@ SixDofEOM::~SixDofEOM()
         delete[] XState;
     }
     
-    if (this->Integrator != nullptr) {
-        delete this->Integrator;
+    if (DefaultIntegrator == true && Integrator != nullptr) {
+        delete Integrator;
     }
     return;
 }
 
-/*! This method exists to add a new gravitational body in to the simulation to 
+/*! This method exists to add a new gravitational body in to the simulation to
     be used to effect the spacecraft dynamics.  
     @return void
     @param NewBody A pointer to the gravitational body that is being added
@@ -304,6 +305,21 @@ void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
 void SixDofEOM::addSolarPanelSet(SolarPanels *NewEffector)
 {
     solarPanels.push_back(NewEffector);
+}
+
+/*!
+ * @brief This method changes the integrator in use (Default integrator: RK4)
+ * @param Pointer to an integrator object.
+ */
+void SixDofEOM::setIntegrator(integrator *NewIntegrator)
+{
+    if (DefaultIntegrator == true && Integrator != nullptr)
+        delete Integrator;
+    
+    Integrator = NewIntegrator;
+    DefaultIntegrator = false;
+    
+    return;
 }
 
 /*! This method creates an output message for each planetary body that computes
@@ -813,6 +829,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     
     //! - Zero the conservative acceleration
     memset(ConservAccel, 0x0, 3*sizeof(double));
+    
+    //! - Zero the non-conservative accel
+    memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
 
     v3SetZero(rDDot_CN_N);
     if (this->useTranslation && this->useGravity){
@@ -900,6 +919,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     // add RW jitter force to net inertial acceleration
                     v3Scale(1.0/this->compMass, rwF_N, rwA_N);
                     v3Add(dX+3, rwA_N, dX+3);
+                    v3Add(rwA_N, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 }
             }
         }
@@ -932,8 +952,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         memcpy(MassProps.InertiaTensor, this->compI, 9*sizeof(double));
         memcpy(MassProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         
-        //! - Zero the non-conservative accel
-        memset(this->NonConservAccelBdy, 0x0, 3*sizeof(double));
         //! - Loop over the vector of thrusters and compute body force/torque
         //! - Convert the body forces to inertial for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
@@ -944,9 +962,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
             if(this->useTranslation){
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
-                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
+                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }

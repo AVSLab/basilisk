@@ -21,7 +21,7 @@
 #include "dynObject.h"
 
 /*!
- @brief Base clase for every integrator. For creating a new integrator, inherit this class and override the integrate() method. DO NOT CHANGE THIS CLASS, if possible.
+ @brief Base clase for every integrator. For creating a new integrator, inherit this class and override the integrate() method. integrate() only needs to advance one time step. DO NOT CHANGE THIS CLASS, if possible.
  */
 class integrator
 {

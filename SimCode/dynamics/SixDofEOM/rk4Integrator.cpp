@@ -16,18 +16,19 @@
 
 
 #include "rk4Integrator.h"
+#include <stdio.h>
 
-rk4integrator::rk4integrator(dynObject* dyn) : integrator(dyn)
+rk4Integrator::rk4Integrator(dynObject* dyn) : integrator(dyn)
 {
     return;
 }
 
-rk4integrator::~rk4integrator()
+rk4Integrator::~rk4Integrator()
 {
     return;
 }
 
-void rk4integrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
+void rk4Integrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
     double  *X2 = new double[NStates];        /* integration state space */
     double  *k1 = new double[NStates];        /* intermediate RK results */

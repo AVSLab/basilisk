@@ -12,20 +12,19 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
  */
 
-#ifndef eulerIntegrator_h
-#define eulerIntegrator_h
 
-#include "integrator.h"
+#include "dynObject.h"
 
-class eulerIntegrator : public integrator
+dynObject::dynObject()
 {
-public:
-    eulerIntegrator(dynObject* dyn);
-    virtual ~eulerIntegrator();
-    virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
-};
+    return;
+}
 
 
-#endif /* eulerIntegrator_h */
+dynObject::~dynObject()
+{
+    return;
+}

@@ -27,5 +27,6 @@ integrator::integrator(dynObject* dyn)
 /*! @brief Destructor */
 integrator::~integrator(void)
 {
+    this->_dyn = nullptr;
     return;
 }

@@ -14,17 +14,21 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef rk4Integrator_h
-#define rk4Integrator_h
+#ifndef eulerIntegrator_h
+#define eulerIntegrator_h
 
 #include "integrator.h"
 
-class rk4integrator : public integrator
+/*!
+ @brief Euler integrator. It only implements the method integrate() to advance one time step.
+ */
+class eulerIntegrator : public integrator
 {
 public:
-    rk4integrator(dynObject* dyn);
-    virtual ~rk4integrator();
+    eulerIntegrator(dynObject* dyn);
+    virtual ~eulerIntegrator();
     virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
 };
 
-#endif /* rk4Integrator_h */
+
+#endif /* eulerIntegrator_h */

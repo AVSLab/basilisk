@@ -26,17 +26,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-<<<<<<< HEAD
 #include "dynamics/SolarPanels/solar_panels.h"
-#include "utilities/dynObject.h"
-#include "utilities/integrator.h"
-#include "utilities/rk4Integrator.h"
-
-=======
-#include "utilities/dynObject.h"
-#include "utilities/integrator.h"
-#include "utilities/rk4Integrator.h"
->>>>>>> eb0e8f4d0e2a332b606b91c7f24fa43bdcc2565d
+#include "dynObject.h"
+#include "integrator.h"
+#include "rk4Integrator.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -116,6 +109,7 @@ public:
     void addThrusterSet(ThrusterDynamics *NewEffector);
 	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
     void addSolarPanelSet(SolarPanels *NewEffector);
+    void setIntegrator(integrator *NewIntegrator);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
     void computeCompositeProperties();
@@ -176,6 +170,7 @@ private:
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
 	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RW in body
     integrator* Integrator;            //!<          Integrator used to integrate the EOM
+    bool DefaultIntegrator;
 };
 
 /*! @} */
