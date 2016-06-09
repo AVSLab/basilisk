@@ -55,8 +55,7 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
-    v3SetZero(ConfigData->attRefOut.domega_RN_N);      /* the inertial spin rate is assumed to be constant */
-
+    ConfigData->priorTime = -1;
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -78,10 +77,9 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
 void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
 
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
+    ConfigData->priorTime = -1;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
                                              first function call */
-
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -93,30 +91,23 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
 {
     double              dt;                 /*!< [s] module update period */
 
-
     /* compute control update time */
-    if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
-        dt = (callTime - ConfigData->priorTime)*NANO2SEC;
-        if (dt > 10.0) dt = 10.0;           /* cap the maximum control time step possible */
-        if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
-    } else {
-        dt = 0.;                            /* set dt to zero to not use integration on first function call */
+    if (ConfigData->priorTime == -1)
+    {
+        dt = 0.0;
     }
+    else {
+        dt = (callTime - ConfigData->priorTime)*NANO2SEC;
+    }
+    
     ConfigData->priorTime = callTime;
-
-
-    /*
-     compute and store output message 
-     */
+    /* compute and store output message */
     computeInertialSpinReference(ConfigData,
-                                 BOOL_TRUE,         /* integrate and update */
+                                 ConfigData->integrateFlag,
                                  dt,
                                  ConfigData->attRefOut.sigma_RN,
                                  ConfigData->attRefOut.omega_RN_N,
                                  ConfigData->attRefOut.domega_RN_N);
-
-
-
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
 

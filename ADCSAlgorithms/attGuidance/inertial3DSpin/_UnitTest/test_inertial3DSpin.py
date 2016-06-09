@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import pytest
 import sys, os, inspect
+import numpy as np
 import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
@@ -37,7 +38,7 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import inertial3DSpin                   # import the module that is to be tested
-import macros
+import macros as mc
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -65,7 +66,7 @@ def subModuleTestFunction(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.5)     # update process rate update time
+    testProcessRate = mc.sec2nano(0.5)     # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -83,13 +84,13 @@ def subModuleTestFunction(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.outputDataName = "outputName"
-
-    vector = [0.1, 0.2, 0.3]
-    SimulationBaseClass.SetCArray(vector,
+    moduleConfig.integrateFlag = 1
+    sigma_RN = [0.1, 0.2, 0.3]
+    SimulationBaseClass.SetCArray(sigma_RN,
                                   'double',
                                   moduleConfig.sigma_RN)
-    vector = [1.*macros.D2R, -1.*macros.D2R, 0.5*macros.D2R]
-    SimulationBaseClass.SetCArray(vector,
+    omega_RN_N = np.array([1., -1., 0.5]) * mc.D2R
+    SimulationBaseClass.SetCArray(omega_RN_N,
                                   'double',
                                   moduleConfig.omega_RN_N)
 
@@ -105,7 +106,7 @@ def subModuleTestFunction(show_plots):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(mc.sec2nano(1.))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -122,8 +123,8 @@ def subModuleTestFunction(show_plots):
     # set the filtered output truth states
     trueVector = [
                [0.1, 0.2, 0.3],
-               [0.1, 0.2, 0.3],
-               [0.1001527163095495,0.1970765735029095,0.3023125612588925]
+               [0.1001527163095495,0.1970765735029095,0.3023125612588925],
+               [0.10030303001175506, 0.19414696439786233, 0.30461883399119877]
                ]
 
     # compare the module results to the truth values
@@ -134,7 +135,7 @@ def subModuleTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
 
 
@@ -151,8 +152,6 @@ def subModuleTestFunction(show_plots):
                [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
                [0.0174532925199433,-0.0174532925199433,0.008726646259971648]
                ]
-    print moduleOutput
-    
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -161,7 +160,7 @@ def subModuleTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
 
     #
@@ -186,12 +185,12 @@ def subModuleTestFunction(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
+                                str(moduleOutput[i,0] * mc.NANO2SEC) +
                                 "sec\n")
     
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
+    unitTestSim.ConfigureStopTime(mc.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
