@@ -78,10 +78,7 @@ void Update_axisScan(axisScanConfig *ConfigData, uint64_t callTime, uint64_t mod
                              ref.sigma_RN,
                              ref.omega_RN_N,
                              ref.domega_RN_N,
-                             callTime,
-                             ConfigData->attRefOut.sigma_RN,
-                             ConfigData->attRefOut.omega_RN_N,
-                             ConfigData->attRefOut.domega_RN_N);
+                             callTime);
     
     /*! - Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
@@ -112,24 +109,21 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
                               double sigma_R0N[3],
                               double omega_R0N_N[3],
                               double domega_R0N_N[3],
-                              uint64_t callTime,
-                              double sigma_RN[3],
-                              double omega_RN_N[3],
-                              double domega_RN_N[3])
+                              uint64_t callTime)
 {
-    double  RN[3][3];       /* DCM mapping from inertial N to desired reference R */
-    double  RU[3][3];       /* DCM mapping from intermediate frame U to desired reference R */
-    double  UN[3][3];       /* DCM mapping from inertial N to intermediate frame U */
-    double  R0N[3][3];      /* DCM mapping from inertial N to input reference R0 */
+    double RN[3][3];       /* DCM mapping from inertial N to desired reference R */
+    double RU[3][3];       /* DCM mapping from intermediate frame U to desired reference R */
+    double UN[3][3];       /* DCM mapping from inertial N to intermediate frame U */
+    double R0N[3][3];      /* DCM mapping from inertial N to input reference R0 */
     
     double omega_RU_N[3];
     double omega_RU_R0[3];
 
-    double  C[3][3];        /* temporary DCM */
-    double  v[3];           /* temporary vector */
+    double C[3][3];        /* temporary DCM */
+    double v[3];           /* temporary vector */
     
-    double  currMnvrTime;   /* time since maneuver started */
-    double  psi;            /* current scanning angle */
+    double currMnvrTime;   /* time since maneuver started */
+    double psi;            /* current scanning angle */
     
     if (ConfigData->mnvrStartTime == -1)
     {
@@ -137,14 +131,14 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
         initializeScanReference(ConfigData, sigma_R0N);
         ConfigData->mnvrStartTime = callTime;
     }
+    currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
     
     /* Integrate Attitude */
     MRP2C(ConfigData->sigma_UN, UN);
-    currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
     psi = ConfigData->psiDot * currMnvrTime;
     Mi(-psi, 3, RU);
     m33MultM33(RU, UN, RN);
-    C2MRP(RN, sigma_RN);
+    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute angular velocity */
     v3SetZero(omega_RU_R0);
@@ -152,9 +146,10 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
     MRP2C(sigma_R0N, R0N);
     m33Transpose(R0N, C);
     m33MultV3(C,  omega_RU_R0, omega_RU_N);
-    v3Add(omega_RU_N, omega_R0N_N, omega_RN_N); /* Note that omega_UR0 = 0, since [UR0] is a constant offset */
+    v3Add(omega_RU_N, omega_R0N_N, ConfigData->attRefOut.omega_RN_N); /* Note that omega_UR0 = 0, 
+                                                                       since [UR0] is a constant offset */
     
     /* Compute angular acceleration */
     v3Cross(omega_R0N_N, omega_RU_N, v);
-    v3Add(v, domega_R0N_N, domega_RN_N);
+    v3Add(v, domega_R0N_N, ConfigData->attRefOut.domega_RN_N);
 }

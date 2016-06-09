@@ -38,11 +38,13 @@ typedef struct {
     double      psiDot;                                     /* Scanning rate */
     double      sigma_UN[3];                                /* offset from inertial N to initial scanning reference U */
     uint64_t    mnvrStartTime;                              /*!< (ns) The time that the attitude maneuver started*/
+    
     /* Declare module IO interfaces */
     char        outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message*/
     int32_t     outputMsgID;                                /*!< ID for the outgoing message */
     char        inputRefName[MAX_STAT_MSG_LENGTH];          /*!< The name of the guidance reference Input message */
     int32_t     inputRefID;                                 /*!< ID for the incoming guidance reference message */
+    
     /* Output attitude reference data to send */
     attRefOut   attRefOut;
 }axisScanConfig;
@@ -55,15 +57,13 @@ extern "C" {
     void CrossInit_axisScan(axisScanConfig *ConfigData, uint64_t moduleID);
     void Reset_axisScan(axisScanConfig *ConfigData, uint64_t moduleID);
     void Update_axisScan(axisScanConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    
     void initializeScanReference(axisScanConfig *ConfigData, double sigma_R0N[3]);
     void computeAxisScanReference(axisScanConfig *ConfigData,
                                   double sigma_R0N[3],
                                   double omegaa_R0N_N[3],
                                   double domega_R0N_N[3],
-                                  uint64_t callTime,
-                                  double sigma_RN[3],
-                                  double omega_RN_N[3],
-                                  double domega_RN_N[3]);
+                                  uint64_t callTime);
     
 #ifdef __cplusplus
 }
