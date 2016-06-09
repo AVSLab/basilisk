@@ -68,11 +68,7 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 }
 void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-//    ConfigData->prevAvailFlag = 0;
-//    v3SetZero(ConfigData->prevConstraintAxis);
-//    v3SetZero(ConfigData->prevConstraintAxisDot);
-//    v3SetZero(ConfigData->prevConstraintAxisDoubleDot);
-    return;
+    
 }
 
 /*! This method takes the spacecraft and points a specified axis at a named 
@@ -92,8 +88,6 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     SpicePlanetState primPlanet;
     SpicePlanetState secPlanet;
     
-    double platAngDiff;             /* Angle between r_P1 and r_P2 */
-    
     double R_P1[3];                 /* Relative position vector of the primary planet wrt the spacecraft point */
     double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
     double v_P1[3];                 /* Relative velocity vector of the primary planet wrt the spacecraft point */
@@ -104,6 +98,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     double v_P2[3];                 /* Relative velocity vector of the secondary planet wrt the spacecraft point */
     double a_P2[3];                 /* Relative acceleration vector of the secondary planet wrt the spacecraft point */
     
+    double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavStateOut), &navData, moduleID);
@@ -138,10 +133,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
         v3Cross(R_P1, a_P1, v_P2);
         v3Cross(v_P1, a_P1, a_P2);
     }
-    computecelestialTwoBodyPoint(ConfigData, R_P1, v_P1, a_P1, R_P2, v_P2, a_P2, callTime,
-                                 ConfigData->attRefOut.sigma_RN,
-                                 ConfigData->attRefOut.omega_RN_N,
-                                 ConfigData->attRefOut.domega_RN_N);
+    computecelestialTwoBodyPoint(ConfigData, R_P1, v_P1, a_P1, R_P2, v_P2, a_P2, callTime);
     
     /* Write output message */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
@@ -155,10 +147,7 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
                                   double R_P2[3],
                                   double v_P2[3],
                                   double a_P2[3],
-                                  uint64_t callTime,
-                                  double sigma_RN[3],
-                                  double omega_RN_N[3],
-                                  double domega_RN_N[3])
+                                  uint64_t callTime)
 {
 
     double R_n[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
@@ -188,7 +177,6 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     double temp33[3][3];    /* Temporary 3x3 matrix */
     double temp33_1[3][3];  /* Temporary 3x3 matrix 1 */
     double temp33_2[3][3];  /* Temporary 3x3 matrix 2 */
-    double I_33[3][3];      /* Identity 3x3 matrix */
     
     
     /* Before-hand computations: R_n, v_n, a_n */
@@ -213,9 +201,10 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Reference base-vectors first time-derivative */
+    double I_33[3][3];      /* Identity 3x3 matrix */
+    double C1[3][3];        /* DCM used in the computation of rates and acceleration */
+    double C3[3][3];        /* DCM used in the computation of rates and acceleration */
     m33SetIdentity(I_33);
-    double C1[3][3];
-    double C3[3][3];
     
     v3OuterProduct(r1_hat, r1_hat, temp33);
     m33Subtract(I_33, temp33, C1);

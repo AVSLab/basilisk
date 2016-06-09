@@ -60,10 +60,7 @@ extern "C" {
                                       double R_P2[3],
                                       double v_P2[3],
                                       double a_P2[3],
-                                      uint64_t callTime,
-                                      double sigma_RN[3],
-                                      double omega_RN_N[3],
-                                      double domega_RN_N[3]);
+                                      uint64_t callTime);
     
 #ifdef __cplusplus
 }
