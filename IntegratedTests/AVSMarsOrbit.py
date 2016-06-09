@@ -136,7 +136,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
 
 # ------------------- MAIN ------------------- #
 
-def executeAVSSafeCapture(TheAVSSim):
+def executeGuidance(TheAVSSim):
     def doubleTest(mode1, mode2):
         TheAVSSim.modeRequest = mode1
         print '\n Mode Request = ', TheAVSSim.modeRequest
@@ -145,7 +145,7 @@ def executeAVSSafeCapture(TheAVSSim):
 
         TheAVSSim.modeRequest = mode2
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        TheAVSSim.ConfigureStopTime(int(60 * 20 * 2 * 1E9))
+        TheAVSSim.ConfigureStopTime(int(60 * 20 * 4 * 1E9))
         TheAVSSim.ExecuteSimulation()
     def singleTest(mode):
         TheAVSSim.modeRequest = mode
@@ -153,19 +153,31 @@ def executeAVSSafeCapture(TheAVSSim):
         TheAVSSim.ConfigureStopTime(int(60 * 20 * 4 * 1E9))
         TheAVSSim.ExecuteSimulation()
 
-    #H_SPIN
-    #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
-    #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    # hillPoint Data:
+    TheAVSSim.hillPointData.outputDataName = "att_ref_output"
+    # inertial3DPoint Data:
+    TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    # velocityPoint Data:
+    TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
+    # axisScan Data:
     TheAVSSim.axisScanData.psiDot = 0.2
+    #TheAVSSim.axisScanData.psi0 = 0.1
+    # cel2BdyPoint Data:
     TheAVSSim.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
+    # orbitAxisSpin Data:
+    TheAVSSim.orbitAxisSpinData.o_spin = 2
+    TheAVSSim.orbitAxisSpinData.b_spin = 0
+    TheAVSSim.orbitAxisSpinData.omega_spin = 0.1
 
-
+    # Initialize SIM:
     TheAVSSim.InitializeSimulation()
     TheAVSSim.ConfigureStopTime(int(1 * 1E9))
     TheAVSSim.ExecuteSimulation()
 
-    #doubleTest('inertial3DSpin', 'inertial3DPoint')
+    #singleTest('inertial3DSpin')
+    #singleTest('inertial3DPoint')
+    #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #doubleTest('hillPoint', 'velocityPoint')
     #singleTest('orbitAxisSpin')
     #doubleTest('velocityPoint', 'orbitAxisSpin')
@@ -175,16 +187,11 @@ def executeAVSSafeCapture(TheAVSSim):
     #doubleTest('hillPoint', 'celTwoBodyPoint')
     #singleTest('singleAxisSpin')
     #singleTest('axisScan')
-    #singleTest('singleAxisSpin')
-    #singleTest('inertial3DSpin')
+    singleTest('singleAxisSpin')
+
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
-
-    #H_SPIN
     TheAVSSim.TotalSim.logThisMessage("att_ref_output_stage1", int(1E9))
-    #2BDY_POINT
-
-
     TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("simple_nav_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
@@ -214,7 +221,7 @@ if __name__ == "__main__":
     TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
     TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
 
-    executeAVSSafeCapture(TheAVSSim)
+    executeGuidance(TheAVSSim)
 
     P = af.orbitalPeriod(TheAVSSim.VehOrbElemObject.CurrentElem.a, TheAVSSim.VehOrbElemObject.mu)
     n = 2 * np.pi / P
@@ -245,15 +252,10 @@ if __name__ == "__main__":
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
         plotBaseReference(sigma_R0N, omega_R0N_N)
 
-    if TheAVSSim.modeRequest == 'celTwoBodyPoint':
-        cel2bdyPoint = True
-
     sigma_BR = TheAVSSim.pullMessageLogData("nom_att_guid_out.sigma_BR", range(3))
     omega_BR_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_BR_B", range(3))
     omega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_RN_B", range(3))
     domega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.domega_RN_B", range(3))
     plotTrackingError(sigma_BR, omega_BR_B)
-
-
 
     plt.show()
