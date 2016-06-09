@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #pragma SWIG nowarn=362
 %{
    #include "six_dof_eom.h"
+   #include "eulerIntegrator.h"
 %}
 
 %include "swig_common_model.i"
@@ -33,6 +34,10 @@ namespace std {
 %include "../utilities/sphericalHarmonics.h"
 %include "sys_model.h"
 %include "dyn_effector.h"
+%include "dynObject.h"
+%include "integrator.h"
+%include "rk4Integrator.h"
+%include "eulerIntegrator.h"
 %include "six_dof_eom.h"
 
 %pythoncode %{

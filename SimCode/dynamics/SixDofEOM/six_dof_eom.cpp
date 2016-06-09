@@ -246,16 +246,25 @@ SixDofEOM::SixDofEOM()
     this->T_Str2BdyInit.assign(9, 0);
     this->T_Str2BdyInit[0] = this->T_Str2BdyInit[4] = this->T_Str2BdyInit[8] = 1.0;
 
+    this->Integrator = new rk4Integrator(this); // Default integrator: RK4
+    this->DefaultIntegrator = true;
     return;
 }
 
-/*! Destructor.  Nothing so far.*/
+/*! Destructor.*/
 SixDofEOM::~SixDofEOM()
 {
+    if (XState != nullptr) { // There was a memory leak. This array was not being released (Manuel)
+        delete[] XState;
+    }
+    
+    if (DefaultIntegrator == true && Integrator != nullptr) {
+        delete Integrator;
+    }
     return;
 }
 
-/*! This method exists to add a new gravitational body in to the simulation to 
+/*! This method exists to add a new gravitational body in to the simulation to
     be used to effect the spacecraft dynamics.  
     @return void
     @param NewBody A pointer to the gravitational body that is being added
@@ -296,6 +305,21 @@ void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
 void SixDofEOM::addSolarPanelSet(SolarPanels *NewEffector)
 {
     solarPanels.push_back(NewEffector);
+}
+
+/*!
+ * @brief This method changes the integrator in use (Default integrator: RK4)
+ * @param Pointer to an integrator object.
+ */
+void SixDofEOM::setIntegrator(integrator *NewIntegrator)
+{
+    if (DefaultIntegrator == true && Integrator != nullptr)
+        delete Integrator;
+    
+    Integrator = NewIntegrator;
+    DefaultIntegrator = false;
+    
+    return;
 }
 
 /*! This method creates an output message for each planetary body that computes
@@ -695,10 +719,8 @@ void SixDofEOM::computeCompositeProperties()
     @param t The current simulation time as double precision
     @param X The current state of the spacecraft
     @param dX The computed derivatives that we output to caller
-    @param CentralBody The gravitational data for the central body
 */
-void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
-                                  GravityBodyData *CentralBody)
+void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
 {
 
     OutputStateData StateCurrent;
@@ -804,6 +826,12 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 
     //! - Set the current composite mass properties for later use in file
     computeCompositeProperties();
+    
+    //! - Zero the conservative acceleration
+    memset(ConservAccel, 0x0, 3*sizeof(double));
+    
+    //! - Zero the non-conservative accel
+    memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
 
     v3SetZero(rDDot_CN_N);
     if (this->useTranslation && this->useGravity){
@@ -814,12 +842,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         rmag = v3Norm(r_BN_NLoc);
         v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, intermediateVector);
         v3Add(intermediateVector, dX+3, dX+3);
+        v3Add(intermediateVector, ConservAccel, ConservAccel);
 
         /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
         if(CentralBody->UseJParams)
         {
             jPerturb(CentralBody, r_BN_NLoc, perturbAccel_N);
             v3Add(dX+3, perturbAccel_N, dX+3);
+            v3Add(perturbAccel_N, ConservAccel, ConservAccel);
         }
         else if (CentralBody->UseSphericalHarmParams)
         {
@@ -838,6 +868,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             m33tMultV3(J2000PfixCurrent, gravField, perturbAccel_N); // [EN]^T * gravField
             
             v3Add(dX+3, perturbAccel_N, dX+3);
+            v3Add(perturbAccel_N, ConservAccel, ConservAccel);
         }
 
         /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
@@ -873,6 +904,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         }
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
+        v3Add(InertialAccels, ConservAccel, ConservAccel);
 
         std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         if (this->useRotation){
@@ -887,6 +919,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
                     // add RW jitter force to net inertial acceleration
                     v3Scale(1.0/this->compMass, rwF_N, rwA_N);
                     v3Add(dX+3, rwA_N, dX+3);
+                    v3Add(rwA_N, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 }
             }
         }
@@ -919,8 +952,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
         memcpy(MassProps.InertiaTensor, this->compI, 9*sizeof(double));
         memcpy(MassProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         
-        //! - Zero the non-conservative accel
-        memset(this->NonConservAccelBdy, 0x0, 3*sizeof(double));
         //! - Loop over the vector of thrusters and compute body force/torque
         //! - Convert the body forces to inertial for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
@@ -931,9 +962,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
             TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
             if(this->useTranslation){
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
-                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
+                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
@@ -1280,23 +1311,20 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX,
 void SixDofEOM::integrateState(double CurrentTime)
 {
     
-    double  *X = new double[this->NStates];         /* integration state space */
-    double  *X2 = new double[this->NStates];        /* integration state space */
-    double  *k1 = new double[this->NStates];        /* intermediate RK results */
-    double  *k2 = new double[this->NStates];
-    double  *k3 = new double[this->NStates];
-    double  *k4 = new double[this->NStates];
-    memset(X, 0x0, this->NStates*sizeof(double));
-    memset(X2, 0x0, this->NStates*sizeof(double));
-    memset(k1, 0x0, this->NStates*sizeof(double));
-    memset(k2, 0x0, this->NStates*sizeof(double));
-    memset(k3, 0x0, this->NStates*sizeof(double));
-    memset(k4, 0x0, this->NStates*sizeof(double));
-    uint32_t i;
+    double  *X = new double[NStates];         /* integration state space */
+    double  *Xnext = new double[NStates];        /* integration state space */
+    memset(X, 0x0, NStates*sizeof(double));
+    memset(Xnext, 0x0, NStates*sizeof(double));
+
     double TimeStep;
     double sMag;
     uint32_t CentralBodyCount = 0;
     double LocalDV[3];
+
+    double DVtot[3];
+    double DVconservative[3];
+    double sigmaBNLoc[3];                     /* MRP from inertial to body */
+
     double BN[3][3];                          /* DCM from inertial to body */
     double intermediateVector[3];             /* intermediate vector needed for calculation */
     double Omega;                             /* current wheel speeds of RWs */
@@ -1314,14 +1342,14 @@ void SixDofEOM::integrateState(double CurrentTime)
     memcpy(X, this->XState, this->NStates*sizeof(double));
     
     //! - Loop through gravitational bodies and find the central body to integrate around
-    GravityBodyData *CentralBody = NULL;
+    //GravityBodyData *CentralBody = NULL;
     std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
         it->ephIntTime = it->ephemTimeSimNanos * NANO2SEC;
         if(it->IsCentralBody)
         {
-            CentralBody = &(*it);
+            this->CentralBody = &(*it);
             CentralBodyCount++;
         }
     }
@@ -1334,32 +1362,26 @@ void SixDofEOM::integrateState(double CurrentTime)
         return;
     }
     
-    //! - Perform RK4 steps.  Go ahead and look it up anywhere.  It's a standard thing
-    equationsOfMotion(CurrentTime, X, k1, CentralBody);
-    for(i = 0; i < this->NStates; i++) {
-        X2[i] = X[i] + 0.5 * TimeStep * k1[i];
+    Integrator->integrate(CurrentTime, TimeStep, X, Xnext, this->NStates);
+
+    // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
+    // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
+    //v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
+    
+    // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this count to account for the translational/rotational flags!
+    
+    if (this->useTranslation) {
+        v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
+        v3Scale(TimeStep, ConservAccel, DVconservative);
+        v3Subtract(DVtot, DVconservative, LocalDV);
     }
-    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
+    
+    //-------------------------------------------------------
+    
     v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
-    equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k2, CentralBody);
-    for(i = 0; i < this->NStates; i++) {
-        X2[i] = X[i] + 0.5 * TimeStep * k2[i];
-    }
-    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
-    equationsOfMotion(CurrentTime + TimeStep * 0.5, X2, k3, CentralBody);
-    for(i = 0; i < this->NStates; i++) {
-        X2[i] = X[i] + TimeStep * k3[i];
-    }
-    v3Scale(TimeStep/3.0, this->NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
-    equationsOfMotion(CurrentTime + TimeStep, X2, k4, CentralBody);
-    for(i = 0; i < this->NStates; i++) {
-        X[i] += TimeStep / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
-    }
-    v3Scale(TimeStep/6.0, this->NonConservAccelBdy, LocalDV);
-    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
-    memcpy(this->XState, X, this->NStates*sizeof(double));
+
+    
+    memcpy(this->XState, Xnext, this->NStates*sizeof(double));
 
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow set
     if (this->useRotation){
@@ -1468,11 +1490,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Clear out local allocations and set time for next cycle
     this->TimePrev = CurrentTime;
     delete[] X;
-    delete[] X2;
-    delete[] k1;
-    delete[] k2;
-    delete[] k3;
-    delete[] k4;
+    delete[] Xnext;
 }
 
 /*! This method computes the output states based on the current integrated state.  
