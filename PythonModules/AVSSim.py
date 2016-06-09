@@ -34,6 +34,7 @@ import astroFunctions as af
 import math
 import csv
 import copy
+
 # Vehicle dynamics and avionics models
 import spice_interface
 import sys_model_task
@@ -68,11 +69,14 @@ import rwNullSpace
 import thrustRWDesat
 import attitude_ukf
 
+import inertial3DSpin
 import inertial3D
 import hillPoint
 import velocityPoint
 import celestialTwoBodyPoint
+import singleAxisSpin
 import orbitAxisSpin
+import axisScan
 import attTrackingError
 
 
@@ -100,21 +104,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # TASKS OF FWS PROCESS
         self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)), 999)
+
         self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)), 106)
         self.fswProc.addTask(self.CreateNewTask("earthPointTask", int(5E8)), 105)
         self.fswProc.addTask(self.CreateNewTask("marsPointTask", int(5E8)), 104)
-        self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleAttMnvrFSWTask", int(5E8)), 103)
+
+        self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
         self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
         #MAR: GUIDANCE TASKS
-        self.fswProc.addTask(self.CreateNewTask("inertial3DPointTask", int(5E8)), 119)
-        self.fswProc.addTask(self.CreateNewTask("hillPointTask", int(5E8)), 118)
-        self.fswProc.addTask(self.CreateNewTask("velocityPointTask", int(5E8)), 117)
-        self.fswProc.addTask(self.CreateNewTask("celTwoBodyPointTask", int(5E8)), 116)
-        self.fswProc.addTask(self.CreateNewTask("orbitAxisSpinTask", int(5E8)), 115)
+        self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 129)
+        self.fswProc.addTask(self.CreateNewTask("inertial3DPointTask", int(5E8)), 128)
+        self.fswProc.addTask(self.CreateNewTask("hillPointTask", int(5E8)), 126)
+        self.fswProc.addTask(self.CreateNewTask("velocityPointTask", int(5E8)), 125)
+        self.fswProc.addTask(self.CreateNewTask("celTwoBodyPointTask", int(5E8)), 124)
+        self.fswProc.addTask(self.CreateNewTask("singleAxisSpinTask", int(5E8)), 123)
+        self.fswProc.addTask(self.CreateNewTask("orbitAxisSpinTask", int(5E8)), 119)
+        self.fswProc.addTask(self.CreateNewTask("axisScanTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
 
 
@@ -218,13 +227,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.AttUKF = attitude_ukf.STInertialUKF()
 
-        self.attMnvrPointData = attRefGen.attRefGenConfig()
-        self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
-                                                       attRefGen.Update_attRefGen,
-                                                       attRefGen.SelfInit_attRefGen,
-                                                       attRefGen.CrossInit_attRefGen,
-                                                       attRefGen.Reset_attRefGen)
-        self.attMnvrPointWrap.ModelTag = "attMnvrPoint"
+        # self.attMnvrPointData = attRefGen.attRefGenConfig()
+        # self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
+        #                                                attRefGen.Update_attRefGen,
+        #                                                attRefGen.SelfInit_attRefGen,
+        #                                                attRefGen.CrossInit_attRefGen,
+        #                                                attRefGen.Reset_attRefGen)
+        # self.attMnvrPointWrap.ModelTag = "attMnvrPoint"
 
         self.MRP_SteeringRWAData = MRP_Steering.MRP_SteeringConfig()
         self.MRP_SteeringRWAWrap = alg_contain.AlgContain(self.MRP_SteeringRWAData,
@@ -252,26 +261,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                       dvAttEffect.CrossInit_dvAttEffect)
         self.dvAttEffectWrap.ModelTag = "dvAttEffect"
 
-        self.sunPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.sunPointWrap = alg_contain.AlgContain(self.sunPointData,
-                                                   celestialBodyPoint.Update_celestialBodyPoint,
-                                                   celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                   celestialBodyPoint.CrossInit_celestialBodyPoint)
-        self.sunPointWrap.ModelTag = "sunPoint"
-
-        self.earthPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.earthPointWrap = alg_contain.AlgContain(self.earthPointData,
-                                                     celestialBodyPoint.Update_celestialBodyPoint,
-                                                     celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                     celestialBodyPoint.CrossInit_celestialBodyPoint)
-        self.earthPointWrap.ModelTag = "earthPoint"
-
-        self.marsPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.marsPointWrap = alg_contain.AlgContain(self.marsPointData,
-                                                    celestialBodyPoint.Update_celestialBodyPoint,
-                                                    celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                    celestialBodyPoint.CrossInit_celestialBodyPoint)
-        self.marsPointWrap.ModelTag = "marsPoint"
+        # self.sunPointData = celestialBodyPoint.celestialBodyPointConfig()
+        # self.sunPointWrap = alg_contain.AlgContain(self.sunPointData,
+        #                                            celestialBodyPoint.Update_celestialBodyPoint,
+        #                                            celestialBodyPoint.SelfInit_celestialBodyPoint,
+        #                                            celestialBodyPoint.CrossInit_celestialBodyPoint)
+        # self.sunPointWrap.ModelTag = "sunPoint"
+        #
+        # self.earthPointData = celestialBodyPoint.celestialBodyPointConfig()
+        # self.earthPointWrap = alg_contain.AlgContain(self.earthPointData,
+        #                                              celestialBodyPoint.Update_celestialBodyPoint,
+        #                                              celestialBodyPoint.SelfInit_celestialBodyPoint,
+        #                                              celestialBodyPoint.CrossInit_celestialBodyPoint)
+        # self.earthPointWrap.ModelTag = "earthPoint"
+        #
+        # self.marsPointData = celestialBodyPoint.celestialBodyPointConfig()
+        # self.marsPointWrap = alg_contain.AlgContain(self.marsPointData,
+        #                                             celestialBodyPoint.Update_celestialBodyPoint,
+        #                                             celestialBodyPoint.SelfInit_celestialBodyPoint,
+        #                                             celestialBodyPoint.CrossInit_celestialBodyPoint)
+        # self.marsPointWrap.ModelTag = "marsPoint"
 
         self.RWAMappingData = dvAttEffect.dvAttEffectConfig()
         self.RWAMappingDataWrap = alg_contain.AlgContain(self.RWAMappingData,
@@ -298,7 +307,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
 
         #MAR: GUIDANCE MODELS
-        # inertial3D FSW model
+        # inertial3DSpin FSW model
+        self.inertial3DSpinData = inertial3DSpin.inertial3DSpinConfig()
+        self.inertial3DSpinWrap = alg_contain.AlgContain(self.inertial3DSpinData,
+                                                     inertial3DSpin.Update_inertial3DSpin,
+                                                     inertial3DSpin.SelfInit_inertial3DSpin,
+                                                     inertial3DSpin.CrossInit_inertial3DSpin,
+                                                     inertial3DSpin.Reset_inertial3DSpin)
+        self.inertial3DSpinWrap.ModelTag = "inertial3DSpin"
+        # inertial3D Point FSW model
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = alg_contain.AlgContain(self.inertial3DData,
                                                        inertial3D.Update_inertial3D,
@@ -333,6 +350,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                     celestialTwoBodyPoint.CrossInit_celestialTwoBodyPoint)
         self.celTwoBodyPointWrap.ModelTag = "celTwoBodyPoint"
 
+        # singleAxisSpin FSW model
+        self.singleAxisSpinData = singleAxisSpin.singleAxisSpinConfig()
+        self.singleAxisSpinWrap = alg_contain.AlgContain(self.singleAxisSpinData,
+                                                       singleAxisSpin.Update_singleAxisSpin,
+                                                       singleAxisSpin.SelfInit_singleAxisSpin,
+                                                       singleAxisSpin.CrossInit_singleAxisSpin,
+                                                       singleAxisSpin.Reset_singleAxisSpin)
+        self.singleAxisSpinWrap.ModelTag = "singleAxisSpin"
+        
+
         # orbitAxisSpin FSW model
         self.orbitAxisSpinData = orbitAxisSpin.orbitAxisSpinConfig()
         self.orbitAxisSpinWrap = alg_contain.AlgContain(self.orbitAxisSpinData,
@@ -341,6 +368,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        orbitAxisSpin.CrossInit_orbitAxisSpin,
                                                        orbitAxisSpin.Reset_orbitAxisSpin)
         self.orbitAxisSpinWrap.ModelTag = "orbitAxisSpin"
+
+        # orbitAxisSpin FSW model
+        self.axisScanData = axisScan.axisScanConfig()
+        self.axisScanWrap = alg_contain.AlgContain(self.axisScanData,
+                                                       axisScan.Update_axisScan,
+                                                       axisScan.SelfInit_axisScan,
+                                                       axisScan.CrossInit_axisScan,
+                                                       axisScan.Reset_axisScan)
+        self.orbitAxisSpinWrap.ModelTag = "axisScan"
 
         # attTrackingError FSW model
         self.attTrackingErrorData = attTrackingError.attTrackingErrorConfig()
@@ -368,7 +404,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.AddModelToTask("attitudeNav", self.AttUKF, None, 10)
 
-        self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 10)
+        # self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 10)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
@@ -376,24 +412,25 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("vehicleDVPrepFSWTask", self.dvGuidanceWrap, self.dvGuidanceData)
 
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvGuidanceWrap, self.dvGuidanceData, 10)
-        self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 9)
+        # self.AddModelToTask("vehicleDVMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 9)
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.MRP_SteeringMOIWrap, self.MRP_SteeringMOIData, 8)
         self.AddModelToTask("vehicleDVMnvrFSWTask", self.dvAttEffectWrap, self.dvAttEffectData, 7)
 
-        self.AddModelToTask("sunPointTask", self.sunPointWrap, self.sunPointData)
-
-        self.AddModelToTask("earthPointTask", self.earthPointWrap, self.earthPointData)
-
-        self.AddModelToTask("marsPointTask", self.marsPointWrap, self.marsPointData)
+        # self.AddModelToTask("sunPointTask", self.sunPointWrap, self.sunPointData)
+        # self.AddModelToTask("earthPointTask", self.earthPointWrap, self.earthPointData)
+        # self.AddModelToTask("marsPointTask", self.marsPointWrap, self.marsPointData)
 
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
 
         #MAR: MAP GUIDANCE MODELS TO TASKS
+        self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 12)
         self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 12)
         self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 12)
         self.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 12)
         self.AddModelToTask("celTwoBodyPointTask", self.celTwoBodyPointWrap, self.celTwoBodyPointData, 12)
+        self.AddModelToTask("singleAxisSpinTask", self.singleAxisSpinWrap, self.singleAxisSpinData, 12)
         self.AddModelToTask("orbitAxisSpinTask", self.orbitAxisSpinWrap, self.orbitAxisSpinData, 11)
+        self.AddModelToTask("axisScanTask", self.axisScanWrap, self.axisScanData, 11)
 
         self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
@@ -403,6 +440,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.disableAllTasks()
 
         #MAR: GUIDANCE EVENTS
+        self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
+                            ["self.fswProc.disableAllTasks()",
+                             "self.enableTask('sensorProcessing')",
+                             "self.enableTask('inertial3DSpinTask')",
+                             "self.enableTask('attitudeControlMnvrTask')",
+                             "self.ResetTask('attitudeControlMnvrTask')"])
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sensorProcessing')",
@@ -427,6 +470,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                              "self.enableTask('celTwoBodyPointTask')",
                              "self.enableTask('attitudeControlMnvrTask')",
                              "self.ResetTask('attitudeControlMnvrTask')"])
+        self.createNewEvent("initiateSingleAxisSpin", int(1E9), True, ["self.modeRequest == 'singleAxisSpin'"],
+                            ["self.fswProc.disableAllTasks()",
+                             "self.enableTask('sensorProcessing')",
+                             "self.enableTask('singleAxisSpinTask')",
+                             "self.enableTask('attitudeControlMnvrTask')",
+                             "self.ResetTask('attitudeControlMnvrTask')"])
         self.createNewEvent("initiateOrbitAxisSpin", int(1E9), True, ["self.modeRequest == 'orbitAxisSpin'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sensorProcessing')",
@@ -434,34 +483,43 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                              "self.enableTask('orbitAxisSpinTask')",
                              "self.enableTask('attitudeControlMnvrTask')",
                              "self.ResetTask('attitudeControlMnvrTask')"])
+        self.createNewEvent("initiateAxisScan", int(1E9), True, ["self.modeRequest == 'axisScan'"],
+                            ["self.fswProc.disableAllTasks()",
+                             "self.enableTask('sensorProcessing')",
+                             "self.enableTask('inertial3DPointTask')",
+                             "self.enableTask('axisScanTask')",
+                             "self.enableTask('attitudeControlMnvrTask')",
+                             "self.ResetTask('attitudeControlMnvrTask')"])
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sunSafeFSWTask')"])
-        self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('attitudeNav')",
-                             "self.enableTask('sunPointTask')",
-                             "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.ResetTask('vehicleAttMnvrFSWTask')"])
-        self.createNewEvent("initiateEarthPoint", int(1E9), True, ["self.modeRequest == 'earthPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('attitudeNav')",
-                             "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.enableTask('earthPointTask')",
-                             "self.ResetTask('vehicleAttMnvrFSWTask')"])
-        self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('attitudeNav')",
-                             "self.enableTask('vehicleAttMnvrFSWTask')",
-                             "self.enableTask('marsPointTask')",
-                             "self.ResetTask('vehicleAttMnvrFSWTask')",
-                             "self.attMnvrPointData.mnvrComplete = False",
-                             "self.activateNextRaster()",
-                             "self.setEventActivity('completeRaster', True)"])
+
+        # self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
+        #                     ["self.fswProc.disableAllTasks()",
+        #                      "self.enableTask('sensorProcessing')",
+        #                      "self.enableTask('attitudeNav')",
+        #                      "self.enableTask('sunPointTask')",
+        #                      "self.enableTask('vehicleAttMnvrFSWTask')",
+        #                      "self.ResetTask('vehicleAttMnvrFSWTask')"])
+        # self.createNewEvent("initiateEarthPoint", int(1E9), True, ["self.modeRequest == 'earthPoint'"],
+        #                     ["self.fswProc.disableAllTasks()",
+        #                      "self.enableTask('sensorProcessing')",
+        #                      "self.enableTask('attitudeNav')",
+        #                      "self.enableTask('vehicleAttMnvrFSWTask')",
+        #                      "self.enableTask('earthPointTask')",
+        #                      "self.ResetTask('vehicleAttMnvrFSWTask')"])
+        # self.createNewEvent("initiateMarsPoint", int(1E9), True, ["self.modeRequest == 'marsPoint'"],
+        #                     ["self.fswProc.disableAllTasks()",
+        #                      "self.enableTask('sensorProcessing')",
+        #                      "self.enableTask('attitudeNav')",
+        #                      "self.enableTask('vehicleAttMnvrFSWTask')",
+        #                      "self.enableTask('marsPointTask')",
+        #                      "self.ResetTask('vehicleAttMnvrFSWTask')",
+        #                      "self.attMnvrPointData.mnvrComplete = False",
+        #                      "self.activateNextRaster()",
+        #                      "self.setEventActivity('completeRaster', True)"])
+
         self.createNewEvent("initiateDVPrep", int(1E9), True, ["self.modeRequest == 'DVPrep'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sensorProcessing')",
@@ -476,6 +534,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                              "self.enableTask('attitudeNav')",
                              "self.enableTask('vehicleDVMnvrFSWTask')",
                              "self.setEventActivity('completeDV', True)"])
+
         self.createNewEvent("initiateRWADesat", int(1E9), True, ["self.modeRequest == 'rwaDesat'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sensorProcessing')",
@@ -484,6 +543,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                              "self.enableTask('vehicleAttMnvrFSWTask')",
                              "self.enableTask('RWADesatTask')",
                              "self.ResetTask('RWADesatTask')"])
+
         self.createNewEvent("completeDV", int(1E8), False, ["self.dvGuidanceData.burnComplete != 0"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sensorProcessing')",
@@ -1091,19 +1151,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(onTimeMap, 'double',
                                       self.sunSafeACSData.thrData.thrOnMap)
 
-    def SetattMnvrPoint(self):
-        self.attMnvrPointData.inputNavStateName = "simple_nav_output"
-        self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
-        self.attMnvrPointData.outputDataName = "nom_att_guid_out"
-        # self.attMnvrPointData.outputDataName = "att_ref_output"
-        self.attMnvrPointData.zeroAngleTol = 1.0 * math.pi / 180.0
-        self.attMnvrPointData.mnvrActive = 0
-        self.attMnvrPointData.totalMnvrTime = 1000.0
-        self.attMnvrPointData.propagateReference = 1
+    # def SetattMnvrPoint(self):
+    #     self.attMnvrPointData.inputNavStateName = "simple_nav_output"
+    #     self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
+    #     self.attMnvrPointData.outputDataName = "nom_att_guid_out"
+    #     # self.attMnvrPointData.outputDataName = "att_ref_output"
+    #     self.attMnvrPointData.zeroAngleTol = 1.0 * math.pi / 180.0
+    #     self.attMnvrPointData.mnvrActive = 0
+    #     self.attMnvrPointData.totalMnvrTime = 1000.0
+    #     self.attMnvrPointData.propagateReference = 1
 
     #MAR: INIT GUIDANCE MODULES
+    def setInertial3DSpin(self):
+        self.inertial3DSpinData.outputDataName = "att_ref_output"
+        sigma_RN = [0., 0., 0.]
+        SimulationBaseClass.SetCArray(sigma_RN, 'double',self.inertial3DSpinData.sigma_RN)
+        omega_RN_N = [0.1, 0.2, 0.3]
+        SimulationBaseClass.SetCArray(omega_RN_N, 'double',self.inertial3DSpinData.omega_RN_N)
+        self.inertial3DSpinData.integrateFlag = 1
     def setInertial3D(self):
-        self.inertial3DData.outputDataName = "att_ref_output"
+        self.inertial3DData.outputDataName = "att_ref_output_stage1"
         sigma_R0N = [0.1, 0.2, 0.3]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DData.sigma_R0N)
     def setHillPoint(self):
@@ -1122,13 +1189,24 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
         self.celTwoBodyPointData.singularityThresh = 1.0 * (math.pi / 180.)  # rad
+    def setSingleAxisSpin(self):
+        self.singleAxisSpinData.outputDataName = "att_ref_output"
+        sigma_R0N =  [0., 0., 0.] #[0.1, 0.2, 0.3]
+        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
+        rotVector = [0.1, 0.2, 0.3]
+        SimulationBaseClass.SetCArray(rotVector, 'double',self.singleAxisSpinData.rotVector)
     def setOrbitAxisSpin(self):
         self.orbitAxisSpinData.inputNavName = "simple_nav_output"
         self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
         self.orbitAxisSpinData.outputDataName = "att_ref_output"
-        self.orbitAxisSpinData.o_spin = 0
-        self.orbitAxisSpinData.b_spin = 0
-        self.orbitAxisSpinData.omega_spin = numpy.pi / 4.0
+        self.orbitAxisSpinData.o_spin = 2
+        #self.orbitAxisSpinData.b_spin = 0
+        self.orbitAxisSpinData.omega_spin = 0.1
+    def setAxisScan(self):
+        self.axisScanData.inputRefName = "att_ref_output_stage1"
+        self.axisScanData.outputDataName = "att_ref_output"
+        self.axisScanData.psi0 = 0.0
+        self.axisScanData.theta0 = 0.0
     def setAttTrackingError(self):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
@@ -1136,9 +1214,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         R0R = numpy.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = RigidBodyKinematics.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
-        # T_Point2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
-        # self.baseMarsTrans = T_Point2Body
-        # SimulationBaseClass.SetCArray(T_Point2Body, 'double', self.marsPointData.TPoint2Bdy)
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1270,33 +1345,33 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         desiredOffAxis = [0.0, 1.0, 0.0]
         Tburn2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
 
-    def SetsunPoint(self):
-        self.sunPointData.inputNavDataName = "simple_nav_output"
-        self.sunPointData.inputCelMessName = "sun_display_frame_data"
-        self.sunPointData.outputDataName = "att_cmd_output"
-        self.sunPointData.inputSecMessName = "earth_display_frame_data"
-        TsunVec2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
-        SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.sunPointData.TPoint2Bdy)
-
-    def SetearthPoint(self):
-        self.earthPointData.inputNavDataName = "simple_nav_output"
-        self.earthPointData.inputCelMessName = "earth_display_frame_data"
-        self.earthPointData.outputDataName = "att_cmd_output"
-        self.earthPointData.inputSecMessName = "sun_display_frame_data"
-        angSin = math.sin(23.0 * math.pi / 180.0)
-        angCos = math.cos(23.0 * math.pi / 180.0)
-        TearthVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
-        SimulationBaseClass.SetCArray(TearthVec2Body, 'double', self.earthPointData.TPoint2Bdy)
-
-    def SetmarsPoint(self):
-        self.marsPointData.inputNavDataName = "simple_nav_output"
-        self.marsPointData.inputCelMessName = "mars_display_frame_data"
-        self.marsPointData.inputSecMessName = "sun_display_frame_data"
-        self.marsPointData.outputDataName = "att_cmd_output"
-        TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
-        # TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-        self.baseMarsTrans = TmarsVec2Body
-        SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
+    # def SetsunPoint(self):
+    #     self.sunPointData.inputNavDataName = "simple_nav_output"
+    #     self.sunPointData.inputCelMessName = "sun_display_frame_data"
+    #     self.sunPointData.outputDataName = "att_cmd_output"
+    #     self.sunPointData.inputSecMessName = "earth_display_frame_data"
+    #     TsunVec2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
+    #     SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.sunPointData.TPoint2Bdy)
+    #
+    # def SetearthPoint(self):
+    #     self.earthPointData.inputNavDataName = "simple_nav_output"
+    #     self.earthPointData.inputCelMessName = "earth_display_frame_data"
+    #     self.earthPointData.outputDataName = "att_cmd_output"
+    #     self.earthPointData.inputSecMessName = "sun_display_frame_data"
+    #     angSin = math.sin(23.0 * math.pi / 180.0)
+    #     angCos = math.cos(23.0 * math.pi / 180.0)
+    #     TearthVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
+    #     SimulationBaseClass.SetCArray(TearthVec2Body, 'double', self.earthPointData.TPoint2Bdy)
+    #
+    # def SetmarsPoint(self):
+    #     self.marsPointData.inputNavDataName = "simple_nav_output"
+    #     self.marsPointData.inputCelMessName = "mars_display_frame_data"
+    #     self.marsPointData.inputSecMessName = "sun_display_frame_data"
+    #     self.marsPointData.outputDataName = "att_cmd_output"
+    #     TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
+    #     # TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    #     self.baseMarsTrans = TmarsVec2Body
+    #     SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
 
     def SetthrustRWDesat(self):
         self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
@@ -1378,24 +1453,27 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetsunSafePoint()
         self.SetMRP_Steering()
         self.SetsunSafeACS()
-        self.SetattMnvrPoint()
+        # self.SetattMnvrPoint()
         self.SetMRP_SteeringRWA()
         self.SetMRP_SteeringMOI()
         self.SetdvAttEffect()
         self.SetdvGuidance()
-        self.SetsunPoint()
-        self.SetearthPoint()
-        self.SetmarsPoint()
+        # self.SetsunPoint()
+        # self.SetearthPoint()
+        # self.SetmarsPoint()
         self.SetRWAMappingData()
         self.SetRWANullSpaceData()
         self.SetthrustRWDesat()
         self.SetAttUKF()
         #MAR
+        self.setInertial3DSpin()
         self.setInertial3D()
         self.setHillPoint()
         self.setVelocityPoint()
         self.setCelTwoBodyPoint()
+        self.setSingleAxisSpin()
         self.setOrbitAxisSpin()
+        self.setAxisScan()
         self.setAttTrackingError()
 
 
