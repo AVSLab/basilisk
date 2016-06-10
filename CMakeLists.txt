@@ -38,7 +38,13 @@ if(WIN32)
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib)
 elseif(APPLE)
    set(library_dependencies 
-      ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a)
+      ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_system.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_program_options.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_serialization.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_filesystem.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_thread.a
+  )
    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
    set(CMAKE_INSTALL_RPATH "@loader_path/")
 else()

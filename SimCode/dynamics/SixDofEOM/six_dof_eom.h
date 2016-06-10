@@ -123,8 +123,9 @@ public:
     std::vector<double> T_Str2BdyInit;//!< []    Initial (perm) structure to bdy rotation
     double ibaseMassInit;             //!< [kg]  Initial mass of vehicle (dry)
     
-    std::string OutputStateMessage;   //!<       Output state data
-    std::string OutputMassPropsMsg;   //!<       Output mass properties
+    std::string outputStateMessage;   //!<       Output state data
+    std::string outputMassPropsMsg;   //!<       Output mass properties
+    std::string centralBodyOutMsgName;//!<       Output central body
     uint64_t OutputBufferCount;
     std::vector<GravityBodyData> GravData; //!<  Central body grav information
     GravityBodyData* CentralBody;         //!<  Central body
@@ -165,6 +166,7 @@ private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data
     int64_t MassPropsMsgID;           //!<        Output message id for state data
+    int64_t centralBodyOutMsgId;
     uint32_t NStates;                 //!<        Count on states available
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body

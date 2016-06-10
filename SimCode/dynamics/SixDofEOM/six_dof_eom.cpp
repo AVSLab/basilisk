@@ -220,18 +220,20 @@ sphericalHarmonics* GravityBodyData::getSphericalHarmonicsModel(void)
 
 /*! This is the constructor for SixDofEOM.  It initializes a few variables*/
 SixDofEOM::SixDofEOM()
+    : outputStateMessage("inertial_state_output")
+    , outputMassPropsMsg("spacecraft_mass_props")
+    , centralBodyOutMsgName("central_body_data")
+    , centralBodyOutMsgId(-1)
 {
     this->CallCounts = 0;
     this->RWACount = reactWheels.size();
     this->SPCount = solarPanels.size(); //! Get number of solar panels
-    this->OutputStateMessage = "inertial_state_output";
-    this->OutputMassPropsMsg = "spacecraft_mass_props";
     this->OutputBufferCount = 2;
     this->MRPSwitchCount = 0;
-
     this->useTranslation = false;
     this->useRotation    = false;
-    this->useGravity     = true;  /* By default gravity will be on, but is only enable if translation is on as well */
+    // By default gravity will be on, but is only enabled if translation is on as well
+    this->useGravity     = true;
 
     /* initialize some spacecraft states to default values.  The user should always override these values
      with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
@@ -508,13 +510,17 @@ void SixDofEOM::SelfInit()
     computeOutputs();
     
     //! - Write output messages for other modules that use the dynamics state in cross-init
-    StateOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(OutputStateMessage, sizeof(OutputStateData),
+    this->StateOutMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->outputStateMessage, sizeof(OutputStateData),
         OutputBufferCount, "OutputStateData", moduleID);
     
-    MassPropsMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(OutputMassPropsMsg, sizeof(MassPropsData),
+    this->MassPropsMsgID = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->outputMassPropsMsg, sizeof(MassPropsData),
         OutputBufferCount, "MassPropsData", moduleID);
+    
+    this->centralBodyOutMsgId = SystemMessaging::GetInstance()->
+        CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetState),
+        OutputBufferCount, "SpicePlanetState", moduleID);
     
     initPlanetStateMessages();
     
@@ -1555,8 +1561,8 @@ void SixDofEOM::computeOutputs()
 */
 void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
 {
-    std::vector<GravityBodyData>::iterator it;
-    SpicePlanetState localPlanet;
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+
     //! Begin method steps
     //! - If we have a valid state output message ID, copy over internals and write out
     if(StateOutMsgID >= 0)
@@ -1569,7 +1575,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(StateOut.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         memcpy(StateOut.TotalAccumDVBdy, this->AccumDVBdy, 3*sizeof(double));
         StateOut.MRPSwitchCount = this->MRPSwitchCount;
-        SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
+        messageSys->WriteMessage(StateOutMsgID, CurrentClock,
             sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut), moduleID);
     }
     
@@ -1582,27 +1588,44 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         memcpy(massProps.CoM, this->compCoM, 3*sizeof(double));
         memcpy(&(massProps.InertiaTensor[0]), &(this->compI[0][0]), 9*sizeof(double));
         memcpy(massProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
-        SystemMessaging::GetInstance()->WriteMessage(MassPropsMsgID, CurrentClock,
+        messageSys->WriteMessage(MassPropsMsgID, CurrentClock,
             sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps), moduleID);
     }
     
+    SpicePlanetState tmpPlanet;
+    std::vector<GravityBodyData>::iterator it;
     for(it = GravData.begin(); it != GravData.end(); it++)
     {
+        // @TODO: Currently the Viz must be given the central body. For now we send the
+        // below message to acheive this. However, long term the Viz will be updated
+        // to be able to read the spice ephemeris and dynamically resolve the
+        // display frame and reference frames and choose any gravity body as the
+        // central display body.
+        if (it->IsCentralBody)
+        {
+            v3Copy(it->posRelDisplay, tmpPlanet.PositionVector);
+            v3Copy(it->velRelDisplay, tmpPlanet.VelocityVector);
+            tmpPlanet.J2000Current = it->ephemTime;
+            memset(tmpPlanet.PlanetName, 0x0, MAX_BODY_NAME_LENGTH*sizeof(char));
+            memcpy(tmpPlanet.PlanetName, it->planetEphemName.c_str(),
+                   it->planetEphemName.size()*sizeof(char));
+            messageSys->WriteMessage(this->centralBodyOutMsgId, CurrentClock, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&tmpPlanet), moduleID);
+        }
+        
         if(it->outputMsgID < 0)
         {
             continue;
         }
-        v3Copy(it->posRelDisplay, localPlanet.PositionVector);
-        v3Copy(it->velRelDisplay, localPlanet.VelocityVector);
-        localPlanet.J2000Current = it->ephemTime;
-        memset(localPlanet.PlanetName, 0x0, MAX_BODY_NAME_LENGTH*sizeof(char));
-        memcpy(localPlanet.PlanetName, it->planetEphemName.c_str(),
+        
+        v3Copy(it->posRelDisplay, tmpPlanet.PositionVector);
+        v3Copy(it->velRelDisplay, tmpPlanet.VelocityVector);
+        tmpPlanet.J2000Current = it->ephemTime;
+        memset(tmpPlanet.PlanetName, 0x0, MAX_BODY_NAME_LENGTH*sizeof(char));
+        memcpy(tmpPlanet.PlanetName, it->planetEphemName.c_str(),
                it->planetEphemName.size()*sizeof(char));
-        SystemMessaging::GetInstance()->
-            WriteMessage(it->outputMsgID, CurrentClock, sizeof(SpicePlanetState),
-            reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
+        messageSys->WriteMessage(it->outputMsgID, CurrentClock, sizeof(SpicePlanetState),
+            reinterpret_cast<uint8_t*> (&tmpPlanet), moduleID);
     }
-    
 }
 
 /*! This method is the main entry point for dynamics.  It reads the inputs, 
