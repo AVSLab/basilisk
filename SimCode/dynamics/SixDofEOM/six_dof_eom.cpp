@@ -1473,7 +1473,7 @@ void SixDofEOM::integrateState(double CurrentTime)
                 /* Set current reaction wheel speed and angle */
                 rwIt->Omega = Omega;
                 if (rwIt->usingRWJitter) {
-                    rwIt->theta = this->XState[useTranslation*6 + useRotation*6 + rwCount + rwJitterCount];
+                    rwIt->theta = this->XState[useTranslation*6 + useRotation*6 + this->RWACount + rwJitterCount];
                     rwJitterCount++;
                 }
                 rwCount++;
