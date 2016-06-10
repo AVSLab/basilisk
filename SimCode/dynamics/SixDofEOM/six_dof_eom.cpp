@@ -834,7 +834,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     computeCompositeProperties();
     
     //! - Zero the conservative acceleration
-    memset(ConservAccel, 0x0, 3*sizeof(double));
+    memset(ConservAccelBdy, 0x0, 3*sizeof(double));
     
     //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
@@ -848,14 +848,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         rmag = v3Norm(r_BN_NLoc);
         v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, intermediateVector);
         v3Add(intermediateVector, dX+3, dX+3);
-        v3Add(intermediateVector, ConservAccel, ConservAccel);
+        m33MultV3(BN, intermediateVector, intermediateVector2);
+        v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
 
         /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
         if(CentralBody->UseJParams)
         {
             jPerturb(CentralBody, r_BN_NLoc, perturbAccel_N);
             v3Add(dX+3, perturbAccel_N, dX+3);
-            v3Add(perturbAccel_N, ConservAccel, ConservAccel);
+            m33MultV3(BN, perturbAccel_N, intermediateVector2);
+            v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
         }
         else if (CentralBody->UseSphericalHarmParams)
         {
@@ -874,7 +876,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             m33tMultV3(J2000PfixCurrent, gravField, perturbAccel_N); // [EN]^T * gravField
             
             v3Add(dX+3, perturbAccel_N, dX+3);
-            v3Add(perturbAccel_N, ConservAccel, ConservAccel);
+            m33MultV3(BN, perturbAccel_N, intermediateVector2);
+            v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
         }
 
         /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
@@ -910,7 +913,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         }
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
-        v3Add(InertialAccels, ConservAccel, ConservAccel);
+        m33MultV3(BN, InertialAccels, intermediateVector2);
+        v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
 
         std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         if (this->useRotation){
@@ -925,7 +929,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     // add RW jitter force to net inertial acceleration
                     v3Scale(1.0/this->compMass, rwF_N, rwA_N);
                     v3Add(dX+3, rwA_N, dX+3);
-                    v3Add(rwA_N, this->NonConservAccelBdy, this->NonConservAccelBdy);
+                    m33MultV3(BN, rwA_N, intermediateVector2);
+                    v3Add(intermediateVector2, NonConservAccelBdy, NonConservAccelBdy);
                 }
             }
         }
@@ -970,7 +975,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
-                v3Add(LocalAccels_B, this->NonConservAccelBdy, this->NonConservAccelBdy);
+                v3Add(LocalAccels_B, NonConservAccelBdy, NonConservAccelBdy);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
@@ -1325,11 +1330,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     double TimeStep;
     double sMag;
     uint32_t CentralBodyCount = 0;
-    double LocalDV[3];
-
-    double DVtot[3];
-    double DVconservative[3];
-    double sigmaBNLoc[3];                     /* MRP from inertial to body */
 
     double BN[3][3];                          /* DCM from inertial to body */
     double intermediateVector[3];             /* intermediate vector needed for calculation */
@@ -1374,17 +1374,43 @@ void SixDofEOM::integrateState(double CurrentTime)
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
     //v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
     
-    // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this count to account for the translational/rotational flags!
+    // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this to account for the translational/rotational flags!
     
-    if (this->useTranslation) {
-        v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
-        v3Scale(TimeStep, ConservAccel, DVconservative);
+    if (this->useTranslation && this->useRotation) {
+        // This rellies on knowledge of the state order (bad code!)
+        // This part has to be changed
+        double DVtot[3];
+        double DVconservative[3];
+        double BNLoc[3][3];
+        double BNLocnext[3][3];
+        double sigma_BN[3];
+        double sigma_BNnext[3];
+        double v_B[3];
+        double v_Bnext[3];
+        double LocalDV[3];
+        
+        sigma_BN[0] = X[3];
+        sigma_BN[1] = X[4];
+        sigma_BN[2] = X[5];
+        
+        sigma_BNnext[0] = Xnext[3];
+        sigma_BNnext[1] = Xnext[4];
+        sigma_BNnext[2] = Xnext[5];
+        
+        MRP2C(sigma_BN, BNLoc);
+        MRP2C(sigma_BNnext, BNLocnext);
+        
+        m33MultV3(BNLoc, X + 3, v_B);
+        m33MultV3(BNLocnext, Xnext + 3, v_Bnext);
+        
+        v3Subtract(v_Bnext, v_B, DVtot);
+        v3Scale(TimeStep, ConservAccelBdy, DVconservative);
         v3Subtract(DVtot, DVconservative, LocalDV);
+        
+        v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
     }
     
     //-------------------------------------------------------
-    
-    v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
 
     
     memcpy(this->XState, Xnext, this->NStates*sizeof(double));

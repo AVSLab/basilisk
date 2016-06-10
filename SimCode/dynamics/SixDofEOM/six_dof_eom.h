@@ -147,7 +147,7 @@ public:
     double omega_BN_B[3];             //!< [r/s]  Current angular velocity (inertial)
     double InertialAccels[3];         //!< [m/s2] Current calculated inertial accels
     double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
-    double ConservAccel[3];           //!< [m/s2] Observed conservative body accel
+    double ConservAccelBdy[3];           //!< [m/s2] Observed conservative body accel
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
