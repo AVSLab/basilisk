@@ -27,7 +27,7 @@ sys.path.append(path + '/../../Basilisk/modules')
 # Simulation base class is needed because we inherit from it
 import SimulationBaseClass
 import RigidBodyKinematics
-import numpy
+import numpy as np
 import astroFunctions as af
 
 # import regular python objects that we need
@@ -46,9 +46,9 @@ import coarse_sun_sensor
 import imu_sensor
 import simple_nav
 import bore_ang_calc
-import clock_synch
 import reactionwheel_dynamics
 # import radiation_pressure
+# import parseSRPLookup
 import star_tracker
 # FSW algorithms that we want to call
 import cssComm
@@ -64,11 +64,12 @@ import dvAttEffect
 import dvGuidance
 import attRefGen
 import celestialBodyPoint
+import clock_synch
 import rwNullSpace
 import thrustRWDesat
 import attitude_ukf
-
 import inertial3DSpin
+import boost_communication
 import inertial3D
 import hillPoint
 import velocityPoint
@@ -84,24 +85,28 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         # Create a sim module as an empty container
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.modeRequest = 'None'
+        self.isUsingVisualization = False
 
-        # PROCESSES
+        # Processes
         self.fswProc = self.CreateNewProcess("FSWProcess")
         self.dynProc = self.CreateNewProcess("DynamicsProcess")
-
-        # INTERFACES
+        self.visProc = self.CreateNewProcess("VisProcess")
+        # Process message interfaces.
         self.dyn2FSWInterface = sim_model.SysInterface()
         self.fsw2DynInterface = sim_model.SysInterface()
+        self.dyn2VisInterface = sim_model.SysInterface()
         self.dyn2FSWInterface.addNewInterface("DynamicsProcess", "FSWProcess")
         self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
+        self.dyn2VisInterface.addNewInterface("DynamicsProcess", "VisProcess")
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+        self.dynProc.addInterfaceRef(self.dyn2VisInterface)
 
-        # TASKS OF DYN PROCESS
+        # Process task groups.
         self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)), 2000)
         self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)), 1000)
 
-        # TASKS OF FWS PROCESS
+        # Flight software tasks.
         self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)), 999)
 
         self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)), 106)
@@ -126,11 +131,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("axisScanTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
 
-
-        # LOCAL CONFIG SC DATA
+        # Spacecraft configuration data module.
         self.LocalConfigData = vehicleConfigData.vehicleConfigData()
 
-         # DYN OBJECTS
+        # Simulation modules
         self.SpiceObject = spice_interface.SpiceInterface()
         self.InitCSSHeads()
         # Schedule the first pyramid on the simulated sensor Task
@@ -149,9 +153,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.trackerA = star_tracker.StarTracker()
         self.InitAllDynObjects()
 
-        # MODELS OF DYN TASKS
+        # Add simulation modules to task groups.
         self.disableTask("SynchTask")
-        self.AddModelToTask("SynchTask", self.clockSynchData)
+        self.AddModelToTask("SynchTask", self.clockSynchData, None, 100)
         self.AddModelToTask("DynamicsTask", self.SpiceObject, None, 202)
         self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA, None, 101)
         self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB, None, 102)
@@ -174,8 +178,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("DynamicsTask", self.highGainBore, None, 112)
         self.AddModelToTask("DynamicsTask", self.trackerA, None, 113)
 
-
-        # FSW OBJECTS
+        # Flight software modules.
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
         self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig,
                                                  cssComm.Update_cssProcessTelem,
@@ -304,9 +307,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                              thrustRWDesat.Reset_thrustRWDesat)
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
-
-
-        # Guidance FSW Models
+        # Guidance flight software modules.
         self.inertial3DSpinData = inertial3DSpin.inertial3DSpinConfig()
         self.inertial3DSpinWrap = alg_contain.AlgContain(self.inertial3DSpinData,
                                                      inertial3DSpin.Update_inertial3DSpin,
@@ -378,10 +379,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        attTrackingError.Reset_attTrackingError)
         self.attTrackingErrorWrap.ModelTag = "attTrackingError"
 
-        # Initialize FSW Objects
+        # Initialize flight software modules.
         self.InitAllFSWObjects()
 
-        # MODELS OF FSW TASKS
+        # Add flight software modules to task groups.
         self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
         self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig, 8)
@@ -600,28 +601,48 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.scanRate = self.sideScanRate
         self.rasterTimes = self.sideScanTimes
 
+    def initializeVisualization(self):
+        openGLIO = boost_communication.OpenGLIO()
+        for planetName in self.SpiceObject.PlanetNames:
+            openGLIO.addPlanetMessageName(planetName)
+        idx = 0
+        for thruster in self.ACSThrusterDynObject.ThrusterData:
+            openGLIO.addThrusterMessageName(idx)
+            idx += 1
+        idxRW = 0
+        for rw in self.rwDynObject.ReactionWheelData:
+            openGLIO.addRwMessageName(idxRW)
+            idxRW += 1
+        openGLIO.setIpAddress("127.0.0.1")
+        openGLIO.spiceDataPath = self.simBasePath+'/External/EphemerisData/'
+        openGLIO.setUTCCalInit(self.SpiceObject.UTCCalInit)
+        openGLIO.setCelestialObject(13)
+        self.visProc.addTask(self.CreateNewTask("visTask", int(1E8)))
+        self.AddModelToTask("visTask", openGLIO)
+        self.enableTask("SynchTask")
+
     def initializeRaster(self):
-        if (self.scanSelector != 0):
+        if self.scanSelector != 0:
             self.setEventActivity('mnvrToRaster', True)
         else:
             SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
             self.setEventActivity('initiateSunPoint', True)
-            if (self.modeRequest != 'earthPoint'):
+            if self.modeRequest != 'earthPoint':
                 self.modeRequest = 'sunPoint'
             self.setEventActivity('initiateMarsPoint', True)
 
     def activateNextRaster(self):
-        basePointMatrix = numpy.array(self.baseMarsTrans)
-        basePointMatrix = numpy.reshape(basePointMatrix, (3, 3))
-        offPointAngles = numpy.array(self.scanAnglesUse[self.scanSelector])
+        basePointMatrix = np.array(self.baseMarsTrans)
+        basePointMatrix = np.reshape(basePointMatrix, (3, 3))
+        offPointAngles = np.array(self.scanAnglesUse[self.scanSelector])
         newScanAngles = self.scanRate[self.scanSelector]
         self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]
         self.scanSelector += 1
         self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
-        offPointAngles = numpy.reshape(offPointAngles, (3, 1))
+        offPointAngles = np.reshape(offPointAngles, (3, 1))
         offMatrix = RigidBodyKinematics.euler1232C(offPointAngles)
-        newPointMatrix = numpy.dot(offMatrix, basePointMatrix)
-        newPointMatrix = numpy.reshape(newPointMatrix, 9).tolist()
+        newPointMatrix = np.dot(offMatrix, basePointMatrix)
+        newPointMatrix = np.reshape(newPointMatrix, 9).tolist()
         SimulationBaseClass.SetCArray(newPointMatrix, 'double', self.marsPointData.TPoint2Bdy)
         SimulationBaseClass.SetCArray(newScanAngles, 'double', self.attMnvrPointData.mnvrScanRate)
         self.attMnvrPointData.mnvrActive = False
@@ -630,15 +651,17 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         print [self.TotalSim.CurrentNanos, self.scanSelector]
 
     def InitializeSimulation(self):
+        if self.isUsingVisualization:
+            self.initializeVisualization()
         SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
         self.dyn2FSWInterface.discoverAllMessages()
         self.fsw2DynInterface.discoverAllMessages()
+        self.dyn2VisInterface.discoverAllMessages()
 
     #
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
-        #
         BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
 
@@ -745,44 +768,63 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
+        self.ACSThrusterDynObject.InputCmds = "acs_thruster_cmds"
+
         Thruster1 = thruster_dynamics.ThrusterConfigData()
-        Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 1.79070])
-        Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
+        #Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 1.79070])
+        #Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
+        Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.75])
+        Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
+
         Thruster1.MaxThrust = 0.9
         Thruster1.MinOnTime = 0.020
         Thruster2 = thruster_dynamics.ThrusterConfigData()
-        Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 1.79070])
-        Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
+        #Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 1.79070])
+        #Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
+        Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.75])
+        Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
         Thruster2.MaxThrust = 0.9
         Thruster2.MinOnTime = 0.020
         Thruster3 = thruster_dynamics.ThrusterConfigData()
-        Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 1.79070])
-        Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
+        #Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 1.79070])
+        #Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
+        Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.75]	)
+        Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
         Thruster3.MaxThrust = 0.9
         Thruster3.MinOnTime = 0.020
         Thruster4 = thruster_dynamics.ThrusterConfigData()
-        Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 1.79070])
-        Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
+        #Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 1.79070])
+        #Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
+        Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.75])
+        Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
         Thruster4.MaxThrust = 0.9
         Thruster4.MinOnTime = 0.020
         Thruster5 = thruster_dynamics.ThrusterConfigData()
-        Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 0.18288])
-        Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
+        #Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 0.18288])
+        #Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
+        Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, -0.75])
+        Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
         Thruster5.MaxThrust = 0.9
         Thruster5.MinOnTime = 0.020
         Thruster6 = thruster_dynamics.ThrusterConfigData()
-        Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 0.18288])
-        Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
+        #Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 0.18288])
+        #Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
+        Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, -0.75])
+        Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
         Thruster6.MaxThrust = 0.9
         Thruster6.MinOnTime = 0.020
         Thruster7 = thruster_dynamics.ThrusterConfigData()
-        Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 0.18288])
-        Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
+        #Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 0.18288])
+        #Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
+        Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, -0.75])
+        Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
         Thruster7.MaxThrust = 0.9
         Thruster7.MinOnTime = 0.020
         Thruster8 = thruster_dynamics.ThrusterConfigData()
-        Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 0.18288])
-        Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
+        #Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 0.18288])
+        #Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
+        Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, -0.75])
+        Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
         Thruster8.MaxThrust = 0.9
         Thruster8.MinOnTime = 0.020
         self.ACSThrusterDynObject.ThrusterData = \
@@ -800,7 +842,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetDVThrusterDynObject(self):
         self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
         self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
-        self.DVThrusterDynObject.OutputDataString = "dv_thruster_output"
         allThrusters = []
         dvRadius = 0.4
         DVIsp = 200.0
@@ -977,6 +1018,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.radiationPressure.m_area = 4.0  # m^2
         self.radiationPressure.m_coeffReflection = 1.2  # no units
 
+        srpParser = parseSRPLookup()
+        srpParser.parseXML("SRPLookupTable.xml")
+        self.radiationPressure.setLookupForceVecs(srpParser.forceBLookup)
+
     def SetVehOrbElemObject(self):
         self.VehOrbElemObject.ModelTag = "VehicleOrbitalElements"
         self.VehOrbElemObject.mu = self.SunGravBody.mu
@@ -1036,7 +1081,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.trackerA.walkBounds = sim_model.DoubleVector(errorBounds)
         self.trackerA.PMatrix = sim_model.DoubleVector(PMatrix)
 
-    def SetclockSynchData(self):
+    def setClockSynchData(self):
         self.clockSynchData.ModelTag = "ClockSynchModel"
         self.clockSynchData.accelFactor = 1.0
         self.clockSynchData.clockOutputName = "clock_synch_data"
@@ -1221,7 +1266,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
-        R0R = numpy.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
+        R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = RigidBodyKinematics.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
 
@@ -1450,7 +1495,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetsolarArrayBore()
         self.SetinstrumentBore()
         self.SethighGainBore()
-        self.SetclockSynchData()
+        self.setClockSynchData()
         self.SetReactionWheelDynObject()
         self.SetStarTrackerData()
 
