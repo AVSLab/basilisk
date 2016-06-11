@@ -120,7 +120,6 @@ void OpenGLIO::readInputMessages()
     messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
     messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
     
-    int i;
     ReactionWheelConfigData tmpWheelData;
     for (int i = 0; i < this->reactionWheels.size(); i++)
     {
