@@ -840,76 +840,78 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
 
     v3SetZero(rDDot_CN_N);
-    if (this->useTranslation && this->useGravity){
+    if (this->useTranslation){
         //! - compute inertial velocity
         v3Copy(v_BN_NLoc, dX);
 
-        //! - Get current position magnitude and compute the 2-body gravitational accels
-        rmag = v3Norm(r_BN_NLoc);
-        v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, intermediateVector);
-        v3Add(intermediateVector, dX+3, dX+3);
-        m33MultV3(BN, intermediateVector, intermediateVector2);
-        v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
-
-        /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
-        if(CentralBody->UseJParams)
-        {
-            jPerturb(CentralBody, r_BN_NLoc, perturbAccel_N);
-            v3Add(dX+3, perturbAccel_N, dX+3);
-            m33MultV3(BN, perturbAccel_N, intermediateVector2);
+        if (this->useGravity){
+            //! - Get current position magnitude and compute the 2-body gravitational accels
+            rmag = v3Norm(r_BN_NLoc);
+            v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_NLoc, intermediateVector);
+            v3Add(intermediateVector, dX+3, dX+3);
+            m33MultV3(BN, intermediateVector, intermediateVector2);
             v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
-        }
-        else if (CentralBody->UseSphericalHarmParams)
-        {
-            unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
-            double posPlanetFix[3]; // [m] Position in planet-fixed frame
-            double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
 
-            double planetDt = t - CentralBody->ephIntTime;
-            double J2000PfixCurrent[3][3];
-            
-            m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
-            m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
-            m33MultV3(J2000PfixCurrent, r_BN_NLoc, posPlanetFix); // r_E = [EN]*r_N
-            CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
-            
-            m33tMultV3(J2000PfixCurrent, gravField, perturbAccel_N); // [EN]^T * gravField
-            
-            v3Add(dX+3, perturbAccel_N, dX+3);
-            m33MultV3(BN, perturbAccel_N, intermediateVector2);
-            v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
-        }
-
-        /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
-         Gravity perturbation is acceleration on spacecraft+acceleration on central body.
-         Ephemeris information is propagated by Euler's method in substeps*/
-        v3SetZero(this->InertialAccels);
-        std::vector<GravityBodyData>::iterator gravit;
-        for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
-        {
-            if(gravit->IsCentralBody || gravit->BodyMsgID < 0)
+            /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
+            if(CentralBody->UseJParams)
             {
-                continue;
+                jPerturb(CentralBody, r_BN_NLoc, perturbAccel_N);
+                v3Add(dX+3, perturbAccel_N, dX+3);
+                m33MultV3(BN, perturbAccel_N, intermediateVector2);
+                v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
             }
-            v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
-                posVelComp);
-            v3Add(r_BN_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
-            v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
-            v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
-            v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
-            v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
-            rmag = v3Norm(PlanetRelPos);
-            v3Scale(-gravit->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
-            v3Add(this->InertialAccels, PlanetAccel, InertialAccels);
-            v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
-            v3Subtract(CentralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
-            v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
-            v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+            else if (CentralBody->UseSphericalHarmParams)
+            {
+                unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
+                double posPlanetFix[3]; // [m] Position in planet-fixed frame
+                double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
+
+                double planetDt = t - CentralBody->ephIntTime;
+                double J2000PfixCurrent[3][3];
+                
+                m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
+                m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
+                m33MultV3(J2000PfixCurrent, r_BN_NLoc, posPlanetFix); // r_E = [EN]*r_N
+                CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
+                
+                m33tMultV3(J2000PfixCurrent, gravField, perturbAccel_N); // [EN]^T * gravField
+                
+                v3Add(dX+3, perturbAccel_N, dX+3);
+                m33MultV3(BN, perturbAccel_N, intermediateVector2);
+                v3Add(intermediateVector2, ConservAccelBdy, ConservAccelBdy);
+            }
+
+            /*! - Zero the inertial accels and compute grav accel for all bodies other than central body.
+             Gravity perturbation is acceleration on spacecraft+acceleration on central body.
+             Ephemeris information is propagated by Euler's method in substeps*/
+            v3SetZero(this->InertialAccels);
+            std::vector<GravityBodyData>::iterator gravit;
+            for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
+            {
+                if(gravit->IsCentralBody || gravit->BodyMsgID < 0)
+                {
+                    continue;
+                }
+                v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
                     posVelComp);
-            v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
-            rmag = v3Norm(PlanetRelPos);
-            v3Scale(gravit->mu/rmag/rmag/rmag, PlanetRelPos, PlanetAccel);
-            v3Add(this->InertialAccels, PlanetAccel, this->InertialAccels);
+                v3Add(r_BN_NLoc, CentralBody->PosFromEphem, PlanetRelPos);
+                v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
+                v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
+                v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
+                v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
+                rmag = v3Norm(PlanetRelPos);
+                v3Scale(-gravit->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
+                v3Add(this->InertialAccels, PlanetAccel, InertialAccels);
+                v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
+                v3Subtract(CentralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
+                v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
+                v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+                        posVelComp);
+                v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
+                rmag = v3Norm(PlanetRelPos);
+                v3Scale(gravit->mu/rmag/rmag/rmag, PlanetRelPos, PlanetAccel);
+                v3Add(this->InertialAccels, PlanetAccel, this->InertialAccels);
+            }
         }
         //! - Add in inertial accelerations of the non-central bodies
         v3Add(dX+3, this->InertialAccels, dX+3);
@@ -934,11 +936,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 }
             }
         }
-    }
-
-    //! - Need to perform same vdot = xdot for non gravity cases
-    if (this->useTranslation && !useGravity) {
-        v3Copy(v_BN_NLoc, dX);
     }
 
     if(this->useRotation){
