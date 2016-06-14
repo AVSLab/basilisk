@@ -112,6 +112,7 @@ public:
     void setIntegrator(integrator *NewIntegrator);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
+    void computeGravity(double t, double r_BN_N[3], double BN[3][3], double *g_N);
     void computeCompositeProperties();
 public:
     std::vector<double> PositionInit; //!< [m]   Initial position (inertial)
