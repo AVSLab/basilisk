@@ -1386,25 +1386,19 @@ void SixDofEOM::integrateState(double CurrentTime)
     // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this to account for the translational/rotational flags!
     
     if (this->useTranslation && this->useRotation) {
-        // This rellies on knowledge of the state order (bad code!)
-        // This part has to be changed
+        // The nonconservative delta v is computed assuming that the conservative acceleration is constant along a time step. Then: DV_cons = Cons_accel * dt. DV_noncons = DV_tot - DV_cons
         double DVtot[3];
         double DVconservative[3];
         double BNLoc[3][3];
         double BNLocnext[3][3];
-        double sigma_BN[3];
-        double sigma_BNnext[3];
+        double* sigma_BN;
+        double* sigma_BNnext;
         double v_B[3];
         double v_Bnext[3];
         double LocalDV[3];
         
-        sigma_BN[0] = X[3];
-        sigma_BN[1] = X[4];
-        sigma_BN[2] = X[5];
-        
-        sigma_BNnext[0] = Xnext[3];
-        sigma_BNnext[1] = Xnext[4];
-        sigma_BNnext[2] = Xnext[5];
+        sigma_BN = X+6;
+        sigma_BNnext = Xnext+6;
         
         MRP2C(sigma_BN, BNLoc);
         MRP2C(sigma_BNnext, BNLocnext);
