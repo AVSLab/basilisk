@@ -872,6 +872,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         v_BN_NLoc[0] = X[i++];
         v_BN_NLoc[1] = X[i++];
         v_BN_NLoc[2] = X[i++];
+        
+        mSetIdentity(BN, 3, 3);
     }
     if(this->useRotation){
         sigma_BNLoc[0] = X[i++];
@@ -897,13 +899,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             thetaDDotsSP = dX + i + this->RWACount + this->numRWJitter + this->SPCount;
         }
         omegaDot_BN_B = dX + 3 + this->useTranslation*6;
+        
+        //! - Convert the current attitude to DCM for conversion in DynEffector loop
+        MRP2C(sigma_BNLoc, BN);
     }
 
     /* zero the derivative vector */
     memset(dX, 0x0, this->NStates*sizeof(double));
-
-    //! - Convert the current attitude to DCM for conversion in DynEffector loop
-    MRP2C(sigma_BNLoc, BN);
 
     //! - Set the current composite mass properties for later use in file
     computeCompositeProperties();
@@ -943,8 +945,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     // add RW jitter force to net inertial acceleration
                     v3Scale(1.0/this->compMass, rwF_N, rwA_N);
                     v3Add(dX+3, rwA_N, dX+3);
-                    m33MultV3(BN, rwA_N, intermediateVector2);
-                    v3Add(intermediateVector2, NonConservAccelBdy, NonConservAccelBdy);
                 }
             }
         }
@@ -984,7 +984,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
-                v3Add(LocalAccels_B, NonConservAccelBdy, NonConservAccelBdy);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
@@ -1314,6 +1313,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         }
 
     }
+    
+    // Compute the total non-conservative acceleration of point B relative to N.
+    // The non-conservative acceleration is what an accelerometer placed at point B would measure.
+    if (this->useTranslation)
+    {
+        double totalAccel_B[3];
+        m33MultV3(BN, dX+3, totalAccel_B);
+        v3Subtract(totalAccel_B, ConservAccelBdy, NonConservAccelBdy);
+    }
+    
     delete [] matrixA;
     delete [] matrixE;
     delete [] matrixF;
@@ -1381,11 +1390,8 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
-    //v3Subtract(Xnext + 3, X + 3, DVtot); // This rellies on knowledge of the state order (bad code!)
     
-    // As I said in my previous comment, these lines heavily relly on knowledge of the order state, which is not very good. Actually, I need to change this to account for the translational/rotational flags!
-    
-    if (this->useTranslation && this->useRotation) {
+    if (this->useTranslation) {
         // The nonconservative delta v is computed assuming that the conservative acceleration is constant along a time step. Then: DV_cons = Cons_accel * dt. DV_noncons = DV_tot - DV_cons
         double DVtot[3];
         double DVconservative[3];
@@ -1397,11 +1403,18 @@ void SixDofEOM::integrateState(double CurrentTime)
         double v_Bnext[3];
         double LocalDV[3];
         
-        sigma_BN = X+6;
-        sigma_BNnext = Xnext+6;
+        if (this->useRotation) {
+            sigma_BN = X+6;
+            sigma_BNnext = Xnext+6;
+            
+            MRP2C(sigma_BN, BNLoc);
+            MRP2C(sigma_BNnext, BNLocnext);
+        }
+        else {
+            mSetIdentity(BNLoc, 3, 3);
+            mSetIdentity(BNLocnext, 3, 3);
+        }
         
-        MRP2C(sigma_BN, BNLoc);
-        MRP2C(sigma_BNnext, BNLocnext);
         
         m33MultV3(BNLoc, X + 3, v_B);
         m33MultV3(BNLocnext, Xnext + 3, v_Bnext);
