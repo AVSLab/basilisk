@@ -1039,12 +1039,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         //! Rotate rDDot_CN_N into the body frame
         m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
 
-        //! - Compute hinged solar panel dynamics
+        //! - Add in changes to mass properties
         v3SetZero(c_B);
         v3SetZero(cPrime_B);
         m33Copy(this->compI, ISCPntB_B);
         m33SetZero(IPrimeSCPntB_B);
         mSC = this->compMass;
+        //! - Loop through solar panels
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
@@ -1109,14 +1110,59 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 spCount++;
             }
         }
+
+        //! - Loop through fuel slosh particles
+        uint32_t fspCount = 0;
+        std::vector<FuelTank *>::iterator itFT;
+        std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+        for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+        {
+            FuelTank *TheEff = *itFT;
+            for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                 FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+            {
+                //! - Define position vector from point B to center of mass of slosh particle
+                v3Add(FSPIt->r_PT_B, TheEff->fuelTankData.r_TB_B, FSPIt->r_PB_B);
+                v3Scale(rhosFS[fspCount], FSPIt->pHat_B, intermediateVector);
+                v3Add(FSPIt->r_PB_B, intermediateVector, FSPIt->r_PcB_B);
+
+                //! - Define body derivative of r_PcB_B, rPrime_PcB_B
+                v3Scale(rhoDotsFS[fspCount], FSPIt->pHat_B, FSPIt->rPrime_PcB_B);
+
+                //! - add to c_B (still to be scaled by 1/mSC outside of loop)
+                v3Scale(FSPIt->massFSP, FSPIt->r_PcB_B, intermediateVector);
+                v3Add(c_B, intermediateVector, c_B);
+
+                //! - add to cPrime_B (still to be scaled by 1/mSC outside of loop)
+                v3Scale(FSPIt->massFSP, FSPIt->rPrime_PcB_B, intermediateVector);
+                v3Add(cPrime_B, intermediateVector, cPrime_B);
+
+                //! - add to inertia of the spacecraft to include the fuel slosh particles
+                //! - Define tilde matrix of r_PcB_B
+                v3Tilde(FSPIt->r_PcB_B, FSPIt->rTilde_PcB_B);
+                m33MultM33t(FSPIt->rTilde_PcB_B, FSPIt->rTilde_PcB_B, intermediateMatrix);
+                m33Scale(FSPIt->massFSP, intermediateMatrix, intermediateMatrix);
+                m33Add(ISCPntB_B, intermediateMatrix, ISCPntB_B);
+
+                //! - add to body derivative of inertia of the spacecraft to include the fuel slosh particles
+                //! - Define tilde matrix of rPrime_PcB_B
+                v3Tilde(FSPIt->rPrime_PcB_B, FSPIt->rPrimeTilde_PcB_B);
+                m33MultM33(FSPIt->rPrimeTilde_PcB_B, FSPIt->rTilde_PcB_B, intermediateMatrix);
+                m33MultM33(FSPIt->rTilde_PcB_B, FSPIt->rPrimeTilde_PcB_B, intermediateMatrix2);
+                m33Add(intermediateMatrix, intermediateMatrix2, intermediateMatrix);
+                m33Scale(FSPIt->massFSP, intermediateMatrix, intermediateMatrix);
+                m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
+                fspCount++;
+            }
+        }
         v3Scale(1/mSC, c_B, c_B);
         v3Scale(1/mSC, cPrime_B, cPrime_B);
 
-        //! Define some necessary tilde matrices
+        //! - Define some necessary tilde matrices
         v3Tilde(omega_BN_BLoc, omegaTilde_BN_B);
         v3Tilde(c_B, cTilde_B);
 
-        //! Define matrices needed for hinged solar panel dynamics
+        //! - Define matrices needed for hinged and fuel slosh dynamics
         uint32_t spCounti = 0;
         uint32_t spCountj;
         v3SetZero(vectorSumHingeDynamics);

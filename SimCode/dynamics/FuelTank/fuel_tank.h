@@ -32,9 +32,13 @@ typedef struct {
 
 typedef struct {
     double massFSP;            //!< kg, mass of fuel slosh particle
-    double r_PT_B[3];          //!< m, postion vector from its tank center to slosh equilibrium, P
-    double r_PB_B[3];          //!< m, position vector from B point to slosh equilibrium, P
-    double pHat_B[3];          //!< slosh direction unit vector
+    double r_PT_B[3];          //!< m, postion vector from its tank center to slosh equilibrium, P, in body frame
+    double r_PB_B[3];          //!< m, position vector from B point to slosh equilibrium, P, in body frame
+    double r_PcB_B[3];         //!< m, position vector from B to center of mass of slosh mass, in body frame
+    double rTilde_PcB_B[3][3]; //!< tilde matrix of r_Pc_B_B
+    double rPrime_PcB_B[3];    //!< m/s, body derivative of r_PcB_B, in body frame
+    double rPrimeTilde_PcB_B[3][3]; //! - tilde matrix of rPrime_PcB_B
+    double pHat_B[3];          //!< slosh direction unit vector, in body frame
     double k;                  //!< N/m, linear spring constant for fuel slosh
     double c;                  //!< N-s/m, linear damping term for fuel slosh
     double rho;                //!< m, fuel slosh displacement from equilibrium
