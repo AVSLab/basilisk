@@ -14,9 +14,9 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module solar_panels
+%module fuel_tanks
 %{
-   #include "solar_panels.h"
+   #include "fuel_tanks.h"
 %}
 
 %include "std_vector.i"
@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // Instantiate templates used by example
 namespace std {
    %template(IntVector) vector<int>;
-   %template(SolarPanelVector) std::vector<SolarPanelConfigData>;
+   %template(FuelTankVector) std::vector<FuelTankConfigData>;
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;

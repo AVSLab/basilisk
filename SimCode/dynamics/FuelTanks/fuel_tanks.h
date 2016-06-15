@@ -15,8 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef SOLAR_PANELS_H
-#define SOLAR_PANELS_H
+#ifndef FUEL_TANKS_H
+#define FUEL_TANKS_H
 
 #include <vector>
 #include "utilities/sys_model.h"
@@ -45,18 +45,18 @@ typedef struct {
     double rPrimeTilde_SB_B[3][3];//!< Tilde matrix of rPrime_SB_B
     double theta;              //!< rad, solar panel angle
     double thetaDot;           //!< rad/s, solar panel angle rate
-}SolarPanelConfigData;
+}FuelTankConfigData;
 
-class SolarPanels {
+class FuelTanks {
 public:
-    SolarPanels();
-    ~SolarPanels();
+    FuelTanks();
+    ~FuelTanks();
 
     //! Add a new solar panel to solar panel set
-    void addSolarPanel(SolarPanelConfigData *newSP) {solarPanelData.push_back(*newSP);}
+    void addFuelTank(FuelTankConfigData *newFT) {fuelTankData.push_back(*newFT);}
 
 public:
-    std::vector<SolarPanelConfigData> solarPanelData;
+    std::vector<FuelTankConfigData> fuelTankData;
     
 private:
 };
