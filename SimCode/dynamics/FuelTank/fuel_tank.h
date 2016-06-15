@@ -46,7 +46,7 @@ public:
     FuelTank();
     ~FuelTank();
 
-    void addFuelSloshParticle(FuelSloshParticleConfigData *newFSP) {fuelSloshParticleData.push_back(*newFSP);}
+    void addFuelSloshParticle(FuelSloshParticleConfigData *newFSP) {fuelSloshParticlesData.push_back(*newFSP);}
 
 public:
     std::vector<FuelSloshParticleConfigData> fuelSloshParticlesData;

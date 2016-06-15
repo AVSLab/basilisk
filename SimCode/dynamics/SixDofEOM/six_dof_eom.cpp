@@ -309,6 +309,17 @@ void SixDofEOM::addSolarPanelSet(SolarPanels *NewEffector)
     solarPanels.push_back(NewEffector);
 }
 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The
+ effector should be a derived class of the DynEffector abstract class and it
+ should include a ComputeDynamics call which is operated by dynamics.
+ @return void
+ @param NewEffector The effector that we are adding to dynamics
+ */
+void SixDofEOM::addFuelTank(FuelTank *NewEffector)
+{
+    fuelTanks.push_back(NewEffector);
+}
+
 /*!
  * @brief This method changes the integrator in use (Default integrator: RK4)
  * @param Pointer to an integrator object.
