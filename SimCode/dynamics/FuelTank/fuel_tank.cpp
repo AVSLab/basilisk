@@ -14,23 +14,21 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module fuel_tanks
-%{
-   #include "fuel_tanks.h"
-%}
+#include "dynamics/FuelTank/fuel_tank.h"
+#include "architecture/messaging/system_messaging.h"
+#include "utilities/linearAlgebra.h"
+#include <cstring>
+#include <iostream>
+#include <cmath>
 
-%include "std_vector.i"
-%include "std_string.i"
-%include "std_map.i"
-%include "stdint.i"
-
-// Instantiate templates used by example
-namespace std {
-   %template(IntVector) vector<int>;
-   %template(FuelTankVector) std::vector<FuelTankConfigData>;
-   %template(DoubleVector) vector<double>;
-   %template(StringVector) vector<string>;
-   %template(ConstCharVector) vector<const char*>;
+/*! This is the constructor.  It sets some default initializers that can be
+ overriden by the user.*/
+FuelTank::FuelTank()
+{
 }
-%include "sys_model.h"
-%include "fuel_tanks.h"
+
+/*! The destructor.  Nothing of note is performed here*/
+FuelTank::~FuelTank()
+{
+    return;
+}
