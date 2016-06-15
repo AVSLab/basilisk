@@ -136,6 +136,7 @@ public:
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
     uint64_t SPCount;                 //!<        Number of solar panels to model
+    uint64_t numFSP;                  //!<        Number of fuel slosh particles
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
     double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
     double baseMass;                  //!< [kg]   Mass of dry spacecraft structure
@@ -165,7 +166,7 @@ public:
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
     bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
     std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
-    std::vector<FuelTank *> fuelTanks; //! (-) Vector of fuel tanks
+    std::vector<FuelTank *> fuelTanks; //! (-) Vector of fuel tank
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data

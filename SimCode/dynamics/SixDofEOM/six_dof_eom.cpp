@@ -370,9 +370,9 @@ void SixDofEOM::SelfInit()
 	this->RWACount = 0;
     this->numRWJitter = 0;
 	std::vector<ReactionWheelDynamics *>::iterator it;
+    std::vector<ReactionWheelConfigData>::iterator rwIt;
 	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
 	{
-		std::vector<ReactionWheelConfigData>::iterator rwIt;
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
@@ -393,16 +393,29 @@ void SixDofEOM::SelfInit()
         }
     }
 
+    this->numFSP = 0;
+    std::vector<FuelTank *>::iterator itFT;
+    std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+    for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+    {
+        for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+             FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+        {
+            this->numFSP++;
+        }
+    }
+
     this->NStates = 0;
     if(this->useTranslation) this->NStates += 6;
     if(this->useRotation)    this->NStates += 6;
     this->NStates += this->RWACount + this->numRWJitter;
     this->NStates += this->SPCount*2;
+    this->NStates += this->numFSP*2;
     if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
 
-    this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot)*/
+    this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot) + fuel slosh (rho/rhoDot)*/
     memset(this->XState, 0x0, (this->NStates)*sizeof(double));
     TimePrev = 0.0;
     
@@ -471,7 +484,6 @@ void SixDofEOM::SelfInit()
     uint32_t rwJitterCount = 0;
 	for (it=reactWheels.begin(); it != reactWheels.end(); it++)
 	{
-		std::vector<ReactionWheelConfigData>::iterator rwIt;
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
@@ -507,13 +519,24 @@ void SixDofEOM::SelfInit()
     uint32_t spIterator = 0;
     for (itSP=solarPanels.begin(); itSP != solarPanels.end(); itSP++)
     {
-        std::vector<SolarPanelConfigData>::iterator SPIt;
         for (SPIt = (*itSP)->solarPanelData.begin();
              SPIt != (*itSP)->solarPanelData.end(); SPIt++)
         {
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spIterator] = SPIt->theta;
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spIterator] = SPIt->thetaDot;
             spIterator++;
+        }
+    }
+
+    uint32_t fspIterator = 0;
+    for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+    {
+        for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+             FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+        {
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount*2 + fspIterator] = FSPIt->rho;
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP + fspIterator] = FSPIt->rhoDot;
+            fspIterator++;
         }
     }
     
@@ -845,6 +868,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *thetasSP;           /* pointer of theta values for hinged SP dynamics */
     double *thetaDotsSP;        /* pointer of time derivatives of thetas for hinged dynamics */
     double *thetaDDotsSP;       /* pointer of 2nd time derivatives of thetas for hinged dynamics */
+    double *rhosFS;             /* pointer of rho values for fuel slosh dynamics */
+    double *rhoDotsFS;          /* pointer of time derivatives of rhos for fuel slosh dynamics */
+    double *rhoDDotsFS;         /* pointer of 2nd time derivatives of rhos for fuel slosh dynamics */
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
@@ -908,6 +934,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             thetasSP = &X[i + this->RWACount + this->numRWJitter];
             thetaDotsSP = &X[i + this->RWACount + this->numRWJitter + this->SPCount];
             thetaDDotsSP = dX + i + this->RWACount + this->numRWJitter + this->SPCount;
+        }
+        if (this->numFSP > 0) {
+            if (!this->useTranslation) {
+                std::cerr << "WARNING: Cannot have fuel slosh dynamics w/o translation" << std::endl;
+            }
+            rhosFS = &X[i + this->RWACount + this->numRWJitter + this->SPCount*2];
+            rhoDotsFS = &X[i + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP];
+            rhoDDotsFS = dX + i + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP;
         }
         omegaDot_BN_B = dX + 3 + this->useTranslation*6;
         
