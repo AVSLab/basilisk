@@ -1063,6 +1063,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
+        uint32_t fspCount = 0;
         std::vector<FuelTank *>::iterator itFT;
         std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
         if (this->useTranslation) {
@@ -1142,7 +1143,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             }
 
             //! - Loop through fuel slosh particles
-            uint32_t fspCount = 0;
             for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
             {
                 FuelTank *TheEff = *itFT;
@@ -1506,7 +1506,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             if (this->numFSP > 0) {
                 //! - Modify tauRHS with vector calculated in fuel slosh loop
                 v3Subtract(tauRHS, vectorSum5FuelSloshDynamics, tauRHS);
-                uint32_t fspCount = 0;
+                fspCount = 0;
                 for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
                 {
                     for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
@@ -1568,23 +1568,49 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
 
         if (this->useTranslation) {
             //! - Back solve for the fuel slosh motion
+            v3SetZero(vectorSum3FuelSloshDynamics);
+            fspCount = 0;
+            for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+            {
+                for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                     FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+                {
+                    //! - Set trivial derivative rhoDot = rhoDot
+                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + fspCount] = rhoDotsFS[fspCount];
+
+                    //! - Solve for rhoDDot
+                    vtMultM(&matrixT[fspCount*this->numFSP], matrixO, this->numFSP, 3, intermediateVector);
+                    rhoDDotsFS[fspCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixT[fspCount*this->numFSP], this->numFSP, vectorQ);
+
+                    //! - Solve for vector needed for translation
+                    v3Scale(FSPIt->massFSP*rhoDDotsFS[fspCount]/mSC, FSPIt->pHat_B, intermediateVector);
+                    v3Add(vectorSum3FuelSloshDynamics, intermediateVector, vectorSum3FuelSloshDynamics);
+
+                    fspCount++;
+                }
+            }
 
             //! - Back solve for solar panel motion
             v3SetZero(vectorSumHingeDynamics);
             v3SetZero(vectorSum2HingeDynamics);
-            mMultV(matrixF, this->SPCount, 3, omegaDot_BN_B, intermediateVector);
             spCount = 0;
             for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
             {
                 for (SPIt = (*SPPackIt)->solarPanelData.begin();
                      SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                 {
-                    //! Set trivial derivative thetaDot = thetaDot
+                    //! - Set trivial derivative thetaDot = thetaDot
                     dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount] = thetaDotsSP[spCount];
 
-                    //! Solve for thetaDDot
+                    //! - Solve for thetaDDot
                     vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
-                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorV);
+                    thetaDDotsSP[spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorV);
+
+                    //! - Add in fuel slosh motion into thetaDDot
+                    if (this->numFSP > 0) {
+                        mMultV(matrixG, this->SPCount, this->numFSP, rhoDDotsFS, intermediateVectorFuelSlosh2);
+                        thetaDDotsSP[spCount] += vDot(&matrixE[spCount*this->SPCount], this->SPCount, intermediateVectorFuelSlosh2);
+                    }
 
                     //! - Solve for two vectors needed for translation
                     v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount]/mSC, SPIt->sHat3_B, intermediateVector);
@@ -1628,14 +1654,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
                 m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
                 v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-                v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
-                v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
                 m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
                 v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+                if (this-SPCount > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+                    v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+                }
+                if (this->numFSP > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSum3FuelSloshDynamics, rDDot_BN_B);
+                }
                 m33tMultV3(BN, rDDot_BN_B, dX + 3);
             }
         }
-
     }
     
     // Compute the total non-conservative acceleration of point B relative to N.
