@@ -885,6 +885,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *matrixN; /* Matrix N needed for fuel slosh and hinged SP dynamics together */
     double *matrixO; /* Matrix O needed for fuel slosh and hinged SP dynamics together */
     double *vectorQ; /* Vector Q needed for fuel slosh and hinged SP dynamics together */
+    double *matrixT; /* Matrix T needed for fuel slosh and hinged SP dynamics together */
+    double *matrixX; /* Matrix X needed for fuel slosh and hinged SP dynamics together */
+    double *intermediateMatrixFuelSlosh; /* Matrix needed for fuel slosh */
+    double *intermediateVectorFuelSlosh; /* Vector needed for fuel slosh and hinged SP */
+    double *intermediateVectorFuelSlosh2; /* Vector needed for fuel slosh and hinged SP */
     double tauRHS[3]; /* Right hand side of omegaDot equation */
     double ILHS[3][3]; /* Left hand side of omegaDot equaion */
     double mSC; /* Mass of the space craft including solar panels */
@@ -898,17 +903,23 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double vectorSum3HingeDynamics[3];          /* intermediate variables */
     double vectorSum4FuelSloshDynamics[3];      /* intermediate variables */
     double vectorSum5FuelSloshDynamics[3];      /* intermediate variables */
+    double vectorSum6FuelSloshDynamics[3];      /* intermediate variables */
     double matrixSumFuelSloshDynamics[3][3];    /* intermediate variables */
     //! Populate variable size matrices and arrays
     matrixA = new double[this->SPCount*this->SPCount];
     matrixE = new double[this->SPCount*this->SPCount];
     matrixF = new double[this->SPCount*3];
     vectorV = new double[this->SPCount];
-    matrixR = new double[this->SPCount*3];
+    matrixR = new double[3*this->SPCount];
     matrixG = new double[this->SPCount*this->numFSP];
     matrixN = new double[this->numFSP*this->numFSP];
     matrixO = new double[this->numFSP*3];
     vectorQ = new double[this->numFSP*3];
+    matrixT = new double[this->numFSP*this->numFSP];
+    matrixX = new double[3*this->numFSP];
+    intermediateMatrixFuelSlosh = new double[this->numFSP*3];
+    intermediateVectorFuelSlosh = new double[this->numFSP];
+    intermediateVectorFuelSlosh2 = new double[this->SPCount];
 
     //! Begin method steps
     //! - Set local state variables based on the input state
@@ -1053,6 +1064,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
+        std::vector<FuelTank *>::iterator itFT;
+        std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
         if (this->useTranslation) {
             //! - Copy acceleration center of mass acceleration
             v3Copy(dX + 3, rDDot_CN_N);
@@ -1131,8 +1144,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
 
             //! - Loop through fuel slosh particles
             uint32_t fspCount = 0;
-            std::vector<FuelTank *>::iterator itFT;
-            std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
             for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
             {
                 FuelTank *TheEff = *itFT;
@@ -1276,7 +1287,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 }
             }
 
-            //! - Modify equation with hinged solar panel dynamics
+            //! - Find inverse of A which is the E matrix
             v3SetZero(vectorSum3HingeDynamics);
             if (this->SPCount > 0) {
                 //! - Find E matrix for hinged solar panel dynamics
@@ -1293,6 +1304,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             uint32_t fspCountl;
             std::vector<FuelTank *>::iterator itFTl;
             std::vector<FuelSloshParticleConfigData>::iterator FSPItl;
+            v3SetZero(vectorSum6FuelSloshDynamics);
             for (itFTj = fuelTanks.begin(); itFTj != fuelTanks.end(); itFTj++)
             {
                 for (FSPItj = (*itFTj)->fuelSloshParticlesData.begin();
@@ -1401,9 +1413,29 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     v3Subtract(intermediateVector, g_B, intermediateVector);
                     v3Subtract(intermediateVector, vectorSum5FuelSloshDynamics, intermediateVector);
                     vectorQ[fspCountj] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector) - FSPItj->k*rhosFS[fspCountj] - FSPItj->c*rhoDotsFS[fspCountj];
+
+                    //! - Populate X matrix
+                    m33Subtract(FSPItj->rTilde_PcB_B, cTilde_B, intermediateMatrix);
+                    m33MultV3(intermediateMatrix, FSPItj->pHat_B, intermediateVector);
+                    v3Scale(FSPItj->massFSP, intermediateVector, &matrixX[fspCountj*3]);
+
+                    //! - Find vector needed for tauRHS
+                    m33MultV3(FSPItj->rTilde_PcB_B, FSPItj->rPrime_PcB_B, intermediateVector);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                    v3Scale(FSPItj->massFSP, intermediateVector, intermediateVector);
+                    v3Add(vectorSum6FuelSloshDynamics, intermediateVector, vectorSum6FuelSloshDynamics);
                     fspCountj++;
                 }
-
+            }
+            //! - Find the inverse of the N matrix which is the T matrix
+            if (this->numFSP > 0) {
+                //! - Find T matrix for hinged solar panel dynamics
+                if (this->numFSP == 1) {
+                    matrixT[0] = 1.0/matrixN[0];
+                }
+                else {
+                    mInverse(matrixN, this->numFSP, matrixT);
+                }
             }
         }
 
@@ -1417,8 +1449,13 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         v3Subtract(extSumTorque_B, intermediateVector, tauRHS);
 
         if (this->useTranslation) {
-            if (this-SPCount >0) {
-                //! - Modify tauRHS and ILHS to include hinged dynamics
+            if (this-SPCount > 0 || this->numFSP > 0) {
+                //! - Modify ILHS
+                m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
+                m33Scale(mSC, intermediateMatrix, intermediateMatrix);
+                m33Add(ILHS, intermediateMatrix, ILHS);
+
+                //! - Modify tauRHS
                 m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
                 v3Scale(2.0, intermediateVector, intermediateVector);
                 v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
@@ -1430,30 +1467,65 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3Subtract(tauRHS, intermediateVector, tauRHS);
                 m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
                 v3Subtract(tauRHS, intermediateVector, tauRHS);
+            }
+            if (this->SPCount > 0) {
+                //! - Modify tauRHS with vector calculated in solar panel loop
                 v3Subtract(tauRHS, vectorSum2HingeDynamics, tauRHS);
-                m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
-                m33Scale(mSC, intermediateMatrix, intermediateMatrix);
-                m33Add(ILHS, intermediateMatrix, ILHS);
                 spCount = 0;
                 for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
                 {
                     for (SPIt = (*SPPackIt)->solarPanelData.begin();
                          SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                     {
+                        //! - Modify ILHS with hinged dynamics
                         vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
                         v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
                         m33Add(ILHS, intermediateMatrix, ILHS);
 
-                        //! - Define vector needed for modification of tauRHS
+                        //! - Modify tauRHS with hinged dynamics
                         v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorV), &matrixR[spCount*3], intermediateVector);
-                        v3Add(vectorSum3HingeDynamics, intermediateVector, vectorSum3HingeDynamics);
+                        v3Subtract(tauRHS, intermediateVector, tauRHS);
+
+                        if (this->numFSP) {
+                            //! - Modify ILHS with cross coupling of hinged and fuel slosh dynamics
+                            mMultM(matrixT, this->numFSP, this->numFSP, matrixO, this->numFSP, 3, intermediateMatrixFuelSlosh);
+                            mMultM(matrixG, this->numFSP, this->numFSP, intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateMatrixFuelSlosh);
+                            vtMultM(&matrixE[spCount*this->SPCount], intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateVector);
+                            v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
+                            m33Add(ILHS, intermediateMatrix, ILHS);
+
+                            //! - Modify tauRHS with cross coupling of hinged and fuel slosh dynamics
+                            mMultV(matrixT, this->numFSP, this->numFSP, vectorQ, intermediateVectorFuelSlosh);
+                            mMultV(matrixG, this->SPCount, this->numFSP, intermediateVectorFuelSlosh, intermediateVectorFuelSlosh2);
+                            v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, intermediateVectorFuelSlosh2), &matrixR[spCount*3], intermediateVector);
+                            v3Subtract(tauRHS, intermediateVector, tauRHS);
+                        }
                         spCount++;
                     }
                 }
-
             }
-            //! Modify tauRHS with Hinged dynamics 
-            v3Subtract(tauRHS, vectorSum3HingeDynamics, tauRHS);
+
+            if (this->numFSP > 0) {
+                //! - Modify tauRHS with vector calculated in fuel slosh loop
+                v3Subtract(tauRHS, vectorSum6FuelSloshDynamics, tauRHS);
+                uint32_t fspCount = 0;
+                for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+                {
+                    for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                         FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+                    {
+                        //! - Modify ILHS with fuel slosh motion
+                        vtMultM(&matrixT[fspCount*this->numFSP], matrixO, this->numFSP, 3, intermediateVector);
+                        v3OuterProduct(&matrixX[fspCount*3], intermediateVector, intermediateMatrix);
+                        m33Add(ILHS, intermediateMatrix, ILHS);
+
+                        //! - Modify tauRHS with fuel slosh motion
+                        v3Scale(vDot(&matrixT[fspCount*this->numFSP], this->numFSP, vectorQ), &matrixX[fspCount*3], intermediateVector);
+                        v3Subtract(tauRHS, intermediateVector, tauRHS);
+                        fspCount++;
+                    }
+                }
+            }
         }
 
 
@@ -1586,6 +1658,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     delete [] matrixN;
     delete [] matrixO;
     delete [] vectorQ;
+    delete [] matrixT;
+    delete [] matrixX;
+    delete [] intermediateMatrixFuelSlosh;
+    delete [] intermediateVectorFuelSlosh;
+    delete [] intermediateVectorFuelSlosh2;
 }
 
 /*! This method is used to integrate the state forward to the time specified.
