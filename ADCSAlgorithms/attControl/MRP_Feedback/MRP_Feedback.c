@@ -30,6 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include <string.h>
 #include <math.h>
 
@@ -60,7 +61,9 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                 sizeof(vehicleConfigData), moduleID);
+                                                              sizeof(vehicleConfigData), moduleID);
+    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+                                                     sizeof(RWSpeedData), moduleID);
 
 }
 
@@ -89,6 +92,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -99,7 +103,9 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     double              v3_1[3];
     double              v3_2[3];
     double              temp;
-
+    int                 i;
+    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
+    
     /* compute control update time */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
         dt = (callTime - ConfigData->priorTime)*NANO2SEC;
@@ -117,6 +123,8 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
 
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
@@ -149,11 +157,13 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     v3Add(v3, Lr, Lr);
 
     m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
-//    for(i = 0; i < NUM_RW; i++) {
-//        v3Scale(sc->rw[i].Js * (v3Dot(sc->omega, sc->rw[i].gs) + sc->rw[i].Omega),
-//                sc->rw[i].gs, v3_1);
-//        v3Add(v3, v3_1, v3);
-//    }
+    for(i = 0; i < ConfigData->numRWAs; i++)
+    {
+        wheelGs = &(ConfigData->GsMatrix[i*3]);
+        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i])
+                , wheelGs, v3_1);
+        v3Add(v3_1, v3, v3);
+    }
     v3Add(guidCmd.omega_RN_B, v3_2, v3_2);
     v3Cross(v3_2, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
