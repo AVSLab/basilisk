@@ -16,7 +16,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #include "sensors/star_tracker/star_tracker.h"
 #include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_interface.h"
 #include "utilities/RigidBodyKinematics.h"
 #include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <iostream>
@@ -24,14 +23,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 StarTracker::StarTracker()
 {
     CallCounts = 0;
-    messagesLinked = false;
-    inputTimeID = -1;
-    inputStateID = -1;
-    inputTimeMessage = "spice_time_output_data";
-    inputStateMessage = "inertial_state_output";
-    outputStateMessage = "star_tracker_state";
-    OutputBufferCount = 2;
-    m33SetIdentity(RECAST3X3 T_CaseStr);
+    this->messagesLinked = false;
+    this->inputTimeID = -1;
+    this->inputStateID = -1;
+    this->inputTimeMessage = "spice_time_output_data";
+    this->inputStateMessage = "inertial_state_output";
+    this->outputStateMessage = "star_tracker_state";
+    this->OutputBufferCount = 2;
+    m33SetIdentity(RECAST3X3 this->T_CaseStr);
+    this->isOutputTruth = false;
     return;
 }
 
@@ -55,7 +55,6 @@ void StarTracker::SelfInit()
 {
     //! Begin method steps
     uint64_t numStates = 3;
-    std::vector<double>::iterator it;
     outputStateID = SystemMessaging::GetInstance()->
         CreateNewMessage(outputStateMessage, sizeof(StarTrackerHWOutput),
         OutputBufferCount, "StarTrackerHWOutput", moduleID);
@@ -85,54 +84,75 @@ void StarTracker::CrossInit()
     messagesLinked = LinkMessages();
 }
 
-void StarTracker::UpdateState(uint64_t CurrentSimNanos)
-{
-    
-    errorModel.setPropMatrix(AMatrix);
-    errorModel.computeNextState();
-    navErrors = errorModel.getCurrentState();
-    computeOutputs(CurrentSimNanos);
-}
 
-void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
+void StarTracker::readInputs()
 {
-    OutputStateData localState;
     SingleMessageHeader localHeader;
-    SpiceTimeOutput timeState;
-    std::vector<double>::iterator it;
-    double sigma_BNLocal[3];
-    double T_BdyInrtl[3][3];
-    double T_StrInrtl[3][3];
-    double T_CaseInrtl[3][3];
-    double mrpErrors[3];
-    double localTime = 0.0;
     
-    if(!messagesLinked)
+    if(!this->messagesLinked)
     {
-        messagesLinked = LinkMessages();
+        this->messagesLinked = LinkMessages();
     }
     
-    memset(&timeState, 0x0, sizeof(SpiceTimeOutput));
-    memset(&localState, 0x0, sizeof(OutputStateData));
+    memset(&this->timeState, 0x0, sizeof(SpiceTimeOutput));
+    memset(&this->trueState, 0x0, sizeof(OutputStateData));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState), moduleID);
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&trueState), moduleID);
     }
     if(inputTimeID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
                                                     sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState), moduleID);
-        localTime = timeState.J2000Current;
-        localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
     }
-    PRV2MRP(&(navErrors.data()[0]), mrpErrors);
-    addMRP(localState.sigma, mrpErrors, sigma_BNLocal);
-    MRP2C(sigma_BNLocal, T_BdyInrtl);
-    m33tMultM33(localState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
+}
+void StarTracker::computeErrors()
+{
+    this->errorModel.setPropMatrix(AMatrix);
+    this->errorModel.computeNextState();
+    this->navErrors = this->errorModel.getCurrentState();
+}
+void StarTracker::applyErrors()
+{
+    addMRP(this->sigmaOutput, this->mrpErrors, this->sigmaOutput);
+}
+
+void StarTracker::UpdateState(uint64_t CurrentSimNanos)
+{
+    readInputs();
+    computeErrors();
+    computeOutputs(CurrentSimNanos);
+    writeOutputs(CurrentSimNanos);
+}
+
+void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
+{
+    SingleMessageHeader localHeader;
+    std::vector<double>::iterator it;
+    double T_BdyInrtl[3][3];
+    double T_StrInrtl[3][3];
+    double T_CaseInrtl[3][3];
+    double localTime = 0.0;
+    
+    localTime = timeState.J2000Current;
+    localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
+
+    v3Copy(trueState.sigma, this->sigmaOutput);
+    PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
+    if (!this->isOutputTruth)
+    {
+        applyErrors();
+    }
+    MRP2C(this->sigmaOutput, T_BdyInrtl);
+    m33tMultM33(trueState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
     m33MultM33(RECAST3X3 T_CaseStr, T_StrInrtl, T_CaseInrtl);
     localOutput.timeTag = localTime;
     C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
+}
+
+void StarTracker::writeOutputs(uint64_t CurrentSimNanos)
+{
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-        sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput), moduleID);
+                                                 sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput), moduleID);
 }

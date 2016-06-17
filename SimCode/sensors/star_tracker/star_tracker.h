@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/gauss_markov.h"
 #include "utilities/dyn_effector.h"
 #include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
+#include "environment/spice/spice_interface.h"
 
 
 class StarTracker: public SysModel {
@@ -34,6 +35,10 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
+    void readInputs();
+    void writeOutputs(uint64_t Clock);
+    void computeErrors();
+    void applyErrors();
     void computeOutputs(uint64_t CurrentSimNanos);
     
 public:
@@ -48,7 +53,17 @@ public:
     std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     double T_CaseStr[9];              //!< [-] Transformation matrix from case to body
-    StarTrackerHWOutput localOutput;    //!< [-] Class-local storage for output message
+    StarTrackerHWOutput localOutput;  //!< [-] Class-local storage for output message
+    int32_t isOutputTruth;            //!< [-] Flag indicating whether the output information is the truth or is corrupted with sensor errors
+    
+    double mrpErrors[3];
+    double sigmaOutput[3];
+    SpiceTimeOutput timeState;
+    OutputStateData trueState;
+
+    
+    
+    
 private:
     std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputTimeID;              //!< [-] Connect to input time message
