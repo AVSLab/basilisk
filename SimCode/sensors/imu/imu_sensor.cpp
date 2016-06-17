@@ -26,20 +26,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ImuSensor::ImuSensor()
 {
     CallCounts = 0;
-    InputStateID = -1;
-    InputStateMsg = "inertial_state_output";
-    OutputDataMsg = "imu_meas_data";
-    InputMassMsg = "spacecraft_mass_props";
-    setStructureToPlatformDCM(0.0, 0.0, 0.0);
+    this->InputStateID = -1;
+    this->InputStateMsg = "inertial_state_output";
+    this->OutputDataMsg = "imu_meas_data";
+    this->InputMassMsg = "spacecraft_mass_props";
+    this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&StatePrevious, 0x0, sizeof(OutputStateData));
-    memset(&StateCurrent, 0x0, sizeof(OutputStateData));
-    PreviousTime = 0;
-    NominalReady = false;
-    memset(&senRotBias[0], 0x0, 3*sizeof(double));
-    memset(&senRotNoiseStd[0], 0x0, 3*sizeof(double));
-    memset(&senTransBias[0], 0x0, 3*sizeof(double));
-    memset(&senTransNoiseStd[0], 0x0, 3*sizeof(double));
+    memset(&this->StatePrevious, 0x0, sizeof(OutputStateData));
+    memset(&this->StateCurrent, 0x0, sizeof(OutputStateData));
+    this->PreviousTime = 0;
+    this->NominalReady = false;
+    this->isOutputTruth = false;
+    memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
+    memset(&this->senRotNoiseStd[0], 0x0, 3*sizeof(double));
+    memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
+    memset(&this->senTransNoiseStd[0], 0x0, 3*sizeof(double));
     
     return;
 }
@@ -89,7 +90,7 @@ void ImuSensor::CrossInit()
     return;
 }
 
-void ImuSensor::ReadInputs()
+void ImuSensor::readInputs()
 {
     SingleMessageHeader LocalHeader;
     
@@ -107,7 +108,7 @@ void ImuSensor::ReadInputs()
     }
 }
 
-void ImuSensor::WriteOutputs(uint64_t Clock)
+void ImuSensor::writeOutputs(uint64_t Clock)
 {
     ImuSensorOutput LocalOutput;
     memcpy(LocalOutput.DVFramePlatform, DVFramePlatform, 3*sizeof(double));
@@ -118,7 +119,7 @@ void ImuSensor::WriteOutputs(uint64_t Clock)
                                                  sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
 
-void ImuSensor::ApplySensorDiscretization(uint64_t CurrentTime)
+void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
 {
     double scaledMeas[3];
     double intMeas[3];
@@ -159,10 +160,10 @@ void ImuSensor::ApplySensorDiscretization(uint64_t CurrentTime)
     
 }
 
-void ImuSensor::ApplySensorErrors(uint64_t CurrentTime)
+void ImuSensor::applySensorErrors(uint64_t CurrentTime)
 {
-    double OmegaErrors[3];
-    double AccelErrors[3];
+    double OmegaErrors[3] = {0, 0, 0};
+    double AccelErrors[3]= {0, 0, 0};
     double dt;
     
     dt = (CurrentTime - PreviousTime)*1.0E-9;
@@ -179,7 +180,7 @@ void ImuSensor::ApplySensorErrors(uint64_t CurrentTime)
     
 }
 
-void ImuSensor::ComputePlatformDR()
+void ImuSensor::computePlatformDR()
 {
     
     double MRP_Bdy2Inrtl_Prev[3];
@@ -204,7 +205,7 @@ void ImuSensor::ComputePlatformDR()
     m33MultV3(T_Bdy2Platform, StateCurrent.omega, AngVelPlatform);
 }
 
-void ImuSensor::ComputePlatformDV(uint64_t CurrentTime)
+void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 {
     
     double CmRelPos[3];
@@ -239,14 +240,17 @@ void ImuSensor::ComputePlatformDV(uint64_t CurrentTime)
 
 void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
-    ReadInputs();
+    readInputs();
     if(NominalReady)
     {
-        ComputePlatformDR();
-        ComputePlatformDV(CurrentSimNanos);
-        ApplySensorErrors(CurrentSimNanos);
-        ApplySensorDiscretization(CurrentSimNanos);
-        WriteOutputs(CurrentSimNanos);
+        computePlatformDR();
+        computePlatformDV(CurrentSimNanos);
+        if (!this->isOutputTruth)
+        {
+            applySensorErrors(CurrentSimNanos);
+        }
+        applySensorDiscretization(CurrentSimNanos);
+        writeOutputs(CurrentSimNanos);
     }
     memcpy(&StatePrevious, &StateCurrent, sizeof(OutputStateData));
     PreviousTime = CurrentSimNanos;
