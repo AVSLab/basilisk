@@ -54,7 +54,8 @@ public:
     void ReadInputs();
     void ComputeSunData();
     void ComputeTruthOutput();
-    void ComputeActualOutput();
+    void ApplySensorErrors();
+    void ScaleActualOutput();
     void WriteOutputs(uint64_t Clock);
     
 public:
@@ -73,23 +74,26 @@ public:
     double              directValue;            /*!< direct solar irradiance measurement */
     double              albedoValue;            /*!< albedo irradiance measurement */
     double              scaleFactor;            /*!< scale factor applied to sensor (common + individual multipliers) */
+    double              trueValue;              /*!< total measurement without including perturbations */
     double              sensedValue;            /*!< total measurement including perturbations */
+    double              outputValue;            /*!< output value to be scaled */
     double              ScaledValue;            /*!< Scaled value prior to discretization*/
     double              KellyFactor;            /*!< Kelly curve fit for output cosine curve*/
     double              fov;                    /*!< rad, field of view half angle */
     double              maxVoltage;             /*!< max voltage measurable by CSS, used in discretization */
     double              r_B[3];
-    bool MessagesLinked;             // -- Indicator for whether inputs bound
-    double SenBias;                  // -- Sensor bias value
-    double SenNoiseStd;                 // -- Sensor noise value
-    uint64_t OutputBufferCount;      /// -- number of output msgs stored
+    bool MessagesLinked;                    // -- Indicator for whether inputs bound
+    double SenBias;                         // -- Sensor bias value
+    double SenNoiseStd;                     // -- Sensor noise value
+    uint64_t OutputBufferCount;             // -- number of output msgs stored
+    int32_t isOutputTruth;                  // -- Flag indicating whether the output information is the truth or is corrupted with sensor errors
 private:
-    int64_t InputSunID;              // -- Connect to input time message
-    int64_t InputStateID;            // -- Connect to input time message
-    int64_t OutputDataID;            // -- Connect to output CSS data
-    SpicePlanetState SunData;        // -- Unused for now, but including it for future
-    OutputStateData StateCurrent;    // -- Current SSBI-relative state
-    std::default_random_engine rgen; // -- Random number generator for disp
+    int64_t InputSunID;                     // -- Connect to input time message
+    int64_t InputStateID;                   // -- Connect to input time message
+    int64_t OutputDataID;                   // -- Connect to output CSS data
+    SpicePlanetState SunData;               // -- Unused for now, but including it for future
+    OutputStateData StateCurrent;           // -- Current SSBI-relative state
+    std::default_random_engine rgen;        // -- Random number generator for disp
     std::normal_distribution<double> rnum;  // -- Random number distribution
 };
 

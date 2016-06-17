@@ -26,13 +26,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 CoarseSunSensor::CoarseSunSensor()
 {
     CallCounts = 0;
-    MessagesLinked = false;
-    InputSunID = -1;
-    InputStateID = -1;
-    InputStateMsg = "inertial_state_output";
-    InputSunMsg = "sun_display_frame_data";
-    OutputDataMsg = "coarse_sun_data";
-    
+    this->MessagesLinked = false;
+    this->InputSunID = -1;
+    this->InputStateID = -1;
+    this->InputStateMsg = "inertial_state_output";
+    this->InputSunMsg = "sun_display_frame_data";
+    this->OutputDataMsg = "coarse_sun_data";
+    this->isOutputTruth = false;
+    this->SenBias = 0.0;
+    this->SenNoiseStd = 0.0;
     this->faultState = MAX_CSSFAULT;
     this->stuckPercent = 0.0;
     v3SetZero(this->nHatStr);
@@ -40,7 +42,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->directValue = 0.0;
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
-    this->KellyFactor = 0.0001; ///- Basically removes kelly curve
+    this->KellyFactor = 0.0; ///- Removes kelly curve
     this->sensedValue = 0.0;
     this->fov           = 1.0471975512; /// 60*degrees2rad
     this->maxVoltage    = 0.0;
@@ -192,16 +194,18 @@ void CoarseSunSensor::ComputeTruthOutput()
         directValue = temp1;
     }
     albedoValue = 0.0; ///-placeholder
-    
+    this->trueValue = directValue + albedoValue;
 }
 
-void CoarseSunSensor::ComputeActualOutput()
+void CoarseSunSensor::ApplySensorErrors()
 {
     double CurrentError = rnum(rgen);
     double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
-    this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;
-    this->ScaledValue = this->sensedValue*this->scaleFactor;
-    
+    this->sensedValue = (this->trueValue)*KellyFit + CurrentError;
+}
+void CoarseSunSensor::ScaleActualOutput()
+{
+    this->ScaledValue = this->outputValue * this->scaleFactor;
 }
 
 void CoarseSunSensor::WriteOutputs(uint64_t Clock)
@@ -218,6 +222,13 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     ReadInputs();
     ComputeSunData();
     ComputeTruthOutput();
-    ComputeActualOutput();
+    if (this->isOutputTruth)
+    {
+        this->outputValue = this->trueValue;
+    } else {
+        ApplySensorErrors();
+        this->outputValue = this->sensedValue;
+    }
+    ScaleActualOutput();
     WriteOutputs(CurrentSimNanos);
 }
