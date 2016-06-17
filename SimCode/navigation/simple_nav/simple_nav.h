@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/dyn_effector.h"
 #include "utilities/gauss_markov.h"
 #include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "environment/spice/spice_interface.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -41,6 +42,10 @@ public:
     void CrossInit(); 
     void UpdateState(uint64_t CurrentSimNanos);
     void computeOutput(uint64_t Clock);
+    void computeErrors(uint64_t CurrentSimNanos);
+    void applyErrors();
+    void readInputs();
+    void writeOutput(uint64_t Clock);
     
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
@@ -53,6 +58,9 @@ public:
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
     NavStateOut outState;              //!< -- navigation state provided by this model
+    OutputStateData inertialState;     //!< -- input inertial state
+    SpicePlanetState sunState;         //!< -- input Sun state
+    int32_t isOutputTruth;              /// -- Flag indicating whether the output information is the truth or is corrupted with sensor errors
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputDataID;              //!< -- Message ID associated with nav state

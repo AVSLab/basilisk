@@ -18,7 +18,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "environment/spice/spice_interface.h"
 #include <iostream>
 #include <cstring>
 
@@ -26,17 +25,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     values and initializes the various parts of the model */
 SimpleNav::SimpleNav()
 {
-    inputStateName = "inertial_state_output";
-    outputNavName = "simple_nav_output";
-    inputSunName = "sun_planet_data";
-    crossTrans = false;
-    crossAtt = false;
-    outputBufferCount = 2;
-    inputStateID = -1;
-    outputDataID = -1;
-    AMatrix.clear();
-    PMatrix.clear();
-    prevTime = 0;
+    this->inputStateName = "inertial_state_output";
+    this->outputNavName = "simple_nav_output";
+    this->inputSunName = "sun_planet_data";
+    this->crossTrans = false;
+    this->crossAtt = false;
+    this->outputBufferCount = 2;
+    this->inputStateID = -1;
+    this->outputDataID = -1;
+    this->AMatrix.clear();
+    this->PMatrix.clear();
+    this->prevTime = 0;
+    this->isOutputTruth = false;
     memset(&outState, 0x0, sizeof(NavStateOut));
     return;
 }
@@ -122,74 +122,89 @@ void SimpleNav::CrossInit()
     }
 }
 
-/*! This method computes the output states for the module.  It reads the input 
-    messages that were mapped in cross-init and then uses those inputs as well 
-    as the calculated model errors to compute what the output navigation state 
-    should be.  It then writes the aggregate information to the output message.
+/*! This method reads the input messages associated with the vehicle state and 
+ the sun state
+ */
+void SimpleNav::readInputs()
+{
+    //! Begin method steps
+    SingleMessageHeader localHeader;
+    memset(&this->sunState, 0x0, sizeof(SpicePlanetState));
+    memset(&this->inertialState, 0x0, sizeof(OutputStateData));
+    if(inputStateID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&this->inertialState), moduleID);
+    }
+    if(inputSunID >= 0)
+    {
+        SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
+                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
+    }
+}
+
+/*! This method writes the aggregate nav information into the output state message.
+ @return void
+ @param Clock The clock time associated with the model call
+ */
+void SimpleNav::writeOutput(uint64_t Clock)
+{
+    //! Begin method steps
+    SystemMessaging::GetInstance()->
+    WriteMessage(outputDataID, Clock, sizeof(NavStateOut),
+                 reinterpret_cast<uint8_t*> (&outState), moduleID);
+}
+
+void SimpleNav::applyErrors()
+{
+    //! - Add errors to the simple cases (everything except sun-pointing)
+    v3Add(outState.r_BN_N, &(navErrors.data()[0]), outState.r_BN_N);
+    v3Add(outState.v_BN_N, &(navErrors.data()[3]), outState.v_BN_N);
+    addMRP(outState.sigma_BN, &(navErrors.data()[6]), outState.sigma_BN);
+    v3Add(outState.omega_BN_B, &(navErrors.data()[9]), outState.omega_BN_B);
+    v3Add(outState.vehAccumDV, &(navErrors.data()[15]), outState.vehAccumDV);
+}
+
+/*! This method uses the input messages as well as the calculated model errors to 
+ compute what the output navigation state should be.
     @return void
     @param Clock The clock time associated with the model's update call
 */
 void SimpleNav::computeOutput(uint64_t Clock)
 {
-    OutputStateData localState;
-    SingleMessageHeader localHeader;
-    SpicePlanetState sunState;
+    //! Begin method steps
     double sc2SunInrtl[3];
     double T_inrtl2bdy[3][3];
     double T_bdyT2bdyO[3][3];
-  
-    //! Begin method steps
-    //! - Obtain the messages associated with the vehicle state and the sun state
-    memset(&sunState, 0x0, sizeof(SpicePlanetState));
-    memset(&localState, 0x0, sizeof(OutputStateData));
-    if(inputStateID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-            sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&localState), moduleID);
-    }
-    if(inputSunID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-            sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&sunState), moduleID);
-    }
     
-    //! - Add errors to the simple cases (everything except sun-pointing)
-    v3Add(localState.r_N, &(navErrors.data()[0]), outState.r_BN_N);
-    v3Add(localState.v_N, &(navErrors.data()[3]), outState.v_BN_N);
-    addMRP(localState.sigma, &(navErrors.data()[6]), outState.sigma_BN);
-    v3Add(localState.omega, &(navErrors.data()[9]), outState.omega_BN_B);
-    v3Add(localState.TotalAccumDVBdy, &(navErrors.data()[15]),
-          outState.vehAccumDV);
+    //! - Set output state to truth data
+    v3Copy(inertialState.r_N, outState.r_BN_N);
+    v3Copy(inertialState.v_N, outState.v_BN_N);
+    v3Copy(inertialState.sigma, outState.sigma_BN);
+    v3Copy(inertialState.omega, outState.omega_BN_B);
+    v3Copy(inertialState.TotalAccumDVBdy, outState.vehAccumDV);
+    
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    v3Subtract(sunState.PositionVector, localState.r_N, sc2SunInrtl);
+    v3Subtract(sunState.PositionVector, inertialState.r_N, sc2SunInrtl);
     v3Normalize(sc2SunInrtl, sc2SunInrtl);
-    MRP2C(localState.sigma, T_inrtl2bdy);
+    MRP2C(inertialState.sigma, T_inrtl2bdy);
     m33MultV3(T_inrtl2bdy, sc2SunInrtl, outState.vehSunPntBdy);
     MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
     m33MultV3(T_bdyT2bdyO, outState.vehSunPntBdy, outState.vehSunPntBdy);
-    
-    //! - Write the composite information into the output state message.
-    SystemMessaging::GetInstance()->
-        WriteMessage(outputDataID, Clock, sizeof(NavStateOut),
-                     reinterpret_cast<uint8_t*> (&outState), moduleID);
 }
 
-/*! This method performs all of the run-time operations for the simple nav model.
-    It primarily sets the propagation matrix, requests new random errors from 
-    its GaussMarkov model, and then applies those errors to the observed truth 
-    states.
-    @return void
-    @param CurrentSimNanos The clock time associated with the model call
-*/
-void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
+/*! This method sets the propagation matrix and requests new random errors from
+ its GaussMarkov model.
+ @return void
+ @param CurrentSimNanos The clock time associated with the model call
+ */
+void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 {
     double timeStep;
     std::vector<double>::iterator it;
-    
-    //! Begin method steps
     std::vector<double> localProp = AMatrix;
     //! - Compute timestep since the last call
-    timeStep = (CurrentSimNanos - prevTime)*1.0E-9;
+    timeStep = (CurrentSimNanos - this->prevTime)*1.0E-9;
     it = localProp.begin();
     //! - Apply that time step to the pos/vel att/rate cross correlation terms
     for(uint32_t i=0; i<3; i++)
@@ -204,7 +219,21 @@ void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
     errorModel.setPropMatrix(localProp);
     errorModel.computeNextState();
     navErrors = errorModel.getCurrentState();
-    //! - Apply observed errors to truth inputs and output information. 
+}
+
+/*! This method calls all of the run-time operations for the simple nav model.
+    @return void
+    @param CurrentSimNanos The clock time associated with the model call
+*/
+void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
+{
+    readInputs();
+    computeErrors(CurrentSimNanos);
     computeOutput(CurrentSimNanos);
-    prevTime = CurrentSimNanos;
+    if (!this->isOutputTruth)
+    {
+        applyErrors();
+    }
+    writeOutput(CurrentSimNanos);
+    this->prevTime = CurrentSimNanos;
 }
