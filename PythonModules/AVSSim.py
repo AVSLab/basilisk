@@ -28,7 +28,7 @@ sys.path.append(path + '/../../Basilisk/modules')
 import SimulationBaseClass
 import RigidBodyKinematics
 import numpy as np
-import astroFunctions as af
+import macros as mc
 
 # import regular python objects that we need
 import math
@@ -59,6 +59,8 @@ import sunSafePoint
 import imuComm
 import stComm
 import MRP_Steering
+import MRP_Feedback
+import PRV_Steering
 import sunSafeACS
 import dvAttEffect
 import dvGuidance
@@ -130,6 +132,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("orbitAxisSpinTask", int(5E8)), 119)
         self.fswProc.addTask(self.CreateNewTask("axisScanTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
+        self.fswProc.addTask(self.CreateNewTask("feedbackControlMnvrTask", int(5E8)), 110)
+        self.fswProc.addTask(self.CreateNewTask("attitudePRVControlMnvrTask", int(5E8)), 110)
 
         # Spacecraft configuration data module.
         self.LocalConfigData = vehicleConfigData.vehicleConfigData()
@@ -244,6 +248,20 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                           MRP_Steering.SelfInit_MRP_Steering,
                                                           MRP_Steering.CrossInit_MRP_Steering)
         self.MRP_SteeringRWAWrap.ModelTag = "MRP_SteeringRWA"
+        
+        self.MRP_FeedbackRWAData = MRP_Feedback.MRP_FeedbackConfig()
+        self.MRP_FeedbackRWAWrap = alg_contain.AlgContain(self.MRP_FeedbackRWAData,
+                                                          MRP_Feedback.Update_MRP_Feedback,
+                                                          MRP_Feedback.SelfInit_MRP_Feedback,
+                                                          MRP_Feedback.CrossInit_MRP_Feedback)
+        self.MRP_FeedbackRWAWrap.ModelTag = "MRP_FeedbackRWA"
+        
+        self.PRV_SteeringRWAData = PRV_Steering.PRV_SteeringConfig()
+        self.PRV_SteeringRWAWrap = alg_contain.AlgContain(self.PRV_SteeringRWAData,
+                                                          PRV_Steering.Update_PRV_Steering,
+                                                          PRV_Steering.SelfInit_PRV_Steering,
+                                                          PRV_Steering.CrossInit_PRV_Steering)
+        self.PRV_SteeringRWAWrap.ModelTag = "PRV_SteeringRWA"
 
         self.MRP_SteeringMOIData = MRP_Steering.MRP_SteeringConfig()
         self.MRP_SteeringMOIWrap = alg_contain.AlgContain(self.MRP_SteeringMOIData,
@@ -427,68 +445,103 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
         self.AddModelToTask("attitudeControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
         self.AddModelToTask("attitudeControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        
+
+        self.AddModelToTask("feedbackControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
+        self.AddModelToTask("feedbackControlMnvrTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
+        self.AddModelToTask("feedbackControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
+        self.AddModelToTask("feedbackControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        
+        self.AddModelToTask("attitudePRVControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
+        self.AddModelToTask("attitudePRVControlMnvrTask", self.PRV_SteeringRWAWrap, self.PRV_SteeringRWAData, 9)
+        self.AddModelToTask("attitudePRVControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
+        self.AddModelToTask("attitudePRVControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
 
         # Disable all tasks in the FSW process
         self.fswProc.disableAllTasks()
 
         # Guidance Events
         self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('inertial3DSpinTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('inertial3DSpinTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('inertial3DPointTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateHillPoint", int(1E9), True, ["self.modeRequest == 'hillPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('hillPointTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('hillPointTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateVelocityPoint", int(1E9), True, ["self.modeRequest == 'velocityPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('velocityPointTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('velocityPointTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateCelTwoBodyPoint", int(1E9), True, ["self.modeRequest == 'celTwoBodyPoint'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('celTwoBodyPointTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('celTwoBodyPointTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateSingleAxisSpin", int(1E9), True, ["self.modeRequest == 'singleAxisSpin'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('singleAxisSpinTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('singleAxisSpinTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateOrbitAxisSpin", int(1E9), True, ["self.modeRequest == 'orbitAxisSpin'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('hillPointTask')",
-                             "self.enableTask('orbitAxisSpinTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('hillPointTask')"
+                                , "self.enableTask('orbitAxisSpinTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateAxisScan", int(1E9), True, ["self.modeRequest == 'axisScan'"],
-                            ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sensorProcessing')",
-                             "self.enableTask('inertial3DPointTask')",
-                             "self.enableTask('axisScanTask')",
-                             "self.enableTask('attitudeControlMnvrTask')",
-                             "self.ResetTask('attitudeControlMnvrTask')"])
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('axisScanTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             ])
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
@@ -682,23 +735,33 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SpiceObject.referenceBase = "MARSIAU"
 
     def SetIMUSensor(self):
-        RotBiasValue = 0.0
-        RotNoiseStdValue = 0.000001
-        TransBiasValue = 0.0
-        TransNoiseStdValue = 1.0E-6
+
+        def setRotationalErrors(rotBiasValue, rotNoiseStdValue):
+            SimulationBaseClass.SetCArray([rotBiasValue, rotBiasValue, rotBiasValue],
+                                          'double', self.IMUSensor.senRotBias)
+            SimulationBaseClass.SetCArray([rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue],
+                                          'double', self.IMUSensor.senRotNoiseStd)
+
+        def setTranslationalErrors(transBiasValue, transNoiseStdValue):
+            SimulationBaseClass.SetCArray([transBiasValue, transBiasValue, transBiasValue],
+                                          'double', self.IMUSensor.senTransBias)
+            SimulationBaseClass.SetCArray([transNoiseStdValue, transNoiseStdValue, transNoiseStdValue],
+                                          'double', self.IMUSensor.senTransNoiseStd)
+
+        rotBiasValue = 0.0
+        rotNoiseStdValue = 0.000001
+        transBiasValue = 0.0
+        transNoiseStdValue = 1.0E-6
+
         self.IMUSensor = imu_sensor.ImuSensor()
         self.IMUSensor.SensorPosStr = imu_sensor.DoubleVector([1.5, 0.1, 0.1])
         self.IMUSensor.setStructureToPlatformDCM(0.0, 0.0, 0.0)
-        SimulationBaseClass.SetCArray([RotBiasValue, RotBiasValue, RotBiasValue],
-                                      'double', self.IMUSensor.senRotBias)
-        SimulationBaseClass.SetCArray([RotNoiseStdValue, RotNoiseStdValue, RotNoiseStdValue],
-                                      'double', self.IMUSensor.senRotNoiseStd)
-        SimulationBaseClass.SetCArray([TransBiasValue, TransBiasValue, TransBiasValue],
-                                      'double', self.IMUSensor.senTransBias)
-        SimulationBaseClass.SetCArray([TransNoiseStdValue, TransNoiseStdValue, TransNoiseStdValue],
-                                      'double', self.IMUSensor.senTransNoiseStd)
         self.IMUSensor.accelLSB = 2.77E-4 * 9.80665
         self.IMUSensor.gyroLSB = 8.75E-3 * math.pi / 180.0
+
+        # Uncomment next two lines to define non-zero corruption errors
+        #setRotationalErrors(rotBiasValue, rotNoiseStdValue)
+        #setTranslationalErrors(transBiasValue, transNoiseStdValue)
 
     def SetReactionWheelDynObject(self):
         rwMaxTorque = 0.2
@@ -873,13 +936,21 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(DVInertia, 'double', self.DVThrusterDynObject.objProps.InertiaTensor)
 
     def InitCSSHeads(self):
+
+        def setCSSErrors(referenceCSS, CSSNoiseBias, CSSNoiseStd, CSSKellyFactor):
+            referenceCSS.SenBias = CSSNoiseBias
+            referenceCSS.SenNoiseStd = CSSNoiseStd
+            referenceCSS.KellyFactor = CSSKellyFactor
+
+
         # Note the re-use between different instances of the modules.
         # Handy but not required.
         CSSNoiseStd = 0.001  # Standard deviation of white noise
         CSSNoiseBias = 0.0  # Constant bias
+        CSSKellyFactor = 0.1  # Used to get the curve shape correct for output
         CSSscaleFactor = 500.0E-6  # Scale factor (500 mu-amps) for max measurement
         CSSFOV = 90.0 * math.pi / 180.0  # 90 degree field of view
-        CSSKellyFactor = 0.1  # Used to get the curve shape correct for output
+
 
         # Platform 1 is forward, platform 2 is back notionally
         CSSPlatform1YPR = [-math.pi / 2.0, -math.pi / 4.0, -math.pi / 2.0]
@@ -888,14 +959,17 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         # Initialize one sensor by hand and then init the rest off of it
         self.CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
         self.CSSPyramid1HeadA.ModelTag = "CSSPyramid1HeadA"
-        self.CSSPyramid1HeadA.SenBias = CSSNoiseBias
-        self.CSSPyramid1HeadA.SenNoiseStd = CSSNoiseStd
+        # Uncomment next line to define non-zero corruption errors
+        setCSSErrors(self.CSSPyramid1HeadA, CSSNoiseBias, CSSNoiseStd, CSSKellyFactor)
+
         self.CSSPyramid1HeadA.setStructureToPlatformDCM(CSSPlatform1YPR[0],
-                                                        CSSPlatform1YPR[1], CSSPlatform1YPR[2])
+                                                        CSSPlatform1YPR[1],
+                                                        CSSPlatform1YPR[2])
         self.CSSPyramid1HeadA.scaleFactor = CSSscaleFactor
         self.CSSPyramid1HeadA.fov = CSSFOV
-        self.CSSPyramid1HeadA.KellyFactor = CSSKellyFactor
         self.CSSPyramid1HeadA.OutputDataMsg = "coarse_sun_data_pyramid1_headA"
+
+
         self.CSSPyramid1HeadB = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
         self.CSSPyramid1HeadB.ModelTag = "CSSPyramid1HeadB"
         self.CSSPyramid1HeadB.OutputDataMsg = "coarse_sun_data_pyramid1_headB"
@@ -1208,9 +1282,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Init of Guidance Modules
     def setInertial3DSpin(self):
         self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_R0N = [0., 0., 0.]
+        sigma_R0N = [0.1, 0.2, 0.3]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DSpinData.sigma_R0N)
-        omega_R0N_N = [0.1, 0.2, 0.3]
+        omega_R0N_N = np.array([0., 0., 0.]) * mc.D2R
         SimulationBaseClass.SetCArray(omega_R0N_N, 'double',self.inertial3DSpinData.omega_R0N_N)
         self.inertial3DSpinData.integrateFlag = 1
 
@@ -1235,13 +1309,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
         self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
-        self.celTwoBodyPointData.singularityThresh = 1.0 * (math.pi / 180.)  # rad
+        self.celTwoBodyPointData.singularityThresh = 1.0 * mc.D2R
 
     def setSingleAxisSpin(self):
         self.singleAxisSpinData.outputDataName = "att_ref_output"
-        sigma_R0N =  [0., 0., 0.]
+        sigma_R0N =  [0.1 , 0.2, 0.3]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
-        rotVector = [0.1, 0.2, 0.3]
+        rotVector = np.array([0.1, 0.2, 0.3]) * mc.D2R
         SimulationBaseClass.SetCArray(rotVector, 'double',self.singleAxisSpinData.rotVector)
 
     def setOrbitAxisSpin(self):
@@ -1250,16 +1324,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.orbitAxisSpinData.outputDataName = "att_ref_output"
         self.orbitAxisSpinData.o_spin = 0
         self.orbitAxisSpinData.b_spin = 0
-        self.orbitAxisSpinData.omega_spin = 0.0
-        self.orbitAxisSpinData.phi_spin0 = 0.0
+        self.orbitAxisSpinData.omega_spin = 0.4 * mc.D2R
+        self.orbitAxisSpinData.phi_spin0 = 0.0 * mc.D2R
         self.orbitAxisSpinData.initializeAngle = 0
 
     def setAxisScan(self):
         self.axisScanData.inputRefName = "att_ref_output_stage1"
         self.axisScanData.outputDataName = "att_ref_output"
-        self.axisScanData.psiDot = 0.0
-        self.axisScanData.psi0 = 0.0
-        self.axisScanData.theta0 = 0.0
+        self.axisScanData.psiDot = 0.0 * mc.D2R
+        self.axisScanData.psi0 = 0.0 * mc.D2R
+        self.axisScanData.theta0 = 0.0 * mc.D2R
 
     # Init of Tracking Error
     def setAttTrackingError(self):
@@ -1281,8 +1355,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RWAGsMatrix = []
         RWAJsList = []
         i = 0
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
+        rwElAngle = 45.0 * mc.D2R
+        rwClockAngle = 45.0 * mc.D2R
         RWAlignScale = 1.0 / 25.0
         while (i < self.MRP_SteeringRWAData.numRWAs):
             RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
@@ -1297,6 +1371,43 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
+
+    def SetMRP_FeedbackRWA(self):
+        self.MRP_FeedbackRWAData.K = 1.  # rad/sec
+        self.MRP_FeedbackRWAData.P = 3.  # N*m*sec
+        self.MRP_FeedbackRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
+        self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
+        self.MRP_FeedbackRWAData.numRWAs = 4
+        RWAGsMatrix = []
+        RWAJsList = []
+        i = 0
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        RWAlignScale = 1.0 / 25.0
+        while (i < self.MRP_FeedbackRWAData.numRWAs):
+            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
+            rwClockAngle += 90.0 * math.pi / 180.0
+            RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
+            i += 1
+        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.MRP_FeedbackRWAData.GsMatrix)
+        SimulationBaseClass.SetCArray(RWAJsList, 'double', self.MRP_FeedbackRWAData.JsList)
+
+        self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
+        self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
+        self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
+        self.MRP_FeedbackRWAData.inputRWSpeedsName = "reactionwheel_output_states"
+
+    def SetPRV_SteeringRWA(self):
+        self.PRV_SteeringRWAData.K1 = 0.3  # rad/sec
+        self.PRV_SteeringRWAData.K3 = 1.0  # rad/sec
+        self.PRV_SteeringRWAData.omega_max = 1.5 * (math.pi / 180.)  # rad/sec
+        self.PRV_SteeringRWAData.P = 150.0  # N*m*sec
+        self.PRV_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
+        self.PRV_SteeringRWAData.integralLimit = 0.0  # rad
+        self.PRV_SteeringRWAData.inputGuidName = "nom_att_guid_out"
+        self.PRV_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
+        self.PRV_SteeringRWAData.outputDataName = "controlTorqueRaw"
 
     def SetMRP_SteeringMOI(self):
         self.MRP_SteeringMOIData.K1 = 0.5  # rad/sec
@@ -1510,6 +1621,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetsunSafeACS()
         self.SetattMnvrPoint()
         self.SetMRP_SteeringRWA()
+        self.SetMRP_FeedbackRWA()
+        self.SetPRV_SteeringRWA()
         self.SetMRP_SteeringMOI()
         self.SetdvAttEffect()
         self.SetdvGuidance()
