@@ -31,7 +31,7 @@ StarTracker::StarTracker()
     this->outputStateMessage = "star_tracker_state";
     this->OutputBufferCount = 2;
     m33SetIdentity(RECAST3X3 this->T_CaseStr);
-    this->isOutputTruth = false;
+    this->isOutputtingMeasured = true;
     return;
 }
 
@@ -85,7 +85,7 @@ void StarTracker::CrossInit()
 }
 
 
-void StarTracker::readInputs()
+void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
     
@@ -115,15 +115,8 @@ void StarTracker::computeErrors()
 }
 void StarTracker::applyErrors()
 {
+    PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
     addMRP(this->sigmaOutput, this->mrpErrors, this->sigmaOutput);
-}
-
-void StarTracker::UpdateState(uint64_t CurrentSimNanos)
-{
-    readInputs();
-    computeErrors();
-    computeOutputs(CurrentSimNanos);
-    writeOutputs(CurrentSimNanos);
 }
 
 void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
@@ -139,8 +132,7 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
     localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
 
     v3Copy(trueState.sigma, this->sigmaOutput);
-    PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
-    if (!this->isOutputTruth)
+    if (this->isOutputtingMeasured)
     {
         applyErrors();
     }
@@ -151,8 +143,16 @@ void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
     C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
 }
 
-void StarTracker::writeOutputs(uint64_t CurrentSimNanos)
+void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
                                                  sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput), moduleID);
+}
+
+void StarTracker::UpdateState(uint64_t CurrentSimNanos)
+{
+    readInputMessages();
+    computeErrors();
+    computeOutputs(CurrentSimNanos);
+    writeOutputMessages(CurrentSimNanos);
 }

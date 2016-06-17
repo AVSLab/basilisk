@@ -44,8 +44,8 @@ public:
     void computeOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
-    void readInputs();
-    void writeOutput(uint64_t Clock);
+    void readInputMessages();
+    void writeOutputMessages(uint64_t Clock);
     
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
@@ -60,7 +60,7 @@ public:
     NavStateOut outState;              //!< -- navigation state provided by this model
     OutputStateData inertialState;     //!< -- input inertial state
     SpicePlanetState sunState;         //!< -- input Sun state
-    int32_t isOutputTruth;              /// -- Flag indicating whether the output information is the truth or is corrupted with sensor errors
+    bool isOutputtingMeasured;         //!< -- Flag indicating whether the output information is the truth or is corrupted with errors
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputDataID;              //!< -- Message ID associated with nav state

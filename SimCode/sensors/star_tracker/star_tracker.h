@@ -35,8 +35,8 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
     void CrossInit();
-    void readInputs();
-    void writeOutputs(uint64_t Clock);
+    void readInputMessages();
+    void writeOutputMessages(uint64_t Clock);
     void computeErrors();
     void applyErrors();
     void computeOutputs(uint64_t CurrentSimNanos);
@@ -54,12 +54,11 @@ public:
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     double T_CaseStr[9];              //!< [-] Transformation matrix from case to body
     StarTrackerHWOutput localOutput;  //!< [-] Class-local storage for output message
-    int32_t isOutputTruth;            //!< [-] Flag indicating whether the output information is the truth or is corrupted with sensor errors
-    
-    double mrpErrors[3];
-    double sigmaOutput[3];
-    SpiceTimeOutput timeState;
-    OutputStateData trueState;
+    bool isOutputtingMeasured;        //!< [-] Flag indicating whether the output information is the truth or is the measured (corrupted with errors)
+    double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
+    double sigmaOutput[3];            //!< [-] Outputted MRP. Could be either the truth or measured one (corrupted with errors)
+    SpiceTimeOutput timeState;        //!< [-] Module variable where the input Spice Time message is stored
+    OutputStateData trueState;        //!< [-] Module variable where the input State Data message is stored
 
     
     

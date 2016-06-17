@@ -38,11 +38,11 @@ public:
     void CrossInit();
     void SelfInit();
     void UpdateState(uint64_t CurrentSimNanos);
+    void readInputMessages();
+    void writeOutputMessages(uint64_t Clock);
     void setStructureToPlatformDCM(double yaw, double pitch, double roll);
     void computePlatformDR();
     void computePlatformDV(uint64_t CurrentTime);
-    void readInputs();
-    void writeOutputs(uint64_t Clock);
     void applySensorErrors(uint64_t CurrentTime);
     void applySensorDiscretization(uint64_t CurrentTime);
     
@@ -64,7 +64,7 @@ public:
     double AngVelPlatform[3];           /// [r/s] Angular velocity in platform frame
     double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
     double gyroLSB;                     //! (-) Discretization value for gyro data
-    int32_t isOutputTruth;              /// -- Flag indicating whether the output information is the truth or is corrupted with sensor errors
+    bool isOutputtingMeasured;          //! (-) Flag indicating whether the output information is the truth or is the measured (corrupted with errors) */
 private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t InputMassID;                /// -- Message ID for the mass properties

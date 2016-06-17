@@ -36,7 +36,7 @@ SimpleNav::SimpleNav()
     this->AMatrix.clear();
     this->PMatrix.clear();
     this->prevTime = 0;
-    this->isOutputTruth = false;
+    this->isOutputtingMeasured = true;
     memset(&outState, 0x0, sizeof(NavStateOut));
     return;
 }
@@ -125,7 +125,7 @@ void SimpleNav::CrossInit()
 /*! This method reads the input messages associated with the vehicle state and 
  the sun state
  */
-void SimpleNav::readInputs()
+void SimpleNav::readInputMessages()
 {
     //! Begin method steps
     SingleMessageHeader localHeader;
@@ -147,7 +147,7 @@ void SimpleNav::readInputs()
  @return void
  @param Clock The clock time associated with the model call
  */
-void SimpleNav::writeOutput(uint64_t Clock)
+void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     //! Begin method steps
     SystemMessaging::GetInstance()->
@@ -227,13 +227,13 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 */
 void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
-    readInputs();
+    readInputMessages();
     computeErrors(CurrentSimNanos);
     computeOutput(CurrentSimNanos);
-    if (!this->isOutputTruth)
+    if (this->isOutputtingMeasured)
     {
         applyErrors();
     }
-    writeOutput(CurrentSimNanos);
+    writeOutputMessages(CurrentSimNanos);
     this->prevTime = CurrentSimNanos;
 }

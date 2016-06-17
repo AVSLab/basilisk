@@ -183,18 +183,20 @@ def computeGains(P, I):
 
 # Sensor Errors
 def turnOffSensorsCorruption(TheAVSSim):
-    TheAVSSim.SimpleNavObject.isOutputTruth = True
-    TheAVSSim.trackerA.isOutputTruth = True
-    TheAVSSim.IMUSensor.isOutputTruth = True
+    TheAVSSim.trackerA.isOutputtingMeasured = False
+    TheAVSSim.IMUSensor.isOutputtingMeasured = False
     # CSS Heads
-    TheAVSSim.CSSPyramid1HeadA.isOutputTruth = True
-    TheAVSSim.CSSPyramid1HeadB.isOutputTruth = True
-    TheAVSSim.CSSPyramid1HeadC.isOutputTruth = True
-    TheAVSSim.CSSPyramid1HeadD.isOutputTruth = True
-    TheAVSSim.CSSPyramid2HeadA.isOutputTruth = True
-    TheAVSSim.CSSPyramid2HeadB.isOutputTruth = True
-    TheAVSSim.CSSPyramid2HeadC.isOutputTruth = True
-    TheAVSSim.CSSPyramid2HeadD.isOutputTruth = True
+    TheAVSSim.CSSPyramid1HeadA.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid1HeadB.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid1HeadC.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid1HeadD.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid2HeadA.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid2HeadB.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid2HeadC.isOutputtingMeasured = False
+    TheAVSSim.CSSPyramid2HeadD.isOutputtingMeasured = False
+
+def turnOffFSWCorruption(TheAVSSim):
+    TheAVSSim.SimpleNavObject.isOutputtingMeasured = False
 
 
 # ------------------- MAIN ------------------- #
@@ -222,6 +224,8 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.isUsingVisualization = True
     # Sensor Corruption
     turnOffSensorsCorruption(TheAVSSim)
+    turnOffFSWCorruption(TheAVSSim)
+
     # MRP_Feedback gains
     P = 28.
     I_vec = ctypes.cast(TheAVSSim.LocalConfigData.I.__long__(), ctypes.POINTER(ctypes.c_double))
@@ -319,7 +323,7 @@ if __name__ == "__main__":
 
     r_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.r_BN_N", range(3))
     v_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.v_BN_N", range(3))
-    #plotRV_mag(r_BN_N, v_BN_N)
+    plotRV_mag(r_BN_N, v_BN_N)
 
     sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
     omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))

@@ -32,7 +32,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->InputStateMsg = "inertial_state_output";
     this->InputSunMsg = "sun_display_frame_data";
     this->OutputDataMsg = "coarse_sun_data";
-    this->isOutputTruth = false;
+    this->isOutputtingMeasured = true;
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
     this->faultState = MAX_CSSFAULT;
@@ -115,7 +115,7 @@ CoarseSunSensor::~CoarseSunSensor()
 void CoarseSunSensor::SelfInit()
 {
     std::normal_distribution<double>::param_type
-    UpdatePair(SenBias, SenNoiseStd);
+    UpdatePair(this->SenBias, this->SenNoiseStd);
     rgen.seed(RNGSeed);
     rnum.param(UpdatePair);
     OutputDataID = SystemMessaging::GetInstance()->
@@ -128,7 +128,7 @@ void CoarseSunSensor::CrossInit()
     LinkMessages();
 }
 
-bool CoarseSunSensor::SpacecraftIlluminated()
+bool CoarseSunSensor::spacecraftIlluminated()
 {
     return(true); /// Sun is always shining baby.  Fix this...
 }
@@ -153,62 +153,62 @@ bool CoarseSunSensor::LinkMessages()
     return(false);
 }
 
-void CoarseSunSensor::ReadInputs()
+void CoarseSunSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
     
-    memset(&SunData, 0x0, sizeof(SpicePlanetState));
-    memset(&StateCurrent, 0x0, sizeof(OutputStateData));
+    memset(&this->SunData, 0x0, sizeof(SpicePlanetState));
+    memset(&this->StateCurrent, 0x0, sizeof(OutputStateData));
     if(InputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
-                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&SunData), moduleID);
+                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
     }
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateCurrent), moduleID);
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
 }
 
-void CoarseSunSensor::ComputeSunData()
+void CoarseSunSensor::computeSunData()
 {
     double Sc2Sun_Inrtl[3];
     double sHatSunBdy[3];
     double T_Irtl2Bdy[3][3];
     
-    v3Scale(-1.0, StateCurrent.r_N, Sc2Sun_Inrtl);
-    v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
+    v3Scale(-1.0, this->StateCurrent.r_N, Sc2Sun_Inrtl);
+    v3Add(Sc2Sun_Inrtl, this->SunData.PositionVector, Sc2Sun_Inrtl);
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
-    MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
+    MRP2C(this->StateCurrent.sigma, T_Irtl2Bdy);
     m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
-    m33MultV3(StateCurrent.T_str2Bdy, sHatSunBdy, sHatStr);
+    m33MultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
 }
 
-void CoarseSunSensor::ComputeTruthOutput()
+void CoarseSunSensor::computeTruthOutput()
 {
     double temp1 = v3Dot(this->nHatStr, this->sHatStr);
-    directValue = 0.0;
+    this->directValue = 0.0;
     if(temp1 >= cos(this->fov))
     {
-        directValue = temp1;
+       this->directValue = temp1;
     }
     albedoValue = 0.0; ///-placeholder
-    this->trueValue = directValue + albedoValue;
+    this->trueValue = this->directValue + this->albedoValue;
 }
 
-void CoarseSunSensor::ApplySensorErrors()
+void CoarseSunSensor::applySensorErrors()
 {
     double CurrentError = rnum(rgen);
-    double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
+    double KellyFit = 1.0 - exp(-this->directValue * this->directValue / this->KellyFactor);
     this->sensedValue = (this->trueValue)*KellyFit + CurrentError;
 }
-void CoarseSunSensor::ScaleActualOutput()
+void CoarseSunSensor::scaleActualOutput()
 {
     this->ScaledValue = this->outputValue * this->scaleFactor;
 }
 
-void CoarseSunSensor::WriteOutputs(uint64_t Clock)
+void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     CSSOutputData LocalMessage;
     memset(&LocalMessage, 0x0, sizeof(CSSOutputData));
@@ -219,16 +219,17 @@ void CoarseSunSensor::WriteOutputs(uint64_t Clock)
 
 void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
 {
-    ReadInputs();
-    ComputeSunData();
-    ComputeTruthOutput();
-    if (this->isOutputTruth)
+    readInputMessages();
+    computeSunData();
+    computeTruthOutput();
+    if (this->isOutputtingMeasured)
     {
-        this->outputValue = this->trueValue;
-    } else {
-        ApplySensorErrors();
+        applySensorErrors();
         this->outputValue = this->sensedValue;
+    } else {
+        this->outputValue = this->trueValue;
     }
-    ScaleActualOutput();
-    WriteOutputs(CurrentSimNanos);
+    // Output value needs to be scaled whether errors are embedded or not
+    scaleActualOutput();
+    writeOutputMessages(CurrentSimNanos);
 }

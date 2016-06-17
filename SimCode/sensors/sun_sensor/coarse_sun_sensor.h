@@ -48,15 +48,15 @@ public:
     void SelfInit();
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
+    void readInputMessages();
+    void writeOutputMessages(uint64_t Clock);
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb);
     void setStructureToPlatformDCM(double yaw, double pitch, double roll);
-    bool SpacecraftIlluminated();
-    void ReadInputs();
-    void ComputeSunData();
-    void ComputeTruthOutput();
-    void ApplySensorErrors();
-    void ScaleActualOutput();
-    void WriteOutputs(uint64_t Clock);
+    bool spacecraftIlluminated();
+    void computeSunData();
+    void computeTruthOutput();
+    void applySensorErrors();
+    void scaleActualOutput();
     
 public:
     std::string InputSunMsg;                    /*!< Message name for sun data */
@@ -82,19 +82,19 @@ public:
     double              fov;                    /*!< rad, field of view half angle */
     double              maxVoltage;             /*!< max voltage measurable by CSS, used in discretization */
     double              r_B[3];
-    bool MessagesLinked;                    // -- Indicator for whether inputs bound
-    double SenBias;                         // -- Sensor bias value
-    double SenNoiseStd;                     // -- Sensor noise value
-    uint64_t OutputBufferCount;             // -- number of output msgs stored
-    int32_t isOutputTruth;                  // -- Flag indicating whether the output information is the truth or is corrupted with sensor errors
+    bool                MessagesLinked;             /*!< Indicator for whether inputs bound */
+    double              SenBias;                    /*!< Sensor bias value */
+    double              SenNoiseStd;                /*!< Sensor noise value */
+    uint64_t            OutputBufferCount;          /*!< number of output msgs stored */
+    bool                isOutputtingMeasured;       /*!< Flag indicating whether the output information is the truth or is the measured (corrupted with errors) */
 private:
-    int64_t InputSunID;                     // -- Connect to input time message
-    int64_t InputStateID;                   // -- Connect to input time message
-    int64_t OutputDataID;                   // -- Connect to output CSS data
-    SpicePlanetState SunData;               // -- Unused for now, but including it for future
-    OutputStateData StateCurrent;           // -- Current SSBI-relative state
-    std::default_random_engine rgen;        // -- Random number generator for disp
-    std::normal_distribution<double> rnum;  // -- Random number distribution
+    int64_t InputSunID;                     /*!<  Connect to input time message */
+    int64_t InputStateID;                   /*!<  Connect to input time message */
+    int64_t OutputDataID;                   /*!<  Connect to output CSS data */
+    SpicePlanetState SunData;               /*!<  Unused for now, but including it for future */
+    OutputStateData StateCurrent;           /*!< Current SSBI-relative state */
+    std::default_random_engine rgen;        /*!<  Random number generator for disp */
+    std::normal_distribution<double> rnum;  /*!<  Random number distribution */
 };
 
 #endif
