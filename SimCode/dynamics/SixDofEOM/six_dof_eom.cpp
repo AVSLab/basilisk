@@ -991,7 +991,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         if (this->useGravity){
 
             double g_N[3];
-            
             computeGravity(t, r_BN_NLoc, BN, g_N);
             
             m33MultV3(BN, g_N, g_B);
@@ -1059,6 +1058,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         //! - Define some necessary tilde matrices
         v3Tilde(omega_BN_BLoc, omegaTilde_BN_B);
 
+        //! - Copy computed inertia into ISCPntB_B
+        m33Copy(this->compI, ISCPntB_B);
+
         //! - This section is situations when the translational motion is coupled with the rotational motion
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
@@ -1076,7 +1078,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             //! - Add in changes to mass properties
             v3SetZero(c_B);
             v3SetZero(cPrime_B);
-            m33Copy(this->compI, ISCPntB_B);
             m33SetZero(IPrimeSCPntB_B);
             mSC = this->compMass;
             //! - Loop through solar panels
@@ -1526,7 +1527,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             }
         }
 
-
         //! - Modify RHS and LHS of the equation with RWs
         uint32_t rwCount = 0;
         double rwTorque[3];
@@ -1620,6 +1620,26 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     spCount++;
                 }
             }
+
+            //! - Back solve to find translational acceleration
+            if (this->SPCount > 0 | this->numFSP > 0) {
+                m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+                v3Scale(2.0, intermediateVector, intermediateVector);
+                v3Subtract(rDDot_CN_B, intermediateVector, rDDot_BN_B);
+                m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
+                m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+                m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
+                v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+                if (this-SPCount > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+                    v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+                }
+                if (this->numFSP > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSum3FuelSloshDynamics, rDDot_BN_B);
+                }
+                m33tMultV3(BN, rDDot_BN_B, dX + 3);
+            }
         }
 
         /* RW motor torque equations to solve for d(Omega)/dt */
@@ -1640,30 +1660,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + rwJitterCount] = Omegas[rwCount];
                     rwJitterCount++;
                 }
-
                 rwCount++;
-            }
-        }
-
-        if (this->useTranslation) {
-            //! - Back solve to find translational acceleration
-            if (this->SPCount > 0 | this->numFSP > 0) {
-                m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-                v3Scale(2.0, intermediateVector, intermediateVector);
-                v3Subtract(rDDot_CN_B, intermediateVector, rDDot_BN_B);
-                m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
-                m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-                v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-                m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
-                v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-                if (this-SPCount > 0) {
-                    v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
-                    v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
-                }
-                if (this->numFSP > 0) {
-                    v3Subtract(rDDot_BN_B, vectorSum3FuelSloshDynamics, rDDot_BN_B);
-                }
-                m33tMultV3(BN, rDDot_BN_B, dX + 3);
             }
         }
     }
