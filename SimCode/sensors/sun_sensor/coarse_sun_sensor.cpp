@@ -117,8 +117,8 @@ void CoarseSunSensor::SelfInit()
     rgen.seed(RNGSeed);
     rnum.param(UpdatePair);
     OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage(OutputDataMsg, sizeof(CSSOutputData),
-        OutputBufferCount, "CSSOutputData", moduleID);
+        CreateNewMessage(OutputDataMsg, sizeof(CSSRawOutputData),
+        OutputBufferCount, "CSSRawOutputData", moduleID);
 }
 
 void CoarseSunSensor::CrossInit()
@@ -206,11 +206,11 @@ void CoarseSunSensor::ComputeActualOutput()
 
 void CoarseSunSensor::WriteOutputs(uint64_t Clock)
 {
-    CSSOutputData LocalMessage;
-    memset(&LocalMessage, 0x0, sizeof(CSSOutputData));
+    CSSRawOutputData LocalMessage;
+    memset(&LocalMessage, 0x0, sizeof(CSSRawOutputData));
     LocalMessage.OutputData = this->ScaledValue;
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
-                                                 sizeof(CSSOutputData), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
+                                                 sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 
 void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)

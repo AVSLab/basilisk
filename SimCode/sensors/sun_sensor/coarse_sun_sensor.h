@@ -37,7 +37,7 @@ typedef enum {
 
 typedef struct {
     double OutputData;       /*!< CSS measurement output */
-}CSSOutputData;
+}CSSRawOutputData;
 
 class CoarseSunSensor: public SysModel {
 public:

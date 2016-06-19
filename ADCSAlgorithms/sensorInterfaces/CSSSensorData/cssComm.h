@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define MAX_NUM_CSS_SENSORS 32
 #define MAX_NUM_CHEBY_POLYS 32
 
-#include "messaging/static_messaging.h"
+#include "../ADCSAlgorithms/messaging/static_messaging.h"
 
 /*! \addtogroup ADCSAlgGroup
  *  This grouping contains the algorithms developed for the ADCS flight system
