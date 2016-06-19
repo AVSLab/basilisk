@@ -26,6 +26,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore ekuced_c;
 %include "carrays.i"
 %array_functions(double, doubleArray);
+%array_functions(int, intArray);
 typedef char ConstSpiceChar;
 typedef double SpiceDouble;
+%typemap(in) ConstSpiceDouble[][4] {
+    $1 = (ConstSpiceDouble (*)[4]) ($input);
+}
+%typemap(in) ConstSpiceDouble[][3] {
+    $1 = (ConstSpiceDouble (*)[3]) ($input);
+}
+typedef double ConstSpiceDouble;
+typedef double ConstSpiceDouble;
+typedef int SpiceInt;
+typedef int SpiceBoolean;
 %include "../../External/cspice/include/SpiceZpr.h"
