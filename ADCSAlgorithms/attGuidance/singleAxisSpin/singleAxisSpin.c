@@ -109,11 +109,11 @@ void computeSingleAxisSpinReference(singleAxisSpinConfig *ConfigData, uint64_t c
         ConfigData->mnvrStartTime = callTime;
     }
     currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
-    v3Scale(currMnvrTime, ConfigData->rotVector, PRV_spin);
+    v3Scale(currMnvrTime, ConfigData->omega_spin, PRV_spin);
     PRV2C(PRV_spin, C_spin);
     MRP2C(ConfigData->sigma_R0N, R0N);
     m33MultM33(C_spin, R0N, RN);
     C2MRP(RN, ConfigData->attRefOut.sigma_RN);
-    v3Copy(ConfigData->rotVector, ConfigData->attRefOut.omega_RN_N);
+    v3Copy(ConfigData->omega_spin, ConfigData->attRefOut.omega_RN_N);
     v3SetZero(ConfigData->attRefOut.domega_RN_N);
 }

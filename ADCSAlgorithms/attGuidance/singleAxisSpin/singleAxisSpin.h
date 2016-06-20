@@ -31,7 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef struct {
     /* Declare module private variables */
     double      sigma_R0N[3];                           /*!< base MRP attitude set*/
-    double      rotVector[3];                           /*!< (r/s) The vector we are rotating about*/
+    double      omega_spin[3];                          /*!< (r/s) The vector we are rotating about*/
     uint64_t    mnvrStartTime;                          /*!< (ns) The time that the attitude maneuver started*/
     
     /* Declare module IO interfaces */

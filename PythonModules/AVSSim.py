@@ -1315,8 +1315,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.singleAxisSpinData.outputDataName = "att_ref_output"
         sigma_R0N =  [0.1 , 0.2, 0.3]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
-        rotVector = np.array([0.1, 0.2, 0.3]) * mc.D2R
-        SimulationBaseClass.SetCArray(rotVector, 'double',self.singleAxisSpinData.rotVector)
+        omega_spin = np.array([0.1, 0.2, 0.3]) * mc.D2R
+        SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
 
     def setOrbitAxisSpin(self):
         self.orbitAxisSpinData.inputNavName = "simple_nav_output"

@@ -88,10 +88,10 @@ def subModuleTestFunction(show_plots):
     SimulationBaseClass.SetCArray(sigma_R0N,
                                   'double',
                                   moduleConfig.sigma_R0N)
-    rotVector = np.array([1., 1., 1.]) * mc.D2R
-    SimulationBaseClass.SetCArray(rotVector,
+    omega_spin = np.array([1., 1., 1.]) * mc.D2R
+    SimulationBaseClass.SetCArray(omega_spin,
                                   'double',
-                                  moduleConfig.rotVector)
+                                  moduleConfig.omega_spin)
 
 
 

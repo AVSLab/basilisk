@@ -30,12 +30,12 @@ def printResultsSingleAxisSpin(dt, sigma_R0N, rotVector):
 
 
 sigma_RN = np.array([0.1, 0.2, 0.3])
-rotVector = np.array([1., 1., 1.]) * mc.D2R
+omega_spin = np.array([1., 1., 1.]) * mc.D2R
 print 'CallTime = 0.0'
 dt = 0.0
-sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, rotVector)
+sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, omega_spin)
 print 'CallTime = 0.5'
 dt = 0.5
-sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, rotVector)
+sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, omega_spin)
 print 'CallTime = 1.0'
-sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, rotVector)
+sigma_RN = printResultsSingleAxisSpin(dt, sigma_RN, omega_spin)
