@@ -90,8 +90,8 @@ void Update_axisScan(axisScanConfig *ConfigData, uint64_t callTime, uint64_t mod
 void initializeScanReference(axisScanConfig *ConfigData, double sigma_R0N[3])
 {
     double  R0N[3][3];      /* DCM mapping from inertial N to input reference R0 */
-    double  UN[3][3];       /* DCM mapping from inertial N to intermediate frame U */
-    double  UR0[3][3];      /* DCM mapping from input reference R0 to intermediate frame U */
+    double  UN[3][3];       /* DCM mapping from inertial N to initial scanning frame U */
+    double  UR0[3][3];      /* DCM mapping from input reference R0 to initial scanning frame U */
     
     double  M2[3][3];       /* temporary DCM */
     double  M3[3][3];       /* temporary DCM */
@@ -112,8 +112,8 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
                               uint64_t callTime)
 {
     double RN[3][3];       /* DCM mapping from inertial N to desired reference R */
-    double RU[3][3];       /* DCM mapping from intermediate frame U to desired reference R */
-    double UN[3][3];       /* DCM mapping from inertial N to intermediate frame U */
+    double RU[3][3];       /* DCM mapping from initial scanning frame U to desired reference R */
+    double UN[3][3];       /* DCM mapping from inertial N to initial scanning frame U */
     double R0N[3][3];      /* DCM mapping from inertial N to input reference R0 */
     
     double omega_RU_N[3];
