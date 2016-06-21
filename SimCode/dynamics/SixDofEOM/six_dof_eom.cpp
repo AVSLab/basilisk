@@ -1416,7 +1416,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         }
         
         
-        m33MultV3(BNLoc, X + 3, v_B);
+        m33MultV3(BNLocnext, X + 3, v_B);
         m33MultV3(BNLocnext, Xnext + 3, v_Bnext);
         
         v3Subtract(v_Bnext, v_B, DVtot);
