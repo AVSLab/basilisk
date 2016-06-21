@@ -26,7 +26,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //! @brief Container for Fuel Tank information for fuel slosh dynamics*/
 typedef struct {
     double massFT;             //!< kg, total mass of the fuel tank
-    double numSloshParticles;  //!< number of particles to discretize the fuel tank into for fuel slosh
     double r_TB_B[3];          //!< m, position vector from B point to center of tank, T
 }FuelTankConfigData;
 

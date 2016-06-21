@@ -1343,9 +1343,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                             if (fspCountj != fspCountl){
                                 //! - Populate off diagonal elements of N matrix
                                 v3Scale(FSPItl->massFSP, FSPItl->pHat_B, intermediateVector);
-                                v3Add(vectorSum3FuelSloshDynamics, intermediateVector, vectorSum3FuelSloshDynamics);
-                                v3Scale(1/mSC, vectorSum3FuelSloshDynamics, vectorSum3FuelSloshDynamics);
-                                matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP*v3Dot(vectorSum3FuelSloshDynamics, intermediateVector2);
+                                if (this->SPCount > 0) {
+                                    v3Add(vectorSum3FuelSloshDynamics, intermediateVector, intermediateVector);
+                                }
+                                v3Scale(1/mSC, intermediateVector, intermediateVector);
+                                matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector);
                             }
                             fspCountl++;
                         }
@@ -1395,8 +1397,10 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     matrixN[fspCountj*this->numFSP + fspCountj] = FSPItj->massFSP-FSPItj->massFSP*FSPItj->massFSP/mSC-FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, vectorSum3FuelSloshDynamics);
 
                     //! - Populate O matrix
-                    m33Subtract(cTilde_B, matrixSumFuelSloshDynamics, intermediateMatrix);
-                    m33Subtract(intermediateMatrix, FSPItj->rTilde_PcB_B, intermediateMatrix);
+                    m33Subtract(cTilde_B, FSPItj->rTilde_PcB_B, intermediateMatrix);
+                    if (this->SPCount > 0) {
+                        m33Subtract(intermediateMatrix, matrixSumFuelSloshDynamics, intermediateMatrix);
+                    }
                     v3tMultM33(FSPItj->pHat_B, intermediateMatrix, intermediateVector);
                     v3Scale(-FSPItj->massFSP, intermediateVector, &matrixO[fspCountj*this->numFSP]);
 
@@ -1410,7 +1414,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     v3Scale(2, intermediateVector2, intermediateVector2);
                     v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
                     v3Subtract(intermediateVector, g_B, intermediateVector);
-                    v3Subtract(intermediateVector, vectorSum4FuelSloshDynamics, intermediateVector);
+                    if (this->SPCount > 0) {
+                        v3Subtract(intermediateVector, vectorSum4FuelSloshDynamics, intermediateVector);
+                    }
                     vectorQ[fspCountj] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector) - FSPItj->k*rhosFS[fspCountj] - FSPItj->c*rhoDotsFS[fspCountj];
 
                     //! - Populate X matrix
@@ -1870,6 +1876,19 @@ void SixDofEOM::integrateState(double CurrentTime)
             }
         }
 
+        uint32_t fspCount = 0;
+        std::vector<FuelTank *>::iterator itFT;
+        std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+        for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+        {
+            for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                 FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+            {
+                FSPIt->rho = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + fspCount];
+                FSPIt->rhoDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + this->numFSP + fspCount];
+                fspCount++;
+            }
+        }
 
         //! - Grab previous energy value for rate of change of energy
         prevTotScRotKinEnergy = this->totScRotKinEnergy;

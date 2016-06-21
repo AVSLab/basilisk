@@ -50,6 +50,7 @@ import reactionwheel_dynamics
 import thruster_dynamics
 import macros
 import solar_panels
+import fuel_tank
 
 
 
@@ -65,28 +66,30 @@ import solar_panels
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP", [
-    (True, True, False, False, False, False),
-    (False, True, False, False, False, False),
-    (True, False, False, False, False, False),
-    (False, True, True, False, False, False),
-    (False, True, True, True, False, False),
-    (True, True, True, False, False, False),
-    (True, True, True, True, False, False),
-    (True, True, False, False, True, False),
-    (True, True, False, False, False, True)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh", [
+    (True, True, False, False, False, False, False),
+    (False, True, False, False, False, False, False),
+    (True, False, False, False, False, False, False),
+    (False, True, True, False, False, False, False),
+    (False, True, True, True, False, False, False),
+    (True, True, True, False, False, False, False),
+    (True, True, True, True, False, False, False),
+    (True, True, False, False, True, False, False),
+    (True, True, False, False, False, True, False),
+    (True, True, False, False, False, False, True),
+    (True, True, False, False, False, True, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP)
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -96,7 +99,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
-
 
     DynUnitTestProc = scSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -245,7 +247,43 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
         VehDynObject.useGravity = False
 
+    if useFuelSlosh:
+        # add Fuel Slosh particles
+        VehDynObject.PositionInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
+        VehDynObject.VelocityInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
+        VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.0, 0.0, 0.0])
+        VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.1, -0.1, 0.1])
+        fuelTank1 = fuel_tank.FuelTank()
+        sloshParticle1 = fuel_tank.FuelSloshParticleConfigData()
+        sloshParticle2 = fuel_tank.FuelSloshParticleConfigData()
 
+        # Define Variables for fuel tank 1
+        fuelTank1.fuelTankData.massFT = 30
+        SimulationBaseClass.SetCArray([0, 0, 0], "double", fuelTank1.fuelTankData.r_TB_B)
+
+        # Define Variables for particle 1
+        sloshParticle1.massFSP = 10
+        sloshParticle1.k = 100.0
+        sloshParticle1.c = 0.0
+        SimulationBaseClass.SetCArray([0.1, 0, -0.1], "double", sloshParticle1.r_PT_B)
+        SimulationBaseClass.SetCArray([1, 0, 0], "double", sloshParticle1.pHat_B)
+        sloshParticle1.rho = 0.05
+        sloshParticle1.rhoDot = 0.0
+
+        # Define Variables for particle 2
+        sloshParticle2.massFSP = 20
+        sloshParticle2.k = 100.0
+        sloshParticle2.c = 0.0
+        SimulationBaseClass.SetCArray([0, 0, 0.1], "double", sloshParticle2.r_PT_B)
+        SimulationBaseClass.SetCArray([0, 1, 0], "double", sloshParticle2.pHat_B)
+        sloshParticle2.rho = -0.025
+        sloshParticle2.rhoDot = 0.0
+
+        fuelTank1.addFuelSloshParticle(sloshParticle1)
+        fuelTank1.addFuelSloshParticle(sloshParticle2)
+        VehDynObject.addFuelTank(fuelTank1)
+
+        VehDynObject.useGravity = False
 
     # add objects to the task process
     if useRW:
@@ -259,19 +297,36 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta", macros.sec2nano(120.))
         scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta", macros.sec2nano(120.))
 
+    if useFuelSlosh:
+        scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
+        scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
+
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
+    # log the data
+    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
+    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+
     if useHingedSP:
         theta1 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta")
         theta2 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta")
 
-    # log the data
-    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    if useFuelSlosh:
+        rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
+        rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
+        plt.figure(1)
+        plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
+        plt.figure(2)
+        plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
+        plt.figure(3)
+        plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
+        plt.figure(4)
+        plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
+        plt.show()
 
     # set expected results
     trueSigma = [
@@ -383,7 +438,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
             testFailCount += 1
             testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
-
     # compare the module results to the truth values
     if useHingedSP==True:
         accuracy = 1e-9
@@ -402,7 +456,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
-                                                
                                                     
 #
 # This statement below ensures that the unit test scrip can be run as a
@@ -410,11 +463,12 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           False,       # useTranslation
+                           True,       # useTranslation
                            True,        # useRotation
-                           True,        # useRW
-                           True,        # useJitter
+                           False,        # useRW
+                           False,        # useJitter
                            False,       # useThruster
-                           False         # useHingedSP
+                           False,       # useHingedSP
+                           True       # useFuelSlosh
                            )
 

@@ -27,6 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace std {
    %template(GravityBodyDataVector) vector<GravityBodyData>;
    %template(SolarPanelCollection) std::vector<SolarPanels *>;
+   %template(FuelTankCollection) std::vector<FuelTank *>;
 }
 
 
