@@ -30,10 +30,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef char ConstSpiceChar;
 typedef double SpiceDouble;
 %typemap(in) ConstSpiceDouble[][4] {
-    $1 = (ConstSpiceDouble (*)[4]) ($input);
+    //$1 = (ConstSpiceDouble (*)[4]) ($input);
+    void *dataPtr;
+    res9 = SWIG_ConvertPtr($input, &dataPtr, $descriptor(ConstSpiceDouble *), 0 |  0);
+    double **actData = (double**) dataPtr;
+    $1 = (ConstSpiceDouble (*)[4]) actData;
 }
 %typemap(in) ConstSpiceDouble[][3] {
-    $1 = (ConstSpiceDouble (*)[3]) ($input);
+    void *dataPtr;
+    res9 = SWIG_ConvertPtr($input, &dataPtr, $descriptor(ConstSpiceDouble *), 0 |  0);
+    double **actData = (double**) dataPtr;
+    $1 = (ConstSpiceDouble (*)[3]) actData;
 }
 typedef double ConstSpiceDouble;
 typedef double ConstSpiceDouble;
