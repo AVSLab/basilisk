@@ -1402,7 +1402,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                         m33Subtract(intermediateMatrix, matrixSumFuelSloshDynamics, intermediateMatrix);
                     }
                     v3tMultM33(FSPItj->pHat_B, intermediateMatrix, intermediateVector);
-                    v3Scale(-FSPItj->massFSP, intermediateVector, &matrixO[fspCountj*this->numFSP]);
+                    v3Scale(-FSPItj->massFSP, intermediateVector, &matrixO[fspCountj*3]);
 
                     //! - Populate q vector
                     v3Subtract(FSPItj->r_PcB_B, c_B, intermediateVector);
