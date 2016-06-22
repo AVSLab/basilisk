@@ -21,16 +21,22 @@ def initializeScan(sigma_R0N, theta0, psi0):
     return sigma_UN
 
 def printResults_axisScan(sigma_R0N, omega_R0N_N, domega_R0N_N, params, callTime):
-    sigma_UN = params[0]
-    psiDot = params[1]
+    theta0 = params[0]
+    psi0 = params[1]
+    psiDot = params[2]
 
     mnvrStartTime = 0.0
     if callTime == 0.0:
         mnvrStartTime = callTime
     currMnvrTime = callTime - mnvrStartTime
-    RU = rbk.Mi(-psiDot * currMnvrTime, 3)
-    UN = rbk.MRP2C(sigma_UN)
-    RN = np.dot(RU, UN)
+
+    R0N = rbk.MRP2C(sigma_R0N)
+
+    psi = psi0 - psiDot * currMnvrTime
+    M3 = rbk.Mi(psi, 3)
+    M2 = rbk.Mi(-theta0, 2)
+    RR0 = np.dot(M2, M3)
+    RN = np.dot(RR0, R0N)
     sigma_RN = rbk.C2MRP(RN)
 
     omega_RU_R0 = np.array([0.0, 0.0, -psiDot])
@@ -46,7 +52,6 @@ def printResults_axisScan(sigma_R0N, omega_R0N_N, domega_R0N_N, params, callTime
     print 'domega_RN_N = ', domega_RN_N
     print '\n'
 
-    return UN
 
 # Initial Conditions
 sigma_R0N = np.array([ 0.1, 0.2, 0.3 ])
@@ -57,7 +62,7 @@ psi0 = 0.0
 psiDot = 0.1
 
 sigma_UN = initializeScan(sigma_R0N, theta0, psi0)
-params = (sigma_UN, psiDot)
+params = (theta0, psi0, psiDot)
 callTime = 0.0 # [sec]
 printResults_axisScan(sigma_R0N, omega_R0N_N, domega_R0N_N, params, callTime)
 callTime = 0.5 # [sec]

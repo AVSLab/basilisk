@@ -97,8 +97,8 @@ void initializeScanReference(axisScanConfig *ConfigData, double sigma_R0N[3])
     double  M3[3][3];       /* temporary DCM */
     
     MRP2C(sigma_R0N, R0N);
-    Mi(ConfigData->theta0, 2, M2);
-    Mi(-ConfigData->psi0, 3, M3);
+    Mi(-ConfigData->theta0, 2, M2);
+    Mi(ConfigData->psi0, 3, M3);
     m33MultM33(M2, M3, UR0);
     m33MultM33(UR0, R0N, UN);
     C2MRP(UN, ConfigData->sigma_UN);
@@ -112,9 +112,11 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
                               uint64_t callTime)
 {
     double RN[3][3];       /* DCM mapping from inertial N to desired reference R */
-    double RU[3][3];       /* DCM mapping from initial scanning frame U to desired reference R */
-    double UN[3][3];       /* DCM mapping from inertial N to initial scanning frame U */
+    double RR0[3][3];       /* DCM mapping from initial scanning frame U to desired reference R */
     double R0N[3][3];      /* DCM mapping from inertial N to input reference R0 */
+    double M3[3][3];
+    double M2[3][3];
+    
     
     double omega_RU_N[3];
     double omega_RU_R0[3];
@@ -134,16 +136,17 @@ void computeAxisScanReference(axisScanConfig *ConfigData,
     currMnvrTime = (callTime - ConfigData->mnvrStartTime)*1.0E-9;
     
     /* Integrate Attitude */
-    MRP2C(ConfigData->sigma_UN, UN);
-    psi = ConfigData->psiDot * currMnvrTime;
-    Mi(-psi, 3, RU);
-    m33MultM33(RU, UN, RN);
+    psi = ConfigData->psi0 - ConfigData->psiDot * currMnvrTime;
+    MRP2C(sigma_R0N, R0N);
+    Mi(-ConfigData->theta0, 2, M2);
+    Mi(psi, 3, M3);
+    m33MultM33(M2, M3, RR0);
+    m33MultM33(RR0, R0N, RN);
     C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute angular velocity */
     v3SetZero(omega_RU_R0);
     omega_RU_R0[2] = -ConfigData->psiDot;
-    MRP2C(sigma_R0N, R0N);
     m33Transpose(R0N, C);
     m33MultV3(C,  omega_RU_R0, omega_RU_N);
     v3Add(omega_RU_N, omega_R0N_N, ConfigData->attRefOut.omega_RN_N); /* Note that omega_UR0 = 0, 
