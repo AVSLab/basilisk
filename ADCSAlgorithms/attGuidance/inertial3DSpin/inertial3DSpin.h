@@ -30,15 +30,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double sigma_R0N[3];                             /*!< MRP from inertial frame N to initial ref frame R0 */
-    double omega_R0N_N[3];                           /*!< [r/s]  angular velocity of R0 wrt N in N-frame components */
-    uint64_t priorTime;                              /*!< [ns] Last time the guidance module is called */
-    int integrateFlag;                               /*!< [ns] Flag to integrate or, otherwise, just evaluate */
+    double sigma_RN[3];                              /*!< --        MRP from inertial frame N to initial ref frame R0 */
+    double omega_RN_N[3];                            /*!< [r/s]     angular velocity of R0 wrt N in N-frame components */
+    uint64_t priorTime;                              /*!< [ns]      last time the guidance module is called */
+    double dt;                                       /*!< [s]       integration time-step */
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message*/
-    int32_t outputMsgID;                             /*!< ID for the outgoing message */
-    attRefOut attRefOut;                             /*!< Output message */
+    char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< --        Name of the outgoing message*/
+    int32_t outputMsgID;                             /*!< --        ID for the outgoing message */
+    attRefOut attRefOut;                             /*!< --        Output data */
 
 }inertial3DSpinConfig;
 
@@ -50,8 +50,9 @@ extern "C" {
     void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID);
     void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-
-    void computeInertialSpinReference(inertial3DSpinConfig *ConfigData, double dt);
+    void computeTimeStep(inertial3DSpinConfig *ConfigData, uint64_t callTime);
+    void evaluateInertial3DSpinRef(inertial3DSpinConfig *ConfigData);
+    void integrateInertialSpinRef(inertial3DSpinConfig *ConfigData);
 
 #ifdef __cplusplus
 }

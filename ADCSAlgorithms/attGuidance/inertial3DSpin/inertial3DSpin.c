@@ -82,70 +82,78 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, u
                                              first function call */
 }
 
-/*! Add a description of what this main Update() routine does for this module
+/*! This method performs all the main computations of the module
  @return void
  @param ConfigData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
 void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    double              dt;                 /*!< [s] module update period */
+    computeTimeStep(ConfigData, callTime);
+    integrateInertialSpinRef(ConfigData);
+    evaluateInertial3DSpinRef(ConfigData);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
+                 (void*) &(ConfigData->attRefOut), moduleID);
+    ConfigData->priorTime = callTime;
+    return;
+}
 
-    /* compute control update time */
+/*
+ * Function: evaluateInertial3DSpinRef
+ * Purpose: This function computes control update time
+ * Input
+ *      ConfigData = module configuration data
+ * Output:
+ *      ConfigData: dt is updated
+ */
+void computeTimeStep(inertial3DSpinConfig *ConfigData, uint64_t callTime)
+{
     if (ConfigData->priorTime == -1)
     {
-        dt = 0.0;
+        ConfigData->dt = 0.0;
+    } else {
+        ConfigData->dt = (callTime - ConfigData->priorTime)*NANO2SEC;
     }
-    else {
-        dt = (callTime - ConfigData->priorTime)*NANO2SEC;
-    }
-    ConfigData->priorTime = callTime;
-    /* compute and store output message */
-    computeInertialSpinReference(ConfigData, dt);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
-                 (void*) &(ConfigData->attRefOut), moduleID);
+}
 
-    return;
+/*
+ * Function: integrateInertialSpinRef
+ * Purpose: This function is designed to integrate the reference attitude
+ * Input
+ *      ConfigData = module configuration data
+ *      dt = integration time step
+ * Output:
+ *      ConfigData: sigma_RN is updated
+ */
+void integrateInertialSpinRef(inertial3DSpinConfig *ConfigData)
+{
+    double  RN[3][3];               /*!< DCM from inertial to reference frame */
+    double  B[3][3];                /*!< MRP rate matrix */
+    double  v3Temp[3];              /*!< temporary 3x1 array */
+    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
+    
+    MRP2C(ConfigData->sigma_RN, RN);
+    m33MultV3(RN, ConfigData->omega_RN_N, omega_RN_R);
+    BmatMRP(ConfigData->sigma_RN, B);
+    m33Scale(0.25* ConfigData->dt, B, B);
+    m33MultV3(B, omega_RN_R, v3Temp);
+    v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
+    MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
 }
 
 
 /*
- * Function: computeInertialSpinReference
- * Purpose: compute the reference frame states for the Inertial 3D spin control mode.  This function is
- designed to work both here in FSW to compute estimated pointing errors, as well as in the
- simulation code to compute true pointing errors
- * Inputs:
-     ConfigData = module configuration data
- *   integrateFlag = flag to reset the reference orientation
- *                   0 - integrate & evaluate
- *                  -1 - evalute but not integrate)
- *   dt = integration time step (control update period )
- * Outputs:
- *   sigma_RN = MRP attitude error of body relative to reference
- *   omega_RN_N = reference angluar velocity vector in body frame components
- *   domega_RN_N = reference angular acceleration vector in body frame componets
+ * Function: evaluateInertial3DSpinRef
+ * Purpose: This function is designed to evaluate the state of the 3D Spinning Reference
+ * Input
+ *      ConfigData = module configuration data
+ * Output:
+ *      ConfigData: attRefOut is updated
  */
-void computeInertialSpinReference(inertial3DSpinConfig *ConfigData, double dt)
+void evaluateInertial3DSpinRef(inertial3DSpinConfig *ConfigData)
 {
-    double  RN[3][3];               /*!< DCM from inertial to reference frame */
-    double  B[3][3];                /*!< MRP rate matrix */
-    double  v3Temp[3];              /*!< temporary 3x1 matrix */
-    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
-
-
-    if (ConfigData->integrateFlag == BOOL_TRUE) {
-        /* integrate reference attitude motion */
-        MRP2C(ConfigData->sigma_R0N, RN);
-        m33MultV3(RN, ConfigData->omega_R0N_N, omega_RN_R);
-        BmatMRP(ConfigData->sigma_R0N, B);
-        m33Scale(0.25*dt, B, B);
-        m33MultV3(B, omega_RN_R, v3Temp);
-        v3Add(ConfigData->sigma_R0N, v3Temp, ConfigData->sigma_R0N);
-        MRPswitch(ConfigData->sigma_R0N, 1.0, ConfigData->sigma_R0N);
-    }
-
-    v3Copy(ConfigData->sigma_R0N, ConfigData->attRefOut.sigma_RN);
-    v3Copy(ConfigData->omega_R0N_N, ConfigData->attRefOut.omega_RN_N);
+    v3Copy(ConfigData->sigma_RN, ConfigData->attRefOut.sigma_RN);
+    v3Copy(ConfigData->omega_RN_N, ConfigData->attRefOut.omega_RN_N);
     v3SetZero(ConfigData->attRefOut.domega_RN_N);
-
 }
+
