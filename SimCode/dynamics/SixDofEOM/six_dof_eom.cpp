@@ -1346,7 +1346,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                                 if (this->SPCount > 0) {
                                     v3Add(vectorSum3FuelSloshDynamics, intermediateVector, intermediateVector);
                                 }
-                                v3Scale(1/mSC, intermediateVector, intermediateVector);
+                                v3Scale(1.0/mSC, intermediateVector, intermediateVector);
                                 matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector);
                             }
                             fspCountl++;
@@ -1394,7 +1394,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                         }
                     }
                     //! - Populate diagonal elements of N matrix
-                    matrixN[fspCountj*this->numFSP + fspCountj] = FSPItj->massFSP-FSPItj->massFSP*FSPItj->massFSP/mSC-FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, vectorSum3FuelSloshDynamics);
+                    matrixN[fspCountj*this->numFSP + fspCountj] = FSPItj->massFSP - FSPItj->massFSP*FSPItj->massFSP/mSC - FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, vectorSum3FuelSloshDynamics);
 
                     //! - Populate O matrix
                     m33Subtract(cTilde_B, FSPItj->rTilde_PcB_B, intermediateMatrix);
@@ -1408,11 +1408,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     v3Subtract(FSPItj->r_PcB_B, c_B, intermediateVector);
                     m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
                     m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-                    v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
+                    v3Add(rDDot_CN_B, intermediateVector, intermediateVector);
                     v3Subtract(FSPItj->rPrime_PcB_B, cPrime_B, intermediateVector2);
                     m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
                     v3Scale(2, intermediateVector2, intermediateVector2);
-                    v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
+                    v3Add(intermediateVector, intermediateVector2, intermediateVector);
                     v3Subtract(intermediateVector, g_B, intermediateVector);
                     if (this->SPCount > 0) {
                         v3Subtract(intermediateVector, vectorSum4FuelSloshDynamics, intermediateVector);
@@ -1582,7 +1582,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                      FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
                 {
                     //! - Set trivial derivative rhoDot = rhoDot
-                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + fspCount] = rhoDotsFS[fspCount];
+                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + fspCount] = rhoDotsFS[fspCount];
 
                     //! - Solve for rhoDDot
                     vtMultM(&matrixT[fspCount*this->numFSP], matrixO, this->numFSP, 3, intermediateVector);
@@ -1723,6 +1723,9 @@ void SixDofEOM::integrateState(double CurrentTime)
     double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
     double prevTotScRotKinEnergy;             /* The last kinetic energy calculation from time step before */
     double *attStates;                        /* pointer to the attitude state set in the overall state matrix */
+    double rDot_BN_B[3];
+    double totFuelSloshEnergy;
+    double intermediateVector2[3];
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -1876,6 +1879,9 @@ void SixDofEOM::integrateState(double CurrentTime)
             }
         }
 
+        MRP2C(&attStates[0], BN);
+        m33MultV3(BN, &this->XState[3], rDot_BN_B);
+        totFuelSloshEnergy = 0;
         uint32_t fspCount = 0;
         std::vector<FuelTank *>::iterator itFT;
         std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
@@ -1886,6 +1892,16 @@ void SixDofEOM::integrateState(double CurrentTime)
             {
                 FSPIt->rho = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + fspCount];
                 FSPIt->rhoDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + this->numFSP + fspCount];
+
+                //! - Find fuel slosh kinetic energy
+                v3Cross(&attStates[3], FSPIt->r_PB_B, intermediateVector);
+                v3Add(rDot_BN_B, intermediateVector, intermediateVector2);
+                v3Scale(FSPIt->rhoDot, FSPIt->pHat_B, intermediateVector);
+                v3Add(intermediateVector2, intermediateVector, intermediateVector2);
+                v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector);
+                v3Cross(&attStates[3], intermediateVector, intermediateVector);
+                v3Add(intermediateVector2, intermediateVector, intermediateVector2);
+                totFuelSloshEnergy+= 1.0/2.0*FSPIt->massFSP*v3Dot(intermediateVector2, intermediateVector2);
                 fspCount++;
             }
         }
@@ -1901,10 +1917,10 @@ void SixDofEOM::integrateState(double CurrentTime)
 
         //! - Add the reaction wheel relative kinetic energy and angular momentum
         this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
+        this->totScRotKinEnergy += totFuelSloshEnergy;
         v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
 
         //! - Find angular momentum vector in inertial frame
-        MRP2C(&attStates[0], BN);
         m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);
 
         //! - Find magnitude of spacecraft angular momentum

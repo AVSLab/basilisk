@@ -76,8 +76,7 @@ import fuel_tank
     (True, True, True, True, False, False, False),
     (True, True, False, False, True, False, False),
     (True, True, False, False, False, True, False),
-    (True, True, False, False, False, False, True),
-    (True, True, False, False, False, True, True)
+    (True, True, False, False, False, False, True)
 ])
 
 # provide a unique test method name, starting with test_
@@ -300,11 +299,12 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
+        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
 
-    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
+    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(0.1))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(10*60.)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(20.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
@@ -318,6 +318,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
+        energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
         plt.figure(1)
         plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
         plt.figure(2)
@@ -326,6 +327,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
         plt.figure(4)
         plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
+        plt.figure(5)
+        plt.plot(energy[:,0]*1.0E-9, energy[:,1], 'b')
         plt.show()
 
     # set expected results
