@@ -53,9 +53,12 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 {
     RWConstellation localRWData;
-    int i, j;
+    ThrusterCluster localThrustData;
+    vehicleConfigData localConfigData;
+    int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
+    double momentArm[3];
     
     /*! - Get the control data message ID*/
     ConfigData->inputSpeedID = subscribeToMessage(ConfigData->inputSpeedName,
@@ -68,11 +71,25 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
-        for(j=0; j<3; j=j+1)
-        {
-            ConfigData->rwAlignMap[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
-        }
+        v3Copy(localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
     }
+    ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
+                                                   sizeof(ThrusterCluster), moduleID);
+    ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
+                sizeof(ThrusterCluster), &localThrustData, moduleID);
+    ConfigData->inputMassPropID = subscribeToMessage(
+        ConfigData->inputMassPropsName, sizeof(vehicleConfigData), moduleID);
+    ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
+                sizeof(vehicleConfigData), &localConfigData, moduleID);
+    for(i=0; i<ConfigData->numThrusters; i=i+1)
+    {
+        v3Copy(localThrustData.thrusters[i].tHatThrust, &ConfigData->thrAlignMap[i*3]);
+        v3Subtract(localThrustData.thrusters[i].rThruster, localConfigData.CoM,
+            momentArm);
+        v3Cross(momentArm, localThrustData.thrusters[i].tHatThrust,
+            &(ConfigData->thrTorqueMap[i*3]));
+    }
+    
     
 }
 

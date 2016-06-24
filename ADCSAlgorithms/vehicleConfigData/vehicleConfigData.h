@@ -31,6 +31,7 @@ typedef struct {
     double BS[9];               /*!< -- DCM from vehicle structure frame S to ADCS body frame B (row major)*/
     uint32_t CurrentADCSState;  /*!< -- Current ADCS state for subsystem */
     double I[9];                /*!< kg m^2 Spacecraft Inertia */
+    double CoM[3];              /*!< [m] Center of mass of spacecraft in body*/
 }vehicleConfigData;
 
 
@@ -43,6 +44,15 @@ typedef struct {
 typedef struct {
     RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
 }RWConstellation;
+
+typedef struct {
+    double rThruster[3];      /*!< [m] Location of the thruster in the spacecraft*/
+    double tHatThrust[3];     /*!< [-] Unit vector of the thrust direction*/
+}ThrusterPointData;
+
+typedef struct {
+    ThrusterPointData thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
+}ThrusterCluster;
 
 /*! @} */
 
