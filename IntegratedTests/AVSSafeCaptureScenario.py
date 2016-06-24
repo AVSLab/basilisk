@@ -74,7 +74,7 @@ def executeAVSSafeCapture(TheAVSSim):
     TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9))  # solar array boresight angles
-    TheAVSSim.AddVectorForLogging('CSSPyramid1HeadA.sHatStr', 'double', 0, 2, int(1E9))
+    TheAVSSim.AddVectorForLogging('CSSConstelation.sensorList[0].sHatStr', 'double', 0, 2, int(1E9))
 
     TheAVSSim.InitializeSimulation()
     TheAVSSim.ConfigureStopTime(int(30 * 1E9))
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
     executeAVSSafeCapture(TheAVSSim)
 
-    DataCSSTruth = TheAVSSim.GetLogVariableData('CSSPyramid1HeadA.sHatStr')
+    DataCSSTruth = TheAVSSim.GetLogVariableData('CSSConstelation.sensorList[0].sHatStr')
     FSWsHat = TheAVSSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')

@@ -123,7 +123,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
          # DYN OBJECTS
         self.SpiceObject = spice_interface.SpiceInterface()
-        self.InitCSSHeads()
+        self.cssConstellation = coarse_sun_sensor.CSSConstellation()
         # Schedule the first pyramid on the simulated sensor Task
         self.IMUSensor = imu_sensor.ImuSensor()
         self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
@@ -144,14 +144,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.disableTask("SynchTask")
         self.AddModelToTask("SynchTask", self.clockSynchData)
         self.AddModelToTask("DynamicsTask", self.SpiceObject, None, 202)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA, None, 101)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB, None, 102)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadC, None, 103)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadD, None, 104)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadA, None, 105)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadB, None, 106)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadC, None, 107)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadD, None, 108)
+        self.AddModelToTask("DynamicsTask", self.cssConstellation, None, 108)
         self.AddModelToTask("DynamicsTask", self.IMUSensor, None, 100)
         # self.AddModelToTask("DynamicsTask", self.radiationPressure, None, 303)
         self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject, None, 302)
@@ -809,71 +802,76 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         CSSPlatform2YPR = [0.0, -math.pi / 2.0, 0.0]
 
         # Initialize one sensor by hand and then init the rest off of it
-        self.CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
-        self.CSSPyramid1HeadA.ModelTag = "CSSPyramid1HeadA"
-        self.CSSPyramid1HeadA.SenBias = CSSNoiseBias
-        self.CSSPyramid1HeadA.SenNoiseStd = CSSNoiseStd
-        self.CSSPyramid1HeadA.setStructureToPlatformDCM(CSSPlatform1YPR[0],
+        self.cssConstellation.ModelTag = "CSSConstelation"
+        self.cssConstellation.outputConstellationMessage = "css_sensors_data"
+        CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
+        CSSPyramid1HeadA.ModelTag = "CSSPyramid1HeadA"
+        CSSPyramid1HeadA.SenBias = CSSNoiseBias
+        CSSPyramid1HeadA.SenNoiseStd = CSSNoiseStd
+        CSSPyramid1HeadA.setStructureToPlatformDCM(CSSPlatform1YPR[0],
                                                         CSSPlatform1YPR[1], CSSPlatform1YPR[2])
-        self.CSSPyramid1HeadA.scaleFactor = CSSscaleFactor
-        self.CSSPyramid1HeadA.fov = CSSFOV
-        self.CSSPyramid1HeadA.KellyFactor = CSSKellyFactor
-        self.CSSPyramid1HeadA.OutputDataMsg = "coarse_sun_data_pyramid1_headA"
-        self.CSSPyramid1HeadB = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadB.ModelTag = "CSSPyramid1HeadB"
-        self.CSSPyramid1HeadB.OutputDataMsg = "coarse_sun_data_pyramid1_headB"
-        self.CSSPyramid1HeadC = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadC.ModelTag = "CSSPyramid1HeadC"
-        self.CSSPyramid1HeadC.OutputDataMsg = "coarse_sun_data_pyramid1_headC"
-        self.CSSPyramid1HeadD = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadD.ModelTag = "CSSPyramid1HeadD"
-        self.CSSPyramid1HeadD.OutputDataMsg = "coarse_sun_data_pyramid1_headD"
+        CSSPyramid1HeadA.scaleFactor = CSSscaleFactor
+        CSSPyramid1HeadA.fov = CSSFOV
+        CSSPyramid1HeadA.KellyFactor = CSSKellyFactor
+        CSSPyramid1HeadA.OutputDataMsg = "coarse_sun_data_pyramid1_headA"
+        CSSPyramid1HeadB = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadB.ModelTag = "CSSPyramid1HeadB"
+        CSSPyramid1HeadB.OutputDataMsg = "coarse_sun_data_pyramid1_headB"
+        CSSPyramid1HeadC = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadC.ModelTag = "CSSPyramid1HeadC"
+        CSSPyramid1HeadC.OutputDataMsg = "coarse_sun_data_pyramid1_headC"
+        CSSPyramid1HeadD = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadD.ModelTag = "CSSPyramid1HeadD"
+        CSSPyramid1HeadD.OutputDataMsg = "coarse_sun_data_pyramid1_headD"
 
         # Set up the sun sensor orientation information
         # Maybe we should add the method call to the SelfInit of the CSS module
-        self.CSSPyramid1HeadA.theta = 0.0
-        self.CSSPyramid1HeadA.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadA.theta = 0.0
+        CSSPyramid1HeadA.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadB.theta = 90.0 * math.pi / 180.0
-        self.CSSPyramid1HeadB.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadB.theta = 90.0 * math.pi / 180.0
+        CSSPyramid1HeadB.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadC.theta = 180.0 * math.pi / 180.0
-        self.CSSPyramid1HeadC.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadC.theta = 180.0 * math.pi / 180.0
+        CSSPyramid1HeadC.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadD.theta = 270.0 * math.pi / 180.0
-        self.CSSPyramid1HeadD.phi = 45 * math.pi / 180.0
-        self.CSSPyramid1HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadD.theta = 270.0 * math.pi / 180.0
+        CSSPyramid1HeadD.phi = 45 * math.pi / 180.0
+        CSSPyramid1HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadA = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid2HeadA.ModelTag = "CSSPyramid2HeadA"
-        self.CSSPyramid2HeadA.OutputDataMsg = "coarse_sun_data_pyramid2_headA"
-        self.CSSPyramid2HeadA.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadA = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid2HeadA.ModelTag = "CSSPyramid2HeadA"
+        CSSPyramid2HeadA.OutputDataMsg = "coarse_sun_data_pyramid2_headA"
+        CSSPyramid2HeadA.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadB = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadB)
-        self.CSSPyramid2HeadB.ModelTag = "CSSPyramid2HeadB"
-        self.CSSPyramid2HeadB.OutputDataMsg = "coarse_sun_data_pyramid2_headB"
-        self.CSSPyramid2HeadB.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadB = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadB)
+        CSSPyramid2HeadB.ModelTag = "CSSPyramid2HeadB"
+        CSSPyramid2HeadB.OutputDataMsg = "coarse_sun_data_pyramid2_headB"
+        CSSPyramid2HeadB.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadC = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadC)
-        self.CSSPyramid2HeadC.ModelTag = "CSSPyramid2HeadC"
-        self.CSSPyramid2HeadC.OutputDataMsg = "coarse_sun_data_pyramid2_headC"
-        self.CSSPyramid2HeadC.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadC = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadC)
+        CSSPyramid2HeadC.ModelTag = "CSSPyramid2HeadC"
+        CSSPyramid2HeadC.OutputDataMsg = "coarse_sun_data_pyramid2_headC"
+        CSSPyramid2HeadC.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadD = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadD)
-        self.CSSPyramid2HeadD.ModelTag = "CSSPyramid2HeadD"
-        self.CSSPyramid2HeadD.OutputDataMsg = "coarse_sun_data_pyramid2_headD"
-        self.CSSPyramid2HeadD.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadD = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadD)
+        CSSPyramid2HeadD.ModelTag = "CSSPyramid2HeadD"
+        CSSPyramid2HeadD.OutputDataMsg = "coarse_sun_data_pyramid2_headD"
+        CSSPyramid2HeadD.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        
+        self.cssConstellation.sensorList = coarse_sun_sensor.CSSVector([CSSPyramid1HeadA, CSSPyramid1HeadB, CSSPyramid1HeadC, CSSPyramid1HeadD,
+            CSSPyramid2HeadA, CSSPyramid2HeadB, CSSPyramid2HeadC, CSSPyramid2HeadD])
 
     def SetVehDynObject(self):
         self.SunGravBody = six_dof_eom.GravityBodyData()
@@ -1020,23 +1018,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.CSSDecodeFSWConfig.ChebyCount = len(ChebyList)
         SimulationBaseClass.SetCArray(ChebyList, 'double',
                                       self.CSSDecodeFSWConfig.KellyCheby)
-        CurrentName = cssComm.SensorMsgNameCarrier()
-        # Arrays of c-strings are hard for SWIG/python.  Required a bit of care.
-        SensorListUse = ["coarse_sun_data_pyramid1_headA",
-                         "coarse_sun_data_pyramid1_headB",
-                         "coarse_sun_data_pyramid1_headC",
-                         "coarse_sun_data_pyramid1_headD",
-                         "coarse_sun_data_pyramid2_headA",
-                         "coarse_sun_data_pyramid2_headB",
-                         "coarse_sun_data_pyramid2_headC",
-                         "coarse_sun_data_pyramid2_headD"]
-
-        i = 0
-        for Name in SensorListUse:
-            CurrentName.SensorMsgName = Name
-            cssComm.SensorNameArray_setitem(self.CSSDecodeFSWConfig.SensorList, i,
-                                            CurrentName)
-            i += 1
+        self.CSSDecodeFSWConfig.SensorListName = "css_sensors_data"
 
     def SetIMUCommData(self):
         self.IMUCommData.InputDataName = "imu_meas_data"
@@ -1343,6 +1325,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def InitAllDynObjects(self):
         self.SetSpiceObject()
         self.SetIMUSensor()
+        self.InitCSSHeads()
         self.SetACSThrusterDynObject()
         self.SetDVThrusterDynObject()
         self.SetVehDynObject()

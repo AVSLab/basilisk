@@ -42,6 +42,12 @@ typedef double SpiceDouble;
     double **actData = (double**) dataPtr;
     $1 = (ConstSpiceDouble (*)[3]) actData;
 }
+%typemap(in) SpiceDouble[3][3] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(ConstSpiceDouble *), 0 |  0);
+    double **actData = (double**) dataPtr;
+    $1 = (SpiceDouble (*)[3]) actData;
+}
 typedef double ConstSpiceDouble;
 typedef double ConstSpiceDouble;
 typedef int SpiceInt;
