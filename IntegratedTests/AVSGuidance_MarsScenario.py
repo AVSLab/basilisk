@@ -99,6 +99,47 @@ def plotReference(sigma_RN, omega_RN_N):
     plt.legend(['$x_1$', '$x_2$', '$x_3$'])
     plt.title(TheAVSSim.modeRequest + ': $\omega_{RN, N}$')
 
+def plotEuler123(sigma_RN, omega_RN_N):
+    theta0 = np.array([])
+    theta1 = np.array([])
+    theta2 = np.array([])
+    theta0_dot = np.array([])
+    theta1_dot = np.array([])
+    theta2_dot = np.array([])
+    t = sigma_RN[:, 0] * 1E-9
+    for i in range(len(t)):
+        e = rbk.MRP2Euler123(sigma_RN[i, 1:])
+        theta0 = np.append(theta0, e[0])
+        theta1 = np.append(theta1, e[1])
+        theta2 = np.append(theta2, e[2])
+
+        e_dot = rbk.dEuler121(e, omega_RN_N[i, 1:])
+        theta0_dot = np.append(theta0_dot, e_dot[0])
+        theta1_dot = np.append(theta1_dot, e_dot[1])
+        theta2_dot = np.append(theta2_dot, e_dot[2])
+    print '\n'
+    print 'theta0 [deg]= ', theta0 * af.R2D
+    print 'theta1 [deg]= ', theta1 * af.R2D
+    print 'theta2 [deg]= ', theta2 * af.R2D
+    print 'theta0_dot [rad/s]= ', theta0_dot
+    print 'theta1_dot [rad/s]= ', theta1_dot
+    print 'theta2_dot [rad/s]= ', theta2_dot
+    print '\n'
+
+    plt.figure(12)
+    plt.plot(t, theta0 * af.R2D, t, theta1 * af.R2D, t, theta2* af.R2D)
+    plt.legend(['$x_1$', '$x_2$', '$x_3$'])
+    plt.title(TheAVSSim.modeRequest + ': 123-Euler Angles')
+    plt.xlabel('[sec]')
+    plt.ylabel('[deg]')
+    plt.figure(13)
+    plt.plot(t, theta0_dot, t, theta1_dot, t, theta2_dot)
+    plt.legend(['$x_1$', '$x_2$', '$x_3$'])
+    plt.title(TheAVSSim.modeRequest + ': 123-Euler Angle Rates')
+    plt.xlabel('[sec]')
+    plt.ylabel('[rad/s]')
+
+
 def plotBaseReference(sigma_R0N, omega_R0N_N):
     print 'sigma_R0N = ', sigma_R0N[:, 1:]
     print 'omega_R0N_N = ', omega_R0N_N[:, 1:]
@@ -206,22 +247,23 @@ def executeGuidance(TheAVSSim):
     def doubleTest(mode1, mode2):
         TheAVSSim.modeRequest = mode1
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        TheAVSSim.ConfigureStopTime(int(60 * 20 * 4 * 1E9))
+        TheAVSSim.ConfigureStopTime(int(60 * 20 * 1E9))
         TheAVSSim.ExecuteSimulation()
 
         TheAVSSim.modeRequest = mode2
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        TheAVSSim.ConfigureStopTime(int(60 * 20 * 8 * 1E9))
+        TheAVSSim.ConfigureStopTime(int(60 * 40 * 1E9)) # 60 * 20 * 8 * 1E9
         TheAVSSim.ExecuteSimulation()
 
     def singleTest(mode):
         TheAVSSim.modeRequest = mode
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        TheAVSSim.ConfigureStopTime(int(60 * 20 * 2 * 1E9))
+        TheAVSSim.ConfigureStopTime(int(60 * 20 * 4 * 1E9))
         TheAVSSim.ExecuteSimulation()
 
     # Visualization
     #TheAVSSim.isUsingVisualization = True
+    #TheAVSSim.clockSynchData.accelFactor = 20.0
     # Sensor Corruption
     turnOffSensorsCorruption(TheAVSSim)
     turnOffFSWCorruption(TheAVSSim)
@@ -238,20 +280,23 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.MRP_FeedbackRWAData.P = P
 
     # hillPoint Data:
-    #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
+    TheAVSSim.hillPointData.outputDataName = "att_ref_output"
     # inertial3DPoint Data:
-    TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
     # velocityPoint Data:
     TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
     # axisScan Data:
-    TheAVSSim.axisScanData.psiDot = 0.2 * mc.D2R
-    TheAVSSim.axisScanData.psi0 = 10. * mc.D2R
+    TheAVSSim.axisScanData.psiDot = 0.02 * mc.D2R
+    #TheAVSSim.axisScanData.psi0 = 10. * mc.D2R
+    #TheAVSSim.axisScanData.theta0 = 10. * mc.D2R
     # cel2BdyPoint Data:
-    TheAVSSim.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
+    #TheAVSSim.celTwoBodyPointData.inputCelMessName = "sun_display_frame_data"
+    TheAVSSim.celTwoBodyPointData.inputSecMessName = "mars_display_frame_data"
+    #TheAVSSim.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
     # orbitAxisSpin Data:
-    TheAVSSim.orbitAxisSpinData.o_spin = 2
-    TheAVSSim.orbitAxisSpinData.b_spin = 0
+    #TheAVSSim.orbitAxisSpinData.o_spin = 2
+    #TheAVSSim.orbitAxisSpinData.b_spin = 0
     TheAVSSim.orbitAxisSpinData.omega_spin = 0.1 * mc.D2R
 
     # Initialize SIM:
@@ -263,7 +308,7 @@ def executeGuidance(TheAVSSim):
     #singleTest('inertial3DPoint')
     #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #singleTest('hillPoint')
-    singleTest('velocityPoint')
+    #singleTest('velocityPoint')
     #doubleTest('hillPoint', 'velocityPoint')
     #singleTest('orbitAxisSpin')
     #doubleTest('velocityPoint', 'orbitAxisSpin')
@@ -271,18 +316,21 @@ def executeGuidance(TheAVSSim):
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
     #singleTest('singleAxisSpin')
     #singleTest('axisScan')
+    #doubleTest('velocityPoint', 'axisScan')
     #doubleTest('inertial3DSpin', 'axisScan')
     #doubleTest('inertial3DPoint', 'singleAxisSpin')
     #singleTest('singleAxisSpin')
+    #singleTest('marsPoint')
+    doubleTest('celTwoBodyPoint', 'marsPoint')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output_stage1", int(1E9))
-    #TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("simple_nav_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("", int(1E9))
 
     TheAVSSim.VehDynObject.GravData[0].IsCentralBody = False
     TheAVSSim.VehDynObject.GravData[0].IsDisplayBody = False
@@ -292,12 +340,12 @@ if __name__ == "__main__":
     TheAVSSim.SpiceObject.referenceBase = "MARSIAU"
     TheAVSSim.VehOrbElemObject.mu = TheAVSSim.MarsGravBody.mu
 
-    TheAVSSim.VehOrbElemObject.CurrentElem.a = af.M_radius * 2.8 * 1000.0
-    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.a = af.M_radius * 4 * 1000.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.7
     TheAVSSim.VehOrbElemObject.CurrentElem.i = 0.0 * math.pi / 180.0
     TheAVSSim.VehOrbElemObject.CurrentElem.Omega = 0.0
     TheAVSSim.VehOrbElemObject.CurrentElem.omega = 0.0
-    TheAVSSim.VehOrbElemObject.CurrentElem.f = 70.0 * math.pi / 180.0
+    TheAVSSim.VehOrbElemObject.CurrentElem.f = 170.0 * math.pi / 180.0
 
     # Convert those OEs to cartesian
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
@@ -323,17 +371,27 @@ if __name__ == "__main__":
 
     r_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.r_BN_N", range(3))
     v_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.v_BN_N", range(3))
-    plotRV_mag(r_BN_N, v_BN_N)
+    #plotRV_mag(r_BN_N, v_BN_N)
 
     sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
     omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))
     #plotRotNav(sigma_BN, omega_BN_B)
 
+    if TheAVSSim.modeRequest == 'marsPoint':
+        sigma_RN = TheAVSSim.pullMessageLogData(".sigma_RN", range(3))
+        omega_RN_N = TheAVSSim.pullMessageLogData(".omega_RN_N", range(3))
+        domega_RN_N = TheAVSSim.pullMessageLogData(".domega_RN_N", range(3))
+        plotEuler123(sigma_RN, omega_RN_N)
+    else:
+        sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
+        omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
+        domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
+        plotReference(sigma_RN, omega_RN_N)
+        if (TheAVSSim.modeRequest == 'axisScan'):
+            plotEuler123(sigma_RN, omega_RN_N)
 
-    sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
-    omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
-    domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
-    #plotReference(sigma_RN, omega_RN_N)
+
+
 
     if TheAVSSim.modeRequest == 'orbitAxisSpin' or TheAVSSim.modeRequest == 'axisScan':
         sigma_R0N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.sigma_RN", range(3))

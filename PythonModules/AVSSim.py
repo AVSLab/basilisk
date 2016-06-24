@@ -26,7 +26,7 @@ sys.path.append(path + '/../../Basilisk/PythonModules')
 sys.path.append(path + '/../../Basilisk/modules')
 # Simulation base class is needed because we inherit from it
 import SimulationBaseClass
-import RigidBodyKinematics
+import RigidBodyKinematics as rbk
 import numpy as np
 import macros as mc
 
@@ -510,8 +510,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('singleAxisSpinTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                                , "self.enableTask('attitudeControlMnvrTask')"
+                                , "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateOrbitAxisSpin", int(1E9), True, ["self.modeRequest == 'orbitAxisSpin'"],
@@ -603,13 +603,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.modeRequest = 'DVMnvr'",
                              "self.setEventActivity('initiateDVMnvr', True)"])
 
-        self.createNewEvent("mnvrToRaster", int(1E9), False,
-                            ["self.attMnvrPointData.mnvrComplete == 1"],
+        self.createNewEvent("mnvrToRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
                             ["self.activateNextRaster()",
                              "self.setEventActivity('completeRaster', True)"])
 
-        self.createNewEvent("completeRaster", int(1E9), False,
-                            ["self.attMnvrPointData.mnvrComplete == 1"],
+        self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
                             ["self.initializeRaster()"])
 
         rastAngRad = 50.0 * math.pi / 180.0
@@ -686,7 +684,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.scanSelector += 1
         self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
         offPointAngles = np.reshape(offPointAngles, (3, 1))
-        offMatrix = RigidBodyKinematics.euler1232C(offPointAngles)
+        offMatrix = rbk.euler1232C(offPointAngles)
         newPointMatrix = np.dot(offMatrix, basePointMatrix)
         newPointMatrix = np.reshape(newPointMatrix, 9).tolist()
         SimulationBaseClass.SetCArray(newPointMatrix, 'double', self.marsPointData.TPoint2Bdy)
@@ -1306,7 +1304,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attMnvrPointData.inputNavStateName = "simple_nav_output"
         self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
         self.attMnvrPointData.outputDataName = "nom_att_guid_out"
-        # self.attMnvrPointData.outputDataName = "att_ref_output"
+        #self.attMnvrPointData.outputRefName = "att_ref_output"
         self.attMnvrPointData.zeroAngleTol = 1.0 * math.pi / 180.0
         self.attMnvrPointData.mnvrActive = 0
         self.attMnvrPointData.totalMnvrTime = 1000.0
@@ -1315,11 +1313,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Init of Guidance Modules
     def setInertial3DSpin(self):
         self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_R0N = [0.1, 0.2, 0.3]
-        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DSpinData.sigma_R0N)
-        omega_R0N_N = np.array([0., 0., 0.]) * mc.D2R
-        SimulationBaseClass.SetCArray(omega_R0N_N, 'double',self.inertial3DSpinData.omega_R0N_N)
-        self.inertial3DSpinData.integrateFlag = 1
+        sigma_R0N = [0.3, 0.3, 0.3]
+        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DSpinData.sigma_RN)
+        omega_R0N_N = np.array([0.2, 0.1, 0.1]) * mc.D2R
+        SimulationBaseClass.SetCArray(omega_R0N_N, 'double',self.inertial3DSpinData.omega_RN_N)
 
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
@@ -1340,7 +1337,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setCelTwoBodyPoint(self):
         self.celTwoBodyPointData.inputNavDataName = "simple_nav_output"
         self.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
-        self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
+        #self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
         self.celTwoBodyPointData.singularityThresh = 1.0 * mc.D2R
 
@@ -1348,25 +1345,25 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.singleAxisSpinData.outputDataName = "att_ref_output"
         sigma_R0N =  [0.1 , 0.2, 0.3]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
-        omega_spin = np.array([0.1, 0.2, 0.3]) * mc.D2R
+        omega_spin = np.array([0.2, 0.2, 0.2]) * mc.D2R
         SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
 
     def setOrbitAxisSpin(self):
         self.orbitAxisSpinData.inputNavName = "simple_nav_output"
         self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
         self.orbitAxisSpinData.outputDataName = "att_ref_output"
-        self.orbitAxisSpinData.o_spin = 0
-        self.orbitAxisSpinData.b_spin = 0
+        #self.orbitAxisSpinData.o_spin = 0
+        #self.orbitAxisSpinData.b_spin = 0
         self.orbitAxisSpinData.omega_spin = 0.4 * mc.D2R
-        self.orbitAxisSpinData.phi_spin0 = 0.0 * mc.D2R
-        self.orbitAxisSpinData.initializeAngle = 0
+        #self.orbitAxisSpinData.phi_spin0 = 0.0 * mc.D2R
+        #self.orbitAxisSpinData.initializeAngle = 0
 
     def setAxisScan(self):
         self.axisScanData.inputRefName = "att_ref_output_stage1"
         self.axisScanData.outputDataName = "att_ref_output"
-        self.axisScanData.psiDot = 0.0 * mc.D2R
-        self.axisScanData.psi0 = 0.0 * mc.D2R
-        self.axisScanData.theta0 = 0.0 * mc.D2R
+        #self.axisScanData.psiDot = 0.0 * mc.D2R
+        #self.axisScanData.psi0 = 0.0 * mc.D2R
+        #self.axisScanData.theta0 = 0.0 * mc.D2R
 
     # Init of Tracking Error
     def setAttTrackingError(self):
@@ -1374,7 +1371,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
-        sigma_R0R = RigidBodyKinematics.C2MRP(R0R)
+        #R0R = rbk.Mi(0.5*np.pi, 2)
+        sigma_R0R = rbk.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
 
     def SetMRP_SteeringRWA(self):
