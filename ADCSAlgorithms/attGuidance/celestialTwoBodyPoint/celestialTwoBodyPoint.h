@@ -30,6 +30,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef struct {
     /* Declare module private variables */
     double singularityThresh;                       /*!< (r) Threshold for when to fix constraint axis*/
+    double R_P1[3];
+    double R_P2[3];
+    double v_P1[3];
+    double v_P2[3];
+    double a_P1[3];
+    double a_P2[3];
+    
     
     /* Declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
@@ -53,14 +60,8 @@ extern "C" {
     void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
     void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
-                                      double R_P1[3],
-                                      double v_P1[3],
-                                      double a_P1[3],
-                                      double R_P2[3],
-                                      double v_P2[3],
-                                      double a_P2[3],
-                                      uint64_t callTime);
+    void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID);
+    void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime);
     
 #ifdef __cplusplus
 }

@@ -71,7 +71,60 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64
     
 }
 
-/*! This method takes the spacecraft and points a specified axis at a named 
+/*! This method takes the navigation translational info as well as the spice data of the
+ primary celestial body and, if applicable, the second one, and computes the relative state vectors
+ necessary to create the restricted 2-body pointing reference frame.
+ @return void
+ */
+void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t moduleID)
+{
+    uint64_t writeTime;
+    uint32_t writeSize;
+    NavStateOut navData;
+    SpicePlanetState primPlanet;
+    SpicePlanetState secPlanet;
+    
+    double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
+    double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
+    
+    double platAngDiff;             /* Angle between r_P1 and r_P2 */
+    double dotProduct;              /* Temporary scalar variable */
+    
+    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavStateOut), &navData, moduleID);
+    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(SpicePlanetState), &primPlanet, moduleID);
+    
+    v3Subtract(primPlanet.PositionVector, navData.r_BN_N, ConfigData->R_P1);
+    v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, ConfigData->v_P1);
+    
+    v3SetZero(ConfigData->a_P1);
+    v3SetZero(ConfigData->a_P2);
+    
+    if(ConfigData->inputSecID >= 0)
+    {
+        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet, moduleID);
+        
+        v3Subtract(secPlanet.PositionVector, navData.r_BN_N, ConfigData->R_P2);
+        v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, ConfigData->v_P2);
+        v3Normalize(ConfigData->R_P1, R_P1_hat);
+        v3Normalize(ConfigData->R_P2, R_P2_hat);
+        dotProduct = v3Dot(R_P2_hat, R_P1_hat);
+        if (dotProduct >= 1.0)
+        {
+            platAngDiff = 0.0;
+        } else {
+            platAngDiff = acos(dotProduct);
+        }
+    }
+    
+    if(ConfigData->inputSecID < 0 || fabs(platAngDiff) < ConfigData->singularityThresh)
+    {
+        v3Cross(ConfigData->R_P1, ConfigData->v_P1, ConfigData->R_P2);
+        v3Cross(ConfigData->R_P1, ConfigData->a_P1, ConfigData->v_P2);
+        v3Cross(ConfigData->v_P1, ConfigData->a_P1, ConfigData->a_P2);
+    }
+}
+
+/*! This method takes the spacecraft and points a specified axis at a named
     celestial body specified in the configuration data.  It generates the 
     commanded attitude and assumes that the control errors are computed 
     downstream.
@@ -82,94 +135,22 @@ void Reset_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64
 void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t writeTime;
-    uint32_t writeSize;
-    NavStateOut navData;
-    SpicePlanetState primPlanet;
-    SpicePlanetState secPlanet;
-    
-    double R_P1[3];                 /* Relative position vector of the primary planet wrt the spacecraft point */
-    double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
-    double v_P1[3];                 /* Relative velocity vector of the primary planet wrt the spacecraft point */
-    double a_P1[3];                 /* Relative acceleration vector of the primary planet wrt the spacecraft point */
-    
-    double R_P2[3];                 /* Relative position vector of the secondary planet wrt the spacecraft point */
-    double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
-    double v_P2[3];                 /* Relative velocity vector of the secondary planet wrt the spacecraft point */
-    double a_P2[3];                 /* Relative acceleration vector of the secondary planet wrt the spacecraft point */
-    
-    double platAngDiff;             /* Angle between r_P1 and r_P2 */
-    double dotProduct;              /* Temporary scalar variable */
-    
-    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavStateOut), &navData, moduleID);
-    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(SpicePlanetState), &primPlanet, moduleID);
-    
-    v3Subtract(primPlanet.PositionVector, navData.r_BN_N, R_P1);
-    v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, v_P1);
-    
-    v3SetZero(a_P1);
-    v3SetZero(a_P2);
-    
-    if(ConfigData->inputSecID >= 0)
-    {
-        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet, moduleID);
-        
-        v3Subtract(secPlanet.PositionVector, navData.r_BN_N, R_P2);
-        v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, v_P2);
-        v3Normalize(R_P1, R_P1_hat);
-        v3Normalize(R_P2, R_P2_hat);
-        dotProduct = v3Dot(R_P2_hat, R_P1_hat);
-        if (dotProduct >= 1.0)
-        {
-            platAngDiff = 0.0;
-        } else {
-            platAngDiff = acos(dotProduct);
-        }
-    }
-
-    if(ConfigData->inputSecID < 0 || fabs(platAngDiff) < ConfigData->singularityThresh)
-    {
-        v3Cross(R_P1, v_P1, R_P2);
-        v3Cross(R_P1, a_P1, v_P2);
-        v3Cross(v_P1, a_P1, a_P2);
-    }
-    computecelestialTwoBodyPoint(ConfigData, R_P1, v_P1, a_P1, R_P2, v_P2, a_P2, callTime);
-    
-    /* Write output message */
+    parseInputMessages(ConfigData, moduleID);
+    computecelestialTwoBodyPoint(ConfigData, callTime);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
                  (void*) &(ConfigData->attRefOut), moduleID);
 }
 
-void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
-                                  double R_P1[3],
-                                  double v_P1[3],
-                                  double a_P1[3],
-                                  double R_P2[3],
-                                  double v_P2[3],
-                                  double a_P2[3],
-                                  uint64_t callTime)
+/*! This method takes the spacecraft and points a specified axis at a named
+ celestial body specified in the configuration data.  It generates the
+ commanded attitude and assumes that the control errors are computed
+ downstream.
+ @return void
+ @param ConfigData The configuration data associated with the celestial body guidance
+ @param callTime The clock time at which the function was called (nanoseconds)
+ */
+void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint64_t callTime)
 {
-
-    double R_n[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
-    double v_n[3];          /* First time-derivative of R_n */
-    double a_n[3];          /* Second time-derivative of R_n */
-    
-    double RN[3][3];        /* DCM that maps from Reference frame to the inertial */
-    double r1_hat[3];       /* 1st row vector of RN */
-    double r2_hat[3];       /* 2nd row vector of RN */
-    double r3_hat[3];       /* 3rd row vector of RN */
-    
-    double dr1_hat[3];      /* r1_hat first time-derivative */
-    double dr2_hat[3];      /* r2_hat first time-derivative */
-    double dr3_hat[3];      /* r3_hat first time-derivative */
-    
-    double ddr1_hat[3];     /* r1_hat second time-derivative */
-    double ddr2_hat[3];     /* r2_hat second time-derivative */
-    double ddr3_hat[3];     /* r3_hat second time-derivative */
-    
-    double omega_RN_R[3];   /* Angular rate of the reference frame wrt the inertial in ref R-frame components */
-    double domega_RN_R[3];   /* Angular acceleration of the reference frame wrt the inertial in ref R-frame components */
-    
     double temp3[3];        /* Temporary vector */
     double temp3_1[3];      /* Temporary vector 1 */
     double temp3_2[3];      /* Temporary vector 2 */
@@ -178,21 +159,29 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     double temp33_1[3][3];  /* Temporary 3x3 matrix 1 */
     double temp33_2[3][3];  /* Temporary 3x3 matrix 2 */
     
-    
     /* Before-hand computations: R_n, v_n, a_n */
-    v3Cross(R_P1, R_P2, R_n);
-    v3Cross(v_P1, R_P2, temp3_1);
-    v3Cross(R_P1, v_P2, temp3_2);
+    double R_n[3];          /* Normal vector of the plane defined by R_P1 and R_P2 */
+    double v_n[3];          /* First time-derivative of R_n */
+    double a_n[3];          /* Second time-derivative of R_n */
+    
+    v3Cross(ConfigData->R_P1, ConfigData->R_P2, R_n);
+    v3Cross(ConfigData->v_P1, ConfigData->R_P2, temp3_1);
+    v3Cross(ConfigData->R_P1, ConfigData->v_P2, temp3_2);
     v3Add(temp3_1, temp3_2, v_n);
-    v3Cross(a_P1, R_P2, temp3_1);
-    v3Cross(R_P1, a_P2, temp3_2);
+    v3Cross(ConfigData->a_P1, ConfigData->R_P2, temp3_1);
+    v3Cross(ConfigData->R_P1, ConfigData->a_P2, temp3_2);
     v3Add(temp3_1, temp3_2, temp3_3);
-    v3Cross(v_P1, v_P2, temp3);
+    v3Cross(ConfigData->v_P1, ConfigData->v_P2, temp3);
     v3Scale(2.0, temp3, temp3);
     v3Add(temp3, temp3_3, a_n);
     
     /* Reference Frame computation */
-    v3Normalize(R_P1, r1_hat);
+    double RN[3][3];        /* DCM that maps from Reference frame to the inertial */
+    double r1_hat[3];       /* 1st row vector of RN */
+    double r2_hat[3];       /* 2nd row vector of RN */
+    double r3_hat[3];       /* 3rd row vector of RN */
+    
+    v3Normalize(ConfigData->R_P1, r1_hat);
     v3Normalize(R_n, r3_hat);
     v3Cross(r3_hat, r1_hat, r2_hat);
     v3Copy(r1_hat, RN[0]);
@@ -201,15 +190,19 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     C2MRP(RN, ConfigData->attRefOut.sigma_RN);
     
     /* Reference base-vectors first time-derivative */
+    double dr1_hat[3];      /* r1_hat first time-derivative */
+    double dr2_hat[3];      /* r2_hat first time-derivative */
+    double dr3_hat[3];      /* r3_hat first time-derivative */
     double I_33[3][3];      /* Identity 3x3 matrix */
     double C1[3][3];        /* DCM used in the computation of rates and acceleration */
     double C3[3][3];        /* DCM used in the computation of rates and acceleration */
+    
     m33SetIdentity(I_33);
     
     v3OuterProduct(r1_hat, r1_hat, temp33);
     m33Subtract(I_33, temp33, C1);
-    m33MultV3(C1, v_P1, temp3);
-    v3Scale(1.0 / v3Norm(R_P1), temp3, dr1_hat);
+    m33MultV3(C1, ConfigData->v_P1, temp3);
+    v3Scale(1.0 / v3Norm(ConfigData->R_P1), temp3, dr1_hat);
     
     v3OuterProduct(r3_hat, r3_hat, temp33);
     m33Subtract(I_33, temp33, C3);
@@ -221,20 +214,27 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     v3Add(temp3_1, temp3_2, dr2_hat);
     
     /* Angular velocity computation */
+    double omega_RN_R[3];   /* Angular rate of the reference frame 
+                             wrt the inertial in ref R-frame components */
+    
     omega_RN_R[0] = v3Dot(r3_hat, dr2_hat);
     omega_RN_R[1]= v3Dot(r1_hat, dr3_hat);
     omega_RN_R[2] = v3Dot(r2_hat, dr1_hat);
     m33tMultV3(RN, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
     
     /* Reference base-vectors second time-derivative */
-    m33MultV3(C1, a_P1, temp3_1);
+    double ddr1_hat[3];     /* r1_hat second time-derivative */
+    double ddr2_hat[3];     /* r2_hat second time-derivative */
+    double ddr3_hat[3];     /* r3_hat second time-derivative */
+    
+    m33MultV3(C1, ConfigData->a_P1, temp3_1);
     v3OuterProduct(dr1_hat, r1_hat, temp33_1);
     m33Scale(2.0, temp33_1, temp33_1);
     v3OuterProduct(r1_hat, dr1_hat, temp33_2);
     m33Add(temp33_1, temp33_2, temp33);
-    m33MultV3(temp33, v_P1, temp3_2);
+    m33MultV3(temp33, ConfigData->v_P1, temp3_2);
     v3Subtract(temp3_1, temp3_2, temp3);
-    v3Scale(1.0 / v3Norm(R_P1), temp3, ddr1_hat);
+    v3Scale(1.0 / v3Norm(ConfigData->R_P1), temp3, ddr1_hat);
     
     m33MultV3(C3, a_n, temp3_1);
     v3OuterProduct(dr3_hat, r3_hat, temp33_1);
@@ -253,6 +253,9 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     v3Add(temp3, temp3_3, ddr2_hat);
     
     /* Angular acceleration computation */
+    double domega_RN_R[3];   /* Angular acceleration of the reference frame
+                              wrt the inertial in ref R-frame components */
+    
     domega_RN_R[0] = v3Dot(dr3_hat, dr2_hat) + v3Dot(r3_hat, ddr2_hat) - v3Dot(omega_RN_R, dr1_hat);
     domega_RN_R[1] = v3Dot(dr1_hat, dr3_hat) + v3Dot(r1_hat, ddr3_hat) - v3Dot(omega_RN_R, dr2_hat);
     domega_RN_R[2] = v3Dot(dr2_hat, dr1_hat) + v3Dot(r2_hat, ddr1_hat) - v3Dot(omega_RN_R, dr3_hat);
