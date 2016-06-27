@@ -8,7 +8,7 @@
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
-* [Windows](https://bitbucket.org/avslab/basilisk/wiki/WindowsSetup)
+* [Windows](https://bitbucket.org/avslab/basilisk/wiki/Windows%20Setup)
 
 ### Contribution guidelines ###
 
