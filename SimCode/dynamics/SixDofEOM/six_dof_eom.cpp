@@ -1346,8 +1346,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                                 if (this->SPCount > 0) {
                                     v3Add(vectorSum3FuelSloshDynamics, intermediateVector, intermediateVector);
                                 }
-                                v3Scale(1.0/mSC, intermediateVector, intermediateVector);
-                                matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector);
+                                matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, intermediateVector);
                             }
                             fspCountl++;
                         }
