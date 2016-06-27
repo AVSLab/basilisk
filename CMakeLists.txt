@@ -21,8 +21,8 @@ if(NOT WIN32)
     add_definitions ("-Wno-unused-local-typedefs")
 endif()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_60_0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_60_0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_61_0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -gdwarf-3 -std=c++11 -I${CMAKE_SOURCE_DIR}/SimCode -I${CMAKE_SOURCE_DIR}/External/boost_1_61_0")
 set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
 set(CMAKE_SWIG_OUTDIR ${CMAKE_SOURCE_DIR}/modules)
 foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
@@ -39,11 +39,11 @@ if(WIN32)
 elseif(APPLE)
    set(library_dependencies 
       ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a
-	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_system.a
-	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_program_options.a
-	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_serialization.a
-	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_filesystem.a
-	  ${CMAKE_SOURCE_DIR}/External/boost_1_60_0/lib/libboost_thread.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_system.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_program_options.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_serialization.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_filesystem.a
+	  ${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_thread.a
   )
    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
    set(CMAKE_INSTALL_RPATH "@loader_path/")
