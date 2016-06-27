@@ -8,13 +8,7 @@
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* [Windows](https://bitbucket.org/avslab/basilisk/wiki/Windows:%20How%20to%20get%20setup)
 
 ### Contribution guidelines ###
 
