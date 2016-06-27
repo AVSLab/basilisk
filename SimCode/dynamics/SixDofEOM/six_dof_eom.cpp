@@ -1724,7 +1724,10 @@ void SixDofEOM::integrateState(double CurrentTime)
     double *attStates;                        /* pointer to the attitude state set in the overall state matrix */
     double rDot_BN_B[3];
     double totFuelSloshEnergy;
+    double totFuelSloshAngMomentum_B[3];
+    double rDot_PcB_B[3];
     double intermediateVector2[3];
+    double rBN_B[3];
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -1880,7 +1883,9 @@ void SixDofEOM::integrateState(double CurrentTime)
 
         MRP2C(&attStates[0], BN);
         m33MultV3(BN, &this->XState[3], rDot_BN_B);
+        m33MultV3(BN, &this->XState[0], rBN_B);
         totFuelSloshEnergy = 0;
+        v3SetZero(totFuelSloshAngMomentum_B);
         uint32_t fspCount = 0;
         std::vector<FuelTank *>::iterator itFT;
         std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
@@ -1894,13 +1899,23 @@ void SixDofEOM::integrateState(double CurrentTime)
 
                 //! - Find fuel slosh kinetic energy
                 v3Cross(&attStates[3], FSPIt->r_PB_B, intermediateVector);
-                v3Add(rDot_BN_B, intermediateVector, intermediateVector2);
+                v3Add(rDot_BN_B, intermediateVector, rDot_PcB_B);
                 v3Scale(FSPIt->rhoDot, FSPIt->pHat_B, intermediateVector);
-                v3Add(intermediateVector2, intermediateVector, intermediateVector2);
+                v3Add(rDot_PcB_B, intermediateVector, rDot_PcB_B);
                 v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector);
                 v3Cross(&attStates[3], intermediateVector, intermediateVector);
-                v3Add(intermediateVector2, intermediateVector, intermediateVector2);
-                totFuelSloshEnergy+= 1.0/2.0*FSPIt->massFSP*v3Dot(intermediateVector2, intermediateVector2);
+                v3Add(rDot_PcB_B, intermediateVector, rDot_PcB_B);
+                totFuelSloshEnergy+= 1.0/2.0*FSPIt->massFSP*v3Dot(rDot_PcB_B, rDot_PcB_B);
+                //! - Add in potential energy of the springs
+                totFuelSloshEnergy+= 1.0/2.0*FSPIt->k*FSPIt->rho*FSPIt->rho;
+
+                //! - Find angular momentum of fuel slosh
+                v3Add(rBN_B, FSPIt->r_PB_B, intermediateVector);
+                v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector2);
+                v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                v3Cross(intermediateVector, rDot_PcB_B, intermediateVector);
+                v3Scale(FSPIt->massFSP, intermediateVector, intermediateVector);
+                v3Add(totFuelSloshAngMomentum_B, intermediateVector, totFuelSloshAngMomentum_B);
                 fspCount++;
             }
         }
@@ -1917,7 +1932,17 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - Add the reaction wheel relative kinetic energy and angular momentum
         this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
         this->totScRotKinEnergy += totFuelSloshEnergy;
+
+        //! - Add in translational kinetic energy of the hub
+        this->totScRotKinEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
+
+        v3Add(totFuelSloshAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
         v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
+
+        //! - Add in translational angular momentum
+        v3Cross(rBN_B, rDot_BN_B, intermediateVector);
+        v3Scale(this->compMass, intermediateVector, intermediateVector);
+        v3Add(this->totScAngMomentum_B, intermediateVector, this->totScAngMomentum_B);
 
         //! - Find angular momentum vector in inertial frame
         m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);

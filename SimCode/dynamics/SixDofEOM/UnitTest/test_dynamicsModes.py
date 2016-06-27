@@ -299,12 +299,13 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
+        # scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
+        # scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.1))
 
-    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(0.1))
+    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(20.)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(60*10.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
@@ -318,18 +319,25 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
-        energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
-        plt.figure(1)
-        plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
-        plt.figure(2)
-        plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
-        plt.figure(3)
-        plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
-        plt.figure(4)
-        plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
-        plt.figure(5)
-        plt.plot(energy[:,0]*1.0E-9, energy[:,1], 'b')
-        plt.show()
+        # energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
+        # momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
+        # plt.figure(1)
+        # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
+        # plt.figure(2)
+        # plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
+        # plt.figure(3)
+        # plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
+        # plt.figure(4)
+        # plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
+        # plt.figure(5)
+        # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
+        # plt.figure(6)
+        # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
+        print dataPos
+        print dataSigma
+        # print rho1[-1]
+        # print rho2[-1]
+        # plt.show()
 
     # set expected results
     trueSigma = [
@@ -375,6 +383,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-7.8808739903179,  -8.17415157897987, 0.15545245637636]
                         ,[-10.5787631792684, -10.7111009304237, 0.143079770048844]
                         ,[-13.3842058040891, -13.2968874812058, 0.155873769585104]
+                        ]
+        elif useRotation==True and useFuelSlosh==True: #Fuel slosh
+            truePos = [
+                        [0.0,              0.0,            0.0]
+                        ,[-4.41367940e-03, 7.32153984e-03, 1.56478226e-02]
+                        ,[-1.38850226e-02, 1.58234595e-02, 3.09668916e-02]
+                        ,[-1.92319753e-02, 2.34021465e-02, 4.75896576e-02]
+                        ,[-3.03881827e-02, 3.07340418e-02, 6.41622218e-02]
+                        ,[-3.65879908e-02, 3.93240143e-02, 7.86976184e-02]
                         ]
         else: # natural translation
             truePos = [
@@ -423,6 +440,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-0.163301363833482, -0.366780426316819, 0.384007061361585]
                         ,[0.228198675962671, -0.329880460528557,  0.266599868549938]
                         ]
+        elif useFuelSlosh==True and useTranslation==True: #Fuel Slosh
+                        trueSigma = [
+                        [0.0,             0.0,            0.0]
+                        ,[-8.16906476e-02, -2.38473436e-01, 8.88798126e-01]
+                        ,[2.86400048e-01,  -4.38657216e-02, -7.15631886e-02]
+                        ,[8.12472104e-03,  -6.55278170e-01,  5.94781359e-01]
+                        ,[5.68831595e-01,   9.14178688e-02, -3.00695901e-02]
+                        ,[-2.45037494e-01,  8.24705432e-01, -3.36726473e-01]
+                        ]
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
@@ -442,7 +468,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
             testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
     # compare the module results to the truth values
-    if useHingedSP==True:
+    if useHingedSP==True or useFuelSlosh==True:
         accuracy = 1e-9
     else:
         accuracy = 1e-2
