@@ -17,7 +17,8 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 * [Boost C++ Libraries 1.61](http://www.boost.org/users/download/)
 * [C SPICE from NAIF at JPL](https://naif.jpl.nasa.gov/naif/toolkit_C.html)
-* [Windows](https://bitbucket.org/avslab/basilisk/wiki/Windows%20Setup)
+
+[Setup a Windows Development Environment](https://bitbucket.org/avslab/basilisk/wiki/Windows%20Setup)
 
 ### Contribution guidelines ###
 
