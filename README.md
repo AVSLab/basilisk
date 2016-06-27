@@ -9,6 +9,7 @@
 
 ### How do I get set up? ###
 Of the following requirements Python is the only one for which prebuilt libraries are not included in the project repository:
+
 * [Python 2.7](https://www.python.org/downloads/windows/)
 -numpy
 -matplotlib
