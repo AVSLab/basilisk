@@ -11,11 +11,7 @@
 Of the following requirements Python is the only one for which prebuilt libraries are not included in the project repository:
 
 * [Cmake](https://cmake.org) for configuring the and generating the Visual Studio solution file.
-* [Python 2.7](https://www.python.org/downloads/windows/)
--numpy
--matplotlib
--pytest
-
+* [Python 2.7](https://www.python.org/downloads/windows/) (numpty, matplotlib, pytest)
 * [Boost C++ Libraries 1.61](http://www.boost.org/users/download/)
 * [C SPICE from NAIF at JPL](https://naif.jpl.nasa.gov/naif/toolkit_C.html)
 
