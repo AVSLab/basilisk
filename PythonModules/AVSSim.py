@@ -606,6 +606,37 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
             vehicleConfigData.MAX_EFF_CNT*7*8, 2, "RWConstellation")
         self.TotalSim.WriteMessageData("rwa_config_data", vehicleConfigData.MAX_EFF_CNT*7*8, 0, rwClass)
+        
+        rcsClass = vehicleConfigData.ThrusterCluster()
+        rcsPointer = vehicleConfigData.ThrusterPointData()
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070] \
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0] \
+                        ]
+        for i in range(8):
+            SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
+            SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust)
+            vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+
+        self.TotalSim.CreateNewMessage("FSWProcess", "rcs_config_data",
+                               vehicleConfigData.MAX_EFF_CNT*6*8, 2, "ThrusterCluster")
+        self.TotalSim.WriteMessageData("rcs_config_data", vehicleConfigData.MAX_EFF_CNT*6*8, 0, rcsClass)
 
     def SetSpiceObject(self):
         self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -1270,35 +1301,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
         self.thrustRWADesatData.outputThrName = "acs_thruster_cmds"
         self.thrustRWADesatData.inputRWConfigData = "rwa_config_data"
+        self.thrustRWADesatData.inputThrConfigName = "rcs_config_data"
+        self.thrustRWADesatData.inputMassPropsName = "adcs_config_data"
         self.thrustRWADesatData.maxFiring = 0.5
         self.thrustRWADesatData.numThrusters = 8
         self.thrustRWADesatData.numRWAs = 4
         self.thrustRWADesatData.thrFiringPeriod = 1.9
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
-        RWAGsMatrix = []
-        i = 0
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        while (i < self.thrustRWADesatData.numRWAs):
-            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle) * RWAlignScale,
-                                -math.sin(rwElAngle) * math.cos(rwClockAngle) * RWAlignScale,
-                                -math.cos(rwElAngle) * RWAlignScale])
-            rwClockAngle += 90.0 * math.pi / 180.0
-            i += 1
-        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.thrustRWADesatData.rwAlignMap)
-        thrustDirMatrix = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0,
-                           1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0]
-        SimulationBaseClass.SetCArray(thrustDirMatrix, 'double', self.thrustRWADesatData.thrAlignMap)
-        thrTorqMap = [0.0, 1.0, 0.7,
-                      -1.0, 0.0, -0.7,
-                      1.0, 0.0, -0.7,
-                      0.0, -1.0, 0.7,
-                      0.0, -1.0, 0.7,
-                      1.0, 0.0, -0.7,
-                      -1.0, 0.0, -0.7,
-                      0.0, 1.0, 0.7]
-        SimulationBaseClass.SetCArray(thrTorqMap, 'double', self.thrustRWADesatData.thrTorqueMap)
 
     def SetAttUKF(self):
         self.AttUKF.ModelTag = "AttitudeUKF"
