@@ -91,11 +91,11 @@ Table \ref{tab:outputTable} shows the Attitude Reference output message of the m
 		\textcolor{white}{Name} & \textcolor{white}{Type} & 
 		\textcolor{white}{Length} & 
 		\textcolor{white}{Description}  \\ \hline
-		$\sigma_{R/N}$ & double [] & 3 & 
+		$\bm{\sigma}_{R/N}$ & double [] & 3 & 
 		MRP attitude set of the reference frame with respect to the reference. \\ \hline
-		$\leftexp{N} \omega_{R/N}$ & double [] & 3 & 
+		$\leftexp{N} {\bm{\omega}_{R/N}}$ & double [] & 3 & 
 		Angular rate vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
-		$\leftexp{N} {\dot{\omega}_{R/N}}$ & double [] & 3 & 
+		$\leftexp{N} {\bm{\dot{\omega}}_{R/N}}$ & double [] & 3 & 
 		Angular acceleration vector of the reference frame with respect to the inertial expressed in inertial frame components. \\ \hline
 	\end{tabular}
 	\label{tab:outputTable}
@@ -240,7 +240,7 @@ Similarly, we find
 \end{equation}
 where $\ddot\beta$ and $\ddot f$ have been substituted by their corresponding expressions.
 
-Both $\bm\omega_{R/N}$ and $\dot\omega_{R/N} $ need to be expressed in the inertial frame $N$. \newline
+Both $\bm\omega_{R/N}$ and $\bm{\dot\omega}_{R/N} $ need to be expressed in the inertial frame $N$. \newline
 Given 
 \begin{subequations}
 \begin{equation}
@@ -250,7 +250,7 @@ Given
       \end{bmatrix}
 \end{equation}
 \begin{equation}
- \leftexp{R}{\bm\dot{\omega}_{R/N}  } = 
+ \leftexp{R}{\bm{\dot{\omega}}_{R/N}  } = 
       \begin{bmatrix}
        0\\ 0 \\ \ddot{f}-\ddot\beta
       \end{bmatrix}
@@ -259,10 +259,10 @@ Given
 Then, 
 \begin{subequations}
 \begin{equation}
-	\leftexp{N} {\bm{\omega}_{R/N}} =  [NR] \textrm{ }\\leftexp{R} {\bm\omega_{R/N} }
+	\leftexp{N} {\bm{\omega}_{R/N}} =  [NR] \textrm{ }\leftexp{R} {\bm{\omega}_{R/N} }
 \end{equation}
 \begin{equation}
-	\leftexp{N} {\bm\dot{\omega}_{R/N} }=[NR]\textrm{ }\leftexp{R} {\bm\dot{\omega}_{R/N}}
+	\leftexp{N} {\bm{\dot{\omega}}_{R/N} }=[NR]\textrm{ }\leftexp{R} {\bm{\dot{\omega}}_{R/N}}
 \end{equation}
 \end{subequations}
 Where $ [NR] = [RN]^T$.
