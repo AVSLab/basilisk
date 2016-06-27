@@ -29,7 +29,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
     
     /*! - Check to make sure that number of sensors is less than the max*/
-    if(ConfigData->NumSensors >= MAX_NUM_CSS_SENSORS)
+    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
     {
         return; /* Throw ugly FSW error/crash here */
     }
@@ -47,20 +47,17 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
  */
 void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
 {
-    uint32_t i;
     
     /*! Begin method steps */
     /*! - If num sensors is past max, quit*/
-    if(ConfigData->NumSensors >= MAX_NUM_CSS_SENSORS)
+    if(ConfigData->NumSensors > MAX_NUM_CSS_SENSORS)
     {
         return; /* Throw ugly FSW error/crash here */
     }
-    /*! - Loop over the number of sensors and find IDs for each one */
-    for(i=0; i<ConfigData->NumSensors; i++)
-    {
-        ConfigData->SensorMsgIDs[i] = subscribeToMessage(
-            ConfigData->SensorList[i].SensorMsgName, sizeof(double), moduleID);
-    }
+    
+    ConfigData->SensorMsgID = subscribeToMessage(
+        ConfigData->SensorListName,
+        ConfigData->NumSensors*sizeof(CSSOutputData), moduleID);
 }
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
@@ -87,8 +84,10 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
         return; /* Throw ugly FSW error/crash here */
     }
     memset(OutputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData));
+    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize,
+                ConfigData->NumSensors*sizeof(CSSOutputData),
+                (void*) (InputValues), moduleID);
     /*! - Loop over the sensors and compute data
-     -# Read the message associated with the sensor.
      -# Check appropriate range on sensor and calibrate
      -# If Chebyshev polynomials are configured:
      - Seed polynominal computations
@@ -97,8 +96,6 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
      -# If range is incorrect, set output value to zero */
     for(i=0; i<ConfigData->NumSensors; i++)
     {
-        ReadMessage(ConfigData->SensorMsgIDs[i], &ClockTime, &ReadSize,
-                    sizeof(double), (void*) &(InputValues[i]), moduleID);
         if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] >= 0.0)
         {
             /* Scale sensor */

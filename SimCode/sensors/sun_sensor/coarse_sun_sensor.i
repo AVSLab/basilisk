@@ -21,6 +21,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %include "swig_common_model.i"
 
+namespace std {
+    %template(CSSVector) vector<CoarseSunSensor>;
+}
+
 %feature("copyctor");
 %include "sys_model.h"
 %include "coarse_sun_sensor.h"

@@ -34,6 +34,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    executing a trajectory adjustment.*/
 typedef struct {
     char inputSpeedName[MAX_STAT_MSG_LENGTH]; /*!< (-) The name of the input RW speeds message*/
+    char inputRWConfigData[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the RWA configuration message*/
+    char inputThrConfigName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the thruster configuration message*/
+    char inputMassPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Tha name of the input mass properties message*/
 	char outputThrName[MAX_STAT_MSG_LENGTH];  /*!< (-) The name of the output thrust command block*/
 	double rwAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the reaction wheel spin axes*/
 	double thrAlignMap[3 * MAX_EFF_CNT]; /*!< (-) Alignment of the vehicle thrusters*/
@@ -47,7 +50,10 @@ typedef struct {
 	double totalAccumFiring;   /*!< (s) The total thruster duration we've commanded*/
 	double DMThresh;           /*!< (r/s) The point at which to stop decrementing momentum*/
 	uint64_t previousFiring;   /*!< (ns) Time that the last firing command was given*/
+    int32_t inputRWConfID;      /*!< [-] ID for the incoming RWA configuration data*/
     int32_t inputSpeedID;      /*!< (-) ID for the incoming RW speeds*/
+    int32_t inputThrConID;     /*!< [-] ID for the thruster configuration data*/
+    int32_t inputMassPropID;   /*!< [-] ID for the incoming mass property information*/
 	int32_t outputThrID;       /*!< (-) ID for the outgoing thruster commands*/
 }thrustRWDesatConfig;
 

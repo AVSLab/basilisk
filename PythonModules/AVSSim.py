@@ -140,7 +140,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # Simulation modules
         self.SpiceObject = spice_interface.SpiceInterface()
-        self.InitCSSHeads()
+        self.cssConstellation = coarse_sun_sensor.CSSConstellation()
         # Schedule the first pyramid on the simulated sensor Task
         self.IMUSensor = imu_sensor.ImuSensor()
         self.ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
@@ -161,14 +161,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.disableTask("SynchTask")
         self.AddModelToTask("SynchTask", self.clockSynchData, None, 100)
         self.AddModelToTask("DynamicsTask", self.SpiceObject, None, 202)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadA, None, 101)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadB, None, 102)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadC, None, 103)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid1HeadD, None, 104)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadA, None, 105)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadB, None, 106)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadC, None, 107)
-        self.AddModelToTask("DynamicsTask", self.CSSPyramid2HeadD, None, 108)
+        self.AddModelToTask("DynamicsTask", self.cssConstellation, None, 108)
         self.AddModelToTask("DynamicsTask", self.IMUSensor, None, 100)
         # self.AddModelToTask("DynamicsTask", self.radiationPressure, None, 303)
         self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject, None, 302)
@@ -725,6 +718,60 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
         self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
         self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
+    
+        self.RWAGsMatrix = []
+        self.RWAJsList = []
+        i = 0
+        rwElAngle = 45.0 * math.pi / 180.0
+        rwClockAngle = 45.0 * math.pi / 180.0
+        RWAlignScale = 1.0 / 25.0
+        rwClass = vehicleConfigData.RWConstellation()
+        rwPointer = vehicleConfigData.RWConfigurationElement()
+        while (i < 4):
+            self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
+            rwClockAngle += 90.0 * math.pi / 180.0
+            self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
+            SimulationBaseClass.SetCArray([-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                           -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)], 'double',
+                                           rwPointer.Gs_S)
+            rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
+            vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+            i += 1
+        self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
+            vehicleConfigData.MAX_EFF_CNT*7*8, 2, "RWConstellation")
+        self.TotalSim.WriteMessageData("rwa_config_data", vehicleConfigData.MAX_EFF_CNT*7*8, 0, rwClass)
+        
+        rcsClass = vehicleConfigData.ThrusterCluster()
+        rcsPointer = vehicleConfigData.ThrusterPointData()
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070] \
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0] \
+                        ]
+        for i in range(8):
+            SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
+            SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust)
+            vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+
+        self.TotalSim.CreateNewMessage("FSWProcess", "rcs_config_data",
+                               vehicleConfigData.MAX_EFF_CNT*6*8, 2, "ThrusterCluster")
+        self.TotalSim.WriteMessageData("rcs_config_data", vehicleConfigData.MAX_EFF_CNT*6*8, 0, rcsClass)
 
     def SetSpiceObject(self):
         self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -957,74 +1004,76 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         CSSPlatform2YPR = [0.0, -math.pi / 2.0, 0.0]
 
         # Initialize one sensor by hand and then init the rest off of it
-        self.CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
-        self.CSSPyramid1HeadA.ModelTag = "CSSPyramid1HeadA"
-        # Uncomment next line to define non-zero corruption errors
-        setCSSErrors(self.CSSPyramid1HeadA, CSSNoiseBias, CSSNoiseStd, CSSKellyFactor)
-
-        self.CSSPyramid1HeadA.setStructureToPlatformDCM(CSSPlatform1YPR[0],
-                                                        CSSPlatform1YPR[1],
-                                                        CSSPlatform1YPR[2])
-        self.CSSPyramid1HeadA.scaleFactor = CSSscaleFactor
-        self.CSSPyramid1HeadA.fov = CSSFOV
-        self.CSSPyramid1HeadA.OutputDataMsg = "coarse_sun_data_pyramid1_headA"
-
-
-        self.CSSPyramid1HeadB = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadB.ModelTag = "CSSPyramid1HeadB"
-        self.CSSPyramid1HeadB.OutputDataMsg = "coarse_sun_data_pyramid1_headB"
-        self.CSSPyramid1HeadC = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadC.ModelTag = "CSSPyramid1HeadC"
-        self.CSSPyramid1HeadC.OutputDataMsg = "coarse_sun_data_pyramid1_headC"
-        self.CSSPyramid1HeadD = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid1HeadD.ModelTag = "CSSPyramid1HeadD"
-        self.CSSPyramid1HeadD.OutputDataMsg = "coarse_sun_data_pyramid1_headD"
+        self.cssConstellation.ModelTag = "CSSConstelation"
+        self.cssConstellation.outputConstellationMessage = "css_sensors_data"
+        CSSPyramid1HeadA = coarse_sun_sensor.CoarseSunSensor()
+        CSSPyramid1HeadA.ModelTag = "CSSPyramid1HeadA"
+        CSSPyramid1HeadA.SenBias = CSSNoiseBias
+        CSSPyramid1HeadA.SenNoiseStd = CSSNoiseStd
+        CSSPyramid1HeadA.setStructureToPlatformDCM(CSSPlatform1YPR[0],
+                                                        CSSPlatform1YPR[1], CSSPlatform1YPR[2])
+        CSSPyramid1HeadA.scaleFactor = CSSscaleFactor
+        CSSPyramid1HeadA.fov = CSSFOV
+        CSSPyramid1HeadA.KellyFactor = CSSKellyFactor
+        CSSPyramid1HeadA.OutputDataMsg = "coarse_sun_data_pyramid1_headA"
+        CSSPyramid1HeadB = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadB.ModelTag = "CSSPyramid1HeadB"
+        CSSPyramid1HeadB.OutputDataMsg = "coarse_sun_data_pyramid1_headB"
+        CSSPyramid1HeadC = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadC.ModelTag = "CSSPyramid1HeadC"
+        CSSPyramid1HeadC.OutputDataMsg = "coarse_sun_data_pyramid1_headC"
+        CSSPyramid1HeadD = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid1HeadD.ModelTag = "CSSPyramid1HeadD"
+        CSSPyramid1HeadD.OutputDataMsg = "coarse_sun_data_pyramid1_headD"
 
         # Set up the sun sensor orientation information
         # Maybe we should add the method call to the SelfInit of the CSS module
-        self.CSSPyramid1HeadA.theta = 0.0
-        self.CSSPyramid1HeadA.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadA.theta = 0.0
+        CSSPyramid1HeadA.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadB.theta = 90.0 * math.pi / 180.0
-        self.CSSPyramid1HeadB.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadB.theta = 90.0 * math.pi / 180.0
+        CSSPyramid1HeadB.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadC.theta = 180.0 * math.pi / 180.0
-        self.CSSPyramid1HeadC.phi = 45.0 * math.pi / 180.0
-        self.CSSPyramid1HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadC.theta = 180.0 * math.pi / 180.0
+        CSSPyramid1HeadC.phi = 45.0 * math.pi / 180.0
+        CSSPyramid1HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid1HeadD.theta = 270.0 * math.pi / 180.0
-        self.CSSPyramid1HeadD.phi = 45 * math.pi / 180.0
-        self.CSSPyramid1HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid1HeadD.theta = 270.0 * math.pi / 180.0
+        CSSPyramid1HeadD.phi = 45 * math.pi / 180.0
+        CSSPyramid1HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadA = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadA)
-        self.CSSPyramid2HeadA.ModelTag = "CSSPyramid2HeadA"
-        self.CSSPyramid2HeadA.OutputDataMsg = "coarse_sun_data_pyramid2_headA"
-        self.CSSPyramid2HeadA.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadA = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadA)
+        CSSPyramid2HeadA.ModelTag = "CSSPyramid2HeadA"
+        CSSPyramid2HeadA.OutputDataMsg = "coarse_sun_data_pyramid2_headA"
+        CSSPyramid2HeadA.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadA.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadB = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadB)
-        self.CSSPyramid2HeadB.ModelTag = "CSSPyramid2HeadB"
-        self.CSSPyramid2HeadB.OutputDataMsg = "coarse_sun_data_pyramid2_headB"
-        self.CSSPyramid2HeadB.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadB = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadB)
+        CSSPyramid2HeadB.ModelTag = "CSSPyramid2HeadB"
+        CSSPyramid2HeadB.OutputDataMsg = "coarse_sun_data_pyramid2_headB"
+        CSSPyramid2HeadB.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadB.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadC = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadC)
-        self.CSSPyramid2HeadC.ModelTag = "CSSPyramid2HeadC"
-        self.CSSPyramid2HeadC.OutputDataMsg = "coarse_sun_data_pyramid2_headC"
-        self.CSSPyramid2HeadC.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadC = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadC)
+        CSSPyramid2HeadC.ModelTag = "CSSPyramid2HeadC"
+        CSSPyramid2HeadC.OutputDataMsg = "coarse_sun_data_pyramid2_headC"
+        CSSPyramid2HeadC.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadC.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
 
-        self.CSSPyramid2HeadD = coarse_sun_sensor.CoarseSunSensor(self.CSSPyramid1HeadD)
-        self.CSSPyramid2HeadD.ModelTag = "CSSPyramid2HeadD"
-        self.CSSPyramid2HeadD.OutputDataMsg = "coarse_sun_data_pyramid2_headD"
-        self.CSSPyramid2HeadD.setStructureToPlatformDCM(CSSPlatform2YPR[0],
+        CSSPyramid2HeadD = coarse_sun_sensor.CoarseSunSensor(CSSPyramid1HeadD)
+        CSSPyramid2HeadD.ModelTag = "CSSPyramid2HeadD"
+        CSSPyramid2HeadD.OutputDataMsg = "coarse_sun_data_pyramid2_headD"
+        CSSPyramid2HeadD.setStructureToPlatformDCM(CSSPlatform2YPR[0],
                                                         CSSPlatform2YPR[1], CSSPlatform2YPR[2])
-        self.CSSPyramid2HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        CSSPyramid2HeadD.setUnitDirectionVectorWithPerturbation(0.0, 0.0)
+        
+        self.cssConstellation.sensorList = coarse_sun_sensor.CSSVector([CSSPyramid1HeadA, CSSPyramid1HeadB, CSSPyramid1HeadC, CSSPyramid1HeadD,
+            CSSPyramid2HeadA, CSSPyramid2HeadB, CSSPyramid2HeadC, CSSPyramid2HeadD])
 
     def SetVehDynObject(self):
         self.SunGravBody = six_dof_eom.GravityBodyData()
@@ -1175,23 +1224,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.CSSDecodeFSWConfig.ChebyCount = len(ChebyList)
         SimulationBaseClass.SetCArray(ChebyList, 'double',
                                       self.CSSDecodeFSWConfig.KellyCheby)
-        CurrentName = cssComm.SensorMsgNameCarrier()
-        # Arrays of c-strings are hard for SWIG/python.  Required a bit of care.
-        SensorListUse = ["coarse_sun_data_pyramid1_headA",
-                         "coarse_sun_data_pyramid1_headB",
-                         "coarse_sun_data_pyramid1_headC",
-                         "coarse_sun_data_pyramid1_headD",
-                         "coarse_sun_data_pyramid2_headA",
-                         "coarse_sun_data_pyramid2_headB",
-                         "coarse_sun_data_pyramid2_headC",
-                         "coarse_sun_data_pyramid2_headD"]
-
-        i = 0
-        for Name in SensorListUse:
-            CurrentName.SensorMsgName = Name
-            cssComm.SensorNameArray_setitem(self.CSSDecodeFSWConfig.SensorList, i,
-                                            CurrentName)
-            i += 1
+        self.CSSDecodeFSWConfig.SensorListName = "css_sensors_data"
 
     def SetIMUCommData(self):
         self.IMUCommData.InputDataName = "imu_meas_data"
@@ -1352,22 +1385,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringRWAData.integralLimit = 0.0  # rad
         self.MRP_SteeringRWAData.numRWAs = 4
-        RWAGsMatrix = []
-        RWAJsList = []
-        i = 0
-        rwElAngle = 45.0 * mc.D2R
-        rwClockAngle = 45.0 * mc.D2R
-        RWAlignScale = 1.0 / 25.0
-        while (i < self.MRP_SteeringRWAData.numRWAs):
-            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-            rwClockAngle += 90.0 * math.pi / 180.0
-            RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
-            i += 1
-        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.MRP_SteeringRWAData.GsMatrix)
-        SimulationBaseClass.SetCArray(RWAJsList, 'double', self.MRP_SteeringRWAData.JsList)
 
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
+        self.MRP_SteeringRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
@@ -1463,20 +1483,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         newThrGroup.minThrustRequest = -10.0
         newThrGroup.numEffectors = 4
         newThrGroup.maxNumCmds = 4
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        onTimeMap = [math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle),
-                     math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                     math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                     math.cos(rwElAngle)]
+        onTimeMap = []
+        for i in range(4):
+            for j in range(3):
+                onTimeMap.append(-self.RWAGsMatrix[i*3+j])
         SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
         dvAttEffect.ThrustGroupArray_setitem(self.RWAMappingData.thrGroups, 0,
                                              newThrGroup)
@@ -1485,23 +1495,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"
         self.RWANullSpaceData.inputRWSpeeds = "reactionwheel_output_states"
         self.RWANullSpaceData.outputControlName = "reactionwheel_cmds"
+        self.RWANullSpaceData.inputRWConfigData = "rwa_config_data"
         self.RWANullSpaceData.numWheels = 4
         self.RWANullSpaceData.OmegaGain = 0.002
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        GsMatrixList = [-math.sin(rwElAngle) * math.sin(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.sin(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 0 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 1 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 2 * 90.0 * math.pi / 180.0),
-                        -math.sin(rwElAngle) * math.cos(rwClockAngle + 3 * 90.0 * math.pi / 180.0),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle),
-                        -math.cos(rwElAngle)]
-        SimulationBaseClass.SetCArray(GsMatrixList, 'double', self.RWANullSpaceData.GsMatrix)
 
     def SetdvGuidance(self):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
@@ -1542,35 +1538,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetthrustRWDesat(self):
         self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
         self.thrustRWADesatData.outputThrName = "acs_thruster_cmds"
+        self.thrustRWADesatData.inputRWConfigData = "rwa_config_data"
+        self.thrustRWADesatData.inputThrConfigName = "rcs_config_data"
+        self.thrustRWADesatData.inputMassPropsName = "adcs_config_data"
         self.thrustRWADesatData.maxFiring = 0.5
         self.thrustRWADesatData.numThrusters = 8
         self.thrustRWADesatData.numRWAs = 4
         self.thrustRWADesatData.thrFiringPeriod = 1.9
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
-        RWAGsMatrix = []
-        i = 0
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        while (i < self.thrustRWADesatData.numRWAs):
-            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle) * RWAlignScale,
-                                -math.sin(rwElAngle) * math.cos(rwClockAngle) * RWAlignScale,
-                                -math.cos(rwElAngle) * RWAlignScale])
-            rwClockAngle += 90.0 * math.pi / 180.0
-            i += 1
-        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.thrustRWADesatData.rwAlignMap)
-        thrustDirMatrix = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0,
-                           1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0]
-        SimulationBaseClass.SetCArray(thrustDirMatrix, 'double', self.thrustRWADesatData.thrAlignMap)
-        thrTorqMap = [0.0, 1.0, 0.7,
-                      -1.0, 0.0, -0.7,
-                      1.0, 0.0, -0.7,
-                      0.0, -1.0, 0.7,
-                      0.0, -1.0, 0.7,
-                      1.0, 0.0, -0.7,
-                      -1.0, 0.0, -0.7,
-                      0.0, 1.0, 0.7]
-        SimulationBaseClass.SetCArray(thrTorqMap, 'double', self.thrustRWADesatData.thrTorqueMap)
 
     def SetAttUKF(self):
         self.AttUKF.ModelTag = "AttitudeUKF"
@@ -1597,6 +1573,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def InitAllDynObjects(self):
         self.SetSpiceObject()
         self.SetIMUSensor()
+        self.InitCSSHeads()
         self.SetACSThrusterDynObject()
         self.SetDVThrusterDynObject()
         self.SetVehDynObject()

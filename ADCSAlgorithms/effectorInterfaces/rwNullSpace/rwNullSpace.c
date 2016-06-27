@@ -31,27 +31,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 {
-	double GsTranspose[3 * MAX_EFF_CNT];
-	double GsInvHalf[3 * 3];
-	double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];
-	double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
         ConfigData->outputControlName, sizeof(vehEffectorOut),
         "vehEffectorOut", moduleID);
-
-	mTranspose(ConfigData->GsMatrix, 3, ConfigData->numWheels, GsTranspose);
-	mMultM(ConfigData->GsMatrix, 3, ConfigData->numWheels, GsTranspose, 
-		ConfigData->numWheels, 3, GsInvHalf);
-	m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);
-	mMultM(GsInvHalf, 3, 3, ConfigData->GsMatrix, 3, ConfigData->numWheels,
-		ConfigData->GsInverse);
-	mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->GsInverse, 3,
-		ConfigData->numWheels, GsTemp);
-	mSetIdentity(identMatrix, ConfigData->numWheels, ConfigData->numWheels);
-	mSubtract(identMatrix, ConfigData->numWheels, ConfigData->numWheels,
-		GsTemp, ConfigData->GsInverse);
 	
 }
 
@@ -63,12 +47,48 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 {
+
+    double GsTranspose[3 * MAX_EFF_CNT];
+    double GsInvHalf[3 * 3];
+    double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];
+    double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];
+    double GsMatrix[3*MAX_EFF_CNT];
+    RWConstellation localRWData;
+    int i, j;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+
     /*! - Get the control data message ID*/
     ConfigData->inputRWCmdsID = subscribeToMessage(ConfigData->inputRWCommands,
         sizeof(vehControlOut), moduleID);
 	/*! - Get the RW speeds ID*/
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
 		sizeof(RWSpeedData), moduleID);
+    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+        sizeof(RWConstellation), moduleID);
+    
+    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
+    
+    for(i=0; i<ConfigData->numWheels; i=i+1)
+    {
+        for(j=0; j<3; j=j+1)
+        {
+            GsMatrix[j*ConfigData->numWheels+i] = localRWData.reactionWheels[i].Gs_S[j];
+        }
+    }
+    
+    mTranspose(GsMatrix, 3, ConfigData->numWheels, GsTranspose);
+    mMultM(GsMatrix, 3, ConfigData->numWheels, GsTranspose,
+           ConfigData->numWheels, 3, GsInvHalf);
+    m33Inverse(RECAST3X3 GsInvHalf, RECAST3X3 GsInvHalf);
+    mMultM(GsInvHalf, 3, 3, GsMatrix, 3, ConfigData->numWheels,
+           ConfigData->GsInverse);
+    mMultM(GsTranspose, ConfigData->numWheels, 3, ConfigData->GsInverse, 3,
+           ConfigData->numWheels, GsTemp);
+    mSetIdentity(identMatrix, ConfigData->numWheels, ConfigData->numWheels);
+    mSubtract(identMatrix, ConfigData->numWheels, ConfigData->numWheels,
+              GsTemp, ConfigData->GsInverse);
     
 }
 

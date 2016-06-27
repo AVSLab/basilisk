@@ -747,6 +747,7 @@ INPUT                  = "SimCode/architecture/system_model" \
    "SimCode/environment/spice" \
    "SimCode/dynamics/Thrusters" \
    "SimCode/dynamics/ReactionWheels" \
+   "SimCode/sensors/sun_sensor" \
    "SimCode/utilities" \
    "SimCode/sim_synch" \
    "ADCSAlgorithms/sensorInterfaces/CSSSensorData" \
