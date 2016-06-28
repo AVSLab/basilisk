@@ -338,8 +338,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
         # plt.figure(8)
         # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
-        print dataPos[-1]
-        print dataSigma[-1]
 
     # set expected results
     trueSigma = [
@@ -398,11 +396,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
             truePos = [
                         [0.0,              0.0,            0.0]
-                        ,[-4.41367940e-03, 7.32153984e-03, 1.56478226e-02]
-                        ,[-1.38850226e-02, 1.58234595e-02, 3.09668916e-02]
-                        ,[-1.92319753e-02, 2.34021465e-02, 4.75896576e-02]
-                        ,[-3.03881827e-02, 3.07340418e-02, 6.41622218e-02]
-                        ,[-3.65879908e-02, 3.93240143e-02, 7.86976184e-02]
+                        ,[-2.46573124e+00, -2.75580938e+00, 2.22630259e-01]
+                        ,[-5.23343937e+00, -5.12333489e+00, 4.77359021e-02]
+                        ,[-7.65770680e+00, -7.90028924e+00, 1.83237349e-01]
+                        ,[-1.02708358e+01, -1.03636445e+01, 1.96301827e-01]
+                        ,[-1.30094173e+01, -1.28493431e+01, 2.08106525e-01]
                         ]
         else: # natural translation
             truePos = [
@@ -463,11 +461,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
                         trueSigma = [
                         [0.0,             0.0,            0.0]
-                        ,[-8.16906476e-02, -2.38473436e-01, 8.88798126e-01]
-                        ,[2.86400048e-01,  -4.38657216e-02, -7.15631886e-02]
-                        ,[8.12472104e-03,  -6.55278170e-01,  5.94781359e-01]
-                        ,[5.68831595e-01,   9.14178688e-02, -3.00695901e-02]
-                        ,[-2.45037494e-01,  8.24705432e-01, -3.36726473e-01]
+                        ,[-3.93680790e-01, -1.66314131e-01, 1.67085232e-01]
+                        ,[1.15246308e-01, -7.15167912e-02, 2.98784096e-01]
+                        ,[-1.18474368e-01, -3.23649233e-01, -2.56139521e-03]
+                        ,[-1.74738883e-01, -3.73954676e-01, 3.74053935e-01]
+                        ,[2.32555007e-01, -3.26467255e-01, 2.81515555e-01]
                         ]
         else: # natural dynamics without RW or thrusters
             trueSigma = [
@@ -488,7 +486,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
             testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
     # compare the module results to the truth values
-    if useHingedSP==True or useFuelSlosh==True:
+    if useHingedSP==True and useFuelSlosh==True:
+        accuracy = 1e-7
+    elif useHingedSP==True or useFuelSlosh==True:
         accuracy = 1e-9
     else:
         accuracy = 1e-2
