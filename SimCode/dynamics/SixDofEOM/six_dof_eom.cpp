@@ -1210,6 +1210,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 for (SPIti = (*SPPackIti)->solarPanelData.begin();
                      SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
                 {
+                    fspCountj = 0;
                     for (itFTj = fuelTanks.begin(); itFTj != fuelTanks.end(); itFTj++)
                     {
                         for (FSPItj = (*itFTj)->fuelSloshParticlesData.begin();
@@ -1218,7 +1219,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                             //! - Populate G matrix
                             v3Scale(FSPItj->massFSP, FSPItj->pHat_B, intermediateVector);
                             v3Scale(SPIti->massSP*SPIti->d/mSC, SPIti->sHat3_B, intermediateVector2);
-                            matrixG[spCounti*this->SPCount + fspCount] = v3Dot(intermediateVector, intermediateVector2);
+                            matrixG[spCounti*this->numFSP + fspCountj] = v3Dot(intermediateVector, intermediateVector2);
                             fspCountj++;
                         }
                     }
@@ -1725,6 +1726,18 @@ void SixDofEOM::integrateState(double CurrentTime)
     double rDot_BN_B[3];
     double totFuelSloshEnergy;
     double totFuelSloshAngMomentum_B[3];
+    double SH[3][3];
+    double SB[3][3];
+    double sHat1_B[3];
+    double sHat2_B[3];
+    double sHat3_B[3];
+    double omega_BN_S[3];
+    double omega_SN_S[3];
+    double omega_SN_B[3];
+    double r_ScH_B[3];
+    double rDot_ScN_B[3];
+    double totSolarPanelEnergy;
+    double totSolarPanelAngMomentum_B[3];
     double rDot_PcB_B[3];
     double intermediateVector2[3];
     double rBN_B[3];
@@ -1867,6 +1880,13 @@ void SixDofEOM::integrateState(double CurrentTime)
             }
         }
 
+        //! - Define parameters needed for energy and momentum calculations
+        MRP2C(&attStates[0], BN);
+        m33MultV3(BN, &this->XState[3], rDot_BN_B);
+        m33MultV3(BN, &this->XState[0], rBN_B);
+
+        totSolarPanelEnergy = 0;
+        v3SetZero(totSolarPanelAngMomentum_B);
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
         uint32_t spCount = 0;
@@ -1877,13 +1897,50 @@ void SixDofEOM::integrateState(double CurrentTime)
             {
                 SPIt->theta = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount];
                 SPIt->thetaDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spCount];
+
+                //! - Calculate energy for solar panels
+                //! - Define DCM from hinge to S
+                Mi(SPIt->theta, 2, SH);
+                //! - Define DCM from body to S
+                mMultM(SH, 3, 3, SPIt->HB, 3, 3, SB);
+                //! - Define unit direction vectors
+                v3Copy(SB[0], sHat1_B);
+                v3Copy(SB[1], sHat2_B);
+                v3Copy(SB[2], sHat3_B);
+                //! - map omega_BN_B to the S frame
+                m33MultV3(SB, &attStates[3], omega_BN_S);
+                v3Copy(omega_BN_S, omega_SN_S);
+                //! - Find omega_SN_S
+                omega_SN_S[1] += SPIt->thetaDot;
+                //! - Find rotational energy of solar panels
+                mMultV(SPIt->ISPPntS_S, 3, 3, omega_SN_S, intermediateVector);
+                totSolarPanelEnergy += 1.0/2.0*v3Dot(omega_SN_S, intermediateVector);
+                //! - Find translational energy of solar panels
+                //! - map omega_SN_S to the body frame
+                m33tMultV3(SB, omega_SN_S, omega_SN_B);
+                v3Scale(-SPIt->d, sHat1_B, r_ScH_B);
+                v3Cross(omega_SN_B, r_ScH_B, intermediateVector);
+                v3Cross(&attStates[3], SPIt->r_HB_B, intermediateVector2);
+                v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                v3Add(rDot_BN_B, intermediateVector, rDot_ScN_B);
+                totSolarPanelEnergy += 1.0/2.0*SPIt->massSP*v3Dot(rDot_ScN_B, rDot_ScN_B);
+                //! - Potential energy of solar panels
+                totSolarPanelEnergy += 1.0/2.0*SPIt->k*SPIt->theta*SPIt->theta;
+
+                //! - Find angular momentum of solar panels
+                mMultV(SPIt->ISPPntS_S, 3, 3, omega_SN_S, intermediateVector);
+                m33tMultV3(SB, intermediateVector, intermediateVector);
+                v3Add(totSolarPanelAngMomentum_B, intermediateVector, totSolarPanelAngMomentum_B);
+                //! - Add in translational angular momentum of solar panels
+                v3Add(r_ScH_B, SPIt->r_HB_B, intermediateVector);
+                v3Add(rBN_B, intermediateVector, intermediateVector);
+                v3Cross(intermediateVector, rDot_ScN_B, intermediateVector);
+                v3Scale(SPIt->massSP, intermediateVector, intermediateVector);
+                v3Add(totSolarPanelAngMomentum_B, intermediateVector, totSolarPanelAngMomentum_B);
                 spCount++;
             }
         }
 
-        MRP2C(&attStates[0], BN);
-        m33MultV3(BN, &this->XState[3], rDot_BN_B);
-        m33MultV3(BN, &this->XState[0], rBN_B);
         totFuelSloshEnergy = 0;
         v3SetZero(totFuelSloshAngMomentum_B);
         uint32_t fspCount = 0;
@@ -1932,11 +1989,13 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - Add the reaction wheel relative kinetic energy and angular momentum
         this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
         this->totScRotKinEnergy += totFuelSloshEnergy;
+        this->totScRotKinEnergy += totSolarPanelEnergy;
 
         //! - Add in translational kinetic energy of the hub
         this->totScRotKinEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
 
         v3Add(totFuelSloshAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
+        v3Add(totSolarPanelAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
         v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
 
         //! - Add in translational angular momentum

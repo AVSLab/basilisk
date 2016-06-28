@@ -76,7 +76,8 @@ import fuel_tank
     (True, True, True, True, False, False, False),
     (True, True, False, False, True, False, False),
     (True, True, False, False, False, True, False),
-    (True, True, False, False, False, False, True)
+    (True, True, False, False, False, False, True),
+    (True, True, False, False, False, True, True)
 ])
 
 # provide a unique test method name, starting with test_
@@ -101,7 +102,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     DynUnitTestProc = scSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.001)))
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
@@ -293,19 +294,19 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
     if useHingedSP:
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta", macros.sec2nano(120.))
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta", macros.sec2nano(120.))
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta", macros.sec2nano(0.1))
+        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta", macros.sec2nano(0.1))
 
     if useFuelSlosh:
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
-        # scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
-        # scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.1))
+        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.001))
+        scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.001))
 
-    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
+    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(0.1))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(60*10.)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(20.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
@@ -319,25 +320,31 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
-        # energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
-        # momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
-        # plt.figure(1)
-        # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
-        # plt.figure(2)
-        # plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
-        # plt.figure(3)
-        # plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
-        # plt.figure(4)
-        # plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
-        # plt.figure(5)
-        # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
-        # plt.figure(6)
-        # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
-        print dataPos
-        print dataSigma
-        # print rho1[-1]
-        # print rho2[-1]
-        # plt.show()
+        energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
+        momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
+        plt.figure(1)
+        plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
+        plt.figure(2)
+        plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
+        plt.figure(3)
+        plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
+        plt.figure(4)
+        plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
+        plt.figure(5)
+        plt.plot(theta1[:,0]*1.0E-9, theta1[:,1], 'b')
+        plt.figure(6)
+        plt.plot(theta2[:,0]*1.0E-9, theta2[:,1], 'b')
+        plt.figure(7)
+        plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
+        plt.figure(8)
+        plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
+        print dataPos[-1]
+        print dataSigma[-1]
+        print rho1[-1]
+        print rho2[-1]
+        print theta1[-1]
+        print theta2[-1]
+        plt.show()
 
     # set expected results
     trueSigma = [
@@ -497,7 +504,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           False,       # useHingedSP
+                           True,       # useHingedSP
                            True       # useFuelSlosh
                            )
 
