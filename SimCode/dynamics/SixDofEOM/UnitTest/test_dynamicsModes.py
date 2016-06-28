@@ -102,7 +102,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     DynUnitTestProc = scSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.001)))
+    DynUnitTestProc.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
     
     VehDynObject = six_dof_eom.SixDofEOM()
     spiceObject = spice_interface.SpiceInterface()
@@ -300,13 +300,13 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useFuelSlosh:
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.001))
-        scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.001))
+        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
+        scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.1))
 
-    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(0.1))
+    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(20.)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(60*10)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
@@ -322,29 +322,24 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
         energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
         momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
-        plt.figure(1)
-        plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
-        plt.figure(2)
-        plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
-        plt.figure(3)
-        plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
-        plt.figure(4)
-        plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
-        plt.figure(5)
-        plt.plot(theta1[:,0]*1.0E-9, theta1[:,1], 'b')
-        plt.figure(6)
-        plt.plot(theta2[:,0]*1.0E-9, theta2[:,1], 'b')
-        plt.figure(7)
-        plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
-        plt.figure(8)
-        plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
+        # plt.figure(1)
+        # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
+        # plt.figure(2)
+        # plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
+        # plt.figure(3)
+        # plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
+        # plt.figure(4)
+        # plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
+        # plt.figure(5)
+        # plt.plot(theta1[:,0]*1.0E-9, theta1[:,1], 'b')
+        # plt.figure(6)
+        # plt.plot(theta2[:,0]*1.0E-9, theta2[:,1], 'b')
+        # plt.figure(7)
+        # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
+        # plt.figure(8)
+        # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
         print dataPos[-1]
         print dataSigma[-1]
-        print rho1[-1]
-        print rho2[-1]
-        print theta1[-1]
-        print theta2[-1]
-        plt.show()
 
     # set expected results
     trueSigma = [
@@ -382,7 +377,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511282e+06,   5.52480503e+06,   5.50155656e+06]
                         ,[-6.78159336e+06,   4.94686853e+06,   5.48674175e+06]
                         ]
-        elif useRotation==True and useHingedSP==True: # Hinged Solar Panel Dynamics
+        elif useRotation==True and useHingedSP==True and useFuelSlosh==False: # Hinged Solar Panel Dynamics
             truePos = [
                         [0.0,                0.0,               0.0]
                         ,[-2.53742996478815, -2.84830940967875, 0.216182452815001]
@@ -391,7 +386,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-10.5787631792684, -10.7111009304237, 0.143079770048844]
                         ,[-13.3842058040891, -13.2968874812058, 0.155873769585104]
                         ]
-        elif useRotation==True and useFuelSlosh==True: #Fuel slosh
+        elif useRotation==True and useFuelSlosh==True and useHingedSP==False: #Fuel slosh
+            truePos = [
+                        [0.0,              0.0,            0.0]
+                        ,[-4.41367940e-03, 7.32153984e-03, 1.56478226e-02]
+                        ,[-1.38850226e-02, 1.58234595e-02, 3.09668916e-02]
+                        ,[-1.92319753e-02, 2.34021465e-02, 4.75896576e-02]
+                        ,[-3.03881827e-02, 3.07340418e-02, 6.41622218e-02]
+                        ,[-3.65879908e-02, 3.93240143e-02, 7.86976184e-02]
+                        ]
+        elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
             truePos = [
                         [0.0,              0.0,            0.0]
                         ,[-4.41367940e-03, 7.32153984e-03, 1.56478226e-02]
@@ -438,7 +442,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 3.07086772e-01, -5.36449617e-01,  6.59728850e-01]
                         ,[ 1.18593650e-01, -3.64833149e-01,  4.52223736e-01]
                         ]
-        elif useHingedSP==True and useTranslation==True: #Hinged Solar Panel Dynamics
+        elif useHingedSP==True and useTranslation==True and useFuelSlosh==False: #Hinged Solar Panel Dynamics
                         trueSigma = [
                         [0.0,             0.0,            0.0]
                         ,[-0.394048228873186, -0.165364626297029, 0.169133385881799]
@@ -447,7 +451,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-0.163301363833482, -0.366780426316819, 0.384007061361585]
                         ,[0.228198675962671, -0.329880460528557,  0.266599868549938]
                         ]
-        elif useFuelSlosh==True and useTranslation==True: #Fuel Slosh
+        elif useFuelSlosh==True and useTranslation==True and useHingedSP==False: #Fuel Slosh
+                        trueSigma = [
+                        [0.0,             0.0,            0.0]
+                        ,[-8.16906476e-02, -2.38473436e-01, 8.88798126e-01]
+                        ,[2.86400048e-01,  -4.38657216e-02, -7.15631886e-02]
+                        ,[8.12472104e-03,  -6.55278170e-01,  5.94781359e-01]
+                        ,[5.68831595e-01,   9.14178688e-02, -3.00695901e-02]
+                        ,[-2.45037494e-01,  8.24705432e-01, -3.36726473e-01]
+                        ]
+        elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
                         trueSigma = [
                         [0.0,             0.0,            0.0]
                         ,[-8.16906476e-02, -2.38473436e-01, 8.88798126e-01]
