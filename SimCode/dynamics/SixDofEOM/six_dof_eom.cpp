@@ -846,18 +846,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
-    double r_BN_NLoc[3];
-    double v_BN_NLoc[3];
-    double sigma_BNLoc[3];
-    double omega_BN_BLoc[3];
+    double r_BN_NLoc[3];        /* [m] position vector from N to B */
+    double v_BN_NLoc[3];        /* [m/s] inertial time derivative of position vector from N to B */
+    double sigma_BNLoc[3];      /* MRP from inertial to body frame */
+    double omega_BN_BLoc[3];    /* [rad/s] angular velocity of body frame w/ respect to N */
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double omegaTilde_BN_B[3][3];    /* tilde matrix of the omega B-frame components */
     double intermediateVector[3];               /* intermediate variables */
     double intermediateVector2[3];              /* intermediate variables */
     double intermediateMatrix[3][3];            /* intermediate variables */
     double intermediateMatrix2[3][3];           /* intermediate variables */
-    double variableSumFuelSloshDynamics;                /* intermediate variables */
-    double BN[3][3];
+    double variableSumFuelSloshDynamics;        /* intermediate variables */
+    double BN[3][3];            /* DCM from inertial to body frame */
     double LocalAccels_B[3];
     double LocalAccels_N[3];
     double extSumTorque_B[3];   /* net external torque acting on the body in B-frame components */
@@ -873,7 +873,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *rhoDotsFS;          /* pointer of time derivatives of rhos for fuel slosh dynamics */
     double *rhoDDotsFS;         /* pointer of 2nd time derivatives of rhos for fuel slosh dynamics */
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
-    double g_B[3];
+    double g_B[3];              /* [m/s^2] gravity acceleration in the body frame */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
     double *matrixA; /* Matrix A needed for hinged SP dynamics */
@@ -905,6 +905,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double vectorSum4FuelSloshDynamics[3];      /* intermediate variables */
     double vectorSum5FuelSloshDynamics[3];      /* intermediate variables */
     double matrixSumFuelSloshDynamics[3][3];    /* intermediate variables */
+
     //! Populate variable size matrices and arrays
     matrixA = new double[this->SPCount*this->SPCount];
     matrixE = new double[this->SPCount*this->SPCount];
@@ -937,6 +938,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         mSetIdentity(BN, 3, 3);
     }
     if(this->useRotation){
+        //! - Extract state information into respective variables
         sigma_BNLoc[0] = X[i++];
         sigma_BNLoc[1] = X[i++];
         sigma_BNLoc[2] = X[i++];
@@ -1063,7 +1065,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         //! - Copy computed inertia into ISCPntB_B
         m33Copy(this->compI, ISCPntB_B);
 
-        //! - This section is situations when the translational motion is coupled with the rotational motion
+        /* This section is situations when the translational motion is coupled with the rotational motion
+         see Allard, Diaz, and Schaub (flex and slosh paper) for details */
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
@@ -1189,6 +1192,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     fspCount++;
                 }
             }
+            //! - Scale c_B and cPrime_B by 1/mSC
             v3Scale(1/mSC, c_B, c_B);
             v3Scale(1/mSC, cPrime_B, cPrime_B);
 
@@ -1552,7 +1556,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3OuterProduct(rwIt->gsHat_B, rwIt->gsHat_B, intermediateMatrix);
                 m33Scale(rwIt->Js, intermediateMatrix, intermediateMatrix);
                 m33Subtract(ILHS, intermediateMatrix, ILHS);
-                /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way */
+                /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way see Allard, Schaub (flex paper) for details */
                 double hs =  rwIt->Js * Omegas[rwCount];
 
                 //! - calculate RW gyro torque - omegaTilde*Gs*hs
@@ -1681,7 +1685,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         m33MultV3(BN, dX+3, totalAccel_B);
         v3Subtract(totalAccel_B, ConservAccelBdy, NonConservAccelBdy);
     }
-    
+
+    //! - delete variable size matrices
     delete [] matrixA;
     delete [] matrixE;
     delete [] matrixF;
@@ -1693,6 +1698,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     delete [] vectorQ;
     delete [] matrixT;
     delete [] matrixX;
+    delete [] intermediateMatrixFuelSlosh2;
     delete [] intermediateMatrixFuelSlosh;
     delete [] intermediateVectorFuelSlosh;
     delete [] intermediateVectorFuelSlosh2;
@@ -1717,32 +1723,31 @@ void SixDofEOM::integrateState(double CurrentTime)
     double sMag;
     uint32_t CentralBodyCount = 0;
 
-    double BN[3][3];                          /* DCM from inertial to body */
-    double intermediateVector[3];             /* intermediate vector needed for calculation */
-    double Omega;                             /* current wheel speeds of RWs */
-    double omega_s;                           /* body rate about the g_s RW axis */
-    double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
-    double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
-    double prevTotScRotKinEnergy;             /* The last kinetic energy calculation from time step before */
-    double *attStates;                        /* pointer to the attitude state set in the overall state matrix */
-    double rDot_BN_B[3];
-    double totFuelSloshEnergy;
-    double totFuelSloshAngMomentum_B[3];
-    double SH[3][3];
-    double SB[3][3];
-    double sHat1_B[3];
-    double sHat2_B[3];
-    double sHat3_B[3];
-    double omega_BN_S[3];
-    double omega_SN_S[3];
-    double omega_SN_B[3];
-    double r_ScH_B[3];
-    double rDot_ScN_B[3];
-    double totSolarPanelEnergy;
-    double totSolarPanelAngMomentum_B[3];
-    double rDot_PcB_B[3];
-    double intermediateVector2[3];
-    double rBN_B[3];
+    double BN[3][3];                        /* DCM from inertial to body */
+    double intermediateVector[3];           /* intermediate vector needed for calculation */
+    double Omega;                           /* current wheel speeds of RWs */
+    double omega_s;                         /* body rate about the g_s RW axis */
+    double totRwsKinEnergy;                 /* All RWs kinetic energy summed together */
+    double totRwsAngMomentum_B[3];          /* All RWs angular momentum */
+    double prevTotScRotKinEnergy;           /* The last kinetic energy calculation from time step before */
+    double *attStates;                      /* pointer to the attitude state set in the overall state matrix */
+    double rDot_BN_B[3];                    /* inertial derivative of position vector from N to B in the B frame */
+    double totFuelSloshEnergy;              /* All slosh particle's translational, rotational and potential energy */
+    double totFuelSloshAngMomentum_B[3];    /* All slosh particle's total angular momentum in the body frame */
+    double SH[3][3];                        /* DCM from hinge frame to solar panel frame for individual solar panels */
+    double SB[3][3];                        /* DCM from body frame to solar panel frame for individual solar panels */
+    double sHat1_B[3];                      /* Unit vector for first axis of S frame in the body frame */
+    double sHat2_B[3];                      /* Unit vector for second axis of S frame in the body frame */
+    double omega_BN_S[3];                   /* angular velocity of B w/ respect to N in the S frame */
+    double omega_SN_S[3];                   /* angular velocity of S w/ respect to N in the S frame */
+    double omega_SN_B[3];                   /* angular velocity of S w/ respect to N in the body frame */
+    double r_ScH_B[3];                      /* position vector from H to Sc in the body frame */
+    double rDot_ScN_B[3];                   /* inertial time derivative of position vector from N to Sc in B frame */
+    double totSolarPanelEnergy;             /* All solar panels translational, rotational and potential energy */
+    double totSolarPanelAngMomentum_B[3];   /* All solar panels angular momentum in the body frame */
+    double rDot_PcB_B[3];                   /* Inertial derivative of position vector from B to Pc in the body frame */
+    double intermediateVector2[3];          /* intermediate vector */
+    double rBN_B[3];                        /* position vector from N to B in the body frame */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -1908,7 +1913,6 @@ void SixDofEOM::integrateState(double CurrentTime)
                 //! - Define unit direction vectors
                 v3Copy(SB[0], sHat1_B);
                 v3Copy(SB[1], sHat2_B);
-                v3Copy(SB[2], sHat3_B);
                 //! - map omega_BN_B to the S frame
                 m33MultV3(SB, &attStates[3], omega_BN_S);
                 v3Copy(omega_BN_S, omega_SN_S);
