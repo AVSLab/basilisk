@@ -888,6 +888,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *matrixT; /* Matrix T needed for fuel slosh and hinged SP dynamics together */
     double *matrixX; /* Matrix X needed for fuel slosh and hinged SP dynamics together */
     double *intermediateMatrixFuelSlosh; /* Matrix needed for fuel slosh */
+    double *intermediateMatrixFuelSlosh2; /* Matrix needed for fuel slosh */
     double *intermediateVectorFuelSlosh; /* Vector needed for fuel slosh and hinged SP */
     double *intermediateVectorFuelSlosh2; /* Vector needed for fuel slosh and hinged SP */
     double tauRHS[3]; /* Right hand side of omegaDot equation */
@@ -917,6 +918,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     matrixT = new double[this->numFSP*this->numFSP];
     matrixX = new double[3*this->numFSP];
     intermediateMatrixFuelSlosh = new double[this->numFSP*3];
+    intermediateMatrixFuelSlosh2 = new double[this->SPCount*3];
     intermediateVectorFuelSlosh = new double[this->numFSP];
     intermediateVectorFuelSlosh2 = new double[this->SPCount];
 
@@ -1331,7 +1333,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                                              SPItk != (*SPPackItk)->solarPanelData.end(); SPItk++)
                                         {
                                             //! - Value needed for off diagonal elements of N matrix
-                                            variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->SPCount + fspCountl];
+                                            variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->numFSP + fspCountl];
                                             spCountk++;
                                         }
                                     }
@@ -1369,7 +1371,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                                      SPItk != (*SPPackItk)->solarPanelData.end(); SPItk++)
                                 {
                                     //! - Value needed for diagonal elements of N matrix
-                                    variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->SPCount + fspCountj];
+                                    variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->numFSP + fspCountj];
                                     spCountk++;
                                 }
                             }
@@ -1494,8 +1496,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                         if (this->numFSP) {
                             //! - Modify ILHS with cross coupling of hinged and fuel slosh dynamics
                             mMultM(matrixT, this->numFSP, this->numFSP, matrixO, this->numFSP, 3, intermediateMatrixFuelSlosh);
-                            mMultM(matrixG, this->numFSP, this->numFSP, intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateMatrixFuelSlosh);
-                            vtMultM(&matrixE[spCount*this->SPCount], intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateVector);
+                            mMultM(matrixG, this->SPCount, this->numFSP, intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateMatrixFuelSlosh2);
+                            vtMultM(&matrixE[spCount*this->SPCount], intermediateMatrixFuelSlosh2, this->SPCount, 3, intermediateVector);
                             v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
                             m33Add(ILHS, intermediateMatrix, ILHS);
 
