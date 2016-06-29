@@ -354,8 +354,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # plt.figure(9)
         # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
         # plt.show()
-        print dataPos
-        print dataSigma
 
     # set expected results
     trueSigma = [
