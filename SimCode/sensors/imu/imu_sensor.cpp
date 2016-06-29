@@ -36,7 +36,6 @@ ImuSensor::ImuSensor()
     memset(&this->StateCurrent, 0x0, sizeof(OutputStateData));
     this->PreviousTime = 0;
     this->NominalReady = false;
-    this->isOutputtingMeasured = true;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
     memset(&this->senRotNoiseStd[0], 0x0, 3*sizeof(double));
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
@@ -111,10 +110,10 @@ void ImuSensor::readInputMessages()
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
     ImuSensorOutput LocalOutput;
-    memcpy(LocalOutput.DVFramePlatform, this->DVFramePlatform, 3*sizeof(double));
-    memcpy(LocalOutput.AccelPlatform, this->AccelPlatform, 3*sizeof(double));
-    memcpy(LocalOutput.DRFramePlatform, this->DRFramePlatform, 3*sizeof(double));
-    memcpy(LocalOutput.AngVelPlatform, this->AngVelPlatform, 3*sizeof(double));
+    memcpy(LocalOutput.DVFramePlatform, this->sensedValues.DVFramePlatform, 3*sizeof(double));
+    memcpy(LocalOutput.AccelPlatform, this->sensedValues.AccelPlatform, 3*sizeof(double));
+    memcpy(LocalOutput.DRFramePlatform, this->sensedValues.DRFramePlatform, 3*sizeof(double));
+    memcpy(LocalOutput.AngVelPlatform, this->sensedValues.AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
                                                  sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
@@ -129,33 +128,33 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
     
     if(accelLSB > 0.0)
     {
-        v3Scale(1.0/accelLSB, AccelPlatform, scaledMeas);
+        v3Scale(1.0/accelLSB, sensedValues.AccelPlatform, scaledMeas);
         for(uint32_t i=0; i<3; i++)
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
             scaledMeas[i] = floor(scaledMeas[i]);
             scaledMeas[i] = scaledMeas[i]*accelLSB;
-            scaledMeas[i] = copysign(scaledMeas[i], AccelPlatform[i]);
+            scaledMeas[i] = copysign(scaledMeas[i], sensedValues.AccelPlatform[i]);
         }
-        v3Subtract(AccelPlatform, scaledMeas, intMeas);
-        v3Copy(scaledMeas, AccelPlatform);
+        v3Subtract(sensedValues.AccelPlatform, scaledMeas, intMeas);
+        v3Copy(scaledMeas, sensedValues.AccelPlatform);
         v3Scale(dt, intMeas, intMeas);
-        v3Subtract(DVFramePlatform, intMeas, DVFramePlatform);
+        v3Subtract(sensedValues.DVFramePlatform, intMeas, sensedValues.DVFramePlatform);
     }
     if(gyroLSB > 0.0)
     {
-        v3Scale(1.0/gyroLSB, AngVelPlatform, scaledMeas);
+        v3Scale(1.0/gyroLSB, sensedValues.AngVelPlatform, scaledMeas);
         for(uint32_t i=0; i<3; i++)
         {
             scaledMeas[i] = fabs(scaledMeas[i]);
             scaledMeas[i] = floor(scaledMeas[i]);
             scaledMeas[i] = scaledMeas[i]*gyroLSB;
-            scaledMeas[i] = copysign(scaledMeas[i], AngVelPlatform[i]);
+            scaledMeas[i] = copysign(scaledMeas[i], sensedValues.AngVelPlatform[i]);
         }
-        v3Subtract(AngVelPlatform, scaledMeas, intMeas);
-        v3Copy(scaledMeas, AngVelPlatform);
+        v3Subtract(sensedValues.AngVelPlatform, scaledMeas, intMeas);
+        v3Copy(scaledMeas, sensedValues.AngVelPlatform);
         v3Scale(dt, intMeas, intMeas);
-        v3Subtract(DRFramePlatform, intMeas, DRFramePlatform);
+        v3Subtract(sensedValues.DRFramePlatform, intMeas, sensedValues.DRFramePlatform);
     }
     
 }
@@ -171,11 +170,11 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     for(uint32_t i=0; i<3; i++)
     {
         OmegaErrors[i] = rot_rnum[i](rot_rgen[i]);
-        AngVelPlatform[i] += OmegaErrors[i];
-        DRFramePlatform[i] += OmegaErrors[i]*dt;
+        this->sensedValues.AngVelPlatform[i] =  this->trueValues.AngVelPlatform[i] + OmegaErrors[i];
+        this->sensedValues.DRFramePlatform[i] = this->trueValues.DRFramePlatform[i] +  OmegaErrors[i]*dt;
         AccelErrors[i] = trans_rnum[i](trans_rgen[i]);
-        AccelPlatform[i] += AccelErrors[i];
-        DVFramePlatform[i] += AccelErrors[i]*dt;
+        this->sensedValues.AccelPlatform[i] = this->trueValues.AccelPlatform[i] + AccelErrors[i];
+        this->sensedValues.DVFramePlatform[i] = this->trueValues.DVFramePlatform[i] + AccelErrors[i]*dt;
     }
     
 }
@@ -201,8 +200,8 @@ void ImuSensor::computePlatformDR()
     }
     addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma, MRP_BdyPrev2BdyNow);
     MRP2PRV(MRP_BdyPrev2BdyNow, DRBodyFrame);
-    m33MultV3(T_Bdy2Platform, DRBodyFrame, DRFramePlatform);
-    m33MultV3(T_Bdy2Platform, StateCurrent.omega, AngVelPlatform);
+    m33MultV3(T_Bdy2Platform, DRBodyFrame, this->trueValues.DRFramePlatform);
+    m33MultV3(T_Bdy2Platform, StateCurrent.omega, this->trueValues.AngVelPlatform);
 }
 
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
@@ -228,13 +227,13 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     v3Add(omeg_x_omeg_x_r, alpha_x_r, RotForces);
     v3Subtract(StateCurrent.TotalAccumDVBdy, StatePrevious.TotalAccumDVBdy,
                InertialAccel);
-    v3Copy(InertialAccel, DVFramePlatform);
+    v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
     v3Scale(1.0/dt, InertialAccel, InertialAccel);
     v3Subtract(InertialAccel, RotForces, InertialAccel);
-    m33MultV3(T_Bdy2Platform, InertialAccel, AccelPlatform);
+    m33MultV3(T_Bdy2Platform, InertialAccel, this->trueValues.AccelPlatform);
     v3Scale(dt, RotForces, RotForces);
-    v3Subtract(DVFramePlatform, RotForces, DVFramePlatform);
-    m33MultV3(T_Bdy2Platform, DVFramePlatform, DVFramePlatform);
+    v3Subtract(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
+    m33MultV3(T_Bdy2Platform, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
     
 }
 
@@ -243,13 +242,13 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
     readInputMessages();
     if(NominalReady)
     {
+        /* Compute true data */
         computePlatformDR();
         computePlatformDV(CurrentSimNanos);
-        if (this->isOutputtingMeasured)
-        {
-            applySensorErrors(CurrentSimNanos);
-        }
+        /* Compute sensed data */
+        applySensorErrors(CurrentSimNanos);
         applySensorDiscretization(CurrentSimNanos);
+        /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
     memcpy(&StatePrevious, &StateCurrent, sizeof(OutputStateData));

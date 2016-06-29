@@ -31,7 +31,6 @@ StarTracker::StarTracker()
     this->outputStateMessage = "star_tracker_state";
     this->OutputBufferCount = 2;
     m33SetIdentity(RECAST3X3 this->T_CaseStr);
-    this->isOutputtingMeasured = true;
     return;
 }
 
@@ -84,7 +83,6 @@ void StarTracker::CrossInit()
     messagesLinked = LinkMessages();
 }
 
-
 void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
@@ -95,11 +93,11 @@ void StarTracker::readInputMessages()
     }
     
     memset(&this->timeState, 0x0, sizeof(SpiceTimeOutput));
-    memset(&this->trueState, 0x0, sizeof(OutputStateData));
+    memset(&this->scState, 0x0, sizeof(OutputStateData));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&trueState), moduleID);
+                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*>(&scState), moduleID);
     }
     if(inputTimeID >= 0)
     {
@@ -107,52 +105,60 @@ void StarTracker::readInputMessages()
                                                     sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState), moduleID);
     }
 }
-void StarTracker::computeErrors()
+
+void StarTracker::computeSensorErrors()
 {
     this->errorModel.setPropMatrix(AMatrix);
     this->errorModel.computeNextState();
     this->navErrors = this->errorModel.getCurrentState();
 }
-void StarTracker::applyErrors()
+
+void StarTracker::applySensorErrors()
 {
+    double sigmaSensed[3];
     PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
-    addMRP(this->sigmaOutput, this->mrpErrors, this->sigmaOutput);
+    addMRP(scState.sigma, this->mrpErrors, sigmaSensed);
+    computeQuaternion(sigmaSensed, &this->sensedValues);
+    this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
-void StarTracker::computeOutputs(uint64_t CurrentSimNanos)
+void StarTracker::computeQuaternion(double *sigma, StarTrackerHWOutput *sensorValues)
 {
-    SingleMessageHeader localHeader;
-    std::vector<double>::iterator it;
     double T_BdyInrtl[3][3];
     double T_StrInrtl[3][3];
     double T_CaseInrtl[3][3];
-    double localTime = 0.0;
-    
-    localTime = timeState.J2000Current;
-    localTime += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
-
-    v3Copy(trueState.sigma, this->sigmaOutput);
-    if (this->isOutputtingMeasured)
-    {
-        applyErrors();
-    }
-    MRP2C(this->sigmaOutput, T_BdyInrtl);
-    m33tMultM33(trueState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
+    MRP2C(sigma, T_BdyInrtl);
+    m33tMultM33(scState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
     m33MultM33(RECAST3X3 T_CaseStr, T_StrInrtl, T_CaseInrtl);
-    localOutput.timeTag = localTime;
-    C2EP(T_CaseInrtl, localOutput.qInrtl2Case);
+    C2EP(T_CaseInrtl, sensorValues->qInrtl2Case);
 }
+
+void StarTracker::computeSensorTimeTag(uint64_t CurrentSimNanos)
+{
+    SingleMessageHeader localHeader;
+    sensorTimeTag = timeState.J2000Current;
+    sensorTimeTag += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
+}
+
+void StarTracker::computeTrueOutput()
+{
+    this->trueValues.timeTag = this->sensorTimeTag;
+    computeQuaternion(this->scState.sigma, &this->trueValues);
+}
+
 
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-                                                 sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&localOutput), moduleID);
+                                                 sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
 }
 
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
-    computeErrors();
-    computeOutputs(CurrentSimNanos);
+    computeSensorTimeTag(CurrentSimNanos);
+    computeSensorErrors();
+    computeTrueOutput();
+    applySensorErrors();
     writeOutputMessages(CurrentSimNanos);
 }

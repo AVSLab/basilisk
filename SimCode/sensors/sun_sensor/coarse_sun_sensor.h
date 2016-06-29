@@ -62,9 +62,9 @@ public:
     bool spacecraftIlluminated(); //!< @brief method to determine if the S/C is illuminated
     void readInputMessages(); //!< @brief method to read the input messages
     void computeSunData(); //!< @brief method to get the sun vector information
-    void computeTruthOutput(); //!< @brief method to compute the true sun-fraction of CSS
+    void computeTrueOutput(); //!< @brief method to compute the true sun-fraction of CSS
     void applySensorErrors(); //!< @brief method to set the actual output of the sensor with scaling/kelly
-    void scaleActualOutput(); 
+    void scaleSensorValues();
     void writeOutputMessages(uint64_t Clock); //!< @brief method to write the output message to the system
     
 public:
@@ -84,7 +84,7 @@ public:
     double              albedoValue;            //!< [-] albedo irradiance measurement
     double              scaleFactor;            //!< [-] scale factor applied to sensor (common + individual multipliers)
     double              sensedValue;            //!< [-] total measurement including perturbations
-    double              ScaledValue;            //!< [-] Scaled value prior to discretization
+    double              trueValue;              //!< [-] total measurement without perturbations
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
     double              maxVoltage;             //!< [V] max voltage measurable by CSS, used in discretization

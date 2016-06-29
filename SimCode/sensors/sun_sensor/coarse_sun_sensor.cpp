@@ -220,7 +220,7 @@ void CoarseSunSensor::computeTruthOutput()
     }
     //! - Albedo is forced to zero for now.
     albedoValue = 0.0;
-    
+    trueValue = directValue + albedoValue;
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
@@ -238,9 +238,10 @@ void CoarseSunSensor::applySensorErrors()
     
 }
 
-void CoarseSunSensor::scaleActualOutput()
+void CoarseSunSensor::scaleSensorValues()
 {
-    this->ScaledValue = this->sensedValue * this->scaleFactor;
+    this->sensedValue = this->sensedValue * this->scaleFactor;
+    this->trueValue = this->trueValue * this->scaleFactor;
 }
 
 /*! This method writes the output message.  The output message contains the 
@@ -254,7 +255,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
     //! - Zero the output message
     memset(&LocalMessage, 0x0, sizeof(CSSRawOutputData));
     //! - Set the outgoing data to the scaled computation
-    LocalMessage.OutputData = this->ScaledValue;
+    LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
                                                  sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
@@ -271,11 +272,11 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     //! - Get sun vector
     this->computeSunData();
     //! - compute true cosine
-    this->computeTruthOutput();
+    this->computeTrueOutput();
     //! - Apply any set errors
     this->applySensorErrors();
     //! - Fit kelly curve
-    this->scaleActualOutput();
+    this->scaleSensorValues();
     //! - Write output data
     this->writeOutputMessages(CurrentSimNanos);
 }
@@ -337,10 +338,10 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
     {
         it->readInputMessages();
         it->computeSunData();
-        it->computeTruthOutput();
+        it->computeTrueOutput();
         it->applySensorErrors();
-        it->scaleActualOutput();
-        outputBuffer[it - sensorList.begin()].OutputData = it->ScaledValue;
+        it->scaleSensorValues();
+        outputBuffer[it - sensorList.begin()].OutputData = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
                                                  sensorList.size()*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));

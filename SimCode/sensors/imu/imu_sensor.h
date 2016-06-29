@@ -58,13 +58,12 @@ public:
     double senTransNoiseStd[3];         /// [m/s2] Accel sensor standard deviation
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
-    double DVFramePlatform[3];          /// [m/s] Accumulated DVs in platform
-    double AccelPlatform[3];            /// [m/s2] Apparent acceleration of the platform
-    double DRFramePlatform[3];          /// [r]  Accumulated DRs in platform
-    double AngVelPlatform[3];           /// [r/s] Angular velocity in platform frame
+    
+    ImuSensorOutput trueValues;         //!< [-] total measurement without perturbations
+    ImuSensorOutput sensedValues;       //!< [-] total measurement including perturbations
+    
     double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
     double gyroLSB;                     //! (-) Discretization value for gyro data
-    bool isOutputtingMeasured;          //! (-) Flag indicating whether the output information is the truth or is the measured (corrupted with errors) */
 private:
     int64_t InputStateID;               /// -- Connect to input time message
     int64_t InputMassID;                /// -- Message ID for the mass properties
