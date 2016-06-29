@@ -207,7 +207,7 @@ void CoarseSunSensor::computeSunData()
 }
 
 /*! This method computes the tru sensed values for the sensor */
-void CoarseSunSensor::computeTruthOutput()
+void CoarseSunSensor::computeTrueOutput()
 {
     //! Begin Method Steps
     double temp1 = v3Dot(this->nHatStr, this->sHatStr);
