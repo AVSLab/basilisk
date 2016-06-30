@@ -204,7 +204,7 @@ def mrp_steering_tracking(show_plots):
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName +
-                                " unit test at t=" + str(moduleOutput[i, 0] * unitTestSupport.NANO2SEC) +
+                                " unit test at t=" + str(moduleOutput[i, 0] * macros.NANO2SEC) +
                                 "sec \n")
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
