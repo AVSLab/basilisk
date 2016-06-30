@@ -462,6 +462,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
                                 #, "self.ResetTask('attitudeControlMnvrTask')"
+                                #, "self.enableTask('attitudePRVControlMnvrTask')"
+                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
@@ -472,6 +474,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
                                 #, "self.ResetTask('attitudeControlMnvrTask')"
+                                #, "self.enableTask('attitudePRVControlMnvrTask')"
+                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateHillPoint", int(1E9), True, ["self.modeRequest == 'hillPoint'"],
@@ -482,6 +486,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
                                 #, "self.ResetTask('attitudeControlMnvrTask')"
+                                #, "self.enableTask('attitudePRVControlMnvrTask')"
+                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateVelocityPoint", int(1E9), True, ["self.modeRequest == 'velocityPoint'"],
@@ -1343,7 +1349,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Init of Guidance Modules
     def setInertial3DSpin(self):
         self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_R0N = [0.3, 0.3, 0.3]
+        sigma_R0N = [0.4, 0.2, 0.4]
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DSpinData.sigma_RN)
         omega_R0N_N = np.array([0.2, 0.1, 0.1]) * mc.D2R
         SimulationBaseClass.SetCArray(omega_R0N_N, 'double',self.inertial3DSpinData.omega_RN_N)
@@ -1440,9 +1446,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.PRV_SteeringRWAData.P = 150.0  # N*m*sec
         self.PRV_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.PRV_SteeringRWAData.integralLimit = 0.0  # rad
+
         self.PRV_SteeringRWAData.inputGuidName = "nom_att_guid_out"
+        self.PRV_SteeringRWAData.inputRWConfigData = "rwa_config_data"
         self.PRV_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.PRV_SteeringRWAData.outputDataName = "controlTorqueRaw"
+        self.PRV_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
 
     def SetMRP_SteeringMOI(self):
         self.MRP_SteeringMOIData.K1 = 0.5  # rad/sec

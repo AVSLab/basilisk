@@ -30,6 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include <string.h>
 #include <math.h>
 
@@ -61,8 +62,29 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                 sizeof(vehicleConfigData), moduleID);
-
+                                                              sizeof(vehicleConfigData), moduleID);
+    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+                                                     sizeof(RWSpeedData), moduleID);
+    
+    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+                                                   sizeof(RWConstellation), moduleID);
+    /*! - Read static RW config data message and store it in module variables*/
+    RWConstellation localRWData;
+    int i, j;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
+    
+    for(i=0; i<ConfigData->numRWAs; i=i+1)
+    {
+        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
+        for(j=0; j<3; j=j+1)
+        {
+            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
+        }
+    }
+    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -89,6 +111,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -104,6 +127,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     double              omega_BN_B[3];
     int                 i;
     double              temp;
+    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
 
     /* compute control update time */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
@@ -122,6 +146,8 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
     
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
@@ -157,11 +183,16 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
     m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
-//    for(i = 0; i < NUM_RW; i++) {
-//        v3Scale(sc->rw[i].Js * (v3Dot(omega, sc->rw[i].gs) + sc->rw[i].Omega),
-//                sc->rw[i].gs, v3_1);
-//        v3Add(v3_1, v3, v3);
-//    }
+    
+    for(i = 0; i < ConfigData->numRWAs; i++)
+    {
+        double scalar;
+        wheelGs = &(ConfigData->GsMatrix[i*3]);
+        scalar = ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]);
+        v3Scale(scalar, wheelGs, v3_1);
+        v3Add(v3_1, v3, v3);
+    }
+    
     v3Cross(omega_BastN_B, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);
 
@@ -173,9 +204,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
 
     v3Add(L, Lr, Lr);                                       /* +L */
 
-    /*
-     store the output message 
-     */
+    /* store the output message */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),

@@ -41,11 +41,16 @@ import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import alg_contain
-import unitTestSupport                  # general support file with common unit test functions
-import PRV_Steering                     # import the module that is to be tested
-import sunSafePoint                     # import module(s) that creates the needed input message declaration
-import vehicleConfigData                # import module(s) that creates the needed input message declaration
+# general support files with common unit test functions
 import macros
+import unitTestSupport
+# import the module that is to be tested
+import PRV_Steering
+# import module(s) that creates the needed input message declaration
+import sunSafePoint
+import vehicleConfigData
+import rwNullSpace
+
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -91,11 +96,14 @@ def subModuleTestFunction(show_plots):
     moduleConfig.inputGuidName  = "inputGuidName"
     moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
     moduleConfig.outputDataName = "outputName"
+    moduleConfig.inputRWConfigData = "rwa_config_data"
+    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
 
     moduleConfig.K1 =   0.15
     moduleConfig.K3 =   1.0
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
+    moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5*macros.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
 
@@ -151,7 +159,48 @@ def subModuleTestFunction(show_plots):
                                           0,
                                           vehicleConfigOut)
 
+    # wheelSpeeds Message
+    inputMessageSize = 36 * 8  # 36 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    Omega = [10.0, 25.0, 50.0, 100.0]
+    SimulationBaseClass.SetCArray(Omega,
+                                  'double',
+                                  rwSpeedMessage.wheelSpeeds)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
+                                          inputMessageSize,
+                                          0,
+                                          rwSpeedMessage)
 
+    # wheelConfigData Message
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWConfigData,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    i = 0
+    rwClass = vehicleConfigData.RWConstellation()
+    rwPointer = vehicleConfigData.RWConfigurationElement()
+
+    localGsMatrix = [0, 0, 0,
+                     0, 0, 0,
+                     0, 0, 0,
+                     0, 0, 0]
+    while (i < 4):
+        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
+                                       localGsMatrix[i*3+1],
+                                       localGsMatrix[i*3+2]],
+                                      'double',
+                                      rwPointer.Gs_S)
+        rwPointer.Js = 0.0
+        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+        i += 1
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigData,
+                                          inputMessageSize,
+                                          0, rwClass)
 
     #   Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -191,7 +240,7 @@ def subModuleTestFunction(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
             testFailCount += 1
-            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(moduleOutput[i,0]*macros.NANO2SEC) + "sec\n")
 
 
 
