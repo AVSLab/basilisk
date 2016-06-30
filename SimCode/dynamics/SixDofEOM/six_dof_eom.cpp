@@ -309,6 +309,17 @@ void SixDofEOM::addSolarPanelSet(SolarPanels *NewEffector)
     solarPanels.push_back(NewEffector);
 }
 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The
+ effector should be a derived class of the DynEffector abstract class and it
+ should include a ComputeDynamics call which is operated by dynamics.
+ @return void
+ @param NewEffector The effector that we are adding to dynamics
+ */
+void SixDofEOM::addFuelTank(FuelTank *NewEffector)
+{
+    fuelTanks.push_back(NewEffector);
+}
+
 /*!
  * @brief This method changes the integrator in use (Default integrator: RK4)
  * @param Pointer to an integrator object.
@@ -359,9 +370,9 @@ void SixDofEOM::SelfInit()
 	this->RWACount = 0;
     this->numRWJitter = 0;
 	std::vector<ReactionWheelDynamics *>::iterator it;
+    std::vector<ReactionWheelConfigData>::iterator rwIt;
 	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
 	{
-		std::vector<ReactionWheelConfigData>::iterator rwIt;
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
@@ -382,16 +393,29 @@ void SixDofEOM::SelfInit()
         }
     }
 
+    this->numFSP = 0;
+    std::vector<FuelTank *>::iterator itFT;
+    std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+    for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+    {
+        for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+             FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+        {
+            this->numFSP++;
+        }
+    }
+
     this->NStates = 0;
     if(this->useTranslation) this->NStates += 6;
     if(this->useRotation)    this->NStates += 6;
     this->NStates += this->RWACount + this->numRWJitter;
     this->NStates += this->SPCount*2;
+    this->NStates += this->numFSP*2;
     if(this->NStates==0) {
         std::cerr << "ERROR: The simulation state vector is of size 0!";
     }
 
-    this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot)*/
+    this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot) + fuel slosh (rho/rhoDot)*/
     memset(this->XState, 0x0, (this->NStates)*sizeof(double));
     TimePrev = 0.0;
     
@@ -460,7 +484,6 @@ void SixDofEOM::SelfInit()
     uint32_t rwJitterCount = 0;
 	for (it=reactWheels.begin(); it != reactWheels.end(); it++)
 	{
-		std::vector<ReactionWheelConfigData>::iterator rwIt;
 		for (rwIt = (*it)->ReactionWheelData.begin();
 		  rwIt != (*it)->ReactionWheelData.end(); rwIt++)
 		{
@@ -496,13 +519,24 @@ void SixDofEOM::SelfInit()
     uint32_t spIterator = 0;
     for (itSP=solarPanels.begin(); itSP != solarPanels.end(); itSP++)
     {
-        std::vector<SolarPanelConfigData>::iterator SPIt;
         for (SPIt = (*itSP)->solarPanelData.begin();
              SPIt != (*itSP)->solarPanelData.end(); SPIt++)
         {
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spIterator] = SPIt->theta;
             this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spIterator] = SPIt->thetaDot;
             spIterator++;
+        }
+    }
+
+    uint32_t fspIterator = 0;
+    for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+    {
+        for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+             FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+        {
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount*2 + fspIterator] = FSPIt->rho;
+            this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP + fspIterator] = FSPIt->rhoDot;
+            fspIterator++;
         }
     }
     
@@ -812,17 +846,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     OutputStateData StateCurrent;
     MassPropsData MassProps;
     
-    double r_BN_NLoc[3];
-    double v_BN_NLoc[3];
-    double sigma_BNLoc[3];
-    double omega_BN_BLoc[3];
+    double r_BN_NLoc[3];        /* [m] position vector from N to B */
+    double v_BN_NLoc[3];        /* [m/s] inertial time derivative of position vector from N to B */
+    double sigma_BNLoc[3];      /* MRP from inertial to body frame */
+    double omega_BN_BLoc[3];    /* [rad/s] angular velocity of body frame w/ respect to N */
     double B[3][3];             /* d(sigma)/dt = 1/4 B omega */
     double omegaTilde_BN_B[3][3];    /* tilde matrix of the omega B-frame components */
     double intermediateVector[3];               /* intermediate variables */
     double intermediateVector2[3];              /* intermediate variables */
     double intermediateMatrix[3][3];            /* intermediate variables */
     double intermediateMatrix2[3][3];           /* intermediate variables */
-    double BN[3][3];
+    double variableSumFuelSloshDynamics;        /* intermediate variables */
+    double BN[3][3];            /* DCM from inertial to body frame */
     double LocalAccels_B[3];
     double LocalAccels_N[3];
     double extSumTorque_B[3];   /* net external torque acting on the body in B-frame components */
@@ -834,14 +869,28 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *thetasSP;           /* pointer of theta values for hinged SP dynamics */
     double *thetaDotsSP;        /* pointer of time derivatives of thetas for hinged dynamics */
     double *thetaDDotsSP;       /* pointer of 2nd time derivatives of thetas for hinged dynamics */
+    double *rhosFS;             /* pointer of rho values for fuel slosh dynamics */
+    double *rhoDotsFS;          /* pointer of time derivatives of rhos for fuel slosh dynamics */
+    double *rhoDDotsFS;         /* pointer of 2nd time derivatives of rhos for fuel slosh dynamics */
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
+    double g_B[3];              /* [m/s^2] gravity acceleration in the body frame */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
     double *matrixA; /* Matrix A needed for hinged SP dynamics */
     double *matrixE; /* Matrix E needed for hinged SP dynamics */
     double *matrixF; /* Matrix F needed for hinged SP dynamics */
-    double *vectorP; /* Vector P needed for hinged SP dynamics */
+    double *vectorV; /* Vector V needed for hinged SP dynamics */
     double *matrixR; /* Matrix R needed for hinged SP dynamics */
+    double *matrixG; /* Matrix G needed for fuel slosh and hinged SP dynamics together */
+    double *matrixN; /* Matrix N needed for fuel slosh and hinged SP dynamics together */
+    double *matrixO; /* Matrix O needed for fuel slosh and hinged SP dynamics together */
+    double *vectorQ; /* Vector Q needed for fuel slosh and hinged SP dynamics together */
+    double *matrixT; /* Matrix T needed for fuel slosh and hinged SP dynamics together */
+    double *matrixX; /* Matrix X needed for fuel slosh and hinged SP dynamics together */
+    double *intermediateMatrixFuelSlosh; /* Matrix needed for fuel slosh */
+    double *intermediateMatrixFuelSlosh2; /* Matrix needed for fuel slosh */
+    double *intermediateVectorFuelSlosh; /* Vector needed for fuel slosh and hinged SP */
+    double *intermediateVectorFuelSlosh2; /* Vector needed for fuel slosh and hinged SP */
     double tauRHS[3]; /* Right hand side of omegaDot equation */
     double ILHS[3][3]; /* Left hand side of omegaDot equaion */
     double mSC; /* Mass of the space craft including solar panels */
@@ -852,16 +901,29 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double cPrime_B[3]; /* body time derivative of c_B */
     double vectorSumHingeDynamics[3];           /* intermediate variables */
     double vectorSum2HingeDynamics[3];          /* intermediate variables */
-    double vectorSum3HingeDynamics[3];          /* intermediate variables */
+    double vectorSum3FuelSloshDynamics[3];      /* intermediate variables */
+    double vectorSum4FuelSloshDynamics[3];      /* intermediate variables */
+    double vectorSum5FuelSloshDynamics[3];      /* intermediate variables */
+    double matrixSumFuelSloshDynamics[3][3];    /* intermediate variables */
+
     //! Populate variable size matrices and arrays
     matrixA = new double[this->SPCount*this->SPCount];
     matrixE = new double[this->SPCount*this->SPCount];
     matrixF = new double[this->SPCount*3];
-    vectorP = new double[this->SPCount];
-    matrixR = new double[this->SPCount*3];
+    vectorV = new double[this->SPCount];
+    matrixR = new double[3*this->SPCount];
+    matrixG = new double[this->SPCount*this->numFSP];
+    matrixN = new double[this->numFSP*this->numFSP];
+    matrixO = new double[this->numFSP*3];
+    vectorQ = new double[this->numFSP*3];
+    matrixT = new double[this->numFSP*this->numFSP];
+    matrixX = new double[3*this->numFSP];
+    intermediateMatrixFuelSlosh = new double[this->numFSP*3];
+    intermediateMatrixFuelSlosh2 = new double[this->SPCount*3];
+    intermediateVectorFuelSlosh = new double[this->numFSP];
+    intermediateVectorFuelSlosh2 = new double[this->SPCount];
 
     //! Begin method steps
-    
     //! - Set local state variables based on the input state
     i = 0;
     /* translate state vector */
@@ -876,6 +938,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         mSetIdentity(BN, 3, 3);
     }
     if(this->useRotation){
+        //! - Extract state information into respective variables
         sigma_BNLoc[0] = X[i++];
         sigma_BNLoc[1] = X[i++];
         sigma_BNLoc[2] = X[i++];
@@ -897,6 +960,14 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             thetasSP = &X[i + this->RWACount + this->numRWJitter];
             thetaDotsSP = &X[i + this->RWACount + this->numRWJitter + this->SPCount];
             thetaDDotsSP = dX + i + this->RWACount + this->numRWJitter + this->SPCount;
+        }
+        if (this->numFSP > 0) {
+            if (!this->useTranslation) {
+                std::cerr << "WARNING: Cannot have fuel slosh dynamics w/o translation" << std::endl;
+            }
+            rhosFS = &X[i + this->RWACount + this->numRWJitter + this->SPCount*2];
+            rhoDotsFS = &X[i + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP];
+            rhoDDotsFS = dX + i + this->RWACount + this->numRWJitter + this->SPCount*2 + this->numFSP;
         }
         omegaDot_BN_B = dX + 3 + this->useTranslation*6;
         
@@ -922,16 +993,16 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         v3Copy(v_BN_NLoc, dX);
 
         if (this->useGravity){
+
             double g_N[3];
-            double g_B[3];
-            
             computeGravity(t, r_BN_NLoc, BN, g_N);
             
             m33MultV3(BN, g_N, g_B);
             v3Add(g_B, ConservAccelBdy, ConservAccelBdy); // Accumulating the conservative acceleration in the body frame
             v3Add(g_N, dX+3, dX+3);
+        } else {
+            v3SetZero(g_B);
         }
-
         std::vector<ReactionWheelDynamics *>::iterator RWPackIt;
         if (this->useRotation){
             for (RWPackIt = reactWheels.begin(); RWPackIt != reactWheels.end(); RWPackIt++)
@@ -988,165 +1059,394 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
         }
 
-        //! - Copy acceleration center of mass acceleration
-        v3Copy(dX + 3, rDDot_CN_N);
+        //! - Define some necessary tilde matrices
+        v3Tilde(omega_BN_BLoc, omegaTilde_BN_B);
 
-        //! Rotate rDDot_CN_N into the body frame
-        m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
-
-        //! - Compute hinged solar panel dynamics
-        v3SetZero(c_B);
-        v3SetZero(cPrime_B);
+        //! - Copy computed inertia into ISCPntB_B
         m33Copy(this->compI, ISCPntB_B);
-        m33SetZero(IPrimeSCPntB_B);
-        mSC = this->compMass;
+
+        /* This section is situations when the translational motion is coupled with the rotational motion
+         see Allard, Diaz, and Schaub (flex and slosh paper) for details */
         uint32_t spCount = 0;
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
-        for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
-        {
-            for (SPIt = (*SPPackIt)->solarPanelData.begin();
-                 SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
+        uint32_t fspCount = 0;
+        std::vector<FuelTank *>::iterator itFT;
+        std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+        if (this->useTranslation) {
+            //! - Copy acceleration center of mass acceleration
+            v3Copy(dX + 3, rDDot_CN_N);
+
+            //! Rotate rDDot_CN_N into the body frame
+            m33MultV3(BN, rDDot_CN_N, rDDot_CN_B);
+
+            //! - Add in changes to mass properties
+            v3SetZero(c_B);
+            v3SetZero(cPrime_B);
+            m33SetZero(IPrimeSCPntB_B);
+            mSC = this->compMass;
+            //! - Loop through solar panels
+            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
             {
-                //! - Define tilde matrix of r_HB_B
-                v3Tilde(SPIt->r_HB_B, SPIt->rTilde_HB_B);
-
-                //! - Define DCM from hinge to S
-                Mi(thetasSP[spCount], 2, SPIt->SH);
-
-                //! - Define DCM from body to S
-                mMultM(SPIt->SH, 3, 3, SPIt->HB, 3, 3, SPIt->SB);
-
-                //! - Define unit direction vectors
-                v3Copy(SPIt->SB[0], SPIt->sHat1_B);
-                v3Copy(SPIt->SB[1], SPIt->sHat2_B);
-                v3Copy(SPIt->SB[2], SPIt->sHat3_B);
-                //! - Find center of mass of sc with respect to B (is scaled by 1/mSC outside of loop)
-
-                v3Scale(-SPIt->d, SPIt->sHat1_B, intermediateVector);
-                v3Add(SPIt->r_HB_B, intermediateVector, SPIt->r_SB_B);
-                v3Scale(SPIt->massSP, SPIt->r_SB_B, intermediateVector);
-                v3Add(intermediateVector, c_B, c_B);
-                mSC += SPIt->massSP;
-
-                //! - Define tilde matrix of r_SB_B
-                v3Tilde(SPIt->r_SB_B, SPIt->rTilde_SB_B);
-
-                //! - Find body derivative of c_B (is scaled by 1/mSC outside of loop)
-                v3Scale(SPIt->massSP*SPIt->d*thetaDotsSP[spCount], SPIt->sHat3_B, intermediateVector);
-                v3Add(intermediateVector, cPrime_B, cPrime_B);
-
-                //! - Find omega_BN in S frame components
-                m33MultV3(SPIt->SB, omega_BN_BLoc, SPIt->omega_BN_S);
-
-                //! - Find inertia of the spacecraft including solar panels
-                mMultM(SPIt->ISPPntS_S, 3, 3, SPIt->SB, 3, 3, intermediateMatrix);
-                m33tMultM33(SPIt->SB, intermediateMatrix, intermediateMatrix);
-                m33MultM33t(SPIt->rTilde_SB_B, SPIt->rTilde_SB_B, intermediateMatrix2);
-                m33Scale(SPIt->massSP, intermediateMatrix2, intermediateMatrix2);
-                m33Add(intermediateMatrix2, intermediateMatrix, intermediateMatrix);
-                m33Add(ISCPntB_B, intermediateMatrix, ISCPntB_B);
-
-                //! - Find body derivative of ISCPntB_B
-                v3OuterProduct(SPIt->sHat1_B, SPIt->sHat3_B, intermediateMatrix);
-                v3OuterProduct(SPIt->sHat3_B, SPIt->sHat1_B, intermediateMatrix2);
-                m33Add(intermediateMatrix, intermediateMatrix2, intermediateMatrix);
-                m33Scale(thetaDotsSP[spCount]*(SPIt->ISPPntS_S[8] - SPIt->ISPPntS_S[0]), intermediateMatrix, intermediateMatrix);
-                m33Add(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
-                v3Scale(SPIt->d*thetaDotsSP[spCount], SPIt->sHat3_B, SPIt->rPrime_SB_B);
-                v3Tilde(SPIt->rPrime_SB_B, SPIt->rPrimeTilde_SB_B);
-                m33MultM33(SPIt->rTilde_SB_B, SPIt->rPrimeTilde_SB_B, intermediateMatrix);
-                m33Scale(SPIt->massSP, intermediateMatrix, intermediateMatrix);
-                m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
-                m33MultM33(SPIt->rPrimeTilde_SB_B, SPIt->rTilde_SB_B, intermediateMatrix);
-                m33Scale(SPIt->massSP, intermediateMatrix, intermediateMatrix);
-                m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
-                spCount++;
-            }
-        }
-        v3Scale(1/mSC, c_B, c_B);
-        v3Scale(1/mSC, cPrime_B, cPrime_B);
-
-        //! Define some necessary tilde matrices
-        v3Tilde(omega_BN_BLoc, omegaTilde_BN_B);
-        v3Tilde(c_B, cTilde_B);
-
-        //! Define matrices needed for hinged solar panel dynamics
-        uint32_t spCounti = 0;
-        uint32_t spCountj;
-        v3SetZero(vectorSumHingeDynamics);
-        v3SetZero(vectorSum2HingeDynamics);
-        std::vector<SolarPanelConfigData>::iterator SPIti;
-        std::vector<SolarPanels *>::iterator SPPackIti;
-        std::vector<SolarPanelConfigData>::iterator SPItj;
-        std::vector<SolarPanels *>::iterator SPPackItj;
-        for (SPPackIti = solarPanels.begin(); SPPackIti != solarPanels.end(); SPPackIti++)
-        {
-            for (SPIti = (*SPPackIti)->solarPanelData.begin();
-                 SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
-            {
-                spCountj = 0;
-                for (SPPackItj = solarPanels.begin(); SPPackItj != solarPanels.end(); SPPackItj++)
+                for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                     SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                 {
-                    for (SPItj = (*SPPackItj)->solarPanelData.begin();
-                         SPItj != (*SPPackItj)->solarPanelData.end(); SPItj++)
-                    {
-                        if (spCounti != spCountj) {
-                            // - Define off diagonal elements of A
-                            matrixA[spCounti*this->SPCount+spCountj] = - SPIti->massSP*SPIti->d*SPItj->massSP*SPItj->d/mSC*v3Dot(SPIti->sHat3_B, SPItj->sHat3_B);
+                    //! - Define tilde matrix of r_HB_B
+                    v3Tilde(SPIt->r_HB_B, SPIt->rTilde_HB_B);
 
-                            // - Define vector that is needed for P vector
-                            v3Scale(SPItj->massSP*SPItj->d*thetaDotsSP[spCountj]*thetaDotsSP[spCountj], SPItj->sHat1_B, intermediateVector);
-                            v3Add(vectorSumHingeDynamics, intermediateVector, vectorSumHingeDynamics);
+                    //! - Define DCM from hinge to S
+                    Mi(thetasSP[spCount], 2, SPIt->SH);
+
+                    //! - Define DCM from body to S
+                    mMultM(SPIt->SH, 3, 3, SPIt->HB, 3, 3, SPIt->SB);
+
+                    //! - Define unit direction vectors
+                    v3Copy(SPIt->SB[0], SPIt->sHat1_B);
+                    v3Copy(SPIt->SB[1], SPIt->sHat2_B);
+                    v3Copy(SPIt->SB[2], SPIt->sHat3_B);
+                    //! - Find center of mass of sc with respect to B (is scaled by 1/mSC outside of loop)
+
+                    v3Scale(-SPIt->d, SPIt->sHat1_B, intermediateVector);
+                    v3Add(SPIt->r_HB_B, intermediateVector, SPIt->r_SB_B);
+                    v3Scale(SPIt->massSP, SPIt->r_SB_B, intermediateVector);
+                    v3Add(intermediateVector, c_B, c_B);
+                    mSC += SPIt->massSP;
+
+                    //! - Define tilde matrix of r_SB_B
+                    v3Tilde(SPIt->r_SB_B, SPIt->rTilde_SB_B);
+
+                    //! - Find body derivative of c_B (is scaled by 1/mSC outside of loop)
+                    v3Scale(SPIt->massSP*SPIt->d*thetaDotsSP[spCount], SPIt->sHat3_B, intermediateVector);
+                    v3Add(intermediateVector, cPrime_B, cPrime_B);
+
+                    //! - Find omega_BN in S frame components
+                    m33MultV3(SPIt->SB, omega_BN_BLoc, SPIt->omega_BN_S);
+
+                    //! - Find inertia of the spacecraft including solar panels
+                    mMultM(SPIt->ISPPntS_S, 3, 3, SPIt->SB, 3, 3, intermediateMatrix);
+                    m33tMultM33(SPIt->SB, intermediateMatrix, intermediateMatrix);
+                    m33MultM33t(SPIt->rTilde_SB_B, SPIt->rTilde_SB_B, intermediateMatrix2);
+                    m33Scale(SPIt->massSP, intermediateMatrix2, intermediateMatrix2);
+                    m33Add(intermediateMatrix2, intermediateMatrix, intermediateMatrix);
+                    m33Add(ISCPntB_B, intermediateMatrix, ISCPntB_B);
+
+                    //! - Find body derivative of ISCPntB_B
+                    v3OuterProduct(SPIt->sHat1_B, SPIt->sHat3_B, intermediateMatrix);
+                    v3OuterProduct(SPIt->sHat3_B, SPIt->sHat1_B, intermediateMatrix2);
+                    m33Add(intermediateMatrix, intermediateMatrix2, intermediateMatrix);
+                    m33Scale(thetaDotsSP[spCount]*(SPIt->ISPPntS_S[8] - SPIt->ISPPntS_S[0]), intermediateMatrix, intermediateMatrix);
+                    m33Add(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
+                    v3Scale(SPIt->d*thetaDotsSP[spCount], SPIt->sHat3_B, SPIt->rPrime_SB_B);
+                    v3Tilde(SPIt->rPrime_SB_B, SPIt->rPrimeTilde_SB_B);
+                    m33MultM33(SPIt->rTilde_SB_B, SPIt->rPrimeTilde_SB_B, intermediateMatrix);
+                    m33Scale(SPIt->massSP, intermediateMatrix, intermediateMatrix);
+                    m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
+                    m33MultM33(SPIt->rPrimeTilde_SB_B, SPIt->rTilde_SB_B, intermediateMatrix);
+                    m33Scale(SPIt->massSP, intermediateMatrix, intermediateMatrix);
+                    m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
+                    spCount++;
+                }
+            }
+
+            //! - Loop through fuel slosh particles
+            for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+            {
+                FuelTank *TheEff = *itFT;
+                for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                     FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+                {
+                    //! - Add fuel slosh masses into mass of the spacecraft
+                    mSC += FSPIt->massFSP;
+
+                    //! - Define position vector from point B to center of mass of slosh particle
+                    v3Add(FSPIt->r_PT_B, TheEff->fuelTankData.r_TB_B, FSPIt->r_PB_B);
+                    v3Scale(rhosFS[fspCount], FSPIt->pHat_B, intermediateVector);
+                    v3Add(FSPIt->r_PB_B, intermediateVector, FSPIt->r_PcB_B);
+
+                    //! - Define body derivative of r_PcB_B, rPrime_PcB_B
+                    v3Scale(rhoDotsFS[fspCount], FSPIt->pHat_B, FSPIt->rPrime_PcB_B);
+
+                    //! - add to c_B (still to be scaled by 1/mSC outside of loop)
+                    v3Scale(FSPIt->massFSP, FSPIt->r_PcB_B, intermediateVector);
+                    v3Add(c_B, intermediateVector, c_B);
+
+                    //! - add to cPrime_B (still to be scaled by 1/mSC outside of loop)
+                    v3Scale(FSPIt->massFSP, FSPIt->rPrime_PcB_B, intermediateVector);
+                    v3Add(cPrime_B, intermediateVector, cPrime_B);
+
+                    //! - add to inertia of the spacecraft to include the fuel slosh particles
+                    //! - Define tilde matrix of r_PcB_B
+                    v3Tilde(FSPIt->r_PcB_B, FSPIt->rTilde_PcB_B);
+                    m33MultM33t(FSPIt->rTilde_PcB_B, FSPIt->rTilde_PcB_B, intermediateMatrix);
+                    m33Scale(FSPIt->massFSP, intermediateMatrix, intermediateMatrix);
+                    m33Add(ISCPntB_B, intermediateMatrix, ISCPntB_B);
+
+                    //! - add to body derivative of inertia of the spacecraft to include the fuel slosh particles
+                    //! - Define tilde matrix of rPrime_PcB_B
+                    v3Tilde(FSPIt->rPrime_PcB_B, FSPIt->rPrimeTilde_PcB_B);
+                    m33MultM33(FSPIt->rPrimeTilde_PcB_B, FSPIt->rTilde_PcB_B, intermediateMatrix);
+                    m33MultM33(FSPIt->rTilde_PcB_B, FSPIt->rPrimeTilde_PcB_B, intermediateMatrix2);
+                    m33Add(intermediateMatrix, intermediateMatrix2, intermediateMatrix);
+                    m33Scale(FSPIt->massFSP, intermediateMatrix, intermediateMatrix);
+                    m33Subtract(IPrimeSCPntB_B, intermediateMatrix, IPrimeSCPntB_B);
+                    fspCount++;
+                }
+            }
+            //! - Scale c_B and cPrime_B by 1/mSC
+            v3Scale(1/mSC, c_B, c_B);
+            v3Scale(1/mSC, cPrime_B, cPrime_B);
+
+            //! - Define necessary tilde matrix
+            v3Tilde(c_B, cTilde_B);
+
+            //! - Define matrices needed for hinged and fuel slosh dynamics
+            uint32_t spCounti = 0;
+            uint32_t spCountk;
+            uint32_t fspCountj = 0;
+            v3SetZero(vectorSumHingeDynamics);
+            v3SetZero(vectorSum2HingeDynamics);
+            std::vector<SolarPanelConfigData>::iterator SPIti;
+            std::vector<SolarPanels *>::iterator SPPackIti;
+            std::vector<SolarPanelConfigData>::iterator SPItk;
+            std::vector<SolarPanels *>::iterator SPPackItk;
+            std::vector<FuelTank *>::iterator itFTj;
+            std::vector<FuelSloshParticleConfigData>::iterator FSPItj;
+            for (SPPackIti = solarPanels.begin(); SPPackIti != solarPanels.end(); SPPackIti++)
+            {
+                for (SPIti = (*SPPackIti)->solarPanelData.begin();
+                     SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
+                {
+                    fspCountj = 0;
+                    for (itFTj = fuelTanks.begin(); itFTj != fuelTanks.end(); itFTj++)
+                    {
+                        for (FSPItj = (*itFTj)->fuelSloshParticlesData.begin();
+                             FSPItj != (*itFTj)->fuelSloshParticlesData.end(); FSPItj++)
+                        {
+                            //! - Populate G matrix
+                            v3Scale(FSPItj->massFSP, FSPItj->pHat_B, intermediateVector);
+                            v3Scale(SPIti->massSP*SPIti->d/mSC, SPIti->sHat3_B, intermediateVector2);
+                            matrixG[spCounti*this->numFSP + fspCountj] = v3Dot(intermediateVector, intermediateVector2);
+                            fspCountj++;
                         }
-                        spCountj++;
+                    }
+                    spCountk = 0;
+                    for (SPPackItk = solarPanels.begin(); SPPackItk != solarPanels.end(); SPPackItk++)
+                    {
+                        for (SPItk = (*SPPackItk)->solarPanelData.begin();
+                             SPItk != (*SPPackItk)->solarPanelData.end(); SPItk++)
+                        {
+                            if (spCounti != spCountk) {
+                                // - Define off diagonal elements of A
+                                matrixA[spCounti*this->SPCount+spCountk] = - SPIti->massSP*SPIti->d*SPItk->massSP*SPItk->d/mSC*v3Dot(SPIti->sHat3_B, SPItk->sHat3_B);
+
+                                // - Define vector that is needed for v vector
+                                v3Scale(SPItk->massSP*SPItk->d*thetaDotsSP[spCountk]*thetaDotsSP[spCountk], SPItk->sHat1_B, intermediateVector);
+                                v3Add(vectorSumHingeDynamics, intermediateVector, vectorSumHingeDynamics);
+                            }
+                            spCountk++;
+
+                        }
 
                     }
+                    //! - Define diagonal elements of A matrix
+                    matrixA[spCounti*this->SPCount + spCounti] = SPIti->ISPPntS_S[4] + (SPIti->massSP - SPIti->massSP*SPIti->massSP/mSC)*SPIti->d*SPIti->d;
 
+                    //! - Define F matrix
+                    m33Subtract(cTilde_B, SPIti->rTilde_HB_B, intermediateMatrix);
+                    v3tMultM33(SPIti->sHat3_B, intermediateMatrix, intermediateVector);
+                    v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
+                    v3Scale(SPIti->ISPPntS_S[4] + SPIti->massSP*SPIti->d*SPIti->d, SPIti->sHat2_B, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                    v3Scale(-1.0, intermediateVector, &matrixF[spCounti*3]);
+
+                    //! - Define v vector
+                    v3Scale(1.0/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
+                    m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+                    v3Scale(2.0, intermediateVector, intermediateVector);
+                    v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
+                    v3Subtract(c_B, SPIti->r_HB_B, intermediateVector2);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
+                    v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
+                    v3Subtract(intermediateVector, vectorSumHingeDynamics, intermediateVector);
+                    vectorV[spCounti] = - SPIti->k*thetasSP[spCounti] - SPIti->c*thetaDotsSP[spCounti] + (SPIti->ISPPntS_S[8] - SPIti->ISPPntS_S[0] + SPIti->massSP*SPIti->d*SPIti->d)*SPIti->omega_BN_S[2]*SPIti->omega_BN_S[0] - SPIti->massSP*SPIti->d*v3Dot(SPIti->sHat3_B, intermediateVector);
+
+                    //! - Define R matrix
+                    m33Subtract(SPIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
+                    m33MultV3(intermediateMatrix, SPIti->sHat3_B, intermediateVector);
+                    v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
+                    v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, &matrixR[spCounti*3]);
+
+                    //! - Define a vector that will be used for tauRHS
+                    m33MultV3(SPIti->rTilde_SB_B, SPIti->sHat3_B, intermediateVector);
+                    v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
+                    v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                    v3Scale(thetaDotsSP[spCounti], intermediateVector, intermediateVector);
+                    m33Subtract(SPIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
+                    m33MultV3(intermediateMatrix, SPIti->sHat1_B, intermediateVector2);
+                    v3Scale(SPIti->massSP*SPIti->d*thetaDotsSP[spCounti]*thetaDotsSP[spCounti], intermediateVector2, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                    v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
+                    spCounti++;
                 }
-                //! - Define diagonal elements of A matrix
-                matrixA[spCounti*this->SPCount + spCounti] = SPIti->ISPPntS_S[4] + (SPIti->massSP - SPIti->massSP*SPIti->massSP/mSC)*SPIti->d*SPIti->d;
+            }
 
-                //! - Define F matrix
-                m33Subtract(cTilde_B, SPIti->rTilde_HB_B, intermediateMatrix);
-                v3tMultM33(SPIti->sHat3_B, intermediateMatrix, intermediateVector);
-                v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                v3Scale(SPIti->ISPPntS_S[4] + SPIti->massSP*SPIti->d*SPIti->d, SPIti->sHat2_B, intermediateVector2);
-                v3Add(intermediateVector, intermediateVector2, intermediateVector);
-                v3Scale(-1.0, intermediateVector, &matrixF[spCounti*3]);
+            //! - Find inverse of A which is the E matrix
+            if (this->SPCount > 0) {
+                //! - Find E matrix for hinged solar panel dynamics
+                if (this->SPCount == 1) {
+                    matrixE[0] = 1.0/matrixA[0];
+                }
+                else {
+                    mInverse(matrixA, this->SPCount, matrixE);
+                }
+            }
 
-                //! - Define P vector
-                v3Scale(1.0/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
-                m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-                v3Scale(2.0, intermediateVector, intermediateVector);
-                v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
-                v3Subtract(c_B, SPIti->r_HB_B, intermediateVector2);
-                m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
-                m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
-                v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
-                v3Subtract(intermediateVector, vectorSumHingeDynamics, intermediateVector);
-                vectorP[spCounti] = - SPIti->k*thetasSP[spCounti] - SPIti->c*thetaDotsSP[spCounti] + (SPIti->ISPPntS_S[8] - SPIti->ISPPntS_S[0] + SPIti->massSP*SPIti->d*SPIti->d)*SPIti->omega_BN_S[2]*SPIti->omega_BN_S[0] - SPIti->massSP*SPIti->d*v3Dot(SPIti->sHat3_B, intermediateVector);
+            //! - Find more matrices needed for hinged dynamics and fuel slosh
+            fspCountj = 0;
+            uint32_t fspCountl;
+            std::vector<FuelTank *>::iterator itFTl;
+            std::vector<FuelSloshParticleConfigData>::iterator FSPItl;
+            v3SetZero(vectorSum5FuelSloshDynamics);
+            for (itFTj = fuelTanks.begin(); itFTj != fuelTanks.end(); itFTj++)
+            {
+                for (FSPItj = (*itFTj)->fuelSloshParticlesData.begin();
+                     FSPItj != (*itFTj)->fuelSloshParticlesData.end(); FSPItj++)
+                {
+                    fspCountl = 0;
+                    for (itFTl = fuelTanks.begin(); itFTl != fuelTanks.end(); itFTl++)
+                    {
+                        for (FSPItl = (*itFTl)->fuelSloshParticlesData.begin();
+                             FSPItl != (*itFTl)->fuelSloshParticlesData.end(); FSPItl++)
+                        {
+                            v3SetZero(vectorSum3FuelSloshDynamics);
+                            spCounti = 0;
+                            for (SPPackIti = solarPanels.begin(); SPPackIti != solarPanels.end(); SPPackIti++)
+                            {
+                                for (SPIti = (*SPPackIti)->solarPanelData.begin();
+                                     SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
+                                {
+                                    variableSumFuelSloshDynamics = 0;
+                                    spCountk = 0;
+                                    for (SPPackItk = solarPanels.begin(); SPPackItk != solarPanels.end(); SPPackItk++)
+                                    {
+                                        for (SPItk = (*SPPackItk)->solarPanelData.begin();
+                                             SPItk != (*SPPackItk)->solarPanelData.end(); SPItk++)
+                                        {
+                                            //! - Value needed for off diagonal elements of N matrix
+                                            variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->numFSP + fspCountl];
+                                            spCountk++;
+                                        }
+                                    }
+                                    //! - Vector needed for off diagonal elements of N matrix
+                                    v3Scale(SPIti->massSP*SPIti->d*variableSumFuelSloshDynamics, SPIti->sHat3_B, intermediateVector2);
+                                    v3Add(vectorSum3FuelSloshDynamics, intermediateVector2, vectorSum3FuelSloshDynamics);
+                                    spCounti++;
+                                }
+                            }
+                            if (fspCountj != fspCountl){
+                                //! - Populate off diagonal elements of N matrix
+                                v3Scale(FSPItl->massFSP, FSPItl->pHat_B, intermediateVector);
+                                if (this->SPCount > 0) {
+                                    v3Add(vectorSum3FuelSloshDynamics, intermediateVector, intermediateVector);
+                                }
+                                matrixN[fspCountj*this->numFSP + fspCountl] = -FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, intermediateVector);
+                            }
+                            fspCountl++;
+                        }
+                    }
+                    v3SetZero(vectorSum3FuelSloshDynamics);
+                    v3SetZero(vectorSum4FuelSloshDynamics);
+                    m33SetZero(matrixSumFuelSloshDynamics);
+                    spCounti = 0;
+                    for (SPPackIti = solarPanels.begin(); SPPackIti != solarPanels.end(); SPPackIti++)
+                    {
+                        for (SPIti = (*SPPackIti)->solarPanelData.begin();
+                             SPIti != (*SPPackIti)->solarPanelData.end(); SPIti++)
+                        {
+                            variableSumFuelSloshDynamics = 0;
+                            spCountk = 0;
+                            for (SPPackItk = solarPanels.begin(); SPPackItk != solarPanels.end(); SPPackItk++)
+                            {
+                                for (SPItk = (*SPPackItk)->solarPanelData.begin();
+                                     SPItk != (*SPPackItk)->solarPanelData.end(); SPItk++)
+                                {
+                                    //! - Value needed for diagonal elements of N matrix
+                                    variableSumFuelSloshDynamics += matrixE[spCounti*this->SPCount + spCountk]*matrixG[spCountk*this->numFSP + fspCountj];
+                                    spCountk++;
+                                }
+                            }
+                            //! - Vector needed for diagonal elements of N matrix
+                            v3Scale(SPIti->massSP*SPIti->d*variableSumFuelSloshDynamics, SPIti->sHat3_B, intermediateVector2);
+                            v3Add(vectorSum3FuelSloshDynamics, intermediateVector2, vectorSum3FuelSloshDynamics);
 
-                //! - Define R matrix
-                m33Subtract(SPIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
-                m33MultV3(intermediateMatrix, SPIti->sHat3_B, intermediateVector);
-                v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
-                v3Add(intermediateVector, intermediateVector2, &matrixR[spCounti*3]);
+                            //! - Matrix needed for O matrix
+                            vtMultM(&matrixE[spCounti*this->SPCount], matrixF, this->SPCount, 3, intermediateVector2);
+                            v3OuterProduct(SPIti->sHat3_B, intermediateVector2, intermediateMatrix);
+                            m33Scale(SPIti->massSP*SPIti->d/mSC, intermediateMatrix, intermediateMatrix);
+                            m33Add(matrixSumFuelSloshDynamics, intermediateMatrix, matrixSumFuelSloshDynamics);
 
-                //! - Define a vector that will be used for tauRHS
-                m33MultV3(SPIti->rTilde_SB_B, SPIti->sHat3_B, intermediateVector);
-                v3Scale(SPIti->massSP*SPIti->d, intermediateVector, intermediateVector);
-                v3Scale(SPIti->ISPPntS_S[4], SPIti->sHat2_B, intermediateVector2);
-                v3Add(intermediateVector, intermediateVector2, intermediateVector);
-                m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-                v3Scale(thetaDotsSP[spCounti], intermediateVector, intermediateVector);
-                m33Subtract(SPIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
-                m33MultV3(intermediateMatrix, SPIti->sHat1_B, intermediateVector2);
-                v3Scale(SPIti->massSP*SPIti->d*thetaDotsSP[spCounti]*thetaDotsSP[spCounti], intermediateVector2, intermediateVector2);
-                v3Add(intermediateVector, intermediateVector2, intermediateVector);
-                v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
-                spCounti++;
+                            //! - Vector needed for q vector
+                            v3Scale(vDot(&matrixE[spCounti*this->SPCount], this->SPCount, vectorV), SPIti->sHat3_B, intermediateVector);
+                            v3Scale(thetaDotsSP[spCounti]*thetaDotsSP[spCounti], SPIti->sHat1_B, intermediateVector2);
+                            v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                            v3Scale(SPIti->massSP*SPIti->d/mSC, intermediateVector, intermediateVector);
+                            v3Add(vectorSum4FuelSloshDynamics, intermediateVector, vectorSum4FuelSloshDynamics);
+
+                            spCounti++;
+                        }
+                    }
+                    //! - Populate diagonal elements of N matrix
+                    matrixN[fspCountj*this->numFSP + fspCountj] = FSPItj->massFSP - FSPItj->massFSP*FSPItj->massFSP/mSC - FSPItj->massFSP/mSC*v3Dot(FSPItj->pHat_B, vectorSum3FuelSloshDynamics);
+
+                    //! - Populate O matrix
+                    m33Subtract(cTilde_B, FSPItj->rTilde_PcB_B, intermediateMatrix);
+                    if (this->SPCount > 0) {
+                        m33Subtract(intermediateMatrix, matrixSumFuelSloshDynamics, intermediateMatrix);
+                    }
+                    v3tMultM33(FSPItj->pHat_B, intermediateMatrix, intermediateVector);
+                    v3Scale(-FSPItj->massFSP, intermediateVector, &matrixO[fspCountj*3]);
+
+                    //! - Populate q vector
+                    v3Subtract(FSPItj->r_PcB_B, c_B, intermediateVector);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                    v3Add(rDDot_CN_B, intermediateVector, intermediateVector);
+                    v3Subtract(FSPItj->rPrime_PcB_B, cPrime_B, intermediateVector2);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
+                    v3Scale(2, intermediateVector2, intermediateVector2);
+                    v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                    v3Subtract(intermediateVector, g_B, intermediateVector);
+                    if (this->SPCount > 0) {
+                        v3Subtract(intermediateVector, vectorSum4FuelSloshDynamics, intermediateVector);
+                    }
+                    vectorQ[fspCountj] = -FSPItj->massFSP*v3Dot(FSPItj->pHat_B, intermediateVector) - FSPItj->k*rhosFS[fspCountj] - FSPItj->c*rhoDotsFS[fspCountj];
+
+                    //! - Populate X matrix
+                    m33Subtract(FSPItj->rTilde_PcB_B, cTilde_B, intermediateMatrix);
+                    m33MultV3(intermediateMatrix, FSPItj->pHat_B, intermediateVector);
+                    v3Scale(FSPItj->massFSP, intermediateVector, &matrixX[fspCountj*3]);
+
+                    //! - Find vector needed for tauRHS
+                    m33MultV3(FSPItj->rTilde_PcB_B, FSPItj->rPrime_PcB_B, intermediateVector);
+                    m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                    v3Scale(FSPItj->massFSP, intermediateVector, intermediateVector);
+                    v3Add(vectorSum5FuelSloshDynamics, intermediateVector, vectorSum5FuelSloshDynamics);
+                    fspCountj++;
+                }
+            }
+            //! - Find the inverse of the N matrix which is the T matrix
+            if (this->numFSP > 0) {
+                //! - Find T matrix for hinged solar panel dynamics
+                if (this->numFSP == 1) {
+                    matrixT[0] = 1.0/matrixN[0];
+                }
+                else {
+                    mInverse(matrixN, this->numFSP, matrixT);
+                }
             }
         }
 
@@ -1159,53 +1459,85 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
         v3Subtract(extSumTorque_B, intermediateVector, tauRHS);
 
-        //! - Modify equation with hinged solar panel dynamics
-        v3SetZero(vectorSum3HingeDynamics);
-        if (this->SPCount > 0) {
-            //! - Find E matrix for hinged solar panel dynamics
-            if (this->SPCount == 1) {
-                matrixE[0] = 1.0/matrixA[0];
-            }
-            else {
-                mInverse(matrixA, this->SPCount, matrixE);
-            }
+        if (this->useTranslation) {
+            if (this-SPCount > 0 || this->numFSP > 0) {
+                //! - Modify ILHS
+                m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
+                m33Scale(mSC, intermediateMatrix, intermediateMatrix);
+                m33Add(ILHS, intermediateMatrix, ILHS);
 
-            //! - Modify tauRHS and ILHS to include hinged dynamics
-            m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-            v3Scale(2.0, intermediateVector, intermediateVector);
-            v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
-            m33MultV3(omegaTilde_BN_B, c_B, intermediateVector2);
-            m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
-            v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
-            m33MultV3(cTilde_B, intermediateVector, intermediateVector);
-            v3Scale(mSC, intermediateVector, intermediateVector);
-            v3Subtract(tauRHS, intermediateVector, tauRHS);
-            m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
-            v3Subtract(tauRHS, intermediateVector, tauRHS);
-            v3Subtract(tauRHS, vectorSum2HingeDynamics, tauRHS);
-            m33MultM33(cTilde_B, cTilde_B, intermediateMatrix);
-            m33Scale(mSC, intermediateMatrix, intermediateMatrix);
-            m33Add(ILHS, intermediateMatrix, ILHS);
-            spCount = 0;
-            for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
-            {
-                for (SPIt = (*SPPackIt)->solarPanelData.begin();
-                     SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
+                //! - Modify tauRHS
+                m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+                v3Scale(2.0, intermediateVector, intermediateVector);
+                v3Subtract(rDDot_CN_B, intermediateVector, intermediateVector);
+                m33MultV3(omegaTilde_BN_B, c_B, intermediateVector2);
+                m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
+                v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
+                m33MultV3(cTilde_B, intermediateVector, intermediateVector);
+                v3Scale(mSC, intermediateVector, intermediateVector);
+                v3Subtract(tauRHS, intermediateVector, tauRHS);
+                m33MultV3(IPrimeSCPntB_B, omega_BN_BLoc, intermediateVector);
+                v3Subtract(tauRHS, intermediateVector, tauRHS);
+            }
+            if (this->SPCount > 0) {
+                //! - Modify tauRHS with vector calculated in solar panel loop
+                v3Subtract(tauRHS, vectorSum2HingeDynamics, tauRHS);
+                spCount = 0;
+                for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
                 {
-                    vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
-                    v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
-                    m33Add(ILHS, intermediateMatrix, ILHS);
+                    for (SPIt = (*SPPackIt)->solarPanelData.begin();
+                         SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
+                    {
+                        //! - Modify ILHS with hinged dynamics
+                        vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
+                        v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
+                        m33Add(ILHS, intermediateMatrix, ILHS);
 
-                    //! - Define vector needed for modification of tauRHS
-                    v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP), &matrixR[spCount*3], intermediateVector);
-                    v3Add(vectorSum3HingeDynamics, intermediateVector, vectorSum3HingeDynamics);
-                    spCount++;
+                        //! - Modify tauRHS with hinged dynamics
+                        v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorV), &matrixR[spCount*3], intermediateVector);
+                        v3Subtract(tauRHS, intermediateVector, tauRHS);
+
+                        if (this->numFSP) {
+                            //! - Modify ILHS with cross coupling of hinged and fuel slosh dynamics
+                            mMultM(matrixT, this->numFSP, this->numFSP, matrixO, this->numFSP, 3, intermediateMatrixFuelSlosh);
+                            mMultM(matrixG, this->SPCount, this->numFSP, intermediateMatrixFuelSlosh, this->numFSP, 3, intermediateMatrixFuelSlosh2);
+                            vtMultM(&matrixE[spCount*this->SPCount], intermediateMatrixFuelSlosh2, this->SPCount, 3, intermediateVector);
+                            v3OuterProduct(&matrixR[spCount*3], intermediateVector, intermediateMatrix);
+                            m33Add(ILHS, intermediateMatrix, ILHS);
+
+                            //! - Modify tauRHS with cross coupling of hinged and fuel slosh dynamics
+                            mMultV(matrixT, this->numFSP, this->numFSP, vectorQ, intermediateVectorFuelSlosh);
+                            mMultV(matrixG, this->SPCount, this->numFSP, intermediateVectorFuelSlosh, intermediateVectorFuelSlosh2);
+                            v3Scale(vDot(&matrixE[spCount*this->SPCount], this->SPCount, intermediateVectorFuelSlosh2), &matrixR[spCount*3], intermediateVector);
+                            v3Subtract(tauRHS, intermediateVector, tauRHS);
+                        }
+                        spCount++;
+                    }
                 }
             }
 
+            if (this->numFSP > 0) {
+                //! - Modify tauRHS with vector calculated in fuel slosh loop
+                v3Subtract(tauRHS, vectorSum5FuelSloshDynamics, tauRHS);
+                fspCount = 0;
+                for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+                {
+                    for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                         FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+                    {
+                        //! - Modify ILHS with fuel slosh motion
+                        vtMultM(&matrixT[fspCount*this->numFSP], matrixO, this->numFSP, 3, intermediateVector);
+                        v3OuterProduct(&matrixX[fspCount*3], intermediateVector, intermediateMatrix);
+                        m33Add(ILHS, intermediateMatrix, ILHS);
+
+                        //! - Modify tauRHS with fuel slosh motion
+                        v3Scale(vDot(&matrixT[fspCount*this->numFSP], this->numFSP, vectorQ), &matrixX[fspCount*3], intermediateVector);
+                        v3Subtract(tauRHS, intermediateVector, tauRHS);
+                        fspCount++;
+                    }
+                }
+            }
         }
-        //! Modify tauRHS with Hinged dynamics 
-        v3Subtract(tauRHS, vectorSum3HingeDynamics, tauRHS);
 
         //! - Modify RHS and LHS of the equation with RWs
         uint32_t rwCount = 0;
@@ -1224,7 +1556,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3OuterProduct(rwIt->gsHat_B, rwIt->gsHat_B, intermediateMatrix);
                 m33Scale(rwIt->Js, intermediateMatrix, intermediateMatrix);
                 m33Subtract(ILHS, intermediateMatrix, ILHS);
-                /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way */
+                /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way see Allard, Schaub (flex paper) for details */
                 double hs =  rwIt->Js * Omegas[rwCount];
 
                 //! - calculate RW gyro torque - omegaTilde*Gs*hs
@@ -1246,23 +1578,51 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         m33Inverse(ILHS, intermediateMatrix);
         m33MultV3(intermediateMatrix, tauRHS, omegaDot_BN_B);            /* d(w)/dt = [I_RW]^-1 . (RHS) */
 
-        //! - Back solve for solar panel motion
-        v3SetZero(vectorSumHingeDynamics);
-        v3SetZero(vectorSum2HingeDynamics);
-        mMultV(matrixF, this->SPCount, 3, omegaDot_BN_B, intermediateVector);
-        if (this->SPCount > 0) {
+        if (this->useTranslation) {
+            //! - Back solve for the fuel slosh motion
+            v3SetZero(vectorSum3FuelSloshDynamics);
+            fspCount = 0;
+            for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+            {
+                for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                     FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+                {
+                    //! - Set trivial derivative rhoDot = rhoDot
+                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + fspCount] = rhoDotsFS[fspCount];
+
+                    //! - Solve for rhoDDot
+                    vtMultM(&matrixT[fspCount*this->numFSP], matrixO, this->numFSP, 3, intermediateVector);
+                    rhoDDotsFS[fspCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixT[fspCount*this->numFSP], this->numFSP, vectorQ);
+
+                    //! - Solve for vector needed for translation
+                    v3Scale(FSPIt->massFSP*rhoDDotsFS[fspCount]/mSC, FSPIt->pHat_B, intermediateVector);
+                    v3Add(vectorSum3FuelSloshDynamics, intermediateVector, vectorSum3FuelSloshDynamics);
+
+                    fspCount++;
+                }
+            }
+
+            //! - Back solve for solar panel motion
+            v3SetZero(vectorSumHingeDynamics);
+            v3SetZero(vectorSum2HingeDynamics);
             spCount = 0;
             for (SPPackIt = solarPanels.begin(); SPPackIt != solarPanels.end(); SPPackIt++)
             {
                 for (SPIt = (*SPPackIt)->solarPanelData.begin();
                      SPIt != (*SPPackIt)->solarPanelData.end(); SPIt++)
                 {
-                    //! Set trivial derivative thetaDot = thetaDot
+                    //! - Set trivial derivative thetaDot = thetaDot
                     dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount] = thetaDotsSP[spCount];
 
-                    //! Solve for thetaDDot
+                    //! - Solve for thetaDDot
                     vtMultM(&matrixE[spCount*this->SPCount], matrixF, this->SPCount, 3, intermediateVector);
-                    dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->SPCount + spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorP);
+                    thetaDDotsSP[spCount] = v3Dot(intermediateVector, omegaDot_BN_B) + vDot(&matrixE[spCount*this->SPCount], this->SPCount, vectorV);
+
+                    //! - Add in fuel slosh motion into thetaDDot
+                    if (this->numFSP > 0) {
+                        mMultV(matrixG, this->SPCount, this->numFSP, rhoDDotsFS, intermediateVectorFuelSlosh2);
+                        thetaDDotsSP[spCount] += vDot(&matrixE[spCount*this->SPCount], this->SPCount, intermediateVectorFuelSlosh2);
+                    }
 
                     //! - Solve for two vectors needed for translation
                     v3Scale(SPIt->massSP*SPIt->d*thetaDDotsSP[spCount]/mSC, SPIt->sHat3_B, intermediateVector);
@@ -1271,6 +1631,26 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     v3Add(intermediateVector, vectorSum2HingeDynamics, vectorSum2HingeDynamics);
                     spCount++;
                 }
+            }
+
+            //! - Back solve to find translational acceleration
+            if (this->SPCount > 0 | this->numFSP > 0) {
+                m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
+                v3Scale(2.0, intermediateVector, intermediateVector);
+                v3Subtract(rDDot_CN_B, intermediateVector, rDDot_BN_B);
+                m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
+                m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
+                v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+                m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
+                v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
+                if (this-SPCount > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
+                    v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
+                }
+                if (this->numFSP > 0) {
+                    v3Subtract(rDDot_BN_B, vectorSum3FuelSloshDynamics, rDDot_BN_B);
+                }
+                m33tMultV3(BN, rDDot_BN_B, dX + 3);
             }
         }
 
@@ -1292,26 +1672,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     dX[this->useTranslation*6 + this->useRotation*6 + this->RWACount + rwJitterCount] = Omegas[rwCount];
                     rwJitterCount++;
                 }
-
                 rwCount++;
             }
         }
-
-        //! - Back solve to find translational acceleration
-        if (this->SPCount > 0) {
-            m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
-            v3Scale(2.0, intermediateVector, intermediateVector);
-            v3Subtract(rDDot_CN_B, intermediateVector, rDDot_BN_B);
-            m33MultV3(omegaTilde_BN_B, c_B, intermediateVector);
-            m33MultV3(omegaTilde_BN_B, intermediateVector, intermediateVector);
-            v3Subtract(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-            v3Subtract(rDDot_BN_B, vectorSumHingeDynamics, rDDot_BN_B);
-            v3Subtract(rDDot_BN_B, vectorSum2HingeDynamics, rDDot_BN_B);
-            m33MultV3(cTilde_B, omegaDot_BN_B, intermediateVector);
-            v3Add(rDDot_BN_B, intermediateVector, rDDot_BN_B);
-            m33tMultV3(BN, rDDot_BN_B, dX + 3);
-        }
-
     }
     
     // Compute the total non-conservative acceleration of point B relative to N.
@@ -1322,12 +1685,23 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         m33MultV3(BN, dX+3, totalAccel_B);
         v3Subtract(totalAccel_B, ConservAccelBdy, NonConservAccelBdy);
     }
-    
+
+    //! - delete variable size matrices
     delete [] matrixA;
     delete [] matrixE;
     delete [] matrixF;
-    delete [] vectorP;
+    delete [] vectorV;
     delete [] matrixR;
+    delete [] matrixG;
+    delete [] matrixN;
+    delete [] matrixO;
+    delete [] vectorQ;
+    delete [] matrixT;
+    delete [] matrixX;
+    delete [] intermediateMatrixFuelSlosh2;
+    delete [] intermediateMatrixFuelSlosh;
+    delete [] intermediateVectorFuelSlosh;
+    delete [] intermediateVectorFuelSlosh2;
 }
 
 /*! This method is used to integrate the state forward to the time specified.
@@ -1349,14 +1723,31 @@ void SixDofEOM::integrateState(double CurrentTime)
     double sMag;
     uint32_t CentralBodyCount = 0;
 
-    double BN[3][3];                          /* DCM from inertial to body */
-    double intermediateVector[3];             /* intermediate vector needed for calculation */
-    double Omega;                             /* current wheel speeds of RWs */
-    double omega_s;                           /* body rate about the g_s RW axis */
-    double totRwsKinEnergy;                   /* All RWs kinetic energy summed together */
-    double totRwsAngMomentum_B[3];            /* All RWs angular momentum */
-    double prevTotScRotKinEnergy;             /* The last kinetic energy calculation from time step before */
-    double *attStates;                        /* pointer to the attitude state set in the overall state matrix */
+    double BN[3][3];                        /* DCM from inertial to body */
+    double intermediateVector[3];           /* intermediate vector needed for calculation */
+    double Omega;                           /* current wheel speeds of RWs */
+    double omega_s;                         /* body rate about the g_s RW axis */
+    double totRwsKinEnergy;                 /* All RWs kinetic energy summed together */
+    double totRwsAngMomentum_B[3];          /* All RWs angular momentum */
+    double prevTotScRotKinEnergy;           /* The last kinetic energy calculation from time step before */
+    double *attStates;                      /* pointer to the attitude state set in the overall state matrix */
+    double rDot_BN_B[3];                    /* inertial derivative of position vector from N to B in the B frame */
+    double totFuelSloshEnergy;              /* All slosh particle's translational, rotational and potential energy */
+    double totFuelSloshAngMomentum_B[3];    /* All slosh particle's total angular momentum in the body frame */
+    double SH[3][3];                        /* DCM from hinge frame to solar panel frame for individual solar panels */
+    double SB[3][3];                        /* DCM from body frame to solar panel frame for individual solar panels */
+    double sHat1_B[3];                      /* Unit vector for first axis of S frame in the body frame */
+    double sHat2_B[3];                      /* Unit vector for second axis of S frame in the body frame */
+    double omega_BN_S[3];                   /* angular velocity of B w/ respect to N in the S frame */
+    double omega_SN_S[3];                   /* angular velocity of S w/ respect to N in the S frame */
+    double omega_SN_B[3];                   /* angular velocity of S w/ respect to N in the body frame */
+    double r_ScH_B[3];                      /* position vector from H to Sc in the body frame */
+    double rDot_ScN_B[3];                   /* inertial time derivative of position vector from N to Sc in B frame */
+    double totSolarPanelEnergy;             /* All solar panels translational, rotational and potential energy */
+    double totSolarPanelAngMomentum_B[3];   /* All solar panels angular momentum in the body frame */
+    double rDot_PcB_B[3];                   /* Inertial derivative of position vector from B to Pc in the body frame */
+    double intermediateVector2[3];          /* intermediate vector */
+    double rBN_B[3];                        /* position vector from N to B in the body frame */
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
@@ -1496,6 +1887,13 @@ void SixDofEOM::integrateState(double CurrentTime)
             }
         }
 
+        //! - Define parameters needed for energy and momentum calculations
+        MRP2C(&attStates[0], BN);
+        m33MultV3(BN, &this->XState[3], rDot_BN_B);
+        m33MultV3(BN, &this->XState[0], rBN_B);
+
+        totSolarPanelEnergy = 0;
+        v3SetZero(totSolarPanelAngMomentum_B);
         std::vector<SolarPanels *>::iterator SPPackIt;
         std::vector<SolarPanelConfigData>::iterator SPIt;
         uint32_t spCount = 0;
@@ -1506,10 +1904,84 @@ void SixDofEOM::integrateState(double CurrentTime)
             {
                 SPIt->theta = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + spCount];
                 SPIt->thetaDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + this->SPCount + spCount];
+
+                //! - Calculate energy for solar panels
+                //! - Define DCM from hinge to S
+                Mi(SPIt->theta, 2, SH);
+                //! - Define DCM from body to S
+                mMultM(SH, 3, 3, SPIt->HB, 3, 3, SB);
+                //! - Define unit direction vectors
+                v3Copy(SB[0], sHat1_B);
+                v3Copy(SB[1], sHat2_B);
+                //! - map omega_BN_B to the S frame
+                m33MultV3(SB, &attStates[3], omega_BN_S);
+                v3Copy(omega_BN_S, omega_SN_S);
+                //! - Find omega_SN_S
+                omega_SN_S[1] += SPIt->thetaDot;
+                //! - Find rotational energy of solar panels
+                mMultV(SPIt->ISPPntS_S, 3, 3, omega_SN_S, intermediateVector);
+                totSolarPanelEnergy += 1.0/2.0*v3Dot(omega_SN_S, intermediateVector);
+                //! - Find translational energy of solar panels
+                //! - map omega_SN_S to the body frame
+                m33tMultV3(SB, omega_SN_S, omega_SN_B);
+                v3Scale(-SPIt->d, sHat1_B, r_ScH_B);
+                v3Cross(omega_SN_B, r_ScH_B, intermediateVector);
+                v3Cross(&attStates[3], SPIt->r_HB_B, intermediateVector2);
+                v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                v3Add(rDot_BN_B, intermediateVector, rDot_ScN_B);
+                totSolarPanelEnergy += 1.0/2.0*SPIt->massSP*v3Dot(rDot_ScN_B, rDot_ScN_B);
+                //! - Potential energy of solar panels
+                totSolarPanelEnergy += 1.0/2.0*SPIt->k*SPIt->theta*SPIt->theta;
+
+                //! - Find angular momentum of solar panels
+                mMultV(SPIt->ISPPntS_S, 3, 3, omega_SN_S, intermediateVector);
+                m33tMultV3(SB, intermediateVector, intermediateVector);
+                v3Add(totSolarPanelAngMomentum_B, intermediateVector, totSolarPanelAngMomentum_B);
+                //! - Add in translational angular momentum of solar panels
+                v3Add(r_ScH_B, SPIt->r_HB_B, intermediateVector);
+                v3Add(rBN_B, intermediateVector, intermediateVector);
+                v3Cross(intermediateVector, rDot_ScN_B, intermediateVector);
+                v3Scale(SPIt->massSP, intermediateVector, intermediateVector);
+                v3Add(totSolarPanelAngMomentum_B, intermediateVector, totSolarPanelAngMomentum_B);
                 spCount++;
             }
         }
 
+        totFuelSloshEnergy = 0;
+        v3SetZero(totFuelSloshAngMomentum_B);
+        uint32_t fspCount = 0;
+        std::vector<FuelTank *>::iterator itFT;
+        std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
+        for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
+        {
+            for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
+                 FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
+            {
+                FSPIt->rho = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + fspCount];
+                FSPIt->rhoDot = this->XState[this->useTranslation*6 + this->useRotation*6 + this->RWACount + this->numRWJitter + 2*this->SPCount + this->numFSP + fspCount];
+
+                //! - Find fuel slosh kinetic energy
+                v3Cross(&attStates[3], FSPIt->r_PB_B, intermediateVector);
+                v3Add(rDot_BN_B, intermediateVector, rDot_PcB_B);
+                v3Scale(FSPIt->rhoDot, FSPIt->pHat_B, intermediateVector);
+                v3Add(rDot_PcB_B, intermediateVector, rDot_PcB_B);
+                v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector);
+                v3Cross(&attStates[3], intermediateVector, intermediateVector);
+                v3Add(rDot_PcB_B, intermediateVector, rDot_PcB_B);
+                totFuelSloshEnergy+= 1.0/2.0*FSPIt->massFSP*v3Dot(rDot_PcB_B, rDot_PcB_B);
+                //! - Add in potential energy of the springs
+                totFuelSloshEnergy+= 1.0/2.0*FSPIt->k*FSPIt->rho*FSPIt->rho;
+
+                //! - Find angular momentum of fuel slosh
+                v3Add(rBN_B, FSPIt->r_PB_B, intermediateVector);
+                v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector2);
+                v3Add(intermediateVector, intermediateVector2, intermediateVector);
+                v3Cross(intermediateVector, rDot_PcB_B, intermediateVector);
+                v3Scale(FSPIt->massFSP, intermediateVector, intermediateVector);
+                v3Add(totFuelSloshAngMomentum_B, intermediateVector, totFuelSloshAngMomentum_B);
+                fspCount++;
+            }
+        }
 
         //! - Grab previous energy value for rate of change of energy
         prevTotScRotKinEnergy = this->totScRotKinEnergy;
@@ -1522,10 +1994,22 @@ void SixDofEOM::integrateState(double CurrentTime)
 
         //! - Add the reaction wheel relative kinetic energy and angular momentum
         this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
+        this->totScRotKinEnergy += totFuelSloshEnergy;
+        this->totScRotKinEnergy += totSolarPanelEnergy;
+
+        //! - Add in translational kinetic energy of the hub
+        this->totScRotKinEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
+
+        v3Add(totFuelSloshAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
+        v3Add(totSolarPanelAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
         v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
 
+        //! - Add in translational angular momentum
+        v3Cross(rBN_B, rDot_BN_B, intermediateVector);
+        v3Scale(this->compMass, intermediateVector, intermediateVector);
+        v3Add(this->totScAngMomentum_B, intermediateVector, this->totScAngMomentum_B);
+
         //! - Find angular momentum vector in inertial frame
-        MRP2C(&attStates[0], BN);
         m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);
 
         //! - Find magnitude of spacecraft angular momentum

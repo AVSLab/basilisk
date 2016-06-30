@@ -14,34 +14,21 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module six_dof_eom
-#pragma SWIG nowarn=362
-%{
-   #include "six_dof_eom.h"
-   #include "eulerIntegrator.h"
-%}
+#include "dynamics/FuelTank/fuel_tank.h"
+#include "architecture/messaging/system_messaging.h"
+#include "utilities/linearAlgebra.h"
+#include <cstring>
+#include <iostream>
+#include <cmath>
 
-%include "swig_common_model.i"
-
-// Instantiate templates used by example
-namespace std {
-   %template(GravityBodyDataVector) vector<GravityBodyData>;
-   %template(SolarPanelCollection) std::vector<SolarPanels *>;
-   %template(FuelTankCollection) std::vector<FuelTank *>;
+/*! This is the constructor.  It sets some default initializers that can be
+ overriden by the user.*/
+FuelTank::FuelTank()
+{
 }
 
-
-%include "../utilities/coeffLoader.h"
-%include "../utilities/sphericalHarmonics.h"
-%include "sys_model.h"
-%include "dyn_effector.h"
-%include "dynObject.h"
-%include "integrator.h"
-%include "rk4Integrator.h"
-%include "eulerIntegrator.h"
-%include "six_dof_eom.h"
-
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! The destructor.  Nothing of note is performed here*/
+FuelTank::~FuelTank()
+{
+    return;
+}
