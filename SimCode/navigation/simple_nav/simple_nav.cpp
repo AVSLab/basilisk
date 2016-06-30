@@ -36,8 +36,8 @@ SimpleNav::SimpleNav()
     this->AMatrix.clear();
     this->PMatrix.clear();
     this->prevTime = 0;
-    this->isOutputtingMeasured = true;
-    memset(&outState, 0x0, sizeof(NavStateOut));
+    memset(&estimatedState, 0x0, sizeof(NavStateOut));
+    memset(&trueState, 0x0, sizeof(NavStateOut));
     return;
 }
 
@@ -152,17 +152,21 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
     //! Begin method steps
     SystemMessaging::GetInstance()->
     WriteMessage(outputDataID, Clock, sizeof(NavStateOut),
-                 reinterpret_cast<uint8_t*> (&outState), moduleID);
+                 reinterpret_cast<uint8_t*> (&estimatedState), moduleID);
 }
 
 void SimpleNav::applyErrors()
 {
     //! - Add errors to the simple cases (everything except sun-pointing)
-    v3Add(outState.r_BN_N, &(navErrors.data()[0]), outState.r_BN_N);
-    v3Add(outState.v_BN_N, &(navErrors.data()[3]), outState.v_BN_N);
-    addMRP(outState.sigma_BN, &(navErrors.data()[6]), outState.sigma_BN);
-    v3Add(outState.omega_BN_B, &(navErrors.data()[9]), outState.omega_BN_B);
-    v3Add(outState.vehAccumDV, &(navErrors.data()[15]), outState.vehAccumDV);
+    v3Add(trueState.r_BN_N, &(navErrors.data()[0]), estimatedState.r_BN_N);
+    v3Add(trueState.v_BN_N, &(navErrors.data()[3]), estimatedState.v_BN_N);
+    addMRP(trueState.sigma_BN, &(navErrors.data()[6]), estimatedState.sigma_BN);
+    v3Add(trueState.omega_BN_B, &(navErrors.data()[9]), estimatedState.omega_BN_B);
+    v3Add(trueState.vehAccumDV, &(navErrors.data()[15]), estimatedState.vehAccumDV);
+    //! - Add errors to  sun-pointing
+    double T_bdyT2bdyO[3][3];
+    MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
+    m33MultV3(T_bdyT2bdyO, trueState.vehSunPntBdy, estimatedState.vehSunPntBdy);
 }
 
 /*! This method uses the input messages as well as the calculated model errors to 
@@ -170,27 +174,21 @@ void SimpleNav::applyErrors()
     @return void
     @param Clock The clock time associated with the model's update call
 */
-void SimpleNav::computeOutput(uint64_t Clock)
+void SimpleNav::computeTrueOutput(uint64_t Clock)
 {
-    //! Begin method steps
+    //! - Set output state to truth data
+    v3Copy(inertialState.r_N, trueState.r_BN_N);
+    v3Copy(inertialState.v_N, trueState.v_BN_N);
+    v3Copy(inertialState.sigma, trueState.sigma_BN);
+    v3Copy(inertialState.omega, trueState.omega_BN_B);
+    v3Copy(inertialState.TotalAccumDVBdy, trueState.vehAccumDV);
+    //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     double sc2SunInrtl[3];
     double T_inrtl2bdy[3][3];
-    double T_bdyT2bdyO[3][3];
-    
-    //! - Set output state to truth data
-    v3Copy(inertialState.r_N, outState.r_BN_N);
-    v3Copy(inertialState.v_N, outState.v_BN_N);
-    v3Copy(inertialState.sigma, outState.sigma_BN);
-    v3Copy(inertialState.omega, outState.omega_BN_B);
-    v3Copy(inertialState.TotalAccumDVBdy, outState.vehAccumDV);
-    
-    //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     v3Subtract(sunState.PositionVector, inertialState.r_N, sc2SunInrtl);
     v3Normalize(sc2SunInrtl, sc2SunInrtl);
     MRP2C(inertialState.sigma, T_inrtl2bdy);
-    m33MultV3(T_inrtl2bdy, sc2SunInrtl, outState.vehSunPntBdy);
-    MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
-    m33MultV3(T_bdyT2bdyO, outState.vehSunPntBdy, outState.vehSunPntBdy);
+    m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueState.vehSunPntBdy);
 }
 
 /*! This method sets the propagation matrix and requests new random errors from
@@ -228,12 +226,9 @@ void SimpleNav::computeErrors(uint64_t CurrentSimNanos)
 void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
+    computeTrueOutput(CurrentSimNanos);
     computeErrors(CurrentSimNanos);
-    computeOutput(CurrentSimNanos);
-    if (this->isOutputtingMeasured)
-    {
-        applyErrors();
-    }
+    applyErrors();
     writeOutputMessages(CurrentSimNanos);
     this->prevTime = CurrentSimNanos;
 }

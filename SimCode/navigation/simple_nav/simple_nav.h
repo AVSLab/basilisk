@@ -41,7 +41,7 @@ public:
     void SelfInit();
     void CrossInit(); 
     void UpdateState(uint64_t CurrentSimNanos);
-    void computeOutput(uint64_t Clock);
+    void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
     void readInputMessages();
@@ -57,10 +57,10 @@ public:
     std::string inputSunName;          //!< -- Message name for the sun state
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
-    NavStateOut outState;              //!< -- navigation state provided by this model
-    OutputStateData inertialState;     //!< -- input inertial state
+    NavStateOut trueState;             //!< -- navigation state without errors
+    NavStateOut estimatedState;        //!< -- navigation state including errors
+    OutputStateData inertialState;     //!< -- input inertial state from Star Tracker
     SpicePlanetState sunState;         //!< -- input Sun state
-    bool isOutputtingMeasured;         //!< -- Flag indicating whether the output information is the truth or is corrupted with errors
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputDataID;              //!< -- Message ID associated with nav state
