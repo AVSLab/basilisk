@@ -153,6 +153,6 @@ void SimModuleTemplate::computeDummyData(double *s_B)
 {
     /* Magnitude of position vector */
     double sunDist = v3Norm(s_B);
-    
-    
+    sunDist += 0.0;
+
 }
