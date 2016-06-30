@@ -81,6 +81,7 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
+    moduleConfig.inputRWConfigData = "rwa_config_data"
 
     moduleConfig.K1 = 0.15
     moduleConfig.K3 = 1.0
@@ -89,17 +90,6 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5 * macros.D2R
     moduleConfig.integralLimit = 2. / moduleConfig.Ki * 0.1
-    SimulationBaseClass.SetCArray([.1, .1, .1, .1],  # set RW spin inertia Js values
-                                  'double',
-                                  moduleConfig.JsList)
-    SimulationBaseClass.SetCArray([
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1,
-        0.5773502691896258, 0.5773502691896258, 0.5773502691896258
-    ],  # set RW spin axes unit vector g_s
-        'double',
-        moduleConfig.GsMatrix)
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -131,7 +121,6 @@ def mrp_steering_tracking(show_plots):
                                           inputMessageSize,
                                           0,
                                           guidCmdData)
-
 
     # wheelSpeeds Message
     inputMessageSize = 36 * 8  # 36 doubles
@@ -167,6 +156,33 @@ def mrp_steering_tracking(show_plots):
                                           0,
                                           vehicleConfigOut)
 
+    # wheelConfigData Message
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWConfigData,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    i = 0
+    rwClass = vehicleConfigData.RWConstellation()
+    rwPointer = vehicleConfigData.RWConfigurationElement()
+
+    localGsMatrix = [1, 0, 0,
+                    0, 1, 0,
+                    0, 0, 1,
+                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
+    while (i < 4):
+        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
+                                       localGsMatrix[i*3+1],
+                                       localGsMatrix[i*3+2]],
+                                      'double',
+                                      rwPointer.Gs_S)
+        rwPointer.Js = 0.1
+        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+        i += 1
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigData,
+                                          inputMessageSize,
+                                          0,
+                                          rwClass)
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
