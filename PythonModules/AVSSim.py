@@ -780,18 +780,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SpiceObject.referenceBase = "MARSIAU"
 
     def SetIMUSensor(self):
-
-        def setRotationalErrors(rotBiasValue, rotNoiseStdValue):
-            SimulationBaseClass.SetCArray([rotBiasValue, rotBiasValue, rotBiasValue],
-                                          'double', self.IMUSensor.senRotBias)
-            SimulationBaseClass.SetCArray([rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue],
-                                          'double', self.IMUSensor.senRotNoiseStd)
-
-        def setTranslationalErrors(transBiasValue, transNoiseStdValue):
-            SimulationBaseClass.SetCArray([transBiasValue, transBiasValue, transBiasValue],
-                                          'double', self.IMUSensor.senTransBias)
-            SimulationBaseClass.SetCArray([transNoiseStdValue, transNoiseStdValue, transNoiseStdValue],
-                                          'double', self.IMUSensor.senTransNoiseStd)
+        def turnOffCorruption():
+            rotBiasValue = 0.0
+            rotNoiseStdValue = 0.0
+            transBiasValue = 0.0
+            transNoiseStdValue = 0.0
+            return (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue)
 
         rotBiasValue = 0.0
         rotNoiseStdValue = 0.000001
@@ -804,9 +798,18 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.IMUSensor.accelLSB = 2.77E-4 * 9.80665
         self.IMUSensor.gyroLSB = 8.75E-3 * math.pi / 180.0
 
-        # Uncomment next two lines to define non-zero corruption errors
-        #setRotationalErrors(rotBiasValue, rotNoiseStdValue)
-        #setTranslationalErrors(transBiasValue, transNoiseStdValue)
+        # Turn off corruption of IMU data
+        (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue) = turnOffCorruption()
+
+        SimulationBaseClass.SetCArray([rotBiasValue, rotBiasValue, rotBiasValue],
+                                      'double', self.IMUSensor.senRotBias)
+        SimulationBaseClass.SetCArray([rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue],
+                                      'double', self.IMUSensor.senRotNoiseStd)
+        SimulationBaseClass.SetCArray([transBiasValue, transBiasValue, transBiasValue],
+                                      'double', self.IMUSensor.senTransBias)
+        SimulationBaseClass.SetCArray([transNoiseStdValue, transNoiseStdValue, transNoiseStdValue],
+                                      'double', self.IMUSensor.senTransNoiseStd)
+
 
     def SetReactionWheelDynObject(self):
         rwMaxTorque = 0.2
@@ -981,12 +984,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(DVInertia, 'double', self.DVThrusterDynObject.objProps.InertiaTensor)
 
     def InitCSSHeads(self):
-
-        def setCSSErrors(referenceCSS, CSSNoiseBias, CSSNoiseStd, CSSKellyFactor):
-            referenceCSS.SenBias = CSSNoiseBias
-            referenceCSS.SenNoiseStd = CSSNoiseStd
-            referenceCSS.KellyFactor = CSSKellyFactor
-
+        def turnOffSensorCorruption():
+            CSSNoiseStd = 0.0
+            CSSNoiseBias = 0.0
+            CSSKellyFactor = 0.0
+            return (CSSNoiseStd, CSSNoiseBias, CSSKellyFactor)
 
         # Note the re-use between different instances of the modules.
         # Handy but not required.
@@ -996,6 +998,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         CSSscaleFactor = 500.0E-6  # Scale factor (500 mu-amps) for max measurement
         CSSFOV = 90.0 * math.pi / 180.0  # 90 degree field of view
 
+        # Turn off corruption of CSS data
+        (CSSNoiseStd, CSSNoiseBias, CSSKellyFactor) = turnOffSensorCorruption()
 
         # Platform 1 is forward, platform 2 is back notionally
         CSSPlatform1YPR = [-math.pi / 2.0, -math.pi / 4.0, -math.pi / 2.0]
@@ -1174,6 +1178,22 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                       self.instrumentBore.strBoreVec)
 
     def SetSimpleNavObject(self):
+        def turnOffCorruption():
+            PMatrix = [0.0] * 18 * 18
+            PMatrix[0 * 18 + 0] = PMatrix[1 * 18 + 1] = PMatrix[2 * 18 + 2] = 0.0  # Position
+            PMatrix[3 * 18 + 3] = PMatrix[4 * 18 + 4] = PMatrix[5 * 18 + 5] = 0.0  # Velocity
+            PMatrix[6 * 18 + 6] = PMatrix[7 * 18 + 7] = PMatrix[8 * 18 + 8] = 0.0 * math.pi / 180.0  # Attitude (sigma!)
+            PMatrix[9 * 18 + 9] = PMatrix[10 * 18 + 10] = PMatrix[11 * 18 + 11] = 0.0 * math.pi / 180.0  # Attitude rate
+            PMatrix[12 * 18 + 12] = PMatrix[13 * 18 + 13] = PMatrix[14 * 18 + 14] = 0.0 * math.pi / 180.0  # Sun vector
+            PMatrix[15 * 18 + 15] = PMatrix[16 * 18 + 16] = PMatrix[17 * 18 + 17] = 0.0  # Accumulated DV
+            errorBounds = [0.0, 0.0, 0.0,  # Position
+                        0.0, 0.0, 0.0,  # Velocity
+                        0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0,  # Attitude
+                        0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0,  # Attitude Rate
+                        0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0, 0.0 * math.pi / 180.0,  # Sun vector
+                        0.0, 0.0, 0.0]  # Accumulated DV
+            return (PMatrix, errorBounds)
+
         self.SimpleNavObject.ModelTag = "SimpleNavigation"
         PMatrix = [0.0] * 18 * 18
         PMatrix[0 * 18 + 0] = PMatrix[1 * 18 + 1] = PMatrix[2 * 18 + 2] = 10.0  # Position
@@ -1189,16 +1209,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                        0.0004 * math.pi / 180.0, 0.0004 * math.pi / 180.0, 0.0004 * math.pi / 180.0,  # Attitude Rate
                        5.0 * math.pi / 180.0, 5.0 * math.pi / 180.0, 5.0 * math.pi / 180.0,  # Sun vector
                        0.053, 0.053, 0.053]  # Accumulated DV
+        # Turn off FSW corruption of navigation data
+        (PMatrix, errorBounds) = turnOffCorruption()
         self.SimpleNavObject.walkBounds = sim_model.DoubleVector(errorBounds)
         self.SimpleNavObject.PMatrix = sim_model.DoubleVector(PMatrix)
         self.SimpleNavObject.crossTrans = True
         self.SimpleNavObject.crossAtt = False
 
     def SetStarTrackerData(self):
+        def turnOffCorruption():
+            PMatrix = [0.0] * 3 * 3
+            PMatrix[0 * 3 + 0] = PMatrix[1 * 3 + 1] = PMatrix[2 * 3 + 2] = 0.0
+            errorBounds = [0.0 / 3600 * math.pi / 180.0] * 3
+            return (PMatrix, errorBounds)
+
         self.trackerA.ModelTag = "StarTrackerA"
         PMatrix = [0.0] * 3 * 3
-        PMatrix[0 * 3 + 0] = PMatrix[1 * 3 + 1] = PMatrix[2 * 3 + 2] = 0.5 / 3600.0 * math.pi / 180.0  # 20 arcsecs?
+        PMatrix[0 * 3 + 0] = PMatrix[1 * 3 + 1] = PMatrix[2 * 3 + 2] = 0.5 / 3600.0 * math.pi / 180.0  # 20 arcsecs?+
         errorBounds = [5.0 / 3600 * math.pi / 180.0] * 3
+        # Turn off FSW corruption of star tracker data
+        (PMatrix, errorBounds) = turnOffCorruption()
         self.trackerA.walkBounds = sim_model.DoubleVector(errorBounds)
         self.trackerA.PMatrix = sim_model.DoubleVector(PMatrix)
 
@@ -1396,22 +1426,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
         self.MRP_FeedbackRWAData.numRWAs = 4
-        RWAGsMatrix = []
-        RWAJsList = []
-        i = 0
-        rwElAngle = 45.0 * math.pi / 180.0
-        rwClockAngle = 45.0 * math.pi / 180.0
-        RWAlignScale = 1.0 / 25.0
-        while (i < self.MRP_FeedbackRWAData.numRWAs):
-            RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-            rwClockAngle += 90.0 * math.pi / 180.0
-            RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
-            i += 1
-        SimulationBaseClass.SetCArray(RWAGsMatrix, 'double', self.MRP_FeedbackRWAData.GsMatrix)
-        SimulationBaseClass.SetCArray(RWAJsList, 'double', self.MRP_FeedbackRWAData.JsList)
 
         self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
+        self.MRP_FeedbackRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_FeedbackRWAData.inputRWSpeedsName = "reactionwheel_output_states"
