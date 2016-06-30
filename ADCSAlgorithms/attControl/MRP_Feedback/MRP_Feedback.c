@@ -64,7 +64,27 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
                                                               sizeof(vehicleConfigData), moduleID);
     ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                      sizeof(RWSpeedData), moduleID);
-
+    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+                                                   sizeof(RWConstellation), moduleID);
+    
+    
+    /*! - Read RW ConfigData message and initialize the corresponding module variables */
+    RWConstellation localRWData;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
+    
+    int i, j;
+    for(i=0; i<ConfigData->numRWAs; i=i+1)
+    {
+        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
+        for(j=0; j<3; j=j+1)
+        {
+            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
+        }
+    }
+    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -164,6 +184,8 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
                 , wheelGs, v3_1);
         v3Add(v3_1, v3, v3);
     }
+    
+    
     v3Add(guidCmd.omega_RN_B, v3_2, v3_2);
     v3Cross(v3_2, v3, v3_1);
     v3Subtract(Lr, v3_1, Lr);

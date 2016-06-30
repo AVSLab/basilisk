@@ -38,19 +38,21 @@ typedef struct {
     double z[3];                        /*!< [rad]     integral state of delta_omega */
     double int_sigma[3];                /*!< [s]       integral of the MPR attitude error */
     double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
-    double GsMatrix[3*MAX_EFF_CNT];     /*!< []        The spin axis matrix used for RWAs*/
+    double GsMatrix[3*MAX_EFF_CNT];     /*!< [-]        The spin axis matrix used for RWAs*/
     double JsList[3*MAX_EFF_CNT];       /*!< [kgm2]    The spin axis inertia for RWAs*/
     uint32_t numRWAs;                   /*!< []        The number of reaction wheels available on vehicle */
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];                   /*!< The name of the output message*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];                    /*!< The name of the Input message*/
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the Input message*/
-    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];                /*!< The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsID;                                    /*!< [] ID for the reaction wheel speeds message*/
-    int32_t outputMsgID;                                        /*!< [] ID for the outgoing body accel requests*/
-    int32_t inputGuidID;                                        /*!< [] ID for the incoming guidance errors*/
-    int32_t inputVehicleConfigDataID;                           /*!< [] ID for the incoming static vehicle data */
+    char outputDataName[MAX_STAT_MSG_LENGTH];                   /*!< [-] The name of the output message*/
+    char inputGuidName[MAX_STAT_MSG_LENGTH];                    /*!< [-] The name of the Input message*/
+    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];       /*!< [-] The name of the Input message*/
+    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];                /*!< [-] The name for the reaction wheel speeds message */
+    char inputRWConfigData[MAX_STAT_MSG_LENGTH];                /*!< [-] The name of the RWA configuration message*/
+    int32_t inputRWConfID;                                      /*!< [-] ID for the incoming RWA configuration data*/
+    int32_t inputRWSpeedsID;                                    /*!< [-] ID for the reaction wheel speeds message*/
+    int32_t outputMsgID;                                        /*!< [-] ID for the outgoing body accel requests*/
+    int32_t inputGuidID;                                        /*!< [-] ID for the incoming guidance errors*/
+    int32_t inputVehicleConfigDataID;                           /*!< [-] ID for the incoming static vehicle data */
     vehControlOut controlOut;                                   /*!< -- Control output requests */
 }MRP_FeedbackConfig;
 
