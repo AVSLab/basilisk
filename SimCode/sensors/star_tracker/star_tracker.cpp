@@ -103,6 +103,7 @@ void StarTracker::readInputMessages()
     {
         SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
                                                     sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState), moduleID);
+        this->envTimeClock = localHeader.WriteClockNanos;
     }
 }
 
@@ -135,9 +136,8 @@ void StarTracker::computeQuaternion(double *sigma, StarTrackerHWOutput *sensorVa
 
 void StarTracker::computeSensorTimeTag(uint64_t CurrentSimNanos)
 {
-    SingleMessageHeader localHeader;
-    sensorTimeTag = timeState.J2000Current;
-    sensorTimeTag += (CurrentSimNanos - localHeader.WriteClockNanos)*1.0E-9;
+    this->sensorTimeTag = this->timeState.J2000Current;
+    this->sensorTimeTag += (CurrentSimNanos - this->envTimeClock)*1.0E-9;
 }
 
 void StarTracker::computeTrueOutput()

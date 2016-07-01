@@ -58,8 +58,7 @@ public:
     StarTrackerHWOutput trueValues;     //!< [-] total measurement without perturbations
     StarTrackerHWOutput sensedValues;   //!< [-] total measurement including perturbations
     double mrpErrors[3];                //!< [-] Errors to be applied to the input MRP set indicating whether
-    //double sigmaTruth[3];               //!< [-] MRP without perturbations
-    //double sigmaSensed[3];              //!< [-] MRP including perturbations
+    uint64_t envTimeClock;              //!< [ns] Clock associated with the environment time message
     SpiceTimeOutput timeState;        //!< [-] Module variable where the input Spice Time message is stored
     OutputStateData scState;        //!< [-] Module variable where the input State Data message is stored
 
