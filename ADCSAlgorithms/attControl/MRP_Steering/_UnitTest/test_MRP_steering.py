@@ -37,7 +37,7 @@ import macros
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-@pytest.mark.xfail() # need to update how the RW states are defined
+# @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_mrp_steering_tracking(show_plots):
     [testResults, testMessage] = mrp_steering_tracking(show_plots)
