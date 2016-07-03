@@ -1,3 +1,0 @@
-\contentsline {section}{\numberline {1}Introduction}{1}{section.1}
-\contentsline {section}{\numberline {2}Simple Thruster Force Algorithm for a Thruster Configuration with Pure Couples}{2}{section.2}
-\contentsline {section}{\numberline {3}Full Thruster Force Algorithm for a General Thruster Configuration}{3}{section.3}
