@@ -39,7 +39,7 @@
 \RequirePackage{fancyhdr}
 \fancyhead{}
 \fancyfoot{}
-\fancyhead[L]{\footnotesize Doc. ID: AVS-Sim-\ModuleName}
+\fancyhead[L]{\footnotesize Doc. ID: Basilisk-\ModuleName}
 \fancyhead[R]{\footnotesize Page \thepage \ of \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -52,17 +52,17 @@
 \newcommand{\makeCover}{
 
 \begin{textblock*}{6.625in}(2.25in,0.975in)
-	\includegraphics[width=3.5in]{Figures/AVSlogo.pdf}
+	\includegraphics[width=3.5in]{Figures/Basilisk-Logo.pdf}
 \end{textblock*}
 
 
 
 \begin{textblock*}{6.5in}(1in,3.5in)
 \centering
-\LARGE\bfseries \noindent Autonomous Vehicle Simulation (AVS) Laboratory\\
+\LARGE\bfseries \noindent \submiterInstitute\\
 \vskip 0.1in
-\noindent AVS-Sim Technical Memorandum\\
-\large\noindent Document ID: AVS-SIM-\ModuleName\\
+\noindent Basilisk Technical Memorandum\\
+\large\noindent Document ID: Basilisk-\ModuleName\\
 \vskip 0.1in
 \noindent \MakeUppercase{\subject}
 \end{textblock*}

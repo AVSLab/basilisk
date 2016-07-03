@@ -1,0 +1,46 @@
+This is BibTeX, Version 0.99d (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: AVS-Sim-ThrusterForces-20160627.aux
+The style file: unsrt.bst
+Database file #1: references.bib
+You've used 1 entry,
+            1791 wiz_defined-function locations,
+            452 strings with 3689 characters,
+and the built_in function-call counts, 196 in all, are:
+= -- 16
+> -- 8
+< -- 0
++ -- 3
+- -- 2
+* -- 10
+:= -- 37
+add.period$ -- 3
+call.type$ -- 1
+change.case$ -- 1
+chr.to.int$ -- 0
+cite$ -- 1
+duplicate$ -- 10
+empty$ -- 20
+format.name$ -- 2
+if$ -- 43
+int.to.chr$ -- 0
+int.to.str$ -- 1
+missing$ -- 2
+newline$ -- 8
+num.names$ -- 1
+pop$ -- 5
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 3
+stack$ -- 0
+substring$ -- 0
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 1
+width$ -- 2
+write$ -- 14
