@@ -16,10 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 /*
  Inertial 3D Spin Module
- 
- * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
- * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
- 
+  
  */
 
 #include "attGuidance/axisScan/axisScan.h"

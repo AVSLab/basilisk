@@ -17,9 +17,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*
     Control Torque Low Pass Filter Module
  
- * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
- * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
-
  */
 
 /* modify the path to reflect the new module names */

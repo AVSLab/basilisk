@@ -17,9 +17,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*
     MRP_FEEDBACK Module
  
- * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
- * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
-
  */
 
 #include "attControl/MRP_Feedback/MRP_Feedback.h"

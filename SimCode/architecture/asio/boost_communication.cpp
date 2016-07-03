@@ -1,8 +1,6 @@
 //
 // boost_communication.cpp
 //
-// University of Colorado, Autonomous Vehicle Systems (AVS) Lab
-// Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
 //
 
 #include "boost_communication.h"
