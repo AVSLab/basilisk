@@ -67,7 +67,7 @@
 	<key>Creator</key>
 	<string>Hanspeter Schaub</string>
 	<key>DisplayScale</key>
-	<string>1 0/72 in = 1 0/72 in</string>
+	<string>1 0/72 in = 1.0000 in</string>
 	<key>GraphDocumentVersion</key>
 	<integer>8</integer>
 	<key>GraphicsList</key>
@@ -192,7 +192,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{191, 234}, {19, 18}}</string>
+			<string>{{357.85275268554688, 218}, {19, 18}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -257,8 +257,8 @@
 			<integer>766</integer>
 			<key>Points</key>
 			<array>
-				<string>{196.99999666213989, 254}</string>
-				<string>{253.99999666213989, 243}</string>
+				<string>{363, 221}</string>
+				<string>{318.99999666213989, 230}</string>
 			</array>
 			<key>Style</key>
 			<dict>
@@ -3358,7 +3358,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2016-06-27 07:32:43 +0000</string>
+	<string>2016-07-03 23:29:51 +0000</string>
 	<key>Modifier</key>
 	<string>Hanspeter Schaub</string>
 	<key>NotesVisible</key>

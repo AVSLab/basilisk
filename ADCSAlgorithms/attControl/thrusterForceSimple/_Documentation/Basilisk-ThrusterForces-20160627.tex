@@ -57,23 +57,23 @@ This technical note describes a general algorithm that maps a desired ADCS exter
 	L_{r,j} = \bm L_{r} \cdot \hat{\bm b}_{j}
 \end{equation}¥
 
-The $i^{\text{th}}$ thruster location relative to the spacecraft point $B$ is given by $\bm r_{i}$ as illustrated in Figure~\ref{fig:thruster}.  The unit direction vector of the thruster exhaust cone is $\hat{\bm g}_{t_{i}}$, while the thruster force is given by
+The $i^{\text{th}}$ thruster location relative to the spacecraft point $B$ is given by $\bm r_{i}$ as illustrated in Figure~\ref{fig:thruster}.  The unit direction vector of the thruster force is $\hat{\bm g}_{t_{i}}$, while the thruster force is given by
 \begin{equation}
 	\label{eq:th:1}
-	\bm F_{i} = - F_{i} \hat{\bm g}_{t_{i}}
+	\bm F_{i} = F_{i} \hat{\bm g}_{t_{i}}
 \end{equation}
 The toque vector produced by each thruster about the body fixed point $B$ is thus
 \begin{equation}
-	\bm \tau_{i} =\bm r_{i} \times F_{i} ( - \hat{\bm g}_{t_{i}})
+	\bm \tau_{i} =\bm r_{i} \times F_{i}  \hat{\bm g}_{t_{i}}
 \end{equation}
 The total torque onto the spacecraft about the $j^{\text{th}}$ body fixed axis, due to a cluster of $N$ thrusters, is
 \begin{equation}
 	\tau_{j} = \sum_{i=1}^{N} \bm \tau_{i} \cdot \hat{\bm b}_{j}
-	= \sum_{i=1}^{N} - (\bm r_{i} \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j} F_{i} = \sum_{i=1}^{N}  d_{i} F_{i}
+	= \sum_{i=1}^{N}  (\bm r_{i} \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j} F_{i} = \sum_{i=1}^{N}  d_{i} F_{i}
 \end{equation}
 where 
 \begin{equation}
-	d_{i} =  - (\bm r_{i} \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j}
+	d_{i} =   (\bm r_{i} \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j}
 \end{equation}
 In matrix form, the net spacecraft torque about the $j^{\text{th}}$ axis is written compactly as
 \begin{equation}
@@ -134,7 +134,7 @@ Here the individual thruster values are either doubled, or set to zero, dependin
 
 If the thruster cluster configuration is symmetric and aligned such that it produces pure torques, then the minimum norm solution to produce the desired $\bm L_{r}$ will also result in a thruster solution that produces a net 0 force onto the spacecraft.   Using the super-particle theorem,\cite{schaub} the total thruster force is given by
 \begin{equation}
-	\bm F_{T,j} =- [G_{t}] \bm F_{j} = - [G_{t}] [D]^{T}([D][D])^{-1} \bm L_{r} \cdot \hat{\bm b}_{j}= \bm 0
+	\bm F_{T,j} = [G_{t}] \bm F_{j} =  [G_{t}] [D]^{T}([D][D])^{-1} \bm L_{r} \cdot \hat{\bm b}_{j}= \bm 0
 \end{equation}
 With a pure-couple thruster configuration the expression satisfies $[G_{t}] [D]^{T} = \bm 0$.
 
@@ -151,7 +151,7 @@ This determines which positive thruster force solutions contribute to the desire
 
 Let $M$ be the number of thrusters that require a positive thruster force, then $\bar{\bm F}_{j}$ is the $M\times 1$ reduced set of strictly positive thruster forces, and $[\bar D]$ is  the  $3\times M$ mapping matrix with the columns $\bar {\bm d}_{i}$ defined as
 \begin{equation}
-	\bar {\bm d}_{i}= - \bm r_{i} \times \hat{\bm g}_{t_{i}}
+	\bar {\bm d}_{i}=  \bm r_{i} \times \hat{\bm g}_{t_{i}}
 \end{equation}
 The reduced control torque vector $\bar{\bm L}_{r}$ is defined as
 \begin{equation}
@@ -165,7 +165,7 @@ This enforces that the desired torque is produced along the $\hat{\bm b}_{j}$ di
 
 A secondary goal of the ADCS thrusters is to not produce a net force onto the spacecraft.  Using the super-particle theorem,\cite{schaub} the total thruster force is given by
 \begin{equation}
-	\bm F_{T,j} = - [\bar G_{t}] \bar{\bm F}_{j} = \bm 0
+	\bm F_{T,j} =  [\bar G_{t}] \bar{\bm F}_{j} = \bm 0
 \end{equation}
 
 Thus, the ADCS thruster force logic seeks a set of positive forces $\bar{\bm F}_{j}$ such that the net residual total force $\bm F_{T,j}$ onto the spacecraft is minimized, while the ADCS torque $\bm L_{r}$ is perfectly achieved along the $\hat{\bm b}_{j}$ direction.  The net force is minimized through the cost function
