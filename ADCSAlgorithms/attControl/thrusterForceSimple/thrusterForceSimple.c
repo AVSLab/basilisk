@@ -24,7 +24,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
-
+#include "vehicleConfigData/vehicleConfigData.h"
+#include <string.h>
 
 
 /*
@@ -44,7 +45,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
 {
-    
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
@@ -52,7 +52,6 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
                                                "thrusterForceSimpleOut",          /* add the output structure name */
                                                moduleID);
 
-    ConfigData->dummy = 0.0;
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -62,11 +61,50 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
  */
 void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
 {
+    ThrusterCluster localThrusterData;
+    int             i, j;
+    uint64_t        clockTime;
+    uint32_t        readSize;
+    double          dumVec[3];
+    double          D2;
+
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
                                                 sizeof(vehControlOut),
                                                 moduleID);
 
+    ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+                sizeof(ThrusterCluster), &localThrusterData, moduleID);
+
+    for(i=0; i<ConfigData->numThrusters; i=i+1)
+    {
+        v3Cross(localThrusterData.thrusters[i].rThruster, localThrusterData.thrusters[i].tHatThrust, dumVec);
+        v3Copy(dumVec, ConfigData->DTDDTinv[i]);
+        for (j=0;j<3;j++)
+        {
+            ConfigData->D[j][i] = dumVec[j];
+            ConfigData->Gt[j][i] = localThrusterData.thrusters[i].tHatThrust[j];
+        }
+    }
+
+    for (j=0;j<3;j++)
+    {
+        D2 = 0.;
+        for(i=0; i<ConfigData->numThrusters; i=i+1)
+        {
+            D2 += ConfigData->DTDDTinv[i][j]*ConfigData->DTDDTinv[i][j];
+        }
+        /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
+        if (D2 > 0.00001) {
+            ConfigData->DTDDTinv[i][j] /= D2;
+        } else {
+            ConfigData->DTDDTinv[i][j] = 0.0;
+        }
+    }
+
+    ConfigData->ignoreBodyAxis[0] = ConfigData->ignoreBodyAxis1;
+    ConfigData->ignoreBodyAxis[1] = ConfigData->ignoreBodyAxis2;
+    ConfigData->ignoreBodyAxis[2] = ConfigData->ignoreBodyAxis3;
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -76,7 +114,7 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
  */
 void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->dummy = 0.0;              /* reset any required variables */
+
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -88,27 +126,52 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    double              Lr[3];              /*!< [unit] variable description */
-
+    double              F[MAX_EFF_CNT];               /*!< [N] vector of commanded thruster forces */
+    double              FAxis[MAX_EFF_CNT];           /*!< [N] vector of commanded thruster forces to produce a torque about a body axis */
+    int                 i,j;
 
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(ConfigData->inputVector), moduleID);
+                sizeof(vehControlOut), (void*) &(ConfigData->Lr_B), moduleID);
+    if (ConfigData->flipLrSign) {
+        v3Scale(-1.0, ConfigData->Lr_B, ConfigData->Lr_B);
+    }
 
-
+    /* clear the net thruster force vector */
+    memset(F,0x0,MAX_EFF_CNT);
 
     /*
-        Add the module specific code
+        Loop over each body axis and compute the set of positive thruster to yield Lr(j)
      */
-    v3Copy(ConfigData->inputVector, Lr);
-    ConfigData->dummy += 1.0;
-    Lr[0] += ConfigData->dummy;
+
+    for (j=0;j<3;j++) {
+        if (!ConfigData->ignoreBodyAxis[j]) {
+
+            memset(FAxis,0x0,MAX_EFF_CNT);      /* clear the per-axis force array */
+
+            for (i=0;i<MAX_EFF_CNT;i++) {
+                /* compute the minimum norm solution for each thruster */
+                FAxis[i] += ConfigData->DTDDTinv[i][j] * ConfigData->Lr_B[j];
+                /* enforce that the thrust must be positive */
+                if (FAxis[i] > 0.0) {
+                    FAxis[i] *= 2.0;
+                } else {
+                    FAxis[i] = 0.0;
+                }
+
+                /* add the per-axis thrust solution to the net thruster sum */
+                F[i] += FAxis[i];
+            }
+        }
+    }
+
+
 
     /*
      store the output message 
      */
-    v3Copy(Lr, ConfigData->thrusterForceOut.effectorRequest);                 /* populate the output message */
+    v3Copy(F, ConfigData->thrusterForceOut.effectorRequest);                 /* populate the output message */
 
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
                  (void*) &(ConfigData->thrusterForceOut), moduleID);
