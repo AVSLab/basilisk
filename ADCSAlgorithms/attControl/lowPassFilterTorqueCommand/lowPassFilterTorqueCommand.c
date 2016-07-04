@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/LowPassFilterTorqueCommand/LowPassFilterTorqueCommand.h"
+#include "attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
@@ -34,7 +34,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
+void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! Begin method steps */
@@ -51,7 +51,7 @@ void SelfInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Confi
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
+void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
@@ -65,7 +65,7 @@ void CrossInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Conf
  @return void
  @param ConfigData The configuration data associated with the MRP steering control
  */
-void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     int i;
 
@@ -83,7 +83,7 @@ void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigDa
  @param ConfigData The configuration data associated with the MRP Steering attitude control
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime,
+void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     uint64_t    clockTime;

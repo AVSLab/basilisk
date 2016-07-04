@@ -56,10 +56,10 @@ typedef struct {
 extern "C" {
 #endif
     
-    void SelfInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
-    void Update_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_LowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t moduleID);
+    void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }
