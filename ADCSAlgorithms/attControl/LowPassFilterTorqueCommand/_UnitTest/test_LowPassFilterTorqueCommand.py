@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        LowPassFilterTorqueCommand
+#   Module Name:        lowPassFilterTorqueCommand
 #   Author:             Hanspeter Schaub
 #   Creation Date:      December 9, 2015
 #
@@ -39,7 +39,7 @@ import SimulationBaseClass
 import sim_model
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import LowPassFilterTorqueCommand       # import the module that is to be tested
+import lowPassFilterTorqueCommand       # import the module that is to be tested
 import MRP_Steering                     # import a sample module that creates the neede input message declaration
 import macros
 
@@ -72,13 +72,13 @@ def subModuleTestFunction(show_plots):
 
 
     #   Construct algorithm and associated C++ container
-    moduleConfig = LowPassFilterTorqueCommand.lowPassFilterTorqueCommandConfig()
+    moduleConfig = lowPassFilterTorqueCommand.lowPassFilterTorqueCommandConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        LowPassFilterTorqueCommand.Update_LowPassFilterTorqueCommand,
-                                        LowPassFilterTorqueCommand.SelfInit_LowPassFilterTorqueCommand,
-                                        LowPassFilterTorqueCommand.CrossInit_LowPassFilterTorqueCommand,
-                                        LowPassFilterTorqueCommand.Reset_LowPassFilterTorqueCommand)
-    moduleWrap.ModelTag = "LowPassFilterTorqueCommand"      # python name of test module.
+                                        lowPassFilterTorqueCommand.Update_lowPassFilterTorqueCommand,
+                                        lowPassFilterTorqueCommand.SelfInit_lowPassFilterTorqueCommand,
+                                        lowPassFilterTorqueCommand.CrossInit_lowPassFilterTorqueCommand,
+                                        lowPassFilterTorqueCommand.Reset_lowPassFilterTorqueCommand)
+    moduleWrap.ModelTag = "lowPassFilterTorqueCommand"      # python name of test module.
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)

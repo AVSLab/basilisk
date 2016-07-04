@@ -14,21 +14,21 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module LowPassFilterTorqueCommand
+%module lowPassFilterTorqueCommand
 %{
-   #include "LowPassFilterTorqueCommand.h"
+   #include "lowPassFilterTorqueCommand.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_LowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
-%ignore Update_LowPassFilterTorqueCommand;
-%constant void SelfInit_LowPassFilterTorqueCommand(void*, uint64_t);
-%ignore SelfInit_LowPassFilterTorqueCommand;
-%constant void CrossInit_LowPassFilterTorqueCommand(void*, uint64_t);
-%ignore CrossInit_LowPassFilterTorqueCommand;
-%constant void Reset_LowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
-%ignore Reset_LowPassFilterTorqueCommand;
-%include "LowPassFilterTorqueCommand.h"
+%constant void Update_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
+%ignore Update_lowPassFilterTorqueCommand;
+%constant void SelfInit_lowPassFilterTorqueCommand(void*, uint64_t);
+%ignore SelfInit_lowPassFilterTorqueCommand;
+%constant void CrossInit_lowPassFilterTorqueCommand(void*, uint64_t);
+%ignore CrossInit_lowPassFilterTorqueCommand;
+%constant void Reset_lowPassFilterTorqueCommand(void*, uint64_t, uint64_t);
+%ignore Reset_lowPassFilterTorqueCommand;
+%include "lowPassFilterTorqueCommand.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/vehControlOut.h"
