@@ -38,6 +38,4 @@ R2D = (180./math.pi)
 #   variable to convert degrees to radians
 RPM = (2.*math.pi/60.)
 
-#   number of effectors
-MAX_EFF_CNT = 36
 
