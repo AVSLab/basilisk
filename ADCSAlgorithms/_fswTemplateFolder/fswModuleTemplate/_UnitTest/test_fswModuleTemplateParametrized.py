@@ -195,7 +195,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
+                                str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
         # check a scalar double value
@@ -203,7 +203,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 variableName + " unit test at t=" +
-                                str(variableState[i,0]*unitTestSupport.NANO2SEC) +
+                                str(variableState[i,0]*macros.NANO2SEC) +
                                 "sec\n")
 
     # Note that we can continue to step the simulation however we feel like.
@@ -216,7 +216,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     if show_plots:
         # plot a sample variable.
         plt.figure(1)
-        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
+        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
         plt.legend(loc='upper left')
         plt.xlabel('Time [s]')
         plt.ylabel('Variable Description [unit]')
