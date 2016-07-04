@@ -32,6 +32,7 @@ import math
 import csv
 import logging
 
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
@@ -51,7 +52,7 @@ import thruster_dynamics
 import macros
 import solar_panels
 import fuel_tank
-
+import vehicleConfigData
 
 
 
@@ -202,12 +203,12 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         setupUtilitiesRW.addRWToSpacecraft("ReactionWheels", rwDynObject, VehDynObject)
 
         # set RW torque command
-        scSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*macros.MAX_EFF_CNT, 2)
-        cmdArray = sim_model.new_doubleArray(macros.MAX_EFF_CNT)
+        scSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 2)
+        cmdArray = sim_model.new_doubleArray(vehicleConfigData.MAX_EFF_CNT)
         sim_model.doubleArray_setitem(cmdArray, 0, 0.020) # RW-1 [Nm]
         sim_model.doubleArray_setitem(cmdArray, 1, 0.010) # RW-2 [Nm]
         sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
-        scSim.TotalSim.WriteMessageData(rwCommandName, 8*macros.MAX_EFF_CNT, 1, cmdArray )
+        scSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
 
     if useHingedSP:
         # add SPs
