@@ -21,16 +21,18 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 import AVSSim
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import ctypes
 import math
 import MessagingAccess
 import sim_model
 import logging
 import numpy as np
+from numpy import cos, sin
+from numpy import linalg as la
 import macros as mc
 import astroFunctions as af
 import RigidBodyKinematics as rbk
-from numpy import linalg as la
 
 # ------------------- PLOTS ------------------- #
 
@@ -98,6 +100,55 @@ def plotReference(sigma_RN, omega_RN_N):
              , omega_RN_N[:, 0] * 1E-9, omega_RN_N[:, 3])
     plt.legend(['$x_1$', '$x_2$', '$x_3$'])
     plt.title(TheAVSSim.modeRequest + ': $\omega_{RN, N}$')
+
+def plotEulerSet(eulerSet):
+    print 'eulerSet = ', eulerSet[:, 1:]
+    print '\n'
+    t_vec = eulerSet[:, 0]
+    psi_vec = eulerSet[:, 1]
+    theta_vec = eulerSet[:, 2]
+    phi_vec = eulerSet[:, 3]
+    plt.figure(100)
+    plt.plot(t_vec * 1E-9, psi_vec
+             , t_vec * 1E-9, theta_vec
+             , t_vec * 1E-9, phi_vec)
+    plt.legend(['$\psi$', '$\Theta$', '$\phi$'])
+    plt.title(TheAVSSim.modeRequest + ': 3-2-1 Euler Set')
+
+    rx_vec = np.array([])
+    ry_vec = np.array([])
+    rz_vec = np.array([])
+    for i in range(len(t_vec)):
+        rx = cos(theta_vec[i]) * cos(psi_vec[i])
+        ry = cos(theta_vec[i]) * sin(psi_vec[i])
+        rz = sin(theta_vec[i])
+        rx_vec = np.append(rx_vec, rx)
+        ry_vec = np.append(ry_vec, ry)
+        rz_vec = np.append(rz_vec, rz)
+    plt.figure(101)
+    plt.plot(rx_vec, rz_vec)
+    plt.ylabel('$R_X$')
+    plt.ylabel('$R_Z$')
+    plt.title(TheAVSSim.modeRequest + ': bore-sight: XZ-plane')
+    plt.figure(102)
+    plt.plot(ry_vec, rz_vec)
+    plt.ylabel('$R_Y$')
+    plt.ylabel('$R_Z$')
+    plt.title(TheAVSSim.modeRequest + ': bore-sight: YZ-plane')
+
+    fig = plt.figure(103)
+    ax = fig.add_subplot(111, projection='3d')
+    ax.plot(rx_vec, ry_vec, rz_vec)
+    max_range = np.array([rx_vec.max() - rx_vec.min(), ry_vec.max() - ry_vec.min(), rz_vec.max() - rz_vec.min()]).max()
+    Xb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][0].flatten() + 0.5 * (rx_vec.max() + rx_vec.min())
+    Yb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][1].flatten() + 0.5 * (ry_vec.max() + ry_vec.min())
+    Zb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][2].flatten() + 0.5 * (rz_vec.max() + rz_vec.min())
+    # Comment or uncomment following both lines to test the fake bounding box:
+    for xb, yb, zb in zip(Xb, Yb, Zb):
+        ax.plot([xb], [yb], [zb], 'w')
+    plt.title(TheAVSSim.modeRequest + ': bore-sight: 3D')
+    plt.xlabel('$R_X$')
+    plt.ylabel('$R_Y$')
 
 def plotEuler123(sigma_RN, omega_RN_N):
     theta0 = np.array([])
@@ -222,23 +273,6 @@ def computeGains(P, I):
     K_cr = max(K)
     return K_cr
 
-# Sensor Errors
-def turnOffSensorsCorruption(TheAVSSim):
-    TheAVSSim.trackerA.isOutputtingMeasured = False
-    TheAVSSim.IMUSensor.isOutputtingMeasured = False
-    # CSS Heads
-    TheAVSSim.CSSPyramid1HeadA.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid1HeadB.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid1HeadC.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid1HeadD.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid2HeadA.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid2HeadB.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid2HeadC.isOutputtingMeasured = False
-    TheAVSSim.CSSPyramid2HeadD.isOutputtingMeasured = False
-
-def turnOffFSWCorruption(TheAVSSim):
-    TheAVSSim.SimpleNavObject.isOutputtingMeasured = False
-
 
 # ------------------- MAIN ------------------- #
 
@@ -264,15 +298,12 @@ def executeGuidance(TheAVSSim):
     # Visualization
     #TheAVSSim.isUsingVisualization = True
     #TheAVSSim.clockSynchData.accelFactor = 20.0
-    # Sensor Corruption
-    turnOffSensorsCorruption(TheAVSSim)
-    turnOffFSWCorruption(TheAVSSim)
 
     # MRP_Feedback gains
-    P = 28.
+    P = 40.
     I_vec = ctypes.cast(TheAVSSim.LocalConfigData.I.__long__(), ctypes.POINTER(ctypes.c_double))
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
-    K = computeGains(P, I) * 2.
+    K = computeGains(P, I) * 8.
     print 'K = ', K
     d = computeDiscriminant(K, P, I)
     print 'Discriminant = ', d
@@ -280,24 +311,17 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.MRP_FeedbackRWAData.P = P
 
     # hillPoint Data:
-    TheAVSSim.hillPointData.outputDataName = "att_ref_output"
+    #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
     # inertial3DPoint Data:
     #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
     # velocityPoint Data:
     TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
-    # axisScan Data:
-    TheAVSSim.axisScanData.psiDot = 0.02 * mc.D2R
-    #TheAVSSim.axisScanData.psi0 = 10. * mc.D2R
-    #TheAVSSim.axisScanData.theta0 = 10. * mc.D2R
     # cel2BdyPoint Data:
     #TheAVSSim.celTwoBodyPointData.inputCelMessName = "sun_display_frame_data"
     TheAVSSim.celTwoBodyPointData.inputSecMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
-    # orbitAxisSpin Data:
-    #TheAVSSim.orbitAxisSpinData.o_spin = 2
-    #TheAVSSim.orbitAxisSpinData.b_spin = 0
-    TheAVSSim.orbitAxisSpinData.omega_spin = 0.1 * mc.D2R
+
 
     # Initialize SIM:
     TheAVSSim.InitializeSimulation()
@@ -321,7 +345,8 @@ def executeGuidance(TheAVSSim):
     #doubleTest('inertial3DPoint', 'singleAxisSpin')
     #singleTest('singleAxisSpin')
     #singleTest('marsPoint')
-    doubleTest('celTwoBodyPoint', 'marsPoint')
+    #doubleTest('celTwoBodyPoint', 'marsPoint')
+    singleTest('eulerRotation')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -330,6 +355,7 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("simple_nav_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("euler_set_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("", int(1E9))
 
     TheAVSSim.VehDynObject.GravData[0].IsCentralBody = False
@@ -387,13 +413,14 @@ if __name__ == "__main__":
         omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
         domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
         plotReference(sigma_RN, omega_RN_N)
-        if (TheAVSSim.modeRequest == 'axisScan'):
-            plotEuler123(sigma_RN, omega_RN_N)
+        if TheAVSSim.modeRequest =='eulerRotation':
+            euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))
+            plotEulerSet(euler123set)
 
 
-
-
-    if TheAVSSim.modeRequest == 'orbitAxisSpin' or TheAVSSim.modeRequest == 'axisScan':
+    if (TheAVSSim.modeRequest == 'orbitAxisSpin'
+        or TheAVSSim.modeRequest =='eulerRotation'
+        or TheAVSSim.modeRequest =='inertial3DSpin'):
         sigma_R0N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.sigma_RN", range(3))
         omega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.omega_RN_N", range(3))
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
