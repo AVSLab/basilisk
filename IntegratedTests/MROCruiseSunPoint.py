@@ -1,4 +1,4 @@
-﻿'''This document contains technology controlled by the U.S. Export Administration 
+'''This document contains technology controlled by the U.S. Export Administration 
 Regulations, 15 C.F.R. Parts 740-774 (EAR). Transfer, disclosure, or export to 
 foreign persons without prior U.S. Government approval may be prohibited. 
 Violations of these export laws and regulations are subject to severe civil 

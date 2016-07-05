@@ -74,7 +74,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
             SystemMessaging::GetInstance()->
                 selectMessageBuffer(MessageID.processBuffer);
             SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader,
-                                                        MaxSize, reinterpret_cast<uint8_t*> (MessageData), LatestOffset);
+                                                        MaxSize, reinterpret_cast<uint8_t*> (MessageData), -1, LatestOffset);
             break;
         case logBuffer:
             messageLogs.readLog(MessageID, &DataHeader,
