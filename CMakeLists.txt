@@ -33,7 +33,6 @@ if(MSVC)
         string(REPLACE "/MDd" "/MT" "${flag}" "${${flag}}")
         string(REPLACE "/MTd" "/MT" "${flag}" "${${flag}}")
         set("${flag}" "${${flag}} /EHsc")
-		message(${${flag}})
     endforeach()
 elseif(APPLE)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -gdwarf-3")
@@ -52,34 +51,86 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # Add include directories
 include_directories(SimCode)
-include_directories(External/boost_1_61_0)
 
-# Create list of libraries depending on system
+# Set options used by "FindBoost.cmake".
+# Either specify BOOST_ROOT or BOOST_INCLUDEDIR and BOOST_LIBRARYDIR.
+#set (BOOST_INCLUDEDIR "External/boost_1_61_0/boost")
+set (ENV{BOOST_ROOT} "External/boost_1_61_0")
+set (BOOST_ROOT "External/boost_1_61_0")
+set (Boost_NO_SYSTEM_PATHS ON)
+set (Boost_USE_MULTITHREADED ON)
+set (Boost_USE_STATIC_LIBS ON)
+set (Boost_USE_STATIC_RUNTIME ON)
+set (Boost_USE_DEBUG_RUNTIME OFF)
+
+if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(_arch_suffix 64)
+    else()
+      set(_arch_suffix 32)
+    endif()
+    if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-14.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-12.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 17)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-11.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 16)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-10.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-9.0)
+    elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14)
+      list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-8.0)
+    endif()
+endif()
+set(BOOST_LIBRARYDIR ${CMAKE_SOURCE_DIR}/${componentlibvar})
+# The components "system" and "filesystem" from "Boost" version 1.55.0 or
+# greater are required.
+find_package (Boost 1.61.0 REQUIRED COMPONENTS system filesystem serialization thread)
+
+if (Boost_FOUND)
+  # From the offical documentation:
+  # Add include directories to the build. [...] If the SYSTEM option is given,
+  # the compiler will be told the directories are meant as system include
+  # directories on some platforms (signalling this setting might achieve effects
+  # such as the compiler skipping warnings [...])."
+  include_directories (SYSTEM ${Boost_INCLUDE_DIR})
+
+  # From the offical documentation:
+  # "Specify directories in which the linker will look for libraries. [...] Note
+  # that this command is rarely necessary. Library locations returned by
+  # find_package() and find_library() are absolute paths. Pass these absolute
+  # library file paths directly to the target_link_libraries() command. CMake
+  # will ensure the linker finds them."
+  link_directories (${Boost_LIBRARY_DIRS})
+endif ()
+
+# Manually create list of libraries depending on system
 if(WIN32)
-	message(${WIN32})
 	set(library_dependencies 
       	${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_system-vc140-mt-s-1_61.lib
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_serialization-vc140-mt-s-1_61.lib
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_filesystem-vc140-mt-s-1_61.lib
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_thread-vc140-mt-s-1_61.lib
+		${Boost_LIBRARIES}
 	)
 elseif(APPLE)
 	set(library_dependencies 
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_system.a
 		${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_serialization.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_filesystem.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib/libboost_thread.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_system.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_serialization.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_filesystem.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_thread.a
 	)
    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
    set(CMAKE_INSTALL_RPATH "@loader_path/")
 else()
-   set(library_dependencies
-      ${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.a)
-   set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-   set(CMAKE_INSTALL_RPATH "\$ORIGIN/")
-
+	set(library_dependencies
+		${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_system.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_serialization.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_filesystem.a
+		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_thread.a
+	)
+	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+	set(CMAKE_INSTALL_RPATH "\$ORIGIN/")
 endif()
 set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
