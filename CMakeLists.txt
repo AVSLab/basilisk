@@ -63,12 +63,13 @@ set (Boost_USE_STATIC_LIBS ON)
 set (Boost_USE_STATIC_RUNTIME ON)
 set (Boost_USE_DEBUG_RUNTIME OFF)
 
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  set(_arch_suffix 64)
+else()
+  set(_arch_suffix 32)
+endif()
+
 if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-      set(_arch_suffix 64)
-    else()
-      set(_arch_suffix 32)
-    endif()
     if(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19)
       list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-14.0)
     elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 18)
@@ -82,7 +83,12 @@ if("x${CMAKE_CXX_COMPILER_ID}" STREQUAL "xMSVC")
     elseif(NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 14)
       list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-msvc-8.0)
     endif()
+elseif(APPLE)
+	list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-osx)
+elseif(UNIX)
+	list(APPEND componentlibvar ${BOOST_ROOT}/lib${_arch_suffix}-unix)
 endif()
+
 set(BOOST_LIBRARYDIR ${CMAKE_SOURCE_DIR}/${componentlibvar})
 # The components "system" and "filesystem" from "Boost" version 1.55.0 or
 # greater are required.
@@ -114,20 +120,14 @@ if(WIN32)
 elseif(APPLE)
 	set(library_dependencies 
 		${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_osx.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_system.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_serialization.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_filesystem.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-osx/libboost_thread.a
+		${Boost_LIBRARIES}
 	)
    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
    set(CMAKE_INSTALL_RPATH "@loader_path/")
 else()
 	set(library_dependencies
 		${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_system.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_serialization.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_filesystem.a
-		${CMAKE_SOURCE_DIR}/External/boost_1_61_0/lib64-unix/libboost_thread.a
+		${Boost_LIBRARIES}
 	)
 	set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 	set(CMAKE_INSTALL_RPATH "\$ORIGIN/")
