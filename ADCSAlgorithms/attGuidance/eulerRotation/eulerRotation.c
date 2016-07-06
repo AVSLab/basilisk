@@ -157,10 +157,14 @@ void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uin
  */
 void checkRasterCommands(eulerRotationConfig *ConfigData)
 {
-    if (ConfigData->cmdSet != ConfigData->priorCmdSet || ConfigData->cmdRates != ConfigData->priorCmdRates)
+    int32_t prevCmdActive = v3IsEqual(ConfigData->cmdSet, ConfigData->priorCmdSet , 1E-12) && v3IsEqual(ConfigData->cmdRates, ConfigData->priorCmdRates , 1E-12);
+    if (!prevCmdActive)
     {
         v3Copy(ConfigData->cmdSet, ConfigData->angleSet);
         v3Copy(ConfigData->cmdRates, ConfigData->angleRates);
+        
+        v3Copy(ConfigData->cmdSet, ConfigData->priorCmdSet);
+        v3Copy(ConfigData->cmdRates, ConfigData->priorCmdRates);
     }
 }
 

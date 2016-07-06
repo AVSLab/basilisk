@@ -61,7 +61,7 @@ def printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N,
         print 'omega_RN_N = ', omega_RN_N
         print 'domega_RN_N = ', domega_RN_N
         print '\n'
-    #printData()
+    printData()
     return angleSet
 
 
@@ -75,78 +75,78 @@ angleRates = np.array([0.1, 0., 0.]) * mc.D2R
 
 angleSet = np.array([0.0, 45.0, 0.0]) * mc.D2R
 configData = (angleSet, angleRates, 0.0)
-# angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*0.0)
-# configData = (angleSet, angleRates, dt)
-# angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*1.0)
-# configData = (angleSet, angleRates, dt)
-# angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*2.0)
+angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*0.0)
+configData = (angleSet, angleRates, dt)
+angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*1.0)
+configData = (angleSet, angleRates, dt)
+angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, dt*2.0)
 
 
-t0 = 0.0
-t1 = 2000
-span = (t1 - t0)/dt + 1
-t_vec = np.linspace(t0, t1, int(span))
-psi_vec = np.array([])
-theta_vec = np.array([])
-phi_vec = np.array([])
-
-rx_vec = np.array([])
-ry_vec = np.array([])
-rz_vec = np.array([])
-for t in t_vec:
-    angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, t)
-    configData = (angleSet, angleRates, dt)
-    psi_vec = np.append(psi_vec, angleSet[0])
-    theta_vec = np.append(theta_vec, angleSet[1])
-    phi_vec = np.append(phi_vec, angleSet[2])
-
-    rx = cos(angleSet[1]) * cos(angleSet[0])
-    ry = cos(angleSet[1]) * sin(angleSet[0])
-    rz = sin(angleSet[1])
-    rx_vec = np.append(rx_vec, rx)
-    ry_vec = np.append(ry_vec, ry)
-    rz_vec = np.append(rz_vec, rz)
-
-print 'rx_vec = ', rx_vec
-print 'ry_vec = ', ry_vec
-print 'rz_vec = ', rz_vec
-
-def plotEuler321():
-    plt.figure(1)
-    plt.plot(t_vec, psi_vec, t_vec, theta_vec, t_vec, phi_vec)
-    plt.legend(['$\psi$','$\Theta$', '$\phi$'])
-def plotPlanes2D():
-    plt.figure(2)
-    plt.plot(rx_vec, rz_vec)
-    plt.xlabel('$R_X$')
-    plt.ylabel('$R_Z$')
-    plt.title('XZ')
-    plt.figure(3)
-    plt.plot(rx_vec, ry_vec)
-    plt.xlabel('$R_X$')
-    plt.ylabel('$R_Y$')
-    plt.title('XY')
-    plt.figure(4)
-    plt.plot(ry_vec, rz_vec)
-    plt.xlabel('$R_Y$')
-    plt.ylabel('$R_Z$')
-    plt.title('YZ')
-def plot3D():
-    fig = plt.figure(10)
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot(rx_vec, ry_vec, rz_vec)
-    max_range = np.array([rx_vec.max() - rx_vec.min(), ry_vec.max() - ry_vec.min(), rz_vec.max() - rz_vec.min()]).max()
-    Xb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][0].flatten() + 0.5 * (rx_vec.max() + rx_vec.min())
-    Yb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][1].flatten() + 0.5 * (ry_vec.max() + ry_vec.min())
-    Zb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][2].flatten() + 0.5 * (rz_vec.max() + rz_vec.min())
-    # Comment or uncomment following both lines to test the fake bounding box:
-    for xb, yb, zb in zip(Xb, Yb, Zb):
-        ax.plot([xb], [yb], [zb], 'w')
-
-plotEuler321()
-plotPlanes2D()
-plot3D()
-plt.show()
+# t0 = 0.0
+# t1 = 2000
+# span = (t1 - t0)/dt + 1
+# t_vec = np.linspace(t0, t1, int(span))
+# psi_vec = np.array([])
+# theta_vec = np.array([])
+# phi_vec = np.array([])
+#
+# rx_vec = np.array([])
+# ry_vec = np.array([])
+# rz_vec = np.array([])
+# for t in t_vec:
+#     angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N, t)
+#     configData = (angleSet, angleRates, dt)
+#     psi_vec = np.append(psi_vec, angleSet[0])
+#     theta_vec = np.append(theta_vec, angleSet[1])
+#     phi_vec = np.append(phi_vec, angleSet[2])
+#
+#     rx = cos(angleSet[1]) * cos(angleSet[0])
+#     ry = cos(angleSet[1]) * sin(angleSet[0])
+#     rz = sin(angleSet[1])
+#     rx_vec = np.append(rx_vec, rx)
+#     ry_vec = np.append(ry_vec, ry)
+#     rz_vec = np.append(rz_vec, rz)
+#
+# print 'rx_vec = ', rx_vec
+# print 'ry_vec = ', ry_vec
+# print 'rz_vec = ', rz_vec
+#
+# def plotEuler321():
+#     plt.figure(1)
+#     plt.plot(t_vec, psi_vec, t_vec, theta_vec, t_vec, phi_vec)
+#     plt.legend(['$\psi$','$\Theta$', '$\phi$'])
+# def plotPlanes2D():
+#     plt.figure(2)
+#     plt.plot(rx_vec, rz_vec)
+#     plt.xlabel('$R_X$')
+#     plt.ylabel('$R_Z$')
+#     plt.title('XZ')
+#     plt.figure(3)
+#     plt.plot(rx_vec, ry_vec)
+#     plt.xlabel('$R_X$')
+#     plt.ylabel('$R_Y$')
+#     plt.title('XY')
+#     plt.figure(4)
+#     plt.plot(ry_vec, rz_vec)
+#     plt.xlabel('$R_Y$')
+#     plt.ylabel('$R_Z$')
+#     plt.title('YZ')
+# def plot3D():
+#     fig = plt.figure(10)
+#     ax = fig.add_subplot(111, projection='3d')
+#     ax.plot(rx_vec, ry_vec, rz_vec)
+#     max_range = np.array([rx_vec.max() - rx_vec.min(), ry_vec.max() - ry_vec.min(), rz_vec.max() - rz_vec.min()]).max()
+#     Xb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][0].flatten() + 0.5 * (rx_vec.max() + rx_vec.min())
+#     Yb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][1].flatten() + 0.5 * (ry_vec.max() + ry_vec.min())
+#     Zb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][2].flatten() + 0.5 * (rz_vec.max() + rz_vec.min())
+#     # Comment or uncomment following both lines to test the fake bounding box:
+#     for xb, yb, zb in zip(Xb, Yb, Zb):
+#         ax.plot([xb], [yb], [zb], 'w')
+#
+# plotEuler321()
+# plotPlanes2D()
+# plot3D()
+# plt.show()
 
 
 
