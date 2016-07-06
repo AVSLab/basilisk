@@ -87,7 +87,7 @@ def plotReference(sigma_RN, omega_RN_N):
     print '\n'
 
     plt.figure(10)
-    plt.ylim([-1.0, 1.0])
+    #plt.ylim([-1.0, 1.0])
     plt.plot(sigma_RN[:, 0] * 1E-9, sigma_RN[:, 1]
              , sigma_RN[:, 0] * 1E-9, sigma_RN[:, 2]
              , sigma_RN[:, 0] * 1E-9, sigma_RN[:, 3])
@@ -169,6 +169,9 @@ def plotEulerSet(eulerSet):
     plt.title(TheAVSSim.modeRequest + ': bore-sight: 3D')
     plt.xlabel('$R_X$')
     plt.ylabel('$R_Y$')
+
+    plotXZ()
+    plotYZ()
 
 
 def plotEuler123(sigma_RN, omega_RN_N):
@@ -349,7 +352,6 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.ConfigureStopTime(int(1 * 1E9))
     TheAVSSim.ExecuteSimulation()
 
-    #singleTest('inertial3DSpin')
     #singleTest('inertial3DPoint')
     #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #singleTest('hillPoint')
@@ -367,8 +369,9 @@ def executeGuidance(TheAVSSim):
     #singleTest('singleAxisSpin')
     #singleTest('marsPoint')
     #doubleTest('celTwoBodyPoint', 'marsPoint')
+    singleTest('inertial3DSpin')
     #singleTest('eulerRotation')
-    singleTest('rasterMnvr')
+    #singleTest('rasterMnvr')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()

@@ -85,7 +85,10 @@ void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, ui
     } else {
         ConfigData->mnvrActive = 0.0;
         ConfigData->scanSelector += 1;
-        printf("Raster: %i. RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
+        printf("Raster: %i. AngleSet = [%f, %f, %f], RateSet = [%f, %f, %f] \n", ConfigData->scanSelector,
+               ConfigData->outputAngleSet.set[0],
+               ConfigData->outputAngleSet.set[1],
+               ConfigData->outputAngleSet.set[2],
                ConfigData->outputAngleRates.set[0],
                ConfigData->outputAngleRates.set[1],
                ConfigData->outputAngleRates.set[2]);

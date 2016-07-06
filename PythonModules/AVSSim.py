@@ -1445,80 +1445,73 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rasterManagerData.outputEulerSetName = "euler_angle_set"
         self.rasterManagerData.outputEulerRatesName = "euler_angle_rates"
 
-        # Euler 321 Angle Sets
-        psi = 45.0 * math.pi / 180.0
-        theta = 10 * math.pi / 180.0
-        angleSetList = [
-            psi, 0.0, 0.0,
-            psi, theta, 0.0,
-            -psi, theta, 0,0,
-            -psi, 2*theta, 0.0,
-            0.0, 2*theta, 0.0,
-            0.0, 0.0, 0.0,
-            -psi, 0.0, 0.0,
-            -psi, -theta, 0.0,
-            psi, -theta, 0,0,
-            psi, -2*theta, 0.0,
-            0.0, -2*theta, 0.0,
-            0.0, 0.0, 0.0
-        ]
+        def asteriskRaster(psi, theta, phiDot, t_mnvr):
+            angleSetList = [
+                0.0, 0.0, 0.0,
+                psi, 0.0, 0.0,
+                psi, psi, 0.0,
+                0.0, 0.0, 0.0,
+                -psi, -psi, 0.0,
+                -psi, 0.0, 0.0,
+                0.0, 0.0, 0.0,
+                0.0, psi, 0.0,
+                -psi, psi, 0.0,
+                0.0, 0.0, 0.0,
+                psi, -psi, 0.0,
+                0.0, -psi, 0.0,
+            ]
 
-        angleSetList = [
-            0.0, 0.0, 0.0,
-            -psi, 0.0, 0.0,
-            psi, 0.0, 0.0
-        ]
+            angleRatesList = [
+                0.0, 0.0, phiDot
+                , 0.0, 0.0, 0.0
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, 0.0
+            ]
 
-        #SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
+            rasterTimeList = [
+                t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+            ]
 
-        # Euler 321 Euler Angle Rates
-        phiDot = 0.002 * math.pi / 180.0
-        angleRatesList = [
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0,
-            0.0, 0.0, -phiDot,
-            0.0, 0.0, 0.0
-        ]
+            return (angleSetList, angleRatesList, rasterTimeList)
 
-        angleRatesList = [
-            -phiDot, 0.0, 0.0
-            , 0.0, phiDot, 0.0
-            , 0.0, 0.0, 0.0
-            , phiDot, 0.0, 0.0
-            , 0.0, 0.0, 0.0
-            , 0.0, -phiDot, 0.0
-            , phiDot, 0.0, 0.0
-            , 0.0, 0.0, 0.0
-        ]
+        def starRateRaster(phiDot, t_mnvr):
+            angleSetList = []
+            angleRatesList = [
+                -phiDot, 0.0, 0.0
+                , phiDot, 0.0, 0.0
+                , phiDot, phiDot, 0.0
+                , -phiDot, -phiDot, 0.0
+                , -phiDot, phiDot, 0.0
+                , phiDot, -phiDot, 0.0
+                , 0.0, phiDot, 0.0
+                , 0.0, -phiDot, 0.0
+            ]
+
+            rasterTimeList = [
+                t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+            ]
+            return (angleSetList, angleRatesList, rasterTimeList)
+
+
+        psi = 8.0 * math.pi / 180.0
+        theta = 8.0 * math.pi / 180.0
+        phiDot = 0.02 * math.pi / 180.0
+        t_mnvr = 20.0 * 18
+        (angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
+        #(angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
+
+        SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
         SimulationBaseClass.SetCArray(angleRatesList, 'double', self.rasterManagerData.scanningRates)
-
-        # Raster times
-        t_h = 25.0 * 60.0 + 100.0
-        t_v = 20.0 * 25
-        rasterTimeList = np.array([t_h, t_v, 2*t_h, t_v, t_h, 2*t_v, t_h, t_v, 2*t_h, t_v, t_h, 2*t_h])*1000
-        rasterTimeList = np.array([
-            t_v, t_v
-            , t_v, t_v
-            , t_v, t_v
-            , t_v, t_v
-        ])
         SimulationBaseClass.SetCArray(rasterTimeList, 'double', self.rasterManagerData.rasterTimes)
-
-        numRasters = len(rasterTimeList)
-        self.rasterManagerData.numRasters = numRasters
+        self.rasterManagerData.numRasters = len(rasterTimeList)
 
     def setInertial3DSpin(self):
         self.inertial3DSpinData.inputRefName = "att_ref_output_stage1"
         self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_RN = np.array([0.1, 0.2, 0.3])
+        sigma_RN = np.array([0.4, 0.4, 0.4])
         SimulationBaseClass.SetCArray(sigma_RN, 'double',self.inertial3DSpinData.sigma_RN)
         omega_RN_N = np.array([0.2, 0.1, 0.1]) * mc.D2R
         SimulationBaseClass.SetCArray(omega_RN_N, 'double',self.inertial3DSpinData.omega_RN_N)
@@ -1528,11 +1521,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.eulerRotationData.outputDataName = "att_ref_output"
         self.eulerRotationData.outputEulerSetName = "euler_set_output"
         self.eulerRotationData.outputEulerRatesName = "euler_rates_output"
-        angleRates = np.array([0.2, 0.0, 0.0]) * mc.D2R
+        angleRates = np.array([0.0, 0.0, 0.2]) * mc.D2R
         SimulationBaseClass.SetCArray(angleRates, 'double',self.eulerRotationData.angleRates)
         # Raster Maneuvers
-        self.eulerRotationData.inputEulerSetName = "euler_angle_set"
-        self.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
+        #self.eulerRotationData.inputEulerSetName = "euler_angle_set"
+        #self.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
 
     # Init of Tracking Error
     def setAttTrackingError(self):
