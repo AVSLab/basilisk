@@ -49,7 +49,7 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
                                                sizeof(vehEffectorOut),
-                                               "thrusterForceSimpleOut",          /* add the output structure name */
+                                               "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
 
 }
@@ -69,10 +69,13 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
     double          D2;
 
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+    ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
                                                 sizeof(vehControlOut),
                                                 moduleID);
 
+    ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
+                                                       sizeof(vehControlOut),
+                                                       moduleID);
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
 
@@ -95,10 +98,13 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
             D2 += ConfigData->DTDDTinv[i][j]*ConfigData->DTDDTinv[i][j];
         }
         /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
-        if (D2 > 0.00001) {
-            ConfigData->DTDDTinv[i][j] /= D2;
-        } else {
-            ConfigData->DTDDTinv[i][j] = 0.0;
+        for(i=0; i<ConfigData->numThrusters; i=i+1)
+        {
+            if (D2 > 0.00001) {
+                ConfigData->DTDDTinv[i][j] = ConfigData->DTDDTinv[i][j]/ D2;
+            } else {
+                ConfigData->DTDDTinv[i][j] = 0.0;
+            }
         }
     }
 
@@ -127,19 +133,19 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     uint64_t            clockTime;
     uint32_t            readSize;
     double              F[MAX_EFF_CNT];               /*!< [N] vector of commanded thruster forces */
-    double              FAxis[MAX_EFF_CNT];           /*!< [N] vector of commanded thruster forces to produce a torque about a body axis */
+    double              forcePerAxis[MAX_EFF_CNT];    /*!< [N] vector of commanded thruster forces to produce a torque about a body axis */
     int                 i,j;
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(ConfigData->Lr_B), moduleID);
     if (ConfigData->flipLrSign) {
         v3Scale(-1.0, ConfigData->Lr_B, ConfigData->Lr_B);
     }
 
     /* clear the net thruster force vector */
-    memset(F,0x0,MAX_EFF_CNT);
+    memset(F,0x0,MAX_EFF_CNT*sizeof(double));
 
     /*
         Loop over each body axis and compute the set of positive thruster to yield Lr(j)
@@ -148,20 +154,20 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     for (j=0;j<3;j++) {
         if (!ConfigData->ignoreBodyAxis[j]) {
 
-            memset(FAxis,0x0,MAX_EFF_CNT);      /* clear the per-axis force array */
+            memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));      /* clear the per-axis force array */
 
             for (i=0;i<MAX_EFF_CNT;i++) {
                 /* compute the minimum norm solution for each thruster */
-                FAxis[i] += ConfigData->DTDDTinv[i][j] * ConfigData->Lr_B[j];
+                forcePerAxis[i] += ConfigData->DTDDTinv[i][j] * ConfigData->Lr_B[j];
                 /* enforce that the thrust must be positive */
-                if (FAxis[i] > 0.0) {
-                    FAxis[i] *= 2.0;
+                if (forcePerAxis[i] > 0.0) {
+                    forcePerAxis[i] *= 2.0;
                 } else {
-                    FAxis[i] = 0.0;
+                    forcePerAxis[i] = 0.0;
                 }
 
                 /* add the per-axis thrust solution to the net thruster sum */
-                F[i] += FAxis[i];
+                F[i] += forcePerAxis[i];
             }
         }
     }
@@ -171,8 +177,7 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     /*
      store the output message 
      */
-    v3Copy(F, ConfigData->thrusterForceOut.effectorRequest);                 /* populate the output message */
-
+    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.effectorRequest);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
                  (void*) &(ConfigData->thrusterForceOut), moduleID);
 

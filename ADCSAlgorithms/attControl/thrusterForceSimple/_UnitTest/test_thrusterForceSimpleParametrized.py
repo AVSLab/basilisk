@@ -16,9 +16,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
+<<<<<<< fac3225aed8148c4ba1d9fd92463b3ebc48ce1db
 #   Module Name:        fswModuleTemplateParametrized
 #   Author:             (First Name) (Last Name)
 #   Creation Date:      Month Day, Year
+=======
+#   Module Name:        thrusterForceSimple
+#   Author:             Hanspeter Schaub
+#   Creation Date:      July 4, 2016
+>>>>>>> [AS-152] had a merge issue when pulling in latest develop and rebasing. Had to re-apply the test_thrusterForceSimpleParameterized.py changes by hand.
 #
 
 import pytest
@@ -36,9 +42,10 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import fswModuleTemplate                # import the module that is to be tested
-import MRP_Steering                     # import module(s) that creates the needed input message declaration
+import thrusterForceSimple
 import macros
+import MRP_Steering
+import vehicleConfigData
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -47,20 +54,20 @@ import macros
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("param1, param2", [
-    (1, 1),
-    (1, 3),
-    (2, 2),
+@pytest.mark.parametrize("flipSign, ignoreAxis2", [
+    (0, 0),
+    (1, 0),
+    (0, 1)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, param1, param2):
+def test_module(show_plots, flipSign, ignoreAxis2):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots, param1, param2)
+    [testResults, testMessage] = thrusterForceTest(show_plots, flipSign, ignoreAxis2)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots, param1, param2):
+def thrusterForceTest(show_plots, flipSign, ignoreAxis2):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -80,48 +87,81 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
+    moduleConfig = thrusterForceSimple.thrusterForceSimpleConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        fswModuleTemplate.Update_fswModuleTemplate,     # update with current values
-                                        fswModuleTemplate.SelfInit_fswModuleTemplate,   # update with current values
-                                        fswModuleTemplate.CrossInit_fswModuleTemplate,  # update with current values
-                                        fswModuleTemplate.Reset_fswModuleTemplate)      # update with current values
-    moduleWrap.ModelTag = "fswModuleTemplate"                                        # update python name of test module
+                                        thrusterForceSimple.Update_thrusterForceSimple,
+                                        thrusterForceSimple.SelfInit_thrusterForceSimple,
+                                        thrusterForceSimple.CrossInit_thrusterForceSimple,
+                                        thrusterForceSimple.Reset_thrusterForceSimple)
+    moduleWrap.ModelTag = "thrusterForceSimple"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputDataName = "sampleInput"          # update with current values
-    moduleConfig.outputDataName = "sampleOutput"        # update with current values
-    moduleConfig.dummy = 1                              # update module parameter with required values
-    vector = [1., 2., 3.]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.dumVector)
+    moduleConfig.inputVehControlName = "LrRequested"
+    moduleConfig.inputThrusterConfName = "RCSThrusters"
+    moduleConfig.outputDataName = "thrusterForceOut"
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageSize = 3*8                              # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputDataName,
+                                          moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    sampleInputMessageVariable = [param1, param2, 0.7]       # Set up a list as a 3-vector
-    SimulationBaseClass.SetCArray(sampleInputMessageVariable,           # specify message variable
+    requestedTorque = [1.0, -0.5, 0.7]                  # Set up a list as a 3-vector
+    SimulationBaseClass.SetCArray(requestedTorque,                      # specify message variable
                                   'double',                             # specify message variable type
                                   inputMessageData.torqueRequestBody)   # write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputDataName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           0,
                                           inputMessageData)             # write data into the simulator
 
+    numThrusters = 8;
+    moduleConfig.numThrusters = numThrusters
+    moduleConfig.flipLrSign = flipSign
+    moduleConfig.ignoreBodyAxis2 = ignoreAxis2
+
+    rcsClass = vehicleConfigData.ThrusterCluster()
+    rcsPointer = vehicleConfigData.ThrusterPointData()
+    rcsLocationData = [ \
+               [-0.86360, -0.82550, 1.79070],
+               [-0.82550, -0.86360, 1.79070],
+               [0.82550, 0.86360, 1.79070],
+               [0.86360, 0.82550, 1.79070],
+               [-0.86360, -0.82550, 1.79070],
+               [-0.82550, -0.86360, 1.79070],
+               [0.82550, 0.86360, 1.79070],
+               [0.86360, 0.82550, 1.79070] \
+               ]
+    rcsDirectionData = [ \
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, -1.0, 0.0],
+                    [-1.0, 0.0, 0.0],
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, -1.0, 0.0],
+                    [-1.0, 0.0, 0.0] \
+                    ]
+    for i in range(numThrusters):
+        SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
+        SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust)
+        vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,
+                           vehicleConfigData.MAX_EFF_CNT*6*8, 2)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName, vehicleConfigData.MAX_EFF_CNT*6*8, 0, rcsClass)
+
+
+
+
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
-    variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -130,57 +170,39 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-    
-    # reset the module to test this functionality
-    moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
-
-    # run the module again for an additional 1.0 seconds
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
-    unitTestSim.ExecuteSimulation()
-        
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "outputVector"
+    moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
-    
+                                                  range(numThrusters))
+
     # set the filtered output truth states
     trueVector=[];
-    if param1==1:
-        if param2==1:
+    if flipSign==0:
+        if ignoreAxis2==0:
             trueVector = [
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7],
-                       [4.0, 1.0, 0.7],
-                       [2.0, 1.0, 0.7],
-                       [3.0, 1.0, 0.7]
+                       [0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018, 0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018],
+                       [0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018, 0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018]
                        ]
         else:
-            if param2==3:
+            if ignoreAxis2==1:
                 trueVector = [
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7],
-                       [4.0, 3.0, 0.7],
-                       [2.0, 3.0, 0.7],
-                       [3.0, 3.0, 0.7]
+               [0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711, 0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711],
+               [0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711, 0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711]
                        ]
             else:
                 testFailCount+=1
                 testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
     else:
-        if param1==2:
+        if flipSign==1:
             trueVector = [
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7],
-                       [5.0, 2.0, 0.7],
-                       [3.0, 2.0, 0.7],
-                       [4.0, 2.0, 0.7]
+                       [0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0, 0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0],
+                       [0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0, 0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0]
                        ]
         else:
             testFailCount+=1
@@ -188,39 +210,25 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*unitTestSupport.NANO2SEC) +
+                                str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-
-        # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableState[i], dummyTrue[i], accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                variableName + " unit test at t=" +
-                                str(variableState[i,0]*unitTestSupport.NANO2SEC) +
-                                "sec\n")
-
-    # Note that we can continue to step the simulation however we feel like.
-    # Just because we stop and query data does not mean everything has to stop for good
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
-    unitTestSim.ExecuteSimulation()
  
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
-    if show_plots:
-        # plot a sample variable.
-        plt.figure(1)
-        plt.plot(variableState[:,0]*unitTestSupport.NANO2SEC, variableState[:,1], label='Sample Variable')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Variable Description [unit]')
-        plt.show()
+    # if show_plots:
+    #     # plot a sample variable.
+    #     plt.figure(1)
+    #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
+    #     plt.legend(loc='upper left')
+    #     plt.xlabel('Time [s]')
+    #     plt.ylabel('Variable Description [unit]')
+    #     plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -237,7 +245,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 #
 if __name__ == "__main__":
     test_module(              # update "module" in function name
-                 True,
-                 1,           # param1 value
-                 1            # param2 value
+                 False,
+                 0,           # flipSign value
+                 0            # ignoreAxis2 value
                )

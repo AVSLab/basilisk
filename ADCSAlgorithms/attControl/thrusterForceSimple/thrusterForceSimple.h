@@ -43,8 +43,9 @@ typedef struct {
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
     int32_t outputMsgID;                            /*!< ID for the outgoing message */
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t inputMsgID;                             /*!< ID for the incoming message */
+    char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
+    char inputThrusterConfName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
+    int32_t inputVehControlID;                      /*!< ID for the incoming Lr control message */
     int32_t inputThrusterConfID;                    /*!< [-] ID for the incoming Thruster configuration data*/
 
     double  Lr_B[3];                                /*!< [Nm]    commanded ADCS control torque */
