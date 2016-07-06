@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 
+#define MAX_RASTER_SET 24
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
@@ -49,6 +50,11 @@ typedef struct {
     double domega_RN_N[3];      /*!< [r/s2] Reference frame inertial acceleration of  R relative
                                             to N in N frame components */
 }attRefOut;
+
+/*! @brief Structure used to define the output euler set for attitude reference generation */
+typedef struct {
+    double set[3];
+}eulerOut;
 
 /*! @} */
 

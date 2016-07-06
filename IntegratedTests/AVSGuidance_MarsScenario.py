@@ -101,6 +101,21 @@ def plotReference(sigma_RN, omega_RN_N):
     plt.legend(['$x_1$', '$x_2$', '$x_3$'])
     plt.title(TheAVSSim.modeRequest + ': $\omega_{RN, N}$')
 
+
+def plotEulerRates(eulerRates):
+    print 'eulerRates = ', eulerRates[:, 1:]
+    print '\n'
+    t_vec = eulerRates[:, 0]
+    psiDot_vec = eulerRates[:, 1]
+    thetaDot_vec = eulerRates[:, 2]
+    phiDot_vec = eulerRates[:, 3]
+    plt.figure(99)
+    plt.plot(t_vec * 1E-9, psiDot_vec
+             , t_vec * 1E-9, thetaDot_vec
+             , t_vec * 1E-9, phiDot_vec)
+    plt.legend(['$\dot\psi$', '$\dot\Theta$', '$\dot\phi$'])
+    plt.title(TheAVSSim.modeRequest + ': 3-2-1 Euler Rates')
+
 def plotEulerSet(eulerSet):
     print 'eulerSet = ', eulerSet[:, 1:]
     print '\n'
@@ -125,16 +140,19 @@ def plotEulerSet(eulerSet):
         rx_vec = np.append(rx_vec, rx)
         ry_vec = np.append(ry_vec, ry)
         rz_vec = np.append(rz_vec, rz)
-    plt.figure(101)
-    plt.plot(rx_vec, rz_vec)
-    plt.ylabel('$R_X$')
-    plt.ylabel('$R_Z$')
-    plt.title(TheAVSSim.modeRequest + ': bore-sight: XZ-plane')
-    plt.figure(102)
-    plt.plot(ry_vec, rz_vec)
-    plt.ylabel('$R_Y$')
-    plt.ylabel('$R_Z$')
-    plt.title(TheAVSSim.modeRequest + ': bore-sight: YZ-plane')
+
+    def plotXZ():
+        plt.figure(101)
+        plt.plot(rx_vec, rz_vec)
+        plt.ylabel('$R_X$')
+        plt.ylabel('$R_Z$')
+        plt.title(TheAVSSim.modeRequest + ': bore-sight: XZ-plane')
+    def plotYZ():
+        plt.figure(102)
+        plt.plot(ry_vec, rz_vec)
+        plt.ylabel('$R_Y$')
+        plt.ylabel('$R_Z$')
+        plt.title(TheAVSSim.modeRequest + ': bore-sight: YZ-plane')
 
     fig = plt.figure(103)
     ax = fig.add_subplot(111, projection='3d')
@@ -146,9 +164,12 @@ def plotEulerSet(eulerSet):
     # Comment or uncomment following both lines to test the fake bounding box:
     for xb, yb, zb in zip(Xb, Yb, Zb):
         ax.plot([xb], [yb], [zb], 'w')
+
+    ax.scatter(0, 0, 0)
     plt.title(TheAVSSim.modeRequest + ': bore-sight: 3D')
     plt.xlabel('$R_X$')
     plt.ylabel('$R_Y$')
+
 
 def plotEuler123(sigma_RN, omega_RN_N):
     theta0 = np.array([])
@@ -346,7 +367,8 @@ def executeGuidance(TheAVSSim):
     #singleTest('singleAxisSpin')
     #singleTest('marsPoint')
     #doubleTest('celTwoBodyPoint', 'marsPoint')
-    singleTest('eulerRotation')
+    #singleTest('eulerRotation')
+    singleTest('rasterMnvr')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -356,6 +378,7 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("euler_set_output", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("euler_rates_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("", int(1E9))
 
     TheAVSSim.VehDynObject.GravData[0].IsCentralBody = False
@@ -413,18 +436,20 @@ if __name__ == "__main__":
         omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
         domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
         plotReference(sigma_RN, omega_RN_N)
-        if TheAVSSim.modeRequest =='eulerRotation':
+        if TheAVSSim.modeRequest =='eulerRotation' or TheAVSSim.modeRequest == 'rasterMnvr':
             euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))
+            euler123rates = TheAVSSim.pullMessageLogData("euler_rates_output.set", range(3))
             plotEulerSet(euler123set)
+            plotEulerRates(euler123rates)
 
 
-    if (TheAVSSim.modeRequest == 'orbitAxisSpin'
+    if (TheAVSSim.modeRequest == 'rasterMnvr'
         or TheAVSSim.modeRequest =='eulerRotation'
         or TheAVSSim.modeRequest =='inertial3DSpin'):
         sigma_R0N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.sigma_RN", range(3))
         omega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.omega_RN_N", range(3))
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
-        plotBaseReference(sigma_R0N, omega_R0N_N)
+        #plotBaseReference(sigma_R0N, omega_R0N_N)
 
     sigma_BR = TheAVSSim.pullMessageLogData("nom_att_guid_out.sigma_BR", range(3))
     omega_BR_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_BR_B", range(3))

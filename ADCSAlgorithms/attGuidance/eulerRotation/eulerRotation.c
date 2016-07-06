@@ -46,11 +46,17 @@ void SelfInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attRefOut),
                                                "attRefOut",
                                                moduleID);
-    ConfigData->outputEulerID = CreateNewMessage(ConfigData->outputEulerName,
+    ConfigData->outputEulerSetID = CreateNewMessage(ConfigData->outputEulerSetName,
                                                sizeof(eulerOut),
                                                "eulerOut",
-                                               moduleID);
+                                                    moduleID);
+    ConfigData->outputEulerRatesID = CreateNewMessage(ConfigData->outputEulerRatesName,
+                                                    sizeof(eulerOut),
+                                                    "eulerOut",
+                                                    moduleID);
     ConfigData->priorTime = -1;
+    v3SetZero(ConfigData->priorCmdSet);
+    v3SetZero(ConfigData->priorCmdRates);
 }
 
 void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
@@ -59,22 +65,51 @@ void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
                                                 sizeof(attRefOut),
                                                 moduleID);
+    
+    ConfigData->inputEulerSetID = ConfigData->inputEulerRatesID = -1;
+    if(strlen(ConfigData->inputEulerSetName) > 0 && strlen(ConfigData->inputEulerRatesName) > 0)
+    {
+        ConfigData->inputEulerSetID = subscribeToMessage(ConfigData->inputEulerSetName,
+                                                         sizeof(eulerOut),
+                                                         moduleID);
+        ConfigData->inputEulerRatesID = subscribeToMessage(ConfigData->inputEulerRatesName,
+                                                           sizeof(eulerOut),
+                                                           moduleID);
+    }
 }
 
 void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
 {
     ConfigData->priorTime = -1;
+    v3SetZero(ConfigData->priorCmdSet);
+    v3SetZero(ConfigData->priorCmdRates);
 }
 
 
 void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    /*! - Read input message */
-    attRefOut           inputRef;
-    uint64_t            writeTime;
-    uint32_t            writeSize;
+    /*! - Read input messages */
+    attRefOut inputRef;
+    eulerOut angles;
+    eulerOut rates;
+    uint64_t writeTime;
+    uint32_t writeSize;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
                 sizeof(attRefOut), (void*) &(inputRef), moduleID);
+    if (ConfigData->inputEulerSetID > 0 && ConfigData->inputEulerRatesID > 0)
+    {
+        /*! - Read Raster Manager messages */
+        ReadMessage(ConfigData->inputEulerSetID, &writeTime, &writeSize,
+                    sizeof(eulerOut), (void*) &(angles), moduleID);
+        ReadMessage(ConfigData->inputEulerRatesID, &writeTime, &writeSize,
+                    sizeof(eulerOut), (void*) &(rates), moduleID);
+        /*! - Save commanded 321 Euler set and rates */
+        v3Copy(angles.set, ConfigData->cmdSet);
+        v3Copy(rates.set, ConfigData->cmdRates);
+        /*! - Check the command is new */
+        checkRasterCommands(ConfigData);
+    }
+    
     /*! - Compute time step to use in the integration downstream */
     computeTimeStep(ConfigData, callTime);
     /*! - Compute output reference frame */
@@ -84,6 +119,7 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
                                   inputRef.domega_RN_N);
     /*! - Write output messages */
     writeOutputMessages(ConfigData, callTime, moduleID);
+    /*! - Update last time the module was called to current call time */
     ConfigData->priorTime = callTime;
     return;
 }
@@ -99,12 +135,33 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
  */
 void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    /*! - Guidance reference output */
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
                  (void*) &(ConfigData->attRefOut), moduleID);
     
-    v3Copy(ConfigData->angleSet, ConfigData->eulerOut.set);
-    WriteMessage(ConfigData->outputEulerID, callTime, sizeof(eulerOut),
-                 (void*) &(ConfigData->eulerOut), moduleID);
+    /*! - Euler angle set and rates outputed for testing purposes */
+    v3Copy(ConfigData->angleSet, ConfigData->eulerSetOut.set);
+    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(eulerOut),
+                 (void*) &(ConfigData->eulerSetOut), moduleID);
+    v3Copy(ConfigData->angleRates, ConfigData->eulerRatesOut.set);
+    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(eulerOut),
+                 (void*) &(ConfigData->eulerRatesOut), moduleID);
+}
+
+
+/*
+ * Function: checkRasterCommands
+ * Purpose: This function checks if there is a new commanded raster maneuver available
+ * Input
+ *      ConfigData = module configuration data
+ */
+void checkRasterCommands(eulerRotationConfig *ConfigData)
+{
+    if (ConfigData->cmdSet != ConfigData->priorCmdSet || ConfigData->cmdRates != ConfigData->priorCmdRates)
+    {
+        v3Copy(ConfigData->cmdSet, ConfigData->angleSet);
+        v3Copy(ConfigData->cmdRates, ConfigData->angleRates);
+    }
 }
 
 /*
