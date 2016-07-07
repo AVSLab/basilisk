@@ -234,6 +234,7 @@ def plotBaseReference(sigma_R0N, omega_R0N_N):
     plt.legend(['$x_1$', '$x_2$', '$x_3$'])
     plt.title('BaseRef: $\omega_{R0N, N}$')
 
+
 def plotTrackingError(sigma_BR, omega_BR_B):
     print 'sigma_BR = ', sigma_BR[:, 1:]
     print 'omega_BR_B = ', omega_BR_B[:, 1:]
@@ -269,6 +270,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
     plt.semilogy(t, eps1, t, eps2, t, eps3)
     plt.legend(['$e_1$', '$e_2$', '$e_3$'])
     plt.title(TheAVSSim.modeRequest + ': Error $e_i$')
+
 
 def plotControlTorque(Lr):
     print 'Lr = ', Lr[:, 1:]
@@ -337,7 +339,7 @@ def executeGuidance(TheAVSSim):
     # hillPoint Data:
     #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
     # inertial3DPoint Data:
-    #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
     # velocityPoint Data:
     TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
     # cel2BdyPoint Data:
@@ -345,6 +347,7 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.celTwoBodyPointData.inputSecMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
+    #TheAVSSim.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
 
 
     # Initialize SIM:
@@ -369,9 +372,11 @@ def executeGuidance(TheAVSSim):
     #singleTest('singleAxisSpin')
     #singleTest('marsPoint')
     #doubleTest('celTwoBodyPoint', 'marsPoint')
-    singleTest('inertial3DSpin')
+    #singleTest('inertial3DSpin')
     #singleTest('eulerRotation')
     #singleTest('rasterMnvr')
+    singleTest('deadbandGuid')
+    #singleTest('inertial3DPoint')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -380,6 +385,8 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("simple_nav_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("db_att_guid_out", int(1E9))
+    TheAVSSim.AddVariableForLogging('errorDeadband.error', int(1E8))
     TheAVSSim.TotalSim.logThisMessage("euler_set_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("euler_rates_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("", int(1E9))
@@ -438,7 +445,7 @@ if __name__ == "__main__":
         sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
         omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
         domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
-        plotReference(sigma_RN, omega_RN_N)
+        #plotReference(sigma_RN, omega_RN_N)
         if TheAVSSim.modeRequest =='eulerRotation' or TheAVSSim.modeRequest == 'rasterMnvr':
             euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))
             euler123rates = TheAVSSim.pullMessageLogData("euler_rates_output.set", range(3))
@@ -454,13 +461,25 @@ if __name__ == "__main__":
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
         #plotBaseReference(sigma_R0N, omega_R0N_N)
 
-    sigma_BR = TheAVSSim.pullMessageLogData("nom_att_guid_out.sigma_BR", range(3))
-    omega_BR_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_BR_B", range(3))
-    omega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_RN_B", range(3))
-    domega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.domega_RN_B", range(3))
-    plotTrackingError(sigma_BR, omega_BR_B)
+
+    if (TheAVSSim.modeRequest == 'deadbandGuid'):
+        sigma_BR = TheAVSSim.pullMessageLogData("db_att_guid_out.sigma_BR", range(3))
+        omega_BR_B = TheAVSSim.pullMessageLogData("db_att_guid_out.omega_BR_B", range(3))
+        plotTrackingError(sigma_BR, omega_BR_B)
+        dbError = TheAVSSim.GetLogVariableData('errorDeadband.error')
+        plt.figure(200)
+        plt.plot(dbError[:, 0] * 1.0E-9, dbError[:, 1], 'b')
+        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh, color='green')
+        plt.axhline(TheAVSSim.errorDeadbandData.outerThresh, color='red')
+        plt.legend(['error', 'inner thresh', 'outer thresh'])
+    else:
+        sigma_BR = TheAVSSim.pullMessageLogData("nom_att_guid_out.sigma_BR", range(3))
+        omega_BR_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_BR_B", range(3))
+        omega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.omega_RN_B", range(3))
+        domega_RN_B = TheAVSSim.pullMessageLogData("nom_att_guid_out.domega_RN_B", range(3))
+        plotTrackingError(sigma_BR, omega_BR_B)
 
     Lr = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-    #plotControlTorque(Lr)
+    plotControlTorque(Lr)
 
     plt.show()

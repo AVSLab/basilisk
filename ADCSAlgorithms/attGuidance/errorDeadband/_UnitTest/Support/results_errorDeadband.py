@@ -11,7 +11,7 @@ from numpy import linalg as la
 import RigidBodyKinematics as rbk
 import macros as mc
 
-np.set_printoptions(precision=12)
+np.set_printoptions(precision=14)
 
 
 sigma_BR = np.array([0.03, -0.05, 0.0])

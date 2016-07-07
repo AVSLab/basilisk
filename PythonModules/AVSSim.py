@@ -82,6 +82,7 @@ import axisScan
 import rasterManager
 import eulerRotation
 import attTrackingError
+import errorDeadband
 
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
@@ -135,6 +136,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("rasterMnvrTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("eulerRotationTask", int(5E8)), 117)
         self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 116)
+
+        self.fswProc.addTask(self.CreateNewTask("trackingErrorTask", int(5E8)), 111)
+        self.fswProc.addTask(self.CreateNewTask("controlTask", int(5E8)), 110)
+
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("feedbackControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("attitudePRVControlMnvrTask", int(5E8)), 110)
@@ -410,6 +415,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        attTrackingError.CrossInit_attTrackingError,
                                                        attTrackingError.Reset_attTrackingError)
         self.attTrackingErrorWrap.ModelTag = "attTrackingError"
+        
+        self.errorDeadbandData = errorDeadband.errorDeadbandConfig()
+        self.errorDeadbandWrap = alg_contain.AlgContain(self.errorDeadbandData,
+                                                       errorDeadband.Update_errorDeadband,
+                                                       errorDeadband.SelfInit_errorDeadband,
+                                                       errorDeadband.CrossInit_errorDeadband,
+                                                       errorDeadband.Reset_errorDeadband)
+        self.errorDeadbandWrap.ModelTag = "errorDeadband"
 
         # Initialize flight software modules.
         self.InitAllFSWObjects()
@@ -447,17 +460,23 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
 
         # Mapping of Guidance Models to Guidance Tasks
-        self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 13)
-        self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 13)
-        self.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 13)
-        self.AddModelToTask("celTwoBodyPointTask", self.celTwoBodyPointWrap, self.celTwoBodyPointData, 13)
+        self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 20)
+        self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 20)
+        self.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 20)
+        self.AddModelToTask("celTwoBodyPointTask", self.celTwoBodyPointWrap, self.celTwoBodyPointData, 20)
         #self.AddModelToTask("singleAxisSpinTask", self.singleAxisSpinWrap, self.singleAxisSpinData, 11)
         #self.AddModelToTask("orbitAxisSpinTask", self.orbitAxisSpinWrap, self.orbitAxisSpinData, 11)
         #self.AddModelToTask("axisScanTask", self.axisScanWrap, self.axisScanData, 11)
-        self.AddModelToTask("eulerRotationTask", self.eulerRotationWrap, self.eulerRotationData, 11)
-        self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 11)
-        self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 12)
-        self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationWrap, 11)
+        self.AddModelToTask("eulerRotationTask", self.eulerRotationWrap, self.eulerRotationData, 19)
+        self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 19)
+        self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 19)
+        self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationWrap, 18)
+
+        self.AddModelToTask("trackingErrorTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 15)
+        self.AddModelToTask("trackingErrorTask", self.errorDeadbandWrap, self.errorDeadbandData, 14)
+        self.AddModelToTask("controlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 10)
+        self.AddModelToTask("controlTask", self.RWAMappingDataWrap, self.RWAMappingData, 9)
+        self.AddModelToTask("controlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 8)
         
         self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
@@ -479,6 +498,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.disableAllTasks()
 
         # Guidance Events
+        self.createNewEvent("initiateGuidanceWithDeadband", int(1E9), True, ["self.modeRequest == 'deadbandGuid'"],
+                            ["self.fswProc.disableAllTasks()"
+                                , "self.enableTask('sensorProcessing')"
+                                , "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('trackingErrorTask')"
+                                , "self.enableTask('controlTask')"
+                                , "self.ResetTask('controlTask')"
+                             ])
+
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
@@ -1527,7 +1555,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         #self.eulerRotationData.inputEulerSetName = "euler_angle_set"
         #self.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
 
-    # Init of Tracking Error
     def setAttTrackingError(self):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
@@ -1536,6 +1563,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         #R0R = rbk.Mi(0.5*np.pi, 2)
         sigma_R0R = rbk.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
+
+    def setErrorDeadband(self):
+        self.errorDeadbandData.inputGuidName = "nom_att_guid_out"
+        self.errorDeadbandData.outputDataName = "db_att_guid_out"
+        self.errorDeadbandData.innerThresh = 2.0 * (math.pi / 180.)
+        self.errorDeadbandData.outerThresh = 4.0 * (math.pi / 180.)
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1559,7 +1592,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
         self.MRP_FeedbackRWAData.numRWAs = 4
 
-        self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
+        #self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
+        self.MRP_FeedbackRWAData.inputGuidName = "db_att_guid_out" # deadband
+
         self.MRP_FeedbackRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
@@ -1772,6 +1807,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.setInertial3DSpin()
         self.setEulerRotation()
         self.setAttTrackingError()
+        self.setErrorDeadband()
 
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):

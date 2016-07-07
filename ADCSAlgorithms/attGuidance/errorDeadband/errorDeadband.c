@@ -110,12 +110,11 @@ void applyDeadband(errorDeadbandConfig *ConfigData)
 {
     double attError;
     double rateError;
-    double error;
     
     attError = 4 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
     rateError = v3Norm(ConfigData->attGuidOut.omega_BR_B);
-    error = sqrt(attError * attError + rateError * rateError);
-    if (error > ConfigData->innerThresh && error < ConfigData->outerThresh)
+    ConfigData->error = sqrt(attError * attError + rateError * rateError);
+    if (ConfigData->error > ConfigData->innerThresh && ConfigData->error < ConfigData->outerThresh)
     {
         v3SetZero(ConfigData->attGuidOut.sigma_BR);
         v3SetZero(ConfigData->attGuidOut.omega_BR_B);

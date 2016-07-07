@@ -32,6 +32,7 @@ typedef struct {
     /* declare module private variables */
     double innerThresh;
     double outerThresh;
+    double error;
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
