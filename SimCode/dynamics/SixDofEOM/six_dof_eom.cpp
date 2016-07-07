@@ -1781,9 +1781,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     
     Integrator->integrate(CurrentTime, TimeStep, X, Xnext, this->NStates);
 
+    memcpy(this->XState, Xnext, this->NStates*sizeof(double));
+
     // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
-    
+    this->totScEnergy = 0.0;
+
     if (this->useTranslation) {
         // The nonconservative delta v is computed assuming that the conservative acceleration is constant along a time step. Then: DV_cons = Cons_accel * dt. DV_noncons = DV_tot - DV_cons
         double DVtot[3];
@@ -1817,12 +1820,12 @@ void SixDofEOM::integrateState(double CurrentTime)
         v3Subtract(DVtot, DVconservative, LocalDV);
         
         v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
+
+        //! - Find translational energy and potential energy
+        this->totScEnergy += 1.0/2.0*this->compMass*v3Dot(&this->XState[3], &this->XState[3]) - this->compMass*this->CentralBody->mu/v3Norm(&this->XState[0]);
     }
     
     //-------------------------------------------------------
-
-    
-    memcpy(this->XState, Xnext, this->NStates*sizeof(double));
 
     //! - MRPs get singular at 360 degrees.  If we are greater than 180, switch to shadow set
     if (this->useRotation){
@@ -1840,7 +1843,6 @@ void SixDofEOM::integrateState(double CurrentTime)
             P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2 */
         totRwsKinEnergy         = 0.0;
         this->scRotPower        = 0.0;
-        this->totScRotKinEnergy = 0.0;
         v3SetZero(totRwsAngMomentum_B);
         v3SetZero(this->totScAngMomentum_B);
         v3SetZero(this->totScAngMomentum_N);
@@ -1986,21 +1988,21 @@ void SixDofEOM::integrateState(double CurrentTime)
         }
 
         //! - Grab previous energy value for rate of change of energy
-        prevTotScRotKinEnergy = this->totScRotKinEnergy;
+        prevTotScRotKinEnergy = this->totScEnergy;
 
         /* spacecraft angular momentum */
         m33MultV3(this->compI, &attStates[3], this->totScAngMomentum_B); /* I*omega */
 
         //! 1/2*omega^T*I*omega
-        this->totScRotKinEnergy = 0.5*v3Dot(&attStates[3], this->totScAngMomentum_B);
+        this->totScEnergy = 0.5*v3Dot(&attStates[3], this->totScAngMomentum_B);
 
         //! - Add the reaction wheel relative kinetic energy and angular momentum
-        this->totScRotKinEnergy += totRwsKinEnergy; /* T from above */
-        this->totScRotKinEnergy += totFuelSloshEnergy;
-        this->totScRotKinEnergy += totSolarPanelEnergy;
+        this->totScEnergy += totRwsKinEnergy; /* T from above */
+        this->totScEnergy += totFuelSloshEnergy;
+        this->totScEnergy += totSolarPanelEnergy;
 
         //! - Add in translational kinetic energy of the hub
-        this->totScRotKinEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
+        this->totScEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
 
         v3Add(totFuelSloshAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
         v3Add(totSolarPanelAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
@@ -2018,7 +2020,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         this->totScAngMomentumMag = v3Norm(this->totScAngMomentum_N);
 
         //! - Calulate rate of change of energy
-        this->scEnergyRate = (this->totScRotKinEnergy-prevTotScRotKinEnergy)/TimeStep;
+        this->scEnergyRate = (this->totScEnergy-prevTotScRotKinEnergy)/TimeStep;
     }
 
     //! - Clear out local allocations and set time for next cycle

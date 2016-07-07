@@ -313,13 +313,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.totScRotKinEnergy", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.1))
+
+    scSim.AddVariableForLogging("VehicleDynamicsData.totScEnergy", macros.sec2nano(0.001))
 
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(60*10)) #Just a simple run to get initial conditions from ephem
+    scSim.ConfigureStopTime(macros.sec2nano(60*10.)) #Just a simple run to get initial conditions from ephem
     scSim.ExecuteSimulation()
 
     # log the data
@@ -334,7 +335,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
         rho3 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho")
-        energy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotKinEnergy")
         momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
         # plt.figure(1)
         # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
@@ -356,28 +356,19 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
         # plt.show()
 
+    energy = scSim.GetLogVariableData("VehicleDynamicsData.totScEnergy")
+    # plt.figure(8)
+    # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
+    # plt.show()
+
     # set expected results
-    trueSigma = [
-                [ 0.0, 0.0, 0.0]
-                ,[0.0, 0.0, 0.0]
-                ,[0.0, 0.0, 0.0]
-                ,[0.0, 0.0, 0.0]
-                ,[0.0, 0.0, 0.0]
-                ,[0.0, 0.0, 0.0]
-                ]
-    truePos = [
-                [ 1.0, 0.0, 0.0]
-                ,[1.0, 0.0, 0.0]
-                ,[1.0, 0.0, 0.0]
-                ,[1.0, 0.0, 0.0]
-                ,[1.0, 0.0, 0.0]
-                ,[1.0, 0.0, 0.0]
-                ]
+    dataPos = dataPos[1:len(dataPos),:]
+    dataSigma = dataSigma[1:len(dataSigma),:]
+
     if useTranslation==True:
         if useRotation==True and useJitter==True and useRW==True:
             truePos = [
-                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
-                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        [-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
                         ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
                         ,[-5.77274667e+06,   6.07124005e+06,   5.48500542e+06]
                         ,[-6.29511736e+06,   5.52480249e+06,   5.50155640e+06]
@@ -385,8 +376,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useThruster: # thrusters with no RW
             truePos = [
-                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
-                        ,[-4.63215747e+06,   7.05703053e+06,   5.35808358e+06]
+                        [-4.63215747e+06,   7.05703053e+06,   5.35808358e+06]
                         ,[-5.21738942e+06,   6.58298678e+06,   5.43711335e+06]
                         ,[-5.77274323e+06,   6.07124197e+06,   5.48500554e+06]
                         ,[-6.29511282e+06,   5.52480503e+06,   5.50155656e+06]
@@ -394,8 +384,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useRotation==True and useHingedSP==True and useFuelSlosh==False: # Hinged Solar Panel Dynamics
             truePos = [
-                        [0.0,                0.0,               0.0]
-                        ,[-2.53742996478815, -2.84830940967875, 0.216182452815001]
+                        [-2.53742996478815, -2.84830940967875, 0.216182452815001]
                         ,[-5.38845294582063, -5.29411572920721, 0.0214874807180885]
                         ,[-7.8808739903179,  -8.17415157897987, 0.15545245637636]
                         ,[-10.5787631792684, -10.7111009304237, 0.143079770048844]
@@ -403,8 +392,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useRotation==True and useFuelSlosh==True and useHingedSP==False: #Fuel slosh
             truePos = [
-                        [0.0,              0.0,            0.0]
-                        ,[-2.69102169e-02, -3.34138085e-02, -7.63296148e-03]
+                        [-2.69102169e-02, -3.34138085e-02, -7.63296148e-03]
                         ,[-5.16421395e-02, -6.69635270e-02, -1.41925287e-02]
                         ,[-7.99673260e-02, -1.00807085e-01, -1.90481350e-02]
                         ,[-1.06932569e-01, -1.35397480e-01, -2.56727424e-02]
@@ -412,8 +400,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
             truePos = [
-                        [0.0,              0.0,            0.0]
-                        ,[-2.44400224e+00, -2.74717376e+00, 2.02431956e-01]
+                        [-2.44400224e+00, -2.74717376e+00, 2.02431956e-01]
                         ,[-5.18632064e+00, -5.11176972e+00, 1.26571309e-02]
                         ,[-7.58841749e+00, -7.88184532e+00, 1.28402447e-01]
                         ,[-1.01751925e+01, -1.03386042e+01, 1.21233539e-01]
@@ -421,8 +408,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         else: # natural translation
             truePos = [
-                        [ -4.02033869e+06,   7.49056674e+06,   5.24829921e+06]
-                        ,[-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
+                        [-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
                         ,[-5.21739172e+06,   6.58298551e+06,   5.43711328e+06]
                         ,[-5.77274669e+06,   6.07124005e+06,   5.48500543e+06]
                         ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
@@ -432,8 +418,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         if useRW==True:
             if useJitter==True:
                 trueSigma = [
-                            [1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
-                            ,[-1.76673450e-01,  -4.44695362e-01,   7.55887814e-01]
+                            [-1.76673450e-01,  -4.44695362e-01,   7.55887814e-01]
                             ,[1.14010584e-01,  -3.22414666e-01,   6.83156574e-01]
                             ,[-2.24562827e-01,  -3.80868645e-01,   8.25282928e-01]
                             ,[2.17619286e-01,   2.60981727e-01,  -2.17974719e-01]
@@ -441,8 +426,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                             ]
             else: # RW without jitter
                 trueSigma = [
-                            [  1.00000000e-01,   2.00000000e-01,  -3.00000000e-01]
-                            ,[-1.76673530e-01,  -4.44695395e-01,   7.55888029e-01]
+                            [-1.76673530e-01,  -4.44695395e-01,   7.55888029e-01]
                             ,[ 1.12819073e-01,  -3.23001268e-01,   6.84420942e-01]
                             ,[-2.29698563e-01,  -3.85908142e-01,   8.29297402e-01]
                             ,[ 2.20123922e-01,   2.50820626e-01,  -2.08093724e-01]
@@ -450,8 +434,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                             ]
         elif useThruster==True: # thrusters with no RW
             trueSigma = [
-                        [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
-                        ,[ 1.19430832e-01,  4.59254882e-01, -3.89066833e-01]
+                        [ 1.19430832e-01,  4.59254882e-01, -3.89066833e-01]
                         ,[ 2.08138788e-01,  4.05119853e-01, -7.15382716e-01]
                         ,[-1.20724242e-01,  2.93740864e-01, -8.36793478e-01]
                         ,[ 3.07086772e-01, -5.36449617e-01,  6.59728850e-01]
@@ -459,8 +442,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useHingedSP==True and useTranslation==True and useFuelSlosh==False: #Hinged Solar Panel Dynamics
                         trueSigma = [
-                        [0.0,             0.0,            0.0]
-                        ,[-0.394048228873186, -0.165364626297029, 0.169133385881799]
+                        [-0.394048228873186, -0.165364626297029, 0.169133385881799]
                         ,[0.118117327421145,  -0.0701596164151959, 0.295067094904904]
                         ,[-0.128038074707568, -0.325975851032536, -0.00401165652329442]
                         ,[-0.163301363833482, -0.366780426316819, 0.384007061361585]
@@ -468,8 +450,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==False: #Fuel Slosh
                         trueSigma = [
-                        [0.0,             0.0,            0.0]
-                        ,[-8.19602045e-02, -2.38564447e-01, 8.88132824e-01]
+                        [-8.19602045e-02, -2.38564447e-01, 8.88132824e-01]
                         ,[2.86731068e-01, -4.36081263e-02, -7.20708425e-02]
                         ,[8.62854092e-03, -6.54746392e-01, 5.93541182e-01]
                         ,[5.69042347e-01, 9.22140866e-02, -3.06825156e-02]
@@ -477,8 +458,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
                         trueSigma = [
-                        [0.0,             0.0,            0.0]
-                        ,[-3.93694358e-01, -1.66142060e-01, 1.66953504e-01]
+                        [-3.93694358e-01, -1.66142060e-01, 1.66953504e-01]
                         ,[1.15251028e-01, -7.13753632e-02, 2.98706088e-01]
                         ,[-1.18726297e-01, -3.23347370e-01, -2.75519994e-03]
                         ,[-1.74899479e-01, -3.73016665e-01, 3.73859155e-01]
@@ -486,8 +466,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
         else: # natural dynamics without RW or thrusters
             trueSigma = [
-                        [  1.00000000e-01,  2.00000000e-01, -3.00000000e-01]
-                        ,[-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
+                        [-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
                         ,[ 2.61447681e-01,   6.34635269e-02,   4.70247303e-02]
                         ,[ 2.04899804e-01,   1.61548495e-01,  -7.03973359e-01]
                         ,[ 2.92545849e-01,  -2.01501819e-01,   3.73256986e-01]
@@ -495,26 +474,21 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
 
     # compare the module results to the truth values
-    accuracy = 1e-9
-    for i in range(0,len(trueSigma)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataSigma[i],trueSigma[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+    accuracy = 1e-8
+    if useRotation==True:
+        for i in range(0,len(trueSigma)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(dataSigma[i],trueSigma[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
-    # compare the module results to the truth values
-    if useHingedSP==True and useFuelSlosh==True:
-        accuracy = 1e-7
-    elif useHingedSP==True or useFuelSlosh==True:
-        accuracy = 1e-9
-    else:
-        accuracy = 1e-2
-    for i in range(0,len(truePos)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
-    
+    if useTranslation==True:
+        for i in range(0,len(truePos)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED " 
@@ -530,11 +504,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
                            True,       # useTranslation
-                           True,        # useRotation
+                           False,        # useRotation
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
                            False,       # useHingedSP
-                           True       # useFuelSlosh
+                           False       # useFuelSlosh
                            )
 
