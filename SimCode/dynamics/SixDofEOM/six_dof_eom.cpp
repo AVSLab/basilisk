@@ -1729,9 +1729,10 @@ void SixDofEOM::integrateState(double CurrentTime)
     double intermediateVector[3];           /* intermediate vector needed for calculation */
     double Omega;                           /* current wheel speeds of RWs */
     double omega_s;                         /* body rate about the g_s RW axis */
+    double totScRotAngMom_B[3];             /* tot spacecraft angular momentum about its center of mass in the body frame */
     double totRwsKinEnergy;                 /* All RWs kinetic energy summed together */
     double totRwsAngMomentum_B[3];          /* All RWs angular momentum */
-    double prevTotScRotKinEnergy;           /* The last kinetic energy calculation from time step before */
+    double prevTotScRotEnergy;           /* The last kinetic energy calculation from time step before */
     double *attStates;                      /* pointer to the attitude state set in the overall state matrix */
     double rDot_BN_B[3];                    /* inertial derivative of position vector from N to B in the B frame */
     double totFuelSloshEnergy;              /* All slosh particle's translational, rotational and potential energy */
@@ -1785,7 +1786,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     // Manuel really dislikes this part of the code and thinks we should rethink it. It's not clean whatsoever
     // The goal of the snippet is to compute the nonConservative delta v (LocalDV)
-    this->totScEnergy = 0.0;
+    this->totScOrbitalEnergy = 0.0;
 
     if (this->useTranslation) {
         // The nonconservative delta v is computed assuming that the conservative acceleration is constant along a time step. Then: DV_cons = Cons_accel * dt. DV_noncons = DV_tot - DV_cons
@@ -1822,7 +1823,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
 
         //! - Find translational energy and potential energy
-        this->totScEnergy += 1.0/2.0*this->compMass*v3Dot(&this->XState[3], &this->XState[3]) - this->compMass*this->CentralBody->mu/v3Norm(&this->XState[0]);
+        this->totScOrbitalEnergy += 1.0/2.0*this->compMass*v3Dot(&this->XState[3], &this->XState[3]) - this->compMass*this->CentralBody->mu/v3Norm(&this->XState[0]);
     }
     
     //-------------------------------------------------------
@@ -1844,8 +1845,8 @@ void SixDofEOM::integrateState(double CurrentTime)
         totRwsKinEnergy         = 0.0;
         this->scRotPower        = 0.0;
         v3SetZero(totRwsAngMomentum_B);
-        v3SetZero(this->totScAngMomentum_B);
-        v3SetZero(this->totScAngMomentum_N);
+        v3SetZero(totScRotAngMom_B);
+        v3SetZero(this->totScRotAngMom_N);
 
         //! Loop through Thrusters to get power
         std::vector<ThrusterDynamics*>::iterator itThruster;
@@ -1871,7 +1872,7 @@ void SixDofEOM::integrateState(double CurrentTime)
                 omega_s = v3Dot(&attStates[3], rwIt->gsHat_B);
 
                 /* RW energy */
-                totRwsKinEnergy += 0.5*rwIt->Js*(Omega + omega_s)*(Omega + omega_s); /* 1/2*Js*(omega_si + Omega_i)^2 */
+                totRwsKinEnergy += 0.5*rwIt->Js*(Omega)*(Omega); /* 1/2*Js*(Omega_i)^2 */
                 v3Scale(rwIt->Js, rwIt->gsHat_B, intermediateVector);
 
                 /* RW power */
@@ -1988,39 +1989,36 @@ void SixDofEOM::integrateState(double CurrentTime)
         }
 
         //! - Grab previous energy value for rate of change of energy
-        prevTotScRotKinEnergy = this->totScEnergy;
+        prevTotScRotEnergy = this->totScRotEnergy;
 
         /* spacecraft angular momentum */
-        m33MultV3(this->compI, &attStates[3], this->totScAngMomentum_B); /* I*omega */
+        m33MultV3(this->compI, &attStates[3], totScRotAngMom_B); /* I*omega */
 
         //! 1/2*omega^T*I*omega
-        this->totScEnergy = 0.5*v3Dot(&attStates[3], this->totScAngMomentum_B);
+        this->totScRotEnergy = 0.5*v3Dot(&attStates[3], totScRotAngMom_B);
 
         //! - Add the reaction wheel relative kinetic energy and angular momentum
-        this->totScEnergy += totRwsKinEnergy; /* T from above */
-        this->totScEnergy += totFuelSloshEnergy;
-        this->totScEnergy += totSolarPanelEnergy;
+        this->totScRotEnergy += totRwsKinEnergy; /* T from above */
+        this->totScRotEnergy += totFuelSloshEnergy;
+        this->totScRotEnergy += totSolarPanelEnergy;
 
-        //! - Add in translational kinetic energy of the hub
-        this->totScEnergy += 1.0/2.0*this->compMass*v3Dot(rDot_BN_B, rDot_BN_B);
-
-        v3Add(totFuelSloshAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
-        v3Add(totSolarPanelAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B);
-        v3Add(totRwsAngMomentum_B, this->totScAngMomentum_B, this->totScAngMomentum_B); /* H from above */
+        v3Add(totFuelSloshAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
+        v3Add(totSolarPanelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
+        v3Add(totRwsAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B); /* H from above */
 
         //! - Add in translational angular momentum
         v3Cross(rBN_B, rDot_BN_B, intermediateVector);
         v3Scale(this->compMass, intermediateVector, intermediateVector);
-        v3Add(this->totScAngMomentum_B, intermediateVector, this->totScAngMomentum_B);
+        v3Add(totScRotAngMom_B, intermediateVector, totScRotAngMom_B);
 
         //! - Find angular momentum vector in inertial frame
-        m33tMultV3(BN, this->totScAngMomentum_B, this->totScAngMomentum_N);
+        m33tMultV3(BN, totScRotAngMom_B, this->totScRotAngMom_N);
 
         //! - Find magnitude of spacecraft angular momentum
-        this->totScAngMomentumMag = v3Norm(this->totScAngMomentum_N);
+        this->totScRotAngMomMag = v3Norm(this->totScRotAngMom_N);
 
         //! - Calulate rate of change of energy
-        this->scEnergyRate = (this->totScEnergy-prevTotScRotKinEnergy)/TimeStep;
+        this->scRotEnergyRate = (this->totScRotEnergy-prevTotScRotEnergy)/TimeStep;
     }
 
     //! - Clear out local allocations and set time for next cycle

@@ -156,12 +156,14 @@ public:
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
-    double totScEnergy;         //!< [J]    Total rotational kinetic energy of spacecraft
-    double totScAngMomentum_B[3];     //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
-    double totScAngMomentum_N[3];     //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
-    double totScAngMomentumMag;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
+    double totScOrbitalEnergy;       //!< [J]    Total orbital energy of spacecraft
+    double totScOrbitalAngMom_N[3];  //!< [kg-m^2/s] Total orbital angular momentum of the spacecraft in inertial frame components
+    double totScOrbitalAngMomMag;    //!< [kg-m^2/s] Magnitude of total orbital angular momentum of the spacecraft
+    double totScRotEnergy;            //!< [J]    Total spacecraft energy about its center of mass
+    double totScRotAngMom_N[3];       //!< [kg-m^2/s] Total angular momentum of the spacecraft about its center of mass in N frame
+    double totScRotAngMomMag;         //!< [kg-m^2/s] Magnitude of total angular momentum of the spacecraft about its center of mass
     double scRotPower;                //!< [W] Mechanical Power of the spacecraft rotational motion (analytical work-energy theorem)
-    double scEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
+    double scRotEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
     bool   useTranslation;            //!<        Flag indicating to use translation dynamics
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
     bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 

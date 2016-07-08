@@ -313,9 +313,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
         scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.totScAngMomentumMag", macros.sec2nano(0.1))
 
-    scSim.AddVariableForLogging("VehicleDynamicsData.totScEnergy", macros.sec2nano(0.001))
+    scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalEnergy", macros.sec2nano(120.))
+    scSim.AddVariableForLogging("VehicleDynamicsData.totScRotEnergy", macros.sec2nano(120.))
+    # scSim.AddVariableForLogging("VehicleDynamicsData.scRotEnergyRate", macros.sec2nano(0.001))
+    # scSim.AddVariableForLogging("VehicleDynamicsData.scRotPower", macros.sec2nano(0.001))
 
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
     
@@ -335,7 +337,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
         rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
         rho3 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho")
-        momentum = scSim.GetLogVariableData("VehicleDynamicsData.totScAngMomentumMag")
         # plt.figure(1)
         # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
         # plt.figure(2)
@@ -356,14 +357,29 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
         # plt.show()
 
-    energy = scSim.GetLogVariableData("VehicleDynamicsData.totScEnergy")
-    # plt.figure(8)
-    # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
+    dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
+    dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
+    # dataRotEnergyRate = scSim.GetLogVariableData("VehicleDynamicsData.scRotEnergyRate")
+    # dataRotPower = scSim.GetLogVariableData("VehicleDynamicsData.scRotPower")
+
+    numpy.set_printoptions(precision=16)
+    # plt.figure(1)
+    # plt.plot(dataRotEnergy[:,0]*1.0E-9, dataRotEnergy[:,1]-dataRotEnergy[0, 1], 'b')
+    # plt.figure(2)
+    # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
+    # plt.figure(3)
+    # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
     # plt.show()
 
-    # set expected results
+    # Remove time zero from list
     dataPos = dataPos[1:len(dataPos),:]
     dataSigma = dataSigma[1:len(dataSigma),:]
+    dataOrbitalEnergy = dataOrbitalEnergy[1:len(dataOrbitalEnergy),:]
+    dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
+
+    # Make all energy checks false
+    checkOrbitalEnergy = False
+    checkRotEnergy = False
 
     if useTranslation==True:
         if useRotation==True and useJitter==True and useRW==True:
@@ -382,6 +398,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511282e+06,   5.52480503e+06,   5.50155656e+06]
                         ,[-6.78159336e+06,   4.94686853e+06,   5.48674175e+06]
                         ]
+            # Energy has been shown to follow prescribed rate of change from power calculations (thrusters were only on
+            # for 10 seconds so energy flat lines after 10 seconds)
+            trueRotEnergy = [
+                        [6.9678869224507189e-01]
+                        ,[6.9678869224507478e-01]
+                        ,[6.9678869224507345e-01]
+                        ,[6.9678869224507367e-01]
+                        ,[6.9678869224507400e-01]
+                        ]
+            checkRotEnergy = True
         elif useRotation==True and useHingedSP==True and useFuelSlosh==False: # Hinged Solar Panel Dynamics
             truePos = [
                         [-2.53742996478815, -2.84830940967875, 0.216182452815001]
@@ -414,6 +440,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511743e+06,   5.52480250e+06,   5.50155642e+06]
                         ,[-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
                         ]
+            trueOrbitalEnergy = [
+                        [-1.4947516556250010e+10]
+                        ,[-1.4947516556249987e+10]
+                        ,[-1.4947516556249828e+10]
+                        ,[-1.4947516556249819e+10]
+                        ,[-1.4947516556249727e+10]
+                        ]
+            checkOrbitalEnergy=True;
+
     if useRotation==True:
         if useRW==True:
             if useJitter==True:
@@ -432,6 +467,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                             ,[ 2.20123922e-01,   2.50820626e-01,  -2.08093724e-01]
                             ,[-2.37038506e-02,  -1.91520817e-01,   4.94757184e-01]
                             ]
+                # Energy has been verified to follow the prescribed rate of change from power calculations
+                trueRotEnergy = [
+                            [1.3634215656299600e+02]
+                            ,[5.4398693685249941e+02]
+                            ,[1.2233068084927652e+03]
+                            ,[2.1742504368170212e+03]
+                            ,[3.3968284498306407e+03]
+                            ]
+                checkRotEnergy = True
         elif useThruster==True: # thrusters with no RW
             trueSigma = [
                         [ 1.19430832e-01,  4.59254882e-01, -3.89066833e-01]
@@ -472,6 +516,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 2.92545849e-01,  -2.01501819e-01,   3.73256986e-01]
                         ,[ 1.31464989e-01,   3.85929801e-02,  -2.48566440e-01]
                         ]
+            trueRotEnergy = [
+                        [3.1045000000000106e-01]
+                        ,[3.1045000000000150e-01]
+                        ,[3.1045000000000000e-01]
+                        ,[3.1045000000000039e-01]
+                        ,[3.1045000000000045e-01]
+                        ]
+            checkRotEnergy = True
 
     # compare the module results to the truth values
     accuracy = 1e-8
@@ -489,6 +541,22 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
 
+    if checkOrbitalEnergy==True:
+        accuracy = 1e-15
+        for i in range(0,len(trueOrbitalEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(dataOrbitalEnergy[i],trueOrbitalEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Dynamics Mode failed orbital energy unit test at t=" + str(dataOrbitalEnergy[i,0]*macros.NANO2SEC) + "sec\n")
+
+    if checkRotEnergy==True:
+        accuracy = 1e-15
+        for i in range(0,len(trueRotEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(dataRotEnergy[i],trueRotEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Dynamics Mode failed rotational energy unit test at t=" + str(dataRotEnergy[i,0]*macros.NANO2SEC) + "sec\n")
+
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED " 
@@ -504,10 +572,10 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
                            True,       # useTranslation
-                           False,        # useRotation
+                           True,        # useRotation
                            False,        # useRW
                            False,        # useJitter
-                           False,       # useThruster
+                           True,       # useThruster
                            False,       # useHingedSP
                            False       # useFuelSlosh
                            )
