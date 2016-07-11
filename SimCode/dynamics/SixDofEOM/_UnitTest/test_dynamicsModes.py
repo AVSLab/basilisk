@@ -368,9 +368,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # plt.figure(2)
     # plt.plot(dataOrbitalEnergy[:,0]*1.0E-9, dataOrbitalEnergy[:,1]-dataOrbitalEnergy[0, 1], 'b')
     # # plt.figure(2)
-    # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
-    # # plt.figure(3)
-    # # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
+    # # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
+    # # # plt.figure(3)
+    # # # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
     # plt.show()
 
     # Remove time zero from list
@@ -378,8 +378,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataSigma = dataSigma[1:len(dataSigma),:]
     dataOrbitalEnergy = dataOrbitalEnergy[1:len(dataOrbitalEnergy),:]
     dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
-    print dataOrbitalEnergy
-    print dataRotEnergy
+    # print dataOrbitalEnergy
+    # print dataRotEnergy
 
     # Make all energy checks false
     checkOrbitalEnergy = False
@@ -436,6 +436,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-1.06932569e-01, -1.35397480e-01, -2.56727424e-02]
                         ,[-1.36388979e-01, -1.70517452e-01, -3.27473799e-02]
                         ]
+            trueOrbitalEnergy = [
+                        [5.3938499170122701e-05]
+                        ,[5.3938864846988306e-05]
+                        ,[5.3938833040934856e-05]
+                        ,[5.3938757903208845e-05]
+                        ,[5.3938676148061827e-05]
+                        ]
+            checkOrbitalEnergy=True
         elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
             truePos = [
                         [-2.44400224e+00, -2.74717376e+00, 2.02431956e-01]
@@ -460,7 +468,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-1.4947516556249727e+10]
                         ]
             checkOrbitalEnergy=True;
-
     if useRotation==True:
         if useRW==True:
             if useJitter==True:
@@ -520,6 +527,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[5.69042347e-01, 9.22140866e-02, -3.06825156e-02]
                         ,[-2.46306074e-01, 8.25425414e-01, -3.37112618e-01]
                         ]
+            trueRotEnergy = [
+                        [1.1675465579266232e+01]
+                        ,[1.1673286902296834e+01]
+                        ,[1.1671143043899853e+01]
+                        ,[1.1669033343674718e+01]
+                        ,[1.1666957075118878e+01]
+                        ]
+            checkRotEnergy=True
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
             trueSigma = [
                         [-3.93694358e-01, -1.66142060e-01, 1.66953504e-01]
@@ -596,7 +611,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHingedSP
-                           False       # useFuelSlosh
+                           False,       # useHingedSP
+                           True       # useFuelSlosh
                            )
 
