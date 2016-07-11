@@ -452,6 +452,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-1.01751925e+01, -1.03386042e+01, 1.21233539e-01]
                         ,[-1.28900259e+01, -1.28174649e+01, 1.15619983e-01]
                         ]
+            trueOrbitalEnergy = [
+                        [4.6624143741499813e-01]
+                        ,[4.6624142524053780e-01]
+                        ,[4.6624145887683388e-01]
+                        ,[4.6624145375104342e-01]
+                        ,[4.6624144577492410e-01]
+                        ]
+            checkOrbitalEnergy=True
         else: # natural translation
             truePos = [
                         [-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
@@ -543,6 +551,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-1.74899479e-01, -3.73016665e-01, 3.73859155e-01]
                         ,[2.32402342e-01, -3.25845947e-01, 2.81360092e-01]
                         ]
+            trueRotEnergy = [
+                        [2.3634205370447170e+01]
+                        ,[2.3632024766628916e+01]
+                        ,[2.3629878703742676e+01]
+                        ,[2.3627765492856582e+01]
+                        ,[2.3625686935050652e+01]
+                        ]
+            checkRotEnergy=True
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
@@ -611,7 +627,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           False,       # useHingedSP
+                           True,       # useHingedSP
                            True       # useFuelSlosh
                            )
 
