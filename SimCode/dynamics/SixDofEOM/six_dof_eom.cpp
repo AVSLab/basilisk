@@ -1735,7 +1735,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     double prevTotScRotEnergy;              /* The last kinetic energy calculation from time step before */
     double *attStates;                      /* pointer to the attitude state set in the overall state matrix */
     double rDot_BN_B[3];                    /* inertial derivative of position vector from N to B in the B frame */
-    double orbitalFuelSloshEnergyContr;     /* Contribution from fuel slosh particles to orbital energy */
     double totRotFuelSloshEnergy;           /* All slosh particle's translational, rotational and potential energy */
     double totRotFuelSloshAngMomentum_B[3]; /* All slosh particle's total angular momentum in the body frame */
     double SH[3][3];                        /* DCM from hinge frame to solar panel frame for individual solar panels */
@@ -1748,7 +1747,6 @@ void SixDofEOM::integrateState(double CurrentTime)
     double omega_SN_B[3];                   /* angular velocity of S w/ respect to N in the body frame */
     double r_ScH_B[3];                      /* position vector from H to Sc in the body frame */
     double rDot_ScB_B[3];                   /* inertial time derivative of position vector from N to Sc in B frame */
-    double orbitalSolarPanelEnergyContr;    /* Contribution from solar panels to orbital energy */
     double totRotSolarPanelEnergy;          /* All solar panels translational, rotational and potential energy */
     double totRotSolarPanelAngMomentum_B[3]; /* All solar panels angular momentum in the body frame */
     double rDot_PcB_B[3];                   /* Inertial derivative of position vector from B to Pc in the body frame */
@@ -2103,11 +2101,6 @@ void SixDofEOM::integrateState(double CurrentTime)
         v3Add(totRotFuelSloshAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
         v3Add(totRotSolarPanelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
         v3Add(totRwsAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B); /* H from above */
-
-        //! - Add in translational angular momentum
-        v3Cross(rBN_B, rDot_BN_B, intermediateVector);
-        v3Scale(this->compMass, intermediateVector, intermediateVector);
-        v3Add(totScRotAngMom_B, intermediateVector, totScRotAngMom_B);
 
         //! - Find angular momentum vector in inertial frame
         m33tMultV3(BN, totScRotAngMom_B, this->totScRotAngMom_N);
