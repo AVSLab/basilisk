@@ -474,7 +474,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.AddModelToTask("trackingErrorTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 15)
         self.AddModelToTask("trackingErrorTask", self.errorDeadbandWrap, self.errorDeadbandData, 14)
-        self.AddModelToTask("controlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 10)
+        self.AddModelToTask("controlTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 10)
+       #self.AddModelToTask("controlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 10)
         self.AddModelToTask("controlTask", self.RWAMappingDataWrap, self.RWAMappingData, 9)
         self.AddModelToTask("controlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 8)
         
@@ -586,7 +587,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateRasterMnvr", int(1E9), True, ["self.modeRequest == 'rasterMnvr'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('inertial3DPointTask')"
+                                #, "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('rasterMnvrTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
@@ -1448,26 +1450,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
         self.celTwoBodyPointData.singularityThresh = 1.0 * mc.D2R
 
-    def setSingleAxisSpin(self):
-        self.singleAxisSpinData.outputDataName = "att_ref_output"
-        sigma_R0N =  [0.1 , 0.2, 0.3]
-        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
-        omega_spin = np.array([0.2, 0.2, 0.2]) * mc.D2R
-        SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
+    # def setSingleAxisSpin(self):
+    #     self.singleAxisSpinData.outputDataName = "att_ref_output"
+    #     sigma_R0N =  [0.1 , 0.2, 0.3]
+    #     SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
+    #     omega_spin = np.array([0.2, 0.2, 0.2]) * mc.D2R
+    #     SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
 
-    def setOrbitAxisSpin(self):
-        self.orbitAxisSpinData.inputNavName = "simple_nav_output"
-        self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
-        self.orbitAxisSpinData.outputDataName = "att_ref_output"
-        self.orbitAxisSpinData.o_spin = 0
-        self.orbitAxisSpinData.omega_spin = 0.2 * mc.D2R
+    # def setOrbitAxisSpin(self):
+    #     self.orbitAxisSpinData.inputNavName = "simple_nav_output"
+    #     self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
+    #     self.orbitAxisSpinData.outputDataName = "att_ref_output"
+    #     self.orbitAxisSpinData.o_spin = 0
+    #     self.orbitAxisSpinData.omega_spin = 0.2 * mc.D2R
 
-    def setAxisScan(self):
-        self.axisScanData.inputRefName = "att_ref_output_stage1"
-        self.axisScanData.outputDataName = "att_ref_output"
-        #self.axisScanData.psiDot = 0.0 * mc.D2R
-        #self.axisScanData.psi0 = 0.0 * mc.D2R
-        #self.axisScanData.theta0 = 0.0 * mc.D2R
+    # def setAxisScan(self):
+    #     self.axisScanData.inputRefName = "att_ref_output_stage1"
+    #     self.axisScanData.outputDataName = "att_ref_output"
+    #     self.axisScanData.psiDot = 0.0 * mc.D2R
+    #     self.axisScanData.psi0 = 0.0 * mc.D2R
+    #     self.axisScanData.theta0 = 0.0 * mc.D2R
 
     def setRasterManager(self):
         self.rasterManagerData.outputEulerSetName = "euler_angle_set"
@@ -1491,18 +1493,47 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
             angleRatesList = [
                 0.0, 0.0, phiDot
-                , 0.0, 0.0, 0.0
                 , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, 0.0
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
             ]
 
             rasterTimeList = [
-                t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                t_mnvr*2.0, t_mnvr, t_mnvr, t_mnvr
                 , t_mnvr, t_mnvr, t_mnvr, t_mnvr
                 , t_mnvr, t_mnvr, t_mnvr, t_mnvr
             ]
 
             return (angleSetList, angleRatesList, rasterTimeList)
+
+        def testRaster(psi, theta, phiDot, t_mnvr):
+            angleSetList = [
+            ]
+
+            angleRatesList_8 = [
+                0.004, 0.004, phiDot
+            ]
+
+            angleRatesList_circX = [
+                0.004, 0.0, phiDot
+            ]
+            angleRatesList_circY = [
+                0.0, 0.004, phiDot
+            ]
+
+            rasterTimeList = [
+                t_mnvr * 10
+            ]
+
+            return (angleSetList, angleRatesList_circY, rasterTimeList)
 
         def starRateRaster(phiDot, t_mnvr):
             angleSetList = []
@@ -1529,7 +1560,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         phiDot = 0.02 * math.pi / 180.0
         t_mnvr = 20.0 * 18
         (angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
-        #(angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
+        (angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
+
+        #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
 
         SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
         SimulationBaseClass.SetCArray(angleRatesList, 'double', self.rasterManagerData.scanningRates)
@@ -1539,9 +1572,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setInertial3DSpin(self):
         self.inertial3DSpinData.inputRefName = "att_ref_output_stage1"
         self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_RN = np.array([0.4, 0.4, 0.4])
-        SimulationBaseClass.SetCArray(sigma_RN, 'double',self.inertial3DSpinData.sigma_RN)
-        omega_RN_N = np.array([0.2, 0.1, 0.1]) * mc.D2R
+        omega_RN_N = np.array([0.2, 0.2, 0.4]) * mc.D2R
         SimulationBaseClass.SetCArray(omega_RN_N, 'double',self.inertial3DSpinData.omega_RN_N)
 
     def setEulerRotation(self):
@@ -1549,9 +1580,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.eulerRotationData.outputDataName = "att_ref_output"
         self.eulerRotationData.outputEulerSetName = "euler_set_output"
         self.eulerRotationData.outputEulerRatesName = "euler_rates_output"
-        angleRates = np.array([0.0, 0.0, 0.2]) * mc.D2R
-        SimulationBaseClass.SetCArray(angleRates, 'double',self.eulerRotationData.angleRates)
-        # Raster Maneuvers
+
+        # SAND-ALONE
+        #angleRates = np.array([0.0, 0.0, 0.0]) * mc.D2R
+        #SimulationBaseClass.SetCArray(angleRates, 'double', self.eulerRotationData.angleRates)
+
+        # RASTER MANEUVER
         #self.eulerRotationData.inputEulerSetName = "euler_angle_set"
         #self.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
 
@@ -1560,7 +1594,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
-        #R0R = rbk.Mi(0.5*np.pi, 2)
         sigma_R0R = rbk.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
 
@@ -1592,8 +1625,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
         self.MRP_FeedbackRWAData.numRWAs = 4
 
-        #self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
-        self.MRP_FeedbackRWAData.inputGuidName = "db_att_guid_out" # deadband
+        self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
 
         self.MRP_FeedbackRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"

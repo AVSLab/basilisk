@@ -61,7 +61,7 @@ def printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega_R0N_N,
         print 'omega_RN_N = ', omega_RN_N
         print 'domega_RN_N = ', domega_RN_N
         print '\n'
-    printData()
+    #printData()
     return angleSet
 
 
@@ -149,8 +149,19 @@ angleSet = printResults_eulerRotation(configData, sigma_R0N, omega_R0N_N, domega
 # plt.show()
 
 
+numPoints = 36
+totalSimTime = 60 * 20 * 4
+angleSetList = np.zeros(3*numPoints)
+angleRatesList = []
+rasterTimeList = np.zeros(numPoints)
+for i in range(numPoints):
+    angleSetList[3 * i + 1] = 2 * np.pi * i / numPoints
+    rasterTimeList[i] = totalSimTime / numPoints
+print angleSetList
 
-
+M3 = rbk.Mi(np.pi, 3)
+print 'M3 = ', M3
+print 'sigma = ', rbk.C2MRP(M3)
 
 
 

@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 
-#define MAX_RASTER_SET 24
+#define MAX_RASTER_SET 36
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
