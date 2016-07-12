@@ -379,15 +379,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # plt.plot(dataOrbitalAngMomMag[:,0]*1.0E-9, dataOrbitalAngMomMag[:,1]-dataOrbitalAngMomMag[0, 1], 'b')
     # plt.figure(3)
     # plt.plot(dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,1]-dataOrbitalAngMom_N[0, 1], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,2]-dataOrbitalAngMom_N[0, 2], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,3]-dataOrbitalAngMom_N[0, 3])
-    # plt.figure(2)
+    # plt.figure(4)
     # plt.plot(dataRotAngMomMag[:,0]*1.0E-9, dataRotAngMomMag[:,1]-dataRotAngMomMag[0, 1], 'b')
-    # plt.figure(3)
+    # plt.figure(5)
     # plt.plot(dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,1]-dataRotAngMom_N[0, 1], dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,2]-dataRotAngMom_N[0, 2], dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,3]-dataRotAngMom_N[0, 3])
     # # plt.figure(2)
     # # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
     # # # plt.figure(3)
     # # # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
-    plt.show()
+    # plt.show()
 
     # Remove time zero from list
     dataPos = dataPos[1:len(dataPos),:]
@@ -396,10 +396,6 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
     dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N),:]
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N),:]
-    # print dataOrbitalEnergy
-    # print dataRotEnergy
-    # print dataOrbitalAngMom_N
-    # print dataRotAngMom_N
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False
@@ -498,6 +494,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[4.6624144577492410e-01]
                         ]
             checkOrbitalEnergy=True
+            trueOrbitalAngMom_N = [
+                        [4.6732026867934335e+00, -4.6500351095875478e+00, 1.5892539006208128e-03]
+                        ,[4.6732034819224486e+00, -4.6500356934250329e+00, 1.5932567291891131e-03]
+                        ,[4.6732071906428594e+00, -4.6500391847572224e+00, 1.6003600063276835e-03]
+                        ,[4.6732020100349247e+00, -4.6500341143814889e+00, 1.5953215407686905e-03]
+                        ,[4.6731977139204757e+00, -4.6500297441736365e+00, 1.6020368640132787e-03]
+                        ]
+            checkOrbitalAngMom = True
         else: # natural translation
             truePos = [
                         [-4.63215860e+06,   7.05702991e+06,   5.35808355e+06]
@@ -629,6 +633,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[2.3625686935050652e+01]
                         ]
             checkRotEnergy=True
+            trueRotAngMom_N = [
+                        [1.2602821565134619e+02, -1.8798087281620440e+02, 1.4775387338882575e+02]
+                        ,[1.2602820080709847e+02, -1.8798085268074720e+02, 1.4775385752169046e+02]
+                        ,[1.2602818730677048e+02, -1.8798083236585873e+02, 1.4775384156156829e+02]
+                        ,[1.2602817358923114e+02, -1.8798081487929164e+02, 1.4775382678456063e+02]
+                        ,[1.2602816304352135e+02, -1.8798079656437807e+02, 1.4775381108506704e+02]
+                        ]
+            checkRotAngMom = True
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
@@ -720,7 +732,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           False,       # useHingedSP
+                           True,       # useHingedSP
                            True       # useFuelSlosh
                            )
 
