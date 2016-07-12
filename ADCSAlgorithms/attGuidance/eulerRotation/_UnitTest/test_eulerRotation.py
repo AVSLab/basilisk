@@ -88,7 +88,9 @@ def eulerRotationTestFunction(show_plots):
     # Initialize the test module configuration data
     moduleConfig.inputRefName = "inputRefName"
     moduleConfig.outputDataName = "outputName"
-    angleRates = np.array([0.2, 0.0, 0.0]) * mc.D2R
+    angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
+    SimulationBaseClass.SetCArray(angleSet, 'double', moduleConfig.angleSet)
+    angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
     SimulationBaseClass.SetCArray(angleRates, 'double', moduleConfig.angleRates)
 
     # Create input message and size it because the regular creator of that message
@@ -146,9 +148,9 @@ def eulerRotationTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-        [0.1, 0.2, 0.3],
-        [0.100200743722,  0.199965040853,  0.300453839325],
-        [0.100401549222,  0.199929976523,  0.300907786212]
+        [-0.193031238249, 0.608048400483, 0.386062476497],
+        [-0.193144351314,  0.607931107381,  0.386360300559],
+        [-0.193257454832,  0.607813704445,  0.386658117585]
     ]
     #print '\n', moduleOutput[:, 1:], '\n'
 
@@ -171,9 +173,9 @@ def eulerRotationTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-        [0.102492560089,  0.000365288979,  0.002416279155],
-        [0.102492560089,  0.000365288979,  0.002416279155],
-        [0.102492560089,  0.000365288979,  0.002416279155]
+        [0.101246280045,  0.000182644489,  0.001208139578],
+        [0.101246280045,  0.000182644489,  0.001208139578],
+        [0.101246280045,  0.000182644489,  0.001208139578]
     ]
     # print '\n omega_RN_N = ', moduleOutput[:, 1:], '\n'
     # compare the module results to the truth values
@@ -195,9 +197,9 @@ def eulerRotationTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-        [0.000000000000e+00,  -2.416279155269e-04,   3.652889785645e-05],
-        [0.000000000000e+00,  -2.416279155269e-04,   3.652889785645e-05],
-        [0.000000000000e+00,  -2.416279155269e-04,   3.652889785645e-05]
+        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
+        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05],
+        [0.000000000000e+00,  -1.208139577635e-04,   1.826444892823e-05]
     ]
     #print '\n domega_RN_N = ', moduleOutput[:, 1:], '\n'
     # compare the module results to the truth values
