@@ -1853,7 +1853,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
 
         /*! - Energy, Power, and angular Momentum Calculations,
-            T = 1/2*omega^T*I*omega + sum_over_RWs(1/2*Js*(omega_si + Omega_i)^2) - Schaub pg. 4.5.1, 
+            T = 1/2*omega^T*I*omega + sum_over_RWs(1/2*Js*(Omega_i)^2) - Schaub pg. 4.5.1, 
             H = I*omega + sum_over_RWs(g_s*J_s(omega_si + Omega)) - Schaub 4.5.1, 
             P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2 */
         totRwsKinEnergy         = 0.0;
@@ -2122,11 +2122,10 @@ void SixDofEOM::integrateState(double CurrentTime)
         v3Scale(this->compMass, intermediateVector, intermediateVector);
         v3Add(totScRotAngMom_B, intermediateVector, totScRotAngMom_B);
 
-        //! - Add the reaction wheel relative kinetic energy and angular momentum
+        //! - Add the reaction wheel, fuel slosh, and hinged dynamcis into rotational energy and momentum
         this->totScRotEnergy += totRwsKinEnergy; /* T from above */
         this->totScRotEnergy += totRotFuelSloshEnergy;
         this->totScRotEnergy += totRotSolarPanelEnergy;
-
         v3Add(totRotFuelSloshAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
         v3Add(totRotSolarPanelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
         v3Add(totRwsRelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B); /* H from above */
