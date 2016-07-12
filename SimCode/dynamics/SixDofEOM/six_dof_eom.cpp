@@ -1833,6 +1833,11 @@ void SixDofEOM::integrateState(double CurrentTime)
         if (this->useGravity) {
             this->totScOrbitalEnergy -= this->compMass*this->CentralBody->mu/v3Norm(&this->XState[0]);
         }
+
+        //! - Find orbital angular momentum
+        v3Cross(&this->XState[0], &this->XState[3], intermediateVector);
+        v3Scale(this->compMass, intermediateVector, this->totScOrbitalAngMom_N);
+        this->totScOrbitalAngMomMag = v3Norm(this->totScOrbitalAngMom_N);
     }
     
     //-------------------------------------------------------

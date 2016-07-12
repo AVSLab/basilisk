@@ -316,6 +316,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalEnergy", macros.sec2nano(120.))
     scSim.AddVariableForLogging("VehicleDynamicsData.totScRotEnergy", macros.sec2nano(120.))
+    scSim.AddVectorForLogging('VehicleDynamicsData.totScOrbitalAngMom_N', 'double', 0, 2, macros.sec2nano(120.))
+    scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalAngMomMag", macros.sec2nano(120.))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotEnergyRate", macros.sec2nano(0.001))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotPower", macros.sec2nano(0.001))
 
@@ -359,6 +361,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
     dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
+    dataOrbitalAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMom_N")
+    # dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
     # dataRotEnergyRate = scSim.GetLogVariableData("VehicleDynamicsData.scRotEnergyRate")
     # dataRotPower = scSim.GetLogVariableData("VehicleDynamicsData.scRotPower")
 
@@ -367,6 +371,10 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # plt.plot(dataRotEnergy[:,0]*1.0E-9, dataRotEnergy[:,1]-dataRotEnergy[0, 1], 'b')
     # plt.figure(2)
     # plt.plot(dataOrbitalEnergy[:,0]*1.0E-9, dataOrbitalEnergy[:,1]-dataOrbitalEnergy[0, 1], 'b')
+    # plt.figure(2)
+    # plt.plot(dataOrbitalAngMomMag[:,0]*1.0E-9, dataOrbitalAngMomMag[:,1]-dataOrbitalAngMomMag[0, 1], 'b')
+    # plt.figure(3)
+    # plt.plot(dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,1]-dataOrbitalAngMom_N[0, 1], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,2]-dataOrbitalAngMom_N[0, 2], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,3]-dataOrbitalAngMom_N[0, 3])
     # # plt.figure(2)
     # # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
     # # # plt.figure(3)
@@ -378,12 +386,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataSigma = dataSigma[1:len(dataSigma),:]
     dataOrbitalEnergy = dataOrbitalEnergy[1:len(dataOrbitalEnergy),:]
     dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
+    dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N),:]
     # print dataOrbitalEnergy
     # print dataRotEnergy
+    # print dataOrbitalAngMom_N
 
-    # Make all energy checks false
+    # Make all energy and momentum checks false
     checkOrbitalEnergy = False
     checkRotEnergy = False
+    checkOrbitalAngMom = False
 
     if useTranslation==True:
         if useRotation==True and useJitter==True and useRW==True:
@@ -475,7 +486,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-1.4947516556249819e+10]
                         ,[-1.4947516556249727e+10]
                         ]
-            checkOrbitalEnergy=True;
+            checkOrbitalEnergy=True
+            trueOrbitalAngMom_N = [
+                        [1.9379050566179688e+13, -1.7326870952867449e+13, 3.9574426247581703e+13]
+                        ,[1.9379050566179707e+13, -1.7326870952867498e+13, 3.9574426247581719e+13]
+                        ,[1.9379050566179738e+13, -1.7326870952867598e+13, 3.9574426247581961e+13]
+                        ,[1.9379050566179766e+13, -1.7326870952867605e+13, 3.9574426247581961e+13]
+                        ,[1.9379050566179824e+13, -1.7326870952867600e+13, 3.9574426247582102e+13]
+                        ]
+            checkOrbitalAngMom = True
     if useRotation==True:
         if useRW==True:
             if useJitter==True:
@@ -608,6 +627,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed rotational energy unit test at t=" + str(dataRotEnergy[i,0]*macros.NANO2SEC) + "sec\n")
 
+    if checkOrbitalAngMom==True:
+        accuracy = 1e-15
+        for i in range(0,len(trueOrbitalAngMom_N)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqual(dataOrbitalAngMom_N[i],trueOrbitalAngMom_N[i],3,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED:  Dynamics Mode failed orbital angular momentum unit test at t=" + str(dataOrbitalAngMom_N[i,0]*macros.NANO2SEC) + "sec\n")
+
     #   print out success message if no error were found
     if testFailCount == 0:
         print   "PASSED " 
@@ -623,11 +650,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
                            True,       # useTranslation
-                           True,        # useRotation
+                           False,        # useRotation
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHingedSP
-                           True       # useFuelSlosh
+                           False,       # useHingedSP
+                           False       # useFuelSlosh
                            )
 
