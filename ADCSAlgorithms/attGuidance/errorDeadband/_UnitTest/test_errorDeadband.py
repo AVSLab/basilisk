@@ -46,8 +46,8 @@ import attTrackingError
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
+#uncomment this line if this test has an expected failure, adjust message as needed
+@pytest.mark.xfail()
 # provide a unique test method name, starting with test_
 def test_errorDeadband(show_plots):
     # each test method requires a single assert method to be called
