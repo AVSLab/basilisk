@@ -27,6 +27,11 @@ get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 
 foreach(file ${file_src})
    get_filename_component(FileBase ${file} NAME_WE)
+   get_filename_component(FileDir ${file} DIRECTORY)
+   set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
+   set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
+   make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
+   
    set_source_files_properties(${file} PROPERTIES CPLUSPLUS ON)
    set_source_files_properties(${file} PROPERTIES SWIG_FLAGS "-includeall")
    set_source_files_properties(${file} PROPERTIES SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities")
@@ -35,18 +40,21 @@ foreach(file ${file_src})
    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
    SWIG_ADD_MODULE(${FileBase} python ${file} ${impl_files})
    SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
+   
    foreach(LibFile ${LIBRARY_BUILD_LIST})
          SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
    endforeach()
+   
    foreach(LibFile ${library_dependencies})
       SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
    endforeach()
+   
    set_property(GLOBAL APPEND PROPERTY TOTAL_TARGET_LIST "${FileBase}.py;_${FileBase}.so;")
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+      LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
    set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-      LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+      LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
 
 endforeach()
