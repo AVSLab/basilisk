@@ -674,7 +674,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           False,       # useTranslation
+                           True,       # useTranslation
                            True,        # useRotation
                            False,        # useRW
                            False,        # useJitter
