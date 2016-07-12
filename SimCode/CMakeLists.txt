@@ -38,7 +38,6 @@ foreach(module ${swig_modules})
 
 	# Make a python package
 	set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
-	# set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
@@ -53,11 +52,11 @@ foreach(module ${swig_modules})
     set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
-	
+
     foreach(LibFile ${LIBRARY_BUILD_LIST})
          SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
     endforeach()
-	
+
     foreach(LibFile ${library_dependencies})
          SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
     endforeach()
@@ -68,7 +67,6 @@ foreach(module ${swig_modules})
 	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
-		message("CMAKE_SOURCE_DIR/modules/FileBase = ${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
