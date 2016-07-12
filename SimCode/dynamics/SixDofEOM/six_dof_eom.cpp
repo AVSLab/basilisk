@@ -1746,10 +1746,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     double omega_SN_S[3];                   /* angular velocity of S w/ respect to N in the S frame */
     double omega_SN_B[3];                   /* angular velocity of S w/ respect to N in the body frame */
     double r_ScH_B[3];                      /* position vector from H to Sc in the body frame */
-    double rDot_ScB_B[3];                   /* inertial time derivative of position vector from N to Sc in B frame */
+    double rDot_ScB_B[3];                   /* inertial time derivative of position vector from B to Sc in B frame */
+    double rDot_ScC_B[3];                   /* inertial time derivative of position vector from C to Sc in B frame */
     double totRotSolarPanelEnergy;          /* All solar panels translational, rotational and potential energy */
     double totRotSolarPanelAngMomentum_B[3]; /* All solar panels angular momentum in the body frame */
     double rDot_PcB_B[3];                   /* Inertial derivative of position vector from B to Pc in the body frame */
+    double rDot_PcC_B[3];                   /* Inertial derivative of position vector from C to Pc in the body frame */
     double intermediateVector2[3];          /* intermediate vector */
     double rBN_B[3];                        /* position vector from N to B in the body frame */
     double c_B[3];                          /* center of mass of the spacecraft with respect to point B in the B frame components */
@@ -1992,6 +1994,16 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - Add in contribution of cDot_B to orbital energy
         this->totScOrbitalEnergy += mSC*v3Dot(rDot_BN_B, cDot_B) + 1.0/2.0*mSC*v3Dot(cDot_B, cDot_B);
 
+        //! - Add in contribution of c_B and cDot_B to orbital angular momentum
+        v3Cross(rBN_B, cDot_B, intermediateVector);
+        v3Cross(c_B, rDot_BN_B, intermediateVector2);
+        v3Add(intermediateVector, intermediateVector2, intermediateVector);
+        v3Cross(c_B, cDot_B, intermediateVector2);
+        v3Add(intermediateVector, intermediateVector2, intermediateVector);
+        v3Scale(mSC, intermediateVector, intermediateVector);
+        m33tMultV3(BN, intermediateVector, intermediateVector);
+        v3Add(this->totScOrbitalAngMom_N, intermediateVector, this->totScOrbitalAngMom_N);
+
         totRotSolarPanelEnergy = 0;
         v3SetZero(totRotSolarPanelAngMomentum_B);
         spCount = 0;
@@ -2024,24 +2036,28 @@ void SixDofEOM::integrateState(double CurrentTime)
                 v3Cross(omega_SN_B, r_ScH_B, intermediateVector);
                 v3Cross(&attStates[3], SPIt->r_HB_B, intermediateVector2);
                 v3Add(intermediateVector, intermediateVector2, rDot_ScB_B);
-                v3Subtract(rDot_ScB_B, cDot_B, intermediateVector);
-                totRotSolarPanelEnergy += 1.0/2.0*SPIt->massSP*v3Dot(intermediateVector, intermediateVector);
+                v3Subtract(rDot_ScB_B, cDot_B, rDot_ScC_B);
+                totRotSolarPanelEnergy += 1.0/2.0*SPIt->massSP*v3Dot(rDot_ScC_B, rDot_ScC_B);
                 //! - Potential energy of solar panels
                 totRotSolarPanelEnergy += 1.0/2.0*SPIt->k*SPIt->theta*SPIt->theta;
 
                 //! - Find contribution from solar panels to orbital energy
                 this->totScOrbitalEnergy += 1.0/2.0*SPIt->massSP*v3Dot(rDot_BN_B, rDot_BN_B);
 
-                //! - Find angular momentum of solar panels
+                //! - Find angular momentum of solar panels about point C of the spacecraft
                 mMultV(SPIt->ISPPntS_S, 3, 3, omega_SN_S, intermediateVector);
                 m33tMultV3(SB, intermediateVector, intermediateVector);
                 v3Add(totRotSolarPanelAngMomentum_B, intermediateVector, totRotSolarPanelAngMomentum_B);
-                //! - Add in translational angular momentum of solar panels
                 v3Add(r_ScH_B, SPIt->r_HB_B, intermediateVector);
-                v3Add(rBN_B, intermediateVector, intermediateVector);
-                v3Cross(intermediateVector, rDot_ScB_B, intermediateVector);
+                v3Subtract(intermediateVector, c_B, intermediateVector);
+                v3Cross(intermediateVector, rDot_ScC_B, intermediateVector);
                 v3Scale(SPIt->massSP, intermediateVector, intermediateVector);
                 v3Add(totRotSolarPanelAngMomentum_B, intermediateVector, totRotSolarPanelAngMomentum_B);
+
+                //! - Find contribution from solar panels to orbital angular momentum
+                v3Cross(&this->XState[0], &this->XState[3], intermediateVector);
+                v3Scale(SPIt->massSP, intermediateVector, intermediateVector);
+                v3Add(this->totScOrbitalAngMom_N, intermediateVector, this->totScOrbitalAngMom_N);
                 spCount++;
             }
         }
@@ -2089,9 +2105,16 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - 1/2*omega^T*I*omega - hubs rotational energy about its center of mass
         this->totScRotEnergy = 0.5*v3Dot(&attStates[3], totScRotAngMom_B);
 
-        //! - Find the hubs rotational energy about point C
+        //! - Add in the hubs rotational energy about point C
         v3Scale(-1.0, cDot_B, intermediateVector);
         this->totScRotEnergy += 1.0/2.0*this->compMass*v3Dot(intermediateVector, intermediateVector);
+
+        //! - Add in the hubs angular momentum about point C
+        v3Scale(-1.0, c_B, intermediateVector);
+        v3Scale(-1.0, cDot_B, intermediateVector2);
+        v3Cross(intermediateVector, intermediateVector2, intermediateVector);
+        v3Scale(this->compMass, intermediateVector, intermediateVector);
+        v3Add(totScRotAngMom_B, intermediateVector, totScRotAngMom_B);
 
         //! - Add the reaction wheel relative kinetic energy and angular momentum
         this->totScRotEnergy += totRwsKinEnergy; /* T from above */
@@ -2105,8 +2128,11 @@ void SixDofEOM::integrateState(double CurrentTime)
         //! - Find angular momentum vector in inertial frame
         m33tMultV3(BN, totScRotAngMom_B, this->totScRotAngMom_N);
 
-        //! - Find magnitude of spacecraft angular momentum
+        //! - Find magnitude of rotational spacecraft angular momentum
         this->totScRotAngMomMag = v3Norm(this->totScRotAngMom_N);
+
+        //! - Find magnitude of orbital spacecraft angular momentum
+        this->totScOrbitalAngMomMag = v3Norm(this->totScOrbitalAngMom_N);
 
         //! - Calulate rate of change of energy
         this->scRotEnergyRate = (this->totScRotEnergy-prevTotScRotEnergy)/TimeStep;

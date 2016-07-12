@@ -364,7 +364,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
     dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
     dataOrbitalAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMom_N")
-    # dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
+    dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
     dataRotAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMom_N")
     dataRotAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMomMag")
     # dataRotEnergyRate = scSim.GetLogVariableData("VehicleDynamicsData.scRotEnergyRate")
@@ -449,7 +449,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[4.7918109843619439e-01]
                         ,[4.7918110109649925e-01]
                         ]
-            checkOrbitalEnergy=True
+            checkOrbitalEnergy = True
+            trueOrbitalAngMom_N = [
+                        [4.7917767026013856e+00, -4.7790087509782637e+00, 1.2836457266194756e-02]
+                        ,[4.7917772716953486e+00, -4.7790093413973604e+00, 1.2836080726626120e-02]
+                        ,[4.7917758489453632e+00, -4.7790079200361397e+00, 1.2836398575007735e-02]
+                        ,[4.7917749015813627e+00, -4.7790070578211328e+00, 1.2832212136338228e-02]
+                        ,[4.7917763797456487e+00, -4.7790085092306143e+00, 1.2833132287383364e-02]
+                        ]
+            checkOrbitalAngMom = True
         elif useRotation==True and useFuelSlosh==True and useHingedSP==False: #Fuel slosh
             truePos = [
                         [-2.69102169e-02, -3.34138085e-02, -7.63296148e-03]
@@ -565,6 +573,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[2.3445736257681787e+01]
                         ]
             checkRotEnergy=True
+            trueRotAngMom_N = [
+                        [1.2583981794635505e+02, -1.8777858377774368e+02, 1.4768114245247938e+02]
+                        ,[1.2583981760136209e+02, -1.8777858441336801e+02, 1.4768114318042959e+02]
+                        ,[1.2583981764025231e+02, -1.8777858545601674e+02, 1.4768114287796766e+02]
+                        ,[1.2583981858326324e+02, -1.8777858573322075e+02, 1.4768114265469842e+02]
+                        ,[1.2583981919986654e+02, -1.8777858531140168e+02, 1.4768114358533944e+02]
+                        ]
+            checkRotAngMom = True
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==False: #Fuel Slosh
             trueSigma = [
                         [-8.19602045e-02, -2.38564447e-01, 8.88132824e-01]
@@ -685,10 +701,10 @@ if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
                            True,       # useTranslation
                            True,        # useRotation
-                           True,        # useRW
+                           False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           False,       # useHingedSP
+                           True,       # useHingedSP
                            False       # useFuelSlosh
                            )
 
