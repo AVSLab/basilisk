@@ -633,14 +633,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useRotation==True:
         for i in range(0,len(trueSigma)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataSigma[i],trueSigma[i],3,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
     if useTranslation==True:
         for i in range(0,len(truePos)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataPos[i],truePos[i],3,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -648,7 +648,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         accuracy = 1e-15
         for i in range(0,len(trueOrbitalEnergy)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataOrbitalEnergy[i],trueOrbitalEnergy[i],1,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataOrbitalEnergy[i],trueOrbitalEnergy[i],1,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed orbital energy unit test at t=" + str(dataOrbitalEnergy[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -656,7 +656,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         accuracy = 1e-15
         for i in range(0,len(trueRotEnergy)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataRotEnergy[i],trueRotEnergy[i],1,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataRotEnergy[i],trueRotEnergy[i],1,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed rotational energy unit test at t=" + str(dataRotEnergy[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -664,7 +664,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         accuracy = 1e-15
         for i in range(0,len(trueOrbitalAngMom_N)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataOrbitalAngMom_N[i],trueOrbitalAngMom_N[i],3,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataOrbitalAngMom_N[i],trueOrbitalAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed orbital angular momentum unit test at t=" + str(dataOrbitalAngMom_N[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -672,7 +672,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         accuracy = 1e-15
         for i in range(0,len(trueRotAngMom_N)):
             # check a vector values
-            if not unitTestSupport.isArrayEqual(dataRotAngMom_N[i],trueRotAngMom_N[i],3,accuracy):
+            if not unitTestSupport.isArrayEqualRelative(dataRotAngMom_N[i],trueRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  Dynamics Mode failed rotational angular momentum unit test at t=" + str(dataRotAngMom_N[i,0]*macros.NANO2SEC) + "sec\n")
 
