@@ -53,8 +53,8 @@ void SelfInit_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t moduleID)
                                                sizeof(attGuidOut),
                                                "attGuidOut",
                                                moduleID);
-
-
+    ConfigData->boolWasControlOff = 0;
+    v3Set(-1, -1, -1, ConfigData->sigma_BR);
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -68,7 +68,6 @@ void CrossInit_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                 sizeof(attGuidOut),
                                                 moduleID);
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -78,6 +77,8 @@ void CrossInit_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    ConfigData->boolWasControlOff = 0;
+    v3Set(-1, -1, -1, ConfigData->sigma_BR);
 
 }
 
@@ -88,37 +89,78 @@ void Reset_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t callTime, uin
  */
 void Update_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    
     /*! - Read the input message and set it as the output by default */
     uint64_t    clockTime;
     uint32_t    readSize;
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(attGuidOut), (void*) &(ConfigData->attGuidOut), moduleID);
-    
-    /*! - Apply deadband if needed */
+    /*! - Evaluate current error in attitude and rates */
+    computeAbsoluteError(ConfigData);
+    /*! - Check whether control should be ON or OFF */
     applyDeadband(ConfigData);
-
     /*! - Write output guidance message */
-    WriteMessage(ConfigData->outputGuidID, callTime, sizeof(attGuidOut),   /* update module name */
-                 (void*) &(ConfigData->attGuidOut), moduleID);
-
+    writeOutputMessages(ConfigData, callTime, moduleID);
     return;
 }
 
 
-void applyDeadband(errorDeadbandConfig *ConfigData)
+void writeOutputMessages(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    WriteMessage(ConfigData->outputGuidID, callTime, sizeof(attGuidOut),
+                 (void*) &(ConfigData->attGuidOut), moduleID);
+    v3Copy(ConfigData->attGuidOut.sigma_BR, ConfigData->sigma_BR);
+    v3Copy(ConfigData->attGuidOut.omega_BR_B, ConfigData->omega_BR_B);
+}
+
+void computeAbsoluteError(errorDeadbandConfig *ConfigData)
 {
     double attError;
     double rateError;
-    
     attError = 4 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
     rateError = v3Norm(ConfigData->attGuidOut.omega_BR_B);
     ConfigData->error = sqrt(attError * attError + rateError * rateError);
-    if (ConfigData->error > ConfigData->innerThresh && ConfigData->error < ConfigData->outerThresh)
+}
+
+void applyDeadband(errorDeadbandConfig *ConfigData)
+{
+    if (ConfigData->error < ConfigData->outerThresh)
     {
-        v3SetZero(ConfigData->attGuidOut.sigma_BR);
-        v3SetZero(ConfigData->attGuidOut.omega_BR_B);
+        if (ConfigData->error < ConfigData->innerThresh || (ConfigData->error > ConfigData->innerThresh && ConfigData->boolWasControlOff))
+        {
+            /* Set errors to zero in order to turn off control */
+            v3SetZero(ConfigData->attGuidOut.sigma_BR);
+            v3SetZero(ConfigData->attGuidOut.omega_BR_B);
+            ConfigData->boolWasControlOff = 1;
+        } else {
+            ConfigData->boolWasControlOff = 0;
+        }
+    }
+    else
+    {
+        ConfigData->boolWasControlOff = 0;
     }
     
 }
+
+//void applyDeadband(errorDeadbandConfig *ConfigData)
+//{
+//    if (ConfigData->error < ConfigData->outerThresh)
+//    {
+//        if (ConfigData->error < ConfigData->innerThresh || (ConfigData->error > ConfigData->innerThresh && wasControlOff(ConfigData)))
+//        {
+//            /* Set errors to zero in order to turn off control */
+//            v3SetZero(ConfigData->attGuidOut.sigma_BR);
+//            v3SetZero(ConfigData->attGuidOut.omega_BR_B);
+//        }
+//    }
+//}
+
+uint32_t wasControlOff(errorDeadbandConfig *ConfigData)
+{
+    double zeroVec[3];
+    v3SetZero(zeroVec);
+    //ConfigData->boolWasControlOff = v3IsEqual(ConfigData->sigma_BR, zeroVec, 1E-12) && v3IsEqual(ConfigData->omega_BR_B, zeroVec, 1E-12);
+    return v3IsEqual(ConfigData->sigma_BR, zeroVec, 1E-12) && v3IsEqual(ConfigData->omega_BR_B, zeroVec, 1E-12);
+}
+
 

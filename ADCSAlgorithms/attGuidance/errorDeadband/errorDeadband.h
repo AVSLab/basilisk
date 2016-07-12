@@ -33,6 +33,9 @@ typedef struct {
     double innerThresh;
     double outerThresh;
     double error;
+    uint32_t boolWasControlOff;
+    double sigma_BR[3];
+    double omega_BR_B[3];
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
@@ -52,7 +55,10 @@ extern "C" {
     void CrossInit_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t moduleID);
     void Update_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_errorDeadband(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void writeOutputMessages(errorDeadbandConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void applyDeadband(errorDeadbandConfig *ConfigData);
+    void computeAbsoluteError(errorDeadbandConfig *ConfigData);
+    uint32_t wasControlOff(errorDeadbandConfig *ConfigData);
 
 #ifdef __cplusplus
 }
