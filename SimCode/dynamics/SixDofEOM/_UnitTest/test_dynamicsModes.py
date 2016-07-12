@@ -399,6 +399,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # print dataOrbitalEnergy
     # print dataRotEnergy
     # print dataOrbitalAngMom_N
+    # print dataRotAngMom_N
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False
@@ -532,6 +533,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                             ,[3.3968284498306407e+03]
                             ]
                 checkRotEnergy = True
+                trueRotAngMom_N = [
+                            [-9.5287780855852944e-01, -1.5092028316403020e+01, 1.2654355186213355e+01]
+                            ,[-9.5287780857909521e-01, -1.5092028316409420e+01, 1.2654355186204228e+01]
+                            ,[-9.5287780854726467e-01, -1.5092028316411398e+01, 1.2654355186204333e+01]
+                            ,[-9.5287780882898065e-01, -1.5092028316372639e+01, 1.2654355186229234e+01]
+                            ,[-9.5287780847799741e-01, -1.5092028316600940e+01, 1.2654355185983071e+01]
+                            ]
+                checkRotAngMom = True
         elif useThruster==True: # thrusters with no RW
             trueSigma = [
                         [ 1.19430832e-01,  4.59254882e-01, -3.89066833e-01]
@@ -674,9 +683,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           True,       # useTranslation
+                           False,       # useTranslation
                            True,        # useRotation
-                           False,        # useRW
+                           True,        # useRW
                            False,        # useJitter
                            False,       # useThruster
                            False,       # useHingedSP

@@ -1731,7 +1731,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     double omega_s;                         /* body rate about the g_s RW axis */
     double totScRotAngMom_B[3];             /* tot spacecraft angular momentum about its center of mass in the body frame */
     double totRwsKinEnergy;                 /* All RWs kinetic energy summed together */
-    double totRwsAngMomentum_B[3];          /* All RWs angular momentum */
+    double totRwsRelAngMomentum_B[3];          /* All RWs angular momentum */
     double prevTotScRotEnergy;              /* The last kinetic energy calculation from time step before */
     double *attStates;                      /* pointer to the attitude state set in the overall state matrix */
     double rDot_BN_B[3];                    /* inertial derivative of position vector from N to B in the B frame */
@@ -1856,7 +1856,7 @@ void SixDofEOM::integrateState(double CurrentTime)
             P = sum_over_external_torque(omega^T*L) + sum_over_RWs(u*Omega) - Schaub 4.5.2 */
         totRwsKinEnergy         = 0.0;
         this->scRotPower        = 0.0;
-        v3SetZero(totRwsAngMomentum_B);
+        v3SetZero(totRwsRelAngMomentum_B);
         v3SetZero(totScRotAngMom_B);
         v3SetZero(this->totScRotAngMom_N);
 
@@ -1891,8 +1891,8 @@ void SixDofEOM::integrateState(double CurrentTime)
                 this->scRotPower += rwIt->u_current*Omega; /* u*Omega */
 
                 /* RW angular momentum */
-                v3Scale((Omega + omega_s), intermediateVector, intermediateVector);
-                v3Add(totRwsAngMomentum_B, intermediateVector, totRwsAngMomentum_B);
+                v3Scale(Omega, intermediateVector, intermediateVector);
+                v3Add(totRwsRelAngMomentum_B, intermediateVector, totRwsRelAngMomentum_B);
 
                 /* Set current reaction wheel speed and angle */
                 rwIt->Omega = Omega;
@@ -2100,7 +2100,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
         v3Add(totRotFuelSloshAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
         v3Add(totRotSolarPanelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B);
-        v3Add(totRwsAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B); /* H from above */
+        v3Add(totRwsRelAngMomentum_B, totScRotAngMom_B, totScRotAngMom_B); /* H from above */
 
         //! - Find angular momentum vector in inertial frame
         m33tMultV3(BN, totScRotAngMom_B, this->totScRotAngMom_N);
