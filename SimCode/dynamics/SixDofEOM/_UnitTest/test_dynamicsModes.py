@@ -387,7 +387,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     # # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
     # # # plt.figure(3)
     # # # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
-    # plt.show()
+    plt.show()
 
     # Remove time zero from list
     dataPos = dataPos[1:len(dataPos),:]
@@ -473,7 +473,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[5.3938757903208845e-05]
                         ,[5.3938676148061827e-05]
                         ]
-            checkOrbitalEnergy=True
+            checkOrbitalEnergy = True
+            trueOrbitalAngMom_N = [
+                        [6.8248289813816810e-04, -5.0795202220321528e-04, -1.1163017030526147e-04]
+                        ,[6.8249052064090670e-04, -5.0795592593507063e-04, -1.1164305727854804e-04]
+                        ,[6.8245621189251212e-04, -5.0792548802023577e-04, -1.1166400157220160e-04]
+                        ,[6.8242403545833207e-04, -5.0789477448558379e-04, -1.1169292736488284e-04]
+                        ,[6.8254983591487352e-04, -5.0799756117381471e-04, -1.1166820345125832e-04]
+                        ]
+            checkOrbitalAngMom = True
         elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
             truePos = [
                         [-2.44400224e+00, -2.74717376e+00, 2.02431956e-01]
@@ -597,6 +605,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[1.1666957075118878e+01]
                         ]
             checkRotEnergy=True
+            trueRotAngMom_N = [
+                        [9.0069135339301980e+01, -8.0072812166013662e+01, 6.0061598702601444e+01]
+                        ,[9.0069115383862737e+01, -8.0072794579006512e+01, 6.0061585388893562e+01]
+                        ,[9.0069096528631817e+01, -8.0072777390512712e+01, 6.0061572484175265e+01]
+                        ,[9.0069078579018239e+01, -8.0072761316733022e+01, 6.0061560487101630e+01]
+                        ,[9.0069060775156075e+01, -8.0072744724956891e+01, 6.0061548781524650e+01]
+                        ]
+            checkRotAngMom = True
         elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
             trueSigma = [
                         [-3.93694358e-01, -1.66142060e-01, 1.66953504e-01]
@@ -704,7 +720,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHingedSP
-                           False       # useFuelSlosh
+                           False,       # useHingedSP
+                           True       # useFuelSlosh
                            )
 

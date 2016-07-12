@@ -2085,13 +2085,19 @@ void SixDofEOM::integrateState(double CurrentTime)
                 //! - Find contribution from fuel slosh to orbital energy
                 this->totScOrbitalEnergy += 1.0/2.0*FSPIt->massFSP*v3Dot(rDot_BN_B, rDot_BN_B);
 
-                //! - Find angular momentum of fuel slosh
-                v3Add(rBN_B, FSPIt->r_PB_B, intermediateVector);
+                //! - Find angular momentum of fuel slosh about point C
                 v3Scale(FSPIt->rho, FSPIt->pHat_B, intermediateVector2);
-                v3Add(intermediateVector, intermediateVector2, intermediateVector);
-                v3Cross(intermediateVector, rDot_PcB_B, intermediateVector);
+                v3Add(FSPIt->r_PB_B, intermediateVector2, intermediateVector);
+                v3Subtract(intermediateVector, c_B, intermediateVector);
+                v3Subtract(rDot_PcB_B, cDot_B, rDot_PcC_B);
+                v3Cross(intermediateVector, rDot_PcC_B, intermediateVector);
                 v3Scale(FSPIt->massFSP, intermediateVector, intermediateVector);
                 v3Add(totRotFuelSloshAngMomentum_B, intermediateVector, totRotFuelSloshAngMomentum_B);
+
+                //! - Find contribution from fuel slosh to orbital angular momentum
+                v3Cross(&this->XState[0], &this->XState[3], intermediateVector);
+                v3Scale(FSPIt->massFSP, intermediateVector, intermediateVector);
+                v3Add(this->totScOrbitalAngMom_N, intermediateVector, this->totScOrbitalAngMom_N);
                 fspCount++;
             }
         }
