@@ -305,21 +305,12 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     scSim.AddModelToTask(unitTaskName, spiceObject)
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
-    if useHingedSP:
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta", macros.sec2nano(0.1))
-
-    if useFuelSlosh:
-        scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho", macros.sec2nano(0.1))
-        scSim.AddVariableForLogging("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho", macros.sec2nano(0.1))
-
     scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalEnergy", macros.sec2nano(120.))
     scSim.AddVariableForLogging("VehicleDynamicsData.totScRotEnergy", macros.sec2nano(120.))
     scSim.AddVectorForLogging('VehicleDynamicsData.totScOrbitalAngMom_N', 'double', 0, 2, macros.sec2nano(120.))
-    scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalAngMomMag", macros.sec2nano(120.))
+    # scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalAngMomMag", macros.sec2nano(120.))
     scSim.AddVectorForLogging('VehicleDynamicsData.totScRotAngMom_N', 'double', 0, 2, macros.sec2nano(120.))
-    scSim.AddVariableForLogging("VehicleDynamicsData.totScRotAngMomMag", macros.sec2nano(120.))
+    # scSim.AddVariableForLogging("VehicleDynamicsData.totScRotAngMomMag", macros.sec2nano(120.))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotEnergyRate", macros.sec2nano(0.001))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotPower", macros.sec2nano(0.001))
 
@@ -333,40 +324,12 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
     dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
 
-    if useHingedSP:
-        theta1 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[0].theta")
-        theta2 = scSim.GetLogVariableData("VehicleDynamicsData.solarPanels[0].solarPanelData[1].theta")
-
-    if useFuelSlosh:
-        rho1 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[0].rho")
-        rho2 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[1].rho")
-        rho3 = scSim.GetLogVariableData("VehicleDynamicsData.fuelTanks[0].fuelSloshParticlesData[2].rho")
-        # plt.figure(1)
-        # plt.plot(dataPos[:,0]*1.0E-9, dataPos[:,1], 'b', dataPos[:,0]*1.0E-9, dataPos[:,2], 'g', dataPos[:,0]*1.0E-9, dataPos[:,3], 'r')
-        # plt.figure(2)
-        # plt.plot(dataSigma[:,0]*1.0E-9, dataSigma[:,1], 'b', dataSigma[:,0]*1.0E-9, dataSigma[:,2], 'g', dataSigma[:,0]*1.0E-9, dataSigma[:,3], 'r')
-        # plt.figure(3)
-        # plt.plot(rho1[:,0]*1.0E-9, rho1[:,1], 'b')
-        # plt.figure(4)
-        # plt.plot(rho2[:,0]*1.0E-9, rho2[:,1], 'b')
-        # plt.figure(5)
-        # plt.plot(rho3[:,0]*1.0E-9, rho3[:,1], 'b')
-        # plt.figure(6)
-        # plt.plot(theta1[:,0]*1.0E-9, theta1[:,1], 'b')
-        # plt.figure(7)
-        # plt.plot(theta2[:,0]*1.0E-9, theta2[:,1], 'b')
-        # plt.figure(8)
-        # plt.plot(energy[:,0]*1.0E-9, energy[:,1]-energy[0, 1], 'b')
-        # plt.figure(9)
-        # plt.plot(momentum[:,0]*1.0E-9, momentum[:,1]-momentum[0, 1], 'b')
-        # plt.show()
-
     dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
     dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
     dataOrbitalAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMom_N")
-    dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
+    # dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
     dataRotAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMom_N")
-    dataRotAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMomMag")
+    # dataRotAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMomMag")
     # dataRotEnergyRate = scSim.GetLogVariableData("VehicleDynamicsData.scRotEnergyRate")
     # dataRotPower = scSim.GetLogVariableData("VehicleDynamicsData.scRotPower")
 
@@ -711,7 +674,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
             # check a vector values
             if not unitTestSupport.isArrayEqual(dataRotAngMom_N[i],trueRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed orbital angular momentum unit test at t=" + str(dataRotAngMom_N[i,0]*macros.NANO2SEC) + "sec\n")
+                testMessages.append("FAILED:  Dynamics Mode failed rotational angular momentum unit test at t=" + str(dataRotAngMom_N[i,0]*macros.NANO2SEC) + "sec\n")
 
     #   print out success message if no error were found
     if testFailCount == 0:
