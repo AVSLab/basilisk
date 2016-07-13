@@ -17,6 +17,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*
     Inertial 3D Spin Module
  
+ * University of Colorado, Autonomous Vehicle Systems (AVS) Lab
+ * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
+
  */
 
 /* modify the path to reflect the new module names */
@@ -63,7 +66,9 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
 void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-
+    ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
+                                                sizeof(attRefOut),
+                                                moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -86,24 +91,51 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, u
  */
 void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    computeTimeStep(ConfigData, callTime);
+    /*! - Read input message */
+    attRefOut           inputRef;
+    uint64_t            writeTime;
+    uint32_t            writeSize;
+    ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
+                sizeof(attRefOut), (void*) &(inputRef), moduleID);
+    checkInputCommand(ConfigData, inputRef.sigma_RN);
+    /*! - Compute time step to use in the integration downstream */
+    computeTimeStep(ConfigData, callTime, moduleID);
+    /*! - Integrate the current attitude */
     integrateInertialSpinRef(ConfigData);
+    /*! - Evaluate the current spinning reference frame */
     evaluateInertial3DSpinRef(ConfigData);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
-                 (void*) &(ConfigData->attRefOut), moduleID);
+    /*! - Write input message */
+    writeOutputMessages(ConfigData, callTime, moduleID);
+    /* Update the last time the module was called to current time */
     ConfigData->priorTime = callTime;
     return;
 }
 
+void checkInputCommand(inertial3DSpinConfig *ConfigData, double cmdSigma_RN[3])
+{
+    int32_t prevCmdActive = v3IsEqual(cmdSigma_RN, ConfigData->priorCmdSigma_RN , 1E-12);
+    if (!prevCmdActive)
+    {
+        v3Copy(cmdSigma_RN, ConfigData->sigma_RN);
+        v3Copy(cmdSigma_RN, ConfigData->priorCmdSigma_RN);
+    }
+}
+
+void writeOutputMessages(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
+                 (void*) &(ConfigData->attRefOut), moduleID);
+}
+
 /*
- * Function: evaluateInertial3DSpinRef
+ * Function: computeTimeStep
  * Purpose: This function computes control update time
  * Input
  *      ConfigData = module configuration data
  * Output:
  *      ConfigData: dt is updated
  */
-void computeTimeStep(inertial3DSpinConfig *ConfigData, uint64_t callTime)
+void computeTimeStep(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     if (ConfigData->priorTime == -1)
     {

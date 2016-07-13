@@ -79,7 +79,10 @@ import celestialTwoBodyPoint
 import singleAxisSpin
 import orbitAxisSpin
 import axisScan
+import rasterManager
+import eulerRotation
 import attTrackingError
+import errorDeadband
 
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
@@ -123,7 +126,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
 
         # Guidance Tasks
-        self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 129)
         self.fswProc.addTask(self.CreateNewTask("inertial3DPointTask", int(5E8)), 128)
         self.fswProc.addTask(self.CreateNewTask("hillPointTask", int(5E8)), 126)
         self.fswProc.addTask(self.CreateNewTask("velocityPointTask", int(5E8)), 125)
@@ -131,6 +133,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("singleAxisSpinTask", int(5E8)), 123)
         self.fswProc.addTask(self.CreateNewTask("orbitAxisSpinTask", int(5E8)), 119)
         self.fswProc.addTask(self.CreateNewTask("axisScanTask", int(5E8)), 118)
+        self.fswProc.addTask(self.CreateNewTask("rasterMnvrTask", int(5E8)), 118)
+        self.fswProc.addTask(self.CreateNewTask("eulerRotationTask", int(5E8)), 117)
+        self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 116)
+
+        self.fswProc.addTask(self.CreateNewTask("trackingErrorTask", int(5E8)), 111)
+        self.fswProc.addTask(self.CreateNewTask("controlTask", int(5E8)), 110)
+
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("feedbackControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("attitudePRVControlMnvrTask", int(5E8)), 110)
@@ -319,13 +328,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
         # Guidance flight software modules.
-        self.inertial3DSpinData = inertial3DSpin.inertial3DSpinConfig()
-        self.inertial3DSpinWrap = alg_contain.AlgContain(self.inertial3DSpinData,
-                                                     inertial3DSpin.Update_inertial3DSpin,
-                                                     inertial3DSpin.SelfInit_inertial3DSpin,
-                                                     inertial3DSpin.CrossInit_inertial3DSpin,
-                                                     inertial3DSpin.Reset_inertial3DSpin)
-        self.inertial3DSpinWrap.ModelTag = "inertial3DSpin"
 
         self.inertial3DData = inertial3D.inertial3DConfig()
         self.inertial3DWrap = alg_contain.AlgContain(self.inertial3DData,
@@ -380,8 +382,32 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        axisScan.SelfInit_axisScan,
                                                        axisScan.CrossInit_axisScan,
                                                        axisScan.Reset_axisScan)
-        self.orbitAxisSpinWrap.ModelTag = "axisScan"
+        self.axisScanWrap.ModelTag = "axisScan"
 
+        self.rasterManagerData = rasterManager.rasterManagerConfig()
+        self.rasterManagerWrap = alg_contain.AlgContain(self.rasterManagerData,
+                                                       rasterManager.Update_rasterManager,
+                                                       rasterManager.SelfInit_rasterManager,
+                                                       rasterManager.CrossInit_rasterManager,
+                                                       rasterManager.Reset_rasterManager)
+        self.rasterManagerWrap.ModelTag = "rasterManager"
+
+        self.eulerRotationData = eulerRotation.eulerRotationConfig()
+        self.eulerRotationWrap = alg_contain.AlgContain(self.eulerRotationData,
+                                                       eulerRotation.Update_eulerRotation,
+                                                       eulerRotation.SelfInit_eulerRotation,
+                                                       eulerRotation.CrossInit_eulerRotation,
+                                                       eulerRotation.Reset_eulerRotation)
+        self.eulerRotationWrap.ModelTag = "eulerRotation"
+
+        self.inertial3DSpinData = inertial3DSpin.inertial3DSpinConfig()
+        self.inertial3DSpinWrap = alg_contain.AlgContain(self.inertial3DSpinData,
+                                                     inertial3DSpin.Update_inertial3DSpin,
+                                                     inertial3DSpin.SelfInit_inertial3DSpin,
+                                                     inertial3DSpin.CrossInit_inertial3DSpin,
+                                                     inertial3DSpin.Reset_inertial3DSpin)
+        self.inertial3DSpinWrap.ModelTag = "inertial3DSpin"
+        
         self.attTrackingErrorData = attTrackingError.attTrackingErrorConfig()
         self.attTrackingErrorWrap = alg_contain.AlgContain(self.attTrackingErrorData,
                                                        attTrackingError.Update_attTrackingError,
@@ -389,6 +415,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        attTrackingError.CrossInit_attTrackingError,
                                                        attTrackingError.Reset_attTrackingError)
         self.attTrackingErrorWrap.ModelTag = "attTrackingError"
+        
+        self.errorDeadbandData = errorDeadband.errorDeadbandConfig()
+        self.errorDeadbandWrap = alg_contain.AlgContain(self.errorDeadbandData,
+                                                       errorDeadband.Update_errorDeadband,
+                                                       errorDeadband.SelfInit_errorDeadband,
+                                                       errorDeadband.CrossInit_errorDeadband,
+                                                       errorDeadband.Reset_errorDeadband)
+        self.errorDeadbandWrap.ModelTag = "errorDeadband"
 
         # Initialize flight software modules.
         self.InitAllFSWObjects()
@@ -426,14 +460,25 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
 
         # Mapping of Guidance Models to Guidance Tasks
-        self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 12)
-        self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 12)
-        self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 12)
-        self.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 12)
-        self.AddModelToTask("celTwoBodyPointTask", self.celTwoBodyPointWrap, self.celTwoBodyPointData, 12)
-        self.AddModelToTask("singleAxisSpinTask", self.singleAxisSpinWrap, self.singleAxisSpinData, 12)
-        self.AddModelToTask("orbitAxisSpinTask", self.orbitAxisSpinWrap, self.orbitAxisSpinData, 11)
-        self.AddModelToTask("axisScanTask", self.axisScanWrap, self.axisScanData, 11)
+        self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 20)
+        self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 20)
+        self.AddModelToTask("velocityPointTask", self.velocityPointWrap, self.velocityPointData, 20)
+        self.AddModelToTask("celTwoBodyPointTask", self.celTwoBodyPointWrap, self.celTwoBodyPointData, 20)
+        #self.AddModelToTask("singleAxisSpinTask", self.singleAxisSpinWrap, self.singleAxisSpinData, 11)
+        #self.AddModelToTask("orbitAxisSpinTask", self.orbitAxisSpinWrap, self.orbitAxisSpinData, 11)
+        #self.AddModelToTask("axisScanTask", self.axisScanWrap, self.axisScanData, 11)
+        self.AddModelToTask("eulerRotationTask", self.eulerRotationWrap, self.eulerRotationData, 19)
+        self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 19)
+        self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 19)
+        self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationWrap, 18)
+
+        self.AddModelToTask("trackingErrorTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 15)
+        self.AddModelToTask("trackingErrorTask", self.errorDeadbandWrap, self.errorDeadbandData, 14)
+        self.AddModelToTask("controlTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 10)
+       #self.AddModelToTask("controlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 10)
+        self.AddModelToTask("controlTask", self.RWAMappingDataWrap, self.RWAMappingData, 9)
+        self.AddModelToTask("controlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 8)
+        
         self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
         self.AddModelToTask("attitudeControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
@@ -454,16 +499,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.disableAllTasks()
 
         # Guidance Events
-        self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
+        self.createNewEvent("initiateGuidanceWithDeadband", int(1E9), True, ["self.modeRequest == 'deadbandGuid'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('inertial3DSpinTask')"
-                                , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
-                                #, "self.enableTask('attitudePRVControlMnvrTask')"
-                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
+                                , "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('trackingErrorTask')"
+                                , "self.enableTask('controlTask')"
+                                , "self.ResetTask('controlTask')"
                              ])
 
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
@@ -510,36 +552,72 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
-        self.createNewEvent("initiateSingleAxisSpin", int(1E9), True, ["self.modeRequest == 'singleAxisSpin'"],
+        # self.createNewEvent("initiateSingleAxisSpin", int(1E9), True, ["self.modeRequest == 'singleAxisSpin'"],
+        #                     ["self.fswProc.disableAllTasks()"
+        #                         , "self.enableTask('sensorProcessing')"
+        #                         , "self.enableTask('singleAxisSpinTask')"
+        #                         , "self.enableTask('feedbackControlMnvrTask')"
+        #                         , "self.ResetTask('feedbackControlMnvrTask')"
+        #                         , "self.enableTask('attitudeControlMnvrTask')"
+        #                         , "self.ResetTask('attitudeControlMnvrTask')"
+        #                      ])
+        # 
+        # self.createNewEvent("initiateOrbitAxisSpin", int(1E9), True, ["self.modeRequest == 'orbitAxisSpin'"],
+        #                     ["self.fswProc.disableAllTasks()"
+        #                         , "self.enableTask('sensorProcessing')"
+        #                         , "self.enableTask('hillPointTask')"
+        #                         , "self.enableTask('orbitAxisSpinTask')"
+        #                         , "self.enableTask('feedbackControlMnvrTask')"
+        #                         , "self.ResetTask('feedbackControlMnvrTask')"
+        #                         #, "self.enableTask('attitudeControlMnvrTask')"
+        #                         #, "self.ResetTask('attitudeControlMnvrTask')"
+        #                      ])
+        # 
+        # self.createNewEvent("initiateAxisScan", int(1E9), True, ["self.modeRequest == 'axisScan'"],
+        #                     ["self.fswProc.disableAllTasks()"
+        #                         , "self.enableTask('sensorProcessing')"
+        #                         , "self.enableTask('inertial3DPointTask')"
+        #                         , "self.enableTask('axisScanTask')"
+        #                         , "self.enableTask('feedbackControlMnvrTask')"
+        #                         , "self.ResetTask('feedbackControlMnvrTask')"
+        #                         #, "self.enableTask('attitudeControlMnvrTask')"
+        #                         #, "self.ResetTask('attitudeControlMnvrTask')"
+        #                      ])
+        
+        self.createNewEvent("initiateRasterMnvr", int(1E9), True, ["self.modeRequest == 'rasterMnvr'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('singleAxisSpinTask')"
+                                #, "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('hillPointTask')"
+                                , "self.enableTask('rasterMnvrTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
-                                , "self.enableTask('attitudeControlMnvrTask')"
-                                , "self.ResetTask('attitudeControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
-
-        self.createNewEvent("initiateOrbitAxisSpin", int(1E9), True, ["self.modeRequest == 'orbitAxisSpin'"],
+        
+        self.createNewEvent("initiateEulerRotation", int(1E9), True, ["self.modeRequest == 'eulerRotation'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('hillPointTask')"
-                                , "self.enableTask('orbitAxisSpinTask')"
+                                , "self.enableTask('eulerRotationTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
+                             # , "self.enableTask('attitudeControlMnvrTask')"
+                             # , "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
-        self.createNewEvent("initiateAxisScan", int(1E9), True, ["self.modeRequest == 'axisScan'"],
+        self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('inertial3DPointTask')"
-                                , "self.enableTask('axisScanTask')"
+                                , "self.enableTask('inertial3DSpinTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
                                 #, "self.ResetTask('attitudeControlMnvrTask')"
+                                #, "self.enableTask('attitudePRVControlMnvrTask')"
+                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
@@ -1318,6 +1396,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
         self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringSafeData.outputDataName = "controlTorqueRaw"
+        #self.MRP_SteeringSafeData.outputDataNameMRP = "controlTorqueRaw"
+        #self.MRP_SteeringSafeData.outputDataNamePRV = "controlTorqueRaw"
 
     def SetsunSafeACS(self):
         self.sunSafeACSData.inputControlName = "controlTorqueRaw"
@@ -1347,13 +1427,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attMnvrPointData.propagateReference = 1
 
     # Init of Guidance Modules
-    def setInertial3DSpin(self):
-        self.inertial3DSpinData.outputDataName = "att_ref_output"
-        sigma_R0N = [0.4, 0.2, 0.4]
-        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DSpinData.sigma_RN)
-        omega_R0N_N = np.array([0.2, 0.1, 0.1]) * mc.D2R
-        SimulationBaseClass.SetCArray(omega_R0N_N, 'double',self.inertial3DSpinData.omega_RN_N)
-
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
         sigma_R0N = [0.1, 0.2, 0.3]
@@ -1377,39 +1450,158 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
         self.celTwoBodyPointData.singularityThresh = 1.0 * mc.D2R
 
-    def setSingleAxisSpin(self):
-        self.singleAxisSpinData.outputDataName = "att_ref_output"
-        sigma_R0N =  [0.1 , 0.2, 0.3]
-        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
-        omega_spin = np.array([0.2, 0.2, 0.2]) * mc.D2R
-        SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
+    # def setSingleAxisSpin(self):
+    #     self.singleAxisSpinData.outputDataName = "att_ref_output"
+    #     sigma_R0N =  [0.1 , 0.2, 0.3]
+    #     SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.singleAxisSpinData.sigma_R0N)
+    #     omega_spin = np.array([0.2, 0.2, 0.2]) * mc.D2R
+    #     SimulationBaseClass.SetCArray(omega_spin, 'double',self.singleAxisSpinData.omega_spin)
 
-    def setOrbitAxisSpin(self):
-        self.orbitAxisSpinData.inputNavName = "simple_nav_output"
-        self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
-        self.orbitAxisSpinData.outputDataName = "att_ref_output"
-        #self.orbitAxisSpinData.o_spin = 0
-        #self.orbitAxisSpinData.b_spin = 0
-        self.orbitAxisSpinData.omega_spin = 0.4 * mc.D2R
-        #self.orbitAxisSpinData.phi_spin0 = 0.0 * mc.D2R
-        #self.orbitAxisSpinData.initializeAngle = 0
+    # def setOrbitAxisSpin(self):
+    #     self.orbitAxisSpinData.inputNavName = "simple_nav_output"
+    #     self.orbitAxisSpinData.inputRefName = "att_ref_output_stage1"
+    #     self.orbitAxisSpinData.outputDataName = "att_ref_output"
+    #     self.orbitAxisSpinData.o_spin = 0
+    #     self.orbitAxisSpinData.omega_spin = 0.2 * mc.D2R
 
-    def setAxisScan(self):
-        self.axisScanData.inputRefName = "att_ref_output_stage1"
-        self.axisScanData.outputDataName = "att_ref_output"
-        #self.axisScanData.psiDot = 0.0 * mc.D2R
-        #self.axisScanData.psi0 = 0.0 * mc.D2R
-        #self.axisScanData.theta0 = 0.0 * mc.D2R
+    # def setAxisScan(self):
+    #     self.axisScanData.inputRefName = "att_ref_output_stage1"
+    #     self.axisScanData.outputDataName = "att_ref_output"
+    #     self.axisScanData.psiDot = 0.0 * mc.D2R
+    #     self.axisScanData.psi0 = 0.0 * mc.D2R
+    #     self.axisScanData.theta0 = 0.0 * mc.D2R
 
-    # Init of Tracking Error
+    def setRasterManager(self):
+        self.rasterManagerData.outputEulerSetName = "euler_angle_set"
+        self.rasterManagerData.outputEulerRatesName = "euler_angle_rates"
+
+        def asteriskRaster(psi, theta, phiDot, t_mnvr):
+            angleSetList = [
+                0.0, 0.0, 0.0,
+                psi, 0.0, 0.0,
+                psi, psi, 0.0,
+                0.0, 0.0, 0.0,
+                -psi, -psi, 0.0,
+                -psi, 0.0, 0.0,
+                0.0, 0.0, 0.0,
+                0.0, psi, 0.0,
+                -psi, psi, 0.0,
+                0.0, 0.0, 0.0,
+                psi, -psi, 0.0,
+                0.0, -psi, 0.0,
+            ]
+
+            angleRatesList = [
+                0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+                , 0.0, 0.0, phiDot
+                , 0.0, 0.0, -phiDot
+            ]
+
+            rasterTimeList = [
+                t_mnvr*2.0, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+            ]
+
+            return (angleSetList, angleRatesList, rasterTimeList)
+
+        def testRaster(psi, theta, phiDot, t_mnvr):
+            angleSetList = [
+            ]
+
+            angleRatesList_8 = [
+                0.004, 0.004, phiDot
+            ]
+
+            angleRatesList_circX = [
+                0.004, 0.0, phiDot
+            ]
+            angleRatesList_circY = [
+                0.0, 0.004, phiDot
+            ]
+
+            rasterTimeList = [
+                t_mnvr * 10
+            ]
+
+            return (angleSetList, angleRatesList_circY, rasterTimeList)
+
+        def starRateRaster(phiDot, t_mnvr):
+            angleSetList = []
+            angleRatesList = [
+                -phiDot, 0.0, 0.0
+                , phiDot, 0.0, 0.0
+                , phiDot, phiDot, 0.0
+                , -phiDot, -phiDot, 0.0
+                , -phiDot, phiDot, 0.0
+                , phiDot, -phiDot, 0.0
+                , 0.0, phiDot, 0.0
+                , 0.0, -phiDot, 0.0
+            ]
+
+            rasterTimeList = [
+                t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+            ]
+            return (angleSetList, angleRatesList, rasterTimeList)
+
+
+        psi = 8.0 * math.pi / 180.0
+        theta = 8.0 * math.pi / 180.0
+        phiDot = 0.02 * math.pi / 180.0
+        t_mnvr = 20.0 * 18
+        (angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
+        (angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
+
+        #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
+
+        SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
+        SimulationBaseClass.SetCArray(angleRatesList, 'double', self.rasterManagerData.scanningRates)
+        SimulationBaseClass.SetCArray(rasterTimeList, 'double', self.rasterManagerData.rasterTimes)
+        self.rasterManagerData.numRasters = len(rasterTimeList)
+
+    def setInertial3DSpin(self):
+        self.inertial3DSpinData.inputRefName = "att_ref_output_stage1"
+        self.inertial3DSpinData.outputDataName = "att_ref_output"
+        omega_RN_N = np.array([0.2, 0.2, 0.4]) * mc.D2R
+        SimulationBaseClass.SetCArray(omega_RN_N, 'double',self.inertial3DSpinData.omega_RN_N)
+
+    def setEulerRotation(self):
+        self.eulerRotationData.inputRefName = "att_ref_output_stage1"
+        self.eulerRotationData.outputDataName = "att_ref_output"
+        self.eulerRotationData.outputEulerSetName = "euler_set_output"
+        self.eulerRotationData.outputEulerRatesName = "euler_rates_output"
+
+        # SAND-ALONE
+        #angleRates = np.array([0.0, 0.0, 0.0]) * mc.D2R
+        #SimulationBaseClass.SetCArray(angleRates, 'double', self.eulerRotationData.angleRates)
+
+        # RASTER MANEUVER
+        #self.eulerRotationData.inputEulerSetName = "euler_angle_set"
+        #self.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
+
     def setAttTrackingError(self):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
         self.attTrackingErrorData.inputNavName = "simple_nav_output"
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
-        #R0R = rbk.Mi(0.5*np.pi, 2)
         sigma_R0R = rbk.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
+
+    def setErrorDeadband(self):
+        self.errorDeadbandData.inputGuidName = "nom_att_guid_out"
+        self.errorDeadbandData.outputDataName = "db_att_guid_out"
+        self.errorDeadbandData.innerThresh = 2.0 * (math.pi / 180.)
+        self.errorDeadbandData.outerThresh = 4.0 * (math.pi / 180.)
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1434,6 +1626,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.numRWAs = 4
 
         self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
+
         self.MRP_FeedbackRWAData.inputRWConfigData = "rwa_config_data"
         self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
@@ -1635,15 +1828,18 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetthrustRWDesat()
         self.SetAttUKF()
         # Guidance FSW Objects
-        self.setInertial3DSpin()
         self.setInertial3D()
         self.setHillPoint()
         self.setVelocityPoint()
         self.setCelTwoBodyPoint()
-        self.setSingleAxisSpin()
-        self.setOrbitAxisSpin()
-        self.setAxisScan()
+        #self.setSingleAxisSpin()
+        #self.setOrbitAxisSpin()
+        #self.setAxisScan()
+        self.setRasterManager()
+        self.setInertial3DSpin()
+        self.setEulerRotation()
         self.setAttTrackingError()
+        self.setErrorDeadband()
 
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):

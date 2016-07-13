@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 find_package(PythonLibs)
@@ -8,21 +7,23 @@ include_directories(${PYTHON_INCLUDE_PATH})
 
 set(CMAKE_SWIG_FLAGS "")
 
-FILE(GLOB sub_directories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
+file(GLOB sub_directories RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/*)
 
-STRING(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
-MATH(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
-STRING(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
+string(FIND ${CMAKE_CURRENT_SOURCE_DIR} "/" DIR_NAME_START REVERSE)
+math(EXPR DIR_NAME_START "${DIR_NAME_START} + 1")
+string(SUBSTRING ${CMAKE_CURRENT_SOURCE_DIR} ${DIR_NAME_START} -1 DIR_NAME_STRING)
 
-PROJECT("${DIR_NAME_STRING}")
+project("${DIR_NAME_STRING}")
 
-FILE(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
+file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
 
-FOREACH(module ${swig_modules})
+foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
+	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
+
     file(GLOB impl_files
 	    "${FileDir}/*.cpp"
 	    "${FileDir}/*.c"
@@ -33,11 +34,16 @@ FOREACH(module ${swig_modules})
 	file(GLOB cpp_files
 	    "${FileDir}/*.cpp"
 		"${FileDir}/../_GeneralModuleFiles/*.cpp")
+	
+	# Make a python package directory and add an __init__.py fiel or 
+	# copy an existing custom __init__.py file.
+	set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
+	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
 	set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
-	FOREACH(localFile ${cpp_files})
+	foreach(localFile ${cpp_files})
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-	ENDFOREACH()
+	endforeach()
 	
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
@@ -45,19 +51,20 @@ FOREACH(module ${swig_modules})
 	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
-    foreach(LibFile ${ALG_LIST})
+    
+	foreach(LibFile ${ALG_LIST})
   	    SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
     endforeach()
+	
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES 
 	FOLDER "${DIR_NAME_STRING}/${FileDir}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules")
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
-
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
               COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/ADCSAlgorithms")
-ENDFOREACH()
+endforeach()
 
