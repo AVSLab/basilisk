@@ -67,6 +67,8 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
         sizeof(RWSpeedData), moduleID);
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellation), moduleID);
+    ConfigData->inputMassPropID = subscribeToMessage(
+        ConfigData->inputMassPropsName, sizeof(vehicleConfigData), moduleID);
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
@@ -82,8 +84,6 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
                                                    sizeof(ThrusterCluster), moduleID);
     ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
                 sizeof(ThrusterCluster), &localThrustData, moduleID);
-    ConfigData->inputMassPropID = subscribeToMessage(
-        ConfigData->inputMassPropsName, sizeof(vehicleConfigData), moduleID);
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,
@@ -156,7 +156,6 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	bestMatch = 0.0;
 	if (v3Dot(ConfigData->currDMDir, observedSpeedVec) <= ConfigData->DMThresh)
 	{
-//		uint32_t lowTime = callTime*1.0E-9;
 		for (i = 0; i < ConfigData->numThrusters; i++)
 		{
 
