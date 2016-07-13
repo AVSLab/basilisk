@@ -100,7 +100,7 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
         /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
         for(i=0; i<ConfigData->numThrusters; i=i+1)
         {
-            if (D2 > 0.00001) {
+            if (D2 > ConfigData->epsilon) {
                 ConfigData->DTDDTinv[i][j] = ConfigData->DTDDTinv[i][j]/ D2;
             } else {
                 ConfigData->DTDDTinv[i][j] = 0.0;

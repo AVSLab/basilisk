@@ -40,14 +40,14 @@ typedef struct {
     double   Gt[3][MAX_EFF_CNT];                    /*!< []      matrix containing the thrust direction unit vectors gHat_t_i */
     double   DTDDTinv[MAX_EFF_CNT][3];              /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t outputMsgID;                            /*!< ID for the outgoing message */
+    char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
+    int32_t  outputMsgID;                           /*!< ID for the outgoing message */
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
     char inputThrusterConfName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
-    int32_t inputVehControlID;                      /*!< ID for the incoming Lr control message */
-    int32_t inputThrusterConfID;                    /*!< [-] ID for the incoming Thruster configuration data*/
-
-    double  Lr_B[3];                                /*!< [Nm]    commanded ADCS control torque */
+    int32_t  inputVehControlID;                     /*!< ID for the incoming Lr control message */
+    int32_t  inputThrusterConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
+    double   epsilon;
+    double   Lr_B[3];                               /*!< [Nm]    commanded ADCS control torque */
 
     vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
 
