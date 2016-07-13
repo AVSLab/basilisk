@@ -44,7 +44,7 @@ def checkCSSEstAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh):
             dot_val = 1.0
         angCheck = math.acos(dot_val)
         if (angCheck > CSSEstAccuracyThresh):
-            errorString = "CSS accuracy failure for value of: "
+            errorString = "CSS accuracy failure for value of [deg]: "
             errorString += str(angCheck * 180.0 / math.pi)
             logging.error(errorString)
             accuracyFailCounter += 1
@@ -63,7 +63,7 @@ def checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
             dot_val = 1.0
         if (math.acos(dot_val) > CSSEstAccuracyThresh):
             controlFailCounter += 1
-            errorString = "Safe mode control failure for value of: "
+            errorString = "Safe mode control failure for value of [deg]: "
             errorString += str(math.acos(dot_val) * 180.0 / math.pi)
             logging.error(errorString)
         counterStart += 1
@@ -71,6 +71,7 @@ def checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
 
 
 def executeAVSSafeCapture(TheAVSSim):
+    TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9))  # solar array boresight angles
@@ -80,7 +81,8 @@ def executeAVSSafeCapture(TheAVSSim):
     TheAVSSim.ConfigureStopTime(int(30 * 1E9))
     TheAVSSim.ExecuteSimulation()
     TheAVSSim.modeRequest = 'safeMode'
-    TheAVSSim.ConfigureStopTime(int(60 * 100 * 1E9))
+    print '\n Mode Request = ', TheAVSSim.modeRequest
+    TheAVSSim.ConfigureStopTime(int(2 * 60 * 100 * 1E9))
     TheAVSSim.ExecuteSimulation()
 
 
@@ -112,6 +114,7 @@ if __name__ == "__main__":
     FSWsHat = TheAVSSim.pullMessageLogData("css_wls_est.sHatBdy", range(3))
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
+    controlTorque = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
 
     CSSEstAccuracyThresh = 17.5 * math.pi / 180.0
     accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat,
@@ -123,17 +126,36 @@ if __name__ == "__main__":
                                            slewFinishTime, desiredSunBdy)
 
     plt.figure(1)
+    plt.title('Sun direction unit vector')
     plt.plot(FSWsHat[:, 0] * 1.0E-9, FSWsHat[:, 1], 'b', DataCSSTruth[:, 0] * 1.0E-9, DataCSSTruth[:, 1], 'b--')
     plt.plot(FSWsHat[:, 0] * 1.0E-9, FSWsHat[:, 2], 'g', DataCSSTruth[:, 0] * 1.0E-9, DataCSSTruth[:, 2], 'g--')
     plt.plot(FSWsHat[:, 0] * 1.0E-9, FSWsHat[:, 3], 'r', DataCSSTruth[:, 0] * 1.0E-9, DataCSSTruth[:, 3], 'r--')
+    plt.legend(['$\hat{x}_1$', '$x_1$', '$\hat{x}_2$', '$x_2$', '$\hat{x}_3$', '$x_3$'])
+    plt.xlabel('time [s]')
+    plt.ylabel('unit vector component value [-]')
 
     plt.figure(2)
     plt.plot(numCSSActive[:, 0] * 1.0E-9, numCSSActive[:, 1])
+    plt.xlabel('time [s]')
+    plt.ylabel('Total number')
+    plt.title('Active CSS')
 
     plt.figure(3)
     plt.plot(solarArrayMiss[:, 0] * 1.0E-9, solarArrayMiss[:, 1] * 180 / math.pi)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Solar Array Miss (d)')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [deg]')
+    plt.title('Solar Array Miss')
+
+    plt.figure(4)
+    plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 1], 'b')
+    plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 2], 'g')
+    plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 3], 'r')
+    plt.legend(['$Lr_1$', '$Lr_2$', '$Lr_3$'])
+    plt.xlabel('Time [s]')
+    plt.ylabel('Torque [N m]')
+    plt.title('Control Torque')
+
+    plt.show()
 
     if (len(sys.argv) > 1):
         if (sys.argv[1] == 'True'):

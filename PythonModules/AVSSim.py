@@ -60,6 +60,7 @@ import imuComm
 import stComm
 import MRP_Steering
 import MRP_Feedback
+import MRP_PD
 import PRV_Steering
 import sunSafeACS
 import dvAttEffect
@@ -227,6 +228,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        MRP_Steering.CrossInit_MRP_Steering)
         self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
 
+
+        self.MRP_PDSafeData = MRP_PD.MRP_PDConfig()
+        self.MRP_PDSafeWrap = alg_contain.AlgContain(self.MRP_PDSafeData,
+                                                       MRP_PD.Update_MRP_PD,
+                                                       MRP_PD.SelfInit_MRP_PD,
+                                                       MRP_PD.CrossInit_MRP_PD)
+        self.MRP_PDSafeWrap.ModelTag = "MRP_PD"
+
         self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
         self.sunSafeACSWrap = alg_contain.AlgContain(self.sunSafeACSData,
                                                      sunSafeACS.Update_sunSafeACS,
@@ -257,7 +266,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                           MRP_Feedback.SelfInit_MRP_Feedback,
                                                           MRP_Feedback.CrossInit_MRP_Feedback)
         self.MRP_FeedbackRWAWrap.ModelTag = "MRP_FeedbackRWA"
-        
+
         self.PRV_SteeringRWAData = PRV_Steering.PRV_SteeringConfig()
         self.PRV_SteeringRWAWrap = alg_contain.AlgContain(self.PRV_SteeringRWAData,
                                                           PRV_Steering.Update_PRV_Steering,
@@ -360,29 +369,29 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                     celestialTwoBodyPoint.CrossInit_celestialTwoBodyPoint)
         self.celTwoBodyPointWrap.ModelTag = "celTwoBodyPoint"
 
-        self.singleAxisSpinData = singleAxisSpin.singleAxisSpinConfig()
-        self.singleAxisSpinWrap = alg_contain.AlgContain(self.singleAxisSpinData,
-                                                       singleAxisSpin.Update_singleAxisSpin,
-                                                       singleAxisSpin.SelfInit_singleAxisSpin,
-                                                       singleAxisSpin.CrossInit_singleAxisSpin,
-                                                       singleAxisSpin.Reset_singleAxisSpin)
-        self.singleAxisSpinWrap.ModelTag = "singleAxisSpin"
+        # self.singleAxisSpinData = singleAxisSpin.singleAxisSpinConfig()
+        # self.singleAxisSpinWrap = alg_contain.AlgContain(self.singleAxisSpinData,
+        #                                                singleAxisSpin.Update_singleAxisSpin,
+        #                                                singleAxisSpin.SelfInit_singleAxisSpin,
+        #                                                singleAxisSpin.CrossInit_singleAxisSpin,
+        #                                                singleAxisSpin.Reset_singleAxisSpin)
+        # self.singleAxisSpinWrap.ModelTag = "singleAxisSpin"
 
-        self.orbitAxisSpinData = orbitAxisSpin.orbitAxisSpinConfig()
-        self.orbitAxisSpinWrap = alg_contain.AlgContain(self.orbitAxisSpinData,
-                                                       orbitAxisSpin.Update_orbitAxisSpin,
-                                                       orbitAxisSpin.SelfInit_orbitAxisSpin,
-                                                       orbitAxisSpin.CrossInit_orbitAxisSpin,
-                                                       orbitAxisSpin.Reset_orbitAxisSpin)
-        self.orbitAxisSpinWrap.ModelTag = "orbitAxisSpin"
+        # self.orbitAxisSpinData = orbitAxisSpin.orbitAxisSpinConfig()
+        # self.orbitAxisSpinWrap = alg_contain.AlgContain(self.orbitAxisSpinData,
+        #                                                orbitAxisSpin.Update_orbitAxisSpin,
+        #                                                orbitAxisSpin.SelfInit_orbitAxisSpin,
+        #                                                orbitAxisSpin.CrossInit_orbitAxisSpin,
+        #                                                orbitAxisSpin.Reset_orbitAxisSpin)
+        # self.orbitAxisSpinWrap.ModelTag = "orbitAxisSpin"
 
-        self.axisScanData = axisScan.axisScanConfig()
-        self.axisScanWrap = alg_contain.AlgContain(self.axisScanData,
-                                                       axisScan.Update_axisScan,
-                                                       axisScan.SelfInit_axisScan,
-                                                       axisScan.CrossInit_axisScan,
-                                                       axisScan.Reset_axisScan)
-        self.axisScanWrap.ModelTag = "axisScan"
+        # self.axisScanData = axisScan.axisScanConfig()
+        # self.axisScanWrap = alg_contain.AlgContain(self.axisScanData,
+        #                                                axisScan.Update_axisScan,
+        #                                                axisScan.SelfInit_axisScan,
+        #                                                axisScan.CrossInit_axisScan,
+        #                                                axisScan.Reset_axisScan)
+        # self.axisScanWrap.ModelTag = "axisScan"
 
         self.rasterManagerData = rasterManager.rasterManagerConfig()
         self.rasterManagerWrap = alg_contain.AlgContain(self.rasterManagerData,
@@ -428,12 +437,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.InitAllFSWObjects()
 
         # Add flight software modules to task groups.
-        self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
+        self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig, 8)
         self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, self.sunSafePointData, 7)
-        self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, self.MRP_SteeringSafeData, 6)
-        self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, self.sunSafeACSData, 5)
+        self.AddModelToTask("sunSafeFSWTask", self.errorDeadbandWrap, self.errorDeadbandData, 6)
+        #self.AddModelToTask("sunSafeFSWTask", self.MRP_PDSafeWrap, self.MRP_PDSafeData, 5)
+        self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, self.MRP_SteeringSafeData, 5)
+        self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, self.sunSafeACSData, 4)
 
         self.AddModelToTask("sensorProcessing", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sensorProcessing", self.IMUCommWrap, self.IMUCommData, 10)
@@ -587,8 +598,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateRasterMnvr", int(1E9), True, ["self.modeRequest == 'rasterMnvr'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                #, "self.enableTask('inertial3DPointTask')"
-                                , "self.enableTask('hillPointTask')"
+                                , "self.enableTask('inertial3DPointTask')"
+                                #, "self.enableTask('hillPointTask')"
                                 , "self.enableTask('rasterMnvrTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"
@@ -1377,11 +1388,25 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringSafeData.P = 150.0  # N*m*sec
         self.MRP_SteeringSafeData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringSafeData.integralLimit = 0.15  # rad
-        self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
+        #self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
+        self.MRP_SteeringSafeData.inputGuidName = "db_att_guid_out"
         self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_SteeringSafeData.outputDataName = "controlTorqueRaw"
-        #self.MRP_SteeringSafeData.outputDataNameMRP = "controlTorqueRaw"
-        #self.MRP_SteeringSafeData.outputDataNamePRV = "controlTorqueRaw"
+
+    def SetMRP_PD(self):
+        self.MRP_PDSafeData.K = 4.5
+        self.MRP_PDSafeData.P = 150.0  # N*m*sec
+        #self.MRP_PD_SafeData.inputGuidName = "sun_safe_att_err"
+        self.MRP_PDSafeData.inputGuidName = "db_att_guid_out"
+        self.MRP_PDSafeData.inputVehicleConfigDataName = "adcs_config_data"
+        self.MRP_PDSafeData.outputDataName = "controlTorqueRaw"
+
+    def setErrorDeadband(self):
+        self.errorDeadbandData.inputGuidName = "sun_safe_att_err"
+        #self.errorDeadbandData.inputGuidName = "nom_att_guid_out"
+        self.errorDeadbandData.outputDataName = "db_att_guid_out"
+        self.errorDeadbandData.innerThresh = 4.0 * (math.pi / 180.)
+        self.errorDeadbandData.outerThresh = 17.5 * (math.pi / 180.)
 
     def SetsunSafeACS(self):
         self.sunSafeACSData.inputControlName = "controlTorqueRaw"
@@ -1414,6 +1439,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
         sigma_R0N = [0.1, 0.2, 0.3]
+        sigma_R0N = [0., 0., 0.]
+
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DData.sigma_R0N)
 
     def setHillPoint(self):
@@ -1539,12 +1566,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             return (angleSetList, angleRatesList, rasterTimeList)
 
 
-        psi = 8.0 * math.pi / 180.0
+        psi = 24.0 * math.pi / 180.0
         theta = 8.0 * math.pi / 180.0
         phiDot = 0.02 * math.pi / 180.0
         t_mnvr = 20.0 * 18
         (angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
-        (angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
+        #(angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
 
         #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
 
@@ -1580,12 +1607,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = rbk.C2MRP(R0R)
         SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
-
-    def setErrorDeadband(self):
-        self.errorDeadbandData.inputGuidName = "nom_att_guid_out"
-        self.errorDeadbandData.outputDataName = "db_att_guid_out"
-        self.errorDeadbandData.innerThresh = 2.0 * (math.pi / 180.)
-        self.errorDeadbandData.outerThresh = 4.0 * (math.pi / 180.)
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1799,6 +1820,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetsunSafeACS()
         self.SetattMnvrPoint()
         self.SetMRP_SteeringRWA()
+        self.SetMRP_PD()
         self.SetMRP_FeedbackRWA()
         self.SetPRV_SteeringRWA()
         self.SetMRP_SteeringMOI()
