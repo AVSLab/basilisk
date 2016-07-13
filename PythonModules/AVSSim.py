@@ -716,7 +716,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
 
         Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
-        SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.I)
+        SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.ISCPntB_B)
 
         # adjust the message size by hand if needed
         msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now

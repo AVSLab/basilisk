@@ -28,10 +28,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double BS[9];               /*!< -- DCM from vehicle structure frame S to ADCS body frame B (row major)*/
-    uint32_t CurrentADCSState;  /*!< -- Current ADCS state for subsystem */
-    double I[9];                /*!< kg m^2 Spacecraft Inertia */
-    double CoM[3];              /*!< [m] Center of mass of spacecraft in body*/
+    double BS[9];               /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
+    double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
+    double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
+    uint32_t CurrentADCSState;  /*!< [-] Current ADCS state for subsystem */
 }vehicleConfigData;
 
 
@@ -46,8 +46,8 @@ typedef struct {
 }RWConstellation;
 
 typedef struct {
-    double rThruster[3];      /*!< [m] Location of the thruster in the spacecraft*/
-    double tHatThrust[3];     /*!< [-] Unit vector of the thrust direction*/
+    double rThrust_S[3];      /*!< [m] Location of the thruster in the spacecraft*/
+    double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
 }ThrusterPointData;
 
 typedef struct {

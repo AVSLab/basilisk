@@ -169,7 +169,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds, moduleID);
     ReadMessage(inputVehicleConfigDataID, &ClockTime, &ReadSize,
         sizeof(vehicleConfigData), &localConfig, moduleID);
-    m33Inverse(RECAST3X3 localConfig.I, RECAST3X3 IInv);
+    m33Inverse(RECAST3X3 localConfig.ISCPntB_B, RECAST3X3 IInv);
     
     if (initToMeas && stMeas.timeTag != 0.0)
     {

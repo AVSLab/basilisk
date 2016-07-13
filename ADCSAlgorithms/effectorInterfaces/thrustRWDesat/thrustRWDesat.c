@@ -21,6 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
 
@@ -59,6 +60,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     uint64_t ClockTime;
     uint32_t ReadSize;
     double momentArm[3];
+    double thrustDat_B[3];
     
     /*! - Get the control data message ID*/
     ConfigData->inputSpeedID = subscribeToMessage(ConfigData->inputSpeedName,
@@ -68,10 +70,13 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
+    ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
+                sizeof(vehicleConfigData), &localConfigData, moduleID);
     
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
-        v3Copy(localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
+        m33MultV3(RECAST3X3 localConfigData.BS,
+                  localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
     }
     ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
                                                    sizeof(ThrusterCluster), moduleID);
@@ -79,15 +84,17 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
                 sizeof(ThrusterCluster), &localThrustData, moduleID);
     ConfigData->inputMassPropID = subscribeToMessage(
         ConfigData->inputMassPropsName, sizeof(vehicleConfigData), moduleID);
-    ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
-                sizeof(vehicleConfigData), &localConfigData, moduleID);
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
-        v3Copy(localThrustData.thrusters[i].tHatThrust, &ConfigData->thrAlignMap[i*3]);
-        v3Subtract(localThrustData.thrusters[i].rThruster, localConfigData.CoM,
-            momentArm);
-        v3Cross(momentArm, localThrustData.thrusters[i].tHatThrust,
-            &(ConfigData->thrTorqueMap[i*3]));
+        m33MultV3(RECAST3X3 localConfigData.BS,
+                  localThrustData.thrusters[i].tHatThrust_S,
+                  &ConfigData->thrAlignMap[i*3]);
+        m33MultV3(RECAST3X3 localConfigData.BS,
+                  localThrustData.thrusters[i].rThrust_S, thrustDat_B);
+        v3Subtract(thrustDat_B, localConfigData.CoM_B, momentArm);
+        m33MultV3(RECAST3X3 localConfigData.BS,
+                  localThrustData.thrusters[i].tHatThrust_S, thrustDat_B);
+        v3Cross(momentArm, thrustDat_B, &(ConfigData->thrTorqueMap[i*3]));
     }
     
     

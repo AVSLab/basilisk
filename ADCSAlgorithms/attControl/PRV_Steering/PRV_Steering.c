@@ -179,7 +179,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->Ki, ConfigData->z, v3);
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
-    m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
     
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
@@ -196,7 +196,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(guidCmd.domega_RN_B, v3, v3_1);
     v3Add(v3_1, omegap_BastR_B, v3_1);
-    m33MultV3(RECAST3X3 sc.I, v3_1, v3);
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_1, v3);
     v3Subtract(Lr, v3, Lr);                                 /* -[I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
 
     v3Add(L, Lr, Lr);                                       /* +L */

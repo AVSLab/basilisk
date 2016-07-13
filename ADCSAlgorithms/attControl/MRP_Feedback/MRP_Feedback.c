@@ -157,7 +157,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
             v3Scale(ConfigData->integralLimit / temp, ConfigData->int_sigma, ConfigData->int_sigma);
         }
         v3Subtract(guidCmd.omega_BR_B, ConfigData->domega0, v3);
-        m33MultV3(RECAST3X3 sc.I, v3, v3_1);
+        m33MultV3(RECAST3X3 sc.ISCPntB_B, v3, v3_1);
         v3Add(ConfigData->int_sigma, v3_1, ConfigData->z);
     } else {
         /* integral feedback is turned off through a negative gain setting */
@@ -173,7 +173,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->P, v3_2, v3);                       /* +P*Ki*z */
     v3Add(v3, Lr, Lr);
 
-    m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
@@ -189,7 +189,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(v3, guidCmd.domega_RN_B, v3_1);
-    m33MultV3(RECAST3X3 sc.I, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
     v3Add(v3, Lr, Lr);
 
     v3Add(L, Lr, Lr);                                       /* +L */
