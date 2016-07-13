@@ -50,7 +50,7 @@ import setupUtilitiesThruster           # Thruster simulation setup utilties
 import reactionwheel_dynamics
 import thruster_dynamics
 import macros
-import solar_panels
+import hinged_rigid_bodies
 import fuel_tank
 import vehicleConfigData
 
@@ -67,7 +67,7 @@ import vehicleConfigData
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh", [
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh", [
     (True, True, False, False, False, False, False),
     (False, True, False, False, False, False, False),
     (True, False, False, False, False, False, False),
@@ -82,15 +82,15 @@ import vehicleConfigData
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh)
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHingedSP, useFuelSlosh):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -210,19 +210,19 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
         scSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
 
-    if useHingedSP:
+    if useHinged:
         # add SPs
         VehDynObject.PositionInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
         VehDynObject.VelocityInit = six_dof_eom.DoubleVector([0.0,	0.0, 0.0])
         VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.0, 0.0, 0.0])
         VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.1, -0.1, 0.1])
-        panelSet1 = solar_panels.SolarPanels()
-        panel1 = solar_panels.SolarPanelConfigData()
-        panel2 = solar_panels.SolarPanelConfigData()
+        panelSet1 = hinged_rigid_bodies.HingedRigidBodies()
+        panel1 = hinged_rigid_bodies.HingedRigidBodyConfigData()
+        panel2 = hinged_rigid_bodies.HingedRigidBodyConfigData()
 
         # Define Variable for panel 1
-        panel1.massSP = 100
-        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel1.ISPPntS_S)
+        panel1.mass = 100
+        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel1.IPntS_S)
         panel1.d = 1.5
         panel1.k = 100.0
         panel1.c = 0.0
@@ -232,8 +232,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         panel1.thetaDot = 0.0
 
         # Define Variables for panel 2
-        panel2.massSP = 100.0
-        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel2.ISPPntS_S)
+        panel2.mass = 100.0
+        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel2.IPntS_S)
         panel2.d = 1.5
         panel2.k = 100
         panel2.c = 0.0
@@ -242,9 +242,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         panel2.theta = 0.0
         panel2.thetaDot = 0.0
 
-        panelSet1.addSolarPanel(panel1)
-        panelSet1.addSolarPanel(panel2)
-        VehDynObject.addSolarPanelSet(panelSet1)
+        panelSet1.addHingedRigidBody(panel1)
+        panelSet1.addHingedRigidBody(panel2)
+        VehDynObject.addHingedRigidBodySet(panelSet1)
 
         VehDynObject.useGravity = False
 
@@ -393,7 +393,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[6.9678869224507400e-01]
                         ]
             checkRotEnergy = True
-        elif useRotation==True and useHingedSP==True and useFuelSlosh==False: # Hinged Solar Panel Dynamics
+        elif useRotation==True and useHinged==True and useFuelSlosh==False: # Hinged Dynamics
             truePos = [
                         [-2.53742996478815, -2.84830940967875, 0.216182452815001]
                         ,[-5.38845294582063, -5.29411572920721, 0.0214874807180885]
@@ -417,7 +417,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[4.7917763797456487e+00, -4.7790085092306143e+00, 1.2833132287383364e-02]
                         ]
             checkOrbitalAngMom = True
-        elif useRotation==True and useFuelSlosh==True and useHingedSP==False: #Fuel slosh
+        elif useRotation==True and useFuelSlosh==True and useHinged==False: #Fuel slosh
             truePos = [
                         [-2.69102169e-02, -3.34138085e-02, -7.63296148e-03]
                         ,[-5.16421395e-02, -6.69635270e-02, -1.41925287e-02]
@@ -441,7 +441,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[6.8254983591487352e-04, -5.0799756117381471e-04, -1.1166820345125832e-04]
                         ]
             checkOrbitalAngMom = True
-        elif useRotation==True and useFuelSlosh==True and useHingedSP==True: #Fuel slosh and Hinged Dynamics
+        elif useRotation==True and useFuelSlosh==True and useHinged==True: #Fuel slosh and Hinged Dynamics
             truePos = [
                         [-2.44400224e+00, -2.74717376e+00, 2.02431956e-01]
                         ,[-5.18632064e+00, -5.11176972e+00, 1.26571309e-02]
@@ -532,7 +532,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[ 3.07086772e-01, -5.36449617e-01,  6.59728850e-01]
                         ,[ 1.18593650e-01, -3.64833149e-01,  4.52223736e-01]
                         ]
-        elif useHingedSP==True and useTranslation==True and useFuelSlosh==False: #Hinged Solar Panel Dynamics
+        elif useHinged==True and useTranslation==True and useFuelSlosh==False: #Hinged Dynamics
             trueSigma = [
                         [-0.394048228873186, -0.165364626297029, 0.169133385881799]
                         ,[0.118117327421145,  -0.0701596164151959, 0.295067094904904]
@@ -556,7 +556,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[1.2583981919986654e+02, -1.8777858531140168e+02, 1.4768114358533944e+02]
                         ]
             checkRotAngMom = True
-        elif useFuelSlosh==True and useTranslation==True and useHingedSP==False: #Fuel Slosh
+        elif useFuelSlosh==True and useTranslation==True and useHinged==False: #Fuel Slosh
             trueSigma = [
                         [-8.19602045e-02, -2.38564447e-01, 8.88132824e-01]
                         ,[2.86731068e-01, -4.36081263e-02, -7.20708425e-02]
@@ -580,7 +580,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[9.0069060775156075e+01, -8.0072744724956891e+01, 6.0061548781524650e+01]
                         ]
             checkRotAngMom = True
-        elif useFuelSlosh==True and useTranslation==True and useHingedSP==True: #Fuel Slosh and Hinged Dynamics
+        elif useFuelSlosh==True and useTranslation==True and useHinged==True: #Fuel Slosh and Hinged Dynamics
             trueSigma = [
                         [-3.93694358e-01, -1.66142060e-01, 1.66953504e-01]
                         ,[1.15251028e-01, -7.13753632e-02, 2.98706088e-01]
@@ -695,7 +695,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHingedSP
+                           True,       # useHinged
                            True       # useFuelSlosh
                            )
 

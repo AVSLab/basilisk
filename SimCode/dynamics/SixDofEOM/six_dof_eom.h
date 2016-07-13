@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "dynamics/SolarPanels/solar_panels.h"
+#include "dynamics/HingedRigidBodies/hinged_rigid_bodies.h"
 #include "dynamics/FuelTank/fuel_tank.h"
 #include "dynObject.h"
 #include "integrator.h"
@@ -109,7 +109,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void addThrusterSet(ThrusterDynamics *NewEffector);
 	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
-    void addSolarPanelSet(SolarPanels *NewEffector);
+    void addHingedRigidBodySet(HingedRigidBodies *NewEffector);
     void addFuelTank(FuelTank *NewEffector);
     void setIntegrator(integrator *NewIntegrator);
     void initPlanetStateMessages();
@@ -135,7 +135,7 @@ public:
     bool MessagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
-    uint64_t SPCount;                 //!<        Number of solar panels to model
+    uint64_t numHRB;                  //!<        Number of hinged rigid bodies to model
     uint64_t numFSP;                  //!<        Number of fuel slosh particles
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
     double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
@@ -167,7 +167,7 @@ public:
     bool   useTranslation;            //!<        Flag indicating to use translation dynamics
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
     bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
-    std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
+    std::vector<HingedRigidBodies *> hingedRigidBodies; //!< (-) Vector of hinged rigid bodies in body
     std::vector<FuelTank *> fuelTanks; //! (-) Vector of fuel tank
 private:
     double *XState;                   //!<        Container for total state
