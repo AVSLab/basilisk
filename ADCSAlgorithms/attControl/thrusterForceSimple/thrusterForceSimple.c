@@ -140,9 +140,10 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(ConfigData->Lr_B), moduleID);
-    if (ConfigData->flipLrSign) {
-        v3Scale(-1.0, ConfigData->Lr_B, ConfigData->Lr_B);
-    }
+
+    /* Lr is assumed to be a negative torque onto the body */
+    v3Scale(-1.0, ConfigData->Lr_B, ConfigData->Lr_B);
+
 
     /* clear the net thruster force vector */
     memset(F,0x0,MAX_EFF_CNT*sizeof(double));

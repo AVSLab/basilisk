@@ -54,20 +54,19 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("flipSign, ignoreAxis2", [
-    (0, 0),
-    (1, 0),
-    (0, 1)
+@pytest.mark.parametrize("ignoreAxis2", [
+    (0),
+    (1)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, flipSign, ignoreAxis2):
+def test_module(show_plots, ignoreAxis2):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, flipSign, ignoreAxis2)
+    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, flipSign, ignoreAxis2):
+def thrusterForceTest(show_plots, ignoreAxis2):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -123,8 +122,8 @@ def thrusterForceTest(show_plots, flipSign, ignoreAxis2):
 
     numThrusters = 8;
     moduleConfig.numThrusters = numThrusters
-    moduleConfig.flipLrSign = flipSign
     moduleConfig.ignoreBodyAxis2 = ignoreAxis2
+    moduleConfig.epsilon = 0.0005
 
     rcsClass = vehicleConfigData.ThrusterCluster()
     rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -180,36 +179,27 @@ def thrusterForceTest(show_plots, flipSign, ignoreAxis2):
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(numThrusters))
+    print moduleOutput
 
     # set the filtered output truth states
     trueVector=[];
-    if flipSign==0:
-        if ignoreAxis2==0:
-            trueVector = [
-                       [0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018, 0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018],
-                       [0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018, 0.2119927316777711, 0, 0.2792204165968615, 0.3516029399762018]
-                       ]
-        else:
-            if ignoreAxis2==1:
-                trueVector = [
-               [0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711, 0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711],
-               [0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711, 0.2119927316777711, 0, 0.2792204165968615, 0.2119927316777711]
-                       ]
-            else:
-                testFailCount+=1
-                testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+    if ignoreAxis2==0:
+        trueVector = [
+                   [0.139610208, 0.491213148, 0.211992732, 0, 0.139610208, 0.491213148, 0.211992732, 0],
+                   [0.139610208, 0.491213148, 0.211992732, 0, 0.139610208, 0.491213148, 0.211992732, 0]
+                   ]
     else:
-        if flipSign==1:
+        if ignoreAxis2==1:
             trueVector = [
-                       [0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0, 0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0],
-                       [0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0, 0.1396102082984308, 0.4912131482746326, 0.2119927316777711, 0]
-                       ]
+           [0, 0.491213148, 0.211992732, 0, 0, 0.491213148, 0.211992732, 0],
+           [0, 0.491213148, 0.211992732, 0, 0, 0.491213148, 0.211992732, 0]
+                   ]
         else:
             testFailCount+=1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
 
     # compare the module results to the truth values
-    accuracy = 1e-12
+    accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
@@ -246,6 +236,5 @@ def thrusterForceTest(show_plots, flipSign, ignoreAxis2):
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 0,           # flipSign value
                  0            # ignoreAxis2 value
                )

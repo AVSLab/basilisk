@@ -35,7 +35,6 @@ typedef struct {
     uint32_t ignoreBodyAxis2;                       /*!< []      Boolean flag indicating if Lr(2) should be ignored */
     uint32_t ignoreBodyAxis3;                       /*!< []      Boolean flag indicating if Lr(3) should be ignored */
     uint32_t ignoreBodyAxis[3];                     /*!< []      array of boolean flags to ignore body axis */
-    uint32_t flipLrSign;                            /*!< []      Boolean flag indicating if Lr or -Lr should be used */
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
     double   D[3][MAX_EFF_CNT];                     /*!< [m]     mapping matrix from thruster forces to body torque */
     double   Gt[3][MAX_EFF_CNT];                    /*!< []      matrix containing the thrust direction unit vectors gHat_t_i */
