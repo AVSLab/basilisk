@@ -82,7 +82,7 @@ def executeAVSSafeCapture(TheAVSSim):
     TheAVSSim.ExecuteSimulation()
     TheAVSSim.modeRequest = 'safeMode'
     print '\n Mode Request = ', TheAVSSim.modeRequest
-    TheAVSSim.ConfigureStopTime(int(2 * 60 * 100 * 1E9))
+    TheAVSSim.ConfigureStopTime(int(60 * 100 * 1E9))
     TheAVSSim.ExecuteSimulation()
 
 
@@ -92,6 +92,8 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
     TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
     TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
+    TheAVSSim.AddVariableForLogging('errorDeadband.error', int(1E8))
+    #TheAVSSim.AddVariableForLogging('errorDeadband.boolWasControlOff', int(1E8))
 
     TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18 * 1000.0
     TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501
@@ -115,6 +117,8 @@ if __name__ == "__main__":
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
     controlTorque = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
+    dbError = TheAVSSim.GetLogVariableData('errorDeadband.error')
+    #boolControlOff = TheAVSSim.GetLogVariableData('errorDeadband.boolWasControlOff')
 
     CSSEstAccuracyThresh = 17.5 * math.pi / 180.0
     accuracyFailCounter = checkCSSEstAccuracy(DataCSSTruth, FSWsHat,
@@ -140,13 +144,29 @@ if __name__ == "__main__":
     plt.ylabel('Total number')
     plt.title('Active CSS')
 
+    def plotErrorBand():
+        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh * 180.0 / math.pi, color='green')
+        plt.axhline(TheAVSSim.errorDeadbandData.outerThresh * 180.0 / math.pi, color='red')
+        #plt.plot(boolControlOff[:, 0] * 1.0E-9, boolControlOff[:, 1] * (CSSEstAccuracyThresh * 180.0 / math.pi), 'k--')
+        plt.legend(['error', 'inner thresh', 'outer thresh', 'control (0=ON, 1=OFF)'])
+
     plt.figure(3)
     plt.plot(solarArrayMiss[:, 0] * 1.0E-9, solarArrayMiss[:, 1] * 180 / math.pi)
+    plt.title('Solar Array Miss Angle')
     plt.xlabel('Time [s]')
     plt.ylabel('Angle [deg]')
-    plt.title('Solar Array Miss')
+    #plotErrorBand()
+
 
     plt.figure(4)
+    plt.plot(dbError[:, 0] * 1.0E-9, dbError[:, 1] * 180 / math.pi)
+    plt.axhline(TheAVSSim.errorDeadbandData.innerThresh, color='green')
+    plt.title('FSW Estimated Error')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Angle [deg]')
+    #plotErrorBand()
+
+    plt.figure(5)
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 1], 'b')
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 2], 'g')
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 3], 'r')
