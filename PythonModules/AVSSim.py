@@ -77,13 +77,14 @@ import inertial3D
 import hillPoint
 import velocityPoint
 import celestialTwoBodyPoint
-import singleAxisSpin
-import orbitAxisSpin
-import axisScan
+#import singleAxisSpin
+#import orbitAxisSpin
+#import axisScan
 import rasterManager
 import eulerRotation
 import attTrackingError
 import errorDeadband
+import simpleDeadband
 
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
@@ -433,6 +434,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                        errorDeadband.Reset_errorDeadband)
         self.errorDeadbandWrap.ModelTag = "errorDeadband"
 
+        self.simpleDeadbandData = simpleDeadband.simpleDeadbandConfig()
+        self.simpleDeadbandWrap = alg_contain.AlgContain(self.simpleDeadbandData,
+                                                        simpleDeadband.Update_simpleDeadband,
+                                                        simpleDeadband.SelfInit_simpleDeadband,
+                                                        simpleDeadband.CrossInit_simpleDeadband,
+                                                        simpleDeadband.Reset_simpleDeadband)
+        self.simpleDeadbandWrap.ModelTag = "simpleDeadband"
+
         # Initialize flight software modules.
         self.InitAllFSWObjects()
 
@@ -441,7 +450,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("sunSafeFSWTask", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sunSafeFSWTask", self.CSSWlsWrap, self.CSSWlsEstFSWConfig, 8)
         self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, self.sunSafePointData, 7)
-        self.AddModelToTask("sunSafeFSWTask", self.errorDeadbandWrap, self.errorDeadbandData, 6)
+        #self.AddModelToTask("sunSafeFSWTask", self.errorDeadbandWrap, self.errorDeadbandData, 6)
+        self.AddModelToTask("sunSafeFSWTask", self.simpleDeadbandWrap, self.simpleDeadbandData, 6)
         self.AddModelToTask("sunSafeFSWTask", self.MRP_PDSafeWrap, self.MRP_PDSafeData, 5)
         #self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, self.MRP_SteeringSafeData, 5)
         self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, self.sunSafeACSData, 4)
@@ -1407,6 +1417,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.errorDeadbandData.outputDataName = "db_att_guid_out"
         self.errorDeadbandData.innerThresh = 4.0 * (math.pi / 180.)
         self.errorDeadbandData.outerThresh = 17.5 * (math.pi / 180.)
+        
+    def setSimpleDeadband(self):
+        self.simpleDeadbandData.inputGuidName = "sun_safe_att_err"
+        #self.simpleDeadbandData.inputGuidName = "nom_att_guid_out"
+        self.simpleDeadbandData.outputDataName = "db_att_guid_out"
+        self.simpleDeadbandData.innerAttThresh = 4.0 * (math.pi / 180.)
+        self.simpleDeadbandData.outerAttThresh = 17.5 * (math.pi / 180.)
+        self.simpleDeadbandData.innerRateThresh = 0.1 * (math.pi / 180.)
+        self.simpleDeadbandData.outerRateThresh = 0.1 * (math.pi / 180.)
 
     def SetsunSafeACS(self):
         self.sunSafeACSData.inputControlName = "controlTorqueRaw"
@@ -1846,6 +1865,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.setEulerRotation()
         self.setAttTrackingError()
         self.setErrorDeadband()
+        self.setSimpleDeadband()
 
 
 # def AddVariableForLogging(self, VarName, LogPeriod = 0):

@@ -90,10 +90,12 @@ if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     TheAVSSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
     TheAVSSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
-    TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
     TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
+    TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
     TheAVSSim.AddVariableForLogging('errorDeadband.error', int(1E8))
-    #TheAVSSim.AddVariableForLogging('errorDeadband.boolWasControlOff', int(1E8))
+    TheAVSSim.AddVariableForLogging('simpleDeadband.wasControlOff', int(1E8))
+    TheAVSSim.AddVariableForLogging('simpleDeadband.attError', int(1E8))
+    TheAVSSim.AddVariableForLogging('simpleDeadband.rateError', int(1E8))
 
     TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18 * 1000.0
     TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501
@@ -117,7 +119,8 @@ if __name__ == "__main__":
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
     controlTorque = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-    dbError = TheAVSSim.GetLogVariableData('errorDeadband.error')
+
+
     #boolControlOff = TheAVSSim.GetLogVariableData('errorDeadband.boolWasControlOff')
 
     CSSEstAccuracyThresh = 17.5 * math.pi / 180.0
@@ -144,29 +147,13 @@ if __name__ == "__main__":
     plt.ylabel('Total number')
     plt.title('Active CSS')
 
-    def plotErrorBand():
-        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh * 180.0 / math.pi, color='green')
-        plt.axhline(TheAVSSim.errorDeadbandData.outerThresh * 180.0 / math.pi, color='red')
-        #plt.plot(boolControlOff[:, 0] * 1.0E-9, boolControlOff[:, 1] * (CSSEstAccuracyThresh * 180.0 / math.pi), 'k--')
-        plt.legend(['error', 'inner thresh', 'outer thresh', 'control (0=ON, 1=OFF)'])
-
     plt.figure(3)
     plt.plot(solarArrayMiss[:, 0] * 1.0E-9, solarArrayMiss[:, 1] * 180 / math.pi)
     plt.title('Solar Array Miss Angle')
     plt.xlabel('Time [s]')
     plt.ylabel('Angle [deg]')
-    #plotErrorBand()
-
 
     plt.figure(4)
-    plt.plot(dbError[:, 0] * 1.0E-9, dbError[:, 1] * 180 / math.pi)
-    plt.axhline(TheAVSSim.errorDeadbandData.innerThresh, color='green')
-    plt.title('FSW Estimated Error')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Angle [deg]')
-    #plotErrorBand()
-
-    plt.figure(5)
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 1], 'b')
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 2], 'g')
     plt.plot(controlTorque[:, 0] * 1.0E-9, controlTorque[:, 3], 'r')
@@ -174,6 +161,46 @@ if __name__ == "__main__":
     plt.xlabel('Time [s]')
     plt.ylabel('Torque [N m]')
     plt.title('Control Torque')
+
+
+    def errorDeadbandMode():
+        dbError = TheAVSSim.GetLogVariableData('errorDeadband.error')
+        plt.figure(5)
+        plt.plot(dbError[:, 0] * 1.0E-9, dbError[:, 1] * 180 / math.pi)
+        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh, color='green')
+        plt.title('FSW Estimated Error')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Angle [deg]')
+        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh * 180.0 / math.pi, color='green')
+        plt.axhline(TheAVSSim.errorDeadbandData.outerThresh * 180.0 / math.pi, color='red')
+        plt.legend(['error', 'inner thresh', 'outer thresh', 'control (0=ON, 1=OFF)'])
+
+    def simpleDeadbandMode():
+        attError = TheAVSSim.GetLogVariableData('simpleDeadband.attError')
+        rateError = TheAVSSim.GetLogVariableData('simpleDeadband.rateError')
+        print 'sigma_BR = ', attError[:, 1]
+        print 'omega_BR = ', rateError[:, 1]
+        wasControlOff = TheAVSSim.GetLogVariableData('simpleDeadband.wasControlOff')
+        plt.figure(6)
+        plt.plot(attError[:, 0] * 1.0E-9, attError[:, 1] * 180 / math.pi, 'b')
+        plt.plot(rateError[:, 0] * 1.0E-9, rateError[:, 1] * 180 / math.pi, 'dodgerblue')
+        plt.axhline(TheAVSSim.simpleDeadbandData.innerAttThresh * 180.0 / math.pi, color='green')
+        plt.axhline(TheAVSSim.simpleDeadbandData.innerRateThresh * 180.0 / math.pi, color='lawngreen')
+        plt.axhline(TheAVSSim.simpleDeadbandData.outerAttThresh * 180.0 / math.pi, color='red')
+        plt.axhline(TheAVSSim.simpleDeadbandData.outerRateThresh * 180.0 / math.pi, color='lightsalmon')
+        controlScaleFactor = TheAVSSim.simpleDeadbandData.outerAttThresh * 180 / math.pi
+        plt.plot(wasControlOff[:, 0] * 1.0E-9, wasControlOff[:, 1] * controlScaleFactor, 'k--')
+        plt.title('FSW Estimated Error')
+        plt.xlabel('Time [s]')
+        plt.legend(['$\sigma$ [deg]','$\omega$ [deg/s]',
+                    '$\sigma_{low}$', '$\omega_{low}$', '$\sigma_{up}$', '$\omega_{up}$',
+                    'control (0=ON, 1=OFF)'])
+
+    # Uncomment next line if the deadbanding you are using is errorDeadband and you want to see control performance
+    #errorDeadbandMode()
+
+    # Uncomment next line if the deadbanding you are using is simpleDeadband and you want to see control performance
+    simpleDeadbandMode()
 
     plt.show()
 
