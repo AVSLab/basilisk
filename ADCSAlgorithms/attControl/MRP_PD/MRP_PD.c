@@ -146,7 +146,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->P, guidCmd.omega_BR_B, v3_temp2);         /* + P*delta_omega */
     v3Add(v3_temp1, v3_temp2, Lr);
 
-    m33MultV3(RECAST3X3 sc.I, omega_BN_B, v3_temp1);              /* - omega x ([I]omega + [Gs]h_s - omega_r) */
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3_temp1);              /* - omega x ([I]omega + [Gs]h_s - omega_r) */
     v3Subtract(v3_temp1, guidCmd.omega_RN_B, v3_temp1);
     for(i = 0; i < ConfigData->numRWAs; i++)
     {
@@ -160,7 +160,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_temp1);             /* - [I](d(omega_r)/dt - omega x omega_r) */
     v3Subtract(guidCmd.domega_RN_B, v3_temp1, v3_temp1);
-    m33MultV3(RECAST3X3 sc.I, v3_temp1, v3_temp1);
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_temp1, v3_temp1);
     v3Subtract(Lr, v3_temp1, Lr);
     
     v3Add(L, Lr, Lr);                                              /* + L */
