@@ -69,21 +69,23 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
                                                    sizeof(RWConstellation), moduleID);
     ConfigData->inputMassPropID = subscribeToMessage(
         ConfigData->inputMassPropsName, sizeof(vehicleConfigData), moduleID);
-    
+    ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
+                                                   sizeof(ThrusterCluster), moduleID);
+    /*! - Read input messages */
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
                 sizeof(vehicleConfigData), &localConfigData, moduleID);
+    ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
+                sizeof(ThrusterCluster), &localThrustData, moduleID);
     
+    /*! - Transform from structure S to body B frame */
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,
                   localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
     }
-    ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
-                                                   sizeof(ThrusterCluster), moduleID);
-    ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
-                sizeof(ThrusterCluster), &localThrustData, moduleID);
+    
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,

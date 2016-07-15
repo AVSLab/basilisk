@@ -399,7 +399,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         {
             ComputeThrusterShut(&(*it), CurrentTime);
         }
-        //! - For each thruster, aggregate the current thrust direction into composite structural force
+        //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
@@ -407,7 +407,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
                 SingleThrusterForce);
         v3Add(BodyForce, SingleThrusterForce, BodyForce);
         
-        //! - Compute the center-of-mass relative torque and aggregate into the composite structural torque
+        //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
         v3Subtract(it->thrLoc_B, Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);
         v3Add(BodyTorque, SingleThrusterTorque, BodyTorque);
@@ -419,7 +419,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         }
         mDotTotal += mDotSingle;
     }
-    //! - Once all thrusters have been checked, convert the structural force/torque to body for API
+    //! - Once all thrusters have been checked, update time-related variables for next evaluation
     updateMassProperties(CurrentTime);
     prevFireTime = CurrentTime;
     
