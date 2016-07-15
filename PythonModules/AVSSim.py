@@ -847,8 +847,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                         [-1.0, 0.0, 0.0] \
                         ]
         for i in range(8):
-            SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
-            SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust)
+            SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
+            SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
             vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
         self.TotalSim.CreateNewMessage("FSWProcess", "rcs_config_data",
@@ -966,60 +966,43 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.ACSThrusterDynObject.InputCmds = "acs_thruster_cmds"
 
         Thruster1 = thruster_dynamics.ThrusterConfigData()
-        Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 1.79070])
-        Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
-        #Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.75])
-        #Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
-
+        SimulationBaseClass.SetCArray([-0.86360, -0.82550, 1.79070], 'double', Thruster1.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster1.inputThrDir_S)
         Thruster1.MaxThrust = 0.9
         Thruster1.MinOnTime = 0.020
         Thruster2 = thruster_dynamics.ThrusterConfigData()
-        Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 1.79070])
-        Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
-        #Thruster2.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.75])
-        #Thruster2.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([-0.82550, -0.86360, 1.79070], 'double', Thruster2.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster2.inputThrDir_S)
         Thruster2.MaxThrust = 0.9
         Thruster2.MinOnTime = 0.020
         Thruster3 = thruster_dynamics.ThrusterConfigData()
-        Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 1.79070])
-        Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
-        #Thruster3.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, 0.75]	)
-        #Thruster3.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([0.82550, 0.86360, 1.79070], 'double', Thruster3.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster3.inputThrDir_S)
         Thruster3.MaxThrust = 0.9
         Thruster3.MinOnTime = 0.020
         Thruster4 = thruster_dynamics.ThrusterConfigData()
-        Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 1.79070])
-        Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
-        #Thruster4.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 0.75])
-        #Thruster4.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([0.86360, 0.82550, 1.79070], 'double', Thruster4.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster4.inputThrDir_S)
         Thruster4.MaxThrust = 0.9
         Thruster4.MinOnTime = 0.020
         Thruster5 = thruster_dynamics.ThrusterConfigData()
-        Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([-0.86360, -0.82550, 0.18288])
-        Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([1.0, 0.0, 0.0])
-        #Thruster5.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, -0.75])
-        #Thruster5.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([-0.86360, -0.82550, 0.18288], 'double', Thruster5.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster5.inputThrDir_S)
         Thruster5.MaxThrust = 0.9
         Thruster5.MinOnTime = 0.020
         Thruster6 = thruster_dynamics.ThrusterConfigData()
-        Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-0.82550, -0.86360, 0.18288])
-        Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 1.0, 0.0])
-        #Thruster6.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, -0.75])
-        #Thruster6.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([-0.82550, -0.86360, 0.18288], 'double', Thruster6.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster6.inputThrDir_S)
         Thruster6.MaxThrust = 0.9
         Thruster6.MinOnTime = 0.020
         Thruster7 = thruster_dynamics.ThrusterConfigData()
-        Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([0.82550, 0.86360, 0.18288])
-        Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, -1.0, 0.0])
-        #Thruster7.ThrusterLocation = thruster_dynamics.DoubleVector([-1.125, 0.0, -0.75])
-        #Thruster7.ThrusterDirection = thruster_dynamics.DoubleVector([-math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([0.82550, 0.86360, 0.18288], 'double', Thruster7.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster7.inputThrDir_S)
         Thruster7.MaxThrust = 0.9
         Thruster7.MinOnTime = 0.020
         Thruster8 = thruster_dynamics.ThrusterConfigData()
-        Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([0.86360, 0.82550, 0.18288])
-        Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([-1.0, 0.0, 0.0])
-        #Thruster8.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, -0.75])
-        #Thruster8.ThrusterDirection = thruster_dynamics.DoubleVector([math.sqrt(2)/2, -math.sqrt(2)/2, 0.0])
+        SimulationBaseClass.SetCArray([0.86360, 0.82550, 0.18288], 'double', Thruster8.inputThrLoc_S)
+        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster8.inputThrDir_S)
         Thruster8.MaxThrust = 0.9
         Thruster8.MinOnTime = 0.020
         self.ACSThrusterDynObject.ThrusterData = \
@@ -1033,10 +1016,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.ACSThrusterDynObject.objProps.Mass = ACSpropMass
         SimulationBaseClass.SetCArray(ACSpropCM, 'double', self.ACSThrusterDynObject.objProps.CoM)
         SimulationBaseClass.SetCArray(ACSInertia, 'double', self.ACSThrusterDynObject.objProps.InertiaTensor)
+        self.ACSThrusterDynObject.inputProperties = "spacecraft_mass_props"
 
     def SetDVThrusterDynObject(self):
         self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
         self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
+        self.DVThrusterDynObject.inputProperties = "spacecraft_mass_props"
         allThrusters = []
         dvRadius = 0.4
         DVIsp = 200.0
@@ -1046,9 +1031,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         angleInc = math.radians(60.0)
         while i < 6:
             newThruster = thruster_dynamics.ThrusterConfigData()
-            newThruster.ThrusterLocation = thruster_dynamics.DoubleVector(
-                [dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0])
-            newThruster.ThrusterDirection = thruster_dynamics.DoubleVector([0.0, 0.0, 1.0])
+            SimulationBaseClass.SetCArray([dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0], 'double', newThruster.inputThrLoc_S)
+            SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', newThruster.inputThrDir_S)
             newThruster.MaxThrust = maxThrust
             newThruster.MinOnTime = minOnTime
             newThruster.steadyIsp = DVIsp

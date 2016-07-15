@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
@@ -35,8 +36,6 @@ ThrusterDynamics::ThrusterDynamics()
     , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
     CallCounts = 0;
-    memset(StrForce, 0x0, 3*sizeof(double));
-    memset(StrTorque, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -92,11 +91,27 @@ void ThrusterDynamics::SelfInit()
  */
 void ThrusterDynamics::CrossInit()
 {
+    MassPropsData localProps;
+    SingleMessageHeader localHeader;
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-    MAX_EFF_CNT*sizeof(ThrustCmdStruct), moduleID);
+        MAX_EFF_CNT*sizeof(ThrustCmdStruct), moduleID);
+    
+    propsInID = SystemMessaging::GetInstance()->subscribeToMessage(inputProperties,
+        sizeof(MassPropsData), moduleID);
+    SystemMessaging::GetInstance()->ReadMessage(propsInID, &localHeader,
+        sizeof(MassPropsData), reinterpret_cast<uint8_t *>(&localProps));
+    std::vector<ThrusterConfigData>::iterator it;
+    for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
+    {
+        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrDir_S,
+            it->thrDir_B);
+        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrLoc_S,
+            it->thrLoc_B);
+    }
+    
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -118,12 +133,12 @@ void ThrusterDynamics::WriteOutputMessages(uint64_t CurrentClock)
          In the future a better way to handle this distinction should be implemented - Mar Cols */
         if (std::strcmp(this->ModelTag.c_str(), "ACSThrusterDynamics") == 0)
         {
-            tmpThruster.thrusterLocation[0] = it->ThrusterLocation[0];
-            tmpThruster.thrusterLocation[1] = it->ThrusterLocation[1];
-            tmpThruster.thrusterLocation[2] = it->ThrusterLocation[2];
-            tmpThruster.thrusterDirection[0] = it->ThrusterDirection[0];
-            tmpThruster.thrusterDirection[1] = it->ThrusterDirection[1];
-            tmpThruster.thrusterDirection[2] = it->ThrusterDirection[2];
+            tmpThruster.thrusterLocation[0] = it->thrLoc_B[0];
+            tmpThruster.thrusterLocation[1] = it->thrLoc_B[1];
+            tmpThruster.thrusterLocation[2] = it->thrLoc_B[2];
+            tmpThruster.thrusterDirection[0] = it->thrDir_B[0];
+            tmpThruster.thrusterDirection[1] = it->thrDir_B[1];
+            tmpThruster.thrusterDirection[2] = it->thrDir_B[2];
             tmpThruster.maxThrust = it->MaxThrust;
             tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
             //            if (it->ThrustOps.ThrustFactor > 0.0)
@@ -365,8 +380,8 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
-    memset(StrForce, 0x0, 3*sizeof(double));
-    memset(StrTorque, 0x0, 3*sizeof(double));
+    memset(BodyForce, 0x0, 3*sizeof(double));
+    memset(BodyTorque, 0x0, 3*sizeof(double));
     mDotTotal = 0.0;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
@@ -384,18 +399,18 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         {
             ComputeThrusterShut(&(*it), CurrentTime);
         }
-        //! - For each thruster, aggregate the current thrust direction into composite structural force
+        //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
-        v3Scale(tmpThrustMag, it->ThrusterDirection.data(),
+        v3Scale(tmpThrustMag, it->thrDir_B,
                 SingleThrusterForce);
-        v3Add(StrForce, SingleThrusterForce, StrForce);
+        v3Add(BodyForce, SingleThrusterForce, BodyForce);
         
-        //! - Compute the center-of-mass relative torque and aggregate into the composite structural torque
-        v3Subtract(it->ThrusterLocation.data(), Props->CoM, CoMRelPos);
+        //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
+        v3Subtract(it->thrLoc_B, Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);
-        v3Add(StrTorque, SingleThrusterTorque, StrTorque);
+        v3Add(BodyTorque, SingleThrusterTorque, BodyTorque);
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
         {
@@ -404,11 +419,9 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         }
         mDotTotal += mDotSingle;
     }
-    //! - Once all thrusters have been checked, convert the structural force/torque to body for API
+    //! - Once all thrusters have been checked, update time-related variables for next evaluation
     updateMassProperties(CurrentTime);
     prevFireTime = CurrentTime;
-    mMultV(Props->T_str2Bdy, 3, 3, StrForce, BodyForce);
-    mMultV(Props->T_str2Bdy, 3, 3, StrTorque, BodyTorque);
     
 }
 
