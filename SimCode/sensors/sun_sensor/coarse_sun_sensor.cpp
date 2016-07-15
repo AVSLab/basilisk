@@ -72,8 +72,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 
     //! - Rotation from individual photo diode sensor frame (S) to css platform frame (P)
     double sensorV3_P[3] = {0,0,0}; // sensor diode normal in platform frame
-    //double PS[3][3];              // rotation matrix sensor to platform frame
-    double BP[3][3];                // rotation matrix platform to body frame
+    double SP[3][3];                // rotation matrix platform to body frame
     
     /*! azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
         of the photo diode*/
@@ -82,8 +81,8 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[2] = sin(tempPhi);
     
     //! Rotation from P frame to structure frame (B)
-    m33Transpose(this->PB, BP);
-    m33MultV3(BP, sensorV3_P, this->nHatStr);
+    m33Transpose(this->PS, SP);
+    m33MultV3(SP, sensorV3_P, this->nHatStr);
 }
 
 /*!
@@ -96,7 +95,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 void CoarseSunSensor::setStructureToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->PB);
+    Euler3212C(q, this->PS);
 }
 
 //! There is nothing to do in the default destructor
