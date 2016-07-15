@@ -122,8 +122,20 @@ def thrusterForceTest(show_plots, ignoreAxis2):
 
     numThrusters = 8;
     moduleConfig.numThrusters = numThrusters
-    moduleConfig.ignoreBodyAxis2 = ignoreAxis2
     moduleConfig.epsilon = 0.0005
+    if ignoreAxis2==0:
+        controlAxes_B = [
+             1,0,0
+            ,0,1,0
+            ,0,0,1
+        ]
+    else:
+        controlAxes_B = [
+             1,0,0
+            ,0,0,1
+        ]
+
+    SimulationBaseClass.SetCArray(controlAxes_B, 'double', moduleConfig.controlAxes_B)
 
     rcsClass = vehicleConfigData.ThrusterCluster()
     rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -132,20 +144,20 @@ def thrusterForceTest(show_plots, ignoreAxis2):
                [-0.82550, -0.86360, 1.79070],
                [0.82550, 0.86360, 1.79070],
                [0.86360, 0.82550, 1.79070],
-               [-0.86360, -0.82550, 1.79070],
-               [-0.82550, -0.86360, 1.79070],
-               [0.82550, 0.86360, 1.79070],
-               [0.86360, 0.82550, 1.79070] \
+               [-0.86360, -0.82550, -1.79070],
+               [-0.82550, -0.86360, -1.79070],
+               [0.82550, 0.86360, -1.79070],
+               [0.86360, 0.82550, -1.79070] \
                ]
     rcsDirectionData = [ \
                     [1.0, 0.0, 0.0],
                     [0.0, 1.0, 0.0],
                     [0.0, -1.0, 0.0],
                     [-1.0, 0.0, 0.0],
-                    [1.0, 0.0, 0.0],
-                    [0.0, 1.0, 0.0],
+                    [-1.0, 0.0, 0.0],
                     [0.0, -1.0, 0.0],
-                    [-1.0, 0.0, 0.0] \
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 0.0] \
                     ]
     for i in range(numThrusters):
         SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
@@ -179,24 +191,24 @@ def thrusterForceTest(show_plots, ignoreAxis2):
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(numThrusters))
-    print moduleOutput
 
-    # set the filtered output truth states
+    # set the output truth states
     trueVector=[];
     if ignoreAxis2==0:
         trueVector = [
-                   [0.139610208, 0.491213148, 0.211992732, 0, 0.139610208, 0.491213148, 0.211992732, 0],
-                   [0.139610208, 0.491213148, 0.211992732, 0, 0.139610208, 0.491213148, 0.211992732, 0]
+                   [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711],
+                   [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
                    ]
     else:
         if ignoreAxis2==1:
             trueVector = [
-           [0, 0.491213148, 0.211992732, 0, 0, 0.491213148, 0.211992732, 0],
-           [0, 0.491213148, 0.211992732, 0, 0, 0.491213148, 0.211992732, 0]
+           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711],
+           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711]
                    ]
         else:
             testFailCount+=1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+
 
     # compare the module results to the truth values
     accuracy = 1e-8

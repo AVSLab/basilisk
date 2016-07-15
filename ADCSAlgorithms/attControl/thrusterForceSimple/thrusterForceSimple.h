@@ -31,10 +31,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    uint32_t ignoreBodyAxis1;                       /*!< []      Boolean flag indicating if Lr(1) should be ignored */
-    uint32_t ignoreBodyAxis2;                       /*!< []      Boolean flag indicating if Lr(2) should be ignored */
-    uint32_t ignoreBodyAxis3;                       /*!< []      Boolean flag indicating if Lr(3) should be ignored */
-    uint32_t ignoreBodyAxis[3];                     /*!< []      array of boolean flags to ignore body axis */
+    double   controlAxes_B[9];                      /*!< []      array of the control unit axes */
+    double   rThruster_B[MAX_EFF_CNT][3];           /*!< [m]     local copy of the thruster locations */
+    double   gtThruster_B[MAX_EFF_CNT][3];          /*!< []      local copy of the thruster force unit direction vectors */
+    uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
     double   D[3][MAX_EFF_CNT];                     /*!< [m]     mapping matrix from thruster forces to body torque */
     double   Gt[3][MAX_EFF_CNT];                    /*!< []      matrix containing the thrust direction unit vectors gHat_t_i */
