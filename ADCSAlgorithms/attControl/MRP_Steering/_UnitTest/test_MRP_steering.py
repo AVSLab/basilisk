@@ -150,7 +150,7 @@ def mrp_steering_tracking(show_plots):
          0., 0., 800.]
     SimulationBaseClass.SetCArray(I,
                                   'double',
-                                  vehicleConfigOut.I)
+                                  vehicleConfigOut.ISCPntB_B)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,

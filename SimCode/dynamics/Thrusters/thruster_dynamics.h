@@ -60,8 +60,10 @@ typedef struct {
  a thruster.*/
 typedef struct {
     std::string typeName;                           //!< [], string containing the thruster type name
-    std::vector<double> ThrusterLocation;           //!< m Location of thruster in structural
-    std::vector<double> ThrusterDirection;          //!< -- Unit vector of thruster pointing
+    double inputThrLoc_S[3];                        //!< m Location of thruster in structural
+    double inputThrDir_S[3];                        //!< -- Unit vector of thruster pointing
+    double thrLoc_B[3];                             //!< [m] Thruster location expressed in body
+    double thrDir_B[3];                             //!< [-] Thruster direction unit vector in body
     std::vector<ThrusterTimePair> ThrusterOnRamp;   //!< -- Percentage of max thrust for ramp up
     std::vector<ThrusterTimePair> ThrusterOffRamp;  //!< -- Percentage of max thrust for ramp down
     double MaxThrust;                               //!< N  Steady state thrust of thruster
@@ -126,18 +128,19 @@ public:
     int stepsInRamp;
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
+    std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
     uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
     std::vector<std::string> thrusterOutMsgNames;                //!< -- Message name for all thruster data
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
-    double StrForce[3];                            //!< N  Computed force in str for thrusters
-    double StrTorque[3];                           //!< Nm Computed torque in str for thrusters
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
+    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
     std::vector<uint64_t> thrusterOutMsgIds;                      //!< -- Message ID of each thruster
     std::vector<ThrusterOutputData> thrusterOutBuffer; //!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
+    int64_t propsInID;                              //!< [-] The ID associated with the mss props msg
     ThrustCmdStruct *IncomingCmdBuffer;             //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 };

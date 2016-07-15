@@ -540,9 +540,6 @@ void SixDofEOM::SelfInit()
         }
     }
     
-    //! - Call computeOutputs to ensure that the outputs are available post-init
-    computeOutputs();
-    
     //! - Write output messages for other modules that use the dynamics state in cross-init
     this->StateOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->outputStateMessage, sizeof(OutputStateData),
@@ -557,6 +554,11 @@ void SixDofEOM::SelfInit()
         OutputBufferCount, "SpicePlanetState", moduleID);
     
     initPlanetStateMessages();
+    
+    //! - Call computeOutputs to ensure that the outputs are available post-init
+    computeCompositeProperties();
+    computeOutputs();
+    WriteOutputMessages(0);
     
 }
 
