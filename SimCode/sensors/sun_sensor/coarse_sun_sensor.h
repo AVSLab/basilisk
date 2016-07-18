@@ -76,7 +76,7 @@ public:
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
     double              B2P321Angles[3];        //!< [-] 321 Euler anhles for Structure to platform
-    double              PB[3][3];               //!< [-] DCM from platform frame P to body frame B
+    double              PS[3][3];               //!< [-] DCM from platform frame P to structure frame S
     double              nHatStr[3];             //!< [-] css unit direction vector in structural components
     double              sHatStr[3];             //!< [-] unit vector to sun in str
     double              horizonPlane[3];        //!< [-] unit direction vector defining horizon cut off plane of CSS

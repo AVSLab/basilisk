@@ -1362,6 +1362,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetCSSWlsEstFSWConfig(self):
         self.CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
         self.CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
+        self.CSSWlsEstFSWConfig.InputPropsName = "adcs_config_data"
         self.CSSWlsEstFSWConfig.UseWeights = True
         self.CSSWlsEstFSWConfig.SensorUseThresh = 0.1
 
@@ -1378,7 +1379,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                               [-0.70710678118654746, -0.70710678118654757, 0.0], ]
         i = 0
         for CSSHat in CSSOrientationList:
-            SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
+            SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatStr)
             cssWlsEst.CSSWlsConfigArray_setitem(self.CSSWlsEstFSWConfig.CSSData, i,
                                                 CSSConfigElement)
             i += 1
