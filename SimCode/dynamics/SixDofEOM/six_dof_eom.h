@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/simMacros.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "dynamics/SolarPanels/solar_panels.h"
+#include "dynamics/HingedRigidBodies/hinged_rigid_bodies.h"
 #include "dynamics/FuelTank/fuel_tank.h"
 #include "dynObject.h"
 #include "integrator.h"
@@ -109,7 +109,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     void addThrusterSet(ThrusterDynamics *NewEffector);
 	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
-    void addSolarPanelSet(SolarPanels *NewEffector);
+    void addHingedRigidBodySet(HingedRigidBodies *NewEffector);
     void addFuelTank(FuelTank *NewEffector);
     void setIntegrator(integrator *NewIntegrator);
     void initPlanetStateMessages();
@@ -130,12 +130,12 @@ public:
     std::string outputMassPropsMsg;   //!<       Output mass properties
     std::string centralBodyOutMsgName;//!<       Output central body
     uint64_t OutputBufferCount;
-    std::vector<GravityBodyData> GravData; //!<  Central body grav information
-    GravityBodyData* CentralBody;         //!<  Central body
-    bool MessagesLinked;              //!<       Indicator for whether inputs bound
+    std::vector<GravityBodyData> gravData; //!<  Central body grav information
+    GravityBodyData* centralBody;         //!<  Central body
+    bool messagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
-    uint64_t SPCount;                 //!<        Number of solar panels to model
+    uint64_t numHRB;                  //!<        Number of hinged rigid bodies to model
     uint64_t numFSP;                  //!<        Number of fuel slosh particles
     double baseCoM[3];                //!< [m]    center of mass of dry spacecraft str
     double baseI[3][3];               //!< [kgm2] Inertia tensor for base spacecraft str
@@ -144,7 +144,7 @@ public:
     double compI[3][3];               //!< [kgm2] Inertia tensor for vehicle
     double compIinv[3][3];            //!< [m2/kg] inverse of inertia tensor
     double compMass;                  //!< [kg]   Mass of the vehicle
-    double TimePrev;                  //!< [s]    Previous update time
+    double timePrev;                  //!< [s]    Previous update time
     double r_BN_N[3];                 //!< [m]    Current position vector (inertial)
     double v_BN_N[3];                 //!< [m/s]  Current velocity vector (inertial)
     double sigma_BN[3];               //!<        Current MRPs (inertial)
@@ -156,16 +156,18 @@ public:
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
-    double totScRotKinEnergy;         //!< [J]    Total rotational kinetic energy of spacecraft
-    double totScAngMomentum_B[3];     //!< [N-m-s]Total angular momentum of the spacecraft in body frame components
-    double totScAngMomentum_N[3];     //!< [N-m-s]Total angular momentum of the spacecraft in inertial frame components
-    double totScAngMomentumMag;       //!< [N-m-s]Magnitude of total angular momentum of the spacecraft
+    double totScOrbitalEnergy;        //!< [J]    Total orbital energy of spacecraft
+    double totScOrbitalAngMom_N[3];   //!< [kg-m^2/s] Total orbital angular momentum of the spacecraft in inertial frame components
+    double totScOrbitalAngMomMag;     //!< [kg-m^2/s] Magnitude of total orbital angular momentum of the spacecraft
+    double totScRotEnergy;            //!< [J]    Total spacecraft energy about its center of mass
+    double totScRotAngMom_N[3];       //!< [kg-m^2/s] Total angular momentum of the spacecraft about its center of mass in N frame
+    double totScRotAngMomMag;         //!< [kg-m^2/s] Magnitude of total angular momentum of the spacecraft about its center of mass
     double scRotPower;                //!< [W] Mechanical Power of the spacecraft rotational motion (analytical work-energy theorem)
-    double scEnergyRate;              //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
+    double scRotEnergyRate;           //!< [W] Rate of change of energy to check with power (numerically evaluatated power)
     bool   useTranslation;            //!<        Flag indicating to use translation dynamics
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
     bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
-    std::vector<SolarPanels *> solarPanels; //!< (-) Vector of solar panels in body
+    std::vector<HingedRigidBodies *> hingedRigidBodies; //!< (-) Vector of hinged rigid bodies in body
     std::vector<FuelTank *> fuelTanks; //! (-) Vector of fuel tank
 private:
     double *XState;                   //!<        Container for total state

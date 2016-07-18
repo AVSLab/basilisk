@@ -43,7 +43,6 @@ import setupUtilitiesThruster           # Thruster simulation setup utilties
 import reactionwheel_dynamics
 import thruster_dynamics
 import macros
-import solar_panels
 
 
 

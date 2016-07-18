@@ -14,9 +14,9 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module solar_panels
+%module hinged_rigid_bodies
 %{
-   #include "solar_panels.h"
+   #include "hinged_rigid_bodies.h"
 %}
 
 %include "std_vector.i"
@@ -27,10 +27,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 // Instantiate templates used by example
 namespace std {
    %template(IntVector) vector<int>;
-   %template(SolarPanelVector) std::vector<SolarPanelConfigData>;
+   %template(HingedRigidBodyVector) std::vector<HingedRigidBodyConfigData>;
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(ConstCharVector) vector<const char*>;
 }
 %include "sys_model.h"
-%include "solar_panels.h"
+%include "hinged_rigid_bodies.h"
