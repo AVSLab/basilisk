@@ -130,9 +130,9 @@ public:
     std::string outputMassPropsMsg;   //!<       Output mass properties
     std::string centralBodyOutMsgName;//!<       Output central body
     uint64_t OutputBufferCount;
-    std::vector<GravityBodyData> GravData; //!<  Central body grav information
-    GravityBodyData* CentralBody;         //!<  Central body
-    bool MessagesLinked;              //!<       Indicator for whether inputs bound
+    std::vector<GravityBodyData> gravData; //!<  Central body grav information
+    GravityBodyData* centralBody;         //!<  Central body
+    bool messagesLinked;              //!<       Indicator for whether inputs bound
     uint64_t RWACount;                //!<        Number of reaction wheels to model
     uint64_t numRWJitter;             //!<        Number of reaction wheels that are modeling jitter
     uint64_t numHRB;                  //!<        Number of hinged rigid bodies to model
@@ -144,7 +144,7 @@ public:
     double compI[3][3];               //!< [kgm2] Inertia tensor for vehicle
     double compIinv[3][3];            //!< [m2/kg] inverse of inertia tensor
     double compMass;                  //!< [kg]   Mass of the vehicle
-    double TimePrev;                  //!< [s]    Previous update time
+    double timePrev;                  //!< [s]    Previous update time
     double r_BN_N[3];                 //!< [m]    Current position vector (inertial)
     double v_BN_N[3];                 //!< [m/s]  Current velocity vector (inertial)
     double sigma_BN[3];               //!<        Current MRPs (inertial)

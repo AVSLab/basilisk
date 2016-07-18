@@ -273,7 +273,7 @@ SixDofEOM::~SixDofEOM()
 */
 void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
 {
-    GravData.push_back(*NewBody);
+    gravData.push_back(*NewBody);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The 
@@ -346,7 +346,7 @@ void SixDofEOM::initPlanetStateMessages()
 {
  
     std::vector<GravityBodyData>::iterator it;
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         it->outputMsgID = -1;
         if(it->outputMsgName.size() > 0)
@@ -373,12 +373,12 @@ void SixDofEOM::SelfInit()
     std::vector<ReactionWheelConfigData>::iterator rwIt;
 	for (it = reactWheels.begin(); it != reactWheels.end(); it++)
 	{
-		for (rwIt = (*it)->ReactionWheelData.begin();
-		rwIt != (*it)->ReactionWheelData.end(); rwIt++)
-		{
-			this->RWACount++;
+        for (rwIt = (*it)->ReactionWheelData.begin();
+             rwIt != (*it)->ReactionWheelData.end(); rwIt++)
+        {
+            this->RWACount++;
             if (rwIt->usingRWJitter) this->numRWJitter++;
-		}
+        }
 	}
 
     this->numHRB = 0;
@@ -386,11 +386,7 @@ void SixDofEOM::SelfInit()
     std::vector<HingedRigidBodyConfigData>::iterator HRBIt;
     for (itSP = hingedRigidBodies.begin(); itSP != hingedRigidBodies.end(); itSP++)
     {
-        for (HRBIt = (*itSP)->hingedRigidBodyData.begin();
-             HRBIt != (*itSP)->hingedRigidBodyData.end(); HRBIt++)
-        {
-            this->numHRB++;
-        }
+        this->numHRB = (*itSP)->hingedRigidBodyData.size();
     }
 
     this->numFSP = 0;
@@ -398,11 +394,7 @@ void SixDofEOM::SelfInit()
     std::vector<FuelSloshParticleConfigData>::iterator FSPIt;
     for (itFT = fuelTanks.begin(); itFT != fuelTanks.end(); itFT++)
     {
-        for (FSPIt = (*itFT)->fuelSloshParticlesData.begin();
-             FSPIt != (*itFT)->fuelSloshParticlesData.end(); FSPIt++)
-        {
-            this->numFSP++;
-        }
+        this->numFSP = (*itFT)->fuelSloshParticlesData.size();
     }
 
     this->NStates = 0;
@@ -417,7 +409,7 @@ void SixDofEOM::SelfInit()
 
     this->XState = new double[this->NStates]; /* pos/vel/att/rate + rwa omegas + hinged dynamics (theta/thetadot) + fuel slosh (rho/rhoDot)*/
     memset(this->XState, 0x0, (this->NStates)*sizeof(double));
-    TimePrev = 0.0;
+    timePrev = 0.0;
     
     //! - Ensure that all init states were appropriately set by the caller
     if(this->useTranslation){
@@ -573,7 +565,7 @@ void SixDofEOM::CrossInit()
     //! - For each gravity body in the data vector, find message ID
     //! - If message ID is not found, alert the user and disable message
     std::vector<GravityBodyData>::iterator it;
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         it->BodyMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
             it->BodyMsgName, sizeof(SpicePlanetState), moduleID);
@@ -600,7 +592,7 @@ void SixDofEOM::ReadInputs()
     
     //! Begin method steps
     //! - Loop through all valid gravity bodies and grab the ephem data
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         if(it->BodyMsgID >= 0)
         {
@@ -766,27 +758,27 @@ void SixDofEOM::computeGravity(double t, double r_BN_N[3], double BN[3][3], doub
     
     //! - Get current position magnitude and compute the 2-body gravitational accels
     rmag = v3Norm(r_BN_N);
-    v3Scale(-CentralBody->mu / rmag / rmag / rmag, r_BN_N, g_N);
+    v3Scale(-centralBody->mu / rmag / rmag / rmag, r_BN_N, g_N);
     
     /* compute the gravitational zonal harmonics or the spherical harmonics (never both)*/
-    if(CentralBody->UseJParams)
+    if(centralBody->UseJParams)
     {
-        jPerturb(CentralBody, r_BN_N, perturbAccel_N);
+        jPerturb(centralBody, r_BN_N, perturbAccel_N);
         v3Add(perturbAccel_N, g_N, g_N);
     }
-    else if (CentralBody->UseSphericalHarmParams)
+    else if (centralBody->UseSphericalHarmParams)
     {
-        unsigned int max_degree = CentralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
+        unsigned int max_degree = centralBody->getSphericalHarmonicsModel()->getMaxDegree(); // Maximum degree to include
         double posPlanetFix[3]; // [m] Position in planet-fixed frame
         double gravField[3]; // [m/s^2] Gravity field in planet fixed frame
         
-        double planetDt = t - CentralBody->ephIntTime;
+        double planetDt = t - centralBody->ephIntTime;
         double J2000PfixCurrent[3][3];
         
-        m33Scale(planetDt, CentralBody->J20002Pfix_dot, J2000PfixCurrent);
-        m33Add(J2000PfixCurrent, CentralBody->J20002Pfix, J2000PfixCurrent);
+        m33Scale(planetDt, centralBody->J20002Pfix_dot, J2000PfixCurrent);
+        m33Add(J2000PfixCurrent, centralBody->J20002Pfix, J2000PfixCurrent);
         m33MultV3(J2000PfixCurrent, r_BN_N, posPlanetFix); // r_E = [EN]*r_N
-        CentralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
+        centralBody->getSphericalHarmonicsModel()->computeField(posPlanetFix, max_degree, gravField, false);
         
         m33tMultV3(J2000PfixCurrent, gravField, perturbAccel_N); // [EN]^T * gravField
         
@@ -798,7 +790,7 @@ void SixDofEOM::computeGravity(double t, double r_BN_N[3], double BN[3][3], doub
      Ephemeris information is propagated by Euler's method in substeps*/
     v3SetZero(this->InertialAccels);
     std::vector<GravityBodyData>::iterator gravit;
-    for(gravit = GravData.begin(); gravit != GravData.end(); gravit++)
+    for(gravit = gravData.begin(); gravit != gravData.end(); gravit++)
     {
         double PlanetRelPos[3];
         double PlanetAccel[3];
@@ -808,9 +800,9 @@ void SixDofEOM::computeGravity(double t, double r_BN_N[3], double BN[3][3], doub
         {
             continue;
         }
-        v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+        v3Scale(t - centralBody->ephIntTime, centralBody->VelFromEphem,
                 posVelComp);
-        v3Add(r_BN_N, CentralBody->PosFromEphem, PlanetRelPos);
+        v3Add(r_BN_N, centralBody->PosFromEphem, PlanetRelPos);
         v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
         v3Subtract(PlanetRelPos, gravit->PosFromEphem, PlanetRelPos);
         v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
@@ -819,9 +811,9 @@ void SixDofEOM::computeGravity(double t, double r_BN_N[3], double BN[3][3], doub
         v3Scale(-gravit->mu / rmag / rmag / rmag, PlanetRelPos, PlanetAccel);
         v3Add(this->InertialAccels, PlanetAccel, InertialAccels);
         v3Scale(t - gravit->ephIntTime, gravit->VelFromEphem, posVelComp);
-        v3Subtract(CentralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
+        v3Subtract(centralBody->PosFromEphem, gravit->PosFromEphem, PlanetRelPos);
         v3Subtract(PlanetRelPos, posVelComp, PlanetRelPos);
-        v3Scale(t - CentralBody->ephIntTime, CentralBody->VelFromEphem,
+        v3Scale(t - centralBody->ephIntTime, centralBody->VelFromEphem,
                 posVelComp);
         v3Add(PlanetRelPos, posVelComp, PlanetRelPos);
         rmag = v3Norm(PlanetRelPos);
@@ -1559,7 +1551,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 m33Scale(rwIt->Js, intermediateMatrix, intermediateMatrix);
                 m33Subtract(ILHS, intermediateMatrix, ILHS);
                 /*! - Define hs of wheels (this is not the hs seen in Schaubs book) the inertia is being modified for the LHS of the equation which results in hs being modified in this way see Allard, Schaub (flex paper) for details */
-                double hs =  rwIt->Js * Omegas[rwCount];
+                double hs = rwIt->Js * Omegas[rwCount];
 
                 //! - calculate RW gyro torque - omegaTilde*Gs*hs
                 v3Scale(hs, rwIt->gsHat_B, intermediateVector);
@@ -1721,7 +1713,7 @@ void SixDofEOM::integrateState(double CurrentTime)
     memset(X, 0x0, NStates*sizeof(double));
     memset(Xnext, 0x0, NStates*sizeof(double));
 
-    double TimeStep;
+    double timeStep;
     double sMag;
     uint32_t CentralBodyCount = 0;
 
@@ -1761,7 +1753,7 @@ void SixDofEOM::integrateState(double CurrentTime)
 
     //! Begin method steps
     //! - Get the dt from the previous time to the current
-    TimeStep = CurrentTime - this->TimePrev;
+    timeStep = CurrentTime - this->timePrev;
     
     //! - Initialize the local states and invert the inertia tensor
     memcpy(X, this->XState, this->NStates*sizeof(double));
@@ -1769,12 +1761,12 @@ void SixDofEOM::integrateState(double CurrentTime)
     //! - Loop through gravitational bodies and find the central body to integrate around
     //GravityBodyData *CentralBody = NULL;
     std::vector<GravityBodyData>::iterator it;
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         it->ephIntTime = it->ephemTimeSimNanos * NANO2SEC;
         if(it->IsCentralBody)
         {
-            this->CentralBody = &(*it);
+            this->centralBody = &(*it);
             CentralBodyCount++;
         }
     }
@@ -1787,7 +1779,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         return;
     }
     
-    Integrator->integrate(CurrentTime, TimeStep, X, Xnext, this->NStates);
+    Integrator->integrate(CurrentTime, timeStep, X, Xnext, this->NStates);
 
     memcpy(this->XState, Xnext, this->NStates*sizeof(double));
 
@@ -1804,7 +1796,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         double* sigma_BNnext;
         double v_B[3];
         double v_Bnext[3];
-        double LocalDV[3];
+        double localDV[3];
         
         if (this->useRotation) {
             sigma_BN = X+6;
@@ -1823,15 +1815,15 @@ void SixDofEOM::integrateState(double CurrentTime)
         m33MultV3(BNLocnext, Xnext + 3, v_Bnext);
         
         v3Subtract(v_Bnext, v_B, DVtot);
-        v3Scale(TimeStep, ConservAccelBdy, DVconservative);
-        v3Subtract(DVtot, DVconservative, LocalDV);
+        v3Scale(timeStep, ConservAccelBdy, DVconservative);
+        v3Subtract(DVtot, DVconservative, localDV);
         
-        v3Add(LocalDV, this->AccumDVBdy, this->AccumDVBdy);
+        v3Add(localDV, this->AccumDVBdy, this->AccumDVBdy);
 
         //! - Find translational energy and potential energy
         this->totScOrbitalEnergy = 1.0/2.0*this->compMass*v3Dot(&this->XState[3], &this->XState[3]);
         if (this->useGravity) {
-            this->totScOrbitalEnergy -= this->compMass*this->CentralBody->mu/v3Norm(&this->XState[0]);
+            this->totScOrbitalEnergy -= this->compMass*this->centralBody->mu/v3Norm(&this->XState[0]);
         }
 
         //! - Find orbital angular momentum
@@ -2140,11 +2132,11 @@ void SixDofEOM::integrateState(double CurrentTime)
         this->totScOrbitalAngMomMag = v3Norm(this->totScOrbitalAngMom_N);
 
         //! - Calulate rate of change of energy
-        this->scRotEnergyRate = (this->totScRotEnergy-prevTotScRotEnergy)/TimeStep;
+        this->scRotEnergyRate = (this->totScRotEnergy-prevTotScRotEnergy)/timeStep;
     }
 
     //! - Clear out local allocations and set time for next cycle
-    this->TimePrev = CurrentTime;
+    this->timePrev = CurrentTime;
     delete[] X;
     delete[] Xnext;
 }
@@ -2159,7 +2151,7 @@ void SixDofEOM::computeOutputs()
     std::vector<GravityBodyData>::iterator it;
     double displayPos[3], displayVel[3];
     
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         if(it->IsCentralBody)
         {
@@ -2195,7 +2187,7 @@ void SixDofEOM::computeOutputs()
         v3Copy(displayBody->PosFromEphem, displayPos);
         v3Copy(displayBody->VelFromEphem, displayVel);
     }
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         v3Subtract(it->PosFromEphem, displayPos, it->posRelDisplay);
         v3Subtract(it->VelFromEphem, displayVel, it->velRelDisplay);
@@ -2217,16 +2209,16 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     //! - If we have a valid state output message ID, copy over internals and write out
     if(StateOutMsgID >= 0)
     {
-        OutputStateData StateOut;
-        memcpy(StateOut.r_N, this->r_BN_N, 3*sizeof(double));
-        memcpy(StateOut.v_N, this->v_BN_N, 3*sizeof(double));
-        memcpy(StateOut.sigma, this->sigma_BN, 3*sizeof(double));
-        memcpy(StateOut.omega, this->omega_BN_B, 3*sizeof(double));
-        memcpy(StateOut.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
-        memcpy(StateOut.TotalAccumDVBdy, this->AccumDVBdy, 3*sizeof(double));
-        StateOut.MRPSwitchCount = this->MRPSwitchCount;
+        OutputStateData stateOut;
+        memcpy(stateOut.r_N, this->r_BN_N, 3*sizeof(double));
+        memcpy(stateOut.v_N, this->v_BN_N, 3*sizeof(double));
+        memcpy(stateOut.sigma, this->sigma_BN, 3*sizeof(double));
+        memcpy(stateOut.omega, this->omega_BN_B, 3*sizeof(double));
+        memcpy(stateOut.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(stateOut.TotalAccumDVBdy, this->AccumDVBdy, 3*sizeof(double));
+        stateOut.MRPSwitchCount = this->MRPSwitchCount;
         messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-            sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&StateOut), moduleID);
+            sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&stateOut), moduleID);
     }
     
     //! - If we have a valid mass props output message ID, copy over internals and write out
@@ -2244,7 +2236,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     
     SpicePlanetState tmpPlanet;
     std::vector<GravityBodyData>::iterator it;
-    for(it = GravData.begin(); it != GravData.end(); it++)
+    for(it = gravData.begin(); it != gravData.end(); it++)
     {
         // @TODO: Currently the Viz must be given the central body. For now we send the
         // below message to acheive this. However, long term the Viz will be updated
