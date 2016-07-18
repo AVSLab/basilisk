@@ -1263,7 +1263,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetCSSWlsEstFSWConfig(self):
         self.CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
         self.CSSWlsEstFSWConfig.OutputDataName = "css_wls_est"
-        self.CSSWlsEstFSWConfig.inputPropsName = "adcs_config_data"
+        self.CSSWlsEstFSWConfig.InputPropsName = "adcs_config_data"
         self.CSSWlsEstFSWConfig.UseWeights = True
         self.CSSWlsEstFSWConfig.SensorUseThresh = 0.1
 

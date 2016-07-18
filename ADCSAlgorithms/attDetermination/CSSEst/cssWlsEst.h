@@ -46,14 +46,14 @@ typedef struct {
     SingleCSSConfig CSSData[MAX_NUM_CSS_SENSORS]; /*!< -- The config data for the estimator*/
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char inputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
+    char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t UseWeights;     /*!< -- Flag indicating whether or not to use weights for least squares*/
     double SensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     CSSWlsEstOut OutputData; /*!< -- Unit vector to the Sun in the spacecraft body frame*/
     int32_t OutputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t InputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t inputPropsID;    /*!< [-] ID for the incoming mass properties message*/
+    int32_t InputPropsID;    /*!< [-] ID for the incoming mass properties message*/
 }CSSWLSConfig;
 
 #ifdef __cplusplus

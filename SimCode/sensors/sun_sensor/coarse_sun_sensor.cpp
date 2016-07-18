@@ -72,7 +72,6 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 
     //! - Rotation from individual photo diode sensor frame (S) to css platform frame (P)
     double sensorV3_P[3] = {0,0,0}; // sensor diode normal in platform frame
-    double SP[3][3];                // rotation matrix platform to body frame
     
     /*! azimuth and elevation rotations of vec transpose(1,0,0) where vec is the unit normal
         of the photo diode*/
@@ -80,9 +79,8 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[1] = cos(tempPhi) * sin(tempTheta);
     sensorV3_P[2] = sin(tempPhi);
     
-    //! Rotation from P frame to structure frame (B)
-    m33Transpose(this->PS, SP);
-    m33MultV3(SP, sensorV3_P, this->nHatStr);
+    //! Rotation from P frame to structure frame (S)
+    m33tMultV3(this->PS, sensorV3_P, this->nHatStr);
 }
 
 /*!
