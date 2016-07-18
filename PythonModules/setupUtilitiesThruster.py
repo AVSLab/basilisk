@@ -102,6 +102,8 @@ def addThrustersToSpacecraft(modelTag, thDynObject, VehDynObject):
 
     thDynObject.ThrusterData = thruster_dynamics.ThrusterConfigVector(thrusterList)
 
+    thDynObject.inputProperties = VehDynObject.outputMassPropsMsg
+
     VehDynObject.addThrusterSet(thDynObject)
 
     return
