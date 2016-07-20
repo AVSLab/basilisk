@@ -55,8 +55,8 @@ import vehicleConfigData
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("ignoreAxis2", [
-    (0),
-    (1)
+    (0)
+    ,(1)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -101,6 +101,25 @@ def thrusterForceTest(show_plots, ignoreAxis2):
     moduleConfig.inputVehControlName = "LrRequested"
     moduleConfig.inputThrusterConfName = "RCSThrusters"
     moduleConfig.outputDataName = "thrusterForceOut"
+    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
+
+    # write vehicle configuration message
+    inputMessageSize = 21 * 8 + 8  # 21 doubles + 1 32bit integer
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputVehicleConfigDataName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    BS = [1.0, 0., 0.,
+         0., 1.0, 0.,
+         0., 0., 1.0]
+    SimulationBaseClass.SetCArray(BS,
+                                  'double',
+                                  vehicleConfigOut.BS)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
+                                          inputMessageSize,
+                                          0,
+                                          vehicleConfigOut)
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -160,8 +179,8 @@ def thrusterForceTest(show_plots, ignoreAxis2):
                     [1.0, 0.0, 0.0] \
                     ]
     for i in range(numThrusters):
-        SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThruster)
-        SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust)
+        SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
+        SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
         vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,

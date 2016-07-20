@@ -25,6 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "vehicleConfigData/vehicleConfigData.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 
 
@@ -79,10 +80,10 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
  */
 void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
 {
-    ThrusterCluster localThrusterData;
-    int             i;
-    uint64_t        clockTime;
-    uint32_t        readSize;
+    ThrusterCluster     localThrusterData;
+    int                 i;
+    uint64_t            clockTime;
+    uint32_t            readSize;
 
     /*! - Get the control data message ID*/
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
@@ -95,14 +96,23 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
 
+    /* read in the vehicle configuration data */
+    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
+                                                              sizeof(vehicleConfigData), moduleID);
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+                sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
+
     /* read in the thruster position and thruster force heading information */
     /* Note: we will still need to correct for the S to B transformation */
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
-        v3Copy(localThrusterData.thrusters[i].rThruster, ConfigData->rThruster_B[i]);
-        v3Copy(localThrusterData.thrusters[i].tHatThrust, ConfigData->gtThruster_B[i]);
+        m33MultV3(RECAST3X3 ConfigData->sc.BS,
+                  localThrusterData.thrusters[i].rThrust_S,
+                  ConfigData->rThruster_B[i]);
+        m33MultV3(RECAST3X3 ConfigData->sc.BS,
+                  localThrusterData.thrusters[i].tHatThrust_S,
+                  ConfigData->gtThruster_B[i]);
     }
-
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
