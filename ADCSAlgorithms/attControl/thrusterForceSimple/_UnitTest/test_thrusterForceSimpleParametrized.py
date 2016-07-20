@@ -54,19 +54,20 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("ignoreAxis2", [
-    (0)
-    ,(1)
+@pytest.mark.parametrize("ignoreAxis2, useCOMOffset", [
+    (0,0)
+    ,(1,0)
+    ,(0,1)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, ignoreAxis2):
+def test_module(show_plots, ignoreAxis2, useCOMOffset):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2)
+    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, ignoreAxis2):
+def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -113,9 +114,16 @@ def thrusterForceTest(show_plots, ignoreAxis2):
     BS = [1.0, 0., 0.,
          0., 1.0, 0.,
          0., 0., 1.0]
+    if useCOMOffset == 1:
+        CoM_S = [0.1, 0.05, 0.01]
+    else:
+        CoM_S = [0,0,0]
     SimulationBaseClass.SetCArray(BS,
                                   'double',
                                   vehicleConfigOut.BS)
+    SimulationBaseClass.SetCArray(CoM_S,
+                                  'double',
+                                  vehicleConfigOut.CoM_B)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
@@ -214,10 +222,16 @@ def thrusterForceTest(show_plots, ignoreAxis2):
     # set the output truth states
     trueVector=[];
     if ignoreAxis2==0:
-        trueVector = [
-                   [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711],
-                   [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
-                   ]
+        if useCOMOffset == 0:
+            trueVector = [
+                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711],
+                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
+                       ]
+        else:
+            trueVector = [
+                       [0.1388262385061627,0.5131656966163608,0.184618952806837,0,0.3631751236061719,0.2807709414028722,0,0.1973425195061365],
+                       [0.1388262385061627,0.5131656966163608,0.184618952806837,0,0.3631751236061719,0.2807709414028722,0,0.1973425195061365]
+                       ]
     else:
         if ignoreAxis2==1:
             trueVector = [
@@ -267,5 +281,6 @@ def thrusterForceTest(show_plots, ignoreAxis2):
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 0            # ignoreAxis2 value
+                 0,           # ignoreAxis2 value
+                 0,           # use COM offset
                )

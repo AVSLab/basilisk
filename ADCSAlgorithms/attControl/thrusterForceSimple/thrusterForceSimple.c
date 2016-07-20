@@ -109,6 +109,7 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].rThrust_S,
                   ConfigData->rThruster_B[i]);
+        v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, ConfigData->rThruster_B[i]);
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
