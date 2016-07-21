@@ -107,10 +107,11 @@ public:
     void computeOutputs();
     void AddGravityBody(GravityBodyData *NewBody);
     void WriteOutputMessages(uint64_t CurrentClock);
-    void addThrusterSet(ThrusterDynamics *NewEffector);
-	void addReactionWheelSet(ReactionWheelDynamics *NewEffector);
-    void addHingedRigidBodySet(HingedRigidBodies *NewEffector);
-    void addFuelTank(FuelTank *NewEffector);
+    void addThrusterSet(ThrusterDynamics *newThrusterSet);
+	void addReactionWheelSet(ReactionWheelDynamics *newReactionWheelSet);
+    void addHingedRigidBodySet(HingedRigidBodies *newHingedRigidEffector);
+    void addBodyEffector(DynEffector *newBodyEffector);
+    void addFuelTank(FuelTank *newFuelTank);
     void setIntegrator(integrator *NewIntegrator);
     void initPlanetStateMessages();
     void jPerturb(GravityBodyData *gravBody, double r_N[3], double perturbAccel[3]);
@@ -151,7 +152,7 @@ public:
     double omega_BN_B[3];             //!< [r/s]  Current angular velocity (inertial)
     double InertialAccels[3];         //!< [m/s2] Current calculated inertial accels
     double NonConservAccelBdy[3];     //!< [m/s2] Observed non-conservative body accel
-    double ConservAccelBdy[3];           //!< [m/s2] Observed conservative body accel
+    double ConservAccelBdy[3];        //!< [m/s2] Observed conservative body accel
     double T_str2Bdy[3][3];           //!<        Structure to body DCM matrix
     double AccumDVBdy[3];             //!< [m/s]  Accumulated DV in body
     double rwaGyroTorqueBdy[3];       //!<
@@ -168,7 +169,9 @@ public:
     bool   useRotation;               //!<        Flag indicating to use rotational dynamics
     bool   useGravity;                //!<        Flag indicating to use gravity in dynamics 
     std::vector<HingedRigidBodies *> hingedRigidBodies; //!< (-) Vector of hinged rigid bodies in body
-    std::vector<FuelTank *> fuelTanks; //! (-) Vector of fuel tank
+    std::vector<FuelTank *> fuelTanks;          //!< (-) Vector of fuel tank
+    std::vector<DynEffector *> bodyEffectors;   //!< (-) Vector of one way coupled body effectors
+    
 private:
     double *XState;                   //!<        Container for total state
     int64_t StateOutMsgID;            //!<        Output message id for state data

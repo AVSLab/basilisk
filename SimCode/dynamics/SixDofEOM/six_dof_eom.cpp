@@ -269,55 +269,66 @@ SixDofEOM::~SixDofEOM()
 /*! This method exists to add a new gravitational body in to the simulation to
     be used to effect the spacecraft dynamics.  
     @return void
-    @param NewBody A pointer to the gravitational body that is being added
+    @param newGravityBody A pointer to the gravitational body that is being added
 */
-void SixDofEOM::AddGravityBody(GravityBodyData *NewBody)
+void SixDofEOM::AddGravityBody(GravityBodyData *newGravityBody)
 {
-    gravData.push_back(*NewBody);
+    gravData.push_back(*newGravityBody);
 }
 
-/*! This method exists to attach an effector to the vehicle's dynamics.  The 
-    effector should be a derived class of the DynEffector abstract class and it 
+/*! This method exists to attach an effector to the vehicle's dynamics.  The
+ effector should be a derived class of the DynEffector abstract class and it
+ should include a ComputeDynamics call which is operated by dynamics.
+ @return void
+ @param NewEffector The effector that we are adding to dynamics
+ */
+void SixDofEOM::addBodyEffector(DynEffector *newBodyEffector)
+{
+    this->bodyEffectors.push_back(newBodyEffector);
+}
+
+/*! This method exists to attach a thrust set effector to the vehicle's dynamics.
+    The effector should be a derived class of the DynEffector abstract class and it
     should include a ComputeDynamics call which is operated by dynamics.
     @return void
-    @param NewEffector The effector that we are adding to dynamics
+    @param newThrusterSet The effector that we are adding to dynamics
 */
-void SixDofEOM::addThrusterSet(ThrusterDynamics *NewEffector)
+void SixDofEOM::addThrusterSet(ThrusterDynamics *newThrusterSet)
 {
-    this->thrusters.push_back(NewEffector);
+    this->thrusters.push_back(newThrusterSet);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The
 effector should be a derived class of the DynEffector abstract class and it
 should include a ComputeDynamics call which is operated by dynamics.
 @return void
-@param NewEffector The effector that we are adding to dynamics
+@param newReactionWheelSet The effector that we are adding to dynamics
 */
-void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *NewEffector)
+void SixDofEOM::addReactionWheelSet(ReactionWheelDynamics *newReactionWheelSet)
 {
-	this->reactWheels.push_back(NewEffector);
+	this->reactWheels.push_back(newReactionWheelSet);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The
  effector should be a derived class of the DynEffector abstract class and it
  should include a ComputeDynamics call which is operated by dynamics.
  @return void
- @param NewEffector The effector that we are adding to dynamics
+ @param newHingedRigidEffector The effector that we are adding to dynamics
  */
-void SixDofEOM::addHingedRigidBodySet(HingedRigidBodies *NewEffector)
+void SixDofEOM::addHingedRigidBodySet(HingedRigidBodies *newHingedRigidEffector)
 {
-    hingedRigidBodies.push_back(NewEffector);
+    hingedRigidBodies.push_back(newHingedRigidEffector);
 }
 
 /*! This method exists to attach an effector to the vehicle's dynamics.  The
  effector should be a derived class of the DynEffector abstract class and it
  should include a ComputeDynamics call which is operated by dynamics.
  @return void
- @param NewEffector The effector that we are adding to dynamics
+ @param newFuelTank The effector that we are adding to dynamics
  */
-void SixDofEOM::addFuelTank(FuelTank *NewEffector)
+void SixDofEOM::addFuelTank(FuelTank *newFuelTank)
 {
-    fuelTanks.push_back(NewEffector);
+    fuelTanks.push_back(newFuelTank);
 }
 
 /*!
@@ -1041,7 +1052,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         //! - Convert the body forces to inertial for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
         std::vector<ThrusterDynamics*>::iterator it;
-        for(it=thrusters.begin(); it != thrusters.end(); it++)
+        for(it = thrusters.begin(); it != thrusters.end(); it++)
         {
             ThrusterDynamics *TheEff = *it;
             TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
@@ -1051,6 +1062,19 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
             v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
+        }
+        
+        std::vector<DynEffector*>::iterator effectorIt;
+        for(effectorIt = this->bodyEffectors.begin(); effectorIt != this->bodyEffectors.end(); effectorIt++)
+        {
+            DynEffector *bodyEffector = *effectorIt;
+            bodyEffector->ComputeDynamics(&MassProps, &StateCurrent, t);
+            if(this->useTranslation){
+                v3Scale(1.0/this->compMass, bodyEffector->GetBodyForces(), LocalAccels_B);
+                m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
+                v3Add(dX + 3, LocalAccels_N, dX + 3);
+            }
+            v3Add(extSumTorque_B, bodyEffector->GetBodyTorques(), extSumTorque_B);
         }
 
         //! - Define some necessary tilde matrices
