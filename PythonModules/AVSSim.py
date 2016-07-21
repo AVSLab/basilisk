@@ -1918,7 +1918,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.setInertial3DSpin()
         self.setEulerRotation()
         self.setAttTrackingError()
-        self.setErrorDeadband()
+        #self.setErrorDeadband()
         self.setSimpleDeadband()
 
 
