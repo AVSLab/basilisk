@@ -50,6 +50,13 @@ namespace std {
    %template(interfaceVector) std::vector<SysInterface*>;
    %template (interfaceSingVector) std::vector<InterfaceDataExchange *>;
 }
+
+%inline %{
+    uint64_t getObjectAddress(void *variable) {
+        return (reinterpret_cast<uint64_t> (variable));
+    }
+%}
+
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
