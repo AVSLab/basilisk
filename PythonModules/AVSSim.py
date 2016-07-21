@@ -523,7 +523,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateGuidanceWithDeadband", int(1E9), True, ["self.modeRequest == 'deadbandGuid'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('velocityPointTask')"
                                 , "self.enableTask('trackingErrorTask')"
                                 , "self.enableTask('controlTask')"
                                 , "self.ResetTask('controlTask')"
@@ -1416,8 +1416,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.errorDeadbandData.inputGuidName = "sun_safe_att_err"
         #self.errorDeadbandData.inputGuidName = "nom_att_guid_out"
         self.errorDeadbandData.outputDataName = "db_att_guid_out"
-        self.errorDeadbandData.innerThresh = 4.0 * (math.pi / 180.)
-        self.errorDeadbandData.outerThresh = 17.5 * (math.pi / 180.)
+        self.errorDeadbandData.innerAttThresh = 4.0 * (math.pi / 180.)
+        self.errorDeadbandData.outerAttThresh = 17.5 * (math.pi / 180.)
+        self.errorDeadbandData.innerRateThresh = 0.1 * (math.pi / 180.)
+        self.errorDeadbandData.outerRateThresh = 0.1 * (math.pi / 180.)
         
     def setSimpleDeadband(self):
         self.simpleDeadbandData.inputGuidName = "sun_safe_att_err"
@@ -1459,7 +1461,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
         sigma_R0N = [0.1, 0.2, 0.3]
-        sigma_R0N = [0., 0., 0.]
+        #sigma_R0N = [0., 0., 0.]
 
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DData.sigma_R0N)
 
@@ -1506,6 +1508,50 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rasterManagerData.outputEulerSetName = "euler_angle_set"
         self.rasterManagerData.outputEulerRatesName = "euler_angle_rates"
 
+        def crossingNominal(alpha, totalMnvrTime):
+            t_raster = totalMnvrTime / 12.0
+            angleSetList = [
+                alpha, 0.0, 0.0,
+                -alpha, 0.0, 0.0,
+                0.0, 0.0, 0.0,
+                -alpha, -alpha, 0.0,
+                alpha, alpha, 0.0,
+                0.0, 0.0, 0.0,
+                alpha, -alpha, 0.0,
+                -alpha, alpha, 0.0,
+                0.0, 0.0, 0.0,
+                0.0, alpha, 0.0,
+                0.0, -alpha, 0.0
+            ]
+            angleRatesList = []
+            rasterTimeList = [
+                t_raster, t_raster, t_raster, t_raster
+                , t_raster, t_raster, t_raster, t_raster
+                , t_raster, t_raster, t_raster, t_raster
+            ]
+            return (angleSetList, angleRatesList, rasterTimeList)
+
+        def crossingRaster(alpha, offAlpha, totalMnvrTime):
+            t_raster = totalMnvrTime / 5.0
+            alphaDot = 2.0 * alpha / t_raster
+            t_offset = offAlpha / alphaDot
+            angleSetList = [
+                alpha + offAlpha, 0.0, 0.0,
+                -alpha - offAlpha, -alpha - offAlpha, 0.0,
+                alpha + offAlpha, -alpha - offAlpha, 0.0,
+                0.0, alpha + offAlpha, 0.0,
+            ]
+            angleRatesList = [
+                -alphaDot, 0.0, 0.0
+                , alphaDot, alphaDot, 0.0
+                , -alphaDot, alphaDot, 0.0
+                , 0.0, -alphaDot, 0.0
+            ]
+            rasterTimeList = [
+                t_raster + t_offset, t_raster + t_offset, t_raster + t_offset, t_raster + t_offset
+            ]
+            return (angleSetList, angleRatesList, rasterTimeList)
+
         def asteriskRaster(psi, theta, phiDot, t_mnvr):
             angleSetList = [
                 0.0, 0.0, 0.0,
@@ -1540,7 +1586,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             rasterTimeList = [
                 t_mnvr*2.0, t_mnvr, t_mnvr, t_mnvr
                 , t_mnvr, t_mnvr, t_mnvr, t_mnvr
-                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr
+                , t_mnvr, t_mnvr
             ]
 
             return (angleSetList, angleRatesList, rasterTimeList)
@@ -1586,14 +1633,20 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             return (angleSetList, angleRatesList, rasterTimeList)
 
 
-        psi = 24.0 * math.pi / 180.0
+        psi = 8.0 * math.pi / 180.0
         theta = 8.0 * math.pi / 180.0
         phiDot = 0.02 * math.pi / 180.0
         t_mnvr = 20.0 * 18
-        (angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
+        #(angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
         #(angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
-
         #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
+
+        alpha = 8.0 * math.pi / 180.0
+        offAlpha = 0.18* alpha
+        totalGuidSimTime = 60 * 20 * 4
+        (angleSetList, angleRatesList, rasterTimeList) = crossingRaster(alpha, offAlpha, totalGuidSimTime)
+        #(angleSetList, angleRatesList, rasterTimeList) = crossingNominal(alpha, totalGuidSimTime)
+
 
         SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
         SimulationBaseClass.SetCArray(angleRatesList, 'double', self.rasterManagerData.scanningRates)
@@ -1613,7 +1666,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.eulerRotationData.outputEulerRatesName = "euler_rates_output"
 
         # SAND-ALONE
-        #angleRates = np.array([0.0, 0.0, 0.0]) * mc.D2R
+        #angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
         #SimulationBaseClass.SetCArray(angleRates, 'double', self.eulerRotationData.angleRates)
 
         # RASTER MANEUVER
