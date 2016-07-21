@@ -421,7 +421,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
         std::cerr << " who is not on access list." << std::endl;
     }
     
-    exIt->exchangeList.insert(std::pair<int64_t, int64_t>
+    exIt->exchangeList.insert(std::pair<long int, long int>
         (MsgHdr->previousPublisher, moduleID));
     
     uint8_t *ReadBuffer = &(messageStorage->messageStorage.
@@ -549,7 +549,7 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
     return(outputNames);
 }
 
-std::set<std::pair<int64_t, int64_t>>
+std::set<std::pair<long int, long int>>
     SystemMessaging::getMessageExchangeData(uint64_t messageID)
 {
     std::vector<MessageExchangeData>::iterator it;

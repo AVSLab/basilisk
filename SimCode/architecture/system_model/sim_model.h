@@ -62,8 +62,8 @@ public:
     void populateMessageHeader(std::string messageName,
         MessageHeaderData* headerOut); //!< Get header data associated with msg
     std::set<std::string> getUniqueMessageNames();
-    std::set<std::pair<int64_t, int64_t>> getMessageExchangeData(std::string messageName,
-        std::set<uint64_t> procList  = std::set<uint64_t>());
+    std::set<std::pair<long int, long int>> getMessageExchangeData(std::string messageName,
+        std::set<unsigned long> procList  = std::set<unsigned long>());
     void terminateSimulation();
     
 public:

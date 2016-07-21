@@ -12,6 +12,6 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(StringSet) set<string>;
-   %template(intSet) set<uint64_t>;
+   %template(intSet) set<unsigned long>;
    %template(ConstCharVector) vector<const char*>;
 }
