@@ -92,7 +92,6 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("OrbitalElements", int(1E9))
     TheAVSSim.AddVariableForLogging('CSSWlsEst.numActiveCss', int(1E8))
-    TheAVSSim.AddVariableForLogging('errorDeadband.error', int(1E8))
     TheAVSSim.AddVariableForLogging('simpleDeadband.wasControlOff', int(1E8))
     TheAVSSim.AddVariableForLogging('simpleDeadband.attError', int(1E8))
     TheAVSSim.AddVariableForLogging('simpleDeadband.rateError', int(1E8))
@@ -162,19 +161,6 @@ if __name__ == "__main__":
     plt.ylabel('Torque [N m]')
     plt.title('Control Torque')
 
-
-    def errorDeadbandMode():
-        dbError = TheAVSSim.GetLogVariableData('errorDeadband.error')
-        plt.figure(5)
-        plt.plot(dbError[:, 0] * 1.0E-9, dbError[:, 1] * 180 / math.pi)
-        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh, color='green')
-        plt.title('FSW Estimated Error')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Angle [deg]')
-        plt.axhline(TheAVSSim.errorDeadbandData.innerThresh * 180.0 / math.pi, color='green')
-        plt.axhline(TheAVSSim.errorDeadbandData.outerThresh * 180.0 / math.pi, color='red')
-        plt.legend(['error', 'inner thresh', 'outer thresh', 'control (0=ON, 1=OFF)'])
-
     def simpleDeadbandMode():
         attError = TheAVSSim.GetLogVariableData('simpleDeadband.attError')
         rateError = TheAVSSim.GetLogVariableData('simpleDeadband.rateError')
@@ -195,9 +181,6 @@ if __name__ == "__main__":
         plt.legend(['$\sigma$ [deg]','$\omega$ [deg/s]',
                     '$\sigma_{low}$', '$\omega_{low}$', '$\sigma_{up}$', '$\omega_{up}$',
                     'control (0=ON, 1=OFF)'])
-
-    # Uncomment next line if the deadbanding you are using is errorDeadband and you want to see control performance
-    #errorDeadbandMode()
 
     # Uncomment next line if the deadbanding you are using is simpleDeadband and you want to see control performance
     simpleDeadbandMode()
