@@ -93,7 +93,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, 
                 sizeof(attGuidOut), (void*) &(ConfigData->attGuidOut), moduleID);
     
     /*! - Evaluate average simple in attitude and rates */
-    ConfigData->attError = 4 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
+    ConfigData->attError = 4.0 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
     ConfigData->rateError = v3Norm(ConfigData->attGuidOut.omega_BR_B);
     
     /*! - Check whether control should be ON or OFF */

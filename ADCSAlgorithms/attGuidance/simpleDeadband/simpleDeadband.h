@@ -30,21 +30,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double innerAttThresh;
-    double outerAttThresh;
-    double innerRateThresh;
-    double outerRateThresh;
-    uint32_t wasControlOff;
-    double attError;
-    double rateError;
+    double innerAttThresh;              /*!< inner limit for sigma (attitude) errors */
+    double outerAttThresh;              /*!< outer limit for sigma (attitude) errors */
+    double innerRateThresh;             /*!< inner limit for omega (rate) errors */
+    double outerRateThresh;             /*!< outer limit for omega (rate) errors */
+    uint32_t wasControlOff;             /*!< boolean variable to keep track of the last Control status (ON/OFF) */
+    double attError;                    /*!< current scalar attitude error */
+    double rateError;                   /*!< current scalar rate error */
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
+    char outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message*/
     char inputGuidName[MAX_STAT_MSG_LENGTH];         /*!< The name of the guidance reference Input message */
     int32_t outputGuidID;                            /*!< ID for the outgoing message */
     int32_t inputGuidID;                             /*!< ID for the incoming guidance reference message */
 
-    attGuidOut attGuidOut;                          /*!< copy of the output message */
+    attGuidOut attGuidOut;                           /*!< copy of the output message */
 
 }simpleDeadbandConfig;
 
