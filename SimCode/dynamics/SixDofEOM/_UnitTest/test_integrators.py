@@ -34,6 +34,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import spice_interface
 import six_dof_eom
+import integrators
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
@@ -127,11 +128,11 @@ def unitIntegratorsTestFunction(show_plots, useRK4, useEuler):
     scSim.AddModelToTask(unitTaskName, VehDynObject)
 
     if useRK4:
-        rk4Int = six_dof_eom.rk4Integrator(VehDynObject)
+        rk4Int = integrators.rk4Integrator(VehDynObject)
         VehDynObject.setIntegrator(rk4Int)
 
     if useEuler:
-        eulerInt = six_dof_eom.eulerIntegrator(VehDynObject)
+        eulerInt = integrators.eulerIntegrator(VehDynObject)
         VehDynObject.setIntegrator(eulerInt)
 
     scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
