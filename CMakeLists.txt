@@ -69,7 +69,7 @@ function(create_symlinks destinationPath)
                         ERROR_VARIABLE output)
 
         if (NOT ${result} EQUAL 0)
-        #    message(FATAL_ERROR "Could not create symbolic link for: ${target} --> ${output}")
+            message(FATAL_ERROR "Could not create symbolic link for: ${target} --> ${output}")
         endif()
 
     endforeach(filePath)
