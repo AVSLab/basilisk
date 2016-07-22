@@ -14,29 +14,21 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module six_dof_eom
+%module integrators
 #pragma SWIG nowarn=362
 %{
-   #include "six_dof_eom.h"
+   #include "../_GeneralModuleFiles/integrator.h"
+   #include "../_GeneralModuleFiles/rk4Integrator.h"
    #include "eulerIntegrator.h"
+   #include "utilities/sys_model.h"
 %}
 
 %include "swig_common_model.i"
 
-// Instantiate templates used by example
-namespace std {
-   %template(GravityBodyDataVector) vector<GravityBodyData>;
-   %template(HingedRigidBodyCollection) std::vector<HingedRigidBodies *>;
-   %template(FuelTankCollection) std::vector<FuelTank *>;
-}
-
-
-%include "../utilities/coeffLoader.h"
-%include "../utilities/sphericalHarmonics.h"
 %include "sys_model.h"
-%include "dyn_effector.h"
-%include "../_GeneralModuleFiles/dynObject.h"
-%include "six_dof_eom.h"
+%include "../_GeneralModuleFiles/integrator.h"
+%include "../_GeneralModuleFiles/rk4Integrator.h"
+%include "eulerIntegrator.h"
 
 %pythoncode %{
 import sys

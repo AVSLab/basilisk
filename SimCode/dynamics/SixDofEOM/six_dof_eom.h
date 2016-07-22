@@ -28,9 +28,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 #include "dynamics/HingedRigidBodies/hinged_rigid_bodies.h"
 #include "dynamics/FuelTank/fuel_tank.h"
-#include "dynObject.h"
-#include "integrator.h"
-#include "rk4Integrator.h"
+#include "dynamics/_GeneralModuleFiles/dynObject.h"
+#include "dynamics/_GeneralModuleFiles/integrator.h"
+#include "dynamics/_GeneralModuleFiles/rk4Integrator.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
