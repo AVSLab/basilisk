@@ -16,15 +16,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-<<<<<<< fac3225aed8148c4ba1d9fd92463b3ebc48ce1db
-#   Module Name:        fswModuleTemplateParametrized
-#   Author:             (First Name) (Last Name)
-#   Creation Date:      Month Day, Year
-=======
 #   Module Name:        thrusterForceSimple
 #   Author:             Hanspeter Schaub
 #   Creation Date:      July 4, 2016
->>>>>>> [AS-152] had a merge issue when pulling in latest develop and rebasing. Had to re-apply the test_thrusterForceSimpleParameterized.py changes by hand.
 #
 
 import pytest
