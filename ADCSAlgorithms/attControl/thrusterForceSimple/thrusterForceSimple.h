@@ -31,14 +31,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double   controlAxes_B[9];                      /*!< []      array of the control unit axes */
+    double   controlAxes_B[3*3];                    /*!< []      array of the control unit axes */
     double   rThruster_B[MAX_EFF_CNT][3];           /*!< [m]     local copy of the thruster locations */
     double   gtThruster_B[MAX_EFF_CNT][3];          /*!< []      local copy of the thruster force unit direction vectors */
     uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
-    double   D[3][MAX_EFF_CNT];                     /*!< [m]     mapping matrix from thruster forces to body torque */
-    double   Gt[3][MAX_EFF_CNT];                    /*!< []      matrix containing the thrust direction unit vectors gHat_t_i */
-    double   DTDDTinv[MAX_EFF_CNT][3];              /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
     int32_t  outputMsgID;                           /*!< ID for the outgoing message */
@@ -50,7 +47,6 @@ typedef struct {
     int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
     vehicleConfigData   sc;                         /*!< spacecraft configuration message */
     double   epsilon;
-    double   Lr_B[3];                               /*!< [Nm]    commanded ADCS control torque */
 
     vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
 

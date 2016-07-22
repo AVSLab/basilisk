@@ -204,6 +204,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
 
+    moduleWrap.Reset(0)
+
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
