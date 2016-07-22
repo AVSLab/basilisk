@@ -103,6 +103,7 @@ public:
     std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
     std::string InputCmds;                                      //!< -- message used to read command inputs
     std::string OutputDataString;                               //!< -- port to use for output data
+    std::string inputVehProps;                                  //!< [-] Input mass properties of vehicle
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
     std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels

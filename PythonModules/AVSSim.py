@@ -926,6 +926,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
         self.rwDynObject.ModelTag = "ReactionWheels"
+        self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
         RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
         SimulationBaseClass.SetCArray([0.8, 0.8, 1.79070], 'double', RW1.r_S)
