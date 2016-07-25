@@ -22,14 +22,14 @@ def evalParsedList(list):
     for methodName in list:
         methodObject = eval('sys.modules["' + module + '"].' + methodName)
         objectSize = sys.getsizeof(methodObject)
-        #if methodObject.__class__.__basicsize__== 48:
-        if objectSize == 48:
+        if objectSize == 48: # size of SwigPyObject
             print methodName
 
 # ----------------------------- MAIN ----------------------------- #
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     taskIdxList = [10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
+
     for i_task in taskIdxList:
         print 'Task Index = ', i_task
         task = TheAVSSim.TaskList[i_task]
@@ -41,7 +41,6 @@ if __name__ == "__main__":
             dirList = dir(sysMod)
             parsed_dirList = parseSwigVars(dirList)
             evalParsedList(parsed_dirList)
-            #evalParsedList(dirList)
             print '\n'
 
 
