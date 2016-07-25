@@ -546,9 +546,9 @@ def executeGuidance(TheAVSSim):
     #singleTest('celTwoBodyPoint')
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
     #singleTest('inertial3DSpin')
-    #singleTest('eulerRotation')
+    singleTest('eulerRotation')
     #singleTest('rasterMnvr')
-    singleTest('deadbandGuid')
+    #singleTest('deadbandGuid')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -563,10 +563,10 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("euler_set_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("euler_rates_output", int(1E9))
 
-    TheAVSSim.VehDynObject.GravData[0].IsCentralBody = False
-    TheAVSSim.VehDynObject.GravData[0].IsDisplayBody = False
-    TheAVSSim.VehDynObject.GravData[2].IsCentralBody = True
-    TheAVSSim.VehDynObject.GravData[2].IsDisplayBody = True
+    TheAVSSim.VehDynObject.gravData[0].IsCentralBody = False
+    TheAVSSim.VehDynObject.gravData[0].IsDisplayBody = False
+    TheAVSSim.VehDynObject.gravData[2].IsCentralBody = True
+    TheAVSSim.VehDynObject.gravData[2].IsDisplayBody = True
     TheAVSSim.SpiceObject.zeroBase = "mars"
     TheAVSSim.SpiceObject.referenceBase = "MARSIAU"
     TheAVSSim.VehOrbElemObject.mu = TheAVSSim.MarsGravBody.mu
