@@ -982,6 +982,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RW4.U_s = rwStaticImbalance
         RW4.U_d = rwDynamicImbalance
         self.rwDynObject.AddReactionWheel(RW4)
+    
+        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
@@ -1222,7 +1224,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.VehDynObject.addThrusterSet(self.ACSThrusterDynObject)
         self.VehDynObject.addThrusterSet(self.DVThrusterDynObject)
         # self.VehDynObject.addBodyEffector(self.radiationPressure)
-        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
         self.VehDynObject.useTranslation = True
         self.VehDynObject.useRotation = True
 

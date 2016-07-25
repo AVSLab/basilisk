@@ -177,7 +177,7 @@ private:
     uint32_t NStates;                 //!<        Count on states available
     //std::vector<DynEffector*> BodyEffectors;  //!<  Vector of effectors on body
     std::vector<ThrusterDynamics *> thrusters; //!< (-) Vector of thrusters in body
-	std::vector<ReactionWheelDynamics *> reactWheels; //!< (-) Vector of RW in body
+	std::vector<ReactionWheelConfigData *> reactWheels; //!< (-) Vector of RW in body
     integrator* Integrator;            //!<          Integrator used to integrate the EOM
     bool DefaultIntegrator;
 };
