@@ -41,8 +41,9 @@ public:
     void SelfInit();
     void UpdateState(uint64_t CurrentSimNanos);
 	void Reset(uint64_t CurrentSimNanos);
+    uint64_t getSelfInitAddress() {return reinterpret_cast<uint64_t>(*AlgSelfInit);}
     
-private:
+public:
     void *DataPtr;
     AlgPtr AlgSelfInit;
     AlgPtr AlgCrossInit;

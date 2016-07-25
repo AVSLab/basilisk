@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
+#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
@@ -88,6 +89,11 @@ void ReactionWheelDynamics::SelfInit()
  */
 void ReactionWheelDynamics::CrossInit()
 {
+
+    int64_t propsID;
+    SingleMessageHeader localHeader;
+    MassPropsData localProps;
+
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
@@ -97,6 +103,34 @@ void ReactionWheelDynamics::CrossInit()
     {
         std::cerr << "WARNING: Did not find a valid message with name: ";
 		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
+    }
+    
+    propsID = SystemMessaging::GetInstance()->subscribeToMessage(inputVehProps,
+        sizeof(MassPropsData), moduleID);
+    SystemMessaging::GetInstance()->ReadMessage(propsID, &localHeader,
+        sizeof(MassPropsData), reinterpret_cast<uint8_t*>(&localProps));
+    std::vector<ReactionWheelConfigData>::iterator it;
+    for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+    {
+        if (v3Norm(it->gsHat_S) > 0.01) {
+            m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gsHat_S,  it->gsHat_B);
+        } else {
+            std::cerr <<
+               "Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
+        }
+        if (it->usingRWJitter) {
+            if (v3Norm(it->gtHat0_S) > 0.01) {
+                m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gtHat0_S, it->gtHat0_B);
+            } else {
+                std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
+            }
+            if (v3Norm(it->ggHat0_S) > 0.01) {
+                m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->ggHat0_S,  it->ggHat0_B);
+            } else {
+                std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
+            }
+        }
+        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->r_S, it->r_B);
     }
 }
 

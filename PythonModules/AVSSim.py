@@ -878,6 +878,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
         self.rwDynObject.ModelTag = "ReactionWheels"
+        self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
         RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
         SimulationBaseClass.SetCArray([0.8, 0.8, 1.79070], 'double', RW1.r_S)
@@ -933,6 +934,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RW4.U_s = rwStaticImbalance
         RW4.U_d = rwDynamicImbalance
         self.rwDynObject.AddReactionWheel(RW4)
+    
+        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
@@ -1173,7 +1176,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.VehDynObject.addThrusterSet(self.ACSThrusterDynObject)
         self.VehDynObject.addThrusterSet(self.DVThrusterDynObject)
         # self.VehDynObject.addBodyEffector(self.radiationPressure)
-        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
         self.VehDynObject.useTranslation = True
         self.VehDynObject.useRotation = True
 

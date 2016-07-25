@@ -41,15 +41,24 @@ namespace std {
    %template(DoubleVector) vector<double>;
    %template(StringVector) vector<string>;
    %template(StringSet) set<string>;
-   %template(intSet) set<uint64_t>;
+   %template(intSet) set<unsigned long>;
    %template(ConstCharVector) vector<const char*>;
    %template(messsageLogVector) vector<messageLogContainer>;
+   %template() std::pair<long int, long int>;
+   %template() std::pair<long long int, long long int>;
    %template() std::pair<int64_t,int64_t>;
-   %template(exchangeSet) std::set<std::pair<int64_t, int64_t>>;
+   %template(exchangeSet) std::set<std::pair<long int, long int>>;
    %template(modelPriPair) std::vector<ModelPriorityPair>;
    %template(interfaceVector) std::vector<SysInterface*>;
    %template (interfaceSingVector) std::vector<InterfaceDataExchange *>;
 }
+
+%inline %{
+    uint64_t getObjectAddress(void *variable) {
+        return (reinterpret_cast<uint64_t> (variable));
+    }
+%}
+
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"

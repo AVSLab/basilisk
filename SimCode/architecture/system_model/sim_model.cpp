@@ -331,11 +331,11 @@ void SimModel::terminateSimulation()
     @return Write/Read pairs for the entire simulation run
     @param messageName The name of the message to find pairs for
 */
-std::set<std::pair<int64_t, int64_t>>
+std::set<std::pair<long int, long int>>
 SimModel::getMessageExchangeData(std::string messageName,
-     std::set<uint64_t> procList)
+     std::set<unsigned long> procList)
 {
-    std::set<std::pair<int64_t, int64_t>> returnPairs;
+    std::set<std::pair<long int, long int>> returnPairs;
     bool messageFound = false;
     for(uint64_t i=0; i<SystemMessaging::GetInstance()->getProcessCount(); i++)
     {
@@ -349,7 +349,7 @@ SimModel::getMessageExchangeData(std::string messageName,
             FindMessageID(messageName);
         if(messageID >= 0)
         {
-            std::set<std::pair<int64_t, int64_t>> localPairs;
+            std::set<std::pair<long int, long int>> localPairs;
             localPairs =SystemMessaging::GetInstance()->
                 getMessageExchangeData(messageID);
             returnPairs.insert(localPairs.begin(), localPairs.end());

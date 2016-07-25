@@ -51,7 +51,7 @@ typedef struct {
 }AllowAccessData;
 
 typedef struct {
-    std::set<std::pair<int64_t, int64_t>> exchangeList; // (-) List of modules allowed to access message
+    std::set<std::pair<long int, long int>> exchangeList; // (-) List of modules allowed to access message
 }MessageExchangeData;
 
 typedef struct {
@@ -107,7 +107,7 @@ public:
     int64_t findMessageBuffer(std::string bufferName);
     std::set<std::string> getUnpublishedMessages();
     std::set<std::string> getUniqueMessageNames();
-    std::set<std::pair<int64_t, int64_t>>
+    std::set<std::pair<long int, long int>>
         getMessageExchangeData(uint64_t messageID);
     void clearMessaging();
     bool obtainWriteRights(uint64_t messageID, int64_t moduleID);
