@@ -17,7 +17,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
-#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>

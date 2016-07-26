@@ -26,6 +26,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  Declare common ADCS macros
  */
 #define NANO2SEC        1.0E-9
+#define RECAST3X3       (double (*)[3])
+#define RECAST2x2       (double (*)[2])
 
 
 #endif
