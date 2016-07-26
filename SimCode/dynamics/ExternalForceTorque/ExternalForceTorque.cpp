@@ -26,8 +26,8 @@
 overriden by the user.*/
 ExternalForceTorque::ExternalForceTorque()
 {
-    memset(force_N, 0x0, 3*sizeof(double));
-    memset(torque_B, 0x0, 3*sizeof(double));
+    memset(this->force_B, 0x0, 3*sizeof(double));
+    memset(this->torque_B, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -76,7 +76,7 @@ void ExternalForceTorque::readInputs()
     return;
 }
 
-/*! This method is used to compute all the dynamical effects for the thruster set.
+/*! This method is used to compute all the dynamical effects.
 It is an inherited method from the DynEffector class and is designed to be called
 by the dynamics plant for the simulation.  It uses the thruster force magnitude
 computed for the current time as well as the current vehicle state and mass
@@ -89,10 +89,8 @@ dynamics
 */
 void ExternalForceTorque::ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime)
 {
-
-   
-    v3Copy(force_N, BodyForce);
-    v3Copy(torque_B, BodyTorque);
+    v3Copy(this->force_B, BodyForce);
+    v3Copy(this->torque_B, BodyTorque);
 }
 
 void ExternalForceTorque::UpdateState(uint64_t CurrentSimNanos)
