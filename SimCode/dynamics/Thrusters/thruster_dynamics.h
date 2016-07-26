@@ -136,7 +136,7 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     
 private:
-    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
+//    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
     std::vector<uint64_t> thrusterOutMsgIds;                      //!< -- Message ID of each thruster
     std::vector<ThrusterOutputData> thrusterOutBuffer; //!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
