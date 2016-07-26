@@ -53,7 +53,7 @@ import macros
 import hinged_rigid_bodies
 import fuel_tank
 import vehicleConfigData
-
+import ExternalForceTorque
 
 
 
@@ -67,30 +67,35 @@ import vehicleConfigData
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh", [
-    (True, True, False, False, False, False, False),
-    (False, True, False, False, False, False, False),
-    (True, False, False, False, False, False, False),
-    (False, True, True, False, False, False, False),
-    (False, True, True, True, False, False, False),
-    (True, True, True, False, False, False, False),
-    (True, True, True, True, False, False, False),
-    (True, True, False, False, True, False, False),
-    (True, True, False, False, False, True, False),
-    (True, True, False, False, False, False, True),
-    (True, True, False, False, False, True, True)
+@pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHinged,"\
+                         " useFuelSlosh, useExtForceTorque", [
+    (True, True, False, False, False, False, False, False),
+    (False, True, False, False, False, False, False, False),
+    (True, False, False, False, False, False, False, False),
+    (False, True, True, False, False, False, False, False),
+    (False, True, True, True, False, False, False, False),
+    (True, True, True, False, False, False, False, False),
+    (True, True, True, True, False, False, False, False),
+    (True, True, False, False, True, False, False, False),
+    (True, True, False, False, False, True, False, False),
+    (True, True, False, False, False, False, True, False),
+    (True, True, False, False, False, True, True, False),
+    (True, True, False, False, False, False, False, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh):
+def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged,
+                           useFuelSlosh, useExtForceTorque):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh)
+            show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged,
+            useFuelSlosh, useExtForceTorque)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged, useFuelSlosh):
+def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW, useJitter, useThruster, useHinged,
+                                  useFuelSlosh, useExtForceTorque):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -174,6 +179,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         ThrustMessage.OnTimeRequest = 10.0
         scSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
         scSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
+
+    if useExtForceTorque:
+        extFTObject = ExternalForceTorque.ExternalForceTorque()
+        extFTObject.ModelTag = "externalDisturbance"
+        extFTObject.inputVehProps = "spacecraft_mass_props"
+        SimulationBaseClass.SetCArray([1,2,3], 'double', extFTObject.force_B)
+        SimulationBaseClass.SetCArray([-1,1,-1], 'double', extFTObject.torque_B)
+        VehDynObject.addBodyEffector(extFTObject)
 
     if useRW:
         # add RW devices
@@ -375,6 +388,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511736e+06,   5.52480249e+06,   5.50155640e+06]
                         ,[-6.78159897e+06,   4.94686538e+06,   5.48674157e+06]
                         ]
+        elif useRotation == True and useExtForceTorque == True:
+            truePos = [
+                          [-4.63213916e+06, 7.05701699e+06, 5.35807994e+06]
+                        , [-5.21733880e+06, 6.58291016e+06, 5.43708908e+06]
+                        , [-5.77264774e+06, 6.07105086e+06, 5.48494463e+06]
+                        , [-6.29495833e+06, 5.52444552e+06, 5.50144157e+06]
+                        , [-6.78136423e+06, 4.94628599e+06, 5.48655395e+06]
+                    ]
+
         elif useThruster: # thrusters with no RW
             truePos = [
                         [-4.63215747e+06,   7.05703053e+06,   5.35808358e+06]
@@ -604,6 +626,16 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[1.2602816304352135e+02, -1.8798079656437807e+02, 1.4775381108506704e+02]
                         ]
             checkRotAngMom = True
+
+        elif useExtForceTorque == True:
+            trueSigma = [
+                          [1.35231621e-01,  3.41155419e-01, -6.64963888e-01]
+                        , [1.45248859e-01, -6.05831978e-01,  5.45084605e-01]
+                        , [2.96168976e-01,  3.52365350e-01, -2.29346879e-01]
+                        , [2.57514759e-01, -5.93356106e-01,  5.54508640e-01]
+                        , [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
+                        ]
+            
         else: # natural dynamics without RW or thrusters
             trueSigma = [
                         [-3.38921912e-02,  -3.38798472e-01,   5.85609015e-01]
@@ -696,6 +728,7 @@ if __name__ == "__main__":
                            False,        # useJitter
                            False,       # useThruster
                            True,       # useHinged
-                           True       # useFuelSlosh
+                           True,       # useFuelSlosh
+                           False        # useExtForceTorque
                            )
 
