@@ -42,6 +42,9 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
 	void Reset(uint64_t CurrentSimNanos);
     uint64_t getSelfInitAddress() {return reinterpret_cast<uint64_t>(*AlgSelfInit);}
+    uint64_t getCrossInitAddress() {return reinterpret_cast<uint64_t>(*AlgCrossInit);}
+    uint64_t getResetAddress() {return reinterpret_cast<uint64_t>(*AlgReset);}
+    uint64_t getUpdateAddress() {return reinterpret_cast<uint64_t>(*AlgUpdate);}
     
 public:
     void *DataPtr;

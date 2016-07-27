@@ -203,21 +203,24 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                  cssComm.Update_cssProcessTelem,
                                                  cssComm.SelfInit_cssProcessTelem,
                                                  cssComm.CrossInit_cssProcessTelem)
-        self.CSSAlgWrap.ModelTag = "cssSensorDecode"
+        #self.CSSAlgWrap.ModelTag = "cssSensorDecode"
+        self.CSSAlgWrap.ModelTag = self.CSSDecodeFSWConfig.__module__
 
         self.IMUCommData = imuComm.IMUConfigData()
         self.IMUCommWrap = alg_contain.AlgContain(self.IMUCommData,
                                                   imuComm.Update_imuProcessTelem,
                                                   imuComm.SelfInit_imuProcessTelem,
                                                   imuComm.CrossInit_imuProcessTelem)
-        self.IMUCommWrap.ModelTag = "imuSensorDecode"
+        #self.IMUCommWrap.ModelTag = "imuSensorDecode"
+        self.IMUCommWrap.ModelTag = self.IMUCommData.__module__
 
         self.STCommData = stComm.STConfigData()
         self.STCommWrap = alg_contain.AlgContain(self.STCommData,
                                                  stComm.Update_stProcessTelem,
                                                  stComm.SelfInit_stProcessTelem,
                                                  stComm.CrossInit_stProcessTelem)
-        self.STCommWrap.ModelTag = "stSensorDecode"
+        #self.STCommWrap.ModelTag = "stSensorDecode"
+        self.STCommWrap.ModelTag = self.STCommData.__module__
 
         self.CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
         self.CSSWlsWrap = alg_contain.AlgContain(self.CSSWlsEstFSWConfig,
