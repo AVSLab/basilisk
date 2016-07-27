@@ -69,18 +69,19 @@ import ExternalForceTorque
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useTranslation, useRotation, useRW, useJitter, useThruster, useHinged,"\
                          " useFuelSlosh, useExtForceTorque", [
-    (True, True, False, False, False, False, False, False),
-    (False, True, False, False, False, False, False, False),
-    (True, False, False, False, False, False, False, False),
-    (False, True, True, False, False, False, False, False),
-    (False, True, True, True, False, False, False, False),
-    (True, True, True, False, False, False, False, False),
-    (True, True, True, True, False, False, False, False),
-    (True, True, False, False, True, False, False, False),
-    (True, True, False, False, False, True, False, False),
-    (True, True, False, False, False, False, True, False),
-    (True, True, False, False, False, True, True, False),
-    (True, True, False, False, False, False, False, True)
+    (True, True, False, False, False, False, False, 0),
+    (False, True, False, False, False, False, False, 0),
+    (True, False, False, False, False, False, False, 0),
+    (False, True, True, False, False, False, False, 0),
+    (False, True, True, True, False, False, False, 0),
+    (True, True, True, False, False, False, False, 0),
+    (True, True, True, True, False, False, False, 0),
+    (True, True, False, False, True, False, False, 0),
+    (True, True, False, False, False, True, False, 0),
+    (True, True, False, False, False, False, True, 0),
+    (True, True, False, False, False, True, True, 0),
+    (True, True, False, False, False, False, False, 1),
+    (True, True, False, False, False, False, False, 2)
 ])
 
 # provide a unique test method name, starting with test_
@@ -180,12 +181,15 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         scSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
         scSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
 
-    if useExtForceTorque:
+    if useExtForceTorque>0:
         extFTObject = ExternalForceTorque.ExternalForceTorque()
         extFTObject.ModelTag = "externalDisturbance"
         extFTObject.inputVehProps = "spacecraft_mass_props"
-        SimulationBaseClass.SetCArray([1,2,3], 'double', extFTObject.extForce_B)
-        SimulationBaseClass.SetCArray([-1,1,-1], 'double', extFTObject.extTorque_B)
+        SimulationBaseClass.SetCArray([-1, 1, -1], 'double', extFTObject.extTorque_B)
+        if useExtForceTorque == 1:
+            SimulationBaseClass.SetCArray([1,2,3], 'double', extFTObject.extForce_B)
+        else:
+            SimulationBaseClass.SetCArray([-1, -0.5, 0.5], 'double', extFTObject.extForce_N)
         VehDynObject.addBodyEffector(extFTObject)
 
     if useRW:
@@ -388,13 +392,22 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ,[-6.29511736e+06,   5.52480249e+06,   5.50155640e+06]
                         ,[-6.78159897e+06,   4.94686538e+06,   5.48674157e+06]
                         ]
-        elif useRotation == True and useExtForceTorque == True:
+        elif useRotation == True and useExtForceTorque == 1:
             truePos = [
                           [-4.63213916e+06, 7.05701699e+06, 5.35807994e+06]
                         , [-5.21733880e+06, 6.58291016e+06, 5.43708908e+06]
                         , [-5.77264774e+06, 6.07105086e+06, 5.48494463e+06]
                         , [-6.29495833e+06, 5.52444552e+06, 5.50144157e+06]
                         , [-6.78136423e+06, 4.94628599e+06, 5.48655395e+06]
+                    ]
+
+        elif useRotation == True and useExtForceTorque == 2:
+            truePos = [
+                          [-4.63216819e+06, 7.05702511e+06, 5.35808835e+06]
+                        , [-5.21743009e+06, 6.58296641e+06, 5.43713249e+06]
+                        , [-5.77283297e+06, 6.07119737e+06, 5.48504872e+06]
+                        , [-6.29527082e+06, 5.52472739e+06, 5.50163359e+06]
+                        , [-6.78183900e+06, 4.94674963e+06, 5.48686274e+06]
                     ]
 
         elif useThruster: # thrusters with no RW
@@ -627,7 +640,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
                         ]
             checkRotAngMom = True
 
-        elif useExtForceTorque == True:
+        elif useExtForceTorque > 0:
             trueSigma = [
                           [1.35231621e-01,  3.41155419e-01, -6.64963888e-01]
                         , [1.45248859e-01, -6.05831978e-01,  5.45084605e-01]
@@ -727,8 +740,8 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHinged
-                           True,       # useFuelSlosh
-                           False        # useExtForceTorque
+                           False,       # useHinged
+                           False,       # useFuelSlosh
+                           0        # useExtForceTorque
                            )
 

@@ -48,8 +48,9 @@ class ExternalForceTorque: public SysModel, public DynEffector{
     private:
     
     public:
-    double extForce_B[3];               //!< N  external force in body frame components
-    double extTorque_B[3];              //!< Nm external torque in body frame components
+    double extForce_N[3];               //!< [N]  external force in inertial  frame components
+    double extForce_B[3];               //!< [N]  external force in body frame components
+    double extTorque_B[3];              //!< [Nm] external torque in body frame components
 
     private:
 };

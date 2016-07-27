@@ -843,6 +843,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double LocalAccels_B[3];
     double LocalAccels_N[3];
     double extSumTorque_B[3];   /* net external torque acting on the body in B-frame components */
+    std::vector<DynEffector*>::iterator effectorIt;
     int    i;
 	double *Omegas;             /* pointer to the RW speeds */
     double *omegaDot_BN_B;      /* pointer to inertial body angular acceleration vector in B-frame components */
@@ -970,6 +971,15 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     //! - Zero the non-conservative accel
     memset(NonConservAccelBdy, 0x0, 3*sizeof(double));
 
+    /* loop over the body effectors to call their individual ComputeDynamics() function.
+       This avoids this function being called twice below */
+    for(effectorIt = this->bodyEffectors.begin(); effectorIt != this->bodyEffectors.end(); effectorIt++)
+    {
+        DynEffector *bodyEffector = *effectorIt;
+        bodyEffector->ComputeDynamics(&MassProps, &StateCurrent, t);
+    }
+
+
     v3SetZero(rDDot_CN_N);
     if (this->useTranslation){
         //! - compute inertial velocity
@@ -1001,6 +1011,18 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             }
             
         }
+
+        //! - Loop over the vector of body Effectors and compute net force given in inertial N frame
+        //! - Scale the force/torque by the mass properties inverse to get accels
+        for(effectorIt = this->bodyEffectors.begin(); effectorIt != this->bodyEffectors.end(); effectorIt++)
+        {
+            DynEffector *bodyEffector = *effectorIt;
+            if(this->useTranslation){
+                v3Scale(1.0/this->compMass, bodyEffector->GetBodyForces_N(), LocalAccels_N);
+                v3Add(dX + 3, LocalAccels_N, dX + 3);
+            }
+        }
+
     }
 
     if(this->useRotation){
@@ -1026,7 +1048,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         memcpy(MassProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
         
         //! - Loop over the vector of thrusters and compute body force/torque
-        //! - Convert the body forces to inertial for inclusion in dynamics
+        //! - Convert the B-frame body forces to inertial frame for inclusion in dynamics
         //! - Scale the force/torque by the mass properties inverse to get accels
         std::vector<ThrusterDynamics*>::iterator it;
         for(it = thrusters.begin(); it != thrusters.end(); it++)
@@ -1034,24 +1056,25 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             ThrusterDynamics *TheEff = *it;
             TheEff->ComputeDynamics(&MassProps, &StateCurrent, t);
             if(this->useTranslation){
-                v3Scale(1.0/this->compMass, TheEff->GetBodyForces(), LocalAccels_B);
+                v3Scale(1.0/this->compMass, TheEff->GetBodyForces_B(), LocalAccels_B);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
-            v3Add(extSumTorque_B, TheEff->GetBodyTorques(), extSumTorque_B);
+            v3Add(extSumTorque_B, TheEff->GetBodyTorques_B(), extSumTorque_B);
         }
-        
-        std::vector<DynEffector*>::iterator effectorIt;
+
+        //! - Loop over the vector of body Effectors and compute net force/torque
+        //! - Convert the B-frame body forces to inertial frame for inclusion in dynamics
+        //! - Scale the force/torque by the mass properties inverse to get accels
         for(effectorIt = this->bodyEffectors.begin(); effectorIt != this->bodyEffectors.end(); effectorIt++)
         {
             DynEffector *bodyEffector = *effectorIt;
-            bodyEffector->ComputeDynamics(&MassProps, &StateCurrent, t);
             if(this->useTranslation){
-                v3Scale(1.0/this->compMass, bodyEffector->GetBodyForces(), LocalAccels_B);
+                v3Scale(1.0/this->compMass, bodyEffector->GetBodyForces_B(), LocalAccels_B);
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
-            v3Add(extSumTorque_B, bodyEffector->GetBodyTorques(), extSumTorque_B);
+            v3Add(extSumTorque_B, bodyEffector->GetBodyTorques_B(), extSumTorque_B);
         }
 
         //! - Define some necessary tilde matrices
@@ -1859,7 +1882,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         for(itThruster = thrusters.begin(); itThruster != thrusters.end(); itThruster++)
         {
             theEff = *itThruster;
-            this->scRotPower += v3Dot(&attStates[3], theEff->GetBodyTorques()); /* omega^T*L */
+            this->scRotPower += v3Dot(&attStates[3], theEff->GetBodyTorques_B()); /* omega^T*L */
         }
         
         //! - Loop through RWs to get energy, momentum and power information
