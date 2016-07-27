@@ -28,25 +28,30 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID)
 {
 
-    double SB[3][3];
     double halfInertia[3][3];
     vehicleConfigData localConfigData;
+    /*! Begin function steps*/
     
+    /*! - Zero the output message data */
     memset(&localConfigData, 0x0, sizeof(vehicleConfigData));
 
+    /*! - Create the output message for the mass properties of the spacecraft*/
     ConfigData->outputPropsID = CreateNewMessage(
         ConfigData->outputPropsName, sizeof(vehicleConfigData),
         "vehicleConfigData", moduleID);
-    m33Transpose(RECAST3X3 ConfigData->BS, SB);
-    
+ 
+    /*! - Convert the center of mass from structure to body*/
     m33MultV3(RECAST3X3 ConfigData->BS, ConfigData->CoM_S,
         localConfigData.CoM_B);
+    /*! - Copy over the structure to body transformation matrix to output*/
     m33Copy(RECAST3X3 ConfigData->BS, RECAST3X3 localConfigData.BS);
+    
+    /*! - Convert the inertia tensor to body using similarity transformation*/
     m33MultM33(RECAST3X3 ConfigData->BS, RECAST3X3 ConfigData->ISCPntB_S,
         halfInertia);
     m33MultM33t(halfInertia, RECAST3X3 ConfigData->BS,
         RECAST3X3 localConfigData.ISCPntB_B);
-    
+    /*! - Write output properties to the messaging system*/
     WriteMessage(ConfigData->outputPropsID, 0, sizeof(vehicleConfigData),
         &localConfigData, moduleID);
     
@@ -60,6 +65,7 @@ void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleI
  */
 void CrossInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID)
 {
+    /*! Nothing done in this method.  Make sure this is still true!*/
 }
 
 /*! There are no runtime operations performed by the vehicle configuration 
@@ -70,6 +76,6 @@ void CrossInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t module
  */
 void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    
+    /*! Nothing done in this method.  Make sure this is still true!*/
     return;
 }
