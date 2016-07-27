@@ -80,7 +80,8 @@ typedef struct {
  intended to be attached to the dynamics plant in the system using the
  DynEffector interface and as such, does not directly write the current force
  or torque into the messaging system.  The nominal interface to dynamics are the
- BodyForce and BodyTorque arrays that are provided by the DynEffector base class.
+ dynEffectorForce and dynEffectorTorque arrays that are provided by the 
+ DynEffector base class.
  There is technically double inheritance here, but both the DynEffector and
  SysModel classes are abstract base classes so there is no risk of diamond.*/
 class ReactionWheelDynamics: public SysModel, public DynEffector {

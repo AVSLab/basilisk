@@ -58,14 +58,14 @@ public:
     virtual ~DynEffector();
     virtual void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
                                  double CurrentTime);
-    double *GetBodyForces() {return BodyForce;}
-    double *GetBodyTorques() {return BodyTorque;}
+    double *GetBodyForces() {return this->dynEffectorForce_B;}
+    double *GetBodyTorques() {return this->dynEffectorTorque_B;}
     void getProps(MassPropsData *callerProps)
         {memcpy(callerProps, &objProps, sizeof(MassPropsData));}
     
 public:
-    double BodyForce[3];              //!< N Modeled force on the body
-    double BodyTorque[3];             //!< Nm Modeled Torque on the body
+    double dynEffectorForce_B[3];     //!< N Modeled force on the body
+    double dynEffectorTorque_B[3];    //!< Nm Modeled Torque on the body
     MassPropsData objProps;           //!< (-) Update-driven mass properties for object
 };
 

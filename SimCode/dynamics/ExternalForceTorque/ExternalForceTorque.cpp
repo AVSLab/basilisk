@@ -89,8 +89,8 @@ dynamics
 */
 void ExternalForceTorque::ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime)
 {
-    v3Copy(this->extForce_B, BodyForce);
-    v3Copy(this->extTorque_B, BodyTorque);
+    v3Copy(this->extForce_B, dynEffectorForce_B);
+    v3Copy(this->extTorque_B, dynEffectorTorque_B);
 }
 
 void ExternalForceTorque::UpdateState(uint64_t CurrentSimNanos)
