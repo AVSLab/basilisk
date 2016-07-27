@@ -800,24 +800,24 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         rcsClass = vehicleConfigData.ThrusterCluster()
         rcsPointer = vehicleConfigData.ThrusterPointData()
         rcsLocationData = [ \
-                   [-0.86360, -0.82550, 1.79070],
-                   [-0.82550, -0.86360, 1.79070],
-                   [0.82550, 0.86360, 1.79070],
-                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550,  1.79070],
+                   [-0.82550, -0.86360,  1.79070],
+                   [ 0.82550,  0.86360,  1.79070],
+                   [ 0.86360,  0.82550,  1.79070],
                    [-0.86360, -0.82550, -1.79070],
                    [-0.82550, -0.86360, -1.79070],
-                   [0.82550, 0.86360, -1.79070],
-                   [0.86360, 0.82550, -1.79070] \
+                   [ 0.82550,  0.86360, -1.79070],
+                   [ 0.86360,  0.82550, -1.79070] \
                    ]
         rcsDirectionData = [ \
                         [1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
+                        [1.0, 0.0, 0.0],
                         [0.0, 1.0, 0.0],
-                        [1.0, 0.0, 0.0] \
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0] \
                         ]
         for i in range(8):
             SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
@@ -963,22 +963,22 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         Thruster4.MinOnTime = 0.020
         Thruster5 = thruster_dynamics.ThrusterConfigData()
         SimulationBaseClass.SetCArray([-0.86360, -0.82550, -1.79070], 'double', Thruster5.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster5.inputThrDir_S)
+        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster5.inputThrDir_S)
         Thruster5.MaxThrust = 0.9
         Thruster5.MinOnTime = 0.020
         Thruster6 = thruster_dynamics.ThrusterConfigData()
         SimulationBaseClass.SetCArray([-0.82550, -0.86360, -1.79070], 'double', Thruster6.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster6.inputThrDir_S)
+        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster6.inputThrDir_S)
         Thruster6.MaxThrust = 0.9
         Thruster6.MinOnTime = 0.020
         Thruster7 = thruster_dynamics.ThrusterConfigData()
         SimulationBaseClass.SetCArray([0.82550, 0.86360, -1.79070], 'double', Thruster7.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster7.inputThrDir_S)
+        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster7.inputThrDir_S)
         Thruster7.MaxThrust = 0.9
         Thruster7.MinOnTime = 0.020
         Thruster8 = thruster_dynamics.ThrusterConfigData()
         SimulationBaseClass.SetCArray([0.86360, 0.82550, -1.79070], 'double', Thruster8.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster8.inputThrDir_S)
+        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster8.inputThrDir_S)
         Thruster8.MaxThrust = 0.9
         Thruster8.MinOnTime = 0.020
         self.ACSThrusterDynObject.ThrusterData = \
