@@ -440,7 +440,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         # Initialize flight software modules.
         self.InitAllFSWObjects()
         
-        #self.AddModelToTask("initOnlyTask", self.VehConfigDataWrap, self.VehConfigData, 1)
+        self.AddModelToTask("initOnlyTask", self.VehConfigDataWrap, self.VehConfigData, 1)
 
         # Add flight software modules to task groups.
         self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
@@ -772,16 +772,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
-        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
-
-        Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
-        SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.ISCPntB_B)
-
-        # adjust the message size by hand if needed
-        msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
-        self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
-        self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
     
         self.RWAGsMatrix = []
         self.RWAJsList = []
