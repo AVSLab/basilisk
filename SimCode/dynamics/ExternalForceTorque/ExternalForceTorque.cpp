@@ -26,8 +26,8 @@
 overriden by the user.*/
 ExternalForceTorque::ExternalForceTorque()
 {
-    memset(this->force_B, 0x0, 3*sizeof(double));
-    memset(this->torque_B, 0x0, 3*sizeof(double));
+    memset(this->extForce_B, 0x0, 3*sizeof(double));
+    memset(this->extTorque_B, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -89,8 +89,8 @@ dynamics
 */
 void ExternalForceTorque::ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime)
 {
-    v3Copy(this->force_B, BodyForce);
-    v3Copy(this->torque_B, BodyTorque);
+    v3Copy(this->extForce_B, BodyForce);
+    v3Copy(this->extTorque_B, BodyTorque);
 }
 
 void ExternalForceTorque::UpdateState(uint64_t CurrentSimNanos)
