@@ -34,12 +34,11 @@ def evalParsedList(list):
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     taskIdxList = [10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
-    #taskIdxList = [19]
+    #taskIdxList = [10]
     for i_task in taskIdxList:
         print 'Task Index = ', i_task
         task = TheAVSSim.TaskList[i_task]
         print 'Task Name = ', task.Name
-        print '\n'
         for model in task.TaskModels:
             module = model.__module__
             print 'Module = ', module
@@ -47,7 +46,6 @@ if __name__ == "__main__":
             dirList = dir(sysMod)
             parsed_dirList = parseSwigVars(dirList)
             evalParsedList(parsed_dirList)
-            print '\n'
         print '\n'
 
     addressDictMatch = {}
