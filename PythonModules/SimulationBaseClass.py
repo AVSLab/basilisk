@@ -562,6 +562,9 @@ class SimBaseClass:
         fDesc.close()
 
     def setModelDataWrap(self, modelData):
+        # First Parsing:
+        # Get rid of all the variables that come after a built-in. The methods SelfInit, CrossInit, Update and Restart
+        # will always come first, and so will the variables that are capitalized.
         def parseSwigVars(list):
             parsed_array = np.array([])
             length = len(list)
@@ -573,6 +576,9 @@ class SimBaseClass:
                 else:
                     break
             return parsed_array
+        # Second Parsing:
+        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
+        # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
         def evalParsedList(list):
             algNames = []
             for methodName in list:
@@ -582,11 +588,15 @@ class SimBaseClass:
                     algNames.append(methodName)
             return algNames
 
+        # Create the complete name of the arguments of alg_contain
         def createAlgArgumentList(module, argList):
             for i in range(len(argList)):
                 argList[i] = module + '.' + argList[i]
             return argList
-
+        # Arrange the methods name in the order they must be passed as arguments of alg_contain.
+        # Note 1: I'm taking advantage of the fact that the method names are initially ordered in alphabetic order
+        # Note 2: This will only work if the previous parsing is correct. Ath this point only SelfInit, CrossInit,
+        # Update and Restart (if applicable) are assumed to be in the input argument algNames.
         def createAlgMethodsList(algNames, module):
             update = algNames.pop()
             selfInit = algNames.pop()
@@ -602,11 +612,15 @@ class SimBaseClass:
         module = modelData.__module__
         sysMod = sys.modules[module]
         dirList = dir(sysMod)
+        # First Parsing
         parsed_dirList = parseSwigVars(dirList)
+        # Second Parsing
         swigPyObjList = evalParsedList(parsed_dirList)
+        # Generate the complete name of the methods that will be passed to alg_contain
         alg_argList = createAlgMethodsList(swigPyObjList, module)
-
         return alg_argList
+        # HEY!!!! CAN I SEND IMPORTED MODULES ACCROSS? PLEASE.
+        #import module
 
 def SetCArray(InputList, VarType, ArrayPointer):
     CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
