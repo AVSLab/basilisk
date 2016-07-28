@@ -234,6 +234,7 @@ SixDofEOM::SixDofEOM()
     this->useRotation    = false;
     // By default gravity will be on, but is only enabled if translation is on as well
     this->useGravity     = true;
+    this->XState = nullptr;
 
     /* initialize some spacecraft states to default values.  The user should always override these values
      with the desired values.  These defaults are set to avoid crashes if the dynamic mode doesn't set or update these */
