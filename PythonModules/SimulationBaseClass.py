@@ -31,7 +31,6 @@ import inspect
 import MonteCarloBaseClass
 import sets
 
-
 class ProcessBaseClass:
     def __init__(self, procName):
         self.Name = procName
@@ -561,6 +560,53 @@ class SimBaseClass:
 
         fDesc.write('\n}')
         fDesc.close()
+
+    def setModelDataWrap(self, modelData):
+        def parseSwigVars(list):
+            parsed_array = np.array([])
+            length = len(list)
+            i = 0
+            while i < length:
+                if list[i][0] != '_':
+                    parsed_array = np.append(parsed_array, list[i])
+                    i += 1
+                else:
+                    break
+            return parsed_array
+        def evalParsedList(list):
+            algNames = []
+            for methodName in list:
+                methodObject = eval('sys.modules["' + module + '"].' + methodName)
+                objectSize = sys.getsizeof(methodObject)
+                if objectSize == 48:  # size of SwigPyObject
+                    algNames.append(methodName)
+            return algNames
+
+        def createAlgArgumentList(module, argList):
+            for i in range(len(argList)):
+                argList[i] = module + '.' + argList[i]
+            return argList
+
+        def createAlgMethodsList(algNames, module):
+            update = algNames.pop()
+            selfInit = algNames.pop()
+            crossInit = algNames.pop(0)
+            argList = [update, selfInit, crossInit]
+            try:
+                reset = algNames.pop()
+                argList.append(reset)
+                return(createAlgArgumentList(module, argList))
+            except:
+                return (createAlgArgumentList(module, argList))
+
+        module = modelData.__module__
+        sysMod = sys.modules[module]
+        dirList = dir(sysMod)
+        parsed_dirList = parseSwigVars(dirList)
+        swigPyObjList = evalParsedList(parsed_dirList)
+        alg_argList = createAlgMethodsList(swigPyObjList, module)
+
+        return alg_argList
 
 def SetCArray(InputList, VarType, ArrayPointer):
     CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
