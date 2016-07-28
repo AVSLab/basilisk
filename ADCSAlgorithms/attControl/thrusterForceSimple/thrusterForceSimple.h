@@ -36,6 +36,7 @@ typedef struct {
     double   gtThruster_B[MAX_EFF_CNT][3];          /*!< []      local copy of the thruster force unit direction vectors */
     uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
+
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
     int32_t  outputMsgID;                           /*!< ID for the outgoing message */
