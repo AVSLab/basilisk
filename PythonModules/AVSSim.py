@@ -110,6 +110,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)), 1000)
 
         # Flight software tasks.
+        self.fswProc.addTask(self.CreateNewTask("initOnlyTask", int(1E10)), 1)
         self.fswProc.addTask(self.CreateNewTask("sunSafeFSWTask", int(5E8)), 999)
 
         self.fswProc.addTask(self.CreateNewTask("sunPointTask", int(5E8)), 106)
@@ -183,6 +184,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("DynamicsTask", self.trackerA, None, 113)
 
         # Flight software modules.
+        self.VehConfigData = vehicleConfigData.VehConfigInputData()
+        self.VehConfigDataWrap = alg_contain.AlgContain(self.VehConfigData,
+            vehicleConfigData.Update_vehicleConfigData, vehicleConfigData.SelfInit_vehicleConfigData,
+            vehicleConfigData.CrossInit_vehicleConfigData)
+        self.VehConfigDataWrap.ModelTag = "vehConfigData"
+        
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
         self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig,
                                                  cssComm.Update_cssProcessTelem,
@@ -432,6 +439,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # Initialize flight software modules.
         self.InitAllFSWObjects()
+        
+        self.AddModelToTask("initOnlyTask", self.VehConfigDataWrap, self.VehConfigData, 1)
 
         # Add flight software modules to task groups.
         self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
@@ -763,16 +772,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
-        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(BS, 'double', self.LocalConfigData.BS)
-
-        Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
-        SimulationBaseClass.SetCArray(Inertia, 'double', self.LocalConfigData.ISCPntB_B)
-
-        # adjust the message size by hand if needed
-        msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
-        self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
-        self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
     
         self.RWAGsMatrix = []
         self.RWAJsList = []
@@ -1280,6 +1279,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.clockSynchData.accelFactor = 1.0
         self.clockSynchData.clockOutputName = "clock_synch_data"
         self.clockSynchData.outputBufferCount = 2
+    
+    def SetVehicleConfigData(self):
+        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        SimulationBaseClass.SetCArray(BS, 'double', self.VehConfigData.BS)
+        Inertia = [700.0, 0.0, 0.0, 0.0, 700.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
+        SimulationBaseClass.SetCArray(Inertia, 'double', self.VehConfigData.ISCPntB_S)
+        CoM = [0.0, 0.0, 1.0]
+        SimulationBaseClass.SetCArray(CoM, 'double', self.VehConfigData.CoM_S)
+        self.VehConfigData.outputPropsName = "adcs_config_data"
 
     def SetCSSDecodeFSWConfig(self):
         self.CSSDecodeFSWConfig.NumSensors = 8
@@ -1799,6 +1807,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetStarTrackerData()
 
     def InitAllFSWObjects(self):
+        self.SetVehicleConfigData()
         self.SetLocalConfigData()
         self.SetCSSDecodeFSWConfig()
         self.SetIMUCommData()

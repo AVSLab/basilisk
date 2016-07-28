@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define _VEHICLE_CONFIG_DATA_H_
 
 #include <stdint.h>
+#include "../ADCSAlgorithms/messaging/static_messaging.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -54,6 +55,18 @@ typedef struct {
     ThrusterPointData thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
 }ThrusterCluster;
 
+/*! @brief Structure used to define a common structure for top level vehicle information*/
+typedef struct {
+    double BS[9];               /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
+    double ISCPntB_S[9];                /*!< [kg m^2] Spacecraft Inertia */
+    double CoM_S[3];              /*!< [m] Center of mass of spacecraft in body*/
+    char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
+    int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
+}VehConfigInputData;
+
+void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
+void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);
+void CrossInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);
 /*! @} */
 
 #endif
