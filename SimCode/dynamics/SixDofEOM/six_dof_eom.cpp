@@ -1192,8 +1192,8 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
 
             //! - Find torque due to gravity about point B
             v3Cross(c_B, g_B, intermediateVector);
-            v3Scale(mSC, intermediateVector, intermediateVector);
-            v3Add(extSumTorque_B, intermediateVector, extSumTorque_B);
+            v3Scale(mSC, intermediateVector, gravityTorquePntB_B);
+            v3Add(extSumTorque_B, gravityTorquePntB_B, extSumTorque_B);
 
             //! - Define necessary tilde matrix
             v3Tilde(c_B, cTilde_B);
