@@ -28,7 +28,7 @@ ExternalForceTorque::ExternalForceTorque()
 {
     memset(this->extForce_N, 0x0, 3*sizeof(double));
     memset(this->extForce_B, 0x0, 3*sizeof(double));
-    memset(this->extTorque_B, 0x0, 3*sizeof(double));
+    memset(this->extTorquePntB_B, 0x0, 3*sizeof(double));
     return;
 }
 
@@ -92,7 +92,7 @@ void ExternalForceTorque::ComputeDynamics(MassPropsData *massPropsData, OutputSt
 {
     v3Copy(this->extForce_N, dynEffectorForce_N);
     v3Copy(this->extForce_B, dynEffectorForce_B);
-    v3Copy(this->extTorque_B, dynEffectorTorque_B);
+    v3Copy(this->extTorquePntB_B, dynEffectorTorquePntB_B);
 }
 
 void ExternalForceTorque::UpdateState(uint64_t CurrentSimNanos)

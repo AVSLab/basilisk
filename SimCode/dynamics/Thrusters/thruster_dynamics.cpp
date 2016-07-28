@@ -381,7 +381,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
     memset(dynEffectorForce_B, 0x0, 3*sizeof(double));
-    memset(dynEffectorTorque_B, 0x0, 3*sizeof(double));
+    memset(dynEffectorTorquePntB_B, 0x0, 3*sizeof(double));
     mDotTotal = 0.0;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
@@ -410,7 +410,7 @@ void ThrusterDynamics::ComputeDynamics(MassPropsData *Props,
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
         v3Subtract(it->thrLoc_B, Props->CoM, CoMRelPos);
         v3Cross(CoMRelPos, SingleThrusterForce, SingleThrusterTorque);
-        v3Add(dynEffectorTorque_B, SingleThrusterTorque, dynEffectorTorque_B);
+        v3Add(dynEffectorTorquePntB_B, SingleThrusterTorque, dynEffectorTorquePntB_B);
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
         {

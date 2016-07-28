@@ -1060,7 +1060,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
-            v3Add(extSumTorque_B, TheEff->GetBodyTorques_B(), extSumTorque_B);
+            v3Add(extSumTorque_B, TheEff->GetBodyTorquesPntB_B(), extSumTorque_B);
         }
 
         //! - Loop over the vector of body Effectors and compute net force/torque
@@ -1074,7 +1074,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                 m33tMultV3(BN, LocalAccels_B, LocalAccels_N);
                 v3Add(dX + 3, LocalAccels_N, dX + 3);
             }
-            v3Add(extSumTorque_B, bodyEffector->GetBodyTorques_B(), extSumTorque_B);
+            v3Add(extSumTorque_B, bodyEffector->GetBodyTorquesPntB_B(), extSumTorque_B);
         }
 
         //! - Define some necessary tilde matrices
@@ -1882,7 +1882,7 @@ void SixDofEOM::integrateState(double CurrentTime)
         for(itThruster = thrusters.begin(); itThruster != thrusters.end(); itThruster++)
         {
             theEff = *itThruster;
-            this->scRotPower += v3Dot(&attStates[3], theEff->GetBodyTorques_B()); /* omega^T*L */
+            this->scRotPower += v3Dot(&attStates[3], theEff->GetBodyTorquesPntB_B()); /* omega^T*L */
         }
         
         //! - Loop through RWs to get energy, momentum and power information

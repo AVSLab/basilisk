@@ -185,7 +185,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         extFTObject = ExternalForceTorque.ExternalForceTorque()
         extFTObject.ModelTag = "externalDisturbance"
         extFTObject.inputVehProps = "spacecraft_mass_props"
-        SimulationBaseClass.SetCArray([-1, 1, -1], 'double', extFTObject.extTorque_B)
+        SimulationBaseClass.SetCArray([-1, 1, -1], 'double', extFTObject.extTorquePntB_B)
         if useExtForceTorque == 1:
             SimulationBaseClass.SetCArray([1,2,3], 'double', extFTObject.extForce_B)
         else:

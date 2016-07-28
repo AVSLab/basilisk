@@ -60,15 +60,15 @@ public:
                                  double CurrentTime);
     double *GetBodyForces_N() {return this->dynEffectorForce_N;}
     double *GetBodyForces_B() {return this->dynEffectorForce_B;}
-    double *GetBodyTorques_B() {return this->dynEffectorTorque_B;}
+    double *GetBodyTorquesPntB_B() {return this->dynEffectorTorquePntB_B;}
     void getProps(MassPropsData *callerProps)
         {memcpy(callerProps, &objProps, sizeof(MassPropsData));}
     
 public:
-    double dynEffectorForce_N[3];     //!< [N] Modeled force on the body in inertial frame components
-    double dynEffectorForce_B[3];     //!< [N] Modeled force on the body in body frame components
-    double dynEffectorTorque_B[3];    //!< [Nm] Modeled Torque on the body in body frame components
-    MassPropsData objProps;           //!< [] Update-driven mass properties for object
+    double dynEffectorForce_N[3];           //!< [N] Modeled force on the body in inertial frame components
+    double dynEffectorForce_B[3];           //!< [N] Modeled force on the body in body frame components
+    double dynEffectorTorquePntB_B[3];    //!< [Nm] Modeled Torque on the body in body frame components
+    MassPropsData objProps;                 //!< [] Update-driven mass properties for object
 };
 
 /*! @} */
