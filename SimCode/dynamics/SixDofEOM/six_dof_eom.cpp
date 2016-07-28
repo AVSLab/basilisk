@@ -855,6 +855,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double *rhoDDotsFS;         /* pointer of 2nd time derivatives of rhos for fuel slosh dynamics */
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
     double g_B[3];              /* [m/s^2] gravity acceleration in the body frame */
+    double gravityTorquePntB_B[3]; /* [N-m] torque due to gravity about point B in B frame components */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
     double *matrixA; /* Matrix A needed for hinged SP dynamics */
@@ -1188,6 +1189,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
             //! - Scale c_B and cPrime_B by 1/mSC
             v3Scale(1/mSC, c_B, c_B);
             v3Scale(1/mSC, cPrime_B, cPrime_B);
+
+            //! - Find torque due to gravity about point B
+            v3Cross(c_B, g_B, intermediateVector);
+            v3Scale(mSC, intermediateVector, intermediateVector);
+            v3Add(extSumTorque_B, intermediateVector, extSumTorque_B);
 
             //! - Define necessary tilde matrix
             v3Tilde(c_B, cTilde_B);
