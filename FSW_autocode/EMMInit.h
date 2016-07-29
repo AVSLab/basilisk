@@ -1,7 +1,7 @@
 typedef struct {
-	CSSConfigData cssSensorDecode;
-	IMUConfigData imuSensorDecode;
-	STConfigData stSensorDecode;
+	CSSConfigData cssComm.cssComm;
+	IMUConfigData imuComm.imuComm;
+	STConfigData stComm.stComm;
 	inertial3DConfig inertial3D;
 	hillPointConfig hillPoint;
 	velocityPointConfig velocityPoint;

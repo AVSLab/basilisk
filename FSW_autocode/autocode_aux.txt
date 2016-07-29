@@ -1,6 +1,7 @@
 
 
 TaskList: 10
+
 TaskModel: 0
 
 ChebyCount
@@ -12,7 +13,7 @@ InputValues
 
 KellyCheby
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 MaxSensorValue
 <type 'float'>
@@ -85,6 +86,7 @@ __swig_setmethods__
 __weakref__
 
 this
+
 TaskModel: 1
 
 InputDataName
@@ -162,13 +164,14 @@ __weakref__
 
 platform2BdyDCM
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 platform2StrDCM
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
+
 TaskModel: 2
 
 InputDataName
@@ -200,11 +203,11 @@ SensorMsgID
 
 T_BdyPlatform
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 T_StrPlatform
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 __class__
 
@@ -256,6 +259,7 @@ this
 
 
 TaskList: 12
+
 TaskModel: 0
 
 __class__
@@ -317,12 +321,13 @@ outputMsgID
 
 sigma_R0N
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
 
 
 TaskList: 13
+
 TaskModel: 0
 
 __class__
@@ -402,6 +407,7 @@ this
 
 
 TaskList: 14
+
 TaskModel: 0
 
 __class__
@@ -488,15 +494,16 @@ this
 
 
 TaskList: 15
+
 TaskModel: 0
 
 R_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 R_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410a80>
 
 __class__
 
@@ -546,11 +553,11 @@ __weakref__
 
 a_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 a_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
@@ -595,14 +602,15 @@ this
 
 v_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 v_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 
 TaskList: 19
+
 TaskModel: 0
 
 __class__
@@ -691,7 +699,7 @@ euler_angle_set
 
 rasterTimes
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410a80>
 
 scanSelector
 <type 'int'>
@@ -699,30 +707,31 @@ scanSelector
 
 scanningAngles
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410a80>
 
 scanningRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
+
 TaskModel: 1
 
 AlgCrossInit
 <type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x112cafcc0>
+<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x103410a80>
 
 AlgReset
 <type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x112cafa20>
+<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x103410ab0>
 
 AlgSelfInit
 <type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x112cafcc0>
+<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x103410a80>
 
 AlgUpdate
 <type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x112cafa20>
+<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x103410ab0>
 
 CallCounts
 <type 'long'>
@@ -730,15 +739,15 @@ CallCounts
 
 CrossInit
 <type 'instancemethod'>
-<bound method AlgContain.CrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.CrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 DataPtr
 <type 'SwigPyObject'>
-<Swig Object of type 'void *' at 0x112cafa20>
+<Swig Object of type 'void *' at 0x103410ab0>
 
 IntegratedInit
 <type 'instancemethod'>
-<bound method AlgContain.IntegratedInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.IntegratedInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 ModelTag
 <type 'str'>
@@ -750,35 +759,35 @@ RNGSeed
 
 Reset
 <type 'instancemethod'>
-<bound method AlgContain.Reset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.Reset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 SelfInit
 <type 'instancemethod'>
-<bound method AlgContain.SelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.SelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UpdateState
 <type 'instancemethod'>
-<bound method AlgContain.UpdateState of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UpdateState of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UseCrossInit
 <type 'instancemethod'>
-<bound method AlgContain.UseCrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UseCrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UseData
 <type 'instancemethod'>
-<bound method AlgContain.UseData of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UseData of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UseReset
 <type 'instancemethod'>
-<bound method AlgContain.UseReset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UseReset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UseSelfInit
 <type 'instancemethod'>
-<bound method AlgContain.UseSelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UseSelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 UseUpdate
 <type 'instancemethod'>
-<bound method AlgContain.UseUpdate of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.UseUpdate of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 __class__
 
@@ -830,9 +839,21 @@ _s
 <type 'type'>
 <class 'alg_contain.alg_contain.SysModel'>
 
+getCrossInitAddress
+<type 'instancemethod'>
+<bound method AlgContain.getCrossInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
+
+getResetAddress
+<type 'instancemethod'>
+<bound method AlgContain.getResetAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
+
 getSelfInitAddress
 <type 'instancemethod'>
-<bound method AlgContain.getSelfInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+<bound method AlgContain.getSelfInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
+
+getUpdateAddress
+<type 'instancemethod'>
+<bound method AlgContain.getUpdateAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
 
 moduleID
 <type 'long'>
@@ -842,6 +863,7 @@ this
 
 
 TaskList: 20
+
 TaskModel: 0
 
 __class__
@@ -892,22 +914,22 @@ __weakref__
 
 angleRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 angleSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 
 cmdRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 cmdSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 dt
 <type 'float'>
@@ -969,11 +991,11 @@ outputMsgID
 
 priorCmdRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 priorCmdSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 priorTime
 <type 'long'>
@@ -983,6 +1005,7 @@ this
 
 
 TaskList: 22
+
 TaskModel: 0
 
 __class__
@@ -1064,9 +1087,10 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
+
 TaskModel: 1
 
 __class__
@@ -1136,7 +1160,7 @@ sun_safe_att_err
 
 omega_BR_B
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 outerThresh
 <type 'float'>
@@ -1152,21 +1176,22 @@ outputGuidID
 
 sigma_BR
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
 
 
 TaskList: 23
+
 TaskModel: 0
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410a80>
 
 K1
 <type 'float'>
@@ -1297,7 +1322,8 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
+
 TaskModel: 1
 
 __class__
@@ -1362,11 +1388,12 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+
 TaskModel: 2
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 OmegaGain
 <type 'float'>
@@ -1458,6 +1485,7 @@ this
 
 
 TaskList: 24
+
 TaskModel: 0
 
 __class__
@@ -1539,18 +1567,19 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
+
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 K1
 <type 'float'>
@@ -1681,7 +1710,8 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
+
 TaskModel: 2
 
 __class__
@@ -1746,11 +1776,12 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 OmegaGain
 <type 'float'>
@@ -1842,6 +1873,7 @@ this
 
 
 TaskList: 25
+
 TaskModel: 0
 
 __class__
@@ -1923,18 +1955,19 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
+
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 K
 <type 'float'>
@@ -1999,7 +2032,7 @@ controlOut
 
 domega0
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x10a8b1fc0>
 
 inputGuidID
 <type 'int'>
@@ -2035,7 +2068,7 @@ adcs_config_data
 
 int_sigma
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410a80>
 
 integralLimit
 <type 'float'>
@@ -2061,7 +2094,8 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410ab0>
+
 TaskModel: 2
 
 __class__
@@ -2126,11 +2160,12 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 OmegaGain
 <type 'float'>
@@ -2222,6 +2257,7 @@ this
 
 
 TaskList: 21
+
 TaskModel: 0
 
 __class__
@@ -2287,7 +2323,7 @@ att_ref_output_stage1
 
 omega_RN_N
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 outputDataName
 <type 'str'>
@@ -2299,7 +2335,7 @@ outputMsgID
 
 priorCmdSigma_RN
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 priorTime
 <type 'long'>
@@ -2307,12 +2343,13 @@ priorTime
 
 sigma_RN
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafa20>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
 
 
 TaskList: 26
+
 TaskModel: 0
 
 __class__
@@ -2394,18 +2431,19 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
+
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112cafcc0>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 K1
 <type 'float'>
@@ -2532,7 +2570,8 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf780>
+<Swig Object of type 'double *' at 0x103410ab0>
+
 TaskModel: 2
 
 __class__
@@ -2597,11 +2636,12 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x112caf630>
+<Swig Object of type 'double *' at 0x103410a80>
 
 OmegaGain
 <type 'float'>
