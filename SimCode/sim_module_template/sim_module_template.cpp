@@ -131,8 +131,8 @@ void SimModuleTemplate::ComputeDynamics(MassPropsData *massPropsData, OutputStat
     v3Subtract(bodyState->r_N, this->sunEphmInBuffer.PositionVector, s_B);
 
    
-    v3Copy(force_B, BodyForce);
-    v3Copy(torque_B, BodyTorque);
+    v3Copy(force_B, dynEffectorForce_B);
+    v3Copy(torque_B, dynEffectorTorquePntB_B);
 }
 
 void SimModuleTemplate::UpdateState(uint64_t CurrentSimNanos)

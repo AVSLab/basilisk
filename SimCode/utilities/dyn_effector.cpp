@@ -21,8 +21,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! This is the constructor, zero the public outputs here. */
 DynEffector::DynEffector()
 {
-    memset(BodyForce, 0x0, 3*sizeof(double));
-    memset(BodyTorque, 0x0, 3*sizeof(double));
+    memset(this->dynEffectorForce_N, 0x0, 3*sizeof(double));
+    memset(this->dynEffectorForce_B, 0x0, 3*sizeof(double));
+    memset(this->dynEffectorTorquePntB_B, 0x0, 3*sizeof(double));
 }
 
 /*! Nothing to destroy */
