@@ -10,10 +10,11 @@ ChebyCount
 
 InputValues
 <class 'cssComm.cssComm.CSSOutputData'>
+<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x103410ab0> >
 
 KellyCheby
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 MaxSensorValue
 <type 'float'>
@@ -99,6 +100,7 @@ adcs_config_data
 
 LocalOutput
 <class 'imuComm.imuComm.IMUOutputData'>
+<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x103410ab0> >
 
 OutputDataName
 <type 'str'>
@@ -184,6 +186,7 @@ adcs_config_data
 
 LocalOutput
 <class 'stComm.stComm.STOutputData'>
+<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x103410a80> >
 
 OutputDataName
 <type 'str'>
@@ -310,6 +313,7 @@ __weakref__
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410a80> >
 
 outputDataName
 <type 'str'>
@@ -378,6 +382,7 @@ __weakref__
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
 
 inputCelID
 <type 'int'>
@@ -458,6 +463,7 @@ __weakref__
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
 
 inputCelID
 <type 'int'>
@@ -481,6 +487,7 @@ mu
 
 oe
 <class 'orb_elem_convert.orb_elem_convert.classicElements'>
+<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x103410ab0> >
 
 outputDataName
 <type 'str'>
@@ -561,6 +568,7 @@ a_P2
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
 
 inputCelID
 <type 'int'>
@@ -602,11 +610,11 @@ this
 
 v_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 v_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 
 TaskList: 19
@@ -677,9 +685,11 @@ numRasters
 
 outputAngleRates
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410ab0> >
 
 outputAngleSet
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410a80> >
 
 outputEulerRatesID
 <type 'int'>
@@ -743,7 +753,7 @@ CrossInit
 
 DataPtr
 <type 'SwigPyObject'>
-<Swig Object of type 'void *' at 0x103410ab0>
+<Swig Object of type 'void *' at 0x103410a80>
 
 IntegratedInit
 <type 'instancemethod'>
@@ -914,22 +924,23 @@ __weakref__
 
 angleRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 angleSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
 
 cmdRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 cmdSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 dt
 <type 'float'>
@@ -937,9 +948,11 @@ dt
 
 eulerRatesOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410ab0> >
 
 eulerSetOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410a80> >
 
 inputEulerRatesID
 <type 'int'>
@@ -1056,6 +1069,7 @@ __weakref__
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
 
 inputNavID
 <type 'int'>
@@ -1087,7 +1101,7 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
 
@@ -1141,6 +1155,7 @@ __weakref__
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410a80> >
 
 error
 <type 'float'>
@@ -1176,7 +1191,7 @@ outputGuidID
 
 sigma_BR
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
 
@@ -1187,11 +1202,11 @@ TaskModel: 0
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 K1
 <type 'float'>
@@ -1257,6 +1272,7 @@ __weakref__
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410a80> >
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1388,6 +1404,7 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410a80> >
 
 TaskModel: 2
 
@@ -1536,6 +1553,7 @@ __weakref__
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410a80> >
 
 inputNavID
 <type 'int'>
@@ -1645,6 +1663,7 @@ __weakref__
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410ab0> >
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1710,7 +1729,7 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 TaskModel: 2
 
@@ -1776,12 +1795,13 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410ab0> >
 
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 OmegaGain
 <type 'float'>
@@ -1924,6 +1944,7 @@ __weakref__
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
 
 inputNavID
 <type 'int'>
@@ -1955,7 +1976,7 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 this
 
@@ -1963,11 +1984,11 @@ TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 K
 <type 'float'>
@@ -2029,10 +2050,11 @@ __weakref__
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410ab0> >
 
 domega0
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x10a8b1fc0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 inputGuidID
 <type 'int'>
@@ -2160,6 +2182,7 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410ab0> >
 
 TaskModel: 3
 
@@ -2308,6 +2331,7 @@ __weakref__
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
 
 dt
 <type 'float'>
@@ -2343,7 +2367,7 @@ priorTime
 
 sigma_RN
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 this
 
@@ -2400,6 +2424,7 @@ __weakref__
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
 
 inputNavID
 <type 'int'>
@@ -2509,6 +2534,7 @@ __weakref__
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410a80> >
 
 inputGuidID
 <type 'int'>
@@ -2570,7 +2596,7 @@ this
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x103410a80>
 
 TaskModel: 2
 
@@ -2636,12 +2662,13 @@ this
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410a80> >
 
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x103410ab0>
 
 OmegaGain
 <type 'float'>

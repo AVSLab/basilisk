@@ -24,10 +24,12 @@ EMMInith = open(path + '/../../Basilisk/FSW_autocode/EMMInit.h', 'w') # .h file
 EMMInitc.write('void dataInitialization(EMMConfigData *ConfigData) {\n')
 EMMInith.write('typedef struct {\n')
 
-# name of the main struct
-ConfigDataStr = 'ConfigData->'
-
+# constants and such
+ConfigDataStr = 'ConfigData->' # name of the main struct
+arrMaxLen = 3
 NameReplace = TheAVSSim.NameReplace
+TaskList = TheAVSSim.TaskList
+TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
 
 def matchDictValueToKey(searchVal):
     return NameReplace.keys()[NameReplace.values().index(searchVal)]
@@ -44,11 +46,6 @@ def getDataTypeStr(typStr):
 def makeTaskModelString(i,j):
     return 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']'
 
-arrMaxLen = 3
-
-TaskList = TheAVSSim.TaskList
-
-TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
 
 # make sure all TaskModels have a NameReplace, since this is used for unique naming
 for i in range(0,len(TaskList)):
@@ -58,13 +55,11 @@ for i in range(0,len(TaskList)):
             NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
 
 
-
+# main autocode sequence
 for i in TaskListIdxs: # loop through TaskLists
-
     auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
 
     for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
-
             auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
 
             fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
@@ -80,36 +75,37 @@ for i in TaskListIdxs: # loop through TaskLists
                     varValue = getattr(TaskList[i].TaskModels[j], varNameList[k]) # get value of current element of TaskModel
                     auxFile.write(str(type(varValue))+'\n') # print datatype to workfile
 
-                    if (str(type(varValue))[1:6] != 'class'): # skip classes
-                        auxFile.write(str(varValue)+'\n') # print value of current element to workfile
-                        varType = type(varValue).__name__ # datatype of value of current element
+                    auxFile.write(str(varValue)+'\n') # print value of current element to workfile
+                    varType = type(varValue).__name__ # datatype of value of current element
 
-                        # character array
-                        if varType == 'str':
-                            dest = ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k])
-                            src = '"'+str(varValue)+'"'
-                            strcpyStr = 'strcpy(' + dest + ',' + src + ')'
-                            EMMInitc.write('\t'+strcpyStr+';\n')
+                    # class
+                    if (str(type(varValue))[1:6] == 'class'):
+                        continue # skip classes
 
-                        # array (SwigPyObject) or method
-                        elif varType == 'SwigPyObject' or varType == 'instancemethod':
-                            typeStr = varValue.__str__()
+                    # character array
+                    elif varType == 'str':
+                        dest = ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k])
+                        EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(varValue)+'"' + ')'+';\n')
 
-                            if ((typeStr.find('void') >= 0) or (typeStr.find('AlgContain') >= 0)):
-                                continue
-                            else:
-                                typeStr = getDataTypeStr(typeStr)
+                    # array (SwigPyObject) or method (instancemethod)
+                    elif varType == 'SwigPyObject' or varType == 'instancemethod':
+                        typeStr = varValue.__str__()
 
-                            arr = AVSSim.SimulationBaseClass.getCArray(typeStr,varValue,arrMaxLen)
-
-                            for l in range(0,arrMaxLen):
-                                EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k]) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
-
-                        # non-array variable
+                        if ((typeStr.find('void') >= 0) or (typeStr.find('AlgContain') >= 0)):
+                            continue
                         else:
-                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.')
-                            EMMInitc.write(str(varNameList[k])) # name of the variable
-                            EMMInitc.write(' = '+str(varValue)+';\n') # value of the variable
+                            typeStr = getDataTypeStr(typeStr)
+
+                        arr = AVSSim.SimulationBaseClass.getCArray(typeStr,varValue,arrMaxLen)
+
+                        for l in range(0,arrMaxLen):
+                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k]) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+
+                    # non-array variable
+                    else:
+                        EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.')
+                        EMMInitc.write(str(varNameList[k])) # name of the variable
+                        EMMInitc.write(' = '+str(varValue)+';\n') # value of the variable
 
 EMMInitc.write('}')
 EMMInith.write('}EMMConfigData;')
