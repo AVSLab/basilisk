@@ -583,8 +583,7 @@ class SimBaseClass:
             algNames = []
             for methodName in list:
                 methodObject = eval('sys.modules["' + module + '"].' + methodName)
-                objectSize = sys.getsizeof(methodObject)
-                if objectSize == 48:  # size of SwigPyObject
+                if type(methodObject).__name__ == "SwigPyObject":
                     algNames.append(methodName)
             return algNames
 

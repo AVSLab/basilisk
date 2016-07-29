@@ -198,13 +198,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             vehicleConfigData.CrossInit_vehicleConfigData)
         self.VehConfigDataWrap.ModelTag = "vehConfigData"
 
+
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
         self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig,
                                                   cssComm.Update_cssProcessTelem,
                                                   cssComm.SelfInit_cssProcessTelem,
                                                   cssComm.CrossInit_cssProcessTelem)
         self.CSSAlgWrap.ModelTag = "cssSensorDecode"
-
 
         self.IMUCommData = imuComm.IMUConfigData()
         self.IMUCommWrap = alg_contain.AlgContain(self.IMUCommData,
@@ -507,7 +507,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("eulerRotationTask", self.eulerRotationWrap, self.eulerRotationData, 19)
         self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 19)
         self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 19)
-        self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationWrap, 18)
+        self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationData, 18)
 
         self.AddModelToTask("trackingErrorTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 15)
         self.AddModelToTask("trackingErrorTask", self.simpleDeadbandWrap, self.simpleDeadbandData, 14)
