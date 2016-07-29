@@ -181,7 +181,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         scSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
         scSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
 
-    if useExtForceTorque>0:
+    if useExtForceTorque:
         extFTObject = ExternalForceTorque.ExternalForceTorque()
         extFTObject.ModelTag = "externalDisturbance"
         extFTObject.inputVehProps = "spacecraft_mass_props"
