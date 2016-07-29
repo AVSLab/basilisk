@@ -7,97 +7,118 @@ and criminal penalties.
 '''
 
 import sys, os, inspect, re
+
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../../Basilisk/PythonModules')
-import AVSSim
 
-TheAVSSim = AVSSim.AVSSim()
+# import AVSSim
+# TheAVSSim = AVSSim.AVSSim()
 
-f = open(path + '/../../Basilisk/FSW_autocode/workfile.txt', 'w')
+# open the files for writing
+wf = open(path + '/../../Basilisk/FSW_autocode/workfile.txt', 'w') # workfile is useful for debugging
+EMMInitc = open(path + '/../../Basilisk/FSW_autocode/EMMInit.c', 'w') # .c file
+EMMInith = open(path + '/../../Basilisk/FSW_autocode/EMMInit.h', 'w') # .h file
 
-EMMInitc = open(path + '/../../Basilisk/FSW_autocode/EMMInit.c', 'w')
-EMMInith = open(path + '/../../Basilisk/FSW_autocode/EMMInit.h', 'w')
-
-
+# print initialization text to the files
 EMMInitc.write('void dataInitialization(EMMConfigData *ConfigData) {\n')
 EMMInith.write('typedef struct {\n')
 
-ConfigDatastr = 'ConfigData->'
+# name of the main struct
+ConfigDataStr = 'ConfigData->'
+
 
 nameReplaceDict = TheAVSSim.NameReplace
 
 def matchDictValueToKey(searchVal):
     return nameReplaceDict.keys()[nameReplaceDict.values().index(searchVal)]
 
-taskListIn = TheAVSSim.TaskList
-nTaskListIn = len(taskListIn)
+arrMaxLen = 3
 
-for i in range(10, 11): # only process TaskList[2] for now
-    print('\n\n'+'TaskList: '+str(i)+'\n') # print current tasklist to terminal
-    f.write('\n\n'+'TaskList: '+str(i)+'\n') # print current tasklist to workfile
-    nTaskModels = len(taskListIn[i].TaskModels)
+TaskList = TheAVSSim.TaskList
 
-    for j in range(0, nTaskModels): # loop through TaskModels in TaskList
-        print('TaskModel: '+str(j)+'\n') # print current taskmodel to terminal
-        f.write('TaskModel: '+str(j)+'\n') # print current taskmofrl to workfile
-        curElems = dir(taskListIn[i].TaskModels[j]) # list all the elements under current TaskModel
-        nCurElems = len(curElems)
-        fieldStr = str(type(taskListIn[i].TaskModels[j]).__name__)
-        fieldStrInterface = matchDictValueToKey('self.TaskList['+str(i)+'].TaskModels['+str(j)+']')
-        EMMInith.write('\t' + fieldStr + ' ' + fieldStrInterface + ';\n')
+taskIdxList = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26] #
 
-        for k in range(0, nCurElems): # loop through elements within current TaskModel
-            print(curElems[k]) # print name of current element of taskmodel to terminal
-            f.write('\n'+str(curElems[k])+'\n') # print name of current element of taskmodel to workfile
+# make sure all TaskModels have a NameReplace
+for i in range(0,len(TaskList)):
+    for j in range(0,len(TaskList[i].TaskModels)):
+        if not 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']' in nameReplaceDict.itervalues():
+            nameReplaceDict['TaskList_'+str(i)+'_TaskModel_'+str(j)] = 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']'
 
-            if (curElems[k][0:2] != '__') & (curElems[k][0:4] != 'this'): # make sure element doesn't begin with __ or this
-                curAttr = getattr(taskListIn[i].TaskModels[j], curElems[k]) # get value of current element of TaskModel
-                print(type(curAttr)) # print datatype of value of current element to terminal
-                f.write(str(type(curAttr))+'\n') # print datatype to workfile
 
-                if (str(type(curAttr))[1:6] != 'class'): # skip classes
-                    print(curAttr) # print value of current element to terminal
-                    print curAttr.__sizeof__()
-                    f.write(str(curAttr.__sizeof__())+'\n')
-                    f.write(str(curAttr)+'\n') # print value of current element to workfile
-                    curTypeStr = type(curAttr).__name__ # datatype of value of current element
 
-                    if curTypeStr == 'str': # write sequence for string datatype
-                        dest = ConfigDatastr + fieldStrInterface + '.' + str(curElems[k])
-                        src = '"'+str(curAttr)+'"'
-                        strcpyStr = 'strcpy(' + dest + ',' + src + ')'
-                        EMMInitc.write('\t'+strcpyStr+';\n')
-                    elif curTypeStr == 'SwigPyObject':
-                        lmax = 10
-                        typestr = curAttr.__str__()
-                        strindx = typestr.find("'")
-                        typestr = typestr[(strindx+1):len(typestr)]
-                        strindx = typestr.find("'")
-                        typestr = typestr[0:strindx]
-                        strindx = typestr.find(' *')
+for i in taskIdxList: # only process TaskList[2] for now
 
-                        if strindx >= 0:
-                            typestr = typestr[0:strindx]
+    # print info to terminal and workfile
+    print('\n\n'+'TaskList: '+str(i)+'\n') # print current tasklist index to terminal
+    wf.write('\n\n'+'TaskList: '+str(i)+'\n') # print current tasklist index to workfile
 
-                        if typestr.find('int') >= 0:
-                            typestr = typestr[typestr.find('int'):(typestr.find('int')+3)]
+    for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
 
-                        print typestr
-                        print curAttr
-                        arr = AVSSim.SimulationBaseClass.getCArray(typestr,curAttr,lmax)
+            # print info to terminal and workfile
+            print('TaskModel: '+str(j)+'\n') # print current taskmodel index to terminal
+            wf.write('TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
 
-                        for l in range(0,lmax):
-                            EMMInitc.write('\t' + ConfigDatastr + fieldStrInterface + '.' + str(curElems[k]) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
-                    else:
-                        EMMInitc.write('\t' + ConfigDatastr + fieldStrInterface + '.')
-                        EMMInitc.write(str(curElems[k])) # name of the variable
-                        EMMInitc.write(' = '+str(curAttr)+';\n') # value of the variable
+            fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
+            fieldStrInterface = matchDictValueToKey('self.TaskList['+str(i)+'].TaskModels['+str(j)+']')
+            EMMInith.write('\t' + fieldStr + ' ' + fieldStrInterface + ';\n')
+
+            varNameList = dir(TaskList[i].TaskModels[j]) # list all the variable names under current TaskModel
+
+            for k in range(0, len(varNameList)): # loop through variables within current TaskModel
+                wf.write('\n'+str(varNameList[k])+'\n') # print name of current element of taskmodel to workfile
+
+                if (varNameList[k][0:2] != '__') & (varNameList[k][0:4] != 'this'): # make sure element doesn't begin with __ or this
+                    varValue = getattr(TaskList[i].TaskModels[j], varNameList[k]) # get value of current element of TaskModel
+                    wf.write(str(type(varValue))+'\n') # print datatype to workfile
+
+                    if (str(type(varValue))[1:6] != 'class'): # skip classes
+                        wf.write(str(varValue)+'\n') # print value of current element to workfile
+                        varType = type(varValue).__name__ # datatype of value of current element
+
+                        if varType == 'str': # write sequence for string datatype
+                            dest = ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k])
+                            src = '"'+str(varValue)+'"'
+                            strcpyStr = 'strcpy(' + dest + ',' + src + ')'
+                            EMMInitc.write('\t'+strcpyStr+';\n')
+                        elif varType == 'SwigPyObject':
+                            typestr = varValue.__str__()
+                            if typestr.find("void") >= 0 or typestr.find("AlgContain") >= 0:
+                                continue
+                            else:
+                                strindx = typestr.find("'")
+                                typestr = typestr[(strindx+1):len(typestr)]
+                                strindx = typestr.find("'")
+                                typestr = typestr[0:strindx]
+                                strindx = typestr.find(' *')
+
+
+                            if strindx >= 0:
+                                typestr = typestr[0:strindx]
+
+
+                            if typestr.find('int') >= 0:
+                                typestr = typestr[typestr.find('int'):(typestr.find('int')+3)]
+
+                            print varNameList[k]
+                            print typestr
+                            print varValue
+                            print arrMaxLen
+                            arr = AVSSim.SimulationBaseClass.getCArray(typestr,varValue,arrMaxLen)
+                            # arr = [0]*10
+
+                            for l in range(0,arrMaxLen):
+                                EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k]) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+                        else:
+                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.')
+                            EMMInitc.write(str(varNameList[k])) # name of the variable
+                            EMMInitc.write(' = '+str(varValue)+';\n') # value of the variable
 
 EMMInitc.write('}')
 EMMInith.write('}EMMConfigData;')
 
-f.close() # close workfile
+wf.close() # close workfile
 EMMInitc.close() # close c_out file
 EMMInith.close() # close c_out file
+
 print('done')

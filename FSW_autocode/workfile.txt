@@ -5,7 +5,6 @@ TaskModel: 0
 
 ChebyCount
 <type 'int'>
-24
 14
 
 InputValues
@@ -13,37 +12,30 @@ InputValues
 
 KellyCheby
 <type 'SwigPyObject'>
-48
-<Swig Object of type 'double *' at 0x10f8bf840>
+<Swig Object of type 'double *' at 0x112cafa20>
 
 MaxSensorValue
 <type 'float'>
-24
 0.0005
 
 NumSensors
 <type 'int'>
-24
 8
 
 OutputDataName
 <type 'str'>
-55
 css_data_aggregate
 
 OutputMsgID
 <type 'int'>
-24
 0
 
 SensorListName
 <type 'str'>
-53
 css_sensors_data
 
 SensorMsgID
 <type 'int'>
-24
 0
 
 __class__
@@ -97,12 +89,10 @@ TaskModel: 1
 
 InputDataName
 <type 'str'>
-50
 imu_meas_data
 
 InputPropsName
 <type 'str'>
-53
 adcs_config_data
 
 LocalOutput
@@ -110,22 +100,18 @@ LocalOutput
 
 OutputDataName
 <type 'str'>
-52
 parsed_imu_data
 
 OutputMsgID
 <type 'int'>
-24
 0
 
 PropsMsgID
 <type 'int'>
-24
 0
 
 SensorMsgID
 <type 'int'>
-24
 0
 
 __class__
@@ -176,25 +162,21 @@ __weakref__
 
 platform2BdyDCM
 <type 'SwigPyObject'>
-48
-<Swig Object of type 'double *' at 0x10f8bf8d0>
+<Swig Object of type 'double *' at 0x112cafa20>
 
 platform2StrDCM
 <type 'SwigPyObject'>
-48
-<Swig Object of type 'double *' at 0x10f8bf8a0>
+<Swig Object of type 'double *' at 0x112cafcc0>
 
 this
 TaskModel: 2
 
 InputDataName
 <type 'str'>
-55
 star_tracker_state
 
 InputPropsName
 <type 'str'>
-53
 adcs_config_data
 
 LocalOutput
@@ -202,33 +184,27 @@ LocalOutput
 
 OutputDataName
 <type 'str'>
-51
 parsed_st_data
 
 OutputMsgID
 <type 'int'>
-24
 0
 
 PropsMsgID
 <type 'int'>
-24
 0
 
 SensorMsgID
 <type 'int'>
-24
 0
 
 T_BdyPlatform
 <type 'SwigPyObject'>
-48
-<Swig Object of type 'double *' at 0x10f8bf8a0>
+<Swig Object of type 'double *' at 0x112cafcc0>
 
 T_StrPlatform
 <type 'SwigPyObject'>
-48
-<Swig Object of type 'double *' at 0x10f8bf870>
+<Swig Object of type 'double *' at 0x112cafa20>
 
 __class__
 
@@ -275,5 +251,2442 @@ __swig_getmethods__
 __swig_setmethods__
 
 __weakref__
+
+this
+
+
+TaskList: 12
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+outputDataName
+<type 'str'>
+att_ref_output_stage1
+
+outputMsgID
+<type 'int'>
+0
+
+sigma_R0N
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+this
+
+
+TaskList: 13
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+inputCelID
+<type 'int'>
+0
+
+inputCelMessName
+<type 'str'>
+mars_display_frame_data
+
+inputNavDataName
+<type 'str'>
+simple_nav_output
+
+inputNavID
+<type 'int'>
+0
+
+outputDataName
+<type 'str'>
+att_ref_output_stage1
+
+outputMsgID
+<type 'int'>
+0
+
+this
+
+
+TaskList: 14
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+inputCelID
+<type 'int'>
+0
+
+inputCelMessName
+<type 'str'>
+mars_display_frame_data
+
+inputNavDataName
+<type 'str'>
+simple_nav_output
+
+inputNavID
+<type 'int'>
+0
+
+mu
+<type 'float'>
+1.32712440018e+20
+
+oe
+<class 'orb_elem_convert.orb_elem_convert.classicElements'>
+
+outputDataName
+<type 'str'>
+att_ref_output
+
+outputMsgID
+<type 'int'>
+0
+
+this
+
+
+TaskList: 15
+TaskModel: 0
+
+R_P1
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+R_P2
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+a_P1
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+a_P2
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+inputCelID
+<type 'int'>
+0
+
+inputCelMessName
+<type 'str'>
+mars_display_frame_data
+
+inputNavDataName
+<type 'str'>
+simple_nav_output
+
+inputNavID
+<type 'int'>
+0
+
+inputSecID
+<type 'int'>
+0
+
+inputSecMessName
+<type 'str'>
+
+
+outputDataName
+<type 'str'>
+att_ref_output
+
+outputMsgID
+<type 'int'>
+0
+
+singularityThresh
+<type 'float'>
+0.0174532925199
+
+this
+
+v_P1
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+v_P2
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+
+TaskList: 19
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+mnvrActive
+<type 'int'>
+0
+
+mnvrComplete
+<type 'int'>
+0
+
+mnvrStartTime
+<type 'long'>
+0
+
+numRasters
+<type 'int'>
+12
+
+outputAngleRates
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+
+outputAngleSet
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+
+outputEulerRatesID
+<type 'int'>
+0
+
+outputEulerRatesName
+<type 'str'>
+euler_angle_rates
+
+outputEulerSetID
+<type 'int'>
+0
+
+outputEulerSetName
+<type 'str'>
+euler_angle_set
+
+rasterTimes
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+scanSelector
+<type 'int'>
+0
+
+scanningAngles
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+scanningRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+this
+TaskModel: 1
+
+AlgCrossInit
+<type 'SwigPyObject'>
+<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x112cafcc0>
+
+AlgReset
+<type 'SwigPyObject'>
+<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x112cafa20>
+
+AlgSelfInit
+<type 'SwigPyObject'>
+<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x112cafcc0>
+
+AlgUpdate
+<type 'SwigPyObject'>
+<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x112cafa20>
+
+CallCounts
+<type 'long'>
+0
+
+CrossInit
+<type 'instancemethod'>
+<bound method AlgContain.CrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+DataPtr
+<type 'SwigPyObject'>
+<Swig Object of type 'void *' at 0x112cafa20>
+
+IntegratedInit
+<type 'instancemethod'>
+<bound method AlgContain.IntegratedInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+ModelTag
+<type 'str'>
+eulerRotation
+
+RNGSeed
+<type 'int'>
+464374481
+
+Reset
+<type 'instancemethod'>
+<bound method AlgContain.Reset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+SelfInit
+<type 'instancemethod'>
+<bound method AlgContain.SelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UpdateState
+<type 'instancemethod'>
+<bound method AlgContain.UpdateState of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UseCrossInit
+<type 'instancemethod'>
+<bound method AlgContain.UseCrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UseData
+<type 'instancemethod'>
+<bound method AlgContain.UseData of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UseReset
+<type 'instancemethod'>
+<bound method AlgContain.UseReset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UseSelfInit
+<type 'instancemethod'>
+<bound method AlgContain.UseSelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+UseUpdate
+<type 'instancemethod'>
+<bound method AlgContain.UseUpdate of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+_s
+<type 'type'>
+<class 'alg_contain.alg_contain.SysModel'>
+
+getSelfInitAddress
+<type 'instancemethod'>
+<bound method AlgContain.getSelfInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x112c8dba0> >>
+
+moduleID
+<type 'long'>
+92
+
+this
+
+
+TaskList: 20
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+angleRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+angleSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+cmdRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+cmdSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+dt
+<type 'float'>
+0.0
+
+eulerRatesOut
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+
+eulerSetOut
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+
+inputEulerRatesID
+<type 'int'>
+0
+
+inputEulerRatesName
+<type 'str'>
+
+
+inputEulerSetID
+<type 'int'>
+0
+
+inputEulerSetName
+<type 'str'>
+
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output_stage1
+
+outputDataName
+<type 'str'>
+att_ref_output
+
+outputEulerRatesID
+<type 'int'>
+0
+
+outputEulerRatesName
+<type 'str'>
+euler_rates_output
+
+outputEulerSetID
+<type 'int'>
+0
+
+outputEulerSetName
+<type 'str'>
+euler_set_output
+
+outputMsgID
+<type 'int'>
+0
+
+priorCmdRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+priorCmdSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+priorTime
+<type 'long'>
+0
+
+this
+
+
+TaskList: 22
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attGuidOut
+<class 'simpleDeadband.simpleDeadband.attGuidOut'>
+
+inputNavID
+<type 'int'>
+0
+
+inputNavName
+<type 'str'>
+simple_nav_output
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output
+
+outputDataName
+<type 'str'>
+nom_att_guid_out
+
+outputMsgID
+<type 'int'>
+0
+
+sigma_BcB
+<type 'NoneType'>
+None
+
+sigma_R0R
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+this
+TaskModel: 1
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attGuidOut
+<class 'simpleDeadband.simpleDeadband.attGuidOut'>
+
+error
+<type 'float'>
+0.0
+
+innerThresh
+<type 'float'>
+0.0698131700798
+
+inputGuidID
+<type 'int'>
+0
+
+inputGuidName
+<type 'str'>
+sun_safe_att_err
+
+omega_BR_B
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+outerThresh
+<type 'float'>
+0.305432619099
+
+outputDataName
+<type 'str'>
+db_att_guid_out
+
+outputGuidID
+<type 'int'>
+0
+
+sigma_BR
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+this
+
+
+TaskList: 23
+TaskModel: 0
+
+GsMatrix
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+JsList
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+K1
+<type 'float'>
+0.3
+
+K3
+<type 'float'>
+1.0
+
+Ki
+<type 'float'>
+-1.0
+
+P
+<type 'float'>
+150.0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+controlOut
+<class 'PRV_Steering.PRV_Steering.vehControlOut'>
+
+ignoreOuterLoopFeedforward
+<type 'int'>
+0
+
+inputGuidID
+<type 'int'>
+0
+
+inputGuidName
+<type 'str'>
+nom_att_guid_out
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeedsID
+<type 'int'>
+0
+
+inputRWSpeedsName
+<type 'str'>
+reactionwheel_output_states
+
+inputVehicleConfigDataID
+<type 'int'>
+0
+
+inputVehicleConfigDataName
+<type 'str'>
+adcs_config_data
+
+integralLimit
+<type 'float'>
+0.0
+
+numRWAs
+<type 'int'>
+4
+
+omega_max
+<type 'float'>
+0.0261799387799
+
+outputDataName
+<type 'str'>
+controlTorqueRaw
+
+outputMsgID
+<type 'int'>
+0
+
+priorTime
+<type 'long'>
+0
+
+this
+
+z
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+TaskModel: 1
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputControlName
+<type 'str'>
+controlTorqueRaw
+
+inputMsgID
+<type 'int'>
+0
+
+numThrGroups
+<type 'int'>
+1
+
+this
+
+thrGroups
+<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+TaskModel: 2
+
+GsInverse
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+OmegaGain
+<type 'float'>
+0.002
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputRWCmdsID
+<type 'int'>
+0
+
+inputRWCommands
+<type 'str'>
+reactionwheel_cmds_raw
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeeds
+<type 'str'>
+reactionwheel_output_states
+
+inputSpeedsID
+<type 'int'>
+0
+
+numWheels
+<type 'int'>
+4
+
+outputControlName
+<type 'str'>
+reactionwheel_cmds
+
+outputMsgID
+<type 'int'>
+0
+
+this
+
+
+TaskList: 24
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attGuidOut
+<class 'simpleDeadband.simpleDeadband.attGuidOut'>
+
+inputNavID
+<type 'int'>
+0
+
+inputNavName
+<type 'str'>
+simple_nav_output
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output
+
+outputDataName
+<type 'str'>
+nom_att_guid_out
+
+outputMsgID
+<type 'int'>
+0
+
+sigma_BcB
+<type 'NoneType'>
+None
+
+sigma_R0R
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+this
+TaskModel: 1
+
+GsMatrix
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+JsList
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+K1
+<type 'float'>
+0.3
+
+K3
+<type 'float'>
+1.0
+
+Ki
+<type 'float'>
+-1.0
+
+P
+<type 'float'>
+150.0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+controlOut
+<class 'PRV_Steering.PRV_Steering.vehControlOut'>
+
+ignoreOuterLoopFeedforward
+<type 'int'>
+0
+
+inputGuidID
+<type 'int'>
+0
+
+inputGuidName
+<type 'str'>
+nom_att_guid_out
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeedsID
+<type 'int'>
+0
+
+inputRWSpeedsName
+<type 'str'>
+reactionwheel_output_states
+
+inputVehicleConfigDataID
+<type 'int'>
+0
+
+inputVehicleConfigDataName
+<type 'str'>
+adcs_config_data
+
+integralLimit
+<type 'float'>
+0.0
+
+numRWAs
+<type 'int'>
+4
+
+omega_max
+<type 'float'>
+0.0261799387799
+
+outputDataName
+<type 'str'>
+controlTorqueRaw
+
+outputMsgID
+<type 'int'>
+0
+
+priorTime
+<type 'long'>
+0
+
+this
+
+z
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+TaskModel: 2
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputControlName
+<type 'str'>
+controlTorqueRaw
+
+inputMsgID
+<type 'int'>
+0
+
+numThrGroups
+<type 'int'>
+1
+
+this
+
+thrGroups
+<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+TaskModel: 3
+
+GsInverse
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+OmegaGain
+<type 'float'>
+0.002
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputRWCmdsID
+<type 'int'>
+0
+
+inputRWCommands
+<type 'str'>
+reactionwheel_cmds_raw
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeeds
+<type 'str'>
+reactionwheel_output_states
+
+inputSpeedsID
+<type 'int'>
+0
+
+numWheels
+<type 'int'>
+4
+
+outputControlName
+<type 'str'>
+reactionwheel_cmds
+
+outputMsgID
+<type 'int'>
+0
+
+this
+
+
+TaskList: 25
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attGuidOut
+<class 'simpleDeadband.simpleDeadband.attGuidOut'>
+
+inputNavID
+<type 'int'>
+0
+
+inputNavName
+<type 'str'>
+simple_nav_output
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output
+
+outputDataName
+<type 'str'>
+nom_att_guid_out
+
+outputMsgID
+<type 'int'>
+0
+
+sigma_BcB
+<type 'NoneType'>
+None
+
+sigma_R0R
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+this
+TaskModel: 1
+
+GsMatrix
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+JsList
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+K
+<type 'float'>
+1.0
+
+Ki
+<type 'float'>
+-1.0
+
+P
+<type 'float'>
+3.0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+controlOut
+<class 'PRV_Steering.PRV_Steering.vehControlOut'>
+
+domega0
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+inputGuidID
+<type 'int'>
+0
+
+inputGuidName
+<type 'str'>
+nom_att_guid_out
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeedsID
+<type 'int'>
+0
+
+inputRWSpeedsName
+<type 'str'>
+reactionwheel_output_states
+
+inputVehicleConfigDataID
+<type 'int'>
+0
+
+inputVehicleConfigDataName
+<type 'str'>
+adcs_config_data
+
+int_sigma
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+integralLimit
+<type 'float'>
+0.0
+
+numRWAs
+<type 'int'>
+4
+
+outputDataName
+<type 'str'>
+controlTorqueRaw
+
+outputMsgID
+<type 'int'>
+0
+
+priorTime
+<type 'long'>
+0
+
+this
+
+z
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+TaskModel: 2
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputControlName
+<type 'str'>
+controlTorqueRaw
+
+inputMsgID
+<type 'int'>
+0
+
+numThrGroups
+<type 'int'>
+1
+
+this
+
+thrGroups
+<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+TaskModel: 3
+
+GsInverse
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+OmegaGain
+<type 'float'>
+0.002
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputRWCmdsID
+<type 'int'>
+0
+
+inputRWCommands
+<type 'str'>
+reactionwheel_cmds_raw
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeeds
+<type 'str'>
+reactionwheel_output_states
+
+inputSpeedsID
+<type 'int'>
+0
+
+numWheels
+<type 'int'>
+4
+
+outputControlName
+<type 'str'>
+reactionwheel_cmds
+
+outputMsgID
+<type 'int'>
+0
+
+this
+
+
+TaskList: 21
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+
+dt
+<type 'float'>
+0.0
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output_stage1
+
+omega_RN_N
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+outputDataName
+<type 'str'>
+att_ref_output
+
+outputMsgID
+<type 'int'>
+0
+
+priorCmdSigma_RN
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+priorTime
+<type 'long'>
+0
+
+sigma_RN
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafa20>
+
+this
+
+
+TaskList: 26
+TaskModel: 0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+attGuidOut
+<class 'simpleDeadband.simpleDeadband.attGuidOut'>
+
+inputNavID
+<type 'int'>
+0
+
+inputNavName
+<type 'str'>
+simple_nav_output
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output
+
+outputDataName
+<type 'str'>
+nom_att_guid_out
+
+outputMsgID
+<type 'int'>
+0
+
+sigma_BcB
+<type 'NoneType'>
+None
+
+sigma_R0R
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+
+this
+TaskModel: 1
+
+GsMatrix
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+JsList
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112cafcc0>
+
+K1
+<type 'float'>
+0.3
+
+K3
+<type 'float'>
+1.0
+
+Ki
+<type 'float'>
+-1.0
+
+P
+<type 'float'>
+150.0
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+controlOut
+<class 'PRV_Steering.PRV_Steering.vehControlOut'>
+
+inputGuidID
+<type 'int'>
+0
+
+inputGuidName
+<type 'str'>
+nom_att_guid_out
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeedsID
+<type 'int'>
+0
+
+inputRWSpeedsName
+<type 'str'>
+reactionwheel_output_states
+
+inputVehicleConfigDataID
+<type 'int'>
+0
+
+inputVehicleConfigDataName
+<type 'str'>
+adcs_config_data
+
+integralLimit
+<type 'float'>
+0.0
+
+numRWAs
+<type 'int'>
+0
+
+omega_max
+<type 'float'>
+0.0261799387799
+
+outputDataName
+<type 'str'>
+controlTorqueRaw
+
+outputMsgID
+<type 'int'>
+0
+
+priorTime
+<type 'long'>
+0
+
+this
+
+z
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf780>
+TaskModel: 2
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputControlName
+<type 'str'>
+controlTorqueRaw
+
+inputMsgID
+<type 'int'>
+0
+
+numThrGroups
+<type 'int'>
+1
+
+this
+
+thrGroups
+<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
+TaskModel: 3
+
+GsInverse
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x112caf630>
+
+OmegaGain
+<type 'float'>
+0.002
+
+__class__
+
+__del__
+
+__delattr__
+
+__dict__
+
+__doc__
+
+__format__
+
+__getattr__
+
+__getattribute__
+
+__hash__
+
+__init__
+
+__module__
+
+__new__
+
+__reduce__
+
+__reduce_ex__
+
+__repr__
+
+__setattr__
+
+__sizeof__
+
+__str__
+
+__subclasshook__
+
+__swig_destroy__
+
+__swig_getmethods__
+
+__swig_setmethods__
+
+__weakref__
+
+inputRWCmdsID
+<type 'int'>
+0
+
+inputRWCommands
+<type 'str'>
+reactionwheel_cmds_raw
+
+inputRWConfID
+<type 'int'>
+0
+
+inputRWConfigData
+<type 'str'>
+rwa_config_data
+
+inputRWSpeeds
+<type 'str'>
+reactionwheel_output_states
+
+inputSpeedsID
+<type 'int'>
+0
+
+numWheels
+<type 'int'>
+4
+
+outputControlName
+<type 'str'>
+reactionwheel_cmds
+
+outputMsgID
+<type 'int'>
+0
 
 this
