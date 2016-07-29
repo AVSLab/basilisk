@@ -48,20 +48,22 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("ignoreAxis2, useCOMOffset", [
-    (0,0)
-    ,(1,0)
-    ,(0,1)
+@pytest.mark.parametrize("ignoreAxis2, useCOMOffset, dropThruster, use2ndLr", [
+    (False, False, False, False)
+    ,(True, False, False, False)
+    ,(False, True, False, False)
+    ,(False, True, True, False)
+    ,(False, True, True, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, ignoreAxis2, useCOMOffset):
+def test_module(show_plots, ignoreAxis2, useCOMOffset,dropThruster, use2ndLr):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset)
+    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
+def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -132,7 +134,10 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    requestedTorque = [1.0, -0.5, 0.7]                  # Set up a list as a 3-vector
+    if use2ndLr:
+        requestedTorque = [0.1, 0.16, 0.005]            # Set up a list as a 3-vector
+    else:
+        requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
     SimulationBaseClass.SetCArray(requestedTorque,                      # specify message variable
                                   'double',                             # specify message variable type
                                   inputMessageData.torqueRequestBody)   # write torque request to input message
@@ -141,8 +146,6 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
                                           0,
                                           inputMessageData)             # write data into the simulator
 
-    numThrusters = 8;
-    moduleConfig.numThrusters = numThrusters
     moduleConfig.epsilon = 0.0005
     if ignoreAxis2==0:
         controlAxes_B = [
@@ -160,26 +163,51 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
 
     rcsClass = vehicleConfigData.ThrusterCluster()
     rcsPointer = vehicleConfigData.ThrusterPointData()
-    rcsLocationData = [ \
-               [-0.86360, -0.82550, 1.79070],
-               [-0.82550, -0.86360, 1.79070],
-               [0.82550, 0.86360, 1.79070],
-               [0.86360, 0.82550, 1.79070],
-               [-0.86360, -0.82550, -1.79070],
-               [-0.82550, -0.86360, -1.79070],
-               [0.82550, 0.86360, -1.79070],
-               [0.86360, 0.82550, -1.79070] \
-               ]
-    rcsDirectionData = [ \
-                    [1.0, 0.0, 0.0],
-                    [0.0, 1.0, 0.0],
-                    [0.0, -1.0, 0.0],
-                    [-1.0, 0.0, 0.0],
-                    [-1.0, 0.0, 0.0],
-                    [0.0, -1.0, 0.0],
-                    [0.0, 1.0, 0.0],
-                    [1.0, 0.0, 0.0] \
-                    ]
+    if dropThruster:
+        numThrusters = 7;
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, -1.79070],
+                   [-0.82550, -0.86360, -1.79070],
+                   [0.82550, 0.86360, -1.79070]\
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 1.0, 0.0]\
+                        ]
+    else:
+        numThrusters = 8;
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, -1.79070],
+                   [-0.82550, -0.86360, -1.79070],
+                   [0.82550, 0.86360, -1.79070],
+                   [0.86360, 0.82550, -1.79070] \
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [1.0, 0.0, 0.0] \
+                        ]
+    moduleConfig.numThrusters = numThrusters
+
+
     for i in range(numThrusters):
         SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
         SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
@@ -224,10 +252,24 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
                        [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
                        ]
         else:
-            trueVector = [
-                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
-                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
-                       ]
+            if dropThruster:
+                if use2ndLr:
+                    trueVector = [
+                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0],
+                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0]
+                    ]
+                else:
+                    trueVector = [
+                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
+                         0.2792204165968615, 0],
+                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
+                         0.2792204165968615, 0]
+                    ]
+            else:
+                trueVector = [
+                           [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
+                           [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
+                           ]
     else:
         if ignoreAxis2==1:
             trueVector = [
@@ -277,6 +319,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset):
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 0,           # ignoreAxis2 value
-                 0,           # use COM offset
+                 False,           # ignoreAxis2 value
+                 False,           # use COM offset
+                 False,           # drop last thruster
+                 False,           # use alternate Lr torque
                )
