@@ -136,11 +136,12 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     double      forcePerAxis[MAX_EFF_CNT];    /*!< [N]     vector of commanded thruster forces to produce a torque about a body axis */
     int         i,j,c,k;
     int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
-    double      dumVec[3];
-    double      dumVec2[3];
+    double      tempVec[3];
+    double      Lrj[3];                       /*!< [Nm]    control axis specific desired control torque vector */
     double      D2;
     double      D[MAX_EFF_CNT];               /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Dbar[3][MAX_EFF_CNT];         /*!< [m]     mapping matrix from positive thruster forces to body torque */
+    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     mapping matrix from positive thruster forces to body torque 
+                                                           Note, the vectors are stored as row vectors, not column vectors */
     double      DbarDbarT33[3][3];
     double      DbarTDbar22[2][2];
     double      DbarTDbar11;
@@ -170,8 +171,8 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
         D2 = 0.;
         for(i=0; i<ConfigData->numThrusters; i=i+1)
         {
-            v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], dumVec);
-            D[i] = v3Dot(dumVec, ConfigData->controlAxes_B+3*k);
+            v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], tempVec);
+            D[i] = v3Dot(tempVec, ConfigData->controlAxes_B+3*k);
             D2 += D[i]*D[i];
         }
         /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
@@ -192,10 +193,7 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
 
             if (forcePerAxis[i]>0.0) {
                 thrusterUsed[i] = 1;
-                v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], dumVec);
-                for (j=0;j<3;j++) {
-                Dbar[j][counterPosForces] = dumVec[j];
-                }
+                v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
                 counterPosForces += 1;
             }
         }
@@ -205,62 +203,57 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
             for (j=0;j<3;j++) {
                 DbarDbarT33[i][j] = 0.0;
                 for (c=0;c<counterPosForces;c++) {
-                    DbarDbarT33[i][j] += Dbar[i][c]*Dbar[j][c];
+                    DbarDbarT33[i][j] += Dbar[c][i]*Dbar[c][j];
                 }
             }
         }
 
         memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));
-        v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, dumVec);
+        v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, Lrj);
         if (m33Determinant(DbarDbarT33) > ConfigData->epsilon) {
             /* 
              do a minimum norm inverse 
              */
             m33Inverse(DbarDbarT33, matInv33);
-            m33MultV3(matInv33, dumVec, dumVec2);
+            m33MultV3(matInv33, Lrj, tempVec);
             for (i=0;i<counterPosForces;i++) {
-                for (j=0;j<3;j++) {
-                    forcePerAxis[i] += Dbar[j][i]*dumVec2[j];
-                }
+                forcePerAxis[i] = v3Dot(Dbar[i], tempVec);
             }
 
         } else {
             /* 
              do a least squares inverse 
              */
+
             switch (counterPosForces) {
                 case 2:
                     for (i=0;i<2;i++){
                         for (j=0;j<2;j++) {
                             DbarTDbar22[i][j] = 0.0;
                             for (c=0;c<3;c++) {
-                                DbarTDbar22[i][j] += Dbar[c][i]*Dbar[c][j];
+                                DbarTDbar22[i][j] += Dbar[i][c]*Dbar[j][c];
                             }
                         }
                     }
-                    m22Inverse(DbarTDbar22, matInv22);
-                    for (i=0;i<2;i++) {
-                        dumVec2[i] = 0.;
-                        for (j=0;j<3;j++) {
-                            dumVec2[i] += Dbar[j][i]*dumVec[j];
+
+                    if (m22Determinant(DbarTDbar22) > ConfigData->epsilon) {
+                        /* matrix is full rank, do regular least squares inverse */
+                        m22Inverse(DbarTDbar22, matInv22);
+                        for (i=0;i<2;i++) {
+                            tempVec[i] = v3Dot(Dbar[i], Lrj);
                         }
-                    }
-                    for (i=0;i<2;i++) {
-                        for (j=0;j<2;j++) {
-                            forcePerAxis[i] += matInv22[i][j] * dumVec2[j];
-                        }
+                        m22MultV2(matInv22, tempVec, forcePerAxis);
+                    } else {
+                        /* matrix is not full rank, only one axis can be controlled. */
+                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/v3Norm(Dbar[0])/(1+v3Norm(Dbar[1])/v3Norm(Dbar[0]));
+                        forcePerAxis[1] = forcePerAxis[0];
                     }
                     break;
 
                 case 1:
-                    DbarTDbar11 = 0.;
-                    for (c=0;c<3;c++) {
-                        DbarTDbar11 += Dbar[c][0]*Dbar[c][0];
-                    }
+                    DbarTDbar11 = v3Dot(Dbar[0], Dbar[0]);
                     if (DbarTDbar11 > ConfigData->epsilon) {
-                        for (c=0;c<3;c++) {
-                            forcePerAxis[0] += Dbar[c][0]*dumVec[c]/DbarTDbar11;
-                        }
+                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/DbarTDbar11;
                     } else {
                         forcePerAxis[0] = 0.0;
                     }
