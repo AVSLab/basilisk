@@ -142,7 +142,8 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     double      D[MAX_EFF_CNT];               /*!< [m]     mapping matrix from thruster forces to body torque */
     double      Dbar[3][MAX_EFF_CNT];         /*!< [m]     mapping matrix from positive thruster forces to body torque */
     double      DbarDbarT33[3][3];
-    double      DbarDbarT22[2][2];
+    double      DbarTDbar22[2][2];
+    double      DbarTDbar11;
     double      DTDDTinv[MAX_EFF_CNT];        /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
     double      matInv33[3][3];
     double      matInv22[2][2];
@@ -209,6 +210,7 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
             }
         }
 
+        memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));
         v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, dumVec);
         if (m33Determinant(DbarDbarT33) > ConfigData->epsilon) {
             /* 
@@ -217,7 +219,6 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
             m33Inverse(DbarDbarT33, matInv33);
             m33MultV3(matInv33, dumVec, dumVec2);
             for (i=0;i<counterPosForces;i++) {
-                forcePerAxis[i] = 0.0;
                 for (j=0;j<3;j++) {
                     forcePerAxis[i] += Dbar[j][i]*dumVec2[j];
                 }
@@ -227,26 +228,46 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
             /* 
              do a least squares inverse 
              */
-            for (i=0;i<2;i++){
-                for (j=0;j<2;j++) {
-                    DbarDbarT22[i][j] = 0.0;
-                    for (c=0;c<3;c++) {
-                        DbarDbarT22[i][j] += Dbar[c][i]*Dbar[c][j];
+            switch (counterPosForces) {
+                case 2:
+                    for (i=0;i<2;i++){
+                        for (j=0;j<2;j++) {
+                            DbarTDbar22[i][j] = 0.0;
+                            for (c=0;c<3;c++) {
+                                DbarTDbar22[i][j] += Dbar[c][i]*Dbar[c][j];
+                            }
+                        }
                     }
-                }
-            }
-            m22Inverse(DbarDbarT22, matInv22);
-            for (i=0;i<2;i++) {
-                dumVec2[i] = 0.;
-                for (j=0;j<3;j++) {
-                    dumVec2[i] += Dbar[j][i]*dumVec[j];
-                }
-            }
-            for (i=0;i<2;i++) {
-                forcePerAxis[i] = 0.0;
-                for (j=0;j<2;j++) {
-                    forcePerAxis[i] += matInv22[i][j] * dumVec2[j];
-                }
+                    m22Inverse(DbarTDbar22, matInv22);
+                    for (i=0;i<2;i++) {
+                        dumVec2[i] = 0.;
+                        for (j=0;j<3;j++) {
+                            dumVec2[i] += Dbar[j][i]*dumVec[j];
+                        }
+                    }
+                    for (i=0;i<2;i++) {
+                        for (j=0;j<2;j++) {
+                            forcePerAxis[i] += matInv22[i][j] * dumVec2[j];
+                        }
+                    }
+                    break;
+
+                case 1:
+                    DbarTDbar11 = 0.;
+                    for (c=0;c<3;c++) {
+                        DbarTDbar11 += Dbar[c][0]*Dbar[c][0];
+                    }
+                    if (DbarTDbar11 > ConfigData->epsilon) {
+                        for (c=0;c<3;c++) {
+                            forcePerAxis[0] += Dbar[c][0]*dumVec[c]/DbarTDbar11;
+                        }
+                    } else {
+                        forcePerAxis[0] = 0.0;
+                    }
+
+                default:
+                    /* the current control axis cannot be achieved with the currently available thrusters */
+                    break;
             }
 
         }
