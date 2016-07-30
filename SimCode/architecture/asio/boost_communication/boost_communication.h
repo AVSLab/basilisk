@@ -18,8 +18,8 @@
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "dynamics/Thrusters/thruster_dynamics.h"
 #include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "TcpServer.h"
-#include "TcpSerializeServer.h"
+#include "architecture/asio/_GeneralModuleFiles/TcpServer.h"
+#include "architecture/asio/_GeneralModuleFiles/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
 
 #define IP_BASE_PORT         50000

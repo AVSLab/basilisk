@@ -4,7 +4,7 @@
 //
 
 #include "boost_communication.h"
-#include "TcpClient.h"
+#include "architecture/asio/_GeneralModuleFiles/TcpClient.h"
 #include "../External/cspice/include/SpiceUsr.h"
 
 extern "C" {
