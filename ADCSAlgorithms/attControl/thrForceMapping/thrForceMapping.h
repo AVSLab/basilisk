@@ -15,8 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef _THRUSTER_FORCE_SIMPLE_H_
-#define _THRUSTER_FORCE_SIMPLE_H_
+#ifndef _THRUSTER_FORCE_MAPPING_H_
+#define _THRUSTER_FORCE_MAPPING_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
@@ -51,16 +51,16 @@ typedef struct {
 
     vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
 
-}thrusterForceSimpleConfig;
+}thrForceMappingConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID);
-    void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
+    void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

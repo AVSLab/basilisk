@@ -14,21 +14,21 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module thrusterForceSimple
+%module thrForceMapping
 %{
-   #include "thrusterForceSimple.h"
+   #include "thrForceMapping.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_thrusterForceSimple(void*, uint64_t, uint64_t);
-%ignore Update_thrusterForceSimple;
-%constant void SelfInit_thrusterForceSimple(void*, uint64_t);
-%ignore SelfInit_thrusterForceSimple;
-%constant void CrossInit_thrusterForceSimple(void*, uint64_t);
-%ignore CrossInit_thrusterForceSimple;
-%constant void Reset_thrusterForceSimple(void*, uint64_t, uint64_t);
-%ignore Reset_thrusterForceSimple;
-%include "thrusterForceSimple.h"
+%constant void Update_thrForceMapping(void*, uint64_t, uint64_t);
+%ignore Update_thrForceMapping;
+%constant void SelfInit_thrForceMapping(void*, uint64_t);
+%ignore SelfInit_thrForceMapping;
+%constant void CrossInit_thrForceMapping(void*, uint64_t);
+%ignore CrossInit_thrForceMapping;
+%constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
+%ignore Reset_thrForceMapping;
+%include "thrForceMapping.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"

@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/thrusterForceSimple/thrusterForceSimple.h"
+#include "attControl/thrForceMapping/thrForceMapping.h"
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
@@ -41,7 +41,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
+void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Create output message for module */
@@ -56,7 +56,7 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
+void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
@@ -77,7 +77,7 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
@@ -98,7 +98,7 @@ void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t c
         }
     }
     if (ConfigData->numOfAxesToBeControlled==0) {
-        printf("WARNING: thrusterForceSimple() is not setup to control any axes!\n");
+        printf("WARNING: thrForceMapping() is not setup to control any axes!\n");
     }
 
 
@@ -128,7 +128,7 @@ void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t c
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t    clockTime;
     uint32_t    readSize;

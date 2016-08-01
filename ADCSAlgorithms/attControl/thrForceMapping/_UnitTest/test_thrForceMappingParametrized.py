@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        thrusterForceSimple
+#   Module Name:        thrForceMapping
 #   Author:             Hanspeter Schaub
 #   Creation Date:      July 4, 2016
 #
@@ -36,7 +36,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import thrusterForceSimple
+import thrForceMapping
 import macros
 import MRP_Steering
 import vehicleConfigData
@@ -83,13 +83,13 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrusterForceSimple.thrusterForceSimpleConfig()                          # update with current values
+    moduleConfig = thrForceMapping.thrForceMappingConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrusterForceSimple.Update_thrusterForceSimple,
-                                        thrusterForceSimple.SelfInit_thrusterForceSimple,
-                                        thrusterForceSimple.CrossInit_thrusterForceSimple,
-                                        thrusterForceSimple.Reset_thrusterForceSimple)
-    moduleWrap.ModelTag = "thrusterForceSimple"
+                                        thrForceMapping.Update_thrForceMapping,
+                                        thrForceMapping.SelfInit_thrForceMapping,
+                                        thrForceMapping.CrossInit_thrForceMapping,
+                                        thrForceMapping.Reset_thrForceMapping)
+    moduleWrap.ModelTag = "thrForceMapping"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
