@@ -15,8 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef _THRUSTER_FORCE_SIMPLE_H_
-#define _THRUSTER_FORCE_SIMPLE_H_
+#ifndef _THRUSTER_FORCE_MAPPING_H_
+#define _THRUSTER_FORCE_MAPPING_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
@@ -36,6 +36,7 @@ typedef struct {
     double   gtThruster_B[MAX_EFF_CNT][3];          /*!< []      local copy of the thruster force unit direction vectors */
     uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
+
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
     int32_t  outputMsgID;                           /*!< ID for the outgoing message */
@@ -50,16 +51,16 @@ typedef struct {
 
     vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
 
-}thrusterForceSimpleConfig;
+}thrForceMappingConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID);
-    void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
+    void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

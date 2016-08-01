@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/thrusterForceSimple/thrusterForceSimple.h"
+#include "attControl/thrForceMapping/thrForceMapping.h"
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
@@ -41,7 +41,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
+void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Create output message for module */
@@ -56,7 +56,7 @@ void SelfInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t moduleID)
+void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
@@ -77,7 +77,7 @@ void CrossInit_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
@@ -98,7 +98,7 @@ void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t c
         }
     }
     if (ConfigData->numOfAxesToBeControlled==0) {
-        printf("WARNING: thrusterForceSimple() is not setup to control any axes!\n");
+        printf("WARNING: thrForceMapping() is not setup to control any axes!\n");
     }
 
 
@@ -115,7 +115,6 @@ void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t c
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].rThrust_S,
                   ConfigData->rThruster_B[i]);
-        v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, ConfigData->rThruster_B[i]);
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
@@ -128,19 +127,29 @@ void Reset_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t c
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t    clockTime;
     uint32_t    readSize;
-    double      F[MAX_EFF_CNT];               /*!< [N] vector of commanded thruster forces */
-    double      forcePerAxis[MAX_EFF_CNT];    /*!< [N] vector of commanded thruster forces to produce a torque about a body axis */
-    int         i,j;
-    double      dumVec[3];
+    double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
+    double      forcePerAxis[MAX_EFF_CNT];    /*!< [N]     vector of commanded thruster forces to produce a torque about a body axis */
+    int         i,j,c,k;
+    int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
+    double      tempVec[3];
+    double      Lrj[3];                       /*!< [Nm]    control axis specific desired control torque vector */
     double      D2;
-    double      D[3][MAX_EFF_CNT];            /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Gt[3][MAX_EFF_CNT];           /*!< []      matrix containing the thrust direction unit vectors gHat_t_i */
-    double      DTDDTinv[MAX_EFF_CNT][3];     /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
+    double      D[MAX_EFF_CNT];               /*!< [m]     mapping matrix from thruster forces to body torque */
+    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     mapping matrix from positive thruster forces to body torque 
+                                                           Note, the vectors are stored as row vectors, not column vectors */
+    double      DbarDbarT33[3][3];
+    double      DbarTDbar22[2][2];
+    double      DbarTDbar11;
+    double      DTDDTinv[MAX_EFF_CNT];        /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
+    double      matInv33[3][3];
+    double      matInv22[2][2];
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
+    int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
+    double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -152,70 +161,124 @@ void Update_thrusterForceSimple(thrusterForceSimpleConfig *ConfigData, uint64_t 
     /* Lr is assumed to be a negative torque onto the body */
     v3Scale(-1.0, Lr_B, Lr_B);
 
-
-    /* clear the net thruster force vector */
-    memset(F,0x0,MAX_EFF_CNT*sizeof(double));
-
-    /* 
-     setup the required projection matrices 
-     */
-    for(i=0; i<ConfigData->numThrusters; i=i+1)
-    {
-        v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], dumVec);
-        for (j=0;j<ConfigData->numOfAxesToBeControlled; j++)
-        {
-            D[j][i] = v3Dot(dumVec, ConfigData->controlAxes_B+3*j);
-        }
-        for (j=0;j<3;j++)
-        {
-            Gt[j][i] = ConfigData->rThruster_B[i][j];
-        }
+    /* compute thruster locations relative to COM */
+    for (i=0;i<ConfigData->numThrusters;i++) {
+        v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, rThrusterRelCOM_B[i]);
     }
 
+    /* clear the net thruster force output array */
+    memset(F,0x0,MAX_EFF_CNT*sizeof(double));
 
 
-    for (j=0;j<ConfigData->numOfAxesToBeControlled;j++)
+    for (k=0;k<ConfigData->numOfAxesToBeControlled;k++)
     {
         D2 = 0.;
         for(i=0; i<ConfigData->numThrusters; i=i+1)
         {
-            D2 += D[j][i]*D[j][i];
+            v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], tempVec);
+            D[i] = v3Dot(tempVec, ConfigData->controlAxes_B+3*k);
+            D2 += D[i]*D[i];
         }
         /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
         for(i=0; i<ConfigData->numThrusters; i=i+1)
         {
             if (D2 > ConfigData->epsilon) {
-                DTDDTinv[i][j] = D[j][i]/ D2;
+                DTDDTinv[i] = D[i]/ D2;
             } else {
-                DTDDTinv[i][j] = 0.0;
+                DTDDTinv[i] = 0.0;
             }
         }
-    }
 
-
-    /*
-        Loop over each body axis and compute the set of positive thruster to yield Lr(j)
-     */
-
-    for (j=0;j<ConfigData->numOfAxesToBeControlled;j++) {
-
-        memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));      /* clear the per-axis force array */
-
+        /* check which thrusters require a positive thrust force */
+        counterPosForces = 0;
+        memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
         for (i=0;i<ConfigData->numThrusters;i++) {
-            /* compute the minimum norm solution for each thruster */
-            forcePerAxis[i] += DTDDTinv[i][j] * v3Dot(Lr_B,ConfigData->controlAxes_B+3*j);
-            /* enforce that the thrust must be positive */
-            if (forcePerAxis[i] > 0.0) {
-                forcePerAxis[i] *= 2.0;
-            } else {
-                forcePerAxis[i] = 0.0;
+            forcePerAxis[i] = DTDDTinv[i] * v3Dot(Lr_B,ConfigData->controlAxes_B+3*k);
+
+            if (forcePerAxis[i]>0.0) {
+                thrusterUsed[i] = 1;
+                v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
+                counterPosForces += 1;
+            }
+        }
+
+        /* compute Dbar.Dbar^T to check if this is of rank 3 */
+        for (i=0;i<3;i++){
+            for (j=0;j<3;j++) {
+                DbarDbarT33[i][j] = 0.0;
+                for (c=0;c<counterPosForces;c++) {
+                    DbarDbarT33[i][j] += Dbar[c][i]*Dbar[c][j];
+                }
+            }
+        }
+
+        memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));
+        v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, Lrj);
+        if (m33Determinant(DbarDbarT33) > ConfigData->epsilon) {
+            /* 
+             do a minimum norm inverse 
+             */
+            m33Inverse(DbarDbarT33, matInv33);
+            m33MultV3(matInv33, Lrj, tempVec);
+            for (i=0;i<counterPosForces;i++) {
+                forcePerAxis[i] = v3Dot(Dbar[i], tempVec);
             }
 
-            /* add the per-axis thrust solution to the net thruster sum */
-            F[i] += forcePerAxis[i];
-        }
-    }
+        } else {
+            /* 
+             do a least squares inverse 
+             */
 
+            switch (counterPosForces) {
+                case 2:
+                    for (i=0;i<2;i++){
+                        for (j=0;j<2;j++) {
+                            DbarTDbar22[i][j] = 0.0;
+                            for (c=0;c<3;c++) {
+                                DbarTDbar22[i][j] += Dbar[i][c]*Dbar[j][c];
+                            }
+                        }
+                    }
+
+                    if (m22Determinant(DbarTDbar22) > ConfigData->epsilon) {
+                        /* matrix is full rank, do regular least squares inverse */
+                        m22Inverse(DbarTDbar22, matInv22);
+                        for (i=0;i<2;i++) {
+                            tempVec[i] = v3Dot(Dbar[i], Lrj);
+                        }
+                        m22MultV2(matInv22, tempVec, forcePerAxis);
+                    } else {
+                        /* matrix is not full rank, only one axis can be controlled. */
+                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/v3Norm(Dbar[0])/(1+v3Norm(Dbar[1])/v3Norm(Dbar[0]));
+                        forcePerAxis[1] = forcePerAxis[0];
+                    }
+                    break;
+
+                case 1:
+                    DbarTDbar11 = v3Dot(Dbar[0], Dbar[0]);
+                    if (DbarTDbar11 > ConfigData->epsilon) {
+                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/DbarTDbar11;
+                    } else {
+                        forcePerAxis[0] = 0.0;
+                    }
+
+                default:
+                    /* the current control axis cannot be achieved with the currently available thrusters */
+                    break;
+            }
+
+        }
+
+        /* add the per axis thrust solutions to the overall thruster force solution */
+        c = 0;
+        for (i=0;i<ConfigData->numThrusters;i++) {
+            if (thrusterUsed[i]) {
+                F[i] += forcePerAxis[c];
+                c += 1;
+            }
+        }
+
+    }
 
 
     /*
