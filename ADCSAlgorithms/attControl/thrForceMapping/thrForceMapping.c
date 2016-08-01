@@ -115,7 +115,6 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].rThrust_S,
                   ConfigData->rThruster_B[i]);
-        v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, ConfigData->rThruster_B[i]);
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
@@ -150,6 +149,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     double      matInv22[2][2];
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
+    double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -161,6 +161,10 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     /* Lr is assumed to be a negative torque onto the body */
     v3Scale(-1.0, Lr_B, Lr_B);
 
+    /* compute thruster locations relative to COM */
+    for (i=0;i<ConfigData->numThrusters;i++) {
+        v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, rThrusterRelCOM_B[i]);
+    }
 
     /* clear the net thruster force output array */
     memset(F,0x0,MAX_EFF_CNT*sizeof(double));
@@ -171,7 +175,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         D2 = 0.;
         for(i=0; i<ConfigData->numThrusters; i=i+1)
         {
-            v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], tempVec);
+            v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], tempVec);
             D[i] = v3Dot(tempVec, ConfigData->controlAxes_B+3*k);
             D2 += D[i]*D[i];
         }
@@ -193,7 +197,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
 
             if (forcePerAxis[i]>0.0) {
                 thrusterUsed[i] = 1;
-                v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
+                v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
                 counterPosForces += 1;
             }
         }
