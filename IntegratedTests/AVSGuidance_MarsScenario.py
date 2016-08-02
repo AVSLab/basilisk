@@ -518,10 +518,11 @@ def executeGuidance(TheAVSSim):
 
     # MRP FEEDBACK GAINS
     P = 180.
-    I_vec = ctypes.cast(TheAVSSim.LocalConfigData.ISCPntB_B.__long__(), ctypes.POINTER(ctypes.c_double))
+    I_vec = ctypes.cast(TheAVSSim.VehConfigData.ISCPntB_S.__long__(), ctypes.POINTER(ctypes.c_double))
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
     K_cr = computeGains(P, I) * 1.0
     d = computeDiscriminant(K_cr, P, I)
+    print 'Inertia = ', I
     print 'Discriminant = ', d
     print 'K = ', K_cr
     print 'P = ', P
