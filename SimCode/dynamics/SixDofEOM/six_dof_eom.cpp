@@ -858,6 +858,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     double rDDot_CN_N[3];       /* inertial accelerration of the center of mass of the sc in N frame */
     double g_B[3];              /* [m/s^2] gravity acceleration in the body frame */
     double gravityTorquePntB_B[3]; /* [N-m] torque due to gravity about point B in B frame components */
+    double gravityTorqueHRBPntH_B[3]; /* [N-m] gravity torque on hinged rigid body about point H in B */
     double rDDot_CN_B[3];       /* inertial accelerration of the center of mass of the sc in B frame */
     double rDDot_BN_B[3];       /* inertial accelerration of r_BN in the body frame */
     double *matrixA; /* Matrix A needed for hinged SP dynamics */
@@ -1283,6 +1284,9 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     v3Scale(-1.0, intermediateVector, &matrixF[hrbCounti*3]);
 
                     //! - Define v vector
+                    v3Scale(HRBIti->mass, g_B, intermediateVector);
+                    v3Cross(HRBIti->sHat1_B, intermediateVector, intermediateVector);
+                    v3Scale(-HRBIti->d, intermediateVector, gravityTorqueHRBPntH_B);
                     v3Scale(1.0/mSC, vectorSumHingeDynamics, vectorSumHingeDynamics);
                     m33MultV3(omegaTilde_BN_B, cPrime_B, intermediateVector);
                     v3Scale(2.0, intermediateVector, intermediateVector);
@@ -1292,7 +1296,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
                     m33MultV3(omegaTilde_BN_B, intermediateVector2, intermediateVector2);
                     v3Subtract(intermediateVector, intermediateVector2, intermediateVector);
                     v3Subtract(intermediateVector, vectorSumHingeDynamics, intermediateVector);
-                    vectorV[hrbCounti] = - HRBIti->k*thetasSP[hrbCounti] - HRBIti->c*thetaDotsSP[hrbCounti] + (HRBIti->IPntS_S[8] - HRBIti->IPntS_S[0] + HRBIti->mass*HRBIti->d*HRBIti->d)*HRBIti->omega_BN_S[2]*HRBIti->omega_BN_S[0] - HRBIti->mass*HRBIti->d*v3Dot(HRBIti->sHat3_B, intermediateVector);
+                    vectorV[hrbCounti] = - HRBIti->k*thetasSP[hrbCounti] - HRBIti->c*thetaDotsSP[hrbCounti] + v3Dot(HRBIti->sHat2_B, gravityTorqueHRBPntH_B)+ (HRBIti->IPntS_S[8] - HRBIti->IPntS_S[0] + HRBIti->mass*HRBIti->d*HRBIti->d)*HRBIti->omega_BN_S[2]*HRBIti->omega_BN_S[0] - HRBIti->mass*HRBIti->d*v3Dot(HRBIti->sHat3_B, intermediateVector);
 
                     //! - Define R matrix
                     m33Subtract(HRBIti->rTilde_SB_B, cTilde_B, intermediateMatrix);
