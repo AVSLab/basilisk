@@ -32,9 +32,6 @@ typedef struct {
     /* declare module private variables */
     double K;                           /*!< [rad/sec] Proportional gain applied to MRP errors */
     double P;                           /*!< [N*m*s]   Rate error feedback gain applied  */
-    double GsMatrix[3*MAX_EFF_CNT];     /*!< []        The spin axis matrix used for RWAs*/
-    double JsList[3*MAX_EFF_CNT];       /*!< [kgm2]    The spin axis inertia for RWAs*/
-    uint32_t numRWAs;                   /*!< []        The number of reaction wheels available on vehicle */
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the output message*/
@@ -43,10 +40,6 @@ typedef struct {
     int32_t inputGuidID;                                    /*!< [] ID for the incoming guidance errors*/
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;                       /*!< [] ID for the incoming static vehicle data */
-    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsID;                    /*!< [] The ID for the reaction wheel speeds message*/
-    char inputRWConfigData[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the RWA configuration message*/
-    int32_t inputRWConfID;      /*!< [-] ID for the incoming RWA configuration data*/
     
     vehControlOut controlOut;                               /*!< [] Control output requests */
 }MRP_PDConfig;
