@@ -643,7 +643,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('inertial3DPointTask')"
+                                #, "self.enableTask('inertial3DPointTask')"
+                                , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('inertial3DSpinTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
                                 , "self.ResetTask('feedbackControlMnvrTask')"

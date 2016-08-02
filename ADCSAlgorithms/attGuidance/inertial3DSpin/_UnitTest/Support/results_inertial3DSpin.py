@@ -12,26 +12,39 @@ import macros as mc
 
 np.set_printoptions(precision=12)
 
-def printResults3DSpin(dt, sigma_RN, omega_RN_N):
-    RN = rbk.MRP2C(sigma_RN)
+def printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_RR0_R, dt):
+
+    # Compute angular Rate
+    RN = rbk.MRP2C(sigma_R0N)
+    omega_RR0_N = np.dot(RN.T, omega_RR0_R)
+    omega_RN_N = omega_RR0_N + omega_R0N_N
+
+    # Compute angular acceleration
+    domega_RN_N = np.cross(omega_R0N_N, omega_RR0_N) + domega_R0N_N
+
+    # Compute attitude
     omega_RN_R = np.dot(RN, omega_RN_N)
-    B = rbk.BmatMRP(sigma_RN)
+    B = rbk.BmatMRP(sigma_R0N)
     dsigma_RN = 0.25 * np.dot(B, omega_RN_R)
-    sigma_RN += dsigma_RN * dt
+    sigma_RN =  sigma_R0N + dsigma_RN * dt
     rbk.MRPswitch(sigma_RN, 1)
+
+    # Print results
     print 'sigma_RN = ', sigma_RN
     print 'omega_RN_N = ', omega_RN_N
+    print 'domega_RN_N = ', domega_RN_N
     print '\n'
-    return (sigma_RN, omega_RN_N)
+    return sigma_RN
 
 
-sigma_RN = np.array([0.1, 0.2, 0.3])
-omega_RN_N = np.array([1., -1., 0.5]) * mc.D2R
+sigma_R0N = np.array([0.1, 0.2, 0.3])
+omega_R0N_N = np.array([0., 0., 0.])
+domega_R0N_N = np.array([0., 0., 0.])
+omega_spin = np.array([1., -1., 0.5]) * mc.D2R
 print 'CallTime = 0.0'
 dt = 0.0
-(sigma_RN, omega_RN_N) = printResults3DSpin(dt, sigma_RN, omega_RN_N)
-print 'CallTime = 0.5'
+sigma_RN = printResults3DSpin(sigma_R0N, omega_R0N_N, domega_R0N_N, omega_spin, dt)
 dt = 0.5
-(sigma_RN, omega_RN_N) = printResults3DSpin(dt, sigma_RN, omega_RN_N)
-print 'CallTime = 1.0'
-(sigma_RN, omega_RN_N) = printResults3DSpin(dt, sigma_RN, omega_RN_N)
+sigma_RN = printResults3DSpin(sigma_RN, omega_R0N_N, domega_R0N_N, omega_spin, dt)
+dt = 0.5
+printResults3DSpin(sigma_RN, omega_R0N_N, domega_R0N_N, omega_spin, dt)

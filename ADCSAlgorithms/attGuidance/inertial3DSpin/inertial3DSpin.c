@@ -92,97 +92,70 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, u
 void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
-    attRefOut           inputRef;
-    uint64_t            writeTime;
-    uint32_t            writeSize;
+    attRefOut inputRef;
+    uint64_t writeTime;
+    uint32_t writeSize;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
                 sizeof(attRefOut), (void*) &(inputRef), moduleID);
-    checkInputCommand(ConfigData, inputRef.sigma_RN);
-    /*! - Compute time step to use in the integration downstream */
-    computeTimeStep(ConfigData, callTime, moduleID);
-    /*! - Integrate the current attitude */
-    integrateInertialSpinRef(ConfigData);
-    /*! - Evaluate the current spinning reference frame */
-    evaluateInertial3DSpinRef(ConfigData);
-    /*! - Write input message */
-    writeOutputMessages(ConfigData, callTime, moduleID);
-    /* Update the last time the module was called to current time */
-    ConfigData->priorTime = callTime;
-    return;
-}
-
-void checkInputCommand(inertial3DSpinConfig *ConfigData, double cmdSigma_RN[3])
-{
-    int32_t prevCmdActive = v3IsEqual(cmdSigma_RN, ConfigData->priorCmdSigma_RN , 1E-12);
-    if (!prevCmdActive)
-    {
-        v3Copy(cmdSigma_RN, ConfigData->sigma_RN);
-        v3Copy(cmdSigma_RN, ConfigData->priorCmdSigma_RN);
-    }
-}
-
-void writeOutputMessages(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
-                 (void*) &(ConfigData->attRefOut), moduleID);
-}
-
-/*
- * Function: computeTimeStep
- * Purpose: This function computes control update time
- * Input
- *      ConfigData = module configuration data
- * Output:
- *      ConfigData: dt is updated
- */
-void computeTimeStep(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
+    
+    /*! - Get input reference and compute integration time step to use downstream */
+    double dt; /* integration time step [s] */
     if (ConfigData->priorTime == -1)
     {
-        ConfigData->dt = 0.0;
+        dt = 0.0;
+        v3Copy(inputRef.sigma_RN, ConfigData->sigma_RN);
     } else {
-        ConfigData->dt = (callTime - ConfigData->priorTime)*NANO2SEC;
+        dt = (callTime - ConfigData->priorTime) * NANO2SEC;
     }
+    
+    /*! - Generate inertial 3D Spinning Reference */
+    computeReference_inertial3DSpin(ConfigData,
+                                    inputRef.omega_RN_N,
+                                    inputRef.domega_RN_N,
+                                    ConfigData->omega_spin,
+                                    dt);
+    
+    /*! - Write output message */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
+                 (void*) &(ConfigData->attRefOut), moduleID);
+    
+    /*! Update prior time to current for next evaluation */
+    ConfigData->priorTime = callTime;
 }
 
-/*
- * Function: integrateInertialSpinRef
- * Purpose: This function is designed to integrate the reference attitude
- * Input
- *      ConfigData = module configuration data
- *      dt = integration time step
- * Output:
- *      ConfigData: sigma_RN is updated
- */
-void integrateInertialSpinRef(inertial3DSpinConfig *ConfigData)
+void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
+                                     double omega_R0N_N[3],
+                                     double domega_R0N_N[3],
+                                     double omega_RR0_R[3],
+                                     double dt)
 {
-    double  RN[3][3];               /*!< DCM from inertial to reference frame */
-    double  B[3][3];                /*!< MRP rate matrix */
-    double  v3Temp[3];              /*!< temporary 3x1 array */
-    double  omega_RN_R[3];          /*!< reference angular velocity vector in Reference frame R components */
+    double omega_RN_N[3];
+    double domega_RN_N[3];
     
+    /*! Compute angular rate */
+    double RN[3][3]; /* DCM from inertial frame N to generated ref frame R */
+    double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
     MRP2C(ConfigData->sigma_RN, RN);
-    m33MultV3(RN, ConfigData->omega_RN_N, omega_RN_R);
+    m33tMultV3(RN, omega_RR0_R, omega_RR0_N);
+    v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
+    
+    /*! Compute angular acceleration */
+    double v3Temp[3]; /* temporary 3x1 array */
+    v3Cross(omega_R0N_N, omega_RR0_N, v3Temp);
+    v3Add(v3Temp, domega_R0N_N, domega_RN_N);
+    
+    /*! Integrate Attitude */
+    double B[3][3]; /* MRP rate matrix */
+    double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
+    m33MultV3(RN, omega_RN_N, omega_RN_R);
     BmatMRP(ConfigData->sigma_RN, B);
-    m33Scale(0.25* ConfigData->dt, B, B);
+    m33Scale(0.25 * dt, B, B);
     m33MultV3(B, omega_RN_R, v3Temp);
     v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
     MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
-}
-
-
-/*
- * Function: evaluateInertial3DSpinRef
- * Purpose: This function is designed to evaluate the state of the 3D Spinning Reference
- * Input
- *      ConfigData = module configuration data
- * Output:
- *      ConfigData: attRefOut is updated
- */
-void evaluateInertial3DSpinRef(inertial3DSpinConfig *ConfigData)
-{
+    
+    /*! Copy output in attRefOut struct */
     v3Copy(ConfigData->sigma_RN, ConfigData->attRefOut.sigma_RN);
-    v3Copy(ConfigData->omega_RN_N, ConfigData->attRefOut.omega_RN_N);
-    v3SetZero(ConfigData->attRefOut.domega_RN_N);
+    v3Copy(omega_RN_N, ConfigData->attRefOut.omega_RN_N);
+    v3Copy(domega_RN_N, ConfigData->attRefOut.domega_RN_N);
 }
-

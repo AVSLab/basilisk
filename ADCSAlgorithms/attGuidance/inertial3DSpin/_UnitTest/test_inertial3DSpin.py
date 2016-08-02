@@ -84,14 +84,38 @@ def subModuleTestFunction(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.outputDataName = "outputName"
-    sigma_R0N = [0.1, 0.2, 0.3]
+    omega_spin = np.array([1., -1., 0.5]) * mc.D2R
+    SimulationBaseClass.SetCArray(omega_spin,
+                                  'double',
+                                  moduleConfig.omega_spin)
+    # Create input message and size it because the regular creator of that message
+    # is not part of the test.
+    #
+    # Reference Frame Message
+    #
+    inputMessageSize = 12*8                             # 4x3 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRefName,
+                                          inputMessageSize,
+                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+
+    RefStateOutData = inertial3DSpin.attRefOut()          # Create a structure for the input message
+    sigma_R0N = np.array([0.1, 0.2, 0.3])
     SimulationBaseClass.SetCArray(sigma_R0N,
                                   'double',
-                                  moduleConfig.sigma_RN)
-    omega_R0N_N = np.array([1., -1., 0.5]) * mc.D2R
+                                  RefStateOutData.sigma_RN)
+    omega_R0N_N = np.array([0.0, 0.0, 0.0])
     SimulationBaseClass.SetCArray(omega_R0N_N,
                                   'double',
-                                  moduleConfig.omega_RN_N)
+                                  RefStateOutData.omega_RN_N)
+    domega_R0N_N = np.array([0.0, 0.0, 0.0])
+    SimulationBaseClass.SetCArray(domega_R0N_N,
+                                  'double',
+                                  RefStateOutData.domega_RN_N)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
+                                          inputMessageSize,
+                                          0,
+                                          RefStateOutData)
 
 
 
@@ -118,12 +142,12 @@ def subModuleTestFunction(show_plots):
     moduleOutputName = "sigma_RN"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
+    print '\n sigma RN = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
                [0.1, 0.2, 0.3],
-               [0.1001527163095495,0.1970765735029095,0.3023125612588925],
-               [0.10030303001175506, 0.19414696439786233, 0.30461883399119877]
+               [0.103643374814, 0.199258235068, 0.299694567381],
+               [0.10728593457, 0.198511279747, 0.299381655572]
                ]
 
     # compare the module results to the truth values
@@ -139,18 +163,18 @@ def subModuleTestFunction(show_plots):
 
 
     #
-    # check omega_RN_B
+    # check omega_RN_N
     #
     moduleOutputName = "omega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-
+    print '\n omega_RN_N = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648],
-               [0.0174532925199433,-0.0174532925199433,0.008726646259971648]
-               ]
+        [0.02142849611, 0.01021197571, -0.011041933756],
+        [0.02142849611, 0.01021197571, -0.011041933756],
+        [0.021428270863,  0.010212299678, -0.011042071256]
+    ]
     # compare the module results to the truth values
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
@@ -163,11 +187,12 @@ def subModuleTestFunction(show_plots):
                                 "sec\n")
 
     #
-    # check domega_RN_B
+    # check domega_RN_N
     #
     moduleOutputName = "domega_RN_N"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
+    print '\n domega_RN_N = ', moduleOutput[:, 1:]
 
     # set the filtered output truth states
     trueVector = [
