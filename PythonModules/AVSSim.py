@@ -269,40 +269,47 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAWrap = alg_contain.AlgContain(self.MRP_SteeringRWAData,
                                                           MRP_Steering.Update_MRP_Steering,
                                                           MRP_Steering.SelfInit_MRP_Steering,
-                                                          MRP_Steering.CrossInit_MRP_Steering)
+                                                          MRP_Steering.CrossInit_MRP_Steering,
+                                                          MRP_Steering.Reset_MRP_Steering)
         self.MRP_SteeringRWAWrap.ModelTag = "MRP_SteeringRWA"
         
         self.MRP_FeedbackRWAData = MRP_Feedback.MRP_FeedbackConfig()
         self.MRP_FeedbackRWAWrap = alg_contain.AlgContain(self.MRP_FeedbackRWAData,
                                                           MRP_Feedback.Update_MRP_Feedback,
                                                           MRP_Feedback.SelfInit_MRP_Feedback,
-                                                          MRP_Feedback.CrossInit_MRP_Feedback)
+                                                          MRP_Feedback.CrossInit_MRP_Feedback,
+                                                          MRP_Feedback.Reset_MRP_Feedback)
         self.MRP_FeedbackRWAWrap.ModelTag = "MRP_FeedbackRWA"
 
         self.PRV_SteeringRWAData = PRV_Steering.PRV_SteeringConfig()
         self.PRV_SteeringRWAWrap = alg_contain.AlgContain(self.PRV_SteeringRWAData,
                                                           PRV_Steering.Update_PRV_Steering,
                                                           PRV_Steering.SelfInit_PRV_Steering,
-                                                          PRV_Steering.CrossInit_PRV_Steering)
+                                                          PRV_Steering.CrossInit_PRV_Steering,
+                                                          PRV_Steering.Reset_PRV_Steering)
         self.PRV_SteeringRWAWrap.ModelTag = "PRV_SteeringRWA"
 
         self.MRP_SteeringMOIData = MRP_Steering.MRP_SteeringConfig()
         self.MRP_SteeringMOIWrap = alg_contain.AlgContain(self.MRP_SteeringMOIData,
                                                           MRP_Steering.Update_MRP_Steering,
                                                           MRP_Steering.SelfInit_MRP_Steering,
-                                                          MRP_Steering.CrossInit_MRP_Steering)
+                                                          MRP_Steering.CrossInit_MRP_Steering,
+                                                          MRP_Steering.Reset_MRP_Steering)
         self.MRP_SteeringMOIWrap.ModelTag = "MRP_SteeringMOI"
 
         self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
         self.dvGuidanceWrap = alg_contain.AlgContain(self.dvGuidanceData,
-                                                     dvGuidance.Update_dvGuidance, dvGuidance.SelfInit_dvGuidance,
+                                                     dvGuidance.Update_dvGuidance,
+                                                     dvGuidance.SelfInit_dvGuidance,
                                                      dvGuidance.CrossInit_dvGuidance)
         self.dvGuidanceWrap.ModelTag = "dvGuidance"
 
         self.dvAttEffectData = dvAttEffect.dvAttEffectConfig()
         self.dvAttEffectWrap = alg_contain.AlgContain(self.dvAttEffectData,
-                                                      dvAttEffect.Update_dvAttEffect, dvAttEffect.SelfInit_dvAttEffect,
-                                                      dvAttEffect.CrossInit_dvAttEffect)
+                                                      dvAttEffect.Update_dvAttEffect,
+                                                      dvAttEffect.SelfInit_dvAttEffect,
+                                                      dvAttEffect.CrossInit_dvAttEffect,
+                                                      dvAttEffect.Reset_dvAttEffect)
         self.dvAttEffectWrap.ModelTag = "dvAttEffect"
 
         self.sunPointData = celestialBodyPoint.celestialBodyPointConfig()
@@ -337,7 +344,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWANullSpaceDataWrap = alg_contain.AlgContain(self.RWANullSpaceData,
                                                            rwNullSpace.Update_rwNullSpace,
                                                            rwNullSpace.SelfInit_rwNullSpace,
-                                                           rwNullSpace.CrossInit_rwNullSpace)
+                                                           rwNullSpace.CrossInit_rwNullSpace,
+                                                           rwNullSpace.Reset_rwNullSpace)
         self.RWANullSpaceDataWrap.ModelTag = "RWNullSpace"
 
         self.thrustRWADesatData = thrustRWDesat.thrustRWDesatConfig()
