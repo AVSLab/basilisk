@@ -70,6 +70,20 @@ def writeCFiles(sourceFile, headerFile, taskName, str_alg):
         sourceFile.write('}')
         sourceFile.write('\n')
 
+def printWrap_allDicts():
+    print 'selfInit_ModelDict = ', SelfInit_dict
+    print 'crossInit_ModelDict = ', CrossInit_dict
+    print 'update_ModelDict = ', Update_dict
+    print 'reset_ModelDict = ', Reset_dict
+    print '\n'
+
+def printTaskData_AllAlg():
+    print 'allAlgSelfInit = ', allAlgSelfInit
+    print 'allAlgCrossInit = ', allAlgCrossInit
+    print 'allAlgUpdate = ', allAlgUpdate
+    print 'allAlgReset = ', allAlgReset
+    print '\n'
+
 # ----------------------------- MAIN ----------------------------- #
 if __name__ == "__main__":
     alg_source = open(path + '/../../Basilisk/FSW_autocode/EMMAlgorithms.c', 'w+')
@@ -92,29 +106,18 @@ if __name__ == "__main__":
             if (elem.getResetAddress()):
                 Reset_dict[elem.ModelTag] = int(elem.getResetAddress())
                 reset = int(elem.getResetAddress())
-    def printWrap_allDicts():
-        print 'selfInit_ModelDict = ', SelfInit_dict
-        print 'crossInit_ModelDict = ', CrossInit_dict
-        print 'update_ModelDict = ', Update_dict
-        print 'reset_ModelDict = ', Reset_dict
-        print '\n'
     printWrap_allDicts()
 
     # Model Data
     dict_TagID = {}
     ID_counter = 0
     taskIdxList = [10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
-    # Tasks Out:
-    #   11. attitudeNav
-    #   16. singleAxisSpinTask
-    #   17. orbitAxisSpinTask
-    #   18. axisScanTask
+    #FSW Tasks Out: 11. attitudeNav, 16. singleAxisSpinTask, 17. orbitAxisSpinTask, 18. axisScanTask
     for i_task in taskIdxList:
         allAlgSelfInit = []
         allAlgCrossInit = []
         allAlgUpdate = []
         allAlgReset = []
-
         print 'Task Index = ', i_task
         task = TheAVSSim.TaskList[i_task]
         print 'Task Name = ', task.Name
@@ -134,19 +137,12 @@ if __name__ == "__main__":
                     dict_TagID[modelTag] = ID_counter
                     modelID = ID_counter
                     ID_counter += 1
-
                 theString = k +'(&(data->' + modelTag + '), ' + str(modelID) + ')'
                 theList = eval('allAlg' + methodType)
                 theList.append(theString)
-
-        def printTaskData_AllAlg():
-            print 'allAlgSelfInit = ', allAlgSelfInit
-            print 'allAlgCrossInit = ', allAlgCrossInit
-            print 'allAlgUpdate = ', allAlgUpdate
-            print 'allAlgReset = ', allAlgReset
-            print '\n'
         printTaskData_AllAlg()
 
+        # Output data in C source and header files
         str_algSelfInit = 'allAlgSelfInit'
         str_algCrossInit = 'allAlgCrossInit'
         str_algUpdate = 'allAlgUpdate'
