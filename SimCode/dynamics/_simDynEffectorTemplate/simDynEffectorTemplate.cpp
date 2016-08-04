@@ -1,4 +1,4 @@
-#include "sim_module_template.h"
+#include "simDynEffectorTemplate.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
@@ -8,7 +8,7 @@
 
 /*! This is the constructor.  It sets some defaul initializers that can be
 overriden by the user.*/
-SimModuleTemplate::SimModuleTemplate():
+simDynEffectorTemplate::simDynEffectorTemplate():
     sunEphmInMsgName("sun_planet_data")
     ,stateInMsgName("inertial_state_output")
     ,sunEphmInMsgID(-1)
@@ -16,13 +16,14 @@ SimModuleTemplate::SimModuleTemplate():
     ,stateInBuffer(OutputStateData())
 {
     CallCounts = 0;
-    memset(force_B, 0x0, 3*sizeof(double));
-    memset(torque_B, 0x0, 3*sizeof(double));
+    memset(this->extForce_N, 0x0, 3*sizeof(double));
+    memset(this->extForce_B, 0x0, 3*sizeof(double));
+    memset(this->extTorquePntB_B, 0x0, 3*sizeof(double));
     return;
 }
 
 /*! The destructor.  Nothing of note is performed here*/
-SimModuleTemplate::~SimModuleTemplate()
+simDynEffectorTemplate::~simDynEffectorTemplate()
 {
     return;
 }
@@ -30,7 +31,7 @@ SimModuleTemplate::~SimModuleTemplate()
 /*! This method is used to setup the module 
 @return void
 */
-void SimModuleTemplate::SelfInit()
+void simDynEffectorTemplate::SelfInit()
 {
     //! Begin method steps
     this->exampleOutMsgID = SystemMessaging::GetInstance()->
@@ -44,7 +45,7 @@ It sets the message ID based on what it finds for the input string.  If the
 message is not successfully linked, it will warn the user.
 @return void
 */
-void SimModuleTemplate::CrossInit()
+void simDynEffectorTemplate::CrossInit()
 {
     //! Begin method steps
     //! - Find the message ID associated with the ephmInMsgID string.
@@ -75,7 +76,7 @@ comment.
 @param CurrentClock The current time used for time-stamping the message
 @return void
 */
-void SimModuleTemplate::writeOutputMessages(uint64_t CurrentClock)
+void simDynEffectorTemplate::writeOutputMessages(uint64_t CurrentClock)
 {
 
 }
@@ -84,7 +85,7 @@ void SimModuleTemplate::writeOutputMessages(uint64_t CurrentClock)
 associated buffer structure.
 @return void
 */
-void SimModuleTemplate::readInputs()
+void simDynEffectorTemplate::readInputs()
 {
     bool dataGood;
     //! Begin method steps
@@ -120,22 +121,18 @@ dynamics
 @param Bstate Current state of the vehicle (not used by thruster dynamics)
 @param CurrentTime Current simulation time converted to double precision
 */
-void SimModuleTemplate::ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime)
+void simDynEffectorTemplate::ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime)
 {
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
-    double s_B[3] = {0, 0, 0}; // (m)
-    memset(this->force_B, 0x0, 3*sizeof(double));
-    memset(this->torque_B, 0x0, 3*sizeof(double));
 
-    v3Subtract(bodyState->r_N, this->sunEphmInBuffer.PositionVector, s_B);
+    
 
-   
-    v3Copy(force_B, dynEffectorForce_B);
-    v3Copy(torque_B, dynEffectorTorquePntB_B);
+    v3Copy(this->extForce_B, dynEffectorForce_B);
+    v3Copy(this->extTorquePntB_B, dynEffectorTorquePntB_B);
 }
 
-void SimModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
+void simDynEffectorTemplate::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputs();
 }
@@ -149,7 +146,7 @@ void SimModuleTemplate::UpdateState(uint64_t CurrentSimNanos)
 @return void
 @param s_B (m) Position vector to the Sun relative to the body frame
 */
-void SimModuleTemplate::computeDummyData(double *s_B)
+void simDynEffectorTemplate::computeDummyData(double *s_B)
 {
     /* Magnitude of position vector */
     double sunDist = v3Norm(s_B);

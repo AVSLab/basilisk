@@ -1,6 +1,6 @@
-%module sim_module_template
+%module simDynEffectorTemplate
 %{
-   #include "sim_module_template.h"
+   #include "simDynEffectorTemplate.h"
 %}
 
 // SWIG translates basic C/C++ type variables (bool, int, double etc.)
@@ -26,4 +26,4 @@ namespace std {
 %include "sys_model.h"
 %include "dyn_effector.h"
 // Replace the following include with the header from your module
-%include "sim_module_template.h"
+%include "simDynEffectorTemplate.h"

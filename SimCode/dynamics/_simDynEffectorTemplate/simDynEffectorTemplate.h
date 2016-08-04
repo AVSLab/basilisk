@@ -15,14 +15,15 @@
  
  */
 
-#ifndef sim_module_template_h
-#define sim_module_template_h
+#ifndef SIM_DYN_EFFECTOR_TEMPLATE_H
+#define SIM_DYN_EFFECTOR_TEMPLATE_H
 
 #include <vector>
 #include <array>
 #include "utilities/sys_model.h"
 #include "utilities/dyn_effector.h"
 #include "environment/spice/spice_planet_state.h"
+#include "simDynEffectorTemplate.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -31,10 +32,10 @@
 //! @brief The brief note is a single sentence to describe the function of this sim module.
 /*! This is followed by a more lengthy description if necessary. This class is used to ...*/
 /* Delete: The module class must inhert from SysModel class. The module class may inheret the DynEffector class is being included in uncoupled dynamics calculations. */
-class SimModuleTemplate: public SysModel, public DynEffector{
+class simDynEffectorTemplate: public SysModel, public DynEffector{
     public:
-    SimModuleTemplate();
-    ~SimModuleTemplate();
+    simDynEffectorTemplate();
+    ~simDynEffectorTemplate();
     
     /* Delete: The module should override the inherented SysModel class method SelfInit() with its own implementation. All other SysModel class methods are optional. See the class SysModel for other initialization methods. This example overids CrossInit() and UpdateState(uint64_t CurrentSimNanos). */
     void SelfInit();
@@ -57,10 +58,12 @@ class SimModuleTemplate: public SysModel, public DynEffector{
     std::vector<double> exampleDoubleVector;            //!< -- Example templated vector class
     std::vector<std::string> exampleStringVector;       //!< -- Example templated vector class
     std::vector<int> exampleIntVector;                  //!< -- Example templated vector class
-    
+
+    double extForce_N[3];               //!< N  body effector force in inertial frame N components
+    double extForce_B[3];               //!< N  body effector force in body frame B components
+    double extTorquePntB_B[3];          //!< Nm body effector torque about Point B in B frame components
+
     private:
-    double force_B[3];                  //!< N  Computed force in body due to radiation pressure
-    double torque_B[3];                 //!< Nm Computed torque in body due to radiation pressure
     std::string exampleOutMsgName;      //!< -- Example message name for outgoing data
     int64_t exampleOutMsgID;            //!< -- Example message ID for outgoing data
     int64_t sunEphmInMsgID;             //!< -- Example message ID for incoming data
@@ -71,4 +74,4 @@ class SimModuleTemplate: public SysModel, public DynEffector{
 
 /*! @} */
 
-#endif /* sim_module_template_h */
+#endif /* SIM_DYN_EFFECTOR_TEMPLATE_H */
