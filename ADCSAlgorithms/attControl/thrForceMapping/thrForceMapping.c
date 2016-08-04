@@ -100,6 +100,9 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     if (ConfigData->numOfAxesToBeControlled==0) {
         printf("WARNING: thrForceMapping() is not setup to control any axes!\n");
     }
+    if (ConfigData->thrForceSign ==0) {
+        printf("WARNING: thrForceMapping() must have posThrustFlag set to either +1 or -1\n");
+    }
 
 
     /* read in the support messages */
@@ -195,7 +198,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         for (i=0;i<ConfigData->numThrusters;i++) {
             forcePerAxis[i] = DTDDTinv[i] * v3Dot(Lr_B,ConfigData->controlAxes_B+3*k);
 
-            if (forcePerAxis[i]>0.0) {
+            if (forcePerAxis[i]*ConfigData->thrForceSign > 0.0) {
                 thrusterUsed[i] = 1;
                 v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
                 counterPosForces += 1;
