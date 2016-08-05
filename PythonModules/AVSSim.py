@@ -111,7 +111,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.dynProc.addInterfaceRef(self.dyn2VisInterface)
 
         # Process task groups.
-        self.dynProc.addTask(self.CreateNewTask("SynchTask", int(1E8)), 2000)
+        self.dynProc.addTask(self.CreateNewTask("SynchTask", int(5E8)), 2000)
         self.dynProc.addTask(self.CreateNewTask("DynamicsTask", int(1E8)), 1000)
 
         # Flight software tasks.
@@ -391,30 +391,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                                     celestialTwoBodyPoint.SelfInit_celestialTwoBodyPoint,
                                                     celestialTwoBodyPoint.CrossInit_celestialTwoBodyPoint)
         self.celTwoBodyPointWrap.ModelTag = "celTwoBodyPoint"
-
-        # self.singleAxisSpinData = singleAxisSpin.singleAxisSpinConfig()
-        # self.singleAxisSpinWrap = alg_contain.AlgContain(self.singleAxisSpinData,
-        #                                                singleAxisSpin.Update_singleAxisSpin,
-        #                                                singleAxisSpin.SelfInit_singleAxisSpin,
-        #                                                singleAxisSpin.CrossInit_singleAxisSpin,
-        #                                                singleAxisSpin.Reset_singleAxisSpin)
-        # self.singleAxisSpinWrap.ModelTag = "singleAxisSpin"
-
-        # self.orbitAxisSpinData = orbitAxisSpin.orbitAxisSpinConfig()
-        # self.orbitAxisSpinWrap = alg_contain.AlgContain(self.orbitAxisSpinData,
-        #                                                orbitAxisSpin.Update_orbitAxisSpin,
-        #                                                orbitAxisSpin.SelfInit_orbitAxisSpin,
-        #                                                orbitAxisSpin.CrossInit_orbitAxisSpin,
-        #                                                orbitAxisSpin.Reset_orbitAxisSpin)
-        # self.orbitAxisSpinWrap.ModelTag = "orbitAxisSpin"
-
-        # self.axisScanData = axisScan.axisScanConfig()
-        # self.axisScanWrap = alg_contain.AlgContain(self.axisScanData,
-        #                                                axisScan.Update_axisScan,
-        #                                                axisScan.SelfInit_axisScan,
-        #                                                axisScan.CrossInit_axisScan,
-        #                                                axisScan.Reset_axisScan)
-        # self.axisScanWrap.ModelTag = "axisScan"
 
         self.rasterManagerData = rasterManager.rasterManagerConfig()
         self.rasterManagerWrap = alg_contain.AlgContain(self.rasterManagerData,
@@ -1466,8 +1442,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
         sigma_R0N = [0.4, 0.2, 0.1]
-        #sigma_R0N = [0., 0., 0.]
-
         self.inertial3DData.sigma_R0N = sigma_R0N
 
     def setHillPoint(self):
