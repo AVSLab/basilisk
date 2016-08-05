@@ -58,6 +58,12 @@ void rk4Integrator::integrate(double currentTime, double timeStep, double* curre
         nextState[i] = currentState[i] + timeStep / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
     }
 
+    delete [] X2;
+    delete [] k1;
+    delete [] k2;
+    delete [] k3;
+    delete [] k4;
+
     return;
 }
 
