@@ -17,7 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module sim_model
 %{
    #include "sim_model.h"
-   #include "sys_interface.h"
+   #include "_GeneralModuleFiles/sys_interface.h"
    #include "utilities/linearAlgebra.h"
    #include "utilities/rigidBodyKinematics.h"
 %}
@@ -65,6 +65,6 @@ namespace std {
 %include "sys_interface.h"
 %include "message_logger.h"
 %include "../messaging/system_messaging.h"
-%include "linearAlgebra.h"
-%include "rigidBodyKinematics.h"
+%include "../utilities/linearAlgebra.h"
+%include "../utilities/rigidBodyKinematics.h"
 %include "sim_model.h"

@@ -15,7 +15,7 @@ public:
     TcpServer(boost::asio::io_service *ioService);
 
     bool acceptConnections(std::string ipAddress = "127.0.0.1",
-                           std::string portNum = "50000");
+                           uint32_t portNum = 50000);
     virtual bool close(void);
 
     virtual bool receiveData(std::vector<char> &data);

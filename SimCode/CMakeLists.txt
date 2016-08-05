@@ -31,10 +31,27 @@ foreach(module ${swig_modules})
 	    "${FileDir}/*.cpp"
 	    "${FileDir}/*.c"
 	    "${FileDir}/*.h"
-	    "${FileDir}/../_GeneralModuleFiles/*.cpp"
-	    "${FileDir}/../_GeneralModuleFiles/*.h"
-	    "${FileDir}/../_GeneralModuleFiles/*.c"
 	)
+    set(gen_files "")
+    file(GLOB gen_files 
+        "_GeneralModuleFiles/*.cpp"
+        "_GeneralModuleFiles/*.h" 
+        "_GeneralModuleFiles/*.c")
+    string(REPLACE "/" ";" DirList ${FileDir})
+    list(LENGTH DirList dirLength)
+    set(currentDir "")
+    set(endDir "")
+    foreach(localDir ${DirList})
+        set(currentDir "${currentDir}${localDir}/")
+        file(GLOB gen_files_loc "${currentDir}_GeneralModuleFiles/*.cpp"
+            "${currentDir}_GeneralModuleFiles/*.h"
+            "${currentDir}_GeneralModuleFiles/*.c")
+        set(gen_files "${gen_files};${gen_files_loc}")
+    set(endDir ${localDir})
+    endforeach()
+    if("${endDir}" STREQUAL "_GeneralModuleFiles")
+        continue()
+    endif()
 
 	# Make a python package
 	set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
@@ -42,15 +59,13 @@ foreach(module ${swig_modules})
 
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
     set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-    #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-includeall")
-    #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities")
-	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/utilities" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
+	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	# MESSAGE("${SWIG_FLAGS}")
     #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set_source_files_properties( ${swig_generated_file_fullname}
                PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
-    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files})
-    SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files})
+    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files})
+    SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 
     foreach(LibFile ${LIBRARY_BUILD_LIST})

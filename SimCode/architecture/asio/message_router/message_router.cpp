@@ -14,18 +14,24 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module orb_elem_convert
-%{
-   #include "orb_elem_convert.h"
-%}
+#include "architecture/asio/message_router/message_router.h"
+#include "architecture/messaging/system_messaging.h"
+#include <iostream>
 
-%include "swig_common_model.i"
+MessageRouter::MessageRouter()
+{
+    serverConnection = nullptr;
+    clientConnection = nullptr;
+    return;
+}
 
-%include "sys_model.h"
-%include "../utilities/orbitalMotion.h"
-%include "orb_elem_convert.h"
+MessageRouter::~MessageRouter()
+{
+    return;
+}
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+void MessageRouter::initializeServer(std::string hostName, uint32_t portStart)
+{
+    serverConnection = new TcpServer(&ioService);
+    serverConnection->acceptConnections(hostName, portStart);
+}

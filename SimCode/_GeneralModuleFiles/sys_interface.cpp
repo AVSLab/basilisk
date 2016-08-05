@@ -15,7 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#include "architecture/system_model/sys_interface.h"
+#include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>

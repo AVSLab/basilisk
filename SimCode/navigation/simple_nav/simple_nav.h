@@ -19,8 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define SIMPLE_NAV_H
 
 #include <vector>
-#include "utilities/sys_model.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include "utilities/gauss_markov.h"
 #include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "environment/spice/spice_interface.h"

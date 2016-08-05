@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define SpiceInterface_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
 #include "utilities/linearAlgebra.h"
 #include <map>

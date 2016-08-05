@@ -19,9 +19,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define STAR_TRACKER_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
 #include "environment/spice/spice_interface.h"
 

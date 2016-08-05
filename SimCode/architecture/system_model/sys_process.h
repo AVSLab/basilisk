@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-#include "architecture/system_model/sys_interface.h"
+#include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
 /*! \addtogroup SimArchGroup
  * @{

@@ -19,8 +19,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define HINGED_RIGID_BODIES_H
 
 #include <vector>
-#include "utilities/sys_model.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 
 //! @brief Container for hinged rigid body information for hinged rigid body dynamics*/

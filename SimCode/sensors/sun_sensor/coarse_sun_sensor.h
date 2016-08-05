@@ -19,9 +19,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define COARSE_SUN_SENSOR_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_interface.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include <random>
 
 typedef enum {

@@ -14,48 +14,18 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
+%module message_router
+%{
+   #include "message_router.h"
+%}
 
-#include "utilities/sys_model.h"
-#include "architecture/messaging/system_messaging.h"
-SysModel::SysModel()
-{
-    ModelTag = "";
-    RNGSeed = 0x1badcad1;
-    moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
-}
+%include "swig_common_model.i"
 
-SysModel::SysModel(const SysModel &obj)
-{
-    ModelTag = obj.ModelTag;
-    RNGSeed = obj.RNGSeed;
-    moduleID = SystemMessaging::GetInstance()->checkoutModuleID();
-}
+%include "sys_model.h"
+%include "sys_interface.h"
+%include "message_router.h"
 
-SysModel::~SysModel()
-{
-}
-
-void SysModel :: SelfInit()
-{
-    return;
-}
-
-void SysModel :: CrossInit()
-{
-    return;
-}
-
-void SysModel :: IntegratedInit()
-{
-    return;
-}
-
-void SysModel :: UpdateState(uint64_t CurrentSimNanos)
-{
-    return;
-}
-
-void SysModel::Reset(uint64_t CurrentSimNanos)
-{
-	return;
-}
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

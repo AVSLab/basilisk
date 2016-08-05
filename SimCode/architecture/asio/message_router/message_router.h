@@ -14,18 +14,33 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module orb_elem_convert
-%{
-   #include "orb_elem_convert.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef MESSAGE_ROUTER_H
+#define MESSAGE_ROUTER_H
 
-%include "sys_model.h"
-%include "../utilities/orbitalMotion.h"
-%include "orb_elem_convert.h"
+#include <vector>
+#include "_GeneralModuleFiles/sys_interface.h"
+#include "../_GeneralModuleFiles/TcpClient.h"
+#include "../_GeneralModuleFiles/TcpServer.h"
+#include <boost/asio.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/locks.hpp>
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+class MessageRouter: public SysInterface {
+public:
+    MessageRouter();
+    ~MessageRouter();
+    void initializeServer(std::string hostName, uint32_t portStart);
+     
+public:
+    
+private:
+    boost::asio::io_service ioService;
+    TcpServer *serverConnection;
+    TcpClient *clientConnection;
+};
+
+#endif

@@ -20,8 +20,8 @@
 
 #include <vector>
 #include <array>
-#include "utilities/sys_model.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include "environment/spice/spice_planet_state.h"
 
 /*! \addtogroup SimModelGroup
