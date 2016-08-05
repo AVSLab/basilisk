@@ -40,66 +40,82 @@ def autoCode():
                 auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
 
                 fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
-                fieldStrInterface = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
-                EMMInith.write('\t' + fieldStr + ' ' + fieldStrInterface + ';\n')
+                prefix = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
+                EMMInith.write('\t' + fieldStr + ' ' + prefix + ';\n')
 
-                varNameList = dir(TaskList[i].TaskModels[j]) # list all the variable names under current TaskModel
-
-                for k in range(0, len(varNameList)): # loop through variables within current TaskModel
-                    auxFile.write('\n'+str(varNameList[k])+'\n') # print name of current element of taskmodel to workfile
-
-                    varName = varNameList[k]
-                    varValue = getattr(TaskList[i].TaskModels[j], varName) # get value of current element of TaskModel
-
-                    print varName
-
-                    # innerAutocode(varName,varValue,fieldStrInterface)
-                    varType = type(varValue).__name__ # datatype of value of current element
-                    varTypeFull = str(type(varValue))
-
-                    auxFile.write(varTypeFull+'\n') # print datatype to workfile
-                    auxFile.write(str(varValue)+'\n') # print value of current element to workfile
-
-                    # __.__ and this
-                    if (varName[0:2] == '__') or (varName[0:4] == 'this'):
-                        continue # skip __.__ and this
-
-                    # class
-                    elif varTypeFull[1:6] == 'class':
-                        # innerAutocode(varName,varValue,'WhatGoesHere')
-                        continue # skip classes
-
-                    # character array
-                    elif varType == 'str':
-                        dest = ConfigDataStr + fieldStrInterface + '.' + str(varName)
-                        EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(varValue)+'"' + ')'+';\n')
-
-                    # array (SwigPyObject) or method (instancemethod)
-                    elif varType == 'SwigPyObject' or varType == 'instancemethod':
-                        typeStr = varValue.__str__()
-
-                        if ((typeStr.find('void') >= 0) or (typeStr.find('AlgContain') >= 0)):
-                            continue
-                        else:
-                            typeStr = getDataTypeStr(typeStr)
-
-                        arr = AVSSim.SimulationBaseClass.getCArray(typeStr,varValue,arrMaxLen)
-
-                        for l in range(0,arrMaxLen):
-                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
-
-                    # non-array variable
-                    else:
-                        EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.')
-                        EMMInitc.write(str(varName)) # name of the variable
-                        EMMInitc.write(' = '+str(varValue)+';\n') # value of the variable
+                codeThisOut(TaskList[i].TaskModels[j],prefix)
 
     EMMInitc.write('}')
     EMMInith.write('}EMMConfigData;')
-
-
-
     print("Goin' to Mars2")
+    return
+
+def makeValidVarName(s):
+   s = re.sub('[^0-9a-zA-Z_]', '', s)
+   s = re.sub('^[^a-zA-Z_]+', '', s)
+   return s
+
+
+def codeThisOut(input,prefix):
+
+    fieldNames = dir(input) # list all the variable names under current TaskModel. input = TaskList[i].TaskModels[j]
+
+    for k in range(0,len(fieldNames)): # loop through variables within current TaskModel
+
+        fieldName = fieldNames[k]
+        fieldValue = getattr(input,fieldName)
+        fieldTypeName = type(fieldValue).__name__
+        fieldTypeFull = str(type(fieldValue))
+
+        print fieldName
+        print fieldTypeFull
+        print fieldTypeName
+        print str(fieldValue)
+        print '\n'
+
+        auxFile.write('\n'+fieldName+'\n') # print name of current element of taskmodel to workfile
+        auxFile.write(fieldTypeFull+'\n') # print datatype to workfile
+        auxFile.write(fieldTypeName+'\n') # print datatype to workfile
+        auxFile.write(str(fieldValue)+'\n') # print value of current element to workfile
+
+        # this and __
+        if (fieldName[0:2] == '__') or (fieldName[0:4] == 'this'):
+            continue # skip __ and this
+
+        # class
+        elif fieldTypeFull[1:6] == 'class':
+            print ' ****************** INCEPTION! ' + fieldName + ' ****************** '
+            auxFile.write('\n ****************** INCEPTION! ' + fieldName + ' ****************** \n')
+            codeThisOut(fieldValue,prefix+'.'+fieldName)
+            print ' ****************** out ' + fieldName + ' ****************** '
+            auxFile.write('\n ****************** out ' + fieldName + ' ****************** \n')
+            # continue # skip classes
+
+        # character array
+        elif fieldTypeName == 'str':
+            dest = ConfigDataStr + prefix + '.' + str(fieldName)
+            EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(fieldValue)+'"' + ')'+';\n')
+
+        # array (SwigPyObject) or method (instancemethod)
+        elif fieldTypeName == 'SwigPyObject' or fieldTypeName == 'instancemethod':
+            typeStr = fieldValue.__str__()
+
+            if ((typeStr.find('void') >= 0) or (typeStr.find('AlgContain') >= 0)):
+                continue # skip void and AlgContain
+            else:
+                typeStr = getDataTypeStr(typeStr)
+
+            arr = AVSSim.SimulationBaseClass.getCArray(typeStr,fieldValue,arrMaxLen)
+
+            for l in range(0,arrMaxLen):
+                EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+
+        # non-array variable
+        else:
+            EMMInitc.write('\t' + ConfigDataStr + prefix + '.')
+            EMMInitc.write(str(fieldName)) # name of the variable
+            EMMInitc.write(' = '+str(fieldValue)+';\n') # value of the variable
+    return
 
 
 # ----------------------------- MAIN ----------------------------- #
@@ -132,6 +148,11 @@ if __name__ == "__main__":
             tmStr = makeTaskModelString(i,j)
             if not tmStr in NameReplace.values():
                 NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
+
+    newNameReplace = {}
+    for i in range(0,len(NameReplace.keys())):
+        newNameReplace[makeValidVarName(NameReplace.keys()[i])] = NameReplace.values()[i]
+    NameReplace = newNameReplace
 
     autoCode()
 
