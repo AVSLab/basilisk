@@ -7,7 +7,7 @@ typedef struct {
 	velocityPointConfig velocityPoint;
 	celestialTwoBodyPointConfig celTwoBodyPoint;
 	rasterManagerConfig rasterManager;
-	AlgContain eulerRotation;
+	eulerRotationConfig eulerRotation;
 	eulerRotationConfig TaskList_20_TaskModel_0;
 	attTrackingErrorConfig TaskList_22_TaskModel_0;
 	errorDeadbandConfig errorDeadband;

@@ -10,11 +10,11 @@ ChebyCount
 
 InputValues
 <class 'cssComm.cssComm.CSSOutputData'>
-<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x103410ab0> >
+<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x11ab83420> >
 
 KellyCheby
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 MaxSensorValue
 <type 'float'>
@@ -41,52 +41,100 @@ SensorMsgID
 0
 
 __class__
+<type 'type'>
+<class 'cssComm.cssComm.CSSConfigData'>
 
 __del__
+<type 'instancemethod'>
+<bound method CSSConfigData.<lambda> of <cssComm.cssComm.CSSConfigData; proxy of <Swig Object of type 'CSSConfigData *' at 0x11a9deea0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of CSSConfigData object at 0x11ab4b610>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'CSSConfigData *' at 0x11a9deea0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of CSSConfigData object at 0x11ab4b610>
 
 __getattr__
+<type 'instancemethod'>
+<bound method CSSConfigData.<lambda> of <cssComm.cssComm.CSSConfigData; proxy of <Swig Object of type 'CSSConfigData *' at 0x11a9deea0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of CSSConfigData object at 0x11ab4b610>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of CSSConfigData object at 0x11ab4b610>
 
 __init__
+<type 'instancemethod'>
+<bound method CSSConfigData.__init__ of <cssComm.cssComm.CSSConfigData; proxy of <Swig Object of type 'CSSConfigData *' at 0x11a9deea0> >>
 
 __module__
+<type 'str'>
+cssComm.cssComm
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of CSSConfigData object at 0x11ab4b610>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of CSSConfigData object at 0x11ab4b610>
 
 __repr__
+<type 'instancemethod'>
+<bound method CSSConfigData._swig_repr of <cssComm.cssComm.CSSConfigData; proxy of <Swig Object of type 'CSSConfigData *' at 0x11a9deea0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method CSSConfigData.protectSetAttr of <cssComm.cssComm.CSSConfigData; proxy of <Swig Object of type 'CSSConfigData *' at 0x11a9deea0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of CSSConfigData object at 0x11ab4b610>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of CSSConfigData object at 0x11ab4b610>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15a9270>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_CSSConfigData>
 
 __swig_getmethods__
+<type 'dict'>
+{'OutputDataName': <built-in function CSSConfigData_OutputDataName_get>, 'InputValues': <built-in function CSSConfigData_InputValues_get>, 'OutputMsgID': <built-in function CSSConfigData_OutputMsgID_get>, 'NumSensors': <built-in function CSSConfigData_NumSensors_get>, 'KellyCheby': <built-in function CSSConfigData_KellyCheby_get>, 'MaxSensorValue': <built-in function CSSConfigData_MaxSensorValue_get>, 'ChebyCount': <built-in function CSSConfigData_ChebyCount_get>, 'SensorListName': <built-in function CSSConfigData_SensorListName_get>, 'SensorMsgID': <built-in function CSSConfigData_SensorMsgID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'OutputDataName': <built-in function CSSConfigData_OutputDataName_set>, 'InputValues': <built-in function CSSConfigData_InputValues_set>, 'OutputMsgID': <built-in function CSSConfigData_OutputMsgID_set>, 'NumSensors': <built-in function CSSConfigData_NumSensors_set>, 'KellyCheby': <built-in function CSSConfigData_KellyCheby_set>, 'MaxSensorValue': <built-in function CSSConfigData_MaxSensorValue_set>, 'ChebyCount': <built-in function CSSConfigData_ChebyCount_set>, 'SensorListName': <built-in function CSSConfigData_SensorListName_set>, 'SensorMsgID': <built-in function CSSConfigData_SensorMsgID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'CSSConfigData *' at 0x11a9deea0>
 
 TaskModel: 1
 
@@ -100,7 +148,7 @@ adcs_config_data
 
 LocalOutput
 <class 'imuComm.imuComm.IMUOutputData'>
-<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x103410ab0> >
+<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x11ab83a20> >
 
 OutputDataName
 <type 'str'>
@@ -119,60 +167,108 @@ SensorMsgID
 0
 
 __class__
+<type 'type'>
+<class 'imuComm.imuComm.IMUConfigData'>
 
 __del__
+<type 'instancemethod'>
+<bound method IMUConfigData.<lambda> of <imuComm.imuComm.IMUConfigData; proxy of <Swig Object of type 'IMUConfigData *' at 0x11a9dee70> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of IMUConfigData object at 0x11ab4b6d0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'IMUConfigData *' at 0x11a9dee70>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of IMUConfigData object at 0x11ab4b6d0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method IMUConfigData.<lambda> of <imuComm.imuComm.IMUConfigData; proxy of <Swig Object of type 'IMUConfigData *' at 0x11a9dee70> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of IMUConfigData object at 0x11ab4b6d0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of IMUConfigData object at 0x11ab4b6d0>
 
 __init__
+<type 'instancemethod'>
+<bound method IMUConfigData.__init__ of <imuComm.imuComm.IMUConfigData; proxy of <Swig Object of type 'IMUConfigData *' at 0x11a9dee70> >>
 
 __module__
+<type 'str'>
+imuComm.imuComm
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of IMUConfigData object at 0x11ab4b6d0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of IMUConfigData object at 0x11ab4b6d0>
 
 __repr__
+<type 'instancemethod'>
+<bound method IMUConfigData._swig_repr of <imuComm.imuComm.IMUConfigData; proxy of <Swig Object of type 'IMUConfigData *' at 0x11a9dee70> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method IMUConfigData.protectSetAttr of <imuComm.imuComm.IMUConfigData; proxy of <Swig Object of type 'IMUConfigData *' at 0x11a9dee70> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of IMUConfigData object at 0x11ab4b6d0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of IMUConfigData object at 0x11ab4b6d0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b3490>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_IMUConfigData>
 
 __swig_getmethods__
+<type 'dict'>
+{'platform2StrDCM': <built-in function IMUConfigData_platform2StrDCM_get>, 'OutputDataName': <built-in function IMUConfigData_OutputDataName_get>, 'InputPropsName': <built-in function IMUConfigData_InputPropsName_get>, 'OutputMsgID': <built-in function IMUConfigData_OutputMsgID_get>, 'LocalOutput': <built-in function IMUConfigData_LocalOutput_get>, 'InputDataName': <built-in function IMUConfigData_InputDataName_get>, 'platform2BdyDCM': <built-in function IMUConfigData_platform2BdyDCM_get>, 'SensorMsgID': <built-in function IMUConfigData_SensorMsgID_get>, 'PropsMsgID': <built-in function IMUConfigData_PropsMsgID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'platform2StrDCM': <built-in function IMUConfigData_platform2StrDCM_set>, 'OutputDataName': <built-in function IMUConfigData_OutputDataName_set>, 'InputPropsName': <built-in function IMUConfigData_InputPropsName_set>, 'OutputMsgID': <built-in function IMUConfigData_OutputMsgID_set>, 'LocalOutput': <built-in function IMUConfigData_LocalOutput_set>, 'InputDataName': <built-in function IMUConfigData_InputDataName_set>, 'platform2BdyDCM': <built-in function IMUConfigData_platform2BdyDCM_set>, 'SensorMsgID': <built-in function IMUConfigData_SensorMsgID_set>, 'PropsMsgID': <built-in function IMUConfigData_PropsMsgID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 platform2BdyDCM
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 platform2StrDCM
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'IMUConfigData *' at 0x11a9dee70>
 
 TaskModel: 2
 
@@ -186,7 +282,7 @@ adcs_config_data
 
 LocalOutput
 <class 'stComm.stComm.STOutputData'>
-<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x103410a80> >
+<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x11ab832a0> >
 
 OutputDataName
 <type 'str'>
@@ -206,59 +302,107 @@ SensorMsgID
 
 T_BdyPlatform
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 T_StrPlatform
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 __class__
+<type 'type'>
+<class 'stComm.stComm.STConfigData'>
 
 __del__
+<type 'instancemethod'>
+<bound method STConfigData.<lambda> of <stComm.stComm.STConfigData; proxy of <Swig Object of type 'STConfigData *' at 0x11a9def00> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of STConfigData object at 0x11ab4b590>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'STConfigData *' at 0x11a9def00>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of STConfigData object at 0x11ab4b590>
 
 __getattr__
+<type 'instancemethod'>
+<bound method STConfigData.<lambda> of <stComm.stComm.STConfigData; proxy of <Swig Object of type 'STConfigData *' at 0x11a9def00> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of STConfigData object at 0x11ab4b590>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of STConfigData object at 0x11ab4b590>
 
 __init__
+<type 'instancemethod'>
+<bound method STConfigData.__init__ of <stComm.stComm.STConfigData; proxy of <Swig Object of type 'STConfigData *' at 0x11a9def00> >>
 
 __module__
+<type 'str'>
+stComm.stComm
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of STConfigData object at 0x11ab4b590>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of STConfigData object at 0x11ab4b590>
 
 __repr__
+<type 'instancemethod'>
+<bound method STConfigData._swig_repr of <stComm.stComm.STConfigData; proxy of <Swig Object of type 'STConfigData *' at 0x11a9def00> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method STConfigData.protectSetAttr of <stComm.stComm.STConfigData; proxy of <Swig Object of type 'STConfigData *' at 0x11a9def00> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of STConfigData object at 0x11ab4b590>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of STConfigData object at 0x11ab4b590>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b5310>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_STConfigData>
 
 __swig_getmethods__
+<type 'dict'>
+{'T_StrPlatform': <built-in function STConfigData_T_StrPlatform_get>, 'PropsMsgID': <built-in function STConfigData_PropsMsgID_get>, 'OutputDataName': <built-in function STConfigData_OutputDataName_get>, 'InputPropsName': <built-in function STConfigData_InputPropsName_get>, 'OutputMsgID': <built-in function STConfigData_OutputMsgID_get>, 'LocalOutput': <built-in function STConfigData_LocalOutput_get>, 'InputDataName': <built-in function STConfigData_InputDataName_get>, 'SensorMsgID': <built-in function STConfigData_SensorMsgID_get>, 'T_BdyPlatform': <built-in function STConfigData_T_BdyPlatform_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'T_StrPlatform': <built-in function STConfigData_T_StrPlatform_set>, 'PropsMsgID': <built-in function STConfigData_PropsMsgID_set>, 'OutputDataName': <built-in function STConfigData_OutputDataName_set>, 'InputPropsName': <built-in function STConfigData_InputPropsName_set>, 'OutputMsgID': <built-in function STConfigData_OutputMsgID_set>, 'LocalOutput': <built-in function STConfigData_LocalOutput_set>, 'InputDataName': <built-in function STConfigData_InputDataName_set>, 'SensorMsgID': <built-in function STConfigData_SensorMsgID_set>, 'T_BdyPlatform': <built-in function STConfigData_T_BdyPlatform_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'STConfigData *' at 0x11a9def00>
 
 
 TaskList: 12
@@ -266,54 +410,100 @@ TaskList: 12
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'inertial3D.inertial3D.inertial3DConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method inertial3DConfig.<lambda> of <inertial3D.inertial3D.inertial3DConfig; proxy of <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of inertial3DConfig object at 0x11ab74110>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of inertial3DConfig object at 0x11ab74110>
 
 __getattr__
+<type 'instancemethod'>
+<bound method inertial3DConfig.<lambda> of <inertial3D.inertial3D.inertial3DConfig; proxy of <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of inertial3DConfig object at 0x11ab74110>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of inertial3DConfig object at 0x11ab74110>
 
 __init__
+<type 'instancemethod'>
+<bound method inertial3DConfig.__init__ of <inertial3D.inertial3D.inertial3DConfig; proxy of <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0> >>
 
 __module__
+<type 'str'>
+inertial3D.inertial3D
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of inertial3DConfig object at 0x11ab74110>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of inertial3DConfig object at 0x11ab74110>
 
 __repr__
+<type 'instancemethod'>
+<bound method inertial3DConfig._swig_repr of <inertial3D.inertial3D.inertial3DConfig; proxy of <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method inertial3DConfig.protectSetAttr of <inertial3D.inertial3D.inertial3DConfig; proxy of <Swig Object of type 'inertial3DConfig *' at 0x11ab696f0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of inertial3DConfig object at 0x11ab74110>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of inertial3DConfig object at 0x11ab74110>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15d4dc0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_inertial3DConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_R0N': <built-in function inertial3DConfig_sigma_R0N_get>, 'outputDataName': <built-in function inertial3DConfig_outputDataName_get>, 'outputMsgID': <built-in function inertial3DConfig_outputMsgID_get>, 'attRefOut': <built-in function inertial3DConfig_attRefOut_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_R0N': <built-in function inertial3DConfig_sigma_R0N_set>, 'outputDataName': <built-in function inertial3DConfig_outputDataName_set>, 'outputMsgID': <built-in function inertial3DConfig_outputMsgID_set>, 'attRefOut': <built-in function inertial3DConfig_attRefOut_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410a80> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab83300> >
 
 outputDataName
 <type 'str'>
@@ -325,9 +515,11 @@ outputMsgID
 
 sigma_R0N
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'inertial3DConfig *' at 0x11ab696f0>
 
 
 TaskList: 13
@@ -335,54 +527,100 @@ TaskList: 13
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'hillPoint.hillPoint.hillPointConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method hillPointConfig.<lambda> of <hillPoint.hillPoint.hillPointConfig; proxy of <Swig Object of type 'hillPointConfig *' at 0x11ab69750> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of hillPointConfig object at 0x11ab74190>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'hillPointConfig *' at 0x11ab69750>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of hillPointConfig object at 0x11ab74190>
 
 __getattr__
+<type 'instancemethod'>
+<bound method hillPointConfig.<lambda> of <hillPoint.hillPoint.hillPointConfig; proxy of <Swig Object of type 'hillPointConfig *' at 0x11ab69750> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of hillPointConfig object at 0x11ab74190>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of hillPointConfig object at 0x11ab74190>
 
 __init__
+<type 'instancemethod'>
+<bound method hillPointConfig.__init__ of <hillPoint.hillPoint.hillPointConfig; proxy of <Swig Object of type 'hillPointConfig *' at 0x11ab69750> >>
 
 __module__
+<type 'str'>
+hillPoint.hillPoint
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of hillPointConfig object at 0x11ab74190>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of hillPointConfig object at 0x11ab74190>
 
 __repr__
+<type 'instancemethod'>
+<bound method hillPointConfig._swig_repr of <hillPoint.hillPoint.hillPointConfig; proxy of <Swig Object of type 'hillPointConfig *' at 0x11ab69750> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method hillPointConfig.protectSetAttr of <hillPoint.hillPoint.hillPointConfig; proxy of <Swig Object of type 'hillPointConfig *' at 0x11ab69750> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of hillPointConfig object at 0x11ab74190>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of hillPointConfig object at 0x11ab74190>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15d7a90>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_hillPointConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'outputDataName': <built-in function hillPointConfig_outputDataName_get>, 'outputMsgID': <built-in function hillPointConfig_outputMsgID_get>, 'inputNavID': <built-in function hillPointConfig_inputNavID_get>, 'inputCelID': <built-in function hillPointConfig_inputCelID_get>, 'inputNavDataName': <built-in function hillPointConfig_inputNavDataName_get>, 'attRefOut': <built-in function hillPointConfig_attRefOut_get>, 'inputCelMessName': <built-in function hillPointConfig_inputCelMessName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'outputDataName': <built-in function hillPointConfig_outputDataName_set>, 'outputMsgID': <built-in function hillPointConfig_outputMsgID_set>, 'inputNavID': <built-in function hillPointConfig_inputNavID_set>, 'inputCelID': <built-in function hillPointConfig_inputCelID_set>, 'inputNavDataName': <built-in function hillPointConfig_inputNavDataName_set>, 'attRefOut': <built-in function hillPointConfig_attRefOut_set>, 'inputCelMessName': <built-in function hillPointConfig_inputCelMessName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab832a0> >
 
 inputCelID
 <type 'int'>
@@ -409,6 +647,8 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'hillPointConfig *' at 0x11ab69750>
 
 
 TaskList: 14
@@ -416,54 +656,100 @@ TaskList: 14
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'velocityPoint.velocityPoint.velocityPointConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method velocityPointConfig.<lambda> of <velocityPoint.velocityPoint.velocityPointConfig; proxy of <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of velocityPointConfig object at 0x11ab74210>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of velocityPointConfig object at 0x11ab74210>
 
 __getattr__
+<type 'instancemethod'>
+<bound method velocityPointConfig.<lambda> of <velocityPoint.velocityPoint.velocityPointConfig; proxy of <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of velocityPointConfig object at 0x11ab74210>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of velocityPointConfig object at 0x11ab74210>
 
 __init__
+<type 'instancemethod'>
+<bound method velocityPointConfig.__init__ of <velocityPoint.velocityPoint.velocityPointConfig; proxy of <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0> >>
 
 __module__
+<type 'str'>
+velocityPoint.velocityPoint
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of velocityPointConfig object at 0x11ab74210>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of velocityPointConfig object at 0x11ab74210>
 
 __repr__
+<type 'instancemethod'>
+<bound method velocityPointConfig._swig_repr of <velocityPoint.velocityPoint.velocityPointConfig; proxy of <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method velocityPointConfig.protectSetAttr of <velocityPoint.velocityPoint.velocityPointConfig; proxy of <Swig Object of type 'velocityPointConfig *' at 0x11ab697b0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of velocityPointConfig object at 0x11ab74210>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of velocityPointConfig object at 0x11ab74210>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15daa20>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_velocityPointConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'outputDataName': <built-in function velocityPointConfig_outputDataName_get>, 'inputNavID': <built-in function velocityPointConfig_inputNavID_get>, 'outputMsgID': <built-in function velocityPointConfig_outputMsgID_get>, 'inputCelID': <built-in function velocityPointConfig_inputCelID_get>, 'oe': <built-in function velocityPointConfig_oe_get>, 'inputNavDataName': <built-in function velocityPointConfig_inputNavDataName_get>, 'mu': <built-in function velocityPointConfig_mu_get>, 'attRefOut': <built-in function velocityPointConfig_attRefOut_get>, 'inputCelMessName': <built-in function velocityPointConfig_inputCelMessName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'outputDataName': <built-in function velocityPointConfig_outputDataName_set>, 'inputNavID': <built-in function velocityPointConfig_inputNavID_set>, 'outputMsgID': <built-in function velocityPointConfig_outputMsgID_set>, 'inputCelID': <built-in function velocityPointConfig_inputCelID_set>, 'oe': <built-in function velocityPointConfig_oe_set>, 'inputNavDataName': <built-in function velocityPointConfig_inputNavDataName_set>, 'mu': <built-in function velocityPointConfig_mu_set>, 'attRefOut': <built-in function velocityPointConfig_attRefOut_set>, 'inputCelMessName': <built-in function velocityPointConfig_inputCelMessName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab83a20> >
 
 inputCelID
 <type 'int'>
@@ -487,7 +773,7 @@ mu
 
 oe
 <class 'orb_elem_convert.orb_elem_convert.classicElements'>
-<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x103410ab0> >
+<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x11ab832a0> >
 
 outputDataName
 <type 'str'>
@@ -498,6 +784,8 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'velocityPointConfig *' at 0x11ab697b0>
 
 
 TaskList: 15
@@ -506,69 +794,115 @@ TaskModel: 0
 
 R_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 R_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 __class__
+<type 'type'>
+<class 'celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method celestialTwoBodyPointConfig.<lambda> of <celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig; proxy of <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __getattr__
+<type 'instancemethod'>
+<bound method celestialTwoBodyPointConfig.<lambda> of <celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig; proxy of <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __init__
+<type 'instancemethod'>
+<bound method celestialTwoBodyPointConfig.__init__ of <celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig; proxy of <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810> >>
 
 __module__
+<type 'str'>
+celestialTwoBodyPoint.celestialTwoBodyPoint
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __repr__
+<type 'instancemethod'>
+<bound method celestialTwoBodyPointConfig._swig_repr of <celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig; proxy of <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method celestialTwoBodyPointConfig.protectSetAttr of <celestialTwoBodyPoint.celestialTwoBodyPoint.celestialTwoBodyPointConfig; proxy of <Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of celestialTwoBodyPointConfig object at 0x11ab74290>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15df420>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_celestialTwoBodyPointConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'v_P1': <built-in function celestialTwoBodyPointConfig_v_P1_get>, 'v_P2': <built-in function celestialTwoBodyPointConfig_v_P2_get>, 'outputDataName': <built-in function celestialTwoBodyPointConfig_outputDataName_get>, 'inputNavID': <built-in function celestialTwoBodyPointConfig_inputNavID_get>, 'outputMsgID': <built-in function celestialTwoBodyPointConfig_outputMsgID_get>, 'inputCelID': <built-in function celestialTwoBodyPointConfig_inputCelID_get>, 'inputCelMessName': <built-in function celestialTwoBodyPointConfig_inputCelMessName_get>, 'attRefOut': <built-in function celestialTwoBodyPointConfig_attRefOut_get>, 'inputNavDataName': <built-in function celestialTwoBodyPointConfig_inputNavDataName_get>, 'R_P1': <built-in function celestialTwoBodyPointConfig_R_P1_get>, 'inputSecMessName': <built-in function celestialTwoBodyPointConfig_inputSecMessName_get>, 'R_P2': <built-in function celestialTwoBodyPointConfig_R_P2_get>, 'a_P1': <built-in function celestialTwoBodyPointConfig_a_P1_get>, 'a_P2': <built-in function celestialTwoBodyPointConfig_a_P2_get>, 'inputSecID': <built-in function celestialTwoBodyPointConfig_inputSecID_get>, 'singularityThresh': <built-in function celestialTwoBodyPointConfig_singularityThresh_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'v_P1': <built-in function celestialTwoBodyPointConfig_v_P1_set>, 'v_P2': <built-in function celestialTwoBodyPointConfig_v_P2_set>, 'outputDataName': <built-in function celestialTwoBodyPointConfig_outputDataName_set>, 'inputNavID': <built-in function celestialTwoBodyPointConfig_inputNavID_set>, 'outputMsgID': <built-in function celestialTwoBodyPointConfig_outputMsgID_set>, 'inputCelID': <built-in function celestialTwoBodyPointConfig_inputCelID_set>, 'inputCelMessName': <built-in function celestialTwoBodyPointConfig_inputCelMessName_set>, 'attRefOut': <built-in function celestialTwoBodyPointConfig_attRefOut_set>, 'inputNavDataName': <built-in function celestialTwoBodyPointConfig_inputNavDataName_set>, 'R_P1': <built-in function celestialTwoBodyPointConfig_R_P1_set>, 'inputSecMessName': <built-in function celestialTwoBodyPointConfig_inputSecMessName_set>, 'R_P2': <built-in function celestialTwoBodyPointConfig_R_P2_set>, 'a_P1': <built-in function celestialTwoBodyPointConfig_a_P1_set>, 'a_P2': <built-in function celestialTwoBodyPointConfig_a_P2_set>, 'inputSecID': <built-in function celestialTwoBodyPointConfig_inputSecID_set>, 'singularityThresh': <built-in function celestialTwoBodyPointConfig_singularityThresh_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 a_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 a_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab83300> >
 
 inputCelID
 <type 'int'>
@@ -607,14 +941,16 @@ singularityThresh
 0.0174532925199
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'celestialTwoBodyPointConfig *' at 0x11ab69810>
 
 v_P1
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 v_P2
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 
 TaskList: 19
@@ -622,50 +958,96 @@ TaskList: 19
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'rasterManager.rasterManager.rasterManagerConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method rasterManagerConfig.<lambda> of <rasterManager.rasterManager.rasterManagerConfig; proxy of <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of rasterManagerConfig object at 0x11ab74310>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of rasterManagerConfig object at 0x11ab74310>
 
 __getattr__
+<type 'instancemethod'>
+<bound method rasterManagerConfig.<lambda> of <rasterManager.rasterManager.rasterManagerConfig; proxy of <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of rasterManagerConfig object at 0x11ab74310>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of rasterManagerConfig object at 0x11ab74310>
 
 __init__
+<type 'instancemethod'>
+<bound method rasterManagerConfig.__init__ of <rasterManager.rasterManager.rasterManagerConfig; proxy of <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870> >>
 
 __module__
+<type 'str'>
+rasterManager.rasterManager
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of rasterManagerConfig object at 0x11ab74310>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of rasterManagerConfig object at 0x11ab74310>
 
 __repr__
+<type 'instancemethod'>
+<bound method rasterManagerConfig._swig_repr of <rasterManager.rasterManager.rasterManagerConfig; proxy of <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method rasterManagerConfig.protectSetAttr of <rasterManager.rasterManager.rasterManagerConfig; proxy of <Swig Object of type 'rasterManagerConfig *' at 0x11ab69870> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of rasterManagerConfig object at 0x11ab74310>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of rasterManagerConfig object at 0x11ab74310>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e01b0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_rasterManagerConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'mnvrStartTime': <built-in function rasterManagerConfig_mnvrStartTime_get>, 'scanSelector': <built-in function rasterManagerConfig_scanSelector_get>, 'outputAngleRates': <built-in function rasterManagerConfig_outputAngleRates_get>, 'outputEulerRatesName': <built-in function rasterManagerConfig_outputEulerRatesName_get>, 'rasterTimes': <built-in function rasterManagerConfig_rasterTimes_get>, 'outputEulerSetID': <built-in function rasterManagerConfig_outputEulerSetID_get>, 'outputEulerRatesID': <built-in function rasterManagerConfig_outputEulerRatesID_get>, 'mnvrActive': <built-in function rasterManagerConfig_mnvrActive_get>, 'outputAngleSet': <built-in function rasterManagerConfig_outputAngleSet_get>, 'scanningAngles': <built-in function rasterManagerConfig_scanningAngles_get>, 'mnvrComplete': <built-in function rasterManagerConfig_mnvrComplete_get>, 'outputEulerSetName': <built-in function rasterManagerConfig_outputEulerSetName_get>, 'numRasters': <built-in function rasterManagerConfig_numRasters_get>, 'scanningRates': <built-in function rasterManagerConfig_scanningRates_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'mnvrStartTime': <built-in function rasterManagerConfig_mnvrStartTime_set>, 'scanSelector': <built-in function rasterManagerConfig_scanSelector_set>, 'outputAngleRates': <built-in function rasterManagerConfig_outputAngleRates_set>, 'outputEulerRatesName': <built-in function rasterManagerConfig_outputEulerRatesName_set>, 'rasterTimes': <built-in function rasterManagerConfig_rasterTimes_set>, 'outputEulerSetID': <built-in function rasterManagerConfig_outputEulerSetID_set>, 'outputEulerRatesID': <built-in function rasterManagerConfig_outputEulerRatesID_set>, 'mnvrActive': <built-in function rasterManagerConfig_mnvrActive_set>, 'outputAngleSet': <built-in function rasterManagerConfig_outputAngleSet_set>, 'scanningAngles': <built-in function rasterManagerConfig_scanningAngles_set>, 'mnvrComplete': <built-in function rasterManagerConfig_mnvrComplete_set>, 'outputEulerSetName': <built-in function rasterManagerConfig_outputEulerSetName_set>, 'numRasters': <built-in function rasterManagerConfig_numRasters_set>, 'scanningRates': <built-in function rasterManagerConfig_scanningRates_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 mnvrActive
 <type 'int'>
@@ -685,11 +1067,11 @@ numRasters
 
 outputAngleRates
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab832a0> >
 
 outputAngleSet
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410a80> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab83a20> >
 
 outputEulerRatesID
 <type 'int'>
@@ -709,7 +1091,7 @@ euler_angle_set
 
 rasterTimes
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 scanSelector
 <type 'int'>
@@ -717,230 +1099,129 @@ scanSelector
 
 scanningAngles
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 scanningRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'rasterManagerConfig *' at 0x11ab69870>
 
 TaskModel: 1
 
-AlgCrossInit
-<type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x103410a80>
-
-AlgReset
-<type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x103410ab0>
-
-AlgSelfInit
-<type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long)' at 0x103410a80>
-
-AlgUpdate
-<type 'SwigPyObject'>
-<Swig Object of type 'void (*)(void *,unsigned long long,unsigned long long)' at 0x103410ab0>
-
-CallCounts
-<type 'long'>
-0
-
-CrossInit
-<type 'instancemethod'>
-<bound method AlgContain.CrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-DataPtr
-<type 'SwigPyObject'>
-<Swig Object of type 'void *' at 0x103410a80>
-
-IntegratedInit
-<type 'instancemethod'>
-<bound method AlgContain.IntegratedInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-ModelTag
-<type 'str'>
-eulerRotation
-
-RNGSeed
-<type 'int'>
-464374481
-
-Reset
-<type 'instancemethod'>
-<bound method AlgContain.Reset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-SelfInit
-<type 'instancemethod'>
-<bound method AlgContain.SelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UpdateState
-<type 'instancemethod'>
-<bound method AlgContain.UpdateState of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UseCrossInit
-<type 'instancemethod'>
-<bound method AlgContain.UseCrossInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UseData
-<type 'instancemethod'>
-<bound method AlgContain.UseData of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UseReset
-<type 'instancemethod'>
-<bound method AlgContain.UseReset of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UseSelfInit
-<type 'instancemethod'>
-<bound method AlgContain.UseSelfInit of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-UseUpdate
-<type 'instancemethod'>
-<bound method AlgContain.UseUpdate of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
 __class__
-
-__del__
-
-__delattr__
-
-__dict__
-
-__doc__
-
-__format__
-
-__getattr__
-
-__getattribute__
-
-__hash__
-
-__init__
-
-__module__
-
-__new__
-
-__reduce__
-
-__reduce_ex__
-
-__repr__
-
-__setattr__
-
-__sizeof__
-
-__str__
-
-__subclasshook__
-
-__swig_destroy__
-
-__swig_getmethods__
-
-__swig_setmethods__
-
-__weakref__
-
-_s
 <type 'type'>
-<class 'alg_contain.alg_contain.SysModel'>
-
-getCrossInitAddress
-<type 'instancemethod'>
-<bound method AlgContain.getCrossInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-getResetAddress
-<type 'instancemethod'>
-<bound method AlgContain.getResetAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-getSelfInitAddress
-<type 'instancemethod'>
-<bound method AlgContain.getSelfInitAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-getUpdateAddress
-<type 'instancemethod'>
-<bound method AlgContain.getUpdateAddress of <alg_contain.alg_contain.AlgContain; proxy of <Swig Object of type 'AlgContain *' at 0x10a8b1360> >>
-
-moduleID
-<type 'long'>
-92
-
-this
-
-
-TaskList: 20
-
-TaskModel: 0
-
-__class__
+<class 'eulerRotation.eulerRotation.eulerRotationConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.<lambda> of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of eulerRotationConfig object at 0x11ab74390>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of eulerRotationConfig object at 0x11ab74390>
 
 __getattr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.<lambda> of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of eulerRotationConfig object at 0x11ab74390>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of eulerRotationConfig object at 0x11ab74390>
 
 __init__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.__init__ of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
 
 __module__
+<type 'str'>
+eulerRotation.eulerRotation
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of eulerRotationConfig object at 0x11ab74390>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of eulerRotationConfig object at 0x11ab74390>
 
 __repr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig._swig_repr of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.protectSetAttr of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of eulerRotationConfig object at 0x11ab74390>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of eulerRotationConfig object at 0x11ab74390>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e2790>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_eulerRotationConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'outputDataName': <built-in function eulerRotationConfig_outputDataName_get>, 'outputEulerRatesName': <built-in function eulerRotationConfig_outputEulerRatesName_get>, 'priorTime': <built-in function eulerRotationConfig_priorTime_get>, 'inputRefName': <built-in function eulerRotationConfig_inputRefName_get>, 'angleRates': <built-in function eulerRotationConfig_angleRates_get>, 'inputEulerRatesID': <built-in function eulerRotationConfig_inputEulerRatesID_get>, 'angleSet': <built-in function eulerRotationConfig_angleSet_get>, 'priorCmdSet': <built-in function eulerRotationConfig_priorCmdSet_get>, 'eulerSetOut': <built-in function eulerRotationConfig_eulerSetOut_get>, 'outputEulerSetID': <built-in function eulerRotationConfig_outputEulerSetID_get>, 'outputEulerRatesID': <built-in function eulerRotationConfig_outputEulerRatesID_get>, 'priorCmdRates': <built-in function eulerRotationConfig_priorCmdRates_get>, 'inputEulerSetName': <built-in function eulerRotationConfig_inputEulerSetName_get>, 'inputEulerRatesName': <built-in function eulerRotationConfig_inputEulerRatesName_get>, 'eulerRatesOut': <built-in function eulerRotationConfig_eulerRatesOut_get>, 'outputEulerSetName': <built-in function eulerRotationConfig_outputEulerSetName_get>, 'dt': <built-in function eulerRotationConfig_dt_get>, 'inputEulerSetID': <built-in function eulerRotationConfig_inputEulerSetID_get>, 'cmdSet': <built-in function eulerRotationConfig_cmdSet_get>, 'cmdRates': <built-in function eulerRotationConfig_cmdRates_get>, 'outputMsgID': <built-in function eulerRotationConfig_outputMsgID_get>, 'inputRefID': <built-in function eulerRotationConfig_inputRefID_get>, 'attRefOut': <built-in function eulerRotationConfig_attRefOut_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'outputDataName': <built-in function eulerRotationConfig_outputDataName_set>, 'outputEulerRatesName': <built-in function eulerRotationConfig_outputEulerRatesName_set>, 'priorTime': <built-in function eulerRotationConfig_priorTime_set>, 'inputRefName': <built-in function eulerRotationConfig_inputRefName_set>, 'angleRates': <built-in function eulerRotationConfig_angleRates_set>, 'inputEulerRatesID': <built-in function eulerRotationConfig_inputEulerRatesID_set>, 'angleSet': <built-in function eulerRotationConfig_angleSet_set>, 'priorCmdSet': <built-in function eulerRotationConfig_priorCmdSet_set>, 'eulerSetOut': <built-in function eulerRotationConfig_eulerSetOut_set>, 'outputEulerSetID': <built-in function eulerRotationConfig_outputEulerSetID_set>, 'outputEulerRatesID': <built-in function eulerRotationConfig_outputEulerRatesID_set>, 'priorCmdRates': <built-in function eulerRotationConfig_priorCmdRates_set>, 'inputEulerSetName': <built-in function eulerRotationConfig_inputEulerSetName_set>, 'inputEulerRatesName': <built-in function eulerRotationConfig_inputEulerRatesName_set>, 'eulerRatesOut': <built-in function eulerRotationConfig_eulerRatesOut_set>, 'outputEulerSetName': <built-in function eulerRotationConfig_outputEulerSetName_set>, 'dt': <built-in function eulerRotationConfig_dt_set>, 'inputEulerSetID': <built-in function eulerRotationConfig_inputEulerSetID_set>, 'cmdSet': <built-in function eulerRotationConfig_cmdSet_set>, 'cmdRates': <built-in function eulerRotationConfig_cmdRates_set>, 'outputMsgID': <built-in function eulerRotationConfig_outputMsgID_set>, 'inputRefID': <built-in function eulerRotationConfig_inputRefID_set>, 'attRefOut': <built-in function eulerRotationConfig_attRefOut_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 angleRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 angleSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab83420> >
 
 cmdRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 cmdSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 dt
 <type 'float'>
@@ -948,11 +1229,11 @@ dt
 
 eulerRatesOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab832a0> >
 
 eulerSetOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x103410a80> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab83300> >
 
 inputEulerRatesID
 <type 'int'>
@@ -1004,17 +1285,212 @@ outputMsgID
 
 priorCmdRates
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 priorCmdSet
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 priorTime
 <type 'long'>
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0>
+
+
+TaskList: 20
+
+TaskModel: 0
+
+__class__
+<type 'type'>
+<class 'eulerRotation.eulerRotation.eulerRotationConfig'>
+
+__del__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.<lambda> of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
+
+__delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of eulerRotationConfig object at 0x11ab74390>
+
+__dict__
+<type 'dict'>
+{'this': <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0>}
+
+__doc__
+<type 'NoneType'>
+None
+
+__format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of eulerRotationConfig object at 0x11ab74390>
+
+__getattr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.<lambda> of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
+
+__getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of eulerRotationConfig object at 0x11ab74390>
+
+__hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of eulerRotationConfig object at 0x11ab74390>
+
+__init__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.__init__ of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
+
+__module__
+<type 'str'>
+eulerRotation.eulerRotation
+
+__new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
+
+__reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of eulerRotationConfig object at 0x11ab74390>
+
+__reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of eulerRotationConfig object at 0x11ab74390>
+
+__repr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig._swig_repr of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
+
+__setattr__
+<type 'instancemethod'>
+<bound method eulerRotationConfig.protectSetAttr of <eulerRotation.eulerRotation.eulerRotationConfig; proxy of <Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0> >>
+
+__sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of eulerRotationConfig object at 0x11ab74390>
+
+__str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of eulerRotationConfig object at 0x11ab74390>
+
+__subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e2790>
+
+__swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_eulerRotationConfig>
+
+__swig_getmethods__
+<type 'dict'>
+{'outputDataName': <built-in function eulerRotationConfig_outputDataName_get>, 'outputEulerRatesName': <built-in function eulerRotationConfig_outputEulerRatesName_get>, 'priorTime': <built-in function eulerRotationConfig_priorTime_get>, 'inputRefName': <built-in function eulerRotationConfig_inputRefName_get>, 'angleRates': <built-in function eulerRotationConfig_angleRates_get>, 'inputEulerRatesID': <built-in function eulerRotationConfig_inputEulerRatesID_get>, 'angleSet': <built-in function eulerRotationConfig_angleSet_get>, 'priorCmdSet': <built-in function eulerRotationConfig_priorCmdSet_get>, 'eulerSetOut': <built-in function eulerRotationConfig_eulerSetOut_get>, 'outputEulerSetID': <built-in function eulerRotationConfig_outputEulerSetID_get>, 'outputEulerRatesID': <built-in function eulerRotationConfig_outputEulerRatesID_get>, 'priorCmdRates': <built-in function eulerRotationConfig_priorCmdRates_get>, 'inputEulerSetName': <built-in function eulerRotationConfig_inputEulerSetName_get>, 'inputEulerRatesName': <built-in function eulerRotationConfig_inputEulerRatesName_get>, 'eulerRatesOut': <built-in function eulerRotationConfig_eulerRatesOut_get>, 'outputEulerSetName': <built-in function eulerRotationConfig_outputEulerSetName_get>, 'dt': <built-in function eulerRotationConfig_dt_get>, 'inputEulerSetID': <built-in function eulerRotationConfig_inputEulerSetID_get>, 'cmdSet': <built-in function eulerRotationConfig_cmdSet_get>, 'cmdRates': <built-in function eulerRotationConfig_cmdRates_get>, 'outputMsgID': <built-in function eulerRotationConfig_outputMsgID_get>, 'inputRefID': <built-in function eulerRotationConfig_inputRefID_get>, 'attRefOut': <built-in function eulerRotationConfig_attRefOut_get>}
+
+__swig_setmethods__
+<type 'dict'>
+{'outputDataName': <built-in function eulerRotationConfig_outputDataName_set>, 'outputEulerRatesName': <built-in function eulerRotationConfig_outputEulerRatesName_set>, 'priorTime': <built-in function eulerRotationConfig_priorTime_set>, 'inputRefName': <built-in function eulerRotationConfig_inputRefName_set>, 'angleRates': <built-in function eulerRotationConfig_angleRates_set>, 'inputEulerRatesID': <built-in function eulerRotationConfig_inputEulerRatesID_set>, 'angleSet': <built-in function eulerRotationConfig_angleSet_set>, 'priorCmdSet': <built-in function eulerRotationConfig_priorCmdSet_set>, 'eulerSetOut': <built-in function eulerRotationConfig_eulerSetOut_set>, 'outputEulerSetID': <built-in function eulerRotationConfig_outputEulerSetID_set>, 'outputEulerRatesID': <built-in function eulerRotationConfig_outputEulerRatesID_set>, 'priorCmdRates': <built-in function eulerRotationConfig_priorCmdRates_set>, 'inputEulerSetName': <built-in function eulerRotationConfig_inputEulerSetName_set>, 'inputEulerRatesName': <built-in function eulerRotationConfig_inputEulerRatesName_set>, 'eulerRatesOut': <built-in function eulerRotationConfig_eulerRatesOut_set>, 'outputEulerSetName': <built-in function eulerRotationConfig_outputEulerSetName_set>, 'dt': <built-in function eulerRotationConfig_dt_set>, 'inputEulerSetID': <built-in function eulerRotationConfig_inputEulerSetID_set>, 'cmdSet': <built-in function eulerRotationConfig_cmdSet_set>, 'cmdRates': <built-in function eulerRotationConfig_cmdRates_set>, 'outputMsgID': <built-in function eulerRotationConfig_outputMsgID_set>, 'inputRefID': <built-in function eulerRotationConfig_inputRefID_set>, 'attRefOut': <built-in function eulerRotationConfig_attRefOut_set>}
+
+__weakref__
+<type 'NoneType'>
+None
+
+angleRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83420>
+
+angleSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83300>
+
+attRefOut
+<class 'simpleDeadband.simpleDeadband.attRefOut'>
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab832a0> >
+
+cmdRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83300>
+
+cmdSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83420>
+
+dt
+<type 'float'>
+0.0
+
+eulerRatesOut
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab83a20> >
+
+eulerSetOut
+<class 'simpleDeadband.simpleDeadband.eulerOut'>
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x11ab83420> >
+
+inputEulerRatesID
+<type 'int'>
+0
+
+inputEulerRatesName
+<type 'str'>
+
+
+inputEulerSetID
+<type 'int'>
+0
+
+inputEulerSetName
+<type 'str'>
+
+
+inputRefID
+<type 'int'>
+0
+
+inputRefName
+<type 'str'>
+att_ref_output_stage1
+
+outputDataName
+<type 'str'>
+att_ref_output
+
+outputEulerRatesID
+<type 'int'>
+0
+
+outputEulerRatesName
+<type 'str'>
+euler_rates_output
+
+outputEulerSetID
+<type 'int'>
+0
+
+outputEulerSetName
+<type 'str'>
+euler_set_output
+
+outputMsgID
+<type 'int'>
+0
+
+priorCmdRates
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83420>
+
+priorCmdSet
+<type 'SwigPyObject'>
+<Swig Object of type 'double *' at 0x11ab83300>
+
+priorTime
+<type 'long'>
+0
+
+this
+<type 'SwigPyObject'>
+<Swig Object of type 'eulerRotationConfig *' at 0x11ab698d0>
 
 
 TaskList: 22
@@ -1022,54 +1498,100 @@ TaskList: 22
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'attTrackingError.attTrackingError.attTrackingErrorConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __getattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __init__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.__init__ of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __module__
+<type 'str'>
+attTrackingError.attTrackingError
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __repr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig._swig_repr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.protectSetAttr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e5380>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_attTrackingErrorConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_get>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_get>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_get>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_get>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_get>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_get>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_get>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_get>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_set>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_set>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_set>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_set>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_set>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_set>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_set>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_set>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x11ab832a0> >
 
 inputNavID
 <type 'int'>
@@ -1101,61 +1623,109 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>
 
 TaskModel: 1
 
 __class__
+<type 'type'>
+<class 'errorDeadband.errorDeadband.errorDeadbandConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method errorDeadbandConfig.<lambda> of <errorDeadband.errorDeadband.errorDeadbandConfig; proxy of <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of errorDeadbandConfig object at 0x11ab74510>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of errorDeadbandConfig object at 0x11ab74510>
 
 __getattr__
+<type 'instancemethod'>
+<bound method errorDeadbandConfig.<lambda> of <errorDeadband.errorDeadband.errorDeadbandConfig; proxy of <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of errorDeadbandConfig object at 0x11ab74510>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of errorDeadbandConfig object at 0x11ab74510>
 
 __init__
+<type 'instancemethod'>
+<bound method errorDeadbandConfig.__init__ of <errorDeadband.errorDeadband.errorDeadbandConfig; proxy of <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0> >>
 
 __module__
+<type 'str'>
+errorDeadband.errorDeadband
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of errorDeadbandConfig object at 0x11ab74510>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of errorDeadbandConfig object at 0x11ab74510>
 
 __repr__
+<type 'instancemethod'>
+<bound method errorDeadbandConfig._swig_repr of <errorDeadband.errorDeadband.errorDeadbandConfig; proxy of <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method errorDeadbandConfig.protectSetAttr of <errorDeadband.errorDeadband.errorDeadbandConfig; proxy of <Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of errorDeadbandConfig object at 0x11ab74510>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of errorDeadbandConfig object at 0x11ab74510>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e8010>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_errorDeadbandConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_BR': <built-in function errorDeadbandConfig_sigma_BR_get>, 'outputDataName': <built-in function errorDeadbandConfig_outputDataName_get>, 'innerThresh': <built-in function errorDeadbandConfig_innerThresh_get>, 'inputGuidID': <built-in function errorDeadbandConfig_inputGuidID_get>, 'outputGuidID': <built-in function errorDeadbandConfig_outputGuidID_get>, 'outerThresh': <built-in function errorDeadbandConfig_outerThresh_get>, 'error': <built-in function errorDeadbandConfig_error_get>, 'attGuidOut': <built-in function errorDeadbandConfig_attGuidOut_get>, 'inputGuidName': <built-in function errorDeadbandConfig_inputGuidName_get>, 'omega_BR_B': <built-in function errorDeadbandConfig_omega_BR_B_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_BR': <built-in function errorDeadbandConfig_sigma_BR_set>, 'outputDataName': <built-in function errorDeadbandConfig_outputDataName_set>, 'innerThresh': <built-in function errorDeadbandConfig_innerThresh_set>, 'inputGuidID': <built-in function errorDeadbandConfig_inputGuidID_set>, 'outputGuidID': <built-in function errorDeadbandConfig_outputGuidID_set>, 'outerThresh': <built-in function errorDeadbandConfig_outerThresh_set>, 'error': <built-in function errorDeadbandConfig_error_set>, 'attGuidOut': <built-in function errorDeadbandConfig_attGuidOut_set>, 'inputGuidName': <built-in function errorDeadbandConfig_inputGuidName_set>, 'omega_BR_B': <built-in function errorDeadbandConfig_omega_BR_B_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410a80> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x11ab83a20> >
 
 error
 <type 'float'>
@@ -1175,7 +1745,7 @@ sun_safe_att_err
 
 omega_BR_B
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 outerThresh
 <type 'float'>
@@ -1191,9 +1761,11 @@ outputGuidID
 
 sigma_BR
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'errorDeadbandConfig *' at 0x11ab699f0>
 
 
 TaskList: 23
@@ -1202,11 +1774,11 @@ TaskModel: 0
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 K1
 <type 'float'>
@@ -1225,54 +1797,100 @@ P
 150.0
 
 __class__
+<type 'type'>
+<class 'MRP_Steering.MRP_Steering.MRP_SteeringConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.<lambda> of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.<lambda> of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __init__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.__init__ of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __module__
+<type 'str'>
+MRP_Steering.MRP_Steering
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __repr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig._swig_repr of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.protectSetAttr of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b6190>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_MRP_SteeringConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_SteeringConfig_numRWAs_get>, 'outputDataName': <built-in function MRP_SteeringConfig_outputDataName_get>, 'omega_max': <built-in function MRP_SteeringConfig_omega_max_get>, 'controlOut': <built-in function MRP_SteeringConfig_controlOut_get>, 'K3': <built-in function MRP_SteeringConfig_K3_get>, 'inputRWConfID': <built-in function MRP_SteeringConfig_inputRWConfID_get>, 'K1': <built-in function MRP_SteeringConfig_K1_get>, 'priorTime': <built-in function MRP_SteeringConfig_priorTime_get>, 'inputRWSpeedsName': <built-in function MRP_SteeringConfig_inputRWSpeedsName_get>, 'ignoreOuterLoopFeedforward': <built-in function MRP_SteeringConfig_ignoreOuterLoopFeedforward_get>, 'inputRWConfigData': <built-in function MRP_SteeringConfig_inputRWConfigData_get>, 'Ki': <built-in function MRP_SteeringConfig_Ki_get>, 'P': <built-in function MRP_SteeringConfig_P_get>, 'inputGuidName': <built-in function MRP_SteeringConfig_inputGuidName_get>, 'inputVehicleConfigDataID': <built-in function MRP_SteeringConfig_inputVehicleConfigDataID_get>, 'outputMsgID': <built-in function MRP_SteeringConfig_outputMsgID_get>, 'inputVehicleConfigDataName': <built-in function MRP_SteeringConfig_inputVehicleConfigDataName_get>, 'GsMatrix': <built-in function MRP_SteeringConfig_GsMatrix_get>, 'inputGuidID': <built-in function MRP_SteeringConfig_inputGuidID_get>, 'JsList': <built-in function MRP_SteeringConfig_JsList_get>, 'integralLimit': <built-in function MRP_SteeringConfig_integralLimit_get>, 'z': <built-in function MRP_SteeringConfig_z_get>, 'inputRWSpeedsID': <built-in function MRP_SteeringConfig_inputRWSpeedsID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_SteeringConfig_numRWAs_set>, 'outputDataName': <built-in function MRP_SteeringConfig_outputDataName_set>, 'omega_max': <built-in function MRP_SteeringConfig_omega_max_set>, 'controlOut': <built-in function MRP_SteeringConfig_controlOut_set>, 'K3': <built-in function MRP_SteeringConfig_K3_set>, 'inputRWConfID': <built-in function MRP_SteeringConfig_inputRWConfID_set>, 'K1': <built-in function MRP_SteeringConfig_K1_set>, 'priorTime': <built-in function MRP_SteeringConfig_priorTime_set>, 'inputRWSpeedsName': <built-in function MRP_SteeringConfig_inputRWSpeedsName_set>, 'ignoreOuterLoopFeedforward': <built-in function MRP_SteeringConfig_ignoreOuterLoopFeedforward_set>, 'inputRWConfigData': <built-in function MRP_SteeringConfig_inputRWConfigData_set>, 'Ki': <built-in function MRP_SteeringConfig_Ki_set>, 'P': <built-in function MRP_SteeringConfig_P_set>, 'inputGuidName': <built-in function MRP_SteeringConfig_inputGuidName_set>, 'inputVehicleConfigDataID': <built-in function MRP_SteeringConfig_inputVehicleConfigDataID_set>, 'outputMsgID': <built-in function MRP_SteeringConfig_outputMsgID_set>, 'inputVehicleConfigDataName': <built-in function MRP_SteeringConfig_inputVehicleConfigDataName_set>, 'GsMatrix': <built-in function MRP_SteeringConfig_GsMatrix_set>, 'inputGuidID': <built-in function MRP_SteeringConfig_inputGuidID_set>, 'JsList': <built-in function MRP_SteeringConfig_JsList_set>, 'integralLimit': <built-in function MRP_SteeringConfig_integralLimit_set>, 'z': <built-in function MRP_SteeringConfig_z_set>, 'inputRWSpeedsID': <built-in function MRP_SteeringConfig_inputRWSpeedsID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410a80> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x11ab83420> >
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1335,58 +1953,106 @@ priorTime
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270>
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 TaskModel: 1
 
 __class__
+<type 'type'>
+<class 'dvAttEffect.dvAttEffect.dvAttEffectConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __getattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __init__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.__init__ of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __module__
+<type 'str'>
+dvAttEffect.dvAttEffect
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __repr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig._swig_repr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.protectSetAttr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15be0e0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_dvAttEffectConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_get>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_get>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_get>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_set>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_set>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_set>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputControlName
 <type 'str'>
@@ -1401,66 +2067,114 @@ numThrGroups
 1
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410a80> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x11ab832a0> >
 
 TaskModel: 2
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 OmegaGain
 <type 'float'>
 0.002
 
 __class__
+<type 'type'>
+<class 'rwNullSpace.rwNullSpace.rwNullSpaceConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __init__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.__init__ of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __module__
+<type 'str'>
+rwNullSpace.rwNullSpace
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __repr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig._swig_repr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.protectSetAttr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15c9ac0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_rwNullSpaceConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_get>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_get>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_get>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_get>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_get>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_get>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_get>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_get>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_get>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_get>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_set>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_set>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_set>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_set>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_set>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_set>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_set>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_set>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_set>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_set>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputRWCmdsID
 <type 'int'>
@@ -1499,6 +2213,8 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>
 
 
 TaskList: 24
@@ -1506,54 +2222,100 @@ TaskList: 24
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'attTrackingError.attTrackingError.attTrackingErrorConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __getattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __init__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.__init__ of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __module__
+<type 'str'>
+attTrackingError.attTrackingError
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __repr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig._swig_repr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.protectSetAttr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e5380>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_attTrackingErrorConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_get>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_get>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_get>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_get>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_get>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_get>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_get>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_get>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_set>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_set>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_set>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_set>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_set>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_set>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_set>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_set>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410a80> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x11ab83300> >
 
 inputNavID
 <type 'int'>
@@ -1585,19 +2347,21 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>
 
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 K1
 <type 'float'>
@@ -1616,54 +2380,100 @@ P
 150.0
 
 __class__
+<type 'type'>
+<class 'MRP_Steering.MRP_Steering.MRP_SteeringConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.<lambda> of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.<lambda> of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __init__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.__init__ of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __module__
+<type 'str'>
+MRP_Steering.MRP_Steering
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __repr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig._swig_repr of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method MRP_SteeringConfig.protectSetAttr of <MRP_Steering.MRP_Steering.MRP_SteeringConfig; proxy of <Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of MRP_SteeringConfig object at 0x11ab4bad0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b6190>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_MRP_SteeringConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_SteeringConfig_numRWAs_get>, 'outputDataName': <built-in function MRP_SteeringConfig_outputDataName_get>, 'omega_max': <built-in function MRP_SteeringConfig_omega_max_get>, 'controlOut': <built-in function MRP_SteeringConfig_controlOut_get>, 'K3': <built-in function MRP_SteeringConfig_K3_get>, 'inputRWConfID': <built-in function MRP_SteeringConfig_inputRWConfID_get>, 'K1': <built-in function MRP_SteeringConfig_K1_get>, 'priorTime': <built-in function MRP_SteeringConfig_priorTime_get>, 'inputRWSpeedsName': <built-in function MRP_SteeringConfig_inputRWSpeedsName_get>, 'ignoreOuterLoopFeedforward': <built-in function MRP_SteeringConfig_ignoreOuterLoopFeedforward_get>, 'inputRWConfigData': <built-in function MRP_SteeringConfig_inputRWConfigData_get>, 'Ki': <built-in function MRP_SteeringConfig_Ki_get>, 'P': <built-in function MRP_SteeringConfig_P_get>, 'inputGuidName': <built-in function MRP_SteeringConfig_inputGuidName_get>, 'inputVehicleConfigDataID': <built-in function MRP_SteeringConfig_inputVehicleConfigDataID_get>, 'outputMsgID': <built-in function MRP_SteeringConfig_outputMsgID_get>, 'inputVehicleConfigDataName': <built-in function MRP_SteeringConfig_inputVehicleConfigDataName_get>, 'GsMatrix': <built-in function MRP_SteeringConfig_GsMatrix_get>, 'inputGuidID': <built-in function MRP_SteeringConfig_inputGuidID_get>, 'JsList': <built-in function MRP_SteeringConfig_JsList_get>, 'integralLimit': <built-in function MRP_SteeringConfig_integralLimit_get>, 'z': <built-in function MRP_SteeringConfig_z_get>, 'inputRWSpeedsID': <built-in function MRP_SteeringConfig_inputRWSpeedsID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_SteeringConfig_numRWAs_set>, 'outputDataName': <built-in function MRP_SteeringConfig_outputDataName_set>, 'omega_max': <built-in function MRP_SteeringConfig_omega_max_set>, 'controlOut': <built-in function MRP_SteeringConfig_controlOut_set>, 'K3': <built-in function MRP_SteeringConfig_K3_set>, 'inputRWConfID': <built-in function MRP_SteeringConfig_inputRWConfID_set>, 'K1': <built-in function MRP_SteeringConfig_K1_set>, 'priorTime': <built-in function MRP_SteeringConfig_priorTime_set>, 'inputRWSpeedsName': <built-in function MRP_SteeringConfig_inputRWSpeedsName_set>, 'ignoreOuterLoopFeedforward': <built-in function MRP_SteeringConfig_ignoreOuterLoopFeedforward_set>, 'inputRWConfigData': <built-in function MRP_SteeringConfig_inputRWConfigData_set>, 'Ki': <built-in function MRP_SteeringConfig_Ki_set>, 'P': <built-in function MRP_SteeringConfig_P_set>, 'inputGuidName': <built-in function MRP_SteeringConfig_inputGuidName_set>, 'inputVehicleConfigDataID': <built-in function MRP_SteeringConfig_inputVehicleConfigDataID_set>, 'outputMsgID': <built-in function MRP_SteeringConfig_outputMsgID_set>, 'inputVehicleConfigDataName': <built-in function MRP_SteeringConfig_inputVehicleConfigDataName_set>, 'GsMatrix': <built-in function MRP_SteeringConfig_GsMatrix_set>, 'inputGuidID': <built-in function MRP_SteeringConfig_inputGuidID_set>, 'JsList': <built-in function MRP_SteeringConfig_JsList_set>, 'integralLimit': <built-in function MRP_SteeringConfig_integralLimit_set>, 'z': <built-in function MRP_SteeringConfig_z_set>, 'inputRWSpeedsID': <built-in function MRP_SteeringConfig_inputRWSpeedsID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410ab0> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x11ab832a0> >
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1726,58 +2536,106 @@ priorTime
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'MRP_SteeringConfig *' at 0x11ab69270>
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 TaskModel: 2
 
 __class__
+<type 'type'>
+<class 'dvAttEffect.dvAttEffect.dvAttEffectConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __getattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __init__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.__init__ of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __module__
+<type 'str'>
+dvAttEffect.dvAttEffect
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __repr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig._swig_repr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.protectSetAttr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15be0e0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_dvAttEffectConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_get>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_get>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_get>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_set>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_set>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_set>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputControlName
 <type 'str'>
@@ -1792,66 +2650,114 @@ numThrGroups
 1
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410ab0> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x11ab83420> >
 
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 OmegaGain
 <type 'float'>
 0.002
 
 __class__
+<type 'type'>
+<class 'rwNullSpace.rwNullSpace.rwNullSpaceConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __init__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.__init__ of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __module__
+<type 'str'>
+rwNullSpace.rwNullSpace
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __repr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig._swig_repr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.protectSetAttr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15c9ac0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_rwNullSpaceConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_get>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_get>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_get>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_get>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_get>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_get>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_get>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_get>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_get>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_get>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_set>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_set>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_set>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_set>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_set>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_set>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_set>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_set>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_set>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_set>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputRWCmdsID
 <type 'int'>
@@ -1890,6 +2796,8 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>
 
 
 TaskList: 25
@@ -1897,54 +2805,100 @@ TaskList: 25
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'attTrackingError.attTrackingError.attTrackingErrorConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __getattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __init__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.__init__ of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __module__
+<type 'str'>
+attTrackingError.attTrackingError
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __repr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig._swig_repr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.protectSetAttr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e5380>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_attTrackingErrorConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_get>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_get>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_get>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_get>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_get>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_get>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_get>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_get>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_set>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_set>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_set>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_set>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_set>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_set>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_set>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_set>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x11ab83a20> >
 
 inputNavID
 <type 'int'>
@@ -1976,19 +2930,21 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>
 
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 K
 <type 'float'>
@@ -2003,58 +2959,104 @@ P
 3.0
 
 __class__
+<type 'type'>
+<class 'MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method MRP_FeedbackConfig.<lambda> of <MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig; proxy of <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __getattr__
+<type 'instancemethod'>
+<bound method MRP_FeedbackConfig.<lambda> of <MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig; proxy of <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __init__
+<type 'instancemethod'>
+<bound method MRP_FeedbackConfig.__init__ of <MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig; proxy of <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0> >>
 
 __module__
+<type 'str'>
+MRP_Feedback.MRP_Feedback
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __repr__
+<type 'instancemethod'>
+<bound method MRP_FeedbackConfig._swig_repr of <MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig; proxy of <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method MRP_FeedbackConfig.protectSetAttr of <MRP_Feedback.MRP_Feedback.MRP_FeedbackConfig; proxy of <Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of MRP_FeedbackConfig object at 0x11ab4bb50>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b7220>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_MRP_FeedbackConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_FeedbackConfig_numRWAs_get>, 'outputDataName': <built-in function MRP_FeedbackConfig_outputDataName_get>, 'controlOut': <built-in function MRP_FeedbackConfig_controlOut_get>, 'inputRWConfID': <built-in function MRP_FeedbackConfig_inputRWConfID_get>, 'priorTime': <built-in function MRP_FeedbackConfig_priorTime_get>, 'inputRWSpeedsName': <built-in function MRP_FeedbackConfig_inputRWSpeedsName_get>, 'inputRWConfigData': <built-in function MRP_FeedbackConfig_inputRWConfigData_get>, 'Ki': <built-in function MRP_FeedbackConfig_Ki_get>, 'domega0': <built-in function MRP_FeedbackConfig_domega0_get>, 'K': <built-in function MRP_FeedbackConfig_K_get>, 'P': <built-in function MRP_FeedbackConfig_P_get>, 'int_sigma': <built-in function MRP_FeedbackConfig_int_sigma_get>, 'inputGuidName': <built-in function MRP_FeedbackConfig_inputGuidName_get>, 'inputVehicleConfigDataID': <built-in function MRP_FeedbackConfig_inputVehicleConfigDataID_get>, 'outputMsgID': <built-in function MRP_FeedbackConfig_outputMsgID_get>, 'inputVehicleConfigDataName': <built-in function MRP_FeedbackConfig_inputVehicleConfigDataName_get>, 'GsMatrix': <built-in function MRP_FeedbackConfig_GsMatrix_get>, 'inputGuidID': <built-in function MRP_FeedbackConfig_inputGuidID_get>, 'JsList': <built-in function MRP_FeedbackConfig_JsList_get>, 'integralLimit': <built-in function MRP_FeedbackConfig_integralLimit_get>, 'z': <built-in function MRP_FeedbackConfig_z_get>, 'inputRWSpeedsID': <built-in function MRP_FeedbackConfig_inputRWSpeedsID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'numRWAs': <built-in function MRP_FeedbackConfig_numRWAs_set>, 'outputDataName': <built-in function MRP_FeedbackConfig_outputDataName_set>, 'controlOut': <built-in function MRP_FeedbackConfig_controlOut_set>, 'inputRWConfID': <built-in function MRP_FeedbackConfig_inputRWConfID_set>, 'priorTime': <built-in function MRP_FeedbackConfig_priorTime_set>, 'inputRWSpeedsName': <built-in function MRP_FeedbackConfig_inputRWSpeedsName_set>, 'inputRWConfigData': <built-in function MRP_FeedbackConfig_inputRWConfigData_set>, 'Ki': <built-in function MRP_FeedbackConfig_Ki_set>, 'domega0': <built-in function MRP_FeedbackConfig_domega0_set>, 'K': <built-in function MRP_FeedbackConfig_K_set>, 'P': <built-in function MRP_FeedbackConfig_P_set>, 'int_sigma': <built-in function MRP_FeedbackConfig_int_sigma_set>, 'inputGuidName': <built-in function MRP_FeedbackConfig_inputGuidName_set>, 'inputVehicleConfigDataID': <built-in function MRP_FeedbackConfig_inputVehicleConfigDataID_set>, 'outputMsgID': <built-in function MRP_FeedbackConfig_outputMsgID_set>, 'inputVehicleConfigDataName': <built-in function MRP_FeedbackConfig_inputVehicleConfigDataName_set>, 'GsMatrix': <built-in function MRP_FeedbackConfig_GsMatrix_set>, 'inputGuidID': <built-in function MRP_FeedbackConfig_inputGuidID_set>, 'JsList': <built-in function MRP_FeedbackConfig_JsList_set>, 'integralLimit': <built-in function MRP_FeedbackConfig_integralLimit_set>, 'z': <built-in function MRP_FeedbackConfig_z_set>, 'inputRWSpeedsID': <built-in function MRP_FeedbackConfig_inputRWSpeedsID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410ab0> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x11ab83420> >
 
 domega0
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 inputGuidID
 <type 'int'>
@@ -2090,7 +3092,7 @@ adcs_config_data
 
 int_sigma
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 integralLimit
 <type 'float'>
@@ -2113,58 +3115,106 @@ priorTime
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'MRP_FeedbackConfig *' at 0x11ab692d0>
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 TaskModel: 2
 
 __class__
+<type 'type'>
+<class 'dvAttEffect.dvAttEffect.dvAttEffectConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __getattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __init__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.__init__ of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __module__
+<type 'str'>
+dvAttEffect.dvAttEffect
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __repr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig._swig_repr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.protectSetAttr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15be0e0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_dvAttEffectConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_get>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_get>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_get>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_set>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_set>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_set>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputControlName
 <type 'str'>
@@ -2179,66 +3229,114 @@ numThrGroups
 1
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410ab0> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x11ab832a0> >
 
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 OmegaGain
 <type 'float'>
 0.002
 
 __class__
+<type 'type'>
+<class 'rwNullSpace.rwNullSpace.rwNullSpaceConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __init__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.__init__ of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __module__
+<type 'str'>
+rwNullSpace.rwNullSpace
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __repr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig._swig_repr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.protectSetAttr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15c9ac0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_rwNullSpaceConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_get>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_get>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_get>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_get>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_get>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_get>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_get>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_get>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_get>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_get>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_set>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_set>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_set>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_set>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_set>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_set>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_set>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_set>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_set>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_set>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputRWCmdsID
 <type 'int'>
@@ -2277,6 +3375,8 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>
 
 
 TaskList: 21
@@ -2284,54 +3384,100 @@ TaskList: 21
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'inertial3DSpin.inertial3DSpin.inertial3DSpinConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method inertial3DSpinConfig.<lambda> of <inertial3DSpin.inertial3DSpin.inertial3DSpinConfig; proxy of <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of inertial3DSpinConfig object at 0x11ab74410>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of inertial3DSpinConfig object at 0x11ab74410>
 
 __getattr__
+<type 'instancemethod'>
+<bound method inertial3DSpinConfig.<lambda> of <inertial3DSpin.inertial3DSpin.inertial3DSpinConfig; proxy of <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of inertial3DSpinConfig object at 0x11ab74410>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of inertial3DSpinConfig object at 0x11ab74410>
 
 __init__
+<type 'instancemethod'>
+<bound method inertial3DSpinConfig.__init__ of <inertial3DSpin.inertial3DSpin.inertial3DSpinConfig; proxy of <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930> >>
 
 __module__
+<type 'str'>
+inertial3DSpin.inertial3DSpin
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of inertial3DSpinConfig object at 0x11ab74410>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of inertial3DSpinConfig object at 0x11ab74410>
 
 __repr__
+<type 'instancemethod'>
+<bound method inertial3DSpinConfig._swig_repr of <inertial3DSpin.inertial3DSpin.inertial3DSpinConfig; proxy of <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method inertial3DSpinConfig.protectSetAttr of <inertial3DSpin.inertial3DSpin.inertial3DSpinConfig; proxy of <Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of inertial3DSpinConfig object at 0x11ab74410>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of inertial3DSpinConfig object at 0x11ab74410>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15cff80>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_inertial3DSpinConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'outputDataName': <built-in function inertial3DSpinConfig_outputDataName_get>, 'outputMsgID': <built-in function inertial3DSpinConfig_outputMsgID_get>, 'sigma_RN': <built-in function inertial3DSpinConfig_sigma_RN_get>, 'inputRefID': <built-in function inertial3DSpinConfig_inputRefID_get>, 'priorTime': <built-in function inertial3DSpinConfig_priorTime_get>, 'priorCmdSigma_RN': <built-in function inertial3DSpinConfig_priorCmdSigma_RN_get>, 'attRefOut': <built-in function inertial3DSpinConfig_attRefOut_get>, 'dt': <built-in function inertial3DSpinConfig_dt_get>, 'inputRefName': <built-in function inertial3DSpinConfig_inputRefName_get>, 'omega_RN_N': <built-in function inertial3DSpinConfig_omega_RN_N_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'outputDataName': <built-in function inertial3DSpinConfig_outputDataName_set>, 'outputMsgID': <built-in function inertial3DSpinConfig_outputMsgID_set>, 'sigma_RN': <built-in function inertial3DSpinConfig_sigma_RN_set>, 'inputRefID': <built-in function inertial3DSpinConfig_inputRefID_set>, 'priorTime': <built-in function inertial3DSpinConfig_priorTime_set>, 'priorCmdSigma_RN': <built-in function inertial3DSpinConfig_priorCmdSigma_RN_set>, 'attRefOut': <built-in function inertial3DSpinConfig_attRefOut_set>, 'dt': <built-in function inertial3DSpinConfig_dt_set>, 'inputRefName': <built-in function inertial3DSpinConfig_inputRefName_set>, 'omega_RN_N': <built-in function inertial3DSpinConfig_omega_RN_N_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x11ab83a20> >
 
 dt
 <type 'float'>
@@ -2347,7 +3493,7 @@ att_ref_output_stage1
 
 omega_RN_N
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 outputDataName
 <type 'str'>
@@ -2359,7 +3505,7 @@ outputMsgID
 
 priorCmdSigma_RN
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 priorTime
 <type 'long'>
@@ -2367,9 +3513,11 @@ priorTime
 
 sigma_RN
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83300>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'inertial3DSpinConfig *' at 0x11ab69930>
 
 
 TaskList: 26
@@ -2377,54 +3525,100 @@ TaskList: 26
 TaskModel: 0
 
 __class__
+<type 'type'>
+<class 'attTrackingError.attTrackingError.attTrackingErrorConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __getattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.<lambda> of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __init__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.__init__ of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __module__
+<type 'str'>
+attTrackingError.attTrackingError
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __repr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig._swig_repr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method attTrackingErrorConfig.protectSetAttr of <attTrackingError.attTrackingError.attTrackingErrorConfig; proxy of <Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of attTrackingErrorConfig object at 0x11ab74490>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of attTrackingErrorConfig object at 0x11ab74490>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15e5380>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_attTrackingErrorConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_get>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_get>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_get>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_get>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_get>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_get>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_get>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_get>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'sigma_BcB': <built-in function attTrackingErrorConfig_sigma_BcB_set>, 'inputNavName': <built-in function attTrackingErrorConfig_inputNavName_set>, 'outputDataName': <built-in function attTrackingErrorConfig_outputDataName_set>, 'inputNavID': <built-in function attTrackingErrorConfig_inputNavID_set>, 'outputMsgID': <built-in function attTrackingErrorConfig_outputMsgID_set>, 'inputRefID': <built-in function attTrackingErrorConfig_inputRefID_set>, 'sigma_R0R': <built-in function attTrackingErrorConfig_sigma_R0R_set>, 'attGuidOut': <built-in function attTrackingErrorConfig_attGuidOut_set>, 'inputRefName': <built-in function attTrackingErrorConfig_inputRefName_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x103410ab0> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x11ab832a0> >
 
 inputNavID
 <type 'int'>
@@ -2456,19 +3650,21 @@ None
 
 sigma_R0R
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'attTrackingErrorConfig *' at 0x11ab69990>
 
 TaskModel: 1
 
 GsMatrix
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 JsList
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab832a0>
 
 K1
 <type 'float'>
@@ -2487,54 +3683,100 @@ P
 150.0
 
 __class__
+<type 'type'>
+<class 'PRV_Steering.PRV_Steering.PRV_SteeringConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method PRV_SteeringConfig.<lambda> of <PRV_Steering.PRV_Steering.PRV_SteeringConfig; proxy of <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method PRV_SteeringConfig.<lambda> of <PRV_Steering.PRV_Steering.PRV_SteeringConfig; proxy of <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __init__
+<type 'instancemethod'>
+<bound method PRV_SteeringConfig.__init__ of <PRV_Steering.PRV_Steering.PRV_SteeringConfig; proxy of <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330> >>
 
 __module__
+<type 'str'>
+PRV_Steering.PRV_Steering
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __repr__
+<type 'instancemethod'>
+<bound method PRV_SteeringConfig._swig_repr of <PRV_Steering.PRV_Steering.PRV_SteeringConfig; proxy of <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method PRV_SteeringConfig.protectSetAttr of <PRV_Steering.PRV_Steering.PRV_SteeringConfig; proxy of <Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of PRV_SteeringConfig object at 0x11ab4bbd0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15b9ae0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_PRV_SteeringConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'numRWAs': <built-in function PRV_SteeringConfig_numRWAs_get>, 'outputDataName': <built-in function PRV_SteeringConfig_outputDataName_get>, 'omega_max': <built-in function PRV_SteeringConfig_omega_max_get>, 'controlOut': <built-in function PRV_SteeringConfig_controlOut_get>, 'K3': <built-in function PRV_SteeringConfig_K3_get>, 'inputRWConfID': <built-in function PRV_SteeringConfig_inputRWConfID_get>, 'K1': <built-in function PRV_SteeringConfig_K1_get>, 'priorTime': <built-in function PRV_SteeringConfig_priorTime_get>, 'inputRWSpeedsName': <built-in function PRV_SteeringConfig_inputRWSpeedsName_get>, 'inputRWConfigData': <built-in function PRV_SteeringConfig_inputRWConfigData_get>, 'Ki': <built-in function PRV_SteeringConfig_Ki_get>, 'P': <built-in function PRV_SteeringConfig_P_get>, 'inputGuidName': <built-in function PRV_SteeringConfig_inputGuidName_get>, 'inputVehicleConfigDataID': <built-in function PRV_SteeringConfig_inputVehicleConfigDataID_get>, 'outputMsgID': <built-in function PRV_SteeringConfig_outputMsgID_get>, 'inputVehicleConfigDataName': <built-in function PRV_SteeringConfig_inputVehicleConfigDataName_get>, 'GsMatrix': <built-in function PRV_SteeringConfig_GsMatrix_get>, 'inputGuidID': <built-in function PRV_SteeringConfig_inputGuidID_get>, 'JsList': <built-in function PRV_SteeringConfig_JsList_get>, 'integralLimit': <built-in function PRV_SteeringConfig_integralLimit_get>, 'z': <built-in function PRV_SteeringConfig_z_get>, 'inputRWSpeedsID': <built-in function PRV_SteeringConfig_inputRWSpeedsID_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'numRWAs': <built-in function PRV_SteeringConfig_numRWAs_set>, 'outputDataName': <built-in function PRV_SteeringConfig_outputDataName_set>, 'omega_max': <built-in function PRV_SteeringConfig_omega_max_set>, 'controlOut': <built-in function PRV_SteeringConfig_controlOut_set>, 'K3': <built-in function PRV_SteeringConfig_K3_set>, 'inputRWConfID': <built-in function PRV_SteeringConfig_inputRWConfID_set>, 'K1': <built-in function PRV_SteeringConfig_K1_set>, 'priorTime': <built-in function PRV_SteeringConfig_priorTime_set>, 'inputRWSpeedsName': <built-in function PRV_SteeringConfig_inputRWSpeedsName_set>, 'inputRWConfigData': <built-in function PRV_SteeringConfig_inputRWConfigData_set>, 'Ki': <built-in function PRV_SteeringConfig_Ki_set>, 'P': <built-in function PRV_SteeringConfig_P_set>, 'inputGuidName': <built-in function PRV_SteeringConfig_inputGuidName_set>, 'inputVehicleConfigDataID': <built-in function PRV_SteeringConfig_inputVehicleConfigDataID_set>, 'outputMsgID': <built-in function PRV_SteeringConfig_outputMsgID_set>, 'inputVehicleConfigDataName': <built-in function PRV_SteeringConfig_inputVehicleConfigDataName_set>, 'GsMatrix': <built-in function PRV_SteeringConfig_GsMatrix_set>, 'inputGuidID': <built-in function PRV_SteeringConfig_inputGuidID_set>, 'JsList': <built-in function PRV_SteeringConfig_JsList_set>, 'integralLimit': <built-in function PRV_SteeringConfig_integralLimit_set>, 'z': <built-in function PRV_SteeringConfig_z_set>, 'inputRWSpeedsID': <built-in function PRV_SteeringConfig_inputRWSpeedsID_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x103410a80> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x11ab83a20> >
 
 inputGuidID
 <type 'int'>
@@ -2593,58 +3835,106 @@ priorTime
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'PRV_SteeringConfig *' at 0x11ab69330>
 
 z
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410a80>
+<Swig Object of type 'double *' at 0x11ab83a20>
 
 TaskModel: 2
 
 __class__
+<type 'type'>
+<class 'dvAttEffect.dvAttEffect.dvAttEffectConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __getattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.<lambda> of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __init__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.__init__ of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __module__
+<type 'str'>
+dvAttEffect.dvAttEffect
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __repr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig._swig_repr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method dvAttEffectConfig.protectSetAttr of <dvAttEffect.dvAttEffect.dvAttEffectConfig; proxy of <Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of dvAttEffectConfig object at 0x11ab4bf50>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of dvAttEffectConfig object at 0x11ab4bf50>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15be0e0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_dvAttEffectConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_get>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_get>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_get>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputMsgID': <built-in function dvAttEffectConfig_inputMsgID_set>, 'numThrGroups': <built-in function dvAttEffectConfig_numThrGroups_set>, 'inputControlName': <built-in function dvAttEffectConfig_inputControlName_set>, 'thrGroups': <built-in function dvAttEffectConfig_thrGroups_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputControlName
 <type 'str'>
@@ -2659,66 +3949,114 @@ numThrGroups
 1
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'dvAttEffectConfig *' at 0x11ab695d0>
 
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x103410a80> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x11ab83300> >
 
 TaskModel: 3
 
 GsInverse
 <type 'SwigPyObject'>
-<Swig Object of type 'double *' at 0x103410ab0>
+<Swig Object of type 'double *' at 0x11ab83420>
 
 OmegaGain
 <type 'float'>
 0.002
 
 __class__
+<type 'type'>
+<class 'rwNullSpace.rwNullSpace.rwNullSpaceConfig'>
 
 __del__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __delattr__
+<type 'method-wrapper'>
+<method-wrapper '__delattr__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __dict__
+<type 'dict'>
+{'this': <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>}
 
 __doc__
+<type 'NoneType'>
+None
 
 __format__
+<type 'builtin_function_or_method'>
+<built-in method __format__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __getattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.<lambda> of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __getattribute__
+<type 'method-wrapper'>
+<method-wrapper '__getattribute__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __hash__
+<type 'method-wrapper'>
+<method-wrapper '__hash__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __init__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.__init__ of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __module__
+<type 'str'>
+rwNullSpace.rwNullSpace
 
 __new__
+<type 'builtin_function_or_method'>
+<built-in method __new__ of type object at 0x10d33ea20>
 
 __reduce__
+<type 'builtin_function_or_method'>
+<built-in method __reduce__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __reduce_ex__
+<type 'builtin_function_or_method'>
+<built-in method __reduce_ex__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __repr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig._swig_repr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __setattr__
+<type 'instancemethod'>
+<bound method rwNullSpaceConfig.protectSetAttr of <rwNullSpace.rwNullSpace.rwNullSpaceConfig; proxy of <Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630> >>
 
 __sizeof__
+<type 'builtin_function_or_method'>
+<built-in method __sizeof__ of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __str__
+<type 'method-wrapper'>
+<method-wrapper '__str__' of rwNullSpaceConfig object at 0x11ab4bfd0>
 
 __subclasshook__
+<type 'builtin_function_or_method'>
+<built-in method __subclasshook__ of type object at 0x7f92e15c9ac0>
 
 __swig_destroy__
+<type 'builtin_function_or_method'>
+<built-in function delete_rwNullSpaceConfig>
 
 __swig_getmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_get>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_get>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_get>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_get>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_get>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_get>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_get>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_get>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_get>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_get>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_get>}
 
 __swig_setmethods__
+<type 'dict'>
+{'inputRWCmdsID': <built-in function rwNullSpaceConfig_inputRWCmdsID_set>, 'inputRWSpeeds': <built-in function rwNullSpaceConfig_inputRWSpeeds_set>, 'numWheels': <built-in function rwNullSpaceConfig_numWheels_set>, 'outputControlName': <built-in function rwNullSpaceConfig_outputControlName_set>, 'outputMsgID': <built-in function rwNullSpaceConfig_outputMsgID_set>, 'inputRWConfigData': <built-in function rwNullSpaceConfig_inputRWConfigData_set>, 'inputRWCommands': <built-in function rwNullSpaceConfig_inputRWCommands_set>, 'inputRWConfID': <built-in function rwNullSpaceConfig_inputRWConfID_set>, 'inputSpeedsID': <built-in function rwNullSpaceConfig_inputSpeedsID_set>, 'OmegaGain': <built-in function rwNullSpaceConfig_OmegaGain_set>, 'GsInverse': <built-in function rwNullSpaceConfig_GsInverse_set>}
 
 __weakref__
+<type 'NoneType'>
+None
 
 inputRWCmdsID
 <type 'int'>
@@ -2757,3 +4095,5 @@ outputMsgID
 0
 
 this
+<type 'SwigPyObject'>
+<Swig Object of type 'rwNullSpaceConfig *' at 0x11ab69630>

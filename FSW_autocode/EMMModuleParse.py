@@ -10,29 +10,13 @@ import sys, os, inspect, re
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-sys.path.append(path + '/../../Basilisk/PythonModules')
+sys.path.append(path + '/../PythonModules')
 
 # import AVSSim
-# TheAVSSim = AVSSim.AVSSim()
 
-# open the files for writing
-auxFile = open(path + '/../../Basilisk/FSW_autocode/autocode_aux.txt', 'w') # auxFile is useful for debugging
-EMMInitc = open(path + '/../../Basilisk/FSW_autocode/EMMInit.c', 'w') # .c file
-EMMInith = open(path + '/../../Basilisk/FSW_autocode/EMMInit.h', 'w') # .h file
-
-# print initialization text to the files
-EMMInitc.write('void dataInitialization(EMMConfigData *ConfigData) {\n')
-EMMInith.write('typedef struct {\n')
-
-# constants and such
-ConfigDataStr = 'ConfigData->' # name of the main struct
-arrMaxLen = 3
-NameReplace = TheAVSSim.NameReplace
-TaskList = TheAVSSim.TaskList
-TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
-
-def matchDictValueToKey(searchVal):
-    return NameReplace.keys()[NameReplace.values().index(searchVal)]
+# ----------------------------- METHODS ----------------------------- #
+def matchDictValueToKey(dict,searchVal):
+    return dict.keys()[dict.values().index(searchVal)]
 
 def getDataTypeStr(typStr):
     typStr = typStr[(typStr.find("'")+1):len(typStr)]
@@ -46,45 +30,48 @@ def getDataTypeStr(typStr):
 def makeTaskModelString(i,j):
     return 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']'
 
+def autoCode():
+    # main autocode sequence
+    print TaskListIdxs
+    for i in TaskListIdxs: # loop through TaskLists
+        auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
 
-# make sure all TaskModels have a NameReplace, since this is used for unique naming
-for i in range(0,len(TaskList)):
-    for j in range(0,len(TaskList[i].TaskModels)):
-        tmStr = makeTaskModelString(i,j)
-        if not tmStr in NameReplace.values():
-            NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
+        for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
+                auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
 
+                fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
+                fieldStrInterface = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
+                EMMInith.write('\t' + fieldStr + ' ' + fieldStrInterface + ';\n')
 
-# main autocode sequence
-for i in TaskListIdxs: # loop through TaskLists
-    auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
+                varNameList = dir(TaskList[i].TaskModels[j]) # list all the variable names under current TaskModel
 
-    for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
-            auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
+                for k in range(0, len(varNameList)): # loop through variables within current TaskModel
+                    auxFile.write('\n'+str(varNameList[k])+'\n') # print name of current element of taskmodel to workfile
 
-            fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
-            fieldStrInterface = matchDictValueToKey('self.TaskList['+str(i)+'].TaskModels['+str(j)+']')
-            EMMInith.write('\t' + fieldStr + ' ' + fieldStrInterface + ';\n')
+                    varName = varNameList[k]
+                    varValue = getattr(TaskList[i].TaskModels[j], varName) # get value of current element of TaskModel
 
-            varNameList = dir(TaskList[i].TaskModels[j]) # list all the variable names under current TaskModel
+                    print varName
 
-            for k in range(0, len(varNameList)): # loop through variables within current TaskModel
-                auxFile.write('\n'+str(varNameList[k])+'\n') # print name of current element of taskmodel to workfile
-
-                if (varNameList[k][0:2] != '__') & (varNameList[k][0:4] != 'this'): # make sure element doesn't begin with __ or this
-                    varValue = getattr(TaskList[i].TaskModels[j], varNameList[k]) # get value of current element of TaskModel
-                    auxFile.write(str(type(varValue))+'\n') # print datatype to workfile
-
-                    auxFile.write(str(varValue)+'\n') # print value of current element to workfile
+                    # innerAutocode(varName,varValue,fieldStrInterface)
                     varType = type(varValue).__name__ # datatype of value of current element
+                    varTypeFull = str(type(varValue))
+
+                    auxFile.write(varTypeFull+'\n') # print datatype to workfile
+                    auxFile.write(str(varValue)+'\n') # print value of current element to workfile
+
+                    # __.__ and this
+                    if (varName[0:2] == '__') or (varName[0:4] == 'this'):
+                        continue # skip __.__ and this
 
                     # class
-                    if (str(type(varValue))[1:6] == 'class'):
+                    elif varTypeFull[1:6] == 'class':
+                        # innerAutocode(varName,varValue,'WhatGoesHere')
                         continue # skip classes
 
                     # character array
                     elif varType == 'str':
-                        dest = ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k])
+                        dest = ConfigDataStr + fieldStrInterface + '.' + str(varName)
                         EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(varValue)+'"' + ')'+';\n')
 
                     # array (SwigPyObject) or method (instancemethod)
@@ -99,19 +86,57 @@ for i in TaskListIdxs: # loop through TaskLists
                         arr = AVSSim.SimulationBaseClass.getCArray(typeStr,varValue,arrMaxLen)
 
                         for l in range(0,arrMaxLen):
-                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varNameList[k]) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+                            EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.' + str(varName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
 
                     # non-array variable
                     else:
                         EMMInitc.write('\t' + ConfigDataStr + fieldStrInterface + '.')
-                        EMMInitc.write(str(varNameList[k])) # name of the variable
+                        EMMInitc.write(str(varName)) # name of the variable
                         EMMInitc.write(' = '+str(varValue)+';\n') # value of the variable
 
-EMMInitc.write('}')
-EMMInith.write('}EMMConfigData;')
+    EMMInitc.write('}')
+    EMMInith.write('}EMMConfigData;')
 
-auxFile.close() # close auxFile
-EMMInitc.close() # close EMMInitc file
-EMMInith.close() # close EMMInith file
 
-print("Goin' to Mars")
+
+    print("Goin' to Mars2")
+
+
+# ----------------------------- MAIN ----------------------------- #
+if __name__ == "__main__":
+
+    print 'started'
+
+    # TheAVSSim = AVSSim.AVSSim()
+
+    # constants and such
+    ConfigDataStr = 'ConfigData->' # name of the main struct
+    arrMaxLen = 3
+    NameReplace = TheAVSSim.NameReplace
+    TaskList = TheAVSSim.TaskList
+    TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
+
+
+    # open the files for writing
+    auxFile = open(path + '/../FSW_autocode/autocode_aux.txt', 'w') # auxFile is useful for debugging
+    EMMInitc = open(path + '/../FSW_autocode/EMMInit.c', 'w') # .c file
+    EMMInith = open(path + '/../FSW_autocode/EMMInit.h', 'w') # .h file
+
+    # print initialization text to the files
+    EMMInitc.write('void dataInitialization(EMMConfigData *ConfigData) {\n')
+    EMMInith.write('typedef struct {\n')
+
+    # make sure all TaskModels have a NameReplace, since this is used for unique naming
+    for i in range(0,len(TaskList)):
+        for j in range(0,len(TaskList[i].TaskModels)):
+            tmStr = makeTaskModelString(i,j)
+            if not tmStr in NameReplace.values():
+                NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
+
+    autoCode()
+
+    auxFile.close() # close auxFile
+    EMMInitc.close() # close EMMInitc file
+    EMMInith.close() # close EMMInith file
+
+    print 'stopped'
