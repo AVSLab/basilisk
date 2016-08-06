@@ -52,9 +52,9 @@ v0.01 & Updated the thruster force evaluation to account for center of mass offs
 \end{figure}
 
 \section{Introduction}
-This technical note describes a general algorithm that maps a desired ADCS external control torque $\bm L_{r}$ onto force commands for a cluster of thrusters.  Let $\hat{\bm b}_{j}$ be the axis about which the thrusters are to produce the desired torque.  The module can accept up to 3 orthogonal control axis $\hat{\bm b}_{j}$.  The $j^{\text{th}}$ component of $\bm L_{r}$ is given by
+This technical note describes a general algorithm that maps a desired ADCS external control torque $\bm L_{r}$ onto force commands for a cluster of thrusters.  Let $\hat{\bm c}_{j}$ be the axis about which the thrusters are to produce the desired torque.  The module can accept up to 3 orthogonal control axis $\hat{\bm c}_{j}$.  The $j^{\text{th}}$ component of $\bm L_{r}$ is given by
 \begin{equation}
-	L_{r,j} = \bm L_{r} \cdot \hat{\bm b}_{j}
+	L_{r,j} = \bm L_{r} \cdot \hat{\bm c}_{j}
 \end{equation}¥
 
 The $i^{\text{th}}$ thruster location relative to the spacecraft point $B$ is given by $\bm r_{i}$ as illustrated in Figure~\ref{fig:thruster}.  The unit direction vector of the thruster force is $\hat{\bm g}_{t_{i}}$, while the thruster force is given by
@@ -66,15 +66,15 @@ The toque vector produced by each thruster about the body fixed point $B$ is thu
 \begin{equation}
 	\bm \tau_{i} = (\bm r_{i} - \bm r_{\text{COM}}) \times F_{i}  \hat{\bm g}_{t_{i}}
 \end{equation}
-The total torque onto the spacecraft about the body fixed axis $\hat{\bm b}_{j}$, due to a cluster of $N$ thrusters, is
+The total torque onto the spacecraft about the body fixed axis $\hat{\bm c}_{j}$, due to a cluster of $N$ thrusters, is
 \begin{equation}
-	\tau_{j} = \sum_{i=1}^{N} \bm \tau_{i} \cdot \hat{\bm b}_{j}
-	= \sum_{i=1}^{N}  ((\bm r_{i} - \bm r_{\text{COM}}) \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j} F_{i} = \sum_{i=1}^{N}  d_{i} F_{i}
+	\tau_{j} = \sum_{i=1}^{N} \bm \tau_{i} \cdot \hat{\bm c}_{j}
+	= \sum_{i=1}^{N}  ((\bm r_{i} - \bm r_{\text{COM}}) \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm c}_{j} F_{i} = \sum_{i=1}^{N}  d_{i} F_{i}
 \end{equation}
 where 
 \begin{equation}
 	\label{eq:th1:1}
-	d_{i} =   ( ( \bm r_{i} - \bm r_{\text{COM}})  \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm b}_{j}
+	d_{i} =   ( ( \bm r_{i} - \bm r_{\text{COM}})  \times \hat{\bm g}_{t_{i}})\cdot \hat{\bm c}_{j}
 \end{equation}
 In matrix form, the net spacecraft torque about the $j^{\text{th}}$ axis is written compactly as
 \begin{equation}
@@ -93,19 +93,19 @@ where $[D]$ is a $1\times N$ matrix that maps the thruster forces $F_{i}$ to the
 The goal of the thruster force algorithm is to determine a set of thruster forces $\bm F$ such that the net force onto the spacecraft is
 \begin{equation}
 	\label{eq:th:2}
-	\tau_{j} = \bm L_{r} \cdot \hat{\bm b}_{j} = [D]\bm F_{j}
+	\tau_{j} = \bm L_{r} \cdot \hat{\bm c}_{j} = [D]\bm F_{j}
 \end{equation}
 without bleeding torque onto the un-controlled axes.
 
-The following algorithm is applied individually to control the desired torque about each $\hat{\bm b}_{j}$ axis.  
+The following algorithm is applied individually to control the desired torque about each $\hat{\bm c}_{j}$ axis.  
 The first step to determine which  thruster forces $F_{i}$  are contributing with the desired sign.  If on-pulsing is used for attitude control, then only positive forces are sought.  In contrast, if off-pulsing is used to achieve the required control torque, then negative thruster force solutions are sought.    Each thruster can only produce a positive force.  With off-pulsing, the nominal thrust force plus the negative correction must still yield a non-negative thrust force.  The module parameter {\tt thrForceSign} is either +1 or -1 to account for the desired force sign.  The value of this parameter is represented through $s_{F}$.
 
 Using a minimum norm inverse of Eq.~\eqref{eq:th:2} yields
 \begin{equation}
 	\label{eq:th:3}
-	\bm F_{j} = [D]^{T} \left( [D] [D]^{T}\right)^{-1} \bm L_{r} \cdot \hat{\bm b}_{j}
+	\bm F_{j} = [D]^{T} \left( [D] [D]^{T}\right)^{-1} \bm L_{r} \cdot \hat{\bm c}_{j}
 \end{equation}
-This minimum norm inverse only requires inverting a $1\times 1$ matrix.  Using the SVD inverse technique, the value of this $1\times 1$ matrix is the singular value.  Thus, if this singular value is below a specified threshold $\epsilon$, the thruster configuration is not contributing to a torque about the $\hat{\bm b}_{j}$ axis.  In this case the inverse of this matrix is set to zero, and not thruster forces contribute to the desired torque about this axis.  
+This minimum norm inverse only requires inverting a $1\times 1$ matrix.  Using the SVD inverse technique, the value of this $1\times 1$ matrix is the singular value.  Thus, if this singular value is below a specified threshold $\epsilon$, the thruster configuration is not contributing to a torque about the $\hat{\bm c}_{j}$ axis.  In this case the inverse of this matrix is set to zero, and not thruster forces contribute to the desired torque about this axis.  
 
 Note that this force stack $\bm F$ contains both positive and negative force values.  Another step is required to ensure that the thrusters can only produce the desired force sign.  Assume there are $M$  force values in $\bm F_{j}$ with a sign that matches $s_{F}$.  The locations of these values is provided in the $N$-dimensional array $\bm t_{\text{used}}$ which contains either 0 or 1 values.  For example, consider $N=8$ and only thrusters 2 and 6 produce  forces of the desired sign. In this case we find
 \begin{equation}
@@ -126,21 +126,21 @@ The net torque due to $\bar{\bm F}_{j}$ is
 	\bar{\bm \tau}_{j} = [\bar D] \bar{\bm F}_{j}
 \end{equation}
 
-To enforce that $\bar{\bm F}_{j}$ only produces the desired torque about the $\hat{\bm b}_{j}$ axis, and not any torque about other axes, the following condition is established:
+To enforce that $\bar{\bm F}_{j}$ only produces the desired torque about the $\hat{\bm c}_{j}$ axis, and not any torque about other axes, the following condition is established:
 \begin{equation}
 	\label{eq:thf:14}
-	(\hat{\bm b}_{j} \cdot \bm L_{r}) \hat{\bm b}_{j} = [\bar D] \bar{\bm F}_{j}
+	(\hat{\bm c}_{j} \cdot \bm L_{r}) \hat{\bm c}_{j} = [\bar D] \bar{\bm F}_{j}
 \end{equation}
 
 If the mapping matrix $[\bar D]$ has rank 3, then a minimum norm inverse can be used to determine the smallest set of thruster forces that satisfy Eq.~\eqref{eq:thf:14}.
 \begin{equation}
-	\bar{\bm F}_{j} = [\bar D]^{T} ([\bar D] [\bar D]^{T})^{-1}  \hat{\bm b}_{j} (\hat{\bm b}_{j} \cdot \bm L_{r})
+	\bar{\bm F}_{j} = [\bar D]^{T} ([\bar D] [\bar D]^{T})^{-1}  \hat{\bm c}_{j} (\hat{\bm c}_{j} \cdot \bm L_{r})
 \end{equation}
 The rank condition can easily be checked by computing if the determinant of $[\bar D] [\bar D]^{T}$ is greater than zero.  If yes, a minimum norm inverse can be taken without numerical difficulties.
 
 If the determinant of $[\bar D] [\bar D]^{T}$ is near zero, then $\bar{\bm F}_{j}$ cannot generate a general 3D torque vector.  As the spacecraft is setup with pairs of thrusters to produce the control torques, in this case the rank of $[\bar D]$ is 2, and not all body axis are influenced by $\bar{\bm F}_{j}$.  In this case the thruster forces are determined through a least-squares inverse that selects $\bar{\bm F}_{j}$ such that the controllable axes satisfy the condition in Eq.~\eqref{eq:thf:14}.  
 \begin{equation}
-	\bar{\bm F}_{j} = ([\bar D]^{T} [\bar D])^{-1}  [\bar D]^{T}  \hat{\bm b}_{j} (\hat{\bm b}_{j} \cdot \bm L_{r})	
+	\bar{\bm F}_{j} = ([\bar D]^{T} [\bar D])^{-1}  [\bar D]^{T}  \hat{\bm c}_{j} (\hat{\bm c}_{j} \cdot \bm L_{r})	
 \end{equation}
 
   
@@ -164,18 +164,18 @@ The final step is to sum the individual $\bar{\bm F}_{j}$ thruster solutions to 
 
 If the thruster cluster configuration is such that pairs of thrusters produce full controllabilty, then the minimum norm solution to produce the desired $\bm L_{r}$ will also result in a thruster solution that produces a net 0 force onto the spacecraft.   Using the super-particle theorem,\cite{schaub} the total thruster force is given by
 \begin{equation}
-	\bm F_{T,j} = [G_{t}] \bm F_{j} =  [G_{t}] [D]^{T}([D][D])^{-1} \bm L_{r} \cdot \hat{\bm b}_{j}= \bm 0
+	\bm F_{T,j} = [G_{t}] \bm F_{j} =  [G_{t}] [D]^{T}([D][D])^{-1} \bm L_{r} \cdot \hat{\bm c}_{j}= \bm 0
 \end{equation}
 With a pure-couple thruster configuration the expression satisfies $[G_{t}] [D]^{T} = \bm 0$.
 
 
 
 %\section{Full Thruster Force Algorithm for a General Thruster Configuration}
-%Next, the case is considered where the thruster configuration is not symmetric about the center of mass, or the thruster alignments are not setup such that pure torque couples are produced.  As with the simpler algorithm described above, the positive thrust forces $F_{i}$ are determined individually to produce the desired control torque about each body axes $\hat{\bm b}_{j}$, and then these positive force solutions are summed up to obtain a final thruster force solution.
+%Next, the case is considered where the thruster configuration is not symmetric about the center of mass, or the thruster alignments are not setup such that pure torque couples are produced.  As with the simpler algorithm described above, the positive thrust forces $F_{i}$ are determined individually to produce the desired control torque about each body axes $\hat{\bm c}_{j}$, and then these positive force solutions are summed up to obtain a final thruster force solution.
 %
-%The first step is again to seek the minimum norm solution to produce the desired control torque about the $\hat{\bm b}_{j}$ axis:
+%The first step is again to seek the minimum norm solution to produce the desired control torque about the $\hat{\bm c}_{j}$ axis:
 %\begin{equation}
-%	\bm F_{j} = [D]^{T} \left( [D] [D]^{T}\right)^{-1} \bm L_{r} \cdot \hat{\bm b}_{j}
+%	\bm F_{j} = [D]^{T} \left( [D] [D]^{T}\right)^{-1} \bm L_{r} \cdot \hat{\bm c}_{j}
 %\end{equation}
 %This determines which positive thruster force solutions contribute to the desired torque.  
 %
@@ -185,9 +185,9 @@ With a pure-couple thruster configuration the expression satisfies $[G_{t}] [D]^
 %\end{equation}
 %The reduced control torque vector $\bar{\bm L}_{r}$ is defined as
 %\begin{equation}
-%	\bar{\bm L}_{r} = \hat{\bm b}_{j} \left( \bm L_{r} \cdot \hat{\bm b}_{j}\right)
+%	\bar{\bm L}_{r} = \hat{\bm c}_{j} \left( \bm L_{r} \cdot \hat{\bm c}_{j}\right)
 %\end{equation}
-%This enforces that the desired torque is produced along the $\hat{\bm b}_{j}$ direction, while not impacting the torques about the other body axes.  The torque constraints are thus written as:
+%This enforces that the desired torque is produced along the $\hat{\bm c}_{j}$ direction, while not impacting the torques about the other body axes.  The torque constraints are thus written as:
 %\begin{equation}
 %	\label{eq:th:4}
 %	\bm\phi(\bar{\bm F}_{j}) = [\bar D] \bar{\bm F}_{j} - \bar{\bm L}_{r} =  0
@@ -198,7 +198,7 @@ With a pure-couple thruster configuration the expression satisfies $[G_{t}] [D]^
 %	\bm F_{T,j} =  [\bar G_{t}] \bar{\bm F}_{j} = \bm 0
 %\end{equation}
 %
-%Thus, the ADCS thruster force logic seeks a set of positive forces $\bar{\bm F}_{j}$ such that the net residual total force $\bm F_{T,j}$ onto the spacecraft is minimized, while the ADCS torque $\bm L_{r}$ is perfectly achieved along the $\hat{\bm b}_{j}$ direction.  The net force is minimized through the cost function
+%Thus, the ADCS thruster force logic seeks a set of positive forces $\bar{\bm F}_{j}$ such that the net residual total force $\bm F_{T,j}$ onto the spacecraft is minimized, while the ADCS torque $\bm L_{r}$ is perfectly achieved along the $\hat{\bm c}_{j}$ direction.  The net force is minimized through the cost function
 %\begin{equation}
 %	J = \frac{1}{2} \bm F_{T,j}^{T} \bm F_{T,j}  = \frac{1}{2} \bar{\bm F}_{j}^{T} [\bar G_{t}]^{T}[\bar G_{t}] \bar{\bm F}_{j}
 %\end{equation}
@@ -234,9 +234,9 @@ The minimum norm inverse in Eq.~\eqref{eq:th:3} requires a non-zero value of $[D
 \begin{equation}
 	D_{2} = [D][D]^{T}
 \end{equation}
-The $d_{i}$ matrix components are given in Eq.~\eqref{eq:th1:1}.  Using the robust SVD inverse technique, $D_{2} > \epsilon$, then the $1/D_{2}$ math is evaluated as normal.  However, if $D_{2}<\epsilon$, then the inverse $1/D_{2}$ is set to zero.  In the latter case there is no control authority about the current axis of interest.  To set this epsilon parameter, not the definition of the $[D]$ matrix components $d_{i} = (\bm r_{i} \times \hat{\bm g}_{t_{i}}) \cdot \hat{\bm b}_{j}$. Note that $\bm r_{i} \times \hat{\bm g}_{t_{i}}$ is a scaled axis along which the $i^{\text{th}}$ thruster can produce a torque.  The value $d_{i}$ will be near zero if the dot product of this axis with the current control axis $\hat{\bm b}_{j}$ is small.  
+The $d_{i}$ matrix components are given in Eq.~\eqref{eq:th1:1}.  Using the robust SVD inverse technique, $D_{2} > \epsilon$, then the $1/D_{2}$ math is evaluated as normal.  However, if $D_{2}<\epsilon$, then the inverse $1/D_{2}$ is set to zero.  In the latter case there is no control authority about the current axis of interest.  To set this epsilon parameter, not the definition of the $[D]$ matrix components $d_{i} = (\bm r_{i} \times \hat{\bm g}_{t_{i}}) \cdot \hat{\bm c}_{j}$. Note that $\bm r_{i} \times \hat{\bm g}_{t_{i}}$ is a scaled axis along which the $i^{\text{th}}$ thruster can produce a torque.  The value $d_{i}$ will be near zero if the dot product of this axis with the current control axis $\hat{\bm c}_{j}$ is small.  
 
-To determine an appropriate $\epsilon$ value, let $\alpha$ be the minimum desired angle to avoid the control axis $\hat{\bm b}_{j}$ and the scaled thruster torque axis $\bm r_{i} \times \hat{\bm g}_{t_{i}}$ being orthogonal.  If $\bar r$ is a mean distance of the thrusters to the spacecraft center of mass, then the $d_{i}$ values must satisfy
+To determine an appropriate $\epsilon$ value, let $\alpha$ be the minimum desired angle to avoid the control axis $\hat{\bm c}_{j}$ and the scaled thruster torque axis $\bm r_{i} \times \hat{\bm g}_{t_{i}}$ being orthogonal.  If $\bar r$ is a mean distance of the thrusters to the spacecraft center of mass, then the $d_{i}$ values must satisfy
 \begin{equation}
 	\frac{d_{i}}{\bar r} > \cos(90\dg - \alpha) = \sin\alpha
 \end{equation}
@@ -246,8 +246,17 @@ Thus, to estimate a good value of $\epsilon$, the following formula can be used
 \end{equation}
 For example, if $\bar{r} = 1.3$ meters, and we want $\alpha$ to be at least 1$\dg$, then we would set $\epsilon = 0.000515$.
 
-\subsection{$[B]$ matrix}
-The module requires control control axis matrix $[B]$ to be defined.  Up to 3 orthogonal control axes can be selected.  Not that in python the matrix is given in a 1D form by defining {\tt controlAxes\_B}.  Thus, the $\hat{\bm b}_{j}$ axes are concatenated to produce the input matrix $[B]$. 
+\subsection{$[C]$ matrix}
+The module requires control control axis matrix $[C]$ to be defined.  Up to 3 orthogonal control axes can be selected.  Let $M$ be the number of control axes.  The $M\times 3$ $[C]$ matrix is then defined as
+\begin{equation}
+	[C] = \begin{bmatrix}
+		\hat{\bm c}_{1}
+		\\
+		\vdots
+	\end{bmatrix}
+\end{equation}
+
+Not that in python the matrix is given in a 1D form by defining {\tt controlAxes\_B}.  Thus, the $\hat{\bm c}_{j}$ axes are concatenated to produce the input matrix $[C]$. 
 
 \subsection{{\tt thrForceSign} Parameter}
 Before this module can be run, the parameter {\tt thrForceSign} must be set to either +1 (on-pulsing) or -1 (off-pulsing.
