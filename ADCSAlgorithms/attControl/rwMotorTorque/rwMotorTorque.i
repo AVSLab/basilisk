@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 %module rwMotorTorque
 %{
-   #include "thrusterForceSimple.h"
+   #include "rwMotorTorque.h"
 %}
 
 %include "swig_conly_data.i"

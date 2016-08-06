@@ -108,7 +108,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
 
-    /* read in the thruster position and thruster force heading information */
+    /* read in the RW spin axis gsHat information */
     /* Note: we will still need to correct for the S to B transformation */
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
@@ -128,24 +128,15 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
 {
     uint64_t    clockTime;
     uint32_t    readSize;
-    double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
-    double      forcePerAxis[MAX_EFF_CNT];    /*!< [N]     vector of commanded thruster forces to produce a torque about a body axis */
-    int         i,j,c,k;
-    int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
-    double      tempVec[3];
-    double      Lrj[3];                       /*!< [Nm]    control axis specific desired control torque vector */
-    double      D2;
-    double      D[MAX_EFF_CNT];               /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     mapping matrix from positive thruster forces to body torque 
-                                                           Note, the vectors are stored as row vectors, not column vectors */
-    double      DbarDbarT33[3][3];
-    double      DbarTDbar22[2][2];
-    double      DbarTDbar11;
-    double      DTDDTinv[MAX_EFF_CNT];        /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
-    double      matInv33[3][3];
-    double      matInv22[2][2];
+    double      us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
+    int         i,j,k;
+    double      GsTBT[MAX_EFF_CNT][3];        /*!< []       [Gs]^T B^T */
+    double      mat3x3[3][3];
+    double      mat2x2[2][2];
+    double      mat1x1;
+    double      vec[3];
+    double      BLr[3];
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
-    int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -157,125 +148,79 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     /* Lr is assumed to be a negative torque onto the body */
     v3Scale(+1.0, Lr_B, Lr_B);
 
+    /* clear the RW motoro torque output array */
+    memset(us,0x0,MAX_EFF_CNT*sizeof(double));
 
+    /* compute [B].Lr */
+    for (k=0;k<ConfigData->numOfAxesToBeControlled;k++) {
+        BLr[k] = v3Dot(ConfigData->controlAxes_B+3*k, Lr_B);
+    }
 
-    for (k=0;k<ConfigData->numOfAxesToBeControlled;k++)
-    {
-        D2 = 0.;
-        for(i=0; i<ConfigData->numThrusters; i=i+1)
-        {
-            v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], tempVec);
-            D[i] = v3Dot(tempVec, ConfigData->controlAxes_B+3*k);
-            D2 += D[i]*D[i];
+    /* compute [Gs]^T B^T */
+    for (i=0;i<ConfigData->numRWAs;i++) {
+        for (j=0;j<ConfigData->numOfAxesToBeControlled; j++) {
+            GsTBT[i][j] = v3Dot(ConfigData->gsHat_B[i], ConfigData->controlAxes_B+3*j);
         }
-        /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
-        for(i=0; i<ConfigData->numThrusters; i=i+1)
-        {
-            if (D2 > ConfigData->epsilon) {
-                DTDDTinv[i] = D[i]/ D2;
-            } else {
-                DTDDTinv[i] = 0.0;
-            }
-        }
+    }
 
-        /* check which thrusters require a positive thrust force */
-        counterPosForces = 0;
-        memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
-        for (i=0;i<ConfigData->numThrusters;i++) {
-            forcePerAxis[i] = DTDDTinv[i] * v3Dot(Lr_B,ConfigData->controlAxes_B+3*k);
 
-            if (forcePerAxis[i]>0.0) {
-                thrusterUsed[i] = 1;
-                v3Cross(ConfigData->rThruster_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
-                counterPosForces += 1;
-            }
-        }
-
-        /* compute Dbar.Dbar^T to check if this is of rank 3 */
-        for (i=0;i<3;i++){
+    if (ConfigData->numOfAxesToBeControlled == 3) {
+        /* compute [B].[Gs].[Gs]^T.[B]^T */
+        for (i=0;i<3;i++) {
             for (j=0;j<3;j++) {
-                DbarDbarT33[i][j] = 0.0;
-                for (c=0;c<counterPosForces;c++) {
-                    DbarDbarT33[i][j] += Dbar[c][i]*Dbar[c][j];
+                mat3x3[i][j] = 0.;
+                for (k=0;k<ConfigData->numRWAs;k++) {
+                    mat3x3[i][j] += GsTBT[k][i]*GsTBT[k][j];
                 }
             }
         }
 
-        memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));
-        v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, Lrj);
-        if (m33Determinant(DbarDbarT33) > ConfigData->epsilon) {
-            /* 
-             do a minimum norm inverse 
-             */
-            m33Inverse(DbarDbarT33, matInv33);
-            m33MultV3(matInv33, Lrj, tempVec);
-            for (i=0;i<counterPosForces;i++) {
-                forcePerAxis[i] = v3Dot(Dbar[i], tempVec);
-            }
+        m33Inverse(mat3x3, mat3x3);
+        m33MultV3(mat3x3, BLr, vec);
 
-        } else {
-            /* 
-             do a least squares inverse 
-             */
 
-            switch (counterPosForces) {
-                case 2:
-                    for (i=0;i<2;i++){
-                        for (j=0;j<2;j++) {
-                            DbarTDbar22[i][j] = 0.0;
-                            for (c=0;c<3;c++) {
-                                DbarTDbar22[i][j] += Dbar[i][c]*Dbar[j][c];
-                            }
-                        }
-                    }
-
-                    if (m22Determinant(DbarTDbar22) > ConfigData->epsilon) {
-                        /* matrix is full rank, do regular least squares inverse */
-                        m22Inverse(DbarTDbar22, matInv22);
-                        for (i=0;i<2;i++) {
-                            tempVec[i] = v3Dot(Dbar[i], Lrj);
-                        }
-                        m22MultV2(matInv22, tempVec, forcePerAxis);
-                    } else {
-                        /* matrix is not full rank, only one axis can be controlled. */
-                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/v3Norm(Dbar[0])/(1+v3Norm(Dbar[1])/v3Norm(Dbar[0]));
-                        forcePerAxis[1] = forcePerAxis[0];
-                    }
-                    break;
-
-                case 1:
-                    DbarTDbar11 = v3Dot(Dbar[0], Dbar[0]);
-                    if (DbarTDbar11 > ConfigData->epsilon) {
-                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/DbarTDbar11;
-                    } else {
-                        forcePerAxis[0] = 0.0;
-                    }
-
-                default:
-                    /* the current control axis cannot be achieved with the currently available thrusters */
-                    break;
-            }
-
-        }
-
-        /* add the per axis thrust solutions to the overall thruster force solution */
-        c = 0;
-        for (i=0;i<ConfigData->numThrusters;i++) {
-            if (thrusterUsed[i]) {
-                F[i] += forcePerAxis[c];
-                c += 1;
+    } else if (ConfigData->numOfAxesToBeControlled == 2) {
+        /* compute [B].[Gs].[Gs]^T.[B]^T */
+        for (i=0;i<2;i++) {
+            for (j=0;j<2;j++) {
+                mat2x2[i][j] = 0.;
+                for (k=0;k<ConfigData->numRWAs;k++) {
+                    mat2x2[i][j] += GsTBT[k][i]*GsTBT[k][j];
+                }
             }
         }
 
+        m22Inverse(mat2x2, mat2x2);
+        m22MultV2(mat2x2, BLr, vec);
+
+    } else {
+        /* compute [B].[Gs].[Gs]^T.[B]^T */
+        mat1x1 = 0.;
+        for (k=0;k<ConfigData->numRWAs;k++) {
+            mat1x1 += GsTBT[k][0]*GsTBT[k][0];
+        }
+
+        mat1x1 = 1./mat1x1;
+        vec[0] = mat1x1*BLr[0];
     }
+
+    /* compute the RW motor torques */
+    for (i=0;i<ConfigData->numRWAs;i++) {
+        us[i] = 0.0;
+        for (j=0;j<ConfigData->numOfAxesToBeControlled;j++) {
+            us[i] += GsTBT[i][j]*vec[j];
+        }
+    }
+
+
 
 
     /*
      store the output message 
      */
-    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.effectorRequest);
+    mCopy(us, ConfigData->numRWAs, 1, ConfigData->rwMotorTorques.effectorRequest);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
-                 (void*) &(ConfigData->thrusterForceOut), moduleID);
+                 (void*) &(ConfigData->rwMotorTorques), moduleID);
 
     return;
 }

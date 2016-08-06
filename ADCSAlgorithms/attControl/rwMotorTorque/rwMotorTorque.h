@@ -48,7 +48,7 @@ typedef struct {
     vehicleConfigData   sc;                         /*!< spacecraft configuration message */
     double   epsilon;
 
-    vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
+    vehEffectorOut rwMotorTorques;                  /*!< -- copy of the output message */
 
 }rwMotorTorqueConfig;
 
