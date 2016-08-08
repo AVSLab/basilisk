@@ -1,0 +1,97 @@
+\documentclass[]{BasiliskReportMemo}
+\usepackage{AVS}
+\usepackage{algorithmic}
+\usepackage[boxed]{algorithm}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory}
+
+\newcommand{\ModuleName}{rwMotorTorque}
+\newcommand{\subject}{Algorithms to Map Desired Torque Vector onto a set of Reaction Wheel Motor Torques }
+\newcommand{\status}{Draft}
+\newcommand{\preparer}{H. Schaub}
+\newcommand{\summary}{This module take $\bm L_{r}$ as the input, and maps it onto a set of reaction wheel motor torques.  The module allows for a 3-DOF torque vector to be controlled, or only a sub-set along 1 or 2 base vectors.     }
+
+
+\begin{document}
+
+
+\makeCover
+
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{1.1}
+\noindent
+\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+\hline
+{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+\hline
+v0.1 & Initial Draft of this documentation & H. Schaub \\
+\hline
+
+\end{longtable}
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents
+~\\ \hrule ~\\
+
+
+\section{Introduction}
+This technical note describes a general algorithm that maps a desired ADCS external control torque $\bm L_{r}$ onto $N$ Reaction Wheel (RW) motor torque commands $\bm u_{s}$.  Let $\hat{\bm c}_{j}$ be the axis about which the thrusters are to produce the desired torque.  The module can accept up to 3 orthogonal control axis $\hat{\bm c}_{j}$, where $M$ is the number of axis to be controlled.  The vectors are packing into an $M\times 3$ matrix
+\begin{equation}
+	[C] = \begin{bmatrix}
+		\hat{\bm c}_{1}^{T}\\
+		\vdots
+	\end{bmatrix}
+\end{equation}
+The reaction wheel spin axis are denoted through the unit direction vectors $\hat{\bm g}_{s_{j}}$.  They are packed into a $3\times N$ projection matrix $[G_{s}]$ through
+\begin{equation}
+	[G_{s}] = \begin{bmatrix}
+		\hat{\bm g}_{s_{1}} & \cdots & \hat{\bm g}_{s_{N}}
+	\end{bmatrix}
+\end{equation}
+
+
+
+\section{Control Torque Mapping}
+The ADCS control condition is written such that
+\begin{equation}
+	[G_{s}] \bm u_{s} = \bm L_{r}
+\end{equation}
+where $\bm L_{r}$ is the 3-dimensional attitude control vector derived from a particular control solution.  To limit the dimensionality of the control solution, and possibly only control a sub-set of axes with the RWs, the $[C]$ matrix is used:
+\begin{equation}
+	[C][G_{s}] \bm u_{s} = [C]\bm L_{r}
+	\label{eq:rwM:2}
+\end{equation}
+
+A common solution to the RW motor torque mapping is to find the set of $\bm u_{s}$ such that they employ the smallest set of motor effort.  This is achieved using a minimum norm inverse of Eq.~\eqref{eq:rwM:2}.
+\begin{equation}
+	\bm u_{s} = [G_{s}]^{T} [C]^{T} \left( [C] [G_{s}] [G_{s}]^{T} [C]^{T} \right)^{-1} [C] \bm L_{r}
+\end{equation}
+Note that this requires a matrix inverse of dimension $M$.  If the RWs are used for full 3D attitude control, then this is a $3\times 3$ matrix inverse.  The numerical implementation of this is still pretty fast as an analytical solution to this inverse is feasible.
+
+
+
+
+
+
+\section{Module Parameters}
+
+
+\subsection{$[C]$ matrix}
+The module requires control control axis matrix $[C]$ to be defined.  Up to 3 orthogonal control axes can be selected.  Not that in python the matrix is given in a 1D form by defining {\tt controlAxes\_B}.  Thus, the $\hat{\bm c}_{j}$ axes are concatenated to produce the input matrix $[C]$. 
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+
+
+\end{document}
