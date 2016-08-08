@@ -981,7 +981,6 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
     }
 
 
-    v3SetZero(rDDot_CN_N);
     if (this->useTranslation){
         //! - compute inertial velocity
         v3Copy(v_BN_NLoc, dX);
