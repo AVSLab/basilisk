@@ -22,6 +22,10 @@ MessageRouter::MessageRouter()
 {
     serverConnection = nullptr;
     clientConnection = nullptr;
+    theConnection = nullptr;
+    runAsServer = false;
+    hostName = "localhost";
+    defaultPort = 20000;
     return;
 }
 
@@ -30,8 +34,61 @@ MessageRouter::~MessageRouter()
     return;
 }
 
-void MessageRouter::initializeServer(std::string hostName, uint32_t portStart)
+MessageRouter::MessageRouter(std::string from, std::string to, std::string intName)
 {
+    processData.messageSource = from;
+    processData.messageDest = to;
+    if(intName == "")
+    {
+        intName = from + "2" + to + "Interface";
+    }
+    ModelTag = intName;
+}
+
+bool MessageRouter::initializeServer(std::string hostName, uint32_t portStart)
+{
+    bool serverLinked;
     serverConnection = new TcpServer(&ioService);
-    serverConnection->acceptConnections(hostName, portStart);
+    serverLinked = serverConnection->acceptConnections(hostName, portStart);
+    theConnection = serverConnection;
+    return(serverLinked);
+}
+
+bool MessageRouter::initializeClient(std::string hostName, uint32_t portStart)
+{
+    bool clientLinked;
+    clientConnection = new TcpClient(&ioService);
+    clientLinked = clientConnection->connect(hostName, portStart);
+    theConnection = clientConnection;
+    return(clientLinked);
+}
+
+bool MessageRouter::linkProcesses()
+{
+    bool processLinked = false;
+    processData.source = SystemMessaging::GetInstance()->
+    findMessageBuffer(processData.messageSource);
+    if(runAsServer)
+    {
+        processLinked = initializeServer(hostName, defaultPort);
+        uint32_t stringLength = processData.messageDest.length();
+        
+        theConnection->sendData(processData.messageDest);
+    }
+    else
+    {
+        processLinked = initializeClient(hostName, defaultPort);
+        
+    }
+    return processLinked;
+}
+
+void MessageRouter::discoverMessages()
+{
+    
+}
+
+void MessageRouter::routeUnknownMessages()
+{
+    
 }

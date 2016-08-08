@@ -27,18 +27,28 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <boost/bind.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/locks.hpp>
+#include <stdint.h>
 
 
-class MessageRouter: public SysInterface {
+class MessageRouter: public InterfaceDataExchange {
 public:
     MessageRouter();
     ~MessageRouter();
-    void initializeServer(std::string hostName, uint32_t portStart);
+    MessageRouter(std::string from, std::string to, std::string intName="");
+    bool initializeServer(std::string hostName, uint32_t portStart);
+    bool initializeClient(std::string hostName, uint32_t portServer);
+    bool linkProcesses();
+    void discoverMessages();
+    void routeUnknownMessages();
      
 public:
+    bool runAsServer;
+    uint32_t defaultPort;     //! [-] Portnumber to start with on server and the connect to with client
+    std::string hostName;     //! [-] Name of the host that we are connecting to
     
 private:
     boost::asio::io_service ioService;
+    BasicIoObject *theConnection;
     TcpServer *serverConnection;
     TcpClient *clientConnection;
 };

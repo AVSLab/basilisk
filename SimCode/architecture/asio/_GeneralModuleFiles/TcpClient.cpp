@@ -14,11 +14,11 @@ TcpClient::TcpClient(boost::asio::io_service *ioService)
     m_stream.reset(new boost::asio::ip::tcp::socket(*ioService));
 }
 
-int TcpClient::connect(std::string ipAddress, std::string portNum)
+int TcpClient::connect(std::string ipAddress, uint32_t portNum)
 {
     boost::system::error_code ec;
     boost::asio::ip::tcp::resolver resolver(m_stream->get_io_service());
-    boost::asio::ip::tcp::resolver::query query(ipAddress, portNum);
+    boost::asio::ip::tcp::resolver::query query(ipAddress, std::to_string(portNum));
     boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(query, ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
