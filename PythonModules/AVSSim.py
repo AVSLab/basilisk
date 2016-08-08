@@ -771,11 +771,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fsw2DynInterface.discoverAllMessages()
         self.dyn2VisInterface.discoverAllMessages()
 
+    def setDeviceAvailability(self):
+        self.rwAvailability = componentState.RWAvailability()
     #
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
-    
         self.RWAGsMatrix = []
         self.RWAJsList = []
         i = 0
@@ -783,8 +784,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         rwClockAngle = 45.0 * math.pi / 180.0
         RWAlignScale = 1.0 / 25.0
         rwClass = vehicleConfigData.RWConstellation()
+        rwClass.numRW = 4
         rwPointer = vehicleConfigData.RWConfigurationElement()
-        while (i < 4):
+        while (i < rwClass.numRW):
             self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
             rwClockAngle += 90.0 * math.pi / 180.0
@@ -795,9 +797,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
             vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
             i += 1
+
+        msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
-            vehicleConfigData.MAX_EFF_CNT*7*8, 2, "RWConstellation")
-        self.TotalSim.WriteMessageData("rwa_config_data", vehicleConfigData.MAX_EFF_CNT*7*8, 0, rwClass)
+                                       msgSizeRW, 2, "RWConstellation")
+        self.TotalSim.WriteMessageData("rwa_config_data", msgSizeRW, 0, rwClass)
         
         rcsClass = vehicleConfigData.ThrusterCluster()
         rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -821,14 +825,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0] \
                         ]
-        for i in range(8):
+        rcsClass.numThrusters = 8
+        for i in range(rcsClass.numThrusters):
             SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
             SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
             vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
+        msgSizeThrust = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rcs_config_data",
-                               vehicleConfigData.MAX_EFF_CNT*6*8, 2, "ThrusterCluster")
-        self.TotalSim.WriteMessageData("rcs_config_data", vehicleConfigData.MAX_EFF_CNT*6*8, 0, rcsClass)
+                                       msgSizeThrust, 2, "ThrusterCluster")
+        self.TotalSim.WriteMessageData("rcs_config_data", msgSizeThrust, 0, rcsClass)
 
     def SetSpiceObject(self):
         self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -1610,7 +1616,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.P = 150.0  # N*m*sec
         self.MRP_SteeringRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringRWAData.integralLimit = 0.0  # rad
-        self.MRP_SteeringRWAData.numRWAs = 4
+        #self.MRP_SteeringRWAData.numRWAs = 4
 
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
         self.MRP_SteeringRWAData.inputRWConfigData = "rwa_config_data"
@@ -1623,7 +1629,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.P = 3.  # N*m*sec
         self.MRP_FeedbackRWAData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
-        self.MRP_FeedbackRWAData.numRWAs = 4
+        #self.MRP_FeedbackRWAData.numRWAs = 4
 
         self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
 
@@ -1713,7 +1719,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWANullSpaceData.inputRWSpeeds = "reactionwheel_output_states"
         self.RWANullSpaceData.outputControlName = "reactionwheel_cmds"
         self.RWANullSpaceData.inputRWConfigData = "rwa_config_data"
-        self.RWANullSpaceData.numWheels = 4
+        #self.RWANullSpaceData.numWheels = 4
         self.RWANullSpaceData.OmegaGain = 0.002
 
     def SetdvGuidance(self):
@@ -1759,8 +1765,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatData.inputThrConfigName = "rcs_config_data"
         self.thrustRWADesatData.inputMassPropsName = "adcs_config_data"
         self.thrustRWADesatData.maxFiring = 0.5
-        self.thrustRWADesatData.numThrusters = 8
-        self.thrustRWADesatData.numRWAs = 4
+        #self.thrustRWADesatData.numThrusters = 8
+        #self.thrustRWADesatData.numRWAs = 4
         self.thrustRWADesatData.thrFiringPeriod = 1.9
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
