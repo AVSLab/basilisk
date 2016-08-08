@@ -157,7 +157,7 @@ def mrp_steering_tracking(show_plots):
                                           vehicleConfigOut)
 
     # wheelConfigData Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
+    inputMessageSize = 4 + vehicleConfigData.MAX_EFF_CNT * 7 * 8
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWConfigData,
                                           inputMessageSize,
@@ -170,7 +170,8 @@ def mrp_steering_tracking(show_plots):
                     0, 1, 0,
                     0, 0, 1,
                     0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-    while (i < 4):
+    rwClass.numRW = 4
+    while (i < rwClass.numRW):
         SimulationBaseClass.SetCArray([localGsMatrix[i*3],
                                        localGsMatrix[i*3+1],
                                        localGsMatrix[i*3+2]],

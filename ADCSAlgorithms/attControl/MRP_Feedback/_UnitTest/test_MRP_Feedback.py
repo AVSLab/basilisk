@@ -174,7 +174,7 @@ def subModuleTestFunction(show_plots):
                                           rwSpeedMessage)
 
     # wheelConfigData Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
+    inputMessageSize = 4 + vehicleConfigData.MAX_EFF_CNT * 7 * 8
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWConfigData,
                                           inputMessageSize,
@@ -187,7 +187,8 @@ def subModuleTestFunction(show_plots):
                      0, 0, 0,
                      0, 0, 0,
                      0, 0, 0]
-    while (i < 4):
+    rwClass.numRW = 4
+    while (i < rwClass.numRW):
         SimulationBaseClass.SetCArray([localGsMatrix[i*3],
                                        localGsMatrix[i*3+1],
                                        localGsMatrix[i*3+2]],
