@@ -194,8 +194,6 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
     dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N), :]
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N), :]
 
-    print dataPos
-    print dataSigma
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False
