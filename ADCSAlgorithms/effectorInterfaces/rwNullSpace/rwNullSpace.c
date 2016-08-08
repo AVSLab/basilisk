@@ -70,6 +70,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     
+    ConfigData->numWheels = localRWData.numRW;
     for(i=0; i<ConfigData->numWheels; i=i+1)
     {
         for(j=0; j<3; j=j+1)

@@ -75,7 +75,7 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
-    
+    ConfigData->numRWAs = localRWData.numRW;
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;

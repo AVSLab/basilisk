@@ -43,6 +43,7 @@ typedef struct {
 }RWConfigurationElement;
 
 typedef struct {
+    int numRW;
     RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
 }RWConstellation;
 
@@ -52,6 +53,7 @@ typedef struct {
 }ThrusterPointData;
 
 typedef struct {
+    int numThrusters;
     ThrusterPointData thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
 }ThrusterCluster;
 

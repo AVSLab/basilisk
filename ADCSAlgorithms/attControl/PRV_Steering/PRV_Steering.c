@@ -72,7 +72,7 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     uint32_t ReadSize;
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
-    
+    ConfigData->numRWAs = localRWData.numRW;
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;

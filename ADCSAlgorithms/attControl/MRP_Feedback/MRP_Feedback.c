@@ -72,6 +72,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     
+    ConfigData->numRWAs = localRWData.numRW;
     int i, j;
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
