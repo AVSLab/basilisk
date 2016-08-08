@@ -130,20 +130,18 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     uint32_t    readSize;
     double      us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
     int         i,j,k;
-    double      GsTBT[MAX_EFF_CNT][3];        /*!< []       [Gs]^T B^T */
+    double      GsTCT[MAX_EFF_CNT][3];        /*!< []       [Gs]^T C^T */
     double      mat3x3[3][3];
     double      mat2x2[2][2];
     double      mat1x1;
     double      vec[3];
-    double      BLr[3];
+    double      CLr[3];
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
 
     /* Lr is assumed to be a negative torque onto the body */
     v3Scale(+1.0, Lr_B, Lr_B);
@@ -151,32 +149,32 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     /* clear the RW motoro torque output array */
     memset(us,0x0,MAX_EFF_CNT*sizeof(double));
 
-    /* compute [B].Lr */
+    /* compute [C].Lr */
     for (k=0;k<ConfigData->numOfAxesToBeControlled;k++) {
-        BLr[k] = v3Dot(ConfigData->controlAxes_B+3*k, Lr_B);
+        CLr[k] = v3Dot(ConfigData->controlAxes_B+3*k, Lr_B);
     }
 
-    /* compute [Gs]^T B^T */
+    /* compute [Gs]^T [C]^T */
     for (i=0;i<ConfigData->numRWAs;i++) {
         for (j=0;j<ConfigData->numOfAxesToBeControlled; j++) {
-            GsTBT[i][j] = v3Dot(ConfigData->gsHat_B[i], ConfigData->controlAxes_B+3*j);
+            GsTCT[i][j] = v3Dot(ConfigData->gsHat_B[i], ConfigData->controlAxes_B+3*j);
         }
     }
 
 
     if (ConfigData->numOfAxesToBeControlled == 3) {
-        /* compute [B].[Gs].[Gs]^T.[B]^T */
+        /* compute [C].[Gs].[Gs]^T.[C]^T */
         for (i=0;i<3;i++) {
             for (j=0;j<3;j++) {
                 mat3x3[i][j] = 0.;
                 for (k=0;k<ConfigData->numRWAs;k++) {
-                    mat3x3[i][j] += GsTBT[k][i]*GsTBT[k][j];
+                    mat3x3[i][j] += GsTCT[k][i]*GsTCT[k][j];
                 }
             }
         }
 
         m33Inverse(mat3x3, mat3x3);
-        m33MultV3(mat3x3, BLr, vec);
+        m33MultV3(mat3x3, CLr, vec);
 
 
     } else if (ConfigData->numOfAxesToBeControlled == 2) {
@@ -185,30 +183,30 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
             for (j=0;j<2;j++) {
                 mat2x2[i][j] = 0.;
                 for (k=0;k<ConfigData->numRWAs;k++) {
-                    mat2x2[i][j] += GsTBT[k][i]*GsTBT[k][j];
+                    mat2x2[i][j] += GsTCT[k][i]*GsTCT[k][j];
                 }
             }
         }
 
         m22Inverse(mat2x2, mat2x2);
-        m22MultV2(mat2x2, BLr, vec);
+        m22MultV2(mat2x2, CLr, vec);
 
     } else {
         /* compute [B].[Gs].[Gs]^T.[B]^T */
         mat1x1 = 0.;
         for (k=0;k<ConfigData->numRWAs;k++) {
-            mat1x1 += GsTBT[k][0]*GsTBT[k][0];
+            mat1x1 += GsTCT[k][0]*GsTCT[k][0];
         }
 
         mat1x1 = 1./mat1x1;
-        vec[0] = mat1x1*BLr[0];
+        vec[0] = mat1x1*CLr[0];
     }
 
     /* compute the RW motor torques */
     for (i=0;i<ConfigData->numRWAs;i++) {
         us[i] = 0.0;
         for (j=0;j<ConfigData->numOfAxesToBeControlled;j++) {
-            us[i] += GsTBT[i][j]*vec[j];
+            us[i] += GsTCT[i][j]*vec[j];
         }
     }
 

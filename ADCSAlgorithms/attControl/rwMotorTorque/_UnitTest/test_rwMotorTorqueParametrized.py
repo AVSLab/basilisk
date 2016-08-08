@@ -168,7 +168,6 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           0,
                                           inputMessageData)             # write data into the simulator
 
-    moduleConfig.epsilon = 0.0005
     if dropAxes:
         controlAxes_B = [
              1,0,0

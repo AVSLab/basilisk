@@ -46,7 +46,6 @@ typedef struct {
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
     vehicleConfigData   sc;                         /*!< spacecraft configuration message */
-    double   epsilon;
 
     vehEffectorOut rwMotorTorques;                  /*!< -- copy of the output message */
 
