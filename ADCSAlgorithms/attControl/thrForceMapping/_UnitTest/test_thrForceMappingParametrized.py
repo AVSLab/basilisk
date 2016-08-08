@@ -48,22 +48,24 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("ignoreAxis2, useCOMOffset, dropThruster, use2ndLr", [
-    (False, False, False, False)
-    ,(True, False, False, False)
-    ,(False, True, False, False)
-    ,(False, True, True, False)
-    ,(False, True, True, True)
+@pytest.mark.parametrize("ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce", [
+    (False, False, False, False, False)
+    ,(True, False, False, False, False)
+    ,(False, True, False, False, False)
+    ,(False, True, True, False, False)
+    ,(False, True, True, True, False)
+    ,(False, True, False, False, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, ignoreAxis2, useCOMOffset,dropThruster, use2ndLr):
+def test_module(show_plots, ignoreAxis2, useCOMOffset,dropThruster, use2ndLr, useNegForce):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr)
+    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster,
+                                                   use2ndLr, useNegForce)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr):
+def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -145,6 +147,11 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                                           inputMessageSize,
                                           0,
                                           inputMessageData)             # write data into the simulator
+
+    if useNegForce:
+        moduleConfig.thrForceSign = -1
+    else:
+        moduleConfig.thrForceSign = +1
 
     moduleConfig.epsilon = 0.0005
     if ignoreAxis2==0:
@@ -266,10 +273,16 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                          0.2792204165968615, 0]
                     ]
             else:
-                trueVector = [
-                           [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
-                           [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
-                           ]
+                if useNegForce:
+                    trueVector = [
+                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309],
+                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309]
+                               ]
+                else:
+                    trueVector = [
+                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
+                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
+                               ]
     else:
         if ignoreAxis2==1:
             trueVector = [
@@ -323,4 +336,5 @@ if __name__ == "__main__":
                  False,           # use COM offset
                  False,           # drop last thruster
                  False,           # use alternate Lr torque
+                 False            # use pos/neg thruster forces
                )
