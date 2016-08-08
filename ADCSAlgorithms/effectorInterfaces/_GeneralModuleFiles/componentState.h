@@ -26,14 +26,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Structure used to define the output definition for component stat3s*/
  typedef enum {
-    STATUS_ON,
-    STATUS_OFF,
-    STATUS_FAILED
-}FSWcomponentState;
+    AVAILABLE,
+    UNAVAILABLE
+}FSWdeviceAvailability;
 
 typedef struct {
-	FSWcomponentState wheelStates[MAX_EFF_CNT];                //!< The current state of the wheel
-}RWComponentState;
+	FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
+}RWAvailability;
 
 /*! @} */
 
