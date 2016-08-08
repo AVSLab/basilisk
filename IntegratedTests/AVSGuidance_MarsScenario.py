@@ -39,7 +39,7 @@ import RigidBodyKinematics as rbk
 
 # ------------------- PLOTS DIRECTORY ------------------- #
 paperPath = '/Users/marcolsmargenet/Desktop/AIAApaper/Figures/'
-arePlotsSaved = True
+arePlotsSaved = False
 if arePlotsSaved:
     plt.rcParams['figure.figsize'] = 1.75, 1.5
     plt.rcParams.update({'font.size': 6})
@@ -466,7 +466,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
     def plotLogOmega():
         plt.figure(34)
         plt.semilogy(t, absOmega_vec1, color_x)
-        plt.semilogy(t, absOmega_vec1, color_y),
+        plt.semilogy(t, absOmega_vec2, color_y),
         plt.semilogy(t, absOmega_vec3, color_z)
         plt.legend(['log($\omega_1$)', 'log($\omega_2$)', 'log($\omega_3$)'])
         plt.xlabel('Time, min')
@@ -555,7 +555,7 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
 
     # STAND-ALONE INERTIAL 3D POINT:
-    #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
 
     # VELOCITY POINT:
     TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
@@ -565,18 +565,18 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
 
     # EULER ANGLE ROTATION (FOR ORBIT AXIS SPIN)
-    angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
-    SimulationBaseClass.SetCArray(angleRates, 'double', TheAVSSim.eulerRotationData.angleRates)
+    #angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
+    #SimulationBaseClass.SetCArray(angleRates, 'double', TheAVSSim.eulerRotationData.angleRates)
 
     # RASTER MNVR
-    #TheAVSSim.eulerRotationData.inputEulerSetName = "euler_angle_set"
-    #TheAVSSim.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
+    TheAVSSim.eulerRotationData.inputEulerSetName = "euler_angle_set"
+    TheAVSSim.eulerRotationData.inputEulerRatesName = "euler_angle_rates"
 
     # ATT TRACKING ERROR
     angleOff = np.pi
     R0R = rbk.Mi(angleOff, 3)
     sigma_R0R = rbk.C2MRP(R0R)
-    SimulationBaseClass.SetCArray(sigma_R0R, 'double', TheAVSSim.attTrackingErrorData.sigma_R0R)
+    #SimulationBaseClass.SetCArray(sigma_R0R, 'double', TheAVSSim.attTrackingErrorData.sigma_R0R)
 
     # DEAD-BAND
     #TheAVSSim.MRP_SteeringRWAData.inputGuidName = "db_att_guid_out"
@@ -607,7 +607,7 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.ExecuteSimulation()
 
     # GUIDANCE PROFILES
-    #singleTest('inertial3DPoint')
+    singleTest('inertial3DPoint')
     #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #singleTest('hillPoint')
     #singleTest('velocityPoint')
@@ -671,7 +671,7 @@ if __name__ == "__main__":
 
     sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
     omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))
-    #plotRotNav(sigma_BN, omega_BN_B)
+    plotRotNav(sigma_BN, omega_BN_B)
     if TheAVSSim.modeRequest == 'rasterMnvr':
         plotTrueBodyEulerSet(sigma_BN)
 
@@ -721,7 +721,7 @@ if __name__ == "__main__":
         plotTrackingError(sigma_BR, omega_BR_B)
 
     Lr = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-    #plotControlTorque(Lr)
+    plotControlTorque(Lr)
 
     u = TheAVSSim.pullMessageLogData("reactionwheel_cmds.effectorRequest", range(4))
     plotEffectorTorqueRequest(u)
