@@ -40,7 +40,7 @@ typedef struct {
     double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
     double GsMatrix[3*MAX_EFF_CNT];     /*!< [-]        The spin axis matrix used for RWAs*/
     double JsList[3*MAX_EFF_CNT];       /*!< [kgm2]    The spin axis inertia for RWAs*/
-    uint32_t numRWAs;                   /*!< []        The number of reaction wheels available on vehicle */
+    uint32_t numRW;                     /*!< []        The number of reaction wheels available on vehicle */
 
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];                   /*!< [-] The name of the output message*/

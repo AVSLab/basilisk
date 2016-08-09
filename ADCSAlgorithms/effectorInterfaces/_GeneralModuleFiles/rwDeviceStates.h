@@ -14,30 +14,22 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-/*
-* ADCSDefinitions.h
-* 
-* Provide generation defintions related to the ADCS Algorithms
-*
-* University of Colorado, Autonomous Vehicle Systems (AVS) Lab
-* Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
-*/
 
-#ifndef _ADCS_DEFINITIONS_H
-#define _ADCS_DEFINITIONS_H
+#ifndef _RW_DEVICE_STATES_H_
+#define _RW_DEVICE_STATES_H_
 
+#include <stdint.h>
+#include "ADCSUtilities/ADCSDefinitions.h"
 
-/* Boolean Definition */
-typedef enum {
-    BOOL_FALSE = 0,
-    BOOL_TRUE
-} boolean_t;
+/*! \addtogroup ADCSAlgGroup
+ * @{
+ */
 
-/*! @brief Structure used to define the output definition for component availability */
- typedef enum {
-    AVAILABLE,
-    UNAVAILABLE
-}FSWdeviceAvailability;
+/*! @brief Array with availability of RW */
+typedef struct {
+	FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
+}RWAvailability;
 
+/*! @} */
 
 #endif

@@ -40,7 +40,7 @@ typedef struct {
     double z[3];                   /*!< [rad]     integral state of delta_omega */
     double GsMatrix[3*MAX_EFF_CNT];/*!< []        The spin axis matrix used for RWAs*/
     double JsList[3*MAX_EFF_CNT];  /*!< [kgm2]    The spin axis inertia for RWAs*/
-    uint32_t numRWAs;              /*!< []        The number of reaction wheels available on vehicle */
+    uint32_t numRW;                /*!< []        The number of reaction wheels available on vehicle */
     uint32_t ignoreOuterLoopFeedforward;/*!< []      Boolean flag indicating if outer feedforward term should be included */
 
     /* declare module IO interfaces */

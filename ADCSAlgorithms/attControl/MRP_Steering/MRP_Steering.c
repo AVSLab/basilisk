@@ -75,8 +75,8 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
-    ConfigData->numRWAs = localRWData.numRW;
-    for(i=0; i<ConfigData->numRWAs; i=i+1)
+    ConfigData->numRW = localRWData.numRW;
+    for(i=0; i<ConfigData->numRW; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
         for(j=0; j<3; j=j+1)
@@ -184,7 +184,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Add(v3, Lr, Lr);                                      /* +Ki*z */
 
     m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3);          /* - omega_BastN x ([I]omega + [Gs]h_s) */
-    for(i = 0; i < ConfigData->numRWAs; i++)
+    for(i = 0; i < ConfigData->numRW; i++)
     {
         wheelGs = &(ConfigData->GsMatrix[i*3]);
         v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) +

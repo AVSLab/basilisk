@@ -41,7 +41,7 @@ typedef struct {
     double z[3];                    /*!< [rad]     Integral state of delta_omega */
     double GsMatrix[3*MAX_EFF_CNT]; /*!< [-]       The spin axis matrix used for RWAs*/
     double JsList[3*MAX_EFF_CNT];   /*!< [kgm2]    The spin axis inertia for RWAs*/
-    uint32_t numRWAs;               /*!< [-]       The number of reaction wheels available on vehicle */
+    uint32_t numRW;                 /*!< [-]       The number of reaction wheels available on vehicle */
     
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the control output message */
