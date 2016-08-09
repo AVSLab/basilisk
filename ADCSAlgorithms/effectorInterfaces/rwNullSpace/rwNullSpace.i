@@ -30,6 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore Reset_rwNullSpace;
 %include "rwNullSpace.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"
+%include "../_GeneralModuleFiles/rwDeviceStates.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

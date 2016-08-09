@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include <stdint.h>
 #include <stdlib.h>
 
