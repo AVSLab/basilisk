@@ -514,7 +514,7 @@ def executeGuidance(TheAVSSim):
     #SimulationBaseClass.SetCArray(sigma_R0R, 'double', TheAVSSim.attTrackingErrorData.sigma_R0R)
 
     # DEAD-BAND
-    TheAVSSim.MRP_SteeringRWAData.inputGuidName = "db_att_guid_out"
+    #TheAVSSim.MRP_SteeringRWAData.inputGuidName = "db_att_guid_out"
 
     # MRP FEEDBACK GAINS
     P = 180.
@@ -547,9 +547,10 @@ def executeGuidance(TheAVSSim):
     #singleTest('celTwoBodyPoint')
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
     #singleTest('inertial3DSpin')
-    singleTest('eulerRotation')
+    #singleTest('eulerRotation')
     #singleTest('rasterMnvr')
     #singleTest('deadbandGuid')
+    singleTest('rwMotorTorqueControl')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
