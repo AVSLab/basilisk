@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        rwMotorTorque
+#   Module Name:        thrForceMapping
 #   Author:             Hanspeter Schaub
 #   Creation Date:      July 4, 2016
 #
@@ -36,7 +36,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import rwMotorTorque
+import thrForceMapping
 import macros
 import MRP_Steering
 import vehicleConfigData
@@ -48,19 +48,24 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("dropAxes", [
-    (False)
-    ,(True)
+@pytest.mark.parametrize("ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce", [
+    (False, False, False, False, False)
+    ,(True, False, False, False, False)
+    ,(False, True, False, False, False)
+    ,(False, True, True, False, False)
+    ,(False, True, True, True, False)
+    ,(False, True, False, False, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, dropAxes):
+def test_module(show_plots, ignoreAxis2, useCOMOffset,dropThruster, use2ndLr, useNegForce):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, dropAxes)
+    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster,
+                                                   use2ndLr, useNegForce)
     assert testResults < 1, testMessage
 
 
-def rwMotorTorqueTest(show_plots, dropAxes):
+def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -80,53 +85,22 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rwMotorTorque.rwMotorTorqueConfig()                          # update with current values
+    moduleConfig = thrForceMapping.thrForceMappingConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        rwMotorTorque.Update_rwMotorTorque,
-                                        rwMotorTorque.SelfInit_rwMotorTorque,
-                                        rwMotorTorque.CrossInit_rwMotorTorque,
-                                        rwMotorTorque.Reset_rwMotorTorque)
-    moduleWrap.ModelTag = "rwMotorTorque"
-
-    # Initialize the test module configuration data names
-    moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.inputRWConfigDataName = "rwa_config_data"
-    moduleConfig.outputDataName = "rwMotorTorqueOut"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-
-    # wheelConfigData Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwClass = vehicleConfigData.RWConstellation()
-    rwPointer = vehicleConfigData.RWConfigurationElement()
-
-    localGsMatrix = [1, 0, 0,
-                    0, 1, 0,
-                    0, 0, 1,
-                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-    numRWAs = len(localGsMatrix)/3
-    moduleConfig.numRWAs = numRWAs
-    i = 0
-    while (i < numRWAs):
-        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
-                                       localGsMatrix[i*3+1],
-                                       localGsMatrix[i*3+2]],
-                                      'double',
-                                      rwPointer.Gs_S)
-        rwPointer.Js = 0.1
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-        i += 1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          rwClass)
+                                        thrForceMapping.Update_thrForceMapping,
+                                        thrForceMapping.SelfInit_thrForceMapping,
+                                        thrForceMapping.CrossInit_thrForceMapping,
+                                        thrForceMapping.Reset_thrForceMapping)
+    moduleWrap.ModelTag = "thrForceMapping"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
+    # Initialize the test module configuration data
+    moduleConfig.inputVehControlName = "LrRequested"
+    moduleConfig.inputThrusterConfName = "RCSThrusters"
+    moduleConfig.outputDataName = "thrusterForceOut"
+    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
 
     # write vehicle configuration message
     inputMessageSize = 21 * 8 + 8  # 21 doubles + 1 32bit integer
@@ -135,10 +109,13 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    CoM_S = [0,0,0]
+    BS = [1.0, 0., 0.,
+         0., 1.0, 0.,
+         0., 0., 1.0]
+    if useCOMOffset == 1:
+        CoM_S = [0.1, 0.05, 0.01]
+    else:
+        CoM_S = [0,0,0]
     SimulationBaseClass.SetCArray(BS,
                                   'double',
                                   vehicleConfigOut.BS)
@@ -159,7 +136,10 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
+    if use2ndLr:
+        requestedTorque = [0.1, 0.16, 0.005]            # Set up a list as a 3-vector
+    else:
+        requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
     SimulationBaseClass.SetCArray(requestedTorque,                      # specify message variable
                                   'double',                             # specify message variable type
                                   inputMessageData.torqueRequestBody)   # write torque request to input message
@@ -168,19 +148,83 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           0,
                                           inputMessageData)             # write data into the simulator
 
-    if dropAxes:
-        controlAxes_B = [
-             1,0,0
-            ,0,0,1
-        ]
+    if useNegForce:
+        moduleConfig.thrForceSign = -1
     else:
+        moduleConfig.thrForceSign = +1
+
+    moduleConfig.epsilon = 0.0005
+    if ignoreAxis2==0:
         controlAxes_B = [
              1,0,0
             ,0,1,0
             ,0,0,1
         ]
+    else:
+        controlAxes_B = [
+             1,0,0
+            ,0,0,1
+        ]
 
     SimulationBaseClass.SetCArray(controlAxes_B, 'double', moduleConfig.controlAxes_B)
+
+    rcsClass = vehicleConfigData.ThrusterCluster()
+    rcsPointer = vehicleConfigData.ThrusterPointData()
+    if dropThruster:
+        numThrusters = 7
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, -1.79070],
+                   [-0.82550, -0.86360, -1.79070],
+                   [0.82550, 0.86360, -1.79070]\
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 1.0, 0.0]\
+                        ]
+    else:
+        numThrusters = 8
+        rcsLocationData = [ \
+                   [-0.86360, -0.82550, 1.79070],
+                   [-0.82550, -0.86360, 1.79070],
+                   [0.82550, 0.86360, 1.79070],
+                   [0.86360, 0.82550, 1.79070],
+                   [-0.86360, -0.82550, -1.79070],
+                   [-0.82550, -0.86360, -1.79070],
+                   [0.82550, 0.86360, -1.79070],
+                   [0.86360, 0.82550, -1.79070] \
+                   ]
+        rcsDirectionData = [ \
+                        [1.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [-1.0, 0.0, 0.0],
+                        [0.0, -1.0, 0.0],
+                        [0.0, 1.0, 0.0],
+                        [1.0, 0.0, 0.0] \
+                        ]
+    rcsClass.numThrusters = numThrusters
+
+
+    for i in range(numThrusters):
+        SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
+        SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
+        vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+
+    msgSize = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,
+                                          msgSize, 2)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName, msgSize, 0, rcsClass)
+
 
 
 
@@ -205,38 +249,63 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(numRWAs))
-    print moduleOutput
+                                                  range(numThrusters))
 
     # set the output truth states
     trueVector=[];
-    if dropAxes:
-        trueVector = [
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183],
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183]
-        ]
+    if ignoreAxis2==0:
+        if useCOMOffset == 0:
+            trueVector = [
+                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711],
+                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
+                       ]
+        else:
+            if dropThruster:
+                if use2ndLr:
+                    trueVector = [
+                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0],
+                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0]
+                    ]
+                else:
+                    trueVector = [
+                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
+                         0.2792204165968615, 0],
+                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
+                         0.2792204165968615, 0]
+                    ]
+            else:
+                if useNegForce:
+                    trueVector = [
+                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309],
+                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309]
+                               ]
+                else:
+                    trueVector = [
+                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
+                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
+                               ]
     else:
-        trueVector = [
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755],
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755]
+        if ignoreAxis2==1:
+            trueVector = [
+           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711],
+           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711]
                    ]
-
-        # else:
-        #     testFailCount+=1
-        #     testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+        else:
+            testFailCount+=1
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
 
 
     # compare the module results to the truth values
     accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numRWAs, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-
+ 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     # if show_plots:
@@ -262,7 +331,11 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(              # update "module" in function name
-                False,
-                False
+    test_module(              # update "module" in function name
+                 False,
+                 False,           # ignoreAxis2 value
+                 False,           # use COM offset
+                 False,           # drop last thruster
+                 False,           # use alternate Lr torque
+                 False            # use pos/neg thruster forces
                )

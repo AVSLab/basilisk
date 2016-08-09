@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/thrForceMapping/thrForceMapping.h"
+#include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
@@ -113,6 +113,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 
     /* read in the thruster position and thruster force heading information */
     /* Note: we will still need to correct for the S to B transformation */
+    ConfigData->numThrusters = localThrusterData.numThrusters;
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
         m33MultV3(RECAST3X3 ConfigData->sc.BS,

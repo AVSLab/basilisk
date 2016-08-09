@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/rwMotorTorque/rwMotorTorque.h"
+#include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
@@ -64,7 +64,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
                                                 moduleID);
 
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigDataName,
-                                                       sizeof(vehControlOut),
+                                                       sizeof(RWConstellation),
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
@@ -110,7 +110,8 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
 
     /* read in the RW spin axis gsHat information */
     /* Note: we will still need to correct for the S to B transformation */
-    for(i=0; i<ConfigData->numRWAs; i=i+1)
+    ConfigData->numRW = localRWData.numRW;
+    for(i=0; i<ConfigData->numRW; i=i+1)
     {
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
                   localRWData.reactionWheels[i].Gs_S,
@@ -155,7 +156,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     }
 
     /* compute [Gs]^T [C]^T */
-    for (i=0;i<ConfigData->numRWAs;i++) {
+    for (i=0;i<ConfigData->numRW;i++) {
         for (j=0;j<ConfigData->numOfAxesToBeControlled; j++) {
             GsTCT[i][j] = v3Dot(ConfigData->gsHat_B[i], ConfigData->controlAxes_B+3*j);
         }
@@ -167,7 +168,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         for (i=0;i<3;i++) {
             for (j=0;j<3;j++) {
                 mat3x3[i][j] = 0.;
-                for (k=0;k<ConfigData->numRWAs;k++) {
+                for (k=0;k<ConfigData->numRW;k++) {
                     mat3x3[i][j] += GsTCT[k][i]*GsTCT[k][j];
                 }
             }
@@ -182,7 +183,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         for (i=0;i<2;i++) {
             for (j=0;j<2;j++) {
                 mat2x2[i][j] = 0.;
-                for (k=0;k<ConfigData->numRWAs;k++) {
+                for (k=0;k<ConfigData->numRW;k++) {
                     mat2x2[i][j] += GsTCT[k][i]*GsTCT[k][j];
                 }
             }
@@ -194,7 +195,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     } else {
         /* compute [B].[Gs].[Gs]^T.[B]^T */
         mat1x1 = 0.;
-        for (k=0;k<ConfigData->numRWAs;k++) {
+        for (k=0;k<ConfigData->numRW;k++) {
             mat1x1 += GsTCT[k][0]*GsTCT[k][0];
         }
 
@@ -203,7 +204,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     }
 
     /* compute the RW motor torques */
-    for (i=0;i<ConfigData->numRWAs;i++) {
+    for (i=0;i<ConfigData->numRW;i++) {
         us[i] = 0.0;
         for (j=0;j<ConfigData->numOfAxesToBeControlled;j++) {
             us[i] += GsTCT[i][j]*vec[j];
@@ -216,7 +217,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     /*
      store the output message 
      */
-    mCopy(us, ConfigData->numRWAs, 1, ConfigData->rwMotorTorques.effectorRequest);
+    mCopy(us, ConfigData->numRW, 1, ConfigData->rwMotorTorques.effectorRequest);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
                  (void*) &(ConfigData->rwMotorTorques), moduleID);
 
