@@ -787,7 +787,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         if self.scanSelector != 0:
             self.setEventActivity('mnvrToRaster', True)
         else:
-            SimulationBaseClass.SetCArray([0.0, 0.0, 0.0], 'double', self.attMnvrPointData.mnvrScanRate)
+            self.attMnvrPointData.mnvrScanRate = [0.0, 0.0, 0.0]
             self.setEventActivity('initiateSunPoint', True)
             if self.modeRequest != 'earthPoint':
                 self.modeRequest = 'sunPoint'
@@ -805,8 +805,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         offMatrix = rbk.euler1232C(offPointAngles)
         newPointMatrix = np.dot(offMatrix, basePointMatrix)
         newPointMatrix = np.reshape(newPointMatrix, 9).tolist()
-        SimulationBaseClass.SetCArray(newPointMatrix, 'double', self.marsPointData.TPoint2Bdy)
-        SimulationBaseClass.SetCArray(newScanAngles, 'double', self.attMnvrPointData.mnvrScanRate)
+        Sself.marsPointData.TPoint2Bdy = newPointMatrix
+        self.attMnvrPointData.mnvrScanRate = newScanAngles
         self.attMnvrPointData.mnvrActive = False
         self.attMnvrPointData.mnvrComplete = 0
         print "Current Raster"
@@ -824,6 +824,17 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
+        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        self.LocalConfigData.BS = BS
+
+        Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
+        self.LocalConfigData.ISCPntB_B = Inertia
+
+        # adjust the message size by hand if needed
+        msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
+        self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
+        self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
+    
         self.RWAGsMatrix = []
         self.RWAJsList = []
         i = 0
@@ -837,9 +848,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
             self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
-            SimulationBaseClass.SetCArray([-math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                           -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)], 'double',
-                                           rwPointer.gsHat_S)
+            rwPointer.Gs_S = [-math.sin(rwElAngle) * math.sin(rwClockAngle),
+                                           -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)]
             rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
             vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
             rwClockAngle += 90.0 * math.pi / 180.0
@@ -873,10 +883,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                         [0.0, -1.0, 0.0],
                         [-1.0, 0.0, 0.0] \
                         ]
+
         rcsClass.numThrusters = 8
-        for i in range(rcsClass.numThrusters):
-            SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
-            SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
+        for i in range(8):
+            rcsPointer.rThrust_S = rcsLocationData[i]
+            rcsPointer.tHatThrust_S = rcsDirectionData[i]
             vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
         msgSizeThrust = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
@@ -926,14 +937,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         # Turn off corruption of IMU data
         (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue) = turnOffCorruption()
 
-        SimulationBaseClass.SetCArray([rotBiasValue, rotBiasValue, rotBiasValue],
-                                      'double', self.IMUSensor.senRotBias)
-        SimulationBaseClass.SetCArray([rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue],
-                                      'double', self.IMUSensor.senRotNoiseStd)
-        SimulationBaseClass.SetCArray([transBiasValue, transBiasValue, transBiasValue],
-                                      'double', self.IMUSensor.senTransBias)
-        SimulationBaseClass.SetCArray([transNoiseStdValue, transNoiseStdValue, transNoiseStdValue],
-                                      'double', self.IMUSensor.senTransNoiseStd)
+        self.IMUSensor.senRotBias = [rotBiasValue, rotBiasValue, rotBiasValue]
+        self.IMUSensor.senRotNoiseStd = [rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue]
+        self.IMUSensor.senTransBias = [transBiasValue, transBiasValue, transBiasValue]
+        self.IMUSensor.senTransNoiseStd = [transNoiseStdValue, transNoiseStdValue, transNoiseStdValue]
 
 
     def SetReactionWheelDynObject(self):
@@ -979,7 +986,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             0.0,  # Omega [RPM]
             [-0.8, 0.8, 1.79070]  # r_S [m]
         )
-
         simSetupRW.addToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
 
     def SetACSThrusterDynObject(self):
@@ -1031,16 +1037,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         simSetupThruster.addToSpacecraft(self.ACSThrusterDynObject.ModelTag,
                                          self.ACSThrusterDynObject,
                                          self.VehDynObject)
-
-
         ACSpropCM = [0.0, 0.0, 1.2]
         ACSpropMass = 40  # Made up!!!!
         ACSpropRadius = 46.0 / 2.0 / 3.2808399 / 12.0
         sphereInerita = 2.0 / 5.0 * ACSpropMass * ACSpropRadius * ACSpropRadius
         ACSInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
         self.ACSThrusterDynObject.objProps.Mass = ACSpropMass
-        SimulationBaseClass.SetCArray(ACSpropCM, 'double', self.ACSThrusterDynObject.objProps.CoM)
-        SimulationBaseClass.SetCArray(ACSInertia, 'double', self.ACSThrusterDynObject.objProps.InertiaTensor)
+        self.ACSThrusterDynObject.objProps.CoM = ACSpropCM
+        self.ACSThrusterDynObject.objProps.InertiaTensor = ACSInertia
         self.ACSThrusterDynObject.inputProperties = "spacecraft_mass_props"
 
     def SetDVThrusterDynObject(self):
@@ -1088,8 +1092,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         sphereInerita = 2.0 / 5.0 * DVpropMass * DVpropRadius * DVpropRadius
         DVInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
         self.DVThrusterDynObject.objProps.Mass = DVpropMass
-        SimulationBaseClass.SetCArray(DVpropCM, 'double', self.DVThrusterDynObject.objProps.CoM)
-        SimulationBaseClass.SetCArray(DVInertia, 'double', self.DVThrusterDynObject.objProps.InertiaTensor)
+        self.DVThrusterDynObject.objProps.CoM = DVpropCM
+        self.DVThrusterDynObject.objProps.InertiaTensor = DVInertia
 
     def InitCSSHeads(self):
         def turnOffSensorCorruption():
@@ -1263,8 +1267,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.solarArrayBore.StateString = "inertial_state_output"
         self.solarArrayBore.celBodyString = "sun_display_frame_data"
         self.solarArrayBore.OutputDataString = "solar_array_sun_bore"
-        SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double',
-                                      self.solarArrayBore.strBoreVec)
+        self.solarArrayBore.strBoreVec = [0.0, 0.0, 1.0]
 
     def SethighGainBore(self):
         self.highGainBore.ModelTag = "highGainBoresight"
@@ -1273,16 +1276,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.highGainBore.OutputDataString = "high_gain_earth_bore"
         angSin = math.sin(23.0 * math.pi / 180.0)
         angCos = math.cos(23.0 * math.pi / 180.0)
-        SimulationBaseClass.SetCArray([0.0, -angSin, angCos], 'double',
-                                      self.highGainBore.strBoreVec)
+        self.highGainBore.strBoreVec = [0.0, -angSin, angCos]
 
     def SetinstrumentBore(self):
         self.instrumentBore.ModelTag = "instrumentBoresight"
         self.instrumentBore.StateString = "inertial_state_output"
         self.instrumentBore.celBodyString = "mars_display_frame_data"
         self.instrumentBore.OutputDataString = "instrument_mars_bore"
-        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double',
-                                      self.instrumentBore.strBoreVec)
+        self.instrumentBore.strBoreVec = [0.0, 1.0, 0.0]
 
     def SetSimpleNavObject(self):
         def turnOffCorruption():
@@ -1366,8 +1367,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      -8.704033370738143e+03, 1.816188108176300e+03,
                      -2.581556805090373e+02, 1.888418924282780e+01]
         self.CSSDecodeFSWConfig.ChebyCount = len(ChebyList)
-        SimulationBaseClass.SetCArray(ChebyList, 'double',
-                                      self.CSSDecodeFSWConfig.KellyCheby)
+        self.CSSDecodeFSWConfig.KellyCheby = ChebyList
         self.CSSDecodeFSWConfig.SensorListName = "css_sensors_data"
 
     def SetIMUCommData(self):
@@ -1375,16 +1375,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.IMUCommData.InputPropsName = "adcs_config_data"
         self.IMUCommData.OutputDataName = "parsed_imu_data"
         platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(platform2str, 'double',
-                                      self.IMUCommData.platform2StrDCM)
+        self.IMUCommData.platform2StrDCM = platform2str
 
     def SetSTCommData(self):
         self.STCommData.InputDataName = "star_tracker_state"
         self.STCommData.InputPropsName = "adcs_config_data"
         self.STCommData.OutputDataName = "parsed_st_data"
         platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(platform2str, 'double',
-                                      self.STCommData.T_StrPlatform)
+        self.STCommData.T_StrPlatform = platform2str
 
     def SetCSSWlsEstFSWConfig(self):
         self.CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"
@@ -1406,7 +1404,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                               [-0.70710678118654746, -0.70710678118654757, 0.0], ]
         i = 0
         for CSSHat in CSSOrientationList:
-            SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatStr)
+            CSSConfigElement.nHatStr = CSSHat
+            print type(CSSConfigElement.nHatStr)
             cssWlsEst.CSSWlsConfigArray_setitem(self.CSSWlsEstFSWConfig.CSSData, i,
                                                 CSSConfigElement)
             i += 1
@@ -1416,9 +1415,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.sunSafePointData.inputSunVecName = "css_wls_est"
         self.sunSafePointData.inputIMUDataName = "parsed_imu_data"
         self.sunSafePointData.minUnitMag = 0.95
-        SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double',
-                                      self.sunSafePointData.sHatBdyCmd)
-
+        self.sunSafePointData.sHatBdyCmd = [0.0, 0.0, 1.0]
+    
     def SetMRP_Steering(self):
         self.MRP_SteeringSafeData.omega_max = 0.4 * (math.pi / 180.)
         self.MRP_SteeringSafeData.K1 = 0.05
@@ -1462,8 +1460,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      1.0, 0.0, -0.7,
                      -1.0, 0.0, -0.7,
                      0.0, 1.0, 0.7]
-        SimulationBaseClass.SetCArray(onTimeMap, 'double',
-                                      self.sunSafeACSData.thrData.thrOnMap)
+        self.sunSafeACSData.thrData.thrOnMap = onTimeMap
 
     def SetattMnvrPoint(self):
         self.attMnvrPointData.inputNavStateName = "simple_nav_output"
@@ -1481,7 +1478,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         sigma_R0N = [0.4, 0.2, 0.1]
         #sigma_R0N = [0., 0., 0.]
 
-        SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DData.sigma_R0N)
+        self.inertial3DData.sigma_R0N = sigma_R0N
 
     def setHillPoint(self):
         self.hillPointData.inputNavDataName = "simple_nav_output"
@@ -1642,19 +1639,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         offAlpha = 0.18* alpha
         totalGuidSimTime = 60 * 20 * 4
         (angleSetList, angleRatesList, rasterTimeList) = crossingRaster(alpha, offAlpha, totalGuidSimTime)
-        #(angleSetList, angleRatesList, rasterTimeList) = crossingNominal(alpha, totalGuidSimTime)
-
-
-        SimulationBaseClass.SetCArray(angleSetList, 'double', self.rasterManagerData.scanningAngles)
-        SimulationBaseClass.SetCArray(angleRatesList, 'double', self.rasterManagerData.scanningRates)
-        SimulationBaseClass.SetCArray(rasterTimeList, 'double', self.rasterManagerData.rasterTimes)
+        self.rasterManagerData.scanningAngles = angleSetList
+        self.rasterManagerData.scanningRates = angleRatesList
+        self.rasterManagerData.rasterTimes = rasterTimeList
         self.rasterManagerData.numRasters = len(rasterTimeList)
 
     def setInertial3DSpin(self):
         self.inertial3DSpinData.inputRefName = "att_ref_output_stage1"
         self.inertial3DSpinData.outputDataName = "att_ref_output"
         omega_RN_N = np.array([0.2, 0.2, 0.4]) * mc.D2R
-        SimulationBaseClass.SetCArray(omega_RN_N, 'double',self.inertial3DSpinData.omega_RN_N)
+        self.inertial3DSpinData.omega_RN_N = omega_RN_N
 
     def setEulerRotation(self):
         self.eulerRotationData.inputRefName = "att_ref_output_stage1"
@@ -1668,7 +1662,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = rbk.C2MRP(R0R)
-        SimulationBaseClass.SetCArray(sigma_R0R, 'double',self.attTrackingErrorData.sigma_R0R)
+        self.attTrackingErrorData.sigma_R0R = sigma_R0R
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1737,7 +1731,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      0.0, 0.0, -1.0,
                      0.0, 0.0, -1.0,
                      0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
+        newThrGroup.thrOnMap = onTimeMap
         dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 0,
                                              newThrGroup)
         newThrGroup.numEffectors = 6
@@ -1752,7 +1746,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      0.0, 0.1 * matMult, 0.0,
                      -0.0866 * matMult, 0.05 * matMult, 0.0,
                      -0.0866 * matMult, -0.05 * matMult, 0.0]
-        SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
+        newThrGroup.thrOnMap = onTimeMap
         dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
                                              newThrGroup)
 
@@ -1769,7 +1763,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         for i in range(4):
             for j in range(3):
                 onTimeMap.append(-self.RWAGsMatrix[i*3+j])
-        SimulationBaseClass.SetCArray(onTimeMap, 'double', newThrGroup.thrOnMap)
+        newThrGroup.thrOnMap = onTimeMap
         dvAttEffect.ThrustGroupArray_setitem(self.RWAMappingData.thrGroups, 0,
                                              newThrGroup)
 
@@ -1809,7 +1803,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.sunPointData.outputDataName = "att_cmd_output"
         self.sunPointData.inputSecMessName = "earth_display_frame_data"
         TsunVec2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
-        SimulationBaseClass.SetCArray(TsunVec2Body, 'double', self.sunPointData.TPoint2Bdy)
+        self.sunPointData.TPoint2Bdy = TsunVec2Body
 
     def SetearthPoint(self):
         self.earthPointData.inputNavDataName = "simple_nav_output"
@@ -1819,7 +1813,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         angSin = math.sin(23.0 * math.pi / 180.0)
         angCos = math.cos(23.0 * math.pi / 180.0)
         TearthVec2Body = [0.0, 0.0, -1.0, -angSin, angCos, 0.0, angCos, angSin, 0.0]
-        SimulationBaseClass.SetCArray(TearthVec2Body, 'double', self.earthPointData.TPoint2Bdy)
+        self.earthPointData.TPoint2Bdy = TearthVec2Body
 
     def SetmarsPoint(self):
         self.marsPointData.inputNavDataName = "simple_nav_output"
@@ -1829,8 +1823,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
         # TmarsVec2Body = [0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]
         self.baseMarsTrans = TmarsVec2Body
-        SimulationBaseClass.SetCArray(TmarsVec2Body, 'double', self.marsPointData.TPoint2Bdy)
-
+        self.marsPointData.TPoint2Bdy = TmarsVec2Body
+    
     def SetthrustRWDesat(self):
         self.thrustRWADesatData.inputSpeedName = "reactionwheel_output_states"
         self.thrustRWADesatData.outputThrName = "acs_thruster_cmds"
@@ -1847,15 +1841,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         initialCovariance = [0.0] * 6 * 6
         initialCovariance[0 * 6 + 0] = initialCovariance[1 * 6 + 1] = initialCovariance[2 * 6 + 2] = 0.02
         initialCovariance[3 * 6 + 3] = initialCovariance[4 * 6 + 4] = initialCovariance[5 * 6 + 5] = 0.0006
-        SimulationBaseClass.SetCArray(initialCovariance, 'double', self.AttUKF.CovarInit)
-        obsNoise = [0.0] * 6 * 6
-        obsNoise[0 * 6 + 0] = obsNoise[1 * 6 + 1] = obsNoise[2 * 6 + 2] = 0.062
-        obsNoise[3 * 6 + 3] = obsNoise[4 * 6 + 4] = obsNoise[5 * 6 + 5] = 0.008
-        SimulationBaseClass.SetCArray(obsNoise, 'double', self.AttUKF.QStObs)
+        self.AttUKF.CovarInit = initialCovariance
+        obsNoise = [0.0] * 3 * 3
+        obsNoise[0 * 3 + 0] = obsNoise[1 * 3 + 1] = obsNoise[2 * 3 + 2] = 0.062
+        #obsNoise[3 * 6 + 3] = obsNoise[4 * 6 + 4] = obsNoise[5 * 6 + 5] = 0.008
+        self.AttUKF.QStObs = obsNoise
         Qnoise = [0.0] * 6 * 6
         Qnoise[0 * 6 + 0] = Qnoise[1 * 6 + 1] = Qnoise[2 * 6 + 2] = 0.00002
         Qnoise[3 * 6 + 3] = Qnoise[4 * 6 + 4] = Qnoise[5 * 6 + 5] = 0.002
-        SimulationBaseClass.SetCArray(Qnoise, 'double', self.AttUKF.QNoiseInit)
+        self.AttUKF.QNoiseInit = Qnoise
         self.AttUKF.stInputName = "parsed_st_data"
         self.AttUKF.InertialUKFStateName = "attitude_filter_state"
         self.AttUKF.inputRWSpeeds = "reactionwheel_output_states"

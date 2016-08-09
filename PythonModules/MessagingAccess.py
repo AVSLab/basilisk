@@ -49,7 +49,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    swigObject = eval('LocalContainer.' + VarName);
    swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
    TimeValues = array.array('d')
-   if swigObject:
+   if swigObjectGood:
       functionCall = eval('sim_model.' + VarType + 'Array_getitem')
    else: #So this is weird, but weirdly we need to punch a duck now
       RefFunctionString = 'def GetMessage' + MessageName + VarName + '(self):\n'
@@ -64,6 +64,8 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
       while executeLoop:
          if swigObjectGood:
             TimeValues.append(functionCall(swigObject, currentIndex))
+         elif startIndex != stopIndex:
+            TimeValues.append(functionCall(LocalContainer)[currentIndex])
          else:
             TimeValues.append(functionCall(LocalContainer))
          currentIndex -= 1

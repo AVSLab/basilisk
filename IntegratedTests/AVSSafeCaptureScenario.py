@@ -104,12 +104,9 @@ if __name__ == "__main__":
     TheAVSSim.VehOrbElemObject.CurrentElem.f = 70.0 * math.pi / 180.0
     # Convert those OEs to cartesian
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
-    PosVec = ctypes.cast(TheAVSSim.VehOrbElemObject.r_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    VelVec = ctypes.cast(TheAVSSim.VehOrbElemObject.v_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
-    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
+    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.r_N[:])
+    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.v_N[:])
+    print TheAVSSim.VehDynObject.PositionInit[0]
 
     executeAVSSafeCapture(TheAVSSim)
 

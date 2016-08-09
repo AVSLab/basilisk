@@ -622,11 +622,14 @@ class SimBaseClass:
         #import module
 
 def SetCArray(InputList, VarType, ArrayPointer):
-    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
-    CurrIndex = 0
-    for CurrElem in InputList:
-        exec (CmdString)
-        CurrIndex += 1
+    try:
+        ArrayPointer[0] = InputList[0]
+    except TypeError:
+        CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
+        CurrIndex = 0
+        for CurrElem in InputList:
+            exec (CmdString)
+            CurrIndex += 1
 
 
 def getCArray(varType, arrayPointer, arraySize):
