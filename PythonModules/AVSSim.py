@@ -874,7 +874,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
         rwType = 'Honeywell_HR16'
-        self.rwDynObject.ModelTag = "ReactionWheels"
+        modelTag = "ReactionWheels"
         self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
         simSetupUtilitiesRW.clearRWSetup()
@@ -913,7 +913,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             [-0.8, 0.8, 1.79070]  # r_S [m]
         )
 
-        simSetupUtilitiesRW.addRWToSpacecraft(self.rwDynObject.ModelTag, self.rwDynObject, self.VehDynObject)
+        simSetupUtilitiesRW.addRWToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
