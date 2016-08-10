@@ -217,6 +217,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
         # create RW object container and tie to spacecraft object
         rwDynObject = reactionwheel_dynamics.ReactionWheelDynamics()
+        rwDynObject.inputVehProps = "spacecraft_mass_props"
         simSetupUtilitiesRW.addRWToSpacecraft("ReactionWheels", rwDynObject, VehDynObject)
 
         # set RW torque command
