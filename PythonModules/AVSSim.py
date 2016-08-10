@@ -82,6 +82,8 @@ import eulerRotation
 import attTrackingError
 import simpleDeadband
 
+import simSetupUtilitiesRW                 # RW simulation setup utilties
+
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
     def __init__(self):
@@ -868,73 +870,111 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
 
     def SetReactionWheelDynObject(self):
-        rwMaxTorque = 0.2
-        rwMinTorque = 0.001  # arbitrary
-        rwStaticFrictionTorque = 0.0005  # arbitrary
-        rwStaticImbalance = 7.0E-6  # kg-m, based on rough industry reference
-        rwDynamicImbalance = 20.0E-7  # kg-m^2, based on rough industry reference
-        rwJs = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
+        # rwMaxTorque = 0.2
+        # rwMinTorque = 0.001  # arbitrary
+        # rwStaticFrictionTorque = 0.0005  # arbitrary
+        # rwStaticImbalance = 7.0E-6  # kg-m, based on rough industry reference
+        # rwDynamicImbalance = 20.0E-7  # kg-m^2, based on rough industry reference
+        # rwJs = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
         self.rwDynObject.ModelTag = "ReactionWheels"
         self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
-        RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
-        SimulationBaseClass.SetCArray([0.8, 0.8, 1.79070], 'double', RW1.r_S)
-        SimulationBaseClass.SetCArray(
+        simSetupUtilitiesRW.clearRWSetup()
+        simSetupUtilitiesRW.options.useRWfriction = True
+        simSetupUtilitiesRW.options.useMinTorque = True
+        simSetupUtilitiesRW.options.maxMomentum = 100    # Nms
+        simSetupUtilitiesRW.createRW(
+            'Honeywell_HR16',
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-             -math.cos(rwElAngle)], 'double', RW1.gsHat_S)
-        RW1.u_max = rwMaxTorque
-        RW1.u_min = rwMinTorque
-        RW1.u_f = rwStaticFrictionTorque
-        RW1.Js = rwJs
-        RW1.U_s = rwStaticImbalance
-        RW1.U_d = rwDynamicImbalance
-        self.rwDynObject.AddReactionWheel(RW1)
-
+             -math.cos(rwElAngle)],  # gsHat_S
+            0.0,  # Omega [RPM]
+            [0.8, 0.8, 1.79070] #r_S [m]
+        )
         rwClockAngle += 90.0 * math.pi / 180.0
-        RW2 = reactionwheel_dynamics.ReactionWheelConfigData()
-        SimulationBaseClass.SetCArray([0.8, -0.8, 1.79070], 'double', RW2.r_S)
-        SimulationBaseClass.SetCArray(
+        simSetupUtilitiesRW.createRW(
+            'Honeywell_HR16',
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-             -math.cos(rwElAngle)], 'double', RW2.gsHat_S)
-        RW2.u_max = rwMaxTorque
-        RW2.u_min = rwMinTorque
-        RW2.u_f = rwStaticFrictionTorque
-        RW2.Js = rwJs
-        RW2.U_s = rwStaticImbalance
-        RW2.U_d = rwDynamicImbalance
-        self.rwDynObject.AddReactionWheel(RW2)
-
+             -math.cos(rwElAngle)],  # gsHat_S
+            0.0,  # Omega [RPM]
+            [0.8, -0.8, 1.79070]  # r_S [m]
+        )
         rwClockAngle += 90.0 * math.pi / 180.0
-        RW3 = reactionwheel_dynamics.ReactionWheelConfigData()
-        SimulationBaseClass.SetCArray([-0.8, -0.8, 1.79070], 'double', RW3.r_S)
-        SimulationBaseClass.SetCArray(
+        simSetupUtilitiesRW.createRW(
+            'Honeywell_HR16',
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-             -math.cos(rwElAngle)], 'double', RW3.gsHat_S)
-        RW3.u_max = rwMaxTorque
-        RW3.u_min = rwMinTorque
-        RW3.u_f = rwStaticFrictionTorque
-        RW3.Js = rwJs
-        RW3.U_s = rwStaticImbalance
-        RW3.U_d = rwDynamicImbalance
-        self.rwDynObject.AddReactionWheel(RW3)
-
+             -math.cos(rwElAngle)],  # gsHat_S
+            0.0,  # Omega [RPM]
+            [-0.8, -0.8, 1.79070]  # r_S [m]
+        )
         rwClockAngle += 90.0 * math.pi / 180.0
-        RW4 = reactionwheel_dynamics.ReactionWheelConfigData()
-        SimulationBaseClass.SetCArray([-0.8, 0.8, 1.79070], 'double', RW4.r_S)
-        SimulationBaseClass.SetCArray(
+        simSetupUtilitiesRW.createRW(
+            'Honeywell_HR16',
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-             -math.cos(rwElAngle)], 'double', RW4.gsHat_S)
-        RW4.u_max = rwMaxTorque
-        RW4.u_min = rwMinTorque
-        RW4.u_f = rwStaticFrictionTorque
-        RW4.Js = rwJs
-        RW4.U_s = rwStaticImbalance
-        RW4.U_d = rwDynamicImbalance
-        self.rwDynObject.AddReactionWheel(RW4)
-    
-        self.VehDynObject.addReactionWheelSet(self.rwDynObject)
+             -math.cos(rwElAngle)],  # gsHat_S
+            0.0,  # Omega [RPM]
+            [-0.8, 0.8, 1.79070]  # r_S [m]
+        )
+
+        simSetupUtilitiesRW.addRWToSpacecraft(self.rwDynObject.ModelTag, self.rwDynObject, self.VehDynObject)
+
+        # RW1 = reactionwheel_dynamics.ReactionWheelConfigData()
+        # SimulationBaseClass.SetCArray([0.8, 0.8, 1.79070], 'double', RW1.r_S)
+        # SimulationBaseClass.SetCArray(
+        #     [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+        #      -math.cos(rwElAngle)], 'double', RW1.gsHat_S)
+        # RW1.u_max = rwMaxTorque
+        # RW1.u_min = rwMinTorque
+        # RW1.u_f = rwStaticFrictionTorque
+        # RW1.Js = rwJs
+        # RW1.U_s = rwStaticImbalance
+        # RW1.U_d = rwDynamicImbalance
+        # self.rwDynObject.AddReactionWheel(RW1)
+        #
+        # rwClockAngle += 90.0 * math.pi / 180.0
+        # RW2 = reactionwheel_dynamics.ReactionWheelConfigData()
+        # SimulationBaseClass.SetCArray([0.8, -0.8, 1.79070], 'double', RW2.r_S)
+        # SimulationBaseClass.SetCArray(
+        #     [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+        #      -math.cos(rwElAngle)], 'double', RW2.gsHat_S)
+        # RW2.u_max = rwMaxTorque
+        # RW2.u_min = rwMinTorque
+        # RW2.u_f = rwStaticFrictionTorque
+        # RW2.Js = rwJs
+        # RW2.U_s = rwStaticImbalance
+        # RW2.U_d = rwDynamicImbalance
+        # self.rwDynObject.AddReactionWheel(RW2)
+        #
+        # rwClockAngle += 90.0 * math.pi / 180.0
+        # RW3 = reactionwheel_dynamics.ReactionWheelConfigData()
+        # SimulationBaseClass.SetCArray([-0.8, -0.8, 1.79070], 'double', RW3.r_S)
+        # SimulationBaseClass.SetCArray(
+        #     [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+        #      -math.cos(rwElAngle)], 'double', RW3.gsHat_S)
+        # RW3.u_max = rwMaxTorque
+        # RW3.u_min = rwMinTorque
+        # RW3.u_f = rwStaticFrictionTorque
+        # RW3.Js = rwJs
+        # RW3.U_s = rwStaticImbalance
+        # RW3.U_d = rwDynamicImbalance
+        # self.rwDynObject.AddReactionWheel(RW3)
+        #
+        # rwClockAngle += 90.0 * math.pi / 180.0
+        # RW4 = reactionwheel_dynamics.ReactionWheelConfigData()
+        # SimulationBaseClass.SetCArray([-0.8, 0.8, 1.79070], 'double', RW4.r_S)
+        # SimulationBaseClass.SetCArray(
+        #     [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+        #      -math.cos(rwElAngle)], 'double', RW4.gsHat_S)
+        # RW4.u_max = rwMaxTorque
+        # RW4.u_min = rwMinTorque
+        # RW4.u_f = rwStaticFrictionTorque
+        # RW4.Js = rwJs
+        # RW4.U_s = rwStaticImbalance
+        # RW4.U_d = rwDynamicImbalance
+        # self.rwDynObject.AddReactionWheel(RW4)
+        #
+        # self.VehDynObject.addReactionWheelSet(self.rwDynObject)
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
