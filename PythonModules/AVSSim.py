@@ -83,6 +83,7 @@ import attTrackingError
 import simpleDeadband
 
 import simSetupUtilitiesRW                 # RW simulation setup utilties
+import simSetupUtilitiesThruster           # Thruster simulation setup utilties
 
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
@@ -918,49 +919,53 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
         self.ACSThrusterDynObject.InputCmds = "acs_thruster_cmds"
 
-        Thruster1 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([-0.86360, -0.82550, 1.79070], 'double', Thruster1.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster1.inputThrDir_S)
-        Thruster1.MaxThrust = 0.9
-        Thruster1.MinOnTime = 0.020
-        Thruster2 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([-0.82550, -0.86360, 1.79070], 'double', Thruster2.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster2.inputThrDir_S)
-        Thruster2.MaxThrust = 0.9
-        Thruster2.MinOnTime = 0.020
-        Thruster3 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([0.82550, 0.86360, 1.79070], 'double', Thruster3.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster3.inputThrDir_S)
-        Thruster3.MaxThrust = 0.9
-        Thruster3.MinOnTime = 0.020
-        Thruster4 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([0.86360, 0.82550, 1.79070], 'double', Thruster4.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster4.inputThrDir_S)
-        Thruster4.MaxThrust = 0.9
-        Thruster4.MinOnTime = 0.020
-        Thruster5 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([-0.86360, -0.82550, -1.79070], 'double', Thruster5.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([1.0, 0.0, 0.0], 'double', Thruster5.inputThrDir_S)
-        Thruster5.MaxThrust = 0.9
-        Thruster5.MinOnTime = 0.020
-        Thruster6 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([-0.82550, -0.86360, -1.79070], 'double', Thruster6.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, 1.0, 0.0], 'double', Thruster6.inputThrDir_S)
-        Thruster6.MaxThrust = 0.9
-        Thruster6.MinOnTime = 0.020
-        Thruster7 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([0.82550, 0.86360, -1.79070], 'double', Thruster7.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([0.0, -1.0, 0.0], 'double', Thruster7.inputThrDir_S)
-        Thruster7.MaxThrust = 0.9
-        Thruster7.MinOnTime = 0.020
-        Thruster8 = thruster_dynamics.ThrusterConfigData()
-        SimulationBaseClass.SetCArray([0.86360, 0.82550, -1.79070], 'double', Thruster8.inputThrLoc_S)
-        SimulationBaseClass.SetCArray([-1.0, 0.0, 0.0], 'double', Thruster8.inputThrDir_S)
-        Thruster8.MaxThrust = 0.9
-        Thruster8.MinOnTime = 0.020
-        self.ACSThrusterDynObject.ThrusterData = \
-            thruster_dynamics.ThrusterConfigVector([Thruster1, Thruster2, Thruster3,
-                                                    Thruster4, Thruster5, Thruster6, Thruster7, Thruster8])
+        simSetupUtilitiesThruster.clearThrusterSetup()
+        thrusterType = 'MOOG_Monarc_1'
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [-0.86360, -0.82550, 1.79070],  # location in S frame
+            [1.0, 0.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [-0.82550, -0.86360, 1.79070],  # location in S frame
+            [0.0, 1.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [0.82550, 0.86360, 1.79070],  # location in S frame
+            [0.0, -1.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [0.86360, 0.82550, 1.79070],  # location in S frame
+            [-1.0, 0.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [-0.86360, -0.82550, -1.79070],  # location in S frame
+            [1.0, 0.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [-0.82550, -0.86360, -1.79070],  # location in S frame
+            [0.0, 1.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [0.82550, 0.86360, -1.79070],  # location in S frame
+            [0.0, -1.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.createThruster(
+            thrusterType,
+            [0.86360, 0.82550, -1.79070],  # location in S frame
+            [-1.0, 0.0, 0.0]  # direction in S frame
+        )
+        simSetupUtilitiesThruster.addThrustersToSpacecraft(self.ACSThrusterDynObject.ModelTag,
+                                                           self.ACSThrusterDynObject,
+                                                           self.VehDynObject)
+
+
         ACSpropCM = [0.0, 0.0, 1.2]
         ACSpropMass = 40  # Made up!!!!
         ACSpropRadius = 46.0 / 2.0 / 3.2808399 / 12.0
