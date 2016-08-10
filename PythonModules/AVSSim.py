@@ -246,7 +246,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_PDSafeWrap = alg_contain.AlgContain(self.MRP_PDSafeData,
                                                        MRP_PD.Update_MRP_PD,
                                                        MRP_PD.SelfInit_MRP_PD,
-                                                       MRP_PD.CrossInit_MRP_PD)
+                                                       MRP_PD.CrossInit_MRP_PD,
+                                                       MRP_PD.Reset_MRP_PD)
         self.MRP_PDSafeWrap.ModelTag = "MRP_PD"
 
         self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
