@@ -980,25 +980,40 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.DVThrusterDynObject.ModelTag = "DVThrusterDynamics"
         self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
         self.DVThrusterDynObject.inputProperties = "spacecraft_mass_props"
-        allThrusters = []
+
+        simSetupUtilitiesThruster.clearThrusterSetup()
+        thrusterType = 'MOOG_Monarc_90HT'
+
+
+        # allThrusters = []
         dvRadius = 0.4
-        DVIsp = 200.0
+        # DVIsp = 200.0
         maxThrust = 111.0
         minOnTime = 0.020
         i = 0
         angleInc = math.radians(60.0)
         while i < 6:
-            newThruster = thruster_dynamics.ThrusterConfigData()
-            SimulationBaseClass.SetCArray([dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0], 'double', newThruster.inputThrLoc_S)
-            SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', newThruster.inputThrDir_S)
-            newThruster.MaxThrust = maxThrust
-            newThruster.MinOnTime = minOnTime
-            newThruster.steadyIsp = DVIsp
-            allThrusters.append(newThruster)
+            simSetupUtilitiesThruster.createThruster(
+                thrusterType,
+                [dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0],  # location in S frame
+                [0.0, 0.0, 1.0]  # direction in S frame
+            )
+            simSetupUtilitiesThruster.thrusterList[i].MaxThrust = maxThrust
+            simSetupUtilitiesThruster.thrusterList[i].MinOnTime = minOnTime
+            # newThruster = thruster_dynamics.ThrusterConfigData()
+            # SimulationBaseClass.SetCArray([dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0], 'double', newThruster.inputThrLoc_S)
+            # SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', newThruster.inputThrDir_S)
+            # newThruster.MaxThrust = maxThrust
+            # newThruster.MinOnTime = minOnTime
+            # newThruster.steadyIsp = DVIsp
+            # allThrusters.append(newThruster)
             i += 1
 
-        self.DVThrusterDynObject.ThrusterData = \
-            thruster_dynamics.ThrusterConfigVector(allThrusters)
+        simSetupUtilitiesThruster.addThrustersToSpacecraft(self.DVThrusterDynObject.ModelTag,
+                                                           self.DVThrusterDynObject,
+                                                           self.VehDynObject)
+        # self.DVThrusterDynObject.ThrusterData = \
+        #     thruster_dynamics.ThrusterConfigVector(allThrusters)
 
         DVpropCM = [0.0, 0.0, 1.0]
         DVpropMass = 812.3 - 40  # The 40 comes from the made up ACS number!
