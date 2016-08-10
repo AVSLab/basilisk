@@ -35,14 +35,8 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 import spice_interface
 import six_dof_eom
 import integrators
-import MessagingAccess
 import SimulationBaseClass
-import sim_model
 import unitTestSupport                  # general support file with common unit test functions
-import setupUtilitiesRW                 # RW simulation setup utilties
-import setupUtilitiesThruster           # Thruster simulation setup utilties
-import reactionwheel_dynamics
-import thruster_dynamics
 import macros
 
 
