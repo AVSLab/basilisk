@@ -872,6 +872,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetReactionWheelDynObject(self):
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
+        rwType = 'Honeywell_HR16'
         self.rwDynObject.ModelTag = "ReactionWheels"
         self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
@@ -880,7 +881,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         simSetupUtilitiesRW.options.useMinTorque = True
         simSetupUtilitiesRW.options.maxMomentum = 100    # Nms
         simSetupUtilitiesRW.createRW(
-            'Honeywell_HR16',
+            rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
             0.0,  # Omega [RPM]
@@ -888,7 +889,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         )
         rwClockAngle += 90.0 * math.pi / 180.0
         simSetupUtilitiesRW.createRW(
-            'Honeywell_HR16',
+            rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
             0.0,  # Omega [RPM]
@@ -896,7 +897,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         )
         rwClockAngle += 90.0 * math.pi / 180.0
         simSetupUtilitiesRW.createRW(
-            'Honeywell_HR16',
+            rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
             0.0,  # Omega [RPM]
@@ -904,7 +905,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         )
         rwClockAngle += 90.0 * math.pi / 180.0
         simSetupUtilitiesRW.createRW(
-            'Honeywell_HR16',
+            rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
             0.0,  # Omega [RPM]
