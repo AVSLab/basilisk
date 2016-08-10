@@ -238,7 +238,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringSafeData,
                                                        MRP_Steering.Update_MRP_Steering,
                                                        MRP_Steering.SelfInit_MRP_Steering,
-                                                       MRP_Steering.CrossInit_MRP_Steering)
+                                                       MRP_Steering.CrossInit_MRP_Steering,
+                                                       MRP_Steering.Reset_MRP_Steering)
         self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
 
         self.MRP_PDSafeData = MRP_PD.MRP_PDConfig()
@@ -337,7 +338,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWAMappingDataWrap = alg_contain.AlgContain(self.RWAMappingData,
                                                          dvAttEffect.Update_dvAttEffect,
                                                          dvAttEffect.SelfInit_dvAttEffect,
-                                                         dvAttEffect.CrossInit_dvAttEffect)
+                                                         dvAttEffect.CrossInit_dvAttEffect,
+                                                         dvAttEffect.Reset_dvAttEffect)
         self.RWAMappingDataWrap.ModelTag = "RWAMappingData"
 
         self.RWANullSpaceData = rwNullSpace.rwNullSpaceConfig()
