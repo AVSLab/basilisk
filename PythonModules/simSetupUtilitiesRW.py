@@ -132,7 +132,6 @@ def addRWToSpacecraft(modelTag, rwDynObject, VehDynObject):
     global rwList
 
     rwDynObject.ModelTag = modelTag
-    rwDynObject.inputVehProps="spacecraft_mass_props"
     for item in rwList:
         rwDynObject.AddReactionWheel(item)
 
