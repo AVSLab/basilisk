@@ -14,24 +14,19 @@ sys.path.append(path + '/../PythonModules')
 
 # import AVSSim
 
+
 # ----------------------------- METHODS ----------------------------- #
+
+#  This method searches a dictionary for a key that has a specific value. Requires dict keys have unique values
 def matchDictValueToKey(dict,searchVal):
     return dict.keys()[dict.values().index(searchVal)]
 
-def getDataTypeStr(typStr):
-    typStr = typStr[(typStr.find("'")+1):len(typStr)]
-    typStr = typStr[0:typStr.find("'")]
-    if typStr.find(' *') >= 0:
-        typStr = typStr[0:typStr.find(' *')]
-    if typStr.find('int') >= 0:
-        typStr = typStr[typStr.find('int'):(typStr.find('int')+3)]
-    return typStr
-
+# This method simply makes a string of the format: 'self.TaskList[0].TaskModels[0]'
 def makeTaskModelString(i,j):
     return 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']'
 
+# This method is the main autocode sequence. This method is NOT recursive.
 def autoCode():
-    # main autocode sequence
     print TaskListIdxs
     for i in TaskListIdxs: # loop through TaskLists
         auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
@@ -52,14 +47,14 @@ def autoCode():
     print("Goin' to Mars2")
     return
 
+# This method takes in a string and returns a valid variable name.
 def makeValidVarName(s):
-   s = re.sub('[^0-9a-zA-Z_]', '', s)
-   s = re.sub('^[^a-zA-Z_]+', '', s)
-   return s
+    s = re.sub('[^0-9a-zA-Z_]', '', s)
+    s = re.sub('^[^a-zA-Z_]+', '', s)
+    return s
 
-
+# This method recursively autocodes the input object.
 def codeThisOut(input,prefix):
-
     fieldNames = dir(input) # list all the variable names under current TaskModel. input = TaskList[i].TaskModels[j]
 
     for k in range(0,len(fieldNames)): # loop through variables within current TaskModel
@@ -127,10 +122,7 @@ if __name__ == "__main__":
     arrMaxLen = 3
     NameReplace = TheAVSSim.NameReplace
     TaskList = TheAVSSim.TaskList
-    # TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
-    # TaskListIdxs = [11]
     TaskListIdxs = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
-
 
     # open the files for writing
     auxFile = open(path + '/../FSW_autocode/autocode_aux.txt', 'w') # auxFile is useful for debugging
@@ -148,11 +140,13 @@ if __name__ == "__main__":
             if not tmStr in NameReplace.values():
                 NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
 
+    # make sure all NameReplace keys are valid variable names
     newNameReplace = {}
     for i in range(0,len(NameReplace.keys())):
         newNameReplace[makeValidVarName(NameReplace.keys()[i])] = NameReplace.values()[i]
     NameReplace = newNameReplace
 
+    # autocode TheAVSSim!
     autoCode()
 
     auxFile.close() # close auxFile
