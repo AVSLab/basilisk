@@ -45,8 +45,8 @@ import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import unitTestSupport                  # general support file with common unit test functions
-import simSetupUtilitiesRW                 # RW simulation setup utilties
-import simSetupUtilitiesThruster           # Thruster simulation setup utilties
+import simSetupRW                       # RW simulation setup utilties
+import simSetupThruster                 # Thruster simulation setup utilties
 import reactionwheel_dynamics
 import thruster_dynamics
 import macros
@@ -152,8 +152,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useThruster:
         # add thruster devices
         # The clearThrusterSetup() is critical if the script is to run multiple times
-        simSetupUtilitiesThruster.clearThrusterSetup()
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.clearSetup()
+        simSetupThruster.create(
                 'MOOG_Monarc_1',
                 [1,0,0],                # location in S frame
                 [0,1,0]                 # direction in S frame
@@ -161,9 +161,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
         # create thruster object container and tie to spacecraft object
         thrustersDynObject = thruster_dynamics.ThrusterDynamics()
-        simSetupUtilitiesThruster.addThrustersToSpacecraft("Thrusters",
-                                                       thrustersDynObject,
-                                                       VehDynObject)
+        simSetupThruster.addToSpacecraft(  "Thrusters",
+                                            thrustersDynObject,
+                                            VehDynObject)
 
         # setup the thruster mass properties
         thrusterPropCM = [0.0, 0.0, 1.2]
@@ -195,20 +195,20 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useRW:
         # add RW devices
         # The clearRWSetup() is critical if the script is to run multiple times
-        simSetupUtilitiesRW.clearRWSetup()
-        simSetupUtilitiesRW.options.useRWJitter = useJitter
-        simSetupUtilitiesRW.options.maxMomentum = 100
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.clearSetup()
+        simSetupRW.options.useRWJitter = useJitter
+        simSetupRW.options.maxMomentum = 100
+        simSetupRW.create(
                 'Honeywell_HR16',
                 [1,0,0],                # gsHat_S
                 0.0                     # RPM
                 )
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.create(
                 'Honeywell_HR16',
                 [0,1,0],                # gsHat_S
                 0.0                     # RPM
                 )
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.create(
                 'Honeywell_HR16',
                 [0,0,1],                # gsHat_S
                 0.0,                    # RPM
@@ -218,7 +218,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         # create RW object container and tie to spacecraft object
         rwDynObject = reactionwheel_dynamics.ReactionWheelDynamics()
         rwDynObject.inputVehProps = "spacecraft_mass_props"
-        simSetupUtilitiesRW.addRWToSpacecraft("ReactionWheels", rwDynObject, VehDynObject)
+        simSetupRW.addToSpacecraft("ReactionWheels", rwDynObject, VehDynObject)
 
         # set RW torque command
         scSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 2)

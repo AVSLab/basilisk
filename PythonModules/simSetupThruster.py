@@ -29,7 +29,6 @@ sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import SimulationBaseClass
-import macros
 import thruster_dynamics
 
 class thrusterOptions:
@@ -50,7 +49,7 @@ options = thrusterOptions()
 #   the createThruster() commands.  This new option is then applied to all the following
 #   createThruster() calls.
 #
-def createThruster(
+def create(
         thrusterType,
         r_S,
         tHat_S
@@ -95,7 +94,7 @@ def createThruster(
 #   It creates the C-class container for the array of thruster devices, and attaches
 #   this container to the spacecraft object
 #
-def addThrustersToSpacecraft(modelTag, thDynObject, VehDynObject):
+def addToSpacecraft(modelTag, thDynObject, VehDynObject):
     global thrusterList
 
     thDynObject.ModelTag = modelTag
@@ -108,7 +107,7 @@ def addThrustersToSpacecraft(modelTag, thDynObject, VehDynObject):
 
     return
 
-def clearThrusterSetup():
+def clearSetup():
     global thrusterList
     global options
 
@@ -116,6 +115,10 @@ def clearThrusterSetup():
     options = thrusterOptions()
 
     return
+
+def getNumOfDevices():
+    return len(thrusterList)
+
 
 #
 #   MOOG Monarc-1
