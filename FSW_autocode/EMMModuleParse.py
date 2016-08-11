@@ -64,16 +64,16 @@ def codeThisOut(input,prefix):
         fieldTypeName = type(fieldValue).__name__
         fieldTypeFull = str(type(fieldValue))
 
-        print fieldName
-        print fieldTypeFull
-        print fieldTypeName
-        print str(fieldValue)
-        print '\n'
-
-        auxFile.write('\n'+fieldName+'\n') # print name of current element of taskmodel to workfile
-        auxFile.write(fieldTypeFull+'\n') # print datatype to workfile
-        auxFile.write(fieldTypeName+'\n') # print datatype to workfile
-        auxFile.write(str(fieldValue)+'\n') # print value of current element to workfile
+        if not (fieldName[0:2] == '__' or fieldName[0:4] == 'this'):
+            print fieldName
+            print fieldTypeFull
+            print fieldTypeName
+            print str(fieldValue)
+            print '\n'
+            auxFile.write('\n'+fieldName+'\n') # print name of current element of taskmodel to workfile
+            auxFile.write(fieldTypeFull+'\n') # print datatype to workfile
+            auxFile.write(fieldTypeName+'\n') # print datatype to workfile
+            auxFile.write(str(fieldValue)+'\n') # print value of current element to workfile
 
         # this and __
         if (fieldName[0:2] == '__') or (fieldName[0:4] == 'this'):
