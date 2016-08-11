@@ -39,6 +39,7 @@ typedef struct {
 typedef struct {
     double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
     double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
+    double r_S[3];
 }RWConfigurationElement;
 
 typedef struct {
