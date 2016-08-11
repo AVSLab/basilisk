@@ -40,6 +40,7 @@ import rwMotorTorque
 import macros
 import MRP_Steering
 import vehicleConfigData
+import fswSetupRW
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -95,35 +96,19 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
 
     # wheelConfigData Message
-    inputMessageSize = 4 + vehicleConfigData.MAX_EFF_CNT * 7 * 8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwClass = vehicleConfigData.RWConstellation()
-    rwPointer = vehicleConfigData.RWConfigurationElement()
+    fswSetupRW.clearSetup()
+    Js = 0.1
+    fswSetupRW.create([1.0, 0.0, 0.0], Js)
+    fswSetupRW.create([0.0, 1.0, 0.0], Js)
+    fswSetupRW.create([0.0, 0.0, 1.0], Js)
+    fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
+    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigDataName,
+                                                   unitTestSim.TotalSim,
+                                                   unitProcessName)
+    numRWs = fswSetupRW.getNumOfDevices()
+    moduleConfig.numRWAs = numRWs
 
-    localGsMatrix = [1., 0., 0.,
-                    0., 1., 0.,
-                    0., 0., 1.,
-                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-
-    rwClass.numRW = len(localGsMatrix)/3
-    i = 0
-    while (i < rwClass.numRW):
-        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
-                                       localGsMatrix[i*3+1],
-                                       localGsMatrix[i*3+2]],
-                                      'double',
-                                      rwPointer.gsHat_S)
-        rwPointer.Js = 0.1
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-        i += 1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          rwClass)
-
+    
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
@@ -205,7 +190,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(rwClass.numRW))
+                                                  range(numRWs))
     print moduleOutput
 
     # set the output truth states
@@ -229,7 +214,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwClass.numRW, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numRWs, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
