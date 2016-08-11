@@ -830,7 +830,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
             SimulationBaseClass.SetCArray([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                            -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)], 'double',
-                                           rwPointer.Gs_S)
+                                           rwPointer.gsHat_S)
             rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
             vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
             i += 1
