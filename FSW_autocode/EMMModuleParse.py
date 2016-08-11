@@ -98,21 +98,9 @@ def codeThisOut(input,prefix):
             dest = ConfigDataStr + prefix + '.' + str(fieldName)
             EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(fieldValue)+'"' + ')'+';\n')
 
-        # array (SwigPyObject) or method (instancemethod)
+        # SwigPyObject or instancemethod
         elif fieldTypeName == 'SwigPyObject' or fieldTypeName == 'instancemethod':
-            fieldValueStr = fieldValue.__str__()
-
-            if ((fieldValueStr.find('void') >= 0) or (fieldValueStr.find('AlgContain') >= 0))or fieldTypeName == 'instancemethod':
-                continue # skip void and AlgContain and instancemethod
-            else:
-                fieldValueTypeStr = getDataTypeStr(fieldValueStr)
-                if fieldValueTypeStr != 'double':
-                    print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! fieldValueTypeStr: ' + fieldValueTypeStr + '\n\n\n'
-                    continue
-                # if fieldValueTypeStr == 'double'
-                arr = AVSSim.SimulationBaseClass.getCArray(fieldValueTypeStr,fieldValue,arrMaxLen)
-                for l in range(0,arrMaxLen):
-                    EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+            continue # skip SwigPyObject and instancemethod
 
         # handle lists (after Scott's fix)
         elif fieldTypeName == 'list':
@@ -141,7 +129,7 @@ if __name__ == "__main__":
     TaskList = TheAVSSim.TaskList
     # TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
     # TaskListIdxs = [11]
-    taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
+    TaskListIdxs = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
 
 
     # open the files for writing
