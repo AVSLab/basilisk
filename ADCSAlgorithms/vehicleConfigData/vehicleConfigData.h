@@ -39,7 +39,6 @@ typedef struct {
 typedef struct {
     double Gs_S[3];             /*!< [-] Spin axis of the wheel in structure */
     double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
-    double r_S[3];              /*!< [m] Location of the reaction wheel in structure*/
 }RWConfigurationElement;
 
 typedef struct {
