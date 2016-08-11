@@ -84,9 +84,9 @@ import simpleDeadband
 import thrForceMapping
 import rwMotorTorque
 
-import simSetupUtilitiesRW                 # RW simulation setup utilties
-import simSetupUtilitiesThruster           # Thruster simulation setup utilties
-
+import simSetupRW                 # RW simulation setup utilties
+import simSetupThruster           # Thruster simulation setup utilties
+import fswSetupRW
 
 class AVSSim(SimulationBaseClass.SimBaseClass):
     def __init__(self):
@@ -933,11 +933,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         modelTag = "ReactionWheels"
         self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
-        simSetupUtilitiesRW.clearRWSetup()
-        simSetupUtilitiesRW.options.useRWfriction = True
-        simSetupUtilitiesRW.options.useMinTorque = True
-        simSetupUtilitiesRW.options.maxMomentum = 100    # Nms
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.clearSetup()
+        simSetupRW.options.useRWfriction = True
+        simSetupRW.options.useMinTorque = True
+        simSetupRW.options.maxMomentum = 100    # Nms
+        simSetupRW.create(
             rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
@@ -945,7 +945,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             [0.8, 0.8, 1.79070] #r_S [m]
         )
         rwClockAngle += 90.0 * math.pi / 180.0
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.create(
             rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
@@ -953,7 +953,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             [0.8, -0.8, 1.79070]  # r_S [m]
         )
         rwClockAngle += 90.0 * math.pi / 180.0
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.create(
             rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
@@ -961,7 +961,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             [-0.8, -0.8, 1.79070]  # r_S [m]
         )
         rwClockAngle += 90.0 * math.pi / 180.0
-        simSetupUtilitiesRW.createRW(
+        simSetupRW.create(
             rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
@@ -969,57 +969,57 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             [-0.8, 0.8, 1.79070]  # r_S [m]
         )
 
-        simSetupUtilitiesRW.addRWToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
+        simSetupRW.addToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
 
     def SetACSThrusterDynObject(self):
         self.ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
         self.ACSThrusterDynObject.InputCmds = "acs_thruster_cmds"
 
-        simSetupUtilitiesThruster.clearThrusterSetup()
+        simSetupThruster.clearSetup()
         thrusterType = 'MOOG_Monarc_1'
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [-0.86360, -0.82550, 1.79070],  # location in S frame
             [1.0, 0.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [-0.82550, -0.86360, 1.79070],  # location in S frame
             [0.0, 1.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [0.82550, 0.86360, 1.79070],  # location in S frame
             [0.0, -1.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [0.86360, 0.82550, 1.79070],  # location in S frame
             [-1.0, 0.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [-0.86360, -0.82550, -1.79070],  # location in S frame
             [1.0, 0.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [-0.82550, -0.86360, -1.79070],  # location in S frame
             [0.0, 1.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [0.82550, 0.86360, -1.79070],  # location in S frame
             [0.0, -1.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.createThruster(
+        simSetupThruster.create(
             thrusterType,
             [0.86360, 0.82550, -1.79070],  # location in S frame
             [-1.0, 0.0, 0.0]  # direction in S frame
         )
-        simSetupUtilitiesThruster.addThrustersToSpacecraft(self.ACSThrusterDynObject.ModelTag,
-                                                           self.ACSThrusterDynObject,
-                                                           self.VehDynObject)
+        simSetupThruster.addToSpacecraft(self.ACSThrusterDynObject.ModelTag,
+                                         self.ACSThrusterDynObject,
+                                         self.VehDynObject)
 
 
         ACSpropCM = [0.0, 0.0, 1.2]
@@ -1037,7 +1037,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.DVThrusterDynObject.InputCmds = "dv_thruster_cmds"
         self.DVThrusterDynObject.inputProperties = "spacecraft_mass_props"
 
-        simSetupUtilitiesThruster.clearThrusterSetup()
+        simSetupThruster.clearSetup()
         thrusterType = 'MOOG_Monarc_90HT'
 
 
@@ -1049,13 +1049,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         i = 0
         angleInc = math.radians(60.0)
         while i < 6:
-            simSetupUtilitiesThruster.createThruster(
+            simSetupThruster.create(
                 thrusterType,
                 [dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0],  # location in S frame
                 [0.0, 0.0, 1.0]  # direction in S frame
             )
-            simSetupUtilitiesThruster.thrusterList[i].MaxThrust = maxThrust
-            simSetupUtilitiesThruster.thrusterList[i].MinOnTime = minOnTime
+            simSetupThruster.thrusterList[i].MaxThrust = maxThrust
+            simSetupThruster.thrusterList[i].MinOnTime = minOnTime
             # newThruster = thruster_dynamics.ThrusterConfigData()
             # SimulationBaseClass.SetCArray([dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0], 'double', newThruster.inputThrLoc_S)
             # SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', newThruster.inputThrDir_S)
@@ -1065,9 +1065,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             # allThrusters.append(newThruster)
             i += 1
 
-        simSetupUtilitiesThruster.addThrustersToSpacecraft(self.DVThrusterDynObject.ModelTag,
-                                                           self.DVThrusterDynObject,
-                                                           self.VehDynObject)
+            simSetupThruster.addToSpacecraft(self.DVThrusterDynObject.ModelTag,
+                                             self.DVThrusterDynObject,
+                                             self.VehDynObject)
         # self.DVThrusterDynObject.ThrusterData = \
         #     thruster_dynamics.ThrusterConfigVector(allThrusters)
 
