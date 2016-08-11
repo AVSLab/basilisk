@@ -35,9 +35,11 @@ def autoCode():
     print TaskListIdxs
     for i in TaskListIdxs: # loop through TaskLists
         auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
+        print '\n\n'+'TaskList: '+str(i)+'\n'
 
         for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
                 auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
+                print '\n'+'TaskModel: '+str(j)+'\n'
 
                 fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
                 prefix = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
@@ -98,17 +100,24 @@ def codeThisOut(input,prefix):
 
         # array (SwigPyObject) or method (instancemethod)
         elif fieldTypeName == 'SwigPyObject' or fieldTypeName == 'instancemethod':
-            typeStr = fieldValue.__str__()
+            fieldValueStr = fieldValue.__str__()
 
-            if ((typeStr.find('void') >= 0) or (typeStr.find('AlgContain') >= 0)):
-                continue # skip void and AlgContain
+            if ((fieldValueStr.find('void') >= 0) or (fieldValueStr.find('AlgContain') >= 0))or fieldTypeName == 'instancemethod':
+                continue # skip void and AlgContain and instancemethod
             else:
-                typeStr = getDataTypeStr(typeStr)
+                fieldValueTypeStr = getDataTypeStr(fieldValueStr)
+                if fieldValueTypeStr != 'double':
+                    print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! fieldValueTypeStr: ' + fieldValueTypeStr + '\n\n\n'
+                    continue
+                # if fieldValueTypeStr == 'double'
+                arr = AVSSim.SimulationBaseClass.getCArray(fieldValueTypeStr,fieldValue,arrMaxLen)
+                for l in range(0,arrMaxLen):
+                    EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
 
-            arr = AVSSim.SimulationBaseClass.getCArray(typeStr,fieldValue,arrMaxLen)
-
-            for l in range(0,arrMaxLen):
-                EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(arr[l])+';\n')
+        # handle lists (after Scott's fix)
+        elif fieldTypeName == 'list':
+            for l in range(0,len(fieldValue)):
+                EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(fieldValue[l])+';\n')
 
         # non-array variable
         else:
@@ -130,7 +139,9 @@ if __name__ == "__main__":
     arrMaxLen = 3
     NameReplace = TheAVSSim.NameReplace
     TaskList = TheAVSSim.TaskList
-    TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
+    # TaskListIdxs = [10, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 21, 26]
+    # TaskListIdxs = [11]
+    taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 19, 20, 21, 22, 23, 24, 25, 26]
 
 
     # open the files for writing
