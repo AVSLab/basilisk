@@ -1,0 +1,49 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{hyphen\}}{\leveltext\leveltemplateid2\'01\uc0\u8259 ;}{\levelnumbers;}\fi-360\li1440\lin1440 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww8520\viewh14120\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\b\fs24 \cf0 Basilisk FSW Module Folder Template\
+
+\b0 \
+\
+A module folder can contain an individual FSW module folder.  The output message of this module is the same as the other modules inside the parent module folder.\
+\
+\
+
+\b Usage
+\b0 \
+To use this template:\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}make a copy of this sub-folder\
+{\listtext	\'95	}rename the sub-folder name\
+{\listtext	\'95	}rename the *.c, *.h and *.i files inside this sub-folder with the same module name\
+{\listtext	\'95	}rerun Cmake on the Basilisk project to create an updated Xcode or MS Studio Project file\
+{\listtext	\'95	}edit the *.i file first\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}replace \'93fswModuleTemplate\'94 text inside this *.i file with the new sub-module name\
+{\listtext	\uc0\u8259 	}include the proper module output message definition *.h file\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}edit the *.h file next\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}provide a unique sub-module MACRO name at the top of the file\
+{\listtext	\uc0\u8259 	}replace \'93fswModuleTemplate\'94 text inside this *.h file\
+{\listtext	\uc0\u8259 	}add any needed Module configuration data states and remove the dummy variable\
+{\listtext	\uc0\u8259 	}add any needed output or input message interface variables\
+{\listtext	\uc0\u8259 	}add any needed sub-module specific support subroutine interface definitions\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}edit the *.c file last\
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}update comment with the module name and description\
+{\listtext	\uc0\u8259 	}replace \'93fswModuleTemplate\'94 text inside this *.c file\
+{\listtext	\uc0\u8259 	}add any needed *.h inclusions at the top.  \
+{\listtext	\uc0\u8259 	}edit the  Update() routine introductory comment to describe what this module does\
+\pard\tx220\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li720\fi-720\pardirnatural\partightenfactor0
+\ls1\ilvl0\cf0 {\listtext	\'95	}in the _UnitTest folder, \
+\pard\tx940\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\li1440\fi-1440\pardirnatural\partightenfactor0
+\ls1\ilvl1\cf0 {\listtext	\uc0\u8259 	}replace \'93fswModuleTemplate\'94 text inside \'93test_xxx.py\'94 files\
+{\listtext	\uc0\u8259 	}update the unit test to provide an I/O unit test of this module\
+}
