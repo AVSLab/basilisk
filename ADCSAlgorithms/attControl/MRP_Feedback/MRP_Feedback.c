@@ -79,7 +79,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
         for(j=0; j<3; j=j+1)
         {
-            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
+            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].gsHat_S[j];
         }
     }
     

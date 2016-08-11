@@ -175,7 +175,7 @@ def mrp_steering_tracking(show_plots):
                                        localGsMatrix[i*3+1],
                                        localGsMatrix[i*3+2]],
                                       'double',
-                                      rwPointer.Gs_S)
+                                      rwPointer.gsHat_S)
         rwPointer.Js = 0.1
         vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
         i += 1
