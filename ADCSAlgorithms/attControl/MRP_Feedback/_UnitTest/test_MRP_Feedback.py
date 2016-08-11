@@ -104,7 +104,6 @@ def subModuleTestFunction(show_plots):
     moduleConfig.K  =   0.15
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
-    moduleConfig.numRWAs = 4
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
     domega0 = [0., 0., 0.]
     SimulationBaseClass.SetCArray(domega0, 'double', moduleConfig.domega0)

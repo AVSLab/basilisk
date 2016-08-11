@@ -103,7 +103,6 @@ def subModuleTestFunction(show_plots):
     moduleConfig.K3 =   1.0
     moduleConfig.Ki =   0.01
     moduleConfig.P  = 150.0
-    moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5*macros.D2R
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1;
 
