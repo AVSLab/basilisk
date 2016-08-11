@@ -61,7 +61,7 @@ def create(
     return
 
 #
-#   This function should be called after all RW devices are created with createRW()
+#   This function should be called after all devices are created with create()
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #

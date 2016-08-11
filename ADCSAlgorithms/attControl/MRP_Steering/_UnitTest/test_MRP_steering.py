@@ -33,6 +33,7 @@ import sunSafePoint  # import module(s) that creates the needed input message de
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import rwNullSpace
 import macros
+import fswSetupRW
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -156,33 +157,16 @@ def mrp_steering_tracking(show_plots):
                                           vehicleConfigOut)
 
     # wheelConfigData Message
-    inputMessageSize = 4 + vehicleConfigData.MAX_EFF_CNT * 7 * 8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    i = 0
-    rwClass = vehicleConfigData.RWConstellation()
-    rwPointer = vehicleConfigData.RWConfigurationElement()
+    fswSetupRW.clearSetup()
+    Js = 0.1
+    fswSetupRW.create([1.0, 0.0, 0.0], Js)
+    fswSetupRW.create([0.0, 1.0, 0.0], Js)
+    fswSetupRW.create([0.0, 0.0, 1.0], Js)
+    fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
+    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
+                               unitTestSim.TotalSim,
+                               unitProcessName)
 
-    localGsMatrix = [1, 0, 0,
-                    0, 1, 0,
-                    0, 0, 1,
-                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-    rwClass.numRW = 4
-    while (i < rwClass.numRW):
-        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
-                                       localGsMatrix[i*3+1],
-                                       localGsMatrix[i*3+2]],
-                                      'double',
-                                      rwPointer.gsHat_S)
-        rwPointer.Js = 0.1
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-        i += 1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          0,
-                                          rwClass)
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
