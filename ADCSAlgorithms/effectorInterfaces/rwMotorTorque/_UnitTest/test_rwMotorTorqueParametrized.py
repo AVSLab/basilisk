@@ -106,7 +106,6 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                                    unitTestSim.TotalSim,
                                                    unitProcessName)
     numRWs = fswSetupRW.getNumOfDevices()
-    moduleConfig.numRWAs = numRWs
 
     
     # Add test module to runtime call list
