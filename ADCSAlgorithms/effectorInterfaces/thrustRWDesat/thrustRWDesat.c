@@ -84,7 +84,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,
-                  localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
+                  localRWData.reactionWheels[i].gsHat_S, &ConfigData->rwAlignMap[i*3]);
     }
     
     ConfigData->numThrusters = localThrustData.numThrusters;

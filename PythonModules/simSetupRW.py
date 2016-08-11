@@ -54,10 +54,10 @@ options = rwOptions()
 #
 #   There are some RW options that can be changed.  The defaults are show in the rwOptions
 #   class definition.  The use can change any particular default value prior to calling
-#   the createRW() commands.  This new option is then applied to all the following
-#   createRW() calls.
+#   the create() commands.  This new option is then applied to all the following
+#   create() calls.
 #
-def createRW(
+def create(
         rwType,
         gsHat_S,
         Omega,
@@ -128,7 +128,7 @@ def createRW(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def addRWToSpacecraft(modelTag, rwDynObject, VehDynObject):
+def addToSpacecraft(modelTag, rwDynObject, VehDynObject):
     global rwList
 
     rwDynObject.ModelTag = modelTag
@@ -139,7 +139,7 @@ def addRWToSpacecraft(modelTag, rwDynObject, VehDynObject):
 
     return
 
-def clearRWSetup():
+def clearSetup():
     global rwList
     global options
 
@@ -147,6 +147,10 @@ def clearRWSetup():
     options = rwOptions()
 
     return
+
+
+def getNumOfDevices():
+    return len(rwList)
 
 #
 #   Honeywell HR16 (100Nm, 75Nm, 50Nm)

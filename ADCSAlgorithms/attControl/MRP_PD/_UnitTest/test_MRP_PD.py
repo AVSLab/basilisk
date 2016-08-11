@@ -31,7 +31,6 @@ import unitTestSupport  # general support file with common unit test functions
 import MRP_PD  # import the module that is to be tested
 import sunSafePoint  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
-import rwNullSpace
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

@@ -114,7 +114,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     for(i=0; i<ConfigData->numRW; i=i+1)
     {
         m33MultV3(RECAST3X3 ConfigData->sc.BS,
-                  localRWData.reactionWheels[i].Gs_S,
+                  localRWData.reactionWheels[i].gsHat_S,
                   ConfigData->gsHat_B[i]);
     }
 
