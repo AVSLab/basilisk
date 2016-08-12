@@ -69,13 +69,16 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
                                                  sizeof(vehicleConfigData), moduleID);
     ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                    sizeof(RWSpeedData), moduleID);
-    
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellation), moduleID);
-    
-    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
-    ConfigData->numRW = localRWData.numRW;
+
+    if (ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                    sizeof(RWConstellation), &localRWData, moduleID)) {
+        ConfigData->numRW = localRWData.numRW;
+    } else {
+        ConfigData->numRW = 0;
+    }
+
     for(i=0; i<ConfigData->numRW; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
@@ -147,9 +150,11 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
-    
+    if (ConfigData->numRW > 0) {
+        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                    sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+    }
+
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
