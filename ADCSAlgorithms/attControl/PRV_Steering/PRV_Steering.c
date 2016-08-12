@@ -55,6 +55,12 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
 {
+    /*! - Read static RW config data message and store it in module variables*/
+    RWConstellation localRWData;
+    int i, j;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
@@ -65,14 +71,14 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellation), moduleID);
-    /*! - Read static RW config data message and store it in module variables*/
-    RWConstellation localRWData;
-    int i, j;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
-    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
-    ConfigData->numRW = localRWData.numRW;
+
+    if (ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                    sizeof(RWConstellation), &localRWData, moduleID)) {
+        ConfigData->numRW = localRWData.numRW;
+    } else {
+        ConfigData->numRW = 0;
+    }
+
     for(i=0; i<ConfigData->numRW; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
@@ -143,9 +149,11 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
-    
+    if (ConfigData->numRW>0) {
+        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                    sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+    }
+
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
