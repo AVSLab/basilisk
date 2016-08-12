@@ -20,6 +20,8 @@ public:
 
     bool receiveData(std::vector<char> &data);
     bool sendData(std::vector<char> & data);
+    
+    bool close(void);
 
     virtual void clearBuffers(void);
 };

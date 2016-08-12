@@ -60,7 +60,6 @@ bool TcpClient::receiveData(std::vector<char> &data)
     boost::system::error_code ec;
 
     m_inboundBuffer = data;
-    uint32_t bytesReturned = m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
@@ -75,6 +74,23 @@ bool TcpClient::sendData(std::vector<char> &data)
     boost::system::error_code ec;
     m_outboundBuffer = data;
     boost::asio::write(*m_stream, boost::asio::buffer(m_outboundBuffer), ec);
+    if(ec) {
+        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+        return false;
+    }
+    return true;
+}
+
+bool TcpClient::close()
+{
+
+    boost::system::error_code ec;
+    m_stream->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+    if(ec) {
+        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+        return false;
+    }
+    m_stream->close(ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
