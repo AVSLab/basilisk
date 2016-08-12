@@ -548,6 +548,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.fswProc.disableAllTasks()"
                              , "self.enableTask('sensorProcessing')"
                              , "self.enableTask('velocityPointTask')"
+                             #, "self.enableTask('inertial3DPointTask')"
                              , "self.enableTask('simpleRWControlTask')"
                              , "self.ResetTask('simpleRWControlTask')"
                              ])
@@ -935,8 +936,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rwDynObject.inputVehProps = "spacecraft_mass_props"
 
         simSetupRW.clearSetup()
-        simSetupRW.options.useRWfriction = True
-        simSetupRW.options.useMinTorque = True
+        simSetupRW.options.useRWfriction = False
+        simSetupRW.options.useMinTorque = False
         simSetupRW.options.maxMomentum = 100    # Nms
         simSetupRW.create(rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
