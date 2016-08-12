@@ -11,42 +11,59 @@ TcpServer::TcpServer(boost::asio::io_service *ioService)
     m_stream.reset(new boost::asio::ip::tcp::socket(*ioService));
 }
 
-bool TcpServer::acceptConnections(std::string ipAddress, std::string portNum)
+bool TcpServer::acceptConnections(std::string ipAddress, uint32_t portNum)
 {
     boost::system::error_code ec;
     boost::asio::ip::tcp::resolver resolver(m_stream->get_io_service());
-    boost::asio::ip::tcp::resolver::query query(ipAddress, portNum);
-    boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(query, ec);
-    if(ec) {
-        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
-        return false;
+    boost::asio::ip::tcp::endpoint endpoint;
+    bool portBound = false;
+    while(!portBound)
+    {
+        boost::asio::ip::tcp::resolver::query query(ipAddress, std::to_string(portNum));
+        endpoint = *resolver.resolve(query, ec);
+        if(ec) {
+            std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+            return false;
+        }
+        m_acceptor->open(endpoint.protocol(), ec);
+        if(ec) {
+            std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+            return false;
+        }
+        m_acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(false), ec);
+        if(ec) {
+            std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+            return false;
+        }
+        m_acceptor->bind(endpoint, ec);
+        if(ec.value() == boost::system::errc::address_in_use) {
+            portBound = false;
+            portNum += 1;
+            m_acceptor->close();
+        }
+        else if(ec)
+        {
+            std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+            return false;
+        }
+        else{
+            portBound = true;
+        }
     }
-    m_acceptor->open(endpoint.protocol(), ec);
-    if(ec) {
-        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
-        return false;
-    }
-    m_acceptor->set_option(boost::asio::ip::tcp::acceptor::reuse_address(false), ec);
-    if(ec) {
-        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
-        return false;
-    }
-    m_acceptor->bind(endpoint, ec);
-    if(ec) {
-        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
-        return false;
-    }
+    
     m_acceptor->listen(boost::asio::socket_base::max_connections, ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
     }
+    std::cout << "Listening on: " << endpoint.port() << std::endl;
 
     m_acceptor->accept(*m_stream, endpoint, ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
     }
+    m_acceptor->close();
     return true;
 }
 
@@ -74,6 +91,9 @@ bool TcpServer::close(void)
 bool TcpServer::receiveData(std::vector<char> &data)
 {
     boost::system::error_code ec;
+    
+    m_inboundBuffer = data;
+    
     m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
@@ -84,7 +104,7 @@ bool TcpServer::receiveData(std::vector<char> &data)
     return true;
 }
 
-bool TcpServer::sendData(std::string data)
+bool TcpServer::sendData(std::vector<char> &data)
 {
     boost::system::error_code ec;
     m_outboundBuffer = data;
@@ -98,8 +118,6 @@ bool TcpServer::sendData(std::string data)
 
 void TcpServer::clearBuffers(void)
 {
-    m_stream->async_read_some(boost::asio::buffer(m_inboundBuffer),
-                              boost::bind(&BasicIoObject_t::handleClearBuffers, this,
-                                          boost::asio::placeholders::error,
-                                          boost::asio::placeholders::bytes_transferred));
+    m_outboundBuffer.clear();
+    m_inboundBuffer.clear();
 }

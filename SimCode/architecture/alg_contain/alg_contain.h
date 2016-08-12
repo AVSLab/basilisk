@@ -18,7 +18,7 @@ OR  IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef ALG_CONTAIN_H
 #define ALG_CONTAIN_H
 
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 
 typedef void (*AlgPtr)(void*, uint64_t);
 typedef void (*AlgUpdatePtr)(void*, uint64_t, uint64_t);

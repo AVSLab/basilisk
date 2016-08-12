@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define BORE_ANG_CALC_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
 #include "dynamics/SixDofEOM/six_dof_eom.h"
 

@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <vector>
 #include <stdint.h>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 /*! \addtogroup SimArchGroup
  * @{
  */

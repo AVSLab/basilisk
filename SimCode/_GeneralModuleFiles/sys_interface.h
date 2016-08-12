@@ -37,14 +37,15 @@ class  InterfaceDataExchange : public SysModel{
 public:
     InterfaceDataExchange();
     virtual ~InterfaceDataExchange();
-    bool linkProcesses();
-    bool linkMessages();
-    void discoverMessages();
-    void routeMessages();
+    virtual bool linkProcesses();
+    virtual bool linkMessages();
+    virtual void discoverMessages();
+    virtual void routeMessages();
 public:
     bool exchangeActive;                //!< (-) Flag indicating that exchange is active
     MessageInterfaceMatch processData;  //!< Definition of process movement
     std::vector<MessageInterfaceMatch> messageTraffic; //!< Message movement
+    bool needDelete;
 private:
     uint64_t msgBufferSize;
     uint8_t *msgBuffer;

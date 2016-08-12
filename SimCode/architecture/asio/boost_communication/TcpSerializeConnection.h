@@ -6,7 +6,7 @@
 #ifndef TCP_SERIALIZE_CONNECTION_HPP
 #define TCP_SERIALIZE_CONNECTION_HPP
 
-#include "basicIoDevice.h"
+#include "../_GeneralModuleFiles/basicIoDevice.h"
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/archive/text_iarchive.hpp>
@@ -69,7 +69,9 @@ int TcpSerializeConnection::sendData(const T &t, Handler handler)
         boost::system::error_code error(boost::asio::error::invalid_argument);
         return 1;
     }
-    m_outboundBuffer = archiveStream.str();
+    m_outboundBuffer.clear();
+    m_outboundBuffer.insert(m_outboundBuffer.begin(), archiveStream.str().c_str(),
+        archiveStream.str().c_str() + archiveStream.str().size());
 
     // Format the header
     std::ostringstream headerStream;

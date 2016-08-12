@@ -20,7 +20,7 @@
 
 #include <stdint.h>
 #include <vector>
-#include "SimCode/Utilities/sys_model.h"
+#include "SimCode/_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/unscent_kalfilt.h"
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "../_GeneralModuleFiles/navStateOut.h"

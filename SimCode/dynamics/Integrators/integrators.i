@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "../_GeneralModuleFiles/integrator.h"
    #include "../_GeneralModuleFiles/rk4Integrator.h"
    #include "eulerIntegrator.h"
-   #include "utilities/sys_model.h"
+   #include "_GeneralModuleFiles/sys_model.h"
 %}
 
 %include "swig_common_model.i"

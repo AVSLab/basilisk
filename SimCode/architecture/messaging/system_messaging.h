@@ -25,8 +25,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/blank_storage.h"
 #define MAX_MESSAGE_SIZE 512
 
-
-
 typedef struct {
     char MessageName[MAX_MESSAGE_SIZE];// -- It pains me, but let's fix name
     char messageStruct[MAX_MESSAGE_SIZE]; // -- Again, pain, but it's better

@@ -28,7 +28,7 @@ public:
     virtual bool close(void) = 0;
 
     virtual bool receiveData(std::vector<char> &data) = 0;
-    virtual bool sendData(std::string data) = 0;
+    virtual bool sendData(std::vector<char> &data) = 0;
 
     virtual void clearBuffers(void) = 0;
 
@@ -46,15 +46,16 @@ public:
     virtual bool close(void);
 
     virtual bool receiveData(std::vector<char> &data) { return 1; }
-    virtual bool sendData(std::string data) { return 1; }
+    virtual bool sendData(std::vector<char> &data) { return 1; }
 
     std::string getInputBuffer() { return m_inboundBuffer; }
     virtual void clearBuffers(void) {}
     void handleClearBuffers(const boost::system::error_code &ec, size_t bytes_transferred);
+    void appendToOutbound(const char * newBytes, uint64_t byteSize);
 
 protected:
     boost::scoped_ptr<StreamType> m_stream;
-    std::string m_outboundBuffer;
+    std::vector<char> m_outboundBuffer;
     std::vector<char> m_inboundBuffer;
 };
 
@@ -106,6 +107,12 @@ void BasicIoObject_t<StreamType>::handleClearBuffers(const boost::system::error_
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
     }
+}
+
+template <typename StreamType>
+void BasicIoObject_t<StreamType>::appendToOutbound(const char *newBytes, uint64_t byteSize)
+{
+    m_outboundBuffer.insert(m_outboundBuffer.end(), newBytes, newBytes+byteSize);
 }
 
 #endif

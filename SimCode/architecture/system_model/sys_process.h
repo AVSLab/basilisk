@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-#include "architecture/system_model/sys_interface.h"
+#include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
 /*! \addtogroup SimArchGroup
  * @{
@@ -67,6 +67,7 @@ public:
     std::vector<ModelScheduleEntry> taskModels; //!< -- Array that has pointers to all GNC laws
     uint64_t messageBuffer;                     //!< -- Message buffer for data
     uint64_t nextTaskTime;                      //!< ns time for the next Task
+    uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed
     std::string processName;                      //!< -- Identified for Task
 	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled 
 };

@@ -14,11 +14,11 @@ TcpClient::TcpClient(boost::asio::io_service *ioService)
     m_stream.reset(new boost::asio::ip::tcp::socket(*ioService));
 }
 
-int TcpClient::connect(std::string ipAddress, std::string portNum)
+int TcpClient::connect(std::string ipAddress, uint32_t portNum)
 {
     boost::system::error_code ec;
     boost::asio::ip::tcp::resolver resolver(m_stream->get_io_service());
-    boost::asio::ip::tcp::resolver::query query(ipAddress, portNum);
+    boost::asio::ip::tcp::resolver::query query(ipAddress, std::to_string(portNum));
     boost::asio::ip::tcp::endpoint endpoint = *resolver.resolve(query, ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
@@ -58,7 +58,8 @@ int TcpClient::connect(std::string ipAddress, std::string portNum)
 bool TcpClient::receiveData(std::vector<char> &data)
 {
     boost::system::error_code ec;
-    m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
+
+    m_inboundBuffer = data;
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
@@ -68,7 +69,7 @@ bool TcpClient::receiveData(std::vector<char> &data)
     return true;
 }
 
-bool TcpClient::sendData(std::string data)
+bool TcpClient::sendData(std::vector<char> &data)
 {
     boost::system::error_code ec;
     m_outboundBuffer = data;
@@ -80,10 +81,25 @@ bool TcpClient::sendData(std::string data)
     return true;
 }
 
+bool TcpClient::close()
+{
+
+    boost::system::error_code ec;
+    m_stream->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+    if(ec) {
+        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+        return false;
+    }
+    m_stream->close(ec);
+    if(ec) {
+        std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+        return false;
+    }
+    return true;
+}
+
 void TcpClient::clearBuffers(void)
 {
-    m_stream->async_read_some(boost::asio::buffer(m_inboundBuffer),
-                              boost::bind(&BasicIoObject_t::handleClearBuffers, this,
-                                          boost::asio::placeholders::error,
-                                          boost::asio::placeholders::bytes_transferred));
+    m_outboundBuffer.clear();
+    m_inboundBuffer.clear();
 }
