@@ -69,22 +69,14 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(vehicleConfigData), moduleID);
-
-}
-
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param ConfigData The configuration data associated with the module
- */
-void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
+    
+    
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
     RWConstellation     localRWData;           /*!< local copy of the RWA information */
     uint64_t            clockTime;
     uint32_t            readSize;
-
+    
     /* configure the number of axes that are controlled */
     ConfigData->numOfAxesToBeControlled = 0;
     for (i=0;i<3;i++)
@@ -100,14 +92,14 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     if (ConfigData->numOfAxesToBeControlled==0) {
         printf("WARNING: rwMotorTorque() is not setup to control any axes!\n");
     }
-
-
+    
+    
     /* read in the support messages */
     ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
-
+    
     /* read in the RW spin axis gsHat information */
     /* Note: we will still need to correct for the S to B transformation */
     ConfigData->numRW = localRWData.numRW;
@@ -117,6 +109,16 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
                   localRWData.reactionWheels[i].gsHat_S,
                   ConfigData->gsHat_B[i]);
     }
+
+}
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the module
+ */
+void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
 
 }
 

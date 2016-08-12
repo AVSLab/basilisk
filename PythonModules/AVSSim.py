@@ -524,8 +524,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.AddModelToTask("feedbackControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("feedbackControlMnvrTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
-        self.AddModelToTask("feedbackControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
-        self.AddModelToTask("feedbackControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        self.AddModelToTask("feedbackControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+        #self.AddModelToTask("feedbackControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
+        #self.AddModelToTask("feedbackControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
         
         self.AddModelToTask("attitudePRVControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudePRVControlMnvrTask", self.PRV_SteeringRWAWrap, self.PRV_SteeringRWAData, 9)
@@ -536,7 +537,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("simpleRWControlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
         self.AddModelToTask("simpleRWControlTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
         #self.AddModelToTask("simpleRWControlTask", self.RWAMappingDataWrap, self.RWAMappingDataWrap, 8)
-        self.AddModelToTask("simpleRWControlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        #self.AddModelToTask("simpleRWControlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
 
 
         # Disable all tasks in the FSW process
@@ -546,7 +547,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateSimpleRWControlEvent", int(1E9), True, ["self.modeRequest == 'rwMotorTorqueControl'"],
                             ["self.fswProc.disableAllTasks()"
                              , "self.enableTask('sensorProcessing')"
-                             , "self.enableTask('velocityPointTask')"
+                             , "self.enableTask('inertial3DPointTask')"
                              , "self.enableTask('simpleRWControlTask')"
                              , "self.ResetTask('simpleRWControlTask')"
                              ])
@@ -588,10 +589,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('velocityPointTask')"
-                                #, "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.ResetTask('feedbackControlMnvrTask')"
-                                , "self.enableTask('attitudeControlMnvrTask')"
-                                , "self.ResetTask('attitudeControlMnvrTask')"
+                                , "self.enableTask('feedbackControlMnvrTask')"
+                                , "self.ResetTask('feedbackControlMnvrTask')"
+                                #, "self.enableTask('attitudeControlMnvrTask')"
+                                #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateCelTwoBodyPoint", int(1E9), True, ["self.modeRequest == 'celTwoBodyPoint'"],
@@ -819,6 +820,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         i = 0
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
+        print '\n ', rwClockAngle
         RWAlignScale = 1.0 / 25.0
         rwClass = vehicleConfigData.RWConstellation()
         rwClass.numRW = 4
@@ -826,15 +828,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         while (i < rwClass.numRW):
             self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
-            rwClockAngle += 90.0 * math.pi / 180.0
             self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
             SimulationBaseClass.SetCArray([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                            -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)], 'double',
                                            rwPointer.gsHat_S)
             rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
             vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
+            rwClockAngle += 90.0 * math.pi / 180.0
             i += 1
 
+        #print 'RW_ADCS Gs = ', self.RWAGsMatrix
         msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
                                        msgSizeRW, 2, "RWConstellation")
@@ -937,8 +940,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         simSetupRW.options.useRWfriction = True
         simSetupRW.options.useMinTorque = True
         simSetupRW.options.maxMomentum = 100    # Nms
-        simSetupRW.create(
-            rwType,
+        simSetupRW.create(rwType,
             [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
              -math.cos(rwElAngle)],  # gsHat_S
             0.0,  # Omega [RPM]
@@ -952,6 +954,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             0.0,  # Omega [RPM]
             [0.8, -0.8, 1.79070]  # r_S [m]
         )
+
         rwClockAngle += 90.0 * math.pi / 180.0
         simSetupRW.create(
             rwType,
@@ -960,6 +963,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             0.0,  # Omega [RPM]
             [-0.8, -0.8, 1.79070]  # r_S [m]
         )
+
         rwClockAngle += 90.0 * math.pi / 180.0
         simSetupRW.create(
             rwType,
@@ -968,6 +972,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             0.0,  # Omega [RPM]
             [-0.8, 0.8, 1.79070]  # r_S [m]
         )
+        print 'Sim RW 4 G_s = ', [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
+             -math.cos(rwElAngle)]
 
         simSetupRW.addToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
 
@@ -1467,7 +1473,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Init of Guidance Modules
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
-        sigma_R0N = [0.1, 0.2, 0.3]
+        sigma_R0N = [0.4, 0.2, 0.1]
         #sigma_R0N = [0., 0., 0.]
 
         SimulationBaseClass.SetCArray(sigma_R0N, 'double',self.inertial3DData.sigma_R0N)
@@ -1749,7 +1755,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.RWAMappingData.inputControlName = "controlTorqueRaw"
         self.RWAMappingData.numThrGroups = 1
         newThrGroup = dvAttEffect.ThrustGroupData()
-        newThrGroup.outputDataName = "reactionwheel_cmds_raw"
+        #newThrGroup.outputDataName = "reactionwheel_cmds_raw"
+        newThrGroup.outputDataName = "reactionwheel_cmds"
         newThrGroup.minThrustRequest = -10.0
         newThrGroup.numEffectors = 4
         newThrGroup.maxNumCmds = 4
@@ -1771,7 +1778,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
         self.rwMotorTorqueData.inputRWConfigDataName = "rwa_config_data"
         self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"
-        self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds_raw"
+        #self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds_raw"
+        self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"
 
     def SetRWANullSpaceData(self):
         self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"
