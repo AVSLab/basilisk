@@ -64,7 +64,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
                                                 moduleID);
 
     ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
-                                                       sizeof(vehControlOut),
+                                                       sizeof(ThrusterCluster),
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
