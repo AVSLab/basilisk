@@ -60,7 +60,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 
     /*! - Get the control data message ID*/
     ConfigData->inputRWCmdsID = subscribeToMessage(ConfigData->inputRWCommands,
-        sizeof(vehControlOut), moduleID);
+        sizeof(vehEffectorOut), moduleID);
 	/*! - Get the RW speeds ID*/
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
 		sizeof(RWSpeedData), moduleID);
