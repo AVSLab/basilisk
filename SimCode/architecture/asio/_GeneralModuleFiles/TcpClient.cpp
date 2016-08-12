@@ -58,7 +58,9 @@ int TcpClient::connect(std::string ipAddress, uint32_t portNum)
 bool TcpClient::receiveData(std::vector<char> &data)
 {
     boost::system::error_code ec;
-    m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
+
+    m_inboundBuffer = data;
+    uint32_t bytesReturned = m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
@@ -68,7 +70,7 @@ bool TcpClient::receiveData(std::vector<char> &data)
     return true;
 }
 
-bool TcpClient::sendData(std::string data)
+bool TcpClient::sendData(std::vector<char> &data)
 {
     boost::system::error_code ec;
     m_outboundBuffer = data;
@@ -82,8 +84,6 @@ bool TcpClient::sendData(std::string data)
 
 void TcpClient::clearBuffers(void)
 {
-    m_stream->async_read_some(boost::asio::buffer(m_inboundBuffer),
-                              boost::bind(&BasicIoObject_t::handleClearBuffers, this,
-                                          boost::asio::placeholders::error,
-                                          boost::asio::placeholders::bytes_transferred));
+    m_outboundBuffer.clear();
+    m_inboundBuffer.clear();
 }

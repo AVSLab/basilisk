@@ -40,6 +40,7 @@ SysProcess :: SysProcess(std::string messageContainer)
     messageBuffer = SystemMessaging::GetInstance()->
         AttachStorageBucket(messageContainer);
     SystemMessaging::GetInstance()->ClearMessageBuffer();
+    prevRouteTime = 0xFF;
     disableProcess();
 }
 
@@ -112,8 +113,6 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     int32_t localPriority;
     //! Begin Method steps
     //! - Check to make sure that there are models to be called.
-    routeInterfaces();
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     it = taskModels.begin();
     if(it == taskModels.end())
     {
@@ -128,6 +127,12 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
         return;
     }
     //! - Call the next scheduled model, and set the time to its start
+    if(currentNanos != prevRouteTime)
+    {
+        routeInterfaces();
+        prevRouteTime = currentNanos;
+    }
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     SysModelTask *localTask = it->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     

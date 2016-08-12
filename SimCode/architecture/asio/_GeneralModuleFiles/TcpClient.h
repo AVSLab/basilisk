@@ -18,8 +18,8 @@ public:
     int connect(std::string ipAddress = "127.0.0.1",
                 uint32_t portNum = 50000);
 
-    virtual bool receiveData(std::vector<char> &data);
-    virtual bool sendData(std::string data);
+    bool receiveData(std::vector<char> &data);
+    bool sendData(std::vector<char> & data);
 
     virtual void clearBuffers(void);
 };

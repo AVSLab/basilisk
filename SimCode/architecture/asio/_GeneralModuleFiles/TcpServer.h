@@ -19,7 +19,7 @@ public:
     virtual bool close(void);
 
     virtual bool receiveData(std::vector<char> &data);
-    virtual bool sendData(std::string data);
+    virtual bool sendData(std::vector<char> &data);
 
     virtual void clearBuffers(void);
 

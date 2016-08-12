@@ -45,6 +45,7 @@ public:
     bool exchangeActive;                //!< (-) Flag indicating that exchange is active
     MessageInterfaceMatch processData;  //!< Definition of process movement
     std::vector<MessageInterfaceMatch> messageTraffic; //!< Message movement
+    bool needDelete;
 private:
     uint64_t msgBufferSize;
     uint8_t *msgBuffer;

@@ -67,6 +67,7 @@ public:
     std::vector<ModelScheduleEntry> taskModels; //!< -- Array that has pointers to all GNC laws
     uint64_t messageBuffer;                     //!< -- Message buffer for data
     uint64_t nextTaskTime;                      //!< ns time for the next Task
+    uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed
     std::string processName;                      //!< -- Identified for Task
 	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled 
 };

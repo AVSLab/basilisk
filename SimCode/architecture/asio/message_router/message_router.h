@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "_GeneralModuleFiles/sys_interface.h"
 #include "../_GeneralModuleFiles/TcpClient.h"
 #include "../_GeneralModuleFiles/TcpServer.h"
+#include "architecture/messaging/system_messaging.h"
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/bind.hpp>
@@ -29,6 +30,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <boost/thread/locks.hpp>
 #include <stdint.h>
 
+typedef struct {
+    char messageName[MAX_MESSAGE_SIZE];
+    uint64_t messageID;
+}MessageNameIDPair;
+
+typedef struct {
+    int64_t messageID;
+    uint64_t lastWriteCounter;
+} MessageWriteData;
+
+typedef struct {
+    int64_t messageID;
+    SingleMessageHeader headerData;
+} ExchangeMessageHeader;
 
 class MessageRouter: public InterfaceDataExchange {
 public:
@@ -39,7 +54,10 @@ public:
     bool initializeClient(std::string hostName, uint32_t portServer);
     bool linkProcesses();
     void discoverMessages();
-    void routeUnknownMessages();
+    void UpdateState(uint64_t CurrentSimNanos);
+    void requestUnknownMessages();
+    void receiveUnknownMessages();
+    void routeMessages();
      
 public:
     bool runAsServer;
@@ -48,9 +66,11 @@ public:
     
 private:
     boost::asio::io_service ioService;
-    BasicIoObject *theConnection;
+    BasicIoObject_t<boost::asio::ip::tcp::socket> *theConnection;
     TcpServer *serverConnection;
     TcpClient *clientConnection;
+    std::map<int64_t, MessageWriteData> routerMapping;
+    bool processLinked;       
 };
 
 #endif

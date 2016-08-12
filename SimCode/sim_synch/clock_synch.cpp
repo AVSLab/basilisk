@@ -26,7 +26,7 @@ ClockSynch::ClockSynch()
 {
 	timeInitialized = false;
 	startSimTime = 0;
-	accuracyNanos = -1000000;
+	accuracyNanos = 1000000;
 	accelFactor = 1.0;
     clockOutputID = -1;
     outputBufferCount = 2;

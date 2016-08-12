@@ -30,6 +30,7 @@ InterfaceDataExchange::InterfaceDataExchange()
     processData.source = -1;
     msgBufferSize = 0;
     msgBuffer = NULL;
+    needDelete = false;
 }
 
 InterfaceDataExchange::~InterfaceDataExchange()
@@ -161,7 +162,10 @@ SysInterface::~SysInterface()
     std::vector<InterfaceDataExchange*>::iterator itPtr;
     for(itPtr = interfaceDef.begin(); itPtr != interfaceDef.end(); itPtr++)
     {
-        delete (*itPtr);
+        if((*itPtr)->needDelete)
+        {
+            delete (*itPtr);
+        }
     }
 }
 
@@ -170,8 +174,8 @@ void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
     interfaceDef.push_back(newInterface);
     std::vector<MessageInterfaceMatch>::iterator it;
     newInterface->exchangeActive = true;
-    newInterface->processData.messageDest = -1;
-    newInterface->processData.messageSource = -1;
+    newInterface->processData.destination = -1;
+    newInterface->processData.source = -1;
     for(it = newInterface->messageTraffic.begin();
         it != newInterface->messageTraffic.end(); it++)
     {
@@ -192,6 +196,7 @@ void SysInterface::addNewInterface(std::string from, std::string to, std::string
         intName = from + "2" + to + "Interface";
     }
     newInterface->ModelTag = intName;
+    newInterface->needDelete = true;
     interfaceDef.push_back(newInterface);
     interfacesLinked = false;
     it = interfaceDef.end() - 1;
