@@ -449,6 +449,20 @@ def plotControlTorque(Lr):
         plt.title(TheAVSSim.modeRequest + ': Torque $L_r$')
 
 
+def plotEffectorTorqueRequest(u):
+    print 'u = ', u[:, 1:]
+    print '\n'
+
+    plt.figure(41)
+    plt.plot(u[:, 0] * 1E-12, u[:, 1], color_x)
+    plt.plot(u[:, 0] * 1E-12, u[:, 2], color_y)
+    plt.plot(u[:, 0] * 1E-12, u[:, 3], color_z)
+    plt.plot(u[:, 0] * 1E-12, u[:, 4], 'm')
+    plt.legend(['$u_1$', '$u_2$', '$u_3$', '$u_4$'])
+    plt.xlabel('Time, $10^3$ s')
+    plt.ylabel('Torque')
+    plt.title(TheAVSSim.modeRequest + ': Effector Torque Request $u_r$')
+
 # ------------------- SUPPORT METHODS------------------- #
 # MRP Feedback gains
 def computeDiscriminant(K, P, I):
@@ -517,7 +531,7 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.MRP_SteeringRWAData.inputGuidName = "db_att_guid_out"
 
     # MRP FEEDBACK GAINS
-    P = 180.
+    P = 13
     I_vec = ctypes.cast(TheAVSSim.VehConfigData.ISCPntB_S.__long__(), ctypes.POINTER(ctypes.c_double))
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
     K_cr = computeGains(P, I) * 1.0
@@ -560,10 +574,10 @@ if __name__ == "__main__":
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("db_att_guid_out", int(1E9))
-    #TheAVSSim.AddVariableForLogging('errorDeadband.error', int(1E9))
-    #TheAVSSim.AddVariableForLogging('errorDeadband.boolWasControlOff', int(1E9))
     TheAVSSim.TotalSim.logThisMessage("euler_set_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("euler_rates_output", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("reactionwheel_cmds", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("rwa_config_data", int(1E9))
 
     TheAVSSim.VehDynObject.gravData[0].IsCentralBody = False
     TheAVSSim.VehDynObject.gravData[0].IsDisplayBody = False
@@ -609,7 +623,7 @@ if __name__ == "__main__":
 
     sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
     omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))
-    plotRotNav(sigma_BN, omega_BN_B)
+    #plotRotNav(sigma_BN, omega_BN_B)
     if TheAVSSim.modeRequest == 'rasterMnvr':
         plotTrueBodyEulerSet(sigma_BN)
 
@@ -617,7 +631,7 @@ if __name__ == "__main__":
     sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
     omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
     domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
-    plotReference(sigma_RN, omega_RN_N)
+    #plotReference(sigma_RN, omega_RN_N)
 
     if TheAVSSim.modeRequest =='eulerRotation' or TheAVSSim.modeRequest == 'rasterMnvr':
         euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))
@@ -660,5 +674,9 @@ if __name__ == "__main__":
 
     Lr = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
     plotControlTorque(Lr)
+
+    u = TheAVSSim.pullMessageLogData("reactionwheel_cmds.effectorRequest", range(4))
+    plotEffectorTorqueRequest(u)
+
 
     plt.show()
