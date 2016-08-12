@@ -21,6 +21,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehControlOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 
 
@@ -35,6 +37,7 @@ typedef struct {
     double   gsHat_B[MAX_EFF_CNT][3];               /*!< []      local copy of the rw torque axis */
     uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numRW;                               /*!< []      The number of RWs installed on vehicle */
+    int wheelsAvailability [MAX_EFF_CNT];
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
@@ -42,11 +45,12 @@ typedef struct {
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
     int32_t  inputVehControlID;                     /*!< ID for the incoming Lr control message */
     char inputRWConfigDataName[MAX_STAT_MSG_LENGTH];/*!< The name of the RWA cluster Input message*/
-    int32_t  inputRWConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
+    int32_t  inputRWConfID;                   /*!< [-] ID for the incoming RW configuration data*/
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
+    char inputRWsAvailDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the RWs availability message*/
+    int32_t inputRWsAvailID; /*!< [-] ID for the incoming  RWs availability data*/
     vehicleConfigData   sc;                         /*!< spacecraft configuration message */
-
     vehEffectorOut rwMotorTorques;                  /*!< -- copy of the output message */
 
 }rwMotorTorqueConfig;

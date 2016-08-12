@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 #include "ADCSUtilities/ADCSDefinitions.h"
+#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -27,8 +28,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Array with availability of RW */
 typedef struct {
-	FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
-}RWAvailability;
+    int wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
+}RWAvailabilityData;
 
 /*! @} */
 

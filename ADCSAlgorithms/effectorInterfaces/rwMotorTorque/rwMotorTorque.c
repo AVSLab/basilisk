@@ -70,10 +70,15 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(vehicleConfigData), moduleID);
     
+    ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
+                                                   sizeof(RWAvailabilityData),
+                                                   moduleID);
+    
     
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
     RWConstellation     localRWData;           /*!< local copy of the RWA information */
+    RWAvailabilityData  localRWsAvailData;
     uint64_t            clockTime;
     uint32_t            readSize;
     
@@ -95,11 +100,11 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     
     
     /* read in the support messages */
-    ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
     
+    ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
     /* read in the RW spin axis gsHat information */
     /* Note: we will still need to correct for the S to B transformation */
     ConfigData->numRW = localRWData.numRW;
@@ -145,6 +150,12 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
+    
+    /* #TODO: Do something with availability information */
+    RWAvailabilityData wheelsAvailability;
+    ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
+                sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
+
 
     /* Lr is assumed to be a negative torque onto the body */
     v3Scale(+1.0, Lr_B, Lr_B);

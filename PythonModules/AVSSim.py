@@ -547,7 +547,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateSimpleRWControlEvent", int(1E9), True, ["self.modeRequest == 'rwMotorTorqueControl'"],
                             ["self.fswProc.disableAllTasks()"
                              , "self.enableTask('sensorProcessing')"
-                             , "self.enableTask('inertial3DPointTask')"
+                             , "self.enableTask('velocityPointTask')"
                              , "self.enableTask('simpleRWControlTask')"
                              , "self.ResetTask('simpleRWControlTask')"
                              ])
@@ -820,7 +820,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         i = 0
         rwElAngle = 45.0 * math.pi / 180.0
         rwClockAngle = 45.0 * math.pi / 180.0
-        print '\n ', rwClockAngle
         RWAlignScale = 1.0 / 25.0
         rwClass = vehicleConfigData.RWConstellation()
         rwClass.numRW = 4
@@ -837,11 +836,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             rwClockAngle += 90.0 * math.pi / 180.0
             i += 1
 
-        #print 'RW_ADCS Gs = ', self.RWAGsMatrix
         msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
                                        msgSizeRW, 2, "RWConstellation")
         self.TotalSim.WriteMessageData("rwa_config_data", msgSizeRW, 0, rwClass)
+
         
         rcsClass = vehicleConfigData.ThrusterCluster()
         rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -877,17 +876,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.TotalSim.WriteMessageData("rcs_config_data", msgSizeThrust, 0, rcsClass)
 
 
+
     def setRwFSWDeviceAvailability(self):
-        RWAvailability = rwNullSpace.RWAvailability()
-        # In the future localRwAvailabilityList should be an input param
-        localRwAvailabilityList = []
-        for rw in self.rwDynObject.ReactionWheelData:
-            localRwAvailabilityList.extend([1])
-        print 'list = ', localRwAvailabilityList
-        SimulationBaseClass.SetCArray(localRwAvailabilityList, 'int', RWAvailability.wheelAvailability)
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        avail = [1, 0, 1, 0]
+        SimulationBaseClass.SetCArray(avail,
+                                      'int',
+                                      rwAvailabilityMessage.wheelAvailability)
         msgSize = vehicleConfigData.MAX_EFF_CNT*4
-        self.TotalSim.CreateNewMessage("FSWProcess", "rwa_availability", msgSize, 2, "RWAvailability")
-        self.TotalSim.WriteMessageData("rwa_availability", msgSize, 0, RWAvailability)
+        self.TotalSim.CreateNewMessage("FSWProcess", "rw_availability", msgSize, 2, "RWAvailabilityData")
+        self.TotalSim.WriteMessageData("rw_availability", msgSize, 0, rwAvailabilityMessage)
 
     def SetSpiceObject(self):
         self.SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -972,8 +970,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             0.0,  # Omega [RPM]
             [-0.8, 0.8, 1.79070]  # r_S [m]
         )
-        print 'Sim RW 4 G_s = ', [-math.sin(rwElAngle) * math.sin(rwClockAngle), -math.sin(rwElAngle) * math.cos(rwClockAngle),
-             -math.cos(rwElAngle)]
 
         simSetupRW.addToSpacecraft(modelTag, self.rwDynObject, self.VehDynObject)
 
@@ -1780,6 +1776,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"
         #self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds_raw"
         self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"
+        self.rwMotorTorqueData.inputRWsAvailDataName = "rw_availability"
 
     def SetRWANullSpaceData(self):
         self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"
@@ -1877,7 +1874,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def InitAllFSWObjects(self):
         self.SetVehicleConfigData()
         self.SetLocalConfigData()
-        #self.setRwFSWDeviceAvailability()
+        self.setRwFSWDeviceAvailability()
         self.SetCSSDecodeFSWConfig()
         self.SetIMUCommData()
         self.SetSTCommData()
