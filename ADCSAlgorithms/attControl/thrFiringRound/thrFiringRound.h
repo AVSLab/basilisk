@@ -27,32 +27,42 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * @{
  */
 
+
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double dummy;                                   /*!< [units] sample module variable declaration */
-    double dumVector[3];                            /*!< [units] sample vector variable */
+	double              pulseRemainder[MAX_EFF_CNT];            /*!< Unimplemented thrust pulses */
+	double              pulseTime[MAX_EFF_CNT];                 /*!< Desired high cycle time of pulse */
+	double              pulseTimeResolution[MAX_EFF_CNT];       /*!< Pulse increment */
+	double              pulseTimeMin[MAX_EFF_CNT];              /*!< Minimum pulse command */
+	double              level[MAX_EFF_CNT];                     /*!< thruster duty cycle percentage */
+	int                 numPulses[MAX_EFF_CNT];                 /*!< number of discrete pulses implemented */
+	double				controlPeriod;
+	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
+	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
+	uint64_t			prevCallTime;							/*!< callTime from previous function call */
 
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t outputMsgID;                            /*!< ID for the outgoing message */
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t inputMsgID;                             /*!< ID for the incoming message */
+    char 				outputDataName[MAX_STAT_MSG_LENGTH];       	/*!< The name of the output message*/
+    int32_t 			outputMsgID;                            	/*!< ID for the outgoing message */
+    char 				inputDataName[MAX_STAT_MSG_LENGTH];        	/*!< The name of the Input message*/
+    int32_t 			inputMsgID;                             	/*!< ID for the incoming message */
+	char 				inputThrusterConfName[MAX_STAT_MSG_LENGTH];	/*!< The name of the thruster cluster Input message*/
+	int32_t  			inputThrusterConfID;                   		/*!< [-] ID for the incoming Thruster configuration data*/
 
-    double  inputVector[3];                         /*!< [units]  vector description */
+	vehEffectorOut thrFiringRoundIn;								/*!< -- copy of the input message */
+	vehEffectorOut thrFiringRoundOut;								/*!< -- copy of the output message */
 
-    fswModuleTemplateOut fswModuleOut;              /*!< -- copy of the output message */
-
-}fswModuleTemplateConfig;
+}thrFiringRoundConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID);
-    void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void SelfInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID);
+    void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    void Reset_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

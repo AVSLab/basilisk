@@ -49,6 +49,7 @@ typedef struct {
 typedef struct {
     double rThrust_S[3];      /*!< [m] Location of the thruster in the spacecraft*/
     double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
+	double maxThrust;			/*!< [N] Max thrust*/
 }ThrusterPointData;
 
 typedef struct {

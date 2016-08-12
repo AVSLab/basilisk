@@ -15,25 +15,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 /*
-    FSW MODULE Template
+    Thrust Firing Round
  
  */
 
 /* modify the path to reflect the new module names */
-#include "_fswTemplateFolder/fswModuleTemplate/fswModuleTemplate.h"
+#include "attControl/thrFiringRound/thrFiringRound.h"
 
 /* update this include to reflect the required module input messages */
-#include "attControl/MRP_Steering/MRP_Steering.h"
+#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 
 
 
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "SimCode/utilities/linearAlgebra.h"
-//#include "SimCode/utilities/rigidBodyKinematics.h"
-//#include "SimCode/utilities/astroConstants.h"
-//#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -42,17 +38,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID)
+void SelfInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID)
 {
-    
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(fswModuleTemplateOut),
-                                               "fswModuleTemplateOut",          /* add the output structure name */
+                                               sizeof(vehEffectorOut),
+                                               "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
-
-    ConfigData->dummy = 0.0;
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -60,13 +53,15 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t mo
  @return void
  @param ConfigData The configuration data associated with this module
  */
-void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID)
+void CrossInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
-                                                sizeof(fswModuleTemplateOut),
-                                                moduleID);
-
+	/*! - Get the input message ID's */
+	ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+														 sizeof(vehEffectorOut),
+														 moduleID);
+	ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
+												sizeof(ThrusterCluster),
+												moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -74,9 +69,24 @@ void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t m
  @return void
  @param ConfigData The configuration data associated with the module
  */
-void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Reset_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->dummy = 0.0;              /* reset any required variables */
+	ThrusterCluster     localThrusterData;     /*!< local copy of the thruster data message */
+	uint64_t            clockTime;
+	uint32_t            readSize;
+	int 				i;
+
+	ConfigData->prevCallTime = ~0;
+
+	/* read in the support messages */
+	ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+				sizeof(ThrusterCluster), &localThrusterData, moduleID);
+
+	for(i=0; i<ConfigData->numThrusters; i++)
+	{
+		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
+	}
+
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -84,34 +94,65 @@ void Reset_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callT
  @param ConfigData The configuration data associated with the module
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
+void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    double              Lr[3];              /*!< [unit] variable description */
+	int i;
+	double ratioOfPulses;
+    double thrustForce;
 
 
-    /*! Begin method steps*/
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(ConfigData->inputVector), moduleID);
+	if(ConfigData->prevCallTime == ~0) {
+		ConfigData->prevCallTime = callTime;
+		return;
+	}
 
+	ConfigData->controlPeriod = callTime - ConfigData->prevCallTime;
+	ConfigData->prevCallTime = callTime;
 
+	/*! Begin method steps */
+	/*! - Read the input messages */
+	ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+				sizeof(vehEffectorOut), (void*) &(ConfigData->thrFiringRoundIn), moduleID);
 
-    /*
-        Add the module specific code
-     */
-    v3Copy(ConfigData->inputVector, Lr);
-    ConfigData->dummy += 1.0;
-    Lr[0] += ConfigData->dummy;
+	/*! Loop through thrusters */
+	for(i = 0; i < ConfigData->numThrusters; i++) {
 
-    /*
-     store the output message 
-     */
-    v3Copy(Lr, ConfigData->fswModuleOut.outputVector);                      /* populate the output message */
+		/*! Pulse remainder logic */
+		ConfigData->pulseTime[i] = thrustForce/ConfigData->maxThrust[i]*ConfigData->controlPeriod; // s
+		ratioOfPulses = ConfigData->pulseTime[i] / ConfigData->pulseTimeResolution[i];
+		ConfigData->numPulses[i] = (int)(ratioOfPulses + ConfigData->pulseRemainder[i]);
+		ConfigData->pulseRemainder[i] = ratioOfPulses + ConfigData->pulseRemainder[i] - (double)(ConfigData->numPulses[i]);
+		ConfigData->pulseTime[i] = ConfigData->numPulses[i] * ConfigData->pulseTimeResolution[i];
 
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(fswModuleTemplateOut),   /* update module name */
-                 (void*) &(ConfigData->fswModuleOut), moduleID);
+		if(ConfigData->pulseTime[i] < ConfigData->pulseTimeMin[i]) {
+			/*! Request is less than minimum pulse time */
+			ConfigData->pulseRemainder[i] += ConfigData->pulseTime[i]/ConfigData->pulseTimeResolution[i];
+			ConfigData->pulseTime[i] = 0.0;
+			ConfigData->level[i] = 0.0;
+			thrustForce = 0.0;
+			ConfigData->numPulses[i] = 0;
+		} else if (ConfigData->pulseTime[i] >= ConfigData->controlPeriod) {
+			/*! Request is greater than control period */
+			ConfigData->pulseTime[i] = 1.01*ConfigData->controlPeriod; // oversaturate to avoid numerical error
+			ConfigData->level[i] = 100.0;
+			thrustForce = ConfigData->maxThrust[i];
+			ConfigData->pulseRemainder[i] = 0.0;
+			ConfigData->numPulses[i] = (int)(ConfigData->controlPeriod/ConfigData->pulseTimeResolution[i]);
+		} else {
+			thrustForce = ConfigData->pulseTime[i] / ConfigData->controlPeriod * ConfigData->maxThrust[i];
+			ConfigData->level[i] = ConfigData->pulseTime[i]/ConfigData->controlPeriod*100.0;
+		}
 
-    return;
+		/*! Set the output data */
+		ConfigData->thrFiringRoundOut.effectorRequest[i] = ConfigData->level[i];
+
+	}
+
+	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+				 (void*) &(ConfigData->thrFiringRoundOut), moduleID);
+
+	return;
+
 }
