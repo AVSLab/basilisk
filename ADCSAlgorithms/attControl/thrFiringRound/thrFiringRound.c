@@ -46,6 +46,7 @@ void SelfInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID
                                                sizeof(vehEffectorOut),
                                                "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
+	printf("completed SelfInit_thrFiringRound");
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -62,6 +63,7 @@ void CrossInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleI
 	ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
 												sizeof(ThrusterCluster),
 												moduleID);
+	printf("completed CrossInit_thrFiringRound");
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -86,7 +88,7 @@ void Reset_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, u
 	{
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 	}
-
+	printf("completed Reset_thrFiringRound");
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -108,7 +110,7 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 		return;
 	}
 
-	ConfigData->controlPeriod = callTime - ConfigData->prevCallTime;
+	ConfigData->controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * 1e-9;
 	ConfigData->prevCallTime = callTime;
 
 	/*! Begin method steps */

@@ -70,6 +70,7 @@ import celestialBodyPoint
 import clock_synch
 import rwNullSpace
 import thrustRWDesat
+import thrFiringRound
 import attitude_ukf
 import boost_communication
 import inertial3D
@@ -126,6 +127,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
+        self.fswProc.addTask(self.CreateNewTask("thrFiringRoundTask", int(5E8)), 112)
         self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
 
@@ -279,6 +281,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatDataWrap = self.setModelDataWrap(self.thrustRWADesatData)
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
+        self.thrFiringRoundData = thrFiringRound.thrFiringRoundConfig()
+        self.thrFiringRoundDataWrap = alg_contain.AlgContain(self.thrFiringRoundData,
+                                                             thrFiringRound.Update_thrFiringRound,
+                                                             thrFiringRound.SelfInit_thrFiringRound,
+                                                             thrFiringRound.CrossInit_thrFiringRound,
+                                                             thrFiringRound.Reset_thrFiringRound)
+        self.thrustRWADesatDataWrap.ModelTag = "thrFiringRound"
+
         # Guidance flight software modules.
 
         self.inertial3DData = inertial3D.inertial3DConfig()
@@ -362,6 +372,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("marsPointTask", self.marsPointWrap, self.marsPointData)
 
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
+        self.AddModelToTask("thrFiringRoundTask", self.thrFiringRoundDataWrap, self.thrFiringRoundData)
 
         # Mapping of Guidance Models to Guidance Tasks
         self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 20)
@@ -1434,6 +1445,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
 
+    def SetthrFiringRound(self):
+        self.thrFiringRoundData.inputDataName = "acs_thruster_cmds"
+        self.thrFiringRoundData.outputDataName = "acs_thruster_cmds"
+        self.thrFiringRoundData.inputThrusterConfName = "rcs_config_data"
+        self.thrFiringRoundData.numThrusters = 8
+
     def SetAttUKF(self):
         self.AttUKF.ModelTag = "AttitudeUKF"
         initialCovariance = [0.0] * 6 * 6
@@ -1501,6 +1518,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetRWMotorTorque()
         self.SetRWANullSpaceData()
         self.SetthrustRWDesat()
+        self.SetthrFiringRound()
         self.SetAttUKF()
         # Guidance FSW Objects
         self.setInertial3D()
