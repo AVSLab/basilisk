@@ -114,6 +114,10 @@ void SimModel::InitSimulation()
     {
         (*it)->crossInitProcess();
     }
+    for(it=processList.begin(); it!= processList.end(); it++)
+    {
+        (*it)->resetProcess(0);
+    }
     //! - If a message has been added to logger, link the message IDs
     if(!messageLogs.messagesLinked())
     {
@@ -180,7 +184,7 @@ void SimModel::ResetSimulation()
     //! - Iterate through model list and call the Task model initializer
     for(it = processList.begin(); it != processList.end(); it++)
     {
-        (*it)->resetProcess();
+        (*it)->reInitProcess();
     }
     messageLogs.clearLogs();
     CurrentNanos = 0;

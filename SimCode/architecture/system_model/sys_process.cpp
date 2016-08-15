@@ -84,7 +84,26 @@ void SysProcess::crossInitProcess()
     return;
 }
 
-void SysProcess::resetProcess()
+/*! This method resets each task inside the process ensuring that all parameters go 
+    back to their default state.
+    @return void
+    @param currentTime [ns] Current simulation time that reset is occurring at
+*/
+void SysProcess::resetProcess(uint64_t currentTime)
+{
+    //! Begin Method steps
+    std::vector<ModelScheduleEntry>::iterator it;
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
+    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    {
+        SysModelTask *localTask = it->TaskPtr;
+        localTask->ResetTaskList(currentTime); //! Time of reset is zero as we are starting over
+    }
+    
+    return;
+}
+
+void SysProcess::reInitProcess()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;

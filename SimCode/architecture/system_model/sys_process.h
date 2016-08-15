@@ -46,7 +46,8 @@ public:
     void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1);
     void selfInitProcess();
     void crossInitProcess();
-    void resetProcess();
+    void resetProcess(uint64_t currentTime);
+    void reInitProcess();
     void enableProcess() { processActive = true; }
     void disableProcess() { processActive = false; }
     void scheduleTask(ModelScheduleEntry & taskCall);
