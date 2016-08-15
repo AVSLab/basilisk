@@ -84,8 +84,8 @@ void SysProcess::crossInitProcess()
     return;
 }
 
-/*! This method resets each task inside the process ensuring that all parameters go 
-    back to their default state.
+/*! This method resets each task and associated model-set inside the process 
+    ensuring that all parameters go back to their default state.
     @return void
     @param currentTime [ns] Current simulation time that reset is occurring at
 */
@@ -103,6 +103,11 @@ void SysProcess::resetProcess(uint64_t currentTime)
     return;
 }
 
+/*! This method re-initializes the process and the various tasks contained inside 
+    of it to zero-time for cases when a simulation is re-run or another sim is 
+    started using a previously-run set of simulation architecture.
+    @return void
+*/
 void SysProcess::reInitProcess()
 {
     //! Begin Method steps
