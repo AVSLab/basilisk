@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_cssProcessTelem;
 %constant void CrossInit_cssProcessTelem(void*, uint64_t);
 %ignore CrossInit_cssProcessTelem;
+SCOTTROX(CSSOutputData)
 %include "cssComm.h"
 %pythoncode %{
 import sys

@@ -1,6 +1,9 @@
 %include "stdint.i"
-%typemap(in) double [ANY] (double temp[$1_dim0]) {
+%define ARRAYASLIST(type)
+%typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
+    void *blankPtr = 0 ;
+    int resOut = 0 ;
     if (!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a sequence");
         return NULL;
@@ -10,34 +13,100 @@
         PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
         return NULL;
     }
-    memset(temp, 0x0, $1_dim0*sizeof(double));
+    memset(temp, 0x0, $1_dim0*sizeof(type));
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
         if (PyNumber_Check(o)) {
-            temp[i] = (double) PyFloat_AsDouble(o);
+            temp[i] = (type) PyFloat_AsDouble(o);
         } else {
-            PyErr_SetString(PyExc_ValueError,"Sequence elements must be numbers");
-            return NULL;
+            resOut = SWIG_ConvertPtr(o, &blankPtr,SWIGTYPE_p_ ## type, 0 |  0 );
+            if (!SWIG_IsOK(resOut)) {
+                SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
+                return NULL;
+            }
+            memcpy(&(temp[i]), blankPtr, sizeof(type));
         }
     }
     $1 = temp;
 }
 
-%typemap(memberin) double [ANY] {
+%typemap(memberin) type [ANY] {
     int i;
     for (i = 0; i < $1_dim0; i++) {
-        $1[i] = $input[i];
+        memcpy(&($1[i]), &($input[i]), sizeof(type));
     }
 }
 
-%typemap(out) double [ANY] {
+%typemap(out) type [ANY] {
+    int i;
+    $result = PyList_New($1_dim0);
+    //PyObject *outObject = 0;
+    for (i = 0; i < $1_dim0; i++) {
+        //SWIG_ConvertPtr(SWIG_as_voidptr(&($1[i])), locOutObj, SWIGTYPE_p_ ## type, 0 |  0 );
+        PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
+        
+        if(PyNumber_Check(locOutObj)){
+            PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
+            PyList_SetItem($result,i,outObject);
+        }
+        else
+        {
+            PyList_SetItem($result, i, locOutObj);
+        }
+    }
+}
+
+
+%enddef
+ARRAYASLIST(double)
+ARRAYASLIST(int)
+ARRAYASLIST(float)
+ARRAYASLIST(unsigned int)
+
+%define SCOTTROX(type)
+%typemap(in) type [ANY] (type temp[$1_dim0]) {
+    int i;
+    void *blankPtr = 0 ;
+    int resOut = 0 ;
+    if (!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a sequence");
+        return NULL;
+    }
+    if (PySequence_Length($input) > $1_dim0) {
+        printf("Value: %d\n", $1_dim0);
+        PyErr_SetString(PyExc_ValueError,"Size mismatch. Expected $1_dim0 elements");
+        return NULL;
+    }
+    memset(temp, 0x0, $1_dim0*sizeof(type));
+    for (i = 0; i < PySequence_Length($input); i++) {
+        PyObject *o = PySequence_GetItem($input,i);
+        resOut = SWIG_ConvertPtr(o, &blankPtr,SWIGTYPE_p_ ## type, 0 |  0 );
+        if (!SWIG_IsOK(resOut)) {
+            SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failur Good luck.\n");
+            return NULL;
+        }
+        memcpy(&(temp[i]), blankPtr, sizeof(type));
+        
+    }
+    $1 = temp;
+}
+
+%typemap(memberin) type [ANY] {
+    int i;
+    for (i = 0; i < $1_dim0; i++) {
+        memcpy(&($1[i]), &($input[i]), sizeof(type));
+    }
+}
+
+%typemap(out) type [ANY] {
     int i;
     $result = PyList_New($1_dim0);
     for (i = 0; i < $1_dim0; i++) {
-        PyObject *o = PyFloat_FromDouble((double) $1[i]);
-        PyList_SetItem($result,i,o);
+        PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
+        PyList_SetItem($result, i, locOutObj);
     }
 }
+%enddef
 
 %include "carrays.i"
 
