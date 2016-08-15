@@ -17,33 +17,28 @@ sys.path.append(path + '/../PythonModules')
 
 # ----------------------------- METHODS ----------------------------- #
 
-#  This method searches a dictionary for a key that has a specific value. Requires dict keys have unique values
-def matchDictValueToKey(dict,searchVal):
-    return dict[searchVal]
-
 # This method simply makes a string of the format: 'self.TaskList[0].TaskModels[0]'
 def makeTaskModelString(i,j):
     return 'self.TaskList['+str(i)+'].TaskModels['+str(j)+']'
 
 # This method is the main autocode sequence. This method is NOT recursive.
-def autoCode():
-    print TaskListIdxs
+def autocodeTaskLists():
     handledModels = []
     for i in TaskListIdxs: # loop through TaskLists
         auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
-        print '\n\n'+'TaskList: '+str(i)+'\n'
+        # print '\n\n'+'TaskList: '+str(i)+'\n'
 
         for j in range(0, len(TaskList[i].TaskModels)): # loop through TaskModels in TaskList
                 auxFile.write('\n'+'TaskModel: '+str(j)+'\n') # print current taskmodel index to workfile
-                print '\n'+'TaskModel: '+str(j)+'\n'
+                # print '\n'+'TaskModel: '+str(j)+'\n'
 
                 fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
-                prefix = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
+                prefix = NameReplace[makeTaskModelString(i,j)]
                 if(prefix in handledModels):
                     continue
                 EMMInith.write('\t' + fieldStr + ' ' + prefix + ';\n')
 
-                codeThisOut(TaskList[i].TaskModels[j],prefix)
+                autocodeObject(TaskList[i].TaskModels[j],prefix)
                 handledModels.append(prefix)
 
     EMMInitc.write('}')
@@ -51,14 +46,8 @@ def autoCode():
     print("Goin' to Mars2")
     return
 
-# This method takes in a string and returns a valid variable name.
-def makeValidVarName(s):
-    s = re.sub('[^0-9a-zA-Z_]', '', s)
-    s = re.sub('^[^a-zA-Z_]+', '', s)
-    return s
-
 # This method recursively autocodes the input object.
-def codeThisOut(input,prefix):
+def autocodeObject(input,prefix):
     fieldNames = dir(input) # list all the variable names under current TaskModel. input = TaskList[i].TaskModels[j]
 
     for k in range(0,len(fieldNames)): # loop through variables within current TaskModel
@@ -69,47 +58,35 @@ def codeThisOut(input,prefix):
         fieldTypeFull = str(type(fieldValue))
 
         if not (fieldName[0:2] == '__' or fieldName[0:4] == 'this'):
-            print fieldName
-            print fieldTypeFull
-            print fieldTypeName
-            print str(fieldValue)
-            print '\n'
+            # print fieldName
+            # print fieldTypeFull
+            # print fieldTypeName
+            # print str(fieldValue)
+            # print '\n'
             auxFile.write('\n'+fieldName+'\n') # print name of current element of taskmodel to workfile
             auxFile.write(fieldTypeFull+'\n') # print datatype to workfile
             auxFile.write(fieldTypeName+'\n') # print datatype to workfile
             auxFile.write(str(fieldValue)+'\n') # print value of current element to workfile
 
-        # this and __
-        if (fieldName[0:2] == '__') or (fieldName[0:4] == 'this'):
-            continue # skip __ and this
+        # this and __ and SwigPyObject and instancemethod
+        if (fieldName[0:2] == '__') or (fieldName[0:4] == 'this') or fieldTypeName == 'SwigPyObject' or fieldTypeName == 'instancemethod':
+            continue # skip __ and this and SwigPyObject and instancemethod
 
         # class
         elif fieldTypeFull[1:6] == 'class':
-            print ' ****************** INCEPTION! ' + fieldName + ' ****************** '
-            auxFile.write('\n ****************** INCEPTION! ' + fieldName + ' ****************** \n')
-            codeThisOut(fieldValue,prefix+'.'+fieldName)
-            print ' ****************** out ' + fieldName + ' ****************** '
-            auxFile.write('\n ****************** out ' + fieldName + ' ****************** \n')
+            autocodeObject(fieldValue,prefix+'.'+fieldName)
 
-        # array of class/struct
+        # list of class/struct
         elif fieldTypeName == 'list' and str(type(fieldValue[0]))[1:6] == 'class':
-            for e in range(0,len(fieldValue)):
-                print ' ****************** INCEPTION! ' + fieldName+'['+str(e)+']' + ' ****************** '
-                auxFile.write('\n ****************** INCEPTION! ' + fieldName+'['+str(e)+']' + ' ****************** \n')
-                codeThisOut(fieldValue[e],prefix+'.'+fieldName+'['+str(e)+']')
-                print ' ****************** out ' + fieldName+'['+str(e)+']' + ' ****************** '
-                auxFile.write('\n ****************** out ' + fieldName+'['+str(e)+']'+ ' ****************** \n')
+            for l in range(0,len(fieldValue)):
+                autocodeObject(fieldValue[l],prefix+'.'+fieldName+'['+str(l)+']')
 
         # character array
         elif fieldTypeName == 'str':
             dest = ConfigDataStr + prefix + '.' + str(fieldName)
             EMMInitc.write('\t'+'strcpy(' + dest + ',' + '"'+str(fieldValue)+'"' + ')'+';\n')
 
-        # SwigPyObject or instancemethod
-        elif fieldTypeName == 'SwigPyObject' or fieldTypeName == 'instancemethod':
-            continue # skip SwigPyObject and instancemethod
-
-        # handle lists (after Scott's fix)
+        # handle numeric lists
         elif fieldTypeName == 'list':
             for l in range(0,len(fieldValue)):
                 EMMInitc.write('\t' + ConfigDataStr + prefix + '.' + str(fieldName) + '[' + str(l) + '] = ' + str(fieldValue[l])+';\n')
@@ -124,8 +101,6 @@ def codeThisOut(input,prefix):
 
 # ----------------------------- MAIN ----------------------------- #
 if __name__ == "__main__":
-
-    print 'started'
 
     # TheAVSSim = AVSSim.AVSSim()
 
@@ -145,24 +120,9 @@ if __name__ == "__main__":
     EMMInitc.write('void dataInitialization(EMMConfigData *ConfigData) {\n')
     EMMInith.write('typedef struct {\n')
 
-    # make sure all TaskModels have a NameReplace, since this is used for unique naming
-    #for i in range(0,len(TaskList)):
-    #    for j in range(0,len(TaskList[i].TaskModels)):
-    #        tmStr = makeTaskModelString(i,j)
-    #        if not tmStr in NameReplace.values():
-    #            NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
-
-    # make sure all NameReplace keys are valid variable names
-    #newNameReplace = {}
-    #for i in range(0,len(NameReplace.keys())):
-    #    newNameReplace[makeValidVarName(NameReplace.keys()[i])] = NameReplace.values()[i]
-    #NameReplace = newNameReplace
-
     # autocode TheAVSSim!
-    autoCode()
+    autocodeTaskLists()
 
     auxFile.close() # close auxFile
     EMMInitc.close() # close EMMInitc file
     EMMInith.close() # close EMMInith file
-
-    print 'stopped'
