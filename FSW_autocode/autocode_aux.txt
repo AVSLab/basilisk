@@ -17,9 +17,7 @@ adcs_config_data
 LocalOutput
 <class 'imuComm.imuComm.IMUOutputData'>
 IMUOutputData
-<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x10def5c60> >
-
- ****************** INCEPTION! LocalOutput ****************** 
+<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x11044d930> >
 
 AccelBody
 <type 'list'>
@@ -40,8 +38,6 @@ DVFrameBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out LocalOutput ****************** 
 
 OutputDataName
 <type 'str'>
@@ -83,7 +79,167 @@ int
 InputValues
 <type 'list'>
 list
-[<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11600> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11630> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11450> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11660> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11690> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df116c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df116f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11720> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11750> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11780> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df117b0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df117e0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11810> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11840> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11870> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df118a0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df118d0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11900> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11930> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11960> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11990> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df119c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df119f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a20> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a50> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a80> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ab0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ae0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b10> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b40> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b70> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ba0> >]
+[<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4ed0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4cf0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4f00> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4f30> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4f60> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4f90> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104d4fc0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd030> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd060> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd090> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd0c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd0f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd120> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd150> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd180> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd1b0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd1e0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd210> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd240> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd270> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd2a0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd2d0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd300> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd330> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd360> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd390> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd3c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd3f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd420> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd450> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd480> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x1104dd4b0> >]
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
+
+CosValue
+<type 'float'>
+float
+0.0
 
 KellyCheby
 <type 'list'>
@@ -125,9 +281,7 @@ TaskModel: 2
 CSSData
 <class 'cssWlsEst.cssWlsEst.SingleCSSConfig'>
 SingleCSSConfig
-<cssWlsEst.cssWlsEst.SingleCSSConfig; proxy of <Swig Object of type 'SingleCSSConfig *' at 0x10df11bd0> >
-
- ****************** INCEPTION! CSSData ****************** 
+<cssWlsEst.cssWlsEst.SingleCSSConfig; proxy of <Swig Object of type 'SingleCSSConfig *' at 0x1104d4f00> >
 
 CBias
 <type 'float'>
@@ -148,8 +302,6 @@ nHatStr
 <type 'list'>
 list
 [0.7071067811865475, -0.5, 0.5]
-
- ****************** out CSSData ****************** 
 
 InputDataName
 <type 'str'>
@@ -174,16 +326,12 @@ adcs_config_data
 OutputData
 <class 'cssWlsEst.cssWlsEst.CSSWlsEstOut'>
 CSSWlsEstOut
-<cssWlsEst.cssWlsEst.CSSWlsEstOut; proxy of <Swig Object of type 'CSSWlsEstOut *' at 0x10df11bd0> >
-
- ****************** INCEPTION! OutputData ****************** 
+<cssWlsEst.cssWlsEst.CSSWlsEstOut; proxy of <Swig Object of type 'CSSWlsEstOut *' at 0x1104d4f00> >
 
 sHatBdy
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out OutputData ****************** 
 
 OutputDataName
 <type 'str'>
@@ -215,9 +363,7 @@ TaskModel: 3
 attOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df117e0> >
-
- ****************** INCEPTION! attOut ****************** 
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x1104d4f00> >
 
 domega_RN_B
 <type 'list'>
@@ -238,8 +384,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attOut ****************** 
 
 imuMsgID
 <type 'int'>
@@ -301,9 +445,7 @@ float
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df11ae0> >
-
- ****************** INCEPTION! attGuidOut ****************** 
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x1104dd3f0> >
 
 domega_RN_B
 <type 'list'>
@@ -324,8 +466,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
 
 innerAttThresh
 <type 'float'>
@@ -402,16 +542,12 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df0acc0> >
-
- ****************** INCEPTION! controlOut ****************** 
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x1104d65d0> >
 
 torqueRequestBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
 
 inputGuidID
 <type 'int'>
@@ -483,23 +619,17 @@ int
 thrData
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df0ad80> >
-
- ****************** INCEPTION! thrData ****************** 
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x1104d6660> >
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df0acc0> >
-
- ****************** INCEPTION! cmdRequests ****************** 
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x1104d65d0> >
 
 effectorRequest
 <type 'list'>
 list
 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
 
 maxNumCmds
 <type 'int'>
@@ -536,8 +666,6 @@ thrOnMap
 list
 [0.0, 1.0, 0.7, -1.0, 0.0, -0.7, 1.0, 0.0, -0.7, 0.0, -1.0, 0.7, 0.0, -1.0, 0.7, 1.0, 0.0, -0.7, -1.0, 0.0, -0.7, 0.0, 1.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
- ****************** out thrData ****************** 
-
 
 TaskList: 3
 
@@ -551,9 +679,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0c9c0> >
-
- ****************** INCEPTION! attCmd ****************** 
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x1104d8300> >
 
 omega_BR
 <type 'list'>
@@ -564,8 +690,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attCmd ****************** 
 
 inputCelID
 <type 'int'>
@@ -635,9 +759,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0cd80> >
-
- ****************** INCEPTION! attCmd ****************** 
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x1104d8690> >
 
 omega_BR
 <type 'list'>
@@ -648,8 +770,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attCmd ****************** 
 
 inputCelID
 <type 'int'>
@@ -719,9 +839,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0d120> >
-
- ****************** INCEPTION! attCmd ****************** 
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x1104d89f0> >
 
 omega_BR
 <type 'list'>
@@ -732,8 +850,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attCmd ****************** 
 
 inputCelID
 <type 'int'>
@@ -798,9 +914,7 @@ TaskModel: 0
 attOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df0d300> >
-
- ****************** INCEPTION! attOut ****************** 
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x1104d8c00> >
 
 domega_RN_B
 <type 'list'>
@@ -821,8 +935,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attOut ****************** 
 
 currMnvrTime
 <type 'float'>
@@ -949,16 +1061,12 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df10060> >
-
- ****************** INCEPTION! controlOut ****************** 
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x1104db930> >
 
 torqueRequestBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1060,23 +1168,17 @@ int
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df10150> >
-
- ****************** INCEPTION! thrGroups ****************** 
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x1104dba50> >
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df100f0> >
-
- ****************** INCEPTION! cmdRequests ****************** 
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x1104db9f0> >
 
 effectorRequest
 <type 'list'>
 list
 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
 
 maxNumCmds
 <type 'int'>
@@ -1112,8 +1214,6 @@ thrOnMap
 <type 'list'>
 list
 [0.4999999999999999, 0.5, 0.7071067811865476, 0.5, -0.4999999999999999, 0.7071067811865476, -0.4999999999999999, -0.5000000000000001, 0.7071067811865476, -0.5000000000000001, 0.4999999999999999, 0.7071067811865476, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
 
 TaskModel: 3
 
@@ -1185,9 +1285,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df22510> >
-
- ****************** INCEPTION! attCmd ****************** 
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x1104eede0> >
 
 omega_BR
 <type 'list'>
@@ -1198,8 +1296,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attCmd ****************** 
 
 dvMag
 <type 'float'>
@@ -1288,16 +1384,12 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df24f90> >
-
- ****************** INCEPTION! controlOut ****************** 
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x1104f28a0> >
 
 torqueRequestBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
 
 ignoreOuterLoopFeedforward
 <type 'int'>
@@ -1399,23 +1491,17 @@ int
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df250c0> >
-
- ****************** INCEPTION! thrGroups ****************** 
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x1104f29c0> >
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df25060> >
-
- ****************** INCEPTION! cmdRequests ****************** 
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x1104f2960> >
 
 effectorRequest
 <type 'list'>
 list
 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
 
 maxNumCmds
 <type 'int'>
@@ -1451,8 +1537,6 @@ thrOnMap
 <type 'list'>
 list
 [0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
 
 
 TaskList: 9
@@ -1591,9 +1675,7 @@ adcs_config_data
 LocalOutput
 <class 'stComm.stComm.STOutputData'>
 STOutputData
-<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x10df29690> >
-
- ****************** INCEPTION! LocalOutput ****************** 
+<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x1104f6f30> >
 
 MRP_BdyInrtl
 <type 'list'>
@@ -1604,8 +1686,6 @@ timeTag
 <type 'float'>
 float
 0.0
-
- ****************** out LocalOutput ****************** 
 
 OutputDataName
 <type 'str'>
@@ -1645,9 +1725,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2aed0> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104f87e0> >
 
 domega_RN_N
 <type 'list'>
@@ -1663,8 +1741,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 outputDataName
 <type 'str'>
@@ -1689,9 +1765,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c180> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104f8a20> >
 
 domega_RN_N
 <type 'list'>
@@ -1707,8 +1781,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 inputCelID
 <type 'int'>
@@ -1748,9 +1820,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c330> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104f8c00> >
 
 domega_RN_N
 <type 'list'>
@@ -1766,8 +1836,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 inputCelID
 <type 'int'>
@@ -1797,9 +1865,7 @@ float
 oe
 <class 'orb_elem_convert.orb_elem_convert.classicElements'>
 classicElements
-<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x10df2c510> >
-
- ****************** INCEPTION! oe ****************** 
+<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x1104f8d20> >
 
 Omega
 <type 'float'>
@@ -1851,8 +1917,6 @@ rmag
 float
 0.0
 
- ****************** out oe ****************** 
-
 outputDataName
 <type 'str'>
 str
@@ -1891,9 +1955,7 @@ list
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c720> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104f8f30> >
 
 domega_RN_N
 <type 'list'>
@@ -1909,8 +1971,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 inputCelID
 <type 'int'>
@@ -1995,30 +2055,22 @@ int
 outputAngleRates
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2c840> >
-
- ****************** INCEPTION! outputAngleRates ****************** 
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x1104f9300> >
 
 set
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out outputAngleRates ****************** 
 
 outputAngleSet
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2ca80> >
-
- ****************** INCEPTION! outputAngleSet ****************** 
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x1104f9390> >
 
 set
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out outputAngleSet ****************** 
 
 outputEulerRatesID
 <type 'int'>
@@ -2075,9 +2127,7 @@ list
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2fc30> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104fc480> >
 
 domega_RN_N
 <type 'list'>
@@ -2093,8 +2143,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 cmdRates
 <type 'list'>
@@ -2114,30 +2162,22 @@ float
 eulerRatesOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2fc30> >
-
- ****************** INCEPTION! eulerRatesOut ****************** 
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x1104fc810> >
 
 set
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out eulerRatesOut ****************** 
 
 eulerSetOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2ff90> >
-
- ****************** INCEPTION! eulerSetOut ****************** 
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x1104fc8a0> >
 
 set
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out eulerSetOut ****************** 
 
 inputEulerRatesID
 <type 'int'>
@@ -2227,9 +2267,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df30090> >
-
- ****************** INCEPTION! attRefOut ****************** 
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x1104fca50> >
 
 domega_RN_N
 <type 'list'>
@@ -2245,8 +2283,6 @@ sigma_RN
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
 
 dt
 <type 'float'>
@@ -2301,9 +2337,7 @@ TaskModel: 0
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df304e0> >
-
- ****************** INCEPTION! attGuidOut ****************** 
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x1104fccf0> >
 
 domega_RN_B
 <type 'list'>
@@ -2324,8 +2358,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
 
 inputNavID
 <type 'int'>
@@ -2372,9 +2404,7 @@ TaskModel: 1
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df307b0> >
-
- ****************** INCEPTION! attGuidOut ****************** 
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x1104fd090> >
 
 domega_RN_B
 <type 'list'>
@@ -2395,8 +2425,6 @@ sigma_BR
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
 
 error
 <type 'float'>
@@ -2498,16 +2526,12 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df33450> >
-
- ****************** INCEPTION! controlOut ****************** 
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x1104ffd20> >
 
 torqueRequestBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
 
 domega0
 <type 'list'>
@@ -2633,16 +2657,12 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df35f90> >
-
- ****************** INCEPTION! controlOut ****************** 
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x1105028a0> >
 
 torqueRequestBody
 <type 'list'>
 list
 [0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
 
 inputGuidID
 <type 'int'>
