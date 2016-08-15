@@ -90,7 +90,15 @@ def codeThisOut(input,prefix):
             codeThisOut(fieldValue,prefix+'.'+fieldName)
             print ' ****************** out ' + fieldName + ' ****************** '
             auxFile.write('\n ****************** out ' + fieldName + ' ****************** \n')
-            # continue # skip classes
+
+        # array of class/struct
+        elif fieldTypeName == 'list' and str(type(fieldValue[0]))[1:6] == 'class':
+            for e in range(0,len(fieldValue)):
+                print ' ****************** INCEPTION! ' + fieldName+'['+str(e)+']' + ' ****************** '
+                auxFile.write('\n ****************** INCEPTION! ' + fieldName+'['+str(e)+']' + ' ****************** \n')
+                codeThisOut(fieldValue[e],prefix+'.'+fieldName+'['+str(e)+']')
+                print ' ****************** out ' + fieldName+'['+str(e)+']' + ' ****************** '
+                auxFile.write('\n ****************** out ' + fieldName+'['+str(e)+']'+ ' ****************** \n')
 
         # character array
         elif fieldTypeName == 'str':
