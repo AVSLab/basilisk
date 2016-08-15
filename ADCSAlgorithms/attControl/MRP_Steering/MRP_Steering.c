@@ -67,18 +67,26 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                  sizeof(vehicleConfigData), moduleID);
-    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
-                                                   sizeof(RWSpeedData), moduleID);
-    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+    ConfigData->inputRWConfID = -1;
+    ConfigData->inputRWSpeedsID = -1;
+    if(strlen(ConfigData->inputRWConfigData) > 0)
+    {
+        ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellation), moduleID);
-
-    if (ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                    sizeof(RWConstellation), &localRWData, moduleID)) {
-        ConfigData->numRW = localRWData.numRW;
-    } else {
-        ConfigData->numRW = 0;
+        if (ConfigData->inputRWConfID >=0 && ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+                sizeof(RWConstellation), &localRWData, moduleID)) {
+            ConfigData->numRW = localRWData.numRW;
+        } else {
+            ConfigData->numRW = 0;
+        }
+        if(strlen(ConfigData->inputRWSpeedsName) && ConfigData->numRW > 0)
+        {
+            ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+                                                             sizeof(RWSpeedData), moduleID);
+        }
+        
     }
-
+    
     for(i=0; i<ConfigData->numRW; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
