@@ -17,7 +17,7 @@ adcs_config_data
 LocalOutput
 <class 'imuComm.imuComm.IMUOutputData'>
 IMUOutputData
-<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x10de59a20> >
+<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x10def5c60> >
 
  ****************** INCEPTION! LocalOutput ****************** 
 
@@ -81,18 +81,9 @@ int
 14
 
 InputValues
-<class 'cssComm.cssComm.CSSOutputData'>
-CSSOutputData
-<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10de59a20> >
-
- ****************** INCEPTION! InputValues ****************** 
-
-CosValue
-<type 'float'>
-float
-0.0
-
- ****************** out InputValues ****************** 
+<type 'list'>
+list
+[<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11600> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11630> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11450> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11660> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11690> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df116c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df116f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11720> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11750> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11780> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df117b0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df117e0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11810> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11840> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11870> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df118a0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df118d0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11900> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11930> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11960> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11990> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df119c0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df119f0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a20> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a50> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11a80> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ab0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ae0> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b10> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b40> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11b70> >, <cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10df11ba0> >]
 
 KellyCheby
 <type 'list'>
@@ -134,7 +125,7 @@ TaskModel: 2
 CSSData
 <class 'cssWlsEst.cssWlsEst.SingleCSSConfig'>
 SingleCSSConfig
-<cssWlsEst.cssWlsEst.SingleCSSConfig; proxy of <Swig Object of type 'SingleCSSConfig *' at 0x10de59f00> >
+<cssWlsEst.cssWlsEst.SingleCSSConfig; proxy of <Swig Object of type 'SingleCSSConfig *' at 0x10df11bd0> >
 
  ****************** INCEPTION! CSSData ****************** 
 
@@ -183,7 +174,7 @@ adcs_config_data
 OutputData
 <class 'cssWlsEst.cssWlsEst.CSSWlsEstOut'>
 CSSWlsEstOut
-<cssWlsEst.cssWlsEst.CSSWlsEstOut; proxy of <Swig Object of type 'CSSWlsEstOut *' at 0x10de59f00> >
+<cssWlsEst.cssWlsEst.CSSWlsEstOut; proxy of <Swig Object of type 'CSSWlsEstOut *' at 0x10df11bd0> >
 
  ****************** INCEPTION! OutputData ****************** 
 
@@ -224,7 +215,7 @@ TaskModel: 3
 attOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59570> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df117e0> >
 
  ****************** INCEPTION! attOut ****************** 
 
@@ -310,7 +301,7 @@ float
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59f00> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df11ae0> >
 
  ****************** INCEPTION! attGuidOut ****************** 
 
@@ -411,7 +402,7 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de59f00> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df0acc0> >
 
  ****************** INCEPTION! controlOut ****************** 
 
@@ -492,14 +483,14 @@ int
 thrData
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de59a20> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df0ad80> >
 
  ****************** INCEPTION! thrData ****************** 
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59f00> >
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df0acc0> >
 
  ****************** INCEPTION! cmdRequests ****************** 
 
@@ -560,7 +551,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10de59a20> >
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0c9c0> >
 
  ****************** INCEPTION! attCmd ****************** 
 
@@ -644,7 +635,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0cd80> >
 
  ****************** INCEPTION! attCmd ****************** 
 
@@ -728,7 +719,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10de59840> >
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df0d120> >
 
  ****************** INCEPTION! attCmd ****************** 
 
@@ -807,7 +798,7 @@ TaskModel: 0
 attOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59570> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df0d300> >
 
  ****************** INCEPTION! attOut ****************** 
 
@@ -958,7 +949,7 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de59840> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df10060> >
 
  ****************** INCEPTION! controlOut ****************** 
 
@@ -1069,14 +1060,14 @@ int
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de59a20> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df10150> >
 
  ****************** INCEPTION! thrGroups ****************** 
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59840> >
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df100f0> >
 
  ****************** INCEPTION! cmdRequests ****************** 
 
@@ -1194,7 +1185,7 @@ list
 attCmd
 <class 'simpleDeadband.simpleDeadband.attCmdOut'>
 attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10df22510> >
 
  ****************** INCEPTION! attCmd ****************** 
 
@@ -1260,195 +1251,7 @@ TaskList: 8
 
 TaskModel: 0
 
-Tburn2Bdy
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-attCmd
-<class 'simpleDeadband.simpleDeadband.attCmdOut'>
-attCmdOut
-<simpleDeadband.simpleDeadband.attCmdOut; proxy of <Swig Object of type 'attCmdOut *' at 0x10de595a0> >
-
- ****************** INCEPTION! attCmd ****************** 
-
-omega_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attCmd ****************** 
-
-dvMag
-<type 'float'>
-float
-0.0
-
-inputBurnCmdID
-<type 'int'>
-int
-0
-
-inputBurnDataName
-<type 'str'>
-str
-
-
-inputMPID
-<type 'int'>
-int
-0
-
-inputMassPropName
-<type 'str'>
-str
-adcs_config_data
-
-inputNavDataName
-<type 'str'>
-str
-simple_nav_output
-
-inputNavID
-<type 'int'>
-int
-0
-
-outputDataName
-<type 'str'>
-str
-att_cmd_output
-
-outputMsgID
-<type 'int'>
-int
-0
-
 TaskModel: 1
-
-attOut
-<class 'simpleDeadband.simpleDeadband.attGuidOut'>
-attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59a20> >
-
- ****************** INCEPTION! attOut ****************** 
-
-domega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_BR_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attOut ****************** 
-
-currMnvrTime
-<type 'float'>
-float
-0.0
-
-inputAttCmdName
-<type 'str'>
-str
-att_cmd_output
-
-inputCmdID
-<type 'int'>
-int
-0
-
-inputNavID
-<type 'int'>
-int
-0
-
-inputNavStateName
-<type 'str'>
-str
-simple_nav_output
-
-mnvrActive
-<type 'int'>
-int
-0
-
-mnvrComplete
-<type 'int'>
-int
-0
-
-mnvrScanRate
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omegaCmd_BR_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-outputDataName
-<type 'str'>
-str
-nom_att_guid_out
-
-outputMsgID
-<type 'int'>
-int
-0
-
-outputRefID
-<type 'int'>
-int
-0
-
-outputRefName
-<type 'str'>
-str
-
-
-propagateReference
-<type 'int'>
-int
-1
-
-sigmaCmd_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-startClockRead
-<type 'long'>
-long
-0
-
-totalMnvrTime
-<type 'float'>
-float
-1000.0
-
-zeroAngleTol
-<type 'float'>
-float
-0.0174532925199
 
 TaskModel: 2
 
@@ -1485,7 +1288,7 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de59570> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df24f90> >
 
  ****************** INCEPTION! controlOut ****************** 
 
@@ -1596,14 +1399,14 @@ int
 thrGroups
 <class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
 ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de595a0> >
+<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10df250c0> >
 
  ****************** INCEPTION! thrGroups ****************** 
 
 cmdRequests
 <class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
 vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59570> >
+<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10df25060> >
 
  ****************** INCEPTION! cmdRequests ****************** 
 
@@ -1771,130 +1574,7 @@ TaskList: 10
 
 TaskModel: 0
 
-ChebyCount
-<type 'int'>
-int
-14
-
-InputValues
-<class 'cssComm.cssComm.CSSOutputData'>
-CSSOutputData
-<cssComm.cssComm.CSSOutputData; proxy of <Swig Object of type 'CSSOutputData *' at 0x10de59a20> >
-
- ****************** INCEPTION! InputValues ****************** 
-
-CosValue
-<type 'float'>
-float
-0.0
-
- ****************** out InputValues ****************** 
-
-KellyCheby
-<type 'list'>
-list
-[-1734963.346951471, 3294117.146099591, -2816333.294617512, 2163709.942144332, -1488025.993860025, 910735.9382775769, -491971.2500291216, 231843.6583511218, -93761.0504552901, 31775.36873430168, -8704.033370738143, 1816.1881081763, -258.1556805090373, 18.8841892428278, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-MaxSensorValue
-<type 'float'>
-float
-0.0005
-
-NumSensors
-<type 'int'>
-int
-8
-
-OutputDataName
-<type 'str'>
-str
-css_data_aggregate
-
-OutputMsgID
-<type 'int'>
-int
-0
-
-SensorListName
-<type 'str'>
-str
-css_sensors_data
-
-SensorMsgID
-<type 'int'>
-int
-0
-
 TaskModel: 1
-
-InputDataName
-<type 'str'>
-str
-imu_meas_data
-
-InputPropsName
-<type 'str'>
-str
-adcs_config_data
-
-LocalOutput
-<class 'imuComm.imuComm.IMUOutputData'>
-IMUOutputData
-<imuComm.imuComm.IMUOutputData; proxy of <Swig Object of type 'IMUOutputData *' at 0x10de595a0> >
-
- ****************** INCEPTION! LocalOutput ****************** 
-
-AccelBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-AngVelBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-DRFrameBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-DVFrameBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out LocalOutput ****************** 
-
-OutputDataName
-<type 'str'>
-str
-parsed_imu_data
-
-OutputMsgID
-<type 'int'>
-int
-0
-
-PropsMsgID
-<type 'int'>
-int
-0
-
-SensorMsgID
-<type 'int'>
-int
-0
-
-platform2BdyDCM
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-platform2StrDCM
-<type 'list'>
-list
-[1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
 
 TaskModel: 2
 
@@ -1911,7 +1591,7 @@ adcs_config_data
 LocalOutput
 <class 'stComm.stComm.STOutputData'>
 STOutputData
-<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x10de595a0> >
+<stComm.stComm.STOutputData; proxy of <Swig Object of type 'STOutputData *' at 0x10df29690> >
 
  ****************** INCEPTION! LocalOutput ****************** 
 
@@ -1965,7 +1645,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de59a80> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2aed0> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2009,7 +1689,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c180> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2068,7 +1748,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de598d0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c330> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2117,7 +1797,7 @@ float
 oe
 <class 'orb_elem_convert.orb_elem_convert.classicElements'>
 classicElements
-<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x10de595a0> >
+<orb_elem_convert.orb_elem_convert.classicElements; proxy of <Swig Object of type 'classicElements *' at 0x10df2c510> >
 
  ****************** INCEPTION! oe ****************** 
 
@@ -2211,7 +1891,7 @@ list
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2c720> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2315,7 +1995,7 @@ int
 outputAngleRates
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2c840> >
 
  ****************** INCEPTION! outputAngleRates ****************** 
 
@@ -2329,7 +2009,7 @@ list
 outputAngleSet
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de598d0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2ca80> >
 
  ****************** INCEPTION! outputAngleSet ****************** 
 
@@ -2395,7 +2075,7 @@ list
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de598d0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df2fc30> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2434,7 +2114,7 @@ float
 eulerRatesOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de598d0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2fc30> >
 
  ****************** INCEPTION! eulerRatesOut ****************** 
 
@@ -2448,7 +2128,7 @@ list
 eulerSetOut
 <class 'simpleDeadband.simpleDeadband.eulerOut'>
 eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10df2ff90> >
 
  ****************** INCEPTION! eulerSetOut ****************** 
 
@@ -2539,158 +2219,6 @@ TaskList: 20
 
 TaskModel: 0
 
-angleRates
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-angleSet
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-attRefOut
-<class 'simpleDeadband.simpleDeadband.attRefOut'>
-attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de598d0> >
-
- ****************** INCEPTION! attRefOut ****************** 
-
-domega_RN_N
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_RN_N
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_RN
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attRefOut ****************** 
-
-cmdRates
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-cmdSet
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-dt
-<type 'float'>
-float
-0.0
-
-eulerRatesOut
-<class 'simpleDeadband.simpleDeadband.eulerOut'>
-eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de598d0> >
-
- ****************** INCEPTION! eulerRatesOut ****************** 
-
-set
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out eulerRatesOut ****************** 
-
-eulerSetOut
-<class 'simpleDeadband.simpleDeadband.eulerOut'>
-eulerOut
-<simpleDeadband.simpleDeadband.eulerOut; proxy of <Swig Object of type 'eulerOut *' at 0x10de595a0> >
-
- ****************** INCEPTION! eulerSetOut ****************** 
-
-set
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out eulerSetOut ****************** 
-
-inputEulerRatesID
-<type 'int'>
-int
-0
-
-inputEulerRatesName
-<type 'str'>
-str
-
-
-inputEulerSetID
-<type 'int'>
-int
-0
-
-inputEulerSetName
-<type 'str'>
-str
-
-
-inputRefID
-<type 'int'>
-int
-0
-
-inputRefName
-<type 'str'>
-str
-att_ref_output_stage1
-
-outputDataName
-<type 'str'>
-str
-att_ref_output
-
-outputEulerRatesID
-<type 'int'>
-int
-0
-
-outputEulerRatesName
-<type 'str'>
-str
-euler_rates_output
-
-outputEulerSetID
-<type 'int'>
-int
-0
-
-outputEulerSetName
-<type 'str'>
-str
-euler_set_output
-
-outputMsgID
-<type 'int'>
-int
-0
-
-priorCmdRates
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-priorCmdSet
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-priorTime
-<type 'long'>
-long
-0
-
 
 TaskList: 21
 
@@ -2699,7 +2227,7 @@ TaskModel: 0
 attRefOut
 <class 'simpleDeadband.simpleDeadband.attRefOut'>
 attRefOut
-<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attRefOut; proxy of <Swig Object of type 'attRefOut *' at 0x10df30090> >
 
  ****************** INCEPTION! attRefOut ****************** 
 
@@ -2773,7 +2301,7 @@ TaskModel: 0
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de595a0> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df304e0> >
 
  ****************** INCEPTION! attGuidOut ****************** 
 
@@ -2844,7 +2372,7 @@ TaskModel: 1
 attGuidOut
 <class 'simpleDeadband.simpleDeadband.attGuidOut'>
 attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59a80> >
+<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10df307b0> >
 
  ****************** INCEPTION! attGuidOut ****************** 
 
@@ -2920,667 +2448,25 @@ TaskList: 23
 
 TaskModel: 0
 
-GsMatrix
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-JsList
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-K1
-<type 'float'>
-float
-0.3
-
-K3
-<type 'float'>
-float
-1.0
-
-Ki
-<type 'float'>
-float
--1.0
-
-P
-<type 'float'>
-float
-150.0
-
-controlOut
-<class 'PRV_Steering.PRV_Steering.vehControlOut'>
-vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de59a80> >
-
- ****************** INCEPTION! controlOut ****************** 
-
-torqueRequestBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
-
-ignoreOuterLoopFeedforward
-<type 'int'>
-int
-0
-
-inputGuidID
-<type 'int'>
-int
-0
-
-inputGuidName
-<type 'str'>
-str
-nom_att_guid_out
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeedsID
-<type 'int'>
-int
-0
-
-inputRWSpeedsName
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputVehicleConfigDataID
-<type 'int'>
-int
-0
-
-inputVehicleConfigDataName
-<type 'str'>
-str
-adcs_config_data
-
-integralLimit
-<type 'float'>
-float
-0.0
-
-numRWAs
-<type 'int'>
-int
-4
-
-omega_max
-<type 'float'>
-float
-0.0261799387799
-
-outputDataName
-<type 'str'>
-str
-controlTorqueRaw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-priorTime
-<type 'long'>
-long
-0
-
-z
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
 TaskModel: 1
 
-inputControlName
-<type 'str'>
-str
-controlTorqueRaw
-
-inputMsgID
-<type 'int'>
-int
-0
-
-numThrGroups
-<type 'int'>
-int
-1
-
-thrGroups
-<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de595a0> >
-
- ****************** INCEPTION! thrGroups ****************** 
-
-cmdRequests
-<class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
-vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59a80> >
-
- ****************** INCEPTION! cmdRequests ****************** 
-
-effectorRequest
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
-
-maxNumCmds
-<type 'int'>
-int
-4
-
-minThrustRequest
-<type 'float'>
-float
--10.0
-
-nomThrustOn
-<type 'float'>
-float
-0.0
-
-numEffectors
-<type 'int'>
-int
-4
-
-outputDataName
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-thrOnMap
-<type 'list'>
-list
-[0.4999999999999999, 0.5, 0.7071067811865476, 0.5, -0.4999999999999999, 0.7071067811865476, -0.4999999999999999, -0.5000000000000001, 0.7071067811865476, -0.5000000000000001, 0.4999999999999999, 0.7071067811865476, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
-
 TaskModel: 2
-
-GsInverse
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-OmegaGain
-<type 'float'>
-float
-0.002
-
-inputRWCmdsID
-<type 'int'>
-int
-0
-
-inputRWCommands
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeeds
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputSpeedsID
-<type 'int'>
-int
-0
-
-numWheels
-<type 'int'>
-int
-4
-
-outputControlName
-<type 'str'>
-str
-reactionwheel_cmds
-
-outputMsgID
-<type 'int'>
-int
-0
 
 
 TaskList: 24
 
 TaskModel: 0
 
-attGuidOut
-<class 'simpleDeadband.simpleDeadband.attGuidOut'>
-attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59a80> >
-
- ****************** INCEPTION! attGuidOut ****************** 
-
-domega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_BR_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
-
-inputNavID
-<type 'int'>
-int
-0
-
-inputNavName
-<type 'str'>
-str
-simple_nav_output
-
-inputRefID
-<type 'int'>
-int
-0
-
-inputRefName
-<type 'str'>
-str
-att_ref_output
-
-outputDataName
-<type 'str'>
-str
-nom_att_guid_out
-
-outputMsgID
-<type 'int'>
-int
-0
-
-sigma_BcB
-<type 'NoneType'>
-NoneType
-None
-
-sigma_R0R
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
 TaskModel: 1
-
-GsMatrix
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-JsList
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-K1
-<type 'float'>
-float
-0.3
-
-K3
-<type 'float'>
-float
-1.0
-
-Ki
-<type 'float'>
-float
--1.0
-
-P
-<type 'float'>
-float
-150.0
-
-controlOut
-<class 'PRV_Steering.PRV_Steering.vehControlOut'>
-vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de598d0> >
-
- ****************** INCEPTION! controlOut ****************** 
-
-torqueRequestBody
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out controlOut ****************** 
-
-ignoreOuterLoopFeedforward
-<type 'int'>
-int
-0
-
-inputGuidID
-<type 'int'>
-int
-0
-
-inputGuidName
-<type 'str'>
-str
-nom_att_guid_out
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeedsID
-<type 'int'>
-int
-0
-
-inputRWSpeedsName
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputVehicleConfigDataID
-<type 'int'>
-int
-0
-
-inputVehicleConfigDataName
-<type 'str'>
-str
-adcs_config_data
-
-integralLimit
-<type 'float'>
-float
-0.0
-
-numRWAs
-<type 'int'>
-int
-4
-
-omega_max
-<type 'float'>
-float
-0.0261799387799
-
-outputDataName
-<type 'str'>
-str
-controlTorqueRaw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-priorTime
-<type 'long'>
-long
-0
-
-z
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
 
 TaskModel: 2
 
-inputControlName
-<type 'str'>
-str
-controlTorqueRaw
-
-inputMsgID
-<type 'int'>
-int
-0
-
-numThrGroups
-<type 'int'>
-int
-1
-
-thrGroups
-<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de595a0> >
-
- ****************** INCEPTION! thrGroups ****************** 
-
-cmdRequests
-<class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
-vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de598d0> >
-
- ****************** INCEPTION! cmdRequests ****************** 
-
-effectorRequest
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
-
-maxNumCmds
-<type 'int'>
-int
-4
-
-minThrustRequest
-<type 'float'>
-float
--10.0
-
-nomThrustOn
-<type 'float'>
-float
-0.0
-
-numEffectors
-<type 'int'>
-int
-4
-
-outputDataName
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-thrOnMap
-<type 'list'>
-list
-[0.4999999999999999, 0.5, 0.7071067811865476, 0.5, -0.4999999999999999, 0.7071067811865476, -0.4999999999999999, -0.5000000000000001, 0.7071067811865476, -0.5000000000000001, 0.4999999999999999, 0.7071067811865476, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
-
 TaskModel: 3
-
-GsInverse
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-OmegaGain
-<type 'float'>
-float
-0.002
-
-inputRWCmdsID
-<type 'int'>
-int
-0
-
-inputRWCommands
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeeds
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputSpeedsID
-<type 'int'>
-int
-0
-
-numWheels
-<type 'int'>
-int
-4
-
-outputControlName
-<type 'str'>
-str
-reactionwheel_cmds
-
-outputMsgID
-<type 'int'>
-int
-0
 
 
 TaskList: 25
 
 TaskModel: 0
-
-attGuidOut
-<class 'simpleDeadband.simpleDeadband.attGuidOut'>
-attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de598d0> >
-
- ****************** INCEPTION! attGuidOut ****************** 
-
-domega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_BR_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
-
-inputNavID
-<type 'int'>
-int
-0
-
-inputNavName
-<type 'str'>
-str
-simple_nav_output
-
-inputRefID
-<type 'int'>
-int
-0
-
-inputRefName
-<type 'str'>
-str
-att_ref_output
-
-outputDataName
-<type 'str'>
-str
-nom_att_guid_out
-
-outputMsgID
-<type 'int'>
-int
-0
-
-sigma_BcB
-<type 'NoneType'>
-NoneType
-None
-
-sigma_R0R
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
 
 TaskModel: 1
 
@@ -3612,7 +2498,7 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de595a0> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df33450> >
 
  ****************** INCEPTION! controlOut ****************** 
 
@@ -3705,209 +2591,12 @@ list
 
 TaskModel: 2
 
-inputControlName
-<type 'str'>
-str
-controlTorqueRaw
-
-inputMsgID
-<type 'int'>
-int
-0
-
-numThrGroups
-<type 'int'>
-int
-1
-
-thrGroups
-<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de595a0> >
-
- ****************** INCEPTION! thrGroups ****************** 
-
-cmdRequests
-<class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
-vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59a80> >
-
- ****************** INCEPTION! cmdRequests ****************** 
-
-effectorRequest
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
-
-maxNumCmds
-<type 'int'>
-int
-4
-
-minThrustRequest
-<type 'float'>
-float
--10.0
-
-nomThrustOn
-<type 'float'>
-float
-0.0
-
-numEffectors
-<type 'int'>
-int
-4
-
-outputDataName
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-thrOnMap
-<type 'list'>
-list
-[0.4999999999999999, 0.5, 0.7071067811865476, 0.5, -0.4999999999999999, 0.7071067811865476, -0.4999999999999999, -0.5000000000000001, 0.7071067811865476, -0.5000000000000001, 0.4999999999999999, 0.7071067811865476, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
-
 TaskModel: 3
-
-GsInverse
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-OmegaGain
-<type 'float'>
-float
-0.002
-
-inputRWCmdsID
-<type 'int'>
-int
-0
-
-inputRWCommands
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeeds
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputSpeedsID
-<type 'int'>
-int
-0
-
-numWheels
-<type 'int'>
-int
-4
-
-outputControlName
-<type 'str'>
-str
-reactionwheel_cmds
-
-outputMsgID
-<type 'int'>
-int
-0
 
 
 TaskList: 26
 
 TaskModel: 0
-
-attGuidOut
-<class 'simpleDeadband.simpleDeadband.attGuidOut'>
-attGuidOut
-<simpleDeadband.simpleDeadband.attGuidOut; proxy of <Swig Object of type 'attGuidOut *' at 0x10de59a80> >
-
- ****************** INCEPTION! attGuidOut ****************** 
-
-domega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_BR_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-omega_RN_B
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
-sigma_BR
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
-
- ****************** out attGuidOut ****************** 
-
-inputNavID
-<type 'int'>
-int
-0
-
-inputNavName
-<type 'str'>
-str
-simple_nav_output
-
-inputRefID
-<type 'int'>
-int
-0
-
-inputRefName
-<type 'str'>
-str
-att_ref_output
-
-outputDataName
-<type 'str'>
-str
-nom_att_guid_out
-
-outputMsgID
-<type 'int'>
-int
-0
-
-sigma_BcB
-<type 'NoneType'>
-NoneType
-None
-
-sigma_R0R
-<type 'list'>
-list
-[0.0, 0.0, 0.0]
 
 TaskModel: 1
 
@@ -3944,7 +2633,7 @@ float
 controlOut
 <class 'PRV_Steering.PRV_Steering.vehControlOut'>
 vehControlOut
-<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10de59a20> >
+<PRV_Steering.PRV_Steering.vehControlOut; proxy of <Swig Object of type 'vehControlOut *' at 0x10df35f90> >
 
  ****************** INCEPTION! controlOut ****************** 
 
@@ -4032,132 +2721,4 @@ list
 
 TaskModel: 2
 
-inputControlName
-<type 'str'>
-str
-controlTorqueRaw
-
-inputMsgID
-<type 'int'>
-int
-0
-
-numThrGroups
-<type 'int'>
-int
-1
-
-thrGroups
-<class 'dvAttEffect.dvAttEffect.ThrustGroupData'>
-ThrustGroupData
-<dvAttEffect.dvAttEffect.ThrustGroupData; proxy of <Swig Object of type 'ThrustGroupData *' at 0x10de595a0> >
-
- ****************** INCEPTION! thrGroups ****************** 
-
-cmdRequests
-<class 'thrustRWDesat.thrustRWDesat.vehEffectorOut'>
-vehEffectorOut
-<thrustRWDesat.thrustRWDesat.vehEffectorOut; proxy of <Swig Object of type 'vehEffectorOut *' at 0x10de59a20> >
-
- ****************** INCEPTION! cmdRequests ****************** 
-
-effectorRequest
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out cmdRequests ****************** 
-
-maxNumCmds
-<type 'int'>
-int
-4
-
-minThrustRequest
-<type 'float'>
-float
--10.0
-
-nomThrustOn
-<type 'float'>
-float
-0.0
-
-numEffectors
-<type 'int'>
-int
-4
-
-outputDataName
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-outputMsgID
-<type 'int'>
-int
-0
-
-thrOnMap
-<type 'list'>
-list
-[0.4999999999999999, 0.5, 0.7071067811865476, 0.5, -0.4999999999999999, 0.7071067811865476, -0.4999999999999999, -0.5000000000000001, 0.7071067811865476, -0.5000000000000001, 0.4999999999999999, 0.7071067811865476, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
- ****************** out thrGroups ****************** 
-
 TaskModel: 3
-
-GsInverse
-<type 'list'>
-list
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-OmegaGain
-<type 'float'>
-float
-0.002
-
-inputRWCmdsID
-<type 'int'>
-int
-0
-
-inputRWCommands
-<type 'str'>
-str
-reactionwheel_cmds_raw
-
-inputRWConfID
-<type 'int'>
-int
-0
-
-inputRWConfigData
-<type 'str'>
-str
-rwa_config_data
-
-inputRWSpeeds
-<type 'str'>
-str
-reactionwheel_output_states
-
-inputSpeedsID
-<type 'int'>
-int
-0
-
-numWheels
-<type 'int'>
-int
-4
-
-outputControlName
-<type 'str'>
-str
-reactionwheel_cmds
-
-outputMsgID
-<type 'int'>
-int
-0
