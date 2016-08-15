@@ -1600,7 +1600,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
 
         alpha = 8.0 * math.pi / 180.0
-        offAlpha = 0.18* alpha
+        alpha = 24.0 * math.pi / 180.0
+        offAlpha = 0.24 * alpha
         totalGuidSimTime = 60 * 20 * 4
         (angleSetList, angleRatesList, rasterTimeList) = crossingRaster(alpha, offAlpha, totalGuidSimTime)
         self.rasterManagerData.scanningAngles = angleSetList

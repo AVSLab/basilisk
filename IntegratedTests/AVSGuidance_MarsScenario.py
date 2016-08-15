@@ -39,7 +39,7 @@ import RigidBodyKinematics as rbk
 
 # ------------------- PLOTS DIRECTORY ------------------- #
 paperPath = '/Users/marcolsmargenet/Desktop/AIAApaper/Figures/'
-arePlotsSaved = False
+arePlotsSaved = True
 if arePlotsSaved:
     plt.rcParams['figure.figsize'] = 1.75, 1.5
     plt.rcParams.update({'font.size': 6})
@@ -303,20 +303,21 @@ def plotTrueBodyEulerSet(sigma_BN):
             rz_vec = np.append(rz_vec, rz)
 
     def plot_real3DBoresight():
-        fig = plt.figure(100, figsize=(5,4))
+        fig = plt.figure(100, figsize=(3.75,3.75))
         ax = fig.add_subplot(111, projection='3d')
         #ax.view_init(elev=0., azim=0.)
-        ax.plot(rx_vec, ry_vec, rz_vec)
+        ax.plot(rx_vec, ry_vec, rz_vec, color='magenta')
         max_range = np.array([rx_vec.max() - rx_vec.min(), ry_vec.max() - ry_vec.min(), rz_vec.max() - rz_vec.min()]).max()
         Xb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][0].flatten() + 0.5 * (rx_vec.max() + rx_vec.min())
         Yb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][1].flatten() + 0.5 * (ry_vec.max() + ry_vec.min())
         Zb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][2].flatten() + 0.5 * (rz_vec.max() + rz_vec.min())
         for xb, yb, zb in zip(Xb, Yb, Zb):
             ax.plot([xb], [yb], [zb], 'w')
-        ax.scatter(0, 0, 0)
+        ax.scatter(0, 0, 0, color = 'dodgerblue')
         ax.set_xlabel('$R_x$')
         ax.set_ylabel('$R_y$')
         ax.set_zlabel('$R_z$')
+        ax.legend(['Bore-sight', 'Spacecraft'])
         if arePlotsSaved:
             plt.savefig(paperPath + TheAVSSim.modeRequest + "/realBoresightPointing.pdf", bbox_inches='tight')
         else:
@@ -357,7 +358,7 @@ def plotTrueBodyEulerSet(sigma_BN):
     n_a = ['(1.a)','(2.a)', '(3.a)', '(4.a)']
     n_b = ['(1.b)','(2.b)', '(3.b)', '(4.b)']
     def plot_scanAngles():
-        plt.figure(102, figsize=(3.75,3.75))
+        plt.figure(102, figsize=(3.,3.))
         plt.plot(psi_vec, theta_vec, 'magenta')
         plt.plot(rasterLine_y, rasterLine_z, 'b--')
 
@@ -558,7 +559,7 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.hillPointData.outputDataName = "att_ref_output"
 
     # STAND-ALONE INERTIAL 3D POINT:
-    TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
+    #TheAVSSim.inertial3DData.outputDataName = "att_ref_output"
 
     # VELOCITY POINT:
     TheAVSSim.velocityPointData.mu = TheAVSSim.VehOrbElemObject.mu
@@ -612,7 +613,7 @@ def executeGuidance(TheAVSSim):
     TheAVSSim.ExecuteSimulation()
 
     # GUIDANCE PROFILES
-    singleTest('inertial3DPoint')
+    #singleTest('inertial3DPoint')
     #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #singleTest('hillPoint')
     #singleTest('velocityPoint')
@@ -621,9 +622,9 @@ def executeGuidance(TheAVSSim):
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
     #singleTest('inertial3DSpin')
     #singleTest('eulerRotation')
-    #singleTest('rasterMnvr')
+    singleTest('rasterMnvr')
     #singleTest('deadbandGuid')
-    singleTest('rwMotorTorqueControl')
+    #singleTest('rwMotorTorqueControl')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -676,7 +677,7 @@ if __name__ == "__main__":
 
     sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
     omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))
-    plotRotNav(sigma_BN, omega_BN_B)
+    #plotRotNav(sigma_BN, omega_BN_B)
     if TheAVSSim.modeRequest == 'rasterMnvr':
         plotTrueBodyEulerSet(sigma_BN)
 
@@ -684,7 +685,7 @@ if __name__ == "__main__":
     sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
     omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
     domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
-    #plotReference(sigma_RN, omega_RN_N)
+    plotReference(sigma_RN, omega_RN_N, domega_RN_N)
 
     if TheAVSSim.modeRequest =='eulerRotation' or TheAVSSim.modeRequest == 'rasterMnvr':
         euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))
@@ -698,7 +699,7 @@ if __name__ == "__main__":
         sigma_R0N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.sigma_RN", range(3))
         omega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.omega_RN_N", range(3))
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
-        plotBaseReference(sigma_R0N, omega_R0N_N)
+        #plotBaseReference(sigma_R0N, omega_R0N_N)
 
 
     if (TheAVSSim.modeRequest == 'deadbandGuid'):
@@ -726,7 +727,7 @@ if __name__ == "__main__":
         plotTrackingError(sigma_BR, omega_BR_B)
 
     Lr = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-    plotControlTorque(Lr)
+    #plotControlTorque(Lr)
 
     u = TheAVSSim.pullMessageLogData("reactionwheel_cmds.effectorRequest", range(4))
     plotEffectorTorqueRequest(u)
