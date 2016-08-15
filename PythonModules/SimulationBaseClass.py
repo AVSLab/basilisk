@@ -223,7 +223,7 @@ class SimBaseClass:
                 Task.TaskData.AddNewObject(NewModel, ModelPriority)
                 TaskReplaceTag = 'self.TaskList[' + str(i) + ']'
                 TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
-                self.NameReplace[NewModel.ModelTag] = TaskReplaceTag
+                self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
                 if (ModelData != None):
                     Task.TaskModels.append(ModelData)
                     self.simModules.add(inspect.getmodule(ModelData))
@@ -253,8 +253,9 @@ class SimBaseClass:
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
         NoDotName = NoDotName.translate(None, '[]')
-        if SplitName[0] in self.NameReplace:
-            LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+        inv_map = {v: k for k, v in self.NameReplace.items()}
+        if SplitName[0] in inv_map:
+            LogName = inv_map[SplitName[0]] + '.' + Subname
             if (LogName in self.VarLogList):
                 return
             if (type(eval(LogName)).__name__ == 'SwigPyObject'):
@@ -295,8 +296,9 @@ class SimBaseClass:
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
         NoDotName = NoDotName.translate(None, '[]')
-        if SplitName[0] in self.NameReplace:
-            LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+        inv_map = {v: k for k, v in self.NameReplace.items()}
+        if SplitName[0] in inv_map:
+            LogName = inv_map[SplitName[0]] + '.' + Subname
             if (LogName not in self.VarLogList):
                 RefFunctionString = 'def Get' + NoDotName + '(self):\n'
                 RefFunctionString += '   return ' + LogName

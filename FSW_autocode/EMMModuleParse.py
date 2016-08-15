@@ -19,7 +19,7 @@ sys.path.append(path + '/../PythonModules')
 
 #  This method searches a dictionary for a key that has a specific value. Requires dict keys have unique values
 def matchDictValueToKey(dict,searchVal):
-    return dict.keys()[dict.values().index(searchVal)]
+    return dict[searchVal]
 
 # This method simply makes a string of the format: 'self.TaskList[0].TaskModels[0]'
 def makeTaskModelString(i,j):
@@ -28,6 +28,7 @@ def makeTaskModelString(i,j):
 # This method is the main autocode sequence. This method is NOT recursive.
 def autoCode():
     print TaskListIdxs
+    handledModels = []
     for i in TaskListIdxs: # loop through TaskLists
         auxFile.write('\n\n'+'TaskList: '+str(i)+'\n') # print current Tasklist index to workfile
         print '\n\n'+'TaskList: '+str(i)+'\n'
@@ -38,9 +39,12 @@ def autoCode():
 
                 fieldStr = str(type(TaskList[i].TaskModels[j]).__name__)
                 prefix = matchDictValueToKey(NameReplace,makeTaskModelString(i,j))
+                if(prefix in handledModels):
+                    continue
                 EMMInith.write('\t' + fieldStr + ' ' + prefix + ';\n')
 
                 codeThisOut(TaskList[i].TaskModels[j],prefix)
+                handledModels.append(prefix)
 
     EMMInitc.write('}')
     EMMInith.write('}EMMConfigData;')
@@ -134,17 +138,17 @@ if __name__ == "__main__":
     EMMInith.write('typedef struct {\n')
 
     # make sure all TaskModels have a NameReplace, since this is used for unique naming
-    for i in range(0,len(TaskList)):
-        for j in range(0,len(TaskList[i].TaskModels)):
-            tmStr = makeTaskModelString(i,j)
-            if not tmStr in NameReplace.values():
-                NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
+    #for i in range(0,len(TaskList)):
+    #    for j in range(0,len(TaskList[i].TaskModels)):
+    #        tmStr = makeTaskModelString(i,j)
+    #        if not tmStr in NameReplace.values():
+    #            NameReplace['TaskList_'+str(i)+'_TaskModel_'+str(j)] = tmStr
 
     # make sure all NameReplace keys are valid variable names
-    newNameReplace = {}
-    for i in range(0,len(NameReplace.keys())):
-        newNameReplace[makeValidVarName(NameReplace.keys()[i])] = NameReplace.values()[i]
-    NameReplace = newNameReplace
+    #newNameReplace = {}
+    #for i in range(0,len(NameReplace.keys())):
+    #    newNameReplace[makeValidVarName(NameReplace.keys()[i])] = NameReplace.values()[i]
+    #NameReplace = newNameReplace
 
     # autocode TheAVSSim!
     autoCode()
