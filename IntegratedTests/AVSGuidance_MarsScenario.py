@@ -495,9 +495,9 @@ def plotControlTorque(Lr):
     plt.xlabel('Time, min')
     plt.ylabel('Control Torque, N$\cdot$m')
     if arePlotsSaved:
-        plt.savefig(paperPath+TheAVSSim.modeRequest+"/torque.pdf", bbox_inches='tight')
+        plt.savefig(paperPath+TheAVSSim.modeRequest+"/controlTorque.pdf", bbox_inches='tight')
     else:
-        plt.title(TheAVSSim.modeRequest + ': Torque $L_r$')
+        plt.title(TheAVSSim.modeRequest + ': Control Torque Request $L_r$')
 
 
 def plotEffectorTorqueRequest(u):
@@ -511,8 +511,11 @@ def plotEffectorTorqueRequest(u):
     plt.plot(u[:, 0] * 1E-12, u[:, 4], 'm')
     plt.legend(['$u_1$', '$u_2$', '$u_3$', '$u_4$'])
     plt.xlabel('Time, $10^3$ s')
-    plt.ylabel('Torque')
-    plt.title(TheAVSSim.modeRequest + ': Effector Torque Request $u_r$')
+    plt.ylabel('Torque, N$\cdot$m')
+    if arePlotsSaved:
+        plt.savefig(paperPath+TheAVSSim.modeRequest+"/effectorTorque.pdf", bbox_inches='tight')
+    else:
+        plt.title(TheAVSSim.modeRequest + ': Effector Torque Request $u_r$')
 
 # ------------------- SUPPORT METHODS------------------- #
 # MRP Feedback gains
@@ -585,12 +588,14 @@ def executeGuidance(TheAVSSim):
     P = 13
     I_vec = TheAVSSim.VehConfigData.ISCPntB_S
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
-    K_cr = computeGains(P, I) * 1.0
+    K_cr = computeGains(P, I) * 0.7
     d = computeDiscriminant(K_cr, P, I)
+    T = 2.0 * np.min(I) / P
     print 'Inertia = ', I
     print 'Discriminant = ', d
     print 'K = ', K_cr
     print 'P = ', P
+    print 'Decay Time [min] = ', T / 60.0
     TheAVSSim.MRP_FeedbackRWAData.K = K_cr
     TheAVSSim.MRP_FeedbackRWAData.P = P
 
