@@ -151,10 +151,17 @@ def mrp_steering_tracking(show_plots):
     SimulationBaseClass.SetCArray(I,
                                   'double',
                                   vehicleConfigOut.ISCPntB_B)
+    BS = [1.0, 0.0, 0.0,
+          0.0, 1.0, 0.0,
+          0.0, 0.0, 1.0]
+    SimulationBaseClass.SetCArray(BS,
+                                  'double',
+                                  vehicleConfigOut.BS)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
                                           vehicleConfigOut)
+
 
     # wheelConfigData Message
     fswSetupRW.clearSetup()

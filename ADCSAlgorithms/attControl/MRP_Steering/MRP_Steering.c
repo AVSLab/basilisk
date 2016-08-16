@@ -83,19 +83,24 @@ void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint6
 {
     RWConstellation localRWData;
     int i;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
+    uint64_t clockTime;
+    uint32_t readSize;
+    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
 
     if (ConfigData->inputRWConfID>0) {
         /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
+        ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
                     sizeof(RWConstellation), &localRWData, moduleID);
         ConfigData->numRW = localRWData.numRW;
+        ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+                    sizeof(vehicleConfigData), (void*) &(sc), moduleID);
 
         for(i=0; i<ConfigData->numRW; i=i+1)
         {
             ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-            v3Copy(localRWData.reactionWheels[i].gsHat_S, &ConfigData->GsMatrix[i*3]);
+            m33MultV3(RECAST3X3 sc.BS,
+                      localRWData.reactionWheels[i].gsHat_S,
+                      &ConfigData->GsMatrix[i*3]);
         }
     }
 
