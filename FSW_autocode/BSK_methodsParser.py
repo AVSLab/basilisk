@@ -93,8 +93,8 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     # This function appends a module's header string to the global headers list (only if it's not there)
     def createModuleHeaderName(module, headersList):
         moduleName = module[:len(module) / 2]
-        if not(moduleName in headersList):
-            header = '#include "' + moduleName + '.h"\n'
+        header = '#include "' + moduleName + '.h"\n'
+        if not(header in headersList):
             headersList.append(header)
 
     # Model Wraps
