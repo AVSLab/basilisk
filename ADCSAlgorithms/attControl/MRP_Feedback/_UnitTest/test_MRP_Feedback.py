@@ -151,6 +151,12 @@ def subModuleTestFunction(show_plots):
          0., 800., 0.,
          0., 0., 800.]
     SimulationBaseClass.SetCArray(I, 'double', vehicleConfigOut.ISCPntB_B)
+    BS = [1.0, 0.0, 0.0,
+          0.0, 1.0, 0.0,
+          0.0, 0.0, 1.0]
+    SimulationBaseClass.SetCArray(BS,
+                                  'double',
+                                  vehicleConfigOut.BS)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0, vehicleConfigOut)
