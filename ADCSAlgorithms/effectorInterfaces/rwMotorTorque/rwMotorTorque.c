@@ -78,7 +78,6 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
     RWConstellation     localRWData;           /*!< local copy of the RWA information */
-    RWAvailabilityData  localRWsAvailData;
     uint64_t            clockTime;
     uint32_t            readSize;
     

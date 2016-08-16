@@ -37,7 +37,7 @@ typedef struct {
     double   gsHat_B[MAX_EFF_CNT][3];               /*!< []      local copy of the rw torque axis */
     uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
     uint32_t numRW;                               /*!< []      The number of RWs installed on vehicle */
-    int wheelsAvailability [MAX_EFF_CNT];
+    int wheelsAvailability[MAX_EFF_CNT];
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
