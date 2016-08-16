@@ -151,9 +151,16 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         }
     	return(FindMessageID(MessageName));
     }
+    if(MessageName == "")
+    {
+        std::cerr << "ERROR: Module ID: " << moduleID << " tried to create a ";
+        std::cerr << "message without a name.  Please try again" << std::endl;
+        CreateFails++;
+        return(-1);
+    }
     if(NumMessageBuffers <= 0)
     {
-        std::cerr << "I can't create a message with zero buffers.  I refuse.";
+        std::cerr << "ERROR: I can't create a message with zero buffers.  I refuse.";
         std::cerr << std::endl;
         CreateFails++;
         return(-1);
@@ -233,7 +240,7 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
     {
         messageID = CreateNewMessage(messageName, messageSize, 2);
     }
-    if(moduleID >= 0)
+    if(moduleID >= 0 && messageID >= 0)
     {
         it = messageStorage->subData.begin();
         it += messageID;
