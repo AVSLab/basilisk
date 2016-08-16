@@ -55,39 +55,28 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Read static RW config data message and store it in module variables*/
-    RWConstellation localRWData;
-    int i, j;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
-
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(vehicleConfigData), moduleID);
+
+    if(strlen(ConfigData->inputRWConfigData) > 0) {
+        ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+                                                       sizeof(RWConstellation), moduleID);
+        ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+                                                         sizeof(RWSpeedData), moduleID);
+    } else {
+        ConfigData->numRW = 0;
+        ConfigData->inputRWConfID = -1;
+        ConfigData->inputRWSpeedsID = -1;
+    }
+
     ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                      sizeof(RWSpeedData), moduleID);
     
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellation), moduleID);
-
-    if (ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                    sizeof(RWConstellation), &localRWData, moduleID)) {
-        ConfigData->numRW = localRWData.numRW;
-    } else {
-        ConfigData->numRW = 0;
-    }
-
-    for(i=0; i<ConfigData->numRW; i=i+1)
-    {
-        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-        for(j=0; j<3; j=j+1)
-        {
-            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].gsHat_S[j];
-        }
-    }
-    
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -97,6 +86,29 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    RWConstellation localRWData;
+    int i;
+    uint64_t clockTime;
+    uint32_t readSize;
+    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+
+    if (ConfigData->inputRWConfID>0) {
+        /*! - Read static RW config data message and store it in module variables*/
+        ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
+                    sizeof(RWConstellation), &localRWData, moduleID);
+        ConfigData->numRW = localRWData.numRW;
+        ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+                    sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+
+        for(i=0; i<ConfigData->numRW; i=i+1)
+        {
+            ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
+            m33MultV3(RECAST3X3 sc.BS,
+                      localRWData.reactionWheels[i].gsHat_S,
+                      &ConfigData->GsMatrix[i*3]);
+        }
+    }
+
     ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
                                              to zero, the control time step is not evaluated on the
                                              first function call */
