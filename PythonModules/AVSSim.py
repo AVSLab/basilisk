@@ -1461,7 +1461,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.attMnvrPointData.inputNavStateName = "simple_nav_output"
         self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
         self.attMnvrPointData.outputDataName = "nom_att_guid_out"
-        #self.attMnvrPointData.outputRefName = "att_ref_output"
+        self.attMnvrPointData.outputRefName = "att_ref_output_gen"
         self.attMnvrPointData.zeroAngleTol = 1.0 * math.pi / 180.0
         self.attMnvrPointData.mnvrActive = 0
         self.attMnvrPointData.totalMnvrTime = 1000.0
@@ -1790,6 +1790,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
         self.dvGuidanceData.inputNavDataName = "simple_nav_output"
         self.dvGuidanceData.inputMassPropName = "adcs_config_data"
+        self.dvGuidanceData.inputBurnDataName = "vehicle_dv_cmd"
         desiredBurnDir = [1.0, 0.0, 0.0]
         desiredOffAxis = [0.0, 1.0, 0.0]
         Tburn2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
@@ -1849,6 +1850,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SetCArray(Qnoise, 'double', self.AttUKF.QNoiseInit)
         self.AttUKF.stInputName = "parsed_st_data"
         self.AttUKF.InertialUKFStateName = "attitude_filter_state"
+        self.AttUKF.inputRWSpeeds = "reactionwheel_output_states"
+        self.AttUKF.inputVehicleConfigDataName = "adcs_config_data"
         self.AttUKF.alpha = 0.1
         self.AttUKF.beta = 2.1
         self.AttUKF.kappa = 2.0
