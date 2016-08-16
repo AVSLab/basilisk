@@ -1408,7 +1408,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         i = 0
         for CSSHat in CSSOrientationList:
             CSSConfigElement.nHatStr = CSSHat
-            print type(CSSConfigElement.nHatStr)
+            #print type(CSSConfigElement.nHatStr)
             cssWlsEst.CSSWlsConfigArray_setitem(self.CSSWlsEstFSWConfig.CSSData, i,
                                                 CSSConfigElement)
             i += 1
