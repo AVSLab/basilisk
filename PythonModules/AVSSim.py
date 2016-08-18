@@ -1490,7 +1490,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             return (angleSetList, angleRatesList, rasterTimeList)
 
         def crossingRaster(alpha, offAlpha, totalMnvrTime):
-            t_raster = totalMnvrTime / 5.0
+            t_raster = totalMnvrTime / 6
             alphaDot = 2.0 * alpha / t_raster
             t_offset = offAlpha / alphaDot
             angleSetList = [
@@ -1510,99 +1510,17 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             ]
             return (angleSetList, angleRatesList, rasterTimeList)
 
-        def asteriskRaster(psi, theta, phiDot, t_mnvr):
-            angleSetList = [
-                0.0, 0.0, 0.0,
-                psi, 0.0, 0.0,
-                psi, psi, 0.0,
-                0.0, 0.0, 0.0,
-                -psi, -psi, 0.0,
-                -psi, 0.0, 0.0,
-                0.0, 0.0, 0.0,
-                0.0, psi, 0.0,
-                -psi, psi, 0.0,
-                0.0, 0.0, 0.0,
-                psi, -psi, 0.0,
-                0.0, -psi, 0.0,
-            ]
 
-            angleRatesList = [
-                0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-                , 0.0, 0.0, phiDot
-                , 0.0, 0.0, -phiDot
-            ]
-
-            rasterTimeList = [
-                t_mnvr*2.0, t_mnvr, t_mnvr, t_mnvr
-                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
-                , t_mnvr, t_mnvr
-                , t_mnvr, t_mnvr
-            ]
-
-            return (angleSetList, angleRatesList, rasterTimeList)
-
-        def testRaster(psi, theta, phiDot, t_mnvr):
-            angleSetList = [
-            ]
-
-            angleRatesList_8 = [
-                0.004, 0.004, phiDot
-            ]
-
-            angleRatesList_circX = [
-                0.004, 0.0, phiDot
-            ]
-            angleRatesList_circY = [
-                0.0, 0.004, phiDot
-            ]
-
-            rasterTimeList = [
-                t_mnvr * 10
-            ]
-
-            return (angleSetList, angleRatesList_circY, rasterTimeList)
-
-        def starRateRaster(phiDot, t_mnvr):
-            angleSetList = []
-            angleRatesList = [
-                -phiDot, 0.0, 0.0
-                , phiDot, 0.0, 0.0
-                , phiDot, phiDot, 0.0
-                , -phiDot, -phiDot, 0.0
-                , -phiDot, phiDot, 0.0
-                , phiDot, -phiDot, 0.0
-                , 0.0, phiDot, 0.0
-                , 0.0, -phiDot, 0.0
-            ]
-
-            rasterTimeList = [
-                t_mnvr, t_mnvr, t_mnvr, t_mnvr
-                , t_mnvr, t_mnvr, t_mnvr, t_mnvr
-            ]
-            return (angleSetList, angleRatesList, rasterTimeList)
 
 
         psi = 8.0 * math.pi / 180.0
         theta = 8.0 * math.pi / 180.0
         phiDot = 0.02 * math.pi / 180.0
         t_mnvr = 20.0 * 18
-        #(angleSetList, angleRatesList, rasterTimeList) = asteriskRaster(psi, theta, phiDot, t_mnvr)
-        #(angleSetList, angleRatesList, rasterTimeList) = starRateRaster(phiDot, t_mnvr)
-        #(angleSetList, angleRatesList, rasterTimeList) = testRaster(psi, theta, phiDot, t_mnvr)
 
         alpha = 8.0 * math.pi / 180.0
-        alpha = 24.0 * math.pi / 180.0
-        offAlpha = 0.24 * alpha
-        totalGuidSimTime = 60 * 20 * 4
+        offAlpha = 0.5 * alpha
+        totalGuidSimTime = 2 * 60 * 20 * 4
         (angleSetList, angleRatesList, rasterTimeList) = crossingRaster(alpha, offAlpha, totalGuidSimTime)
         self.rasterManagerData.scanningAngles = angleSetList
         self.rasterManagerData.scanningRates = angleRatesList

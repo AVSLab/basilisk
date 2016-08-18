@@ -38,7 +38,7 @@ import RigidBodyKinematics as rbk
 
 
 # ------------------- PLOTS DIRECTORY ------------------- #
-paperPath = '/Users/marcolsmargenet/Desktop/AIAApaper/Figures/'
+paperPath = '/Users/marcolsmargenet/Desktop/AIAApaper_new/Figures/'
 arePlotsSaved = True
 if arePlotsSaved:
     plt.rcParams['figure.figsize'] = 1.75, 1.5
@@ -50,12 +50,12 @@ color_z = 'r'
 
 def plotLabels_sigma():
     plt.legend(['$\sigma_1$', '$\sigma_2$', '$\sigma_3$'])
-    plt.xlabel('Time, min')
+    plt.xlabel('Time, h')
     plt.ylabel('MRP Attitude Set')
-    plt.ylim([-1.0, 1.0])
+    #plt.ylim([-1.0, 1.0])
 def plotLabels_omega():
     plt.legend(['$\omega_1$', '$\omega_2$', '$\omega_3$'])
-    plt.xlabel('Time, min')
+    plt.xlabel('Time, h')
     plt.ylabel('Angular Rate, rad/s')
 # ------------------- PLOTTING FUNCTIONS ------------------- #
 
@@ -89,7 +89,7 @@ def plotRotNav(sigma_BN, omega_BN_B):
     print 'sigma_BN = ', sigma_BN[:, 1:]
     print 'omega_BN_N = ', omega_BN_B[:, 1:]
     print '\n'
-    t = sigma_BN[:, 0] * mc.NANO2SEC / 60.0
+    t = sigma_BN[:, 0] * mc.NANO2SEC / 3600.0
 
     plt.figure(5)
     plt.ylim([-1.0, 1.0])
@@ -106,7 +106,7 @@ def plotReference(sigma_RN, omega_RN_N, domega_R0N_N):
     print 'sigma_RN = ', sigma_RN[:, 1:]
     print 'omega_RN_N = ', omega_RN_N[:, 1:]
     print '\n'
-    t = sigma_RN[:, 0] * mc.NANO2SEC / 60.0
+    t = sigma_RN[:, 0] * mc.NANO2SEC / 3600.0
 
     plt.figure(10)
     plt.plot(t, sigma_RN[:, 1], color_x)
@@ -133,7 +133,7 @@ def plotReference(sigma_RN, omega_RN_N, domega_R0N_N):
     plt.plot(t, domega_R0N_N[:, 2], color_y)
     plt.plot(t, domega_R0N_N[:, 3], color_z)
     plt.legend(['$\dot{\omega_1}$', '$\dot{\omega}_2$', '$\dot{\omega}_3$'])
-    plt.xlabel('Time, min')
+    plt.xlabel('Time, h')
     plt.ylabel('Angular Acceleration, rad/s$^2$')
     plt.title(TheAVSSim.modeRequest + ' : Reference Acceleration $\dot{\omega}_{RN}$')
 
@@ -141,7 +141,7 @@ def plotBaseReference(sigma_R0N, omega_R0N_N):
     print 'sigma_R0N = ', sigma_R0N[:, 1:]
     print 'omega_R0N_N = ', omega_R0N_N[:, 1:]
     print '\n'
-    t = sigma_R0N[:, 0] * mc.NANO2SEC / 60.0
+    t = sigma_R0N[:, 0] * mc.NANO2SEC / 3600.0
 
     plt.figure(15)
     plt.plot(t, sigma_R0N[:, 1], color_x)
@@ -167,7 +167,7 @@ def plotBaseReference(sigma_R0N, omega_R0N_N):
 def plotEulerRates(eulerRates):
     print 'eulerRates = ', eulerRates[:, 1:]
     print '\n'
-    t_vec = eulerRates[:, 0] * mc.NANO2SEC / 60.0
+    t_vec = eulerRates[:, 0] * mc.NANO2SEC / 3600.0
     psiDot_vec = eulerRates[:, 1]
     thetaDot_vec = eulerRates[:, 2]
     phiDot_vec = eulerRates[:, 3]
@@ -176,7 +176,7 @@ def plotEulerRates(eulerRates):
     plt.plot(t_vec, thetaDot_vec, color_y)
     plt.plot(t_vec, phiDot_vec, color_z)
     plt.legend(['$\dot\psi$', '$\dot\Theta$', '$\dot\phi$'])
-    plt.xlabel('Time, min')
+    plt.xlabel('Time, h')
     plt.ylabel('3-2-1 Euler Rates, rad/s')
     if arePlotsSaved:
         plt.savefig(paperPath+TheAVSSim.modeRequest+"/euler_rates.pdf", bbox_inches='tight')
@@ -187,7 +187,7 @@ def plotEulerRates(eulerRates):
 def plotEulerSet(eulerSet):
     print 'eulerSet = ', eulerSet[:, 1:]
     print '\n'
-    t_vec = eulerSet[:, 0] * mc.NANO2SEC / 60.0
+    t_vec = eulerSet[:, 0] * mc.NANO2SEC / 3600.0
     psi_vec = eulerSet[:, 1]
     theta_vec = eulerSet[:, 2]
     phi_vec = eulerSet[:, 3]
@@ -209,7 +209,7 @@ def plotEulerSet(eulerSet):
         plt.plot(t_vec, theta_vec, color_y)
         plt.plot(t_vec, phi_vec, color_z)
         plt.legend(['$\psi$', '$\Theta$', '$\phi$'])
-        plt.xlabel('Time, min')
+        plt.xlabel('Time, h')
         plt.ylabel('3-2-1 Euler Set, rad')
         if arePlotsSaved:
             plt.savefig(paperPath + TheAVSSim.modeRequest + "/euler_set.pdf", bbox_inches='tight')
@@ -246,7 +246,7 @@ def plotEulerSet(eulerSet):
         else:
             plt.title(TheAVSSim.modeRequest + ': bore-sight: XZ-plane')
 
-    alpha = 8.0 * math.pi / 180.0
+    alpha = 8.00 * math.pi / 180.0
     rasterSet = np.array([
         [0.0, alpha],
         [0.0, -alpha],
@@ -291,7 +291,7 @@ def plotTrueBodyEulerSet(sigma_BN):
     theta_vec = np.array([])
     t = sigma_BN[:, 0] * mc.NANO2SEC
     for i in range(len(t)):
-        if t[i] > 500:
+        if t[i] > 600:
             e = rbk.MRP2Euler321(sigma_BN[i, 1:])
             psi_vec = np.append(psi_vec, e[0])
             theta_vec = np.append(theta_vec, e[1])
@@ -333,8 +333,23 @@ def plotTrueBodyEulerSet(sigma_BN):
         else:
             plt.title(TheAVSSim.modeRequest + ': Real bore-sight: YZ-plane')
 
-    alpha = 8.0 * math.pi / 180.0
+    alpha = 8.00 * math.pi / 180.0
+    offAlpha = alpha * 0.5
     rasterLines = np.array([
+        [0.0, alpha + offAlpha],
+        [0.0, -(alpha + offAlpha)],
+        [0.0, 0.0],
+        [alpha + offAlpha, 0.0],
+        [-(alpha+ offAlpha), 0.0],
+        [0.0, 0.0],
+        [-(alpha + offAlpha), alpha + offAlpha],
+        [alpha + offAlpha, - (alpha + offAlpha)],
+        [0.0, 0.0],
+        [-(alpha + offAlpha), -(alpha + offAlpha)],
+        [alpha + offAlpha, alpha + offAlpha],
+    ])
+
+    rasterNominalLines = np.array([
         [0.0, alpha],
         [0.0, -alpha],
         [0.0, 0.0],
@@ -347,6 +362,9 @@ def plotTrueBodyEulerSet(sigma_BN):
         [-alpha, -alpha],
         [alpha, alpha],
     ])
+
+    rasterNomLine_y = rasterNominalLines[:, 0]
+    rasterNomLine_z = rasterNominalLines[:, 1]
     rasterLine_y = rasterLines[:, 0]
     rasterLine_z = rasterLines[:, 1]
     angleSetList = np.array([
@@ -359,18 +377,22 @@ def plotTrueBodyEulerSet(sigma_BN):
     n_b = ['(1.b)','(2.b)', '(3.b)', '(4.b)']
     def plot_scanAngles():
         plt.figure(102, figsize=(3.,3.))
+        plt.plot(rasterLine_y, rasterLine_z, c='dodgerblue', ls='--')
         plt.plot(psi_vec, theta_vec, 'magenta')
-        plt.plot(rasterLine_y, rasterLine_z, 'b--')
+        plt.plot(rasterNomLine_y, rasterNomLine_z, 'b--')
 
         for i in range(len(rasterLine_y)):
-            plt.scatter(rasterLine_y[i], rasterLine_z[i], s=10, c='b')
+            plt.scatter(rasterNomLine_y[i], rasterNomLine_z[i], s=10, c='b')
         for j, txt_a in enumerate(n_a):
             plt.annotate(txt_a, (angleSetList[j, 0], angleSetList[j, 1]))
         for k, txt_b in enumerate(n_b):
             plt.annotate(txt_b, (-angleSetList[k, 0], -angleSetList[k, 1]))
         plt.xlabel('Yaw Angle, rad')
         plt.ylabel('Pitch Angle, rad')
-        plt.legend(['Real maneuver', 'Nominal raster'])
+        plt.legend(['Offset', 'Maneuver', 'Raster'])
+        lim = 0.27
+        #plt.xlim([-lim, lim])
+        #plt.ylim([-lim, lim])
         if arePlotsSaved:
             plt.savefig(paperPath+TheAVSSim.modeRequest+"/scanAngles.pdf", bbox_inches='tight')
         else:
@@ -386,7 +408,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
     print 'sigma_BR = ', sigma_BR[:, 1:]
     print 'omega_BR_B = ', omega_BR_B[:, 1:]
     print '\n'
-    t = sigma_BR[:, 0] * mc.NANO2SEC / 60.0
+    t = sigma_BR[:, 0] * mc.NANO2SEC / 3600.0
     def plotSigma():
         plt.figure(30)
         plt.plot(t, sigma_BR[:, 1], color_x)
@@ -394,7 +416,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
         plt.plot(t, sigma_BR[:, 3], color_z)
         plotLabels_sigma()
         if arePlotsSaved:
-            plt.savefig(paperPath+TheAVSSim.modeRequest+"/sigma_BR.pdf", bbox_inches='tight')
+            plt.savefig(paperPath + TheAVSSim.modeRequest + "/sigma_BR.pdf", bbox_inches='tight')
         else:
             plt.title(TheAVSSim.modeRequest + ': Att Tracking Error $\sigma_{BR}$')
 
@@ -405,13 +427,13 @@ def plotTrackingError(sigma_BR, omega_BR_B):
         plt.plot(t, omega_BR_B[:, 3], color_z)
         plotLabels_omega()
         if arePlotsSaved:
-            plt.savefig(paperPath+TheAVSSim.modeRequest+'/omega_BR_B.pdf', bbox_inches='tight')
+            plt.savefig(paperPath + TheAVSSim.modeRequest + '/omega_BR_B.pdf', bbox_inches='tight')
         else:
             plt.title(TheAVSSim.modeRequest + ': Rate Tracking Error $\omega_{BR, B}$')
 
     def plotAverageError():
         plt.figure(32)
-        t = sigma_BR[:, 0] * mc.NANO2SEC / 60.0
+        t = sigma_BR[:, 0] * mc.NANO2SEC / 3600.0
         eps1 = np.array([])
         eps2 = np.array([])
         eps3 = np.array([])
@@ -426,7 +448,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
         plt.semilogy(t, eps2, color_y)
         plt.semilogy(t, eps3, color_z)
         plt.legend(['$\epsilon_1$', '$\epsilon_2$', '$\epsilon_3$'])
-        plt.xlabel('Time, min')
+        plt.xlabel('Time, h')
         plt.ylabel('Logarithmic Average Error log($\epsilon$)')
         if arePlotsSaved:
             plt.savefig(paperPath+TheAVSSim.modeRequest+"/error.pdf", bbox_inches='tight')
@@ -456,7 +478,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
         plt.semilogy(t, absSigma_vec2, color_y),
         plt.semilogy(t, absSigma_vec3, color_z)
         plt.legend(['log$(\sigma_1)$', 'log$(\sigma_2)$', 'log$(\sigma_3)$'])
-        plt.xlabel('Time, min')
+        plt.xlabel('Time, h')
         plt.ylabel('Logarithmic MRP Error: log($\epsilon$)')
         if arePlotsSaved:
             plt.savefig(paperPath+TheAVSSim.modeRequest+"/logSigma_BR.pdf", bbox_inches='tight')
@@ -470,7 +492,7 @@ def plotTrackingError(sigma_BR, omega_BR_B):
         plt.semilogy(t, absOmega_vec2, color_y),
         plt.semilogy(t, absOmega_vec3, color_z)
         plt.legend(['log($\omega_1$)', 'log($\omega_2$)', 'log($\omega_3$)'])
-        plt.xlabel('Time, min')
+        plt.xlabel('Time, h')
         plt.ylabel('Logarithmic Rate Error: log($\omega$)')
         if arePlotsSaved:
             plt.savefig(paperPath+TheAVSSim.modeRequest+"/logOmega_BR.pdf", bbox_inches='tight')
@@ -487,13 +509,13 @@ def plotTrackingError(sigma_BR, omega_BR_B):
 def plotControlTorque(Lr):
     print 'Lr = ', Lr[:, 1:]
     print '\n'
-    t = Lr[:, 0] * mc.NANO2SEC / 60.0
+    t = Lr[:, 0] * mc.NANO2SEC / 3600.0
     plt.figure(40)
     plt.plot(t, Lr[:, 1], color_x)
     plt.plot(t, Lr[:, 2], color_y)
     plt.plot(t, Lr[:, 3], color_z)
     plt.legend(['$u_1$', '$u_2$', '$u_3$'])
-    plt.xlabel('Time, min')
+    plt.xlabel('Time, h')
     plt.ylabel('Control Torque, N$\cdot$m')
     if arePlotsSaved:
         plt.savefig(paperPath+TheAVSSim.modeRequest+"/controlTorque.pdf", bbox_inches='tight')
@@ -505,13 +527,15 @@ def plotEffectorTorqueRequest(u):
     print 'u = ', u[:, 1:]
     print '\n'
 
+    t = u[:, 0] * mc.NANO2SEC / 3600.0
     plt.figure(41)
-    plt.plot(u[:, 0] * 1E-12, u[:, 1], color_x)
-    plt.plot(u[:, 0] * 1E-12, u[:, 2], color_y)
-    plt.plot(u[:, 0] * 1E-12, u[:, 3], color_z)
-    plt.plot(u[:, 0] * 1E-12, u[:, 4], 'm')
+    plt.ylim([-0.2, 0.2])
+    plt.plot(t, u[:, 1], color_x)
+    plt.plot(t, u[:, 2], color_y)
+    plt.plot(t, u[:, 3], color_z)
+    plt.plot(t, u[:, 4], 'm')
     plt.legend(['$u_1$', '$u_2$', '$u_3$', '$u_4$'])
-    plt.xlabel('Time, $10^3$ s')
+    plt.xlabel('Time, h')
     plt.ylabel('Torque, N$\cdot$m')
     if arePlotsSaved:
         plt.savefig(paperPath+TheAVSSim.modeRequest+"/effectorTorque.pdf", bbox_inches='tight')
@@ -550,7 +574,9 @@ def executeGuidance(TheAVSSim):
     def singleTest(mode):
         TheAVSSim.modeRequest = mode
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        TheAVSSim.ConfigureStopTime(int(60 * 20 * 4 * 1E9))
+        t_sim = 2 * 60 * 20 * 4
+        print 'Sim Time = ', t_sim
+        TheAVSSim.ConfigureStopTime(int(t_sim * 1E9))
         #TheAVSSim.ConfigureStopTime(int(60 * 20 * 1E9))
         TheAVSSim.ExecuteSimulation()
 
@@ -569,7 +595,7 @@ def executeGuidance(TheAVSSim):
     #TheAVSSim.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
 
     # EULER ANGLE ROTATION (FOR ORBIT AXIS SPIN)
-    #angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
+    angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
     #SimulationBaseClass.SetCArray(angleRates, 'double', TheAVSSim.eulerRotationData.angleRates)
 
     # RASTER MNVR
@@ -589,14 +615,14 @@ def executeGuidance(TheAVSSim):
     P = 13
     I_vec = TheAVSSim.VehConfigData.ISCPntB_S
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
-    K_cr = computeGains(P, I) * 0.7
+    K_cr = computeGains(P, I) 
     d = computeDiscriminant(K_cr, P, I)
     T = 2.0 * np.min(I) / P
     print 'Inertia = ', I
     print 'Discriminant = ', d
     print 'K = ', K_cr
     print 'P = ', P
-    print 'Decay Time [min] = ', T / 60.0
+    print 'Decay Time [s] = ', T
     TheAVSSim.MRP_FeedbackRWAData.K = K_cr
     TheAVSSim.MRP_FeedbackRWAData.P = P
 
@@ -699,7 +725,7 @@ if __name__ == "__main__":
         sigma_R0N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.sigma_RN", range(3))
         omega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.omega_RN_N", range(3))
         domega_R0N_N = TheAVSSim.pullMessageLogData("att_ref_output_stage1.domega_RN_N", range(3))
-        #plotBaseReference(sigma_R0N, omega_R0N_N)
+        plotBaseReference(sigma_R0N, omega_R0N_N)
 
 
     if (TheAVSSim.modeRequest == 'deadbandGuid'):
