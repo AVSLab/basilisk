@@ -25,6 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
 
 
@@ -62,9 +63,13 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
  */
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - Get the other message IDs */
+    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+                                                  sizeof(RWConstellation), moduleID);
     ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                      sizeof(RWSpeedData), moduleID);
+    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
+                                                              sizeof(vehicleConfigData), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -74,7 +79,27 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->dummy = 0.0;              /* reset any required variables */
+    RWConstellation localRWData;
+    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+    uint64_t clockTime;
+    uint32_t readSize;
+    int i;
+
+    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+    ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
+                sizeof(RWConstellation), &localRWData, moduleID);
+    ConfigData->numRW = localRWData.numRW;
+
+    for(i=0; i<ConfigData->numRW; i=i+1)
+    {
+        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
+        m33MultV3(RECAST3X3 sc.BS,
+                  localRWData.reactionWheels[i].gsHat_S,
+                  &ConfigData->GsMatrix[i*3]);
+    }
+
+    ConfigData->status = DUMPING_OFF;
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -86,28 +111,42 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    double              Lr[3];              /*!< [unit] variable description */
     RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
+    double              hs;                 /*!< net RW cluster angularl momentum magnitude */
+    double              hs_B[3];            /*!< RW angular momentum */
+    double              vec3[3];            /*!< temp vector */
+    int i;
 
 
-    /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
                 sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
 
+    /* compute net RW momentum magnitude */
+    v3SetZero(hs_B);
+    for (i=0;i<ConfigData->numRW;i++) {
+        v3Scale(ConfigData->JsList[i],&ConfigData->GsMatrix[i*3],vec3);
+        v3Add(hs_B, vec3, hs_B);
+    }
+    hs = v3Norm(hs_B);
 
+    if (hs < ConfigData->hs_min || ConfigData->status == DUMPING_COMPLETED ) {
+        /* Momentum dumping completed or not required */
+        ConfigData->status = DUMPING_COMPLETED;
+        v3SetZero(ConfigData->Delta_H_B);
+    } else {
+        if (ConfigData->status == DUMPING_OFF) {
+            /* turn on momentum dumping */
+            ConfigData->status = DUMPING_ON;
+            v3Scale((hs - ConfigData->hs_min)/hs*1.1, hs_B, ConfigData->Delta_H_B);
+        }
+    }
 
-    /*
-        Add the module specific code
-     */
-    v3Copy(ConfigData->inputVector, Lr);
-    ConfigData->dummy += 1.0;
-    Lr[0] += ConfigData->dummy;
 
     /*
      store the output message 
      */
-    v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
+    v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
 
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
                  (void*) &(ConfigData->controlOut), moduleID);

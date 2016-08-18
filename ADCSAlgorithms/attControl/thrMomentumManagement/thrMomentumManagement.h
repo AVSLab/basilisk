@@ -21,27 +21,39 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehControlOut.h"
+#include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
+enum momentumDumpingStatus {
+    DUMPING_OFF, DUMPING_ON, DUMPING_COMPLETED
+};
+
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double dummy;                                   /*!< [units] sample module variable declaration */
-    double dumVector[3];                            /*!< [units] sample vector variable */
+    enum momentumDumpingStatus status;              /*!<        status flag of the momentum dumping management */
+    double Delta_H_B[3];                            /*!< [Nms]  net desired angular momentum change */
+    int numRW;                                      /*!<        number of RW */
+    double GsMatrix[3*MAX_EFF_CNT];                 /*!< []     The spin axis matrix used for RWAs*/
+    double JsList[MAX_EFF_CNT];                     /*!< [kgm2] The spin axis inertia for RWAs*/
 
+    /* declare module public variables */
+    double hs_min;                                  /*!< [Nms]  minimum RW cluster momentum for dumping */
+    
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
     int32_t outputMsgID;                            /*!< ID for the outgoing message */
-    char inputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t inputMsgID;                             /*!< ID for the incoming message */
-    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsID;                    /*!< [] The ID for the reaction wheel speeds message*/
+    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    int32_t inputVehicleConfigDataID;           /*!< [] ID for the incoming static vehicle data */
+    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];    /*!< [] The name for the reaction wheel speeds message */
+    int32_t inputRWSpeedsID;                        /*!< [] The ID for the reaction wheel speeds message*/
+    char inputRWConfigData[MAX_STAT_MSG_LENGTH];    /*!< [-] The name of the RWA configuration message*/
+    int32_t inputRWConfID;                          /*!< [-] ID for the incoming RWA configuration data*/
 
-    double  inputVector[3];                         /*!< [units]  vector description */
 
     vehControlOut controlOut;                        /*!< [] Control output requests */
 
