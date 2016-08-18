@@ -39,7 +39,7 @@ typedef struct {
     double int_sigma[3];                /*!< [s]       integral of the MPR attitude error */
     double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
     double GsMatrix[3*MAX_EFF_CNT];     /*!< [-]        The spin axis matrix used for RWAs*/
-    double JsList[3*MAX_EFF_CNT];       /*!< [kgm2]    The spin axis inertia for RWAs*/
+    double JsList[MAX_EFF_CNT];         /*!< [kgm2]    The spin axis inertia for RWAs*/
     uint32_t numRW;                     /*!< []        The number of reaction wheels available on vehicle */
 
     /* declare module IO interfaces */

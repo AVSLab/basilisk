@@ -40,7 +40,7 @@ typedef struct {
     uint64_t priorTime;             /*!< [ns]      Last time the attitude control is called */
     double z[3];                    /*!< [rad]     Integral state of delta_omega */
     double GsMatrix[3*MAX_EFF_CNT]; /*!< [-]       The spin axis matrix used for RWAs*/
-    double JsList[3*MAX_EFF_CNT];   /*!< [kgm2]    The spin axis inertia for RWAs*/
+    double JsList[MAX_EFF_CNT];     /*!< [kgm2]    The spin axis inertia for RWAs*/
     uint32_t numRW;                 /*!< [-]       The number of reaction wheels available on vehicle */
     
     /* declare module IO interfaces */
