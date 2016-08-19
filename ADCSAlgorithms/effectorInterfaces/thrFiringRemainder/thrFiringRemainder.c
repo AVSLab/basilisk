@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 /* modify the path to reflect the new module names */
-#include "attControl/thrFiringRemainder/thrFiringRemainder.h"
+#include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
 
 /* update this include to reflect the required module input messages */
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
