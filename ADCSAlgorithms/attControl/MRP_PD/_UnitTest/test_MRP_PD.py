@@ -94,21 +94,13 @@ def mrp_PD_tracking(show_plots):
 
     guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
-    SimulationBaseClass.SetCArray(sigma_BR,
-                                  'double',
-                                  guidCmdData.sigma_BR)
+    guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
-    SimulationBaseClass.SetCArray(omega_BR_B,
-                                  'double',
-                                  guidCmdData.omega_BR_B)
+    guidCmdData.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    SimulationBaseClass.SetCArray(omega_RN_B,
-                                  'double',
-                                  guidCmdData.omega_RN_B)
+    guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    SimulationBaseClass.SetCArray(domega_RN_B,
-                                  'double',
-                                  guidCmdData.domega_RN_B)
+    guidCmdData.domega_RN_B = domega_RN_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
                                           inputMessageSize,
                                           0,
@@ -124,9 +116,7 @@ def mrp_PD_tracking(show_plots):
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    SimulationBaseClass.SetCArray(I,
-                                  'double',
-                                  vehicleConfigOut.ISCPntB_B)
+    vehicleConfigOut.ISCPntB_B = I
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,

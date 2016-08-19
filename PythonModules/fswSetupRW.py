@@ -52,7 +52,7 @@ def create(
     RW = vehicleConfigData.RWConfigurationElement()
 
 
-    SimulationBaseClass.SetCArray(gsHat_S, 'double', RW.gsHat_S)
+    RW.gsHat_S = gsHat_S
     RW.Js = Js
 
     # add RW to the list of RW devices

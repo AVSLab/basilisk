@@ -44,7 +44,7 @@ import macros as mc
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
+#@pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
 def test_inertial3DSpin(show_plots):
     # each test method requires a single assert method to be called
@@ -84,10 +84,9 @@ def subModuleTestFunction(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.outputDataName = "outputName"
+    moduleConfig.inputRefName = "inputRefName"
     omega_spin = np.array([1., -1., 0.5]) * mc.D2R
-    SimulationBaseClass.SetCArray(omega_spin,
-                                  'double',
-                                  moduleConfig.omega_spin)
+    moduleConfig.omega_spin = omega_spin
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     #
@@ -101,17 +100,11 @@ def subModuleTestFunction(show_plots):
 
     RefStateOutData = inertial3DSpin.attRefOut()          # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
-    SimulationBaseClass.SetCArray(sigma_R0N,
-                                  'double',
-                                  RefStateOutData.sigma_RN)
+    RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.0, 0.0, 0.0])
-    SimulationBaseClass.SetCArray(omega_R0N_N,
-                                  'double',
-                                  RefStateOutData.omega_RN_N)
+    RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
-    SimulationBaseClass.SetCArray(domega_R0N_N,
-                                  'double',
-                                  RefStateOutData.domega_RN_N)
+    RefStateOutData.domega_RN_N = domega_R0N_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
                                           inputMessageSize,
                                           0,

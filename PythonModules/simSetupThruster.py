@@ -75,11 +75,9 @@ def create(
     else:
         print 'Error: Thruster ' + sys._getframe().f_code.co_name +' direction tHat input must be non-zero 3x1 vector'
         exit(1)
-    #SimulationBaseClass.SetCArray(tHat_S, 'double', TH.inputThrDir_S)
     TH.inputThrDir_S = tHat_S
 
     # set thruster position vector
-    #SimulationBaseClass.SetCArray(r_S, 'double', TH.inputThrLoc_S)
     TH.inputThrLoc_S = r_S
     # enforce Thruster options
     if not options.useMinPulseTime:

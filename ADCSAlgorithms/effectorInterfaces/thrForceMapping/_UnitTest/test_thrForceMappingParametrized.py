@@ -116,12 +116,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
         CoM_S = [0.1, 0.05, 0.01]
     else:
         CoM_S = [0,0,0]
-    SimulationBaseClass.SetCArray(BS,
-                                  'double',
-                                  vehicleConfigOut.BS)
-    SimulationBaseClass.SetCArray(CoM_S,
-                                  'double',
-                                  vehicleConfigOut.CoM_B)
+    vehicleConfigOut.BS = BS
+    vehicleConfigOut.CoM_B = CoM_S
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
@@ -140,9 +136,7 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
         requestedTorque = [0.1, 0.16, 0.005]            # Set up a list as a 3-vector
     else:
         requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
-    SimulationBaseClass.SetCArray(requestedTorque,                      # specify message variable
-                                  'double',                             # specify message variable type
-                                  inputMessageData.torqueRequestBody)   # write torque request to input message
+    inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           0,
@@ -166,7 +160,7 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
             ,0,0,1
         ]
 
-    SimulationBaseClass.SetCArray(controlAxes_B, 'double', moduleConfig.controlAxes_B)
+    moduleConfig.controlAxes_B = controlAxes_B
 
     rcsClass = vehicleConfigData.ThrusterCluster()
     rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -216,8 +210,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
 
 
     for i in range(numThrusters):
-        SimulationBaseClass.SetCArray(rcsLocationData[i], 'double', rcsPointer.rThrust_S)
-        SimulationBaseClass.SetCArray(rcsDirectionData[i], 'double', rcsPointer.tHatThrust_S)
+        rcsPointer.rThrust_S = rcsLocationData[i]
+        rcsPointer.tHatThrust_S = rcsDirectionData[i]
         vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
     msgSize = 4 + vehicleConfigData.MAX_EFF_CNT*6*8

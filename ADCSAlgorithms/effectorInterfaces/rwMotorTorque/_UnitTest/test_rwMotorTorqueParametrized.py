@@ -94,6 +94,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleConfig.inputRWConfigDataName = "rwa_config_data"
     moduleConfig.outputDataName = "rwMotorTorqueOut"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
+    moduleConfig.inputRWsAvailDataName = "rw_availability"
 
     # wheelConfigData Message
     fswSetupRW.clearSetup()
@@ -123,12 +124,8 @@ def rwMotorTorqueTest(show_plots, dropAxes):
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
     CoM_S = [0.0, 0.0, 0.0]
-    SimulationBaseClass.SetCArray(BS,
-                                  'double',
-                                  vehicleConfigOut.BS)
-    SimulationBaseClass.SetCArray(CoM_S,
-                                  'double',
-                                  vehicleConfigOut.CoM_B)
+    vehicleConfigOut.BS = BS
+    vehicleConfigOut.CoM_B = CoM_S
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
@@ -144,9 +141,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
-    SimulationBaseClass.SetCArray(requestedTorque,                      # specify message variable
-                                  'double',                             # specify message variable type
-                                  inputMessageData.torqueRequestBody)   # write torque request to input message
+    inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           0,
@@ -164,7 +159,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
             ,0,0,1
         ]
 
-    SimulationBaseClass.SetCArray(controlAxes_B, 'double', moduleConfig.controlAxes_B)
+    moduleConfig.controlAxes_B = controlAxes_B
 
 
 

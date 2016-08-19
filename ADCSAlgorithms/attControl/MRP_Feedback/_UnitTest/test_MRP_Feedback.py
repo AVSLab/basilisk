@@ -105,7 +105,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
     domega0 = [0., 0., 0.]
-    SimulationBaseClass.SetCArray(domega0, 'double', moduleConfig.domega0)
+    moduleConfig.domega0 = domega0
 
 
     #   Create input message and size it because the regular creator of that message
@@ -120,21 +120,13 @@ def subModuleTestFunction(show_plots):
 
     guidCmdData = sunSafePoint.attGuidOut()             # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
-    SimulationBaseClass.SetCArray(sigma_BR,
-                                  'double',
-                                  guidCmdData.sigma_BR)
+    guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
-    SimulationBaseClass.SetCArray(omega_BR_B,
-                                  'double',
-                                  guidCmdData.omega_BR_B)
+    guidCmdData.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    SimulationBaseClass.SetCArray(omega_RN_B,
-                                  'double',
-                                  guidCmdData.omega_RN_B)
+    guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    SimulationBaseClass.SetCArray(domega_RN_B,
-                                  'double',
-                                  guidCmdData.domega_RN_B)
+    guidCmdData.domega_RN_B = domega_RN_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
                                           inputMessageSize,
                                           0,
@@ -150,13 +142,11 @@ def subModuleTestFunction(show_plots):
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    SimulationBaseClass.SetCArray(I, 'double', vehicleConfigOut.ISCPntB_B)
+    vehicleConfigOut.ISCPntB_B = I
     BS = [1.0, 0.0, 0.0,
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
-    SimulationBaseClass.SetCArray(BS,
-                                  'double',
-                                  vehicleConfigOut.BS)
+    vehicleConfigOut.BS = BS
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0, vehicleConfigOut)
@@ -169,9 +159,7 @@ def subModuleTestFunction(show_plots):
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     rwSpeedMessage = rwNullSpace.RWSpeedData()
     Omega = [10.0, 25.0, 50.0, 100.0]
-    SimulationBaseClass.SetCArray(Omega,
-                                  'double',
-                                  rwSpeedMessage.wheelSpeeds)
+    rwSpeedMessage.wheelSpeeds = Omega
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
                                           0,

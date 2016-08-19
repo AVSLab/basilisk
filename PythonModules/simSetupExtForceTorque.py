@@ -50,8 +50,8 @@ def createExtForceTorque(
     # create the blank RW object
     extFTObject = ExternalForceTorque.ExternalForceTorque()
 
-    SimulationBaseClass.SetCArray(force_B, 'double', extFTObject.force_B)
-    SimulationBaseClass.SetCArray(torque_B, 'double', extFTObject.torque_B)
+    extFTObject.force_B = force_B
+    extFTObject.torque_B = torque_B
 
     # add RW to the list of RW devices
     extForceTorqueList.append(extFTObject)
