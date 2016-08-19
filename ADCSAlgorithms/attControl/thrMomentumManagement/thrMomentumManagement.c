@@ -100,6 +100,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
     }
 
     ConfigData->status = DUMPING_OFF;
+    v3SetZero(ConfigData->Delta_H_B);
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -111,7 +112,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
+    RWSpeedData         rwSpeedMsg;         /*!< Reaction wheel speed estimates */
     double              hs;                 /*!< net RW cluster angularl momentum magnitude */
     double              hs_B[3];            /*!< RW angular momentum */
     double              vec3[3];            /*!< temp vector */
@@ -120,12 +121,12 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+                sizeof(RWSpeedData), (void*) &(rwSpeedMsg), moduleID);
 
     /* compute net RW momentum magnitude */
     v3SetZero(hs_B);
     for (i=0;i<ConfigData->numRW;i++) {
-        v3Scale(ConfigData->JsList[i],&ConfigData->GsMatrix[i*3],vec3);
+        v3Scale(ConfigData->JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->GsMatrix[i*3],vec3);
         v3Add(hs_B, vec3, hs_B);
     }
     hs = v3Norm(hs_B);
