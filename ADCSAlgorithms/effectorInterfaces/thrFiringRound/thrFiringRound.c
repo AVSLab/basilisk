@@ -24,6 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* update this include to reflect the required module input messages */
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <math.h>
 
 
@@ -112,7 +113,7 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 		return;
 	}
 
-	ConfigData->controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * 1e-9;
+	ConfigData->controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
 	ConfigData->prevCallTime = callTime;
 
 	/*! Begin method steps */
