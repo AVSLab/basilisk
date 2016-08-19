@@ -827,17 +827,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Set the static spacecraft parameters
     #
     def SetLocalConfigData(self):
-        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        self.LocalConfigData.BS = BS
-
-        Inertia = [1000.0, 0.0, 0.0, 0.0, 800.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
-        self.LocalConfigData.ISCPntB_B = Inertia
-
-        # adjust the message size by hand if needed
-        msgSize = 8 * 9 + 8 * 9 + 4 + 8  # the last 8 bytes are a required padding for now
-        self.TotalSim.CreateNewMessage("FSWProcess", "adcs_config_data", msgSize, 2)
-        self.TotalSim.WriteMessageData("adcs_config_data", msgSize, 0, self.LocalConfigData)
-    
         self.RWAGsMatrix = []
         self.RWAJsList = []
         i = 0
@@ -851,8 +840,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             self.RWAGsMatrix.extend([-math.sin(rwElAngle) * math.sin(rwClockAngle),
                                 -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)])
             self.RWAJsList.extend([100.0 / (6000.0 / 60.0 * math.pi * 2.0)])
-            rwPointer.Gs_S = [-math.sin(rwElAngle) * math.sin(rwClockAngle),
-                                           -math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)]
+            rwPointer.gsHat_S = [-math.sin(rwElAngle) * math.sin(rwClockAngle),-math.sin(rwElAngle) * math.cos(rwClockAngle), -math.cos(rwElAngle)]
             rwPointer.Js = 100.0 / (6000.0 / 60.0 * math.pi * 2.0)
             vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
             rwClockAngle += 90.0 * math.pi / 180.0
@@ -903,9 +891,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def setRwFSWDeviceAvailability(self):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
         avail = [1, 0, 1, 0]
-        SimulationBaseClass.SetCArray(avail,
-                                      'int',
-                                      rwAvailabilityMessage.wheelAvailability)
+        rwAvailabilityMessage.wheelAvailability = avail
         msgSize = vehicleConfigData.MAX_EFF_CNT*4
         self.TotalSim.CreateNewMessage("FSWProcess", "rw_availability", msgSize, 2, "RWAvailabilityData")
         self.TotalSim.WriteMessageData("rw_availability", msgSize, 0, rwAvailabilityMessage)
@@ -1351,11 +1337,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     
     def SetVehicleConfigData(self):
         BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(BS, 'double', self.VehConfigData.BS)
+        self.VehConfigData.BS = BS
         Inertia = [700.0, 0.0, 0.0, 0.0, 700.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
-        SimulationBaseClass.SetCArray(Inertia, 'double', self.VehConfigData.ISCPntB_S)
+        self.VehConfigData.ISCPntB_S = Inertia
         CoM = [0.0, 0.0, 1.0]
-        SimulationBaseClass.SetCArray(CoM, 'double', self.VehConfigData.CoM_S)
+        self.VehConfigData.CoM_S = CoM
         self.VehConfigData.outputPropsName = "adcs_config_data"
 
     def SetCSSDecodeFSWConfig(self):
@@ -1776,7 +1762,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             , 0.0, 1.0, 0.0
             , 0.0, 0.0, 1.0
         ]
-        SimulationBaseClass.SetCArray(controlAxes_B, 'double', self.rwMotorTorqueData.controlAxes_B)
+        self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
         self.rwMotorTorqueData.inputRWConfigDataName = "rwa_config_data"
         self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"

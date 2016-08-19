@@ -532,7 +532,7 @@ def executeGuidance(TheAVSSim):
 
     # MRP FEEDBACK GAINS
     P = 13
-    I_vec = ctypes.cast(TheAVSSim.VehConfigData.ISCPntB_S.__long__(), ctypes.POINTER(ctypes.c_double))
+    I_vec = TheAVSSim.VehConfigData.ISCPntB_S
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
     K_cr = computeGains(P, I) * 1.0
     d = computeDiscriminant(K_cr, P, I)
@@ -596,15 +596,9 @@ if __name__ == "__main__":
 
     # Convert those OEs to cartesian
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
-    PosVec = ctypes.cast(TheAVSSim.VehOrbElemObject.r_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    VelVec = ctypes.cast(TheAVSSim.VehOrbElemObject.v_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
-    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
+    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.r_N)
+    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector( TheAVSSim.VehOrbElemObject.v_N)
 
-    print 'r0 = [', PosVec[0], ', ', PosVec[1], ', ', PosVec[2], ']'
-    print 'v0 = [', VelVec[0], ', ', VelVec[1], ', ', VelVec[2], ']'
     executeGuidance(TheAVSSim)
 
     P = af.orbitalPeriod(TheAVSSim.VehOrbElemObject.CurrentElem.a, TheAVSSim.VehOrbElemObject.mu)

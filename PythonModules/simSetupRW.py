@@ -89,7 +89,8 @@ def create(
     else:
         print 'Error: RW gsHat input must be non-zero 3x1 vector'
         exit(1)
-    SimulationBaseClass.SetCArray(gsHat_S, 'double', RW.gsHat_S)
+    #SimulationBaseClass.SetCArray(gsHat_S, 'double', RW.gsHat_S)
+    RW.gsHat_S = gsHat_S
 
     # set RW t and g unit axes
     gtHat0_S = numpy.cross(gsHat_S,[1,0,0])
@@ -99,11 +100,14 @@ def create(
         norm = numpy.linalg.norm(gtHat0_S)
     gtHat0_S = gtHat0_S / norm
     ggHat0_S = numpy.cross(gsHat_S,gtHat0_S)
-    SimulationBaseClass.SetCArray(gtHat0_S, 'double', RW.gtHat0_S)
-    SimulationBaseClass.SetCArray(ggHat0_S, 'double', RW.ggHat0_S)
+    #SimulationBaseClass.SetCArray(gtHat0_S, 'double', RW.gtHat0_S)
+    RW.gtHat0_S = gtHat0_S
+    #SimulationBaseClass.SetCArray(ggHat0_S, 'double', RW.ggHat0_S)
+    RW.ggHat0_S = ggHat0_S
 
     # set RW position vector
-    SimulationBaseClass.SetCArray(r_S, 'double', RW.r_S)
+    #SimulationBaseClass.SetCArray(r_S, 'double', RW.r_S)
+    RW.r_S = r_S
 
     # set initial RW states
     RW.Omega = Omega*macros.RPM

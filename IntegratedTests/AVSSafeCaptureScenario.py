@@ -106,7 +106,6 @@ if __name__ == "__main__":
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
     TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.r_N[:])
     TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.v_N[:])
-    print TheAVSSim.VehDynObject.PositionInit[0]
 
     executeAVSSafeCapture(TheAVSSim)
 
