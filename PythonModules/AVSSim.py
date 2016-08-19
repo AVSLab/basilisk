@@ -127,7 +127,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
-        self.fswProc.addTask(self.CreateNewTask("thrFiringRoundTask", int(5E8)), 112)
+        self.fswProc.addTask(self.CreateNewTask("thrFiringRoundTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
 
@@ -469,7 +469,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
-                             "self.enableTask('sunSafeFSWTask')"])
+                             "self.enableTask('sunSafeFSWTask')",
+                             "self.enableTask('thrFiringRound')"])
 
         self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
                             ["self.fswProc.disableAllTasks()",
@@ -1165,7 +1166,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def SetsunSafeACS(self):
         self.sunSafeACSData.inputControlName = "controlTorqueRaw"
-        self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds"
+        self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds_raw"
         self.sunSafeACSData.thrData.minThrustRequest = 0.1
         self.sunSafeACSData.thrData.numEffectors = 8
         self.sunSafeACSData.thrData.maxNumCmds = 2
@@ -1446,7 +1447,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
 
     def SetthrFiringRound(self):
-        self.thrFiringRoundData.inputDataName = "acs_thruster_cmds"
+        self.thrFiringRoundData.inputDataName = "acs_thruster_cmds_raw"
         self.thrFiringRoundData.outputDataName = "acs_thruster_cmds"
         self.thrFiringRoundData.inputThrusterConfName = "rcs_config_data"
         self.thrFiringRoundData.numThrusters = 8
