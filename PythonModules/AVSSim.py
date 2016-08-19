@@ -1500,7 +1500,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.inertial3DSpinData.inputRefName = "att_ref_output_stage1"
         self.inertial3DSpinData.outputDataName = "att_ref_output"
         omega_RN_N = np.array([0.2, 0.2, 0.4]) * mc.D2R
-        self.inertial3DSpinData.omega_RN_N = omega_RN_N
+        self.inertial3DSpinData.omega_spin = omega_RN_N
 
     def setEulerRotation(self):
         self.eulerRotationData.inputRefName = "att_ref_output_stage1"
