@@ -112,12 +112,8 @@ def hillPointTestFunction(show_plots):
                                           inputNavMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
     NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    SimulationBaseClass.SetCArray(r_BN_N,
-                                  'double',
-                                  NavStateOutData.r_BN_N)
-    SimulationBaseClass.SetCArray(v_BN_N,
-                                  'double',
-                                  NavStateOutData.v_BN_N)
+    NavStateOutData.r_BN_N = r_BN_N
+    NavStateOutData.v_BN_N = v_BN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
                                           inputNavMessageSize,
                                           0,
@@ -135,12 +131,8 @@ def hillPointTestFunction(show_plots):
                                           inputCelMessageSize,
                                           2)  
     CelBodyData = spice_interface.SpicePlanetState()
-    SimulationBaseClass.SetCArray(planetPos,
-                                  'double',
-                                  CelBodyData.PositionVector)
-    SimulationBaseClass.SetCArray(planetVel,
-                                  'double',
-                                  CelBodyData.VelocityVector)
+    CelBodyData.PositionVector = planetPos
+    CelBodyData.VelocityVector = planetVel
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
                                           inputCelMessageSize,
                                           0,
