@@ -512,8 +512,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("feedbackControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("feedbackControlMnvrTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
         self.AddModelToTask("feedbackControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
-        #self.AddModelToTask("feedbackControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
-        #self.AddModelToTask("feedbackControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
         
         self.AddModelToTask("attitudePRVControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudePRVControlMnvrTask", self.PRV_SteeringRWAWrap, self.PRV_SteeringRWAData, 9)
@@ -523,8 +521,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("simpleRWControlTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("simpleRWControlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
         self.AddModelToTask("simpleRWControlTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
-        #self.AddModelToTask("simpleRWControlTask", self.RWAMappingDataWrap, self.RWAMappingDataWrap, 8)
-        #self.AddModelToTask("simpleRWControlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
 
 
         # Disable all tasks in the FSW process
@@ -535,9 +531,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.fswProc.disableAllTasks()"
                              , "self.enableTask('sensorProcessing')"
                              , "self.enableTask('velocityPointTask')"
-                             #, "self.enableTask('inertial3DPointTask')"
                              , "self.enableTask('simpleRWControlTask')"
-                             , "self.ResetTask('simpleRWControlTask')"
                              ])
         # Guidance Events
         self.createNewEvent("initiateGuidanceWithDeadband", int(1E9), True, ["self.modeRequest == 'deadbandGuid'"],
@@ -546,7 +540,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('velocityPointTask')"
                                 , "self.enableTask('trackingErrorTask')"
                                 , "self.enableTask('controlTask')"
-                                , "self.ResetTask('controlTask')"
                              ])
 
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
@@ -554,11 +547,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('inertial3DPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                                 #, "self.enableTask('attitudePRVControlMnvrTask')"
-                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateHillPoint", int(1E9), True, ["self.modeRequest == 'hillPoint'"],
@@ -566,11 +556,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                                 #, "self.enableTask('attitudePRVControlMnvrTask')"
-                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateVelocityPoint", int(1E9), True, ["self.modeRequest == 'velocityPoint'"],
@@ -578,9 +565,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('velocityPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateCelTwoBodyPoint", int(1E9), True, ["self.modeRequest == 'celTwoBodyPoint'"],
@@ -588,9 +573,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('celTwoBodyPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
         
         self.createNewEvent("initiateRasterMnvr", int(1E9), True, ["self.modeRequest == 'rasterMnvr'"],
@@ -600,9 +583,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 #, "self.enableTask('hillPointTask')"
                                 , "self.enableTask('rasterMnvrTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                              ])
         
         self.createNewEvent("initiateEulerRotation", int(1E9), True, ["self.modeRequest == 'eulerRotation'"],
@@ -611,9 +592,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('eulerRotationTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                              # , "self.enableTask('attitudeControlMnvrTask')"
-                             # , "self.ResetTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
@@ -623,11 +602,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('inertial3DSpinTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                , "self.ResetTask('feedbackControlMnvrTask')"
                                 #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.ResetTask('attitudeControlMnvrTask')"
                                 #, "self.enableTask('attitudePRVControlMnvrTask')"
-                                #, "self.ResetTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
@@ -1441,7 +1417,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     # Init of Guidance Modules
     def setInertial3D(self):
         self.inertial3DData.outputDataName = "att_ref_output_stage1"
-        sigma_R0N = [0.4, 0.2, 0.1]
+        sigma_R0N = [0., 0., 0.]
         self.inertial3DData.sigma_R0N = sigma_R0N
 
     def setHillPoint(self):
@@ -1467,7 +1443,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rasterManagerData.outputEulerRatesName = "euler_angle_rates"
 
         def crossingNominal(alpha, totalMnvrTime):
-            t_raster = totalMnvrTime / 12.0
+            t_raster = totalMnvrTime / 6.0
             angleSetList = [
                 alpha, 0.0, 0.0,
                 -alpha, 0.0, 0.0,
@@ -1510,13 +1486,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             ]
             return (angleSetList, angleRatesList, rasterTimeList)
 
-
-
-
-        psi = 8.0 * math.pi / 180.0
-        theta = 8.0 * math.pi / 180.0
-        phiDot = 0.02 * math.pi / 180.0
-        t_mnvr = 20.0 * 18
 
         alpha = 8.0 * math.pi / 180.0
         offAlpha = 0.5 * alpha

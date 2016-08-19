@@ -39,7 +39,7 @@ import RigidBodyKinematics as rbk
 
 # ------------------- PLOTS DIRECTORY ------------------- #
 paperPath = '/Users/marcolsmargenet/Desktop/AIAApaper_new/Figures/'
-arePlotsSaved = True
+arePlotsSaved = False
 if arePlotsSaved:
     plt.rcParams['figure.figsize'] = 1.75, 1.5
     plt.rcParams.update({'font.size': 6})
@@ -278,7 +278,7 @@ def plotEulerSet(eulerSet):
 
     #plot_boresightXZ()
     #plot_boresightYZ()
-    #plot_boresight3D()
+    plot_boresight3D()
     plot321Angles()
 
 
@@ -289,9 +289,9 @@ def plotTrueBodyEulerSet(sigma_BN):
 
     psi_vec = np.array([])
     theta_vec = np.array([])
-    t = sigma_BN[:, 0] * mc.NANO2SEC
+    t = sigma_BN[:, 0] * mc.NANO2SEC / 3600.0
     for i in range(len(t)):
-        if t[i] > 600:
+        if t[i] > 0.5:
             e = rbk.MRP2Euler321(sigma_BN[i, 1:])
             psi_vec = np.append(psi_vec, e[0])
             theta_vec = np.append(theta_vec, e[1])
@@ -390,9 +390,6 @@ def plotTrueBodyEulerSet(sigma_BN):
         plt.xlabel('Yaw Angle, rad')
         plt.ylabel('Pitch Angle, rad')
         plt.legend(['Offset', 'Maneuver', 'Raster'])
-        lim = 0.27
-        #plt.xlim([-lim, lim])
-        #plt.ylim([-lim, lim])
         if arePlotsSaved:
             plt.savefig(paperPath+TheAVSSim.modeRequest+"/scanAngles.pdf", bbox_inches='tight')
         else:
@@ -596,7 +593,7 @@ def executeGuidance(TheAVSSim):
 
     # EULER ANGLE ROTATION (FOR ORBIT AXIS SPIN)
     angleRates = np.array([0.0, 0.0, 0.3]) * mc.D2R
-    #SimulationBaseClass.SetCArray(angleRates, 'double', TheAVSSim.eulerRotationData.angleRates)
+    #TheAVSSim.eulerRotationData.angleRates = angleRates
 
     # RASTER MNVR
     TheAVSSim.eulerRotationData.inputEulerSetName = "euler_angle_set"
@@ -606,15 +603,16 @@ def executeGuidance(TheAVSSim):
     angleOff = np.pi
     R0R = rbk.Mi(angleOff, 3)
     sigma_R0R = rbk.C2MRP(R0R)
-    #SimulationBaseClass.SetCArray(sigma_R0R, 'double', TheAVSSim.attTrackingErrorData.sigma_R0R)
+    #TheAVSSim.attTrackingErrorData.sigma_R0R = sigma_R0R
 
     # DEAD-BAND
     #TheAVSSim.MRP_SteeringRWAData.inputGuidName = "db_att_guid_out"
 
     # MRP FEEDBACK GAINS
-    P = 13
+    P = 45
     I_vec = TheAVSSim.VehConfigData.ISCPntB_S
     I = np.array([I_vec[0], I_vec[4], I_vec[8]])
+    print 'I = ', I
     K_cr = computeGains(P, I) 
     d = computeDiscriminant(K_cr, P, I)
     T = 2.0 * np.min(I) / P
