@@ -470,7 +470,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sunSafeFSWTask')",
-                             "self.enableTask('thrFiringRound')"])
+                             "self.enableTask('thrFiringRoundTask')"])
 
         self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
                             ["self.fswProc.disableAllTasks()",
