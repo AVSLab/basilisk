@@ -24,6 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* update this include to reflect the required module input messages */
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include <math.h>
 
 
 
@@ -102,7 +103,8 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
     uint32_t            readSize;
 	int i;
 	double ratioOfPulses;
-    double thrustForce;
+    double onTimeRequest;
+	int numPulses;
 
 
 	if(ConfigData->prevCallTime == ~0) {
@@ -121,34 +123,23 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
-		/*! Pulse remainder logic */
-		ConfigData->pulseTime[i] = thrustForce/ConfigData->maxThrust[i]*ConfigData->controlPeriod; // s
-		ratioOfPulses = ConfigData->pulseTime[i] / ConfigData->pulseTimeResolution[i];
-		ConfigData->numPulses[i] = (int)(ratioOfPulses + ConfigData->pulseRemainder[i]);
-		ConfigData->pulseRemainder[i] = ratioOfPulses + ConfigData->pulseRemainder[i] - (double)(ConfigData->numPulses[i]);
-		ConfigData->pulseTime[i] = ConfigData->numPulses[i] * ConfigData->pulseTimeResolution[i];
+		onTimeRequest = ConfigData->thrFiringRoundIn.effectorRequest[i];
 
-		if(ConfigData->pulseTime[i] < ConfigData->pulseTimeMin[i]) {
+		/*! Pulse remainder logic */
+		ratioOfPulses = onTimeRequest / ConfigData->pulseTimeResolution[i];
+		numPulses = round(ratioOfPulses);
+		ConfigData->onTime[i] = numPulses * ConfigData->pulseTimeResolution[i];
+
+		if(ConfigData->onTime[i] < ConfigData->pulseTimeMin[i]) {
 			/*! Request is less than minimum pulse time */
-			ConfigData->pulseRemainder[i] += ConfigData->pulseTime[i]/ConfigData->pulseTimeResolution[i];
-			ConfigData->pulseTime[i] = 0.0;
-			ConfigData->level[i] = 0.0;
-			thrustForce = 0.0;
-			ConfigData->numPulses[i] = 0;
-		} else if (ConfigData->pulseTime[i] >= ConfigData->controlPeriod) {
+			ConfigData->onTime[i] = round(ConfigData->onTime[i]/ConfigData->pulseTimeMin[i])*ConfigData->pulseTimeMin[i];
+		} else if (ConfigData->onTime[i] >= ConfigData->controlPeriod) {
 			/*! Request is greater than control period */
-			ConfigData->pulseTime[i] = 1.01*ConfigData->controlPeriod; // oversaturate to avoid numerical error
-			ConfigData->level[i] = 100.0;
-			thrustForce = ConfigData->maxThrust[i];
-			ConfigData->pulseRemainder[i] = 0.0;
-			ConfigData->numPulses[i] = (int)(ConfigData->controlPeriod/ConfigData->pulseTimeResolution[i]);
-		} else {
-			thrustForce = ConfigData->pulseTime[i] / ConfigData->controlPeriod * ConfigData->maxThrust[i];
-			ConfigData->level[i] = ConfigData->pulseTime[i]/ConfigData->controlPeriod*100.0;
+			ConfigData->onTime[i] = 1.01*ConfigData->controlPeriod; // oversaturate to avoid numerical error
 		}
 
 		/*! Set the output data */
-		ConfigData->thrFiringRoundOut.effectorRequest[i] = ConfigData->level[i];
+		ConfigData->thrFiringRoundOut.effectorRequest[i] = ConfigData->onTime[i];
 
 	}
 

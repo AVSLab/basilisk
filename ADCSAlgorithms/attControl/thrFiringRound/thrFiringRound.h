@@ -31,12 +31,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-	double              pulseRemainder[MAX_EFF_CNT];            /*!< Unimplemented thrust pulses */
-	double              pulseTime[MAX_EFF_CNT];                 /*!< Desired high cycle time of pulse */
 	double              pulseTimeResolution[MAX_EFF_CNT];       /*!< Pulse increment */
 	double              pulseTimeMin[MAX_EFF_CNT];              /*!< Minimum pulse command */
-	double              level[MAX_EFF_CNT];                     /*!< thruster duty cycle percentage */
-	int                 numPulses[MAX_EFF_CNT];                 /*!< number of discrete pulses implemented */
+	double				onTime[MAX_EFF_CNT];
 	double				controlPeriod;
 	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
 	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
