@@ -141,9 +141,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("eulerRotationTask", int(5E8)), 117)
         self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 116)
 
-        self.fswProc.addTask(self.CreateNewTask("trackingErrorTask", int(5E8)), 111)
-        self.fswProc.addTask(self.CreateNewTask("controlTask", int(5E8)), 110)
-
         self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("feedbackControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("attitudePRVControlMnvrTask", int(5E8)), 110)
@@ -495,13 +492,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("inertial3DSpinTask", self.inertial3DSpinWrap, self.inertial3DSpinData, 19)
         self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 19)
         self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationData, 18)
-
-        self.AddModelToTask("trackingErrorTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 15)
-        self.AddModelToTask("trackingErrorTask", self.simpleDeadbandWrap, self.simpleDeadbandData, 14)
-        self.AddModelToTask("controlTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 10)
-        # self.AddModelToTask("controlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 10)
-        self.AddModelToTask("controlTask", self.RWAMappingDataWrap, self.RWAMappingData, 9)
-        self.AddModelToTask("controlTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 8)
         
         self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
@@ -534,21 +524,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                              , "self.enableTask('simpleRWControlTask')"
                              ])
         # Guidance Events
-        self.createNewEvent("initiateGuidanceWithDeadband", int(1E9), True, ["self.modeRequest == 'deadbandGuid'"],
-                            ["self.fswProc.disableAllTasks()"
-                                , "self.enableTask('sensorProcessing')"
-                                , "self.enableTask('velocityPointTask')"
-                                , "self.enableTask('trackingErrorTask')"
-                                , "self.enableTask('controlTask')"
-                             ])
-
         self.createNewEvent("initiateInertial3DPoint", int(1E9), True, ["self.modeRequest == 'inertial3DPoint'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('inertial3DPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.enableTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateHillPoint", int(1E9), True, ["self.modeRequest == 'hillPoint'"],
@@ -556,8 +536,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.enableTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateVelocityPoint", int(1E9), True, ["self.modeRequest == 'velocityPoint'"],
@@ -565,7 +543,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('velocityPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateCelTwoBodyPoint", int(1E9), True, ["self.modeRequest == 'celTwoBodyPoint'"],
@@ -573,17 +550,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('celTwoBodyPointTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
                              ])
         
         self.createNewEvent("initiateRasterMnvr", int(1E9), True, ["self.modeRequest == 'rasterMnvr'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
                                 , "self.enableTask('inertial3DPointTask')"
-                                #, "self.enableTask('hillPointTask')"
                                 , "self.enableTask('rasterMnvrTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
                              ])
         
         self.createNewEvent("initiateEulerRotation", int(1E9), True, ["self.modeRequest == 'eulerRotation'"],
@@ -592,18 +566,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('eulerRotationTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                             # , "self.enableTask('attitudeControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateInertial3DSpin", int(1E9), True, ["self.modeRequest == 'inertial3DSpin'"],
                             ["self.fswProc.disableAllTasks()"
                                 , "self.enableTask('sensorProcessing')"
-                                #, "self.enableTask('inertial3DPointTask')"
                                 , "self.enableTask('hillPointTask')"
                                 , "self.enableTask('inertial3DSpinTask')"
                                 , "self.enableTask('feedbackControlMnvrTask')"
-                                #, "self.enableTask('attitudeControlMnvrTask')"
-                                #, "self.enableTask('attitudePRVControlMnvrTask')"
                              ])
 
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
@@ -673,52 +643,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.modeRequest = 'DVMnvr'",
                              "self.setEventActivity('initiateDVMnvr', True)"])
 
-        self.createNewEvent("mnvrToRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
-                            ["self.activateNextRaster()",
-                             "self.setEventActivity('completeRaster', True)"])
-
-        self.createNewEvent("completeRaster", int(1E9), False, ["self.attMnvrPointData.mnvrComplete == 1"],
-                            ["self.initializeRaster()"])
-
-        # self.createNewEvent("rwFSWDeviceAvailabilityChange", int(1E9), False, ["self.rwAvailabilityChangeCmd = 1"],
-        #                     ["self.setRwFSWDeviceAvailability()",
-        #                      "self.rwAvailabilityChangeCmd = 0"])
-
-        rastAngRad = 50.0 * math.pi / 180.0
-        self.asteriskAngles = [[rastAngRad, 0.0, 0.0],
-                               [-rastAngRad, 0.0, 0.0],
-                               [-rastAngRad / math.sqrt(2.0), 0.0, -rastAngRad / math.sqrt(2.0)],
-                               [rastAngRad / math.sqrt(2.0), 0.0, rastAngRad / math.sqrt(2.0)],
-                               [0.0, 0.0, rastAngRad],
-                               [0.0, 0.0, -rastAngRad],
-                               [rastAngRad / math.sqrt(2.0), 0.0, -rastAngRad / math.sqrt(2.0)],
-                               [-rastAngRad / math.sqrt(2.0), 0.0, rastAngRad / math.sqrt(2.0)],
-                               [0.0, 0.0, 0.0]]
-
-        rastAngRad = 11.0 * math.pi / 180.0
-        discAngleRad = 16.5 * 1.6 * math.pi / 180.0
-        rasterTime = 25.0 * 60.0 + 100.0
-        discAngRate = 2.0 * discAngleRad / rasterTime
-        self.sideScanAngles = [ \
-            [rastAngRad, 0.0, -discAngleRad],
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, -discAngleRad],
-            [0.0, 0.0, 0.0],
-            [-rastAngRad, 0.0, discAngleRad] \
-            ]
-        self.sideScanRate = [ \
-            [0.0, 0.0, -discAngRate],
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, -discAngRate],
-            [0.0, 0.0, 0.0],
-            [0.0, 0.0, discAngRate] \
-            ]
-        self.sideScanTimes = [rasterTime, 200.0, rasterTime, 200.0, rasterTime]
-        self.scanSelector = 0
-        self.scanAnglesUse = self.asteriskAngles
-        self.scanRate = self.sideScanRate
-        self.rasterTimes = self.sideScanTimes
-
     def initializeVisualization(self):
         openGLIO = boost_communication.OpenGLIO()
         for planetName in self.SpiceObject.PlanetNames:
@@ -739,34 +663,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("visTask", openGLIO)
         self.enableTask("SynchTask")
 
-    def initializeRaster(self):
-        if self.scanSelector != 0:
-            self.setEventActivity('mnvrToRaster', True)
-        else:
-            self.attMnvrPointData.mnvrScanRate = [0.0, 0.0, 0.0]
-            self.setEventActivity('initiateSunPoint', True)
-            if self.modeRequest != 'earthPoint':
-                self.modeRequest = 'sunPoint'
-            self.setEventActivity('initiateMarsPoint', True)
-
-    def activateNextRaster(self):
-        basePointMatrix = np.array(self.baseMarsTrans)
-        basePointMatrix = np.reshape(basePointMatrix, (3, 3))
-        offPointAngles = np.array(self.scanAnglesUse[self.scanSelector])
-        newScanAngles = self.scanRate[self.scanSelector]
-        self.attMnvrPointData.totalMnvrTime = self.rasterTimes[self.scanSelector]
-        self.scanSelector += 1
-        self.scanSelector = self.scanSelector % len(self.scanAnglesUse)
-        offPointAngles = np.reshape(offPointAngles, (3, 1))
-        offMatrix = rbk.euler1232C(offPointAngles)
-        newPointMatrix = np.dot(offMatrix, basePointMatrix)
-        newPointMatrix = np.reshape(newPointMatrix, 9).tolist()
-        Sself.marsPointData.TPoint2Bdy = newPointMatrix
-        self.attMnvrPointData.mnvrScanRate = newScanAngles
-        self.attMnvrPointData.mnvrActive = False
-        self.attMnvrPointData.mnvrComplete = 0
-        print "Current Raster"
-        print [self.TotalSim.CurrentNanos, self.scanSelector]
 
     def InitializeSimulation(self):
         if self.isUsingVisualization:
@@ -996,11 +892,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         simSetupThruster.clearSetup()
         thrusterType = 'MOOG_Monarc_90HT'
-
-
-        # allThrusters = []
         dvRadius = 0.4
-        # DVIsp = 200.0
         maxThrust = 111.0
         minOnTime = 0.020
         i = 0
@@ -1013,20 +905,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             )
             simSetupThruster.thrusterList[i].MaxThrust = maxThrust
             simSetupThruster.thrusterList[i].MinOnTime = minOnTime
-            # newThruster = thruster_dynamics.ThrusterConfigData()
-            # SimulationBaseClass.SetCArray([dvRadius * math.cos(i * angleInc), dvRadius * math.sin(i * angleInc), 0.0], 'double', newThruster.inputThrLoc_S)
-            # SimulationBaseClass.SetCArray([0.0, 0.0, 1.0], 'double', newThruster.inputThrDir_S)
-            # newThruster.MaxThrust = maxThrust
-            # newThruster.MinOnTime = minOnTime
-            # newThruster.steadyIsp = DVIsp
-            # allThrusters.append(newThruster)
             i += 1
 
             simSetupThruster.addToSpacecraft(self.DVThrusterDynObject.ModelTag,
                                              self.DVThrusterDynObject,
                                              self.VehDynObject)
-        # self.DVThrusterDynObject.ThrusterData = \
-        #     thruster_dynamics.ThrusterConfigVector(allThrusters)
 
         DVpropCM = [0.0, 0.0, 1.0]
         DVpropMass = 812.3 - 40  # The 40 comes from the made up ACS number!
@@ -1442,29 +1325,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rasterManagerData.outputEulerSetName = "euler_angle_set"
         self.rasterManagerData.outputEulerRatesName = "euler_angle_rates"
 
-        def crossingNominal(alpha, totalMnvrTime):
-            t_raster = totalMnvrTime / 6.0
-            angleSetList = [
-                alpha, 0.0, 0.0,
-                -alpha, 0.0, 0.0,
-                0.0, 0.0, 0.0,
-                -alpha, -alpha, 0.0,
-                alpha, alpha, 0.0,
-                0.0, 0.0, 0.0,
-                alpha, -alpha, 0.0,
-                -alpha, alpha, 0.0,
-                0.0, 0.0, 0.0,
-                0.0, alpha, 0.0,
-                0.0, -alpha, 0.0
-            ]
-            angleRatesList = []
-            rasterTimeList = [
-                t_raster, t_raster, t_raster, t_raster
-                , t_raster, t_raster, t_raster, t_raster
-                , t_raster, t_raster, t_raster, t_raster
-            ]
-            return (angleSetList, angleRatesList, rasterTimeList)
-
         def crossingRaster(alpha, offAlpha, totalMnvrTime):
             t_raster = totalMnvrTime / 6
             alphaDot = 2.0 * alpha / t_raster
@@ -1766,66 +1626,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.setEulerRotation()
         self.setAttTrackingError()
         self.setSimpleDeadband()
-
-
-# def AddVariableForLogging(self, VarName, LogPeriod = 0):
-#   i=0
-#   SplitName = VarName.split('.')
-#   Subname = '.'
-#   Subname = Subname.join(SplitName[1:])
-#   NoDotName = ''
-#   NoDotName = NoDotName.join(SplitName)
-#   NoDotName = NoDotName.translate(None, '[]')
-#   #if SplitName[0] in self.NameReplace:
-#   # LogName = self.NameReplace[SplitName[0]] + '.' + Subname
-#   if(VarName not in self.VarLogList):
-#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += ' return self.'+ VarName
-#      exec(RefFunctionString)
-#      methodHandle = eval('Get' + NoDotName)
-#      self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName,
-#      LogPeriod,
-#         methodHandle )
-#
-# def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0,
-# LogPeriod=0):
-#   SplitName = VarName.split('.')
-#   Subname = '.'
-#   Subname = Subname.join(SplitName[1:])
-#   NoDotName = ''
-#   NoDotName = NoDotName.join(SplitName)
-#   NoDotName = NoDotName.translate(None, '[]')
-#   #LogName = self.NameReplace[SplitName[0]] + '.' + Subname
-#   if(VarName in self.VarLogList):
-#      return
-#   if(type(eval('self.'+VarName)).__name__ == 'SwigPyObject'):
-#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += ' return ['
-#      LoopTerminate = False
-#      i=0
-#      while not LoopTerminate:
-#         RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
-#         RefFunctionString += 'self.'+VarName + ', ' + str(StartIndex + i) +
-#         '),'
-#         i+=1
-#         if(i > StopIndex-StartIndex):
-#            LoopTerminate = True
-#   else:
-#      RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-#      RefFunctionString += ' return ['
-#      LoopTerminate = False
-#      i=0
-#      while not LoopTerminate:
-#         RefFunctionString += 'self.'+VarName + '[' +str(StartIndex+i) +'],'
-#         i+=1
-#         if(i > StopIndex-StartIndex):
-#            LoopTerminate = True
-#   RefFunctionString = RefFunctionString[:-1] + ']'
-#   exec(RefFunctionString)
-#   methodHandle = eval('Get' + NoDotName)
-#   self.VarLogList[VarName] = SimulationBaseClass.LogBaseClass(VarName,
-#   LogPeriod,
-#      methodHandle, StopIndex - StartIndex+1)
 
 def LoadGravFromFile(FileName, GravBody, JParamsSelect):
     csvfile = open(FileName, 'rb')
