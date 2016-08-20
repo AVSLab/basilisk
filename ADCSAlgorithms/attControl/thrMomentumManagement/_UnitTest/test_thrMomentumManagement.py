@@ -51,18 +51,19 @@ import rwNullSpace
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("param1", [
+@pytest.mark.parametrize("hsMinCheck", [
+    (0),
     (1)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrMomentumManagement(show_plots, param1):
+def test_thrMomentumManagement(show_plots, hsMinCheck):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumManagementTestFunction(show_plots, param1)
+    [testResults, testMessage] = thrMomentumManagementTestFunction(show_plots, hsMinCheck)
     assert testResults < 1, testMessage
 
 
-def thrMomentumManagementTestFunction(show_plots, param1):
+def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -94,7 +95,11 @@ def thrMomentumManagementTestFunction(show_plots, param1):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.hs_min = 100./6000.*100.               # Nms
+    if hsMinCheck:
+        moduleConfig.hs_min = 1000./6000.*100.               # Nms
+    else:
+        moduleConfig.hs_min = 100./6000.*100.               # Nms
+
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -176,10 +181,10 @@ def thrMomentumManagementTestFunction(show_plots, param1):
     print moduleOutput
 
     # set the filtered output truth states
-    if param1==1:
+    if hsMinCheck==1:
         trueVector = [
-                   [6.505806432561237,3.144130273311092,10.34772204313283],
-                   [6.505806432561237,3.144130273311092,10.34772204313283]
+                   [0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0]
                    ]
     else:
         trueVector = [
@@ -230,5 +235,5 @@ def thrMomentumManagementTestFunction(show_plots, param1):
 if __name__ == "__main__":
     test_thrMomentumManagement(              # update "module" in function name
                  True,
-                 1            # param1 value
+                 0            # hsMinCheck
                )
