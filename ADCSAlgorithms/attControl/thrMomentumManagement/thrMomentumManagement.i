@@ -31,8 +31,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "thrMomentumManagement.h"
 %include "../_GeneralModuleFiles/vehControlOut.h"
 
-// sample Module supportfile to be included in this sub-module
-//%include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
