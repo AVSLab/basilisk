@@ -86,10 +86,7 @@ def fswModuleTestFunction(show_plots):
     moduleConfig.inputDataName  = "sampleInput"         # update with current values
     moduleConfig.outputDataName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
-    vector = [1., 2., 3.]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.dumVector)
+    moduleConfig.dumVector = [1., 2., 3.]
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -100,10 +97,7 @@ def fswModuleTestFunction(show_plots):
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    sampleInputMessageVariable = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
-    SimulationBaseClass.SetCArray(sampleInputMessageVariable,           # specify message variable
-                                  'double',                             # specify message variable type
-                                  inputMessageData.torqueRequestBody)   # write torque request to input message
+    inputMessageData.torqueRequestBody = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputDataName,
                                           inputMessageSize,
                                           0,
