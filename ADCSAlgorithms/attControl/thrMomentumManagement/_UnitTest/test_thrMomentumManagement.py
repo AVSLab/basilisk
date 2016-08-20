@@ -110,10 +110,7 @@ def thrMomentumManagementTestFunction(show_plots, param1):
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     rwSpeedMessage = rwNullSpace.RWSpeedData()
-    Omega = [10.0, -25.0, 50.0, 100.]
-    SimulationBaseClass.SetCArray(Omega,
-                                  'double',
-                                  rwSpeedMessage.wheelSpeeds)
+    rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
                                           0,
@@ -126,12 +123,9 @@ def thrMomentumManagementTestFunction(show_plots, param1):
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    BS = [1.0, 0.0, 0.0,
+    vehicleConfigOut.BS = [1.0, 0.0, 0.0,
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
-    SimulationBaseClass.SetCArray(BS,
-                                  'double',
-                                  vehicleConfigOut.BS)
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
