@@ -179,16 +179,16 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
 
+    print moduleOutput
+
     # set the filtered output truth states
     if hsMinCheck==1:
         trueVector = [
-                   [0.0, 0.0, 0.0],
                    [0.0, 0.0, 0.0]
                    ]
     else:
         trueVector = [
-                   [6.505806432561237,3.144130273311092,10.34772204313283],
-                   [6.505806432561237,3.144130273311092,10.34772204313283]
+                   [5.914369484146579,2.858300248464629,9.407020039211664]
                    ]
 
         # else:

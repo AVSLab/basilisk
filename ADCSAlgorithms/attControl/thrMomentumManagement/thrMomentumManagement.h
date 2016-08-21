@@ -28,18 +28,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * @{
  */
 
-enum momentumDumpingStatus {
-    DUMPING_OFF, DUMPING_ON, DUMPING_COMPLETED
-};
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    enum momentumDumpingStatus status;              /*!<        status flag of the momentum dumping management */
-    double Delta_H_B[3];                            /*!< [Nms]  net desired angular momentum change */
-    int numRW;                                      /*!<        number of RW */
-    double GsMatrix[3*MAX_EFF_CNT];                 /*!< []     The spin axis matrix used for RWAs*/
-    double JsList[MAX_EFF_CNT];                     /*!< [kgm2] The spin axis inertia for RWAs*/
+    int initRequest;                                /*!<        status flag of the momentum dumping management */
+    double  Delta_H_B[3];                           /*!< [Nms]  net desired angular momentum change */
+    int     numRW;                                  /*!<        number of RW */
+    double  GsMatrix[3*MAX_EFF_CNT];                /*!< []     The spin axis matrix used for RWAs*/
+    double  JsList[MAX_EFF_CNT];                    /*!< [kgm2] The spin axis inertia for RWAs*/
 
     /* declare module public variables */
     double hs_min;                                  /*!< [Nms]  minimum RW cluster momentum for dumping */

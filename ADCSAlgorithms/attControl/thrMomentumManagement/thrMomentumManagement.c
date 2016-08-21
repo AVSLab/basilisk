@@ -99,7 +99,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
                   &ConfigData->GsMatrix[i*3]);
     }
 
-    ConfigData->status = DUMPING_OFF;
+    ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
 }
 
@@ -119,39 +119,38 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
     int i;
 
 
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                sizeof(RWSpeedData), (void*) &(rwSpeedMsg), moduleID);
+    if (ConfigData->initRequest == 1) {
 
-    /* compute net RW momentum magnitude */
-    v3SetZero(hs_B);
-    for (i=0;i<ConfigData->numRW;i++) {
-        v3Scale(ConfigData->JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->GsMatrix[i*3],vec3);
-        v3Add(hs_B, vec3, hs_B);
-    }
-    hs = v3Norm(hs_B);
+        /*! - Read the input messages */
+        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                    sizeof(RWSpeedData), (void*) &(rwSpeedMsg), moduleID);
 
-    if (hs < ConfigData->hs_min || ConfigData->status == DUMPING_COMPLETED ) {
-        /* Momentum dumping completed or not required */
-        ConfigData->status = DUMPING_COMPLETED;
-        v3SetZero(ConfigData->Delta_H_B);
-    } else {
-        if (ConfigData->status == DUMPING_OFF) {
-            /* turn on momentum dumping */
-            ConfigData->status = DUMPING_ON;
-            v3Scale((hs - ConfigData->hs_min)/hs*1.1, hs_B, ConfigData->Delta_H_B);
+        /* compute net RW momentum magnitude */
+        v3SetZero(hs_B);
+        for (i=0;i<ConfigData->numRW;i++) {
+            v3Scale(ConfigData->JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->GsMatrix[i*3],vec3);
+            v3Add(hs_B, vec3, hs_B);
         }
+        hs = v3Norm(hs_B);
+
+        if (hs < ConfigData->hs_min) {
+            /* Momentum dumping not required */
+            v3SetZero(ConfigData->Delta_H_B);
+        } else {
+            v3Scale((hs - ConfigData->hs_min)/hs, hs_B, ConfigData->Delta_H_B);
+        }
+        ConfigData->initRequest = 0;
+
+
+        /*
+         store the output message 
+         */
+        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
+
+        WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
+                     (void*) &(ConfigData->controlOut), moduleID);
+
     }
-
-
-    /*
-     store the output message 
-     */
-    v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
-
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
-                 (void*) &(ConfigData->controlOut), moduleID);
-
 
     return;
 }
