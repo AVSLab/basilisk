@@ -90,7 +90,6 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
                                              to zero, the control time step is not evaluated on the
                                              first function call */
 
-    memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
 
     /* read in number of thrusters installed */
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
@@ -98,12 +97,14 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
         ConfigData->thrMaxForce[i] = 2.0;
+        ConfigData->thrMinPulseTime[i] = 0.020;
     }
 
     ConfigData->thrDumpingCounter = 0;
 
-    /* zero out the remaining on-time vector */
+    /* zero out some vectors */
     memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
+    memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
 
     if (ConfigData->maxCounterValue < 1) {
         printf("WARNING: the maxCounterValue flag must be set to a positive value.\n");
@@ -139,36 +140,43 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
         ReadMessage(ConfigData->inputThrusterImpulseMsgID, &clockTime, &readSize,
                     sizeof(vehEffectorOut), (void*) Delta_P_input, moduleID);
 
-        if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double))) {
+        if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
             /* idential net thruster impulse request case, continue with existing RW momentum dumping */
 
             if (ConfigData->thrDumpingCounter <= 0) {
                 /* time to fire thrusters again */
-                for (i=0;i<ConfigData->numThrusters;i++) {
-                    ConfigData->thrOnTimeRemaining[i] -= dt;
-                }
                 memmove(tOnOut, ConfigData->thrOnTimeRemaining, ConfigData->numThrusters*sizeof(double));
+                for (i=0;i<ConfigData->numThrusters;i++) {
+                    if (ConfigData->thrOnTimeRemaining[i] >0.0)
+                        ConfigData->thrOnTimeRemaining[i] -= dt;
+                }
                 ConfigData->thrDumpingCounter = ConfigData->maxCounterValue;
             } else {
                 /* no thrusters are firing, giving RWs time to settle attitude */
+                ConfigData->thrDumpingCounter -= 1;
                 memset(tOnOut, 0x0, MAX_EFF_CNT*sizeof(double));
             }
 
 
         } else {
             /* new net thruster impulse request case */
+            memmove(ConfigData->Delta_p, Delta_P_input, ConfigData->numThrusters*sizeof(double));
             for (i=0;i<ConfigData->numThrusters;i++) {
                 ConfigData->thrOnTimeRemaining[i] = Delta_P_input[i]/ConfigData->thrMaxForce[i];
             }
             memmove(tOnOut, ConfigData->thrOnTimeRemaining, ConfigData->numThrusters*sizeof(double));
             ConfigData->thrDumpingCounter = ConfigData->maxCounterValue;
+            for (i=0;i<ConfigData->numThrusters;i++) {
+                ConfigData->thrOnTimeRemaining[i] -= dt;
+            }
         }
 
-        ConfigData->thrDumpingCounter -= 1;
+
 
         /* check for negative or saturated firing times */
         for (i=0;i<ConfigData->numThrusters;i++) {
-            if (tOnOut[i] < 0.0) tOnOut[i] = 0.0;
+            if (tOnOut[i] < ConfigData->thrMinPulseTime[i]) tOnOut[i] = 0.0;
+            if (ConfigData->thrOnTimeRemaining[i] < 0.0) ConfigData->thrOnTimeRemaining[i] = 0.0;
             if (tOnOut[i] > dt)  tOnOut[i] = dt;
         }
 
@@ -181,9 +189,8 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
     ConfigData->priorTime = callTime;
 
-
     /*
-     store the output message 
+     store the output message
      */
     memmove(ConfigData->thrOnTimeOut.effectorRequest, tOnOut, ConfigData->numThrusters*sizeof(double));
 

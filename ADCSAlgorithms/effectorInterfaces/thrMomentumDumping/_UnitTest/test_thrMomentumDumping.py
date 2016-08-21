@@ -39,9 +39,8 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import thrMomentumDumping            # import the module that is to be tested
 import macros
-import fswSetupRW
+import fswSetupThrusters
 import vehicleConfigData
-import rwNullSpace
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -51,19 +50,19 @@ import rwNullSpace
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("hsMinCheck", [
-    (0),
-    (1)
+@pytest.mark.parametrize("resetCheck", [
+    (False),
+    (True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrMomentumDumping(show_plots, hsMinCheck):
+def test_thrMomentumDumping(show_plots, resetCheck):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, hsMinCheck)
+    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck)
     assert testResults < 1, testMessage
 
 
-def thrMomentumDumpingTestFunction(show_plots, hsMinCheck):
+def thrMomentumDumpingTestFunction(show_plots, resetCheck):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -106,45 +105,54 @@ def thrMomentumDumpingTestFunction(show_plots, hsMinCheck):
 
 
     # setup thruster cluster message
-    rcsClass = vehicleConfigData.ThrusterCluster()
-    rcsPointer = vehicleConfigData.ThrusterPointData()
-    numThrusters = 8
+    fswSetupThrusters.clearSetup()
     rcsLocationData = [ \
-               [-0.86360, -0.82550, 1.79070],
-               [-0.82550, -0.86360, 1.79070],
-               [0.82550, 0.86360, 1.79070],
-               [0.86360, 0.82550, 1.79070],
-               [-0.86360, -0.82550, -1.79070],
-               [-0.82550, -0.86360, -1.79070],
-               [0.82550, 0.86360, -1.79070],
-               [0.86360, 0.82550, -1.79070] \
-               ]
+        [-0.86360, -0.82550, 1.79070],
+        [-0.82550, -0.86360, 1.79070],
+        [0.82550, 0.86360, 1.79070],
+        [0.86360, 0.82550, 1.79070],
+        [-0.86360, -0.82550, -1.79070],
+        [-0.82550, -0.86360, -1.79070],
+        [0.82550, 0.86360, -1.79070],
+        [0.86360, 0.82550, -1.79070] \
+        ]
     rcsDirectionData = [ \
-                    [1.0, 0.0, 0.0],
-                    [0.0, 1.0, 0.0],
-                    [0.0, -1.0, 0.0],
-                    [-1.0, 0.0, 0.0],
-                    [-1.0, 0.0, 0.0],
-                    [0.0, -1.0, 0.0],
-                    [0.0, 1.0, 0.0],
-                    [1.0, 0.0, 0.0] \
-                    ]
-    rcsClass.numThrusters = numThrusters
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, -1.0, 0.0],
+        [-1.0, 0.0, 0.0],
+        [-1.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [1.0, 0.0, 0.0] \
+        ]
 
-    for i in range(numThrusters):
-        rcsPointer.rThrust_S = rcsLocationData[i]
-        rcsPointer.tHatThrust_S = rcsDirectionData[i]
-        vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+    for i in range(len(rcsLocationData)):
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i])
+    fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
+                                        unitTestSim.TotalSim,
+                                        unitProcessName)
+    numThrusters = fswSetupThrusters.getNumOfDevices()
 
-    msgSize = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,
-                                          msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName, msgSize, 0, rcsClass)
+    # setup thruster impulse request message
+    messageSize = vehicleConfigData.MAX_EFF_CNT*(3)*8
+    inputMessageData = thrMomentumDumping.vehEffectorOut()
+    inputMessageData.effectorRequest = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputThrusterImpulseName,
+                                          messageSize,
+                                          2)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterImpulseName,
+                                          messageSize,
+                                          0,
+                                          inputMessageData)
+
+
 
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputThrusterOnTimeName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -153,40 +161,51 @@ def thrMomentumDumpingTestFunction(show_plots, hsMinCheck):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
-    # # reset the module to test this functionality
-    # moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds)
-    #
-    # # run the module again for an additional 1.0 seconds
-    # unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
-    # unitTestSim.ExecuteSimulation()
+    if resetCheck:
+        # reset the module to test this functionality
+        moduleWrap.Reset(macros.sec2nano(3.0))     # this module reset function needs a time input (in NanoSeconds)
+
+        # run the module again for an additional 1.0 seconds
+        unitTestSim.ConfigureStopTime(macros.sec2nano(5.5))        # seconds to stop simulation
+        unitTestSim.ExecuteSimulation()
 
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(3))
-    print moduleOutput
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputThrusterOnTimeName + '.' + moduleOutputName,
+                                                  range(numThrusters))
 
     # set the filtered output truth states
-    if hsMinCheck==1:
+    if resetCheck==1:
         trueVector = [
-                   [0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0]
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0]
                    ]
     else:
         trueVector = [
-                   [6.505806432561237,3.144130273311092,10.34772204313283],
-                   [6.505806432561237,3.144130273311092,10.34772204313283],
-                   [6.505806432561237,3.144130273311092,10.34772204313283],
-                   [6.505806432561237,3.144130273311092,10.34772204313283]
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
                    ]
 
         # else:
@@ -232,5 +251,5 @@ def thrMomentumDumpingTestFunction(show_plots, hsMinCheck):
 if __name__ == "__main__":
     test_thrMomentumDumping(              # update "module" in function name
                  True,
-                 0            # hsMinCheck
+                 True           # hsMinCheck
                )
