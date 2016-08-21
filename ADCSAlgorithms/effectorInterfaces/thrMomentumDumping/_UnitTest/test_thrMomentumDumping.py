@@ -16,9 +16,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Unit Test Script
-#   Module Name:        thrMomentumManagement
+#   Module Name:        thrMomentumDumping
 #   Author:             Hanspeter Schaub
-#   Creation Date:      August 18, 2016
+#   Creation Date:      August 21, 2016
 #
 
 import sys, os, inspect
@@ -37,7 +37,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
-import thrMomentumManagement            # import the module that is to be tested
+import thrMomentumDumping            # import the module that is to be tested
 import macros
 import fswSetupRW
 import vehicleConfigData
@@ -57,13 +57,13 @@ import rwNullSpace
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrMomentumManagement(show_plots, hsMinCheck):
+def test_thrMomentumDumping(show_plots, hsMinCheck):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumManagementTestFunction(show_plots, hsMinCheck)
+    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, hsMinCheck)
     assert testResults < 1, testMessage
 
 
-def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
+def thrMomentumDumpingTestFunction(show_plots, hsMinCheck):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -83,70 +83,63 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = thrMomentumManagement.thrMomentumManagementConfig()                          # update with current values
+    moduleConfig = thrMomentumDumping.thrMomentumDumpingConfig()                          # update with current values
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrMomentumManagement.Update_thrMomentumManagement,     # update with current values
-                                        thrMomentumManagement.SelfInit_thrMomentumManagement,   # update with current values
-                                        thrMomentumManagement.CrossInit_thrMomentumManagement,  # update with current values
-                                        thrMomentumManagement.Reset_thrMomentumManagement)      # update with current values
-    moduleWrap.ModelTag = "thrMomentumManagement"                                        # update python name of test module
+                                        thrMomentumDumping.Update_thrMomentumDumping,     # update with current values
+                                        thrMomentumDumping.SelfInit_thrMomentumDumping,   # update with current values
+                                        thrMomentumDumping.CrossInit_thrMomentumDumping,  # update with current values
+                                        thrMomentumDumping.Reset_thrMomentumDumping)      # update with current values
+    moduleWrap.ModelTag = "thrMomentumDumping"                                        # update python name of test module
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    if hsMinCheck:
-        moduleConfig.hs_min = 1000./6000.*100.               # Nms
-    else:
-        moduleConfig.hs_min = 100./6000.*100.               # Nms
+    moduleConfig.maxCounterValue = 2
 
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
-    moduleConfig.outputDataName = "outputName"
-
-    # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwSpeedMessage = rwNullSpace.RWSpeedData()
-    rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
-
-    # vehicleConfigData Message:
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    vehicleConfigOut.BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+    moduleConfig.inputThrusterImpulseName = "thrImpulseMomentumManagement"
+    moduleConfig.inputThrusterConfName = "thr_config_data"
+    moduleConfig.outputThrusterOnTimeName = "outputName"
 
 
-    # wheelConfigData Message
-    fswSetupRW.clearSetup()
-    Js = 0.1
-    fswSetupRW.create([1.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 1.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 1.0], Js)
-    fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
-                               unitTestSim.TotalSim,
-                               unitProcessName)
+    # setup thruster cluster message
+    rcsClass = vehicleConfigData.ThrusterCluster()
+    rcsPointer = vehicleConfigData.ThrusterPointData()
+    numThrusters = 8
+    rcsLocationData = [ \
+               [-0.86360, -0.82550, 1.79070],
+               [-0.82550, -0.86360, 1.79070],
+               [0.82550, 0.86360, 1.79070],
+               [0.86360, 0.82550, 1.79070],
+               [-0.86360, -0.82550, -1.79070],
+               [-0.82550, -0.86360, -1.79070],
+               [0.82550, 0.86360, -1.79070],
+               [0.86360, 0.82550, -1.79070] \
+               ]
+    rcsDirectionData = [ \
+                    [1.0, 0.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [0.0, -1.0, 0.0],
+                    [-1.0, 0.0, 0.0],
+                    [-1.0, 0.0, 0.0],
+                    [0.0, -1.0, 0.0],
+                    [0.0, 1.0, 0.0],
+                    [1.0, 0.0, 0.0] \
+                    ]
+    rcsClass.numThrusters = numThrusters
+
+    for i in range(numThrusters):
+        rcsPointer.rThrust_S = rcsLocationData[i]
+        rcsPointer.tHatThrust_S = rcsDirectionData[i]
+        vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
+
+    msgSize = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,
+                                          msgSize, 2)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName, msgSize, 0, rcsClass)
 
 
 
@@ -160,7 +153,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(0.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
@@ -175,18 +168,23 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
+    moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
+    print moduleOutput
 
     # set the filtered output truth states
     if hsMinCheck==1:
         trueVector = [
                    [0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0],
                    [0.0, 0.0, 0.0]
                    ]
     else:
         trueVector = [
+                   [6.505806432561237,3.144130273311092,10.34772204313283],
+                   [6.505806432561237,3.144130273311092,10.34772204313283],
                    [6.505806432561237,3.144130273311092,10.34772204313283],
                    [6.505806432561237,3.144130273311092,10.34772204313283]
                    ]
@@ -232,7 +230,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_thrMomentumManagement(              # update "module" in function name
+    test_thrMomentumDumping(              # update "module" in function name
                  True,
                  0            # hsMinCheck
                )
