@@ -40,6 +40,7 @@ import thrForceMapping
 import macros
 import MRP_Steering
 import vehicleConfigData
+import fswSetupThrusters
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -162,10 +163,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
 
     moduleConfig.controlAxes_B = controlAxes_B
 
-    rcsClass = vehicleConfigData.ThrusterCluster()
-    rcsPointer = vehicleConfigData.ThrusterPointData()
+    fswSetupThrusters.clearSetup()
     if dropThruster:
-        numThrusters = 7
         rcsLocationData = [ \
                    [-0.86360, -0.82550, 1.79070],
                    [-0.82550, -0.86360, 1.79070],
@@ -185,7 +184,6 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                         [0.0, 1.0, 0.0]\
                         ]
     else:
-        numThrusters = 8
         rcsLocationData = [ \
                    [-0.86360, -0.82550, 1.79070],
                    [-0.82550, -0.86360, 1.79070],
@@ -206,29 +204,19 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                         [0.0, 1.0, 0.0],
                         [1.0, 0.0, 0.0] \
                         ]
-    rcsClass.numThrusters = numThrusters
 
-
-    for i in range(numThrusters):
-        rcsPointer.rThrust_S = rcsLocationData[i]
-        rcsPointer.tHatThrust_S = rcsDirectionData[i]
-        vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
-
-    msgSize = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputThrusterConfName,
-                                          msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName, msgSize, 0, rcsClass)
-
-
-
+    for i in range(len(rcsLocationData)):
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i])
+    fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
+                                        unitTestSim.TotalSim,
+                                        unitProcessName)
+    numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
-
-    moduleWrap.Reset(0)
 
     # Set the simulation time.
     # NOTE: the total simulation time may be longer than this value. The
