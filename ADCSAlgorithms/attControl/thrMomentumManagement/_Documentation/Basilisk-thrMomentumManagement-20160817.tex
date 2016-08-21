@@ -1,12 +1,13 @@
 \documentclass[]{BasiliskReportMemo}
+\usepackage{AVS}
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{subTemplateModule}
-\newcommand{\subject}{Short Descriptive Title (12 words or less)}
-\newcommand{\status}{status description}
-\newcommand{\preparer}{J. Doe}
-\newcommand{\summary}{Include a short summary of what this system engineering report is about.  Should be 300 words or less.     }
+\newcommand{\ModuleName}{thrMomentumManagement}
+\newcommand{\subject}{Reaction Wheel Angular Momentum Dumping Management Module}
+\newcommand{\status}{Initial Document draft}
+\newcommand{\preparer}{H. Schaub}
+\newcommand{\summary}{This module reads in the Reaction Wheel (RW) speeds, determines the net RW momentum, and then determines the amount of angular momentum that must be dumped.  A separate thruster firing logic module called {\tt thrMomentumDumping} will later on compute the thruster on cycling.      }
 
 
 \begin{document}
@@ -26,7 +27,7 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & XXXXXX & X. XXXX \\
+Draft & Initial document creation & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -41,74 +42,52 @@ Draft & XXXXXX & X. XXXX \\
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[]{Figures/Fig1}
+	\includegraphics[]{Figures/rwMomentumOverview}
 	}
-	\caption{Sample Figure Inclusion.}
+	\caption{Overview of the Modules Used to Perform Reaction Wheel Angular Momentum Dumping.}
 	\label{fig:Fig1}
 \end{figure}
 
 \section{Introduction}
-Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as Figure~\ref{fig:Fig1}, reference earlier work if needed in a literature review.
-
-
-\section{Document ID}
-The technical document ID is setup through the module name.  For example, if the module name is ``subModuleTemplate'', then the  {\tt \ModuleName} parameter is set to this name.  The document ID then becomes {\tt AVS-SIM-subModuleTemplate}.  
-
-
-
-
-\section{Report Formatting and Styling}
-\subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+To manage the Reaction Wheel (RW) angular momentum build-up over time, a thruster-based momentum dumping strategy is used.  Figure~\ref{fig:Fig1} illustrates how the momentum dumping will occur simultaneously with an inertial pointing control solution.  Assume the spacecraft contains $N_{\text{RW}}$ RWs, and $M_{\text{thr}}$ thrusters. The net RW angular momentum is given by
 \begin{equation}
-	\label{eq:ab}
-	a = b^{2}
+	\bm h_{s} = \sum_{i=1}^{N_{\text{RW}}} \hat{\bm g}_{s_{i}} \Omega_{i}
+\end{equation} 
+where $\hat{\bm g}_{s_{i}}$ is the RW spin axis, and $\Omega_{i}$ is the RW speed rate about this axis.  
+Because the inertial attitude of the spacecraft is assumed to be held nominally steady, 
+\begin{equation}
+	\dot{\bm h}_{s} = \frac{\leftexp{B}{\D}\bm h_{s}}{\D t} + \bm\omega_{B/N} \times \bm h_{s} \approx \frac{\leftexp{B}{\D}\bm h_{s}}{\D t}
 \end{equation}
 
 
-\subsection{Citation}
-The citation of bibliographical references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.  This is the default style included in this report \LaTeX\ class.
-
-References listed at the end of the paper are indicated in the text by a superscript Arabic number. If this causes confusion in mathematics or if a superscript is not appropriate for other reasons, this can be expressed as (Ref.~1).  
-
-\subsection{Figures}
-Illustrations are referred to by name in the text as Figure~1, Figure 2, etc., or, Figures 3 and 4 (e.g., not figure 1, Fig. 1, or \emph{Figure} 1). Captions are in title case (miniscule lettering with the first letter of major words majuscule); they are 10-point serif font and centered below the figure as shown in Figure~\ref{fig:Fig1}. Each illustration should have a caption unless it is a mere sketch. An explanatory caption of several sentences is permissible. Each included illustration must be called out (mentioned) in the text. Ideally, figures should appear within the text just before they are called out. 
-
-The figure files (PDF preferred) should be stored in a common ``Figure'' sub-folder.  If available, any drawing documents used to create this figure can be stored in a ``Support'' sub-folder.
 
 
 
-\subsection{Tables}
-Tables are referred to by name in the text as Table 1, or, Tables 2 and 3 (e.g., not table 1, Tbl. 1, or Table 1). The title is centered above the table, as shown in Table~\ref{tab:label}. The minimum number of lines needed for clarity is desired. The table font may be adjusted smaller than the body text as necessary.
 
-\begin{table}[htbp]
-    \caption{A Caption Goes Here}
-   \label{tab:label}
-        \centering \fontsize{10}{10}\selectfont
-   \begin{tabular}{c | r | r } % Column formatting, 
-      \hline 
-      Animal    & Description & Price (\$)\\
-      \hline 
-      Gnat      & per gram & 13.65 \\
-                & each     &  0.01 \\
-      Gnu       & stuffed  & 92.50 \\
-      Emu       & stuffed  & 33.33 \\
-      Armadillo & frozen   &  8.99 \\
-      \hline
-   \end{tabular}
-\end{table}
+\begin{figure}[tp]
+	\centerline{
+	\includegraphics[]{Figures/rwMomentumManagement}
+	}
+	\caption{Overview of the Reaction Wheel Angular Momentum Management Module.}
+	\label{fig:Fig2}
+\end{figure}
 
+\section{{\tt thrMomentumManagement}  Module Description}
+Figure~\ref{fig:Fig2} illustrates the function of the RW angular momentum dumping management module.  Let $h_{s,\text{min}}$ be lower bound that the RW momentum dumping strategy should achieve.  The desired net change in inertial angular momentum is thus determined through
+\begin{equation}
+	\leftexp{B}{\Delta}\bm H = \leftexp{B}{\bm h}_{s} \frac{
+		|\bm h_{s}| - h_{s,\text{min}}
+	}{|\bm h_{s}|} 
+\end{equation}
 
-
-\section{Acknowledgment}
-Any acknowledgment which the author or authors wish to make may appear here. 
+This strategy requires a thruster firing solution which creates this desired $\leftexp{B}{\Delta}\bm H$ over the duration of the momentum dumping.  The goal of the RW momentum management module is to simply compute if a $\leftexp{B}{\Delta}\bm H$ is required, or set it equal to zero if the RW momentum is too small.  Not that this module will only compute $\leftexp{B}{\Delta}\bm H$ once.  Either it is zero or non-zero.  To reuse this momentum management module, the reset() function must be called.
 
 
 
-\section{Notation}
-If mathematical symbols require definition, a table of notation should appear here. A footnote near the beginning of the paper where mathematics is introduced should direct attention of the reader to this table.
 
-
+\section{Module Parameters}
+\subsection{{\tt hs\_min} Parameter}
+This parameter dictates the desired lower ceiling of the RW cluster angular momentum.  It must be set prior to calling the routine.  
 
 
 
