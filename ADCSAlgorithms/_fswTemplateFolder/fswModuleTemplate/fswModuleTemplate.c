@@ -51,8 +51,6 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t mo
                                                sizeof(fswModuleTemplateOut),
                                                "fswModuleTemplateOut",          /* add the output structure name */
                                                moduleID);
-
-    ConfigData->dummy = 0.0;
 }
 
 /*! This method performs the second stage of initialization for this module.
