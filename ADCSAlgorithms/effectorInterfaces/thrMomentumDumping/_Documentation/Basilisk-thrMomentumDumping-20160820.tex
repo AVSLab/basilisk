@@ -1,12 +1,14 @@
 \documentclass[]{BasiliskReportMemo}
+\usepackage{AVS}
+
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{subTemplateModule}
-\newcommand{\subject}{Short Descriptive Title (12 words or less)}
-\newcommand{\status}{status description}
-\newcommand{\preparer}{J. Doe}
-\newcommand{\summary}{Include a short summary of what this system engineering report is about.  Should be 300 words or less.     }
+\newcommand{\ModuleName}{thrMomentumDumping}
+\newcommand{\subject}{Thrusting Firing Module to Cycle Through the RW Momentum Dumping}
+\newcommand{\status}{initial document draft}
+\newcommand{\preparer}{H. Schaub}
+\newcommand{\summary}{This module reads in the desired impulse that each thruster must produce to create inertial momentum change to despin the RWs.   The output of the module is a setof of thruster firing times.  Each thruster can only fire for a maximum time that matches a single control period.  After this the thrusters are off for an integer number of control periods to let the RW re-stabilize the attitude about an inertial pointing scenario.    }
 
 
 \begin{document}
@@ -26,7 +28,7 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & XXXXXX & X. XXXX \\
+Draft & Initial document creation & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -41,72 +43,44 @@ Draft & XXXXXX & X. XXXX \\
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[]{Figures/Fig1}
+	\includegraphics[]{Figures/rwMomentumOverview}
 	}
-	\caption{Sample Figure Inclusion.}
+	\caption{Overview of the Modules Used to Perform Reaction Wheel Angular Momentum Dumping.}
 	\label{fig:Fig1}
 \end{figure}
 
 \section{Introduction}
-Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as Figure~\ref{fig:Fig1}, reference earlier work if needed in a literature review.
-
-
-\section{Document ID}
-The technical document ID is setup through the module name.  For example, if the module name is ``subModuleTemplate'', then the  {\tt \ModuleName} parameter is set to this name.  The document ID then becomes {\tt AVS-SIM-subModuleTemplate}.  
+To manage the Reaction Wheel (RW) angular momentum build-up over time, a thruster-based momentum dumping strategy is used.  Figure~\ref{fig:Fig1} illustrates how the momentum dumping will occur simultaneously with an inertial pointing control solution.  Assume the spacecraft contains $N_{\text{RW}}$ RWs, and $M_{\text{thr}}$ thrusters.   The momentum dumping management module already evaluated the required $\leftexp{B}{\Delta}\bm H$ that must be achieved in this round of momentum dumping.  The spacecraft is assumed to be held inertially fixed, such as in sun-pointing.  
 
 
 
+\begin{figure}[t]
+	\centerline{
+	\includegraphics[]{Figures/rwMomentumDumping}
+	}
+	\caption{Overview of the Reaction Wheel Angular Momentum Dumping Module.}
+	\label{fig:Fig2}
+\end{figure}
 
-\section{Report Formatting and Styling}
-\subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+
+\section{{\tt thrMomentumDumping} Module Description}
+This modules receives the vector of thruster impulses $\Delta\bm p$ from a thruster mapping module.  It first checks to see if this $\Delta\bm p$ is new.  If yes, it compute the overall thruster on-times through
 \begin{equation}
-	\label{eq:ab}
-	a = b^{2}
+	\bm t_{i,\text{on}} = \frac{\Delta \bm p}{F_{i,\text{max}}}
 \end{equation}
+where $F_{i,\text{max}}$ is the maximum thrust force achievable with the on-off type thruster.  This on-times are copied to the output thruster on times, and the thruster cycling counter is reset.  
 
+If the $\Delta\bm p$ message is not new, then the counter flag is checked.  If the counter is strictly positive, the thrusters should be off to allow for the RW to stabilize the orientation.  In this case the output thruster times are set to zero, and the counter is decremented, and the remaining required thruster on-times are decremented by the control time period.
 
-\subsection{Citation}
-The citation of bibliographical references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.  This is the default style included in this report \LaTeX\ class.
+If the counter flag reaches zero it is time to fire the required thrusters again to implement the next chunk of the required thruster impulse.  The output thrust on times are set to the remaining thruster on times, the counter is reset, and the remaining thruster on times is decremented again by the control period.
 
-References listed at the end of the paper are indicated in the text by a superscript Arabic number. If this causes confusion in mathematics or if a superscript is not appropriate for other reasons, this can be expressed as (Ref.~1).  
-
-\subsection{Figures}
-Illustrations are referred to by name in the text as Figure~1, Figure 2, etc., or, Figures 3 and 4 (e.g., not figure 1, Fig. 1, or \emph{Figure} 1). Captions are in title case (miniscule lettering with the first letter of major words majuscule); they are 10-point serif font and centered below the figure as shown in Figure~\ref{fig:Fig1}. Each illustration should have a caption unless it is a mere sketch. An explanatory caption of several sentences is permissible. Each included illustration must be called out (mentioned) in the text. Ideally, figures should appear within the text just before they are called out. 
-
-The figure files (PDF preferred) should be stored in a common ``Figure'' sub-folder.  If available, any drawing documents used to create this figure can be stored in a ``Support'' sub-folder.
+Finally, the thruster on times are checked to be greater than the thruster minimum pulse time, or the output time is set to zero.  Similarly, if the required thruster on time is larger than a control period, the thruster on time is set equal to the control period.  This ensures that the thrusters will fire for a single control period duration only before returning to an off-mode.  
 
 
 
-\subsection{Tables}
-Tables are referred to by name in the text as Table 1, or, Tables 2 and 3 (e.g., not table 1, Tbl. 1, or Table 1). The title is centered above the table, as shown in Table~\ref{tab:label}. The minimum number of lines needed for clarity is desired. The table font may be adjusted smaller than the body text as necessary.
-
-\begin{table}[htbp]
-    \caption{A Caption Goes Here}
-   \label{tab:label}
-        \centering \fontsize{10}{10}\selectfont
-   \begin{tabular}{c | r | r } % Column formatting, 
-      \hline 
-      Animal    & Description & Price (\$)\\
-      \hline 
-      Gnat      & per gram & 13.65 \\
-                & each     &  0.01 \\
-      Gnu       & stuffed  & 92.50 \\
-      Emu       & stuffed  & 33.33 \\
-      Armadillo & frozen   &  8.99 \\
-      \hline
-   \end{tabular}
-\end{table}
-
-
-
-\section{Acknowledgment}
-Any acknowledgment which the author or authors wish to make may appear here. 
-
-
-
-\section{Notation}
-If mathematical symbols require definition, a table of notation should appear here. A footnote near the beginning of the paper where mathematics is introduced should direct attention of the reader to this table.
+\section{Module Parameters}
+\subsection{{\tt maxCounterValue} Parameter}
+This parameter dictates the number of control periods where the thrusters cycle off to allow the RWs to re-stabilize the orientation.  It must be set to a strictly positive value.  
 
 
 
