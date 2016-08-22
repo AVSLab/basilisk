@@ -60,6 +60,7 @@ bool TcpClient::receiveData(std::vector<char> &data)
     boost::system::error_code ec;
 
     m_inboundBuffer = data;
+    m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;

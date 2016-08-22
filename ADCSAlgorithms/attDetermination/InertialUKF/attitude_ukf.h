@@ -56,7 +56,7 @@ public:
     bool initToMeas;         // -- Command to initialize to measurement
     double QNoiseInit[6*6]; // -- Qnoise matrix to init with
     double CovarInit[6*6];  // -- Covariance matrix to start out with
-    double QStObs[3*3];   // -- observation noise matrix
+    double QStObs[6*6];   // -- observation noise matrix
     double ConvThresh;       // -- Required level of covariance convergence
     int ConvTestCounter;     // -- Number of sequential passes that must satisfy
     double HTolerance;       // s  Level of agreement required for time-tagging
@@ -64,7 +64,7 @@ public:
     int ConvCounter;         // -- Current counter of Convergence Values
     bool FilterConverged;    // -- Indicator that filter has converged
     
-    double MRP_BdyInrtl_Init[4];       // -- Initialization value for modified rodrigues parameters
+    double MRP_BdyInrtl_Init[3];       // -- Initialization value for modified rodrigues parameters
     double w_BdyInrtl_Bdy[3];        // -- Initial body rate estimate to seed filter with
     double MRPPrevious[3];
     double IInv[9];          //!< [-] Inverse of the spacecraft inertia tensor
