@@ -103,20 +103,20 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
-    moduleConfig.outputDataName = "outputName"
+    moduleConfig.vehicleConfigDataInMsgName = "vehicleConfigName"
+    moduleConfig.rwSpeedsInMsgName = "reactionwheel_speeds"
+    moduleConfig.rwConfigDataInMsgName = "rwa_config_data"
+    moduleConfig.deltaHOutMsgName = "outputName"
 
     # wheelSpeeds Message
     inputMessageSize = 36 * 8  # 36 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWSpeedsName,
+                                          moduleConfig.rwSpeedsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     rwSpeedMessage = rwNullSpace.RWSpeedData()
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwSpeedsInMsgName,
                                           inputMessageSize,
                                           0,
                                           rwSpeedMessage)
@@ -124,14 +124,14 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # vehicleConfigData Message:
     inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
+                                          moduleConfig.vehicleConfigDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     vehicleConfigOut.BS = [1.0, 0.0, 0.0,
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehicleConfigDataInMsgName,
                                           inputMessageSize,
                                           0,
                                           vehicleConfigOut)
@@ -144,14 +144,14 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     fswSetupRW.create([0.0, 1.0, 0.0], Js)
     fswSetupRW.create([0.0, 0.0, 1.0], Js)
     fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
+    fswSetupRW.addToSpacecraft(moduleConfig.rwConfigDataInMsgName,
                                unitTestSim.TotalSim,
                                unitProcessName)
 
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.deltaHOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -176,7 +176,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "torqueRequestBody"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
                                                   range(3))
 
     print moduleOutput

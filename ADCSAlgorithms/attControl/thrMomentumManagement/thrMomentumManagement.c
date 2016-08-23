@@ -49,7 +49,7 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    ConfigData->deltaHOutMsgID = CreateNewMessage(ConfigData->deltaHOutMsgName,
                                                sizeof(vehControlOut),
                                                "vehControlOut",          /* add the output structure name */
                                                moduleID);
@@ -64,11 +64,11 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
 void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the other message IDs */
-    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
+    ConfigData->rwConfInMsgID = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
                                                   sizeof(RWConstellation), moduleID);
-    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
+    ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
                                                      sizeof(RWSpeedData), moduleID);
-    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
+    ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
                                                               sizeof(vehicleConfigData), moduleID);
 }
 
@@ -85,9 +85,9 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
     uint32_t readSize;
     int i;
 
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
+    ReadMessage(ConfigData->vehicleConfigDataInMsgID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
+    ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     ConfigData->numRW = localRWData.numRW;
 
@@ -122,7 +122,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
     if (ConfigData->initRequest == 1) {
 
         /*! - Read the input messages */
-        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+        ReadMessage(ConfigData->rwSpeedsInMsgID, &clockTime, &readSize,
                     sizeof(RWSpeedData), (void*) &(rwSpeedMsg), moduleID);
 
         /* compute net RW momentum magnitude */
@@ -147,7 +147,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
          */
         v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
 
-        WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
+        WriteMessage(ConfigData->deltaHOutMsgID, callTime, sizeof(vehControlOut),
                      (void*) &(ConfigData->controlOut), moduleID);
 
     }

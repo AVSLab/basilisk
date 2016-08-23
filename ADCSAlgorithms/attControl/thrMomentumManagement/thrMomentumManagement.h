@@ -42,17 +42,17 @@ typedef struct {
     double hs_min;                                  /*!< [Nms]  minimum RW cluster momentum for dumping */
     
     /* declare module IO interfaces */
-    char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t outputMsgID;                            /*!< ID for the outgoing message */
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    int32_t inputVehicleConfigDataID;           /*!< [] ID for the incoming static vehicle data */
-    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];    /*!< [] The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsID;                        /*!< [] The ID for the reaction wheel speeds message*/
-    char inputRWConfigData[MAX_STAT_MSG_LENGTH];    /*!< [-] The name of the RWA configuration message*/
-    int32_t inputRWConfID;                          /*!< [-] ID for the incoming RWA configuration data*/
+    char deltaHOutMsgName[MAX_STAT_MSG_LENGTH];         /*!< The name of the output message*/
+    int32_t deltaHOutMsgID;                             /*!< ID for the outgoing message */
+    char vehicleConfigDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    int32_t vehicleConfigDataInMsgID;                   /*!< [] ID for the incoming static vehicle data */
+    char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< [] The name for the reaction wheel speeds message */
+    int32_t rwSpeedsInMsgID;                            /*!< [] The ID for the reaction wheel speeds message*/
+    char rwConfigDataInMsgName[MAX_STAT_MSG_LENGTH];    /*!< [-] The name of the RWA configuration message*/
+    int32_t rwConfInMsgID;                              /*!< [-] ID for the incoming RWA configuration data*/
 
 
-    vehControlOut controlOut;                        /*!< [] Control output requests */
+    vehControlOut controlOut;                           /*!< [] Control output requests */
 
 }thrMomentumManagementConfig;
 
