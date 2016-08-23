@@ -21,6 +21,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "ADCSUtilities/ADCSDefinitions.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -37,6 +39,11 @@ typedef struct {
 	double				controlPeriod;
 	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
 	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
+	double				pulseTimeMin[MAX_EFF_CNT];
+	boolean_t			baseThrustState[MAX_EFF_CNT];
+	boolean_t			thrustState[MAX_EFF_CNT];
+	double 				onTime[MAX_EFF_CNT];
+
 	uint64_t			prevCallTime;							/*!< callTime from previous function call */
 
     /* declare module IO interfaces */

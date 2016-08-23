@@ -129,6 +129,8 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 
 		/*! Correct for off-pulsing if necessary */
 		ConfigData->thrFiringRoundIn.effectorRequest[i] += ConfigData->baseThrustState[i] == BOOL_TRUE ? ConfigData->maxThrust[i] : 0.0;
+
+		/*! Do not allow thrust requests less than zero */
 		ConfigData->thrFiringRoundIn.effectorRequest[i] = ConfigData->thrFiringRoundIn.effectorRequest[i] < 0.0 ? 0.0 : ConfigData->thrFiringRoundIn.effectorRequest[i];
 
 		/*! Compute T_on from thrust request, max thrust, and control period */

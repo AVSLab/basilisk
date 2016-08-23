@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include <stdio.h>
 
 
 
@@ -49,7 +50,6 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
                                                sizeof(vehEffectorOut),
                                                "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
-	printf("completed SelfInit_thrFiringSchmitt");
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -66,7 +66,6 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t mod
 	ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
 												sizeof(ThrusterCluster),
 												moduleID);
-	printf("completed CrossInit_thrFiringSchmitt");
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -90,8 +89,8 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 	for(i=0; i<ConfigData->numThrusters; i++)
 	{
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
+		ConfigData->pulseTimeMin[i] = localThrusterData.thrusters[i].pulseTimeMin;
 	}
-	printf("completed Reset_thrFiringSchmitt");
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -101,15 +100,21 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
  */
 void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    uint64_t            clockTime;
-    uint32_t            readSize;
+
+	uint64_t            clockTime;
+	uint32_t            readSize;
 	int i;
-	double onTimeRequest;
-	double level;
-	boolean_t thrustState;
+	double 				level;
 
 	if(ConfigData->prevCallTime == ~0) {
 		ConfigData->prevCallTime = callTime;
+
+		for(i = 0; i < ConfigData->numThrusters; i++) {
+			ConfigData->thrFiringSchmittOut.effectorRequest[i] = (double)(ConfigData->baseThrustState[i]) * 2.0;
+		}
+
+		WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+					 (void*) &(ConfigData->thrFiringSchmittOut), moduleID);
 		return;
 	}
 
@@ -124,24 +129,43 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
-		onTimeRequest = ConfigData->thrFiringSchmittIn.effectorRequest[i];
-		level = onTimeRequest/ConfigData->controlPeriod;
+		/*! Correct for off-pulsing if necessary */
+		ConfigData->thrFiringSchmittIn.effectorRequest[i] += ConfigData->baseThrustState[i] == BOOL_TRUE ? ConfigData->maxThrust[i] : 0.0;
 
-		if (level >= ConfigData->level_on[i]) {
-			thrustState = BOOL_TRUE;
-		} else if (level <= ConfigData->level_off[i]) {
-			thrustState = BOOL_FALSE;
-		} else {
-			continue;
+		/*! Do not allow thrust requests less than zero */
+		ConfigData->thrFiringSchmittIn.effectorRequest[i] = ConfigData->thrFiringSchmittIn.effectorRequest[i] < 0.0 ? 0.0 : ConfigData->thrFiringSchmittIn.effectorRequest[i];
+
+		/*! Compute T_on from thrust request, max thrust, and control period */
+		ConfigData->onTime[i] = ConfigData->thrFiringSchmittIn.effectorRequest[i]/ConfigData->maxThrust[i]*ConfigData->controlPeriod;
+
+		if(ConfigData->onTime[i] < ConfigData->pulseTimeMin[i]) {
+			/*! Request is less than minimum pulse time */
+			level = ConfigData->onTime[i]/ConfigData->pulseTimeMin[i];
+			if (ConfigData->level[i] >= ConfigData->level_on[i]) {
+				ConfigData->thrustState[i] = BOOL_TRUE;
+				ConfigData->onTime[i] = ConfigData->pulseTimeMin[i];
+			} else if (ConfigData->level[i] <= ConfigData->level_off[i]) {
+				ConfigData->thrustState[i] = BOOL_FALSE;
+				ConfigData->onTime[i] = 0.0;
+			} else if (ConfigData->thrustState[i] == BOOL_TRUE) {
+				ConfigData->onTime[i] = ConfigData->pulseTimeMin[i];
+			} else {
+				ConfigData->onTime[i] = 0.0;
+			}
+		} else if (ConfigData->onTime[i] >= ConfigData->controlPeriod) {
+			/*! Request is greater than control period */
+			ConfigData->onTime[i] = 1.1*ConfigData->controlPeriod; // oversaturate to avoid numerical error
 		}
 
 		/*! Set the output data */
-		ConfigData->thrFiringSchmittOut.effectorRequest[i] = thrustState == BOOL_TRUE ? ConfigData->controlPeriod : 0.0;
-
+		ConfigData->thrFiringSchmittOut.effectorRequest[i] = ConfigData->onTime[i];
+		
 	}
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
 				 (void*) &(ConfigData->thrFiringSchmittOut), moduleID);
+
+	printf("completed Update_thrFiringSchmitt");
 
 	return;
 
