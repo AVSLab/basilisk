@@ -24,8 +24,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* update this include to reflect the required module input messages */
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <math.h>
+#include <stdio.h>
 
 
 
@@ -48,7 +50,6 @@ void SelfInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleID
                                                sizeof(vehEffectorOut),
                                                "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
-	printf("completed SelfInit_thrFiringRound");
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -65,7 +66,6 @@ void CrossInit_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t moduleI
 	ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
 												sizeof(ThrusterCluster),
 												moduleID);
-	printf("completed CrossInit_thrFiringRound");
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -89,8 +89,8 @@ void Reset_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, u
 	for(i=0; i<ConfigData->numThrusters; i++)
 	{
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
+		ConfigData->pulseTimeMin[i] = localThrusterData.thrusters[i].pulseTimeMin;
 	}
-	printf("completed Reset_thrFiringRound");
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -103,13 +103,16 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
     uint64_t            clockTime;
     uint32_t            readSize;
 	int i;
-	double ratioOfPulses;
-    double onTimeRequest;
-	int numPulses;
-
 
 	if(ConfigData->prevCallTime == ~0) {
 		ConfigData->prevCallTime = callTime;
+
+		for(i = 0; i < ConfigData->numThrusters; i++) {
+			ConfigData->thrFiringRoundOut.effectorRequest[i] = (double)(ConfigData->baseThrustState[i]) * 2.0;
+		}
+
+		WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+					 (void*) &(ConfigData->thrFiringRoundOut), moduleID);
 		return;
 	}
 
@@ -124,19 +127,20 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
-		onTimeRequest = ConfigData->thrFiringRoundIn.effectorRequest[i];
+		/*! Correct for off-pulsing if necessary */
+		ConfigData->thrFiringRoundIn.effectorRequest[i] += ConfigData->baseThrustState[i] == BOOL_TRUE ? ConfigData->maxThrust[i] : 0.0;
+		ConfigData->thrFiringRoundIn.effectorRequest[i] = ConfigData->thrFiringRoundIn.effectorRequest[i] < 0.0 ? 0.0 : ConfigData->thrFiringRoundIn.effectorRequest[i];
 
-		/*! Pulse remainder logic */
-		ratioOfPulses = onTimeRequest / ConfigData->pulseTimeResolution[i];
-		numPulses = round(ratioOfPulses);
-		ConfigData->onTime[i] = numPulses * ConfigData->pulseTimeResolution[i];
+		/*! Compute T_on from thrust request, max thrust, and control period */
+		ConfigData->onTime[i] = ConfigData->thrFiringRoundIn.effectorRequest[i]/ConfigData->maxThrust[i]*ConfigData->controlPeriod;
 
+		/*! Pulse rounding logic */
 		if(ConfigData->onTime[i] < ConfigData->pulseTimeMin[i]) {
 			/*! Request is less than minimum pulse time */
 			ConfigData->onTime[i] = round(ConfigData->onTime[i]/ConfigData->pulseTimeMin[i])*ConfigData->pulseTimeMin[i];
 		} else if (ConfigData->onTime[i] >= ConfigData->controlPeriod) {
 			/*! Request is greater than control period */
-			ConfigData->onTime[i] = 1.01*ConfigData->controlPeriod; // oversaturate to avoid numerical error
+			ConfigData->onTime[i] = 1.1*ConfigData->controlPeriod; // oversaturate to avoid numerical error
 		}
 
 		/*! Set the output data */
@@ -146,6 +150,8 @@ void Update_thrFiringRound(thrFiringRoundConfig *ConfigData, uint64_t callTime, 
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
 				 (void*) &(ConfigData->thrFiringRoundOut), moduleID);
+
+	printf("completed Update_thrFiringRound");
 
 	return;
 

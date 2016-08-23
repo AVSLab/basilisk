@@ -21,6 +21,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "ADCSUtilities/ADCSDefinitions.h"
+#include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -31,13 +33,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-	double              pulseTimeResolution[MAX_EFF_CNT];       /*!< Pulse increment */
 	double              pulseTimeMin[MAX_EFF_CNT];              /*!< Minimum pulse command */
 	double				onTime[MAX_EFF_CNT];
 	double				controlPeriod;
 	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
 	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
 	uint64_t			prevCallTime;							/*!< callTime from previous function call */
+	boolean_t			baseThrustState[MAX_EFF_CNT];
 
     /* declare module IO interfaces */
     char 				outputDataName[MAX_STAT_MSG_LENGTH];       	/*!< The name of the output message*/
