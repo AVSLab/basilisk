@@ -369,12 +369,16 @@ class MonteCarloBaseClass:
             for disp in self.varDisp:
                 nextValue = disp.generate(newSim)
                 if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
+                    separator = '.'
+                    execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.inputThrDir_S = ['
                     for i in range(3):
-                        separator = '.'
-                        execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.inputThrDir_S[' + str(i) + '] = ' + str(nextValue[i])
-                        exec(execString)
-                        if fHandle is not None:
-                            fHandle.write('    ' + execString + '\n')
+                        execString += str(nextValue[i])
+                        if(i<2):
+                            execString += ', '
+                    execString += ']'
+                    exec(execString)
+                    if fHandle is not None:
+                        fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
                     for i in range(9):
                         execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
@@ -400,10 +404,13 @@ class MonteCarloBaseClass:
                     for model in Task.TaskModels:
                         execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
                         execString += '[' + str(j) + '].RNGSeed = '
-                        model.RNGSeed = random.randint(0, 1<<32-1)
-                        execString += str(model.RNGSeed)
-                        if fHandle is not None:
-                            fHandle.write('    ' + execString + '\n')
+                        try:
+                            model.RNGSeed = random.randint(0, 1<<32-1)
+                            execString += str(model.RNGSeed)
+                            if fHandle is not None:
+                                fHandle.write('    ' + execString + '\n')
+                        except ValueError:
+                           continue
                         j+=1
                     i+=1
             if fHandle is not None:
