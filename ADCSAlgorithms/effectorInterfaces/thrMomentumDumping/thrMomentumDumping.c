@@ -50,7 +50,7 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t 
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputThrusterOnTImeMsgID = CreateNewMessage(ConfigData->outputThrusterOnTimeName,
+    ConfigData->thrusterOnTimeOutMsgID = CreateNewMessage(ConfigData->thrusterOnTimeOutMsgName,
                                                sizeof(vehEffectorOut),
                                                "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
@@ -65,10 +65,10 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t 
 void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputThrusterImpulseMsgID = subscribeToMessage(ConfigData->inputThrusterImpulseName,
+    ConfigData->thrusterImpulseInMsgID = subscribeToMessage(ConfigData->thrusterImpulseInMsgName,
                                                 sizeof(vehEffectorOut),
                                                 moduleID);
-    ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
+    ConfigData->thrusterConfInMsgID = subscribeToMessage(ConfigData->thrusterConfInMsgName,
                                                          sizeof(ThrusterCluster),
                                                          moduleID);
 
@@ -92,7 +92,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
 
 
     /* read in number of thrusters installed */
-    ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+    ReadMessage(ConfigData->thrusterConfInMsgID, &clockTime, &readSize,
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
@@ -137,7 +137,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
         if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
 
         /*! - Read the input messages */
-        ReadMessage(ConfigData->inputThrusterImpulseMsgID, &clockTime, &readSize,
+        ReadMessage(ConfigData->thrusterImpulseInMsgID, &clockTime, &readSize,
                     sizeof(vehEffectorOut), (void*) Delta_P_input, moduleID);
 
         if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
@@ -194,7 +194,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
      */
     memmove(ConfigData->thrOnTimeOut.effectorRequest, tOnOut, ConfigData->numThrusters*sizeof(double));
 
-    WriteMessage(ConfigData->outputThrusterOnTImeMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+    WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
                  (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
     return;

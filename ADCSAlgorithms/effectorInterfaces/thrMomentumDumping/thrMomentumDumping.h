@@ -45,12 +45,12 @@ typedef struct {
                                                                     fire again to dump RW momentum  */
 
     /* declare module IO interfaces */
-    char outputThrusterOnTimeName[MAX_STAT_MSG_LENGTH];
-    int32_t outputThrusterOnTImeMsgID;
-    char inputThrusterImpulseName[MAX_STAT_MSG_LENGTH];
-    int32_t inputThrusterImpulseMsgID;
-    char inputThrusterConfName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
-    int32_t  inputThrusterConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
+    char thrusterOnTimeOutMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t thrusterOnTimeOutMsgID;
+    char thrusterImpulseInMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t thrusterImpulseInMsgID;
+    char thrusterConfInMsgName[MAX_STAT_MSG_LENGTH];/*!< The name of the thruster cluster Input message*/
+    int32_t  thrusterConfInMsgID;                   /*!< [-] ID for the incoming Thruster configuration data*/
 
 
     vehEffectorOut thrOnTimeOut;                    /*!< -- copy of the output message */

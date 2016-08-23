@@ -99,9 +99,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    moduleConfig.inputThrusterImpulseName = "thrImpulseMomentumManagement"
-    moduleConfig.inputThrusterConfName = "thr_config_data"
-    moduleConfig.outputThrusterOnTimeName = "outputName"
+    moduleConfig.thrusterImpulseInMsgName = "thrImpulseMomentumManagement"
+    moduleConfig.thrusterConfInMsgName = "thr_config_data"
+    moduleConfig.thrusterOnTimeOutMsgName = "outputName"
 
 
     # setup thruster cluster message
@@ -129,7 +129,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i])
-    fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
+    fswSetupThrusters.addToSpacecraft(  moduleConfig.thrusterConfInMsgName,
                                         unitTestSim.TotalSim,
                                         unitProcessName)
     numThrusters = fswSetupThrusters.getNumOfDevices()
@@ -139,10 +139,10 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
     inputMessageData = thrMomentumDumping.vehEffectorOut()
     inputMessageData.effectorRequest = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputThrusterImpulseName,
+                                          moduleConfig.thrusterImpulseInMsgName,
                                           messageSize,
                                           2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterImpulseName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrusterImpulseInMsgName,
                                           messageSize,
                                           0,
                                           inputMessageData)
@@ -152,7 +152,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputThrusterOnTimeName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.thrusterOnTimeOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -178,7 +178,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputThrusterOnTimeName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
 
     # set the filtered output truth states
