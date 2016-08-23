@@ -184,8 +184,10 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
                   " dispersions will not be set for variable " + self.varName)
             return
         else:
+            separator = '.'
             thrusterObject = getattr(sim, self.varNameComponents[0])
-            dirVec = thrusterObject.ThrusterData[self.thrusterIndex].ThrusterDirection
+            totalVar = separator.join(self.varNameComponents[0:-1])
+            dirVec = eval('sim.' + totalVar + '.inputThrDir_S')
             angle = np.random.normal(0, self.phiStd, 1)
             dispVec = self.perturbVectorByAngle(dirVec, angle)
         return dispVec
@@ -250,7 +252,7 @@ class InertiaTensorDispersion:
             return
         else:
             vehDynObject = getattr(sim, self.varNameComponents[0])
-            I = np.array(vehDynObject.baseInertiaInit).reshape(3, 3)
+            I = np.array(eval('sim.'+self.varName)).reshape(3, 3)
 
             # generate random values for the diagonals
             temp = []
@@ -368,7 +370,8 @@ class MonteCarloBaseClass:
                 nextValue = disp.generate(newSim)
                 if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
                     for i in range(3):
-                        execString = 'newSim.' + disp.varNameComponents[0] + '.ThrusterData[' + str(disp.thrusterIndex) + '].ThrusterDirection[' + str(i) + '] = ' + str(nextValue[i])
+                        separator = '.'
+                        execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.inputThrDir_S[' + str(i) + '] = ' + str(nextValue[i])
                         exec(execString)
                         if fHandle is not None:
                             fHandle.write('    ' + execString + '\n')
