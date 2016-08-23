@@ -1,6 +1,7 @@
-#ifndef _SIM_ALGORITHMS_
-#define _SIM_ALGORITHMS_
+#ifndef EMM_FSW_AUTOCODE_
+#define EMM_FSW_AUTOCODE_
 
+#include "vehicleConfigData.h"
 #include "imuComm.h"
 #include "cssComm.h"
 #include "cssWlsEst.h"
@@ -24,13 +25,49 @@
 #include "eulerRotation.h"
 #include "inertial3DSpin.h"
 #include "attTrackingError.h"
-#include "errorDeadband.h"
 #include "MRP_Feedback.h"
+#include "rwMotorTorque.h"
 #include "PRV_Steering.h"
+
+typedef struct{
+	VehConfigInputData vehConfigData;
+	IMUConfigData imuSensorDecode;
+	CSSConfigData cssSensorDecode;
+	CSSWLSConfig CSSWlsEst;
+	sunSafePointConfig sunSafePoint;
+	simpleDeadbandConfig simpleDeadband;
+	MRP_PDConfig MRP_PD;
+	sunSafeACSConfig sunSafeACS;
+	celestialBodyPointConfig sunPoint;
+	celestialBodyPointConfig earthPoint;
+	celestialBodyPointConfig marsPoint;
+	attRefGenConfig attMnvrPoint;
+	MRP_SteeringConfig MRP_SteeringRWA;
+	dvAttEffectConfig RWAMappingData;
+	rwNullSpaceConfig RWNullSpace;
+	dvGuidanceConfig dvGuidance;
+	MRP_SteeringConfig MRP_SteeringMOI;
+	dvAttEffectConfig dvAttEffect;
+	thrustRWDesatConfig thrustRWDesat;
+	STConfigData stSensorDecode;
+	inertial3DConfig inertial3D;
+	hillPointConfig hillPoint;
+	velocityPointConfig velocityPoint;
+	celestialTwoBodyPointConfig celTwoBodyPoint;
+	rasterManagerConfig rasterManager;
+	eulerRotationConfig eulerRotation;
+	inertial3DSpinConfig inertial3DSpin;
+	attTrackingErrorConfig attTrackingError;
+	MRP_FeedbackConfig MRP_FeedbackRWA;
+	rwMotorTorqueConfig rwMotorTorque;
+	PRV_SteeringConfig PRV_SteeringRWA;
+}EMMConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+	void dataInit(EMMConfigData *data);
+	void initOnlyTask_Update(EMMConfigData *data);
 	void sunSafeFSWTask_Update(EMMConfigData *data);
 	void sunSafeFSWTask_Reset(EMMConfigData *data);
 	void sunPointTask_Update(EMMConfigData *data);
@@ -57,18 +94,18 @@ extern "C" {
 	void eulerRotationTask_Reset(EMMConfigData *data);
 	void inertial3DSpinTask_Update(EMMConfigData *data);
 	void inertial3DSpinTask_Reset(EMMConfigData *data);
-	void trackingErrorTask_Update(EMMConfigData *data);
-	void trackingErrorTask_Reset(EMMConfigData *data);
-	void controlTask_Update(EMMConfigData *data);
-	void controlTask_Reset(EMMConfigData *data);
 	void attitudeControlMnvrTask_Update(EMMConfigData *data);
 	void attitudeControlMnvrTask_Reset(EMMConfigData *data);
 	void feedbackControlMnvrTask_Update(EMMConfigData *data);
 	void feedbackControlMnvrTask_Reset(EMMConfigData *data);
 	void attitudePRVControlMnvrTask_Update(EMMConfigData *data);
 	void attitudePRVControlMnvrTask_Reset(EMMConfigData *data);
+	void simpleRWControlTask_Update(EMMConfigData *data);
+	void simpleRWControlTask_Reset(EMMConfigData *data);
 	void allAlg_SelfInit(EMMConfigData *data);
 	void allAlg_CrossInit(EMMConfigData *data);
+	void allAlg_Reset(EMMConfigData *data);
+	void allTasks_Update(EMMConfigData *data);
 #ifdef __cplusplus
 }
 #endif
