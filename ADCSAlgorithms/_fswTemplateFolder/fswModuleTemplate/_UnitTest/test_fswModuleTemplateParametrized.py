@@ -92,8 +92,8 @@ def fswModuleTestFunction(show_plots, param1, param2):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.inputDataName = "sampleInput"          # update with current values
-    moduleConfig.outputDataName = "sampleOutput"        # update with current values
+    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
+    moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
     moduleConfig.dummy = 1                              # update module parameter with required values
     moduleConfig.dumVector = [1., 2., 3.]
 
@@ -101,19 +101,19 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # is not part of the test.
     inputMessageSize = 3*8                              # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputDataName,
+                                          moduleConfig.dataInMsgName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
     inputMessageData.torqueRequestBody = [param1, param2, 0.7]       # Set up a list as a 3-vector
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputDataName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.dataInMsgName,
                                           inputMessageSize,
                                           0,
                                           inputMessageData)             # write data into the simulator
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)
     variableName = "dummy"                              # name the module variable to be logged
     unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
 
@@ -140,7 +140,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "outputVector"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
     

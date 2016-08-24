@@ -47,7 +47,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t mo
     
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    ConfigData->dataOutMsgID = CreateNewMessage(ConfigData->dataOutMsgName,
                                                sizeof(fswModuleTemplateOut),
                                                "fswModuleTemplateOut",          /* add the output structure name */
                                                moduleID);
@@ -61,7 +61,7 @@ void SelfInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t mo
 void CrossInit_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
-    ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+    ConfigData->dataInMsgID = subscribeToMessage(ConfigData->dataInMsgName,
                                                 sizeof(fswModuleTemplateOut),
                                                 moduleID);
 
@@ -91,7 +91,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t call
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+    ReadMessage(ConfigData->dataInMsgID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(ConfigData->inputVector), moduleID);
 
 
@@ -108,7 +108,7 @@ void Update_fswModuleTemplate(fswModuleTemplateConfig *ConfigData, uint64_t call
      */
     v3Copy(Lr, ConfigData->fswModuleOut.outputVector);                      /* populate the output message */
 
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(fswModuleTemplateOut),   /* update module name */
+    WriteMessage(ConfigData->dataOutMsgID, callTime, sizeof(fswModuleTemplateOut),   /* update module name */
                  (void*) &(ConfigData->fswModuleOut), moduleID);
 
     return;
