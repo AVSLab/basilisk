@@ -121,12 +121,21 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
             theTaskActivity_initList.append(init_str)
         return (theTaskActivity_declareList, theTaskActivity_initList)
 
+    def findFilePath(file):
+        ADCSPath = path + '/../ADCSAlgorithms/'
+        for dirpath, subdirs, files in os.walk(ADCSPath):
+            for x in files:
+                if x == file:
+                    relDir = os.path.relpath(dirpath, path)
+                    filePath = os.path.join(relDir, file)
+                    return filePath
+
     # This function appends a module's header string to the global headers list (only if it's not there)
     def createModuleHeaderName(module, headersList):
-        moduleName = module[:len(module) / 2]
-        header = '#include "' + moduleName + '.h"\n'
+        moduleName = module[:len(module) / 2] + '.h'
+        headerPath = findFilePath(moduleName)
+        header = '#include "' + headerPath + '"\n'
         if not(header in headersList):
-            #print moduleName
             headersList.append(header)
 
     def createConfigDataHeader(tag, configData, configlist):
@@ -195,7 +204,6 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
         algNameUpdate = task.Name + '_Update'
         algNameUpdateTaskActivity = task.Name + '_isActive'
         globalAlgUpdate[algNameUpdate] = (algNameUpdateTaskActivity, taskActivity)
-        print algNameUpdate, globalAlgUpdate[algNameUpdate]
         algNameReset = task.Name + '_Reset'
         writeTaskAlgs(str_ConfigData, algNameUpdate, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
