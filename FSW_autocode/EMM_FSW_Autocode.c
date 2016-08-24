@@ -340,6 +340,27 @@ void allTasks_Update(EMMConfigData *data)
 }
 
 void dataInit(EMMConfigData *data){
+	data->sunSafeFSWTask_isActive = true;
+	data->velocityPointTask_isActive = true;
+	data->attitudePRVControlMnvrTask_isActive = true;
+	data->rasterMnvrTask_isActive = true;
+	data->earthPointTask_isActive = true;
+	data->vehicleAttMnvrFSWTask_isActive = true;
+	data->inertial3DPointTask_isActive = true;
+	data->marsPointTask_isActive = true;
+	data->hillPointTask_isActive = true;
+	data->celTwoBodyPointTask_isActive = true;
+	data->vehicleDVPrepFSWTask_isActive = true;
+	data->initOnlyTask_isActive = true;
+	data->vehicleDVMnvrFSWTask_isActive = true;
+	data->inertial3DSpinTask_isActive = true;
+	data->feedbackControlMnvrTask_isActive = true;
+	data->RWADesatTask_isActive = true;
+	data->sensorProcessing_isActive = true;
+	data->attitudeControlMnvrTask_isActive = true;
+	data->eulerRotationTask_isActive = true;
+	data->sunPointTask_isActive = true;
+	data->simpleRWControlTask_isActive = true;
 	data->vehConfigData.BS[0] = 1.0;
 	data->vehConfigData.BS[1] = 0.0;
 	data->vehConfigData.BS[2] = 0.0;

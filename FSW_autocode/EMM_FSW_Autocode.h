@@ -61,6 +61,27 @@ typedef struct{
 	MRP_FeedbackConfig MRP_FeedbackRWA;
 	rwMotorTorqueConfig rwMotorTorque;
 	PRV_SteeringConfig PRV_SteeringRWA;
+	unit32_t sunSafeFSWTask_isActive;
+	unit32_t velocityPointTask_isActive;
+	unit32_t attitudePRVControlMnvrTask_isActive;
+	unit32_t rasterMnvrTask_isActive;
+	unit32_t earthPointTask_isActive;
+	unit32_t vehicleAttMnvrFSWTask_isActive;
+	unit32_t inertial3DPointTask_isActive;
+	unit32_t marsPointTask_isActive;
+	unit32_t hillPointTask_isActive;
+	unit32_t celTwoBodyPointTask_isActive;
+	unit32_t vehicleDVPrepFSWTask_isActive;
+	unit32_t initOnlyTask_isActive;
+	unit32_t vehicleDVMnvrFSWTask_isActive;
+	unit32_t inertial3DSpinTask_isActive;
+	unit32_t feedbackControlMnvrTask_isActive;
+	unit32_t RWADesatTask_isActive;
+	unit32_t sensorProcessing_isActive;
+	unit32_t attitudeControlMnvrTask_isActive;
+	unit32_t eulerRotationTask_isActive;
+	unit32_t sunPointTask_isActive;
+	unit32_t simpleRWControlTask_isActive;
 }EMMConfigData;
 
 #ifdef __cplusplus

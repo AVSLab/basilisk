@@ -10,7 +10,7 @@ import sim_model
 import numpy as np
 
 
-def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
+def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
     # First Parsing Method:
     # Get rid of all the variables that come after a built-in. The methods SelfInit, CrossInit, Update and Restart
     # will always come first, and so will do the variables that are capitalized (this is based on how "dir()" command
@@ -103,12 +103,23 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
         void_header = void + ';\n'
         void_source = void + '\n{\n'
         for k, v in globalAlgUpdate.items():
-            void_source += '\t' + 'if (data->' + v + '){' + '\n'
+            void_source += '\t' + 'if (data->' + v[0] + '){' + '\n'
             void_source += '\t\t' + k + '(data);' + '\n'
             void_source += '\t' + '}' + '\n'
         void_source += '}' + '\n'
         theVoidList.append(void_header)
         theAlgList.append(void_source)
+
+
+    def writeTaskActivityVars(globalAlgUpdate, varType):
+        theTaskActivity_declareList = []
+        theTaskActivity_initList = []
+        for k, v in globalAlgUpdate.items():
+            declare_str = varType + ' ' + v[0] + ';' + '\n'
+            init_str = 'data->' + v[0] + ' = ' + v[1] + ';' + '\n'
+            theTaskActivity_declareList.append(declare_str)
+            theTaskActivity_initList.append(init_str)
+        return (theTaskActivity_declareList, theTaskActivity_initList)
 
     # This function appends a module's header string to the global headers list (only if it's not there)
     def createModuleHeaderName(module, headersList):
@@ -142,8 +153,6 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
                 Reset_dict[elem.ModelTag] = (hasResetAddress, i)
             i += 1
 
-    str_Data = 'data'
-    theConfigDataSourceList = []
 
     # Model Data
     NameReplaceList = TheSim.NameReplace
@@ -158,6 +167,7 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     theHeadersList = [] # global list for all the module headers
     for i_task in taskIdxList:
         task = TheSim.TaskList[i_task]
+        taskActivity = taskIdxDir[i_task]
         allAlgUpdate = [] # local list for task models' Update algorithms
         allAlgReset = [] # local list for task model's Reset algorithms
         i_model = 0
@@ -184,7 +194,8 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
 
         algNameUpdate = task.Name + '_Update'
         algNameUpdateTaskActivity = task.Name + '_isActive'
-        globalAlgUpdate[algNameUpdate] = algNameUpdateTaskActivity
+        globalAlgUpdate[algNameUpdate] = (algNameUpdateTaskActivity, taskActivity)
+        print algNameUpdate, globalAlgUpdate[algNameUpdate]
         algNameReset = task.Name + '_Reset'
         writeTaskAlgs(str_ConfigData, algNameUpdate, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
@@ -196,11 +207,12 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     algNameAllCrossInit = 'allAlg_CrossInit'
     algNameAllReset = 'allAlg_Reset'
     taskNameUpdate = 'allTasks_Update'
-
     writeTaskAlgs(str_ConfigData, algNameAllSelfInit, allAlgSelfInit, theVoidList, theAlgList)
     writeTaskAlgs(str_ConfigData, algNameAllCrossInit, allAlgCrossInit, theVoidList, theAlgList)
     writeTaskAlgs(str_ConfigData, algNameAllReset, globalAllAlgReset, theVoidList, theAlgList)
     writeUpdateTaskActivityAlg(str_ConfigData, taskNameUpdate, globalAlgUpdate, theVoidList, theAlgList)
+    varType = 'unit32_t'
+    (theTaskActivity_declareList, theTaskActivity_initList) = writeTaskActivityVars(globalAlgUpdate, varType)
 
     # Open/Create C source and header files
     filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -214,6 +226,9 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     alg_source.write('\n')
     theDataVoid = 'void dataInit(EMMConfigData *data)'
     alg_source.write(theDataVoid + '{\n')
+    for init in theTaskActivity_initList:
+        alg_source.write('\t')
+        alg_source.write(init)
     dataParser.ParseConfigData(TheSim, taskIdxList, 'data->', alg_source)
     alg_source.write('}')
     alg_source.close()
@@ -227,7 +242,11 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     for configData in theConfigDataList:
         alg_header.write('\t')
         alg_header.write(configData)
+    for declare in theTaskActivity_declareList:
+        alg_header.write('\t')
+        alg_header.write(declare)
     alg_header.write('}' + str_ConfigData +';' + '\n')
+
     alg_header.write('\n' + '#ifdef ' + '__cplusplus' + '\n' + 'extern "C" {' + '\n' + '#endif' + '\n')
     alg_header.write('\t' + theDataVoid + ';' + '\n')
     for void in theVoidList:
@@ -236,15 +255,17 @@ def parseSimAlgorithms(TheSim, taskIdxList, outputCFileName, str_ConfigData):
     alg_header.write('#ifdef ' + '__cplusplus' + '\n' + '}' + '\n' + '#endif')
     alg_header.close()
 
-    return (theHeadersList, theConfigDataList,  globalAlgUpdate, localPath)
-
-
 
 
 
 TheAVSSim = AVSSim.AVSSim()
 taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+taskIdxActivityDir = {}
+for taskIdx in taskIdxList:
+    taskIdxActivityDir[taskIdx] = 'true'
 outputCFileName = 'EMM_FSW_Autocode'
 str_ConfigData = 'EMMConfigData'
-(theHeadersList, theConfigDataList, globalAlgUpdate, localPath) = parseSimAlgorithms(TheAVSSim, taskIdxList, outputCFileName, str_ConfigData)
+parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputCFileName, str_ConfigData)
+
+
 
