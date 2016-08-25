@@ -78,17 +78,21 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 	uint32_t            readSize;
 	int 				i;
 
-	ConfigData->prevCallTime = ~0;
+	ConfigData->prevCallTime = 0;
 
 	/* read in the support messages */
 	ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
 				sizeof(ThrusterCluster), &localThrusterData, moduleID);
 
-	for(i=0; i<ConfigData->numThrusters; i++)
-	{
+	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		ConfigData->pulseTimeMin[i] = localThrusterData.thrusters[i].pulseTimeMin;
 	}
+
+	for (i = 0; i < ConfigData->numThrusters; i++) {
+		ConfigData->pulseRemainder[i] = 0.0;
+	}
+
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -101,16 +105,17 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	uint64_t            clockTime;
 	uint32_t            readSize;
 	int i;
+	double				tCritical;
 
-	if(ConfigData->prevCallTime == ~0) {
+	if(ConfigData->prevCallTime == 0) {
 		ConfigData->prevCallTime = callTime;
 
 		for(i = 0; i < ConfigData->numThrusters; i++) {
-			ConfigData->thrFiringRemainderOut.effectorRequest[i] = (double)(ConfigData->baseThrustState[i]) * 2.0;
+			ConfigData->thrOnTimeOut.effectorRequest[i] = (double)(ConfigData->baseThrustState[i]) * 2.0;
 		}
 
 		WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
-					 (void*) &(ConfigData->thrFiringRemainderOut), moduleID);
+					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
 
@@ -120,40 +125,46 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	/*! Begin method steps */
 	/*! - Read the input messages */
 	ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-				sizeof(vehEffectorOut), (void*) &(ConfigData->thrFiringRemainderIn), moduleID);
+				sizeof(vehEffectorOut), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
 		/*! Correct for off-pulsing if necessary */
-		ConfigData->thrFiringRemainderIn.effectorRequest[i] += ConfigData->baseThrustState[i] == BOOL_TRUE ? ConfigData->maxThrust[i] : 0.0;
+		if (ConfigData->baseThrustState[i] == BOOL_TRUE) {
+			ConfigData->thrForceIn.effectorRequest[i] += ConfigData->maxThrust[i];
+		}
 
 		/*! Do not allow thrust requests less than zero */
-		ConfigData->thrFiringRemainderIn.effectorRequest[i] = ConfigData->thrFiringRemainderIn.effectorRequest[i] < 0.0 ? 0.0 : ConfigData->thrFiringRemainderIn.effectorRequest[i];
+		if (ConfigData->thrForceIn.effectorRequest[i] < 0.0) {
+			ConfigData->thrForceIn.effectorRequest[i] = 0.0;
+		}
 
 		/*! Compute T_on from thrust request, max thrust, and control period */
-		ConfigData->onTime[i] = ConfigData->thrFiringRemainderIn.effectorRequest[i]/ConfigData->maxThrust[i]*ConfigData->controlPeriod;
+		ConfigData->onTime[i] = ConfigData->thrForceIn.effectorRequest[i]/ConfigData->maxThrust[i]*ConfigData->controlPeriod;
+		/*! Add in remainder */
 		ConfigData->onTime[i] += ConfigData->pulseRemainder[i]*ConfigData->pulseTimeMin[i];
+		/*! Set pulse remainder to zero. Remainder now stored in onTime */
 		ConfigData->pulseRemainder[i] = 0.0;
 
 		/*! Pulse remainder logic */
-		if(ConfigData->onTime[i] < ConfigData->pulseTimeMin[i]) {
+		tCritical = ConfigData->pulseTimeMin[i];
+		if(ConfigData->onTime[i] < tCritical) {
 			/*! Request is less than minimum pulse time */
-			ConfigData->pulseRemainder[i] = ConfigData->onTime[i]/ConfigData->pulseTimeMin[i];
+			ConfigData->pulseRemainder[i] = ConfigData->onTime[i]/tCritical;
 			ConfigData->onTime[i] = 0.0;
 		} else if (ConfigData->onTime[i] >= ConfigData->controlPeriod) {
 			/*! Request is greater than control period */
-			ConfigData->pulseRemainder[i] = 0.0;
 			ConfigData->onTime[i] = 1.1*ConfigData->controlPeriod; // oversaturate to avoid numerical error
 		}
 
 		/*! Set the output data */
-		ConfigData->thrFiringRemainderOut.effectorRequest[i] = ConfigData->onTime[i];
+		ConfigData->thrOnTimeOut.effectorRequest[i] = ConfigData->onTime[i];
 		
 	}
 
 	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
-				 (void*) &(ConfigData->thrFiringRemainderOut), moduleID);
+				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	return;
 

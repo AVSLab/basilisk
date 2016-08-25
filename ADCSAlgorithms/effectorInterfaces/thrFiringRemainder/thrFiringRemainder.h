@@ -51,8 +51,8 @@ typedef struct {
 	char 				inputThrusterConfName[MAX_STAT_MSG_LENGTH];	/*!< The name of the thruster cluster Input message*/
 	int32_t  			inputThrusterConfID;                   		/*!< [-] ID for the incoming Thruster configuration data*/
 
-	vehEffectorOut thrFiringRemainderIn;								/*!< -- copy of the input message */
-	vehEffectorOut thrFiringRemainderOut;								/*!< -- copy of the output message */
+	vehEffectorOut thrForceIn;								/*!< -- copy of the input message */
+	vehEffectorOut thrOnTimeOut;								/*!< -- copy of the output message */
 
 }thrFiringRemainderConfig;
 
