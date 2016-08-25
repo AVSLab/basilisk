@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
-
+#include <string.h>
 
 
 /*
