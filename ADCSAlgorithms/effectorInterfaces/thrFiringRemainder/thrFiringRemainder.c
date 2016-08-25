@@ -84,6 +84,8 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 	ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
 				sizeof(ThrusterCluster), &localThrusterData, moduleID);
 
+	ConfigData->numThrusters = localThrusterData.numThrusters;
+
 	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		ConfigData->pulseTimeMin[i] = localThrusterData.thrusters[i].pulseTimeMin;
