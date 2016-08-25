@@ -123,6 +123,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
     }
+    memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(vehEffectorOut));
 
 }
 

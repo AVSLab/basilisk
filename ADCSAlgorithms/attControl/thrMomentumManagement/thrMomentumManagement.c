@@ -33,9 +33,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
 #include "SimCode/utilities/linearAlgebra.h"
-//#include "SimCode/utilities/rigidBodyKinematics.h"
-//#include "SimCode/utilities/astroConstants.h"
-//#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 
 
 /*! This method initializes the ConfigData for this module.
@@ -101,6 +98,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
 
     ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
+    memset(&(ConfigData->controlOut), 0x0, sizeof(vehControlOut));
 }
 
 /*! Add a description of what this main Update() routine does for this module

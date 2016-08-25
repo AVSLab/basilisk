@@ -33,15 +33,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
-//#include "SimCode/utilities/linearAlgebra.h"
-//#include "SimCode/utilities/rigidBodyKinematics.h"
-//#include "SimCode/utilities/astroConstants.h"
-//#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 
 
 /*! This method initializes the ConfigData for this module.
- It checks to ensure that the inputs are sane and then creates the
- output message
+ It creates the output message.
  @return void
  @param ConfigData The configuration data associated with this module
  */
@@ -105,6 +100,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     /* zero out some vectors */
     memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
     memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
+    memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(vehEffectorOut));
 
     if (ConfigData->maxCounterValue < 1) {
         printf("WARNING: the maxCounterValue flag must be set to a positive value.\n");
