@@ -68,8 +68,9 @@ extern "C" {
     
     void SelfInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID);
     void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID);
-    void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID);
+    void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
+    
     void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void checkRasterCommands(eulerRotationConfig *ConfigData);
     void computeTimeStep(eulerRotationConfig *ConfigData, uint64_t callTime);

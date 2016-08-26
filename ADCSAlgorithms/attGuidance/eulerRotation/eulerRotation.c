@@ -78,7 +78,7 @@ void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
     }
 }
 
-void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
+void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->priorTime = -1;
     v3SetZero(ConfigData->priorCmdSet);
