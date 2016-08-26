@@ -233,6 +233,7 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
     double gtHat_B[3];
     double temp1[3];
     double temp2[3];
+    double omegaCritical;
 
     // zero the sum vectors of RW jitter torque and force
     v3SetZero(this->sumTau_B);
@@ -256,17 +257,13 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
         }
 
         // Coulomb friction
-        if(this->ReactionWheelData[RWIter].Omega > 0.0) {
+        omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionPercent;
+        if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
             u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
-        } else if(this->ReactionWheelData[RWIter].Omega < 0.0) {
+        } else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
             u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
         } else {
-            if (fabs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_f) {
-                // stickage
-                u_s = 0;
-            } else {
-                u_s = CmdIt->u_cmd;
-            }
+            u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
         }
 
         this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor

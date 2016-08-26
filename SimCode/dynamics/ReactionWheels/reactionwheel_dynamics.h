@@ -63,6 +63,7 @@ typedef struct {
     double F_B[3];             //!< N, single RW force with simple jitter model
     double tau_B[3];           //!< N-m, single RW torque with simple jitter model
     bool usingRWJitter;        //!< flag for using imbalance torques
+    double linearFrictionPercent; //!< [%] percent of max speed value up to which the friction behaves linearly
 }ReactionWheelConfigData;
 
 //! @brief Input container for thruster firing requests.
