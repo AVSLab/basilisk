@@ -63,7 +63,7 @@ ARRAYASLIST(int)
 ARRAYASLIST(float)
 ARRAYASLIST(unsigned int)
 
-%define SCOTTROX(type)
+%define STRUCTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
     void *blankPtr = 0 ;
