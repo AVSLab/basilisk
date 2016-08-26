@@ -74,7 +74,7 @@ If the $\Delta\bm p$ message is not new, then the counter flag is checked.  If t
 
 If the counter flag reaches zero it is time to fire the required thrusters again to implement the next chunk of the required thruster impulse.  The output thrust on times are set to the remaining thruster on times, the counter is reset, and the remaining thruster on times is decremented again by the control period.
 
-Finally, the thruster on times are checked to be greater than the thruster minimum pulse time, or the output time is set to zero.  Similarly, if the required thruster on time is larger than a control period, the thruster on time is set equal to the control period.  This ensures that the thrusters will fire for a single control period duration only before returning to an off-mode.  
+Finally, the thruster on times are checked to be greater than the thruster minimum firing time, or the output time is set to zero.  Similarly, if the required thruster on time is larger than a control period, the thruster on time is set equal to the control period.  This ensures that the thrusters will fire for a single control period duration only before returning to an off-mode.  
 
 
 
@@ -82,6 +82,8 @@ Finally, the thruster on times are checked to be greater than the thruster minim
 \subsection{{\tt maxCounterValue} Parameter}
 This parameter dictates the number of control periods where the thrusters cycle off to allow the RWs to re-stabilize the orientation.  It must be set to a strictly positive value.  
 
+\subsection{{\tt thrMinFireTime} Parameter}
+This parameter determines what the minimum thruster firing time is, provided in units of seconds.  
 
 
 
