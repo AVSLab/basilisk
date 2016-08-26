@@ -41,21 +41,25 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
                 addressDict[methodName] = int(methodAddress)
         return addressDict
 
-    # This function checks the method type of the input and returns the corresponding string.
+    # This function checks the method type of the input and returns the corresponding strings.
     #   methodName: name of the model data algorithm
     def checkMethodType(methodName):
         str_selfInit = 'SelfInit'
         str_crossInit = 'CrossInit'
         str_update = 'Update'
         str_reset = 'Reset'
+
+        str_blank = '' # the methods SelfInit and CrossInit don't need the callTime parameter
+        str_callTime = ', callTime' # the methods Reset and Update need an extra parameter for callTine
+
         if methodName[0:len(str_selfInit)] == str_selfInit:
-            return str_selfInit
+            return (str_selfInit, str_blank)
         elif methodName[0:len(str_crossInit)] == str_crossInit:
-            return str_crossInit
+            return (str_crossInit, str_blank)
         elif methodName[0:len(str_update)] == str_update:
-            return str_update
+            return (str_update, str_callTime)
         elif methodName[0:len(str_reset)] == str_reset:
-            return str_reset
+            return (str_reset, str_callTime)
         else:
             raise ValueError('Cannot recognize the method. Parse better.')
 
@@ -85,9 +89,8 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
 
     # This function progressively creates a list with all the void definitions that will go in the output header file
     # and the algorithms that will go in the output source file
-    def writeTaskAlgs(str_ConfigData, algName, algList, theVoidList, theAlgList):
-        ConfigData = '(' + str_ConfigData + ' *data)'
-        void = 'void ' + algName + ConfigData
+    def writeTaskAlgs(algName, algList, theVoidList, theAlgList):
+        void = 'void ' + algName
         void_header = void + ';\n'
         void_source = void + '\n{\n'
         for alg in algList:
@@ -96,15 +99,13 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
         theVoidList.append(void_header)
         theAlgList.append(void_source)
 
-
-    def writeUpdateTaskActivityAlg(str_ConfigData, algName, globalAlgUpdate, theVoidList, theAlgList):
-        ConfigData = '(' + str_ConfigData + ' *data)'
-        void = 'void ' + algName + ConfigData
+    def writeUpdateTaskActivityAlg(algName, globalAlgUpdate, theVoidList, theAlgList):
+        void = 'void ' + algName
         void_header = void + ';\n'
         void_source = void + '\n{\n'
         for k, v in globalAlgUpdate.items():
             void_source += '\t' + 'if (data->' + v[0] + '){' + '\n'
-            void_source += '\t\t' + k + '(data);' + '\n'
+            void_source += '\t\t' + k + '(data, callTime);' + '\n'
             void_source += '\t' + '}' + '\n'
         void_source += '}' + '\n'
         theVoidList.append(void_header)
@@ -169,11 +170,14 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
     allAlgCrossInit = [] # global list for all models' CrossInit algorithms
     globalAllAlgReset = [] # global list for all models' Reset algorithms
     globalAlgUpdate = {} #
-    #configDataModelDict = {}
     theConfigDataList = []
     theAlgList = [] # global list for all source algorithms
     theVoidList = [] # global list for all header void function definitions.
     theHeadersList = [] # global list for all the module headers
+    ConfigData = '(' + str_ConfigData + ' *data)'
+    ConfigData_callTime = '(' + str_ConfigData + ' *data, uint64_t callTime)'
+
+
     for i_task in taskIdxList:
         task = TheSim.TaskList[i_task]
         taskActivity = taskIdxDir[i_task]
@@ -192,10 +196,10 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
             parsed_dirList = parseSwigVars(dirList)
             addressDict = evalParsedList(parsed_dirList, module)
             for k, v in addressDict.items():
-                methodType = checkMethodType(k)
+                (methodType, methodCallTime) = checkMethodType(k)
                 dict = eval(methodType + '_dict')
                 modelID = findAddressMatch(v, modelTag, dict)
-                theString = k +'(&(data->' + modelTag + '), ' + str(modelID) + ')'
+                theString = k +'(&(data->' + modelTag + ')' + methodCallTime + ', ' + str(modelID) + ')'
                 theList = eval('allAlg' + methodType)
                 if not(theString in theList):
                     theList.append(theString)
@@ -205,45 +209,51 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
         algNameUpdateTaskActivity = task.Name + '_isActive'
         globalAlgUpdate[algNameUpdate] = (algNameUpdateTaskActivity, taskActivity)
         algNameReset = task.Name + '_Reset'
-        writeTaskAlgs(str_ConfigData, algNameUpdate, allAlgUpdate, theVoidList, theAlgList)
+        writeTaskAlgs(algNameUpdate + ConfigData_callTime, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
-            writeTaskAlgs(str_ConfigData, algNameReset, allAlgReset, theVoidList, theAlgList)
+            writeTaskAlgs(algNameReset + ConfigData_callTime, allAlgReset, theVoidList, theAlgList)
             for reset in allAlgReset:
                 if not(reset in globalAllAlgReset):
                     globalAllAlgReset.append(reset)
-    algNameAllSelfInit = 'allAlg_SelfInit'
-    algNameAllCrossInit = 'allAlg_CrossInit'
-    algNameAllReset = 'allAlg_Reset'
-    taskNameUpdate = 'allTasks_Update'
-    writeTaskAlgs(str_ConfigData, algNameAllSelfInit, allAlgSelfInit, theVoidList, theAlgList)
-    writeTaskAlgs(str_ConfigData, algNameAllCrossInit, allAlgCrossInit, theVoidList, theAlgList)
-    writeTaskAlgs(str_ConfigData, algNameAllReset, globalAllAlgReset, theVoidList, theAlgList)
-    writeUpdateTaskActivityAlg(str_ConfigData, taskNameUpdate, globalAlgUpdate, theVoidList, theAlgList)
-    varType = 'unit32_t'
+    algNameAllSelfInit = 'AllAlg_SelfInit'
+    algNameAllCrossInit = 'AllAlg_CrossInit'
+    algNameAllReset = 'AllAlg_Reset'
+    taskNameUpdate = 'AllTasks_Update'
+    algNameDataInit = 'DataInit'
+
+    writeTaskAlgs(algNameAllSelfInit + ConfigData, allAlgSelfInit, theVoidList, theAlgList)
+    writeTaskAlgs(algNameAllCrossInit  + ConfigData, allAlgCrossInit, theVoidList, theAlgList)
+    writeTaskAlgs(algNameAllReset + ConfigData_callTime, globalAllAlgReset, theVoidList, theAlgList)
+    writeUpdateTaskActivityAlg(taskNameUpdate  + ConfigData_callTime, globalAlgUpdate, theVoidList, theAlgList)
+    varType = 'uint32_t'
     (theTaskActivity_declareList, theTaskActivity_initList) = writeTaskActivityVars(globalAlgUpdate, varType)
 
-    # Open/Create C source and header files
+    # Open/Create C source&header files and swig file
     filename = inspect.getframeinfo(inspect.currentframe()).filename
     localPath = os.path.dirname(os.path.abspath(filename))
     fileMode = 'w+'  # create file to be written if it doesn't exist
-    # Write source file
     alg_source = open(localPath + '/' + outputCFileName + '.c', fileMode)  # source file
+    alg_header = open(localPath + '/' + outputCFileName + '.h', fileMode)  # header file
+    alg_swig = open(localPath + '/' + outputCFileName + '.i', fileMode)  # header file
+
+    # Write source file
     alg_source.write('#include "' + outputCFileName + '.h"' + '\n\n')
     for alg in theAlgList:
         alg_source.write(alg)
     alg_source.write('\n')
-    theDataVoid = 'void dataInit(EMMConfigData *data)'
+    theDataVoid = 'void ' + algNameDataInit + '(' + str_ConfigData + ' *data)'
     alg_source.write(theDataVoid + '{\n')
     for init in theTaskActivity_initList:
         alg_source.write('\t')
         alg_source.write(init)
     dataParser.ParseConfigData(TheSim, taskIdxList, 'data->', alg_source)
     alg_source.write('}')
-    alg_source.close()
+
     # Write header file
-    alg_header = open(localPath + '/' + outputCFileName + '.h', fileMode)  # header file
+    ## begin header file
     defName = 'EMM_FSW_AUTOCODE_'
     alg_header.write('#ifndef ' + defName + '\n' + '#define ' + defName + '\n\n')
+    ## define auto-code init data
     for header in theHeadersList:
         alg_header.write(header)
     alg_header.write('\n' + 'typedef struct{' + '\n')
@@ -254,14 +264,48 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
         alg_header.write('\t')
         alg_header.write(declare)
     alg_header.write('}' + str_ConfigData +';' + '\n')
-
+    ## define auto-code algorithms
     alg_header.write('\n' + '#ifdef ' + '__cplusplus' + '\n' + 'extern "C" {' + '\n' + '#endif' + '\n')
-    alg_header.write('\t' + theDataVoid + ';' + '\n')
     for void in theVoidList:
         alg_header.write('\t')
         alg_header.write(void)
+    alg_header.write('\t' + theDataVoid + ';' + '\n')
     alg_header.write('#ifdef ' + '__cplusplus' + '\n' + '}' + '\n' + '#endif')
+    alg_header.write('\n\n' + '#endif')
+
+    # Write swig file
+    def writeSwigAlgCode(algNames, swigFile):
+        endL = ';\n'
+        for name in algNames:
+            constant_str = '%constant void ' + name + endL
+            ignore_str = '%ignore ' + name + endL
+            swigFile.write(constant_str + ignore_str)
+        return
+    ## begin swig code
+    alg_swig.write('%module ' + outputFileName + '\n' + '%{' + '\n')
+    alg_swig.write('\t' + '#include "' + outputFileName + '.h"' + '\n' + '%}' + '\n\n')
+    alg_swig.write('%include "swig_conly_data.i"' + '\n\n')
+    ## wrap C auto-code algorithms
+    configData_paramsDefault = '(void*, unit64_t)'
+    configData_paramsCallTime =  '(void*, unit64_t, uint64_t)'
+    algNames = [
+        algNameDataInit +configData_paramsDefault,
+        algNameAllSelfInit + configData_paramsDefault,
+        algNameAllCrossInit + configData_paramsDefault,
+        algNameAllReset + configData_paramsCallTime,
+        taskNameUpdate + configData_paramsCallTime
+    ]
+    writeSwigAlgCode(algNames, alg_swig)
+    ## end swig code
+    alg_swig.write('%include "'+ outputFileName + '.h"' + '\n\n')
+    alg_swig.write('%pythoncode %{' + '\n' + 'import sys' + '\n' +
+                   'protectAllClasses(sys.modules[__name__])' + '\n' + '%}')
+
+    # Close C source&header files and swig file
+    alg_source.close()
     alg_header.close()
+    alg_swig.close()
+
 
 
 
@@ -270,10 +314,10 @@ TheAVSSim = AVSSim.AVSSim()
 taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
 taskIdxActivityDir = {}
 for taskIdx in taskIdxList:
-    taskIdxActivityDir[taskIdx] = 'true'
-outputCFileName = 'EMM_FSW_Autocode'
+    taskIdxActivityDir[taskIdx] = str(1)
+outputFileName = 'EMM_FSW_Autocode'
 str_ConfigData = 'EMMConfigData'
-parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputCFileName, str_ConfigData)
+parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputFileName, str_ConfigData)
 
 
 
