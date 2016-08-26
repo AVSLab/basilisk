@@ -26,18 +26,22 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 SimpleNav::SimpleNav()
 {
     this->inputStateName = "inertial_state_output";
-    this->outputNavName = "simple_nav_output";
+    this->outputAttName = "simple_att_nav_output";
+    this->outputTransName = "simple_trans_nav_output";
     this->inputSunName = "sun_planet_data";
     this->crossTrans = false;
     this->crossAtt = false;
     this->outputBufferCount = 2;
     this->inputStateID = -1;
-    this->outputDataID = -1;
+    this->outputAttID = -1;
+    this->outputTransID = -1;
     this->AMatrix.clear();
     this->PMatrix.clear();
     this->prevTime = 0;
-    memset(&estimatedState, 0x0, sizeof(NavStateOut));
-    memset(&trueState, 0x0, sizeof(NavStateOut));
+    memset(&estAttState, 0x0, sizeof(NavAttOut));
+    memset(&trueAttState, 0x0, sizeof(NavAttOut));
+    memset(&estTransState, 0x0, sizeof(NavTransOut));
+    memset(&trueTransState, 0x0, sizeof(NavTransOut));
     return;
 }
 
@@ -65,9 +69,12 @@ void SimpleNav::SelfInit()
     uint64_t numStates = 18;
     std::vector<double>::iterator it;
     //! - Create a new message for the output simple nav state data
-    outputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputNavName, sizeof(NavStateOut), outputBufferCount,
-        "NavStateOut", moduleID);
+    outputAttID = SystemMessaging::GetInstance()->
+        CreateNewMessage(outputAttName, sizeof(NavAttOut), outputBufferCount,
+        "NavAttOut", moduleID);
+    outputTransID = SystemMessaging::GetInstance()->
+    CreateNewMessage(outputTransName, sizeof(NavTransOut), outputBufferCount,
+                     "NavTransOut", moduleID);
     //! - Initialize the propagation matrix to default values for use in update
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
@@ -151,22 +158,25 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     //! Begin method steps
     SystemMessaging::GetInstance()->
-    WriteMessage(outputDataID, Clock, sizeof(NavStateOut),
-                 reinterpret_cast<uint8_t*> (&estimatedState), moduleID);
+    WriteMessage(outputAttID, Clock, sizeof(NavAttOut),
+                 reinterpret_cast<uint8_t*> (&estAttState), moduleID);
+    SystemMessaging::GetInstance()->
+    WriteMessage(outputTransID, Clock, sizeof(NavTransOut),
+                 reinterpret_cast<uint8_t*> (&estTransState), moduleID);
 }
 
 void SimpleNav::applyErrors()
 {
     //! - Add errors to the simple cases (everything except sun-pointing)
-    v3Add(trueState.r_BN_N, &(navErrors.data()[0]), estimatedState.r_BN_N);
-    v3Add(trueState.v_BN_N, &(navErrors.data()[3]), estimatedState.v_BN_N);
-    addMRP(trueState.sigma_BN, &(navErrors.data()[6]), estimatedState.sigma_BN);
-    v3Add(trueState.omega_BN_B, &(navErrors.data()[9]), estimatedState.omega_BN_B);
-    v3Add(trueState.vehAccumDV, &(navErrors.data()[15]), estimatedState.vehAccumDV);
+    v3Add(trueTransState.r_BN_N, &(navErrors.data()[0]), estTransState.r_BN_N);
+    v3Add(trueTransState.v_BN_N, &(navErrors.data()[3]), estTransState.v_BN_N);
+    addMRP(trueAttState.sigma_BN, &(navErrors.data()[6]), estAttState.sigma_BN);
+    v3Add(trueAttState.omega_BN_B, &(navErrors.data()[9]), estAttState.omega_BN_B);
+    v3Add(trueTransState.vehAccumDV, &(navErrors.data()[15]), estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
     double T_bdyT2bdyO[3][3];
     MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
-    m33MultV3(T_bdyT2bdyO, trueState.vehSunPntBdy, estimatedState.vehSunPntBdy);
+    m33MultV3(T_bdyT2bdyO, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
 }
 
 /*! This method uses the input messages as well as the calculated model errors to 
@@ -177,18 +187,18 @@ void SimpleNav::applyErrors()
 void SimpleNav::computeTrueOutput(uint64_t Clock)
 {
     //! - Set output state to truth data
-    v3Copy(inertialState.r_N, trueState.r_BN_N);
-    v3Copy(inertialState.v_N, trueState.v_BN_N);
-    v3Copy(inertialState.sigma, trueState.sigma_BN);
-    v3Copy(inertialState.omega, trueState.omega_BN_B);
-    v3Copy(inertialState.TotalAccumDVBdy, trueState.vehAccumDV);
+    v3Copy(inertialState.r_N, trueTransState.r_BN_N);
+    v3Copy(inertialState.v_N, trueTransState.v_BN_N);
+    v3Copy(inertialState.sigma, trueAttState.sigma_BN);
+    v3Copy(inertialState.omega, trueAttState.omega_BN_B);
+    v3Copy(inertialState.TotalAccumDVBdy, trueTransState.vehAccumDV);
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     double sc2SunInrtl[3];
     double T_inrtl2bdy[3][3];
     v3Subtract(sunState.PositionVector, inertialState.r_N, sc2SunInrtl);
     v3Normalize(sc2SunInrtl, sc2SunInrtl);
     MRP2C(inertialState.sigma, T_inrtl2bdy);
-    m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueState.vehSunPntBdy);
+    m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueAttState.vehSunPntBdy);
 }
 
 /*! This method sets the propagation matrix and requests new random errors from

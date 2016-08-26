@@ -69,7 +69,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
                                                 sizeof(attRefOut),
                                                 moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
-                                                sizeof(NavStateOut),
+                                                sizeof(NavAttOut),
                                                 moduleID);
 
 }
@@ -94,16 +94,16 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
     uint64_t    clockTime;
     uint32_t    readSize;
     attRefOut   ref;                        /*!< reference guidance message */
-    NavStateOut nav;                        /*!< navigation message */
+    NavAttOut nav;                        /*!< navigation message */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(attRefOut));
-    memset(&nav, 0x0, sizeof(NavStateOut));
+    memset(&nav, 0x0, sizeof(NavAttOut));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
                 sizeof(attRefOut), (void*) &(ref), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavStateOut), (void*) &(nav), moduleID);
+                sizeof(NavAttOut), (void*) &(nav), moduleID);
 
 
     computeAttitudeError(nav.sigma_BN,

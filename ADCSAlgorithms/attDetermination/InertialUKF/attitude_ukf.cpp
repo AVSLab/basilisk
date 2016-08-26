@@ -226,7 +226,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     BinvMRP(localOutput.sigma_BN, BMatInv);
     m33MultV3(BMatInv, &(state.vec_vals[3]), localOutput.omega_BN_B);
     v3Scale(4.0, localOutput.omega_BN_B, localOutput.omega_BN_B);
-    WriteMessage(InertialUKFStateID, callTime, sizeof(NavStateOut), &localOutput,
+    WriteMessage(InertialUKFStateID, callTime, sizeof(NavAttOut), &localOutput,
                  moduleID);
     memcpy(MRPPrevious, stMeas.MRP_BdyInrtl, 3*sizeof(double));
     memcpy(&previousSpeeds, &currentSpeeds, sizeof(RWSpeedData));
@@ -284,7 +284,7 @@ void STInertialUKF::SelfInit()
     }
     char name[]="NavStateOut";
 
-    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavStateOut),
+    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavAttOut),
                                           name, moduleID);
     return;
 }

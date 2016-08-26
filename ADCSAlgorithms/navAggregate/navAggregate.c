@@ -26,8 +26,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
 {
-    ConfigData->outputNavMsgID = CreateNewMessage(ConfigData->outputNavName,
-        sizeof(NavStateOut), "NavStateOut", moduleID);
+    ConfigData->outputAttMsgID = CreateNewMessage(ConfigData->outputAttName,
+        sizeof(NavAttOut), "NavAttOut", moduleID);
+    ConfigData->outputTransMsgID = CreateNewMessage(ConfigData->outputTransName,
+                                                  sizeof(NavAttOut), "NavTransOut", moduleID);
 }
 
 /*! This method performs the second stage of initialization for the nav aggregration 
@@ -39,10 +41,15 @@ void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
 void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
 {
     uint32_t i;
-    for(i=0; i<ConfigData->msgCount; i=i+1)
+    for(i=0; i<ConfigData->attMsgCount; i=i+1)
     {
-        ConfigData->navMsgs[i].inputNavID = subscribeToMessage(
-            ConfigData->navMsgs[i].inputNavName, sizeof(NavStateOut), moduleID);
+        ConfigData->attMsgs[i].inputNavID = subscribeToMessage(
+            ConfigData->attMsgs[i].inputNavName, sizeof(NavAttOut), moduleID);
+    }
+    for(i=0; i<ConfigData->transMsgCount; i=i+1)
+    {
+        ConfigData->transMsgs[i].inputNavID = subscribeToMessage(
+            ConfigData->transMsgs[i].inputNavName, sizeof(NavTransOut), moduleID);
     }
 }
 
@@ -60,30 +67,39 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     uint32_t i;
     /*! Begin method steps */
     /*! - Iterate through all of the input messages and archive their nav data*/
-    for(i=0; i<ConfigData->msgCount; i=i+1)
+    for(i=0; i<ConfigData->attMsgCount; i=i+1)
     {
-        ReadMessage(ConfigData->navMsgs[i].inputNavID, &writeTime, &writeSize,
-                    sizeof(NavStateOut), &(ConfigData->navMsgs[i].msgStorage), moduleID);
+        ReadMessage(ConfigData->attMsgs[i].inputNavID, &writeTime, &writeSize,
+                    sizeof(NavAttOut), &(ConfigData->attMsgs[i].msgStorage), moduleID);
+    }
+    for(i=0; i<ConfigData->transMsgCount; i=i+1)
+    {
+        ReadMessage(ConfigData->transMsgs[i].inputNavID, &writeTime, &writeSize,
+                    sizeof(NavTransOut), &(ConfigData->transMsgs[i].msgStorage), moduleID);
     }
     
     /*! - Copy out each part of the source message into the target output message*/
-    ConfigData->outputData.timeTag =
-        ConfigData->navMsgs[ConfigData->timeIdx].msgStorage.timeTag;
-    memcpy(ConfigData->outputData.r_BN_N,
-           ConfigData->navMsgs[ConfigData->posIdx].msgStorage.r_BN_N, 3*sizeof(double));
-    memcpy(ConfigData->outputData.v_BN_N,
-           ConfigData->navMsgs[ConfigData->velIdx].msgStorage.v_BN_N, 3*sizeof(double));
-    memcpy(ConfigData->outputData.sigma_BN,
-           ConfigData->navMsgs[ConfigData->attIdx].msgStorage.sigma_BN, 3*sizeof(double));
-    memcpy(ConfigData->outputData.omega_BN_B,
-           ConfigData->navMsgs[ConfigData->rateIdx].msgStorage.omega_BN_B, 3*sizeof(double));
-    memcpy(ConfigData->outputData.vehAccumDV,
-           ConfigData->navMsgs[ConfigData->dvIdx].msgStorage.vehAccumDV, 3*sizeof(double));
-    memcpy(ConfigData->outputData.vehSunPntBdy,
-           ConfigData->navMsgs[ConfigData->sunIdx].msgStorage.vehSunPntBdy, 3*sizeof(double));
+    ConfigData->outAttData.timeTag =
+        ConfigData->attMsgs[ConfigData->attTimeIdx].msgStorage.timeTag;
+    ConfigData->outTransData.timeTag =
+        ConfigData->attMsgs[ConfigData->transTimeIdx].msgStorage.timeTag;
+    memcpy(ConfigData->outTransData.r_BN_N,
+           ConfigData->transMsgs[ConfigData->posIdx].msgStorage.r_BN_N, 3*sizeof(double));
+    memcpy(ConfigData->outTransData.v_BN_N,
+           ConfigData->transMsgs[ConfigData->velIdx].msgStorage.v_BN_N, 3*sizeof(double));
+    memcpy(ConfigData->outAttData.sigma_BN,
+           ConfigData->attMsgs[ConfigData->attIdx].msgStorage.sigma_BN, 3*sizeof(double));
+    memcpy(ConfigData->outAttData.omega_BN_B,
+           ConfigData->attMsgs[ConfigData->rateIdx].msgStorage.omega_BN_B, 3*sizeof(double));
+    memcpy(ConfigData->outTransData.vehAccumDV,
+           ConfigData->transMsgs[ConfigData->dvIdx].msgStorage.vehAccumDV, 3*sizeof(double));
+    memcpy(ConfigData->outAttData.vehSunPntBdy,
+           ConfigData->attMsgs[ConfigData->sunIdx].msgStorage.vehSunPntBdy, 3*sizeof(double));
     /*! - Write the total message out for everyone else to pick up */
-    WriteMessage(ConfigData->outputNavMsgID, callTime, sizeof(NavStateOut),
-                 &(ConfigData->outputData), moduleID);
+    WriteMessage(ConfigData->outputAttMsgID, callTime, sizeof(NavAttOut),
+                 &(ConfigData->outAttData), moduleID);
+    WriteMessage(ConfigData->outputTransMsgID, callTime, sizeof(NavTransOut),
+                 &(ConfigData->outTransData), moduleID);
     
     return;
 }

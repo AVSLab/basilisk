@@ -26,7 +26,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_aggregateNav;
 %constant void CrossInit_aggregateNav(void*, uint64_t);
 %ignore CrossInit_aggregateNav;
-%array_functions(AggregateMsgInput, AggMsgArray);
+%array_functions(AggregateAttInput, AggAttArray);
+%array_functions(AggregateTransInput, AggTransArray);
 %include "navAggregate.h"
 %pythoncode %{
 import sys

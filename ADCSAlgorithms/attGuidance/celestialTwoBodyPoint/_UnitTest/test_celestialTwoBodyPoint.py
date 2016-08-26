@@ -165,7 +165,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
                                           inputNavMessageSize, 2)
 
-    NavStateOutData = simple_nav.NavStateOut()  # Create a structure for the input message
+    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,

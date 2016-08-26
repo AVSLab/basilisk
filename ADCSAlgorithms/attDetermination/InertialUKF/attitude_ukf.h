@@ -72,7 +72,7 @@ public:
     double LastStTime;       // -- Last Accelerometer time-tag
     
     double CovarEst[6*6];   // -- Covariance estimate output from filter
-    NavStateOut localOutput; //! -- Current output state estimate
+    NavAttOut localOutput; //! -- Current output state estimate
     RWSpeedData currentSpeeds; //! [-] Current estimate of the wheel speeds
     RWSpeedData previousSpeeds; //! [-] Previous set of wheel speeds
     std::vector<RWConfigElement> rwData; //! [-] Vector of reaction wheel configuration data

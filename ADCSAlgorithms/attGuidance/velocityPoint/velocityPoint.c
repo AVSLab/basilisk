@@ -50,7 +50,7 @@ void CrossInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(SpicePlanetState), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-                                                sizeof(NavStateOut), moduleID);
+                                                sizeof(NavTransOut), moduleID);
 }
 
 void Reset_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
@@ -64,13 +64,13 @@ void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, ui
     /*! - Read input message */
     uint64_t            writeTime;
     uint32_t            writeSize;
-    NavStateOut         navData;
+    NavTransOut         navData;
     SpicePlanetState    primPlanet;
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(SpicePlanetState), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(NavStateOut), &navData, moduleID);
+                sizeof(NavTransOut), &navData, moduleID);
     
     
     /*! - Compute and store output message */
