@@ -1,188 +1,188 @@
 #include "EMM_FSW_Autocode.h"
 
-void initOnlyTask_Update(EMMConfigData *data)
+void initOnlyTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_vehicleConfigData(&(data->vehConfigData), 12);
+	Update_vehicleConfigData(&(data->vehConfigData), callTime, 12);
 }
-void sunSafeFSWTask_Update(EMMConfigData *data)
+void sunSafeFSWTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_imuProcessTelem(&(data->imuSensorDecode), 2);
-	Update_cssProcessTelem(&(data->cssSensorDecode), 0);
-	Update_cssWlsEst(&(data->CSSWlsEst), 1);
-	Update_sunSafePoint(&(data->sunSafePoint), 29);
-	Update_simpleDeadband(&(data->simpleDeadband), 26);
-	Update_MRP_PD(&(data->MRP_PD), 4);
-	Update_sunSafeACS(&(data->sunSafeACS), 28);
+	Update_imuProcessTelem(&(data->imuSensorDecode), callTime, 2);
+	Update_cssProcessTelem(&(data->cssSensorDecode), callTime, 0);
+	Update_cssWlsEst(&(data->CSSWlsEst), callTime, 1);
+	Update_sunSafePoint(&(data->sunSafePoint), callTime, 29);
+	Update_simpleDeadband(&(data->simpleDeadband), callTime, 26);
+	Update_MRP_PD(&(data->MRP_PD), callTime, 4);
+	Update_sunSafeACS(&(data->sunSafeACS), callTime, 28);
 }
-void sunSafeFSWTask_Reset(EMMConfigData *data)
+void sunSafeFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_simpleDeadband(&(data->simpleDeadband), 26);
-	Reset_MRP_PD(&(data->MRP_PD), 4);
+	Reset_simpleDeadband(&(data->simpleDeadband), callTime, 26);
+	Reset_MRP_PD(&(data->MRP_PD), callTime, 4);
 }
-void sunPointTask_Update(EMMConfigData *data)
+void sunPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_celestialBodyPoint(&(data->sunPoint), 27);
+	Update_celestialBodyPoint(&(data->sunPoint), callTime, 27);
 }
-void earthPointTask_Update(EMMConfigData *data)
+void earthPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_celestialBodyPoint(&(data->earthPoint), 18);
+	Update_celestialBodyPoint(&(data->earthPoint), callTime, 18);
 }
-void marsPointTask_Update(EMMConfigData *data)
+void marsPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_celestialBodyPoint(&(data->marsPoint), 23);
+	Update_celestialBodyPoint(&(data->marsPoint), callTime, 23);
 }
-void vehicleAttMnvrFSWTask_Update(EMMConfigData *data)
+void vehicleAttMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_attRefGen(&(data->attMnvrPoint), 13);
-	Update_MRP_Steering(&(data->MRP_SteeringRWA), 6);
-	Update_dvAttEffect(&(data->RWAMappingData), 9);
-	Update_rwNullSpace(&(data->RWNullSpace), 10);
+	Update_attRefGen(&(data->attMnvrPoint), callTime, 13);
+	Update_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
+	Update_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Update_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void vehicleAttMnvrFSWTask_Reset(EMMConfigData *data)
+void vehicleAttMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attRefGen(&(data->attMnvrPoint), 13);
-	Reset_MRP_Steering(&(data->MRP_SteeringRWA), 6);
-	Reset_dvAttEffect(&(data->RWAMappingData), 9);
-	Reset_rwNullSpace(&(data->RWNullSpace), 10);
+	Reset_attRefGen(&(data->attMnvrPoint), callTime, 13);
+	Reset_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
+	Reset_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Reset_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void vehicleDVPrepFSWTask_Update(EMMConfigData *data)
+void vehicleDVPrepFSWTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_dvGuidance(&(data->dvGuidance), 17);
+	Update_dvGuidance(&(data->dvGuidance), callTime, 17);
 }
-void vehicleDVMnvrFSWTask_Update(EMMConfigData *data)
+void vehicleDVMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_dvGuidance(&(data->dvGuidance), 17);
-	Update_attRefGen(&(data->attMnvrPoint), 13);
-	Update_MRP_Steering(&(data->MRP_SteeringMOI), 5);
-	Update_dvAttEffect(&(data->dvAttEffect), 16);
+	Update_dvGuidance(&(data->dvGuidance), callTime, 17);
+	Update_attRefGen(&(data->attMnvrPoint), callTime, 13);
+	Update_MRP_Steering(&(data->MRP_SteeringMOI), callTime, 5);
+	Update_dvAttEffect(&(data->dvAttEffect), callTime, 16);
 }
-void vehicleDVMnvrFSWTask_Reset(EMMConfigData *data)
+void vehicleDVMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attRefGen(&(data->attMnvrPoint), 13);
-	Reset_MRP_Steering(&(data->MRP_SteeringMOI), 5);
-	Reset_dvAttEffect(&(data->dvAttEffect), 16);
+	Reset_attRefGen(&(data->attMnvrPoint), callTime, 13);
+	Reset_MRP_Steering(&(data->MRP_SteeringMOI), callTime, 5);
+	Reset_dvAttEffect(&(data->dvAttEffect), callTime, 16);
 }
-void RWADesatTask_Update(EMMConfigData *data)
+void RWADesatTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_thrustRWDesat(&(data->thrustRWDesat), 31);
+	Update_thrustRWDesat(&(data->thrustRWDesat), callTime, 31);
 }
-void RWADesatTask_Reset(EMMConfigData *data)
+void RWADesatTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_thrustRWDesat(&(data->thrustRWDesat), 31);
+	Reset_thrustRWDesat(&(data->thrustRWDesat), callTime, 31);
 }
-void sensorProcessing_Update(EMMConfigData *data)
+void sensorProcessing_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_cssProcessTelem(&(data->cssSensorDecode), 0);
-	Update_imuProcessTelem(&(data->imuSensorDecode), 2);
-	Update_stProcessTelem(&(data->stSensorDecode), 11);
+	Update_cssProcessTelem(&(data->cssSensorDecode), callTime, 0);
+	Update_imuProcessTelem(&(data->imuSensorDecode), callTime, 2);
+	Update_stProcessTelem(&(data->stSensorDecode), callTime, 11);
 }
-void inertial3DPointTask_Update(EMMConfigData *data)
+void inertial3DPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_inertial3D(&(data->inertial3D), 22);
+	Update_inertial3D(&(data->inertial3D), callTime, 22);
 }
-void inertial3DPointTask_Reset(EMMConfigData *data)
+void inertial3DPointTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_inertial3D(&(data->inertial3D), 22);
+	Reset_inertial3D(&(data->inertial3D), callTime, 22);
 }
-void hillPointTask_Update(EMMConfigData *data)
+void hillPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_hillPoint(&(data->hillPoint), 20);
+	Update_hillPoint(&(data->hillPoint), callTime, 20);
 }
-void hillPointTask_Reset(EMMConfigData *data)
+void hillPointTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_hillPoint(&(data->hillPoint), 20);
+	Reset_hillPoint(&(data->hillPoint), callTime, 20);
 }
-void velocityPointTask_Update(EMMConfigData *data)
+void velocityPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_velocityPoint(&(data->velocityPoint), 32);
+	Update_velocityPoint(&(data->velocityPoint), callTime, 32);
 }
-void velocityPointTask_Reset(EMMConfigData *data)
+void velocityPointTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_velocityPoint(&(data->velocityPoint), 32);
+	Reset_velocityPoint(&(data->velocityPoint), callTime, 32);
 }
-void celTwoBodyPointTask_Update(EMMConfigData *data)
+void celTwoBodyPointTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_celestialTwoBodyPoint(&(data->celTwoBodyPoint), 15);
+	Update_celestialTwoBodyPoint(&(data->celTwoBodyPoint), callTime, 15);
 }
-void rasterMnvrTask_Update(EMMConfigData *data)
+void rasterMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_rasterManager(&(data->rasterManager), 24);
-	Update_eulerRotation(&(data->eulerRotation), 19);
+	Update_rasterManager(&(data->rasterManager), callTime, 24);
+	Update_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void rasterMnvrTask_Reset(EMMConfigData *data)
+void rasterMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_rasterManager(&(data->rasterManager), 24);
-	Reset_eulerRotation(&(data->eulerRotation), 19);
+	Reset_rasterManager(&(data->rasterManager), callTime, 24);
+	Reset_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void eulerRotationTask_Update(EMMConfigData *data)
+void eulerRotationTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_eulerRotation(&(data->eulerRotation), 19);
+	Update_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void eulerRotationTask_Reset(EMMConfigData *data)
+void eulerRotationTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_eulerRotation(&(data->eulerRotation), 19);
+	Reset_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void inertial3DSpinTask_Update(EMMConfigData *data)
+void inertial3DSpinTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_inertial3DSpin(&(data->inertial3DSpin), 21);
+	Update_inertial3DSpin(&(data->inertial3DSpin), callTime, 21);
 }
-void inertial3DSpinTask_Reset(EMMConfigData *data)
+void inertial3DSpinTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_inertial3DSpin(&(data->inertial3DSpin), 21);
+	Reset_inertial3DSpin(&(data->inertial3DSpin), callTime, 21);
 }
-void attitudeControlMnvrTask_Update(EMMConfigData *data)
+void attitudeControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_attTrackingError(&(data->attTrackingError), 14);
-	Update_MRP_Steering(&(data->MRP_SteeringRWA), 6);
-	Update_dvAttEffect(&(data->RWAMappingData), 9);
-	Update_rwNullSpace(&(data->RWNullSpace), 10);
+	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Update_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
+	Update_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Update_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void attitudeControlMnvrTask_Reset(EMMConfigData *data)
+void attitudeControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attTrackingError(&(data->attTrackingError), 14);
-	Reset_MRP_Steering(&(data->MRP_SteeringRWA), 6);
-	Reset_dvAttEffect(&(data->RWAMappingData), 9);
-	Reset_rwNullSpace(&(data->RWNullSpace), 10);
+	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Reset_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
+	Reset_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Reset_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void feedbackControlMnvrTask_Update(EMMConfigData *data)
+void feedbackControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_attTrackingError(&(data->attTrackingError), 14);
-	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
-	Update_rwMotorTorque(&(data->rwMotorTorque), 25);
+	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
+	Update_rwMotorTorque(&(data->rwMotorTorque), callTime, 25);
 }
-void feedbackControlMnvrTask_Reset(EMMConfigData *data)
+void feedbackControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attTrackingError(&(data->attTrackingError), 14);
-	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
-	Reset_rwMotorTorque(&(data->rwMotorTorque), 25);
+	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
+	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 25);
 }
-void attitudePRVControlMnvrTask_Update(EMMConfigData *data)
+void attitudePRVControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_attTrackingError(&(data->attTrackingError), 14);
-	Update_PRV_Steering(&(data->PRV_SteeringRWA), 8);
-	Update_dvAttEffect(&(data->RWAMappingData), 9);
-	Update_rwNullSpace(&(data->RWNullSpace), 10);
+	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Update_PRV_Steering(&(data->PRV_SteeringRWA), callTime, 8);
+	Update_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Update_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void attitudePRVControlMnvrTask_Reset(EMMConfigData *data)
+void attitudePRVControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attTrackingError(&(data->attTrackingError), 14);
-	Reset_PRV_Steering(&(data->PRV_SteeringRWA), 8);
-	Reset_dvAttEffect(&(data->RWAMappingData), 9);
-	Reset_rwNullSpace(&(data->RWNullSpace), 10);
+	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Reset_PRV_Steering(&(data->PRV_SteeringRWA), callTime, 8);
+	Reset_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Reset_rwNullSpace(&(data->RWNullSpace), callTime, 10);
 }
-void simpleRWControlTask_Update(EMMConfigData *data)
+void simpleRWControlTask_Update(EMMConfigData *data, uint64_t callTime)
 {
-	Update_attTrackingError(&(data->attTrackingError), 14);
-	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
-	Update_rwMotorTorque(&(data->rwMotorTorque), 25);
+	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
+	Update_rwMotorTorque(&(data->rwMotorTorque), callTime, 25);
 }
-void simpleRWControlTask_Reset(EMMConfigData *data)
+void simpleRWControlTask_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_attTrackingError(&(data->attTrackingError), 14);
-	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
-	Reset_rwMotorTorque(&(data->rwMotorTorque), 25);
+	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
+	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 25);
 }
-void allAlg_SelfInit(EMMConfigData *data)
+void AllAlg_SelfInit(EMMConfigData *data)
 {
 	SelfInit_vehicleConfigData(&(data->vehConfigData), 12);
 	SelfInit_imuProcessTelem(&(data->imuSensorDecode), 2);
@@ -216,7 +216,7 @@ void allAlg_SelfInit(EMMConfigData *data)
 	SelfInit_rwMotorTorque(&(data->rwMotorTorque), 25);
 	SelfInit_PRV_Steering(&(data->PRV_SteeringRWA), 8);
 }
-void allAlg_CrossInit(EMMConfigData *data)
+void AllAlg_CrossInit(EMMConfigData *data)
 {
 	CrossInit_vehicleConfigData(&(data->vehConfigData), 12);
 	CrossInit_imuProcessTelem(&(data->imuSensorDecode), 2);
@@ -250,117 +250,117 @@ void allAlg_CrossInit(EMMConfigData *data)
 	CrossInit_rwMotorTorque(&(data->rwMotorTorque), 25);
 	CrossInit_PRV_Steering(&(data->PRV_SteeringRWA), 8);
 }
-void allAlg_Reset(EMMConfigData *data)
+void AllAlg_Reset(EMMConfigData *data, uint64_t callTime)
 {
-	Reset_simpleDeadband(&(data->simpleDeadband), 26);
-	Reset_MRP_PD(&(data->MRP_PD), 4);
-	Reset_attRefGen(&(data->attMnvrPoint), 13);
-	Reset_MRP_Steering(&(data->MRP_SteeringRWA), 6);
-	Reset_dvAttEffect(&(data->RWAMappingData), 9);
-	Reset_rwNullSpace(&(data->RWNullSpace), 10);
-	Reset_MRP_Steering(&(data->MRP_SteeringMOI), 5);
-	Reset_dvAttEffect(&(data->dvAttEffect), 16);
-	Reset_thrustRWDesat(&(data->thrustRWDesat), 31);
-	Reset_inertial3D(&(data->inertial3D), 22);
-	Reset_hillPoint(&(data->hillPoint), 20);
-	Reset_velocityPoint(&(data->velocityPoint), 32);
-	Reset_rasterManager(&(data->rasterManager), 24);
-	Reset_eulerRotation(&(data->eulerRotation), 19);
-	Reset_inertial3DSpin(&(data->inertial3DSpin), 21);
-	Reset_attTrackingError(&(data->attTrackingError), 14);
-	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
-	Reset_rwMotorTorque(&(data->rwMotorTorque), 25);
-	Reset_PRV_Steering(&(data->PRV_SteeringRWA), 8);
+	Reset_simpleDeadband(&(data->simpleDeadband), callTime, 26);
+	Reset_MRP_PD(&(data->MRP_PD), callTime, 4);
+	Reset_attRefGen(&(data->attMnvrPoint), callTime, 13);
+	Reset_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
+	Reset_dvAttEffect(&(data->RWAMappingData), callTime, 9);
+	Reset_rwNullSpace(&(data->RWNullSpace), callTime, 10);
+	Reset_MRP_Steering(&(data->MRP_SteeringMOI), callTime, 5);
+	Reset_dvAttEffect(&(data->dvAttEffect), callTime, 16);
+	Reset_thrustRWDesat(&(data->thrustRWDesat), callTime, 31);
+	Reset_inertial3D(&(data->inertial3D), callTime, 22);
+	Reset_hillPoint(&(data->hillPoint), callTime, 20);
+	Reset_velocityPoint(&(data->velocityPoint), callTime, 32);
+	Reset_rasterManager(&(data->rasterManager), callTime, 24);
+	Reset_eulerRotation(&(data->eulerRotation), callTime, 19);
+	Reset_inertial3DSpin(&(data->inertial3DSpin), callTime, 21);
+	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
+	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
+	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 25);
+	Reset_PRV_Steering(&(data->PRV_SteeringRWA), callTime, 8);
 }
-void allTasks_Update(EMMConfigData *data)
+void AllTasks_Update(EMMConfigData *data, uint64_t callTime)
 {
 	if (data->sunSafeFSWTask_isActive){
-		sunSafeFSWTask_Update(data);
+		sunSafeFSWTask_Update(data, callTime);
 	}
 	if (data->velocityPointTask_isActive){
-		velocityPointTask_Update(data);
+		velocityPointTask_Update(data, callTime);
 	}
 	if (data->attitudePRVControlMnvrTask_isActive){
-		attitudePRVControlMnvrTask_Update(data);
+		attitudePRVControlMnvrTask_Update(data, callTime);
 	}
 	if (data->rasterMnvrTask_isActive){
-		rasterMnvrTask_Update(data);
+		rasterMnvrTask_Update(data, callTime);
 	}
 	if (data->earthPointTask_isActive){
-		earthPointTask_Update(data);
+		earthPointTask_Update(data, callTime);
 	}
 	if (data->vehicleAttMnvrFSWTask_isActive){
-		vehicleAttMnvrFSWTask_Update(data);
+		vehicleAttMnvrFSWTask_Update(data, callTime);
 	}
 	if (data->inertial3DPointTask_isActive){
-		inertial3DPointTask_Update(data);
+		inertial3DPointTask_Update(data, callTime);
 	}
 	if (data->marsPointTask_isActive){
-		marsPointTask_Update(data);
+		marsPointTask_Update(data, callTime);
 	}
 	if (data->hillPointTask_isActive){
-		hillPointTask_Update(data);
+		hillPointTask_Update(data, callTime);
 	}
 	if (data->celTwoBodyPointTask_isActive){
-		celTwoBodyPointTask_Update(data);
+		celTwoBodyPointTask_Update(data, callTime);
 	}
 	if (data->vehicleDVPrepFSWTask_isActive){
-		vehicleDVPrepFSWTask_Update(data);
+		vehicleDVPrepFSWTask_Update(data, callTime);
 	}
 	if (data->initOnlyTask_isActive){
-		initOnlyTask_Update(data);
+		initOnlyTask_Update(data, callTime);
 	}
 	if (data->vehicleDVMnvrFSWTask_isActive){
-		vehicleDVMnvrFSWTask_Update(data);
+		vehicleDVMnvrFSWTask_Update(data, callTime);
 	}
 	if (data->inertial3DSpinTask_isActive){
-		inertial3DSpinTask_Update(data);
+		inertial3DSpinTask_Update(data, callTime);
 	}
 	if (data->feedbackControlMnvrTask_isActive){
-		feedbackControlMnvrTask_Update(data);
+		feedbackControlMnvrTask_Update(data, callTime);
 	}
 	if (data->RWADesatTask_isActive){
-		RWADesatTask_Update(data);
+		RWADesatTask_Update(data, callTime);
 	}
 	if (data->sensorProcessing_isActive){
-		sensorProcessing_Update(data);
+		sensorProcessing_Update(data, callTime);
 	}
 	if (data->attitudeControlMnvrTask_isActive){
-		attitudeControlMnvrTask_Update(data);
+		attitudeControlMnvrTask_Update(data, callTime);
 	}
 	if (data->eulerRotationTask_isActive){
-		eulerRotationTask_Update(data);
+		eulerRotationTask_Update(data, callTime);
 	}
 	if (data->sunPointTask_isActive){
-		sunPointTask_Update(data);
+		sunPointTask_Update(data, callTime);
 	}
 	if (data->simpleRWControlTask_isActive){
-		simpleRWControlTask_Update(data);
+		simpleRWControlTask_Update(data, callTime);
 	}
 }
 
-void dataInit(EMMConfigData *data){
-	data->sunSafeFSWTask_isActive = true;
-	data->velocityPointTask_isActive = true;
-	data->attitudePRVControlMnvrTask_isActive = true;
-	data->rasterMnvrTask_isActive = true;
-	data->earthPointTask_isActive = true;
-	data->vehicleAttMnvrFSWTask_isActive = true;
-	data->inertial3DPointTask_isActive = true;
-	data->marsPointTask_isActive = true;
-	data->hillPointTask_isActive = true;
-	data->celTwoBodyPointTask_isActive = true;
-	data->vehicleDVPrepFSWTask_isActive = true;
-	data->initOnlyTask_isActive = true;
-	data->vehicleDVMnvrFSWTask_isActive = true;
-	data->inertial3DSpinTask_isActive = true;
-	data->feedbackControlMnvrTask_isActive = true;
-	data->RWADesatTask_isActive = true;
-	data->sensorProcessing_isActive = true;
-	data->attitudeControlMnvrTask_isActive = true;
-	data->eulerRotationTask_isActive = true;
-	data->sunPointTask_isActive = true;
-	data->simpleRWControlTask_isActive = true;
+void DataInit(EMMConfigData *data){
+	data->sunSafeFSWTask_isActive = 1;
+	data->velocityPointTask_isActive = 1;
+	data->attitudePRVControlMnvrTask_isActive = 1;
+	data->rasterMnvrTask_isActive = 1;
+	data->earthPointTask_isActive = 1;
+	data->vehicleAttMnvrFSWTask_isActive = 1;
+	data->inertial3DPointTask_isActive = 1;
+	data->marsPointTask_isActive = 1;
+	data->hillPointTask_isActive = 1;
+	data->celTwoBodyPointTask_isActive = 1;
+	data->vehicleDVPrepFSWTask_isActive = 1;
+	data->initOnlyTask_isActive = 1;
+	data->vehicleDVMnvrFSWTask_isActive = 1;
+	data->inertial3DSpinTask_isActive = 1;
+	data->feedbackControlMnvrTask_isActive = 1;
+	data->RWADesatTask_isActive = 1;
+	data->sensorProcessing_isActive = 1;
+	data->attitudeControlMnvrTask_isActive = 1;
+	data->eulerRotationTask_isActive = 1;
+	data->sunPointTask_isActive = 1;
+	data->simpleRWControlTask_isActive = 1;
 	data->vehConfigData.BS[0] = 1.0;
 	data->vehConfigData.BS[1] = 0.0;
 	data->vehConfigData.BS[2] = 0.0;
