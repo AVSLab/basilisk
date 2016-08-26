@@ -50,19 +50,20 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("resetCheck", [
-    (False),
-    (True)
+@pytest.mark.parametrize("resetCheck, largeMinFireTime", [
+    (False, False)
+    ,(True, False)
+    ,(False, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrMomentumDumping(show_plots, resetCheck):
+def test_thrMomentumDumping(show_plots, resetCheck, largeMinFireTime):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck)
+    [testResults, testMessage] = thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime)
     assert testResults < 1, testMessage
 
 
-def thrMomentumDumpingTestFunction(show_plots, resetCheck):
+def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -95,7 +96,10 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
 
     # Initialize the test module configuration data
     moduleConfig.maxCounterValue = 2
-
+    if largeMinFireTime:
+        moduleConfig.thrMinFireTime = 0.200         # seconds
+    else:
+        moduleConfig.thrMinFireTime = 0.020         # seconds
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -181,6 +185,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
 
+
     # set the filtered output truth states
     if resetCheck==1:
         trueVector = [
@@ -198,15 +203,26 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
                    [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0]
                    ]
     else:
-        trueVector = [
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                   [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
-                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-                   ]
+        if largeMinFireTime:
+            trueVector = [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.5, 0.0, 0.0, 0.5, 0.5, 0.0, 0.5, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.3, 0.0, 0.0, 0.3, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            ]
+        else:
+            trueVector = [
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                       [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
+                       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+                       ]
 
         # else:
         #     testFailCount+=1
@@ -216,7 +232,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
     accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
@@ -251,5 +267,6 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
 if __name__ == "__main__":
     test_thrMomentumDumping(              # update "module" in function name
                  True,
-                 True           # hsMinCheck
+                 False,             # resetFlag
+                 False              # largeMinFireTime
                )

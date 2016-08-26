@@ -37,7 +37,7 @@ typedef struct {
     uint64_t    priorTime;                              /*!< [ns]   Last time the attitude control is called */
     int         numThrusters;                           /*!<        number of thrusters installed */
     double      thrMaxForce[MAX_EFF_CNT];               /*!< [N]    vector of maximum thruster forces */
-    double      thrMinPulseTime[MAX_EFF_CNT];           /*!< [s]    vector of minimum thruster pulse times */
+    double      thrMinFireTime;                         /*!< [s]    smallest thruster firing time */
 
     /* declare module public variables */
     int         maxCounterValue;                        /*!<        this variable must be set to a non-zero value, indicating
