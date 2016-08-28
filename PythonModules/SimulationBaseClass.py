@@ -22,6 +22,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import sim_model
 import sys_model_task
+import alg_contain
 import MessagingAccess
 import types
 import numpy as np
@@ -564,64 +565,57 @@ class SimBaseClass:
         fDesc.close()
 
     def setModelDataWrap(self, modelData):
-        # First Parsing:
-        # Get rid of all the variables that come after a built-in. The methods SelfInit, CrossInit, Update and Restart
-        # will always come first, and so will the variables that are capitalized.
-        def parseSwigVars(list):
-            parsed_array = np.array([])
-            length = len(list)
-            i = 0
-            while i < length:
-                if list[i][0] != '_':
-                    parsed_array = np.append(parsed_array, list[i])
-                    i += 1
-                else:
-                    break
-            return parsed_array
-        # Second Parsing:
+        # SwigPyObject's Parsing:
         # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
         # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
-        def evalParsedList(list):
+        def parseDirList(dirList):
             algNames = []
-            for methodName in list:
+            for methodName in dirList:
                 methodObject = eval('sys.modules["' + module + '"].' + methodName)
                 if type(methodObject).__name__ == "SwigPyObject":
                     algNames.append(methodName)
             return algNames
-
-        # Create the complete name of the arguments of alg_contain
-        def createAlgArgumentList(module, argList):
-            for i in range(len(argList)):
-                argList[i] = module + '.' + argList[i]
-            return argList
-        # Arrange the methods name in the order they must be passed as arguments of alg_contain.
-        # Note 1: I'm taking advantage of the fact that the method names are initially ordered in alphabetic order
-        # Note 2: This will only work if the previous parsing is correct. Ath this point only SelfInit, CrossInit,
-        # Update and Restart (if applicable) are assumed to be in the input argument algNames.
-        def createAlgMethodsList(algNames, module):
-            update = algNames.pop()
-            selfInit = algNames.pop()
-            crossInit = algNames.pop(0)
-            argList = [update, selfInit, crossInit]
-            try:
-                reset = algNames.pop()
-                argList.append(reset)
-                return(createAlgArgumentList(module, argList))
-            except:
-                return (createAlgArgumentList(module, argList))
+        # Check the type of the algorithm, i.e. SelfInit, CrossInit, Update or Reset,
+        # and return the key to create a new dictionary D[str_method] = method
+        def checkMethodType(methodName):
+            if methodName[0:len(str_selfInit)] == str_selfInit:
+                return str_selfInit
+            elif methodName[0:len(str_crossInit)] == str_crossInit:
+                return str_crossInit
+            elif methodName[0:len(str_update)] == str_update:
+                return str_update
+            elif methodName[0:len(str_reset)] == str_reset:
+                return str_reset
+            else:
+                raise ValueError('Cannot recognize the method'
+                                 '(I only assess SelfInit, CrossInit, Update and Reset methods). '
+                                 'Parse better.')
 
         module = modelData.__module__
         sysMod = sys.modules[module]
         dirList = dir(sysMod)
-        # First Parsing
-        parsed_dirList = parseSwigVars(dirList)
-        # Second Parsing
-        swigPyObjList = evalParsedList(parsed_dirList)
-        # Generate the complete name of the methods that will be passed to alg_contain
-        alg_argList = createAlgMethodsList(swigPyObjList, module)
-        return alg_argList
-        # HEY!!!! CAN I SEND IMPORTED MODULES ACCROSS? PLEASE.
-        #import module
+        algList = parseDirList(dirList)
+        moduleName = module[:len(module)/2 + 1]
+        currMod = __import__(moduleName)
+        algDict = {}
+        str_selfInit = 'SelfInit'
+        str_crossInit = 'CrossInit'
+        str_update = 'Update'
+        str_reset = 'Reset'
+        for alg in algList:
+            key = checkMethodType(alg)
+            algDict[key] = alg
+        update = eval('currMod.' + algDict[str_update])
+        selfInit = eval('currMod.' + algDict[str_selfInit])
+        crossInit = eval('currMod.' + algDict[str_crossInit])
+        try:
+            resetArg = algDict[str_reset]
+            reset = eval('currMod.' + resetArg)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
+        except:
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit)
+        return modelWrap
+
 
 def SetCArray(InputList, VarType, ArrayPointer):
     try:

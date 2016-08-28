@@ -194,252 +194,135 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
 
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
-        self.CSSAlgWrap = alg_contain.AlgContain(self.CSSDecodeFSWConfig,
-                                                  cssComm.Update_cssProcessTelem,
-                                                  cssComm.SelfInit_cssProcessTelem,
-                                                  cssComm.CrossInit_cssProcessTelem)
+        self.CSSAlgWrap = self.setModelDataWrap(self.CSSDecodeFSWConfig)
         self.CSSAlgWrap.ModelTag = "cssSensorDecode"
 
         self.IMUCommData = imuComm.IMUConfigData()
-        self.IMUCommWrap = alg_contain.AlgContain(self.IMUCommData,
-                                                  imuComm.Update_imuProcessTelem,
-                                                  imuComm.SelfInit_imuProcessTelem,
-                                                  imuComm.CrossInit_imuProcessTelem)
+        self.IMUCommWrap = self.setModelDataWrap(self.IMUCommData)
         self.IMUCommWrap.ModelTag = "imuSensorDecode"
 
         self.STCommData = stComm.STConfigData()
-        self.STCommWrap = alg_contain.AlgContain(self.STCommData,
-                                                 stComm.Update_stProcessTelem,
-                                                 stComm.SelfInit_stProcessTelem,
-                                                 stComm.CrossInit_stProcessTelem)
+        self.STCommWrap = self.setModelDataWrap(self.STCommData)
         self.STCommWrap.ModelTag = "stSensorDecode"
 
         self.CSSWlsEstFSWConfig = cssWlsEst.CSSWLSConfig()
-        self.CSSWlsWrap = alg_contain.AlgContain(self.CSSWlsEstFSWConfig,
-                                                 cssWlsEst.Update_cssWlsEst,
-                                                 cssWlsEst.SelfInit_cssWlsEst,
-                                                 cssWlsEst.CrossInit_cssWlsEst)
+        self.CSSWlsWrap = self.setModelDataWrap(self.CSSWlsEstFSWConfig)
         self.CSSWlsWrap.ModelTag = "CSSWlsEst"
 
         self.sunSafePointData = sunSafePoint.sunSafePointConfig()
-        self.sunSafePointWrap = alg_contain.AlgContain(self.sunSafePointData,
-                                                       sunSafePoint.Update_sunSafePoint,
-                                                       sunSafePoint.SelfInit_sunSafePoint,
-                                                       sunSafePoint.CrossInit_sunSafePoint)
+        self.sunSafePointWrap = self.setModelDataWrap(self.sunSafePointData)
         self.sunSafePointWrap.ModelTag = "sunSafePoint"
 
         self.MRP_SteeringSafeData = MRP_Steering.MRP_SteeringConfig()
-        self.MRP_SteeringWrap = alg_contain.AlgContain(self.MRP_SteeringSafeData,
-                                                       MRP_Steering.Update_MRP_Steering,
-                                                       MRP_Steering.SelfInit_MRP_Steering,
-                                                       MRP_Steering.CrossInit_MRP_Steering,
-                                                       MRP_Steering.Reset_MRP_Steering)
+        self.MRP_SteeringWrap = self.setModelDataWrap(self.MRP_SteeringSafeData)
         self.MRP_SteeringWrap.ModelTag = "MRP_Steering"
 
         self.MRP_PDSafeData = MRP_PD.MRP_PDConfig()
-        self.MRP_PDSafeWrap = alg_contain.AlgContain(self.MRP_PDSafeData,
-                                                       MRP_PD.Update_MRP_PD,
-                                                       MRP_PD.SelfInit_MRP_PD,
-                                                       MRP_PD.CrossInit_MRP_PD,
-                                                       MRP_PD.Reset_MRP_PD)
+        self.MRP_PDSafeWrap = self.setModelDataWrap(self.MRP_PDSafeData)
         self.MRP_PDSafeWrap.ModelTag = "MRP_PD"
 
         self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
-        self.sunSafeACSWrap = alg_contain.AlgContain(self.sunSafeACSData,
-                                                     sunSafeACS.Update_sunSafeACS,
-                                                     sunSafeACS.SelfInit_sunSafeACS,
-                                                     sunSafeACS.CrossInit_sunSafeACS)
+        self.sunSafeACSWrap = self.setModelDataWrap(self.sunSafeACSData)
         self.sunSafeACSWrap.ModelTag = "sunSafeACS"
 
         self.AttUKF = attitude_ukf.STInertialUKF()
 
         self.attMnvrPointData = attRefGen.attRefGenConfig()
-        self.attMnvrPointWrap = alg_contain.AlgContain(self.attMnvrPointData,
-                                                       attRefGen.Update_attRefGen,
-                                                       attRefGen.SelfInit_attRefGen,
-                                                       attRefGen.CrossInit_attRefGen,
-                                                       attRefGen.Reset_attRefGen)
+        self.attMnvrPointWrap = self.setModelDataWrap(self.attMnvrPointData)
         self.attMnvrPointWrap.ModelTag = "attMnvrPoint"
 
         self.MRP_SteeringRWAData = MRP_Steering.MRP_SteeringConfig()
-        self.MRP_SteeringRWAWrap = alg_contain.AlgContain(self.MRP_SteeringRWAData,
-                                                          MRP_Steering.Update_MRP_Steering,
-                                                          MRP_Steering.SelfInit_MRP_Steering,
-                                                          MRP_Steering.CrossInit_MRP_Steering,
-                                                          MRP_Steering.Reset_MRP_Steering)
+        self.MRP_SteeringRWAWrap = self.setModelDataWrap(self.MRP_SteeringRWAData)
         self.MRP_SteeringRWAWrap.ModelTag = "MRP_SteeringRWA"
         
         self.MRP_FeedbackRWAData = MRP_Feedback.MRP_FeedbackConfig()
-        self.MRP_FeedbackRWAWrap = alg_contain.AlgContain(self.MRP_FeedbackRWAData,
-                                                          MRP_Feedback.Update_MRP_Feedback,
-                                                          MRP_Feedback.SelfInit_MRP_Feedback,
-                                                          MRP_Feedback.CrossInit_MRP_Feedback,
-                                                          MRP_Feedback.Reset_MRP_Feedback)
+        self.MRP_FeedbackRWAWrap = self.setModelDataWrap(self.MRP_FeedbackRWAData)
         self.MRP_FeedbackRWAWrap.ModelTag = "MRP_FeedbackRWA"
 
         self.PRV_SteeringRWAData = PRV_Steering.PRV_SteeringConfig()
-        self.PRV_SteeringRWAWrap = alg_contain.AlgContain(self.PRV_SteeringRWAData,
-                                                          PRV_Steering.Update_PRV_Steering,
-                                                          PRV_Steering.SelfInit_PRV_Steering,
-                                                          PRV_Steering.CrossInit_PRV_Steering,
-                                                          PRV_Steering.Reset_PRV_Steering)
+        self.PRV_SteeringRWAWrap = self.setModelDataWrap(self.PRV_SteeringRWAData)
         self.PRV_SteeringRWAWrap.ModelTag = "PRV_SteeringRWA"
 
         self.MRP_SteeringMOIData = MRP_Steering.MRP_SteeringConfig()
-        self.MRP_SteeringMOIWrap = alg_contain.AlgContain(self.MRP_SteeringMOIData,
-                                                          MRP_Steering.Update_MRP_Steering,
-                                                          MRP_Steering.SelfInit_MRP_Steering,
-                                                          MRP_Steering.CrossInit_MRP_Steering,
-                                                          MRP_Steering.Reset_MRP_Steering)
+        self.MRP_SteeringMOIWrap = self.setModelDataWrap(self.MRP_SteeringMOIData)
         self.MRP_SteeringMOIWrap.ModelTag = "MRP_SteeringMOI"
 
         self.dvGuidanceData = dvGuidance.dvGuidanceConfig()
-        self.dvGuidanceWrap = alg_contain.AlgContain(self.dvGuidanceData,
-                                                     dvGuidance.Update_dvGuidance,
-                                                     dvGuidance.SelfInit_dvGuidance,
-                                                     dvGuidance.CrossInit_dvGuidance)
+        self.dvGuidanceWrap = self.setModelDataWrap(self.dvGuidanceData)
         self.dvGuidanceWrap.ModelTag = "dvGuidance"
 
         self.dvAttEffectData = dvAttEffect.dvAttEffectConfig()
-        self.dvAttEffectWrap = alg_contain.AlgContain(self.dvAttEffectData,
-                                                      dvAttEffect.Update_dvAttEffect,
-                                                      dvAttEffect.SelfInit_dvAttEffect,
-                                                      dvAttEffect.CrossInit_dvAttEffect,
-                                                      dvAttEffect.Reset_dvAttEffect)
+        self.dvAttEffectWrap = self.setModelDataWrap(self.dvAttEffectData)
         self.dvAttEffectWrap.ModelTag = "dvAttEffect"
 
         self.sunPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.sunPointWrap = alg_contain.AlgContain(self.sunPointData,
-                                                   celestialBodyPoint.Update_celestialBodyPoint,
-                                                   celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                   celestialBodyPoint.CrossInit_celestialBodyPoint)
+        self.sunPointWrap = self.setModelDataWrap(self.sunPointData)
         self.sunPointWrap.ModelTag = "sunPoint"
 
         self.earthPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.earthPointWrap = alg_contain.AlgContain(self.earthPointData,
-                                                     celestialBodyPoint.Update_celestialBodyPoint,
-                                                     celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                     celestialBodyPoint.CrossInit_celestialBodyPoint)
+        self.earthPointWrap = self.setModelDataWrap(self.earthPointData)
         self.earthPointWrap.ModelTag = "earthPoint"
 
         self.marsPointData = celestialBodyPoint.celestialBodyPointConfig()
-        self.marsPointWrap = alg_contain.AlgContain(self.marsPointData,
-                                                    celestialBodyPoint.Update_celestialBodyPoint,
-                                                    celestialBodyPoint.SelfInit_celestialBodyPoint,
-                                                    celestialBodyPoint.CrossInit_celestialBodyPoint)
+        self.marsPointWrap = self.setModelDataWrap(self.marsPointData)
         self.marsPointWrap.ModelTag = "marsPoint"
 
         self.RWAMappingData = dvAttEffect.dvAttEffectConfig()
-        self.RWAMappingDataWrap = alg_contain.AlgContain(self.RWAMappingData,
-                                                         dvAttEffect.Update_dvAttEffect,
-                                                         dvAttEffect.SelfInit_dvAttEffect,
-                                                         dvAttEffect.CrossInit_dvAttEffect,
-                                                         dvAttEffect.Reset_dvAttEffect)
+        self.RWAMappingDataWrap = self.setModelDataWrap(self.RWAMappingData)
         self.RWAMappingDataWrap.ModelTag = "RWAMappingData"
 
         self.RWANullSpaceData = rwNullSpace.rwNullSpaceConfig()
-        self.RWANullSpaceDataWrap = alg_contain.AlgContain(self.RWANullSpaceData,
-                                                           rwNullSpace.Update_rwNullSpace,
-                                                           rwNullSpace.SelfInit_rwNullSpace,
-                                                           rwNullSpace.CrossInit_rwNullSpace,
-                                                           rwNullSpace.Reset_rwNullSpace)
+        self.RWANullSpaceDataWrap = self.setModelDataWrap(self.RWANullSpaceData)
         self.RWANullSpaceDataWrap.ModelTag = "RWNullSpace"
 
         self.thrustRWADesatData = thrustRWDesat.thrustRWDesatConfig()
-        self.thrustRWADesatDataWrap = alg_contain.AlgContain(self.thrustRWADesatData,
-                                                             thrustRWDesat.Update_thrustRWDesat,
-                                                             thrustRWDesat.SelfInit_thrustRWDesat,
-                                                             thrustRWDesat.CrossInit_thrustRWDesat,
-                                                             thrustRWDesat.Reset_thrustRWDesat)
+        self.thrustRWADesatDataWrap = self.setModelDataWrap(self.thrustRWADesatData)
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
         # Guidance flight software modules.
 
         self.inertial3DData = inertial3D.inertial3DConfig()
-        self.inertial3DWrap = alg_contain.AlgContain(self.inertial3DData,
-                                                       inertial3D.Update_inertial3D,
-                                                       inertial3D.SelfInit_inertial3D,
-                                                       inertial3D.CrossInit_inertial3D,
-                                                       inertial3D.Reset_inertial3D)
+        self.inertial3DWrap = self.setModelDataWrap(self.inertial3DData)
         self.inertial3DWrap.ModelTag = "inertial3D"
 
         self.hillPointData = hillPoint.hillPointConfig()
-        self.hillPointWrap = alg_contain.AlgContain(self.hillPointData,
-                                                       hillPoint.Update_hillPoint,
-                                                       hillPoint.SelfInit_hillPoint,
-                                                       hillPoint.CrossInit_hillPoint,
-                                                       hillPoint.Reset_hillPoint)
+        self.hillPointWrap = self.setModelDataWrap(self.hillPointData)
         self.hillPointWrap.ModelTag = "hillPoint"
 
         self.velocityPointData = velocityPoint.velocityPointConfig()
-        self.velocityPointWrap = alg_contain.AlgContain(self.velocityPointData,
-                                                       velocityPoint.Update_velocityPoint,
-                                                       velocityPoint.SelfInit_velocityPoint,
-                                                       velocityPoint.CrossInit_velocityPoint,
-                                                       velocityPoint.Reset_velocityPoint)
+        self.velocityPointWrap = self.setModelDataWrap(self.velocityPointData)
         self.velocityPointWrap.ModelTag = "velocityPoint"
 
         self.celTwoBodyPointData = celestialTwoBodyPoint.celestialTwoBodyPointConfig()
-        self.celTwoBodyPointWrap = alg_contain.AlgContain(self.celTwoBodyPointData,
-                                                    celestialTwoBodyPoint.Update_celestialTwoBodyPoint,
-                                                    celestialTwoBodyPoint.SelfInit_celestialTwoBodyPoint,
-                                                    celestialTwoBodyPoint.CrossInit_celestialTwoBodyPoint)
+        self.celTwoBodyPointWrap = self.setModelDataWrap(self.celTwoBodyPointData)
         self.celTwoBodyPointWrap.ModelTag = "celTwoBodyPoint"
 
         self.rasterManagerData = rasterManager.rasterManagerConfig()
-        self.rasterManagerWrap = alg_contain.AlgContain(self.rasterManagerData,
-                                                       rasterManager.Update_rasterManager,
-                                                       rasterManager.SelfInit_rasterManager,
-                                                       rasterManager.CrossInit_rasterManager,
-                                                       rasterManager.Reset_rasterManager)
+        self.rasterManagerWrap = self.setModelDataWrap(self.rasterManagerData)
         self.rasterManagerWrap.ModelTag = "rasterManager"
 
         self.eulerRotationData = eulerRotation.eulerRotationConfig()
-        self.eulerRotationWrap = alg_contain.AlgContain(self.eulerRotationData,
-                                                       eulerRotation.Update_eulerRotation,
-                                                       eulerRotation.SelfInit_eulerRotation,
-                                                       eulerRotation.CrossInit_eulerRotation,
-                                                       eulerRotation.Reset_eulerRotation)
+        self.eulerRotationWrap = self.setModelDataWrap(self.eulerRotationData)
         self.eulerRotationWrap.ModelTag = "eulerRotation"
 
         self.inertial3DSpinData = inertial3DSpin.inertial3DSpinConfig()
-        self.inertial3DSpinWrap = alg_contain.AlgContain(self.inertial3DSpinData,
-                                                     inertial3DSpin.Update_inertial3DSpin,
-                                                     inertial3DSpin.SelfInit_inertial3DSpin,
-                                                     inertial3DSpin.CrossInit_inertial3DSpin,
-                                                     inertial3DSpin.Reset_inertial3DSpin)
+        self.inertial3DSpinWrap = self.setModelDataWrap(self.inertial3DSpinData)
         self.inertial3DSpinWrap.ModelTag = "inertial3DSpin"
         
         self.attTrackingErrorData = attTrackingError.attTrackingErrorConfig()
-        self.attTrackingErrorWrap = alg_contain.AlgContain(self.attTrackingErrorData,
-                                                       attTrackingError.Update_attTrackingError,
-                                                       attTrackingError.SelfInit_attTrackingError,
-                                                       attTrackingError.CrossInit_attTrackingError,
-                                                       attTrackingError.Reset_attTrackingError)
+        self.attTrackingErrorWrap = self.setModelDataWrap(self.attTrackingErrorData)
         self.attTrackingErrorWrap.ModelTag = "attTrackingError"
 
         self.simpleDeadbandData = simpleDeadband.simpleDeadbandConfig()
-        self.simpleDeadbandWrap = alg_contain.AlgContain(self.simpleDeadbandData,
-                                                        simpleDeadband.Update_simpleDeadband,
-                                                        simpleDeadband.SelfInit_simpleDeadband,
-                                                        simpleDeadband.CrossInit_simpleDeadband,
-                                                        simpleDeadband.Reset_simpleDeadband)
+        self.simpleDeadbandWrap = self.setModelDataWrap(self.simpleDeadbandData)
         self.simpleDeadbandWrap.ModelTag = "simpleDeadband"
         
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
-        self.rwMotorTorqueWrap = alg_contain.AlgContain(self.rwMotorTorqueData,
-                                                        rwMotorTorque.Update_rwMotorTorque,
-                                                        rwMotorTorque.SelfInit_rwMotorTorque,
-                                                        rwMotorTorque.CrossInit_rwMotorTorque,
-                                                        rwMotorTorque.Reset_rwMotorTorque)
+        self.rwMotorTorqueWrap = self.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
         
         self.thrForceMappingData = thrForceMapping.thrForceMappingConfig()
-        self.thrForceMappingWrap = alg_contain.AlgContain(self.thrForceMappingData,
-                                                        thrForceMapping.Update_thrForceMapping,
-                                                        thrForceMapping.SelfInit_thrForceMapping,
-                                                        thrForceMapping.CrossInit_thrForceMapping,
-                                                        thrForceMapping.Reset_thrForceMapping)
+        self.thrForceMappingWrap = self.setModelDataWrap(self.thrForceMappingData)
         self.thrForceMappingWrap.ModelTag = "thrForceMapping"
 
         # Initialize flight software modules.
@@ -1373,6 +1256,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = rbk.C2MRP(R0R)
         self.attTrackingErrorData.sigma_R0R = sigma_R0R
+
 
     def SetMRP_SteeringRWA(self):
         self.MRP_SteeringRWAData.K1 = 0.3  # rad/sec
