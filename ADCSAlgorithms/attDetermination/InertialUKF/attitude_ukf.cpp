@@ -282,7 +282,7 @@ void STInertialUKF::SelfInit()
         ConvCounter = 0;
         ReInitFilter = false;
     }
-    char name[]="NavStateOut";
+    char name[]="NavAttOut";
 
     InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavAttOut),
                                           name, moduleID);
