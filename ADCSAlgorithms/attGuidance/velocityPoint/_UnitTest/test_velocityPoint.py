@@ -106,7 +106,7 @@ def velocityPointTestFunction(show_plots):
     #
     #   Navigation Input Message
     #
-    inputNavMessageSize = 18*8                             # 6x3 doubles
+    inputNavMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavDataName,
                                           inputNavMessageSize,

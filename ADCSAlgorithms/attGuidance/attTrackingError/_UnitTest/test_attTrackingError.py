@@ -96,7 +96,7 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    inputMessageSize = 18*8                             # 6x3 doubles
+    inputMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,
                                           inputMessageSize,
