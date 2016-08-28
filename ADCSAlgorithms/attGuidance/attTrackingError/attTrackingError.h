@@ -33,9 +33,6 @@ typedef struct {
     double sigma_R0R[3];                            /*!< MRP from corrected reference frame to original reference frame R0
                                                          This is the same as [BcB] going from primary body frame B
                                                          to the corrected body frame Bc */
-    double *sigma_BcB;                              /*!< MRP from primary body frame B to corrected body frame Bc */
-
-    
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
     char inputRefName[MAX_STAT_MSG_LENGTH];         /*!< The name of the guidance reference Input message */

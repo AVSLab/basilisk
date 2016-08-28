@@ -4783,7 +4783,6 @@ void DataInit(EMMConfigData *data){
 	strcpy(data->attTrackingError.inputRefName,"att_ref_output");
 	strcpy(data->attTrackingError.outputDataName,"nom_att_guid_out");
 	data->attTrackingError.outputMsgID = 0;
-	data->attTrackingError.sigma_BcB = None;
 	data->attTrackingError.sigma_R0R[0] = 0.0;
 	data->attTrackingError.sigma_R0R[1] = 0.0;
 	data->attTrackingError.sigma_R0R[2] = 0.0;
