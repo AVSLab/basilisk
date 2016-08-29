@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_cssWlsEst;
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
-%array_functions(SingleCSSConfig, CSSWlsConfigArray);
+STRUCTASLIST(SingleCSSConfig)
 %include "cssWlsEst.h"
 
 %pythoncode %{

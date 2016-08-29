@@ -61,7 +61,7 @@ void CrossInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
     /*! - Get the control data message ID*/
 }
 
-void Reset_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
+void Reset_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     ConfigData->mnvrActive = 0;
     ConfigData->scanSelector = 0;

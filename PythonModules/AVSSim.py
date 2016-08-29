@@ -134,9 +134,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("hillPointTask", int(5E8)), 126)
         self.fswProc.addTask(self.CreateNewTask("velocityPointTask", int(5E8)), 125)
         self.fswProc.addTask(self.CreateNewTask("celTwoBodyPointTask", int(5E8)), 124)
-        self.fswProc.addTask(self.CreateNewTask("singleAxisSpinTask", int(5E8)), 123)
-        self.fswProc.addTask(self.CreateNewTask("orbitAxisSpinTask", int(5E8)), 119)
-        self.fswProc.addTask(self.CreateNewTask("axisScanTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("rasterMnvrTask", int(5E8)), 118)
         self.fswProc.addTask(self.CreateNewTask("eulerRotationTask", int(5E8)), 117)
         self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 116)
@@ -1216,9 +1213,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.CSSWlsEstFSWConfig.UseWeights = True
         self.CSSWlsEstFSWConfig.SensorUseThresh = 0.1
 
-        CSSConfigElement = cssWlsEst.SingleCSSConfig()
-        CSSConfigElement.CBias = 1.0
-        CSSConfigElement.cssNoiseStd = 0.2
         CSSOrientationList = [[0.70710678118654746, -0.5, 0.5],
                               [0.70710678118654746, -0.5, -0.5],
                               [0.70710678118654746, 0.5, -0.5],
@@ -1228,12 +1222,16 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                               [-0.70710678118654746, 0, -0.70710678118654757],
                               [-0.70710678118654746, -0.70710678118654757, 0.0], ]
         i = 0
+        totalCSSList = []
         for CSSHat in CSSOrientationList:
+            CSSConfigElement = cssWlsEst.SingleCSSConfig()
+            CSSConfigElement.CBias = 1.0
+            CSSConfigElement.cssNoiseStd = 0.2
             CSSConfigElement.nHatStr = CSSHat
-            #print type(CSSConfigElement.nHatStr)
-            cssWlsEst.CSSWlsConfigArray_setitem(self.CSSWlsEstFSWConfig.CSSData, i,
-                                                CSSConfigElement)
+            totalCSSList.append(CSSConfigElement)
             i += 1
+        
+        self.CSSWlsEstFSWConfig.CSSData = totalCSSList
 
     def SetsunSafePoint(self):
         self.sunSafePointData.outputDataName = "sun_safe_att_err"
@@ -1430,6 +1428,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetdvAttEffect(self):
         self.dvAttEffectData.inputControlName = "controlTorqueRaw"
         self.dvAttEffectData.numThrGroups = 2
+        totalThrGroup = []
         newThrGroup = dvAttEffect.ThrustGroupData()
         newThrGroup.outputDataName = "acs_thruster_cmds"
         newThrGroup.minThrustRequest = 0.1
@@ -1444,8 +1443,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      0.0, 0.0, -1.0,
                      0.0, 0.0, 1.0]
         newThrGroup.thrOnMap = onTimeMap
-        dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 0,
-                                             newThrGroup)
+
+        totalThrGroup.append(newThrGroup)
+        
+        newThrGroup = dvAttEffect.ThrustGroupData()
         newThrGroup.numEffectors = 6
         newThrGroup.maxNumCmds = 6
         newThrGroup.nomThrustOn = 0.52
@@ -1459,8 +1460,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                      -0.0866 * matMult, 0.05 * matMult, 0.0,
                      -0.0866 * matMult, -0.05 * matMult, 0.0]
         newThrGroup.thrOnMap = onTimeMap
-        dvAttEffect.ThrustGroupArray_setitem(self.dvAttEffectData.thrGroups, 1,
-                                             newThrGroup)
+        
+        totalThrGroup.append(newThrGroup)
+
+        self.dvAttEffectData.thrGroups = totalThrGroup
 
     def SetRWAMappingData(self):
         self.RWAMappingData.inputControlName = "controlTorqueRaw"
@@ -1476,8 +1479,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             for j in range(3):
                 onTimeMap.append(-self.RWAGsMatrix[i*3+j])
         newThrGroup.thrOnMap = onTimeMap
-        dvAttEffect.ThrustGroupArray_setitem(self.RWAMappingData.thrGroups, 0,
-                                             newThrGroup)
+        self.RWAMappingData.thrGroups = [newThrGroup]
 
     def SetRWMotorTorque(self):
         controlAxes_B = [

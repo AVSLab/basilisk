@@ -52,9 +52,6 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t modu
                                                sizeof(attGuidOut),
                                                "attGuidOut",
                                                moduleID);
-
-    ConfigData->sigma_BcB = ConfigData->sigma_R0R;      /* these two relative orientations labels are the same */
-
 }
 
 /*! This method performs the second stage of initialization for this module.

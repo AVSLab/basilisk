@@ -58,7 +58,7 @@ extern "C" {
     
     void SelfInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID);
     void CrossInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID);
-    void Reset_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID);
+    void Reset_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     
 #ifdef __cplusplus
