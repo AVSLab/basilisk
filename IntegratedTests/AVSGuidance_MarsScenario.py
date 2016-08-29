@@ -571,7 +571,7 @@ def executeGuidance(TheAVSSim):
     def singleTest(mode):
         TheAVSSim.modeRequest = mode
         print '\n Mode Request = ', TheAVSSim.modeRequest
-        t_sim = 2 * 60 * 20 * 4
+        t_sim = 2 * 60 * 20 #* 4
         print 'Sim Time = ', t_sim
         TheAVSSim.ConfigureStopTime(int(t_sim * 1E9))
         #TheAVSSim.ConfigureStopTime(int(60 * 20 * 1E9))
@@ -646,9 +646,9 @@ def executeGuidance(TheAVSSim):
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
     #singleTest('inertial3DSpin')
     #singleTest('eulerRotation')
-    singleTest('rasterMnvr')
+    #singleTest('rasterMnvr')
     #singleTest('deadbandGuid')
-    #singleTest('rwMotorTorqueControl')
+    singleTest('rwMotorTorqueControl')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()

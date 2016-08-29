@@ -634,7 +634,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def setRwFSWDeviceAvailability(self):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
-        avail = [1, 0, 1, 0]
+        avail = [1, 1, 1, 1]
         rwAvailabilityMessage.wheelAvailability = avail
         msgSize = vehicleConfigData.MAX_EFF_CNT*4
         self.TotalSim.CreateNewMessage("FSWProcess", "rw_availability", msgSize, 2, "RWAvailabilityData")
@@ -1282,6 +1282,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
         self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_FeedbackRWAData.inputRWSpeedsName = "reactionwheel_output_states"
+        self.MRP_FeedbackRWAData.inputRWsAvailDataName = "rw_availability"
 
     def SetPRV_SteeringRWA(self):
         self.PRV_SteeringRWAData.K1 = 0.3  # rad/sec
