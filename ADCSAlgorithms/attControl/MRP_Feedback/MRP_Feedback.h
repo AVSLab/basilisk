@@ -48,6 +48,8 @@ typedef struct {
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];       /*!< [-] The name of the Input message*/
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];                /*!< [-] The name for the reaction wheel speeds message */
     char inputRWConfigData[MAX_STAT_MSG_LENGTH];                /*!< [-] The name of the RWA configuration message*/
+    char inputRWsAvailDataName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the RWs availability message*/
+    int32_t inputRWsAvailID;                                    /*!< [-] ID for the incoming  RWs availability data*/
     int32_t inputRWConfID;                                      /*!< [-] ID for the incoming RWA configuration data*/
     int32_t inputRWSpeedsID;                                    /*!< [-] ID for the reaction wheel speeds message*/
     int32_t outputMsgID;                                        /*!< [-] ID for the outgoing body accel requests*/

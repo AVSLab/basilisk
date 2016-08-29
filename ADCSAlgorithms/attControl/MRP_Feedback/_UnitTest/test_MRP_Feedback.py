@@ -49,6 +49,7 @@ import MRP_Feedback
 import sunSafePoint
 import vehicleConfigData
 import rwNullSpace
+import rwMotorTorque
 import fswSetupRW
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -99,6 +100,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.outputDataName = "outputName"
     moduleConfig.inputRWConfigData = "rwa_config_data"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
+    moduleConfig.inputRWsAvailDataName = "rw_availability"
 
     moduleConfig.K  =   0.15
     moduleConfig.Ki =   0.01
@@ -152,7 +154,7 @@ def subModuleTestFunction(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 8  # doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
@@ -175,6 +177,20 @@ def subModuleTestFunction(show_plots):
     fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
                                unitTestSim.TotalSim,
                                unitProcessName)
+    # wheelAvailability Message
+    msgSize = vehicleConfigData.MAX_EFF_CNT * 4 # ints
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRWsAvailDataName,
+                                          msgSize,
+                                          2)
+    rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+    avail = [1, 1, 1, 1]
+    rwAvailabilityMessage.wheelAvailability = avail
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWsAvailDataName,
+                                          msgSize,
+                                          0,
+                                          rwAvailabilityMessage)
+
 
 
     #   Setup logging on the test module output message so that we get all the writes to it

@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include <string.h>
 #include <math.h>
 
@@ -65,10 +66,13 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
                                                        sizeof(RWConstellation), moduleID);
         ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                          sizeof(RWSpeedData), moduleID);
+        ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
+                                                         sizeof(RWAvailabilityData), moduleID);
     } else {
         ConfigData->numRW = 0;
         ConfigData->inputRWConfID = -1;
         ConfigData->inputRWSpeedsID = -1;
+        ConfigData->inputRWsAvailID = -1;
     }
 }
 
@@ -85,7 +89,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
     uint32_t readSize;
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
 
-    if (ConfigData->inputRWConfID>0) {
+    if (ConfigData->inputRWConfID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
                     sizeof(RWConstellation), &localRWData, moduleID);
@@ -121,6 +125,8 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
     RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
+    RWAvailabilityData  wheelsAvailability; /*!< Reaction wheel availability */
+
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -151,9 +157,13 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    if(ConfigData->numRW>0) {
+    if(ConfigData->numRW > 0) {
         ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
                     sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+        
+        /* #TODO: Do something with availability information */
+        ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
+                    sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
     }
 
     /* compute body rate */
@@ -189,10 +199,12 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->numRW; i++)
     {
-        wheelGs = &(ConfigData->GsMatrix[i*3]);
-        v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i])
-                , wheelGs, v3_1);
-        v3Add(v3_1, v3, v3);
+        if (wheelsAvailability.wheelAvailability[i] == 1){ /* check if wheel is available */
+            wheelGs = &(ConfigData->GsMatrix[i*3]);
+            v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+                    wheelGs, v3_1);
+            v3Add(v3_1, v3, v3);
+        }
     }
     
     
