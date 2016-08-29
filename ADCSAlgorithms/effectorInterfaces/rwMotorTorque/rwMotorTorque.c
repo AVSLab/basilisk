@@ -133,6 +133,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
  */
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    RWAvailabilityData wheelsAvailability;
     uint64_t    clockTime;
     uint32_t    readSize;
     double      us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
@@ -151,7 +152,6 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
     
     /* #TODO: Do something with availability information */
-    RWAvailabilityData wheelsAvailability;
     ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
                 sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
 

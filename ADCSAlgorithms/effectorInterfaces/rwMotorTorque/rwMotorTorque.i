@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_rwMotorTorque;
 %constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorTorque;
+STRUCTASLIST(FSWdeviceAvailability)
 %include "rwMotorTorque.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
