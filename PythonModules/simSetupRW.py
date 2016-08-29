@@ -38,7 +38,7 @@ class rwOptions:
     useMinTorque = False
     useMaxTorque = True
     maxMomentum = 0.0
-    linearFrictionPercent = 0.00
+    linearFrictionRatio = -1.0          # neg. value turns off this mode by default
 
 
 rwList = []
@@ -118,7 +118,7 @@ def create(
         RW.u_max = -1       # a negative value turns of RW torque saturation
     if not options.useMinTorque:
         RW.u_min = 0.0
-    RW.linearFrictionPercent = options.linearFrictionPercent
+    RW.linearFrictionRatio = options.linearFrictionRatio
 
     # add RW to the list of RW devices
     rwList.append(RW)

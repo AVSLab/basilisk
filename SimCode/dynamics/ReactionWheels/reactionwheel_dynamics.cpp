@@ -257,13 +257,21 @@ void ReactionWheelDynamics::ConfigureRWRequests(double CurrentTime)
         }
 
         // Coulomb friction
-        omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionPercent;
+        if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0.0) {
+            omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionRatio;
+        } else {
+            omegaCritical = 0.0;
+        }
         if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
             u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
         } else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
             u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
         } else {
-            u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
+            if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0) {
+                u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
+            } else {
+                u_s = CmdIt->u_cmd;
+            }
         }
 
         this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
