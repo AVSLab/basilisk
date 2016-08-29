@@ -1288,7 +1288,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.sunSafeACSData.thrData.thrOnMap = onTimeMap
 
     def SetattMnvrPoint(self):
-        self.attMnvrPointData.inputNavStateName = "simple_nav_output"
+        self.attMnvrPointData.inputNavStateName = "simple_att_nav_output"
         self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
         self.attMnvrPointData.outputDataName = "nom_att_guid_out"
         self.attMnvrPointData.outputRefName = "att_ref_output_gen"
@@ -1304,18 +1304,18 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.inertial3DData.sigma_R0N = sigma_R0N
 
     def setHillPoint(self):
-        self.hillPointData.inputNavDataName = "simple_nav_output"
+        self.hillPointData.inputNavDataName = "simple_trans_nav_output"
         self.hillPointData.inputCelMessName = "mars_display_frame_data"
         self.hillPointData.outputDataName = "att_ref_output_stage1"
 
     def setVelocityPoint(self):
-        self.velocityPointData.inputNavDataName = "simple_nav_output"
+        self.velocityPointData.inputNavDataName = "simple_trans_nav_output"
         self.velocityPointData.inputCelMessName = "mars_display_frame_data"
         self.velocityPointData.outputDataName = "att_ref_output"
         self.velocityPointData.mu = self.SunGravBody.mu
 
     def setCelTwoBodyPoint(self):
-        self.celTwoBodyPointData.inputNavDataName = "simple_nav_output"
+        self.celTwoBodyPointData.inputNavDataName = "simple_trans_nav_output"
         self.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
         #self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
@@ -1370,7 +1370,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def setAttTrackingError(self):
         self.attTrackingErrorData.inputRefName = "att_ref_output"
-        self.attTrackingErrorData.inputNavName = "simple_nav_output"
+        self.attTrackingErrorData.inputNavName = "simple_att_nav_output"
         self.attTrackingErrorData.outputDataName = "nom_att_guid_out"
         R0R = np.identity(3) # DCM from s/c body reference to body-fixed reference (offset)
         sigma_R0R = rbk.C2MRP(R0R)
@@ -1502,7 +1502,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def SetdvGuidance(self):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
-        self.dvGuidanceData.inputNavDataName = "simple_nav_output"
+        self.dvGuidanceData.inputNavDataName = "simple_trans_nav_output"
         self.dvGuidanceData.inputMassPropName = "adcs_config_data"
         self.dvGuidanceData.inputBurnDataName = "vehicle_dv_cmd"
         desiredBurnDir = [1.0, 0.0, 0.0]
@@ -1510,7 +1510,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         Tburn2Body = [0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]
 
     def SetsunPoint(self):
-        self.sunPointData.inputNavDataName = "simple_nav_output"
+        self.sunPointData.inputNavDataName = "simple_trans_nav_output"
         self.sunPointData.inputCelMessName = "sun_display_frame_data"
         self.sunPointData.outputDataName = "att_cmd_output"
         self.sunPointData.inputSecMessName = "earth_display_frame_data"
@@ -1518,7 +1518,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.sunPointData.TPoint2Bdy = TsunVec2Body
 
     def SetearthPoint(self):
-        self.earthPointData.inputNavDataName = "simple_nav_output"
+        self.earthPointData.inputNavDataName = "simple_trans_nav_output"
         self.earthPointData.inputCelMessName = "earth_display_frame_data"
         self.earthPointData.outputDataName = "att_cmd_output"
         self.earthPointData.inputSecMessName = "sun_display_frame_data"
@@ -1528,7 +1528,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.earthPointData.TPoint2Bdy = TearthVec2Body
 
     def SetmarsPoint(self):
-        self.marsPointData.inputNavDataName = "simple_nav_output"
+        self.marsPointData.inputNavDataName = "simple_trans_nav_output"
         self.marsPointData.inputCelMessName = "mars_display_frame_data"
         self.marsPointData.inputSecMessName = "sun_display_frame_data"
         self.marsPointData.outputDataName = "att_cmd_output"

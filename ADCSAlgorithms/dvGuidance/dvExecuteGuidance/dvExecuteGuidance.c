@@ -53,7 +53,7 @@ void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t m
 {
     /*ConfigData->inputMPID = subscribeToMessage(ConfigData->inputMassPropName, sizeof() <#int64_t moduleID#>)(ConfigData->inputMassPropName);*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-        sizeof(NavStateOut), moduleID);
+        sizeof(NavTransOut), moduleID);
     ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
                                                     sizeof(DvBurnCmdData), moduleID);
     return;
@@ -76,13 +76,13 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     double dvMag;
     uint64_t writeTime;
     uint32_t writeSize;
-    NavStateOut navData;
+    NavTransOut navData;
     DvBurnCmdData localBurnData;
     dvExecutionData localExeData;
     vehEffectorOut effCmd;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-        sizeof(NavStateOut), &navData, moduleID);
+        sizeof(NavTransOut), &navData, moduleID);
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
                 sizeof(DvBurnCmdData), &localBurnData, moduleID);
     

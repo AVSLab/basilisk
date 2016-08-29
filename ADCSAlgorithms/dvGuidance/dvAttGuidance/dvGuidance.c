@@ -50,7 +50,7 @@ void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
     /*ConfigData->inputMPID = subscribeToMessage(ConfigData->inputMassPropName, sizeof() <#int64_t moduleID#>)(ConfigData->inputMassPropName);*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-        sizeof(NavStateOut), moduleID);
+        sizeof(NavTransOut), moduleID);
     ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
                                                     sizeof(DvBurnCmdData), moduleID);
     return;
@@ -77,11 +77,11 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	double omega_BR_N[3];
     uint64_t writeTime;
     uint32_t writeSize;
-    NavStateOut navData;
+    NavTransOut navData;
     DvBurnCmdData localBurnData;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-        sizeof(NavStateOut), &navData, moduleID);
+        sizeof(NavTransOut), &navData, moduleID);
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
                 sizeof(DvBurnCmdData), &localBurnData, moduleID);
     

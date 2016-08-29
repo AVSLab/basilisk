@@ -53,17 +53,21 @@ public:
     std::vector<double> walkBounds;    //!< -- "3-sigma" errors to permit for states
     std::vector<double> navErrors;     //!< -- Current navigation errors applied to truth
     std::string inputStateName;        //!< -- Message that contains s/c state
-    std::string outputNavName;         //!< -- Message that we output state to
+    std::string outputAttName;         //!< -- Message that we output state to
+    std::string outputTransName;         //!< -- Message that we output state to
     std::string inputSunName;          //!< -- Message name for the sun state
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
-    NavStateOut trueState;             //!< -- navigation state without errors
-    NavStateOut estimatedState;        //!< -- navigation state including errors
+    NavAttOut trueAttState;            //!< -- attitude nav state without errors
+    NavAttOut estAttState;             //!< -- attitude nav state including errors
+    NavTransOut trueTransState;        //!< -- translation nav state without errors
+    NavTransOut estTransState;         //!< -- translation nav state including errors
     OutputStateData inertialState;     //!< -- input inertial state from Star Tracker
     SpicePlanetState sunState;         //!< -- input Sun state
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
-    int64_t outputDataID;              //!< -- Message ID associated with nav state
+    int64_t outputAttID;               //!< -- Message ID associated with att-nav state
+    int64_t outputTransID;             //!< -- Message ID associated with trans-nav state
     int64_t inputSunID;                //!< -- Message ID associated with the sun position
     std::vector<double> AMatrix;       //!< -- The matrix used to propagate the state
     GaussMarkov errorModel;            //!< -- Gauss-markov error states

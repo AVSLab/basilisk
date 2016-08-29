@@ -654,7 +654,8 @@ if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output_stage1", int(1E9))
-    TheAVSSim.TotalSim.logThisMessage("simple_nav_output", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("simple_att_nav_output", int(1E9))
+    TheAVSSim.TotalSim.logThisMessage("simple_trans_nav_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("nom_att_guid_out", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("db_att_guid_out", int(1E9))
@@ -695,12 +696,12 @@ if __name__ == "__main__":
     print 'Mars Orbit Inclination = ', TheAVSSim.VehOrbElemObject.CurrentElem.i
     print '\n'
 
-    r_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.r_BN_N", range(3))
-    v_BN_N = TheAVSSim.pullMessageLogData("simple_nav_output.v_BN_N", range(3))
+    r_BN_N = TheAVSSim.pullMessageLogData("simple_trans_nav_output.r_BN_N", range(3))
+    v_BN_N = TheAVSSim.pullMessageLogData("simple_trans_nav_output.v_BN_N", range(3))
     #plotRV_mag(r_BN_N, v_BN_N)
 
-    sigma_BN = TheAVSSim.pullMessageLogData("simple_nav_output.sigma_BN", range(3))
-    omega_BN_B = TheAVSSim.pullMessageLogData("simple_nav_output.omega_BN_B", range(3))
+    sigma_BN = TheAVSSim.pullMessageLogData("simple_att_nav_output.sigma_BN", range(3))
+    omega_BN_B = TheAVSSim.pullMessageLogData("simple_att_nav_output.omega_BN_B", range(3))
     #plotRotNav(sigma_BN, omega_BN_B)
     if TheAVSSim.modeRequest == 'rasterMnvr':
         plotTrueBodyEulerSet(sigma_BN)

@@ -55,7 +55,7 @@ void CrossInit_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
         sizeof(SpicePlanetState), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-        sizeof(NavStateOut), moduleID);
+        sizeof(NavTransOut), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
@@ -79,7 +79,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
 {
     uint64_t writeTime;
     uint32_t writeSize;
-    NavStateOut navData;
+    NavTransOut navData;
     SpicePlanetState primPlanet;
     SpicePlanetState secPlanet;
 	double platAngDiff;
@@ -102,7 +102,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
 	uint32_t noValidConstraint;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(NavStateOut), &navData, moduleID);
+                sizeof(NavTransOut), &navData, moduleID);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(SpicePlanetState), &primPlanet, moduleID);
 	v3Subtract(primPlanet.PositionVector, navData.r_BN_N, primPointVector);

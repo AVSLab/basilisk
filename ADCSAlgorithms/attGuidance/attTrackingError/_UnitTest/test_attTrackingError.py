@@ -96,13 +96,13 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    inputMessageSize = 18*8                             # 6x3 doubles
+    inputMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
+    NavStateOutData = simple_nav.NavAttOut()          # Create a structure for the input message
     sigma_BN = [0.25, -0.45, 0.75]
     NavStateOutData.sigma_BN = sigma_BN
     omega_BN_B = [-0.015, -0.012, 0.005]

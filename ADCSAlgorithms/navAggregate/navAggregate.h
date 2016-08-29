@@ -26,26 +26,38 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavStateOut msgStorage; /*! [-] Local buffer to store nav message*/
-}AggregateMsgInput;
+    NavAttOut msgStorage; /*! [-] Local buffer to store nav message*/
+}AggregateAttInput;
+
+typedef struct {
+    char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
+    int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
+    NavTransOut msgStorage; /*! [-] Local buffer to store nav message*/
+}AggregateTransInput;
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    AggregateMsgInput navMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
-    char outputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
-    uint32_t timeIdx;       /*!< [-] The index of the message to use for time */
+    AggregateAttInput attMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
+    AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
+    char outputAttName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
+    char outputTransName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
+    uint32_t attTimeIdx;       /*!< [-] The index of the message to use for time */
+    uint32_t transTimeIdx;       /*!< [-] The index of the message to use for time */
     uint32_t attIdx;        /*!< [-] The index of the message to use for inertial MRP*/
     uint32_t rateIdx;       /*!< [-] The index of the message to use for attitude rate*/
     uint32_t posIdx;        /*!< [-] The index of the message to use for inertial position*/
     uint32_t velIdx;        /*!< [-] The index of the message to use for inertial velocity*/
     uint32_t dvIdx;         /*!< [-] The index of the message to use for accumulated DV */
     uint32_t sunIdx;        /*!< [-] The index of the message to use for sun pointing*/
-    uint32_t msgCount;      /*!< [-] The total number of messages available as inputs */
+    uint32_t attMsgCount;   /*!< [-] The total number of messages available as inputs */
+    uint32_t transMsgCount; /*!< [-] The total number of messages available as inputs */
     
-    int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
+    int32_t outputTransMsgID;    /*!< [-] The ID associated with the outgoing message*/
+    int32_t outputAttMsgID;    /*!< [-] The ID associated with the outgoing message*/
     
-    NavStateOut outputData; /*!< [-] The local storage of the outgoing message data*/
+    NavAttOut outAttData; /*!< [-] The local storage of the outgoing message data*/
+    NavTransOut outTransData; /*!< [-] The local storage of the outgoing message data*/
 }NavAggregateData;
 
 #ifdef __cplusplus
