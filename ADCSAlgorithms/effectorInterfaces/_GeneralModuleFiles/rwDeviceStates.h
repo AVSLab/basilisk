@@ -28,7 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Array with availability of RW */
 typedef struct {
-    int wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
+    FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
 }RWAvailabilityData;
 
 /*! @} */
