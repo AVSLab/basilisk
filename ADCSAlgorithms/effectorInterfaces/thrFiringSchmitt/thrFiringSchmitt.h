@@ -39,7 +39,7 @@ typedef struct {
 	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
 	double				thrMinFireTime;
 	int					baseThrustState;
-	boolean_t			thrustState[MAX_EFF_CNT];
+	boolean_t			lastThrustState[MAX_EFF_CNT];
 
 	uint64_t			prevCallTime;							/*!< callTime from previous function call */
 

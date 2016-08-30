@@ -90,6 +90,7 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 
 	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
+		ConfigData->lastThrustState[i] = BOOL_FALSE;
 		ConfigData->thrOnTimeOut.effectorRequest[i] = 0.0;
 	}
 }
@@ -104,7 +105,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 
 	uint64_t            clockTime;
 	uint32_t            readSize;
-	int i;
+	int 				i;
 	double 				level;
 	double				controlPeriod;
 	double				onTime[MAX_EFF_CNT];
@@ -148,23 +149,23 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 			/*! Request is less than minimum fire time */
 			level = onTime[i]/ConfigData->thrMinFireTime;
 			if (level >= ConfigData->level_on) {
-				ConfigData->thrustState[i] = BOOL_TRUE;
+				ConfigData->lastThrustState[i] = BOOL_TRUE;
 				onTime[i] = ConfigData->thrMinFireTime;
 			} else if (level <= ConfigData->level_off) {
-				ConfigData->thrustState[i] = BOOL_FALSE;
+				ConfigData->lastThrustState[i] = BOOL_FALSE;
 				onTime[i] = 0.0;
-			} else if (ConfigData->thrustState[i] == BOOL_TRUE) {
+			} else if (ConfigData->lastThrustState[i] == BOOL_TRUE) {
 				onTime[i] = ConfigData->thrMinFireTime;
 			} else {
 				onTime[i] = 0.0;
 			}
 		} else if (onTime[i] >= controlPeriod) {
 			/*! Request is greater than control period */
-			ConfigData->thrustState[i] = BOOL_TRUE;
+			ConfigData->lastThrustState[i] = BOOL_TRUE;
 			onTime[i] = 1.1*controlPeriod; // oversaturate to avoid numerical error
 		} else {
 			/*! Request is greater than minimum fire time and less than control period */
-			ConfigData->thrustState[i] = BOOL_TRUE;
+			ConfigData->lastThrustState[i] = BOOL_TRUE;
 		}
 
 		/*! Set the output data */
@@ -173,8 +174,6 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 
 	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
-
-	printf("completed Update_thrFiringSchmitt");
 
 	return;
 
