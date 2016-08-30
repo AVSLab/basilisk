@@ -128,7 +128,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck):
         ]
 
     for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i])
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.95)
     fswSetupThrusters.addToSpacecraft(  moduleConfig.thrusterConfInMsgName,
                                         unitTestSim.TotalSim,
                                         unitProcessName)

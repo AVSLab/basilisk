@@ -206,7 +206,7 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                         ]
 
     for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i])
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.95)
     fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
                                         unitTestSim.TotalSim,
                                         unitProcessName)
