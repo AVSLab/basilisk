@@ -94,16 +94,16 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.pulseTimeMin = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+    moduleConfig.thrMinFireTime = 0.2
     moduleConfig.baseThrustState = 0
-    moduleConfig.level_on = [.5,.5,.5,.5,.5,.5,.5,.5]
-    moduleConfig.level_off = [.5,.5,.5,.5,.5,.5,.5,.5]
+    moduleConfig.level_on = .75
+    moduleConfig.level_off = .25
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    moduleConfig.inputThrusterConfName = "rcs_config_data"
-    moduleConfig.inputDataName = "thr_config_data"
-    moduleConfig.outputDataName = "outputName"
+    moduleConfig.thrConfInMsgName = "rcs_config_data"
+    moduleConfig.thrForceInMsgName = "thr_config_data"
+    moduleConfig.onTimeOutMsgName = "outputName"
 
 
     # setup thruster cluster message
@@ -130,8 +130,8 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
         ]
 
     for i in range(len(rcsLocationData)):
-        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 2.0)
-    fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
+        fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.5)
+    fswSetupThrusters.addToSpacecraft(  moduleConfig.thrConfInMsgName,
                                         unitTestSim.TotalSim,
                                         unitProcessName)
     numThrusters = fswSetupThrusters.getNumOfDevices()
@@ -139,13 +139,12 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     # setup thruster impulse request message
     messageSize = vehicleConfigData.MAX_EFF_CNT*8
     inputMessageData = thrFiringSchmitt.vehEffectorOut()
-    # inputMessageData.effectorRequest = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
-    inputMessageData.effectorRequest = [0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.49]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputThrusterConfName,
+                                          moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputThrusterConfName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
                                           inputMessageData)
@@ -155,7 +154,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
 
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.onTimeOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -164,8 +163,39 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     # NOTE: the total simulation time may be longer than this value. The
     # simulation is stopped at the next logging event on or after the
     # simulation end time.
-    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
+    # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
+
+
+
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
+    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
+                                          messageSize,
+                                          0,
+                                          inputMessageData)
+
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
+    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.01]
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
+                                          messageSize,
+                                          0,
+                                          inputMessageData)
+
+    unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
+    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
+                                          messageSize,
+                                          0,
+                                          inputMessageData)
+
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
@@ -181,89 +211,37 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
     print moduleOutput
 
     # set the filtered output truth states
     if resetCheck==1:
-        # trueVector = [
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0]
-        #            ]
-
-        # trueVector = [
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #        ]
-
         trueVector = [
-               [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-               [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-               [0.25, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-               [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
+               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
                ]
 
-
     else:
-        # trueVector = [
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.5, 0.1, 0.0, 0.5, 0.5, 0.1, 0.5, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.1, 0.0, 0.0, 0.3, 0.1, 0.0, 0.3, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        #            ]
-
-        # trueVector = [
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        #            [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-        #            ]
         trueVector = [
-                   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-                   [8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0],
-                   [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-                   [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-                   [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-                   [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-                   [9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0, 9.0],
-                   ]
-
-
+               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+               ]
 
         # else:
         #     testFailCount+=1
