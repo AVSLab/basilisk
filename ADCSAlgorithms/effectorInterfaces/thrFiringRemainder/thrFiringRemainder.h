@@ -37,7 +37,7 @@ typedef struct {
 	double              thrMinFireTime;              			/*!< Minimum pulse command */
 	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
 	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
-	boolean_t			baseThrustState;
+	int					baseThrustState;
 
 	uint64_t			prevCallTime;							/*!< callTime from previous function call */
 	

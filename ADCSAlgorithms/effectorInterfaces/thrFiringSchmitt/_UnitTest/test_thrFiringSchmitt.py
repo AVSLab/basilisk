@@ -138,19 +138,12 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
 
     # setup thruster impulse request message
     messageSize = vehicleConfigData.MAX_EFF_CNT*8
+
     inputMessageData = thrFiringSchmitt.vehEffectorOut()
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.49]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           2)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
-                                          messageSize,
-                                          0,
-                                          inputMessageData)
-
-
-
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -166,37 +159,39 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
 
-
-
+    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.49]
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
+                                          messageSize,
+                                          0,
+                                          inputMessageData)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
+
 
     inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
                                           inputMessageData)
-
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
+
 
     inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.01]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
                                           inputMessageData)
-
     unitTestSim.ConfigureStopTime(macros.sec2nano(2.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
+
 
     inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
                                           inputMessageData)
-
     unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
-    # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
 
     if resetCheck:

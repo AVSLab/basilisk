@@ -131,7 +131,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
 		/*! Correct for off-pulsing if necessary */
-		if (ConfigData->baseThrustState == BOOL_TRUE) {
+		if (ConfigData->baseThrustState == 1) {
 			ConfigData->thrForceIn.effectorRequest[i] += ConfigData->maxThrust[i];
 		}
 
