@@ -565,6 +565,12 @@ class SimBaseClass:
         fDesc.close()
 
     def setModelDataWrap(self, modelData):
+        algDict = {}
+        STR_SELFINIT = 'SelfInit'
+        STR_CROSSINIT = 'CrossInit'
+        STR_UPDATE = 'Update'
+        STR_RESET = 'Reset'
+
         # SwigPyObject's Parsing:
         # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
         # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
@@ -578,14 +584,14 @@ class SimBaseClass:
         # Check the type of the algorithm, i.e. SelfInit, CrossInit, Update or Reset,
         # and return the key to create a new dictionary D[str_method] = method
         def checkMethodType(methodName):
-            if methodName[0:len(str_selfInit)] == str_selfInit:
-                return str_selfInit
-            elif methodName[0:len(str_crossInit)] == str_crossInit:
-                return str_crossInit
-            elif methodName[0:len(str_update)] == str_update:
-                return str_update
-            elif methodName[0:len(str_reset)] == str_reset:
-                return str_reset
+            if methodName[0:len(STR_SELFINIT)] == STR_SELFINIT:
+                return STR_SELFINIT
+            elif methodName[0:len(STR_CROSSINIT)] == STR_CROSSINIT:
+                return STR_CROSSINIT
+            elif methodName[0:len(STR_UPDATE)] == STR_UPDATE:
+                return STR_UPDATE
+            elif methodName[0:len(STR_RESET)] == STR_RESET:
+                return STR_RESET
             else:
                 raise ValueError('Cannot recognize the method'
                                  '(I only assess SelfInit, CrossInit, Update and Reset methods). '
@@ -595,21 +601,16 @@ class SimBaseClass:
         sysMod = sys.modules[module]
         dirList = dir(sysMod)
         algList = parseDirList(dirList)
-        moduleName = module[:len(module)/2 + 1]
+        moduleName =  module.split('.')[0]
         currMod = __import__(moduleName)
-        algDict = {}
-        str_selfInit = 'SelfInit'
-        str_crossInit = 'CrossInit'
-        str_update = 'Update'
-        str_reset = 'Reset'
         for alg in algList:
             key = checkMethodType(alg)
             algDict[key] = alg
-        update = eval('currMod.' + algDict[str_update])
-        selfInit = eval('currMod.' + algDict[str_selfInit])
-        crossInit = eval('currMod.' + algDict[str_crossInit])
+        update = eval('currMod.' + algDict[STR_UPDATE])
+        selfInit = eval('currMod.' + algDict[STR_SELFINIT])
+        crossInit = eval('currMod.' + algDict[STR_CROSSINIT])
         try:
-            resetArg = algDict[str_reset]
+            resetArg = algDict[STR_RESET]
             reset = eval('currMod.' + resetArg)
             modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
         except:
