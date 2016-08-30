@@ -46,7 +46,7 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
 {
     /*! Begin method steps */
     /*! - Create output message for module */
-    ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
+    ConfigData->onTimeOutMsgID = CreateNewMessage(ConfigData->onTimeOutMsgName,
                                                sizeof(vehEffectorOut),
                                                "vehEffectorOut",          /* add the output structure name */
                                                moduleID);
@@ -60,10 +60,10 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
 void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t moduleID)
 {
 	/*! - Get the input message ID's */
-	ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
+	ConfigData->thrForceInMsgID = subscribeToMessage(ConfigData->thrForceInMsgName,
 														 sizeof(vehEffectorOut),
 														 moduleID);
-	ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
+	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
 												sizeof(ThrusterCluster),
 												moduleID);
 }
@@ -83,14 +83,14 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 	ConfigData->prevCallTime = 0;
 
 	/* read in the support messages */
-	ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
+	ReadMessage(ConfigData->thrConfInMsgID, &clockTime, &readSize,
 				sizeof(ThrusterCluster), &localThrusterData, moduleID);
 
 	ConfigData->numThrusters = localThrusterData.numThrusters;
 
 	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
-		ConfigData->pulseTimeMin[i] = localThrusterData.thrusters[i].pulseTimeMin;
+		ConfigData->thrOnTimeOut.effectorRequest[i] = 0.0;
 	}
 }
 
@@ -106,33 +106,35 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 	uint32_t            readSize;
 	int i;
 	double 				level;
-	double				tCritical;						/*!< name??? */
+	double				controlPeriod;
+	double				onTime[MAX_EFF_CNT];
 
 	if(ConfigData->prevCallTime == 0) {
 		ConfigData->prevCallTime = callTime;
 
 		for(i = 0; i < ConfigData->numThrusters; i++) {
-			ConfigData->thrOnTimeOut.effectorRequest[i] = (double)(ConfigData->baseThrustState[i]) * 2.0;
+			ConfigData->thrOnTimeOut.effectorRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
+			ConfigData->thrOnTimeOut.effectorRequest[i] = 8.0;
 		}
 
-		WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
 					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
 
-	ConfigData->controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
+	controlPeriod = ((double)(callTime - ConfigData->prevCallTime)) * NANO2SEC;
 	ConfigData->prevCallTime = callTime;
 
 	/*! Begin method steps */
 	/*! - Read the input messages */
-	ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
+	ReadMessage(ConfigData->thrForceInMsgID, &clockTime, &readSize,
 				sizeof(vehEffectorOut), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
 		/*! Correct for off-pulsing if necessary */
-		if (ConfigData->baseThrustState[i] == BOOL_TRUE) {
+		if (ConfigData->baseThrustState == 1) {
 			ConfigData->thrForceIn.effectorRequest[i] += ConfigData->maxThrust[i];
 		}
 
@@ -141,34 +143,34 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 			ConfigData->thrForceIn.effectorRequest[i] = 0.0;
 		}
 		/*! Compute T_on from thrust request, max thrust, and control period */
-		ConfigData->onTime[i] = ConfigData->thrForceIn.effectorRequest[i]/ConfigData->maxThrust[i]*ConfigData->controlPeriod;
+		onTime[i] = ConfigData->thrForceIn.effectorRequest[i]/ConfigData->maxThrust[i]*controlPeriod;
 
-		tCritical = ConfigData->pulseTimeMin[i];
-		if (ConfigData->onTime[i] < tCritical) {
+		if (onTime[i] < ConfigData->thrMinFireTime) {
 			/*! Request is less than minimum pulse time */
-			level = ConfigData->onTime[i]/tCritical;
-			if (level >= ConfigData->level_on[i]) {
+			level = onTime[i]/ConfigData->thrMinFireTime;
+			if (level >= ConfigData->level_on) {
 				ConfigData->thrustState[i] = BOOL_TRUE;
-				ConfigData->onTime[i] = tCritical;
-			} else if (level <= ConfigData->level_off[i]) {
+				onTime[i] = ConfigData->thrMinFireTime;
+			} else if (level <= ConfigData->level_off) {
 				ConfigData->thrustState[i] = BOOL_FALSE;
-				ConfigData->onTime[i] = 0.0;
+				onTime[i] = 0.0;
 			} else if (ConfigData->thrustState[i] == BOOL_TRUE) {
-				ConfigData->onTime[i] = tCritical;
+				onTime[i] = ConfigData->thrMinFireTime;
 			} else {
-				ConfigData->onTime[i] = 0.0;
+				onTime[i] = 0.0;
 			}
-		} else if (ConfigData->onTime[i] >= ConfigData->controlPeriod) {
+		} else if (onTime[i] >= controlPeriod) {
 			/*! Request is greater than control period */
-			ConfigData->onTime[i] = 1.1*ConfigData->controlPeriod; // oversaturate to avoid numerical error
+			onTime[i] = 1.1*controlPeriod; // oversaturate to avoid numerical error
 		}
 
 		/*! Set the output data */
-		ConfigData->thrOnTimeOut.effectorRequest[i] = ConfigData->onTime[i];
+		ConfigData->thrOnTimeOut.effectorRequest[i] = onTime[i];
+		ConfigData->thrOnTimeOut.effectorRequest[i] = 9.0;
 		
 	}
 
-	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	printf("completed Update_thrFiringSchmitt");

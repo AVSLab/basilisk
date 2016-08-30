@@ -45,7 +45,7 @@ thrList = []
 def create(
         rThrust_S,
         tHatThrust_S,
-        minPulseTime = 0.020
+        Fmax
     ):
     global thrList
 
@@ -54,6 +54,7 @@ def create(
 
     thrPointer.rThrust_S = rThrust_S
     thrPointer.tHatThrust_S = tHatThrust_S
+    thrPointer.maxThrust = Fmax
 
     # add RW to the list of RW devices
     thrList.append(thrPointer)
@@ -75,7 +76,7 @@ def addToSpacecraft(thrConfigMsgName, simObject, processName):
         vehicleConfigData.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
-    messageSize = vehicleConfigData.MAX_EFF_CNT*(3+3)*8 + 4
+    messageSize = vehicleConfigData.MAX_EFF_CNT*(3+3+1)*8 + 4
 
     thrClass.numThrusters = len(thrList)
 
