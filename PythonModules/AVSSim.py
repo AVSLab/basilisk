@@ -634,7 +634,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def setRwFSWDeviceAvailability(self):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
-        avail = [1, 1, 1, 1]
+        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
         msgSize = vehicleConfigData.MAX_EFF_CNT*4
         self.TotalSim.CreateNewMessage("FSWProcess", "rw_availability", msgSize, 2, "RWAvailabilityData")

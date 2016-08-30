@@ -28,10 +28,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_rwMotorTorque;
 %constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorTorque;
-STRUCTASLIST(FSWdeviceAvailability)
+ARRAYASLIST(FSWdeviceAvailability)
 %include "rwMotorTorque.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../ADCSUtilities/ADCSDefinitions.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"
