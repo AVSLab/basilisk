@@ -30,11 +30,11 @@ rk4Integrator::~rk4Integrator()
 
 void rk4Integrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
-    double  *X2 = new double[NStates];        /* integration state space */
-    double  *k1 = new double[NStates];        /* intermediate RK results */
-    double  *k2 = new double[NStates];
-    double  *k3 = new double[NStates];
-    double  *k4 = new double[NStates];
+    double X2[NStates];       /* integration state space */
+    double k1[NStates];       /* intermediate RK results */
+    double k2[NStates];
+    double k3[NStates];
+    double k4[NStates];
     
     unsigned int i;
     
@@ -57,12 +57,6 @@ void rk4Integrator::integrate(double currentTime, double timeStep, double* curre
     for(i = 0; i < NStates; i++) {
         nextState[i] = currentState[i] + timeStep / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
     }
-
-    delete [] X2;
-    delete [] k1;
-    delete [] k2;
-    delete [] k3;
-    delete [] k4;
 
     return;
 }

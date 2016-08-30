@@ -29,7 +29,7 @@ eulerIntegrator::~eulerIntegrator()
 
 void eulerIntegrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
-    double *dX = new double[NStates];
+    double dX[NStates];
  
     unsigned int i;
     
