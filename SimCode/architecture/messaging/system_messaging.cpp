@@ -342,6 +342,7 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
             std::cerr << "Received a write request from a module that doesn't publish";
             std::cerr << " for " << FindMessageName(MessageID)<<std::endl;
             std::cerr << "You get nothing."<<std::endl;
+            WriteFails++;
             return(false);
         }
     }

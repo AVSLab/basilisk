@@ -156,6 +156,10 @@ void SimModel::SingleStepProcesses()
         }
         it++;
     }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message reads or writes failed.  Please examine output.\n");
+    }
     NextTaskTime = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
     messageLogs.logAllMessages();
 }
