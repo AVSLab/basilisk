@@ -19,8 +19,8 @@
 
 eulerIntegrator::eulerIntegrator(dynObject* dyn) : integrator(dyn)
 {
-    return;
     dX = nullptr;
+    return;
 }
 
 eulerIntegrator::~eulerIntegrator()
