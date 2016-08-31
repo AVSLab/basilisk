@@ -335,7 +335,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("sunSafeFSWTask", self.sunSafePointWrap, self.sunSafePointData, 7)
         self.AddModelToTask("sunSafeFSWTask", self.simpleDeadbandWrap, self.simpleDeadbandData, 6)
         self.AddModelToTask("sunSafeFSWTask", self.MRP_PDSafeWrap, self.MRP_PDSafeData, 5)
-        # self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, self.MRP_SteeringSafeData, 5)
 
         self.AddModelToTask("sensorProcessing", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sensorProcessing", self.IMUCommWrap, self.IMUCommData, 10)
@@ -345,8 +344,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 10)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
-        self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
-        self.AddModelToTask("vehicleAttMnvrFSWTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        self.AddModelToTask("vehicleAttMnvrFSWTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 
         self.AddModelToTask("vehicleDVPrepFSWTask", self.dvGuidanceWrap, self.dvGuidanceData)
 
@@ -375,8 +373,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         
         self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
-        self.AddModelToTask("attitudeControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
-        self.AddModelToTask("attitudeControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        self.AddModelToTask("attitudeControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
         
 
         self.AddModelToTask("feedbackControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
@@ -385,8 +382,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         
         self.AddModelToTask("attitudePRVControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("attitudePRVControlMnvrTask", self.PRV_SteeringRWAWrap, self.PRV_SteeringRWAData, 9)
-        self.AddModelToTask("attitudePRVControlMnvrTask", self.RWAMappingDataWrap, self.RWAMappingData, 8)
-        self.AddModelToTask("attitudePRVControlMnvrTask", self.RWANullSpaceDataWrap, self.RWANullSpaceData, 7)
+        self.AddModelToTask("attitudePRVControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
 
         self.AddModelToTask("simpleRWControlTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
         self.AddModelToTask("simpleRWControlTask", self.MRP_FeedbackRWAWrap, self.MRP_FeedbackRWAData, 9)
