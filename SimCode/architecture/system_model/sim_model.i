@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_pair.i"
 %include "stdint.i"
 %include "carrays.i"
+%include "exception.i"
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);
@@ -58,6 +59,16 @@ namespace std {
         return (reinterpret_cast<uint64_t> (variable));
     }
 %}
+
+%exception {
+    try {
+        $action
+    } catch (const std::exception& e) {
+        SWIG_exception(SWIG_RuntimeError, e.what());
+    } catch (const std::string& e) {
+        SWIG_exception(SWIG_RuntimeError, e.c_str());
+    } 
+}
 
 %include "sys_model_task.h"
 %include "sys_model.h"

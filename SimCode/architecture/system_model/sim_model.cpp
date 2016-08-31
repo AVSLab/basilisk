@@ -123,6 +123,10 @@ void SimModel::InitSimulation()
     {
         messageLogs.linkMessages();
     }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message creation failed.  Please examine output.\n");
+    }
     NextTaskTime = 0;
     CurrentNanos = 0;
 }

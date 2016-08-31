@@ -194,14 +194,16 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     uint32_t NameLength = MessageName.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        std::cout << "Your name length is too long, truncating name" <<std::endl;
+        std::cerr << "Your name length for: " << MessageName <<" is too long, truncating name" <<std::endl;
+        CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->MessageName, MessageName.c_str(), NameLength);
     NameLength = messageStruct.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        std::cout << "Your struct name length is too long, truncating name" <<std::endl;
+        std::cerr << "Your struct name length for: " << messageStruct << " is too long, truncating name" <<std::endl;
+        CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->messageStruct, messageStruct.c_str(), NameLength);
