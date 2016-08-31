@@ -17,7 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 #   Unit Test Script
 #   Module Name:        thrFiringSchmitt
-#   Author:             John Alcorn, modified code by Hanspeter Schaub
+#   Author:             John Alcorn
 #   Creation Date:      August 25, 2016
 #
 
@@ -50,19 +50,21 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("resetCheck", [
-    (False),
-    (True)
+@pytest.mark.parametrize("resetCheck, dvOn", [
+    (False, False),
+    (True, False),
+    (False, True),
+    (True, True),
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrFiringSchmitt(show_plots, resetCheck):
+def test_thrFiringSchmitt(show_plots, resetCheck, dvOn):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrFiringSchmittTestFunction(show_plots, resetCheck)
+    [testResults, testMessage] = thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn)
     assert testResults < 1, testMessage
 
 
-def thrFiringSchmittTestFunction(show_plots, resetCheck):
+def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -95,7 +97,11 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
 
     # Initialize the test module configuration data
     moduleConfig.thrMinFireTime = 0.2
-    moduleConfig.baseThrustState = 0
+    if dvOn == 1:
+        moduleConfig.baseThrustState = 1
+    else:
+        moduleConfig.baseThrustState = 0
+
     moduleConfig.level_on = .75
     moduleConfig.level_off = .25
 
@@ -159,7 +165,20 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
 
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.49]
+    if dvOn:
+        effReq1 = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]
+        effReq2 = [0.0, -0.1, -0.2, -0.3, -0.351, -0.351, -0.451, -0.5]
+        effReq3 = [0.0, -0.1, -0.2, -0.3, -0.5, -0.351, -0.451, -0.5]
+        effReq4 = [0.0, -0.1, -0.2, -0.3, -0.351, -0.351, -0.451, -0.5]
+
+    else:
+        effReq1 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.49]
+        effReq2 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+        effReq3 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.01]
+        effReq4 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+
+
+    inputMessageData.effectorRequest = effReq1
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -168,7 +187,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+    inputMessageData.effectorRequest = effReq2
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -177,7 +196,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.01]
+    inputMessageData.effectorRequest = effReq3
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -186,7 +205,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
+    inputMessageData.effectorRequest = effReq4
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -208,35 +227,62 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
-    print moduleOutput
+    # print moduleOutput
 
     # set the filtered output truth states
     if resetCheck==1:
-        trueVector = [
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               ]
+        if dvOn == 1:
+            trueVector = [
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   ]
+        else:
+            trueVector = [
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   ]
 
     else:
-        trueVector = [
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
-               ]
+        if dvOn == 1:
+            trueVector = [
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.2, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0, 0.0],
+                   ]
+        else:
+            trueVector = [
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.0],
+                   ]
 
         # else:
         #     testFailCount+=1
@@ -280,6 +326,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck):
 #
 if __name__ == "__main__":
     test_thrFiringSchmitt(              # update "module" in function name
-                 True,
-                 True           # hsMinCheck
+                 False,
+                 True,           # resetOn
+                 False           # dvOn
                )

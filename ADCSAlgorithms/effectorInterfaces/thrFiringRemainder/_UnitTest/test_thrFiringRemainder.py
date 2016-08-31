@@ -50,19 +50,21 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("resetCheck", [
-    (False),
-    (True)
+@pytest.mark.parametrize("resetCheck, dvOn", [
+    (False,False),
+    (True,False),
+    (False,True),
+    (True,True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_thrFiringRemainder(show_plots, resetCheck):
+def test_thrFiringRemainder(show_plots, resetCheck, dvOn):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrFiringRemainderTestFunction(show_plots, resetCheck)
+    [testResults, testMessage] = thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn)
     assert testResults < 1, testMessage
 
 
-def thrFiringRemainderTestFunction(show_plots, resetCheck):
+def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -95,7 +97,10 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck):
 
     # Initialize the test module configuration data
     moduleConfig.thrMinFireTime = 0.2
-    moduleConfig.baseThrustState = 0
+    if dvOn == 1:
+        moduleConfig.baseThrustState = 1
+    else:
+        moduleConfig.baseThrustState = 0
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -157,7 +162,12 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck):
     # unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
 
 
-    inputMessageData.effectorRequest = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+    if dvOn:
+        # inputMessageData.effectorRequest = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]
+        inputMessageData.effectorRequest = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
+    else:
+        inputMessageData.effectorRequest = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -188,36 +198,62 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck):
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
-    print moduleOutput
+    # print moduleOutput
 
     # set the filtered output truth states
     if resetCheck==1:
-        # inputMessageData.effectorRequest = [0.5, 0.05, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49]
-        trueVector = [
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               ]
+        if dvOn:
+            trueVector = [
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
+                   ]
+        else:
+            trueVector = [
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   ]
 
     else:
-        trueVector = [
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
-               [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
-               ]
+        if dvOn:
+            trueVector = [
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.32, 0.22, 0.24],
+                   [0.0, 0.55, 0.4, 0.3, 0.2, 0.0, 0.0, 0.0],
+                   ]
+        else:
+            trueVector = [
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   [0.55, 0.2, 0.2, 0.3, 0.38, 0.0, 0.2, 0.49],
+                   [0.55, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.49],
+                   ]
 
         # else:
         #     testFailCount+=1
