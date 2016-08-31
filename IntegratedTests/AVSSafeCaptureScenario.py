@@ -95,7 +95,6 @@ if __name__ == "__main__":
     TheAVSSim.AddVariableForLogging('simpleDeadband.wasControlOff', int(1E8))
     TheAVSSim.AddVariableForLogging('simpleDeadband.attError', int(1E8))
     TheAVSSim.AddVariableForLogging('simpleDeadband.rateError', int(1E8))
-    # TheAVSSim.AddVariableForLogging('thrFiringRound.level', int(1E8))
 
     TheAVSSim.VehOrbElemObject.CurrentElem.a = 188767262.18 * 1000.0
     TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.207501
@@ -115,9 +114,7 @@ if __name__ == "__main__":
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
     controlTorque = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-    level = TheAVSSim.pullMessageLogData("acs_thruster_cmds.effectorRequest")
-    # level = TheAVSSim.GetLogVariableData("thrFiringRound.level")
-
+    onTime = TheAVSSim.pullMessageLogData("acs_thruster_cmds.effectorRequest",range(8))
 
     #boolControlOff = TheAVSSim.GetLogVariableData('errorDeadband.boolWasControlOff')
 
@@ -161,15 +158,20 @@ if __name__ == "__main__":
     plt.title('Control Torque')
 
     plt.figure(5)
-    plt.plot(level[:, 0] * 1.0E-9, level[:, 1], 'b')
-    # plt.plot(level[:, 0] * 1.0E-9, level[:, 2], 'g')
-    # plt.plot(level[:, 0] * 1.0E-9, level[:, 3], 'r')
-    # plt.plot(level[:, 0] * 1.0E-9, level[:, 4], 'y')
-    # plt.plot(level[:, 0] * 1.0E-9, level[:, 5], 'k')
-    # plt.legend(['$\ell_1$', '$\ell_2$', '$\ell_3$', '$\ell_4$', '$\ell_5$'])
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 1], 'b')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 2], 'g')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 3], 'r')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 4], 'y')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 5], 'k')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 6])
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 7])
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 8])
+    bef = '$T_{\mathrm{on}_' # before
+    aft = '}$' # after
+    plt.legend([bef+'1'+aft, bef+'2'+aft, bef+'3'+aft, bef+'4'+aft, bef+'5'+aft, bef+'6'+aft, bef+'7'+aft, bef+'8'+aft])
     plt.xlabel('Time [s]')
-    plt.ylabel('Level [N m]')
-    plt.title('Level')
+    plt.ylabel('$T_\mathrm{on}$ [s]')
+    plt.title('ON Time')
 
     def simpleDeadbandMode():
         attError = TheAVSSim.GetLogVariableData('simpleDeadband.attError')

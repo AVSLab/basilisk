@@ -70,7 +70,7 @@ import celestialBodyPoint
 import clock_synch
 import rwNullSpace
 import thrustRWDesat
-import thrFiringRound
+import thrFiringSchmitt
 import attitude_ukf
 import boost_communication
 import inertial3D
@@ -127,7 +127,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
-        self.fswProc.addTask(self.CreateNewTask("thrFiringRoundTask", int(5E8)), 100)
+        self.fswProc.addTask(self.CreateNewTask("thrFiringSchmittTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
 
@@ -281,13 +281,13 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatDataWrap = self.setModelDataWrap(self.thrustRWADesatData)
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
-        self.thrFiringRoundData = thrFiringRound.thrFiringRoundConfig()
-        self.thrFiringRoundDataWrap = alg_contain.AlgContain(self.thrFiringRoundData,
-                                                             thrFiringRound.Update_thrFiringRound,
-                                                             thrFiringRound.SelfInit_thrFiringRound,
-                                                             thrFiringRound.CrossInit_thrFiringRound,
-                                                             thrFiringRound.Reset_thrFiringRound)
-        self.thrustRWADesatDataWrap.ModelTag = "thrFiringRound"
+        self.thrFiringSchmittData = thrFiringSchmitt.thrFiringSchmittConfig()
+        self.thrFiringSchmittDataWrap = alg_contain.AlgContain(self.thrFiringSchmittData,
+                                                             thrFiringSchmitt.Update_thrFiringSchmitt,
+                                                             thrFiringSchmitt.SelfInit_thrFiringSchmitt,
+                                                             thrFiringSchmitt.CrossInit_thrFiringSchmitt,
+                                                             thrFiringSchmitt.Reset_thrFiringSchmitt)
+        self.thrustRWADesatDataWrap.ModelTag = "thrFiringSchmitt"
 
         # Guidance flight software modules.
 
@@ -372,7 +372,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("marsPointTask", self.marsPointWrap, self.marsPointData)
 
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
-        self.AddModelToTask("thrFiringRoundTask", self.thrFiringRoundDataWrap, self.thrFiringRoundData)
+        self.AddModelToTask("thrFiringSchmittTask", self.thrFiringSchmittDataWrap, self.thrFiringSchmittData)
 
         # Mapping of Guidance Models to Guidance Tasks
         self.AddModelToTask("inertial3DPointTask", self.inertial3DWrap, self.inertial3DData, 20)
@@ -470,7 +470,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sunSafeFSWTask')",
-                             "self.enableTask('thrFiringRoundTask')"])
+                             "self.enableTask('thrFiringSchmittTask')"])
 
         self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
                             ["self.fswProc.disableAllTasks()",
@@ -616,13 +616,26 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                         [-1.0, 0.0, 0.0] \
                         ]
 
+        maxThrust = [ \
+                        0.875,
+                        0.875,
+                        0.875,
+                        0.875,
+                        0.875,
+                        0.875,
+                        0.875,
+                        0.875, \
+                        ]
+
+
         rcsClass.numThrusters = 8
         for i in range(8):
             rcsPointer.rThrust_S = rcsLocationData[i]
             rcsPointer.tHatThrust_S = rcsDirectionData[i]
+            rcsPointer.maxThrust = maxThrust[i]
             vehicleConfigData.ThrustConfigArray_setitem(rcsClass.thrusters, i, rcsPointer)
 
-        msgSizeThrust = 4 + vehicleConfigData.MAX_EFF_CNT*6*8
+        msgSizeThrust = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rcs_config_data",
                                        msgSizeThrust, 2, "ThrusterCluster")
         self.TotalSim.WriteMessageData("rcs_config_data", msgSizeThrust, 0, rcsClass)
@@ -1446,11 +1459,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
 
-    def SetthrFiringRound(self):
-        self.thrFiringRoundData.inputDataName = "acs_thruster_cmds_raw"
-        self.thrFiringRoundData.outputDataName = "acs_thruster_cmds"
-        self.thrFiringRoundData.inputThrusterConfName = "rcs_config_data"
-        self.thrFiringRoundData.numThrusters = 8
+    def SetthrFiringSchmitt(self):
+        self.thrFiringSchmittData.thrForceInMsgName = "acs_thruster_cmds_raw"
+        self.thrFiringSchmittData.onTimeOutMsgName = "acs_thruster_cmds"
+        self.thrFiringSchmittData.thrConfInMsgName = "rcs_config_data"
+        self.thrFiringSchmittData.level_on = 0.50
+        self.thrFiringSchmittData.level_off = 0.25
+        self.thrFiringSchmittData.thrMinFireTime = 0.030
+        self.thrFiringSchmittData.baseThrustState = 0
 
     def SetAttUKF(self):
         self.AttUKF.ModelTag = "AttitudeUKF"
@@ -1519,7 +1535,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetRWMotorTorque()
         self.SetRWANullSpaceData()
         self.SetthrustRWDesat()
-        self.SetthrFiringRound()
+        self.SetthrFiringSchmitt()
         self.SetAttUKF()
         # Guidance FSW Objects
         self.setInertial3D()
