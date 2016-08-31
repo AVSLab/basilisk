@@ -103,6 +103,9 @@ void SystemMessaging::clearMessaging()
     }
     dataBuffers.clear();
     nextModuleID = 0;
+    CreateFails = 0;
+    WriteFails = 0;
+    ReadFails = 0;
     messageStorage = NULL;
 }
 
