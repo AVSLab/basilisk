@@ -20,23 +20,36 @@
 eulerIntegrator::eulerIntegrator(dynObject* dyn) : integrator(dyn)
 {
     return;
+    dX = nullptr;
 }
 
 eulerIntegrator::~eulerIntegrator()
 {
+    if(dX)
+    {
+        delete [] dX;
+    }
     return;
 }
 
 void eulerIntegrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
-//    double dX[NStates];
-// 
-//    unsigned int i;
-//    
-//    this->_dyn->equationsOfMotion(currentTime, currentState, dX);
-//    for(i = 0; i < NStates; i++) {
-//        nextState[i] = currentState[i] + timeStep * dX[i];
-//    }
+    if(statesAllocated != NStates)
+    {
+        if(dX)
+        {
+            delete [] dX;
+        }
+        dX = new double[NStates];
+        statesAllocated = NStates;
+    }
+ 
+    unsigned int i;
+    
+    this->_dyn->equationsOfMotion(currentTime, currentState, dX);
+    for(i = 0; i < NStates; i++) {
+        nextState[i] = currentState[i] + timeStep * dX[i];
+    }
     
     return;
 }

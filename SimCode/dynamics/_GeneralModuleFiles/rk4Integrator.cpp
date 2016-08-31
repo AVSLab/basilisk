@@ -21,11 +21,24 @@
 rk4Integrator::rk4Integrator(dynObject* dyn) : integrator(dyn)
 {
     statesAllocated = 0;
+    X2 = nullptr;
+    k1 = nullptr;
+    k2 = nullptr;
+    k3 = nullptr;
+    k4 = nullptr;
     return;
 }
 
 rk4Integrator::~rk4Integrator()
 {
+    if(X2)
+    {
+        delete [] X2;
+        delete [] k1;
+        delete [] k2;
+        delete [] k3;
+        delete [] k4;
+    }
     return;
 }
 
@@ -35,6 +48,14 @@ void rk4Integrator::integrate(double currentTime, double timeStep, double* curre
     
     if(NStates != statesAllocated)
     {
+        if(X2)
+        {
+            delete [] X2;
+            delete [] k1;
+            delete [] k2;
+            delete [] k3;
+            delete [] k4;
+        }
         X2 = new double[NStates];
         k1 = new double[NStates];
         k2 = new double[NStates];

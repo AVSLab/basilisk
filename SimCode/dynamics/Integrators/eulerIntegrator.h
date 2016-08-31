@@ -28,6 +28,9 @@ public:
     eulerIntegrator(dynObject* dyn);
     virtual ~eulerIntegrator();
     virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
+    
+    int statesAllocated;
+    double *dX;
 };
 
 
