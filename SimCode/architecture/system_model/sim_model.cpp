@@ -221,6 +221,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
     {
         std::cerr << "You tried to create a message in a process that doesn't exist.";
         std::cerr << "  No dice."<<std::endl;
+        throw std::range_error("Message creation failed.  Please examine output.\n");
     }
         
 }
