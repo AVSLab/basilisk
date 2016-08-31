@@ -189,11 +189,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # Flight software modules.
         self.VehConfigData = vehicleConfigData.VehConfigInputData()
-        self.VehConfigDataWrap = alg_contain.AlgContain(self.VehConfigData,
-            vehicleConfigData.Update_vehicleConfigData, vehicleConfigData.SelfInit_vehicleConfigData,
-            vehicleConfigData.CrossInit_vehicleConfigData)
+        self.VehConfigDataWrap = self.setModelDataWrap(self.VehConfigData)
         self.VehConfigDataWrap.ModelTag = "vehConfigData"
-
 
         self.CSSDecodeFSWConfig = cssComm.CSSConfigData()
         self.CSSAlgWrap = self.setModelDataWrap(self.CSSDecodeFSWConfig)
@@ -282,11 +279,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrustRWADesatDataWrap.ModelTag = "thrustRWDesat"
 
         self.thrFiringSchmittData = thrFiringSchmitt.thrFiringSchmittConfig()
-        self.thrFiringSchmittDataWrap = alg_contain.AlgContain(self.thrFiringSchmittData,
-                                                             thrFiringSchmitt.Update_thrFiringSchmitt,
-                                                             thrFiringSchmitt.SelfInit_thrFiringSchmitt,
-                                                             thrFiringSchmitt.CrossInit_thrFiringSchmitt,
-                                                             thrFiringSchmitt.Reset_thrFiringSchmitt)
+        self.thrFiringSchmittDataWrap = self.setModelDataWrap(self.thrFiringSchmittData)
         self.thrustRWADesatDataWrap.ModelTag = "thrFiringSchmitt"
 
         # Guidance flight software modules.
