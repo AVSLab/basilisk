@@ -33,11 +33,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-	double              pulseRemainder[MAX_EFF_CNT];            /*!< Unimplemented thrust pulses */
-	double              thrMinFireTime;              			/*!< Minimum pulse command */
-	uint32_t 			numThrusters;							/*!< The number of thrusters available on vehicle */
-	double				maxThrust[MAX_EFF_CNT];					/*!< Max thrust */
-	int					baseThrustState;
+	double              pulseRemainder[MAX_EFF_CNT];            /*!< [-] Unimplemented thrust pulses (number of minimum pulses) */
+	double              thrMinFireTime;              			/*!< [s] Minimum fire time */
+	uint32_t 			numThrusters;							/*!< [-] The number of thrusters available on vehicle */
+	double				maxThrust[MAX_EFF_CNT];					/*!< [N] Max thrust */
+	int					baseThrustState;						/*!< [-] Indicates on-pulsing (0) or off-pusling (1) */
 
 	uint64_t			prevCallTime;							/*!< callTime from previous function call */
 	

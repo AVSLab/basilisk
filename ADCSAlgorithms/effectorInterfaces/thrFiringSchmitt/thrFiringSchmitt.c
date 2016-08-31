@@ -106,9 +106,9 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 	uint64_t            clockTime;
 	uint32_t            readSize;
 	int 				i;
-	double 				level;
-	double				controlPeriod;
-	double				onTime[MAX_EFF_CNT];
+	double 				level;					/*!< [-] duty cycle fraction */
+	double				controlPeriod;			/*!< [s] control period */
+	double				onTime[MAX_EFF_CNT];	/*!< [s] array of commanded on time for thrusters */
 
 	if(ConfigData->prevCallTime == 0) {
 		ConfigData->prevCallTime = callTime;

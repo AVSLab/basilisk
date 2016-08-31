@@ -103,9 +103,9 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 {
 	uint64_t            clockTime;
 	uint32_t            readSize;
-	int i;
-	double				controlPeriod;
-	double				onTime[MAX_EFF_CNT];
+	int 				i;
+	double				controlPeriod;			/*!< [s] control period */
+	double				onTime[MAX_EFF_CNT];	/*!< [s] array of commanded on time for thrusters */
 
 	if(ConfigData->prevCallTime == 0) {
 		ConfigData->prevCallTime = callTime;
