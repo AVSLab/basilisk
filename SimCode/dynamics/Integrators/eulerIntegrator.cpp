@@ -29,14 +29,14 @@ eulerIntegrator::~eulerIntegrator()
 
 void eulerIntegrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
-    double dX[NStates];
- 
-    unsigned int i;
-    
-    this->_dyn->equationsOfMotion(currentTime, currentState, dX);
-    for(i = 0; i < NStates; i++) {
-        nextState[i] = currentState[i] + timeStep * dX[i];
-    }
+//    double dX[NStates];
+// 
+//    unsigned int i;
+//    
+//    this->_dyn->equationsOfMotion(currentTime, currentState, dX);
+//    for(i = 0; i < NStates; i++) {
+//        nextState[i] = currentState[i] + timeStep * dX[i];
+//    }
     
     return;
 }
