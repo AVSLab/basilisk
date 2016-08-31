@@ -18,6 +18,7 @@
 #define rk4Integrator_h
 
 #include "integrator.h"
+#include <stdint.h>
 
 /*!
  @brief RK4 integrator. It only implements the method integrate() to advance one time step.
@@ -28,6 +29,12 @@ public:
     rk4Integrator(dynObject* dyn);
     virtual ~rk4Integrator();
     virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
+    uint32_t statesAllocated;
+    double *X2;       /* integration state space */
+    double *k1;       /* intermediate RK results */
+    double *k2;
+    double *k3;
+    double *k4;
 };
 
 #endif /* rk4Integrator_h */

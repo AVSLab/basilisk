@@ -20,6 +20,7 @@
 
 rk4Integrator::rk4Integrator(dynObject* dyn) : integrator(dyn)
 {
+    statesAllocated = 0;
     return;
 }
 
@@ -30,13 +31,17 @@ rk4Integrator::~rk4Integrator()
 
 void rk4Integrator::integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates)
 {
-    double X2[NStates];       /* integration state space */
-    double k1[NStates];       /* intermediate RK results */
-    double k2[NStates];
-    double k3[NStates];
-    double k4[NStates];
-    
     unsigned int i;
+    
+    if(NStates != statesAllocated)
+    {
+        X2 = new double[NStates];
+        k1 = new double[NStates];
+        k2 = new double[NStates];
+        k3 = new double[NStates];
+        k4 = new double[NStates];
+        statesAllocated = NStates;
+    }
     
     this->_dyn->equationsOfMotion(currentTime, currentState, k1);
     for(i = 0; i < NStates; i++) {
