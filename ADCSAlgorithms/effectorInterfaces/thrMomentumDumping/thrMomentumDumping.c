@@ -91,7 +91,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
-        ConfigData->thrMaxForce[i] = 2.0;
+        ConfigData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
     }
 
     ConfigData->thrDumpingCounter = 0;
