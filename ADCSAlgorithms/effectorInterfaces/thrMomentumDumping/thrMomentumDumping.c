@@ -91,8 +91,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
-        ConfigData->thrMaxForce[i] = 2.0;
-        ConfigData->thrMinPulseTime[i] = 0.020;
+        ConfigData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;
     }
 
     ConfigData->thrDumpingCounter = 0;
@@ -171,7 +170,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
         /* check for negative or saturated firing times */
         for (i=0;i<ConfigData->numThrusters;i++) {
-            if (tOnOut[i] < ConfigData->thrMinPulseTime[i]) tOnOut[i] = 0.0;
+            if (tOnOut[i] < ConfigData->thrMinFireTime) tOnOut[i] = 0.0;
             if (ConfigData->thrOnTimeRemaining[i] < 0.0) ConfigData->thrOnTimeRemaining[i] = 0.0;
             if (tOnOut[i] > dt)  tOnOut[i] = dt;
         }
