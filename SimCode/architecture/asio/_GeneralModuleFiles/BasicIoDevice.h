@@ -52,9 +52,10 @@ public:
     virtual void clearBuffers(void) {}
     void handleClearBuffers(const boost::system::error_code &ec, size_t bytes_transferred);
     void appendToOutbound(const char * newBytes, uint64_t byteSize);
+    boost::shared_ptr<StreamType> m_stream;
 
 protected:
-    boost::scoped_ptr<StreamType> m_stream;
+    
     std::vector<char> m_outboundBuffer;
     std::vector<char> m_inboundBuffer;
 };

@@ -47,11 +47,12 @@ typedef struct {
 
 class MessageRouter: public InterfaceDataExchange {
 public:
-    MessageRouter();
+    MessageRouter(BasicIoObject_t<boost::asio::ip::tcp::socket> *inConnection = nullptr);
     ~MessageRouter();
-    MessageRouter(std::string from, std::string to, std::string intName="");
+    MessageRouter(std::string from, std::string to, std::string intName="", BasicIoObject_t<boost::asio::ip::tcp::socket> *inConnection=nullptr);
     bool initializeServer(std::string hostName, uint32_t portStart);
     bool initializeClient(std::string hostName, uint32_t portServer);
+    BasicIoObject_t<boost::asio::ip::tcp::socket> * getConnection() {return theConnection;}
     bool linkProcesses();
     void discoverMessages();
     void UpdateState(uint64_t CurrentSimNanos);

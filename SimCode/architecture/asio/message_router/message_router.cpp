@@ -17,11 +17,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/asio/message_router/message_router.h"
 #include <iostream>
 
-MessageRouter::MessageRouter()
+MessageRouter::MessageRouter(BasicIoObject_t<boost::asio::ip::tcp::socket> *inConnection)
 {
     serverConnection = nullptr;
     clientConnection = nullptr;
-    theConnection = nullptr;
+    theConnection = inConnection;
     runAsServer = false;
     processLinked = false;
     hostName = "localhost";
@@ -45,7 +45,7 @@ MessageRouter::~MessageRouter()
     return;
 }
 
-MessageRouter::MessageRouter(std::string from, std::string to, std::string intName) : MessageRouter()
+MessageRouter::MessageRouter(std::string from, std::string to, std::string intName, BasicIoObject_t<boost::asio::ip::tcp::socket> *inConnection) : MessageRouter()
 {
     processData.messageSource = from;
     processData.messageDest = to;
@@ -54,22 +54,39 @@ MessageRouter::MessageRouter(std::string from, std::string to, std::string intNa
         intName = from + "2" + to + "Interface";
     }
     ModelTag = intName;
+    theConnection = inConnection;
 }
 
 bool MessageRouter::initializeServer(std::string hostName, uint32_t portStart)
 {
     bool serverLinked;
     serverConnection = new TcpServer(&ioService);
-    serverLinked = serverConnection->acceptConnections(hostName, portStart);
+    if(theConnection != nullptr)
+    {
+        serverConnection->m_stream = theConnection->m_stream;
+        serverLinked = serverConnection->isOpen();
+    }
+    else
+    {
+        serverLinked = serverConnection->acceptConnections(hostName, portStart);
+    }
     theConnection = serverConnection;
     return(serverLinked);
 }
 
 bool MessageRouter::initializeClient(std::string hostName, uint32_t portStart)
 {
-    bool clientLinked;
+    bool clientLinked = false;
     clientConnection = new TcpClient(&ioService);
-    clientLinked = clientConnection->connect(hostName, portStart);
+    if(theConnection != nullptr)
+    {
+        clientConnection->m_stream = theConnection->m_stream;
+        clientLinked = clientConnection->isOpen();
+    }
+    else
+    {
+        clientLinked = !(clientConnection->connect(hostName, portStart));
+    }
     theConnection = clientConnection;
     return(clientLinked);
 }
@@ -91,7 +108,7 @@ bool MessageRouter::linkProcesses()
         std::vector<char> outData((char *) (&stringLength), (char *) &stringLength+sizeof(stringLength));
         theConnection->sendData(outData);
         outData.clear();
-        outData.insert(outData.begin(), processData.messageDest.c_str(), processData.messageDest.c_str() + processData.messageDest.size());
+        outData.insert(outData.begin(), processData.messageDest.c_str(), processData.messageDest.c_str() + stringLength);
         outData.push_back(0);
         theConnection->sendData(outData);
         processLinked = true;
@@ -123,6 +140,8 @@ bool MessageRouter::linkProcesses()
 void MessageRouter::requestUnknownMessages()
 {
     std::set<std::string> unknownPublisher;
+    processData.destination = SystemMessaging::GetInstance()->
+    findMessageBuffer(processData.messageDest);
     SystemMessaging::GetInstance()->selectMessageBuffer(processData.destination);
     unknownPublisher = SystemMessaging::GetInstance()->getUnpublishedMessages();
     std::set<std::string>::iterator it;
@@ -158,11 +177,13 @@ void MessageRouter::receiveUnknownMessages()
     memcpy(&stringLength, inData.data(), sizeof(stringLength));
     messageCount = stringLength/sizeof(MessageNameIDPair);
     inData.clear();
-    inData.insert(inData.begin(), stringLength+1, 0xFF);
+    inData.insert(inData.begin(), stringLength, 0xFF);
     theConnection->receiveData(inData);
     MessageNameIDPair *messageBuffer = new MessageNameIDPair[messageCount];
     memset(messageBuffer, 0x0, messageCount*sizeof(MessageNameIDPair));
     memcpy(messageBuffer, inData.data(), stringLength);
+    processData.source = SystemMessaging::GetInstance()->
+    findMessageBuffer(processData.messageSource);
     SystemMessaging::GetInstance()->selectMessageBuffer(processData.source);
     for(int i=0; i<messageCount; i++)
     {
