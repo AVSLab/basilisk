@@ -1,5 +1,7 @@
-\documentclass[]{AVSSimReportMemo}
+\documentclass[]{BasiliskReportMemo}
 \usepackage{AVS}
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 \newcommand{\ModuleName}{MRP\_Steering}
 \newcommand{\subject}{PRV Steering ADCS Control Module}
@@ -26,6 +28,7 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial Documentation Draft & H. Schaub \\
+0.1 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -272,7 +275,7 @@ and substituting into Eq.~\eqref{eq:MS:12}, the Lyapunov rate is for this case
 	= -   \tan\left(\frac{\phi_{\mathcal{B}/\mathcal{R}}}{4}\right) \hat{\bm e}_{\mathcal{B}/\mathcal{R}}^{T} \hat{\bm e}_{\mathcal{B}/\mathcal{R}} f(\phi_{\mathcal{B}/\mathcal{R}})
 	= -   \tan\left(\frac{\phi_{\mathcal{B}/\mathcal{R}}}{4}\right)f(\phi_{\mathcal{B}/\mathcal{R}}) < 0
 \end{equation}
-This $\dot V$ is negative definite in terms of the attitude error, thus yielding asymptotic convergence.  The saturation function in Eq.~\eqref{eq:MS:16} has the convenient property that the resulting steering law employs an eigenaxis rotation towards the desired reference orientation.  In contrast, the smoothing function in Eq.~\eqref{eq:MS:15} saturates the MRP components individually, deviating fro man eigen-axis rotation.  The benefit of the later is that small errors are reduced quickly, thus reducing the overall tracking error quicker.  The benefit of the eigenaxis approach is that the closed-loop attitude path towards the reference is more predictable.  
+This $\dot V$ is negative definite in terms of the attitude error, thus yielding asymptotic convergence.  The saturation function in Eq.~\eqref{eq:MS:16} has the convenient property that the resulting steering law employs an eigenaxis rotation towards the desired reference orientation. The benefit of the later is that small errors are reduced quickly, thus reducing the overall tracking error quicker.  The benefit of the eigenaxis approach is that the closed-loop attitude path towards the reference is more predictable.  
 
 
 
@@ -436,11 +439,11 @@ Let $[P]^{T} = [P]>$ be a symmetric positive definite rate feedback gain matrix.
 \end{multline}
 Defining the right-hand-side as $\bm L_{r}$, this is rewritten in compact form as
 \begin{equation}
-	[G_{s}]\bm u_{s} = \bm L_{r}
+	[G_{s}]\bm u_{s} = -\bm L_{r}
 \end{equation}
 The array of RW motor torques can be solved with the typical minimum norm inverse
 \begin{equation}
-	\bm u_{s} = [G_{s}]^{T}\left( [G_{s}][G_{s}]^{T}\right)^{-1} \bm L_{r}
+	\bm u_{s} = [G_{s}]^{T}\left( [G_{s}][G_{s}]^{T}\right)^{-1}(- \bm L_{r})
 \end{equation}
 
 
