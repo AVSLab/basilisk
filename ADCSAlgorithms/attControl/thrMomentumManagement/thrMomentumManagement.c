@@ -135,7 +135,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
             /* Momentum dumping not required */
             v3SetZero(ConfigData->Delta_H_B);
         } else {
-            v3Scale((hs - ConfigData->hs_min)/hs, hs_B, ConfigData->Delta_H_B);
+            v3Scale(-(hs - ConfigData->hs_min)/hs, hs_B, ConfigData->Delta_H_B);
         }
         ConfigData->initRequest = 0;
 

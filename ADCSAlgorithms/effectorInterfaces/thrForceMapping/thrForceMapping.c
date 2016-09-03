@@ -163,8 +163,6 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
 
-    /* Lr is assumed to be a negative torque onto the body */
-    v3Scale(-1.0, Lr_B, Lr_B);
 
     /* compute thruster locations relative to COM */
     for (i=0;i<ConfigData->numThrusters;i++) {
