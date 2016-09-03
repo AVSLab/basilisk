@@ -89,7 +89,7 @@ void messageLogger::linkMessages()
         if(messageData.itemFound)
         {
             it->processID = messageData.processBuffer;
-            it->messageID = messageData.itemID;
+            it->messageID = (int32_t)messageData.itemID;
             it->messageBuffer.IncreaseStorage(initBufferSize);
         }
         //! - Warn the user if linking failed and note that logging won't work for that message

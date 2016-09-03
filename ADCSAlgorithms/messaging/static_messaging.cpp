@@ -38,7 +38,7 @@ void InitializeStorage(uint32_t StorageBytes)
 int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct,
     uint64_t moduleID)
 {
-    return(SystemMessaging::GetInstance()->CreateNewMessage(
+    return((uint32_t)SystemMessaging::GetInstance()->CreateNewMessage(
         MessageName, MaxSize, 2, MessageStruct, moduleID));
 }
 
@@ -73,7 +73,7 @@ int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize
     bool TestResult = SystemMessaging::GetInstance()->ReadMessage(MessageID,
                                                                   &LocalHeader, MaxBytes, reinterpret_cast<uint8_t*> (MsgPayload), moduleID);
     *WriteTime = LocalHeader.WriteClockNanos;
-    *WriteSize = LocalHeader.WriteSize;
+    *WriteSize = (uint32_t)LocalHeader.WriteSize;
     return(TestResult);
 }
 
@@ -84,7 +84,7 @@ int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize
 int32_t subscribeToMessage(char *MessageName, uint64_t messageSize,
     int64_t moduleID)
 {
-    int32_t localMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
+    int32_t localMsgID = (int32_t)SystemMessaging::GetInstance()->subscribeToMessage(
         MessageName, messageSize, moduleID);
     if(localMsgID < 0)
     {

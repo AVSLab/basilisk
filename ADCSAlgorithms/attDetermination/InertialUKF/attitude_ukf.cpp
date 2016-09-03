@@ -165,7 +165,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     MatrixOperations inputMatrix;
     vehicleConfigData localConfig;
     
-    ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas, moduleID);
+    ReadMessage((uint32_t)stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas, moduleID);
     ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds, moduleID);
     ReadMessage(inputVehicleConfigDataID, &ClockTime, &ReadSize,
         sizeof(vehicleConfigData), &localConfig, moduleID);
