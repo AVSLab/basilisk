@@ -123,6 +123,10 @@ void SimModel::InitSimulation()
     {
         messageLogs.linkMessages();
     }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message creation failed.  Please examine output.\n");
+    }
     NextTaskTime = 0;
     CurrentNanos = 0;
 }
@@ -151,6 +155,10 @@ void SimModel::SingleStepProcesses()
             }
         }
         it++;
+    }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message reads or writes failed.  Please examine output.\n");
     }
     NextTaskTime = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
     messageLogs.logAllMessages();
@@ -213,6 +221,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
     {
         std::cerr << "You tried to create a message in a process that doesn't exist.";
         std::cerr << "  No dice."<<std::endl;
+        throw std::range_error("Message creation failed.  Please examine output.\n");
     }
         
 }

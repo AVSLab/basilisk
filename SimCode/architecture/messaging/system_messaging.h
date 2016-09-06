@@ -110,6 +110,7 @@ public:
     void clearMessaging();
     bool obtainWriteRights(uint64_t messageID, int64_t moduleID);
     bool obtainReadRights(uint64_t messageID, int64_t moduleID);
+    uint64_t getFailureCount() {return (CreateFails + ReadFails + WriteFails);}
     
     
 private:
