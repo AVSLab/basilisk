@@ -16,9 +16,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Integrated Unit Test Script
-#   Purpose:  Run a test of the unit dynamics modes
+#   Purpose:  Run a test of the IMU sensor module
 #   Author:  John Alcorn
-#   Creation Date:  August 31, 2016
+#   Creation Date:  September 6, 2016
 #
 
 import pytest
@@ -35,9 +35,9 @@ import logging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0]+'/Basilisk/modules')
-sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
+splitPath = path.split('basilisk')
+sys.path.append(splitPath[0]+'/basilisk/modules')
+sys.path.append(splitPath[0]+'/basilisk/PythonModules')
 
 import spice_interface
 import six_dof_eom
@@ -62,13 +62,13 @@ import simDynEffectorTemplate
     (True),
 ])
 # provide a unique test method name, starting with test_
-def test_unitSimDynEffectorTemplate(show_plots, useFlag):
+def test_unitSimIMU(show_plots, useFlag):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimDynEffectorTemplate(show_plots, useFlag)
+    [testResults, testMessage] = unitSimIMU(show_plots, useFlag)
     assert testResults < 1, testMessage
 
 
-def unitSimDynEffectorTemplate(show_plots, useFlag):
+def unitSimIMU(show_plots, useFlag):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -86,7 +86,7 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
 
     # Initialize the ephemeris module
     spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = splitPath[0]+'/Basilisk/External/EphemerisData/'
+    spiceObject.SPICEDataPath = splitPath[0]+'/basilisk/External/EphemerisData/'
     spiceObject.UTCCalInit = "2014 March 27, 14:00:00.0"
     spiceObject.OutputBufferCount = 2
     spiceObject.PlanetNames = spice_interface.StringVector(
@@ -309,6 +309,6 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitSimDynEffectorTemplate(False   # show_plots
+    test_unitSimIMU(False   # show_plots
                            )
 
