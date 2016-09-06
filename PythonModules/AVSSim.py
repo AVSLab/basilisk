@@ -62,7 +62,6 @@ import MRP_Steering
 import MRP_Feedback
 import MRP_PD
 import PRV_Steering
-import sunSafeACS
 import dvAttEffect
 import dvGuidance
 import attRefGen
@@ -127,6 +126,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("vehicleDVPrepFSWTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("vehicleDVMnvrFSWTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("RWADesatTask", int(5E8)), 102)
+        self.fswProc.addTask(self.CreateNewTask("thrForceMappingTask", int(5E8)), 101)
         self.fswProc.addTask(self.CreateNewTask("thrFiringSchmittTask", int(5E8)), 100)
         self.fswProc.addTask(self.CreateNewTask("sensorProcessing", int(5E8)), 210)
         self.fswProc.addTask(self.CreateNewTask("attitudeNav", int(5E8)), 209)
@@ -219,10 +219,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_PDSafeData = MRP_PD.MRP_PDConfig()
         self.MRP_PDSafeWrap = self.setModelDataWrap(self.MRP_PDSafeData)
         self.MRP_PDSafeWrap.ModelTag = "MRP_PD"
-
-        self.sunSafeACSData = sunSafeACS.sunSafeACSConfig()
-        self.sunSafeACSWrap = self.setModelDataWrap(self.sunSafeACSData)
-        self.sunSafeACSWrap.ModelTag = "sunSafeACS"
 
         self.AttUKF = attitude_ukf.STInertialUKF()
 
@@ -340,7 +336,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("sunSafeFSWTask", self.simpleDeadbandWrap, self.simpleDeadbandData, 6)
         self.AddModelToTask("sunSafeFSWTask", self.MRP_PDSafeWrap, self.MRP_PDSafeData, 5)
         # self.AddModelToTask("sunSafeFSWTask", self.MRP_SteeringWrap, self.MRP_SteeringSafeData, 5)
-        self.AddModelToTask("sunSafeFSWTask", self.sunSafeACSWrap, self.sunSafeACSData, 4)
 
         self.AddModelToTask("sensorProcessing", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sensorProcessing", self.IMUCommWrap, self.IMUCommData, 10)
@@ -365,6 +360,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("marsPointTask", self.marsPointWrap, self.marsPointData)
 
         self.AddModelToTask("RWADesatTask", self.thrustRWADesatDataWrap, self.thrustRWADesatData)
+        self.AddModelToTask("thrForceMappingTask", self.thrForceMappingWrap, self.thrForceMappingData)
         self.AddModelToTask("thrFiringSchmittTask", self.thrFiringSchmittDataWrap, self.thrFiringSchmittData)
 
         # Mapping of Guidance Models to Guidance Tasks
@@ -463,6 +459,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.createNewEvent("initiateSafeMode", int(1E9), True, ["self.modeRequest == 'safeMode'"],
                             ["self.fswProc.disableAllTasks()",
                              "self.enableTask('sunSafeFSWTask')",
+                             "self.enableTask('thrForceMappingTask')",
                              "self.enableTask('thrFiringSchmittTask')"])
 
         self.createNewEvent("initiateSunPoint", int(1E9), True, ["self.modeRequest == 'sunPoint'"],
@@ -1170,22 +1167,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.simpleDeadbandData.innerRateThresh = 0.1 * (math.pi / 180.)
         self.simpleDeadbandData.outerRateThresh = 0.1 * (math.pi / 180.)
 
-    def SetsunSafeACS(self):
-        self.sunSafeACSData.inputControlName = "controlTorqueRaw"
-        self.sunSafeACSData.thrData.outputDataName = "acs_thruster_cmds_raw"
-        self.sunSafeACSData.thrData.minThrustRequest = 0.1
-        self.sunSafeACSData.thrData.numEffectors = 8
-        self.sunSafeACSData.thrData.maxNumCmds = 2
-        onTimeMap = [0.0, 1.0, 0.7,
-                     -1.0, 0.0, -0.7,
-                     1.0, 0.0, -0.7,
-                     0.0, -1.0, 0.7,
-                     0.0, -1.0, 0.7,
-                     1.0, 0.0, -0.7,
-                     -1.0, 0.0, -0.7,
-                     0.0, 1.0, 0.7]
-        self.sunSafeACSData.thrData.thrOnMap = onTimeMap
-
     def SetattMnvrPoint(self):
         self.attMnvrPointData.inputNavStateName = "simple_att_nav_output"
         self.attMnvrPointData.inputAttCmdName = "att_cmd_output"
@@ -1452,8 +1433,21 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         RWAlignScale = 1.0 / 25.0
         self.thrustRWADesatData.DMThresh = 50 * (math.pi * 2.0) / 60.0 * RWAlignScale
 
+    def SetthrForceMapping(self):
+        self.thrForceMappingData.inputVehControlName = "controlTorqueRaw"
+        self.thrForceMappingData.outputDataName = "acs_thruster_cmds_mapped"
+        self.thrForceMappingData.inputThrusterConfName = "rcs_config_data"
+        self.thrForceMappingData.inputVehicleConfigDataName = "adcs_config_data"
+        self.thrForceMappingData.thrForceSign = +1
+        self.thrForceMappingData.epsilon = 0.0005
+        self.thrForceMappingData.controlAxes_B = [
+             1,0,0
+            ,0,1,0
+            ,0,0,1
+        ]
+
     def SetthrFiringSchmitt(self):
-        self.thrFiringSchmittData.thrForceInMsgName = "acs_thruster_cmds_raw"
+        self.thrFiringSchmittData.thrForceInMsgName = "acs_thruster_cmds_mapped"
         self.thrFiringSchmittData.onTimeOutMsgName = "acs_thruster_cmds"
         self.thrFiringSchmittData.thrConfInMsgName = "rcs_config_data"
         self.thrFiringSchmittData.level_on = 0.50
@@ -1512,7 +1506,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetCSSWlsEstFSWConfig()
         self.SetsunSafePoint()
         self.SetMRP_Steering()
-        self.SetsunSafeACS()
         self.SetattMnvrPoint()
         self.SetMRP_SteeringRWA()
         self.SetMRP_PD()
@@ -1528,6 +1521,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetRWMotorTorque()
         self.SetRWANullSpaceData()
         self.SetthrustRWDesat()
+        self.SetthrForceMapping()
         self.SetthrFiringSchmitt()
         self.SetAttUKF()
         # Guidance FSW Objects
