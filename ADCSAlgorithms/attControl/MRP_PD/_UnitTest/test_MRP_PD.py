@@ -143,7 +143,7 @@ def mrp_PD_tracking(show_plots):
         [1.395, -3.555, 1.935],
         [1.395, -3.555, 1.935],
         [1.395, -3.555, 1.935]
-    ]
+    ]*(-1)
 
     # compare the module results to the truth values
     accuracy = 1e-12
