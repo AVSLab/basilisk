@@ -1073,7 +1073,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.clockSynchData.outputBufferCount = 2
     
     def SetVehicleConfigData(self):
-        BS = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0]
+        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
         self.VehConfigData.BS = BS
         Inertia = [700.0, 0.0, 0.0, 0.0, 700.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
         self.VehConfigData.ISCPntB_S = Inertia
@@ -1284,8 +1284,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
 
         self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
-        self.MRP_FeedbackRWAData.inputRWConfigData = "rwa_config_data"
-        self.MRP_FeedbackRWAData.inputVehicleConfigDataName = "adcs_config_data"
+        self.MRP_FeedbackRWAData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.MRP_FeedbackRWAData.vehConfigInMsgName = "adcs_config_data"
         self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
         self.MRP_FeedbackRWAData.inputRWSpeedsName = "reactionwheel_output_states"
         self.MRP_FeedbackRWAData.inputRWsAvailDataName = "rw_availability"

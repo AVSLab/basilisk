@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "SimCode/utilities/astroConstants.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+
 #include <string.h>
 #include <math.h>
 
@@ -58,19 +59,19 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
-    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                              sizeof(vehicleConfigData), moduleID);
+    ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
+                                                 sizeof(vehicleConfigData), moduleID);
 
-    if(strlen(ConfigData->inputRWConfigData) > 0) {
-        ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
-                                                       sizeof(RWConstellation), moduleID);
+    if(strlen(ConfigData->rwParamsInMsgName) > 0) {
+        ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
+                                                       sizeof(RWConfigParams), moduleID);
         ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                          sizeof(RWSpeedData), moduleID);
         ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
                                                          sizeof(RWAvailabilityData), moduleID);
     } else {
-        ConfigData->numRW = 0;
-        ConfigData->inputRWConfID = -1;
+        ConfigData->rwConfigParams.numRW = 0;
+        ConfigData->rwParamsInMsgID = -1;
         ConfigData->inputRWSpeedsID = -1;
         ConfigData->inputRWsAvailID = -1;
     }
@@ -83,33 +84,19 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    RWConstellation localRWData;
-    int i;
     uint64_t clockTime;
     uint32_t readSize;
-    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
-
-    if (ConfigData->inputRWConfID >= 0) {
-        /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
-                    sizeof(RWConstellation), &localRWData, moduleID);
-        ConfigData->numRW = localRWData.numRW;
-        ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                    sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-
-        for(i=0; i<ConfigData->numRW; i=i+1)
-        {
-            ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-            m33MultV3(RECAST3X3 sc.BS,
-                      localRWData.reactionWheels[i].gsHat_S,
-                      &ConfigData->GsMatrix[i*3]);
-        }
-    }
-
-    ConfigData->priorTime = 0;              /* reset the prior time flag state.  If set
-                                             to zero, the control time step is not evaluated on the
-                                             first function call */
-    v3SetZero(ConfigData->z);               /* reset the integral measure of the rate tracking error */
+    vehicleConfigData sc;
+    ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
+                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+    for (int i=0; i < 9; i++){
+        ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
+    };
+    
+    /* Reset the prior time flag state.  If set to zero, the control time step is not evaluated on the first function call */
+    ConfigData->priorTime = 0;
+    /* Reset the integral measure of the rate tracking error */
+    v3SetZero(ConfigData->z);
     v3SetZero(ConfigData->int_sigma);
 }
 
@@ -123,7 +110,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
-    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+    //vehicleConfigData   sc;                 /*!< spacecraft configuration message */
     RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityData  wheelsAvailability; /*!< Reaction wheel availability */
 
@@ -139,32 +126,36 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     double              temp;
     int                 i;
     double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
+
+
+
+    /*! Begin method steps*/
+    /*! - Read the input messages */
+    if ((ConfigData->priorTime == 0) && (ConfigData->rwParamsInMsgID >= 0)) {
+        /*! - Read static RW config data message and store it in module variables*/
+        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+    }
+    
+    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
+                sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
+    if(ConfigData->rwConfigParams.numRW > 0) {
+        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
+                    sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+        /* #TODO: Do something with availability information */
+        ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
+                    sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
+    }
     
     /* compute control update time */
     if (ConfigData->priorTime != 0) {       /* don't compute dt if this is the first call after a reset */
-        dt = (callTime - ConfigData->priorTime)*NANO2SEC;
+        dt = (callTime - ConfigData->priorTime) * NANO2SEC;
         if (dt > 10.0) dt = 10.0;           /* cap the maximum control time step possible */
         if (dt < 0.0) dt = 0.0;             /* ensure no negative numbers are used */
     } else {
         dt = 0.;                            /* set dt to zero to not use integration on first function call */
     }
     ConfigData->priorTime = callTime;
-
-
-    /*! Begin method steps*/
-    /*! - Read the input messages */
-    ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    if(ConfigData->numRW > 0) {
-        ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                    sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
-        
-        /* #TODO: Do something with availability information */
-        ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
-                    sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
-    }
 
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
@@ -180,7 +171,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
             v3Scale(ConfigData->integralLimit / temp, ConfigData->int_sigma, ConfigData->int_sigma);
         }
         v3Subtract(guidCmd.omega_BR_B, ConfigData->domega0, v3);
-        m33MultV3(RECAST3X3 sc.ISCPntB_B, v3, v3_1);
+        m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3, v3_1);
         v3Add(ConfigData->int_sigma, v3_1, ConfigData->z);
     } else {
         /* integral feedback is turned off through a negative gain setting */
@@ -196,12 +187,12 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     v3Scale(ConfigData->P, v3_2, v3);                       /* +P*Ki*z */
     v3Add(v3, Lr, Lr);
 
-    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
-    for(i = 0; i < ConfigData->numRW; i++)
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
+    for(i = 0; i < ConfigData->rwConfigParams.numRW; i++)
     {
         if (wheelsAvailability.wheelAvailability[i] == 1){ /* check if wheel is available */
-            wheelGs = &(ConfigData->GsMatrix[i*3]);
-            v3Scale(ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
+            wheelGs = &(ConfigData->rwConfigParams.GsMatrix_B[i*3]);
+            v3Scale(ConfigData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
                     wheelGs, v3_1);
             v3Add(v3_1, v3, v3);
         }
@@ -214,7 +205,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 
     v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3);
     v3Subtract(v3, guidCmd.domega_RN_B, v3_1);
-    m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
+    m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
     v3Add(v3, Lr, Lr);
 
     v3Add(L, Lr, Lr);                                       /* +L */
