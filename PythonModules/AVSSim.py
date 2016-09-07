@@ -52,7 +52,6 @@ import reactionwheel_dynamics
 import star_tracker
 # FSW algorithms that we want to call
 import cssComm
-import alg_contain
 import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
@@ -83,6 +82,7 @@ import attTrackingError
 import simpleDeadband
 import thrForceMapping
 import rwMotorTorque
+import rwConfigData
 
 import simSetupRW                 # RW simulation setup utilties
 import simSetupThruster           # Thruster simulation setup utilties
@@ -319,6 +319,10 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.rwMotorTorqueData = rwMotorTorque.rwMotorTorqueConfig()
         self.rwMotorTorqueWrap = self.setModelDataWrap(self.rwMotorTorqueData)
         self.rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+
+        self.rwConfigData = rwConfigData.rwConfigData()
+        self.rwConfigWrap = self.setModelDataWrap(self.rwConfigData)
+        self.rwConfigWrap.ModelTag = "rwConfigData"
         
         self.thrForceMappingData = thrForceMapping.thrForceMappingConfig()
         self.thrForceMappingWrap = self.setModelDataWrap(self.thrForceMappingData)
@@ -326,7 +330,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # Initialize flight software modules.
         self.InitAllFSWObjects()
-        self.AddModelToTask("initOnlyTask", self.VehConfigDataWrap, self.VehConfigData, 1)
+        self.AddModelToTask("initOnlyTask", self.VehConfigDataWrap, self.VehConfigData, 2)
+        self.AddModelToTask("initOnlyTask", self.rwConfigWrap, self.rwConfigData, 2)
 
         # Add flight software modules to task groups.
         self.AddModelToTask("sunSafeFSWTask", self.IMUCommWrap, self.IMUCommData, 10)
@@ -578,6 +583,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                        msgSizeRW, 2, "RWConstellation")
         self.TotalSim.WriteMessageData("rwa_config_data", msgSizeRW, 0, rwClass)
 
+        self.rwConfigData.rwConstellation = rwClass
+
         
         rcsClass = vehicleConfigData.ThrusterCluster()
         rcsPointer = vehicleConfigData.ThrusterPointData()
@@ -626,9 +633,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                        msgSizeThrust, 2, "ThrusterCluster")
         self.TotalSim.WriteMessageData("rcs_config_data", msgSizeThrust, 0, rcsClass)
 
+    def SetRWConfigData(self):
+        self.rwConfigData.rwConstellationInMsgName = "rwa_config_data"
+        self.rwConfigData.vehConfigInMsgName = "adcs_config_data"
+        self.rwConfigData.rwParamsOutMsgName = "rwa_config_data_parsed"
 
-
-    def setRwFSWDeviceAvailability(self):
+    def SetRwFSWDeviceAvailability(self):
         rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
         avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
@@ -1063,7 +1073,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.clockSynchData.outputBufferCount = 2
     
     def SetVehicleConfigData(self):
-        BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
+        BS = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, -1.0]
         self.VehConfigData.BS = BS
         Inertia = [700.0, 0.0, 0.0, 0.0, 700.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
         self.VehConfigData.ISCPntB_S = Inertia
@@ -1159,7 +1169,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         #self.simpleDeadbandData.inputGuidName = "nom_att_guid_out"
         self.simpleDeadbandData.outputDataName = "db_att_guid_out"
         self.simpleDeadbandData.innerAttThresh = 4.0 * (math.pi / 180.)
-        self.simpleDeadbandData.outerAttThresh = 17.5 * (math.pi / 180.)
+        self.simpleDeadbandData.outerAttThresh = 4.0 * (math.pi / 180.)
         self.simpleDeadbandData.innerRateThresh = 0.1 * (math.pi / 180.)
         self.simpleDeadbandData.outerRateThresh = 0.1 * (math.pi / 180.)
 
@@ -1496,7 +1506,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def InitAllFSWObjects(self):
         self.SetVehicleConfigData()
         self.SetLocalConfigData()
-        self.setRwFSWDeviceAvailability()
+        self.SetRWConfigData()
+        self.SetRwFSWDeviceAvailability()
         self.SetCSSDecodeFSWConfig()
         self.SetIMUCommData()
         self.SetSTCommData()
