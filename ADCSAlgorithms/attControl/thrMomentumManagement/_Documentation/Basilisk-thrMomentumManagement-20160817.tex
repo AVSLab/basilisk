@@ -28,6 +28,7 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial document creation & H. Schaub \\
+0.1 & Updated the sign of $\leftexp{B}{\Delta\bm H}$ & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -75,7 +76,7 @@ Because the inertial attitude of the spacecraft is assumed to be held nominally 
 \section{{\tt thrMomentumManagement}  Module Description}
 Figure~\ref{fig:Fig2} illustrates the function of the RW angular momentum dumping management module.  Let $h_{s,\text{min}}$ be lower bound that the RW momentum dumping strategy should achieve.  The desired net change in inertial angular momentum is thus determined through
 \begin{equation}
-	\leftexp{B}{\Delta}\bm H = \leftexp{B}{\bm h}_{s} \frac{
+	\leftexp{B}{\Delta}\bm H = -\leftexp{B}{\bm h}_{s} \frac{
 		|\bm h_{s}| - h_{s,\text{min}}
 	}{|\bm h_{s}|} 
 \end{equation}

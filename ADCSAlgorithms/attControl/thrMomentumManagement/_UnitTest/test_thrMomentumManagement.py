@@ -189,7 +189,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     else:
         trueVector = [
                    [5.914369484146579,2.858300248464629,9.407020039211664]
-                   ]
+                   ]*(-1)
 
         # else:
         #     testFailCount+=1

@@ -22,7 +22,7 @@ sys.path.append(path + '/../PythonModules/')
 import AVSSim
 import matplotlib.pyplot as plt
 #plt.rcParams.bbox_inches="tight"
-from mpl_toolkits.mplot3d import Axes3D
+# from mpl_toolkits.mplot3d import Axes3D
 import ctypes
 import math
 import MessagingAccess

@@ -220,6 +220,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Subtract(Lr, v3, Lr);                                 /* -[I](d(omega_B^ast/R)/dt + d(omega_r)/dt - omega x omega_r) */
 
     v3Add(L, Lr, Lr);                                       /* +L */
+    v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
     /* store the output message */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);

@@ -156,8 +156,8 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
                 sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
 
 
-    /* Lr is assumed to be a negative torque onto the body */
-    v3Scale(+1.0, Lr_B, Lr_B);
+    /* Lr is assumed to be a positive torque onto the body */
+    v3Scale(-1.0, Lr_B, Lr_B);
 
     /* clear the RW motoro torque output array */
     memset(us,0x0,MAX_EFF_CNT*sizeof(double));

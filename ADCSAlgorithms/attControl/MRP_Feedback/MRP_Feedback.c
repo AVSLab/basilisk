@@ -206,6 +206,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     v3Add(v3, Lr, Lr);
 
     v3Add(L, Lr, Lr);                                       /* +L */
+    v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 
     /*
