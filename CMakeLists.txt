@@ -162,6 +162,7 @@ endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
 
 # Add include directories
 include_directories(SimCode)
+include_directories(External)
 
 # Set options used by "FindBoost.cmake".
 # Either specify BOOST_ROOT or BOOST_INCLUDEDIR and BOOST_LIBRARYDIR.
