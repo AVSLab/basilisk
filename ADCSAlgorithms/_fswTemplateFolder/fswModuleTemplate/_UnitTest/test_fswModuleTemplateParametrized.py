@@ -25,6 +25,7 @@ import pytest
 import sys, os, inspect
 import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -48,9 +49,9 @@ import macros
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("param1, param2", [
-    (1, 1),
-    (1, 3),
-    (2, 2),
+     (1, 1)
+    ,(1, 3)
+    ,(2, 2)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -207,18 +208,43 @@ def fswModuleTestFunction(show_plots, param1, param2):
  
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
+    # plot a sample variable.
+    plt.figure(1)
+    plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
+             label='Case param1 = ' + str(param1) + ' and param2 = ' + str(param2))
+    plt.legend(loc='upper left')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Variable Description [unit]')
     if show_plots:
-        # plot a sample variable.
-        plt.figure(1)
-        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Variable Description [unit]')
         plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag
+
+    # export a plot to be included in the documentation
+    unitTestSupport.writeFigureLaTeX(
+        "testPlot",
+        "Illustration of Sample Plot",
+        plt,
+        "width=0.5\\textwidth",
+        path)
+
+    # write TeX Tables for documentation
+    resultTable = moduleOutput
+    resultTable[:,0] = macros.NANO2SEC*resultTable[:,0]
+    diff = np.delete(moduleOutput,0,1) - trueVector
+    resultTable = np.insert(resultTable,range(2,2+len(diff.transpose())), diff, axis=1)
+
+    tableName = "test" + str(param1) + str(param2)      # make this a unique name
+    tableHeaders = ["time [s]", "Output 1", "Error", "Output 2", "Error", "Output 3 $\\bm r$", "Error"]
+    caption = 'Sample output table for param1 = ' + str(param1) + ' and param2 = ' + str(param2) + '.'
+    unitTestSupport.writeTableLaTeX(
+        tableName,
+        tableHeaders,
+        caption,
+        resultTable,
+        path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -231,7 +257,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 #
 if __name__ == "__main__":
     test_module(              # update "module" in function name
-                 True,
+                 False,
                  1,           # param1 value
                  1            # param2 value
                )
