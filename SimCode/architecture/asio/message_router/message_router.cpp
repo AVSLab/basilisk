@@ -70,6 +70,7 @@ bool MessageRouter::initializeServer(std::string hostName, uint32_t portStart)
     {
         serverLinked = serverConnection->acceptConnections(hostName, portStart);
     }
+	serverConnection->m_stream->set_option(boost::asio::ip::tcp::no_delay(false));
     theConnection = serverConnection;
     return(serverLinked);
 }
@@ -87,6 +88,7 @@ bool MessageRouter::initializeClient(std::string hostName, uint32_t portStart)
     {
         clientLinked = !(clientConnection->connect(hostName, portStart));
     }
+	clientConnection->m_stream->set_option(boost::asio::ip::tcp::no_delay(false));
     theConnection = clientConnection;
     return(clientLinked);
 }
