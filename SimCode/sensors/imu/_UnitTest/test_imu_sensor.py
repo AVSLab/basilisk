@@ -52,25 +52,30 @@ import sim_model
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+testNames = ['zero','bias','noise','discretization','misalignment','CoM offset','walk bounds']
+
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useFlag, biasOn, noiseOn", [
-    (False,False,False),
-    (False,True,False),
+@pytest.mark.parametrize("useFlag, testCase", [
+    (False,testNames[0]),
+    (False,testNames[1]),
+    (False,testNames[2]),
 ])
+
 # provide a unique test method name, starting with test_
-def test_unitSimIMU(show_plots, useFlag, biasOn, noiseOn):
+def test_unitSimIMU(show_plots, useFlag, testCase):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimIMU(show_plots, useFlag, biasOn, noiseOn)
+    [testResults, testMessage] = unitSimIMU(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
 
-def unitSimIMU(show_plots, useFlag, biasOn, noiseOn):
+def unitSimIMU(show_plots, useFlag, testCase):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcName = "TestProcess"  # arbitrary name (don't change)
 
+    # initialize SimulationBaseClass
     unitSim = SimulationBaseClass.SimBaseClass()
     unitSim.TotalSim.terminateSimulation()
 
@@ -79,81 +84,166 @@ def unitSimIMU(show_plots, useFlag, biasOn, noiseOn):
     unitProc = unitSim.CreateNewProcess(unitProcName)
     unitProc.addTask(unitSim.CreateNewTask(unitTaskName, unitProcRate))
 
-    # module specific data
-    def setCorruption(biasOn,noiseOn):
-        if biasOn:
-            rotBiasValue = 1.0
-            transBiasValue = 1.0
-        else:
-            rotBiasValue = 0.0
-            transBiasValue = 0.0
-        if noiseOn:
-            rotNoiseStdValue = 0.333 # 0.000001
-            transNoiseStdValue = 0.333 # 1.0E-6
-        else:
-            rotNoiseStdValue = 0.0
-            transNoiseStdValue = 0.0
-        return (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue)
 
-    testModule = imu_sensor.ImuSensor()
-    testModule.ModelTag = "imusensor"
-    testModule.SensorPosStr = imu_sensor.DoubleVector([0.0, 0.0, 0.0])
-    testModule.setStructureToPlatformDCM(0.0, 0.0, 0.0)
-    testModule.accelLSB = 0.0 # 2.77E-4 * 9.80665
-    testModule.gyroLSB = 0.0 # 8.75E-3 * math.pi / 180.0
+    # configure module
+    ImuSensor = imu_sensor.ImuSensor()
+    ImuSensor.ModelTag = "imusensor"
+    ImuSensor.SensorPosStr = imu_sensor.DoubleVector([0.0, 0.0, 0.0])
+    ImuSensor.setStructureToPlatformDCM(0.0, 0.0, 0.0)
+    ImuSensor.accelLSB = 0.0 # 2.77E-4 * 9.80665
+    ImuSensor.gyroLSB = 0.0 # 8.75E-3 * math.pi / 180.0
+    ImuSensor.senRotBias = [0.0] * 3
+    ImuSensor.senRotNoiseStd = [0.0] * 3 # 0.000001
+    ImuSensor.senTransBias = [0.0] * 3
+    ImuSensor.senTransNoiseStd = [0.0] * 3 # 1.0E-6
 
-    (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue) = setCorruption(biasOn,noiseOn)
+    # configure MassPropsData
+    MassPropsData = six_dof_eom.MassPropsData()
+    MassPropsData.Mass = -99
+    MassPropsData.CoM = [0,0,0]
+    MassPropsData.InertiaTensor = [-99,0,0,0,-99,0,0,0,-99]
+    MassPropsData.T_str2Bdy = [1,0,0,0,1,0,0,0,1]
 
-    testModule.senRotBias = [rotBiasValue, rotBiasValue, rotBiasValue]
-    testModule.senRotNoiseStd = [rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue]
-    testModule.senTransBias = [transBiasValue, transBiasValue, transBiasValue]
-    testModule.senTransNoiseStd = [transNoiseStdValue, transNoiseStdValue, transNoiseStdValue]
+    # configure module input message
+    StateCurrent = six_dof_eom.OutputStateData()
+    StateCurrent.r_N = [0,0,0]
+    StateCurrent.v_N = [0,0,0]
+    StateCurrent.sigma = [0,0,0]
+    StateCurrent.omega = [0,0,0]
+    # StateCurrent.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
+    # sim_model.doubleArray_setitem(StateCurrent.T_str2Bdy, 0, 1.0)
+    StateCurrent.TotalAccumDVBdy = [0,0,0]
+    StateCurrent.MRPSwitchCount = 0
 
-    # add objects to the task process
-    unitSim.AddModelToTask(unitTaskName, testModule)
+    # get module output fields
+    ImuSensorOutput = imu_sensor.ImuSensorOutput()
+    fieldNames = list()
+    for fieldName in dir(ImuSensorOutput):
+        if fieldName.find('__') < 0 and fieldName.find('this') < 0:
+            fieldNames.append(fieldName)
+
+    trueVector = dict()
+
+    # configure test
+    if testCase == 'zero':
+        # keep everything zero
+        simStopTime = 0.5
+        for moduleOutputName in fieldNames:
+            trueVector[moduleOutputName] = [
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0]
+                ]
+
+    elif testCase == 'bias':
+        # turn static bias on
+        ImuSensor.senRotBias = [0.01,0.02,-0.03]
+        ImuSensor.senTransBias = [0.001,0.002,-0.003]
+        simStopTime = 0.5
+        trueVector['AccelPlatform'] = [
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03]
+        ]
+
+        trueVector['AngVelPlatform'] = [
+            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
+            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
+            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
+            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
+            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02]
+        ]
+
+        trueVector['DRFramePlatform'] = [
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
+            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03]
+        ]
+
+        trueVector['DVFramePlatform'] = [
+            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
+            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
+            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
+            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
+            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04]
+        ]
+
+    elif testCase == 'noise':
+        # turn noise on
+        senRotNoiseStd = [1.0,2.0,3.0]
+        ImuSensor.senRotNoiseStd = senRotNoiseStd
+        senTransNoiseStd = [10.0,20.0,30.0]
+        ImuSensor.senTransNoiseStd = senTransNoiseStd
+        simStopTime = 10000.0
+        trueVector['AccelPlatform'] = senTransNoiseStd
+        trueVector['AngVelPlatform'] = senRotNoiseStd
+        trueVector['DRFramePlatform'] = [x*0.1 for x in senRotNoiseStd]
+        trueVector['DVFramePlatform'] = [x*0.1 for x in senTransNoiseStd]
+
+    else:
+        raise Exception('invalid test case')
 
 
-    # configure and write mass props data
-    props = six_dof_eom.MassPropsData()
-    props.Mass = -99
-    props.CoM = [0,0,0]
-    props.InertiaTensor = [-99,0,0,0,-99,0,0,0,-99]
-    props.T_str2Bdy = [1,0,0,0,1,0,0,0,1]
+    # add module to the task
+    unitSim.AddModelToTask(unitTaskName, ImuSensor)
+
+    # configure and write spacecraft_mass_props message
     unitSim.TotalSim.CreateNewMessage("TestProcess", "spacecraft_mass_props", 8*3*4, 2)
-    unitSim.TotalSim.WriteMessageData("spacecraft_mass_props", 8*3*4, 1, props )
+    unitSim.TotalSim.WriteMessageData("spacecraft_mass_props", 8*3*4, 1, MassPropsData )
 
-
-    # configure command message
+    # configure and write inertial_state_output message
     unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*4, 2)
-
-    cmd = six_dof_eom.OutputStateData()
-    cmd.r_N = [0,0,0]
-    cmd.v_N = [0,0,0]
-    cmd.sigma = [0,0,0]
-    cmd.omega = [0,0,0]
-    # cmd.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
-    # sim_model.doubleArray_setitem(cmd.T_str2Bdy, 0, 1.0)
-    cmd.TotalAccumDVBdy = [0,0,0]
-    cmd.MRPSwitchCount = 0
-
-    # write module input message
-    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*4, 1, cmd )
+    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*4, 1, StateCurrent )
 
     # log module output message
-    unitSim.TotalSim.logThisMessage(testModule.OutputDataMsg, unitProcRate)
+    unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
 
     # run simulation
     unitSim.InitializeSimulation()
-    unitSim.ConfigureStopTime(macros.sec2nano(0.5))  # Just a simple run to get initial conditions from ephem
+    unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))  # Just a simple run to get initial conditions from ephem
     unitSim.ExecuteSimulation()
 
-    # collect and print the module output data
-    data = unitSim.pullMessageLogData(testModule.OutputDataMsg + '.' + "AngVelPlatform", range(3))
-    print "\n\ngyro out: \n"
-    print data
-    data = unitSim.pullMessageLogData(testModule.OutputDataMsg + '.' + "AccelPlatform", range(3))
-    print "\n\naccel out: \n"
-    print data
+    # pull message log data and assemble into dict
+    moduleOutput = dict()
+    for moduleOutputName in fieldNames:
+        moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + moduleOutputName, range(3))
+        print "\n\n" + moduleOutputName
+        print str(moduleOutput[moduleOutputName]) + "\n\n"
+
+
+    # compare the module results to the truth values
+    accuracy = 1e-12
+    testFail = False
+    for moduleOutputName in fieldNames:
+        if testCase == 'noise':
+            for i in range(0,3):
+                print str(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) + '\t' + \
+                      str(numpy.abs(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1) + '\t' + \
+                      str(numpy.std(moduleOutput[moduleOutputName][:,i+1])) + '\t' + \
+                      str(trueVector[moduleOutputName][i]) + '\t' + \
+                      str(numpy.abs(numpy.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1)
+
+
+                if numpy.abs(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
+                                or numpy.abs(numpy.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
+                    testFail = True
+        else:
+            for i in range(0,len(trueVector[moduleOutputName])):
+                if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], 3, accuracy):
+                    testFail = True
+
+        if testFail:
+            testFailCount += 1
+            testMessages.append("FAILED: " + ImuSensor.ModelTag + " Module failed " +
+                                moduleOutputName + " unit test at t=" +
+                                str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
+                                "sec\n")
 
 
     numpy.set_printoptions(precision=16)
@@ -162,7 +252,7 @@ def unitSimIMU(show_plots, useFlag, biasOn, noiseOn):
     if testFailCount == 0:
         print   "PASSED "
 
-        # each test method requires a single assert method to be called
+    # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
@@ -175,6 +265,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         False, # show_plots
         False, # useFlag
-        False, # biasOn
-        False # noiseOn
+        testNames[2] # testCase
     )
