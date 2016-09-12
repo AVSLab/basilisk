@@ -36,7 +36,7 @@ typedef struct{
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    RWConstellation rwConstellation;
+    RWConstellation rwConstellation; /* struct used to populate initial RW config parameters are  in structural S frame */
     /* declare module IO interfaces */
     char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellation input message*/
     int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellation incoming message */
