@@ -27,7 +27,7 @@ import matplotlib
 
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 import ctypes
 import math
 import csv
@@ -47,6 +47,10 @@ import imu_sensor
 import six_dof_eom
 import sim_model
 
+# methods
+def listStack(vec,simStopTime,unitProcRate):
+    return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -60,6 +64,7 @@ testNames = ['zero','bias','noise','discretization','misalignment','CoM offset',
     (False,testNames[0]),
     (False,testNames[1]),
     (False,testNames[2]),
+    (False,testNames[3]),
 ])
 
 # provide a unique test method name, starting with test_
@@ -129,7 +134,48 @@ def unitSimIMU(show_plots, useFlag, testCase):
         # keep everything zero
         simStopTime = 0.5
         for moduleOutputName in fieldNames:
-            trueVector[moduleOutputName] = [
+            trueVector[moduleOutputName] = listStack([0.0,0.0,0.0],simStopTime,unitProcRate)
+
+    elif testCase == 'bias':
+        # turn static bias on
+        simStopTime = 0.5
+        ImuSensor.senRotBias = [0.01,0.02,-0.03]
+        ImuSensor.senTransBias = [0.001,0.002,-0.003]
+        trueVector['AccelPlatform'] = listStack([1.0e-03,2.0e-03,-3.0e-03],simStopTime,unitProcRate)
+        trueVector['AngVelPlatform'] = listStack([1.0e-02,2.0e-02,-3.0e-02],simStopTime,unitProcRate)
+        trueVector['DRFramePlatform'] = listStack([1.0e-03,2.0e-03,-3.0e-03],simStopTime,unitProcRate)
+        trueVector['DVFramePlatform'] = listStack([1.0e-04,2.0e-04,-3.0e-04],simStopTime,unitProcRate)
+
+    elif testCase == 'noise':
+        # turn noise on
+        simStopTime = 10000.0
+        senRotNoiseStd = [1.0,2.0,3.0]
+        ImuSensor.senRotNoiseStd = senRotNoiseStd
+        senTransNoiseStd = [10.0,20.0,30.0]
+        ImuSensor.senTransNoiseStd = senTransNoiseStd
+        trueVector['AccelPlatform'] = senTransNoiseStd
+        trueVector['AngVelPlatform'] = senRotNoiseStd
+        trueVector['DRFramePlatform'] = [x*0.1 for x in senRotNoiseStd]
+        trueVector['DVFramePlatform'] = [x*0.1 for x in senTransNoiseStd]
+
+    elif testCase == 'discretization':
+        # apply discretization
+        simStopTime = 0.5
+
+        accelLSB = 0.0
+        # gyroLSB = 0.0123
+        gyroLSB = 0.0123
+        ImuSensor.accelLSB = accelLSB # 2.77E-4 * 9.80665
+        ImuSensor.gyroLSB = gyroLSB # 8.75E-3 * math.pi / 180.0
+
+        omega = [0.321,0.231,0.312]
+        StateCurrent.omega = omega
+
+        omegaDiscretized = np.floor(np.asarray(omega)/gyroLSB)*gyroLSB
+
+        trueVector['AngVelPlatform'] = listStack(omegaDiscretized,simStopTime,unitProcRate)
+
+        trueVector['AccelPlatform'] = [
                 [0.0,   0.0,  0.0],
                 [0.0,   0.0,  0.0],
                 [0.0,   0.0,  0.0],
@@ -137,54 +183,19 @@ def unitSimIMU(show_plots, useFlag, testCase):
                 [0.0,   0.0,  0.0]
                 ]
 
-    elif testCase == 'bias':
-        # turn static bias on
-        ImuSensor.senRotBias = [0.01,0.02,-0.03]
-        ImuSensor.senTransBias = [0.001,0.002,-0.003]
-        simStopTime = 0.5
-        trueVector['AccelPlatform'] = [
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03]
-        ]
-
-        trueVector['AngVelPlatform'] = [
-            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
-            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
-            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
-            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02],
-            [1.00000000e-02,   2.00000000e-02,  -3.00000000e-02]
-        ]
-
-        trueVector['DRFramePlatform'] = [
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03],
-            [1.00000000e-03,   2.00000000e-03,  -3.00000000e-03]
-        ]
-
         trueVector['DVFramePlatform'] = [
-            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
-            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
-            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
-            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04],
-            [1.00000000e-04,   2.00000000e-04,  -3.00000000e-04]
-        ]
-
-    elif testCase == 'noise':
-        # turn noise on
-        senRotNoiseStd = [1.0,2.0,3.0]
-        ImuSensor.senRotNoiseStd = senRotNoiseStd
-        senTransNoiseStd = [10.0,20.0,30.0]
-        ImuSensor.senTransNoiseStd = senTransNoiseStd
-        simStopTime = 10000.0
-        trueVector['AccelPlatform'] = senTransNoiseStd
-        trueVector['AngVelPlatform'] = senRotNoiseStd
-        trueVector['DRFramePlatform'] = [x*0.1 for x in senRotNoiseStd]
-        trueVector['DVFramePlatform'] = [x*0.1 for x in senTransNoiseStd]
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0],
+                [0.0,   0.0,  0.0]
+                ]
+        trueVector['DRFramePlatform'] = [
+            [-1.20000000e-04,  -9.60000000e-04,  -4.50000000e-04],
+             [-1.20000000e-04,  -9.60000000e-04,  -4.50000000e-04],
+             [-1.20000000e-04,  -9.60000000e-04,  -4.50000000e-04],
+             [-1.20000000e-04,  -9.60000000e-04,  -4.50000000e-04],
+             [-1.20000000e-04,  -9.60000000e-04,  -4.50000000e-04]]
 
     else:
         raise Exception('invalid test case')
@@ -223,16 +234,10 @@ def unitSimIMU(show_plots, useFlag, testCase):
     for moduleOutputName in fieldNames:
         if testCase == 'noise':
             for i in range(0,3):
-                print str(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) + '\t' + \
-                      str(numpy.abs(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1) + '\t' + \
-                      str(numpy.std(moduleOutput[moduleOutputName][:,i+1])) + '\t' + \
-                      str(trueVector[moduleOutputName][i]) + '\t' + \
-                      str(numpy.abs(numpy.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1)
-
-
-                if numpy.abs(numpy.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
-                                or numpy.abs(numpy.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
+                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
+                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
                     testFail = True
+
         else:
             for i in range(0,len(trueVector[moduleOutputName])):
                 if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], 3, accuracy):
@@ -246,7 +251,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
                                 "sec\n")
 
 
-    numpy.set_printoptions(precision=16)
+    np.set_printoptions(precision=16)
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -265,5 +270,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         False, # show_plots
         False, # useFlag
-        testNames[2] # testCase
+        testNames[0] # testCase
     )
