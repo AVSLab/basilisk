@@ -225,7 +225,7 @@ endif ()
 # Manually create list of libraries depending on system
 if(WIN32)
 	set(library_dependencies 
-      	${CMAKE_SOURCE_DIR}/External/cspice/lib/win${_arch_suffix}_cspice.lib
+      	${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice_win${_arch_suffix}.lib
 		${Boost_LIBRARIES}
 	)
 elseif(APPLE)
@@ -265,11 +265,11 @@ set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory("SimCode/utilities")
-add_subdirectory("SimCode/architecture/messaging")
 add_subdirectory("SimCode")
 add_subdirectory("ADCSAlgorithms/messaging")
 add_subdirectory("ADCSAlgorithms")
 add_subdirectory("Utilities/pyswice")
+add_subdirectory("SimCode/architecture/messaging")
 
 #find_package(Doxygen)
 #if(DOXYGEN_FOUND)
