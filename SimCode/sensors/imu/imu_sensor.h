@@ -45,7 +45,8 @@ public:
     void computePlatformDV(uint64_t CurrentTime);
     void applySensorErrors(uint64_t CurrentTime);
     void applySensorDiscretization(uint64_t CurrentTime);
-    
+	void applySensorSaturation(uint64_t CurrentTime);
+	
 public:
     std::string InputStateMsg;                  /*!< Message name for spacecraft state */
     std::string InputMassMsg;                   /*!< Mass properties message name */
@@ -56,6 +57,8 @@ public:
     double senRotNoiseStd[3];           /// [r/s] Rotational sensor standard deviation
     double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
     double senTransNoiseStd[3];         /// [m/s2] Accel sensor standard deviation
+	double senRotMax;
+	double senTransMax;
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
     

@@ -179,6 +179,28 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     
 }
 
+void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
+{
+	double dt;
+
+	dt = (CurrentTime - PreviousTime)*1.0E-9;
+
+	for(uint32_t i=0; i<3; i++)
+	{
+		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
+			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
+		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
+			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
+		}
+		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
+			this->sensedValues.AccelPlatform[i] = this->senTransMax;
+		} else if (this->sensedValues.AccelPlatform[i] < -this->senTransMax) {
+			this->sensedValues.AccelPlatform[i] = -this->senTransMax;
+		}
+	}
+
+}
+
 void ImuSensor::computePlatformDR()
 {
     
@@ -259,6 +281,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Compute sensed data */
         applySensorErrors(CurrentSimNanos);
         applySensorDiscretization(CurrentSimNanos);
+		applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
