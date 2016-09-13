@@ -69,7 +69,8 @@ function(create_symlinks destinationPath)
                         ERROR_VARIABLE output)
 
         if (NOT ${result} EQUAL 0)
-            message(FATAL_ERROR "Could not create symbolic link for: ${target} --> ${output}")
+            file( COPY ${target} DESTINATION ${destinationPath})
+            message("Could not create symbolic link for: ${target} --> ${output}.  Copied instead")
         endif()
 
     endforeach(filePath)
@@ -224,7 +225,7 @@ endif ()
 # Manually create list of libraries depending on system
 if(WIN32)
 	set(library_dependencies 
-      	${CMAKE_SOURCE_DIR}/External/cspice/lib/cspice.lib
+      	${CMAKE_SOURCE_DIR}/External/cspice/lib/win${_arch_suffix}_cspice.lib
 		${Boost_LIBRARIES}
 	)
 elseif(APPLE)
