@@ -15,7 +15,6 @@ project("AVS basilisk")
 # \arg:moduleFilePath path to the Basilisk module's resulting python package directory 
 #
 function(make_python_package FileBase FileDir moduleFilePath)
-    # Delete module folder and contents if it exists
 	
 	make_python_package_dir(${FileBase} ${FileDir})
 	# Create symlinks in the python package directory to any 
@@ -56,6 +55,7 @@ function(create_symlinks destinationPath)
         # Get OS dependent path to use in `execute_process`
         file(TO_NATIVE_PATH "${destinationPath}/${fileName}" link)
         file(TO_NATIVE_PATH "${filePath}" target)
+        file(REMOVE ${destinationPath}/${fileName})
 
         if (UNIX)
             set(command ln -s ${target} ${link})
