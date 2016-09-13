@@ -38,7 +38,7 @@ void InitializeStorage(uint32_t StorageBytes)
 int32_t CreateNewMessage(char* MessageName, uint32_t MaxSize, char* MessageStruct,
     uint64_t moduleID)
 {
-    return((uint32_t)SystemMessaging::GetInstance()->CreateNewMessage(
+    return((int32_t)SystemMessaging::GetInstance()->CreateNewMessage(
         MessageName, MaxSize, 2, MessageStruct, moduleID));
 }
 
