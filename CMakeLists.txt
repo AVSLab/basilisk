@@ -16,7 +16,6 @@ project("AVS basilisk")
 #
 function(make_python_package FileBase FileDir moduleFilePath)
     # Delete module folder and contents if it exists
-	file(REMOVE_RECURSE "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
 	
 	make_python_package_dir(${FileBase} ${FileDir})
 	# Create symlinks in the python package directory to any 
