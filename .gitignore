@@ -6,3 +6,4 @@ xml/*
 *.pyc
 lastfailed
 .idea
+**/AutoTex/
