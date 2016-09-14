@@ -44,7 +44,7 @@ public:
     /*!@brief Method does just what it says, seeds the random number generator
        @param newSeed The seed to use in the random number generator
        @return void*/
-    void setRNGSeed(uint64_t newSeed) {rGen.seed(newSeed); RNGSeed = newSeed;}
+    void setRNGSeed(uint64_t newSeed) {rGen.seed((unsigned int)newSeed); RNGSeed = newSeed;}
     /*!@brief Method returns the current random walk state from model
        @return The private currentState which is the vector of random walk values*/
     std::vector<double> getCurrentState() {return(currentState);}

@@ -194,7 +194,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     MessageHeaderData* NewHeader = reinterpret_cast<MessageHeaderData *>
     (MessagingStart);
-    uint32_t NameLength = MessageName.size();
+    uint32_t NameLength = (uint32_t)MessageName.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
         std::cerr << "Your name length for: " << MessageName <<" is too long, truncating name" <<std::endl;
@@ -202,7 +202,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->MessageName, MessageName.c_str(), NameLength);
-    NameLength = messageStruct.size();
+    NameLength = (uint32_t)messageStruct.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
         std::cerr << "Your struct name length for: " << messageStruct << " is too long, truncating name" <<std::endl;
@@ -212,7 +212,7 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     strncpy(NewHeader->messageStruct, messageStruct.c_str(), NameLength);
     NewHeader->UpdateCounter = 0;
     NewHeader->CurrentReadBuffer = 0;
-    NewHeader->MaxNumberBuffers = NumMessageBuffers;
+    NewHeader->MaxNumberBuffers = (uint32_t)NumMessageBuffers;
     NewHeader->MaxMessageSize = MaxSize;
     NewHeader->CurrentReadSize = 0;
     NewHeader->CurrentReadTime = 0;

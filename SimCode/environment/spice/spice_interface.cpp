@@ -233,7 +233,7 @@ void SpiceInterface::ComputePlanetData()
             memset(&NewPlanet, 0x0, sizeof(SpicePlanetState));
             strcpy(NewPlanet.PlanetName, it->c_str());
             //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
-            uint32_t MsgID = SystemMessaging::GetInstance()->
+            uint32_t MsgID = (uint32_t)SystemMessaging::GetInstance()->
                 CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
                 OutputBufferCount, "SpicePlanetState", moduleID);
             std::string planetFrame = *it;
@@ -362,7 +362,7 @@ std::string SpiceInterface::getCurrentTimeString()
 	}
 
 	spiceOutputBuffer = new char[allowedOutputLength];
-	timout_c(J2000Current, timeOutPicture.c_str(), allowedOutputLength, 
+	timout_c(J2000Current, timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
 		spiceOutputBuffer);
 	std::string returnTimeString = spiceOutputBuffer;
 	delete[] spiceOutputBuffer;

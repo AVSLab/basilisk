@@ -87,7 +87,7 @@ bool MessageRouter::linkProcesses()
     if(runAsServer)
     {
         processLinked = initializeServer(hostName, defaultPort);
-        uint32_t stringLength = processData.messageDest.length();
+        uint32_t stringLength = (uint32_t)processData.messageDest.length();
         std::vector<char> outData((char *) (&stringLength), (char *) &stringLength+sizeof(stringLength));
         theConnection->sendData(outData);
         outData.clear();
@@ -138,7 +138,7 @@ void MessageRouter::requestUnknownMessages()
             obtainWriteRights(messageBuffer[messCount].messageID, moduleID);
         messCount++;
     }
-    uint32_t messageLength = unknownPublisher.size()*sizeof(MessageNameIDPair);
+    uint32_t messageLength = (uint32_t)unknownPublisher.size()*sizeof(MessageNameIDPair);
     std::vector<char> outData((char *) (&messageLength),
                               (char *) &messageLength+sizeof(messageLength));
     theConnection->sendData(outData);
@@ -223,7 +223,7 @@ void MessageRouter::UpdateState(uint64_t CurrentSimNanos)
             delete [] msgBuffer;
         }
     }
-    uint32_t bufferSize = outPayload.size();
+    uint32_t bufferSize = (uint32_t)outPayload.size();
     outSize.insert(outSize.begin(), (char*) &bufferSize,
         (char*) &bufferSize + sizeof(bufferSize));
     theConnection->sendData(outSize);
