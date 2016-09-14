@@ -91,15 +91,24 @@ bool TcpServer::close(void)
 bool TcpServer::receiveData(std::vector<char> &data)
 {
     boost::system::error_code ec;
-    
+    std::vector<char> dataOut;
     m_inboundBuffer = data;
-    
-    m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
+    size_t dataReceived = 0;
+    while(dataReceived < data.size())
+    {
+        size_t dataTime = m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
+        dataOut.insert(dataOut.end(), m_inboundBuffer.begin(), m_inboundBuffer.begin() + dataTime);
+        dataReceived += dataTime;
+    }
+    if (dataReceived != data.size())
+    {
+        std::cout << "Uh oh, missing data" << std::endl;
+    }
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
     }
-    data = m_inboundBuffer;
+    data = dataOut;
 
     return true;
 }
