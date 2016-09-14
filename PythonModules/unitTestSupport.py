@@ -82,7 +82,7 @@ def isDoubleEqual(result, truth, accuracy):
 
 
 def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
-    texFileName = path+"/../_Documentation/Tables/"+tableName+".tex"
+    texFileName = path+"/../_Documentation/AutoTeX/"+tableName+".tex"
 
     # table = tabulate(trueVector,tablefmt="latex")
     texTable = open(texFileName, 'w')
@@ -105,18 +105,18 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
-    texFileName = path + "/../_Documentation/Figures/" + figureName + ".tex"
+    texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
     texFigure = open(texFileName, 'w')
 
     texFigure.write('\\begin{figure}[htbp]\n')
     texFigure.write('\centerline{\n')
-    texFigure.write('\includegraphics['+ format +']{Figures/' + figureName + '}}\n')
+    texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
     texFigure.write('\caption{' + caption + '}\n')
     texFigure.write('\label{fig:'+ figureName +'}\n')
     texFigure.write('\end{figure}')
     texFigure.close()
 
-    texFileName = path + "/../_Documentation/Figures/" + figureName + ".pdf"
+    texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
     plt.savefig(texFileName)
 
     return
