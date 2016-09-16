@@ -259,6 +259,10 @@ void MessageRouter::routeMessages()
     theConnection->receiveData(inSize);
     uint32_t stringLength;
     memcpy(&stringLength, inSize.data(), sizeof(stringLength));
+    if(stringLength == 0)
+    {
+        return;
+    }
     std::vector<char> inData(stringLength, 0xFF);
     theConnection->receiveData(inData);
     uint64_t bytesRead = 0;
