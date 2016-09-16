@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 import sys, os, inspect
 import matplotlib.pyplot as plt
-import numpy as np
+import numpy
 import pytest
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -80,7 +80,7 @@ def sunline_utilities_test(show_plots):
                 1.03469, -1.14707, -0.754928, 0.312859, 
                 0.726885, -1.06887, 1.3703, -0.86488,
                -0.303441, -0.809499, -1.71152, -0.0300513,
-               -0.293871, -2.94428, -0.102242, -0.164879,
+                0.293871, -2.94428, -0.102242, -0.164879,
                -0.787283, 1.43838, -0.241447, 0.627707]
    
     RVector = sunlineUKF.new_doubleArray(len(AMatrix))
@@ -90,9 +90,45 @@ def sunline_utilities_test(show_plots):
         sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
 
     sunlineUKF.ukfQRDJustR(AVector, 6, 4, RVector)
-    for i in range(len(AMatrix)):
-        print sunlineUKF.doubleArray_getitem(RVector, i)
+    RMatrix = []
+    for i in range(4*4):
+        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+    RBaseNumpy = numpy.array(RMatrix).reshape(4,4)
+    AMatNumpy = numpy.array(AMatrix).reshape(6,4)
+    q,r = numpy.linalg.qr(AMatNumpy)
+    for i in range(r.shape[0]):
+        if r[i,i] < 0.0:
+            r[i,:] *= -1.0
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+        testFailCount += 1
+        testMessages.append("QR Decomposition accuracy failure")
     
+    AMatrix = [1.09327, 1.10927, -0.863653, 1.32288,
+     -1.21412, -1.1135, -0.00684933, -2.43508,
+     -0.769666, 0.371379, -0.225584, -1.76492,
+     -1.08906, 0.0325575, 0.552527, -1.6256,
+     1.54421, 0.0859311, -1.49159, 1.59683]
+
+    RVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    AVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    for i in range(len(AMatrix)):
+        sunlineUKF.doubleArray_setitem(AVector, i, AMatrix[i])
+        sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
+
+    sunlineUKF.ukfQRDJustR(AVector, 5, 4, RVector)
+    RMatrix = []
+    for i in range(4*4):
+        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+    RBaseNumpy = numpy.array(RMatrix).reshape(4,4)
+    AMatNumpy = numpy.array(AMatrix).reshape(5,4)
+    q,r = numpy.linalg.qr(AMatNumpy)
+    for i in range(r.shape[0]):
+        if r[i,i] < 0.0:
+            r[i,:] *= -1.0
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+        testFailCount += 1
+        testMessages.append("QR Decomposition accuracy failure")
+
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
