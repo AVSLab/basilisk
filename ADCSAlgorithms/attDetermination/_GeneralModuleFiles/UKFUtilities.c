@@ -66,3 +66,256 @@ void ukfQRDJustR(
 
 	return;
 }
+
+void ukfLInv(
+	double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat)
+{
+	int i, j, k, mat_dim;
+	
+	mSetZero(destMat, nRow, nCol);
+	if (nRow != nCol)
+	{
+		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		return;
+	}
+	mat_dim = nRow;
+	for (i = mat_dim - 1; i >= 0; i--)
+	{
+		destMat[mat_dim*i + i] = 1.0 / sourceMat[i*mat_dim + i];
+		for (j = mat_dim - 1; j >= i + 1; j--)
+		{
+			destMat[mat_dim*j + i] = 0.0;
+			for (k = i + 1; k <= j; k++)
+			{
+				destMat[j*mat_dim + i] -= sourceMat[mat_dim*k + i] *
+					destMat[j*mat_dim + k];
+			}
+			destMat[j*mat_dim + i] *= destMat[mat_dim*i + i];
+		}
+	}
+
+
+	return;
+}
+
+void ukfUInv(
+	double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat)
+{
+	int i, j, k, mat_dim;
+
+	mSetZero(destMat, nRow, nCol);
+	if (nRow != nCol)
+	{
+		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		return;
+	}
+	mat_dim = nRow;
+	for (i = mat_dim - 1; i >= 0; i--)
+	{
+		destMat[mat_dim*i + i] = 1.0 / sourceMat[i*mat_dim + i];
+		for (j = mat_dim - 1; j >= i + 1; j--)
+		{
+			destMat[mat_dim*i + j] = 0.0;
+			for (k = i + 1; k <= j; k++)
+			{
+				destMat[i*mat_dim + j] -= sourceMat[mat_dim*i + k] *
+					destMat[k*mat_dim + j];
+			}
+			destMat[i*mat_dim + j] *= destMat[mat_dim*i + i];
+		}
+	}
+	return;
+}
+
+int32_t ukfLUD(double *sourceMat, uint32_t nRow, uint32_t nCol,
+	double *destMat, int32_t *indx)
+{
+	double vv[UKF_MAX_DIM];
+	int32_t rowIndicator, i, j, k, imax;
+	double big, dum, sum, temp;
+	double TINY = 1.0E-14;
+
+	mSetZero(destMat, nRow, nCol);
+	if (nRow != nCol)
+	{
+		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		return;
+	}
+	mCopy(sourceMat, nRow, nCol, destMat);
+	vSetZero(vv, nRow);
+	rowIndicator = 1;
+	for (i = 0; i < nRow; i++)
+	{
+		big = 0.0;
+		for (j = 0; j < nRow; j++)
+		{
+			temp = fabs(destMat[i*nRow + j]);
+			big = temp > big ? temp : big;
+		}
+		if (big < TINY)
+		{
+			printf("Singlular matrix encountered in LU decomposition.\n");
+			return -1;
+		}
+		vv[i] = 1.0 / big;
+	}
+	for (j = 0; j < nRow; j++)
+	{
+		for (i = 0; i < j; i++)
+		{
+			sum = destMat[i*nRow + j];
+			for (k = 0; k < i; k++)
+			{
+				sum -= destMat[i*nRow + k] * destMat[k*nRow + j];
+			}
+			destMat[i*nRow + j] = sum;
+		}
+		big = 0.0;
+		for (i = j; i < nRow; i++)
+		{
+			sum = destMat[i*nRow + j];
+			for (k = 0; k < j; k++)
+			{
+				sum -= destMat[i*nRow + k] * destMat[k*nRow + j];
+			}
+			destMat[i*nRow + j] = sum;
+			dum = vv[i] * fabs(sum);
+			if (dum >= big)
+			{
+				big = dum;
+				imax = i;
+			}
+		}
+		if (j != imax)
+		{
+			for (k = 0; k < nRow; k++)
+			{
+				dum = destMat[imax*nRow + k];
+				destMat[imax*nRow + k] = destMat[j*nRow + k];
+				destMat[j*nRow + k] = dum;
+			}
+			rowIndicator += 1;
+			vv[imax] = vv[j];
+		}
+		indx[j] = imax;
+		if (destMat[j*nRow + j] == 0.0)
+		{
+			destMat[j*nRow + j] = TINY;
+		}
+		if (j != nRow-1)
+		{
+			dum = 1.0 / destMat[j*nRow + j];
+			for (i = j + 1; i < nRow; i++)
+			{
+				destMat[i*nRow + j] *= dum;
+			}
+		}
+	}
+	return rowIndicator;
+}
+
+void ukfLUBckSlv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+	int32_t *indx, double *bmat, double *destMat)
+{
+	int i, ip, j;
+	int ii = -1;
+	double sum;
+
+	vSetZero(destMat, nRow);
+	if (nRow != nCol)
+	{
+		printf("Can't get a linear solution of non-square matrix.\n");
+		return;
+	}
+	vCopy(bmat, nRow, destMat);
+
+	for (i = 0; i < nRow; i++)
+	{
+		ip = indx[i];
+		sum = destMat[ip];
+		destMat[ip] = destMat[i];
+		if (ii >= 0)
+		{
+			for (j = ii; j <= i-1; j++)
+			{
+				sum -= sourceMat[i*nRow + j] * destMat[j];
+			}
+		}
+		else if (sum)
+		{
+			ii = i;
+		}
+		destMat[i] = sum;
+	}
+	for (i = nRow - 1; i >= 0; i--)
+	{
+		sum = destMat[i];
+		for (j = i + 1; j < nRow; j++)
+		{
+			sum -= sourceMat[i*nRow + j] * destMat[j];
+		}
+		destMat[i] = sum / sourceMat[i*nRow + i];
+	}
+}
+
+void ukfMatInv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+	double *destMat)
+{
+	double LUMatrix[UKF_MAX_DIM*UKF_MAX_DIM];
+	double invCol[UKF_MAX_DIM];
+	double colSolve[UKF_MAX_DIM];
+	int indx[UKF_MAX_DIM];
+	int32_t i, j;
+
+	mSetZero(destMat, nRow, nCol);
+	if (nRow != nCol)
+	{
+		printf("Can't invert a non-square matrix.\n");
+		return;
+	}
+	ukfLUD(sourceMat, nRow, nCol, LUMatrix, indx);
+	for (j = 0; j < nRow; j++)
+	{
+		vSetZero(colSolve, nRow);
+		colSolve[j] = 1.0;
+		ukfLUBckSlv(LUMatrix, nRow, nCol, indx, colSolve, invCol);
+		for (i = 0; i < nRow; i++)
+		{
+			destMat[i*nRow + j] = invCol[i];
+		}
+	}
+}
+
+void ukfCholDecomp(double *sourceMat, uint32_t nRow, uint32_t nCol,
+	double *destMat)
+{
+	int32_t i, j, k;
+	double sigma;
+
+	mSetZero(destMat, nRow, nCol);
+	if (nRow != nCol)
+	{
+		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
+		return;
+	}
+	
+	for (i = 0; i<nRow; i++)
+	{
+		for (j = 0; j <= i; j++)
+		{
+			sigma = sourceMat[nRow * i + j];
+			for (k = 0; k <= (j - 1); k++)
+			{
+				sigma -= destMat[nRow * i + k] * destMat[nRow * j + k];
+			}
+			if (i == j)
+			{
+				destMat[nRow * i + j] = sqrt(sigma);
+			}
+			else
+			{
+				destMat[nRow * i + j] = sigma / (destMat[nRow * j + j]);
+			}
+		}
+	}
+}

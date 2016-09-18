@@ -1,4 +1,4 @@
-'''
+﻿'''
 Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -18,6 +18,7 @@ import sys, os, inspect
 import matplotlib.pyplot as plt
 import numpy
 import pytest
+import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -42,6 +43,7 @@ import ctypes
 def test_all_sunline_kf(show_plots):
     [testResults, testMessage] = sunline_utilities_test(show_plots)
     assert testResults < 1, testMessage
+
 
 
 def sunline_utilities_test(show_plots):
@@ -128,6 +130,117 @@ def sunline_utilities_test(show_plots):
     if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
+
+
+    LUSourceMat = [8,1,6,3,5,7,4,9,2]
+    LUSVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
+    LVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
+    UVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
+    intSwapVector = sunlineUKF.new_intArray(3)
+    
+    for i in range(len(LUSourceMat)):
+        sunlineUKF.doubleArray_setitem(LUSVector, i, LUSourceMat[i])
+        sunlineUKF.doubleArray_setitem(UVector, i, 0.0)
+        sunlineUKF.doubleArray_setitem(LVector, i, 0.0)
+
+    exCount = sunlineUKF.ukfLUD(LUSVector, 3, 3, LVector, intSwapVector)
+    #sunlineUKF.ukfUInv(LUSVector, 3, 3, UVector)
+    LMatrix = []
+    UMatrix = []
+    #UMatrix = []
+    for i in range(3):
+        currRow = sunlineUKF.intArray_getitem(intSwapVector, i)
+        for j in range(3):
+            if(j<i):
+                LMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
+                UMatrix.append(0.0)
+            elif(j>i):
+                LMatrix.append(0.0)
+                UMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
+            else:
+                LMatrix.append(1.0)
+                UMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
+    #    UMatrix.append(sunlineUKF.doubleArray_getitem(UVector, i))
+
+    LMatrix = numpy.array(LMatrix).reshape(3,3)
+    UMatrix = numpy.array(UMatrix).reshape(3,3)
+    outMat = numpy.dot(LMatrix, UMatrix)
+    outMatSwap = numpy.zeros((3,3)) 
+    for i in range(3):
+        currRow = sunlineUKF.intArray_getitem(intSwapVector, i)
+        outMatSwap[i,:] = outMat[currRow, :]
+        outMat[currRow,:] = outMat[i, :]
+    LuSourceArray = numpy.array(LUSourceMat).reshape(3,3)
+
+    if(numpy.linalg.norm(outMatSwap - LuSourceArray) > 1.0E-14):
+        testFailCount += 1
+        testMessages.append("LU Decomposition accuracy failure")
+
+    EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
+    BVector = [1.0, 3.0, 5.0]
+    EqnVector = sunlineUKF.new_doubleArray(len(EqnSourceMat))
+    EqnBVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
+    EqnOutVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
+
+    for i in range(len(EqnSourceMat)):
+        sunlineUKF.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
+        sunlineUKF.doubleArray_setitem(EqnBVector, i/3, BVector[i/3])
+        sunlineUKF.intArray_setitem(intSwapVector, i/3, 0)
+        sunlineUKF.doubleArray_setitem(LVector, i, 0.0)
+    
+    exCount = sunlineUKF.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
+    
+    sunlineUKF.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
+    
+    expectedSol = [3.0/10.0, 4.0/10.0, 0.0]
+    errorVal = 0.0
+    for i in range(3):
+        errorVal += abs(sunlineUKF.doubleArray_getitem(EqnOutVector, i) -expectedSol[i])
+
+    if(errorVal > 1.0E-14):
+        testFailCount += 1
+        testMessages.append("LU Back-Solve accuracy failure")
+
+
+    InvSourceMat = [8,1,6,3,5,7,4,9,2]
+    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    for i in range(len(InvSourceMat)):
+        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+    nRow = int(math.sqrt(len(InvSourceMat)))
+    sunlineUKF.ukfMatInv(SourceVector, nRow, nRow, InvVector)
+
+    InvOut = []
+    for i in range(len(InvSourceMat)):
+        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+
+    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
+    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(3,3))
+    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(3))
+    if(errorNorm > 1.0E-14):
+        testFailCount += 1
+        testMessages.append("LU Matrix Inverse accuracy failure")
+
+    
+    cholTestMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
+    SourceVector = sunlineUKF.new_doubleArray(len(cholTestMat))
+    CholVector = sunlineUKF.new_doubleArray(len(cholTestMat))
+    for i in range(len(cholTestMat)):
+        sunlineUKF.doubleArray_setitem(SourceVector, i, cholTestMat[i])
+        sunlineUKF.doubleArray_setitem(CholVector, i, 0.0)
+    nRow = int(math.sqrt(len(cholTestMat)))
+    sunlineUKF.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)
+    cholOut = []
+    for i in range(len(cholTestMat)):
+        cholOut.append(sunlineUKF.doubleArray_getitem(CholVector, i))
+
+    cholOut = numpy.array(cholOut).reshape(nRow, nRow)
+    cholComp = numpy.linalg.cholesky(numpy.array(cholTestMat).reshape(nRow, nRow))
+    errorNorm = numpy.linalg.norm(cholOut - cholComp)
+    if(errorNorm > 1.0E-14):
+        testFailCount += 1
+        testMessages.append("Cholesky Matrix Decomposition accuracy failure")
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,

@@ -32,6 +32,18 @@ extern "C" {
 
 	void ukfQRDJustR(
 		double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat);
+	void ukfLInv(
+		double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat);
+	void ukfUInv(
+		double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat);
+	int32_t ukfLUD(double *sourceMat, uint32_t nRow, uint32_t nCol,
+		double *destMat, int32_t *indx);
+	void ukfLUBckSlv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+		int32_t *indx, double *bmat, double *destMat);
+	void ukfMatInv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+		double *destMat);
+	void ukfCholDecomp(double *sourceMat, uint32_t nRow, uint32_t nCol,
+		double *destMat);
 
 #ifdef __cplusplus
 }
