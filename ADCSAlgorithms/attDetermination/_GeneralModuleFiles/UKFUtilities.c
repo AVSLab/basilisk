@@ -20,9 +20,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <math.h>
 
 void ukfQRDJustR(
-	double *inMat, uint32_t nRow, uint32_t nCol, double *destMat)
+	double *inMat, int32_t nRow, int32_t nCol, double *destMat)
 {
-	uint32_t i, j, k, dimi, dimj;
+	int32_t i, j, k, dimi, dimj;
 	double qMat[UKF_MAX_DIM*UKF_MAX_DIM];
 	double sourceMat[UKF_MAX_DIM*UKF_MAX_DIM];
 	double sum;
@@ -68,7 +68,7 @@ void ukfQRDJustR(
 }
 
 void ukfLInv(
-	double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat)
+	double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int i, j, k, mat_dim;
 	
@@ -99,7 +99,7 @@ void ukfLInv(
 }
 
 void ukfUInv(
-	double *sourceMat, uint32_t nRow, uint32_t nCol, double *destMat)
+	double *sourceMat, int32_t nRow, int32_t nCol, double *destMat)
 {
 	int i, j, k, mat_dim;
 
@@ -127,7 +127,7 @@ void ukfUInv(
 	return;
 }
 
-int32_t ukfLUD(double *sourceMat, uint32_t nRow, uint32_t nCol,
+int32_t ukfLUD(double *sourceMat, int32_t nRow, int32_t nCol,
 	double *destMat, int32_t *indx)
 {
 	double vv[UKF_MAX_DIM];
@@ -139,7 +139,7 @@ int32_t ukfLUD(double *sourceMat, uint32_t nRow, uint32_t nCol,
 	if (nRow != nCol)
 	{
 		printf("Can't get a lower-triangular inverse of non-square matrix.\n");
-		return;
+		return -1;
 	}
 	mCopy(sourceMat, nRow, nCol, destMat);
 	vSetZero(vv, nRow);
@@ -214,7 +214,7 @@ int32_t ukfLUD(double *sourceMat, uint32_t nRow, uint32_t nCol,
 	return rowIndicator;
 }
 
-void ukfLUBckSlv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+void ukfLUBckSlv(double *sourceMat, int32_t nRow, int32_t nCol,
 	int32_t *indx, double *bmat, double *destMat)
 {
 	int i, ip, j;
@@ -258,7 +258,7 @@ void ukfLUBckSlv(double *sourceMat, uint32_t nRow, uint32_t nCol,
 	}
 }
 
-void ukfMatInv(double *sourceMat, uint32_t nRow, uint32_t nCol,
+void ukfMatInv(double *sourceMat, int32_t nRow, int32_t nCol,
 	double *destMat)
 {
 	double LUMatrix[UKF_MAX_DIM*UKF_MAX_DIM];
@@ -286,7 +286,7 @@ void ukfMatInv(double *sourceMat, uint32_t nRow, uint32_t nCol,
 	}
 }
 
-void ukfCholDecomp(double *sourceMat, uint32_t nRow, uint32_t nCol,
+void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	double *destMat)
 {
 	int32_t i, j, k;
@@ -318,4 +318,61 @@ void ukfCholDecomp(double *sourceMat, uint32_t nRow, uint32_t nCol,
 			}
 		}
 	}
+}
+
+void ukfCholDownDate(double *rMat, double *xVec, int32_t nStates,
+	double *rOut)
+{
+	int i, j, k, matdim;
+	double MatNorm, alpha, scale, a, b, T, xx;
+	double RT[UKF_MAX_DIM*UKF_MAX_DIM];
+	double S[UKF_MAX_DIM];
+	double C[UKF_MAX_DIM];
+
+	mCopy(rMat, nStates, nStates, rOut);
+	matdim = nStates; // Square matrix
+	mTranspose(rMat, nStates, nStates, RT);
+	vSetZero(S, nStates);
+	vSetZero(C, nStates);
+
+	for (i = 0; i<matdim; i++)
+	{
+		S[i] = xVec[i];
+		for (j = 0; j <= i - 1; j++)
+		{
+			S[i] -= RT[i*matdim + j] * S[j];
+		}
+		S[i] /= RT[i*matdim + i];
+	}
+	MatNorm = vNorm(S, nStates);
+	if (MatNorm > 1.0)
+	{
+		return;
+	}
+	alpha = sqrt(1.0 - MatNorm*MatNorm);
+	for (i = 1; i <= matdim; i++)
+	{
+		j = matdim - i + 1;
+		scale = alpha + fabs(S[j - 1]);
+		a = alpha / scale;
+		b = S[j - 1] / scale;
+		MatNorm = sqrt(a*a + b*b);
+		C[j - 1] = a / MatNorm;
+		S[j - 1] = b / MatNorm;
+		alpha = scale*MatNorm;
+	}
+	for (i = 1; i <= matdim; i++)
+	{
+		xx = 0.0;
+		for (j = 1; j <= i; j++)
+		{
+			k = i - j + 1;
+			T = C[k - 1] * xx + S[k - 1] * rOut[(k - 1)*matdim +(i - 1)];
+			rOut[(k - 1)*matdim + (i - 1)] = C[k - 1] * rOut[(k - 1)*
+				matdim + (i - 1)] - S[k - 1] * xx;
+			xx = T;
+		}
+	}
+
+	return;
 }
