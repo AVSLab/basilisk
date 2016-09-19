@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "messaging/static_messaging.h"
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
+#include "../_GeneralModuleFiles/navStateOut.h"
 #include <stdint.h>
 
 #define SKF_N_STATES 2
@@ -49,19 +50,22 @@ typedef struct {
 	double dt;                     /*! [s] seconds since last data epoch */
 	double TimeTag;                /*! [s]  Time tag for statecovar/etc */
 
-	double state[SKF_N_STATES];        // -- State estimate for time TimeTag
-	double sBar[SKF_N_STATES*SKF_N_STATES];         // -- Time updated covariance
-	double covar[SKF_N_STATES*SKF_N_STATES];        // -- covariance
+	double wM[2 * SKF_N_STATES + 1]; /*! [-] Weighting vector for sigma points*/
+	double wC[2 * SKF_N_STATES + 1]; /*! [-] Weighting vector for sigma points*/
 
-	double obs[MAX_N_CSS_MEAS];          // -- pseudorange observations
-	double yMeas[MAX_N_CSS_MEAS*SKF_N_STATES];        // -- Measurement model data
+	double state[SKF_N_STATES];        /*! [-] State estimate for time TimeTag*/
+	double sBar[SKF_N_STATES*SKF_N_STATES];         /*! [-] Time updated covariance */
+	double covar[SKF_N_STATES*SKF_N_STATES];        /*! [-] covariance */
 
-	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];          // --    sigma point matrix
+	double obs[MAX_N_CSS_MEAS];          /*! [-] Observation vector for frame*/
+	double yMeas[MAX_N_CSS_MEAS*SKF_N_STATES];        /*! [-] Measurement model data */
 
-	double Qnoise[SKF_N_STATES*SKF_N_STATES];       // -- process noise matrix
-	double SQnoise[SKF_N_STATES*SKF_N_STATES];      // -- cholesky of Qnoise
+	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];          /*! [-]    sigma point matrix */
 
-	double Q_obs[MAX_N_CSS_MEAS];  // -- to put on diagonal of Q obs matrix
+	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*! [-] process noise matrix */
+	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*! [-] cholesky of Qnoise */
+
+	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*! [-] Maximally sized obs noise matrix*/
 
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
@@ -79,6 +83,10 @@ extern "C" {
     void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID);
     void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
+	void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+		uint64_t moduleID);
+	void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime);
+	void sunlineStateProp(double *stateInOut);
     
 #ifdef __cplusplus
 }
