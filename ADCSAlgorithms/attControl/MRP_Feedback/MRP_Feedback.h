@@ -41,7 +41,7 @@ typedef struct {
     double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
-    RWConfigParams rwConfigParams;
+    RWConfigParams rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module IO interfaces */
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams input message*/

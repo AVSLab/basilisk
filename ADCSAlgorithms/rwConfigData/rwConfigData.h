@@ -36,7 +36,8 @@ typedef struct{
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    RWConstellation rwConstellation; /* struct used to populate initial RW config parameters are  in structural S frame */
+    RWConstellation rwConstellation; /* struct to populate input RW config parameters in structural S frame */
+    RWConfigParams  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
     char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellation input message*/
     int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellation incoming message */
@@ -44,7 +45,6 @@ typedef struct {
     int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWConfigParams outgoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
     int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
-    RWConfigParams  rwConfigParamsOut; /* struct for the ouput */
 
 }rwConfigData;
 
