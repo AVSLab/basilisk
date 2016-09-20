@@ -1379,11 +1379,12 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
-        self.rwMotorTorqueData.inputRWConfigDataName = "rwa_config_data"
-        self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"
+        #self.rwMotorTorqueData.inputRWConfigDataName = "rwa_config_data"
+        #self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"
         #self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds_raw"
         self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"
         self.rwMotorTorqueData.inputRWsAvailDataName = "rw_availability"
+        self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data_parsed"
 
     def SetRWANullSpaceData(self):
         self.RWANullSpaceData.inputRWCommands = "reactionwheel_cmds_raw"

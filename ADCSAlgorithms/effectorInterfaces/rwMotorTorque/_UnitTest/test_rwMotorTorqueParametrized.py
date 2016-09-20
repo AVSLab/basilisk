@@ -39,8 +39,8 @@ import unitTestSupport                  # general support file with common unit 
 import rwMotorTorque
 import macros
 import MRP_Steering
+import rwConfigData
 import vehicleConfigData
-import fswSetupRW
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -81,72 +81,15 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = rwMotorTorque.rwMotorTorqueConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        rwMotorTorque.Update_rwMotorTorque,
-                                        rwMotorTorque.SelfInit_rwMotorTorque,
-                                        rwMotorTorque.CrossInit_rwMotorTorque,
-                                        rwMotorTorque.Reset_rwMotorTorque)
+    moduleConfig = rwMotorTorque.rwMotorTorqueConfig()
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwMotorTorque"
-
-    # Initialize the test module configuration data names
-    moduleConfig.inputVehControlName = "LrRequested"
-    moduleConfig.inputRWConfigDataName = "rwa_config_data"
+    # Initialize the test module msg names
     moduleConfig.outputDataName = "rwMotorTorqueOut"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
+    moduleConfig.inputVehControlName = "LrRequested"
     moduleConfig.inputRWsAvailDataName = "rw_availability"
-
-    # wheelConfigData Message
-    fswSetupRW.clearSetup()
-    Js = 0.1
-    fswSetupRW.create([1.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 1.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 1.0], Js)
-    fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigDataName,
-                                                   unitTestSim.TotalSim,
-                                                   unitProcessName)
-    numRWs = fswSetupRW.getNumOfDevices()
-
-    
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-
-
-    # write vehicle configuration message
-    inputMessageSize = 21 * 8 + 8  # 21 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    CoM_S = [0.0, 0.0, 0.0]
-    vehicleConfigOut.BS = BS
-    vehicleConfigOut.CoM_B = CoM_S
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
-
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    inputMessageSize = 3*8                              # 3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
-    inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
-
+    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    # Initialize module variables
     if dropAxes:
         controlAxes_B = [
              1,0,0
@@ -158,9 +101,48 @@ def rwMotorTorqueTest(show_plots, dropAxes):
             ,0,1,0
             ,0,0,1
         ]
-
     moduleConfig.controlAxes_B = controlAxes_B
 
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+
+    # attControl message
+    inputMessageSize = 3*8 # 3 doubles
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputVehControlName,
+                                          inputMessageSize, 2) # number of buffers (leave at 2 as default)
+    inputMessageData = MRP_Steering.vehControlOut() # Create a structure for the input message
+    requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
+    inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName, inputMessageSize,
+                                          0, inputMessageData) # write data into the simulator
+
+    # wheelConfigData message
+    inputMessageSize = 8*vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1*4
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
+                                          inputMessageSize, 2) # number of buffers (leave at 2 as default)
+    rwConfigParams = rwConfigData.RWConfigParams()
+    rwConfigParams.GsMatrix_B = [
+        1.0, 0.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 0.0, 1.0,
+        0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+    ]
+    rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+    rwConfigParams.numRW = 4
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
+                                          0, rwConfigParams)
+
+    # wheelAvailability message
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4 # integers
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputRWsAvailDataName,
+                                          inputMessageSize, 2) # number of buffers (leave at 2 as default)
+    rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+    avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+    rwAvailabilityMessage.wheelAvailability = avail
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWsAvailDataName, inputMessageSize,
+                                          0, rwAvailabilityMessage)
 
 
     # Setup logging on the test module output message so that we get all the writes to it
@@ -184,8 +166,9 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
-                                                  range(numRWs))
-    print moduleOutput
+                                                  range(rwConfigParams.numRW))
+
+    print '\n', moduleOutput[:, 1:]
 
     # set the output truth states
     if dropAxes:
@@ -208,7 +191,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     accuracy = 1e-8
     for i in range(0,len(trueVector)):
         # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numRWs, accuracy):
+        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
             testFailCount += 1
             testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
@@ -240,7 +223,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(              # update "module" in function name
+    test_rwMotorTorque(
                 False,
-                False
+                True
                )

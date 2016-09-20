@@ -24,6 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "rwConfigData/rwConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -33,25 +34,27 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double   controlAxes_B[3*3];                    /*!< []      array of the control unit axes */
-    double   gsHat_B[MAX_EFF_CNT][3];               /*!< []      local copy of the rw torque axis */
-    uint32_t numOfAxesToBeControlled;               /*!< []      counter indicating how many orthogonal axes are controlled */
-    uint32_t numRW;                               /*!< []      The number of RWs installed on vehicle */
-    int wheelsAvailability[MAX_EFF_CNT];
+    double   controlAxes_B[3*3];         /*!< [-] array of the control unit axes */
+    uint32_t numControlAxes;             /*!< [-] counter indicating how many orthogonal axes are controlled */
+    uint32_t numAvailRW;
+    RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
+    uint64_t priorTime;                  /*!< [-] initialization call flag */
+    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
+    double CGs[3][MAX_EFF_CNT];
+
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
     int32_t  outputMsgID;                           /*!< ID for the outgoing message */
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
     int32_t  inputVehControlID;                     /*!< ID for the incoming Lr control message */
-    char inputRWConfigDataName[MAX_STAT_MSG_LENGTH];/*!< The name of the RWA cluster Input message*/
-    int32_t  inputRWConfID;                   /*!< [-] ID for the incoming RW configuration data*/
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
-    char inputRWsAvailDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the RWs availability message*/
-    int32_t inputRWsAvailID; /*!< [-] ID for the incoming  RWs availability data*/
-    vehicleConfigData   sc;                         /*!< spacecraft configuration message */
-    vehEffectorOut rwMotorTorques;                  /*!< -- copy of the output message */
+    
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams input message*/
+    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigParams ingoing message */
+    char inputRWsAvailDataName[MAX_STAT_MSG_LENGTH];    /*!< The name of the RWs availability message*/
+    int32_t inputRWsAvailID;                            /*!< [-] ID for the incoming  RWs availability data */
+    
+    vehEffectorOut rwMotorTorques; /*!< [-] struct to store the output message */
 
 }rwMotorTorqueConfig;
 

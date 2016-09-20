@@ -60,58 +60,25 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
-                                                sizeof(vehControlOut),
-                                                moduleID);
-
-    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigDataName,
-                                                       sizeof(RWConstellation),
-                                                       moduleID);
-
-    ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                              sizeof(vehicleConfigData), moduleID);
-    
+                                                       sizeof(vehControlOut), moduleID);
+    ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
+                                                     sizeof(RWConfigParams), moduleID);
     ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
-                                                   sizeof(RWAvailabilityData),
-                                                   moduleID);
-    
-    
-    double             *pAxis;                 /*!< pointer to the current control axis */
-    int                 i;
-    RWConstellation     localRWData;           /*!< local copy of the RWA information */
-    uint64_t            clockTime;
-    uint32_t            readSize;
+                                                     sizeof(RWAvailabilityData), moduleID);
     
     /* configure the number of axes that are controlled */
-    ConfigData->numOfAxesToBeControlled = 0;
-    for (i=0;i<3;i++)
+    double *pAxis;                 /*!< pointer to the current control axis */
+    int i;
+    ConfigData->numControlAxes = 0;
+    for (i = 0; i < 3; i++)
     {
-        pAxis = ConfigData->controlAxes_B + 3*ConfigData->numOfAxesToBeControlled;
-        if (v3Norm(pAxis) > 0.1) {
-            v3Normalize(pAxis,pAxis);
-            ConfigData->numOfAxesToBeControlled += 1;
-        } else {
-            break;
+        pAxis = ConfigData->controlAxes_B + 3 * ConfigData->numControlAxes;
+        if (v3Norm(pAxis) > 0.0) {
+            ConfigData->numControlAxes += 1;
         }
     }
-    if (ConfigData->numOfAxesToBeControlled==0) {
+    if (ConfigData->numControlAxes == 0) {
         printf("WARNING: rwMotorTorque() is not setup to control any axes!\n");
-    }
-    
-    
-    /* read in the support messages */
-    ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
-    
-    ReadMessage(ConfigData->inputRWConfID, &clockTime, &readSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
-    /* read in the RW spin axis gsHat information */
-    /* Note: we will still need to correct for the S to B transformation */
-    ConfigData->numRW = localRWData.numRW;
-    for(i=0; i<ConfigData->numRW; i=i+1)
-    {
-        m33MultV3(RECAST3X3 ConfigData->sc.BS,
-                  localRWData.reactionWheels[i].gsHat_S,
-                  ConfigData->gsHat_B[i]);
     }
 
 }
@@ -123,7 +90,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-
+    ConfigData->priorTime = 0;
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -134,103 +101,110 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     RWAvailabilityData wheelsAvailability;
-    uint64_t    clockTime;
-    uint32_t    readSize;
-    double      us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
-    int         i,j,k;
-    double      GsTCT[MAX_EFF_CNT][3];        /*!< []       [Gs]^T C^T */
-    double      mat3x3[3][3];
-    double      mat2x2[2][2];
-    double      mat1x1;
-    double      vec[3];
-    double      CLr[3];
-    double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
+    uint64_t clockTime;
+    uint32_t readSize;
+    double us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
+    int i,j,k;
+    double Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
+    if (ConfigData->priorTime == 0) {
+        /*! - Read static RW config data message and store it in module variables*/
+        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+    }
+    ConfigData->priorTime = callTime;
+    ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
+                sizeof(RWAvailabilityData), &wheelsAvailability, moduleID); /* #TODO: Do something with availability information */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
     
-    /* #TODO: Do something with availability information */
-    ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
-                sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
-
+    
+    /* clear the RW motoro torque output array us: [C][Gs]us = [C]Lr */
+    memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
 
     /* Lr is assumed to be a positive torque onto the body */
     v3Scale(-1.0, Lr_B, Lr_B);
-
-    /* clear the RW motoro torque output array */
-    memset(us,0x0,MAX_EFF_CNT*sizeof(double));
-
-    /* compute [C].Lr */
-    for (k=0;k<ConfigData->numOfAxesToBeControlled;k++) {
-        CLr[k] = v3Dot(ConfigData->controlAxes_B+3*k, Lr_B);
+    
+    /* compute [CLr] = [C]Lr */
+    double CLr[3];
+    for (k = 0; k < ConfigData->numControlAxes; k++){
+        CLr[k] = v3Dot(ConfigData->controlAxes_B + 3 * k, Lr_B);
     }
-
-    /* compute [Gs]^T [C]^T */
-    for (i=0;i<ConfigData->numRW;i++) {
-        for (j=0;j<ConfigData->numOfAxesToBeControlled; j++) {
-            GsTCT[i][j] = v3Dot(ConfigData->gsHat_B[i], ConfigData->controlAxes_B+3*j);
+    
+    /* recompute [Gs] including only available RW */
+    int numAvailRW = 0;
+    for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
+        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
+        {
+            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);
+            numAvailRW += 1;
         }
     }
-
-
-    if (ConfigData->numOfAxesToBeControlled == 3) {
-        /* compute [C].[Gs].[Gs]^T.[C]^T */
-        for (i=0;i<3;i++) {
-            for (j=0;j<3;j++) {
-                mat3x3[i][j] = 0.;
-                for (k=0;k<ConfigData->numRW;k++) {
-                    mat3x3[i][j] += GsTCT[k][i]*GsTCT[k][j];
+    
+    /* compute [CGs] */
+    double CGs[3][MAX_EFF_CNT];
+    for (i=0; i<ConfigData->numControlAxes; i++) {
+        for (j=0; j<numAvailRW; j++) {
+            CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
+        }
+    }
+    
+    /* compute minimum norm inverse for us = [CGs].T inv([CGs][CGs].T) [CLr] */
+    /* [M] = [CGs][CGs].T */
+    /* v3_temp = inv([M]) [CLr] */
+    double v3_temp[3];
+    v3SetZero(v3_temp);
+    if (ConfigData->numControlAxes == 3){
+        double M33[3][3];
+        for (i=0; i<ConfigData->numControlAxes; i++) {
+            for (j=0; j<ConfigData->numControlAxes; j++) {
+                M33[i][j] = 0.0;
+                for (k=0; k < numAvailRW; k++) {
+                    M33[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
         }
-
-        m33Inverse(mat3x3, mat3x3);
-        m33MultV3(mat3x3, CLr, vec);
-
-
-    } else if (ConfigData->numOfAxesToBeControlled == 2) {
-        /* compute [B].[Gs].[Gs]^T.[B]^T */
-        for (i=0;i<2;i++) {
-            for (j=0;j<2;j++) {
-                mat2x2[i][j] = 0.;
-                for (k=0;k<ConfigData->numRW;k++) {
-                    mat2x2[i][j] += GsTCT[k][i]*GsTCT[k][j];
+        m33Inverse(M33, M33);
+        m33MultV3(M33, CLr, v3_temp);
+    } else if (ConfigData->numControlAxes == 2){
+        double M22[2][2];
+        for (i=0; i<ConfigData->numControlAxes; i++) {
+            for (j=0; j<ConfigData->numControlAxes; j++) {
+                M22[i][j] = 0.0;
+                for (k=0; k < numAvailRW; k++) {
+                    M22[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
         }
-
-        m22Inverse(mat2x2, mat2x2);
-        m22MultV2(mat2x2, CLr, vec);
-
+        m22Inverse(M22, M22);
+        m22MultV2(M22, CLr, v3_temp);
     } else {
-        /* compute [B].[Gs].[Gs]^T.[B]^T */
-        mat1x1 = 0.;
-        for (k=0;k<ConfigData->numRW;k++) {
-            mat1x1 += GsTCT[k][0]*GsTCT[k][0];
+        double M11[1][1];
+        for (i=0; i<ConfigData->numControlAxes; i++) {
+            for (j=0; j<ConfigData->numControlAxes; j++) {
+                M11[i][j] = 0.0;
+                for (k=0; k < numAvailRW; k++) {
+                    M11[i][j] += CGs[i][k]*CGs[j][k];
+                }
+            }
         }
-
-        mat1x1 = 1./mat1x1;
-        vec[0] = mat1x1*CLr[0];
+        v3_temp[0] = 1.0 / M11[0][0] * CLr[0];
     }
-
+    
     /* compute the RW motor torques */
-    for (i=0;i<ConfigData->numRW;i++) {
+    /* us = [CGs].T v3_temp */
+    for (i=0; i<numAvailRW; i++) {
         us[i] = 0.0;
-        for (j=0;j<ConfigData->numOfAxesToBeControlled;j++) {
-            us[i] += GsTCT[i][j]*vec[j];
+        for (j=0; j<ConfigData->numControlAxes; j++) {
+            us[i] += CGs[j][i] * v3_temp[j];
         }
     }
 
-
-
-
-    /*
-     store the output message 
-     */
-    mCopy(us, ConfigData->numRW, 1, ConfigData->rwMotorTorques.effectorRequest);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+    /* store the output message */
+    mCopy(us, ConfigData->rwConfigParams.numRW, 1, ConfigData->rwMotorTorques.effectorRequest);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
                  (void*) &(ConfigData->rwMotorTorques), moduleID);
 
     return;
