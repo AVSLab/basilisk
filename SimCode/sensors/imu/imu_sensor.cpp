@@ -251,10 +251,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
                InertialAccel);
     v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
     v3Scale(1.0/dt, InertialAccel, InertialAccel);
-    v3Subtract(InertialAccel, RotForces, InertialAccel);
+    v3Add(InertialAccel, RotForces, InertialAccel); // i think this should be v3Add  -john
     m33MultV3(T_Bdy2Platform, InertialAccel, this->trueValues.AccelPlatform);
     v3Scale(dt, RotForces, RotForces);
-    v3Subtract(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
+    v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform); // i think this should be v3Add  -john
     m33MultV3(T_Bdy2Platform, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
     
 }
@@ -262,16 +262,15 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
-
-	StateCurrent.T_str2Bdy[0][0] = 1;
-	StateCurrent.T_str2Bdy[0][1] = 0;
-	StateCurrent.T_str2Bdy[0][2] = 0;
-	StateCurrent.T_str2Bdy[1][0] = 0;
-	StateCurrent.T_str2Bdy[1][1] = 1;
-	StateCurrent.T_str2Bdy[1][2] = 0;
-	StateCurrent.T_str2Bdy[2][0] = 0;
-	StateCurrent.T_str2Bdy[2][1] = 0;
-	StateCurrent.T_str2Bdy[2][2] = 1;
+	StateCurrent.T_str2Bdy[0][0] = 1.0;
+	StateCurrent.T_str2Bdy[0][1] = 0.0;
+	StateCurrent.T_str2Bdy[0][2] = 0.0;
+	StateCurrent.T_str2Bdy[1][0] = 0.0;
+	StateCurrent.T_str2Bdy[1][1] = 1.0;
+	StateCurrent.T_str2Bdy[1][2] = 0.0;
+	StateCurrent.T_str2Bdy[2][0] = 0.0;
+	StateCurrent.T_str2Bdy[2][1] = 0.0;
+	StateCurrent.T_str2Bdy[2][2] = 1.0;
 
     if(NominalReady)
     {
