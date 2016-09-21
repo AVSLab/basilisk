@@ -189,13 +189,17 @@ void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
 	{
 		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
+			this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
 		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
 			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
+			this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
 		}
 		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
 			this->sensedValues.AccelPlatform[i] = this->senTransMax;
+			this->sensedValues.DVFramePlatform[i] = this->senTransMax * dt;
 		} else if (this->sensedValues.AccelPlatform[i] < -this->senTransMax) {
 			this->sensedValues.AccelPlatform[i] = -this->senTransMax;
+			this->sensedValues.DVFramePlatform[i] = -this->senTransMax * dt;
 		}
 	}
 
