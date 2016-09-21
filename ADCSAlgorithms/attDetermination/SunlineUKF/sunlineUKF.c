@@ -31,16 +31,22 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
+
+    int i;
+    double tempMatrix[SKF_N_STATES*SKF_N_STATES];
+    
+    mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->outputStateID = CreateNewMessage(ConfigData->outputNavStateName, 
 		sizeof(NavAttOut), "NavAttOut", moduleID);
-	int i;
 
+    ConfigData->timeTag = 0.0;
+    ConfigData->dt = 0.0;
 	ConfigData->numStates = SKF_N_STATES;
+    ConfigData->countHalfSPs = SKF_N_STATES;
 	ConfigData->numObs = MAX_N_CSS_MEAS;
-	vSetZero(ConfigData->state, ConfigData->numStates);
 	vSetZero(ConfigData->obs, ConfigData->numObs);
 	ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
 		(ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
@@ -61,12 +67,14 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 	{
 		ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates + 
 			ConfigData->lambdaVal);
-		ConfigData->wC[i] = ConfigData->wC[i];
+		ConfigData->wC[i] = ConfigData->wM[i];
 	}
 	mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates, 
 		ConfigData->sBar);
 	ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
-		ConfigData->numStates, ConfigData->sBar);
+		ConfigData->numStates, tempMatrix);
+    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
+        ConfigData->sBar);
 	ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
 		ConfigData->numStates, ConfigData->sQnoise);
 	mTranspose(ConfigData->sQnoise, ConfigData->numStates,
@@ -82,23 +90,48 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
-    int32_t i;
-    vehicleConfigData localConfigData;
-    uint64_t writeTime;
-    uint32_t writeSize;
+    
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->inputCSSDataID = subscribeToMessage(ConfigData->inputCSSDataName,
-        MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), moduleID);
+        sizeof(CSSOutputData), moduleID);
     ConfigData->inputPropsID = subscribeToMessage(ConfigData->inputPropsName,
         sizeof(vehicleConfigData), moduleID);
+    ConfigData->inputCSSConID = subscribeToMessage(ConfigData->inputCSSConfigName,
+                                                   sizeof(CSSConstConfig), moduleID);
+    
+    
+}
+
+/*! This method resets the sunline attitude filter to an initial state and
+ initializes the internal estimation matrices.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ @param callTime The clock time at which the function was called (nanoseconds)
+ */
+void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+                      uint64_t moduleID)
+{
+    
+    int32_t i;
+    vehicleConfigData localConfigData;
+    CSSConstConfig localCSSConfig;
+    uint64_t writeTime;
+    uint32_t writeSize;
+    
+    memset(&localConfigData, 0x0 ,sizeof(vehicleConfigData));
+    memset(&localCSSConfig, 0x0, sizeof(CSSConstConfig));
+    
     ReadMessage(ConfigData->inputPropsID, &writeTime, &writeSize,
                 sizeof(vehicleConfigData), &localConfigData, moduleID);
-    /*for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
+    ReadMessage(ConfigData->inputCSSConID, &writeTime, &writeSize,
+                sizeof(CSSConstConfig), &localCSSConfig, moduleID);
+    for(i=0; i<localCSSConfig.nCSS; i = i+1)
     {
-        m33MultV3(RECAST3X3 localConfigData.BS, ConfigData->CSSData[i].nHatStr,
-                  ConfigData->CSSData[i].nHatBdy);
-    }*/
-    
+         m33MultV3(RECAST3X3 localConfigData.BS, localCSSConfig.cssVals[i].nHat_S,
+             &(ConfigData->cssNHat_B[i*3]));
+    }
+    ConfigData->numCSSTotal = localCSSConfig.nCSS;
+    return;
 }
 
 /*! This method takes the parsed CSS sensor data and outputs an estimate of the
@@ -110,20 +143,31 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
+    double newTimeTag;
+    uint64_t ClockTime;
+    uint32_t ReadSize;
+    
+    /*! Begin method steps*/
+    /*! - Read the input parsed CSS sensor data message*/
+    ClockTime = 0;
+    ReadSize = 0;
+    memset(&(ConfigData->rawSensorData), 0x0, sizeof(CSSOutputData));
+    ReadMessage(ConfigData->inputCSSDataID, &ClockTime, &ReadSize,
+        sizeof(CSSOutputData), (void*) (&(ConfigData->rawSensorData)), moduleID);
+    newTimeTag = ClockTime * NANO2SEC;
+    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    {
+        sunlineUKFTimeUpdate(ConfigData, newTimeTag);
+        sunlineUKFMeasUpdate(ConfigData, newTimeTag);
+    }
+    
+    newTimeTag = callTime*NANO2SEC;
+    if(newTimeTag > ConfigData->timeTag)
+    {
+        sunlineUKFTimeUpdate(ConfigData, newTimeTag);
+    }
     
     return;
-}
-
-/*! This method resets the sunline attitude filter to an initial state and
-    initializes the internal estimation matrices.
-@return void
-@param ConfigData The configuration data associated with the CSS estimator
-@param callTime The clock time at which the function was called (nanoseconds)
-*/
-void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
-	uint64_t moduleID)
-{
-	return;
 }
 
 /*! This method propagates a sunline state vector forward in time.  Note 
@@ -147,16 +191,15 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 {
 	int i, Index;
 	double xBar[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES];
-	double xComp[SKF_N_STATES], AT[(2 * SKF_N_STATES + 1)*SKF_N_STATES];
+	double xComp[SKF_N_STATES], AT[(2 * SKF_N_STATES + SKF_N_STATES)*SKF_N_STATES];
 	double aRow[SKF_N_STATES], rAT[SKF_N_STATES*SKF_N_STATES], xErr[SKF_N_STATES]; 
-	double xErrT[SKF_N_STATES], SPErrMat[SKF_N_STATES*SKF_N_STATES]; 
-	double sBarUp[SKF_N_STATES*SKF_N_STATES];
+	double SPErrMat[SKF_N_STATES*SKF_N_STATES], sBarUp[SKF_N_STATES*SKF_N_STATES];
 	double *spPtr;
 
 	mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
 		sBarT);
 	
-	ConfigData->dt = updateTime - ConfigData->TimeTag;
+	ConfigData->dt = updateTime - ConfigData->timeTag;
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
 
@@ -173,59 +216,212 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
 		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
 		sunlineStateProp(spPtr);
-		vCopy(spPtr, ConfigData->numStates, xComp);
-		vScale(ConfigData->wM[Index], xComp, ConfigData->numStates, xComp);
+		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, xBar, xBar);
 		
-		/*Index = i + 1 + this->CountHalfSPs;
-		this->SP[Index].MatOps_VecSet(&SbarT.vec_vals[i*this->NumStates]);
-		this->SP[Index].MatOps_scale(-this->gamma);
-		this->SP[Index].MatOps_add(this->SP[Index], state);
-		this->StateProp(this->SP[Index]);
-		Xcomp = this->SP[Index];
-		Xcomp.MatOps_scale(this->Wm.vec_vals[Index]);
-		Xbar.MatOps_add(Xbar, Xcomp);*/
+		Index = i + 1 + ConfigData->countHalfSPs;
+        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
+        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
+        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
+        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
+        sunlineStateProp(spPtr);
+        vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
+        vAdd(xComp, ConfigData->numStates, xBar, xBar);
 	}
-	/*AT.MatOps_init(2 * this->CountHalfSPs + this->NumStates, this->NumStates);
-	for (i = 0; i<2 * this->CountHalfSPs; i++)
+    mSetZero(AT, (2 * ConfigData->countHalfSPs + ConfigData->numStates),
+        ConfigData->countHalfSPs);
+	
+	for (i = 0; i<2 * ConfigData->countHalfSPs; i++)
 	{
-		ARow = Xbar;
-		ARow.MatOps_scale(-1.0);
-		ARow.MatOps_add(ARow, SP[i + 1]);
-		ARow.MatOps_scale(sqrt(this->Wc.vec_vals[i + 1]));
-		memcpy((void *)&AT.vec_vals[i*this->NumStates], (void *)ARow.vec_vals,
-			this->NumStates*sizeof(double));
+		
+        vScale(-1.0, xBar, ConfigData->numStates, aRow);
+        vAdd(aRow, ConfigData->numStates,
+             &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
+        vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
+		memcpy((void *)&AT[i*ConfigData->numStates], (void *)aRow,
+			ConfigData->numStates*sizeof(double));
 	}
-	memcpy(&AT.vec_vals[2 * this->CountHalfSPs*this->NumStates],
-		this->SQnoise.vec_vals, this->NumStates*this->NumStates*sizeof(double));
-	RAT.MatOps_QRD_JustR(AT);
-	memcpy(SbarT.vec_vals, RAT.vec_vals, this->NumStates*this->NumStates
-		*sizeof(double));
-	this->Sbar.MatOps_transpose(SbarT);
-	Xerr = Xbar;
-	Xerr.MatOps_scale(-1.0);
-	Xerr.MatOps_add(Xerr, SP[0]);
-	XerrT.MatOps_transpose(Xerr);
-	SPErrMat.MatOps_mult(Xerr, XerrT);
-	SPErrMat.MatOps_scale(this->Wc.vec_vals[0]);
-	SBarUp.MatOps_mult(this->Sbar, SbarT);
-	SBarUp.MatOps_add(SBarUp, SPErrMat);
-	this->Sbar.MatOps_CholDecomp(SBarUp);
-	SbarT.MatOps_transpose(this->Sbar);
-	this->SP[0] = Xbar;
-	for (i = 0; i<this->CountHalfSPs; i++)
+	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
+		ConfigData->sQnoise, ConfigData->numStates*ConfigData->numStates
+        *sizeof(double));
+    ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
+                ConfigData->countHalfSPs, rAT);
+	
+    mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
+    mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
+        ConfigData->sBar);
+    vScale(-1.0, xBar, ConfigData->numStates, xErr);
+    vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
+    mMultM(xErr, ConfigData->numStates, 1, xErr, 1, ConfigData->numStates,
+        SPErrMat);
+	mScale(ConfigData->wC[0], SPErrMat, ConfigData->numStates,
+           ConfigData->numStates, SPErrMat);
+	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates, sBarT,
+           ConfigData->numStates, ConfigData->numStates, sBarUp);
+    mAdd(sBarUp, ConfigData->numStates, ConfigData->numStates, SPErrMat, sBarUp);
+    ukfCholDecomp(sBarUp, ConfigData->numStates, ConfigData->numStates,
+        ConfigData->sBar);
+    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+        sBarT);
+    vCopy(xBar, ConfigData->numStates, &(ConfigData->SP[0]));
+	for (i = 0; i<ConfigData->countHalfSPs; i++)
 	{
 		Index = i + 1;
-		this->SP[Index].MatOps_VecSet(&SbarT.vec_vals[i*SbarT.dim_array[0]]);
-		this->SP[Index].MatOps_scale(gamma);
-		this->SP[Index].MatOps_add(this->SP[Index], Xbar);
-		Index = i + 1 + this->CountHalfSPs;
-		this->SP[Index].MatOps_VecSet(&SbarT.vec_vals[i*SbarT.dim_array[0]]);
-		this->SP[Index].MatOps_scale(-gamma);
-		this->SP[Index].MatOps_add(this->SP[Index], Xbar);
+        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
+        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
+        vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
+        vAdd(spPtr, ConfigData->numStates, xBar, spPtr);
+		Index = i + 1 + ConfigData->countHalfSPs;
+        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
+        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
+        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
+        vAdd(spPtr, ConfigData->numStates, xBar, spPtr);
 	}
-	Covar.MatOps_transpose(Sbar);
-	Covar.MatOps_mult(Sbar, Covar);
-	state = SP[0];
-	TimeTag = UpdateTime;*/
+    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+        ConfigData->covar);
+	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+        ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
+           ConfigData->covar);
+    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
+	
+	ConfigData->timeTag = updateTime;
+}
+
+/*! This method computes what the expected measurement vector is for each CSS 
+    that is present on the spacecraft.  All data is transacted from the main 
+    data structure for the model because there are many variables that would 
+    have to be updated otherwise.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+
+ */
+void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
+{
+    uint32_t i, j, obsCounter;
+    double unitVecState[3];
+    double sensorNormal[3];
+    obsCounter = 0;
+    for(i=0; i<ConfigData->numCSSTotal; i++)
+    {
+        if(ConfigData->rawSensorData.CosValue[i] > ConfigData->sensorUseThresh)
+        {
+            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
+            ConfigData->obs[obsCounter] = ConfigData->rawSensorData.CosValue[i];
+            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
+            {
+                unitVecState[0] = cos(ConfigData->SP[j*SKF_N_STATES + 0]) *
+                    cos(ConfigData->SP[j*SKF_N_STATES + 1]);
+                unitVecState[1] = sin(ConfigData->SP[j*SKF_N_STATES + 0]) *
+                    cos(ConfigData->SP[j*SKF_N_STATES + 1]);
+                unitVecState[2] = sin(ConfigData->SP[j*SKF_N_STATES + 1]);
+                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
+                    v3Dot(unitVecState, sensorNormal);
+            }
+            obsCounter++;
+        }
+    }
+    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
+        ConfigData->yMeas);
+    ConfigData->numObs = obsCounter;
+    
+}
+
+/*! This method performs the measurement update for the sunline kalman filter.
+ It applies the observations in the obs vectors to the current state estimate and 
+ updates the state/covariance with that information.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ @param updateTime The time that we need to fix the filter to (seconds)
+ */
+void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
+{
+    uint32_t i;
+    double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+    double syTInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
+    double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
+    double AT[(2 * SKF_N_STATES + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+    double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], yVecT[MAX_N_CSS_MEAS];
+    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
+    sunlineUKFMeasModel(ConfigData);
+    vSetZero(yBar, ConfigData->numObs);
+    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+    {
+        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+              tempYVec);
+        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
+        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+    }
+    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
+        ConfigData->numObs);
+    for(i=0; i<ConfigData->countHalfSPs*2; i++)
+    {
+        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
+        vAdd(tempYVec, ConfigData->numObs,
+             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
+        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
+        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
+               ConfigData->numObs*sizeof(double));
+    }
+    mSetZero(ConfigData->qObs, ConfigData->numCSSTotal, ConfigData->numCSSTotal);
+    mSetIdentity(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs);
+    mScale(ConfigData->qObsVal, ConfigData->qObs, ConfigData->numObs,
+           ConfigData->numObs, ConfigData->qObs);
+    ukfCholDecomp(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs, qChol);
+    memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
+           qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
+    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
+                ConfigData->numObs, rAT);
+    mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
+    mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
+    vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
+    vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
+    vCopy(tempYVec, ConfigData->numObs, yVecT);
+    mMultM(tempYVec, ConfigData->numObs, 1, yVecT, 1, ConfigData->numObs,
+        updMat);
+    mScale(ConfigData->wC[0], updMat, ConfigData->numObs, ConfigData->numObs,
+        updMat);
+    mMultM(sy, ConfigData->numObs, ConfigData->numObs, syT, ConfigData->numObs,
+           ConfigData->numObs, syTInv);
+    mAdd(updMat, ConfigData->numObs, ConfigData->numObs, syTInv, updMat);
+    ukfCholDecomp(updMat, ConfigData->numObs, ConfigData->numObs, sy);
+    mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
+    mSetZero(pXY, ConfigData->numStates, ConfigData->numObs);
+
+    for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
+    {
+        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
+        vAdd(tempYVec, ConfigData->numObs,
+             &(ConfigData->yMeas[i*ConfigData->numObs]), tempYVec);
+        /*TempYVec.MatOps_add(YMeas[i], TempYVec);
+        TempYVec.MatOps_transpose(TempYVec);*/
+        vSubtract(&(ConfigData->SP[i*ConfigData->numStates]), ConfigData->numStates,
+                  &(ConfigData->SP[0]), xHat);
+        vScale(ConfigData->wC[i], xHat, ConfigData->numStates, xHat);
+        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, ConfigData->numObs,
+            kMat);
+        mAdd(pXY, ConfigData->numStates, ConfigData->numObs, kMat, pXY);
+    }
+    mMultM(sy, ConfigData->numObs, ConfigData->numObs, syT, ConfigData->numObs,
+           ConfigData->numObs, syT);
+    ukfMatInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
+    mMultM(pXY, ConfigData->numStates, ConfigData->numObs, syInv,
+           ConfigData->numObs, ConfigData->numObs, kMat);
+    vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
+    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
+        ConfigData->numObs, 1, xHat);
+    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
+    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,
+           ConfigData->numObs, ConfigData->numObs, pXY);
+
+    for(i=0; i<ConfigData->numObs; i++)
+    {
+        vCopy(&(updMat[i*ConfigData->numObs]), ConfigData->numStates, xHat);
+        mTranspose(ConfigData->sBar, ConfigData->numStates,
+                   ConfigData->numStates, sBarT);
+        ukfCholDownDate(sBarT, xHat, ConfigData->numStates, sBarT);
+        mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
+            ConfigData->sBar);
+    }
+    
 }

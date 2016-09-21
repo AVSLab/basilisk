@@ -1,4 +1,4 @@
-﻿'''
+'''
 Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -15,6 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
 import sys, os, inspect
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy
 import pytest
@@ -30,10 +32,27 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import sunlineUKF  # import the module that is to be tested
+import cssComm
+import vehicleConfigData
 import macros
 import sim_model
 import ctypes
 
+
+def setupFilterData(filterObject):
+    filterObject.outputNavStateName = "sunline_state_estimate"
+    filterObject.inputCSSDataName = "css_sensors_data"
+    filterObject.inputPropsName = "adcs_config_data"
+    filterObject.inputCSSConfigName = "css_config_data"
+
+    filterObject.alpha = 0.2
+    filterObject.beta = 0.01
+    filterObject.kappa = 0.0
+
+    filterObject.state = [0.1, 0.0]
+    filterObject.covar = [0.4, 0.0, 0.0, 0.4]
+    filterObject.qNoise = [0.0017*0.0017, 0.0, 0.0, 0.0017*0.0017]
+    filterObject.qObsVal = 0.017*0.017
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -43,8 +62,10 @@ import ctypes
 def test_all_sunline_kf(show_plots):
     [testResults, testMessage] = sunline_utilities_test(show_plots)
     assert testResults < 1, testMessage
-
-
+    [testResults, testMessage] = testStatePropSunLine(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    assert testResults < 1, testMessage
 
 def sunline_utilities_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -54,28 +75,6 @@ def sunline_utilities_test(show_plots):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
-
-    # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
-    # Construct algorithm and associated C++ container
-    moduleConfig = sunlineUKF.SunlineUKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineUKF.Update_sunlineUKF,
-                                        sunlineUKF.SelfInit_sunlineUKF,
-                                        sunlineUKF.CrossInit_sunlineUKF)
-    moduleWrap.ModelTag = "SunlineUKF"
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
     AMatrix = [0.488894, 0.888396, 0.325191, 0.319207,
@@ -127,6 +126,34 @@ def sunline_utilities_test(show_plots):
     for i in range(r.shape[0]):
         if r[i,i] < 0.0:
             r[i,:] *= -1.0
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+        testFailCount += 1
+        testMessages.append("QR Decomposition accuracy failure")
+    
+    AMatrix = [ 0.2236,         0,
+               0,    0.2236,
+               -0.2236,         0,
+               0,   -0.2236,
+               0.0170,         0,
+               0,    0.0170]
+
+    RVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    AVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    for i in range(len(AMatrix)):
+        sunlineUKF.doubleArray_setitem(AVector, i, AMatrix[i])
+        sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
+
+    sunlineUKF.ukfQRDJustR(AVector, 6, 2, RVector)
+    RMatrix = []
+    for i in range(2*2):
+        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+    RBaseNumpy = numpy.array(RMatrix).reshape(2,2)
+    AMatNumpy = numpy.array(AMatrix).reshape(6,2)
+    q,r = numpy.linalg.qr(AMatNumpy)
+    for i in range(r.shape[0]):
+        if r[i,i] < 0.0:
+            r[i,:] *= -1.0
+
     if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
@@ -250,12 +277,196 @@ def sunline_utilities_test(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag
+        print "PASSED: " + " UKF utilities"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def testStateUpdateSunLine(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+    
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = sunlineUKF.SunlineUKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        sunlineUKF.Update_sunlineUKF,
+                                        sunlineUKF.SelfInit_sunlineUKF,
+                                        sunlineUKF.CrossInit_sunlineUKF,
+                                        sunlineUKF.Reset_sunlineUKF)
+    moduleWrap.ModelTag = "SunlineUKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    
+    setupFilterData(moduleConfig)
+    
+    cssConstelation = vehicleConfigData.CSSConstConfig()
+    
+    CSSOrientationList = [
+       [0.70710678118654746, -0.5, 0.5],
+       [0.70710678118654746, -0.5, -0.5],
+       [0.70710678118654746, 0.5, -0.5],
+       [0.70710678118654746, 0.5, 0.5],
+       [-0.70710678118654746, 0, 0.70710678118654757],
+       [-0.70710678118654746, 0.70710678118654757, 0.0],
+       [-0.70710678118654746, 0, -0.70710678118654757],
+       [-0.70710678118654746, -0.70710678118654757, 0.0],
+    ]
+    totalCSSList = []
+    i=0
+    #Initializing a 2D double array is hard with SWIG.  That's why there is this
+    #layer between the above list and the actual C variables.
+    for CSSHat in CSSOrientationList:
+        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS.nHat_S = CSSHat
+        totalCSSList.append(newCSS)
+    cssConstelation.nCSS = len(CSSOrientationList)
+    cssConstelation.cssVals = totalCSSList
+    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
+                                    vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 2, "CSSConstellation")
+    unitTestSim.TotalSim.WriteMessageData("css_config_data", vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 0, cssConstelation)
+    
+    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputPropsName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    I = [1000., 0., 0.,
+     0., 800., 0.,
+     0., 0., 800.]
+    vehicleConfigOut.ISCPntB_B = I
+    BS = [1.0, 0.0, 0.0,
+          0.0, 1.0, 0.0,
+          0.0, 0.0, 1.0]
+    vehicleConfigOut.BS = BS
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputPropsName,
+                                                inputMessageSize,
+                                                0,
+                                                vehicleConfigOut)
+
+    testVector = numpy.array([1.0, 0.0, 0.0])
+    inputData = cssComm.CSSOutputData()
+    dotList = []
+    for element in CSSOrientationList:
+        dotProd = numpy.dot(numpy.array(element), testVector)
+        dotList.append(dotProd)
+    inputData.CosValue = dotList
+
+    inputMessageSize = vehicleConfigData.MAX_NUM_CSS_SENSORS*8
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                      moduleConfig.inputCSSDataName,
+                                      inputMessageSize,
+                                      2)  # number of buffers (leave at 2 as default, don't make zero)
+
+
+    moduleConfig.state = [0.2, 0.0]
+    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 3, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 1, testProcessRate)
+
+    unitTestSim.InitializeSimulation()
+
+    for i in range(80000):
+        if i > 20:
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCSSDataName,
+                                      inputMessageSize,
+                                      unitTestSim.TotalSim.CurrentNanos,
+                                      inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+        unitTestSim.ExecuteSimulation()
+
+
+    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    plt.figure()
+    plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,1])
+    plt.show()
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + moduleWrap.ModelTag + " state update"
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+def testStatePropSunLine(show_plots):
+
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+    
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = sunlineUKF.SunlineUKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        sunlineUKF.Update_sunlineUKF,
+                                        sunlineUKF.SelfInit_sunlineUKF,
+                                        sunlineUKF.CrossInit_sunlineUKF,
+                                        sunlineUKF.Reset_sunlineUKF)
+    moduleWrap.ModelTag = "SunlineUKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+    
+    setupFilterData(moduleConfig)
+    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 3, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 1, testProcessRate)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
+    unitTestSim.ExecuteSimulation()
+    
+    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    for i in range(2):
+        if(covarLog[-1, i*2+1+i] <= covarLog[0, i*2+1+i]):
+            testFailCount += 1
+            testMessages.append("Covariance propagation failure")
+        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
+            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+            testFailCount += 1
+            testMessages.append("State propagation failure")
+
+    
+
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
     test_all_sunline_kf(False)

@@ -22,7 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "swig_conly_data.i"
 %array_functions(RWConfigurationElement, RWConfigArray);
 %array_functions(ThrusterPointData, ThrustConfigArray);
-
+STRUCTASLIST(CSSConfigurationElement)
 %constant void Update_vehicleConfigData(void*, uint64_t, uint64_t);
 %ignore Update_vehicleConfigData;
 %constant void SelfInit_vehicleConfigData(void*, uint64_t);

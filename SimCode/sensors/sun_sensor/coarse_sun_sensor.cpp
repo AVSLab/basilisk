@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
+#include "../ADCSAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include <math.h>
 #include <iostream>
 #include <cstring>
@@ -285,6 +286,7 @@ CSSConstellation::CSSConstellation()
     outputBuffer = NULL;
     sensorList.clear();
     outputBufferCount = 2;
+    maxNumCSSSensors = MAX_NUM_CSS_SENSORS;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
@@ -304,12 +306,12 @@ void CSSConstellation::SelfInit()
     {
         it->SelfInit();
     }
-    outputBuffer = new CSSRawOutputData[sensorList.size()];
-    memset(outputBuffer, 0x0, sensorList.size()*sizeof(CSSRawOutputData));
+    outputBuffer = new CSSRawOutputData[MAX_NUM_CSS_SENSORS];
+    memset(outputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSRawOutputData)*sensorList.size(), outputBufferCount,
+        sizeof(CSSRawOutputData)*maxNumCSSSensors, outputBufferCount,
         "CSSRawOutputData", moduleID);
 }
 
@@ -341,5 +343,5 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         outputBuffer[it - sensorList.begin()].OutputData = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 sensorList.size()*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
+                                                 MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
 }

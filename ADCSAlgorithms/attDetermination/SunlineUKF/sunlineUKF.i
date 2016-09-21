@@ -27,6 +27,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore SelfInit_sunlineUKF;
 %constant void CrossInit_sunlineUKF(void*, uint64_t);
 %ignore CrossInit_sunlineUKF;
+%constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
+%ignore Reset_sunlineUKF;
 STRUCTASLIST(SingleCSSConfig)
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/UKFUtilities.h"
