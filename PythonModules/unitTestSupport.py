@@ -82,23 +82,27 @@ def isDoubleEqual(result, truth, accuracy):
 
 
 def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
+
     texFileName = path+"/../_Documentation/AutoTeX/"+tableName+".tex"
 
-    # table = tabulate(trueVector,tablefmt="latex")
-    texTable = open(texFileName, 'w')
-    table = tabulate(array,
-                     tableHeaders,
-                     tablefmt="latex",
-                     numalign="center"
-                     )
+    try:
+        texTable = open(texFileName, 'w')
+    except IOError:
+        print 'AutoTeX folder does not exist.'
+    else:
+        table = tabulate(array,
+                         tableHeaders,
+                         tablefmt="latex",
+                         numalign="center"
+                         )
 
-    texTable.write('\\begin{table}[htbp]\n')
-    texTable.write('\caption{' + caption + '}\n')
-    texTable.write('\label{tbl:' + tableName + '}\n')
-    texTable.write('\centering\n')
-    texTable.write(table)
-    texTable.write('\end{table}')
-    texTable.close()
+        texTable.write('\\begin{table}[htbp]\n')
+        texTable.write('\caption{' + caption + '}\n')
+        texTable.write('\label{tbl:' + tableName + '}\n')
+        texTable.write('\centering\n')
+        texTable.write(table)
+        texTable.write('\end{table}')
+        texTable.close()
 
     return
 
@@ -106,17 +110,20 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
     texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
-    texFigure = open(texFileName, 'w')
+    try:
+        texFigure = open(texFileName, 'w')
+    except IOError:
+        print 'AutoTeX folder does not exist.'
+    else:
+        texFigure.write('\\begin{figure}[htbp]\n')
+        texFigure.write('\centerline{\n')
+        texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
+        texFigure.write('\caption{' + caption + '}\n')
+        texFigure.write('\label{fig:'+ figureName +'}\n')
+        texFigure.write('\end{figure}')
+        texFigure.close()
 
-    texFigure.write('\\begin{figure}[htbp]\n')
-    texFigure.write('\centerline{\n')
-    texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
-    texFigure.write('\caption{' + caption + '}\n')
-    texFigure.write('\label{fig:'+ figureName +'}\n')
-    texFigure.write('\end{figure}')
-    texFigure.close()
-
-    texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-    plt.savefig(texFileName)
+        texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
+        plt.savefig(texFileName)
 
     return
