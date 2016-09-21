@@ -29,7 +29,7 @@ void ukfQRDJustR(
 
 	mSetZero(qMat, UKF_MAX_DIM, UKF_MAX_DIM);
 	mSetZero(sourceMat, UKF_MAX_DIM, UKF_MAX_DIM);
-	mSetZero(destMat, nRow, nCol);
+	mSetZero(destMat, nCol, nCol);
 	mCopy(inMat, nRow, nCol, sourceMat);
 
 	for (i = 0; i<nCol; i++)
@@ -320,59 +320,32 @@ void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 	}
 }
 
-void ukfCholDownDate(double *rMat, double *xVec, int32_t nStates,
+void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
 	double *rOut)
 {
-	int i, j, k, matdim;
-	double MatNorm, alpha, scale, a, b, T, xx;
-	double RT[UKF_MAX_DIM*UKF_MAX_DIM];
-	double S[UKF_MAX_DIM];
-	double C[UKF_MAX_DIM];
+	int i, j;
+	double wVec[UKF_MAX_DIM];
+    double rEl2, bParam, gamma;
+	
+    vCopy(xVec, nStates, wVec);
+    mSetZero(rOut, nStates, nStates);
 
-	mCopy(rMat, nStates, nStates, rOut);
-	matdim = nStates; // Square matrix
-	mTranspose(rMat, nStates, nStates, RT);
-	vSetZero(S, nStates);
-	vSetZero(C, nStates);
-
-	for (i = 0; i<matdim; i++)
+    bParam = 1.0;
+	for (i = 0; i < nStates; i++)
 	{
-		S[i] = xVec[i];
-		for (j = 0; j <= i - 1; j++)
-		{
-			S[i] -= RT[i*matdim + j] * S[j];
-		}
-		S[i] /= RT[i*matdim + i];
+        rEl2 = rMat[i*nStates+i] * rMat[i*nStates+i];
+        rOut[i*nStates + i] = sqrt(rEl2 + beta/bParam * wVec[i]*wVec[i]);
+        gamma = rEl2*bParam + beta * wVec[i]*wVec[i];
+        for(j=i+1; j<nStates; j++)
+        {
+            wVec[j] = wVec[j] - wVec[i]/rMat[i*nStates + i]*rMat[j*nStates+i];
+            rOut[j*nStates +i] = rOut[i*nStates + i]/rMat[i*nStates + i] *
+                rMat[j*nStates + i];
+            rOut[j*nStates +i] += rOut[i*nStates + i]*beta*wVec[j]*wVec[i]/gamma;
+        }
+        bParam += beta * wVec[i]*wVec[i]/rEl2;
 	}
-	MatNorm = vNorm(S, nStates);
-	if (MatNorm > 1.0)
-	{
-		return;
-	}
-	alpha = sqrt(1.0 - MatNorm*MatNorm);
-	for (i = 1; i <= matdim; i++)
-	{
-		j = matdim - i + 1;
-		scale = alpha + fabs(S[j - 1]);
-		a = alpha / scale;
-		b = S[j - 1] / scale;
-		MatNorm = sqrt(a*a + b*b);
-		C[j - 1] = a / MatNorm;
-		S[j - 1] = b / MatNorm;
-		alpha = scale*MatNorm;
-	}
-	for (i = 1; i <= matdim; i++)
-	{
-		xx = 0.0;
-		for (j = 1; j <= i; j++)
-		{
-			k = i - j + 1;
-			T = C[k - 1] * xx + S[k - 1] * rOut[(k - 1)*matdim +(i - 1)];
-			rOut[(k - 1)*matdim + (i - 1)] = C[k - 1] * rOut[(k - 1)*
-				matdim + (i - 1)] - S[k - 1] * xx;
-			xx = T;
-		}
-	}
+	
 
 	return;
 }

@@ -363,7 +363,7 @@ def testStateUpdateSunLine(show_plots):
                                                 0,
                                                 vehicleConfigOut)
 
-    testVector = numpy.array([1.0, 0.0, 0.0])
+    testVector = numpy.array([-1.0, 0.0, 0.0])
     inputData = cssComm.CSSOutputData()
     dotList = []
     for element in CSSOrientationList:
@@ -384,13 +384,30 @@ def testStateUpdateSunLine(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(80000):
+    for i in range(20000):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCSSDataName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
+        unitTestSim.ExecuteSimulation()
+
+    testVector = numpy.array([-1.0, 0.0, 0.0])
+    inputData = cssComm.CSSOutputData()
+    dotList = []
+    for element in CSSOrientationList:
+        dotProd = numpy.dot(numpy.array(element), testVector)
+        dotList.append(dotProd)
+    inputData.CosValue = dotList
+        
+    for i in range(20000):
+        if i > 20:
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCSSDataName,
+                                      inputMessageSize,
+                                      unitTestSim.TotalSim.CurrentNanos,
+                                      inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i+20001)*0.5))
         unitTestSim.ExecuteSimulation()
 
 

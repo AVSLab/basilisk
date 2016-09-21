@@ -44,8 +44,8 @@ extern "C" {
 		double *destMat);
 	void ukfCholDecomp(double *sourceMat, int32_t nRow, int32_t nCol,
 		double *destMat);
-	void ukfCholDownDate(double *rMat, double *xVec, int32_t nStates,
-		double *rOut);
+    void ukfCholDownDate(double *rMat, double *xVec, double beta, int32_t nStates,
+                         double *rOut);
 
 #ifdef __cplusplus
 }
