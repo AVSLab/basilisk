@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
 import math
+import os,errno
 
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
@@ -85,11 +86,13 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
     texFileName = path+"/../_Documentation/AutoTeX/"+tableName+".tex"
 
-    try:
-        texTable = open(texFileName, 'w')
-    except IOError:
-        print 'AutoTeX folder does not exist.'
-    else:
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(texFileName, "w") as texTable:
         table = tabulate(array,
                          tableHeaders,
                          tablefmt="latex",
@@ -110,11 +113,13 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
     texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
-    try:
-        texFigure = open(texFileName, 'w')
-    except IOError:
-        print 'AutoTeX folder does not exist.'
-    else:
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(texFileName, "w") as texFigure:
         texFigure.write('\\begin{figure}[htbp]\n')
         texFigure.write('\centerline{\n')
         texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
