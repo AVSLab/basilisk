@@ -175,8 +175,13 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 	@return void
 	@param stateInOut The state that is propagated
 */
-void sunlineStateProp(double *stateInOut)
+void sunlineStateProp(double *stateInOut, double dt)
 {
+
+    double propagatedVel[3];
+    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    v3Add(stateInOut, propagatedVel, stateInOut);
+
 	return;
 }
 
@@ -203,7 +208,8 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 	vCopy(ConfigData->state, ConfigData->numStates,
 		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
 
-	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]));
+	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]),
+        ConfigData->dt);
 	vCopy(&(ConfigData->SP[0 * ConfigData->numStates + 0]),
 		ConfigData->numStates, xBar);
 	vScale(ConfigData->wM[0], xBar, ConfigData->numStates, xBar);
@@ -215,7 +221,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
 		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
 		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-		sunlineStateProp(spPtr);
+		sunlineStateProp(spPtr, ConfigData->dt);
 		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
 		vAdd(xComp, ConfigData->numStates, xBar, xBar);
 		
@@ -224,7 +230,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
         vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
         vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
         vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-        sunlineStateProp(spPtr);
+        sunlineStateProp(spPtr, ConfigData->dt);
         vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
         vAdd(xComp, ConfigData->numStates, xBar, xBar);
 	}
@@ -368,10 +374,13 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
             kMat);
         mAdd(pXY, ConfigData->numStates, ConfigData->numObs, kMat, pXY);
     }
-    mMultM(sy, ConfigData->numObs, ConfigData->numObs, syT, ConfigData->numObs,
-           ConfigData->numObs, syT);
-    ukfMatInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
+
+    ukfUInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
+    
     mMultM(pXY, ConfigData->numStates, ConfigData->numObs, syInv,
+           ConfigData->numObs, ConfigData->numObs, kMat);
+    ukfLInv(sy, ConfigData->numObs, ConfigData->numObs, syInv);
+    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, syInv,
            ConfigData->numObs, ConfigData->numObs, kMat);
     vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
     mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,

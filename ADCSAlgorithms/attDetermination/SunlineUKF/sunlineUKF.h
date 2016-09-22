@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "../_GeneralModuleFiles/navStateOut.h"
 #include <stdint.h>
 
-#define SKF_N_STATES 3
+#define SKF_N_STATES 6
 #define MAX_N_CSS_MEAS 8
 
 /*! \addtogroup ADCSAlgGroup
@@ -94,7 +94,7 @@ extern "C" {
 		uint64_t moduleID);
 	void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime);
     void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime);
-	void sunlineStateProp(double *stateInOut);
+	void sunlineStateProp(double *stateInOut, double dt);
     void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData);
     
 #ifdef __cplusplus

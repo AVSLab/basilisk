@@ -49,9 +49,17 @@ def setupFilterData(filterObject):
     filterObject.beta = 0.01
     filterObject.kappa = 0.0
 
-    filterObject.state = [1.0, 0.0, 0.0]
-    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.4]
-    filterObject.qNoise = [0.017*0.017, 0.0, 0.0, 0.0, 0.017*0.017, 0.0, 0.0, 0.0, 0.017*0.017]
+    filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.04, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.04, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.04]
+    qNoiseIn = numpy.identity(6)
+    qNoiseIn[0:3, 0:3] = qNoiseIn[0:3, 0:3]*0.017*0.017
+    qNoiseIn[3:6, 3:6] = qNoiseIn[3:6, 3:6]*0.0017*0.0017
+    filterObject.qNoise = qNoiseIn.reshape(36).tolist()
     filterObject.qObsVal = 0.017*0.017
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -270,6 +278,53 @@ def sunline_utilities_test(show_plots):
         testMessages.append("Cholesky Matrix Decomposition accuracy failure")
 
 
+    InvSourceMat = [2.1950926119414667, 0.0, 0.0, 0.0,
+               1.0974804773131115, 1.9010439702743847, 0.0, 0.0,
+               0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
+               1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
+               
+    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    for i in range(len(InvSourceMat)):
+        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+    nRow = int(math.sqrt(len(InvSourceMat)))
+    sunlineUKF.ukfLInv(SourceVector, nRow, nRow, InvVector)
+
+    InvOut = []
+    for i in range(len(InvSourceMat)):
+        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+
+    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
+    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow,nRow))
+    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
+    if(errorNorm > 1.0E-12):
+        print errorNorm
+        testFailCount += 1
+        testMessages.append("L Matrix Inverse accuracy failure")
+
+    InvSourceMat = numpy.transpose(numpy.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
+    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    for i in range(len(InvSourceMat)):
+        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+    nRow = int(math.sqrt(len(InvSourceMat)))
+    sunlineUKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
+
+    InvOut = []
+    for i in range(len(InvSourceMat)):
+        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+
+    InvOut = numpy.array(InvOut).reshape(nRow, nRow)
+    expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow,nRow))
+    errorNorm = numpy.linalg.norm(expectIdent - numpy.identity(nRow))
+    if(errorNorm > 1.0E-12):
+        print errorNorm
+        testFailCount += 1
+        testMessages.append("U Matrix Inverse accuracy failure")
+
+
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     if show_plots:
@@ -379,8 +434,8 @@ def testStateUpdateSunLine(show_plots):
 
 
     moduleConfig.state = [1.0, 0.0, 0.0]
-    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 3, testProcessRate)
-    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 1, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
+    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
 
     unitTestSim.InitializeSimulation()
 
@@ -414,8 +469,16 @@ def testStateUpdateSunLine(show_plots):
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
     plt.figure()
-    plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,2])
+    for i in range(moduleConfig.numStates):
+        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1])
+
+    plt.figure()
+    for i in range(moduleConfig.numStates):
+        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1])
+
     plt.show()
+    if(show_plots):
+        plt.show()
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state update"
@@ -458,16 +521,16 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 8, testProcessRate)
-    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 2, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
+    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
-    for i in range(3):
-        if(covarLog[-1, i*3+1+i] <= covarLog[0, i*3+1+i]):
+    for i in range(6):
+        if(covarLog[-1, i*6+1+i] <= covarLog[0, i*6+1+i]):
             testFailCount += 1
             testMessages.append("Covariance propagation failure")
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
