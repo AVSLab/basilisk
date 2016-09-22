@@ -311,13 +311,24 @@ def parseSimAlgorithms(TheSim, taskIdxDir, outputCFileName, str_ConfigData):
 
 
 TheAVSSim = AVSSim.AVSSim()
-taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+# Create list of task indices
+TheList = TheAVSSim.TaskList
+taskIdxList = []
+print "Tasks being parsed:\n"
+for i in range(0, len(TheList)):
+    taskName = TheList[i].Name
+    if taskName == "SynchTask" or taskName == "DynamicsTask" or taskName == "attitudeNav":
+        continue
+    else:
+        print i, taskName
+        taskIdxList.append(i)
+
 taskIdxActivityDir = {}
 for taskIdx in taskIdxList:
     taskIdxActivityDir[taskIdx] = str(1)
 outputFileName = 'EMM_FSW_Autocode'
 str_ConfigData = 'EMMConfigData'
 parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputFileName, str_ConfigData)
-
 
 

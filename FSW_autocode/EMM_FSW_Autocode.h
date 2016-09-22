@@ -8,7 +8,6 @@
 #include "../ADCSAlgorithms/attGuidance/sunSafePoint/sunSafePoint.h"
 #include "../ADCSAlgorithms/attGuidance/simpleDeadband/simpleDeadband.h"
 #include "../ADCSAlgorithms/attControl/MRP_PD/MRP_PD.h"
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/sunSafeACS.h"
 #include "../ADCSAlgorithms/attGuidance/celestialBodyPoint/celestialBodyPoint.h"
 #include "../ADCSAlgorithms/attGuidance/attRefGen/attRefGen.h"
 #include "../ADCSAlgorithms/attControl/MRP_Steering/MRP_Steering.h"
@@ -16,6 +15,8 @@
 #include "../ADCSAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpace.h"
 #include "../ADCSAlgorithms/dvGuidance/dvAttGuidance/dvGuidance.h"
 #include "../ADCSAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
+#include "../ADCSAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
+#include "../ADCSAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
 #include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stComm.h"
 #include "../ADCSAlgorithms/attGuidance/inertial3D/inertial3D.h"
 #include "../ADCSAlgorithms/attGuidance/hillPoint/hillPoint.h"
@@ -37,7 +38,6 @@ typedef struct{
 	sunSafePointConfig sunSafePoint;
 	simpleDeadbandConfig simpleDeadband;
 	MRP_PDConfig MRP_PD;
-	sunSafeACSConfig sunSafeACS;
 	celestialBodyPointConfig sunPoint;
 	celestialBodyPointConfig earthPoint;
 	celestialBodyPointConfig marsPoint;
@@ -48,7 +48,9 @@ typedef struct{
 	dvGuidanceConfig dvGuidance;
 	MRP_SteeringConfig MRP_SteeringMOI;
 	dvAttEffectConfig dvAttEffect;
-	thrustRWDesatConfig thrustRWDesat;
+	thrustRWDesatConfig thrFiringSchmitt;
+	thrForceMappingConfig thrForceMapping;
+	thrFiringSchmittConfig ;
 	STConfigData stSensorDecode;
 	inertial3DConfig inertial3D;
 	hillPointConfig hillPoint;
@@ -61,24 +63,26 @@ typedef struct{
 	MRP_FeedbackConfig MRP_FeedbackRWA;
 	rwMotorTorqueConfig rwMotorTorque;
 	PRV_SteeringConfig PRV_SteeringRWA;
-	uint32_t sunSafeFSWTask_isActive;
-	uint32_t velocityPointTask_isActive;
+	uint32_t earthPointTask_isActive;
+	uint32_t inertial3DSpinTask_isActive;
+	uint32_t inertial3DPointTask_isActive;
+	uint32_t hillPointTask_isActive;
+	uint32_t vehicleDVPrepFSWTask_isActive;
+	uint32_t attitudeControlMnvrTask_isActive;
 	uint32_t attitudePRVControlMnvrTask_isActive;
 	uint32_t rasterMnvrTask_isActive;
-	uint32_t earthPointTask_isActive;
-	uint32_t vehicleAttMnvrFSWTask_isActive;
-	uint32_t inertial3DPointTask_isActive;
-	uint32_t marsPointTask_isActive;
-	uint32_t hillPointTask_isActive;
-	uint32_t celTwoBodyPointTask_isActive;
-	uint32_t vehicleDVPrepFSWTask_isActive;
 	uint32_t initOnlyTask_isActive;
-	uint32_t vehicleDVMnvrFSWTask_isActive;
-	uint32_t inertial3DSpinTask_isActive;
-	uint32_t feedbackControlMnvrTask_isActive;
+	uint32_t velocityPointTask_isActive;
+	uint32_t thrFiringSchmittTask_isActive;
+	uint32_t thrForceMappingTask_isActive;
 	uint32_t RWADesatTask_isActive;
 	uint32_t sensorProcessing_isActive;
-	uint32_t attitudeControlMnvrTask_isActive;
+	uint32_t sunSafeFSWTask_isActive;
+	uint32_t vehicleAttMnvrFSWTask_isActive;
+	uint32_t marsPointTask_isActive;
+	uint32_t celTwoBodyPointTask_isActive;
+	uint32_t vehicleDVMnvrFSWTask_isActive;
+	uint32_t feedbackControlMnvrTask_isActive;
 	uint32_t eulerRotationTask_isActive;
 	uint32_t sunPointTask_isActive;
 	uint32_t simpleRWControlTask_isActive;
@@ -100,6 +104,10 @@ extern "C" {
 	void vehicleDVMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void RWADesatTask_Update(EMMConfigData *data, uint64_t callTime);
 	void RWADesatTask_Reset(EMMConfigData *data, uint64_t callTime);
+	void thrForceMappingTask_Update(EMMConfigData *data, uint64_t callTime);
+	void thrForceMappingTask_Reset(EMMConfigData *data, uint64_t callTime);
+	void thrFiringSchmittTask_Update(EMMConfigData *data, uint64_t callTime);
+	void thrFiringSchmittTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void sensorProcessing_Update(EMMConfigData *data, uint64_t callTime);
 	void inertial3DPointTask_Update(EMMConfigData *data, uint64_t callTime);
 	void inertial3DPointTask_Reset(EMMConfigData *data, uint64_t callTime);
