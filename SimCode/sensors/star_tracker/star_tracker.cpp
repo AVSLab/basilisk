@@ -68,7 +68,7 @@ void StarTracker::SelfInit()
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
     if(PMatrix.size() != numStates*numStates)
     {
-        std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 18*18.";
+        std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
         std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
         PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
                        0.0);
