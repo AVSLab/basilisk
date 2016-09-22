@@ -307,16 +307,6 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
 
-	StateCurrent.T_str2Bdy[0][0] = 1.0;
-	StateCurrent.T_str2Bdy[0][1] = 0.0;
-	StateCurrent.T_str2Bdy[0][2] = 0.0;
-	StateCurrent.T_str2Bdy[1][0] = 0.0;
-	StateCurrent.T_str2Bdy[1][1] = 1.0;
-	StateCurrent.T_str2Bdy[1][2] = 0.0;
-	StateCurrent.T_str2Bdy[2][0] = 0.0;
-	StateCurrent.T_str2Bdy[2][1] = 0.0;
-	StateCurrent.T_str2Bdy[2][2] = 1.0;
-
     if(NominalReady)
     {
         /* Compute true data */
