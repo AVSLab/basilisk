@@ -1,12 +1,19 @@
-// This file is part of Eigen, a lightweight C++ template library
-// for linear algebra.
-//
-// Copyright (C) 2008-2010 Gael Guennebaud <gael.guennebaud@inria.fr>
-// Copyright (C) 2009 Mathieu Gautier <mathieu.gautier@cea.fr>
-//
-// This Source Code Form is subject to the terms of the Mozilla
-// Public License v. 2.0. If a copy of the MPL was not distributed
-// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
+/*
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
 
 #ifndef EIGEN_MRP_H
 #define EIGEN_MRP_H
@@ -154,7 +161,7 @@ namespace Eigen {
         /** \returns the conjugated MRP */
         MRP<Scalar> conjugate() const;
 
-        template<class OtherDerived> MRP<Scalar> slerp(const Scalar& t, const MRPBase<OtherDerived>& other) const;
+        //        template<class OtherDerived> MRP<Scalar> slerp(const Scalar& t, const MRPBase<OtherDerived>& other) const;
 
         /** \returns \c true if \c *this is approximately equal to \a other, within the precision
          * determined by \a prec.
@@ -178,9 +185,6 @@ namespace Eigen {
             return typename internal::cast_return_type<Derived,MRP<NewScalarType> >::type(derived());
         }
 
-//#ifdef EIGEN_QUATERNIONBASE_PLUGIN
-//# include EIGEN_QUATERNIONBASE_PLUGIN
-//#endif
     };
 
     /***************************************************************************
@@ -196,12 +200,11 @@ namespace Eigen {
      * \tparam _Scalar the scalar type, i.e., the type of the coefficients
      * \tparam _Options controls the memory alignment of the coefficients. Can be \# AutoAlign or \# DontAlign. Default is AutoAlign.
      *
-     * This class represents a MRP \f$ w+xi+yj+zk \f$ that is a convenient representation of
+     * This class represents a MRP \f$ (x,y,z) \f$ that is a convenient representation of
      * orientations and rotations of objects in three dimensions. Compared to other representations
      * like Euler angles or 3x3 matrices, MRPs offer the following advantages:
      * \li \b compact storage (3 scalars)
      * \li \b efficient to compose (28 flops),
-     * \li \b stable spherical interpolation
      *
      * The following two typedefs are provided for convenience:
      * \li \c MRPf for \c float
@@ -244,12 +247,8 @@ namespace Eigen {
         /** Default constructor leaving the MRP uninitialized. */
         inline MRP() {}
 
-        /** Constructs and initializes the MRP \f$ w+xi+yj+zk \f$ from
-         * its four coefficients \a w, \a x, \a y and \a z.
-         *
-         * \warning Note the order of the arguments: the real \a w coefficient first,
-         * while internally the coefficients are stored in the following order:
-         * [\c x, \c y, \c z, \c w]
+        /** Constructs and initializes the MRP \f$ (x,y,z) \f$ from
+         * its four coefficients \a x, \a y and \a z.
          */
         inline MRP(const Scalar& x, const Scalar& y, const Scalar& z) : m_coeffs(x, y, z){}
 
@@ -270,9 +269,9 @@ namespace Eigen {
         explicit inline MRP(const MatrixBase<Derived>& other) { *this = other; }
 
         /** Explicit copy constructor with scalar conversion */
-        template<typename OtherScalar, int OtherOptions>
-        explicit inline MRP(const MRP<OtherScalar, OtherOptions>& other)
-        { m_coeffs = other.coeffs().template cast<Scalar>(); }
+        //        template<typename OtherScalar, int OtherOptions>
+        //        explicit inline MRP(const MRP<OtherScalar, OtherOptions>& other)
+        //        { m_coeffs = other.coeffs().template cast<Scalar>(); }
 
         template<typename Derived1, typename Derived2>
         static MRP FromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b);
@@ -523,11 +522,9 @@ namespace Eigen {
     template<class Derived>
     EIGEN_STRONG_INLINE Derived& MRPBase<Derived>::operator=(const AngleAxisType& aa)
     {
-        using std::cos;
-        using std::sin;
-        Scalar ha = Scalar(0.5)*aa.angle(); // Scalar(0.5) to suppress precision loss warnings
-        this->w() = cos(ha);
-        this->vec() = sin(ha) * aa.axis();
+        using std::tan;
+        Scalar tanPhi = Scalar(0.25)*aa.angle(); // Scalar(0.25) to suppress precision loss warnings
+        this->vec() = tanPhi * aa.axis();
         return derived();
     }
 
@@ -597,38 +594,21 @@ namespace Eigen {
     template<typename Derived1, typename Derived2>
     inline Derived& MRPBase<Derived>::setFromTwoVectors(const MatrixBase<Derived1>& a, const MatrixBase<Derived2>& b)
     {
-        using std::max;
-        using std::sqrt;
+        using std::acos;
+        using std::tan;
+
         Vector3 v0 = a.normalized();
         Vector3 v1 = b.normalized();
         Scalar c = v1.dot(v0);
 
-        // if dot == -1, vectors are nearly opposites
-        // => accurately compute the rotation axis by computing the
-        //    intersection of the two planes. This is done by solving:
-        //       x^T v0 = 0
-        //       x^T v1 = 0
-        //    under the constraint:
-        //       ||x|| = 1
-        //    which yields a singular value problem
-        if (c < Scalar(-1)+NumTraits<Scalar>::dummy_precision())
-        {
-            c = (max)(c,Scalar(-1));
-            Matrix<Scalar,2,3> m; m << v0.transpose(), v1.transpose();
-            JacobiSVD<Matrix<Scalar,2,3> > svd(m, ComputeFullV);
-            Vector3 axis = svd.matrixV().col(2);
+        if (c != 1 && c != -1) {
+            Vector3 axis = v0.cross(v1);
+            axis.normalize();
 
-            Scalar w2 = (Scalar(1)+c)*Scalar(0.5);
-            this->w() = sqrt(w2);
-            this->vec() = axis * sqrt(Scalar(1) - w2);
-            return derived();
+            this->vec() = axis*tan(acos(c)/Scalar(4.0));
+        } else {
+            this->vec() << 0., 0., 0.;
         }
-        Vector3 axis = v0.cross(v1);
-        Scalar s = sqrt((Scalar(1)+c)*Scalar(2));
-        Scalar invs = Scalar(1)/s;
-        this->vec() = axis * invs;
-        this->w() = s * Scalar(0.5);
-
         return derived();
     }
 
@@ -720,9 +700,9 @@ namespace Eigen {
     inline MRP<typename internal::traits<Derived>::Scalar>
     MRPBase<Derived>::conjugate() const
     {
-        return MRP<Scalar>(-this->x(),-this->y(),-this->z());
+        return MRP<Scalar>(-this->coeffs());
     }
-    
+
     /** \returns the angle (in radian) between two rotations
      * \sa dot()
      */
@@ -731,56 +711,56 @@ namespace Eigen {
     inline typename internal::traits<Derived>::Scalar
     MRPBase<Derived>::angularDistance(const MRPBase<OtherDerived>& other) const
     {
-        using std::atan2;
+        using std::atan;
         using std::abs;
         MRP<Scalar> d = (*this) * other.conjugate();
-        return Scalar(2) * atan2( d.vec().norm(), abs(d.w()) );
+        return Scalar(4) * atan( d.norm() );
     }
-    
-    
-    
-    /** \returns the spherical linear interpolation between the two MRPs
-     * \c *this and \a other at the parameter \a t in [0;1].
-     * 
-     * This represents an interpolation for a constant motion between \c *this and \a other,
-     * see also http://en.wikipedia.org/wiki/Slerp.
-     */
-    template <class Derived>
-    template <class OtherDerived>
-    MRP<typename internal::traits<Derived>::Scalar>
-    MRPBase<Derived>::slerp(const Scalar& t, const MRPBase<OtherDerived>& other) const
-    {
-        using std::acos;
-        using std::sin;
-        using std::abs;
-        static const Scalar one = Scalar(1) - NumTraits<Scalar>::epsilon();
-        Scalar d = this->dot(other);
-        Scalar absD = abs(d);
-        
-        Scalar scale0;
-        Scalar scale1;
-        
-        if(absD>=one)
-        {
-            scale0 = Scalar(1) - t;
-            scale1 = t;
-        }
-        else
-        {
-            // theta is the angle between the 2 MRPs
-            Scalar theta = acos(absD);
-            Scalar sinTheta = sin(theta);
-            
-            scale0 = sin( ( Scalar(1) - t ) * theta) / sinTheta;
-            scale1 = sin( ( t * theta) ) / sinTheta;
-        }
-        if(d<Scalar(0)) scale1 = -scale1;
-        
-        return MRP<Scalar>(scale0 * coeffs() + scale1 * other.coeffs());
-    }
-    
+
+
+
+    //    /** \returns the spherical linear interpolation between the two MRPs
+    //     * \c *this and \a other at the parameter \a t in [0;1].
+    //     *
+    //     * This represents an interpolation for a constant motion between \c *this and \a other,
+    //     * see also http://en.wikipedia.org/wiki/Slerp.
+    //     */
+    //    template <class Derived>
+    //    template <class OtherDerived>
+    //    MRP<typename internal::traits<Derived>::Scalar>
+    //    MRPBase<Derived>::slerp(const Scalar& t, const MRPBase<OtherDerived>& other) const
+    //    {
+    //        using std::acos;
+    //        using std::sin;
+    //        using std::abs;
+    //        static const Scalar one = Scalar(1) - NumTraits<Scalar>::epsilon();
+    //        Scalar d = this->dot(other);
+    //        Scalar absD = abs(d);
+    //
+    //        Scalar scale0;
+    //        Scalar scale1;
+    //
+    //        if(absD>=one)
+    //        {
+    //            scale0 = Scalar(1) - t;
+    //            scale1 = t;
+    //        }
+    //        else
+    //        {
+    //            // theta is the angle between the 2 MRPs
+    //            Scalar theta = acos(absD);
+    //            Scalar sinTheta = sin(theta);
+    //
+    //            scale0 = sin( ( Scalar(1) - t ) * theta) / sinTheta;
+    //            scale1 = sin( ( t * theta) ) / sinTheta;
+    //        }
+    //        if(d<Scalar(0)) scale1 = -scale1;
+    //
+    //        return MRP<Scalar>(scale0 * coeffs() + scale1 * other.coeffs());
+    //    }
+
     namespace internal {
-        
+
         // set from a rotation matrix
         // this maps the [NB] DCM to the equivalent sigma_B/N set
         template<typename Other>
