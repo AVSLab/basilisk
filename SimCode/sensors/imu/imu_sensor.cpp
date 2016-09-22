@@ -295,10 +295,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
                InertialAccel);
     v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
     v3Scale(1.0/dt, InertialAccel, InertialAccel);
-    v3Add(InertialAccel, RotForces, InertialAccel); // i think this should be v3Add  -john
+    v3Add(InertialAccel, RotForces, InertialAccel);
     m33MultV3(T_Bdy2Platform, InertialAccel, this->trueValues.AccelPlatform);
     v3Scale(dt, RotForces, RotForces);
-    v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform); // i think this should be v3Add  -john
+    v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
     m33MultV3(T_Bdy2Platform, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
     
 }
