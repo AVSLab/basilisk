@@ -49,9 +49,9 @@ def setupFilterData(filterObject):
     filterObject.beta = 0.01
     filterObject.kappa = 0.0
 
-    filterObject.state = [0.1, 0.0]
-    filterObject.covar = [0.4, 0.0, 0.0, 0.4]
-    filterObject.qNoise = [0.0017*0.0017, 0.0, 0.0, 0.0017*0.0017]
+    filterObject.state = [1.0, 0.0, 0.0]
+    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.4]
+    filterObject.qNoise = [0.017*0.017, 0.0, 0.0, 0.0, 0.017*0.017, 0.0, 0.0, 0.0, 0.017*0.017]
     filterObject.qObsVal = 0.017*0.017
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -378,7 +378,7 @@ def testStateUpdateSunLine(show_plots):
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
 
-    moduleConfig.state = [0.2, 0.0]
+    moduleConfig.state = [1.0, 0.0, 0.0]
     unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 3, testProcessRate)
     unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 1, testProcessRate)
 
@@ -393,7 +393,7 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    testVector = numpy.array([-1.0, 0.0, 0.0])
+    testVector = numpy.array([0.0, -1.2, 0.0])
     inputData = cssComm.CSSOutputData()
     dotList = []
     for element in CSSOrientationList:
@@ -414,7 +414,7 @@ def testStateUpdateSunLine(show_plots):
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
     plt.figure()
-    plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,1])
+    plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,2])
     plt.show()
     # print out success message if no error were found
     if testFailCount == 0:
@@ -458,16 +458,16 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 3, testProcessRate)
-    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 1, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 8, testProcessRate)
+    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 2, testProcessRate)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
-    for i in range(2):
-        if(covarLog[-1, i*2+1+i] <= covarLog[0, i*2+1+i]):
+    for i in range(3):
+        if(covarLog[-1, i*3+1+i] <= covarLog[0, i*3+1+i]):
             testFailCount += 1
             testMessages.append("Covariance propagation failure")
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):

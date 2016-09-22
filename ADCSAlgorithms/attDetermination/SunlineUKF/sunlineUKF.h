@@ -23,7 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "../_GeneralModuleFiles/navStateOut.h"
 #include <stdint.h>
 
-#define SKF_N_STATES 2
+#define SKF_N_STATES 3
 #define MAX_N_CSS_MEAS 8
 
 /*! \addtogroup ADCSAlgGroup

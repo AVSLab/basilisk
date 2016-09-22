@@ -255,31 +255,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
     ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
         ConfigData->numStates, sBarUp);
     mCopy(sBarUp, ConfigData->numStates, ConfigData->numStates, ConfigData->sBar);
-//    mMultM(xErr, ConfigData->numStates, 1, xErr, 1, ConfigData->numStates,
-//        SPErrMat);
-//	mScale(ConfigData->wC[0], SPErrMat, ConfigData->numStates,
-//           ConfigData->numStates, SPErrMat);
-//	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates, sBarT,
-//           ConfigData->numStates, ConfigData->numStates, sBarUp);
-//    mAdd(sBarUp, ConfigData->numStates, ConfigData->numStates, SPErrMat, sBarUp);
-//    ukfCholDecomp(sBarUp, ConfigData->numStates, ConfigData->numStates,
-//        ConfigData->sBar);
-//    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-//        sBarT);
-//    vCopy(xBar, ConfigData->numStates, &(ConfigData->SP[0]));
-//	for (i = 0; i<ConfigData->countHalfSPs; i++)
-//	{
-//		Index = i + 1;
-//        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-//        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-//        vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-//        vAdd(spPtr, ConfigData->numStates, xBar, spPtr);
-//		Index = i + 1 + ConfigData->countHalfSPs;
-//        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-//        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-//        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-//        vAdd(spPtr, ConfigData->numStates, xBar, spPtr);
-//	}
+
     mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
         ConfigData->covar);
 	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
@@ -301,7 +277,6 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
 void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
 {
     uint32_t i, j, obsCounter;
-    double unitVecState[3];
     double sensorNormal[3];
     obsCounter = 0;
     for(i=0; i<ConfigData->numCSSTotal; i++)
@@ -312,13 +287,8 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
             ConfigData->obs[obsCounter] = ConfigData->rawSensorData.CosValue[i];
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
             {
-                unitVecState[0] = cos(ConfigData->SP[j*SKF_N_STATES + 0]) *
-                    cos(ConfigData->SP[j*SKF_N_STATES + 1]);
-                unitVecState[1] = sin(ConfigData->SP[j*SKF_N_STATES + 0]) *
-                    cos(ConfigData->SP[j*SKF_N_STATES + 1]);
-                unitVecState[2] = sin(ConfigData->SP[j*SKF_N_STATES + 1]);
                 ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
-                    v3Dot(unitVecState, sensorNormal);
+                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES]), sensorNormal);
             }
             obsCounter++;
         }
@@ -383,16 +353,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
                     ConfigData->numObs, updMat);
     mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
     mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
-    /*vCopy(tempYVec, ConfigData->numObs, yVecT);
-    mMultM(tempYVec, ConfigData->numObs, 1, yVecT, 1, ConfigData->numObs,
-        updMat);
-    mScale(ConfigData->wC[0], updMat, ConfigData->numObs, ConfigData->numObs,
-        updMat);
-    mMultM(sy, ConfigData->numObs, ConfigData->numObs, syT, ConfigData->numObs,
-           ConfigData->numObs, syTInv);
-    mAdd(updMat, ConfigData->numObs, ConfigData->numObs, syTInv, updMat);
-    ukfCholDecomp(updMat, ConfigData->numObs, ConfigData->numObs, sy);
-    mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);*/
+
     mSetZero(pXY, ConfigData->numStates, ConfigData->numObs);
 
     for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
@@ -421,9 +382,9 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
     mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
     for(i=0; i<ConfigData->numObs; i++)
     {
-        vCopy(&(pXY[i*ConfigData->numObs]), ConfigData->numStates, xHat);
-        ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
-        mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
+        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
+        ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);
+        mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }
     
