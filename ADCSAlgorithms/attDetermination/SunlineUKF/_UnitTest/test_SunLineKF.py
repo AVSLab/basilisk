@@ -1,4 +1,4 @@
-'''
+﻿'''
 Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -432,7 +432,8 @@ def testStateUpdateSunLine(show_plots):
                                       inputMessageSize,
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
-
+    stateTarget = testVector.tolist()
+    stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.state = [1.0, 0.0, 0.0]
     unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
     unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
@@ -447,6 +448,18 @@ def testStateUpdateSunLine(show_plots):
                                       inputData)
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+
+    for i in range(6):
+        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-10):
+            print abs(stateLog[-1, i+1] - stateTarget[i])
+            testFailCount += 1
+            testMessages.append("State update failure")
 
     testVector = numpy.array([0.0, -1.2, 0.0])
     inputData = cssComm.CSSOutputData()
@@ -468,6 +481,16 @@ def testStateUpdateSunLine(show_plots):
 
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    stateTarget = testVector.tolist()
+    stateTarget.extend([0.0, 0.0, 0.0])
+    for i in range(6):
+        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-10):
+            print abs(stateLog[-1, i+1] - stateTarget[i])
+            testFailCount += 1
+            testMessages.append("State update failure")
     plt.figure()
     for i in range(moduleConfig.numStates):
         plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1])
@@ -476,7 +499,6 @@ def testStateUpdateSunLine(show_plots):
     for i in range(moduleConfig.numStates):
         plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1])
 
-    plt.show()
     if(show_plots):
         plt.show()
     # print out success message if no error were found
