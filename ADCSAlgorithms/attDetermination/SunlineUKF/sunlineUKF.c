@@ -170,6 +170,8 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
         sunlineUKFTimeUpdate(ConfigData, newTimeTag);
     }
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
+    v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
+        ConfigData->outputSunline.vehSunPntBdy);
 	WriteMessage(ConfigData->outputStateID, callTime, sizeof(NavAttOut), 
 		&(ConfigData->outputSunline), moduleID);
     return;
@@ -184,8 +186,12 @@ void sunlineStateProp(double *stateInOut, double dt)
 {
 
     double propagatedVel[3];
+    double initialMag;
     v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    initialMag = v3Norm(stateInOut);
     v3Add(stateInOut, propagatedVel, stateInOut);
+    v3Normalize(stateInOut, stateInOut);
+    v3Scale(initialMag, stateInOut, stateInOut);
 
 	return;
 }
