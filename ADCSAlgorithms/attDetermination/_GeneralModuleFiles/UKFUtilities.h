@@ -20,7 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include <stdint.h>
 
-#define UKF_MAX_DIM 12
+#define UKF_MAX_DIM 20
 
 /*! \addtogroup ADCSAlgGroup
  * @{

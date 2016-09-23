@@ -131,6 +131,9 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
              &(ConfigData->cssNHat_B[i*3]));
     }
     ConfigData->numCSSTotal = localCSSConfig.nCSS;
+
+	memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttOut));
+
     return;
 }
 
@@ -166,7 +169,9 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     {
         sunlineUKFTimeUpdate(ConfigData, newTimeTag);
     }
-    
+	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
+	WriteMessage(ConfigData->outputStateID, callTime, sizeof(NavAttOut), 
+		&(ConfigData->outputSunline), moduleID);
     return;
 }
 

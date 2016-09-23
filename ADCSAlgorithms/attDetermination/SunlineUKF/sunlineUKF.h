@@ -75,6 +75,7 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     //CSSWlsEstOut OutputData; /*!< -- Unit vector to the Sun in the spacecraft body frame*/
+	NavAttOut outputSunline;   /*!< -- Output sunline estimate data */
     CSSOutputData rawSensorData; /*!< [-] CSS sensor data read in from message bus*/
     int32_t outputStateID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t inputCSSDataID;      /*!< -- ID for the incoming CSS sensor message*/
