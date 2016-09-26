@@ -200,7 +200,7 @@ void CoarseSunSensor::computeSunData()
     //! - Get the inertial to structure transformation information and convert sHat to structural frame
     MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
     m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
-    m33MultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
+    m33tMultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
 }
 
 /*! This method computes the tru sensed values for the sensor */
@@ -209,7 +209,7 @@ void CoarseSunSensor::computeTrueOutput()
     //! Begin Method Steps
     double temp1 = v3Dot(this->nHatStr, this->sHatStr);
     //! - Get dot product of the CSS normal and the sun vector
-    directValue = 0.0;
+    this->directValue = 0.0;
     //! - If the dot product is within the simulated field of view, set direct value to it
     if(temp1 >= cos(this->fov))
     {
