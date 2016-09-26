@@ -28,7 +28,6 @@
 #include "../ADCSAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 #include "../ADCSAlgorithms/attControl/MRP_Feedback/MRP_Feedback.h"
 #include "../ADCSAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
-#include "../ADCSAlgorithms/attControl/PRV_Steering/PRV_Steering.h"
 
 typedef struct{
 	VehConfigInputData vehConfigData;
@@ -48,9 +47,9 @@ typedef struct{
 	dvGuidanceConfig dvGuidance;
 	MRP_SteeringConfig MRP_SteeringMOI;
 	dvAttEffectConfig dvAttEffect;
-	thrustRWDesatConfig thrFiringSchmitt;
+	thrustRWDesatConfig thrustRWDesat;
 	thrForceMappingConfig thrForceMapping;
-	thrFiringSchmittConfig ;
+	thrFiringSchmittConfig thrFiringSchmitt;
 	STConfigData stSensorDecode;
 	inertial3DConfig inertial3D;
 	hillPointConfig hillPoint;
@@ -62,14 +61,12 @@ typedef struct{
 	attTrackingErrorConfig attTrackingError;
 	MRP_FeedbackConfig MRP_FeedbackRWA;
 	rwMotorTorqueConfig rwMotorTorque;
-	PRV_SteeringConfig PRV_SteeringRWA;
 	uint32_t earthPointTask_isActive;
 	uint32_t inertial3DSpinTask_isActive;
 	uint32_t inertial3DPointTask_isActive;
 	uint32_t hillPointTask_isActive;
 	uint32_t vehicleDVPrepFSWTask_isActive;
 	uint32_t attitudeControlMnvrTask_isActive;
-	uint32_t attitudePRVControlMnvrTask_isActive;
 	uint32_t rasterMnvrTask_isActive;
 	uint32_t initOnlyTask_isActive;
 	uint32_t velocityPointTask_isActive;
@@ -126,8 +123,6 @@ extern "C" {
 	void attitudeControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void feedbackControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
 	void feedbackControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void attitudePRVControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
-	void attitudePRVControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void simpleRWControlTask_Update(EMMConfigData *data, uint64_t callTime);
 	void simpleRWControlTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void AllAlg_SelfInit(EMMConfigData *data);
