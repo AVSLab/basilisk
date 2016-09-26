@@ -43,6 +43,7 @@ void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     /*! - Create output message for module */
     ConfigData->rwParamsOutMsgID = CreateNewMessage(ConfigData->rwParamsOutMsgName,
                                                     sizeof(RWConfigParams), "RWConfigParams", moduleID);
+    
 }
 
 /*! This method performs the second stage of initialization for this module.
@@ -52,27 +53,11 @@ void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
  */
 void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
 {
-    /*! - Get the control data message ID*/
+    /*! - Read vehicle config data, convert RW info from S to B and write it in the output mesage */
+    /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
+     When Reset call takes place in all the modules, this RW message should already be available.*/
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
                                                               sizeof(vehicleConfigData), moduleID);
-    
-    if(strlen(ConfigData->rwConstellationInMsgName) > 0) {
-        ConfigData->rwConstellationInMsgID = subscribeToMessage(ConfigData->rwConstellationInMsgName,
-                                                       sizeof(RWConstellation), moduleID);
-    } else {
-        ConfigData->rwConfigParamsOut.numRW = 0;
-        ConfigData->rwConstellationInMsgID = -1;
-    }
-
-}
-
-/*! This method performs a complete reset of the module.  Local module variables that retain
- time varying states between function calls are reset to their default values.
- @return void
- @param ConfigData The configuration data associated with the module
- */
-void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
-{
     int i;
     uint64_t clockTime;
     uint32_t readSize;
@@ -93,6 +78,17 @@ void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t mo
     /*! - Write output RW config data to the messaging system*/
     WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWConfigParams),
                  &(ConfigData->rwConfigParamsOut), moduleID);
+
+}
+
+/*! This method performs a complete reset of the module.  Local module variables that retain
+ time varying states between function calls are reset to their default values.
+ @return void
+ @param ConfigData The configuration data associated with the module
+ */
+void Reset_rwConfigData(rwConfigData *ConfigData, uint64_t callTime, uint64_t moduleID)
+{
+    
 }
 
 /*! Add a description of what this main Update() routine does for this module

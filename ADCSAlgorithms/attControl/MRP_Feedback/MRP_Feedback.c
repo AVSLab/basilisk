@@ -93,8 +93,13 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
     
-    /* Reset the prior time flag state.  If set to zero, the control time step is not evaluated on the first function call */
-    ConfigData->priorTime = 0;
+    /*! - Read the input messages */
+    if (ConfigData->rwParamsInMsgID >= 0) {
+        /*! - Read static RW config data message and store it in module variables*/
+        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+    }
+    
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(ConfigData->z);
     v3SetZero(ConfigData->int_sigma);
@@ -130,13 +135,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
 
 
     /*! Begin method steps*/
-    /*! - Read the input messages */
-    if ((ConfigData->priorTime == 0) && (ConfigData->rwParamsInMsgID >= 0)) {
-        /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
-    }
-    
+    /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     if(ConfigData->rwConfigParams.numRW > 0) {
@@ -190,7 +189,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, omega_BN_B, v3);                    /* -[v3Tilde(omega_r+Ki*z)]([I]omega + [Gs]h_s) */
     for(i = 0; i < ConfigData->rwConfigParams.numRW; i++)
     {
-        if (wheelsAvailability.wheelAvailability[i] == 1){ /* check if wheel is available */
+        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE){ /* check if wheel is available */
             wheelGs = &(ConfigData->rwConfigParams.GsMatrix_B[i*3]);
             v3Scale(ConfigData->rwConfigParams.JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]),
                     wheelGs, v3_1);
