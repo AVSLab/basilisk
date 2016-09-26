@@ -63,8 +63,14 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
                                                        sizeof(vehControlOut), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                      sizeof(RWConfigParams), moduleID);
-    ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
-                                                     sizeof(RWAvailabilityData), moduleID);
+    
+    if (strlen(ConfigData->inputRWsAvailDataName) > 0){
+        ConfigData->inputRWsAvailID = subscribeToMessage(ConfigData->inputRWsAvailDataName,
+                                                         sizeof(RWAvailabilityData), moduleID);
+    } else {
+        ConfigData->inputRWsAvailID = -1;
+        
+    }
     
     /* configure the number of axes that are controlled */
     double *pAxis;                 /*!< pointer to the current control axis */
@@ -90,7 +96,19 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    ConfigData->priorTime = 0;
+    uint64_t clockTime;
+    uint32_t readSize;
+    /*! - Read static RW config data message and store it in module variables */
+    ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
+                sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+    
+    if (ConfigData->inputRWsAvailID < 0){
+        /* If no info is provided about RW availability we'll assume that all are available */
+        ConfigData->numAvailRW =ConfigData->rwConfigParams.numRW;
+        for (int i = 0; i < ConfigData->rwConfigParams.numRW; i++){
+            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[i * 3]);
+        }
+    }
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -100,26 +118,32 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
  */
 void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    RWAvailabilityData wheelsAvailability;
     uint64_t clockTime;
     uint32_t readSize;
+    RWAvailabilityData wheelsAvailability;
     double us[MAX_EFF_CNT];              /*!< [Nm]     vector of RW motor torque commands */
     int i,j,k;
     double Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    if (ConfigData->priorTime == 0) {
-        /*! - Read static RW config data message and store it in module variables*/
-        ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+    if (ConfigData->inputRWsAvailID >= 0)
+    {
+        ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
+                    sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
+        int numAvailRW = 0;
+        for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
+            if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
+            {
+                v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);
+                numAvailRW += 1;
+            }
+            ConfigData->numAvailRW = numAvailRW;
+        }
     }
-    ConfigData->priorTime = callTime;
-    ReadMessage(ConfigData->inputRWsAvailID, &clockTime, &readSize,
-                sizeof(RWAvailabilityData), &wheelsAvailability, moduleID); /* #TODO: Do something with availability information */
+    
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
-    
     
     /* clear the RW motoro torque output array us: [C][Gs]us = [C]Lr */
     memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
@@ -133,20 +157,11 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         CLr[k] = v3Dot(ConfigData->controlAxes_B + 3 * k, Lr_B);
     }
     
-    /* recompute [Gs] including only available RW */
-    int numAvailRW = 0;
-    for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
-        if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)
-        {
-            v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[numAvailRW * 3]);
-            numAvailRW += 1;
-        }
-    }
     
     /* compute [CGs] */
     double CGs[3][MAX_EFF_CNT];
     for (i=0; i<ConfigData->numControlAxes; i++) {
-        for (j=0; j<numAvailRW; j++) {
+        for (j=0; j<ConfigData->numAvailRW; j++) {
             CGs[i][j] = v3Dot(&ConfigData->GsMatrix_B[j * 3], &ConfigData->controlAxes_B[3 * i]);
         }
     }
@@ -161,7 +176,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         for (i=0; i<ConfigData->numControlAxes; i++) {
             for (j=0; j<ConfigData->numControlAxes; j++) {
                 M33[i][j] = 0.0;
-                for (k=0; k < numAvailRW; k++) {
+                for (k=0; k < ConfigData->numAvailRW; k++) {
                     M33[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
@@ -173,7 +188,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         for (i=0; i<ConfigData->numControlAxes; i++) {
             for (j=0; j<ConfigData->numControlAxes; j++) {
                 M22[i][j] = 0.0;
-                for (k=0; k < numAvailRW; k++) {
+                for (k=0; k < ConfigData->numAvailRW; k++) {
                     M22[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
@@ -185,7 +200,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
         for (i=0; i<ConfigData->numControlAxes; i++) {
             for (j=0; j<ConfigData->numControlAxes; j++) {
                 M11[i][j] = 0.0;
-                for (k=0; k < numAvailRW; k++) {
+                for (k=0; k < ConfigData->numAvailRW; k++) {
                     M11[i][j] += CGs[i][k]*CGs[j][k];
                 }
             }
@@ -195,7 +210,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     
     /* compute the RW motor torques */
     /* us = [CGs].T v3_temp */
-    for (i=0; i<numAvailRW; i++) {
+    for (i=0; i<ConfigData->numAvailRW; i++) {
         us[i] = 0.0;
         for (j=0; j<ConfigData->numControlAxes; j++) {
             us[i] += CGs[j][i] * v3_temp[j];

@@ -38,10 +38,8 @@ typedef struct {
     uint32_t numControlAxes;             /*!< [-] counter indicating how many orthogonal axes are controlled */
     uint32_t numAvailRW;
     RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
-    uint64_t priorTime;                  /*!< [-] initialization call flag */
     double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
     double CGs[3][MAX_EFF_CNT];
-
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/
