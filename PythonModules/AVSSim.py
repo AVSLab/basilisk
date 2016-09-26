@@ -276,7 +276,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.thrFiringSchmittData = thrFiringSchmitt.thrFiringSchmittConfig()
         self.thrFiringSchmittDataWrap = self.setModelDataWrap(self.thrFiringSchmittData)
-        self.thrustRWADesatDataWrap.ModelTag = "thrFiringSchmitt"
+        self.thrFiringSchmittDataWrap.ModelTag = "thrFiringSchmitt"
 
         # Guidance flight software modules.
 
