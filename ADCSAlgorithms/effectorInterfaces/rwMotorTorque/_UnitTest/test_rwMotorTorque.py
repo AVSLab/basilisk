@@ -49,19 +49,15 @@ import vehicleConfigData
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("dropAxes", [
-    (False)
-    ,(True)
-])
 
 # update "module" in this function name to reflect the module name
-def test_rwMotorTorque(show_plots, dropAxes):
+def test_rwMotorTorque(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = rwMotorTorqueTest(show_plots, dropAxes)
+    [testResults, testMessage] = rwMotorTorqueTest(show_plots)
     assert testResults < 1, testMessage
 
 
-def rwMotorTorqueTest(show_plots, dropAxes):
+def rwMotorTorqueTest(show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -90,17 +86,11 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     # Initialize module variables
-    if dropAxes:
-        controlAxes_B = [
-             1,0,0
-            ,0,0,1
-        ]
-    else:
-        controlAxes_B = [
+    controlAxes_B = [
              1,0,0
             ,0,1,0
             ,0,0,1
-        ]
+    ]
     moduleConfig.controlAxes_B = controlAxes_B
 
 
@@ -173,16 +163,10 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     print '\n', moduleOutput[:, 1:]
 
     # set the output truth states
-    if dropAxes:
-        trueVector = [
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183],
-            [0.6599999999999999,0.,0.3599999999999999,0.5888972745734183]
-        ]*(-1)
-    else:
-        trueVector = [
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755],
-                   [0.8, -0.7000000000000001, 0.5, 0.3464101615137755]
-                   ]*(-1)
+    trueVector = [
+                   [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755],
+                   [-0.8, 0.7000000000000001, -0.5, -0.3464101615137755]
+    ]
 
         # else:
         #     testFailCount+=1
@@ -190,7 +174,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
 
     # compare the module results to the truth values
-    accuracy = 1e-8
+    accuracy = 1e-12
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], rwConfigParams.numRW, accuracy):
@@ -199,17 +183,6 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[i,0]*macros.NANO2SEC) +
                                 "sec\n")
-
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    # if show_plots:
-    #     # plot a sample variable.
-    #     plt.figure(1)
-    #     plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-    #     plt.legend(loc='upper left')
-    #     plt.xlabel('Time [s]')
-    #     plt.ylabel('Variable Description [unit]')
-    #     plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
@@ -225,7 +198,4 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_rwMotorTorque(
-                False,
-                True
-               )
+    test_rwMotorTorque(False)
