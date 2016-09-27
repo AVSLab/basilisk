@@ -39,15 +39,15 @@
 
 %typemap(out) type [ANY] {
     int i;
-    $result = PyList_New($1_dim0);
-    //PyObject *outObject = 0;
+    $result = PyList_New(0);
+    PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
-        //SWIG_ConvertPtr(SWIG_as_voidptr(&($1[i])), locOutObj, SWIGTYPE_p_ ## type, 0 |  0 );
-        PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
+        locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
         
         if(PyNumber_Check(locOutObj)){
             PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
-            PyList_SetItem($result,i,outObject);
+            PyList_Append($result,outObject);
+            Py_DECREF(outObject);
         }
         else
         {
@@ -55,7 +55,6 @@
         }
     }
 }
-
 
 %enddef
 ARRAYASLIST(double)

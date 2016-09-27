@@ -41,12 +41,13 @@ import ctypes
 
 def setupFilterData(filterObject):
     filterObject.outputNavStateName = "sunline_state_estimate"
+    filterObject.outputFiltDataName = "sunline_filter_data"
     filterObject.inputCSSDataName = "css_sensors_data"
     filterObject.inputPropsName = "adcs_config_data"
     filterObject.inputCSSConfigName = "css_config_data"
 
-    filterObject.alpha = 0.2
-    filterObject.beta = 0.01
+    filterObject.alpha = 0.02
+    filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
     filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
@@ -418,7 +419,7 @@ def testStateUpdateSunLine(show_plots):
                                                 0,
                                                 vehicleConfigOut)
 
-    testVector = numpy.array([-1.0, 0.0, 0.0])
+    testVector = numpy.array([-0.7, 0.7, 0.0])
     inputData = cssComm.CSSOutputData()
     dotList = []
     for element in CSSOrientationList:
@@ -434,7 +435,7 @@ def testStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.state = [1.0, 0.0, 0.0]
+    moduleConfig.state = [0.7, 0.7, 0.0]
     unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
     unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
 
@@ -461,7 +462,7 @@ def testStateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    testVector = numpy.array([0.0, -1.2, 0.0])
+    testVector = numpy.array([-0.8, -0.9, 0.0])
     inputData = cssComm.CSSOutputData()
     dotList = []
     for element in CSSOrientationList:
@@ -551,10 +552,9 @@ def testStatePropSunLine(show_plots):
     
     covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+
+    
     for i in range(6):
-        if(covarLog[-1, i*6+1+i] <= covarLog[0, i*6+1+i]):
-            testFailCount += 1
-            testMessages.append("Covariance propagation failure")
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
             print abs(stateLog[-1, i+1] - stateLog[0, i+1])
             testFailCount += 1

@@ -436,7 +436,8 @@ class SimBaseClass:
         messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
         resplit = varName.split(splitName[0] + '.')
         bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-        messageCount = messageCount if messageCount > 0 else headerData.UpdateCounter
+        maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
+        messageCount = messageCount if messageCount > 0 else maxCountMessager
         messageCount = messageCount if numRecords < 0 else numRecords
         if (len(indices) <= 0):
             indices_use = [0]

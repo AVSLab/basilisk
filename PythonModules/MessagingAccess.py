@@ -44,6 +44,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    messageType = sim_model.messageBuffer):
    ## Begin Method steps here
    LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
+   
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
    swigObject = eval('LocalContainer.' + VarName);
@@ -61,17 +62,21 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
          LocalContainer, messageType, LocalCount)
       currentIndex = stopIndex
       executeLoop = True
+      dataOut = 0
+      if not swigObjectGood:
+          dataOut = functionCall(LocalContainer)
       while executeLoop:
          if swigObjectGood:
             TimeValues.append(functionCall(swigObject, currentIndex))
          elif startIndex != stopIndex:
-            TimeValues.append(functionCall(LocalContainer)[currentIndex])
+            TimeValues.append(dataOut[currentIndex])
          else:
-            TimeValues.append(functionCall(LocalContainer))
+            TimeValues.append(dataOut)
          currentIndex -= 1
          if currentIndex < startIndex:
             executeLoop = False
       TimeValues.append(WriteTime)
+
       LocalCount += 1
    TimeValues.reverse()
    TheArray = numpy.array(TimeValues)

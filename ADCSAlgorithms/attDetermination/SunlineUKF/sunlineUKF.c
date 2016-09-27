@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "attDetermination/SunlineUKF/sunlineUKF.h"
 #include "attDetermination/_GeneralModuleFiles/UKFUtilities.h"
 #include "SimCode/utilities/linearAlgebra.h"
+#include "SimCode/utilities/rigidBodyKinematics.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
@@ -31,9 +32,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
-
-    int i;
-    double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
     
@@ -41,44 +39,8 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     /*! - Create output message for module */
 	ConfigData->outputStateID = CreateNewMessage(ConfigData->outputNavStateName, 
 		sizeof(NavAttOut), "NavAttOut", moduleID);
-
-    ConfigData->timeTag = 0.0;
-    ConfigData->dt = 0.0;
-	ConfigData->numStates = SKF_N_STATES;
-    ConfigData->countHalfSPs = SKF_N_STATES;
-	ConfigData->numObs = MAX_N_CSS_MEAS;
-	vSetZero(ConfigData->obs, ConfigData->numObs);
-	ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
-		(ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
-	ConfigData->gamma = sqrt(ConfigData->numStates + ConfigData->lambdaVal);
-
-	vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
-	vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
-	mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
-	mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1, 
-		ConfigData->numStates);
-	mSetZero(ConfigData->sQnoise, ConfigData->numStates, ConfigData->numStates);
-	ConfigData->wM[0] = ConfigData->lambdaVal / (ConfigData->numStates + 
-		ConfigData->lambdaVal);
-	ConfigData->wC[0] = ConfigData->lambdaVal / (ConfigData->numStates + 
-		ConfigData->lambdaVal) + (1 - ConfigData->alpha*ConfigData->alpha 
-		+ ConfigData->beta);
-	for (i = 1; i<ConfigData->countHalfSPs * 2 + 1; i++)
-	{
-		ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates + 
-			ConfigData->lambdaVal);
-		ConfigData->wC[i] = ConfigData->wM[i];
-	}
-	mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates, 
-		ConfigData->sBar);
-	ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
-		ConfigData->numStates, tempMatrix);
-    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->sBar);
-	ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
-		ConfigData->numStates, ConfigData->sQnoise);
-	mTranspose(ConfigData->sQnoise, ConfigData->numStates,
-		ConfigData->numStates, ConfigData->sQnoise);
+    ConfigData->outputFiltDatID = CreateNewMessage(ConfigData->outputFiltDataName,
+        sizeof(SunlineMeasOut), "SunlineMeasOut", moduleID);
     
 }
 
@@ -117,6 +79,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     CSSConstConfig localCSSConfig;
     uint64_t writeTime;
     uint32_t writeSize;
+    double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
     memset(&localConfigData, 0x0 ,sizeof(vehicleConfigData));
     memset(&localCSSConfig, 0x0, sizeof(CSSConstConfig));
@@ -133,6 +96,46 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     ConfigData->numCSSTotal = localCSSConfig.nCSS;
 
 	memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttOut));
+    
+    
+    ConfigData->timeTag = callTime*NANO2SEC;
+    ConfigData->dt = 0.0;
+    ConfigData->numStates = SKF_N_STATES;
+    ConfigData->countHalfSPs = SKF_N_STATES;
+    ConfigData->numObs = MAX_N_CSS_MEAS;
+    vSetZero(ConfigData->obs, ConfigData->numObs);
+    ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
+    (ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
+    ConfigData->gamma = sqrt(ConfigData->numStates + ConfigData->lambdaVal);
+    
+    vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
+    vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
+    mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
+             ConfigData->numStates);
+    mSetZero(ConfigData->sQnoise, ConfigData->numStates, ConfigData->numStates);
+    ConfigData->wM[0] = ConfigData->lambdaVal / (ConfigData->numStates +
+                                                 ConfigData->lambdaVal);
+    ConfigData->wC[0] = ConfigData->lambdaVal / (ConfigData->numStates +
+                                                 ConfigData->lambdaVal) + (1 - ConfigData->alpha*ConfigData->alpha
+                                                                           + ConfigData->beta);
+    for (i = 1; i<ConfigData->countHalfSPs * 2 + 1; i++)
+    {
+        ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates +
+                                             ConfigData->lambdaVal);
+        ConfigData->wC[i] = ConfigData->wM[i];
+    }
+    mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->sBar);
+    ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
+                  ConfigData->numStates, tempMatrix);
+    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
+          ConfigData->sBar);
+    ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
+                  ConfigData->numStates, ConfigData->sQnoise);
+    mTranspose(ConfigData->sQnoise, ConfigData->numStates,
+               ConfigData->numStates, ConfigData->sQnoise);
+    
 
     return;
 }
@@ -149,6 +152,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     uint64_t ClockTime;
     uint32_t ReadSize;
+    SunlineMeasOut outputMeas;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
@@ -174,6 +178,15 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
         ConfigData->outputSunline.vehSunPntBdy);
 	WriteMessage(ConfigData->outputStateID, callTime, sizeof(NavAttOut), 
 		&(ConfigData->outputSunline), moduleID);
+    
+    outputMeas.timeTag = ConfigData->timeTag;
+    outputMeas.numObs = ConfigData->numObs;
+    memmove(outputMeas.covar, ConfigData->covar,
+            SKF_N_STATES*SKF_N_STATES*sizeof(double));
+    memmove(outputMeas.state, ConfigData->state, SKF_N_STATES*sizeof(double));
+    WriteMessage(ConfigData->outputFiltDatID, callTime, sizeof(SunlineMeasOut),
+                 &outputMeas, moduleID);
+    
     return;
 }
 
@@ -186,12 +199,19 @@ void sunlineStateProp(double *stateInOut, double dt)
 {
 
     double propagatedVel[3];
-    double initialMag;
+    double pointUnit[3];
+    double dcm_P2P1[3][3];
+    double unitComp;
+    
+    v3Normalize(stateInOut, pointUnit);
+    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
+    v3Scale(unitComp, pointUnit, pointUnit);
+    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
     v3Scale(dt, &(stateInOut[3]), propagatedVel);
-    initialMag = v3Norm(stateInOut);
     v3Add(stateInOut, propagatedVel, stateInOut);
-    v3Normalize(stateInOut, stateInOut);
-    v3Scale(initialMag, stateInOut, stateInOut);
+//    PRV2C(propagatedVel, dcm_P2P1);
+//    m33MultV3(dcm_P2P1, stateInOut, stateInOut);
+    
 
 	return;
 }
@@ -407,5 +427,9 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }
-    
+    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+               ConfigData->covar);
+    mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
+           ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
+           ConfigData->covar);
 }
