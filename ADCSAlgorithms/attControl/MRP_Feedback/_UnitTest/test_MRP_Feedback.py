@@ -50,7 +50,7 @@ import sunSafePoint
 import vehicleConfigData
 import rwNullSpace
 import rwMotorTorque
-import fswSetupRW
+import rwConfigData
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -84,23 +84,20 @@ def subModuleTestFunction(show_plots):
 
     #   Construct algorithm and associated C++ container
     moduleConfig = MRP_Feedback.MRP_FeedbackConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        MRP_Feedback.Update_MRP_Feedback,
-                                        MRP_Feedback.SelfInit_MRP_Feedback,
-                                        MRP_Feedback.CrossInit_MRP_Feedback,
-                                        MRP_Feedback.Reset_MRP_Feedback)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "MRP_Feedback"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     #   Initialize the test module configuration data
+
     moduleConfig.inputGuidName  = "inputGuidName"
-    moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
-    moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
+    moduleConfig.vehConfigInMsgName  = "vehicleConfigName"
+    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
-    moduleConfig.inputRWsAvailDataName = "rw_availability"
+    moduleConfig.rwAvailInMsgName = "rw_availability"
+    moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K  =   0.15
     moduleConfig.Ki =   0.01
@@ -114,12 +111,9 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    inputMessageSize = 12*8                            # 4x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
+    inputMessageSize = 12*8 # 4 x 3 x size(double)
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
+                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
     guidCmdData = sunSafePoint.attGuidOut()             # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
@@ -129,27 +123,19 @@ def subModuleTestFunction(show_plots):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          0,
-                                          guidCmdData)
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
+                                          0, guidCmdData)
 
     # vehicleConfigData Message:
     inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
+                                          inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
                                           0, vehicleConfigOut)
 
@@ -167,29 +153,37 @@ def subModuleTestFunction(show_plots):
                                           0,
                                           rwSpeedMessage)
 
-    # wheelConfigData Message
-    fswSetupRW.clearSetup()
-    Js = 0.1
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
-                               unitTestSim.TotalSim,
-                               unitProcessName)
-    # wheelAvailability Message
-    msgSize = vehicleConfigData.MAX_EFF_CNT * 4 # ints
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWsAvailDataName,
-                                          msgSize,
-                                          2)
-    rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
-    avail = [1, 1, 1, 1]
-    rwAvailabilityMessage.wheelAvailability = avail
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWsAvailDataName,
-                                          msgSize,
-                                          0,
-                                          rwAvailabilityMessage)
+    # wheelConfigData message
+    def writeMsgInWheelConfiguration():
+        inputMessageSize = 8*vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1*4
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
+                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
+        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams.GsMatrix_B = [
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+        ]
+        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+        rwConfigParams.numRW = 4
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
+                                              0, rwConfigParams)
+    if len(moduleConfig.rwParamsInMsgName)>0:
+        writeMsgInWheelConfiguration()
+
+    # wheelAvailability message
+    def writeMsgInWheelAvailability():
+        inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4 # integers
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
+                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = avail
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
+                                              0, rwAvailabilityMessage)
+    if len(moduleConfig.rwAvailInMsgName)>0:
+        writeMsgInWheelAvailability()
 
 
 
