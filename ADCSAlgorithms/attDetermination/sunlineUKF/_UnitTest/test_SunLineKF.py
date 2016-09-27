@@ -1,4 +1,4 @@
-﻿'''
+'''
 Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -135,7 +135,7 @@ def sunline_utilities_test(show_plots):
     for i in range(r.shape[0]):
         if r[i,i] < 0.0:
             r[i,:] *= -1.0
-    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-15:
+    if numpy.linalg.norm(r - RBaseNumpy) > 1.0E-14:
         testFailCount += 1
         testMessages.append("QR Decomposition accuracy failure")
     

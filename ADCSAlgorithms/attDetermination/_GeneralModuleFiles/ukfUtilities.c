@@ -15,7 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#include "attDetermination/_GeneralModuleFiles/UKFUtilities.h"
+#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "../SimCode/utilities/linearAlgebra.h"
 #include <math.h>
 

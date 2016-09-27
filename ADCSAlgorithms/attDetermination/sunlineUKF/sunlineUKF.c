@@ -16,7 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 #include "attDetermination/SunlineUKF/sunlineUKF.h"
-#include "attDetermination/_GeneralModuleFiles/UKFUtilities.h"
+#include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
@@ -37,9 +37,9 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-	ConfigData->outputStateID = CreateNewMessage(ConfigData->outputNavStateName, 
+	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
 		sizeof(NavAttOut), "NavAttOut", moduleID);
-    ConfigData->outputFiltDatID = CreateNewMessage(ConfigData->outputFiltDataName,
+    ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
         sizeof(SunlineMeasOut), "SunlineMeasOut", moduleID);
     
 }
@@ -54,11 +54,11 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 {
     
     /*! - Loop over the number of sensors and find IDs for each one */
-    ConfigData->inputCSSDataID = subscribeToMessage(ConfigData->inputCSSDataName,
+    ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSOutputData), moduleID);
-    ConfigData->inputPropsID = subscribeToMessage(ConfigData->inputPropsName,
+    ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
         sizeof(vehicleConfigData), moduleID);
-    ConfigData->inputCSSConID = subscribeToMessage(ConfigData->inputCSSConfigName,
+    ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
                                                    sizeof(CSSConstConfig), moduleID);
     
     
@@ -75,25 +75,25 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    vehicleConfigData localConfigData;
-    CSSConstConfig localCSSConfig;
+    vehicleConfigData massPropsInBuffer;
+    CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
-    memset(&localConfigData, 0x0 ,sizeof(vehicleConfigData));
-    memset(&localCSSConfig, 0x0, sizeof(CSSConstConfig));
+    memset(&massPropsInBuffer, 0x0 ,sizeof(vehicleConfigData));
+    memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
     
-    ReadMessage(ConfigData->inputPropsID, &writeTime, &writeSize,
-                sizeof(vehicleConfigData), &localConfigData, moduleID);
-    ReadMessage(ConfigData->inputCSSConID, &writeTime, &writeSize,
-                sizeof(CSSConstConfig), &localCSSConfig, moduleID);
-    for(i=0; i<localCSSConfig.nCSS; i = i+1)
+    ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
+                sizeof(vehicleConfigData), &massPropsInBuffer, moduleID);
+    ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
+                sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
+    for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
-         m33MultV3(RECAST3X3 localConfigData.BS, localCSSConfig.cssVals[i].nHat_S,
+         m33MultV3(RECAST3X3 massPropsInBuffer.BS, cssConfigInBuffer.cssVals[i].nHat_S,
              &(ConfigData->cssNHat_B[i*3]));
     }
-    ConfigData->numCSSTotal = localCSSConfig.nCSS;
+    ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
 
 	memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttOut));
     
@@ -152,15 +152,15 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     uint64_t ClockTime;
     uint32_t ReadSize;
-    SunlineMeasOut outputMeas;
+    SunlineMeasOut sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(ConfigData->rawSensorData), 0x0, sizeof(CSSOutputData));
-    ReadMessage(ConfigData->inputCSSDataID, &ClockTime, &ReadSize,
-        sizeof(CSSOutputData), (void*) (&(ConfigData->rawSensorData)), moduleID);
+    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSOutputData));
+    ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
+        sizeof(CSSOutputData), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     newTimeTag = ClockTime * NANO2SEC;
     if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
     {
@@ -176,16 +176,16 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
-	WriteMessage(ConfigData->outputStateID, callTime, sizeof(NavAttOut), 
+	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttOut),
 		&(ConfigData->outputSunline), moduleID);
     
-    outputMeas.timeTag = ConfigData->timeTag;
-    outputMeas.numObs = ConfigData->numObs;
-    memmove(outputMeas.covar, ConfigData->covar,
+    sunlineDataOutBuffer.timeTag = ConfigData->timeTag;
+    sunlineDataOutBuffer.numObs = ConfigData->numObs;
+    memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
-    memmove(outputMeas.state, ConfigData->state, SKF_N_STATES*sizeof(double));
-    WriteMessage(ConfigData->outputFiltDatID, callTime, sizeof(SunlineMeasOut),
-                 &outputMeas, moduleID);
+    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
+    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineMeasOut),
+                 &sunlineDataOutBuffer, moduleID);
     
     return;
 }
@@ -200,7 +200,6 @@ void sunlineStateProp(double *stateInOut, double dt)
 
     double propagatedVel[3];
     double pointUnit[3];
-    double dcm_P2P1[3][3];
     double unitComp;
     
     v3Normalize(stateInOut, pointUnit);
@@ -209,9 +208,6 @@ void sunlineStateProp(double *stateInOut, double dt)
     v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
     v3Scale(dt, &(stateInOut[3]), propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
-//    PRV2C(propagatedVel, dcm_P2P1);
-//    m33MultV3(dcm_P2P1, stateInOut, stateInOut);
-    
 
 	return;
 }
@@ -318,10 +314,10 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
     obsCounter = 0;
     for(i=0; i<ConfigData->numCSSTotal; i++)
     {
-        if(ConfigData->rawSensorData.CosValue[i] > ConfigData->sensorUseThresh)
+        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
             v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
-            ConfigData->obs[obsCounter] = ConfigData->rawSensorData.CosValue[i];
+            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
             {
                 ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =

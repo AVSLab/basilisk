@@ -40,11 +40,11 @@ typedef struct {
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    char outputNavStateName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
-    char outputFiltDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
-    char inputCSSDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char inputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
-    char inputCSSConfigName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
+    char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
+    char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
+    char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
+    char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
 
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
@@ -82,12 +82,12 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttOut outputSunline;   /*!< -- Output sunline estimate data */
-    CSSOutputData rawSensorData; /*!< [-] CSS sensor data read in from message bus*/
-    int32_t outputStateID;     /*!< -- ID for the outgoing body estimate message*/
-    int32_t outputFiltDatID;   /*!< [-] ID for the filter data output message*/
-    int32_t inputCSSDataID;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t inputPropsID;    /*!< [-] ID for the incoming mass properties message*/
-    int32_t inputCSSConID;   /*!< [-] ID associated with the CSS configuration data*/
+    CSSOutputData cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+    int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
+    int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
+    int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
+    int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
+    int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
 }SunlineUKFConfig;
 
 #ifdef __cplusplus
