@@ -40,11 +40,11 @@ import ctypes
 
 
 def setupFilterData(filterObject):
-    filterObject.outputNavStateName = "sunline_state_estimate"
-    filterObject.outputFiltDataName = "sunline_filter_data"
-    filterObject.inputCSSDataName = "css_sensors_data"
-    filterObject.inputPropsName = "adcs_config_data"
-    filterObject.inputCSSConfigName = "css_config_data"
+    filterObject.navStateOutMsgName = "sunline_state_estimate"
+    filterObject.filtDataOutMsgName = "sunline_filter_data"
+    filterObject.cssDataInMsgName = "css_sensors_data"
+    filterObject.massPropsInMsgName = "adcs_config_data"
+    filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.alpha = 0.02
     filterObject.beta = 2.0
@@ -402,7 +402,7 @@ def testStateUpdateSunLine(show_plots):
     
     inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputPropsName,
+                                          moduleConfig.massPropsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
@@ -414,7 +414,7 @@ def testStateUpdateSunLine(show_plots):
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]
     vehicleConfigOut.BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputPropsName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
                                                 inputMessageSize,
                                                 0,
                                                 vehicleConfigOut)
@@ -429,7 +429,7 @@ def testStateUpdateSunLine(show_plots):
 
     inputMessageSize = vehicleConfigData.MAX_NUM_CSS_SENSORS*8
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.inputCSSDataName,
+                                      moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       2)  # number of buffers (leave at 2 as default, don't make zero)
 
@@ -443,7 +443,7 @@ def testStateUpdateSunLine(show_plots):
 
     for i in range(20000):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCSSDataName,
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
@@ -472,7 +472,7 @@ def testStateUpdateSunLine(show_plots):
         
     for i in range(20000):
         if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCSSDataName,
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                       inputMessageSize,
                                       unitTestSim.TotalSim.CurrentNanos,
                                       inputData)
