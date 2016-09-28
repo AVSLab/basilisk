@@ -757,6 +757,7 @@ INPUT                  = "SimCode/architecture/system_model" \
    "SimCode/dynamics/SixDofEom" \ 
    "SimCode/navigation/simple_nav" \ 
    "ADCSAlgorithms/attDetermination/CSSEst" \
+   "ADCSAlgorithms/attDetermination/sunlineUKF" \
    "ADCSAlgorithms/attDetermination/navState" \
    "ADCSAlgorithms/attGuidance" \
    "ADCSAlgorithms/effectorInterfaces/errorConversion" \

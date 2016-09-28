@@ -30,6 +30,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  * @{
  */
 
+/*! @brief structure for filter-states output for the unscented kalman filter 
+        implementation of the sunline state estimator*/
 typedef struct {
     double timeTag;                             /*!< [s] Current time of validity for output */
     double covar[SKF_N_STATES*SKF_N_STATES];    /*!< [-] Current covariance of the filter */
@@ -37,7 +39,7 @@ typedef struct {
     int numObs;                                 /*!< [-] Valid observation count for this frame*/
 }SunlineMeasOut;
 
-/*! @brief Top level structure for the CSS weighted least squares estimator.
+/*! @brief Top level structure for the CSS unscented kalman filter estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
@@ -65,6 +67,7 @@ typedef struct {
 	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
 	double sBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
+    double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
 
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
