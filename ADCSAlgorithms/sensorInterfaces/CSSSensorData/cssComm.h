@@ -18,10 +18,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef _CSS_COMM_H_
 #define _CSS_COMM_H_
 
-#define MAX_NUM_CSS_SENSORS 32
+
 #define MAX_NUM_CHEBY_POLYS 32
 
 #include "../ADCSAlgorithms/messaging/static_messaging.h"
+#include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
 
 /*! \addtogroup ADCSAlgGroup
  *  This grouping contains the algorithms developed for the ADCS flight system
@@ -30,7 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! @brief Output structure for CSS interface is only the current cosine for each sensor*/
 typedef struct {
-    double CosValue;   /*!< Current cosine value for a single sensor*/
+    double CosValue[MAX_NUM_CSS_SENSORS];   /*!< Current cosine value for a single sensor*/
 }CSSOutputData;
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -41,7 +42,7 @@ typedef struct {
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     int32_t SensorMsgID; /*!< Sensor ID tied to the sensor data name*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
-    CSSOutputData InputValues[MAX_NUM_CSS_SENSORS]; /*!< Input values we took off the messaging system*/
+    CSSOutputData InputValues; /*!< Input values we took off the messaging system*/
     double MaxSensorValue; /*!< Scale factor to go from sensor values to cosine*/
     uint32_t ChebyCount; /*!< -- Count on the number of chebyshev polynominals we have*/
     double KellyCheby[MAX_NUM_CHEBY_POLYS]; /*!< -- Chebyshev polynominals to fit output to cosine*/

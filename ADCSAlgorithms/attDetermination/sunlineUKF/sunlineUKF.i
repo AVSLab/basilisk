@@ -14,25 +14,27 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module vehicleConfigData
+%module sunlineUKF
 %{
-   #include "vehicleConfigData.h"
+   #include "sunlineUKF.h"
+   #include "../_GeneralModuleFiles/UKFUtilities.h"
 %}
 
 %include "swig_conly_data.i"
-%array_functions(RWConfigurationElement, RWConfigArray);
-%array_functions(ThrusterPointData, ThrustConfigArray);
-STRUCTASLIST(CSSConfigurationElement)
-%constant void Update_vehicleConfigData(void*, uint64_t, uint64_t);
-%ignore Update_vehicleConfigData;
-%constant void SelfInit_vehicleConfigData(void*, uint64_t);
-%ignore SelfInit_vehicleConfigData;
-%constant void CrossInit_vehicleConfigData(void*, uint64_t);
-%ignore CrossInit_vehicleConfigData;
-
-%include "vehicleConfigData.h"
+%constant void Update_sunlineUKF(void*, uint64_t, uint64_t);
+%ignore Update_sunlineUKF;
+%constant void SelfInit_sunlineUKF(void*, uint64_t);
+%ignore SelfInit_sunlineUKF;
+%constant void CrossInit_sunlineUKF(void*, uint64_t);
+%ignore CrossInit_sunlineUKF;
+%constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
+%ignore Reset_sunlineUKF;
+STRUCTASLIST(SingleCSSConfig)
+%include "sunlineUKF.h"
+%include "../_GeneralModuleFiles/UKFUtilities.h"
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+

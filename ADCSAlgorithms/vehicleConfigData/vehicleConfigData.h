@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #define MAX_EFF_CNT 36
+#define MAX_NUM_CSS_SENSORS 32
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
@@ -65,6 +66,15 @@ typedef struct {
     char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
 }VehConfigInputData;
+
+typedef struct {
+    double nHat_S[3];          /*! [-] CSS unit normal expressed in structure */
+}CSSConfigurationElement;
+
+typedef struct {
+    uint32_t nCSS;             /*! [-] Number of coarse sun sensors in cluster*/
+    CSSConfigurationElement cssVals[MAX_NUM_CSS_SENSORS]; /*! [-] constellation of CSS elements */
+}CSSConstConfig;
 
 void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);

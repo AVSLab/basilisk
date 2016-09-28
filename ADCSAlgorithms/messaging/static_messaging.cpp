@@ -69,7 +69,7 @@ int32_t ReadMessage(uint32_t MessageID, uint64_t *WriteTime, uint32_t *WriteSize
                     uint32_t MaxBytes, void *MsgPayload, int64_t moduleID)
 {
     SingleMessageHeader LocalHeader;
-    
+    memset(&LocalHeader, 0x0, sizeof(SingleMessageHeader));
     bool TestResult = SystemMessaging::GetInstance()->ReadMessage(MessageID,
                                                                   &LocalHeader, MaxBytes, reinterpret_cast<uint8_t*> (MsgPayload), moduleID);
     *WriteTime = LocalHeader.WriteClockNanos;

@@ -407,10 +407,12 @@ class MonteCarloBaseClass:
                         try:
                             model.RNGSeed = random.randint(0, 1<<32-1)
                             execString += str(model.RNGSeed)
-                            if fHandle is not None:
-                                fHandle.write('    ' + execString + '\n')
                         except ValueError:
-                           continue
+                            execString = []
+                            j += 1
+                            continue
+                        if fHandle is not None:
+                            fHandle.write('    ' + execString + '\n')
                         j+=1
                     i+=1
             if fHandle is not None:
