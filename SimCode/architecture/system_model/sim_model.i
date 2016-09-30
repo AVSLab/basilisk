@@ -47,11 +47,11 @@ namespace std {
    %template(messsageLogVector) vector<messageLogContainer>;
    %template() std::pair<long int, long int>;
    %template() std::pair<long long int, long long int>;
-   %template() std::pair<int64_t,int64_t>;
+   %template() std::pair<int64_t, int64_t>;
    %template(exchangeSet) std::set<std::pair<long int, long int>>;
    %template(modelPriPair) std::vector<ModelPriorityPair>;
    %template(interfaceVector) std::vector<SysInterface*>;
-   %template (interfaceSingVector) std::vector<InterfaceDataExchange *>;
+   %template(interfaceSingVector) std::vector<InterfaceDataExchange *>;
 }
 
 %inline %{
