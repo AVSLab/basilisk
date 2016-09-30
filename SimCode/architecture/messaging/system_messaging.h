@@ -80,7 +80,7 @@ public:
     static SystemMessaging* GetInstance();
     uint64_t AttachStorageBucket(std::string bufferName = "");
     void SetNumMessages(uint64_t MessageCount);
-    uint64_t GetMessageCount();
+    uint64_t GetMessageCount(int32_t bufferSelect = -1);
     void ClearMessageBuffer();
     uint64_t GetCurrentSize();
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
@@ -92,11 +92,11 @@ public:
     static void AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                   uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
                                   uint64_t maxReadBytes, uint8_t *OutputBuffer);
-    MessageHeaderData* FindMsgHeader(uint64_t MessageID);
+    MessageHeaderData* FindMsgHeader(uint64_t MessageID, int32_t bufferSelect=-1);
     void PrintAllMessageData();
     void PrintMessageStats(uint64_t MessageID);
-    std::string FindMessageName(uint64_t MessageID);
-    int64_t FindMessageID(std::string MessageName);
+    std::string FindMessageName(uint64_t MessageID, int32_t bufferSelect=-1);
+    int64_t FindMessageID(std::string MessageName, int32_t bufferSelect=-1);
     int64_t subscribeToMessage(std::string messageName, uint64_t messageSize,
         int64_t moduleID);
     uint64_t checkoutModuleID();
