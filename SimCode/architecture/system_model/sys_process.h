@@ -65,7 +65,7 @@ public:
     
 public:
     std::vector<SysInterface*> intRefs;         //!< -- Interface references to move data to process
-    std::vector<ModelScheduleEntry> taskModels; //!< -- Array that has pointers to all GNC laws
+    std::vector<ModelScheduleEntry> processTasks; //!< -- Array that has pointers to all GNC laws
     uint64_t messageBuffer;                     //!< -- Message buffer for data
     uint64_t nextTaskTime;                      //!< ns time for the next Task
     uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed

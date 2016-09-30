@@ -39,6 +39,7 @@ def getMessageContainers(MessageModule, MessageObj):
 
    return LocalContainer, TotalDict
 
+
 def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    SimContainer, VarName, VarType, startIndex, stopIndex, 
    messageType = sim_model.messageBuffer):
@@ -46,7 +47,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
-   swigObject = eval('LocalContainer.' + VarName);
+   swigObject = eval('LocalContainer.' + VarName)
    swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
    TimeValues = array.array('d')
    if swigObjectGood:
@@ -55,7 +56,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
       RefFunctionString = 'def GetMessage' + MessageName + VarName + '(self):\n'
       RefFunctionString += '   return self.' + VarName
       exec(RefFunctionString)
-      functionCall = eval('GetMessage'+MessageName + VarName)
+      functionCall = eval('GetMessage'+ MessageName + VarName)
    while(LocalCount < MessageCount):
       WriteTime = SimContainer.GetWriteData(MessageName, 10000, 
          LocalContainer, messageType, LocalCount)
