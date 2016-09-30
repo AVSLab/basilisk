@@ -14,15 +14,15 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-%module stateManager
+%module stateArchitecture
 %{
-   #include "stateManager.h"
+   #include "../_GeneralModuleFiles/stateManager.h"
 %}
 
 %include "swig_common_model.i"
 
-%include "stateManager.h"
-%include "../../_GeneralModuleFiles/StateData.h"
+%include "../_GeneralModuleFiles/stateManager.h"
+%include "../_GeneralModuleFiles/StateData.h"
 
 %pythoncode %{
 import sys

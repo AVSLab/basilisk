@@ -86,7 +86,7 @@ void StateManager::updateStateVector(const StateVector & newState)
 	std::map<std::string, StateData>::iterator it;
 	std::map<std::string, StateData>::const_iterator inIt;
 	for (it = stateContainer.stateMap.begin(), inIt = newState.stateMap.begin();
-	it != stateContainer.stateMap.end(), inIt != newState.stateMap.end(); it++, inIt++)
+	it != stateContainer.stateMap.end() && inIt != newState.stateMap.end(); it++, inIt++)
 	{
 		it->second.setState(inIt->second.getState());
 	}
@@ -118,7 +118,7 @@ StateVector StateVector::operator+(const StateVector& operand)
 	std::map<std::string, StateData>::const_iterator opIt;
 	StateVector outVector;
 	for (it = stateMap.begin(), opIt = operand.stateMap.begin();
-	    it != stateMap.end(), opIt != operand.stateMap.end(); it++, opIt++)
+	    it != stateMap.end() && opIt != operand.stateMap.end(); it++, opIt++)
 	{
 		StateData newState = it->second + opIt->second;
 		outVector.stateMap.insert(std::pair<std::string, StateData>

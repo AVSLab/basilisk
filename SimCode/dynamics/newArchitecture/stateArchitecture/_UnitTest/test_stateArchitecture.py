@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import macros
-import stateManager
+import stateArchitecture
 import sim_model
 import ctypes
 
@@ -40,10 +40,10 @@ import ctypes
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def stateManagerAllTest(show_plots):
+def stateArchitectureAllTest(show_plots):
     [testResults, testMessage] = test_stateData(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_stateManager(show_plots)
+    [testResults, testMessage] = test_stateArchitecture(show_plots)
     assert testResults < 1, testMessage
 
 def test_stateData(show_plots):
@@ -57,7 +57,7 @@ def test_stateData(show_plots):
 
     stateUse = [[10.0], [20.0]]
     stateName = "position"
-    newState = stateManager.StateData(stateName, stateUse)
+    newState = stateArchitecture.StateData(stateName, stateUse)
     newState.setState(stateUse)
     
     predictedDerivative = [[0.0], [0.0]]
@@ -109,7 +109,7 @@ def test_stateData(show_plots):
         testMessages.append("State scaling via * operator check failure.")
 
 
-    dummyState = stateManager.StateData()
+    dummyState = stateArchitecture.StateData()
     if(dummyState.getRowSize() != 0):
         testFailCount += 1
         testMessages.append("Dummy state row sized incorrectly")
@@ -131,7 +131,7 @@ def test_stateData(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_stateManager(show_plots):
+def test_stateArchitecture(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -140,7 +140,7 @@ def test_stateManager(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    newManager = stateManager.StateManager()
+    newManager = stateArchitecture.StateManager()
     
     positionName = "position"
     stateDim = [3, 1]
@@ -201,5 +201,5 @@ def test_stateManager(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    stateManagerAllTest(False)
+    stateArchitectureAllTest(False)
     
