@@ -52,6 +52,7 @@ import reactionwheel_dynamics
 import star_tracker
 # FSW algorithms that we want to call
 import cssComm
+import alg_contain
 import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
@@ -81,7 +82,7 @@ import attTrackingError
 import simpleDeadband
 import thrForceMapping
 import rwMotorTorque
-import rwConfigData
+import VisualizationServer
 
 import simSetupRW                 # RW simulation setup utilties
 import simSetupThruster           # Thruster simulation setup utilties
@@ -535,10 +536,38 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.modeRequest = 'DVMnvr'",
                              "self.setEventActivity('initiateDVMnvr', True)"])
 
+        self.server = VisualizationServer.VisualizationServer(self)
+        self.server.startServer()
+
+
+    # def initializeVisualization(self):
+        # openGLIO = boost_communication.OpenGLIO()
+        # for planetName in self.SpiceObject.PlanetNames:
+        #     openGLIO.addPlanetMessageName(planetName)
+        # idx = 0
+        # for thruster in self.ACSThrusterDynObject.ThrusterData:
+        #     openGLIO.addThrusterMessageName(idx)
+        #     idx += 1
+        # idxRW = 0
+        # for rw in self.rwDynObject.ReactionWheelData:
+        #     openGLIO.addRwMessageName(idxRW)
+        #     idxRW += 1
+        # openGLIO.setIpAddress("127.0.0.1")
+        # openGLIO.spiceDataPath = self.simBasePath+'/External/EphemerisData/'
+        # openGLIO.setUTCCalInit(self.SpiceObject.UTCCalInit)
+        # openGLIO.setCelestialObject(13)
+        # self.visProc.addTask(self.CreateNewTask("visTask", int(1E8)))
+        # self.AddModelToTask("visTask", openGLIO)
+        # self.enableTask("SynchTask")
+
+
     def InitializeSimulation(self):
+        # if self.isUsingVisualization:
+        #     self.initializeVisualization()
         SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
         self.dyn2FSWInterface.discoverAllMessages()
         self.fsw2DynInterface.discoverAllMessages()
+        # self.dyn2VisInterface.discoverAllMessages()
 
     #
     # Set the static spacecraft parameters
