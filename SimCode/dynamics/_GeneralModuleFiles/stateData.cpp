@@ -73,3 +73,15 @@ void StateData::scaleState(double scaleFactor)
 {
     state *= scaleFactor;
 }
+
+StateData StateData::operator+(const StateData& operand)
+{
+	return StateData(stateName, state+operand.getState());
+}
+
+StateData StateData::operator* (double scaleFactor)
+{
+	StateData newState(stateName, state);
+	newState.scaleState(scaleFactor);
+	return(newState);
+}

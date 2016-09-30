@@ -38,15 +38,18 @@ public:
     void propagateState(double dt);
     void zeroDerivative();
     void addToDerivative(const Eigen::MatrixXd & newDeriv);
-    Eigen::MatrixXd getState() {return state;}
-    Eigen::MatrixXd getStateDeriv() {return stateDeriv;}
-    std::string getName() {return stateName;}
-    uint32_t getRowSize() {return(state.innerSize());}
-    uint32_t getColumnSize() {return(state.outerSize());}
+    Eigen::MatrixXd getState() const {return state;}
+    Eigen::MatrixXd getStateDeriv() const {return stateDeriv;}
+    std::string getName() const {return stateName;}
+    uint32_t getRowSize() const {return(state.innerSize());}
+    uint32_t getColumnSize() const {return(state.outerSize());}
     bool isStateActive() {return stateEnabled;}
     void disable() {stateEnabled = false;}
     void enable() {stateEnabled = true;}
     void scaleState(double scaleFactor);
+
+	StateData operator+ (const StateData & operand);
+	StateData operator* (double scaleFactor);
     
 };
 

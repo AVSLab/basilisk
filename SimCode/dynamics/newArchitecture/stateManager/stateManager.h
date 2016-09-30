@@ -27,6 +27,9 @@
 class StateVector {
 public:
     std::map<std::string, StateData> stateMap;
+public:
+	StateVector operator+(const StateVector& operand);
+	StateVector operator*(double scaleFactor);
 };
 
 /*! Manager of states for Basilisk dynamical systems.  Allows the state-
@@ -42,7 +45,8 @@ public:
     StateData* getStateObject(std::string stateName);
     StateVector getStateVector();
     void zeroContributions();
-    void setStateVector(const StateVector & newState);
+    void updateStateVector(const StateVector & newState);
+	void propagateStateVector(double dt);
 };
 
 #endif /* STATE_MANAGER_H */

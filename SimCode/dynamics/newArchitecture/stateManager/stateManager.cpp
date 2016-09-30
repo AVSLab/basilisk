@@ -80,9 +80,16 @@ StateVector StateManager::getStateVector()
     return(stateContainer);
 }
 
-void StateManager::setStateVector(const StateVector & newState)
+void StateManager::updateStateVector(const StateVector & newState)
 {
-    stateContainer = newState;
+    
+	std::map<std::string, StateData>::iterator it;
+	std::map<std::string, StateData>::const_iterator inIt;
+	for (it = stateContainer.stateMap.begin(), inIt = newState.stateMap.begin();
+	it != stateContainer.stateMap.end(), inIt != newState.stateMap.end(); it++, inIt++)
+	{
+		it->second.setState(inIt->second.getState());
+	}
 }
 
 void StateManager::zeroContributions()
@@ -93,4 +100,42 @@ void StateManager::zeroContributions()
     {
         it->second.zeroDerivative();
     }
+}
+
+void StateManager::propagateStateVector(double dt)
+{
+	std::map<std::string, StateData>::iterator it;
+	for (it = stateContainer.stateMap.begin();
+	it != stateContainer.stateMap.end(); it++)
+	{
+		it->second.propagateState(dt);
+	}
+}
+
+StateVector StateVector::operator+(const StateVector& operand)
+{
+	std::map<std::string, StateData>::iterator it;
+	std::map<std::string, StateData>::const_iterator opIt;
+	StateVector outVector;
+	for (it = stateMap.begin(), opIt = operand.stateMap.begin();
+	    it != stateMap.end(), opIt != operand.stateMap.end(); it++, opIt++)
+	{
+		StateData newState = it->second + opIt->second;
+		outVector.stateMap.insert(std::pair<std::string, StateData>
+			(it->first, newState));
+	}
+	return outVector;
+}
+
+StateVector StateVector::operator*(double scaleFactor)
+{
+	StateVector outVector;
+	std::map<std::string, StateData>::iterator it;
+	for (it = stateMap.begin(); it != stateMap.end(); it++)
+	{
+		outVector.stateMap.insert(std::pair<std::string, StateData>
+			(it->first, it->second*scaleFactor));
+	}
+
+	return outVector;
 }

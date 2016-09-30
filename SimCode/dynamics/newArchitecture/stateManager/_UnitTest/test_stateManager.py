@@ -98,11 +98,15 @@ def test_stateData(show_plots):
     priorState = stateUpdateNum
     scaleFactor = 0.25
     priorState *= scaleFactor
+    outState = newState*scaleFactor
     newState.scaleState(scaleFactor)
     stateUpdateNum = numpy.array(newState.getState())
     if(stateUpdateNum.tolist() != priorState.tolist()):
         testFailCount += 1
         testMessages.append("State scaling update check failure.")
+    if(outState.getState() != newState.getState()):
+        testFailCount += 1
+        testMessages.append("State scaling via * operator check failure.")
 
 
     dummyState = stateManager.StateData()
@@ -112,6 +116,14 @@ def test_stateData(show_plots):
     if(dummyState.getColumnSize() != 0):
         testFailCount += 1
         testMessages.append("Dummy state column sized incorrectly")
+
+    dummyState.setState(newState.getState())
+    
+    outState = dummyState + newState
+    if(outState.getState() != (2.0*stateUpdateNum).tolist()):
+        testFailCount += 1
+        testMessages.append("Plus operator failed on StateData")
+
 
     if testFailCount == 0:
         print "PASSED: " + " State data"
@@ -161,6 +173,26 @@ def test_stateManager(show_plots):
         testFailCount += 1
         testMessages.append("State lookup for solar array flex failed")
     
+    vectorFactor = 4.0
+    vecStart = [[1.0], [2.0], [3.5]]
+    posState.setState(vecStart)
+    velState.setState(vecStart)
+    vectorStart = newManager.getStateVector()
+    vectorComposite = vectorStart + vectorStart*vectorFactor + vectorStart*vectorFactor
+    numpyOutput = numpy.array(vecStart) + numpy.array(vecStart)*vectorFactor + numpy.array(vecStart)*vectorFactor
+    newManager.updateStateVector(vectorComposite)
+    
+    if(velState.getState() != numpyOutput.tolist()):
+        testFailCount += 1
+        testMessages.append("Velocity state update via state-manager failed")
+
+    dt = 1.0;
+    posState.addToDerivative(vecStart)
+    newManager.propagateStateVector(dt)
+    numpyOutput += numpy.array(vecStart)*dt
+    if(posState.getState() != numpyOutput.tolist()):
+        testFailCount += 1
+        testMessages.append("Position state propagation via state-manager failed")
 
     if testFailCount == 0:
         print "PASSED: " + " State manager"
