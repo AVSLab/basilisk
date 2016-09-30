@@ -597,7 +597,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             rwClockAngle += 90.0 * math.pi / 180.0
             i += 1
 
-        msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
+        # msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
+        msgSizeRW = 4+vehicleConfigData.MAX_EFF_CNT*4*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
                                        msgSizeRW, 2, "RWConstellation")
         self.TotalSim.WriteMessageData("rwa_config_data", msgSizeRW, 0, rwClass)
