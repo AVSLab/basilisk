@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <stdint.h>
 #include <string>
 #include <set>
+#include <mutex>
 #include "architecture/messaging/blank_storage.h"
 #define MAX_MESSAGE_SIZE 512
 
@@ -65,7 +66,7 @@ typedef struct {
     uint64_t processBuffer;     // (-) Buffer selection for this set of msg
     uint64_t itemID;            // (-) ID associated with request
     bool itemFound;             // (-) Indicator of whether the buffer was found
-}messageIdentData;
+}MessageIdentData;
 
 #ifdef _WIN32
 class __declspec( dllexport) SystemMessaging
@@ -101,7 +102,7 @@ public:
     uint64_t checkoutModuleID();
     void selectMessageBuffer(uint64_t bufferUse);
     uint64_t getProcessCount() {return(dataBuffers.size());}
-    messageIdentData messagePublishSearch(std::string messageName);
+    MessageIdentData messagePublishSearch(std::string messageName);
     int64_t findMessageBuffer(std::string bufferName);
     std::set<std::string> getUnpublishedMessages();
     std::set<std::string> getUniqueMessageNames();

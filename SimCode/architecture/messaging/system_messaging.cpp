@@ -289,11 +289,11 @@ bool SystemMessaging::obtainReadRights(uint64_t messageID, int64_t moduleID)
     
 }
 
-messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
+MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 {
     int64_t messageID;
     
-    messageIdentData dataFound;
+    MessageIdentData dataFound;
     dataFound.itemFound = false;
     dataFound.itemID = -1;
     dataFound.processBuffer = ~0;
@@ -404,7 +404,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     if(MessageID >= GetMessageCount())
     {
         std::cerr << "Received a read request for invalid message ID: ";
-        std::cerr << MessageID<<std::endl;
+        std::cerr << MessageID <<std::endl;
         ReadFails++;
         return(false);
     }

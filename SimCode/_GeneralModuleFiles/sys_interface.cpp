@@ -81,7 +81,6 @@ void InterfaceDataExchange::discoverMessages()
             messageTraffic.push_back(newMessage);
         }
     }
-    
 }
 
 bool InterfaceDataExchange::linkMessages()
@@ -184,6 +183,7 @@ void SysInterface::addNewInterface(InterfaceDataExchange * newInterface)
     }
     interfacesLinked = false;
 }
+
 void SysInterface::addNewInterface(std::string from, std::string to, std::string intName)
 {
 
@@ -203,6 +203,7 @@ void SysInterface::addNewInterface(std::string from, std::string to, std::string
     currentInterface = (*it);
 
 }
+
 void SysInterface::connectInterfaces()
 {
     std::vector<InterfaceDataExchange*>::iterator it;
@@ -219,6 +220,7 @@ void SysInterface::connectInterfaces()
     }
     interfacesLinked = true;
 }
+
 void SysInterface::routeInputs(uint64_t processBuffer)
 {
     std::vector<InterfaceDataExchange*>::iterator it;
@@ -236,9 +238,8 @@ void SysInterface::routeInputs(uint64_t processBuffer)
     {
         (*it)->routeMessages();
     }
-    
-
 }
+
 void SysInterface::discoverAllMessages()
 {
     std::vector<InterfaceDataExchange*>::iterator it;
