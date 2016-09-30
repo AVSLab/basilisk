@@ -109,10 +109,22 @@ void SystemMessaging::clearMessaging()
     messageStorage = NULL;
 }
 
-uint64_t SystemMessaging::GetMessageCount()
+uint64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
 {
-    uint64_t *CurrentMessageCount = reinterpret_cast<uint64_t*>
-    (&messageStorage->messageStorage.StorageBuffer[0]);
+    uint64_t *CurrentMessageCount;
+    if(bufferSelect < 0)
+    {
+       CurrentMessageCount = reinterpret_cast<uint64_t*>
+           (&messageStorage->messageStorage.StorageBuffer[0]);
+    }
+    else
+    {
+        std::vector<MessageStorageContainer *>::iterator it;
+        it = dataBuffers.begin();
+        it += bufferSelect;
+        CurrentMessageCount = reinterpret_cast<uint64_t*>
+        (&((*it)->messageStorage.StorageBuffer[0]));
+    }
     return(*CurrentMessageCount);
 }
 
@@ -300,8 +312,7 @@ MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
     std::vector<MessageStorageContainer *>::iterator it;
     for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        messageStorage = (*it);
-        messageID = FindMessageID(messageName);
+        messageID = FindMessageID(messageName, it-dataBuffers.begin());
         if(messageID < 0)
         {
             continue;
@@ -309,9 +320,9 @@ MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
         dataFound.itemFound = true;
         dataFound.itemID = messageID;
         dataFound.processBuffer = it - dataBuffers.begin();
-        dataFound.bufferName = messageStorage->bufferName;
+        dataFound.bufferName = (*it)->bufferName;
         std::vector<AllowAccessData>::iterator pubIt;
-        pubIt=messageStorage->pubData.begin() + messageID;
+        pubIt=(*it)->pubData.begin() + messageID;
         if(pubIt->accessList.size() > 0 && pubIt->publishedHere)
         {
             return(dataFound);
@@ -456,14 +467,22 @@ void SystemMessaging::PrintAllMessageData()
     }
 }
 
-MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID)
+MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
     if(MessageID >= GetMessageCount())
     {
         return NULL;
     }
-    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(messageStorage->messageStorage.
+    MessageStorageContainer *localStorage = messageStorage;
+    if(bufferSelect >= 0)
+    {
+        std::vector<MessageStorageContainer *>::iterator it;
+        it = dataBuffers.begin();
+        it += bufferSelect;
+        localStorage = *it;
+    }
+    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(localStorage->messageStorage.
                                                      StorageBuffer[sizeof(uint64_t)]));
     MsgHdr += MessageID;
     return(MsgHdr);
@@ -484,24 +503,24 @@ void SystemMessaging::PrintMessageStats(uint64_t MessageID)
     std::cout << "NumberMsgs: "<<MsgHdr->MaxNumberBuffers<<std::endl;
 }
 
-std::string SystemMessaging::FindMessageName(uint64_t MessageID)
+std::string SystemMessaging::FindMessageName(uint64_t MessageID, int32_t bufferSelect)
 {
-    if(MessageID >= GetMessageCount())
+    if(MessageID >= GetMessageCount(bufferSelect))
     {
         std::cerr << "Asked to find a message for invalid ID: "<<MessageID;
         std::cerr << std::endl;
     }
-    MessageHeaderData* MsgHdr = FindMsgHeader(MessageID);
+    MessageHeaderData* MsgHdr = FindMsgHeader(MessageID, bufferSelect);
     return(MsgHdr->MessageName);
     
 }
 
-int64_t SystemMessaging::FindMessageID(std::string MessageName)
+int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
-    for(uint64_t i=0; i<GetMessageCount(); i++)
+    for(uint64_t i=0; i<GetMessageCount(bufferSelect); i++)
     {
-        MsgHdr = FindMsgHeader(i);
+        MsgHdr = FindMsgHeader(i, bufferSelect);
         if(MessageName == std::string(MsgHdr->MessageName))
         {
             return(i);
@@ -552,10 +571,9 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
     std::vector<MessageStorageContainer *>::iterator it;
     for(it = dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        selectMessageBuffer(it - dataBuffers.begin());
-        for(uint64_t i=0; i<GetMessageCount(); i++)
+        for(uint64_t i=0; i<GetMessageCount(it - dataBuffers.begin()); i++)
         {
-            outputNames.insert(FindMessageName(i));
+            outputNames.insert(FindMessageName(i, it - dataBuffers.begin()));
             
         }
     }
