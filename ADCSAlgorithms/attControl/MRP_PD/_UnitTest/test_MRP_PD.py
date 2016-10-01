@@ -137,13 +137,13 @@ def mrp_PD_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-    print '\n Lr = ', moduleOutput
+    print '\n Lr = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
-        [1.395, -3.555, 1.935],
-        [1.395, -3.555, 1.935],
-        [1.395, -3.555, 1.935]
-    ]*(-1)
+        [-1.395, 3.555, -1.935],
+        [-1.395, 3.555, -1.935],
+        [-1.395, 3.555, -1.935]
+    ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
