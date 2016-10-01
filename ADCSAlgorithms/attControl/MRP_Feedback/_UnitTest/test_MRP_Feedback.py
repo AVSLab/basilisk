@@ -55,7 +55,7 @@ import rwConfigData
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(conditionstring)
+#@pytest.mark.xfail()
 # provide a unique test method name, starting with test_
 def test_MRP_Feedback(show_plots):     
     # each test method requires a single assert method to be called
@@ -95,8 +95,8 @@ def subModuleTestFunction(show_plots):
     moduleConfig.inputGuidName  = "inputGuidName"
     moduleConfig.vehConfigInMsgName  = "vehicleConfigName"
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.rwAvailInMsgName = "rw_availability"
+    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K  =   0.15
@@ -160,10 +160,10 @@ def subModuleTestFunction(show_plots):
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
         rwConfigParams = rwConfigData.RWConfigParams()
         rwConfigParams.GsMatrix_B = [
-            1.0, 0.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 0.0, 1.0,
-            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0
         ]
         rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
         rwConfigParams.numRW = 4
@@ -208,15 +208,17 @@ def subModuleTestFunction(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                     range(3))
+    print '\n Lr = ', moduleOutput[:, 1:]
     
     # set the filtered output truth states
+
     trueVector = [
-               [16.115000000000002, -25.064999999999998, 23.495000000000001]
-              ,[16.115000000000002, -25.064999999999998, 23.495000000000001]
-              ,[16.142150000000001, -25.112400000000001, 23.582899999999999]
-              ,[16.115000000000002, -25.064999999999998, 23.495000000000001]
-              ,[16.142150000000001, -25.112400000000001, 23.582899999999999]
-               ]*(-1)
+               [-16.115000000000002, 25.064999999999998, -23.495000000000001]
+              ,[-16.115000000000002, 25.064999999999998, -23.495000000000001]
+              ,[-16.142150000000001, 25.112400000000001, -23.582899999999999]
+              ,[-16.115000000000002, 25.064999999999998, -23.495000000000001]
+              ,[-16.142150000000001, 25.112400000000001, -23.582899999999999]
+               ]
 
     # compare the module results to the truth values
     accuracy = 1e-12

@@ -85,8 +85,10 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
  */
 void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
+    /*! - Read the input messages */
     uint64_t clockTime;
     uint32_t readSize;
+    
     vehicleConfigData sc;
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
@@ -94,18 +96,19 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
     
-    /*! - Read the input messages */
+    ConfigData->rwConfigParams.numRW = 0;
     if (ConfigData->rwParamsInMsgID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
                     sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
-    } else {
-        ConfigData->rwConfigParams.numRW = 0;
     }
     
     /* Reset the integral measure of the rate tracking error */
     v3SetZero(ConfigData->z);
     v3SetZero(ConfigData->int_sigma);
+    /* Reset the prior time flag state. 
+     If zero, control time step not evaluated on the first function call */
+    ConfigData->priorTime = 0;
 }
 
 /*! This method takes the attitude and rate errors relative to the Reference frame, as well as
@@ -143,7 +146,6 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
-    
     if(ConfigData->rwConfigParams.numRW > 0) {
         ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
                     sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
