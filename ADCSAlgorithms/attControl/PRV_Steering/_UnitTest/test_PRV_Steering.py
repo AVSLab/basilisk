@@ -48,7 +48,8 @@ import PRV_Steering
 import sunSafePoint
 import vehicleConfigData
 import rwNullSpace
-import fswSetupRW
+import rwMotorTorque
+import rwConfigData
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -81,22 +82,20 @@ def subModuleTestFunction(show_plots):
 
     #   Construct algorithm and associated C++ container
     moduleConfig = PRV_Steering.PRV_SteeringConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        PRV_Steering.Update_PRV_Steering,
-                                        PRV_Steering.SelfInit_PRV_Steering,
-                                        PRV_Steering.CrossInit_PRV_Steering,
-                                        PRV_Steering.Reset_PRV_Steering)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "PRV_Steering"
 
     #   Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     #   Initialize the test module configuration data
+
     moduleConfig.inputGuidName  = "inputGuidName"
-    moduleConfig.inputVehicleConfigDataName  = "vehicleConfigName"
-    moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
+    moduleConfig.vehConfigInMsgName  = "vehicleConfigName"
+    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
+    moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K1 =   0.15
     moduleConfig.K3 =   1.0
@@ -109,14 +108,15 @@ def subModuleTestFunction(show_plots):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
 
-    #   attGuidOut Message:
-    inputMessageSize = 12*8                            # 4x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+    #   Create input message and size it because the regular creator of that message
+    #   is not part of the test.
 
-    guidCmdData = sunSafePoint.attGuidOut()             # Create a structure for the input message
+    #   attGuidOut Message:
+    inputMessageSize = 12 * 8  # 4 x 3 x size(double)
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -125,34 +125,25 @@ def subModuleTestFunction(show_plots):
     guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
     guidCmdData.domega_RN_B = domega_RN_B
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          0,
-                                          guidCmdData)
-
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
+                                          0, guidCmdData)
 
     # vehicleConfigData Message:
-    inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
+    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+                                          0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 8  # doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
@@ -165,16 +156,39 @@ def subModuleTestFunction(show_plots):
                                           0,
                                           rwSpeedMessage)
 
-    # wheelConfigData Message
-    fswSetupRW.clearSetup()
-    Js = 0.1
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.create([0.0, 0.0, 0.0], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.inputRWConfigData,
-                               unitTestSim.TotalSim,
-                               unitProcessName)
+    # wheelConfigData message
+    def writeMsgInWheelConfiguration():
+        inputMessageSize = 8 * vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1 * 4
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
+                                              inputMessageSize, 2)  # number of buffers (leave at 2 as default)
+        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams.GsMatrix_B = [
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0,
+            0.0, 0.0, 0.0
+        ]
+        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+        rwConfigParams.numRW = 4
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
+                                              0, rwConfigParams)
+
+    if len(moduleConfig.rwParamsInMsgName) > 0:
+        writeMsgInWheelConfiguration()
+
+    # wheelAvailability message
+    def writeMsgInWheelAvailability():
+        inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4  # integers
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
+                                              inputMessageSize, 2)  # number of buffers (leave at 2 as default)
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = avail
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
+                                              0, rwAvailabilityMessage)
+
+    if len(moduleConfig.rwAvailInMsgName) > 0:
+        writeMsgInWheelAvailability()
 
 
     #   Setup logging on the test module output message so that we get all the writes to it
@@ -198,16 +212,16 @@ def subModuleTestFunction(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                     range(3))
-
+    print '\n Lr = ', moduleOutput[:, 1:]
 
     # set the filtered output truth states
     trueVector = [
-               [2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
-              ,[2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
-              ,[2.9353853745179044, -6.2833455830962901, 4.0556481491012084]
-              ,[2.9352922876097969, -6.2831737715827778, 4.0554726129822907]
-              ,[2.9353853745179044, -6.2833455830962901, 4.0556481491012084]
-               ]*(-1)
+               [-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+              ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+              ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
+              ,[-2.9352922876097969, +6.2831737715827778, -4.0554726129822907]
+              ,[-2.9353853745179044, +6.2833455830962901, -4.0556481491012084]
+               ]
 
     # compare the module results to the truth values
     accuracy = 1e-12
