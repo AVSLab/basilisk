@@ -15,8 +15,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#ifndef _FSW_MODULE_TEMPLATE_H_
-#define _FSW_MODULE_TEMPLATE_H_
+#ifndef _RW_CONFIG_DATA_H_
+#define _RW_CONFIG_DATA_H_
 
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"

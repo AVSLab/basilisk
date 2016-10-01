@@ -648,7 +648,9 @@ def executeGuidance(TheAVSSim):
     #singleTest('eulerRotation')
     #singleTest('rasterMnvr')
     #singleTest('deadbandGuid')
-    singleTest('rwMotorTorqueControl')
+    #singleTest('rwMotorTorqueControl')
+    singleTest('steeringControl')
+    #singleTest('PRVControl')
 
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
@@ -710,7 +712,7 @@ if __name__ == "__main__":
     sigma_RN = TheAVSSim.pullMessageLogData("att_ref_output.sigma_RN", range(3))
     omega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.omega_RN_N", range(3))
     domega_RN_N = TheAVSSim.pullMessageLogData("att_ref_output.domega_RN_N", range(3))
-    plotReference(sigma_RN, omega_RN_N, domega_RN_N)
+    #plotReference(sigma_RN, omega_RN_N, domega_RN_N)
 
     if TheAVSSim.modeRequest =='eulerRotation' or TheAVSSim.modeRequest == 'rasterMnvr':
         euler123set = TheAVSSim.pullMessageLogData("euler_set_output.set", range(3))

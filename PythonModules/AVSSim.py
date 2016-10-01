@@ -140,7 +140,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.fswProc.addTask(self.CreateNewTask("eulerRotationTask", int(5E8)), 117)
         self.fswProc.addTask(self.CreateNewTask("inertial3DSpinTask", int(5E8)), 116)
 
-        self.fswProc.addTask(self.CreateNewTask("attitudeControlMnvrTask", int(5E8)), 110)
+        self.fswProc.addTask(self.CreateNewTask("steeringControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("feedbackControlMnvrTask", int(5E8)), 110)
         self.fswProc.addTask(self.CreateNewTask("attitudePRVControlMnvrTask", int(5E8)), 110)
 
@@ -376,9 +376,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("rasterMnvrTask", self.rasterManagerWrap, self.rasterManagerData, 19)
         self.AddModelToTask("rasterMnvrTask", self.eulerRotationWrap, self.eulerRotationData, 18)
         
-        self.AddModelToTask("attitudeControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
-        self.AddModelToTask("attitudeControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
-        self.AddModelToTask("attitudeControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
+        self.AddModelToTask("steeringControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
+        self.AddModelToTask("steeringControlMnvrTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
+        self.AddModelToTask("steeringControlMnvrTask", self.rwMotorTorqueWrap, self.rwMotorTorqueData, 8)
         
 
         self.AddModelToTask("feedbackControlMnvrTask", self.attTrackingErrorWrap, self.attTrackingErrorData, 10)
@@ -396,6 +396,20 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         # Disable all tasks in the FSW process
         self.fswProc.disableAllTasks()
+        # PRV Steering Control Event
+        self.createNewEvent("initiatePRVControlEvent", int(1E9), True, ["self.modeRequest == 'PRVControl'"],
+                            ["self.fswProc.disableAllTasks()"
+                             , "self.enableTask('sensorProcessing')"
+                             , "self.enableTask('velocityPointTask')"
+                             , "self.enableTask('attitudePRVControlMnvrTask')"
+                             ])
+        # MRP Steering Control Event
+        self.createNewEvent("initiateSteeringControlEvent", int(1E9), True, ["self.modeRequest == 'steeringControl'"],
+                            ["self.fswProc.disableAllTasks()"
+                             , "self.enableTask('sensorProcessing')"
+                             , "self.enableTask('velocityPointTask')"
+                             , "self.enableTask('steeringControlMnvrTask')"
+                             ])
 
         # RW Motor Torque Event
         self.createNewEvent("initiateSimpleRWControlEvent", int(1E9), True, ["self.modeRequest == 'rwMotorTorqueControl'"],
@@ -633,7 +647,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                                        msgSizeThrust, 2, "ThrusterCluster")
         self.TotalSim.WriteMessageData("rcs_config_data", msgSizeThrust, 0, rcsClass)
 
-    def SetRWConfigData(self):
+    def SetRWConfigDataFSW(self):
         self.rwConfigData.rwConstellationInMsgName = "rwa_config_data"
         self.rwConfigData.vehConfigInMsgName = "adcs_config_data"
         self.rwConfigData.rwParamsOutMsgName = "rwa_config_data_parsed"
@@ -1151,9 +1165,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringSafeData.P = 150.0  # N*m*sec
         self.MRP_SteeringSafeData.Ki = -1.0  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringSafeData.integralLimit = 0.15  # rad
-        #self.MRP_SteeringSafeData.inputGuidName = "sun_safe_att_err"
         self.MRP_SteeringSafeData.inputGuidName = "db_att_guid_out"
-        self.MRP_SteeringSafeData.inputVehicleConfigDataName = "adcs_config_data"
+        self.MRP_SteeringSafeData.vehConfigInMsgName = "adcs_config_data"
         self.MRP_SteeringSafeData.outputDataName = "controlTorqueRaw"
 
     def SetMRP_PD(self):
@@ -1272,10 +1285,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringRWAData.integralLimit = 0.0  # rad
 
         self.MRP_SteeringRWAData.inputGuidName = "nom_att_guid_out"
-        self.MRP_SteeringRWAData.inputRWConfigData = "rwa_config_data"
-        self.MRP_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
-        self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
+        self.MRP_SteeringRWAData.vehConfigInMsgName = "adcs_config_data"
+        self.MRP_FeedbackRWAData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.MRP_FeedbackRWAData.rwAvailInMsgName = "rw_availability"
         self.MRP_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
+        self.MRP_SteeringRWAData.outputDataName = "controlTorqueRaw"
 
     def SetMRP_FeedbackRWA(self):
         self.MRP_FeedbackRWAData.K = 1.  # rad/sec
@@ -1284,11 +1298,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_FeedbackRWAData.integralLimit = 0.0  # rad
 
         self.MRP_FeedbackRWAData.inputGuidName = "nom_att_guid_out"
-        self.MRP_FeedbackRWAData.rwParamsInMsgName = "rwa_config_data_parsed"
         self.MRP_FeedbackRWAData.vehConfigInMsgName = "adcs_config_data"
-        self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
+        self.MRP_FeedbackRWAData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.MRP_FeedbackRWAData.rwAvailInMsgName = "rw_availability"
         self.MRP_FeedbackRWAData.inputRWSpeedsName = "reactionwheel_output_states"
-        self.MRP_FeedbackRWAData.inputRWsAvailDataName = "rw_availability"
+        self.MRP_FeedbackRWAData.outputDataName = "controlTorqueRaw"
 
     def SetPRV_SteeringRWA(self):
         self.PRV_SteeringRWAData.K1 = 0.3  # rad/sec
@@ -1299,10 +1313,11 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.PRV_SteeringRWAData.integralLimit = 0.0  # rad
 
         self.PRV_SteeringRWAData.inputGuidName = "nom_att_guid_out"
-        self.PRV_SteeringRWAData.inputRWConfigData = "rwa_config_data"
-        self.PRV_SteeringRWAData.inputVehicleConfigDataName = "adcs_config_data"
-        self.PRV_SteeringRWAData.outputDataName = "controlTorqueRaw"
+        self.PRV_SteeringRWAData.vehConfigInMsgName = "adcs_config_data"
+        self.PRV_SteeringRWAData.rwParamsInMsgName = "rwa_config_data_parsed"
+        self.PRV_SteeringRWAData.rwAvailInMsgName = "rw_availability"
         self.PRV_SteeringRWAData.inputRWSpeedsName = "reactionwheel_output_states"
+        self.PRV_SteeringRWAData.outputDataName = "controlTorqueRaw"
 
     def SetMRP_SteeringMOI(self):
         self.MRP_SteeringMOIData.K1 = 0.5  # rad/sec
@@ -1312,7 +1327,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_SteeringMOIData.Ki = 11.7  # N*m - negative values turn off the integral feedback
         self.MRP_SteeringMOIData.integralLimit = 0.5  # rad
         self.MRP_SteeringMOIData.inputGuidName = "nom_att_guid_out"
-        self.MRP_SteeringMOIData.inputVehicleConfigDataName = "adcs_config_data"
+        self.MRP_SteeringMOIData.vehConfigInMsgName = "adcs_config_data"
         self.MRP_SteeringMOIData.outputDataName = "controlTorqueRaw"
 
     def SetdvAttEffect(self):
@@ -1379,11 +1394,9 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         ]
         self.rwMotorTorqueData.controlAxes_B = controlAxes_B
         self.rwMotorTorqueData.inputVehControlName = "controlTorqueRaw"
-        #self.rwMotorTorqueData.inputRWConfigDataName = "rwa_config_data"
-        #self.rwMotorTorqueData.inputVehicleConfigDataName = "adcs_config_data"
         #self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds_raw"
         self.rwMotorTorqueData.outputDataName = "reactionwheel_cmds"
-        self.rwMotorTorqueData.inputRWsAvailDataName = "rw_availability"
+        self.rwMotorTorqueData.rwAvailInMsgName = "rw_availability"
         self.rwMotorTorqueData.rwParamsInMsgName = "rwa_config_data_parsed"
 
     def SetRWANullSpaceData(self):
@@ -1507,7 +1520,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def InitAllFSWObjects(self):
         self.SetVehicleConfigData()
         self.SetLocalConfigData()
-        self.SetRWConfigData()
+        self.SetRWConfigDataFSW()
         self.SetRwFSWDeviceAvailability()
         self.SetCSSDecodeFSWConfig()
         self.SetIMUCommData()
