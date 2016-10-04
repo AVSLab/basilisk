@@ -82,6 +82,7 @@ import attTrackingError
 import simpleDeadband
 import thrForceMapping
 import rwMotorTorque
+import rwConfigData
 import VisualizationServer
 
 import simSetupRW                 # RW simulation setup utilties
