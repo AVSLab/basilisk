@@ -17,6 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #Very simple simulation.  Just sets up and calls the SPICE interface.  Could 
 #be the basis for a unit test of SPICE
 import sys, os
+os.environ["SIMULATION_BASE"] = "/Users/thibaudteil/Documents/Boulder/SoftwareDevelopment/Basilisk"
 sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
 sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 
@@ -26,12 +27,22 @@ import MessagingAccess
 import SimulationBaseClass
 import numpy
 import ctypes
+import macros
 
 TestResults = {}
 
 #Create a sim module as an empty container
-TotalSim = SimulationBaseClass.SimBaseClass() 
-TotalSim.CreateNewTask("TimeTestTask", int(1E9))
+unitTaskName = "unitTask"  # arbitrary name (don't change)
+unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+TotalSim = SimulationBaseClass.SimBaseClass()
+TotalSim.TotalSim.terminateSimulation()
+
+DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
+# create the dynamics task and specify the integration update time
+DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+
+# TotalSim.CreateNewTask("TimeTestTask", int(1E9))
 
 #Now initialize the modules that we are using.  I got a little better as I went along
 SpiceObject = spice_interface.SpiceInterface()
@@ -41,7 +52,7 @@ SpiceObject.SPICEDataPath = os.environ['SIMULATION_BASE'] + '/External/Ephemeris
 SpiceObject.OutputBufferCount = 10000
 SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
 SpiceObject.UTCCalInit = "2016 June 16, 00:00:00.0 TDB"
-TotalSim.AddModelToTask("TimeTestTask", SpiceObject)
+TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
 TotalSim.ConfigureStopTime(int(60.0*1E9))
 TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
@@ -99,8 +110,7 @@ MarsPosEnd = MarsPosEnd*1000.0
 
 FinalMarsMessage = spice_interface.SpicePlanetState()
 TotalSim.TotalSim.GetWriteData("mars_planet_data", 120, FinalMarsMessage, 0)
-MarsPosVec = ctypes.cast(FinalMarsMessage.PositionVector.__long__(), 
-   ctypes.POINTER(ctypes.c_double))
+MarsPosVec = FinalMarsMessage.PositionVector
 
 MarsPosArray = numpy.array([MarsPosVec[0], MarsPosVec[1], MarsPosVec[2]])
 MarsPosDiff = MarsPosArray - MarsPosEnd
@@ -116,8 +126,7 @@ EarthPosEnd = EarthPosEnd*1000.0
 
 FinalEarthMessage = spice_interface.SpicePlanetState()
 TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
-EarthPosVec = ctypes.cast(FinalEarthMessage.PositionVector.__long__(),
-   ctypes.POINTER(ctypes.c_double))
+EarthPosVec = FinalEarthMessage.PositionVector
 
 EarthPosArray = numpy.array([EarthPosVec[0], EarthPosVec[1], EarthPosVec[2]])
 EarthPosDiff = EarthPosArray - EarthPosEnd
@@ -133,8 +142,7 @@ SunPosEnd = SunPosEnd*1000.0
 
 FinalSunMessage = spice_interface.SpicePlanetState()
 TotalSim.TotalSim.GetWriteData("sun_planet_data", 120, FinalSunMessage, 0)
-SunPosVec = ctypes.cast(FinalSunMessage.PositionVector.__long__(),
-   ctypes.POINTER(ctypes.c_double))
+SunPosVec = FinalSunMessage.PositionVector
 
 SunPosArray = numpy.array([SunPosVec[0], SunPosVec[1], SunPosVec[2]])
 SunPosDiff = SunPosArray - SunPosEnd
