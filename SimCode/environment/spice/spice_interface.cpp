@@ -83,10 +83,7 @@ void SpiceInterface::SelfInit()
             printf("Unable to load %s", "de-403-masses.tpc");
         }
         if(loadSpiceKernel((char *)"de430.bsp", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de421.bsp");
-        }
-        if(loadSpiceKernel((char *)"MAR033_2000-2025.bsp", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "MAR033_2000-2025.bsp");
+            printf("Unable to load %s", "de430.bsp");
         }
         SPICELoaded = true;
     }

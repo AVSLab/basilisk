@@ -22,6 +22,6 @@ def pytest_addoption(parser):
                      help="test(s) shall display plots")
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def show_plots(request):
     return request.config.getoption("--show_plots")
