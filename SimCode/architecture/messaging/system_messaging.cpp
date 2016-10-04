@@ -470,7 +470,7 @@ void SystemMessaging::PrintAllMessageData()
 MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
-    if(MessageID >= GetMessageCount())
+    if(MessageID >= GetMessageCount(bufferSelect))
     {
         return NULL;
     }

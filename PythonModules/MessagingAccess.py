@@ -57,7 +57,7 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
       RefFunctionString = 'def GetMessage' + MessageName + VarName + '(self):\n'
       RefFunctionString += '   return self.' + VarName
       exec(RefFunctionString)
-      functionCall = eval('GetMessage'+ MessageName + VarName)
+      functionCall = eval('GetMessage' + MessageName + VarName)
    while(LocalCount < MessageCount):
       WriteTime = SimContainer.GetWriteData(MessageName, 10000, 
          LocalContainer, messageType, LocalCount)

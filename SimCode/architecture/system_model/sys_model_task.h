@@ -51,7 +51,7 @@ public:
 	void updatePeriod(uint64_t newPeriod) { TaskPeriod = newPeriod; }
     
 public:
-    std::vector<ModelPriorityPair> TaskModels; //!< -- Array that has pointers to all GNC laws
+    std::vector<ModelPriorityPair> TaskModels; //!< -- Array that has pointers to all task sysModels
     std::string TaskName;                      //!< -- Identified for Task
     uint64_t NextStartTime;                      //!< ns Next time to start model
     uint64_t NextPickupTime;                     //!< ns Next time read Task outputs

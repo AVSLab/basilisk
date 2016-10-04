@@ -2,7 +2,7 @@ import threading
 import SocketServer
 import VisualizationDataDelegate
 import time
-from pudb import set_trace
+import ujson
 
 class VisualizationServer:
     def __init__(self, simulation):
@@ -11,10 +11,9 @@ class VisualizationServer:
         # is here for clarity and potential manipulation from the simulation level
         host_ip, port = "127.0.0.1", 50000
         self.server = ThreadedTCPServer((host_ip, port), ThreadedTCPRequestHandler)
-        self.server.request_queue_size = 1
+        self.server.request_queue_size = 5
         # self.server.dataSource = VisualizationDataSource.DataSource(simulation)
         self.server.dataDelegate = VisualizationDataDelegate.DataDelegate(simulation)
-
 
     def startServer(self):
         ip, port = self.server.server_address
@@ -35,14 +34,13 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def __init__(self, request, client_address, server):
         self.requestData = None
-        self.BUFFER_SIZE = 4096
+        self.BUFFER_SIZE = 2048
+        # self.timing = []
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
         return
 
     def handle(self):
-        # set_trace()
         while True:
-            # print "handle"+str(threading.current_thread())
             self.requestData = self.request.recv(self.BUFFER_SIZE)
             requestPayloadSize = self.requestData[:8]
             requestType = self.requestData[8:10]
@@ -64,20 +62,29 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
             self.sendResponse(requestType)
 
     def sendResponse(self, requestType):
-        # print int(time.time())
         responseData = []
         if requestType == "00":
             responseData = self.server.dataDelegate.packageData()
+            # t1 = time.clock()
+
             encodedData = self.server.dataDelegate.encodeDataToJSON(responseData)
-            print encodedData
+            # encodedData = ujson.dumps(responseData)
+            # t2 = time.clock()
+            # self.timing.append(t2-t1)
+            # print sum(self.timing)/len(self.timing)
+
         elif requestType == "01":
             print requestType
         else:
             print 'requestType: ' + requestType + ' unknonwn'
 
-        if encodedData != "[]":
-            sentStuff = self.request.sendall(str(len(encodedData))+encodedData)
-            if sentStuff is None:
-                print "Send Successful"
-        else:
-            sentStuff = self.request.sendall("0011EmptyString")
+        sentStuff = self.request.sendall(str(len(encodedData))+encodedData)
+        # if encodedData != "[]":
+        #     # t1 = time.clock()
+        #     sentStuff = self.request.sendall(str(len(encodedData))+encodedData)
+        #     # t2 = time.clock()
+        #     # print "send time: " + str(t2-t1)
+        #     if sentStuff is not None:
+        #         print "Send data failed"
+        # else:
+        #     sentStuff = self.request.sendall("0011EmptyString")
