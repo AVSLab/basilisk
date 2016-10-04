@@ -25,6 +25,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore ekucei_c;
 %ignore ekuced_c;
 %include "carrays.i"
+%include "cstring.i"
+%include "typemaps.i"
 %array_functions(double, doubleArray);
 %array_functions(int, intArray);
 typedef char ConstSpiceChar;
@@ -51,4 +53,9 @@ typedef double ConstSpiceDouble;
 typedef double ConstSpiceDouble;
 typedef int SpiceInt;
 typedef int SpiceBoolean;
+
+
+%cstring_bounded_mutable(SpiceChar *utcstr, 1024);
+
 %include "../../External/cspice/include/SpiceZpr.h"
+
