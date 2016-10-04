@@ -99,17 +99,17 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         # Processes
         self.fswProc = self.CreateNewProcess("FSWProcess")
         self.dynProc = self.CreateNewProcess("DynamicsProcess")
-        # self.visProc = self.CreateNewProcess("VisProcess")
+
         # Process message interfaces.
         self.dyn2FSWInterface = sim_model.SysInterface()
         self.fsw2DynInterface = sim_model.SysInterface()
-        # self.dyn2VisInterface = sim_model.SysInterface()
+
         self.dyn2FSWInterface.addNewInterface("DynamicsProcess", "FSWProcess")
         self.fsw2DynInterface.addNewInterface("FSWProcess", "DynamicsProcess")
-        # self.dyn2VisInterface.addNewInterface("DynamicsProcess", "VisProcess")
+
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
-        # self.dynProc.addInterfaceRef(self.dyn2VisInterface)
+
 
         # Process task groups.
         self.dynProc.addTask(self.CreateNewTask("SynchTask", int(5E8)), 2000)
@@ -541,38 +541,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.modeRequest = 'DVMnvr'",
                              "self.setEventActivity('initiateDVMnvr', True)"])
 
-        self.server = VisualizationServer.VisualizationServer(self)
-        self.server.startServer()
-
-
-    # def initializeVisualization(self):
-        # openGLIO = boost_communication.OpenGLIO()
-        # for planetName in self.SpiceObject.PlanetNames:
-        #     openGLIO.addPlanetMessageName(planetName)
-        # idx = 0
-        # for thruster in self.ACSThrusterDynObject.ThrusterData:
-        #     openGLIO.addThrusterMessageName(idx)
-        #     idx += 1
-        # idxRW = 0
-        # for rw in self.rwDynObject.ReactionWheelData:
-        #     openGLIO.addRwMessageName(idxRW)
-        #     idxRW += 1
-        # openGLIO.setIpAddress("127.0.0.1")
-        # openGLIO.spiceDataPath = self.simBasePath+'/External/EphemerisData/'
-        # openGLIO.setUTCCalInit(self.SpiceObject.UTCCalInit)
-        # openGLIO.setCelestialObject(13)
-        # self.visProc.addTask(self.CreateNewTask("visTask", int(1E8)))
-        # self.AddModelToTask("visTask", openGLIO)
-        # self.enableTask("SynchTask")
 
 
     def InitializeSimulation(self):
-        # if self.isUsingVisualization:
-        #     self.initializeVisualization()
         SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
         self.dyn2FSWInterface.discoverAllMessages()
         self.fsw2DynInterface.discoverAllMessages()
-        # self.dyn2VisInterface.discoverAllMessages()
+        if self.isUsingVisualization:
+            self.server = VisualizationServer.VisualizationServer(self)
+            self.server.startServer()
 
     #
     # Set the static spacecraft parameters
