@@ -4,8 +4,8 @@ import sys
 import MessagingAccess
 import sim_model
 import inspect
-import threading
-import copy
+import time
+
 
 class DataDelegate:
     def __init__(self, simulation):
@@ -14,83 +14,64 @@ class DataDelegate:
         self.encoder = VisJSONEncoder()
         self.processName = 'DynamicsProcess'
         self.visMessages = []
+        self.visSimModules = []
 
     def packageData(self):
-        print "Stage 1: "+sys._getframe().f_code.co_name
-        tmpObjects = [] # Clear the list
+        tmpObjects = []
         if self.isNewConnection:
             self.isNewConnection = False
             self.initDataSource()
         # package up grabbed (updated) messages into parsed structures
         # leave stale values in structures
-        messages = self.collectMessages()
+        messageData = self.collectMessages()
 
-        for messageStruct in messages:
-            for function in (VisReactionWheel, VisPlanetState, VisThruster):
-                try:
-                    tmpObjects.append(function(messageStruct))
-                except:
-                    continue
+        for messageStruct in messageData:
+            tmpClassType = type(messageStruct).__name__
+            if tmpClassType == "ThrusterOutputData":
+                tmpObjects.append(VisThruster(messageStruct))
+            elif tmpClassType == "ReactionWheelConfigData":
+                tmpObjects.append(VisReactionWheel(messageStruct))
+            elif tmpClassType == "OutputStateData":
+                tmpObjects.append(VisSpacecraft(messageStruct))
+            elif tmpClassType == "SpicePlanetState":
+                tmpObjects.append(VisPlanetState(messageStruct))
         return tmpObjects
 
-    def encodeDataToJSON(self, tmpObjects):
-        print sys._getframe().f_code.co_name
-        return self.encoder.encode(tmpObjects)
-
     def initDataSource(self):
-        # dataMap = self.simulation.writeDataMapDot([1])
         msgNames = self.simulation.TotalSim.getUniqueMessageNames()
 
         for name in msgNames:
             msgIdentData = self.simulation.TotalSim.getMessageID(name)
             if msgIdentData.bufferName == self.processName:
-                # self.visMessages.append({'msgName': name, 'msgId': int(msgIdentData.itemID)})
                 self.visMessages.append({'msgName': name, 'msgData': msgIdentData})
 
-    def collectMessages(self):
-        # lock = threading.Lock()
-        # try:
-        print "In: "+sys._getframe().f_code.co_name
-        messages = []
-        # lock.acquire()
         for msg in self.visMessages:
             headerData = sim_model.MessageHeaderData()
             self.simulation.TotalSim.populateMessageHeader(msg['msgName'], headerData)
 
-            moduleFound = ''
             for moduleData in self.simulation.simModules:
-                if moduleFound != '':
-                    break
-                for name, obj in inspect.getmembers(moduleData):
+                for key, obj in inspect.getmembers(moduleData):
                     if inspect.isclass(obj):
                         if obj.__name__ == headerData.messageStruct:
-                            moduleFound = moduleData.__name__
+                            self.visSimModules.append([msg['msgName'], moduleData.__name__, headerData.messageStruct])
                             break
 
-            if moduleFound == '':
-                print "Failed to find valid message structure for: "+headerData.messageStruct
-                continue
+            # if self.visSimModules.has_key(msg['msgName']) is False:
+            #     print "Failed to find valid message structure for: "+headerData.messageStruct
+            #     continue
 
-            # print name
-            localContainer, totalDict = MessagingAccess.getMessageContainers(moduleFound, headerData.messageStruct)
-            # print localContainer.this.__repr__()
-
-            # test_container = copy.deepcopy(localContainer)
+    def collectMessages(self):
+        messages = []
+        for msgData in self.visSimModules:
+            localContainer, totalDict = MessagingAccess.getMessageContainers(msgData[1], msgData[2])
             messageType = sim_model.messageBuffer
-            # print "msg[msgName] " + msg['msgName']
-            # print msg['msgName']
-            # print "localContainer " + str(localContainer)
-            # print messageType
-            try:
-                writeTime = self.simulation.TotalSim.GetWriteData(msg['msgName'], 10000,
+            writeTime = self.simulation.TotalSim.GetWriteData(msgData[0], 10000,
                                                                   localContainer, messageType, 0)
-            except:
-                 print "except"
             messages.append(localContainer)
-        # finally:
-            # lock.release()
-        print "Out: "+sys._getframe().f_code.co_name
         return messages
+
+    def encodeDataToJSON(self, tmpObjects):
+        return self.encoder.encode(tmpObjects)
 
 
 class VisJSONEncoder(json.JSONEncoder):
@@ -100,7 +81,8 @@ class VisJSONEncoder(json.JSONEncoder):
 
 class VisReactionWheel(object):
     def __init__(self, reactionWheelConfigDataStruct):
-        self.omega = reactionWheelConfigDataStruct['Omega']
+        self.omega = reactionWheelConfigDataStruct.Omega
+        self.u = reactionWheelConfigDataStruct.u_current
 
 
 class VisThruster(object):
@@ -109,16 +91,18 @@ class VisThruster(object):
         self.thrusterDirection = messageDataDict.thrusterDirection
         self.maxThrust = messageDataDict.maxThrust
         self.thrustFactor = messageDataDict.thrustFactor
-        # etc.
 
 
 class VisSpacecraft(object):
     def __init__(self, outputStateDataBuffer):
-        self.r_N = sbc.getCArray('double', outputStateDataBuffer.r_N, 3)
-        self.omega = sbc.getCArray('double', outputStateDataBuffer.omega, 3)
-        self.sigma = sbc.getCArray('double', outputStateDataBuffer.sigma, 3)
+        self.r_N = outputStateDataBuffer.r_N
+        self.v_N = outputStateDataBuffer.v_N
+        self.omega = outputStateDataBuffer.omega
+        self.sigma = outputStateDataBuffer.sigma
 
 
 class VisPlanetState(object):
     def __init__(self, spicePlanetStateStruct):
-        self.position = spicePlanetStateStruct.stuff
+        self.position = spicePlanetStateStruct.PositionVector
+        self.velocity = spicePlanetStateStruct.VelocityVector
+        self.planetName = spicePlanetStateStruct.PlanetName

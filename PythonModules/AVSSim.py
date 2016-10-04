@@ -71,7 +71,6 @@ import rwNullSpace
 import thrustRWDesat
 import thrFiringSchmitt
 import attitude_ukf
-import boost_communication
 import inertial3D
 import hillPoint
 import velocityPoint
