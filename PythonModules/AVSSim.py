@@ -95,6 +95,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.modeRequest = 'None'
         self.isUsingVisualization = False
+        self.server = None
 
         # Processes
         self.fswProc = self.CreateNewProcess("FSWProcess")
@@ -171,7 +172,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.disableTask("SynchTask")
         self.AddModelToTask("SynchTask", self.clockSynchData, None, 100)
         self.AddModelToTask("DynamicsTask", self.SpiceObject, None, 202)
-        #self.AddModelToTask("DynamicsTask", self.cssConstellation, None, 108)
+        self.AddModelToTask("DynamicsTask", self.cssConstellation, None, 108)
         self.AddModelToTask("DynamicsTask", self.IMUSensor, None, 100)
         # self.AddModelToTask("DynamicsTask", self.radiationPressure, None, 303)
         self.AddModelToTask("DynamicsTask", self.ACSThrusterDynObject, None, 302)
