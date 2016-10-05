@@ -23,18 +23,17 @@ class DataDelegate:
             self.initDataSource()
         # package up grabbed (updated) messages into parsed structures
         # leave stale values in structures
-        messageData = self.collectMessages()
+        self.collectMessages()
 
-        for messageStruct in messageData:
-            tmpClassType = type(messageStruct).__name__
-            if tmpClassType == "ThrusterOutputData":
-                tmpObjects.append(VisThruster(messageStruct))
-            elif tmpClassType == "ReactionWheelConfigData":
-                tmpObjects.append(VisReactionWheel(messageStruct))
-            elif tmpClassType == "OutputStateData":
-                tmpObjects.append(VisSpacecraft(messageStruct))
-            elif tmpClassType == "SpicePlanetState":
-                tmpObjects.append(VisPlanetState(messageStruct))
+        for messageStruct in self.visSimModules:
+            if messageStruct[2] == "ThrusterOutputData":
+                tmpObjects.append(VisThruster(messageStruct[3]))
+            elif messageStruct[2] == "ReactionWheelConfigData":
+                tmpObjects.append(VisReactionWheel(messageStruct[3]))
+            elif messageStruct[2] == "OutputStateData":
+                tmpObjects.append(VisSpacecraft(messageStruct[3]))
+            elif messageStruct[2] == "SpicePlanetState":
+                tmpObjects.append(VisPlanetState(messageStruct[3]))
         return tmpObjects
 
     def initDataSource(self):
@@ -53,7 +52,8 @@ class DataDelegate:
                 for key, obj in inspect.getmembers(moduleData):
                     if inspect.isclass(obj):
                         if obj.__name__ == headerData.messageStruct:
-                            self.visSimModules.append([msg['msgName'], moduleData.__name__, headerData.messageStruct])
+                            localContainer, totalDict = MessagingAccess.getMessageContainers(moduleData.__name__, headerData.messageStruct)
+                            self.visSimModules.append([msg['msgName'], moduleData.__name__, headerData.messageStruct, localContainer])
                             break
 
             # if self.visSimModules.has_key(msg['msgName']) is False:
@@ -61,14 +61,13 @@ class DataDelegate:
             #     continue
 
     def collectMessages(self):
-        messages = []
         for msgData in self.visSimModules:
-            localContainer, totalDict = MessagingAccess.getMessageContainers(msgData[1], msgData[2])
-            messageType = sim_model.messageBuffer
-            writeTime = self.simulation.TotalSim.GetWriteData(msgData[0], 10000,
-                                                                  localContainer, messageType, 0)
-            messages.append(localContainer)
-        return messages
+            writeTime = self.simulation.TotalSim.GetWriteData(msgData[0],
+                                                              10000,
+                                                              msgData[3],
+                                                              sim_model.messageBuffer,
+                                                              0)
+        return
 
     def encodeDataToJSON(self, tmpObjects):
         return self.encoder.encode(tmpObjects)
