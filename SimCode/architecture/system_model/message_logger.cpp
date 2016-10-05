@@ -81,7 +81,7 @@ void messageLogger::linkMessages()
     std::vector<messageLogContainer>::iterator it;
     //! - Set the linker indicator to good and only falsify it if we don't find a message
     allLogsLinked = true;
-    messageIdentData messageData;
+    MessageIdentData messageData;
     for(it=logData.begin(); it != logData.end(); it++)
     {
         messageData = SystemMessaging::GetInstance()->
@@ -148,7 +148,7 @@ void messageLogger::logAllMessages()
         }
     }
 }
-bool messageLogger::readLog(messageIdentData & messageID, SingleMessageHeader *dataHeader,
+bool messageLogger::readLog(MessageIdentData & messageID, SingleMessageHeader *dataHeader,
                             uint64_t maxBytes, uint8_t *msgPayload, uint64_t currentOffset)
 {
     //! Begin  method steps

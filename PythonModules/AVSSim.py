@@ -52,6 +52,7 @@ import reactionwheel_dynamics
 import star_tracker
 # FSW algorithms that we want to call
 import cssComm
+import alg_contain
 import vehicleConfigData
 import cssWlsEst
 import sunSafePoint
@@ -82,6 +83,7 @@ import simpleDeadband
 import thrForceMapping
 import rwMotorTorque
 import rwConfigData
+import VisualizationServer
 
 import simSetupRW                 # RW simulation setup utilties
 import simSetupThruster           # Thruster simulation setup utilties
@@ -93,6 +95,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         SimulationBaseClass.SimBaseClass.__init__(self)
         self.modeRequest = 'None'
         self.isUsingVisualization = False
+        self.server = None
 
         # Processes
         self.fswProc = self.CreateNewProcess("FSWProcess")
@@ -107,6 +110,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
+
 
         # Process task groups.
         self.dynProc.addTask(self.CreateNewTask("SynchTask", int(5E8)), 2000)
@@ -535,10 +539,15 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
                             ["self.modeRequest = 'DVMnvr'",
                              "self.setEventActivity('initiateDVMnvr', True)"])
 
+
+
     def InitializeSimulation(self):
         SimulationBaseClass.SimBaseClass.InitializeSimulation(self)
         self.dyn2FSWInterface.discoverAllMessages()
         self.fsw2DynInterface.discoverAllMessages()
+        if self.isUsingVisualization:
+            self.server = VisualizationServer.VisualizationServer(self)
+            self.server.startServer()
 
     #
     # Set the static spacecraft parameters
@@ -563,7 +572,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
             rwClockAngle += 90.0 * math.pi / 180.0
             i += 1
 
-        msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
+        # msgSizeRW = 4 + vehicleConfigData.MAX_EFF_CNT*7*8
+        msgSizeRW = 4+vehicleConfigData.MAX_EFF_CNT*4*8
         self.TotalSim.CreateNewMessage("FSWProcess", "rwa_config_data",
                                        msgSizeRW, 2, "RWConstellation")
         self.TotalSim.WriteMessageData("rwa_config_data", msgSizeRW, 0, rwClass)

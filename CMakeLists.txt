@@ -202,7 +202,7 @@ set(BOOST_LIBRARYDIR ${CMAKE_SOURCE_DIR}/${componentlibvar})
 
 # The components "system" and "filesystem" from "Boost" version 1.55.0 or
 # greater are required.
-find_package (Boost 1.61.0 REQUIRED COMPONENTS system filesystem serialization thread)
+find_package (Boost 1.61.0 REQUIRED COMPONENTS filesystem serialization thread system)
 
 if (Boost_FOUND)
   # From the offical documentation:

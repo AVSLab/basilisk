@@ -28,7 +28,6 @@ SimModel::SimModel()
 {
     CurrentNanos = 0;
     NextTaskTime = 0;
-    
 }
 
 /*! Nothing to destroy really */
@@ -54,7 +53,7 @@ void SimModel::PrintSimulatedMessageData()
 uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
                                 void *MessageData, VarAccessType logType, uint64_t LatestOffset)
 {
-    messageIdentData MessageID;
+    MessageIdentData MessageID;
     SingleMessageHeader DataHeader;
     
     //! Begin Method steps
@@ -73,8 +72,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
         case messageBuffer:
             SystemMessaging::GetInstance()->
                 selectMessageBuffer(MessageID.processBuffer);
-            SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader,
-                                                        MaxSize, reinterpret_cast<uint8_t*> (MessageData), -1, LatestOffset);
+            SystemMessaging::GetInstance()->ReadMessage(MessageID.itemID, &DataHeader, MaxSize, reinterpret_cast<uint8_t*> (MessageData), -1, LatestOffset);
             break;
         case logBuffer:
             messageLogs.readLog(MessageID, &DataHeader,
@@ -85,9 +83,7 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
             std::cout << std::endl;
             break;
     }
-    
     return(DataHeader.WriteClockNanos);
-    
 }
 
 /*! This method allows the user to attach a process to the simulation for 
@@ -137,6 +133,7 @@ void SimModel::InitSimulation()
 */
 void SimModel::SingleStepProcesses()
 {
+//      std::cout << "SingleStepProcesses()" << std::endl;
     uint64_t nextCallTime = ~0;
     std::vector<SysProcess *>::iterator it = processList.begin();
     CurrentNanos = NextTaskTime;
@@ -236,7 +233,7 @@ void SimModel::CreateNewMessage(std::string processName, std::string MessageName
 void SimModel::WriteMessageData(std::string MessageName, uint64_t MessageSize,
                                 uint64_t ClockTime, void *MessageData)
 {
-    messageIdentData MessageID;
+    MessageIdentData MessageID;
     
     //! Begin Method steps
     //! - Grab the message ID associated with name if it exists
@@ -296,7 +293,7 @@ std::string SimModel::getMessageName(uint64_t messageID)
 void SimModel::populateMessageHeader(std::string messageName,
                            MessageHeaderData* headerOut)
 {
-    messageIdentData messageID = SystemMessaging::GetInstance()->
+    MessageIdentData messageID = SystemMessaging::GetInstance()->
         messagePublishSearch(messageName);
     SystemMessaging::GetInstance()->selectMessageBuffer(messageID.processBuffer);
     MessageHeaderData *locHeader = SystemMessaging::GetInstance()->
@@ -309,9 +306,9 @@ void SimModel::populateMessageHeader(std::string messageName,
     @return int64_t ID of the message associated with messageName
     @param messageName The name of the message that you want the ID for
 */
-messageIdentData SimModel::getMessageID(std::string messageName)
+MessageIdentData SimModel::getMessageID(std::string messageName)
 {
-    messageIdentData messageID = SystemMessaging::GetInstance()->
+    MessageIdentData messageID = SystemMessaging::GetInstance()->
     messagePublishSearch(messageName);
     return(messageID);
 }
@@ -344,8 +341,7 @@ void SimModel::terminateSimulation()
     @return Write/Read pairs for the entire simulation run
     @param messageName The name of the message to find pairs for
 */
-std::set<std::pair<long int, long int>>
-SimModel::getMessageExchangeData(std::string messageName,
+std::set<std::pair<long int, long int>> SimModel::getMessageExchangeData(std::string messageName,
      std::set<unsigned long> procList)
 {
     std::set<std::pair<long int, long int>> returnPairs;
@@ -363,7 +359,7 @@ SimModel::getMessageExchangeData(std::string messageName,
         if(messageID >= 0)
         {
             std::set<std::pair<long int, long int>> localPairs;
-            localPairs =SystemMessaging::GetInstance()->
+            localPairs = SystemMessaging::GetInstance()->
                 getMessageExchangeData(messageID);
             returnPairs.insert(localPairs.begin(), localPairs.end());
             messageFound = true;

@@ -71,6 +71,7 @@ def checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
 
 
 def executeAVSSafeCapture(TheAVSSim):
+    TheAVSSim.isUsingVisualization = True
     TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
