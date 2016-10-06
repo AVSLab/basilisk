@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "SimCode/architecture/messaging/system_messaging.h"
 #include <stdio.h>
 #include <iostream>
+#include <cstring>
 
 /*! This algorithm initializes the messaging storage for the flight system
  @return void

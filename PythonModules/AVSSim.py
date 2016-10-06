@@ -646,7 +646,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SpiceObject.SPICEDataPath = self.simBasePath + '/External/EphemerisData/'
         self.SpiceObject.UTCCalInit = "2015 June 15, 00:00:00.0"
         self.SpiceObject.OutputBufferCount = 2
-        self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars", "sun"])
+        self.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
         self.SpiceObject.referenceBase = "MARSIAU"
 
     def SetIMUSensor(self):
@@ -932,8 +932,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.EarthGravBody.JParams = six_dof_eom.DoubleVector(JParams)
 
         self.MarsGravBody = six_dof_eom.GravityBodyData()
-        self.MarsGravBody.BodyMsgName = "mars_planet_data"
-        self.MarsGravBody.outputMsgName = "mars_display_frame_data"
+        self.MarsGravBody.BodyMsgName = "mars barycenter_planet_data"
+        self.MarsGravBody.outputMsgName = "mars barycenter_display_frame_data"
         self.MarsGravBody.IsCentralBody = False
         self.MarsGravBody.UseJParams = True
         JParams = LoadGravFromFile(MarsGravFile, self.MarsGravBody, JParamsSelect)
@@ -1002,7 +1002,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     def SetinstrumentBore(self):
         self.instrumentBore.ModelTag = "instrumentBoresight"
         self.instrumentBore.StateString = "inertial_state_output"
-        self.instrumentBore.celBodyString = "mars_display_frame_data"
+        self.instrumentBore.celBodyString = "mars barycenter_display_frame_data"
         self.instrumentBore.OutputDataString = "instrument_mars_bore"
         self.instrumentBore.strBoreVec = [0.0, 1.0, 0.0]
 
@@ -1185,18 +1185,18 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def setHillPoint(self):
         self.hillPointData.inputNavDataName = "simple_trans_nav_output"
-        self.hillPointData.inputCelMessName = "mars_display_frame_data"
+        self.hillPointData.inputCelMessName = "mars barycenter_display_frame_data"
         self.hillPointData.outputDataName = "att_ref_output_stage1"
 
     def setVelocityPoint(self):
         self.velocityPointData.inputNavDataName = "simple_trans_nav_output"
-        self.velocityPointData.inputCelMessName = "mars_display_frame_data"
+        self.velocityPointData.inputCelMessName = "mars barycenter_display_frame_data"
         self.velocityPointData.outputDataName = "att_ref_output"
         self.velocityPointData.mu = self.SunGravBody.mu
 
     def setCelTwoBodyPoint(self):
         self.celTwoBodyPointData.inputNavDataName = "simple_trans_nav_output"
-        self.celTwoBodyPointData.inputCelMessName = "mars_display_frame_data"
+        self.celTwoBodyPointData.inputCelMessName = "mars barycenter_display_frame_data"
         #self.celTwoBodyPointData.inputSecMessName = "sun_display_frame_data"
         self.celTwoBodyPointData.outputDataName = "att_ref_output"
         self.celTwoBodyPointData.singularityThresh = 1.0 * mc.D2R
@@ -1416,7 +1416,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def SetmarsPoint(self):
         self.marsPointData.inputNavDataName = "simple_trans_nav_output"
-        self.marsPointData.inputCelMessName = "mars_display_frame_data"
+        self.marsPointData.inputCelMessName = "mars barycenter_display_frame_data"
         self.marsPointData.inputSecMessName = "sun_display_frame_data"
         self.marsPointData.outputDataName = "att_cmd_output"
         TmarsVec2Body = [0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0]
