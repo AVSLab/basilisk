@@ -2,7 +2,6 @@ import threading
 import SocketServer
 import VisualizationDataDelegate
 import time
-import ujson
 
 class VisualizationServer:
     def __init__(self, simulation):
