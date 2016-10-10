@@ -50,25 +50,81 @@ import vehicleConfigData
 import simDynEffectorTemplate
 
 
+class DataStore:
+    """Container for developer defined variables to be used in test data post-processing and plotting.
+
+           Attributes:
+               variableState (list): an example variable to hold test result data.
+    """
+    def __init__(self):
+        self.dataSigma = None  # replace these with appropriate containers for the data to be stored for plotting
+        self.dataPos = None
+        self.dataOrbitalEnergy = None
+        self.dataRotEnergy = None
+        self.dataOrbitalAngMom_N = None
+        self.dataRotAngMom_N = None
+
+    def plotData(self):
+        """All test plotting to be performed here.
+
+        """
+        plt.figure(1)
+        plt.plot(self.dataRotEnergy[:, 0]*1.0E-9, self.dataRotEnergy[:, 1] - self.dataRotEnergy[0, 1], 'b')
+
+        plt.figure(2)
+        plt.plot(self.dataOrbitalEnergy[:, 0]*1.0E-9, self.dataOrbitalEnergy[:, 1] - self.dataOrbitalEnergy[0, 1], 'b')
+
+        # plt.figure(3)
+        # plt.plot(self.dataOrbitalAngMomMag[:, 0]*1.0E-9,
+        #          self.dataOrbitalAngMomMag[:, 1] - self.dataOrbitalAngMomMag[0, 1], 'b')
+
+        plt.figure(4)
+        plt.plot(self.dataOrbitalAngMom_N[:, 0]*1.0E-9,
+                 self.dataOrbitalAngMom_N[:, 1] - self.dataOrbitalAngMom_N[0, 1],
+                 self.dataOrbitalAngMom_N[:, 0]*1.0E-9,
+                 self.dataOrbitalAngMom_N[:, 2] - self.dataOrbitalAngMom_N[0, 2],
+                 self.dataOrbitalAngMom_N[:, 0]*1.0E-9,
+                 self.dataOrbitalAngMom_N[:, 3] - self.dataOrbitalAngMom_N[0, 3])
+
+        # plt.figure(5)
+        # plt.plot(self.dataRotAngMomMag[:, 0]*1.0E-9, self.dataRotAngMomMag[:, 1] - self.dataRotAngMomMag[0, 1], 'b')
+
+        plt.figure(5)
+        plt.plot(self.dataRotAngMom_N[:, 0]*1.0E-9,
+                 self.dataRotAngMom_N[:, 1] - self.dataRotAngMom_N[0, 1],
+                 self.dataRotAngMom_N[:, 0]*1.0E-9,
+                 self.dataRotAngMom_N[:, 2] - self.dataRotAngMom_N[0, 2],
+                 self.dataRotAngMom_N[:, 0]*1.0E-9,
+                 self.dataRotAngMom_N[:, 3] - self.dataRotAngMom_N[0, 3])
+
+        plt.show()
+
+
+@pytest.fixture(scope="module")
+def plotFixture(show_plots):
+    dataStore = DataStore()
+    yield dataStore
+    if show_plots:
+        dataStore.plotData()
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
+# @pytest.mark.xfail(strict=True, reason="because we wrote some bad code and need to fix it ASAP")
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useFlag", [
-    (False),
-    (True),
-])
+@pytest.mark.parametrize("useFlag", [False, True])
 # provide a unique test method name, starting with test_
-def test_unitSimDynEffectorTemplate(show_plots, useFlag):
+def test_unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimDynEffectorTemplate(show_plots, useFlag)
+    # pass on the testPlotFixture so that the main test function may set the DataStore attributes
+    [testResults, testMessage] = unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag)
     assert testResults < 1, testMessage
 
 
-def unitSimDynEffectorTemplate(show_plots, useFlag):
+def unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
+    numpy.set_printoptions(precision=16)
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     unitTaskName = "unitTask"  # arbitrary name (don't change)
@@ -122,7 +178,6 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
     VehDynObject.useTranslation = useTranslation
     VehDynObject.useRotation = useRotation
 
-
     testModule = simDynEffectorTemplate.simDynEffectorTemplate()
     testModule.ModelTag = "externalDisturbance"
     testModule.inputVehProps = "spacecraft_mass_props"
@@ -133,7 +188,6 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
         SimulationBaseClass.SetCArray([0, 0, 0], 'double', testModule.extForce_B)
         SimulationBaseClass.SetCArray([0, 0, 0], 'double', testModule.extTorquePntB_B)
     VehDynObject.addBodyEffector(testModule)
-
 
     # add objects to the task process
     scSim.AddModelToTask(unitTaskName, spiceObject)
@@ -157,34 +211,10 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
     # log the data
     dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
     dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
-
     dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
     dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
     dataOrbitalAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMom_N")
-    # dataOrbitalAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMomMag")
     dataRotAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMom_N")
-    # dataRotAngMomMag = scSim.GetLogVariableData("VehicleDynamicsData.totScRotAngMomMag")
-    # dataRotEnergyRate = scSim.GetLogVariableData("VehicleDynamicsData.scRotEnergyRate")
-    # dataRotPower = scSim.GetLogVariableData("VehicleDynamicsData.scRotPower")
-
-    numpy.set_printoptions(precision=16)
-    # plt.figure(1)
-    # plt.plot(dataRotEnergy[:,0]*1.0E-9, dataRotEnergy[:,1]-dataRotEnergy[0, 1], 'b')
-    # plt.figure(2)
-    # plt.plot(dataOrbitalEnergy[:,0]*1.0E-9, dataOrbitalEnergy[:,1]-dataOrbitalEnergy[0, 1], 'b')
-    # plt.figure(2)
-    # plt.plot(dataOrbitalAngMomMag[:,0]*1.0E-9, dataOrbitalAngMomMag[:,1]-dataOrbitalAngMomMag[0, 1], 'b')
-    # plt.figure(3)
-    # plt.plot(dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,1]-dataOrbitalAngMom_N[0, 1], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,2]-dataOrbitalAngMom_N[0, 2], dataOrbitalAngMom_N[:,0]*1.0E-9, dataOrbitalAngMom_N[:,3]-dataOrbitalAngMom_N[0, 3])
-    # plt.figure(4)
-    # plt.plot(dataRotAngMomMag[:,0]*1.0E-9, dataRotAngMomMag[:,1]-dataRotAngMomMag[0, 1], 'b')
-    # plt.figure(5)
-    # plt.plot(dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,1]-dataRotAngMom_N[0, 1], dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,2]-dataRotAngMom_N[0, 2], dataRotAngMom_N[:,0]*1.0E-9, dataRotAngMom_N[:,3]-dataRotAngMom_N[0, 3])
-    # # plt.figure(2)
-    # # # plt.plot(dataRotEnergyRate[:,0]*1.0E-9, dataRotEnergyRate[:,1], 'b', dataRotPower[:,0]*1.0E-9, dataRotPower[:,1], 'r')
-    # # # plt.figure(3)
-    # # # plt.plot(dataRotEnergyRate[1:len(dataRotEnergyRate),0]*1.0E-9, dataRotEnergyRate[1:len(dataRotEnergyRate),1]-dataRotPower[1:len(dataRotEnergyRate),1], 'r')
-    # plt.show()
 
     # Remove time zero from list
     dataPos = dataPos[1:len(dataPos), :]
@@ -194,6 +224,13 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
     dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N), :]
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N), :]
 
+    # Store data into test fixture so that we have the option for post-processing and complex plotting
+    plotFixture.dataPos = dataPos
+    plotFixture.dataSigma = dataSigma
+    plotFixture.dataOrbitalEnergy = dataOrbitalEnergy
+    plotFixture.dataRotEnergy = dataRotEnergy
+    plotFixture.dataOrbitalAngMom_N = dataOrbitalAngMom_N
+    plotFixture.dataRotAngMom_N = dataRotAngMom_N
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False
@@ -201,9 +238,9 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
     checkOrbitalAngMom = False
     checkRotAngMom = False
 
-    if useTranslation == True:
+    if useTranslation is True:
 
-        if useRotation == True and useFlag == 1:
+        if useRotation is True and useFlag == 1:
             truePos = [
                  [-4.6321391621199939e+06, 7.0570169944370082e+06, 5.3580799406825136e+06]
                 ,[-5.2173388015798805e+06, 6.5829101590330312e+06, 5.4370890838074163e+06]
@@ -221,7 +258,7 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
                 , [-6.78159911e+06, 4.94686541e+06, 5.48674159e+06]
             ]
 
-    if useRotation == True:
+    if useRotation is True:
 
         if useFlag:
             trueSigma = [
@@ -243,7 +280,7 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    if useRotation == True:
+    if useRotation is True:
         for i in range(0, len(trueSigma)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(dataSigma[i], trueSigma[i], 3, accuracy):
@@ -251,7 +288,7 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
                 testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t="+str(
                     dataSigma[i, 0]*macros.NANO2SEC)+"sec\n")
 
-    if useTranslation == True:
+    if useTranslation is True:
         for i in range(0, len(truePos)):
             # check a vector values
             if not unitTestSupport.isArrayEqualRelative(dataPos[i], truePos[i], 3, accuracy):
@@ -259,56 +296,52 @@ def unitSimDynEffectorTemplate(show_plots, useFlag):
                 testMessages.append(
                     "FAILED:  Dynamics Mode failed pos unit test at t="+str(dataPos[i, 0]*macros.NANO2SEC)+"sec\n")
 
-    if checkOrbitalEnergy == True:
-        accuracy = 1e-15
-        for i in range(0, len(trueOrbitalEnergy)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataOrbitalEnergy[i], trueOrbitalEnergy[i], 1, accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed orbital energy unit test at t="+str(
-                    dataOrbitalEnergy[i, 0]*macros.NANO2SEC)+"sec\n")
-
-    if checkRotEnergy == True:
-        accuracy = 1e-15
-        for i in range(0, len(trueRotEnergy)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataRotEnergy[i], trueRotEnergy[i], 1, accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed rotational energy unit test at t="+str(
-                    dataRotEnergy[i, 0]*macros.NANO2SEC)+"sec\n")
-
-    if checkOrbitalAngMom == True:
-        accuracy = 1e-15
-        for i in range(0, len(trueOrbitalAngMom_N)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataOrbitalAngMom_N[i], trueOrbitalAngMom_N[i], 3, accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed orbital angular momentum unit test at t="+str(
-                    dataOrbitalAngMom_N[i, 0]*macros.NANO2SEC)+"sec\n")
-
-    if checkRotAngMom == True:
-        accuracy = 1e-15
-        for i in range(0, len(trueRotAngMom_N)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataRotAngMom_N[i], trueRotAngMom_N[i], 3, accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed rotational angular momentum unit test at t="+str(
-                    dataRotAngMom_N[i, 0]*macros.NANO2SEC)+"sec\n")
+    # if checkOrbitalEnergy is True:
+    #     accuracy = 1e-15
+    #     for i in range(0, len(trueOrbitalEnergy)):
+    #         # check a vector values
+    #         if not unitTestSupport.isArrayEqualRelative(dataOrbitalEnergy[i], trueOrbitalEnergy[i], 1, accuracy):
+    #             testFailCount += 1
+    #             testMessages.append("FAILED:  Dynamics Mode failed orbital energy unit test at t="+str(
+    #                 dataOrbitalEnergy[i, 0]*macros.NANO2SEC)+"sec\n")
+    #
+    # if checkRotEnergy is True:
+    #     accuracy = 1e-15
+    #     for i in range(0, len(trueRotEnergy)):
+    #         # check a vector values
+    #         if not unitTestSupport.isArrayEqualRelative(dataRotEnergy[i], trueRotEnergy[i], 1, accuracy):
+    #             testFailCount += 1
+    #             testMessages.append("FAILED:  Dynamics Mode failed rotational energy unit test at t="+str(
+    #                 dataRotEnergy[i, 0]*macros.NANO2SEC)+"sec\n")
+    #
+    # if checkOrbitalAngMom is True:
+    #     accuracy = 1e-15
+    #     for i in range(0, len(trueOrbitalAngMom_N)):
+    #         # check a vector values
+    #         if not unitTestSupport.isArrayEqualRelative(dataOrbitalAngMom_N[i], trueOrbitalAngMom_N[i], 3, accuracy):
+    #             testFailCount += 1
+    #             testMessages.append("FAILED:  Dynamics Mode failed orbital angular momentum unit test at t="+str(
+    #                 dataOrbitalAngMom_N[i, 0]*macros.NANO2SEC)+"sec\n")
+    #
+    # if checkRotAngMom is True:
+    #     accuracy = 1e-15
+    #     for i in range(0, len(trueRotAngMom_N)):
+    #         # check a vector values
+    #         if not unitTestSupport.isArrayEqualRelative(dataRotAngMom_N[i], trueRotAngMom_N[i], 3, accuracy):
+    #             testFailCount += 1
+    #             testMessages.append("FAILED:  Dynamics Mode failed rotational angular momentum unit test at t="+str(
+    #                 dataRotAngMom_N[i, 0]*macros.NANO2SEC)+"sec\n")
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   "PASSED "
+        print "PASSED "
 
-        # each test method requires a single assert method to be called
+    # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-
 #
-# This statement below ensures that the unit test scrip can be run as a
-# stand-along python script
+# This statement below ensures that the unit test script can be run stand alone
 #
 if __name__ == "__main__":
-    test_unitSimDynEffectorTemplate(False   # show_plots
-                           )
-
+    test_unitSimDynEffectorTemplate(False)  # defaulting show_plots to false
