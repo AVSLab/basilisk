@@ -51,6 +51,11 @@ import simDynEffectorTemplate
 
 
 class DataStore:
+    """Container for developer defined variables to be used in test data post-processing and plotting.
+
+           Attributes:
+               variableState (list): an example variable to hold test result data.
+    """
     def __init__(self):
         self.dataSigma = None  # replace these with appropriate containers for the data to be stored for plotting
         self.dataPos = None
@@ -60,6 +65,9 @@ class DataStore:
         self.dataRotAngMom_N = None
 
     def plotData(self):
+        """All test plotting to be performed here.
+
+        """
         plt.figure(1)
         plt.plot(self.dataRotEnergy[:, 0]*1.0E-9, self.dataRotEnergy[:, 1] - self.dataRotEnergy[0, 1], 'b')
 
@@ -93,7 +101,7 @@ class DataStore:
 
 
 @pytest.fixture(scope="module")
-def testPlottingFixture(show_plots):
+def plotFixture(show_plots):
     dataStore = DataStore()
     yield dataStore
     if show_plots:
@@ -108,13 +116,14 @@ def testPlottingFixture(show_plots):
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useFlag", [False, True])
 # provide a unique test method name, starting with test_
-def test_unitSimDynEffectorTemplate(testPlottingFixture, show_plots, useFlag):
+def test_unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimDynEffectorTemplate(testPlottingFixture, show_plots, useFlag)
+    # pass on the testPlotFixture so that the main test function may set the DataStore attributes
+    [testResults, testMessage] = unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag)
     assert testResults < 1, testMessage
 
 
-def unitSimDynEffectorTemplate(testPlottingFixture, show_plots, useFlag):
+def unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
     numpy.set_printoptions(precision=16)
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -216,12 +225,12 @@ def unitSimDynEffectorTemplate(testPlottingFixture, show_plots, useFlag):
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N), :]
 
     # Store data into test fixture so that we have the option for post-processing and complex plotting
-    testPlottingFixture.dataPos = dataPos
-    testPlottingFixture.dataSigma = dataSigma
-    testPlottingFixture.dataOrbitalEnergy = dataOrbitalEnergy
-    testPlottingFixture.dataRotEnergy = dataRotEnergy
-    testPlottingFixture.dataOrbitalAngMom_N = dataOrbitalAngMom_N
-    testPlottingFixture.dataRotAngMom_N = dataRotAngMom_N
+    plotFixture.dataPos = dataPos
+    plotFixture.dataSigma = dataSigma
+    plotFixture.dataOrbitalEnergy = dataOrbitalEnergy
+    plotFixture.dataRotEnergy = dataRotEnergy
+    plotFixture.dataOrbitalAngMom_N = dataOrbitalAngMom_N
+    plotFixture.dataRotAngMom_N = dataRotAngMom_N
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False

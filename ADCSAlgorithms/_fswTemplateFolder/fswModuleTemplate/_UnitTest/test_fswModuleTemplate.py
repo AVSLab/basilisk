@@ -40,18 +40,51 @@ import fswModuleTemplate                 # import the module that is to be teste
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
 import macros
 
+
+
+class DataStore:
+    """Container for developer defined variables to be used in test data post-processing and plotting.
+
+        Attributes:
+            variableState (list): an example variable to hold test result data.
+    """
+
+    def __init__(self):
+        self.variableState = None  # replace/add with appropriate variables for test result data storing
+
+    def plotData(self):
+        """All test plotting to be performed here.
+
+        """
+        plt.figure(1) # plot a sample variable.
+        plt.plot(self.variableState[:, 0]*macros.NANO2SEC, self.variableState[:, 1], label='Sample Variable')
+        plt.legend(loc='upper left')
+        plt.xlabel('Time [s]')
+        plt.ylabel('Variable Description [unit]')
+        plt.show()
+
+
+@pytest.fixture(scope="module")
+def plotFixture(show_plots):
+    dataStore = DataStore()
+    yield dataStore
+    if show_plots:
+        dataStore.plotData()
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(conditionstring)
 # provide a unique test method name, starting with test_
-def test_module(show_plots):     # update "module" in this function name to reflect the module name
+def test_module(plotFixture, show_plots):     # update "module" in this function name to reflect the module name
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = fswModuleTestFunction(show_plots)
+    # pass on the testPlotFixture so that the main test function may set the DataStore attributes
+    [testResults, testMessage] = fswModuleTestFunction(plotFixture, show_plots)
     assert testResults < 1, testMessage
 
 
-def fswModuleTestFunction(show_plots):
+def fswModuleTestFunction(plotFixture, show_plots):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -134,7 +167,10 @@ def fswModuleTestFunction(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
                                                   range(3))
     variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
-    
+
+    # Set the results variable(s) to the fixture data storage variables so that it is accessible for plotting
+    plotFixture.variableState = variableState
+
     # set the filtered output truth states
     trueVector = [
                [2.0, -0.5, 0.7],
@@ -168,17 +204,6 @@ def fswModuleTestFunction(show_plots):
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
     unitTestSim.ExecuteSimulation()
- 
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        # plot a sample variable.
-        plt.figure(1)
-        plt.plot(variableState[:,0]*macros.NANO2SEC, variableState[:,1], label='Sample Variable')
-        plt.legend(loc='upper left')
-        plt.xlabel('Time [s]')
-        plt.ylabel('Variable Description [unit]')
-        plt.show()
 
     #   print out success message if no error were found
     if testFailCount == 0:
