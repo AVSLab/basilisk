@@ -36,14 +36,15 @@ typedef struct {
 class StateEffector {
 public:
     EffectorMassProps effProps;
-
+    
 public:
     StateEffector();
     virtual ~StateEffector();
     virtual void registerStates(StateManager& states) = 0;
     virtual void linkInStates(const StateManager& states) = 0;
-    virtual void updateBackSubstitution(double integTime)=0;
-    virtual void updateDerivativeSums(double integTime)=0;
+//    virtual void updateBackSubstitution(double integTime)=0;
+    virtual void updateContributions(double integTime)=0;
+    virtual void computeDerivatives(double integTime)=0;
     virtual void updateEffectorMassProps(double integTime);
     virtual void updateEffectorMassPropRates(double integTime);
 };
