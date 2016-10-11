@@ -16,15 +16,15 @@
  */
 
 
-#include "dynObject.h"
+#include "dynObject2.h"
 
-dynObject::dynObject()
+dynObject2::dynObject2()
 {
     return;
 }
 
 
-dynObject::~dynObject()
+dynObject2::~dynObject2()
 {
     return;
 }

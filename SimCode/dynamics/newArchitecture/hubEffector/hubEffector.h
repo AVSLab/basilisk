@@ -31,7 +31,6 @@ public:
     HubEffector();
     ~HubEffector();
     void linkInStates(StateManager& statesIn);
-    void updateDerivativeSums();
     void registerStates(StateManager& states);
     
 public:

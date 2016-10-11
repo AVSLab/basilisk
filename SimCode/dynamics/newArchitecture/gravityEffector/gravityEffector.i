@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "swig_common_model.i"
 
 %include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/stateData.h"
 %include "gravityEffector.h"
 
 %pythoncode %{

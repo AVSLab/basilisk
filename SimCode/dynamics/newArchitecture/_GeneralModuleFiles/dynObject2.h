@@ -23,8 +23,8 @@
  */
 class dynObject2 {
 public:
-    dynObject();
-    virtual ~dynObject();
+    dynObject2();
+    virtual ~dynObject2();
     virtual void equationsOfMotion(double t, double *X, double *dX) = 0;
 };
 
