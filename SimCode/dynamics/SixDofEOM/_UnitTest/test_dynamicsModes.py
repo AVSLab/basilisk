@@ -191,6 +191,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         else:
             SimulationBaseClass.SetCArray([-1, -0.5, 0.5], 'double', extFTObject.extForce_N)
         VehDynObject.addBodyEffector(extFTObject)
+        scSim.AddModelToTask(unitTaskName, extFTObject)
 
     if useRW:
         # add RW devices
