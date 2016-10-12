@@ -144,8 +144,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     StateCurrent.v_N = [0,0,0]
     StateCurrent.sigma = np.array([0,0,0])
     StateCurrent.omega = [0,0,0]
-    # StateCurrent.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
-    # sim_model.doubleArray_setitem(StateCurrent.T_str2Bdy, 0, 1.0)
+    StateCurrent.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
     StateCurrent.TotalAccumDVBdy = [0,0,0]
     StateCurrent.MRPSwitchCount = 0
 
