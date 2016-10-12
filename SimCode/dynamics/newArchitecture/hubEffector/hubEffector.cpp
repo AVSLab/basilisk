@@ -29,21 +29,35 @@ HubEffector::~HubEffector()
     return;
 }
 
-void HubEffector::linkInStates(DynParamManager& DynParamManager)
+void HubEffector::dynamicsSelfInit()
 {
-    this->posState = DynParamManager.getStateObject("hubPosition");
-    this->velocityState = DynParamManager.getStateObject("hubVelocity");
-    this->sigmaState = DynParamManager.getStateObject("hubSigma");
-    this->omegaState = DynParamManager.getStateObject("hubOmega");
-    
+
 }
 
-void HubEffector::registerStates(DynParamManager& DynParamManager)
+void HubEffector::dynamicsCrossInit()
 {
-    DynParamManager.registerState(3, 1, "hubPosition");
-    DynParamManager.registerState(3, 1, "hubVelocity");
-    DynParamManager.registerState(3, 1, "hubSigma");
-    DynParamManager.registerState(3, 1, "hubOmega");
+
+}
+
+void HubEffector::linkInStates(DynParamManager& statesIn)
+{
+    this->posState = statesIn.getStateObject("hubPosition");
+    this->velocityState = statesIn.getStateObject("hubVelocity");
+    this->sigmaState = statesIn.getStateObject("hubSigma");
+    this->omegaState = statesIn.getStateObject("hubOmega");
+    this->m_SC = statesIn.getPropertyReference("m_SC");
+    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
+    this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
+    this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
+    this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
+}
+
+void HubEffector::registerStates(DynParamManager& states)
+{
+    states.registerState(3, 1, "hubPosition");
+    states.registerState(3, 1, "hubVelocity");
+    states.registerState(3, 1, "hubSigma");
+    states.registerState(3, 1, "hubOmega");
 }
 
 //void updateContributions(double integTime)
@@ -56,6 +70,35 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, 
     Eigen::Vector3d rBNDDot_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
+    Eigen::MatrixXd omegaLocal;
+    Eigen::Vector3d cPrimeLocal_B;
+    Eigen::Vector3d cLocal_B;
+    omegaLocal(3,1);
+    omegaLocal = omegaState->getState();
+    cPrimeLocal_B << (*cPrime_B)(0,0), (*cPrime_B)(1,0), (*cPrime_B)(2,0);
+    cLocal_B << (*c_B)(0,0), (*c_B)(1,0), (*c_B)(2,0);
+    //! - Need to add hub to m_SC, c_B and ISCPntB_B
+    *this->m_SC += this->mHub;
+    *this->c_B += this->mHub*this->rBcB_B;
+    *ISCPntB_B += this->IHubPntB_B;
+
+    //! - Need to scale [A] [B] and vecTrans by m_SC
+    matrixA = matrixA/this->m_SC->value();
+    matrixA = matrixB/this->m_SC->value();
+    vecTrans = vecTrans/this->m_SC->value();
+
+    //! Need to make contributions to the matrices from the hub
+    intermediateMatrix = intermediateMatrix.Identity();
+    matrixA += intermediateMatrix;
+    //! make c_B skew symmetric matrix
+    intermediateMatrix <<  0 , -(*c_B)(2,0),
+    (*c_B)(1,0), (*c_B)(2,0), 0, -(*c_B)(0,0), -(*c_B)(1,0), (*c_B)(0,0), 0;
+    matrixB -= intermediateMatrix;
+    matrixC += this->m_SC->value()*intermediateMatrix;
+    matrixD += *ISCPntB_B;
+    vecTrans += -2*omegaLocal.cross3(cPrimeLocal_B) -omegaLocal.cross3(omegaLocal.cross3(cLocal_B));
+    intermediateVector = *ISCPntB_B*omegaLocal;
+    vecRot += -omegaLocal.cross3(intermediateVector) - *ISCPntBPrime_B*omegaLocal;
 
     if (this->useRotation) {
         if (useTranslation) {

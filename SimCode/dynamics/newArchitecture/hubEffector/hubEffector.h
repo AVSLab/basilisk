@@ -31,9 +31,16 @@ class HubEffector : public StateEffector {
 public:
     HubEffector();
     ~HubEffector();
+    void dynamicsSelfInit();
+    void dynamicsCrossInit();
     void linkInStates(DynParamManager& statesIn);
     void registerStates(DynParamManager& states);
     void computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot);
+    Eigen::MatrixXd *m_SC;
+    Eigen::MatrixXd *ISCPntB_B;
+    Eigen::MatrixXd *cPrime_B;
+    Eigen::MatrixXd *ISCPntBPrime_B;
+    Eigen::MatrixXd *c_B;
     Eigen::MatrixXd mHub;                                  //!
     Eigen::Matrix3d IHubPntB_B;
     Eigen::Vector3d rBcB_B;
