@@ -29,7 +29,7 @@ GravityEffector::~GravityEffector()
     return;
 }
 
-void GravityEffector::linkInStates(const StateManager& statesIn)
+void GravityEffector::linkInStates(const DynParamManager& statesIn)
 {
 
 }
