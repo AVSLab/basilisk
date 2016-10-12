@@ -175,6 +175,14 @@ def test_stateProperties(show_plots):
         testFailCount += 1
         testMessages.append("Set and property reference matching failed.")
 
+    massList = [[1500.0]]
+    massName = "mass"
+    newManager.createProperty(massName, massList)
+    massRef = newManager.getPropertyReference(massName)
+    if massRef != massList:
+        testFailCount += 1
+        testMessages.append("1x1 Eigen property creation failed.")
+
 
     if testFailCount == 0:
         print "PASSED: " + " State properties"
