@@ -30,8 +30,8 @@ class HubEffector : public StateEffector {
 public:
     HubEffector();
     ~HubEffector();
-    void linkInStates(StateManager& statesIn);
-    void registerStates(StateManager& states);
+    void linkInStates(DynParamManager& statesIn);
+    void registerStates(DynParamManager& states);
     
 public:
 	std::string vehicleMassStateName;              //! [-] Name of the vehicle mass state

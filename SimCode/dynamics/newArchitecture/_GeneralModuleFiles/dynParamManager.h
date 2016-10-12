@@ -22,6 +22,7 @@
 #include <stdint.h>
 #include <map>
 #include <vector>
+#include <Eigen/Dense>
 #include "stateData.h"
 
 class StateVector {
@@ -35,18 +36,25 @@ public:
 /*! Manager of states for Basilisk dynamical systems.  Allows the state-
            effector models of a dynamic object to create, get, and update states 
            present in the model.*/
-class StateManager {
+class DynParamManager {
 private:
+    std::map<std::string, Eigen::MatrixXd> dynProperties;
     StateVector stateContainer;
 public:
-    StateManager();
-    ~StateManager();
+    DynParamManager();
+    ~DynParamManager();
     StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
     StateData* getStateObject(std::string stateName);
     StateVector getStateVector();
     void zeroContributions();
     void updateStateVector(const StateVector & newState);
 	void propagateStateVector(double dt);
+    Eigen::MatrixXd* createProperty(std::string propName,
+                                    const Eigen::MatrixXd & propValue);
+    Eigen::MatrixXd* getPropertyReference(std::string propName);
+    void setPropertyValue(const std::string propName,
+                          const Eigen::MatrixXd & propValue);
+    
 };
 
 #endif /* STATE_MANAGER_H */
