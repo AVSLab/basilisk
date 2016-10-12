@@ -16,20 +16,20 @@
  */
 
 
-#include "stateManager.h"
+#include "dynParamManager.h"
 #include <iostream>
 
-StateManager::StateManager()
+DynParamManager::DynParamManager()
 {
     return;
 }
 
-StateManager::~StateManager()
+DynParamManager::~DynParamManager()
 {
     return;
 }
 
-StateData* StateManager::registerState(uint32_t nRow, uint32_t nCol,
+StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol,
     std::string stateName)
 {
     std::map<std::string, StateData>::iterator it;
@@ -60,7 +60,7 @@ StateData* StateManager::registerState(uint32_t nRow, uint32_t nCol,
     return (&(it->second));
 }
 
-StateData* StateManager::getStateObject(std::string stateName)
+StateData* DynParamManager::getStateObject(std::string stateName)
 {
     StateData *statePtr;
     std::map<std::string, StateData>::iterator it;
@@ -75,12 +75,12 @@ StateData* StateManager::getStateObject(std::string stateName)
     return(statePtr);
 }
 
-StateVector StateManager::getStateVector()
+StateVector DynParamManager::getStateVector()
 {
     return(stateContainer);
 }
 
-void StateManager::updateStateVector(const StateVector & newState)
+void DynParamManager::updateStateVector(const StateVector & newState)
 {
     
 	std::map<std::string, StateData>::iterator it;
@@ -92,7 +92,7 @@ void StateManager::updateStateVector(const StateVector & newState)
 	}
 }
 
-void StateManager::zeroContributions()
+void DynParamManager::zeroContributions()
 {
     std::map<std::string, StateData>::iterator it;
     for(it = stateContainer.stateMap.begin();
@@ -102,7 +102,7 @@ void StateManager::zeroContributions()
     }
 }
 
-void StateManager::propagateStateVector(double dt)
+void DynParamManager::propagateStateVector(double dt)
 {
 	std::map<std::string, StateData>::iterator it;
 	for (it = stateContainer.stateMap.begin();
@@ -138,4 +138,56 @@ StateVector StateVector::operator*(double scaleFactor)
 	}
 
 	return outVector;
+}
+
+Eigen::MatrixXd* DynParamManager::createProperty(std::string propName,
+    const Eigen::MatrixXd & propValue)
+{
+    std::map<std::string, Eigen::MatrixXd>::iterator it;
+    it = dynProperties.find(propName);
+    if(it == dynProperties.end())
+    {
+        dynProperties.insert(std::pair<std::string, Eigen::MatrixXd>
+                             (propName, propValue));
+    }
+    else{
+        std::cerr << "WARNING: You created the dynamic property: " << propName;
+        std::cerr << " more than once.  You shouldn't be doing that.";
+        std::cerr << std::endl;
+        it->second = propValue;
+    }
+    return(&(dynProperties.find(propName)->second));
+}
+
+Eigen::MatrixXd* DynParamManager::getPropertyReference(std::string propName)
+{
+    std::map<std::string, Eigen::MatrixXd>::iterator it;
+    it = dynProperties.find(propName);
+    if(it == dynProperties.end())
+    {
+        std::cerr << "ERROR: You requested the property: " << propName;
+        std::cerr << " which doesn't exist.  Null returned" << std::endl;
+        return nullptr;
+    }
+    else
+    {
+        return(&(it->second));
+    }
+}
+
+void DynParamManager::setPropertyValue(const std::string propName,
+                      const Eigen::MatrixXd & propValue)
+{
+    std::map<std::string, Eigen::MatrixXd>::iterator it;
+    it = dynProperties.find(propName);
+    if(it == dynProperties.end())
+    {
+        std::cerr << "You tried to set the property value for: " << propName;
+        std::cerr << " which has not been created yet. I can't do that.";
+        std::cerr << std::endl;
+    }
+    else
+    {
+        it->second = propValue;
+    }
 }

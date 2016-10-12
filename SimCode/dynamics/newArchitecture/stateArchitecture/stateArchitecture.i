@@ -16,12 +16,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 */
 %module stateArchitecture
 %{
-   #include "../_GeneralModuleFiles/stateManager.h"
+   #include "../_GeneralModuleFiles/dynParamManager.h"
 %}
 
 %include "swig_common_model.i"
 
-%include "../_GeneralModuleFiles/stateManager.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/StateData.h"
 
 %pythoncode %{

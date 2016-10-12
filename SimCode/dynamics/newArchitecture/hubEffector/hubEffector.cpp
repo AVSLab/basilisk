@@ -29,21 +29,21 @@ HubEffector::~HubEffector()
     return;
 }
 
-void HubEffector::linkInStates(StateManager& stateManager)
+void HubEffector::linkInStates(DynParamManager& DynParamManager)
 {
-    this->posState = stateManager.getStateObject("hubPosition");
-    this->velocityState = stateManager.getStateObject("hubVelocity");
-    this->sigmaState = stateManager.getStateObject("hubSigma");
-    this->omegaState = stateManager.getStateObject("hubOmega");
+    this->posState = DynParamManager.getStateObject("hubPosition");
+    this->velocityState = DynParamManager.getStateObject("hubVelocity");
+    this->sigmaState = DynParamManager.getStateObject("hubSigma");
+    this->omegaState = DynParamManager.getStateObject("hubOmega");
     
 }
 
-void HubEffector::registerStates(StateManager& stateManager)
+void HubEffector::registerStates(DynParamManager& DynParamManager)
 {
-    stateManager.registerState(3, 1, "hubPosition");
-    stateManager.registerState(3, 1, "hubVelocity");
-    stateManager.registerState(3, 1, "hubSigma");
-    stateManager.registerState(3, 1, "hubOmega");
+    DynParamManager.registerState(3, 1, "hubPosition");
+    DynParamManager.registerState(3, 1, "hubVelocity");
+    DynParamManager.registerState(3, 1, "hubSigma");
+    DynParamManager.registerState(3, 1, "hubOmega");
 }
 
 //void updateContributions(double integTime)

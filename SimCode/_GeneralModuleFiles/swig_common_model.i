@@ -72,3 +72,23 @@ namespace std {
     }
 }
 
+%typemap(out) Eigen::MatrixXd* {
+    int i, j;
+    #include <Eigen/Dense>
+    $result = PyList_New(0);
+    Eigen::MatrixXd *readPtr = ($1);
+    if(!readPtr)
+    {
+        return Py_None;
+    }
+    for(i=0; i<readPtr->innerSize(); i++)
+    {
+        PyObject *locRow = PyList_New(0);
+        for(j=0; j<readPtr->outerSize(); j++)
+        {
+            PyObject *outObject = PyFloat_FromDouble((*readPtr)(i,j));
+            PyList_Append(locRow, outObject);
+        }
+        PyList_Append($result, locRow);
+    }
+}

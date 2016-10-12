@@ -19,7 +19,7 @@
 #ifndef STATE_EFFECTOR_H
 #define STATE_EFFECTOR_H
 
-#include "stateManager.h"
+#include "dynParamManager.h"
 #include <Eigen/Dense>
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
@@ -40,8 +40,8 @@ public:
 public:
     StateEffector();
     virtual ~StateEffector();
-    virtual void registerStates(StateManager& states) = 0;
-    virtual void linkInStates(StateManager& states) = 0;
+    virtual void registerStates(DynParamManager& states) = 0;
+    virtual void linkInStates(DynParamManager& states) = 0;
 //    virtual void updateBackSubstitution(double integTime)=0;
     virtual void updateContributions(double integTime, Eigen::Matrix3d matrixAcontr, Eigen::Matrix3d matrixBcontr, Eigen::Matrix3d matrixCcontr, Eigen::Matrix3d matrixDcontr, Eigen::Vector3d vecTranscontr, Eigen::Vector3d vecRotcontr)=0;
     virtual void computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot)=0;

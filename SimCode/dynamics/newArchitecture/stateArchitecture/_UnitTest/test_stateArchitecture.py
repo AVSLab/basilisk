@@ -45,6 +45,8 @@ def stateArchitectureAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_stateArchitecture(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_stateProperties(show_plots)
+    assert testResults < 1, testMessage
 
 def test_stateData(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -131,6 +133,63 @@ def test_stateData(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_stateProperties(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    newManager = stateArchitecture.DynParamManager()
+
+    gravList = [[9.81], [0.0], [0.1]]
+    gravName = "g_N"
+    newManager.createProperty(gravName, gravList)
+    
+    propRef = newManager.getPropertyReference(gravName)
+    
+    if propRef != gravList:
+        testFailCount += 1
+        testMessages.append("Create and property reference matching failed.")
+    
+    newGravList = [[0.0], [9.81], [-0.1]]
+    newManager.setPropertyValue(gravName, newGravList)
+    propRef = newManager.getPropertyReference(gravName)
+    if propRef != newGravList:
+        testFailCount += 1
+        testMessages.append("Set and property reference matching failed.")
+
+    newGravList = [[0.0], [9.81*2], [-0.1]]
+    newManager.createProperty(gravName, newGravList)
+    propRef = newManager.getPropertyReference(gravName)
+    if propRef != newGravList:
+        testFailCount += 1
+        testMessages.append("Set and property reference matching failed.")
+
+    wrongGravList = [[0.0], [9.81], [-0.1]]
+    newManager.setPropertyValue(gravName+"Scott", newGravList)
+    propRef = newManager.getPropertyReference(gravName+"Scott")
+    if propRef != None:
+        testFailCount += 1
+        testMessages.append("Set and property reference matching failed.")
+
+    massList = [[1500.0]]
+    massName = "mass"
+    newManager.createProperty(massName, massList)
+    massRef = newManager.getPropertyReference(massName)
+    if massRef != massList:
+        testFailCount += 1
+        testMessages.append("1x1 Eigen property creation failed.")
+
+
+    if testFailCount == 0:
+        print "PASSED: " + " State properties"
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
 def test_stateArchitecture(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -140,7 +199,7 @@ def test_stateArchitecture(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    newManager = stateArchitecture.StateManager()
+    newManager = stateArchitecture.DynParamManager()
     
     positionName = "position"
     stateDim = [3, 1]

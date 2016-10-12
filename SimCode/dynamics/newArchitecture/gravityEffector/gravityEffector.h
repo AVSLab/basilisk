@@ -30,7 +30,7 @@ class GravityEffector : public StateData {
 public:
     GravityEffector();
     ~GravityEffector();
-    void linkInStates(const StateManager& statesIn);
+    void linkInStates(const DynParamManager& statesIn);
     void updateDerivativeSums();
 
 public:
