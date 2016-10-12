@@ -62,6 +62,69 @@ ARRAYASLIST(int)
 ARRAYASLIST(float)
 ARRAYASLIST(unsigned int)
 
+%define ARRAY2ASLIST(type)
+
+%typemap(in) type [ANY][ANY] (type temp[$1_dim0][$1_dim1]) {
+
+    if(!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
+        return NULL;
+    }
+    int rowLength = 0;
+    for(int i=0; i<PySequence_Length($input); i++){
+        PyObject *obj = PySequence_GetItem($input, i);
+        if(!PySequence_Check($input)) {
+            printf("Row bad in matrix: %d\n", i);
+            PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+        }
+        if(!rowLength)
+        {
+            rowLength = PySequence_Length(obj);
+        }
+        if(!rowLength || rowLength != PySequence_Length(obj))
+        {
+            printf("Row bad in matrix: %d\n", i);
+            PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+        }
+        for(int j=0; j<rowLength; j++)
+        {
+            temp[i][j] = PyFloat_AsDouble(PySequence_GetItem(obj, j));
+        }
+    }
+    $1 = temp;
+}
+
+%typemap(memberin) type [ANY][ANY] {
+    int i, j;
+    for (i = 0; i < $1_dim0; i++) {
+        for(j=0; j < $1_dim1; j++) {
+            memcpy(&($1[i][j]), &($input[i][j]), sizeof(type));
+        }
+    }
+}
+
+%typemap(out) type [ANY][ANY] {
+    int i, j;
+    $result = PyList_New(0);
+    for(i=0; i<$1_dim0; i++)
+    {
+        PyObject *locRow = PyList_New(0);
+        for(j=0; j<$1_dim1; j++)
+        {
+            PyObject *outObject = PyFloat_FromDouble($1[i][j]);
+            PyList_Append(locRow, outObject);
+        }
+        PyList_Append($result, locRow);
+    }
+}
+
+%enddef
+
+ARRAY2ASLIST(double)
+ARRAY2ASLIST(int)
+ARRAY2ASLIST(float)
+ARRAY2ASLIST(unsigned int)
+
 %define STRUCTASLIST(type)
 %typemap(in) type [ANY] (type temp[$1_dim0]) {
     int i;
