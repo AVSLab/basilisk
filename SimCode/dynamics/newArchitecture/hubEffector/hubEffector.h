@@ -21,6 +21,7 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
+#include <Eigen/Dense>
 
 /*! @brief Abstract class that is used to implement an effector impacting a HUB body
            that does not itself maintain a state or represent a changing component of
@@ -32,10 +33,17 @@ public:
     ~HubEffector();
     void linkInStates(StateManager& statesIn);
     void registerStates(StateManager& states);
-    
+    void computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot);
+    Eigen::MatrixXd mHub;                                  //!
+    Eigen::Matrix3d IHubPntB_B;
+    Eigen::Vector3d rBcB_B;
+    bool useTranslation;
+    bool useRotation;
+
 public:
 	std::string vehicleMassStateName;              //! [-] Name of the vehicle mass state
 	std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
+
 private:
 	StateData *velocityState;                          //! [-] State of the mass of the vehicle
 	StateData *posState;                           //! [-] Position state of the vehicle

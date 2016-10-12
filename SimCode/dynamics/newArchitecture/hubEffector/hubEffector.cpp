@@ -46,13 +46,26 @@ void HubEffector::registerStates(StateManager& stateManager)
     stateManager.registerState(3, 1, "hubOmega");
 }
 
-void updateContributions(double integTime)
-{
-}
+//void updateContributions(double integTime)
+//{
+//}
 
-void computeDerivatives(double integTime)
+void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot)
 {
-    
+    Eigen::Vector3d omegaBNDot_B;
+    Eigen::Vector3d rBNDDot_B;
+    Eigen::Matrix3d intermediateMatrix;
+    Eigen::Vector3d intermediateVector;
+
+    if (this->useRotation) {
+        if (useTranslation) {
+            intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
+            intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
+            omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
+            rBNDDot_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
+        }
+        omegaBNDot_B = matrixD.inverse()*vecRot;
+    }
 }
 
 void updateEffectorMassProps(double integTime){}
