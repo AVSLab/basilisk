@@ -40,8 +40,8 @@ public:
 public:
     StateEffector();
     virtual ~StateEffector();
-    virtual void dynamicsSelfInit();
-    virtual void dynamicsCrossInit();
+    virtual void dynamicsSelfInit() = 0;
+    virtual void dynamicsCrossInit() = 0;
     virtual void registerStates(DynParamManager& states) = 0;
     virtual void linkInStates(DynParamManager& states) = 0;
 //    virtual void updateBackSubstitution(double integTime)=0;

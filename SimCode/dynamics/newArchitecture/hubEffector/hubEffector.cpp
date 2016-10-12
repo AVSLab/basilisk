@@ -70,13 +70,12 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, 
     Eigen::Vector3d rBNDDot_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
-    Eigen::MatrixXd omegaLocal;
+    Eigen::Vector3d omegaLocal;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d cLocal_B;
-    omegaLocal(3,1);
     omegaLocal = omegaState->getState();
-    cPrimeLocal_B << (*cPrime_B)(0,0), (*cPrime_B)(1,0), (*cPrime_B)(2,0);
-    cLocal_B << (*c_B)(0,0), (*c_B)(1,0), (*c_B)(2,0);
+    cPrimeLocal_B = *cPrime_B;
+    cLocal_B = *c_B;
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
     *this->m_SC += this->mHub;
     *this->c_B += this->mHub*this->rBcB_B;
@@ -96,9 +95,9 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, 
     matrixB -= intermediateMatrix;
     matrixC += this->m_SC->value()*intermediateMatrix;
     matrixD += *ISCPntB_B;
-    vecTrans += -2*omegaLocal.cross3(cPrimeLocal_B) -omegaLocal.cross3(omegaLocal.cross3(cLocal_B));
+    vecTrans += -2*omegaLocal.cross(cPrimeLocal_B) -omegaLocal.cross(omegaLocal.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaLocal;
-    vecRot += -omegaLocal.cross3(intermediateVector) - *ISCPntBPrime_B*omegaLocal;
+    vecRot += -omegaLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocal;
 
     if (this->useRotation) {
         if (useTranslation) {
