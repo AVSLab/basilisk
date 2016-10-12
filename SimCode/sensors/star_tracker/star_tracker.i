@@ -23,6 +23,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 %include "sys_model.h"
 %include "star_tracker.h"
+%include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
 
 %pythoncode %{
 import sys
