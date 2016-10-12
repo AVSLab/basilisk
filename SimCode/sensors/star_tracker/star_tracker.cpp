@@ -156,17 +156,6 @@ void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
-
-	scState.T_str2Bdy[0][0] = 1.0;
-	scState.T_str2Bdy[0][1] = 0.0;
-	scState.T_str2Bdy[0][2] = 0.0;
-	scState.T_str2Bdy[1][0] = 0.0;
-	scState.T_str2Bdy[1][1] = 1.0;
-	scState.T_str2Bdy[1][2] = 0.0;
-	scState.T_str2Bdy[2][0] = 0.0;
-	scState.T_str2Bdy[2][1] = 0.0;
-	scState.T_str2Bdy[2][2] = 1.0;
-
     computeSensorTimeTag(CurrentSimNanos);
     computeSensorErrors();
     computeTrueOutput();

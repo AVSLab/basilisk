@@ -110,7 +110,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     OutputStateData.v_N = [0,0,0]
     OutputStateData.sigma = np.array([0,0,0])
     OutputStateData.omega = [0,0,0]
-    # OutputStateData.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
+    OutputStateData.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
     OutputStateData.TotalAccumDVBdy = [0,0,0]
     OutputStateData.MRPSwitchCount = 0
 
