@@ -11,21 +11,26 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-%module hubEffector
+%module stateArchitecture
 %{
+   #include "spacecraftPlus.h"
    #include "hubEffector.h"
 %}
 
 %include "swig_common_model.i"
 
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynObject2.h"
+%include "spacecraftPlus.h"
 %include "hubEffector.h"
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
-

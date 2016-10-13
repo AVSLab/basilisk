@@ -29,22 +29,8 @@ HubEffector::~HubEffector()
     return;
 }
 
-void HubEffector::dynamicsSelfInit()
-{
-
-}
-
-void HubEffector::dynamicsCrossInit()
-{
-
-}
-
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->posState = statesIn.getStateObject("hubPosition");
-    this->velocityState = statesIn.getStateObject("hubVelocity");
-    this->sigmaState = statesIn.getStateObject("hubSigma");
-    this->omegaState = statesIn.getStateObject("hubOmega");
     this->m_SC = statesIn.getPropertyReference("m_SC");
     this->c_B = statesIn.getPropertyReference("centerOfMassSC");
     this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
@@ -54,15 +40,11 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
 
 void HubEffector::registerStates(DynParamManager& states)
 {
-    states.registerState(3, 1, "hubPosition");
-    states.registerState(3, 1, "hubVelocity");
-    states.registerState(3, 1, "hubSigma");
-    states.registerState(3, 1, "hubOmega");
+    this->posState = states.registerState(3, 1, "hubPosition");
+    this->velocityState = states.registerState(3, 1, "hubVelocity");
+    this->sigmaState = states.registerState(3, 1, "hubSigma");
+    this->omegaState = states.registerState(3, 1, "hubOmega");
 }
-
-//void updateContributions(double integTime)
-//{
-//}
 
 void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot)
 {

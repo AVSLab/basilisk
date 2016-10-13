@@ -16,42 +16,65 @@
  */
 
 
-#include "dynObject2.h"
+#include "spacecraftPlus.h"
 
-DynObject2::DynObject2()
+SpacecraftPlus::SpacecraftPlus()
 {
     return;
 }
 
 
-DynObject2::~DynObject2()
+SpacecraftPlus::~SpacecraftPlus()
 {
     return;
 }
 
-void DynObject2::computeEnergyMomentum()
+void SpacecraftPlus::computeEnergyMomentum()
 {
     
 }
 
-void DynObject2::initializeDynamics()
+void SpacecraftPlus::equationsOfMotion(double t)
+{
+    
+}
+void SpacecraftPlus::integrateState(double t)
+{
+    
+}
+
+void SpacecraftPlus::initializeDynamics()
 {
     std::vector<StateEffector*>::iterator it;
     std::vector<DynamicEffector*>::iterator dynIt;
     
+    hub.registerStates(dynManager);
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->registerStates(dynManager);
     }
     
+    hub.linkInStates(dynManager);
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->linkInStates(dynManager);
     }
-
+    
     for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
     {
         (*dynIt)->linkInStates(dynManager);
     }
+}
+
+void SpacecraftPlus::SelfInit()
+{
+    
+}
+void SpacecraftPlus::CrossInit()
+{
+    
+}
+void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
+{
     
 }
