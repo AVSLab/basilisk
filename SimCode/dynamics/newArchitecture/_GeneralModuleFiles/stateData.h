@@ -36,8 +36,7 @@ public:
     ~StateData();
     void setState(const Eigen::MatrixXd & newState);
     void propagateState(double dt);
-    void zeroDerivative();
-    void addToDerivative(const Eigen::MatrixXd & newDeriv);
+    void setDerivative(const Eigen::MatrixXd & newDeriv);
     Eigen::MatrixXd getState() const {return state;}
     Eigen::MatrixXd getStateDeriv() const {return stateDeriv;}
     std::string getName() const {return stateName;}

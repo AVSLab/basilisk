@@ -40,7 +40,12 @@ StateData::StateData(std::string inName, const Eigen::MatrixXd & newState)
 {
     stateName = inName;
     setState(newState);
-    zeroDerivative();
+    if(state.innerSize() != stateDeriv.innerSize() ||
+       state.outerSize() != stateDeriv.outerSize())
+    {
+        stateDeriv = state;
+    }
+    stateDeriv.setZero();
 }
 
 void StateData::setState(const Eigen::MatrixXd & newState)
@@ -54,19 +59,10 @@ void StateData::propagateState(double dt)
     state += stateDeriv * dt;
 }
 
-void StateData::zeroDerivative()
-{
-    if(state.innerSize() != stateDeriv.innerSize() ||
-        state.outerSize() != stateDeriv.outerSize())
-    {
-        stateDeriv = state;
-    }
-    stateDeriv.setZero();
-}
 
-void StateData::addToDerivative(const Eigen::MatrixXd & newDeriv)
+void StateData::setDerivative(const Eigen::MatrixXd & newDeriv)
 {
-    stateDeriv += newDeriv;
+    stateDeriv = newDeriv;
 }
 
 void StateData::scaleState(double scaleFactor)

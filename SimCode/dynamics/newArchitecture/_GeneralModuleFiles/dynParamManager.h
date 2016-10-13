@@ -46,7 +46,6 @@ public:
     StateData* registerState(uint32_t nRow, uint32_t nCol, std::string stateName);
     StateData* getStateObject(std::string stateName);
     StateVector getStateVector();
-    void zeroContributions();
     void updateStateVector(const StateVector & newState);
 	void propagateStateVector(double dt);
     Eigen::MatrixXd* createProperty(std::string propName,

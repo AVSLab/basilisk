@@ -63,7 +63,6 @@ def test_stateData(show_plots):
     newState.setState(stateUse)
     
     predictedDerivative = [[0.0], [0.0]]
-    newState.zeroDerivative()
 
     if(newState.getRowSize() != len(stateUse)):
         testFailCount += 1
@@ -82,7 +81,7 @@ def test_stateData(show_plots):
         testMessages.append("State derivative zero check failure.")
 
     derivativeInc = [[1.0], [2.5]]
-    newState.addToDerivative(derivativeInc)
+    newState.setDerivative(derivativeInc)
     newState.propagateState(0.1)
 
     predictedDerivativeNum = numpy.array(predictedDerivative) + numpy.array(derivativeInc)
@@ -246,7 +245,7 @@ def test_stateArchitecture(show_plots):
         testMessages.append("Velocity state update via state-manager failed")
 
     dt = 1.0;
-    posState.addToDerivative(vecStart)
+    posState.setDerivative(vecStart)
     newManager.propagateStateVector(dt)
     numpyOutput += numpy.array(vecStart)*dt
     if(posState.getState() != numpyOutput.tolist()):

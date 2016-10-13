@@ -52,7 +52,6 @@ StateData* DynParamManager::registerState(uint32_t nRow, uint32_t nCol,
         Eigen::MatrixXd stateMatrix;
         stateMatrix.resize(nRow, nCol);
         StateData newState(stateName, stateMatrix);
-        newState.zeroDerivative();
         stateContainer.stateMap.insert(std::pair<std::string, StateData>
                               (stateName, newState));
         it = stateContainer.stateMap.find(stateName);
@@ -90,16 +89,6 @@ void DynParamManager::updateStateVector(const StateVector & newState)
 	{
 		it->second.setState(inIt->second.getState());
 	}
-}
-
-void DynParamManager::zeroContributions()
-{
-    std::map<std::string, StateData>::iterator it;
-    for(it = stateContainer.stateMap.begin();
-        it != stateContainer.stateMap.end(); it++)
-    {
-        it->second.zeroDerivative();
-    }
 }
 
 void DynParamManager::propagateStateVector(double dt)
