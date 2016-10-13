@@ -67,13 +67,24 @@ void HubEffector::registerStates(DynParamManager& states)
 void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot)
 {
     Eigen::Vector3d omegaBNDot_B;
-    Eigen::Vector3d rBNDDot_B;
+    Eigen::Vector3d rBNDDotLocal_B;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
-    Eigen::Vector3d omegaLocal;
+    Eigen::Vector3d omegaBNLocal;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d cLocal_B;
-    omegaLocal = omegaState->getState();
+    Eigen::Vector3d rBNDotLocal_N;
+    Eigen::Matrix3d Bmat;
+    Eigen::Vector3d sigmaBNLocal;
+    Eigen::Vector3d sigmaBNDotLocal;
+    Eigen::Matrix3d BN;
+    double ms2;
+    double s1s2;
+    double s1s3;
+    double s2s3;
+    sigmaBNLocal = sigmaState->getState();
+    omegaBNLocal = omegaState->getState();
+    rBNDotLocal_N = velocityState->getState();
     cPrimeLocal_B = *cPrime_B;
     cLocal_B = *c_B;
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
@@ -95,18 +106,50 @@ void HubEffector::computeDerivatives(double integTime, Eigen::Matrix3d matrixA, 
     matrixB -= intermediateMatrix;
     matrixC += this->m_SC->value()*intermediateMatrix;
     matrixD += *ISCPntB_B;
-    vecTrans += -2*omegaLocal.cross(cPrimeLocal_B) -omegaLocal.cross(omegaLocal.cross(cLocal_B));
-    intermediateVector = *ISCPntB_B*omegaLocal;
-    vecRot += -omegaLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocal;
+    vecTrans += -2*omegaBNLocal.cross(cPrimeLocal_B) -omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
+    intermediateVector = *ISCPntB_B*omegaBNLocal;
+    vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
 
     if (this->useRotation) {
+        //! Set kinematic derivative
+        ms2  = 1 - sigmaBNLocal.squaredNorm();
+        s1s2 = sigmaBNLocal(0)*sigmaBNLocal(1);
+        s1s3 = sigmaBNLocal(0)*sigmaBNLocal(2);
+        s2s3 = sigmaBNLocal(1)*sigmaBNLocal(2);
+
+        Bmat(0,0) = ms2 + 2*sigmaBNLocal(0)*sigmaBNLocal(0);
+        Bmat(0,1) = 2*(s1s2 - sigmaBNLocal(2));
+        Bmat(0,2) = 2*(s1s3 + sigmaBNLocal(1));
+        Bmat(1,0) = 2*(s1s2 + sigmaBNLocal(2));
+        Bmat(1,1) = ms2 + 2*sigmaBNLocal(1)*sigmaBNLocal(1);
+        Bmat(1,2) = 2*(s2s3 - sigmaBNLocal(0));
+        Bmat(2,0) = 2*(s1s3 - sigmaBNLocal(1));
+        Bmat(2,1) = 2*(s2s3 + sigmaBNLocal(0));
+        Bmat(2,2) = ms2 + 2*sigmaBNLocal(2)*sigmaBNLocal(2);
+        sigmaBNDotLocal = 1/4*Bmat*omegaBNLocal;
+        sigmaState->setDerivative(sigmaBNDotLocal);
+
         if (useTranslation) {
             intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
             omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
-            rBNDDot_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
+            omegaState->setDerivative(omegaBNDot_B);
+            rBNDDotLocal_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
+            //! - Map rBNDDotLocal_B to rBNDotLocal_N
+            velocityState->setDerivative(rBNDDotLocal_B);
         }
         omegaBNDot_B = matrixD.inverse()*vecRot;
+        omegaState->setDerivative(omegaBNDot_B);
+    }
+
+    if (useTranslation) {
+        //! - Set kinematic derivative
+        posState->setDerivative(rBNDotLocal_N);
+        if (useRotation==false) {
+            rBNDDotLocal_B = matrixA.inverse()*(vecTrans);
+
+        }
+
     }
 }
 
