@@ -683,6 +683,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.IMUSensor.setStructureToPlatformDCM(0.0, 0.0, 0.0)
         self.IMUSensor.accelLSB = 2.77E-4 * 9.80665
         self.IMUSensor.gyroLSB = 8.75E-3 * math.pi / 180.0
+        self.IMUSensor.senRotMax = 1e6
+        self.IMUSensor.senTransMax = 1e6
 
         self.IMUSensor.senTransBias = [transBiasValue, transBiasValue, transBiasValue]
         self.IMUSensor.senRotBias = [rotBiasValue, rotBiasValue, rotBiasValue]
