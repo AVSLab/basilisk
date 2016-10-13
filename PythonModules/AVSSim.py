@@ -653,28 +653,39 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         def turnOffCorruption():
             rotBiasValue = 0.0
             rotNoiseStdValue = 0.0
+            rotErrorBounds = [0] * 3
             transBiasValue = 0.0
             transNoiseStdValue = 0.0
-            return (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue)
+            transErrorBounds = [0] * 3
+            return (rotBiasValue, rotNoiseStdValue, rotErrorBounds, transBiasValue, transNoiseStdValue, transErrorBounds)
 
         rotBiasValue = 0.0
         rotNoiseStdValue = 0.000001
+        rotErrorBounds = [0] * 3
         transBiasValue = 0.0
         transNoiseStdValue = 1.0E-6
+        transErrorBounds = [0] * 3
+
+        # Turn off corruption of IMU data
+        (rotBiasValue, rotNoiseStdValue, rotErrorBounds, transBiasValue, transNoiseStdValue, transErrorBounds) = turnOffCorruption()
+
+        PMatrixGyro = [0.0] * 3 * 3
+        PMatrixGyro[0*3+0] = PMatrixGyro[1*3+1] = PMatrixGyro[2*3+2] = rotNoiseStdValue
+        PMatrixAccel = [0.0] * 3 * 3
+        PMatrixAccel[0*3+0] = PMatrixAccel[1*3+1] = PMatrixAccel[2*3+2] = transNoiseStdValue
 
         self.IMUSensor = imu_sensor.ImuSensor()
+        self.IMUSensor.PMatrixAccel = sim_model.DoubleVector(PMatrixAccel)
+        self.IMUSensor.walkBoundsAccel = sim_model.DoubleVector(transErrorBounds)
+        self.IMUSensor.PMatrixGyro = sim_model.DoubleVector(PMatrixGyro)
+        self.IMUSensor.walkBoundsGyro = sim_model.DoubleVector(rotErrorBounds)
         self.IMUSensor.SensorPosStr = imu_sensor.DoubleVector([1.5, 0.1, 0.1])
         self.IMUSensor.setStructureToPlatformDCM(0.0, 0.0, 0.0)
         self.IMUSensor.accelLSB = 2.77E-4 * 9.80665
         self.IMUSensor.gyroLSB = 8.75E-3 * math.pi / 180.0
 
-        # Turn off corruption of IMU data
-        (rotBiasValue, rotNoiseStdValue, transBiasValue, transNoiseStdValue) = turnOffCorruption()
-
-        self.IMUSensor.senRotBias = [rotBiasValue, rotBiasValue, rotBiasValue]
-        self.IMUSensor.senRotNoiseStd = [rotNoiseStdValue, rotNoiseStdValue, rotNoiseStdValue]
         self.IMUSensor.senTransBias = [transBiasValue, transBiasValue, transBiasValue]
-        self.IMUSensor.senTransNoiseStd = [transNoiseStdValue, transNoiseStdValue, transNoiseStdValue]
+        self.IMUSensor.senRotBias = [rotBiasValue, rotBiasValue, rotBiasValue]
 
 
     def SetReactionWheelDynObject(self):
