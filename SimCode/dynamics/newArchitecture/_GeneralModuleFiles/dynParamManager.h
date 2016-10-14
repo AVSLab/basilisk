@@ -37,7 +37,7 @@ public:
            effector models of a dynamic object to create, get, and update states 
            present in the model.*/
 class DynParamManager {
-private:
+public:
     std::map<std::string, Eigen::MatrixXd> dynProperties;
     StateVector stateContainer;
 public:

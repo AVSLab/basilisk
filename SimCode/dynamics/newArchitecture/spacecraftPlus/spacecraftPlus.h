@@ -42,6 +42,8 @@ public:
     Eigen::MatrixXd *cPrime_B;
     Eigen::MatrixXd *ISCPntBPrime_B;
     Eigen::MatrixXd *c_B;
+	double currTimeStep;
+	double timePrevious; 
 public:
     SpacecraftPlus();
     ~SpacecraftPlus();

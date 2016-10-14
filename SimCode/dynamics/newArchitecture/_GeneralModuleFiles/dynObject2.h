@@ -21,6 +21,7 @@
 #include "dynParamManager.h"
 #include "stateEffector.h"
 #include "dynamicEffector.h"
+#include "stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>
@@ -32,6 +33,7 @@ public:
     DynParamManager dynManager;                       //! [-] Dynamics parameter manager for all effectors
     std::vector<StateEffector*> states;               //! [-] Vector of states for dyn-object to handle
     std::vector<DynamicEffector*> dynEffectors;       //! [-] Vector of dynamic effectors attached to dyn
+	StateVecIntegrator *integrator;                   //! [-] Integrator used to propagate state forward
     
 public:
     DynObject2();
@@ -41,6 +43,8 @@ public:
     virtual void equationsOfMotion(double t) = 0;     //! [-] Everyone will need to provide this EOM
     virtual void integrateState(double t) = 0;        //! [-] Everyone will need to integrate the state
     virtual void computeEnergyMomentum();             //! [-] User can implement NRG/moment check 
+	virtual void setIntegator(StateVecIntegrator *newInt) { integrator = newInt; } //!< [-] Setter for integrator
+
 };
 
 #endif /* DYNOBJECT2_H */

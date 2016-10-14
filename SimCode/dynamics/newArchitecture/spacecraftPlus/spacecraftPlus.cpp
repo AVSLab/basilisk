@@ -17,9 +17,14 @@
 
 
 #include "spacecraftPlus.h"
+#include "utilities/simMacros.h"
+#include "../_GeneralModuleFiles/rk4SVIntegrator.h"
 
 SpacecraftPlus::SpacecraftPlus()
 {
+	currTimeStep = 0.0;
+	timePrevious = 0.0;
+	integrator = new rk4SVIntegrator(this);
     return;
 }
 
@@ -88,7 +93,9 @@ void SpacecraftPlus::equationsOfMotion(double t)
 }
 void SpacecraftPlus::integrateState(double t)
 {
-    
+	double currTimeStep = t - timePrevious;
+	integrator->integrate(t, currTimeStep);
+	timePrevious = t;
 }
 
 void SpacecraftPlus::initializeDynamics()
@@ -133,13 +140,14 @@ void SpacecraftPlus::initializeDynamics()
 
 void SpacecraftPlus::SelfInit()
 {
-    
+ 
 }
 void SpacecraftPlus::CrossInit()
 {
-    
+	initializeDynamics();
 }
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 {
-    
+	double newTime = CurrentSimNanos*NANO2SEC;
+	integrateState(newTime);
 }

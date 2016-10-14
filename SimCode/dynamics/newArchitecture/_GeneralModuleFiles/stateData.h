@@ -23,7 +23,7 @@
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
 class StateData {
-private:
+public:
     Eigen::MatrixXd state;                        //! [-] State value storage
     Eigen::MatrixXd stateDeriv;                   //! [-] State derivative value storage
     std::string stateName;                        //! [-] Name of the state
