@@ -58,9 +58,9 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - Loop through state effectors
     for(it = states.begin(); it != states.end(); it++)
     {
-        (*it)->updateEffectorMassProps(timePlaceHolder);
-        (*it)->updateEffectorMassPropRates(timePlaceHolder);
-        (*it)->updateContributions(timePlaceHolder, matrixAContrSCP, matrixBContrSCP, matrixCContrSCP, matrixDContrSCP, vecTransContrSCP, vecRotContrSCP);
+        (*it)->updateEffectorMassProps(t);
+        (*it)->updateEffectorMassPropRates(t);
+        (*it)->updateContributions(t, matrixAContrSCP, matrixBContrSCP, matrixCContrSCP, matrixDContrSCP, vecTransContrSCP, vecRotContrSCP);
         //! Add contributions to matrices
         matrixASCP += matrixAContrSCP;
         matrixBSCP += matrixBContrSCP;
@@ -76,13 +76,13 @@ void SpacecraftPlus::equationsOfMotion(double t)
         //! Empty for now
     }
 
-    hub.computeDerivatives(timePlaceHolder, matrixASCP, matrixBSCP, matrixCSCP, matrixDSCP, vecTransSCP, vecRotSCP);
+    hub.computeDerivatives(t, matrixASCP, matrixBSCP, matrixCSCP, matrixDSCP, vecTransSCP, vecRotSCP);
 
     //! - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
         //! These matrices should be NULL, because the stateEffectors don't need to know about these Matrices
-        (*it)->computeDerivatives(timePlaceHolder, matrixASCP, matrixBSCP, matrixCSCP, matrixDSCP, vecTransSCP, vecRotSCP);
+        (*it)->computeDerivatives(t, matrixASCP, matrixBSCP, matrixCSCP, matrixDSCP, vecTransSCP, vecRotSCP);
     }
 
 }

@@ -43,7 +43,6 @@ public:
     Eigen::Matrix3d matrixDSCP;
     Eigen::Vector3d vecTransSCP;
     Eigen::Vector3d vecRotSCP;
-    double timePlaceHolder;
 public:
     SpacecraftPlus();
     ~SpacecraftPlus();
