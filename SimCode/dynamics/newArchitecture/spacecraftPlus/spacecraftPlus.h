@@ -37,12 +37,6 @@ public:
     Eigen::Matrix3d matrixDContrSCP;
     Eigen::Vector3d vecTransContrSCP;
     Eigen::Vector3d vecRotContrSCP;
-    Eigen::Matrix3d matrixASCP;           //! [-] Spacecraft plus holds the value for all matrices
-    Eigen::Matrix3d matrixBSCP;
-    Eigen::Matrix3d matrixCSCP;
-    Eigen::Matrix3d matrixDSCP;
-    Eigen::Vector3d vecTransSCP;
-    Eigen::Vector3d vecRotSCP;
     Eigen::MatrixXd *m_SC;
     Eigen::MatrixXd *ISCPntB_B;
     Eigen::MatrixXd *cPrime_B;

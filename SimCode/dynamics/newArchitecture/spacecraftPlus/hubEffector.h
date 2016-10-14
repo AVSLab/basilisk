@@ -34,7 +34,7 @@ public:
     ~HubEffector();
     void linkInStates(DynParamManager& statesIn);
     void registerStates(DynParamManager& states);
-    void computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot);
+    void computeDerivatives(double integTime);
     Eigen::MatrixXd *m_SC;
     Eigen::MatrixXd *ISCPntB_B;
     Eigen::MatrixXd *cPrime_B;
@@ -43,6 +43,12 @@ public:
     Eigen::MatrixXd mHub;                                  //!
     Eigen::Matrix3d IHubPntB_B;
     Eigen::Vector3d rBcB_B;
+    Eigen::Matrix3d matrixASCP;           //! [-] hubEffector holds the value for all matrices
+    Eigen::Matrix3d matrixBSCP;
+    Eigen::Matrix3d matrixCSCP;
+    Eigen::Matrix3d matrixDSCP;
+    Eigen::Vector3d vecTransSCP;
+    Eigen::Vector3d vecRotSCP;
     bool useTranslation;
     bool useRotation;
 

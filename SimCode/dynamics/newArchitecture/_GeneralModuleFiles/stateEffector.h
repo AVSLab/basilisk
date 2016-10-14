@@ -43,8 +43,8 @@ public:
     virtual void registerStates(DynParamManager& states) = 0;
     virtual void linkInStates(DynParamManager& states) = 0;
 //    virtual void updateBackSubstitution(double integTime)=0;
-    virtual void updateContributions(double integTime, Eigen::Matrix3d matrixAcontr, Eigen::Matrix3d matrixBcontr, Eigen::Matrix3d matrixCcontr, Eigen::Matrix3d matrixDcontr, Eigen::Vector3d vecTranscontr, Eigen::Vector3d vecRotcontr);
-    virtual void computeDerivatives(double integTime, Eigen::Matrix3d matrixA, Eigen::Matrix3d matrixB, Eigen::Matrix3d matrixC, Eigen::Matrix3d matrixD, Eigen::Vector3d vecTrans, Eigen::Vector3d vecRot)=0;
+    virtual void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
+    virtual void computeDerivatives(double integTime)=0;
     virtual void updateEffectorMassProps(double integTime);
     virtual void updateEffectorMassPropRates(double integTime);
 };
