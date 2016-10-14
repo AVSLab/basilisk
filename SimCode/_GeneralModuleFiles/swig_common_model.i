@@ -55,6 +55,10 @@ namespace std {
     $1 = PySequence_Check($input);
 }
 
+%typemap(memberin) Eigen::MatrixXd {
+    $1 = $input;
+}
+
 %typemap(out) Eigen::MatrixXd {
     int i, j;
     #include <Eigen/Dense>

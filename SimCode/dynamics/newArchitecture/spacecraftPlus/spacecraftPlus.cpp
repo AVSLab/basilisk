@@ -106,7 +106,7 @@ void SpacecraftPlus::initializeDynamics()
     Eigen::MatrixXd cPrime_B(3,1);
     Eigen::MatrixXd ISCPntBPrime_B(3,3);
     this->m_SC = dynManager.createProperty("m_SC", m_SC);
-    this->c_B = dynManager.createProperty("centerofMassSC", c_B);
+    this->c_B = dynManager.createProperty("centerOfMassSC", c_B);
     this->ISCPntB_B = dynManager.createProperty("inertiaSC", ISCPntB_B);
     this->ISCPntBPrime_B = dynManager.createProperty("inertiaPrimeSC", ISCPntBPrime_B);
     this->cPrime_B = dynManager.createProperty("centerOfMassPrimeSC", cPrime_B);

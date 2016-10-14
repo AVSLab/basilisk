@@ -32,7 +32,6 @@ rk4SVIntegrator::~rk4SVIntegrator()
 
 void rk4SVIntegrator::integrate(double currentTime, double timeStep)
 {
-    unsigned int i;
 	StateVector stateOut;
 	StateVector stateInit;
 	std::map<std::string, StateData>::iterator it;

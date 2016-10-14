@@ -14,7 +14,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-%module stateArchitecture
+%module spacecraftPlus
 %{
    #include "spacecraftPlus.h"
    #include "hubEffector.h"
@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynObject2.h"
 %include "spacecraftPlus.h"
 %include "hubEffector.h"
