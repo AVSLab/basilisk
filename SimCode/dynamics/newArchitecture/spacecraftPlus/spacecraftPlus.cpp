@@ -112,7 +112,18 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*dynIt)->linkInStates(dynManager);
     }
-    //! Need to zero m_SC, c_B, ISCPntB_B, cPrime_B, and ISCPntBPrime_B in the properties manager
+    //! Zero m_SC, c_B, ISCPntB_B, cPrime_B, and ISCPntBPrime_B in the properties manager
+    this->m_SC = dynManager.getPropertyReference("m_SC");
+    this->c_B = dynManager.getPropertyReference("centerOfMassSC");
+    this->ISCPntB_B = dynManager.getPropertyReference("inertiaSC");
+    this->cPrime_B = dynManager.getPropertyReference("centerOfMassPrimeSC");
+    this->ISCPntBPrime_B = dynManager.getPropertyReference("inertiaPrimeSC");
+    (*this->m_SC).setZero();
+    (*this->c_B).setZero();
+    (*this->ISCPntB_B).setZero();
+    (*this->cPrime_B).setZero();
+    (*this->ISCPntBPrime_B).setZero();
+
 }
 
 void SpacecraftPlus::SelfInit()

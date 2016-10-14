@@ -43,6 +43,11 @@ public:
     Eigen::Matrix3d matrixDSCP;
     Eigen::Vector3d vecTransSCP;
     Eigen::Vector3d vecRotSCP;
+    Eigen::MatrixXd *m_SC;
+    Eigen::MatrixXd *ISCPntB_B;
+    Eigen::MatrixXd *cPrime_B;
+    Eigen::MatrixXd *ISCPntBPrime_B;
+    Eigen::MatrixXd *c_B;
 public:
     SpacecraftPlus();
     ~SpacecraftPlus();
