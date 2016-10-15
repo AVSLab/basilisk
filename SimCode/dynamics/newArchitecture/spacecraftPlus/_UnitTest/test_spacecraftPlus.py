@@ -89,7 +89,7 @@ def test_hubPropagate(show_plots):
     posRef.setState([[1.0], [0.0], [0.0]])
     omegaRef.setState([[0.001], [0.0], [0.0]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[0.01], [0.0], [0.0]])
 
     scObject.hub.mHub = [[1.0]]
     scObject.hub.rBcB_B = [[1.0], [0.0], [0.0]]
