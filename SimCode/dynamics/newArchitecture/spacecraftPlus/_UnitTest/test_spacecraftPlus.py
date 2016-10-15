@@ -91,15 +91,17 @@ def test_hubPropagate(show_plots):
     sigmaRef.setState([[0.0], [0.0], [0.0]])
     velRef.setState([[0.0], [0.0], [0.0]])
 
-    print scObject.hub
     scObject.hub.mHub = [[1.0]]
     scObject.hub.rBcB_B = [[1.0], [0.0], [0.0]]
     scObject.hub.IHubPntB_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
-    
-    
     unitTestSim.ConfigureStopTime(macros.sec2nano(100.0))
     unitTestSim.ExecuteSimulation()
+
+    print velRef.getState()
+    print posRef.getState()
+    print omegaRef.getState()
+    print sigmaRef.getState()
 
     if testFailCount == 0:
         print "PASSED: " + " Hub Propagate"

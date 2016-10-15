@@ -17,7 +17,9 @@ namespace std {
    %template(MultiArray) vector < vector <double>>;
 }
 
-%typemap(in) const Eigen::MatrixXd &  {
+%define EIGEN_MAT_WRAP(type)
+
+%typemap(in) type {
     #include <Eigen/Dense>
 
     if(!PySequence_Check($input)) {
@@ -48,51 +50,94 @@ namespace std {
             matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
         }
     }
-    $1 = &(matrixAssemble);
+    $1 = (matrixAssemble);
 }
 
-%typemap(typecheck) const Eigen::MatrixXd & {
+%typemap(in) type & {
+    #include <Eigen/Dense>
+
+    if(!PySequence_Check($input)) {
+        PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
+        return NULL;
+    }
+    int rowLength = 0;
+    Eigen::MatrixXd matrixAssemble;
+    for(int i=0; i<PySequence_Length($input); i++){
+        PyObject *obj = PySequence_GetItem($input, i);
+        if(!PySequence_Check($input)) {
+            printf("Row bad in matrix: %d\n", i);
+            PyErr_SetString(PyExc_ValueError,"Need a list for each row");
+        }
+        if(!rowLength)
+        {
+            rowLength = PySequence_Length(obj);
+            matrixAssemble.resize(PySequence_Length($input), rowLength);
+            matrixAssemble.fill(0.0);
+        }
+        if(!rowLength || rowLength != PySequence_Length(obj))
+        {
+            printf("Row bad in matrix: %d\n", i);
+            PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
+        }
+        for(int j=0; j<rowLength; j++)
+        {
+            matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
+        }
+    }
+	type localConvert = matrixAssemble;
+    $1 = &(localConvert);
+}
+
+%typemap(typecheck) type {
     $1 = PySequence_Check($input);
 }
 
-%typemap(memberin) Eigen::MatrixXd {
+%typemap(memberin) type {
     $1 = $input;
 }
 
-%typemap(out) Eigen::MatrixXd {
+%typemap(out) type {
     int i, j;
     #include <Eigen/Dense>
     $result = PyList_New(0);
-    Eigen::MatrixXd *readPtr = &($1);
-    for(i=0; i<readPtr->innerSize(); i++)
+    Eigen::MatrixXd readPtr = ($1);
+    for(i=0; i<readPtr.innerSize(); i++)
     {
         PyObject *locRow = PyList_New(0);
-        for(j=0; j<readPtr->outerSize(); j++)
+        for(j=0; j<readPtr.outerSize(); j++)
         {
-            PyObject *outObject = PyFloat_FromDouble((*readPtr)(i,j));
+            PyObject *outObject = PyFloat_FromDouble((readPtr)(i,j));
             PyList_Append(locRow, outObject);
         }
         PyList_Append($result, locRow);
     }
 }
 
-%typemap(out) Eigen::MatrixXd* {
+%typemap(out) type * {
     int i, j;
     #include <Eigen/Dense>
     $result = PyList_New(0);
-    Eigen::MatrixXd *readPtr = ($1);
-    if(!readPtr)
+    
+    if(!($1))
     {
         return Py_None;
     }
-    for(i=0; i<readPtr->innerSize(); i++)
+	Eigen::MatrixXd readPtr = *($1);
+    for(i=0; i<readPtr.innerSize(); i++)
     {
         PyObject *locRow = PyList_New(0);
-        for(j=0; j<readPtr->outerSize(); j++)
+        for(j=0; j<readPtr.outerSize(); j++)
         {
-            PyObject *outObject = PyFloat_FromDouble((*readPtr)(i,j));
+            PyObject *outObject = PyFloat_FromDouble((readPtr)(i,j));
             PyList_Append(locRow, outObject);
         }
         PyList_Append($result, locRow);
     }
 }
+
+%enddef
+
+//EIGEN_MAT_WRAP(const Eigen::MatrixXd)
+EIGEN_MAT_WRAP(Eigen::MatrixXd)
+EIGEN_MAT_WRAP(Eigen::Matrix3d)
+EIGEN_MAT_WRAP(Eigen::Vector3d)

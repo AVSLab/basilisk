@@ -71,7 +71,7 @@ void HubEffector::computeDerivatives(double integTime)
     cLocal_B = *c_B;
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
     *this->m_SC += this->mHub;
-    *this->c_B += this->mHub*this->rBcB_B;
+    *this->c_B += this->mHub.value()*this->rBcB_B;
     *ISCPntB_B += this->IHubPntB_B;
 
     //! - Need to scale [A] [B] and vecTrans by m_SC
@@ -79,7 +79,7 @@ void HubEffector::computeDerivatives(double integTime)
     matrixASCP = matrixBSCP/this->m_SC->value();
     vecTransSCP = vecTransSCP/this->m_SC->value();
 
-    //! Need to make contributions to the matrices from the hub
+    ////! Need to make contributions to the matrices from the hub
     intermediateMatrix = intermediateMatrix.Identity();
     matrixASCP += intermediateMatrix;
     //! make c_B skew symmetric matrix
@@ -131,8 +131,7 @@ void HubEffector::computeDerivatives(double integTime)
             rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP);
 
         }
-
-    }
+	}
 }
 
 void updateEffectorMassProps(double integTime){}
