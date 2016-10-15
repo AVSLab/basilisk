@@ -1,29 +1,32 @@
+/*
+ Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+ */
 %module simDynEffectorTemplate
 %{
    #include "simDynEffectorTemplate.h"
 %}
 
-// SWIG translates basic C/C++ type variables (bool, int, double etc.)
-// directly to the matching variable type in Python. However, more complex
-// templated types from the standard library like std:vector<> require
-// additional SWIG libraries. Immediately below we include the SWIG libraries
-// for std::vector, std::string, std::map and std::int
-%include "std_vector.i"
-%include "std_string.i"
-%include "std_map.i"
-%include "stdint.i"
-
-// Having included the additional SWIG type mapping libraries above
-// we now use the %template directive to create instantiations of a
-// C++ template class e.g. std::vector<double>.
-namespace std {
-   %template(IntVector) vector<int>;        // std::vector<int>
-   %template(DoubleVector) vector<double>;  // std::vector<double>
-   %template(StringVector) vector<string>;  // std::vector<std::string>
-   %template(ConstCharVector) vector<const char*>; // std::vector<char>
-}
+%include "swig_common_model.i"
 
 %include "sys_model.h"
 %include "dyn_effector.h"
 // Replace the following include with the header from your module
 %include "simDynEffectorTemplate.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

@@ -180,13 +180,12 @@ def unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
 
     testModule = simDynEffectorTemplate.simDynEffectorTemplate()
     testModule.ModelTag = "externalDisturbance"
-    testModule.inputVehProps = "spacecraft_mass_props"
     if useFlag:
-        SimulationBaseClass.SetCArray([1, 2, 3], 'double', testModule.extForce_B)
-        SimulationBaseClass.SetCArray([-1, 1, -1], 'double', testModule.extTorquePntB_B)
+        testModule.extForce_B = [1,2,3]
+        testModule.extTorquePntB_B = [-1, 1, -1]
     else:
-        SimulationBaseClass.SetCArray([0, 0, 0], 'double', testModule.extForce_B)
-        SimulationBaseClass.SetCArray([0, 0, 0], 'double', testModule.extTorquePntB_B)
+        testModule.extForce_B = [0, 0, 0]
+        testModule.extTorquePntB_B = [0, 0, 0]
     VehDynObject.addBodyEffector(testModule)
 
     # add objects to the task process

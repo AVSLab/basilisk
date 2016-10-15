@@ -172,8 +172,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         sphereInerita = 2.0 / 5.0 * thrusterPropMass * thrusterPropRadius * thrusterPropRadius
         thrusterPropInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
         thrustersDynObject.objProps.Mass = thrusterPropMass
-        SimulationBaseClass.SetCArray(thrusterPropCM, 'double', thrustersDynObject.objProps.CoM)
-        SimulationBaseClass.SetCArray(thrusterPropInertia, 'double', thrustersDynObject.objProps.InertiaTensor)
+        thrustersDynObject.objProps.CoM = thrusterPropCM
+        thrustersDynObject.objProps.InertiaTensor = thrusterPropInertia
 
         # set thruster commands
         ThrustMessage = thruster_dynamics.ThrustCmdStruct()
@@ -184,12 +184,11 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     if useExtForceTorque:
         extFTObject = ExternalForceTorque.ExternalForceTorque()
         extFTObject.ModelTag = "externalDisturbance"
-        extFTObject.inputVehProps = "spacecraft_mass_props"
-        SimulationBaseClass.SetCArray([-1, 1, -1], 'double', extFTObject.extTorquePntB_B)
+        extFTObject.extTorquePntB_B = [-1, 1, -1]
         if useExtForceTorque == 1:
-            SimulationBaseClass.SetCArray([1,2,3], 'double', extFTObject.extForce_B)
+            extFTObject.extForce_B = [1,2,3]
         else:
-            SimulationBaseClass.SetCArray([-1, -0.5, 0.5], 'double', extFTObject.extForce_N)
+            extFTObject.extForce_N = [-1, -0.5, 0.5]
         VehDynObject.addBodyEffector(extFTObject)
         scSim.AddModelToTask(unitTaskName, extFTObject)
 
