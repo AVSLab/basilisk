@@ -240,23 +240,23 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
         # Define Variable for panel 1
         panel1.mass = 100
-        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel1.IPntS_S)
+        panel1.IPntS_S = [100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0]
         panel1.d = 1.5
         panel1.k = 100.0
         panel1.c = 0.0
-        SimulationBaseClass.SetCArray([0.5, 0, 1], "double", panel1.r_HB_B)
-        SimulationBaseClass.SetCArray([-1, 0, 0, 0, -1, 0, 0, 0, 1], "double", panel1.HB)
+        panel1.r_HB_B = [0.5, 0, 1]
+        panel1.HB = [-1, 0, 0, 0, -1, 0, 0, 0, 1]
         panel1.theta = 5.0*numpy.pi/180
         panel1.thetaDot = 0.0
 
         # Define Variables for panel 2
         panel2.mass = 100.0
-        SimulationBaseClass.SetCArray([100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0], "double", panel2.IPntS_S)
+        panel2.IPntS_S = [100.0, 0.0, 0.0, 0.0, 50, 0.0, 0.0, 0.0, 50.0]
         panel2.d = 1.5
         panel2.k = 100
         panel2.c = 0.0
-        SimulationBaseClass.SetCArray([-0.5, 0, 1], "double", panel2.r_HB_B)
-        SimulationBaseClass.SetCArray([1, 0, 0, 0, 1, 0, 0, 0, 1], "double", panel2.HB)
+        panel2.r_HB_B = [-0.5, 0, 1]
+        panel2.HB = [1, 0, 0, 0, 1, 0, 0, 0, 1]
         panel2.theta = 0.0
         panel2.thetaDot = 0.0
 
@@ -279,14 +279,14 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
         # Define Variables for fuel tank 1
         fuelTank1.fuelTankData.massFT = 45
-        SimulationBaseClass.SetCArray([0, 0, 0], "double", fuelTank1.fuelTankData.r_TB_B)
+        fuelTank1.fuelTankData.r_TB_B = [0, 0, 0]
 
         # Define Variables for particle 1
         sloshParticle1.massFSP = 10
         sloshParticle1.k = 100.0
         sloshParticle1.c = 0.0
-        SimulationBaseClass.SetCArray([0.1, 0, -0.1], "double", sloshParticle1.r_PT_B)
-        SimulationBaseClass.SetCArray([1, 0, 0], "double", sloshParticle1.pHat_B)
+        sloshParticle1.r_PT_B = [0.1, 0, -0.1]
+        sloshParticle1.pHat_B = [1, 0, 0]
         sloshParticle1.rho = 0.05
         sloshParticle1.rhoDot = 0.0
 
@@ -294,8 +294,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         sloshParticle2.massFSP = 20
         sloshParticle2.k = 100.0
         sloshParticle2.c = 0.0
-        SimulationBaseClass.SetCArray([0, 0, 0.1], "double", sloshParticle2.r_PT_B)
-        SimulationBaseClass.SetCArray([0, 1, 0], "double", sloshParticle2.pHat_B)
+        sloshParticle2.r_PT_B = [0, 0, 0.1]
+        sloshParticle2.pHat_B = [0, 1, 0]
         sloshParticle2.rho = -0.025
         sloshParticle2.rhoDot = 0.0
 
@@ -303,8 +303,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         sloshParticle3.massFSP = 15
         sloshParticle3.k = 100.0
         sloshParticle3.c = 0.0
-        SimulationBaseClass.SetCArray([-0.1, 0, 0.1], "double", sloshParticle3.r_PT_B)
-        SimulationBaseClass.SetCArray([0, 0, 1], "double", sloshParticle3.pHat_B)
+        sloshParticle3.r_PT_B = [-0.1, 0, 0.1]
+        sloshParticle3.pHat_B = [0, 0, 1]
         sloshParticle3.rho = -0.015
         sloshParticle3.rhoDot = 0.0
 

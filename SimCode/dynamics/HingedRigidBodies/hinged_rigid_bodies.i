@@ -19,18 +19,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    #include "hinged_rigid_bodies.h"
 %}
 
-%include "std_vector.i"
-%include "std_string.i"
-%include "std_map.i"
-%include "stdint.i"
+%include "swig_common_model.i"
 
-// Instantiate templates used by example
-namespace std {
-   %template(IntVector) vector<int>;
-   %template(HingedRigidBodyVector) std::vector<HingedRigidBodyConfigData>;
-   %template(DoubleVector) vector<double>;
-   %template(StringVector) vector<string>;
-   %template(ConstCharVector) vector<const char*>;
-}
 %include "sys_model.h"
 %include "hinged_rigid_bodies.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
