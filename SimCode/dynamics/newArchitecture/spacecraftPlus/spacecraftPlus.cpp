@@ -130,12 +130,13 @@ void SpacecraftPlus::initializeDynamics()
         (*dynIt)->linkInStates(dynManager);
     }
     //! Zero m_SC, c_B, ISCPntB_B, cPrime_B, and ISCPntBPrime_B in the properties manager
-    (*this->m_SC).setZero();
+    (*this->m_SC) << 100;
     (*this->c_B).setZero();
-    (*this->ISCPntB_B).setZero();
+    (*this->ISCPntB_B) << 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0;
     (*this->cPrime_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
-
+    hub.useTranslation = true;
+    hub.useRotation = true;
 }
 
 void SpacecraftPlus::SelfInit()

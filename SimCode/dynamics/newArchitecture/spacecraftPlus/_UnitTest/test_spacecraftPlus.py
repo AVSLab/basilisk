@@ -74,11 +74,11 @@ def test_hubPropagate(show_plots):
     
     unitTestSim.InitializeSimulation()
     
-    scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
-    scObject.dynManager.setPropertyValue("centerOfMassSC", [[1.0], [0.0], [0.0]])
-    scObject.dynManager.setPropertyValue("inertiaSC", [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    scObject.dynManager.setPropertyValue("inertiaPrimeSC", [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-    scObject.dynManager.setPropertyValue("centerOfMassPrimeSC", [[0.0], [0.0], [0.0]])
+    # scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
+    # scObject.dynManager.setPropertyValue("centerOfMassSC", [[1.0], [0.0], [0.0]])
+    # scObject.dynManager.setPropertyValue("inertiaSC", [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    # scObject.dynManager.setPropertyValue("inertiaPrimeSC", [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+    # scObject.dynManager.setPropertyValue("centerOfMassPrimeSC", [[0.0], [0.0], [0.0]])
 
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
@@ -86,20 +86,20 @@ def test_hubPropagate(show_plots):
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
     
-    posRef.setState([[1.0], [0.0], [0.0]])
-    omegaRef.setState([[0.001], [0.0], [0.0]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.01], [0.0], [0.0]])
+    # posRef.setState([[1.0], [0.0], [0.0]])
+    # omegaRef.setState([[0.001], [0.0], [0.0]])
+    # sigmaRef.setState([[0.0], [0.0], [0.0]])
+    # velRef.setState([[0.01], [0.0], [0.0]])
 
     scObject.hub.mHub = [[1.0]]
-    scObject.hub.rBcB_B = [[1.0], [0.0], [0.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntB_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
-    unitTestSim.ConfigureStopTime(macros.sec2nano(100.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()
 
-    print velRef.getState()
     print posRef.getState()
+    print velRef.getState()
     print omegaRef.getState()
     print sigmaRef.getState()
 

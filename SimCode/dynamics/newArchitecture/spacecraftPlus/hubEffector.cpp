@@ -44,6 +44,14 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, "hubVelocity");
     this->sigmaState = states.registerState(3, 1, "hubSigma");
     this->omegaState = states.registerState(3, 1, "hubOmega");
+    //# posRef.setState([[1.0], [0.0], [0.0]])
+    //# omegaRef.setState([[0.001], [0.0], [0.0]])
+    //# sigmaRef.setState([[0.0], [0.0], [0.0]])
+    //# velRef.setState([[0.01], [0.0], [0.0]])
+    this->posState->state << 1.0, 0.0, 0.0;
+    this->omegaState->state << 0.001, -0.002, 0.003;
+    this->sigmaState->state.setZero();
+    this->velocityState->state << 55.24, 0.0, 0.0;
 }
 
 void HubEffector::computeDerivatives(double integTime)
@@ -92,7 +100,7 @@ void HubEffector::computeDerivatives(double integTime)
     intermediateVector = *ISCPntB_B*omegaBNLocal;
     vecRotSCP += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
 
-    if (this->useRotation) {
+    if (this->useRotation==true) {
         //! Set kinematic derivative
         ms2  = 1 - sigmaBNLocal.squaredNorm();
         s1s2 = sigmaBNLocal(0)*sigmaBNLocal(1);
@@ -108,10 +116,10 @@ void HubEffector::computeDerivatives(double integTime)
         Bmat(2,0) = 2*(s1s3 - sigmaBNLocal(1));
         Bmat(2,1) = 2*(s2s3 + sigmaBNLocal(0));
         Bmat(2,2) = ms2 + 2*sigmaBNLocal(2)*sigmaBNLocal(2);
-        sigmaBNDotLocal = 1/4*Bmat*omegaBNLocal;
+        sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 
-        if (useTranslation) {
+        if (this->useTranslation==true) {
             intermediateVector = vecRotSCP - matrixCSCP*matrixASCP.inverse()*vecTransSCP;
             intermediateMatrix = matrixDSCP - matrixCSCP*matrixASCP.inverse()*matrixBSCP;
             omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
@@ -124,10 +132,10 @@ void HubEffector::computeDerivatives(double integTime)
         omegaState->setDerivative(omegaBNDot_B);
     }
 
-    if (useTranslation) {
+    if (this->useTranslation==true) {
         //! - Set kinematic derivative
         posState->setDerivative(rBNDotLocal_N);
-        if (useRotation==false) {
+        if (this->useRotation==false) {
             rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP);
 
         }

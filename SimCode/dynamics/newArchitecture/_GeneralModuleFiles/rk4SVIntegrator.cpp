@@ -60,7 +60,7 @@ void rk4SVIntegrator::integrate(double currentTime, double timeStep)
 	{
 		itOut->second.setDerivative(it->second.getStateDeriv());
 		itOut->second.propagateState(2.0*timeStep / 6.0);
-		it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
+		it->second.state = itInit->second.state + timeStep*it->second.stateDeriv;
 	}
 
 	dynPtr->equationsOfMotion(currentTime + timeStep );
