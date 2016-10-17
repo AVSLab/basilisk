@@ -84,7 +84,7 @@ namespace std {
             matrixAssemble(i, j) = PyFloat_AsDouble(PySequence_GetItem(obj, j));
         }
     }
-	type localConvert = matrixAssemble;
+    type localConvert = matrixAssemble;
     $1 = &(localConvert);
 }
 
@@ -122,7 +122,7 @@ namespace std {
     {
         return Py_None;
     }
-	Eigen::MatrixXd readPtr = *($1);
+    Eigen::MatrixXd readPtr = *($1);
     for(i=0; i<readPtr.innerSize(); i++)
     {
         PyObject *locRow = PyList_New(0);
