@@ -33,10 +33,13 @@ foreach(module ${swig_modules})
 	    "${FileDir}/*.h"
 	)
     set(gen_files "")
+    set(swig_dep_files "")
     file(GLOB gen_files 
         "_GeneralModuleFiles/*.cpp"
         "_GeneralModuleFiles/*.h" 
         "_GeneralModuleFiles/*.c")
+    file(GLOB swig_dep_files
+        "_GeneralModuleFiles/*.i")
     string(REPLACE "/" ";" DirList ${FileDir})
     list(LENGTH DirList dirLength)
     set(currentDir "")
@@ -46,7 +49,9 @@ foreach(module ${swig_modules})
         file(GLOB gen_files_loc "${currentDir}_GeneralModuleFiles/*.cpp"
             "${currentDir}_GeneralModuleFiles/*.h"
             "${currentDir}_GeneralModuleFiles/*.c")
+        file(GLOB swig_dep_loc "${currentDir}_GeneralModuleFiles/*.i")
         set(gen_files "${gen_files};${gen_files_loc}")
+        set(swig_dep_files "${swig_dep_files};${swig_dep_loc}")
     set(endDir ${localDir})
     endforeach()
     if("${endDir}" STREQUAL "_GeneralModuleFiles")
@@ -64,7 +69,7 @@ foreach(module ${swig_modules})
     #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set_source_files_properties( ${swig_generated_file_fullname}
                PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
-    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files})
+    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
 

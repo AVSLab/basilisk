@@ -11,24 +11,27 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-#include "dynamics/HingedRigidBodies/hinged_rigid_bodies.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
+%module spacecraftPlus
+%{
+   #include "spacecraftPlus.h"
+   #include "hubEffector.h"
+%}
 
-/*! This is the constructor.  It sets some default initializers that can be
- overriden by the user.*/
-HingedRigidBodies::HingedRigidBodies()
-{
-}
+%include "swig_common_model.i"
 
-/*! The destructor.  Nothing of note is performed here*/
-HingedRigidBodies::~HingedRigidBodies()
-{
-    return;
-}
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/stateEffector.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "../_GeneralModuleFiles/dynObject2.h"
+%include "spacecraftPlus.h"
+%include "hubEffector.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

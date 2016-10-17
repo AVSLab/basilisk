@@ -14,24 +14,25 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef eulerIntegrator_h
-#define eulerIntegrator_h
 
-#include "dynamics/_GeneralModuleFiles/integrator.h"
+#ifndef stateVecIntegrator_h
+#define stateVecIntegrator_h
+
+class DynObject2;
 
 /*!
- @brief Euler integrator. It only implements the method integrate() to advance one time step.
+ @brief Base clase for every StateVecIntegrator. For creating a new StateVecIntegrator, inherit this class and override the integrate() method. integrate() only needs to advance one time step. DO NOT CHANGE THIS CLASS, if possible.
  */
-class eulerIntegrator : public integrator
+class StateVecIntegrator
 {
+	
 public:
-    eulerIntegrator(dynObject* dyn);
-    virtual ~eulerIntegrator();
-    virtual void integrate(double currentTime, double timeStep, double* currentState, double* nextState, unsigned int NStates);
+    StateVecIntegrator(DynObject2* dynIn);
+    virtual ~StateVecIntegrator(void);
+    virtual void integrate(double currentTime, double timeStep) = 0;
     
-    int statesAllocated;
-    double *dX;
+protected:
+    DynObject2* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 };
 
-
-#endif /* eulerIntegrator_h */
+#endif /* StateVecIntegrator_h */

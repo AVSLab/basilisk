@@ -11,24 +11,20 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-#include "dynamics/FuelTank/fuel_tank.h"
-#include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
+%module stateArchitecture
+%{
+   #include "../_GeneralModuleFiles/dynParamManager.h"
+%}
 
-/*! This is the constructor.  It sets some default initializers that can be
- overriden by the user.*/
-FuelTank::FuelTank()
-{
-}
+%include "swig_common_model.i"
 
-/*! The destructor.  Nothing of note is performed here*/
-FuelTank::~FuelTank()
-{
-    return;
-}
+%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "../_GeneralModuleFiles/StateData.h"
+
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}
