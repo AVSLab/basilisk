@@ -85,10 +85,15 @@ namespace std {
         }
     }
     type localConvert = matrixAssemble;
-    $1 = &(localConvert);
+    $1 = new type();
+    *$1 = localConvert;
 }
 
 %typemap(typecheck) type {
+    $1 = PySequence_Check($input);
+}
+
+%typemap(typecheck) type & {
     $1 = PySequence_Check($input);
 }
 
