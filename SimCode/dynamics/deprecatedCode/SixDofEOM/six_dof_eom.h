@@ -24,13 +24,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "utilities/sphericalHarmonics.h"
 #include "utilities/coeffLoader.h"
 #include "utilities/simMacros.h"
-#include "dynamics/Thrusters/thruster_dynamics.h"
-#include "dynamics/ReactionWheels/reactionwheel_dynamics.h"
-#include "dynamics/HingedRigidBodies/hinged_rigid_bodies.h"
-#include "dynamics/FuelTank/fuel_tank.h"
-#include "dynamics/_GeneralModuleFiles/dynObject.h"
-#include "dynamics/_GeneralModuleFiles/integrator.h"
-#include "dynamics/_GeneralModuleFiles/rk4Integrator.h"
+#include "dynamics/deprecatedCode/Thrusters/thruster_dynamics.h"
+#include "dynamics/deprecatedCode/ReactionWheels/reactionwheel_dynamics.h"
+#include "dynamics/deprecatedCode/HingedRigidBodies/hinged_rigid_bodies.h"
+#include "dynamics/deprecatedCode/FuelTank/fuel_tank.h"
+#include "dynamics/deprecatedCode/_GeneralModuleFiles/dynObject.h"
+#include "dynamics/deprecatedCode/_GeneralModuleFiles/integrator.h"
+#include "dynamics/deprecatedCode/_GeneralModuleFiles/rk4Integrator.h"
 /*! \addtogroup SimModelGroup
  * @{
  */

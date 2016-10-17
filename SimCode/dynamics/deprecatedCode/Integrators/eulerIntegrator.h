@@ -17,7 +17,7 @@
 #ifndef eulerIntegrator_h
 #define eulerIntegrator_h
 
-#include "dynamics/_GeneralModuleFiles/integrator.h"
+#include "dynamics/deprecatedCode/_GeneralModuleFiles/integrator.h"
 
 /*!
  @brief Euler integrator. It only implements the method integrate() to advance one time step.

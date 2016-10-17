@@ -14,7 +14,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-#include "dynamics/FuelTank/fuel_tank.h"
+#include "dynamics/deprecatedCode/HingedRigidBodies/hinged_rigid_bodies.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include <cstring>
@@ -23,12 +23,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
-FuelTank::FuelTank()
+HingedRigidBodies::HingedRigidBodies()
 {
 }
 
 /*! The destructor.  Nothing of note is performed here*/
-FuelTank::~FuelTank()
+HingedRigidBodies::~HingedRigidBodies()
 {
     return;
 }

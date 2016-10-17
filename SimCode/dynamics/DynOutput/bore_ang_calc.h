@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
-#include "dynamics/SixDofEOM/six_dof_eom.h"
+#include "dynamics/deprecatedCode/SixDofEOM/six_dof_eom.h"
 
 /*! \addtogroup SimModelGroup
  * @{

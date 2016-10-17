@@ -14,7 +14,7 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-#include "dynamics/SixDofEOM/six_dof_eom.h"
+#include "dynamics/deprecatedCode/SixDofEOM/six_dof_eom.h"
 #include "dynamics/DynOutput/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_planet_state.h"
