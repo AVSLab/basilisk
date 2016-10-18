@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
 %include "vehEffectorOut.h"
+GEN_SIZEOF(thrustRWDesatConfig);
 %include "thrustRWDesat.h"
 
 %pythoncode %{

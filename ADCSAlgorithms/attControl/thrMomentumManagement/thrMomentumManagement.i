@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_thrMomentumManagement;
 %constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumManagement;
+GEN_SIZEOF(thrMomentumManagementConfig);
 %include "thrMomentumManagement.h"
 %include "../_GeneralModuleFiles/vehControlOut.h"
 

@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void CrossInit_celestialTwoBodyPoint(void*, uint64_t);
 %ignore CrossInit_celestialTwoBodyPoint;
 %include "../_GeneralModuleFiles/attGuidOut.h"
+GEN_SIZEOF(celestialTwoBodyPointConfig);
 %include "celestialTwoBodyPoint.h"
 
 %pythoncode %{

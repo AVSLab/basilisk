@@ -8,6 +8,7 @@
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/unscent_kalfilt.h"
 %include "../_GeneralModuleFiles/navStateOut.h"
+GEN_SIZEOF(RWConfigElement);
 %include "attitude_ukf.h"
 
 %pythoncode %{

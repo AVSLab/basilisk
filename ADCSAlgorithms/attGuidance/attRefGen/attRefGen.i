@@ -31,6 +31,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore Reset_attRefGen;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
+GEN_SIZEOF(attRefGenConfig);
 %include "attRefGen.h"
 
 %pythoncode %{

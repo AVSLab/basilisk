@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_PD;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+GEN_SIZEOF(MRP_PDConfig);
 %include "MRP_PD.h"
 %pythoncode %{
 import sys

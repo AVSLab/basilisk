@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_rasterManager;
 %constant void Reset_rasterManager(void*, uint64_t, uint64_t);
 %ignore Reset_rasterManager;
+GEN_SIZEOF(rasterManagerConfig);
 %include "rasterManager.h"
 
 // supportfile to be included in this sub-module

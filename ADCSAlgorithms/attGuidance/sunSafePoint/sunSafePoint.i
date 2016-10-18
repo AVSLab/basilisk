@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_sunSafePoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
+GEN_SIZEOF(sunSafePointConfig);
 %include "sunSafePoint.h"
 
 %pythoncode %{

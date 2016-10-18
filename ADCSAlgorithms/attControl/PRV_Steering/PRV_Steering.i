@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_PRV_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+GEN_SIZEOF(PRV_SteeringConfig);
 %include "PRV_Steering.h"
 %pythoncode %{
 import sys

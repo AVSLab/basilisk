@@ -171,6 +171,8 @@ ARRAY2ASLIST(unsigned int)
 %enddef
 
 %include "carrays.i"
+%include "cmalloc.i"
+#define GEN_SIZEOF(type) %sizeof(type, type)
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);

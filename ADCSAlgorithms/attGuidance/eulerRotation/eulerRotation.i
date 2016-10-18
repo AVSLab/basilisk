@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_eulerRotation;
 %constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
 %ignore Reset_eulerRotation;
+GEN_SIZEOF(eulerRotationConfig);
 %include "eulerRotation.h"
 
 // supportfile to be included in this sub-module

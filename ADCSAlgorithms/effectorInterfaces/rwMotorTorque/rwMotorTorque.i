@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void Reset_rwMotorTorque(void*, uint64_t, uint64_t);
 %ignore Reset_rwMotorTorque;
 ARRAYASLIST(FSWdeviceAvailability)
+GEN_SIZEOF(rwMotorTorqueConfig);
 %include "rwMotorTorque.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"

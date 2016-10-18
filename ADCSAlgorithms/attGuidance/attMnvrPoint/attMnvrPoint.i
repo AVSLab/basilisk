@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_attMnvrPoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
+GEN_SIZEOF(attMnvrPointConfig);
 %include "attMnvrPoint.h"
 
 %pythoncode %{

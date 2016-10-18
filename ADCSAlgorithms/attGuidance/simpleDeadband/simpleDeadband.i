@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_simpleDeadband;
 %constant void Reset_simpleDeadband(void*, uint64_t, uint64_t);
 %ignore Reset_simpleDeadband;
+GEN_SIZEOF(simpleDeadbandConfig);
 %include "simpleDeadband.h"
 
 // sample Module supportfile to be included in this sub-module

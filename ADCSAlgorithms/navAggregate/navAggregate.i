@@ -28,6 +28,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_aggregateNav;
 %array_functions(AggregateAttInput, AggAttArray);
 %array_functions(AggregateTransInput, AggTransArray);
+GEN_SIZEOF(AggregateAttInput);
+GEN_SIZEOF(AggregateTransInput);
+GEN_SIZEOF(NavAggregateData);
 %include "navAggregate.h"
 %pythoncode %{
 import sys

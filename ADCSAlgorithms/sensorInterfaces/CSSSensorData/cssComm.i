@@ -27,6 +27,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void CrossInit_cssProcessTelem(void*, uint64_t);
 %ignore CrossInit_cssProcessTelem;
 STRUCTASLIST(CSSOutputData)
+GEN_SIZEOF(CSSOutputData);
+GEN_SIZEOF(CSSConfigData);
 %include "cssComm.h"
 %pythoncode %{
 import sys

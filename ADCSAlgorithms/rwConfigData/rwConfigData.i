@@ -28,6 +28,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore CrossInit_rwConfigData;
 %constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_rwConfigData;
+GEN_SIZEOF(RWConfigParams);
+GEN_SIZEOF(rwConfigData);
 %include "rwConfigData.h"
 
 %pythoncode %{

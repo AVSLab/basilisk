@@ -29,6 +29,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void Reset_MRP_Feedback(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Feedback;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+GEN_SIZEOF(MRP_FeedbackConfig);
 %include "MRP_Feedback.h"
 
 %pythoncode %{

@@ -27,6 +27,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
 STRUCTASLIST(SingleCSSConfig)
+GEN_SIZEOF(CSSWlsEstOut);
+GEN_SIZEOF(SingleCSSConfig);
+GEN_SIZEOF(CSSWLSConfig);
 %include "cssWlsEst.h"
 
 %pythoncode %{
