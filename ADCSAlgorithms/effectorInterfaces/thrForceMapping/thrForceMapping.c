@@ -137,24 +137,16 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     uint64_t    clockTime;
     uint32_t    readSize;
     double      F[MAX_EFF_CNT];               /*!< [N]     vector of commanded thruster forces */
-    double      forcePerAxis[MAX_EFF_CNT];    /*!< [N]     vector of commanded thruster forces to produce a torque about a body axis */
-    int         i,j,c,k;
+    double      Fbar[MAX_EFF_CNT];            /*!< [N]     vector of intermediate thruster forces */
+    int         i,c;
     int         counterPosForces;             /*!< []      counter for number of positive thruster forces */
-    double      tempVec[3];
-    double      Lrj[3];                       /*!< [Nm]    control axis specific desired control torque vector */
-    double      D2;
-    double      D[MAX_EFF_CNT];               /*!< [m]     mapping matrix from thruster forces to body torque */
-    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     mapping matrix from positive thruster forces to body torque 
+    double      D[MAX_EFF_CNT][3];            /*!< [m]     mapping matrix from thruster forces to body torque */
+    double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     reduced mapping matrix
                                                            Note, the vectors are stored as row vectors, not column vectors */
-    double      DbarDbarT33[3][3];
-    double      DbarTDbar22[2][2];
-    double      DbarTDbar11;
-    double      DTDDTinv[MAX_EFF_CNT];        /*!< [1/m]   mapping matrix from command torque Lr to thruster force sets */
-    double      matInv33[3][3];
-    double      matInv22[2][2];
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
+    uint32_t    numOfAvailableThrusters;      /*!< []      number of available thrusters */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
@@ -169,118 +161,46 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
         v3Subtract(ConfigData->rThruster_B[i], ConfigData->sc.CoM_B, rThrusterRelCOM_B[i]);
     }
 
+
     /* clear the net thruster force output array */
     memset(F,0x0,MAX_EFF_CNT*sizeof(double));
 
+    /* temporary available thruster assignment until the thruster availability is read in through a message */
+    numOfAvailableThrusters = ConfigData->numThrusters;
 
-    for (k=0;k<ConfigData->numOfAxesToBeControlled;k++)
+
+    /* compute general mapping matrix */
+    for(i=0; i<numOfAvailableThrusters; i=i+1)
     {
-        D2 = 0.;
-        for(i=0; i<ConfigData->numThrusters; i=i+1)
-        {
-            v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], tempVec);
-            D[i] = v3Dot(tempVec, ConfigData->controlAxes_B+3*k);
-            D2 += D[i]*D[i];
-        }
-        /* do a pseudo inverse (i.e. SVD inverse) if the determinant is near zero */
-        for(i=0; i<ConfigData->numThrusters; i=i+1)
-        {
-            if (D2 > ConfigData->epsilon) {
-                DTDDTinv[i] = D[i]/ D2;
-            } else {
-                DTDDTinv[i] = 0.0;
-            }
-        }
+        v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], D[i]);
+    }
 
-        /* check which thrusters require a positive thrust force */
+    findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F);
+    substractMinMax(F, numOfAvailableThrusters, ConfigData->thrForceSign);
+
+
+    if (numOfAvailableThrusters != ConfigData->numThrusters) {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
-        for (i=0;i<ConfigData->numThrusters;i++) {
-            forcePerAxis[i] = DTDDTinv[i] * v3Dot(Lr_B,ConfigData->controlAxes_B+3*k);
-
-            if (forcePerAxis[i]*ConfigData->thrForceSign > 0.0) {
+        for (i=0;i<numOfAvailableThrusters;i++) {
+            if (F[i]*ConfigData->thrForceSign > ConfigData->epsilon) {
                 thrusterUsed[i] = 1;
-                v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], Dbar[counterPosForces]);
+                v3Copy(D[i], Dbar[counterPosForces]);
                 counterPosForces += 1;
             }
         }
+        findMinimumNormForce(ConfigData, Dbar, Lr_B, counterPosForces, Fbar);
 
-        /* compute Dbar.Dbar^T to check if this is of rank 3 */
-        for (i=0;i<3;i++){
-            for (j=0;j<3;j++) {
-                DbarDbarT33[i][j] = 0.0;
-                for (c=0;c<counterPosForces;c++) {
-                    DbarDbarT33[i][j] += Dbar[c][i]*Dbar[c][j];
-                }
-            }
-        }
-
-        memset(forcePerAxis,0x0,MAX_EFF_CNT*sizeof(double));
-        v3Scale(v3Dot(Lr_B,ConfigData->controlAxes_B+3*k), ConfigData->controlAxes_B+3*k, Lrj);
-        if (m33Determinant(DbarDbarT33) > ConfigData->epsilon) {
-            /* 
-             do a minimum norm inverse 
-             */
-            m33Inverse(DbarDbarT33, matInv33);
-            m33MultV3(matInv33, Lrj, tempVec);
-            for (i=0;i<counterPosForces;i++) {
-                forcePerAxis[i] = v3Dot(Dbar[i], tempVec);
-            }
-
-        } else {
-            /* 
-             do a least squares inverse 
-             */
-
-            switch (counterPosForces) {
-                case 2:
-                    for (i=0;i<2;i++){
-                        for (j=0;j<2;j++) {
-                            DbarTDbar22[i][j] = 0.0;
-                            for (c=0;c<3;c++) {
-                                DbarTDbar22[i][j] += Dbar[i][c]*Dbar[j][c];
-                            }
-                        }
-                    }
-
-                    if (m22Determinant(DbarTDbar22) > ConfigData->epsilon) {
-                        /* matrix is full rank, do regular least squares inverse */
-                        m22Inverse(DbarTDbar22, matInv22);
-                        for (i=0;i<2;i++) {
-                            tempVec[i] = v3Dot(Dbar[i], Lrj);
-                        }
-                        m22MultV2(matInv22, tempVec, forcePerAxis);
-                    } else {
-                        /* matrix is not full rank, only one axis can be controlled. */
-                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/v3Norm(Dbar[0])/(1+v3Norm(Dbar[1])/v3Norm(Dbar[0]));
-                        forcePerAxis[1] = forcePerAxis[0];
-                    }
-                    break;
-
-                case 1:
-                    DbarTDbar11 = v3Dot(Dbar[0], Dbar[0]);
-                    if (DbarTDbar11 > ConfigData->epsilon) {
-                        forcePerAxis[0] = v3Dot(Dbar[0], Lrj)/DbarTDbar11;
-                    } else {
-                        forcePerAxis[0] = 0.0;
-                    }
-
-                default:
-                    /* the current control axis cannot be achieved with the currently available thrusters */
-                    break;
-            }
-
-        }
-
-        /* add the per axis thrust solutions to the overall thruster force solution */
         c = 0;
-        for (i=0;i<ConfigData->numThrusters;i++) {
+        for (i=0;i<numOfAvailableThrusters;i++) {
             if (thrusterUsed[i]) {
-                F[i] += forcePerAxis[c];
+                F[i] = Fbar[c];
                 c += 1;
+            } else {
+                F[i] = 0.0;
             }
         }
-
+        substractMinMax(F, numOfAvailableThrusters, ConfigData->thrForceSign);
     }
 
 
@@ -290,6 +210,122 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.effectorRequest);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
                  (void*) &(ConfigData->thrusterForceOut), moduleID);
+
+    return;
+}
+
+
+void substractMinMax(double *F, uint32_t size, int32_t thrForceSign)
+{
+    double extremeValue;                        /*!< [N]    min or max value of the force set */
+    int    i;
+
+    extremeValue = F[0];
+    for (i=1;i<size;i++) {
+        if (F[i]*thrForceSign < extremeValue*thrForceSign) {
+            extremeValue = F[i];
+        }
+    }
+    for (i=0;i<size;i++){
+        F[i] -= extremeValue;
+    }
+
+    return;
+}
+
+void findMinimumNormForce(thrForceMappingConfig *ConfigData,
+                          double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT])
+{
+
+    int i,j,k;                                  /*!< []     counters */
+    double      BLr[3];                         /*!< [Nm]   control torque vector reduced to controlable space */
+    double      DDT[3][3];                      /*!< [m^2]  [D].[D]^T matrix */
+    double      CD[2][MAX_EFF_CNT];             /*!< [m]    [C].[D] */
+    double      CDCDT22[2][2];                  /*!< [m^2]  ([C].[D]).([C].[D])^T */
+    double      CDCDT11;                        /*!< [m^2]  ([C].[D]).([C].[D])^T */
+    double      matInv33[3][3];
+    double      matInv22[2][2];
+    double      tempVec[3];
+
+    /* zero the output force vector */
+    memset(F,0x0,MAX_EFF_CNT*sizeof(double));
+
+    /* find [D].[D]^T */
+    for(i=0; i<3; i++) {
+        for(j=0; j<3; j++) {
+            DDT[i][j] = 0.0;
+            for (k=0;k<numForces;k++) {
+                DDT[i][j] += D[k][i] * D[k][j];
+            }
+        }
+    }
+
+    if (m33Determinant(DDT) > ConfigData->epsilon) {
+        /* find minimum norm inverse to control all three axes */
+        m33Inverse(DDT, matInv33);
+        v3SetZero(BLr);
+        for (i=0;i<ConfigData->numOfAxesToBeControlled;i++) {
+            v3Scale(v3Dot(ConfigData->controlAxes_B+3*i, Lr_B), ConfigData->controlAxes_B+3*i, tempVec);
+            v3Add(BLr, tempVec, BLr);
+        }
+        m33MultV3(matInv33, BLr, tempVec);
+        for (i=0;i<numForces;i++) {
+            F[i] = 0.0;
+            for (k=0;k<3;k++) {
+                F[i] += D[i][k]*tempVec[k];
+            }
+        }
+    } else {
+        if (ConfigData->numOfAxesToBeControlled == 2) {
+            /* compute the minimum norm solution on the 2D [C] subspace */
+            for (i=0;i<2;i++){
+                for (j=0;j<numForces;j++) {
+                    CD[i][j] = v3Dot(ConfigData->controlAxes_B+3*i, D[j]);
+                }
+            }
+            for (i=0;i<2;i++) {
+                for (j=0;j<2;j++) {
+                    CDCDT22[i][j] = 0.0;
+                    for (k=0;k<numForces;k++) {
+                        CDCDT22[i][j] += CD[i][k]*CD[j][k];
+                    }
+                }
+            }
+
+            if (m22Determinant(CDCDT22) > ConfigData->epsilon) {
+                tempVec[0] = v3Dot(ConfigData->controlAxes_B,   Lr_B);
+                tempVec[1] = v3Dot(ConfigData->controlAxes_B+3, Lr_B);
+                m22Inverse(CDCDT22, matInv22);
+                m22MultV2(matInv22, tempVec, tempVec);
+
+                for (i=0;i<numForces;i++) {
+                    F[i] = 0.;
+                    for (k=0;k<2;k++) {
+                        F[i] += CD[k][i]*tempVec[k];
+                    }
+                }
+            }
+        }
+
+        if (ConfigData->numOfAxesToBeControlled == 1) {
+            /* compute the minimum norm solution on the 1D [C] subspace */
+            for (j=0;j<numForces;j++) {
+                CD[0][j] = v3Dot(ConfigData->controlAxes_B, D[j]);
+            }
+            CDCDT11 = 0.0;
+            for (k=0;k<numForces;k++) {
+                CDCDT11 += CD[0][k]*CD[0][k];
+            }
+
+            if (CDCDT11 > ConfigData->epsilon) {
+                tempVec[0] = v3Dot(ConfigData->controlAxes_B,   Lr_B);
+                tempVec[0] = tempVec[0] / CDCDT11;
+                for (i=0;i<numForces;i++) {
+                    F[i] = CD[0][i]*tempVec[0];
+                }
+            }
+        }
+    }
 
     return;
 }

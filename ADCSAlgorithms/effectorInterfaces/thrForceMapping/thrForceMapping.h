@@ -63,7 +63,11 @@ extern "C" {
     void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t moduleID);
     void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
     void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime, uint64_t moduleID);
-    
+
+    void substractMinMax(double *F, uint32_t size, int32_t thrForceSign);
+    void findMinimumNormForce(thrForceMappingConfig *ConfigData,
+                              double D[MAX_EFF_CNT][3], double Lr_B[3], uint32_t numForces, double F[MAX_EFF_CNT]);
+
 #ifdef __cplusplus
 }
 #endif
