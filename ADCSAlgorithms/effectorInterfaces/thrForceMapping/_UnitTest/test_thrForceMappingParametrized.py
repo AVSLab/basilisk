@@ -49,24 +49,22 @@ import fswSetupThrusters
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce", [
-    (False, False, False, False, False)
-    ,(True, False, False, False, False)
-    ,(False, True, False, False, False)
-    ,(False, True, True, False, False)
-    ,(False, True, True, True, False)
-    ,(False, True, False, False, True)
+@pytest.mark.parametrize("useDVThruster, useCOMOffset, dropThruster, dropAxis", [
+      (False, False, False, False)
+    , (False, False, False, True)
+    , (False, True, False, False)
+    # , (False, False, True, False)
+    , (True, False, False, False)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, ignoreAxis2, useCOMOffset,dropThruster, use2ndLr, useNegForce):
+def test_module(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster,
-                                                   use2ndLr, useNegForce)
+    [testResults, testMessage] = thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis)
     assert testResults < 1, testMessage
 
 
-def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2ndLr, useNegForce):
+def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dropAxis):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -114,7 +112,7 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
          0., 1.0, 0.,
          0., 0., 1.0]
     if useCOMOffset == 1:
-        CoM_S = [0.1, 0.05, 0.01]
+        CoM_S = [0,0,0.02]
     else:
         CoM_S = [0,0,0]
     vehicleConfigOut.BS = BS
@@ -133,77 +131,111 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    if use2ndLr:
-        requestedTorque = [0.1, 0.16, 0.005]            # Set up a list as a 3-vector
-    else:
-        requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
+    requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           0,
                                           inputMessageData)             # write data into the simulator
 
-    if useNegForce:
-        moduleConfig.thrForceSign = -1
-    else:
-        moduleConfig.thrForceSign = +1
-
     moduleConfig.epsilon = 0.0005
-    if ignoreAxis2==0:
-        controlAxes_B = [
-             1,0,0
-            ,0,1,0
-            ,0,0,1
-        ]
-    else:
-        controlAxes_B = [
-             1,0,0
-            ,0,0,1
-        ]
-
-    moduleConfig.controlAxes_B = controlAxes_B
-
     fswSetupThrusters.clearSetup()
-    if dropThruster:
-        rcsLocationData = [ \
-                   [-0.86360, -0.82550, 1.79070],
-                   [-0.82550, -0.86360, 1.79070],
-                   [0.82550, 0.86360, 1.79070],
-                   [0.86360, 0.82550, 1.79070],
-                   [-0.86360, -0.82550, -1.79070],
-                   [-0.82550, -0.86360, -1.79070],
-                   [0.82550, 0.86360, -1.79070]\
-                   ]
-        rcsDirectionData = [ \
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [0.0, 1.0, 0.0]\
-                        ]
+    if useDVThruster:
+        # DV thruster setup
+        moduleConfig.thrForceSign = -1
+        moduleConfig.controlAxes_B = [
+              1, 0, 0
+            , 0, 1, 0
+        ]
+        if dropThruster:
+            rcsLocationData = [ \
+                [0, 0.413, -0.1671],
+                [0.35766849176297305, 0.20650000000000013, -0.1671],
+                [0.3576684917629732, -0.20649999999999988, -0.1671],
+                [0, -0.413, -0.1671],
+                [-0.35766849176297305, -0.20650000000000018, -0.1671] \
+                ]
+            rcsDirectionData = [ \
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0] \
+                ]
+        else:
+            rcsLocationData = [ \
+                [0, 0.413, -0.1671],
+                [0.35766849176297305, 0.20650000000000013, -0.1671],
+                [0.3576684917629732, -0.20649999999999988, -0.1671],
+                [0, -0.413, -0.1671],
+                [-0.35766849176297305, -0.20650000000000018, -0.1671],
+                [-0.35766849176297333, 0.20649999999999968, -0.1671] \
+                ]
+            rcsDirectionData = [ \
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0],
+                [0.0, 0.0, 1.0] \
+                ]
+
     else:
-        rcsLocationData = [ \
-                   [-0.86360, -0.82550, 1.79070],
-                   [-0.82550, -0.86360, 1.79070],
-                   [0.82550, 0.86360, 1.79070],
-                   [0.86360, 0.82550, 1.79070],
-                   [-0.86360, -0.82550, -1.79070],
-                   [-0.82550, -0.86360, -1.79070],
-                   [0.82550, 0.86360, -1.79070],
-                   [0.86360, 0.82550, -1.79070] \
-                   ]
-        rcsDirectionData = [ \
-                        [1.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [-1.0, 0.0, 0.0],
-                        [0.0, -1.0, 0.0],
-                        [0.0, 1.0, 0.0],
-                        [1.0, 0.0, 0.0] \
-                        ]
+        # RCS thruster setup
+        moduleConfig.thrForceSign = +1
+        if dropAxis:
+            moduleConfig.controlAxes_B = [
+                1, 0, 0
+                , 0, 0, 1
+            ]
+        else:
+            moduleConfig.controlAxes_B = [
+                  1, 0, 0
+                , 0, 1, 0
+                , 0, 0, 1
+            ]
+        if dropThruster:
+            rcsLocationData = [ \
+                [-0.86360, -0.82550, 1.79070],
+                [-0.82550, -0.86360, 1.79070],
+                [0.82550, 0.86360, 1.79070],
+                [0.86360, 0.82550, 1.79070],
+                [-0.86360, -0.82550, -1.79070],
+                [-0.82550, -0.86360, -1.79070],
+                [0.82550, 0.86360, -1.79070] \
+                ]
+            rcsDirectionData = [ \
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0] \
+                ]
+        else:
+            rcsLocationData = [ \
+                [-0.86360, -0.82550, 1.79070],
+                [-0.82550, -0.86360, 1.79070],
+                [0.82550, 0.86360, 1.79070],
+                [0.86360, 0.82550, 1.79070],
+                [-0.86360, -0.82550, -1.79070],
+                [-0.82550, -0.86360, -1.79070],
+                [0.82550, 0.86360, -1.79070],
+                [0.86360, 0.82550, -1.79070] \
+                ]
+            rcsDirectionData = [ \
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [-1.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [0.0, -1.0, 0.0],
+                [-1.0, 0.0, 0.0] \
+                ]
+
+
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.95)
@@ -232,53 +264,54 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(numThrusters))
+    print moduleOutput
 
     # set the output truth states
     trueVector=[];
-    if ignoreAxis2==0:
-        if useCOMOffset == 0:
+    if useDVThruster:
+        # DV Thruster results
+        if useCOMOffset:
             trueVector = [
-                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711],
-                       [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762018,0.2792204165968615,0,0.2119927316777711]
-                       ]*(-1)
+                [0., -0.05406561590619907, -0.8611681179239552, -1.6142050040355125, -1.5601393881293135,
+                 -0.7530368861115577],
+                [0., -0.05406561590619907, -0.8611681179239552, -1.6142050040355125, -1.5601393881293135,
+                 -0.7530368861115577]
+            ]
         else:
-            if dropThruster:
-                if use2ndLr:
-                    trueVector = [
-                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0],
-                        [0,0.0309505092550829,0.00302846759539673,0.07552754243563822,0,0.02792204165968615,0]
-                    ]*(-1)
-                else:
-                    trueVector = [
-                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
-                         0.2792204165968615, 0],
-                        [0.1396102082984308, 0.7032058799524038, 0.4239854633555422, 0, 0.1396102082984307,
-                         0.2792204165968615, 0]
-                    ]*(-1)
-            else:
-                if useNegForce:
-                    trueVector = [
-                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309],
-                               [-0.211992731677771,0,-0.2792204165968616,-0.3516029399762018,0,-0.211992731677771,-0.4912131482746326,-0.1396102082984309]
-                               ]*(-1)
-                else:
-                    trueVector = [
-                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711],
-                               [0.1396102082984308,0.4912131482746326,0.2119927316777711,0,0.3516029399762017,0.2792204165968615,0,0.2119927316777711]
-                               ]*(-1)
+            trueVector = [
+                [0., -0.05406561590619907, -0.8611681179239552, -1.6142050040355125, -1.5601393881293135,
+                 -0.7530368861115577],
+                [0., -0.05406561590619907, -0.8611681179239552, -1.6142050040355125, -1.5601393881293135,
+                 -0.7530368861115577]
+            ]
     else:
-        if ignoreAxis2==1:
+        # RCS thruster results
+        if dropAxis:
             trueVector = [
-           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711],
-           [0,0.4912131482746326,0.2119927316777711,0,0.2119927316777711,0.2792204165968615,0,0.2119927316777711]
-                   ]*(-1)
+                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603],
+                [0.351603, 0., 0.27922, 0.351603, 0.351603, 0.27922, 0., 0.351603]
+            ]
+        elif useCOMOffset:
+            trueVector = [
+                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569],
+                [0.284128, 0.00311817, 0.279186, 0.422161, 0.423721, 0.282304, 0., 0.282569]
+            ]
+        elif dropThruster:
+            trueVector = [
+                [0.563596,0,0.27922,0.421408,0.421408,0.27922,0],
+                [0.563596,0,0.27922,0.421408,0.421408,0.27922,0]
+            ]
         else:
-            testFailCount+=1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed with unsupported input parameters")
+            trueVector = [
+                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798],
+                [0.281798, 0., 0.27922, 0.421408, 0.421408, 0.27922, 0., 0.281798]
+            ]
+
+    print trueVector
 
 
     # compare the module results to the truth values
-    accuracy = 1e-8
+    accuracy = 1e-6
     for i in range(0,len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], numThrusters, accuracy):
@@ -315,9 +348,8 @@ def thrusterForceTest(show_plots, ignoreAxis2, useCOMOffset, dropThruster, use2n
 if __name__ == "__main__":
     test_module(              # update "module" in function name
                  False,
-                 False,           # ignoreAxis2 value
+                 False,           # useDVThruster
                  False,           # use COM offset
-                 False,           # drop last thruster
-                 False,           # use alternate Lr torque
-                 False            # use pos/neg thruster forces
-               )
+                 False,           # drop thruster(s)
+                 False            # drop control axis
+    )
