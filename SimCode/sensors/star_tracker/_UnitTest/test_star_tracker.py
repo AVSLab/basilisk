@@ -73,16 +73,17 @@ testNames = ['basic']
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'basic'),
     (False,'time'),
+    (False,'T_str2Bdy'),
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitSimIMU(show_plots, useFlag, testCase):
+def test_unitSimStarTracker(show_plots, useFlag, testCase):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimIMU(show_plots, useFlag, testCase)
+    [testResults, testMessage] = unitSimStarTracker(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
 
-def unitSimIMU(show_plots, useFlag, testCase):
+def unitSimStarTracker(show_plots, useFlag, testCase):
     testFail = False
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -140,15 +141,37 @@ def unitSimIMU(show_plots, useFlag, testCase):
         simStopTime = 0.5
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
         OutputStateData.sigma = sigma
-        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
-        trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
-
-    elif testCase == 'time':
-        simStopTime = 0.5
         J2000Current = 6129.15171032306 # 12-Oct-2016 15:38:27.7719122171402
         SpiceTimeOutput.J2000Current = J2000Current
-        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(np.array([0,0,0])),simStopTime,unitProcRate)
+        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
         trueVector['timeTag'] =  np.arange(J2000Current,J2000Current+simStopTime,unitProcRate_s)
+
+    elif testCase == 'T_str2Bdy':
+        simStopTime = 0.5
+
+        sigma_str2Bdy = np.array([-0.589909452160510,-0.188883722330776,0.574331363764254])
+        T_str2Bdy = rbk.MRP2C(sigma_str2Bdy)
+        OutputStateData.T_str2Bdy = T_str2Bdy
+
+        sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
+        OutputStateData.sigma = sigma
+
+        beta_str2Inrtl = rbk.C2EP(np.dot(rbk.MRP2C(-sigma_str2Bdy),rbk.MRP2C(sigma)))
+
+        trueVector['qInrtl2Case'] = listStack(beta_str2Inrtl,simStopTime,unitProcRate)
+        trueVector['timeTag'] =  np.arange(0,simStopTime,unitProcRate_s)
+
+    elif 'MRPErrors':
+        simStopTime = 500.
+        setRandomWalk(StarTracker, 0.01, [0.0] * 3)
+        StarTracker.PMatrix[0] = StarTracker.PMatrix[4] = 0
+
+        # sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
+        sigma = np.array([0.,0.,0.])
+        OutputStateData.sigma = sigma
+        prv = rbk.MRP2PRV(sigma)
+        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
+        trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
 
     else:
         raise Exception('invalid test case')
@@ -170,7 +193,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     unitSim.TotalSim.WriteMessageData("spice_time_output_data", SpiceTimeOutput_messageSize, 0, SpiceTimeOutput )
 
     unitSim.InitializeSimulation()
-    unitSim.ConfigureStopTime(macros.sec2nano(0.5))
+    unitSim.ConfigureStopTime(macros.sec2nano(simStopTime))
     unitSim.ExecuteSimulation()
 
 
@@ -181,7 +204,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(StarTracker.outputStateMessage + '.' + moduleOutputName, range(fieldLengths[i]))
         print "\n\n" + moduleOutputName
         print str(moduleOutput[moduleOutputName]) + "\n"
-        print str(trueVector[moduleOutputName]) + "\n\n"
+        # print str(trueVector[moduleOutputName]) + "\n\n"
 
 
     if not 'accuracy' in vars():
@@ -203,6 +226,25 @@ def unitSimIMU(show_plots, useFlag, testCase):
                 if np.max(np.abs(np.asarray(moduleOutput[moduleOutputName][:,i+1]))) > trueVector[moduleOutputName][i]:
                     testFail = True
 
+    moduleOutput['prvInrtl2Case'] = np.zeros([int(simStopTime/unitProcRate_s)+1,3])
+    for i in range(0,int(simStopTime/unitProcRate_s)+1):
+        moduleOutput['prvInrtl2Case'][i,:] = rbk.EP2PRV(moduleOutput['qInrtl2Case'][i,1:])
+
+    print moduleOutput['qInrtl2Case'][1,1:]
+    print moduleOutput['prvInrtl2Case'][1,:]
+    print "here"
+    print rbk.EP2PRV(np.array([1,0,0,0]))
+
+    plt.plot(moduleOutput['qInrtl2Case'][:,0],moduleOutput['prvInrtl2Case'])
+    plt.show()
+
+    print rbk.MRP2PRV(sigma)
+    if testCase == 'MRPErrors':
+        for i in range(0,3):
+            # print (moduleOutput['prvInrtl2Case'][:,i])
+            print np.mean(moduleOutput['prvInrtl2Case'][:,i])
+            print np.std(moduleOutput['prvInrtl2Case'][:,i])
+
         else:
             for i in range(0,len(trueVector[moduleOutputName])):
                 if fieldLengths[j] > 1:
@@ -215,7 +257,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
         if testFail:
             testFailCount += 1
-            testMessages.append("FAILED: " + ImuSensor.ModelTag + " Module failed " +
+            testMessages.append("FAILED: " + StarTracker.ModelTag + " Module failed " +
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
                                 "sec\n")
@@ -237,8 +279,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    test_unitSimIMU(
+    test_unitSimStarTracker(
         False, # show_plots
         False, # useFlag
-        'time' # testCase
+        'MRPErrors' # testCase
     )
