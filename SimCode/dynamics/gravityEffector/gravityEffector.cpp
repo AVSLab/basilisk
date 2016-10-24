@@ -34,7 +34,7 @@ void GravityEffector::linkInStates(const DynParamManager& statesIn)
 
 }
 
-void GravityEffector::updateDerivativeSums()
+void GravityEffector::computeBodyForceTorque()
 {
 
 }

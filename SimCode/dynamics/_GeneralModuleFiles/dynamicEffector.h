@@ -20,6 +20,7 @@
 #define DYNAMIC_EFFECTOR_H
 
 #include "dynParamManager.h"
+#include <Eigen/Dense>
 
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
@@ -30,7 +31,11 @@ public:
     DynamicEffector();
     virtual ~DynamicEffector();
     virtual void linkInStates(const DynParamManager& states) = 0;
-    virtual void updateDerivativeSums()=0;
+    virtual void computeBodyForceTorque()=0;
+    
+public:
+    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
+    Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
 };
 
 #endif /* DYNAMIC_EFFECTOR_H */

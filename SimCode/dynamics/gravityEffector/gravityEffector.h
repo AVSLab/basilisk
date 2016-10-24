@@ -31,7 +31,7 @@ public:
     GravityEffector();
     ~GravityEffector();
     void linkInStates(const DynParamManager& statesIn);
-    void updateDerivativeSums();
+    void computeBodyForceTorque();
 
 public:
 	std::string vehicleMassStateName;              //! [-] Name of the vehicle mass state
