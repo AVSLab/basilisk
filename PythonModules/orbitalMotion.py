@@ -566,12 +566,12 @@ def rv2elem_parab(mu, rVec, vVec):
         if elements.alpha > 0:  # elliptic case #
             Ecc = math.acos(1 - r * elements.alpha)
             if np.dot(rVec, vVec) > 0:
-                Ecc = 2 * np.pi - Ecc
+                Ecc = 2.0 * np.pi - Ecc
             elements.f = Ecc  # for this mode the eccentric anomaly is returned #
         else:  # hyperbolic case #
             H = math.acosh(r * elements.alpha + 1)
             if np.dot(rVec, vVec) < 0:
-                H = 2 * np.pi - H
+                H = 2.0 * np.pi - H
             elements.f = H  # for this mode the hyperbolic anomaly is returned #
     else:
         # compute true anomaly #
@@ -735,9 +735,9 @@ def debyeLength(alt):
      * Outputs:
      *   debye = debye length given in m
     """
-    X = [200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850,
-         900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350, 1400, 1450,
-         1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000]
+    X = [200.0, 250.0, 300.0, 350.0, 400., 450., 500., 550., 600., 650., 700., 750., 800., 850.,
+         900., 950., 1000., 1050., 1100., 1150., 1200., 1250., 1300., 1350., 1400., 1450.,
+         1500., 1550., 1600., 1650., 1700., 1750., 1800., 1850., 1900., 1950., 2000.]
 
     Y = [5.64E-03, 3.92E-03, 3.24E-03, 3.59E-03, 4.04E-03, 4.28E-03, 4.54E-03, 5.30E-03, 6.55E-03,
          7.30E-03, 8.31E-03, 8.38E-03, 8.45E-03, 9.84E-03, 1.22E-02, 1.37E-02, 1.59E-02, 1.75E-02,
@@ -837,9 +837,6 @@ def jPerturb(rvec, num, planet):
      *   ajtot = The total acceleration vector due to the J
      *             perturbations in km/sec^2 [accelx;accely;accelz]
     """
-
-    temp = np.zeros(3)
-    temp2 = np.zeros(3)
 
     ajtot = np.zeros(3)
 
