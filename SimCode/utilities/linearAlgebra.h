@@ -153,7 +153,8 @@ extern "C" {
     int     m22IsZero(double mx[2][2], double accuracy);
     void    m22Print(FILE *pFile, const char *name, double mx[2][2]);
     int     m22Inverse(double mx[2][2], double result[2][2]);
-    
+    void    m22PrintScreen(const char *name, double mx[2][2]);
+
     /* 3x3 matrices */
     void    m33Set(double m00, double m01, double m02,
                    double m10, double m11, double m12,
