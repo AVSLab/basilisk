@@ -66,14 +66,13 @@ def setRandomWalk(self, senNoiseStd = 0.0, errorBounds = [1e6] * 3):
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 
-testNames = ['basic']
-
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'basic'),
-    (False,'time'),
     (False,'T_str2Bdy'),
+    (False,'noise'),
+    (False,'walk bounds')
 ])
 
 # provide a unique test method name, starting with test_
@@ -147,30 +146,37 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         trueVector['timeTag'] =  np.arange(J2000Current,J2000Current+simStopTime,unitProcRate_s)
 
     elif testCase == 'T_str2Bdy':
+        # this test verifies the structure to body transformation works properly
         simStopTime = 0.5
-
         sigma_str2Bdy = np.array([-0.589909452160510,-0.188883722330776,0.574331363764254])
         T_str2Bdy = rbk.MRP2C(sigma_str2Bdy)
         OutputStateData.T_str2Bdy = T_str2Bdy
-
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
         OutputStateData.sigma = sigma
-
         beta_str2Inrtl = rbk.C2EP(np.dot(rbk.MRP2C(-sigma_str2Bdy),rbk.MRP2C(sigma)))
-
         trueVector['qInrtl2Case'] = listStack(beta_str2Inrtl,simStopTime,unitProcRate)
         trueVector['timeTag'] =  np.arange(0,simStopTime,unitProcRate_s)
 
-    elif 'MRPErrors':
-        simStopTime = 500.
-        setRandomWalk(StarTracker, 0.01, [0.0] * 3)
-        StarTracker.PMatrix[0] = StarTracker.PMatrix[4] = 0
-
-        # sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        sigma = np.array([0.,0.,0.])
+    elif testCase == 'noise':
+        simStopTime = 1000.
+        noiseStd = 0.1
+        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [1.0e-13] * 3)
+        sigma = np.array([0,0,0])
         OutputStateData.sigma = sigma
-        prv = rbk.MRP2PRV(sigma)
-        trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
+        trueVector['qInrtl2Case'] = [noiseStd] * 3
+        trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
+
+    elif testCase == 'walk bounds':
+        # this test checks the walk bounds of random walk
+        simStopTime = 1000.
+        noiseStd = 0.01
+        stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
+        walkBound = 0.1
+        setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [walkBound] * 3)
+        sigma = np.array([0,0,0])
+        OutputStateData.sigma = sigma
+        trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
         trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
 
     else:
@@ -204,68 +210,66 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(StarTracker.outputStateMessage + '.' + moduleOutputName, range(fieldLengths[i]))
         print "\n\n" + moduleOutputName
         print str(moduleOutput[moduleOutputName]) + "\n"
-        # print str(trueVector[moduleOutputName]) + "\n\n"
+        print str(trueVector[moduleOutputName]) + "\n\n"
 
 
-    if not 'accuracy' in vars():
-        accuracy = 1e-3
 
-    if len(trueVector[moduleOutputName]) < 1:
-        raise Exception('something went wrong')
 
-    for j in range(0,len(fieldNames)):
-        moduleOutputName = fieldNames[j]
-        if testCase == 'noise':
-            for i in range(0,3):
-                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
-                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
-                    testFail = True
-
-        elif testCase == 'walk bounds':
-            for i in range(0,3):
-                if np.max(np.abs(np.asarray(moduleOutput[moduleOutputName][:,i+1]))) > trueVector[moduleOutputName][i]:
-                    testFail = True
-
+    # convert quaternion output to prv
     moduleOutput['prvInrtl2Case'] = np.zeros([int(simStopTime/unitProcRate_s)+1,3])
     for i in range(0,int(simStopTime/unitProcRate_s)+1):
         moduleOutput['prvInrtl2Case'][i,:] = rbk.EP2PRV(moduleOutput['qInrtl2Case'][i,1:])
 
-    print moduleOutput['qInrtl2Case'][1,1:]
-    print moduleOutput['prvInrtl2Case'][1,:]
-    print "here"
-    print rbk.EP2PRV(np.array([1,0,0,0]))
+    # # plot the output as prv
+    # plt.plot(moduleOutput['qInrtl2Case'][:,0]*macros.NANO2SEC,moduleOutput['prvInrtl2Case'])
+    # plt.show()
 
-    plt.plot(moduleOutput['qInrtl2Case'][:,0],moduleOutput['prvInrtl2Case'])
-    plt.show()
 
-    print rbk.MRP2PRV(sigma)
-    if testCase == 'MRPErrors':
-        for i in range(0,3):
-            # print (moduleOutput['prvInrtl2Case'][:,i])
-            print np.mean(moduleOutput['prvInrtl2Case'][:,i])
-            print np.std(moduleOutput['prvInrtl2Case'][:,i])
 
-        else:
-            for i in range(0,len(trueVector[moduleOutputName])):
-                if fieldLengths[j] > 1:
-                    if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], fieldLengths[j], accuracy):
+
+    if not 'accuracy' in vars():
+        accuracy = 1e-10
+
+    for moduleOutputName in fieldNames:
+        if moduleOutputName is 'qInrtl2Case':
+            if testCase == 'noise':
+                for i in range(0,3):
+                    if np.abs(np.mean(moduleOutput['prvInrtl2Case'][:,i])) > 0.01 \
+                                    or np.abs(np.std(moduleOutput['prvInrtl2Case'][:,i]) - trueVector['qInrtl2Case'][i]) > 0.01 :
                         testFail = True
-                else:
-                    if not unitTestSupport.isDoubleEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], accuracy):
+                        break
+
+            elif testCase == 'walk bounds':
+                for i in range(0,3):
+                    print np.max(np.abs(np.asarray(moduleOutput['prvInrtl2Case'][:,i])))
+                    if np.max(np.abs(np.asarray(moduleOutput['prvInrtl2Case'][:,i]))) > trueVector['qInrtl2Case'][i]:
                         testFail = True
+                        break
+
+            else:
+                for i in range(0,len(trueVector['qInrtl2Case'])):
+                    if not unitTestSupport.isArrayEqual(moduleOutput['qInrtl2Case'][i], trueVector['qInrtl2Case'][i], 3, accuracy):
+                        testFail = True
+                        break
+
+            if testFail: # break outer loop
+                break
+
+        elif moduleOutputName is 'timeTag':
+            # check timeTag
+            for i in range(0,len(trueVector['timeTag'])):
+                if not unitTestSupport.isDoubleEqual(moduleOutput['timeTag'][i], trueVector['timeTag'][i], accuracy):
+                    testFail = True
+                    break
 
 
-        if testFail:
-            testFailCount += 1
-            testMessages.append("FAILED: " + StarTracker.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
-                                "sec\n")
 
+    if testFail:
+        testFailCount += 1
+        testMessages.append("FAILED: " + StarTracker.ModelTag + " Module failed " +
+                            moduleOutputName + " unit test")
 
     np.set_printoptions(precision=16)
-
-
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -282,5 +286,5 @@ if __name__ == "__main__":
     test_unitSimStarTracker(
         False, # show_plots
         False, # useFlag
-        'MRPErrors' # testCase
+        'basic' # testCase
     )
