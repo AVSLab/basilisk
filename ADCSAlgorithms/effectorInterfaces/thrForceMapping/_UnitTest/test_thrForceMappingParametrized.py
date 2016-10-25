@@ -55,6 +55,7 @@ import fswSetupThrusters
     , (False, True, False, False)
     # , (False, False, True, False)
     , (True, False, False, False)
+    , (True, False, True, False)
     , (True, True, False, False)
 ])
 
@@ -150,14 +151,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
         ]
         if dropThruster:
             rcsLocationData = [ \
-                [0, 0.413, -0.1671],
-                [0.35766849176297305, 0.20650000000000013, -0.1671],
-                [0.3576684917629732, -0.20649999999999988, -0.1671],
-                [0, -0.413, -0.1671],
-                [-0.35766849176297305, -0.20650000000000018, -0.1671] \
-                ]
+            [0.35766849176297305, 0.20650000000000013, -0.1671],
+            [0.3576684917629732, -0.20649999999999988, -0.1671],
+            [-0.35766849176297305, -0.20650000000000018, -0.1671],
+            [-0.35766849176297333, 0.20649999999999968, -0.1671] \
+                    ]
             rcsDirectionData = [ \
-                [0.0, 0.0, 1.0],
                 [0.0, 0.0, 1.0],
                 [0.0, 0.0, 1.0],
                 [0.0, 0.0, 1.0],
@@ -275,6 +274,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
             trueVector = [
                 [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0],
                 [0, 0, -0.1081312318123977, -1.6142050040355125, -1.5060737722231148, 0]
+            ]
+        elif dropThruster:
+            trueVector = [
+                [0, -1.722336235847909, -3.120278776258626, 0],
+                [0, -1.722336235847909, -3.120278776258626, 0]
             ]
         else:
             trueVector = [
