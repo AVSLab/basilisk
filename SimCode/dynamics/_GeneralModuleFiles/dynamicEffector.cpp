@@ -20,6 +20,10 @@
 
 DynamicEffector::DynamicEffector()
 {
+    this->forceExternal_N.fill(0.0);
+    this->forceExternal_B.fill(0.0);
+    this->torqueExternalPntB_B.fill(0.0);
+
     return;
 }
 

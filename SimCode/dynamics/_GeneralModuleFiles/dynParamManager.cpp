@@ -70,6 +70,18 @@ StateData* DynParamManager::getStateObject(std::string stateName)
     {
         statePtr = &(it->second);
     }
+
+    if (statePtr == nullptr)
+    {
+        /*  The requested state could not be found.
+            Either the state name was miss-spelled, or the state simply 
+            doesn't exit in the current simulaiton setup (i.e. asking for the 
+            hub attitude in a translation only simulation setup */
+        std::cout << "WARNING: You requested this non-existent state name: " <<stateName << std::endl;
+        std::cout << "You either miss-typed the stateName, or you asked for ";
+        std::cout << "a state that doesn't exist in your simulation setup.";
+        std::cout << std::endl;
+    }
     
     return(statePtr);
 }
