@@ -322,7 +322,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     Eigen::Vector3d gravOut;
     
     double rMag = r_I.norm();
-    gravOut  = -r_I/(rMag*rMag*rMag);
+    gravOut  = -r_I*mu/(rMag*rMag*rMag);
     
     if(spherHarm.harmReady())
     {
@@ -331,9 +331,15 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         SystemMessaging::GetInstance()->ReadMessage(bodyMsgID, &localHeader,
             sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&localPlanet));
         double dt = (simTimeNanos - localHeader.WriteClockNanos)*NANO2SEC;
-        Eigen::Matrix3d dcm_PfixI = Eigen::Map<Eigen::Matrix3d>
+        Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
             (&(localPlanet.J20002Pfix[0][0]), 3, 3);
-            
+        Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
+        (&(localPlanet.J20002Pfix_dot[0][0]), 3, 3);
+        dcm_PfixN += dcm_PfixN_dot * dt;
+        Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
+        Eigen::Vector3d gravPert_Pfix = spherHarm.computeField(r_Pfix,
+            spherHarm.maxDeg, false);
+        gravOut += dcm_PfixN.transpose() * gravPert_Pfix;
         
     }
     
