@@ -52,10 +52,12 @@ class DataStore:
         plt.plot(self.MarsPosErr, 'r', label='Mars')
         plt.plot(self.EarthPosErr, 'bs', label='Earth')
         plt.plot(self.SunPosErr, 'yo', label='Sun')
-        #plt.ylim(0,0.000005)
+#        plt.ylim(0,0.000005)
+#        plt.ylim(0,0.02)
 
         plt.legend(loc='upper left')
-        plt.xlabel('Date (Month) - 10th and 20th')
+        fig1.autofmt_xdate()
+        plt.xlabel('Date of test')
         plt.ylabel('Position Error [m]')
         plt.show()
 
@@ -152,7 +154,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     year = "".join(("20",DatePlot[6:8]))
     date = datetime.datetime( int(year) , int(DatePlot[0:2]) , int(DatePlot[3:5]))
 
-    testPlottingFixture.Date.append(DatePlot[0:2])
+    testPlottingFixture.Date.append(DatePlot[0:8])
 
     #Get the GPS time
     date2 = datetime.datetime(1980, 01, 6) #Start of GPS time
@@ -183,7 +185,6 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
                 testMessages.append("FAILED: Time delta check failed with difference of: %(DiffVal)f \n"% \
                                 {"DiffVal": CurrDiff - InitDiff})
             i += 1
-
 
     # Truth values
     # For absolute GPS time check
@@ -217,6 +218,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
         testFailCount += 1
         testMessages.append("FAILED: Absolute Julian Date time check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": abs(JDEndSim - JDEndTime)})
+    print JDEndTime
 
     # Truth values
     # For Mars position check
@@ -230,7 +232,6 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
 
 
     MarsPosArray = numpy.array([MarsPosVec[0], MarsPosVec[1], MarsPosVec[2]])
-    print MarsPosArray
     MarsPosDiff = MarsPosArray - MarsPosEnd
     PosDiffNorm = numpy.linalg.norm(MarsPosDiff)
 

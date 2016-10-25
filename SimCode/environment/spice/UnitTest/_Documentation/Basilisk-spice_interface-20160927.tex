@@ -6,7 +6,7 @@
 
 \newcommand{\ModuleName}{test\textunderscore unitSpice}
 \newcommand{\subject}{Testing Spice interface Data}
-\newcommand{\status}{initial document draft}
+\newcommand{\status}{Initial document draft}
 \newcommand{\preparer}{T. Teil}
 \newcommand{\summary}{This unit test compares the results of the Spice data within the AVS Basilisk simulation with outside data. Spice generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. The time information creates accurate time tags to be used by others on the project, and the planet ephemeris gives the location of the bodies of interest, and therefore their gravitational effects on the spacecraft. In this test, we compare the values given by Spice values to the actual expected values in order to validate the code.}
 
@@ -44,7 +44,7 @@ Draft & Initial document creation & T. Teil \\
 
 
 \section{Introduction}
-Spice interfaces with the AVS Basilisk simulation. This is done through spice\textunderscore interface.cpp, which loads the proper kernels in External/EphemerisData. Given an epoch, it generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. Depending on the kernel loaded, the precision and planets you can locate will vary. 
+Spice interfaces with the AVS Basilisk simulation. This is done through spice\textunderscore interface.cpp, which loads the proper kernels in External/EphemerisData. Given an epoch, it generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. Depending on the kernel loaded, the precision and planets we can locate will vary. 
 
 
 \section{{\tt test\textunderscore unitSpice} Test Description}
@@ -67,22 +67,28 @@ This test is located in {\tt SimCode/environment/spice/UnitTest/SpiceUnitTest.py
 \item \underline{Dates studied}
 
 In order to create a complete simulation of the different possible situations, these tests were run on 24 dates. Starting in February 2015, the simulation is run for the 10th and 20th of every other month. The last day tested is therefore, nearly two years later in December of 2016. For each of the days, we needed the truth vectors for the positions of Mars, Earth and the Sun in the J200 reference frame. We present all the parameters in \ref{tab:parameters}, along with the test results. 
-\item \underline{Error Tollerance}
 
-We give ourselves certain levels or tolerance for each of the tests. These are summarized in table \ref{tab:errortol}. The GPS time error is relatively high: this is due to floating point approximations. 
+\item \underline{Error Tolerance}
+
+We give ourselves certain levels or tolerance for each of the tests. These are summarized in table \ref{tab:errortol}. 
 
 \begin{table}[htbp]
     \caption{Error Tolerance}
    \label{tab:errortol}
         \centering \fontsize{10}{10}\selectfont
-   \begin{tabular}{c | c | c | c | c |} % Column formatting, 
+   \begin{tabular}{| c | c | c | c | c |} % Column formatting, 
       \hline
       Test   & Time Increment &GPS Time& Julian Day & Body Positions \\
       \hline
       Tolerated Error & 1E-6 (s) & 1E-4 (s) & 1.16E-5 (s) & 250 (m) \\
       \hline
+      Digits of Precision & 11 & 9 & 11 & 7 \\
+      \hline
    \end{tabular}
 \end{table}
+
+The time increment error tolerance is taken at 1 ms generically. The GPS time error is relatively high: this is due to floating point approximations. The Julian Date time error is given by $0.1/(24*3600)$, which is a 0.1 second error over a day.  The Body position error tolerance is set to a quarter kilometer generically. 
+
 
 \end{itemize}
 
@@ -112,18 +118,18 @@ When running py.test, we came to notice that the time checks were failing for tw
       10/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       12/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       12/20/15 & \textcolor{red}{Failed} & \textcolor{red}{Failed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      02/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      02/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      04/10/15 & \textcolor{red}{Failed} & \textcolor{red}{Failed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      04/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      06/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      06/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      08/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      08/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      10/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      10/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      12/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      12/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      02/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      02/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      04/10/16 & \textcolor{red}{Failed} & \textcolor{red}{Failed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      04/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      06/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      06/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      08/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      08/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      10/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      10/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      12/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      12/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       \hline
    \end{tabular}
 \end{table}
@@ -136,7 +142,7 @@ From these tests, we can also plot out the precision of the planet ephemeris. Th
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[scale=0.65]{Figures/Ephem.png}
+	\includegraphics[scale=0.65]{Figures/Ephem2.png}
 	}
 	\caption{Ephemeris scaled to Mars error}
 	\label{fig:Ephem}
@@ -144,7 +150,7 @@ From these tests, we can also plot out the precision of the planet ephemeris. Th
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[scale=0.65]{Figures/EphemEarth.png}
+	\includegraphics[scale=0.65]{Figures/EphemEarth2.png}
 	}
 	\caption{Ephemeris scaled to Earth error}
 	\label{fig:EphemEarth}
@@ -152,7 +158,7 @@ From these tests, we can also plot out the precision of the planet ephemeris. Th
 
 \begin{figure}[htb]
 	\centerline{
-	\includegraphics[scale=0.65]{Figures/EphemSun.png}
+	\includegraphics[scale=0.65]{Figures/EphemSun2.png}
 	}
 	\caption{Ephemeris scaled to Sun error}
 	\label{fig:EphemSun}

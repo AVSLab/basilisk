@@ -16,13 +16,24 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #Very simple simulation.  Just sets up and calls the SPICE interface.  Could 
 #be the basis for a unit test of SPICE
-import sys, os
+
+import pytest
+import sys, os, inspect
+
+
+filename = inspect.getframeinfo(inspect.currentframe()).filename
+path = os.path.dirname(os.path.abspath(filename))
+splitPath = path.split('SimCode')
+sys.path.append(splitPath[0] + '/modules')
+sys.path.append(splitPath[0] + '/PythonModules')
+
 import matplotlib.pyplot as plt
 import numpy
 import ctypes
 import math
-sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
-sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
+
+#sys.path.append(os.environ['SIMULATION_BASE']+'/modules')
+#sys.path.append(os.environ['SIMULATION_BASE']+'/PythonModules/')
 
 #Import all of the modules that we are going to call in this simulation
 import simple_nav

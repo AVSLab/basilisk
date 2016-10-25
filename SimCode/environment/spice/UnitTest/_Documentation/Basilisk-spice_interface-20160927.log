@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  1 OCT 2016 20:29
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012) (format=pdflatex 2012.6.30)  13 OCT 2016 12:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1257,36 +1257,37 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.72 W
+l.73 W
       e give ourselves certain levels or tolerance for each of the tests. Th...
-[1] <Figures/Ephem.png, id=117, 578.16pt x 433.62pt>
-File: Figures/Ephem.png Graphic file (type png)
- <use Figures/Ephem.png>
-Package pdftex.def Info: Figures/Ephem.png used on input line 140.
-(pdftex.def)             Requested size: 375.79955pt x 281.84966pt.
+[1] [2] <Figures/Ephem2.png, id=127, 652.5981pt x 451.6875pt>
+File: Figures/Ephem2.png Graphic file (type png)
 
-<Figures/EphemEarth.png, id=119, 578.16pt x 433.62pt>
-File: Figures/EphemEarth.png Graphic file (type png)
+<use Figures/Ephem2.png>
+Package pdftex.def Info: Figures/Ephem2.png used on input line 146.
+(pdftex.def)             Requested size: 424.18373pt x 293.59338pt.
 
-<use Figures/EphemEarth.png>
-Package pdftex.def Info: Figures/EphemEarth.png used on input line 148.
-(pdftex.def)             Requested size: 375.79955pt x 281.84966pt.
+<Figures/EphemEarth2.png, id=129, 647.5392pt x 453.1329pt>
+File: Figures/EphemEarth2.png Graphic file (type png)
 
-<Figures/EphemSun.png, id=120, 578.16pt x 433.62pt>
-File: Figures/EphemSun.png Graphic file (type png)
- <use Figures/EphemSun.png>
-Package pdftex.def Info: Figures/EphemSun.png used on input line 156.
-(pdftex.def)             Requested size: 375.79955pt x 281.84966pt.
+<use Figures/EphemEarth2.png>
+Package pdftex.def Info: Figures/EphemEarth2.png used on input line 154.
+(pdftex.def)             Requested size: 420.8955pt x 294.53288pt.
 
+<Figures/EphemSun2.png, id=130, 656.2116pt x 456.7464pt>
+File: Figures/EphemSun2.png Graphic file (type png)
 
+<use Figures/EphemSun2.png>
+Package pdftex.def Info: Figures/EphemSun2.png used on input line 162.
+(pdftex.def)             Requested size: 426.53249pt x 296.88164pt.
+ 
 AED: lastpage setting LastPage
-[2] [3 <./Figures/Ephem.png> <./Figures/EphemEarth.png>] [4 <./Figures/EphemSun
-.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 161.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 161.
+[3 <./Figures/Ephem2.png>] [4 <./Figures/EphemEarth2.png> <./Figures/EphemSun2.
+png>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 167.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 167.
  (./Basilisk-spice_interface-20160927.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 161.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 161.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 167.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 167.
 Package rerunfilecheck Info: File `Basilisk-spice_interface-20160927.out' has n
 ot changed.
 (rerunfilecheck)             Checksum: FE9BD7840DA7CBDA8CA9DC99FDEA449D;347.
@@ -1294,27 +1295,30 @@ ot changed.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 161.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 167.
  ) 
 Here is how much of TeX's memory you used:
  18275 strings out of 493488
- 315691 string characters out of 3141326
+ 315706 string characters out of 3141326
  421077 words of memory out of 3000000
  21153 multiletter control sequences out of 15000+200000
  26822 words of font info for 96 fonts, out of 3000000 for 9000
  957 hyphenation exceptions out of 8191
  70i,13n,74p,642b,456s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
-></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb><
-/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
-</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
-/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
-usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Basilisk-spice_interface-20160927.pdf (5 pages, 511078 bytes)
+</usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><
+/usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></
+usr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></us
+r/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></u
+sr/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
+r/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr
+/local/texlive/2012/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/
+local/texlive/2012/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb>
+Output written on Basilisk-spice_interface-20160927.pdf (5 pages, 565422 bytes)
 .
 PDF statistics:
- 170 PDF objects out of 1000 (max. 8388607)
- 131 compressed objects within 2 object streams
+ 182 PDF objects out of 1000 (max. 8388607)
+ 140 compressed objects within 2 object streams
  23 named destinations out of 1000 (max. 500000)
  81 words of extra memory for PDF output out of 10000 (max. 10000000)
 
