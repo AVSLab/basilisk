@@ -186,7 +186,6 @@ def mrp_steering_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-    print '\n Lr = ', moduleOutput[:, 1:]
 
     # set the filtered output truth states
     trueVector = [
