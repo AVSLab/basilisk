@@ -1585,6 +1585,15 @@ int m22Inverse(double mx[2][2], double result[2][2])
     return status;
 }
 
+void    m22PrintScreen(const char *name, double mx[2][2])
+{
+    int i;
+    printf("%s:\n", name);
+    for (i=0;i<2;i++) {
+        printf("%20.15g, %20.15g\n", mx[i][0], mx[i][1]);
+    }
+}
+
 void m33Set(double m00, double m01, double m02,
             double m10, double m11, double m12,
             double m20, double m21, double m22,

@@ -28,6 +28,13 @@
  * @{
  */
 
+//! @brief Input container for external force and torque command requests.
+/*! This structure is .*/
+typedef struct {
+    double cmd[3];              //!< [N or NM], force or torque command
+}extForceTorqueCmdStruct;
+
+
 //! @brief The brief note is a single sentence to describe the function of this sim module.
 /*! This is followed by a more lengthy description if necessary. This class is used to ...*/
 /* Delete: The module class must inhert from SysModel class. The module class may inheret the DynEffector class is being included in uncoupled dynamics calculations. */
@@ -46,11 +53,23 @@ class ExternalForceTorque: public SysModel, public DynEffector{
     void ComputeDynamics(MassPropsData *massPropsData, OutputStateData *bodyState, double currentTime);
     
     private:
-    
+    int64_t cmdTorqueInMsgID;           //!< -- Message ID for incoming data
+    int64_t cmdForceInertialInMsgID;    //!< -- Message ID for incoming data
+    int64_t cmdForceBodyInMsgID;        //!< -- Message ID for incoming data
+    extForceTorqueCmdStruct incomingCmdTorqueBuffer;        //!< -- One-time allocation for savings
+    extForceTorqueCmdStruct incomingCmdForceInertialBuffer; //!< -- One-time allocation for savings
+    extForceTorqueCmdStruct incomingCmdForceBodyBuffer;     //!< -- One-time allocation for savings
+    bool goodTorqueCmdMsg;              //!< -- flat indicating if a torque command message was read
+    bool goodForceBCmdMsg;              //!< -- flat indicating if a inertial force command message was read
+    bool goodForceNCmdMsg;              //!< -- flat indicating if a body-relative force command message was read
+
     public:
     double extForce_N[3];               //!< [N]  external force in inertial  frame components
     double extForce_B[3];               //!< [N]  external force in body frame components
     double extTorquePntB_B[3];          //!< [Nm] external torque in body frame components
+    std::string cmdTorqueInMsgName;     //!< -- message used to read torque command inputs
+    std::string cmdForceInertialInMsgName; //!< -- message used to read force command inputs
+    std::string cmdForceBodyInMsgName;  //!< -- message used to read force command inputs
 
     private:
 };
