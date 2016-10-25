@@ -27,6 +27,7 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
+sys.path.append(splitPath[0] + '/Utilities/pyswice/_UnitTest')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
@@ -36,6 +37,7 @@ import spice_interface
 import sim_model
 import ctypes
 import pyswice
+import pyswice_ck_utilities
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -126,6 +128,7 @@ def test_singleGravityBody(show_plots):
     SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+    SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
     TotalSim.InitializeSimulation()
 
     earthGravBody = gravityDynEffector.GravBodyData()
@@ -136,6 +139,33 @@ def test_singleGravityBody(show_plots):
     gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 100)
     
     earthGravBody.initBody(0)
+    SpiceObject.UpdateState(0)
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
+    pyswice.furnsh_c(path + '/hst_edited.bsp')
+    
+    stringCurrent = SpiceObject.UTCCalInit = "2012 MAY 1 00:02:00.184"
+    et = pyswice.new_doubleArray(1)
+    dt = 1.0
+    normVec = []
+    for i in range(3600*6):
+        stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+        normVec.append(numpy.linalg.norm(stateOut[0:3]))
+        pyswice.str2et_c(stringCurrent, et)
+        etCurr = pyswice.doubleArray_getitem(et, 0)
+        etCurr += dt;
+        stringCurrent = pyswice.et2utc_c(etCurr, 'C', 4, 1024, "Yo")
+    
+    
+    plt.figure()
+    plt.plot(normVec)
+    plt.show()
+
+    
+    gravOut = earthGravBody.computeGravityInertial([[0.0], [0.0], [6378.1363E3]], 0)
+    print gravOut
 
     if testFailCount == 0:
         print "PASSED: " + " Single body"
