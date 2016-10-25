@@ -176,10 +176,9 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     }
 
     findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F);
-    substractMinMax(F, numOfAvailableThrusters, ConfigData->thrForceSign);
+    if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
 
-
-    if (numOfAvailableThrusters != ConfigData->numThrusters) {
+    if (numOfAvailableThrusters != ConfigData->numThrusters || ConfigData->thrForceSign<0) {
         counterPosForces = 0;
         memset(thrusterUsed,0x0,MAX_EFF_CNT*sizeof(int));
         for (i=0;i<numOfAvailableThrusters;i++) {
@@ -200,7 +199,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
                 F[i] = 0.0;
             }
         }
-        substractMinMax(F, numOfAvailableThrusters, ConfigData->thrForceSign);
+        if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
     }
 
 
@@ -215,19 +214,19 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
 }
 
 
-void substractMinMax(double *F, uint32_t size, int32_t thrForceSign)
+void substractMin(double *F, uint32_t size)
 {
-    double extremeValue;                        /*!< [N]    min or max value of the force set */
+    double minValue;                        /*!< [N]    min or max value of the force set */
     int    i;
 
-    extremeValue = F[0];
+    minValue = F[0];
     for (i=1;i<size;i++) {
-        if (F[i]*thrForceSign < extremeValue*thrForceSign) {
-            extremeValue = F[i];
+        if (F[i] < minValue) {
+            minValue = F[i];
         }
     }
     for (i=0;i<size;i++){
-        F[i] -= extremeValue;
+        F[i] -= minValue;
     }
 
     return;
