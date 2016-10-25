@@ -34,7 +34,8 @@ public:
     virtual void computeBodyForceTorque()=0;
     
 public:
-    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
+    Eigen::Vector3d forceExternal_N;      //! [-] External force applied by this effector in inertial frame components
+    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector in body frame components
     Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
 };
 
