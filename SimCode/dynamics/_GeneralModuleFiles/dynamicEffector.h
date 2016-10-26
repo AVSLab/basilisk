@@ -30,7 +30,7 @@ class DynamicEffector {
 public:
     DynamicEffector();
     virtual ~DynamicEffector();
-    virtual void linkInStates(const DynParamManager& states) = 0;
+    virtual void linkInStates(DynParamManager& states) = 0;
     virtual void computeBodyForceTorque()=0;
     
 public:
