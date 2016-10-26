@@ -17,8 +17,6 @@
 
 
 #include "gravityDynEffector.h"
-#include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_planet_state.h"
 #include "utilities/simMacros.h"
 
 SphericalHarmonics::SphericalHarmonics()
@@ -261,12 +259,10 @@ GravBodyData::GravBodyData()
     useSphericalHarmParams = false;
     isCentralBody = false;
     isDisplayBody = false;
-    useSphericalHarmParams = false;
     mu=0;                      //!< [m3/s^2] central body gravitational param
     ephemTime=0;               //!< [s]      Ephemeris time for the body in question
     ephIntTime=0;              //!< [s]      Integration time associated with the ephem data
     radEquator=0;              //!< [m]      Equatorial radius for the body
-    ephemTimeSimNanos=0;
     spherHarm.maxDeg = 0;
 }
 
@@ -324,12 +320,8 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     double rMag = r_I.norm();
     gravOut  = -r_I*mu/(rMag*rMag*rMag);
     
-    if(spherHarm.harmReady())
+    if(spherHarm.harmReady() && useSphericalHarmParams)
     {
-        SpicePlanetState localPlanet;
-        SingleMessageHeader localHeader;
-        SystemMessaging::GetInstance()->ReadMessage(bodyMsgID, &localHeader,
-            sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&localPlanet));
         double dt = (simTimeNanos - localHeader.WriteClockNanos)*NANO2SEC;
         Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
             (&(localPlanet.J20002Pfix[0][0]), 3, 3);
@@ -344,6 +336,12 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     }
     
     return(gravOut);
+}
+
+void GravBodyData::loadEphemeris(uint64_t moduleID)
+{
+    SystemMessaging::GetInstance()->ReadMessage(bodyMsgID, &localHeader,
+        sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&localPlanet));
 }
 
 ///*!
@@ -403,6 +401,8 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
 GravityDynEffector::GravityDynEffector()
 {
     centralBody = nullptr;
+    vehiclePositionStateName = "hubPosition";
+    systemTimeCorrPropName = "systemTime";
     return;
 }
 
@@ -412,14 +412,55 @@ GravityDynEffector::~GravityDynEffector()
     return;
 }
 
-void GravityDynEffector::linkInStates(const DynParamManager& statesIn)
+void GravityDynEffector::registerProperties(DynParamManager& statesIn)
 {
-
+    Eigen::Vector3d gravInit;
+    gravProperty = statesIn.createProperty(vehicleGravityPropName, gravInit);
 }
 
-void GravityDynEffector::updateDerivativeSums()
+void GravityDynEffector::linkInStates(DynParamManager& statesIn)
 {
+    posState = statesIn.getStateObject(vehiclePositionStateName);
+    timeCorr = statesIn.getPropertyReference(systemTimeCorrPropName);
+}
 
+void GravityDynEffector::computeGravityField()
+{
+    std::vector<GravBodyData *>::iterator it;
+    uint64_t systemClock = timeCorr->data()[0];
+    Eigen::Vector3d gravOut;
+    for(it = gravBodies.begin(); it != gravBodies.end(); it++)
+    {
+        Eigen::Vector3d posRelBody_N;
+        posRelBody_N = posState->getState();
+        Eigen::Vector3d mappedPos;
+        double dt;
+        mappedPos = Eigen::Map<Eigen::MatrixXd>
+            (&((*it)->localPlanet.PositionVector[0]), 3, 1);
+        mappedPos += Eigen::Map<Eigen::Vector3d>
+            (&((*it)->localPlanet.VelocityVector[0]), 3, 1)*dt;
+        posRelBody_N -= mappedPos;
+        if(centralBody)
+        {
+            dt = (systemClock - centralBody->localHeader.WriteClockNanos)*NANO2SEC;
+            Eigen::Vector3d centralPos = Eigen::Map<Eigen::MatrixXd>
+            (&(centralBody->localPlanet.PositionVector[0]), 3, 1);
+            centralPos += Eigen::Map<Eigen::Vector3d>
+            (&(centralBody->localPlanet.VelocityVector[0]), 3, 1)*dt;
+            posRelBody_N += centralPos;
+            if(centralBody != (*it))
+            {
+                Eigen::Vector3d frmGrav =
+                    (*it)->computeGravityInertial(centralPos-mappedPos , systemClock);
+                gravOut += frmGrav;
+            }
+        }
+        
+        Eigen::Vector3d bodyGrav = (*it)->computeGravityInertial(posRelBody_N,
+            systemClock);
+        gravOut += bodyGrav;
+    }
+    *gravProperty = gravOut;
 }
 
 void GravityDynEffector::SelfInit()
@@ -443,5 +484,12 @@ void GravityDynEffector::CrossInit()
 
 void GravityDynEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-    
+    //! Begin method steps
+    //! - For each gravity body in the data vector, find message ID
+    //! - If message ID is not found, alert the user and disable message
+    std::vector<GravBodyData *>::iterator it;
+    for(it = gravBodies.begin(); it != gravBodies.end(); it++)
+    {
+        (*it)->loadEphemeris(moduleID);
+    }
 }

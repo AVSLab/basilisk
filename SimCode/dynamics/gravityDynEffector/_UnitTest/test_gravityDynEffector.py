@@ -38,6 +38,7 @@ import sim_model
 import ctypes
 import pyswice
 import pyswice_ck_utilities
+import stateArchitecture
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -48,6 +49,8 @@ def gravityEffectorAllTest(show_plots):
     [testResults, testMessage] = test_sphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_singleGravityBody(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = test_multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
 def test_sphericalHarmonics(show_plots):
@@ -169,6 +172,7 @@ def test_singleGravityBody(show_plots):
         
         stateOut*=1000.0
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
+        earthGravBody.loadEphemeris(0)
         gravOut = earthGravBody.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
  
         gravErrNorm.append(numpy.linalg.norm(gravVec*1000.0 - numpy.array(gravOut).reshape(3))/
@@ -195,6 +199,82 @@ def test_singleGravityBody(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " Single body with spherical harmonics"
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    
+    return [testFailCount, ''.join(testMessages)]
+
+def test_multiBodyGravity(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+    
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+    
+    # Create a sim module as an empty container
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    DateSpice = "2015 February 10, 00:00:00.0 TDB"
+
+    # Create a sim module as an empty container
+    TotalSim = SimulationBaseClass.SimBaseClass()
+    TotalSim.TotalSim.terminateSimulation()
+
+    DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
+    # create the dynamics task and specify the integration update time
+    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+
+    # Initialize the modules that we are using.
+    SpiceObject = spice_interface.SpiceInterface()
+
+    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
+    SpiceObject.OutputBufferCount = 10000
+    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.UTCCalInit = DateSpice
+    TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+    SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
+
+    TotalSim.earthGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    TotalSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    TotalSim.earthGravBody.isCentralBody = False
+    TotalSim.earthGravBody.useSphericalHarmParams = True
+    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', TotalSim.earthGravBody.spherHarm, 60)
+    
+    TotalSim.marsGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.marsGravBody.bodyMsgName = "mars barycenter_planet_data"
+    TotalSim.marsGravBody.outputMsgName = "mars_display_frame_data"
+    TotalSim.marsGravBody.isCentralBody = False
+    TotalSim.marsGravBody.useSphericalHarmParams = False
+    
+    TotalSim.sunGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.sunGravBody.bodyMsgName = "sun_planet_data"
+    TotalSim.sunGravBody.outputMsgName = "sun_display_frame_data"
+    TotalSim.sunGravBody.isCentralBody = True
+    TotalSim.sunGravBody.useSphericalHarmParams = False
+    
+    TotalSim.newManager = stateArchitecture.DynParamManager()
+    positionName = "hubPosition"
+    stateDim = [3, 1]
+    posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
+    
+    allGrav = gravityDynEffector.GravityDynEffector()
+    allGrav.gravBodies = gravityDynEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody])
+    allGrav.linkInStates(TotalSim.newManager)
+    allGrav.registerProperties(TotalSim.newManager)
+    TotalSim.InitializeSimulation()
+    
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
+    pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
+    pyswice.furnsh_c(path + '/hst_edited.bsp')
+
+    if testFailCount == 0:
+        print "PASSED: " + " Multi gravitational bodies"
     # return fail count and join into a single string all messages in the list
     # testMessage
     

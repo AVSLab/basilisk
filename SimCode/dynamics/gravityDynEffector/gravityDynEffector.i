@@ -28,6 +28,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #pragma SWIG nowarn=362
 %include "gravityDynEffector.h"
 
+namespace std {
+    %template(GravBodyVector) vector<GravBodyData *>;
+}
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

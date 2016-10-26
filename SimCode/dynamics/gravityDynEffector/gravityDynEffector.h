@@ -21,6 +21,8 @@
 
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
+#include "environment/spice/spice_planet_state.h"
+#include "architecture/messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
 
@@ -62,17 +64,13 @@ public:
     bool isCentralBody;             //!<          Flag indicating that object is center
     bool isDisplayBody;             //!<          Flag indicating that body is display
     bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
-    Eigen::Vector3d posFromEphem;   //!< [m]      Position vector from central to body
-    Eigen::Vector3d velFromEphem;   //!< [m/s]    Velocity vector from central body
-    Eigen::Matrix3d j20002Pfix;     //!<          Transformation matrix from J2000 to planet-fixed
-    Eigen::Matrix3d j20002Pfix_dot; //!<          Derivative of the transformation matrix from J2000 to planet-fixed
-    Eigen::Vector3d posRelDisplay;  //!< [m]      Position of planet relative to display frame
-    Eigen::Vector3d velRelDisplay;  //!< [m]      Velocity of planet relative to display frame
+    
     double mu;                      //!< [m3/s^2] central body gravitational param
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
-    uint64_t ephemTimeSimNanos;     //!< [ns]     Simulation nanoseconds associated with Ephemeris time
+    SpicePlanetState localPlanet;   //!< [-]      Class storage of ephemeris info from scheduled portion
+    SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
     std::string bodyMsgName;        //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
     std::string planetEphemName;    //!<          Ephemeris name for the planet
@@ -87,6 +85,7 @@ public:
     
     void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
+    void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
     
     // Copy constructor
     //GravBodyData(const GravBodyData& gravBody);
@@ -100,24 +99,27 @@ public:
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
  */
-class GravityDynEffector : public DynamicEffector, public SysModel {
+class GravityDynEffector : public SysModel {
 public:
     GravityDynEffector();
     ~GravityDynEffector();
-    void linkInStates(const DynParamManager& statesIn);
-    void updateDerivativeSums();
+    void linkInStates(DynParamManager& statesIn);
+    void registerProperties(DynParamManager& statesIn);
+    void computeGravityField();
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
 
 public:
-	std::string vehicleMassStateName;              //! [-] Name of the vehicle mass state
+	std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
 	std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
+    std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
     std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
     GravBodyData* centralBody;         //!<  Central body
 private:
-	StateData *massState;                          //! [-] State of the mass of the vehicle
-	StateData *posState;                           //! [-] Position state of the vehicle
+    StateData *posState;                           //! [-] Position state of the vehicle
+    Eigen::MatrixXd *gravProperty;                 //! [-] g_N property for output
+    Eigen::MatrixXd *timeCorr;                     //! [-] Time correlation property
 
 };
 
