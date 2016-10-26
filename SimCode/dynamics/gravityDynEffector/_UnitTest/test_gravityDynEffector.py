@@ -129,48 +129,75 @@ def test_singleGravityBody(show_plots):
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
-    TotalSim.InitializeSimulation()
+    
 
     earthGravBody = gravityDynEffector.GravBodyData()
     earthGravBody.bodyMsgName = "earth_planet_data"
     earthGravBody.outputMsgName = "earth_display_frame_data"
     earthGravBody.isCentralBody = False
     earthGravBody.useSphericalHarmParams = True
-    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 100)
+    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 60)
     
-    earthGravBody.initBody(0)
-    SpiceObject.UpdateState(0)
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/hst_edited.bsp')
     
-    stringCurrent = SpiceObject.UTCCalInit = "2012 MAY 1 00:02:00.184"
+    SpiceObject.UTCCalInit = "2012 MAY 1 00:02:00.184"
+    stringCurrent = SpiceObject.UTCCalInit
     et = pyswice.new_doubleArray(1)
     dt = 1.0
+    pyswice.str2et_c(stringCurrent, et)
+    etCurr = pyswice.doubleArray_getitem(et, 0)
     normVec = []
-    for i in range(3600*6):
+    gravErrNorm = []
+    SpiceObject.UTCCalInit = stringCurrent
+    TotalSim.InitializeSimulation()
+    earthGravBody.initBody(0)
+    SpiceObject.UpdateState(0)
+    for i in range(2*3600):
         stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+        etPrev =etCurr - 2.0
+        stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
+        statePrev = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
+        etNext =etCurr + 2.0
+        stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
+        stateNext = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
+        gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         normVec.append(numpy.linalg.norm(stateOut[0:3]))
+        
+        stateOut*=1000.0
+        SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
+        gravOut = earthGravBody.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
+ 
+        gravErrNorm.append(numpy.linalg.norm(gravVec*1000.0 - numpy.array(gravOut).reshape(3))/
+            numpy.linalg.norm(gravVec*1000.0))
+        
         pyswice.str2et_c(stringCurrent, et)
         etCurr = pyswice.doubleArray_getitem(et, 0)
         etCurr += dt;
         stringCurrent = pyswice.et2utc_c(etCurr, 'C', 4, 1024, "Yo")
     
-    
-    plt.figure()
-    plt.plot(normVec)
-    plt.show()
 
     
-    gravOut = earthGravBody.computeGravityInertial([[0.0], [0.0], [6378.1363E3]], 0)
-    print gravOut
+    for gravErr in gravErrNorm:
+        if gravErr > 1.0e-4:
+            testFailCount += 1
+            testMessages.append("Gravity numerical error too high for kernel comparison")
+            break
+    
+    pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
+    pyswice.unload_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
+    pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
+    pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
+    pyswice.unload_c(path + '/hst_edited.bsp')
 
     if testFailCount == 0:
-        print "PASSED: " + " Single body"
+        print "PASSED: " + " Single body with spherical harmonics"
     # return fail count and join into a single string all messages in the list
     # testMessage
+    
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
