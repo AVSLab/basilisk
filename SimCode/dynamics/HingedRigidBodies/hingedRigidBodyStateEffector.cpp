@@ -23,7 +23,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     effProps.IEffPntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
-
+    effProps.IEffPntBPrime_B.fill(0.0);
     return;
 }
 
@@ -41,6 +41,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
+    this->thetaState = states.registerState(1, 1, "hingedRigidBodyTheta");
+    this->thetaDotState = states.registerState(1, 1, "hingedRigidBodyThetaDot");
 }
 
 void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
@@ -49,7 +51,27 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
+    //! - Give the mass of the hinged rigid body to the effProps mass
     effProps.mEff = this->mass;
+    //! - find hinged rigid bodies position with respect to point B
+    Eigen::MatrixXd interMediateMatrix;
+    interMediateMatrix = this->thetaState->getState();
+    this->theta = interMediateMatrix(0,0);
+    interMediateMatrix = this->thetaDotState->getState();
+    this->thetaDot = interMediateMatrix(0,0);
+    //! - Find the sHat unit vectors
+    this->SH << cos(theta), 0, -sin(theta), 0, 1, 0, sin(theta), 0, cos(theta);
+    this->SB = this->SH*this->HB;
+    this->sHat1_B = this->SB.row(0);
+    this->sHat2_B = this->SB.row(1);
+    this->sHat3_B = this->SB.row(2);
+    this->rSB_B = this->rHB_B -this->d*this->sHat1_B;
+    effProps.rCB_B = this->rSB_B;
+
+    //! - Find the inertia of the hinged rigid body about point B
+    //! - Define rTildeSB_B
+    this->rTildeSB_B << 0 , -rSB_B(2), rSB_B(1), rSB_B(2), 0, -rSB_B(0), -rSB_B(1), rSB_B(0), 0;
+    effProps.IEffPntB_B = this->SB.transpose()*this->IPntS_S*this->SB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
     return;
 }
 

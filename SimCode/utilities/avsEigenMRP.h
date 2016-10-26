@@ -189,7 +189,7 @@ namespace Eigen {
          * then this function smartly returns a const reference to \c *this.
          */
         template<typename NewScalarType>
-        inline typename internal::cast_return_type<Derived,MRP<NewScalarType> >::type cast() const
+        inline typename internal::cast_return_type<Derived, MRP<NewScalarType> >::type cast() const
         {
             return typename internal::cast_return_type<Derived,MRP<NewScalarType> >::type(derived());
         }
