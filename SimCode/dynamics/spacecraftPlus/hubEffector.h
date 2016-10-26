@@ -22,7 +22,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include <Eigen/Dense>
-//#include "../SimCode/utilities/avsEigenMRP.h"
+#include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief Abstract class that is used to implement an effector impacting a HUB body
            that does not itself maintain a state or represent a changing component of
