@@ -20,6 +20,10 @@
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
+    effProps.IEffPntB_B.fill(0.0);
+    effProps.rCB_B.fill(0.0);
+    effProps.mEff = 0.0;
+
     return;
 }
 
@@ -31,6 +35,8 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
+    this->hubSigma = statesIn.getStateObject("hubPosition");
+    this->hubOmega = statesIn.getStateObject("hubSigma");
 }
 
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
@@ -43,6 +49,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 {
+    effProps.mEff = this->mass;
     return;
 }
 
