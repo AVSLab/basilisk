@@ -16,11 +16,14 @@
  */
 
 
-#ifndef DYNAMIC_EFFECTOR_H
-#define DYNAMIC_EFFECTOR_H
+#ifndef THRUSTER_DYNAMIC_EFFECTOR_H
+#define THRUSTER_DYNAMIC_EFFECTOR_H
 
-#include "dynParamManager.h"
+#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "../_GeneralModuleFiles/stateData.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
+#include <vector>
 
 
 
@@ -105,10 +108,10 @@ typedef struct {
  dynEffectorForce and dynEffectorTorque arrays that are provided by the DynEffector base class.
  There is technically double inheritance here, but both the DynEffector and
  SysModel classes are abstract base classes so there is no risk of diamond.*/
-class thrusterDynamicEffector: public SysModel, public DynEffector {
+class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
 public:
-    thrusterDynamicEffector();
-    ~thrusterDynamicEffector();
+    ThrusterDynamicEffector();
+    ~ThrusterDynamicEffector();
     void linkInStates(const DynParamManager& states);
     void computeBodyForceTorque();
     
@@ -120,8 +123,8 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double CurrentTime);
-    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
-                         double CurrentTime);
+/*    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
+                         double CurrentTime);*/
     void ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
                              double CurrentTime);
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
@@ -155,4 +158,4 @@ private:
     //End of copy paste
 };
 
-#endif /* DYNAMIC_EFFECTOR_H */
+#endif /* THRUSTER_DYNAMIC_EFFECTOR_H */
