@@ -18,6 +18,9 @@
 
 #include "hubEffector.h"
 
+using namespace Eigen;
+using namespace std;
+
 HubEffector::HubEffector()
 {
     return;
@@ -65,13 +68,9 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
-    Eigen::Vector3d sigmaBNLocal;
+    MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     Eigen::Matrix3d BN;
-    double ms2;
-    double s1s2;
-    double s1s3;
-    double s2s3;
     sigmaBNLocal = sigmaState->getState();
     omegaBNLocal = omegaState->getState();
     rBNDotLocal_N = velocityState->getState();
@@ -102,20 +101,7 @@ void HubEffector::computeDerivatives(double integTime)
 
     if (this->useRotation==true) {
         //! Set kinematic derivative
-        ms2  = 1 - sigmaBNLocal.squaredNorm();
-        s1s2 = sigmaBNLocal(0)*sigmaBNLocal(1);
-        s1s3 = sigmaBNLocal(0)*sigmaBNLocal(2);
-        s2s3 = sigmaBNLocal(1)*sigmaBNLocal(2);
-
-        Bmat(0,0) = ms2 + 2*sigmaBNLocal(0)*sigmaBNLocal(0);
-        Bmat(0,1) = 2*(s1s2 - sigmaBNLocal(2));
-        Bmat(0,2) = 2*(s1s3 + sigmaBNLocal(1));
-        Bmat(1,0) = 2*(s1s2 + sigmaBNLocal(2));
-        Bmat(1,1) = ms2 + 2*sigmaBNLocal(1)*sigmaBNLocal(1);
-        Bmat(1,2) = 2*(s2s3 - sigmaBNLocal(0));
-        Bmat(2,0) = 2*(s1s3 - sigmaBNLocal(1));
-        Bmat(2,1) = 2*(s2s3 + sigmaBNLocal(0));
-        Bmat(2,2) = ms2 + 2*sigmaBNLocal(2)*sigmaBNLocal(2);
+        Bmat = sigmaBNLocal.Bmat();
         sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 
