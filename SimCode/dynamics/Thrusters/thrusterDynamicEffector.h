@@ -33,9 +33,9 @@
  It pairs the time-delta from on command and thrust factor (percentage/100.0)
  for the entire ramp.*/
 typedef struct {
-    Eigen::MatrixXd ThrustFactor;                 //!< -- Percentage of max thrust
-    Eigen::MatrixXd IspFactor;                    //!< s  fraction specific impulse
-    Eigen::MatrixXd TimeDelta;                    //!< s  Time delta from start of event
+    double ThrustFactor;                 //!< -- Percentage of max thrust
+    double IspFactor;                    //!< s  fraction specific impulse
+    double TimeDelta;                    //!< s  Time delta from start of event
 }ThrusterTimePair;
 
 //! @brief Container for current operational data of a given thruster
@@ -43,15 +43,15 @@ typedef struct {
  It defines where in the cycle the thruster is and how much longer it should be
  on for.  It is intended to have the previous firing remain resident for logging*/
 typedef struct {
-    Eigen::MatrixXd ThrustFactor;                 //!< -- Current Thrust Percentage
-    Eigen::MatrixXd IspFactor;                    //!< -- Current fractional ISP
-    Eigen::MatrixXd ThrustOnRampTime;             //!< s  Time thruster has been on for
-    Eigen::MatrixXd ThrustOnSteadyTime;           //!< s  Time thruster has been on steady
-    Eigen::MatrixXd ThrustOffRampTime;            //!< s  Time thruster has been turning off
-    Eigen::MatrixXd ThrusterStartTime;            //!< s  Time thruster has been executing total
-    Eigen::MatrixXd ThrustOnCmd;                  //!< s  Time Thruster was requested
-    Eigen::MatrixXd PreviousIterTime;             //!< s  Previous thruster int time
-    Eigen::MatrixXd totalOnTime;                  //!< s  Total amount of time thruster has fired
+    double ThrustFactor;                 //!< -- Current Thrust Percentage
+    double IspFactor;                    //!< -- Current fractional ISP
+    double ThrustOnRampTime;             //!< s  Time thruster has been on for
+    double ThrustOnSteadyTime;           //!< s  Time thruster has been on steady
+    double ThrustOffRampTime;            //!< s  Time thruster has been turning off
+    double ThrusterStartTime;            //!< s  Time thruster has been executing total
+    double ThrustOnCmd;                  //!< s  Time Thruster was requested
+    double PreviousIterTime;             //!< s  Previous thruster int time
+    double totalOnTime;                  //!< s  Total amount of time thruster has fired
     uint64_t fireCounter;                //!< (-) Number of times thruster fired
 }ThrusterOperationData;
 
@@ -62,27 +62,27 @@ typedef struct {
  a thruster.*/
 typedef struct {
     std::string typeName;                           //!< [], string containing the thruster type name
-    Eigen::Vector3d inputThrLoc_S[3];                        //!< m Location of thruster in structural
-    Eigen::Vector3d inputThrDir_S[3];                        //!< -- Unit vector of thruster pointing
-    Eigen::Vector3d thrLoc_B[3];                             //!< [m] Thruster location expressed in body
-    Eigen::Vector3d thrDir_B[3];                             //!< [-] Thruster direction unit vector in body
+    Eigen::Vector3d inputThrLoc_S;                        //!< m Location of thruster in structural
+    Eigen::Vector3d inputThrDir_S;                        //!< -- Unit vector of thruster pointing
+    Eigen::Vector3d thrLoc_B;                             //!< [m] Thruster location expressed in body
+    Eigen::Vector3d thrDir_B;                             //!< [-] Thruster direction unit vector in body
     std::vector<ThrusterTimePair> ThrusterOnRamp;   //!< -- Percentage of max thrust for ramp up
     std::vector<ThrusterTimePair> ThrusterOffRamp;  //!< -- Percentage of max thrust for ramp down
-    Eigen::MatrixXd MaxThrust;                               //!< N  Steady state thrust of thruster
-    Eigen::MatrixXd steadyIsp;                               //!< s  Steady state specific impulse of thruster
-    Eigen::MatrixXd MinOnTime;                               //!< s  Minimum allowable on-time
+    double MaxThrust;                               //!< N  Steady state thrust of thruster
+    double steadyIsp;                               //!< s  Steady state specific impulse of thruster
+    double MinOnTime;                               //!< s  Minimum allowable on-time
     ThrusterOperationData ThrustOps;                //!< -- Thruster operating data
-    Eigen::MatrixXd thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
+    double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 }ThrusterConfigData;
 
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
 typedef struct {
-    Eigen::MatrixXd thrusterLocation[3];                     //!< m  Current position vector (inertial)
-    Eigen::MatrixXd thrusterDirection[3];                    //!< -- Unit vector of thruster pointing
-    Eigen::MatrixXd maxThrust;                               //!< N  Steady state thrust of thruster
-    Eigen::MatrixXd thrustFactor;                            //!< -- Current Thrust Percentage
+    Eigen::Vector3d thrusterLocation;                     //!< m  Current position vector (inertial)
+    Eigen::Vector3d thrusterDirection;                    //!< -- Unit vector of thruster pointing
+    double maxThrust;                               //!< N  Steady state thrust of thruster
+    double thrustFactor;                            //!< -- Current Thrust Percentage
 }ThrusterOutputData;
 
 //! @brief Input container for thruster firing requests.
@@ -90,7 +90,7 @@ typedef struct {
  sparse, but it is included as a structure for growth and for clear I/O
  definitions.*/
 typedef struct {
-    Eigen::MatrixXd OnTimeRequest;                //!< s Requested on-time for thruster
+    double OnTimeRequest;                //!< s Requested on-time for thruster
 }ThrustCmdStruct;
 
 
@@ -112,7 +112,6 @@ public:
     void linkInStates(const DynParamManager& states);
     void computeBodyForceTorque();
     
-    //Copy Pasted
     void SelfInit();
     void CrossInit();
     //! Add a new thruster to the thruster set
@@ -128,15 +127,8 @@ public:
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
                              double CurrentTime);
     void updateMassProperties(double CurrentTime);
-    double thrFactorToTime(ThrusterConfigData *thrData,
-                           std::vector<ThrusterTimePair> *thrRamp);
-    //End of Copy paste
     
-public:
-    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
-    Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
-    
-    //Copy paste
+
 public:
     int stepsInRamp;
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
@@ -147,6 +139,10 @@ public:
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
+    double thrFactorToTime(ThrusterConfigData *thrData,
+                           std::vector<ThrusterTimePair> *thrRamp);
+    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
+    Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
     
 private:
     //    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready

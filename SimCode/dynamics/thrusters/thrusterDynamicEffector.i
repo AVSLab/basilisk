@@ -11,25 +11,21 @@ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
 ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
 WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-%module thruster_dynamics
+%module thrusterDynamicEffector
 %{
-   #include "thruster_dynamics.h"
+   #include "thrusterDynamicEffector.h"
 %}
 
 %include "swig_common_model.i"
 
-
-// Instantiate templates used by example
-namespace std {
-   %template(ThrusterTimeVector) vector<ThrusterTimePair>;
-   %template(ThrusterConfigVector) vector<ThrusterConfigData>;
-}
 %include "sys_model.h"
-%include "dyn_effector.h"
-%include "thruster_dynamics.h"
+%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "thrusterDynamicEffector.h"
 
 %pythoncode %{
 import sys
