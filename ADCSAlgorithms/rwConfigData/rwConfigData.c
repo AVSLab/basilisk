@@ -66,6 +66,14 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
     
+    if(strlen(ConfigData->rwConstellationInMsgName) > 0)
+    {
+        ConfigData->rwConstellationInMsgID = subscribeToMessage(ConfigData->rwConstellationInMsgName,
+                                                          sizeof(RWConstellation), moduleID);
+        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellation),
+            &ConfigData->rwConstellation, moduleID);
+    }
+    
     ConfigData->rwConfigParamsOut.numRW = ConfigData->rwConstellation.numRW;
     
     for(i=0; i<ConfigData->rwConfigParamsOut.numRW; i=i+1)
