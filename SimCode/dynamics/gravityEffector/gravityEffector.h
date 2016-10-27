@@ -87,22 +87,16 @@ public:
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
     void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
     
-    // Copy constructor
-    //GravBodyData(const GravBodyData& gravBody);
-    
-    // Overloaded operators
-    //GravBodyData& operator=(const GravBodyData& gravBody);
-    
 };
 
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
  */
-class GravityDynEffector : public SysModel {
+class GravityEffector : public SysModel {
 public:
-    GravityDynEffector();
-    ~GravityDynEffector();
+    GravityEffector();
+    ~GravityEffector();
     void linkInStates(DynParamManager& statesIn);
     void registerProperties(DynParamManager& statesIn);
     void computeGravityField();

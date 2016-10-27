@@ -32,7 +32,7 @@ sys.path.append(splitPath[0] + '/Utilities/pyswice/_UnitTest')
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import macros
-import gravityDynEffector
+import gravityEffector
 import spice_interface
 import sim_model
 import ctypes
@@ -62,11 +62,11 @@ def test_sphericalHarmonics(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
     
-    spherHarm = gravityDynEffector.SphericalHarmonics()
+    spherHarm = gravityEffector.SphericalHarmonics()
     
     testHarm = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
-    spherHarm.cBar = gravityDynEffector.MultiArray(testHarm)
+    spherHarm.cBar = gravityEffector.MultiArray(testHarm)
     
     vecCheckSuccess = True
     for i in range(len(spherHarm.cBar)):
@@ -79,7 +79,7 @@ def test_sphericalHarmonics(show_plots):
         testFailCount += 1
         testMessages.append("2D vector not input appropriately to spherical harmonics")
 
-    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', spherHarm, 20)
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', spherHarm, 20)
     spherHarm.initializeParameters()
     gravOut = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 20, True)
     gravMag = numpy.linalg.norm(numpy.array(gravOut))
@@ -134,12 +134,12 @@ def test_singleGravityBody(show_plots):
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
     
 
-    earthGravBody = gravityDynEffector.GravBodyData()
+    earthGravBody = gravityEffector.GravBodyData()
     earthGravBody.bodyMsgName = "earth_planet_data"
     earthGravBody.outputMsgName = "earth_display_frame_data"
     earthGravBody.isCentralBody = False
     earthGravBody.useSphericalHarmParams = True
-    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 60)
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', earthGravBody.spherHarm, 60)
     
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
@@ -237,28 +237,28 @@ def test_multiBodyGravity(show_plots):
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
 
-    TotalSim.earthGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.earthGravBody = gravityEffector.GravBodyData()
     TotalSim.earthGravBody.bodyMsgName = "earth_planet_data"
     TotalSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     TotalSim.earthGravBody.isCentralBody = False
     TotalSim.earthGravBody.useSphericalHarmParams = True
-    gravityDynEffector.loadGravFromFile(path + '/GGM03S.txt', TotalSim.earthGravBody.spherHarm, 60)
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', TotalSim.earthGravBody.spherHarm, 60)
     
-    TotalSim.marsGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.marsGravBody = gravityEffector.GravBodyData()
     TotalSim.marsGravBody.bodyMsgName = "mars barycenter_planet_data"
     TotalSim.marsGravBody.outputMsgName = "mars_display_frame_data"
     TotalSim.marsGravBody.mu = 4.305e4*1000*1000*1000 # meters!
     TotalSim.marsGravBody.isCentralBody = False
     TotalSim.marsGravBody.useSphericalHarmParams = False
     
-    TotalSim.jupiterGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.jupiterGravBody = gravityEffector.GravBodyData()
     TotalSim.jupiterGravBody.bodyMsgName = "jupiter barycenter_planet_data"
     TotalSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
     TotalSim.jupiterGravBody.mu = 4.305e4*1000*1000*1000 # meters!
     TotalSim.jupiterGravBody.isCentralBody = False
     TotalSim.jupiterGravBody.useSphericalHarmParams = False
     
-    TotalSim.sunGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.sunGravBody = gravityEffector.GravBodyData()
     TotalSim.sunGravBody.bodyMsgName = "sun_planet_data"
     TotalSim.sunGravBody.outputMsgName = "sun_display_frame_data"
     TotalSim.sunGravBody.mu = 1.32712440018E20  # meters!
@@ -271,8 +271,8 @@ def test_multiBodyGravity(show_plots):
     posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
     TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
     
-    allGrav = gravityDynEffector.GravityDynEffector()
-    allGrav.gravBodies = gravityDynEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])
+    allGrav = gravityEffector.GravityDynEffector()
+    allGrav.gravBodies = gravityEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])
     allGrav.linkInStates(TotalSim.newManager)
     allGrav.registerProperties(TotalSim.newManager)
     TotalSim.AddModelToTask(unitTaskName, allGrav)

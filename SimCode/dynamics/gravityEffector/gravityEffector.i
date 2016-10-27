@@ -15,9 +15,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-%module gravityDynEffector
+%module gravityEffector
 %{
-   #include "gravityDynEffector.h"
+   #include "gravityEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "../_GeneralModuleFiles/stateData.h"
 %include "sys_model.h"
 #pragma SWIG nowarn=362
-%include "gravityDynEffector.h"
+%include "gravityEffector.h"
 
 namespace std {
     %template(GravBodyVector) vector<GravBodyData *>;

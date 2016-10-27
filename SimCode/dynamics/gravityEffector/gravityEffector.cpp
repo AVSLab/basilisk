@@ -16,7 +16,7 @@
  */
 
 
-#include "gravityDynEffector.h"
+#include "gravityEffector.h"
 #include "utilities/simMacros.h"
 
 SphericalHarmonics::SphericalHarmonics()
@@ -267,33 +267,6 @@ GravBodyData::GravBodyData()
     spherHarm.maxDeg = 0;
 }
 
-
-/*!
- @brief Copy constructor.
- */
-//GravBodyData::GravBodyData(const GravBodyData& gravBody)
-//{
-//    isCentralBody = gravBody.isCentralBody;
-//    isDisplayBody = gravBody.isDisplayBody;
-//    useSphericalHarmParams = gravBody.useSphericalHarmParams;
-//
-//    posFromEphem = gravBody.posFromEphem;
-//    velFromEphem = gravBody.velFromEphem;
-//    j20002Pfix = gravBody.j20002Pfix;
-//    j20002Pfix_dot = gravBody.j20002Pfix_dot;
-//    mu = gravBody.mu;
-//    ephemTime = gravBody.ephemTime;
-//    ephIntTime = gravBody.ephIntTime;
-//    radEquator = gravBody.radEquator;
-//    bodyMsgName = gravBody.bodyMsgName;
-//    outputMsgName = gravBody.outputMsgName;
-//    planetEphemName = gravBody.planetEphemName;
-//    outputMsgID = gravBody.outputMsgID;
-//    BodyMsgID = gravBody.BodyMsgID;
-//    spherHarm = gravBody.spherHarm;
-//    return;
-//}
-
 /*!
  @brief Destructor.
  */
@@ -345,61 +318,7 @@ void GravBodyData::loadEphemeris(uint64_t moduleID)
         sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&localPlanet));
 }
 
-///*!
-// @brief Operator = overloaded.
-// */
-//GravBodyData& GravBodyData::operator=(const GravBodyData& gravBody)
-//{
-////    if (this == &gravBody) {
-////        return *this;
-////    }
-////    
-////    this->IsCentralBody = gravBody.IsCentralBody;
-////    this->IsDisplayBody = gravBody.IsDisplayBody;
-////    this->UseJParams = gravBody.UseJParams;
-////    this->UseSphericalHarmParams = gravBody.UseSphericalHarmParams;
-////    this->JParams = gravBody.JParams;
-////    
-////    for(unsigned int i = 0; i < 3; i++){
-////        this->PosFromEphem[i] = gravBody.PosFromEphem[i];
-////        this->VelFromEphem[i] = gravBody.VelFromEphem[i];
-////        
-////        this->posRelDisplay[i] = gravBody.posRelDisplay[i];
-////        this->velRelDisplay[i] = gravBody.posRelDisplay[i];
-////        
-////        for(unsigned int j = 0; j < 3; j++) {
-////            this->J20002Pfix[i][j] = gravBody.J20002Pfix[i][j];
-////            this->J20002Pfix_dot[i][j] = gravBody.J20002Pfix_dot[i][j];
-////        }
-////    }
-////    
-////    this->mu = gravBody.mu;
-////    this->ephemTime = gravBody.ephemTime;
-////    this->ephIntTime = gravBody.ephIntTime;
-////    this->radEquator = gravBody.radEquator;
-////    this->BodyMsgName = gravBody.BodyMsgName;
-////    this->outputMsgName = gravBody.outputMsgName;
-////    this->planetEphemName = gravBody.planetEphemName;
-////    this->outputMsgID = gravBody.outputMsgID;
-////    this->BodyMsgID = gravBody.BodyMsgID;
-////    
-////    if (gravBody._coeff_loader != nullptr) {
-////        this->_coeff_loader = new coeffLoaderCSV(*(gravBody._coeff_loader));
-////    }
-////    else
-////    this->_coeff_loader = nullptr;
-////    
-////    if (gravBody._spherHarm != nullptr) {
-////        this->_spherHarm = new sphericalHarmonics(*(gravBody._spherHarm));
-////        this->_spherHarm->setCoefficientLoader(this->_coeff_loader);
-////    }
-////    else
-////    this->_spherHarm = nullptr;
-//    
-//    return *this;
-//}
-
-GravityDynEffector::GravityDynEffector()
+GravityEffector::GravityEffector()
 {
     centralBody = nullptr;
     vehiclePositionStateName = "hubPosition";
@@ -409,25 +328,25 @@ GravityDynEffector::GravityDynEffector()
 }
 
 
-GravityDynEffector::~GravityDynEffector()
+GravityEffector::~GravityEffector()
 {
     return;
 }
 
-void GravityDynEffector::registerProperties(DynParamManager& statesIn)
+void GravityEffector::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d gravInit;
     gravInit.fill(0.0);
     gravProperty = statesIn.createProperty(vehicleGravityPropName, gravInit);
 }
 
-void GravityDynEffector::linkInStates(DynParamManager& statesIn)
+void GravityEffector::linkInStates(DynParamManager& statesIn)
 {
     posState = statesIn.getStateObject(vehiclePositionStateName);
     timeCorr = statesIn.getPropertyReference(systemTimeCorrPropName);
 }
 
-void GravityDynEffector::computeGravityField()
+void GravityEffector::computeGravityField()
 {
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = timeCorr->data()[0];
@@ -469,12 +388,12 @@ void GravityDynEffector::computeGravityField()
     *gravProperty = gravOut;
 }
 
-void GravityDynEffector::SelfInit()
+void GravityEffector::SelfInit()
 {
     
 }
 
-void GravityDynEffector::CrossInit()
+void GravityEffector::CrossInit()
 {
     //! Begin method steps
     //! - For each gravity body in the data vector, find message ID
@@ -488,7 +407,7 @@ void GravityDynEffector::CrossInit()
     
 }
 
-void GravityDynEffector::UpdateState(uint64_t CurrentSimNanos)
+void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
     //! - For each gravity body in the data vector, find message ID
