@@ -14,16 +14,23 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
+
 %module gravityEffector
 %{
-   #include "gravityEffector.h"
+   #include "../_GeneralModuleFiles/gravityEffector.h"
 %}
 
 %include "swig_common_model.i"
 
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/stateData.h"
-%include "gravityEffector.h"
+%include "sys_model.h"
+#pragma SWIG nowarn=362
+%include "../_GeneralModuleFiles/gravityEffector.h"
+
+namespace std {
+    %template(GravBodyVector) vector<GravBodyData *>;
+}
 
 %pythoncode %{
 import sys

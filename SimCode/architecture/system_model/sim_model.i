@@ -40,6 +40,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace std {
    %template(IntVector) vector<int>;
    %template(DoubleVector) vector<double>;
+   %template(MultiArray) vector<vector<double>>;
    %template(StringVector) vector<string>;
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
