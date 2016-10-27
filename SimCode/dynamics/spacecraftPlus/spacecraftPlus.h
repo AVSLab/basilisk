@@ -22,6 +22,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "hubEffector.h"
+#include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynObject2.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
@@ -31,6 +32,7 @@
 class SpacecraftPlus : public DynObject2{
 public:
     HubEffector hub;                          //! [-] The spacecraft hub that effectors spoke off
+    GravityEffector gravField;                //! [-] Gravitational field experienced by spacecraft
     Eigen::Matrix3d matrixAContrSCP;           //! [-] Spacecraft plus holds the value for all matrices
     Eigen::Matrix3d matrixBContrSCP;
     Eigen::Matrix3d matrixCContrSCP;
@@ -42,8 +44,12 @@ public:
     Eigen::MatrixXd *cPrime_B;
     Eigen::MatrixXd *ISCPntBPrime_B;
     Eigen::MatrixXd *c_B;
+    Eigen::MatrixXd *sysTime;
 	double currTimeStep;
-	double timePrevious; 
+	double timePrevious;
+    
+    std::string sysTimePropertyName;          //! [-] Name of the system time property
+    
 public:
     SpacecraftPlus();
     ~SpacecraftPlus();

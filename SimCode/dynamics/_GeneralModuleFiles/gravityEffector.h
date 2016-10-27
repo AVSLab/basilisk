@@ -19,7 +19,7 @@
 #ifndef GRAVITY_DYN_EFFECTOR_H
 #define GRAVITY_DYN_EFFECTOR_H
 
-#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_planet_state.h"
 #include "architecture/messaging/system_messaging.h"

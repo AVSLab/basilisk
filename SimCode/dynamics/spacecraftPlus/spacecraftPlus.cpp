@@ -25,6 +25,7 @@ SpacecraftPlus::SpacecraftPlus()
 	currTimeStep = 0.0;
 	timePrevious = 0.0;
 	integrator = new rk4SVIntegrator(this);
+    sysTimePropertyName = "systemTime";
     return;
 }
 
@@ -105,20 +106,25 @@ void SpacecraftPlus::initializeDynamics()
     Eigen::MatrixXd ISCPntB_B(3,3);
     Eigen::MatrixXd cPrime_B(3,1);
     Eigen::MatrixXd ISCPntBPrime_B(3,3);
+    Eigen::MatrixXd systemTime(2,1);
+    systemTime.setZero();
     this->m_SC = dynManager.createProperty("m_SC", m_SC);
     this->c_B = dynManager.createProperty("centerOfMassSC", c_B);
     this->ISCPntB_B = dynManager.createProperty("inertiaSC", ISCPntB_B);
     this->ISCPntBPrime_B = dynManager.createProperty("inertiaPrimeSC", ISCPntBPrime_B);
     this->cPrime_B = dynManager.createProperty("centerOfMassPrimeSC", cPrime_B);
+    this->sysTime = dynManager.createProperty(sysTimePropertyName, systemTime);
     std::vector<StateEffector*>::iterator it;
     std::vector<DynamicEffector*>::iterator dynIt;
     
+    gravField.registerProperties(dynManager);
     hub.registerStates(dynManager);
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->registerStates(dynManager);
     }
     
+    gravField.linkInStates(dynManager);
     hub.linkInStates(dynManager);
     for(it = states.begin(); it != states.end(); it++)
     {
@@ -141,14 +147,17 @@ void SpacecraftPlus::initializeDynamics()
 
 void SpacecraftPlus::SelfInit()
 {
- 
+    gravField.SelfInit();
 }
 void SpacecraftPlus::CrossInit()
 {
+    gravField.CrossInit();
 	initializeDynamics();
 }
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 {
 	double newTime = CurrentSimNanos*NANO2SEC;
+    (*sysTime) << CurrentSimNanos, newTime;
+    gravField.UpdateState(CurrentSimNanos);
 	integrateState(newTime);
 }
