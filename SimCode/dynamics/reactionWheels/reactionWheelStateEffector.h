@@ -16,41 +16,111 @@
  */
 
 
-#ifndef STATE_EFFECTOR_H
-#define STATE_EFFECTOR_H
+#ifndef REACTIONWHEELSTATEEFFECTOR_H
+#define REACTIONWHEELSTATEEFFECTOR_H
 
-#include "dynParamManager.h"
+#include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/dynParamManager.h"
+#include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "../_GeneralModuleFiles/dynObject2.h"
 #include <Eigen/Dense>
+#include "utilities/simMacros.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
+#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
  */
 
 typedef struct {
-//    Eigen::Matrix3d IEffPntCe_B;           //! [kgm2] Inertia of effector relative to effector CoM in B
-//    Eigen::Vector3d re_B;                  //! [m] Attachment point of effector relative to B in B
-//    Eigen::Vector3d rCe_B;                 //! [m] Center of component with respect to attachment in B
-//    double mEff;                           //! [kg] Mass of the effector
-	Eigen::Vector3d rWB_B;
-	Eigen::Vector3d gsHat_B;
-	Eigen::Vector3d wtHat0_B;
-	Eigen::Vector3d wgHat0_B;
-}EffectorMassProps;
+	double wheelPositions[MAX_EFF_CNT];
+}RWConfigOutputData;
 
-class StateEffector {
+typedef struct {
+	double u_cmd; //!< N-m, torque command for RW
+}RWCmdStruct;
+
+typedef struct {
+	std::string typeName;      //!< [], string containing the RW type name
+	Eigen::Vector3d rWB_S;		//!< m, position vector of the RW relative to the spacecraft structural frame
+	Eigen::Vector3d gsHat_S;	//!< spin axis unit vector in structural frame
+	Eigen::Vector3d gtHat0_S;	//!< initial torque axis unit vector in structural
+	Eigen::Vector3d ggHat0_S;	//!< initial gimbal axis unit vector in structural frame
+	Eigen::Vector3d rWB_B;		//!< m, position vector of the RW relative to the spacecraft body frame
+	Eigen::Vector3d gsHat_B;	//!< spin axis unit vector in body frame
+	Eigen::Vector3d gtHat0_B;	//!< initial torque axis unit vector in body frame
+	Eigen::Vector3d ggHat0_B;	//!< initial gimbal axis unit vector in body frame
+	double theta;              //!< rad, wheel angle
+	double u_current;          //!< N-m, current motor torque
+	double u_max;              //!< N-m, Max torque
+	double u_min;              //!< N-m, Min torque
+	double u_f;                //!< N-m, Coulomb friction torque magnitude
+	double Omega;              //!< rad/s, wheel speed
+	double Omega_max;          //!< rad/s, max wheel speed
+	double Js;                 //!< kg-m^2, spin axis gsHat rotor moment of inertia
+	double Jt;                 //!< kg-m^2, gtHat axis rotor moment of inertia
+	double Jg;                 //!< kg-m^2, ggHat axis rotor moment of inertia
+	double U_s;                //!< kg-m, static imbalance
+	double U_d;                //!< kg-m^2, dynamic imbalance
+	double mass;               //!< kg, reaction wheel rotor mass
+	Eigen::Vector3d F_B;             //!< N, single RW force with simple jitter model
+	Eigen::Vector3d tau_B;           //!< N-m, single RW torque with simple jitter model
+	bool usingRWJitter;        //!< flag for using imbalance torques
+	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
+}ReactionWheelConfigData;
+
+
+class ReactionWheelStateEffector:  public SysModel, public StateEffector {
 public:
     EffectorMassProps effProps;
     
 public:
-    StateEffector();
-    virtual ~StateEffector();
-    virtual void registerStates(DynParamManager& states) = 0;
-    virtual void linkInStates(DynParamManager& states) = 0;
+    ReactionWheelStateEffector();
+	~ReactionWheelStateEffector();
+	void registerStates(DynParamManager& states);
+	void linkInStates(DynParamManager& states);
 //    virtual void updateBackSubstitution(double integTime)=0;
-    virtual void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
-    virtual void computeDerivatives(double integTime)=0;
-    virtual void updateEffectorMassProps(double integTime);
-    virtual void updateEffectorMassPropRates(double integTime);
+	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
+    void computeDerivatives(double integTime);
+    void updateEffectorMassProps(double integTime);
+    void updateEffectorMassPropRates(double integTime);
+
+public:
+
+
+	void SelfInit();
+	void CrossInit();
+	//! Add a new thruster to the thruster set
+	void AddReactionWheel(ReactionWheelConfigData *NewRW) {ReactionWheelData.push_back(*NewRW);}
+	void UpdateState(uint64_t CurrentSimNanos);
+	void WriteOutputMessages(uint64_t CurrentClock);
+	void ReadInputs();
+	void ConfigureRWRequests(double CurrentTime);
+	void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
+						 double CurrentTime);
+
+public:
+	std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
+	std::string InputCmds;                                      //!< -- message used to read command inputs
+	std::string OutputDataString;                               //!< -- port to use for output data
+	std::string inputVehProps;                                  //!< [-] Input mass properties of vehicle
+	uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
+	std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
+	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
+	double sumF_B[3];                                           //!< N  Computed jitter force in body frame
+	double sumTau_B[3];                                         //!< N-m Computed jitter torque in body frame
+
+private:
+	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
+	std::vector<uint64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
+	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
+	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
+	RWCmdStruct *IncomingCmdBuffer;                             //!< -- One-time allocation for savings
+	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
+
 };
 
 #endif /* STATE_EFFECTOR_H */
