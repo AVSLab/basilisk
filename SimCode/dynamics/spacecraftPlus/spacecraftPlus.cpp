@@ -26,6 +26,7 @@ SpacecraftPlus::SpacecraftPlus()
 	timePrevious = 0.0;
 	integrator = new rk4SVIntegrator(this);
     sysTimePropertyName = "systemTime";
+    simTimePrevious = 0;
     return;
 }
 
@@ -45,6 +46,10 @@ void SpacecraftPlus::equationsOfMotion(double t)
     std::vector<StateEffector*>::iterator it;
     std::vector<DynamicEffector*>::iterator dynIt;
 
+    uint64_t CurrentSimNanos;
+    CurrentSimNanos = simTimePrevious + (t-timePrevious)/NANO2SEC;
+    (*sysTime) << CurrentSimNanos, t;
+
     //! - Zero all Matrices and vectors
     matrixAContrSCP.setZero();
     matrixBContrSCP.setZero();
@@ -60,6 +65,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     hub.vecRotSCP.setZero();
 
     //! - This is where gravity will be called
+    gravField.computeGravityField();
 
     //! - Loop through state effectors
     for(it = states.begin(); it != states.end(); it++)
@@ -157,7 +163,7 @@ void SpacecraftPlus::CrossInit()
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 {
 	double newTime = CurrentSimNanos*NANO2SEC;
-    (*sysTime) << CurrentSimNanos, newTime;
     gravField.UpdateState(CurrentSimNanos);
 	integrateState(newTime);
+    simTimePrevious = CurrentSimNanos;
 }

@@ -26,6 +26,7 @@
 #include "../_GeneralModuleFiles/dynObject2.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
+#include <stdint.h>
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
@@ -47,6 +48,7 @@ public:
     Eigen::MatrixXd *sysTime;
 	double currTimeStep;
 	double timePrevious;
+    uint64_t simTimePrevious;                 //! [-] Previous simulation time
     
     std::string sysTimePropertyName;          //! [-] Name of the system time property
     
