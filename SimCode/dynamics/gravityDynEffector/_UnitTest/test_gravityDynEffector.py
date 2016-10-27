@@ -224,7 +224,7 @@ def test_multiBodyGravity(show_plots):
 
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(1000.0)))
 
     # Initialize the modules that we are using.
     SpiceObject = spice_interface.SpiceInterface()
@@ -247,12 +247,21 @@ def test_multiBodyGravity(show_plots):
     TotalSim.marsGravBody = gravityDynEffector.GravBodyData()
     TotalSim.marsGravBody.bodyMsgName = "mars barycenter_planet_data"
     TotalSim.marsGravBody.outputMsgName = "mars_display_frame_data"
+    TotalSim.marsGravBody.mu = 4.305e4*1000*1000*1000 # meters!
     TotalSim.marsGravBody.isCentralBody = False
     TotalSim.marsGravBody.useSphericalHarmParams = False
+    
+    TotalSim.jupiterGravBody = gravityDynEffector.GravBodyData()
+    TotalSim.jupiterGravBody.bodyMsgName = "jupiter barycenter_planet_data"
+    TotalSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
+    TotalSim.jupiterGravBody.mu = 4.305e4*1000*1000*1000 # meters!
+    TotalSim.jupiterGravBody.isCentralBody = False
+    TotalSim.jupiterGravBody.useSphericalHarmParams = False
     
     TotalSim.sunGravBody = gravityDynEffector.GravBodyData()
     TotalSim.sunGravBody.bodyMsgName = "sun_planet_data"
     TotalSim.sunGravBody.outputMsgName = "sun_display_frame_data"
+    TotalSim.sunGravBody.mu = 1.32712440018E20  # meters!
     TotalSim.sunGravBody.isCentralBody = True
     TotalSim.sunGravBody.useSphericalHarmParams = False
     
@@ -260,19 +269,50 @@ def test_multiBodyGravity(show_plots):
     positionName = "hubPosition"
     stateDim = [3, 1]
     posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
+    TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
     
     allGrav = gravityDynEffector.GravityDynEffector()
-    allGrav.gravBodies = gravityDynEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody])
+    allGrav.gravBodies = gravityDynEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])
     allGrav.linkInStates(TotalSim.newManager)
     allGrav.registerProperties(TotalSim.newManager)
-    TotalSim.InitializeSimulation()
+    TotalSim.AddModelToTask(unitTaskName, allGrav)
+    
     
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
-    pyswice.furnsh_c(path + '/hst_edited.bsp')
+    pyswice.furnsh_c(path + '/dawn_rec_081022_081109_090218_v1.bsp')
+    
+    SpiceObject.UTCCalInit = "2008-10-24T00:00:00"
+    stringCurrent = SpiceObject.UTCCalInit
+    TotalSim.InitializeSimulation()
+    dtVal = 1000.0
+    gravErrVec = []
+    for i in range(1300):
+        stateOut = pyswice_ck_utilities.spkRead('DAWN', stringCurrent, 'J2000', 'SUN')*1000.0
+        posState.setState(stateOut[0:3].reshape(3,1).tolist())
+        TotalSim.newManager.setPropertyValue("systemTime", [[i*1000*1e9], [i*1000.0]])
+        TotalSim.ConfigureStopTime(macros.sec2nano(i*1000.0)+10)
+        TotalSim.ExecuteSimulation()
+        allGrav.computeGravityField()
+        etPrev =SpiceObject.J2000Current - 2.0
+        stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
+        statePrev = pyswice_ck_utilities.spkRead('DAWN', stringPrev, 'J2000', 'SUN')*1000.0
+        etNext =SpiceObject.J2000Current + 2.0
+        stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
+        stateNext = pyswice_ck_utilities.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
+        gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
+        gravErrVec.append(numpy.linalg.norm(gravVec.reshape(3,1) - numpy.array(TotalSim.newManager.getPropertyReference("g_N"))))
+    
+    for gravMeas in gravErrVec:
+        if gravMeas > 5.0e-4:
+            print gravMeas
+            testFailCount += 1
+            testMessages.append("Gravity multi-body error too high for kernel comparison")
+            break
 
+    
     if testFailCount == 0:
         print "PASSED: " + " Multi gravitational bodies"
     # return fail count and join into a single string all messages in the list

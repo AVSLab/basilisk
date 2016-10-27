@@ -120,6 +120,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     double a1, a2, a3, a4, sum_a1, sum_a2, sum_a3, sum_a4;
     std::vector<double> rE, iM, rhol;
     Eigen::Vector3d acc;
+    acc.fill(0.0);
     
     // Change of variables: direction cosines
     r = sqrt(x*x + y*y + z*z);
@@ -403,6 +404,7 @@ GravityDynEffector::GravityDynEffector()
     centralBody = nullptr;
     vehiclePositionStateName = "hubPosition";
     systemTimeCorrPropName = "systemTime";
+    vehicleGravityPropName = "g_N";
     return;
 }
 
@@ -415,6 +417,7 @@ GravityDynEffector::~GravityDynEffector()
 void GravityDynEffector::registerProperties(DynParamManager& statesIn)
 {
     Eigen::Vector3d gravInit;
+    gravInit.fill(0.0);
     gravProperty = statesIn.createProperty(vehicleGravityPropName, gravInit);
 }
 
@@ -429,12 +432,15 @@ void GravityDynEffector::computeGravityField()
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = timeCorr->data()[0];
     Eigen::Vector3d gravOut;
+    gravOut.fill(0.0);
     for(it = gravBodies.begin(); it != gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
         posRelBody_N = posState->getState();
         Eigen::Vector3d mappedPos;
+        mappedPos.fill(0.0);
         double dt;
+        dt = (systemClock - (*it)->localHeader.WriteClockNanos)*NANO2SEC;
         mappedPos = Eigen::Map<Eigen::MatrixXd>
             (&((*it)->localPlanet.PositionVector[0]), 3, 1);
         mappedPos += Eigen::Map<Eigen::Vector3d>
@@ -491,5 +497,9 @@ void GravityDynEffector::UpdateState(uint64_t CurrentSimNanos)
     for(it = gravBodies.begin(); it != gravBodies.end(); it++)
     {
         (*it)->loadEphemeris(moduleID);
+        if((*it)->isCentralBody)
+        {
+            centralBody = (*it);
+        }
     }
 }
