@@ -85,13 +85,13 @@ def test_hubPropagate(show_plots):
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    
-    # posRef.setState([[1.0], [0.0], [0.0]])
-    # omegaRef.setState([[0.001], [0.0], [0.0]])
-    # sigmaRef.setState([[0.0], [0.0], [0.0]])
-    # velRef.setState([[0.01], [0.0], [0.0]])
 
-    scObject.hub.mHub = [[1.0]]
+    posRef.setState([[1.0], [0.0], [0.0]])
+    omegaRef.setState([[0.001], [-0.002], [0.003]])
+    sigmaRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[55.24], [0.0], [0.0]])
+
+    scObject.hub.mHub = [[100]]
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntB_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
