@@ -47,14 +47,6 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, "hubVelocity");
     this->sigmaState = states.registerState(3, 1, "hubSigma");
     this->omegaState = states.registerState(3, 1, "hubOmega");
-    //# posRef.setState([[1.0], [0.0], [0.0]])
-    //# omegaRef.setState([[0.001], [0.0], [0.0]])
-    //# sigmaRef.setState([[0.0], [0.0], [0.0]])
-    //# velRef.setState([[0.01], [0.0], [0.0]])
-    this->posState->state << 1.0, 0.0, 0.0;
-    this->omegaState->state << 0.001, -0.002, 0.003;
-    this->sigmaState->state.setZero();
-    this->velocityState->state << 55.24, 0.0, 0.0;
 }
 
 void HubEffector::computeDerivatives(double integTime)
@@ -81,6 +73,7 @@ void HubEffector::computeDerivatives(double integTime)
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
     *this->m_SC += this->mHub;
     *this->c_B += this->mHub.value()*this->rBcB_B;
+    *this->c_B += *this->c_B/(*this->m_SC).value();
     *ISCPntB_B += this->IHubPntB_B;
 
     //! - Need to scale [A] [B] and vecTrans by m_SC
