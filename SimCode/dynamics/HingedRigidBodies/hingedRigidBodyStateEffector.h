@@ -43,13 +43,14 @@ public:
 
 public:
     double mass;               //!< kg, mass of hinged rigid body
-    Eigen::Matrix3d IPntS_S;         //!< kg-m^2, Inertia of hinged rigid body about point S in S frame components
     double d;                  //!< m, distance from hinge point to hinged rigid body center of mass
     double k;                  //!< N-m/rad, torsional spring constant of hinge
     double c;                  //!< N-m-s/rad, rotational damping coefficient of hinge
+    Eigen::Matrix3d IPntS_S;         //!< kg-m^2, Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rHB_B;          //!< m, vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d rTildeHB_B;  //!< Tilde matrix of rHB_B
     Eigen::Matrix3d HB;              //!< DCM from body frame to hinge frame
+private:
+    Eigen::Matrix3d rTildeHB_B;  //!< Tilde matrix of rHB_B
     Eigen::Matrix3d SH;           //!< DCM from hinge to hinged rigid body frame, S
     Eigen::Matrix3d SB;           //!< DCM from body to S frame
     Eigen::Vector3d omegaBN_S;      //!< omega_BN in S frame components
@@ -60,13 +61,12 @@ public:
     Eigen::Matrix3d rTildeSB_B;  //!< Tilde matrix of r_SB_B
     Eigen::Vector3d rPrimeSB_B;     //!< Body time derivative of r_SB_B
     Eigen::Matrix3d rPrimeTildeSB_B;//!< Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d ISPrimePntS_B;  
+    Eigen::Matrix3d ISPrimePntS_B;
+    Eigen::Vector3d omegaBNLoc_B;
+    Eigen::Matrix3d omegaTildeBNLoc_B;
     double theta;              //!< rad, hinged rigid body angle
     double thetaDot;           //!< rad/s, hinged rigid body angle rate
     double a_theta;
-    Eigen::Vector3d omegaBNLoc_B;
-    Eigen::Matrix3d omegaTildeBNLoc_B;
-private:
     StateData *hubSigma;
     StateData *hubOmega;
     StateData *hubVelocity;
