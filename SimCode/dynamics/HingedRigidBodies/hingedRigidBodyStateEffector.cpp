@@ -18,6 +18,9 @@
 
 #include "hingedRigidBodyStateEffector.h"
 
+using namespace Eigen;
+using namespace std;
+
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
     effProps.IEffPntB_B.fill(0.0);
@@ -35,18 +38,15 @@ HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 
 void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 {
-    this->hubSigma = statesIn.getStateObject("hubPosition");
-    this->hubOmega = statesIn.getStateObject("hubSigma");
+    this->hubVelocity = statesIn.getStateObject("hubVelocity");
+    this->hubSigma = statesIn.getStateObject("hubSigma");
+    this->hubOmega = statesIn.getStateObject("hubOmega");
 }
 
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
     this->thetaState = states.registerState(1, 1, "hingedRigidBodyTheta");
     this->thetaDotState = states.registerState(1, 1, "hingedRigidBodyThetaDot");
-}
-
-void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
-{
 }
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
@@ -113,4 +113,29 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
     vecRotcontr = -(this->thetaDot*this->omegaTildeBNLoc_B*(this->IPntS_S(1,1)*this->sHat2_B+this->mass*this->d*this->rTildeSB_B*this->sHat3_B) + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTildeSB_B*this->sHat1_B + this->a_theta*(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1)+this->mass*this->d*this->d));
 
     return;
+}
+
+void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
+{
+    MRPd sigmaBNLocal;
+    Eigen::Matrix3d dcmBN;
+    Eigen::Matrix3d dcmNB;
+    Eigen::MatrixXd thetaDDot(1,1);
+    Eigen::Vector3d rDDotBNLoc_N;
+    Eigen::Vector3d rDDotBNLoc_B;
+    Eigen::Vector3d omegaDotBNLoc_B;
+    //! Grab necessarry values from manager
+    rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
+    sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+    dcmNB = sigmaBNLocal.toRotationMatrix();
+    dcmBN = dcmNB.transpose();
+    rDDotBNLoc_B = dcmBN*rDDotBNLoc_B;
+    omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
+
+    //! - Compute Derivatives
+    //! - First is trivial
+    thetaState->setDerivative(thetaDotState->getState());
+    //! - Second a little more involved
+    thetaDDot(0,0) = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->mass*this->d*this->sHat3_B.dot(rDDotBNLoc_B) - (this->IPntS_S(1,1) + this->mass*this->d*this->d)*sHat2_B.transpose()*(omegaDotBNLoc_B) + this->mass*this->d*this->sHat3_B.transpose()*rTildeHB_B*omegaDotBNLoc_B + this->a_theta);
+    thetaDotState->setDerivative(thetaDDot);
 }

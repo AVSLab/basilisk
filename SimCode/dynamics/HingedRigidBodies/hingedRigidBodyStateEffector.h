@@ -23,6 +23,8 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
+#include "../SimCode/utilities/avsEigenMRP.h"
+
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
@@ -62,13 +64,12 @@ public:
     double theta;              //!< rad, hinged rigid body angle
     double thetaDot;           //!< rad/s, hinged rigid body angle rate
     double a_theta;
-    Eigen::Vector3d sigmaBNLoc;
     Eigen::Vector3d omegaBNLoc_B;
     Eigen::Matrix3d omegaTildeBNLoc_B;
-    Eigen::Matrix3d BN;
 private:
     StateData *hubSigma;
     StateData *hubOmega;
+    StateData *hubVelocity;
     StateData *thetaState;
     StateData *thetaDotState;
     
