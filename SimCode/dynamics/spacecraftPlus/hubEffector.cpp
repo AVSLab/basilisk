@@ -71,7 +71,7 @@ void HubEffector::computeDerivatives(double integTime)
     MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     Eigen::Matrix3d BN;
-    sigmaBNLocal = sigmaState->getState();
+    sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
     omegaBNLocal = omegaState->getState();
     rBNDotLocal_N = velocityState->getState();
     cPrimeLocal_B = *cPrime_B;
@@ -101,7 +101,7 @@ void HubEffector::computeDerivatives(double integTime)
 
     if (this->useRotation==true) {
         //! Set kinematic derivative
-        Bmat = sigmaBNLocal.Bmat();
+        //Bmat = sigmaBNLocal.Bmat();
         sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 

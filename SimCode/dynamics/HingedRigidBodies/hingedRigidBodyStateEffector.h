@@ -61,8 +61,10 @@ public:
     Eigen::Matrix3d ISPrimePntS_B;  
     double theta;              //!< rad, hinged rigid body angle
     double thetaDot;           //!< rad/s, hinged rigid body angle rate
+    double a_theta;
     Eigen::Vector3d sigmaBNLoc;
     Eigen::Vector3d omegaBNLoc_B;
+    Eigen::Matrix3d omegaTildeBNLoc_B;
     Eigen::Matrix3d BN;
 private:
     StateData *hubSigma;
