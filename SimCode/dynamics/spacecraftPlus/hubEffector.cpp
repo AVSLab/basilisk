@@ -101,7 +101,7 @@ void HubEffector::computeDerivatives(double integTime)
 
     if (this->useRotation==true) {
         //! Set kinematic derivative
-        //Bmat = sigmaBNLocal.Bmat();
+        Bmat = sigmaBNLocal.Bmat();
         sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 
