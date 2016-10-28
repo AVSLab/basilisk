@@ -207,7 +207,7 @@ void ReactionWheelStateEffector::CrossInit()
 			std::cerr <<
 			"Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
 		}
-		if (it->usingRWJitter) {
+		if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
 			if (it->gtHat0_S.norm() > 0.01) {
 				it->gtHat0_B = T_str2Bdy * it->gtHat0_S;
 			} else {
@@ -232,39 +232,39 @@ void ReactionWheelStateEffector::CrossInit()
  */
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
-//	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-//	ReactionWheelConfigData tmpRW;
-//	std::vector<ReactionWheelConfigData>::iterator it;
-//	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
-//	{
-//		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
-//
-//		v3Copy(it->r_S, tmpRW.r_S);
-//		v3Copy(it->gsHat_S, tmpRW.gsHat_S);
-//		v3Copy(it->gtHat0_S, tmpRW.gtHat0_S);
-//		v3Copy(it->ggHat0_S, tmpRW.ggHat0_S);
-//		tmpRW.theta = it->theta;
-//		tmpRW.u_current = it->u_current;
-//		tmpRW.u_max = it->u_max;
-//		tmpRW.u_min = it->u_min;
-//		tmpRW.u_f = it->u_f;
-//		tmpRW.Omega = it->Omega;
-//		tmpRW.Omega_max = it->Omega_max;
-//		tmpRW.Js = it->Js;
-//		tmpRW.U_s = it->U_s;
-//		tmpRW.U_d = it->U_d;
-//		tmpRW.usingRWJitter = it->usingRWJitter;
-//		// Write out config data for eachreaction wheel
-//		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
-//								 CurrentClock,
-//								 sizeof(ReactionWheelConfigData),
-//								 reinterpret_cast<uint8_t*> (&tmpRW),
-//								 moduleID);
-//	}
-//
-//	// Write this message once for all reaction wheels
-//	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-//							 sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+	SystemMessaging *messageSys = SystemMessaging::GetInstance();
+	ReactionWheelConfigData tmpRW;
+	std::vector<ReactionWheelConfigData>::iterator it;
+	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+	{
+		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+
+		tmpRW.rWB_S = it->rWB_S;
+		tmpRW.gsHat_S = it->gsHat_S;
+		tmpRW.gtHat0_S = it->gtHat0_S;
+		tmpRW.ggHat0_S = it->ggHat0_S;
+		tmpRW.theta = it->theta;
+		tmpRW.u_current = it->u_current;
+		tmpRW.u_max = it->u_max;
+		tmpRW.u_min = it->u_min;
+		tmpRW.u_f = it->u_f;
+		tmpRW.Omega = it->Omega;
+		tmpRW.Omega_max = it->Omega_max;
+		tmpRW.Js = it->Js;
+		tmpRW.U_s = it->U_s;
+		tmpRW.U_d = it->U_d;
+		tmpRW.RWModel = it->RWModel;
+		// Write out config data for eachreaction wheel
+		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
+								 CurrentClock,
+								 sizeof(ReactionWheelConfigData),
+								 reinterpret_cast<uint8_t*> (&tmpRW),
+								 moduleID);
+	}
+
+	// Write this message once for all reaction wheels
+	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
+							 sizeof(RWSpeedData), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -320,14 +320,14 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 	double u_s;
 	double cosTheta;
 	double sinTheta;
-	double gtHat_B[3];
-	double temp1[3];
-	double temp2[3];
+	Eigen::Vector3d gtHat_B;
+	Eigen::Vector3d temp1;
+	Eigen::Vector3d temp2;
 	double omegaCritical;
 
 	// zero the sum vectors of RW jitter torque and force
-	v3SetZero(this->sumTau_B);
-	v3SetZero(this->sumF_B);
+	this->sumTau_B.setZero();
+	this->sumF_B.setZero();
 
 	// loop through commands
 	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
@@ -366,37 +366,34 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 
 		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
-//		// zero previous RW jitter torque/force vector
-//		v3SetZero(this->ReactionWheelData[RWIter].tau_B);
-//		v3SetZero(this->ReactionWheelData[RWIter].F_B);
-//		// imbalance torque
-//		if (this->ReactionWheelData[RWIter].usingRWJitter) {
-//
-//			cosTheta = cos(this->ReactionWheelData[RWIter].theta);
-//			sinTheta = sin(this->ReactionWheelData[RWIter].theta);
-//
-//			v3Scale(cosTheta, this->ReactionWheelData[RWIter].gtHat0_B, temp1);
-//			v3Scale(sinTheta, this->ReactionWheelData[RWIter].ggHat0_B, temp2);
-//			v3Add(temp1, temp2, gtHat_B); // current gtHat axis vector represented in body frame
-//
-//			/* Fs = Us * Omega^2 */ // calculate static imbalance force
-//			v3Scale(this->ReactionWheelData[RWIter].U_s*pow(this->ReactionWheelData[RWIter].Omega,2),
-//					gtHat_B,
-//					this->ReactionWheelData[RWIter].F_B);
-//			v3Add(this->ReactionWheelData[RWIter].F_B, this->sumF_B, this->sumF_B);
-//
-//			/* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
-//			v3Cross(this->ReactionWheelData[RWIter].r_B,
-//					this->ReactionWheelData[RWIter].F_B,
-//					this->ReactionWheelData[RWIter].tau_B);
-//			/* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
-//			v3Scale(this->ReactionWheelData[RWIter].U_d*pow(this->ReactionWheelData[RWIter].Omega,2),
-//					gtHat_B,
-//					temp2);
-//			// add in dynamic imbalance torque
-//			v3Add(this->ReactionWheelData[RWIter].tau_B, temp2, this->ReactionWheelData[RWIter].tau_B);
-//			v3Add(this->ReactionWheelData[RWIter].tau_B, this->sumTau_B, this->sumTau_B);
-//		}
+		// zero previous RW jitter torque/force vector
+		this->ReactionWheelData[RWIter].tau_B.setZero();
+		this->ReactionWheelData[RWIter].F_B.setZero();
+		// imbalance torque
+		if (this->ReactionWheelData[RWIter].RWModel == JitterSimple) {
+
+			cosTheta = cos(this->ReactionWheelData[RWIter].theta);
+			sinTheta = sin(this->ReactionWheelData[RWIter].theta);
+
+			temp1 = cosTheta * this->ReactionWheelData[RWIter].gtHat0_B;
+			temp2 = sinTheta * this->ReactionWheelData[RWIter].ggHat0_B;
+			gtHat_B = temp1 + temp2; // current gtHat axis vector represented in body frame
+
+			/* Fs = Us * Omega^2 */ // calculate static imbalance force
+			this->ReactionWheelData[RWIter].F_B = this->ReactionWheelData[RWIter].U_s * pow(this->ReactionWheelData[RWIter].Omega,2) * gtHat_B;
+			this->sumF_B = this->ReactionWheelData[RWIter].F_B + this->sumF_B;
+
+			/* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+			this->ReactionWheelData[RWIter].tau_B = this->ReactionWheelData[RWIter].rWB_B.cross(this->ReactionWheelData[RWIter].F_B);
+			/* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+			temp2 = this->ReactionWheelData[RWIter].U_d*pow(this->ReactionWheelData[RWIter].Omega,2) * gtHat_B;
+			// add in dynamic imbalance torque
+			this->ReactionWheelData[RWIter].tau_B = this->ReactionWheelData[RWIter].tau_B + temp2;
+			this->sumTau_B = this->ReactionWheelData[RWIter].tau_B + this->sumTau_B;
+
+		} else if (this->ReactionWheelData[RWIter].RWModel == JitterFullyCoupled) {
+
+		}
 
 		RWIter++;
 

@@ -114,8 +114,8 @@ public:
 	uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
-	double sumF_B[3];                                           //!< N  Computed jitter force in body frame
-	double sumTau_B[3];                                         //!< N-m Computed jitter torque in body frame
+	Eigen::Vector3d sumF_B;                                           //!< N  Computed jitter force in body frame
+	Eigen::Vector3d sumTau_B;                                         //!< N-m Computed jitter torque in body frame
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
