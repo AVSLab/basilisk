@@ -39,25 +39,86 @@ ReactionWheelStateEffector::~ReactionWheelStateEffector()
     return;
 }
 
+void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
+{
+	this->hubSigma = statesIn.getStateObject("hubSigma");
+	this->hubOmega = statesIn.getStateObject("hubOmega");
+}
+
+void ReactionWheelStateEffector::registerStates(DynParamManager& states)
+{
+	this->numRWJitter = 0;
+	this->numRW = 0;
+	std::vector<ReactionWheelConfigData>::iterator RWIt;
+
+	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
+		if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
+			this->numRWJitter++;
+		}
+		this->numRW++;
+	}
+
+	this->OmegasState = states.registerState(this->numRW, 1, "reactionWheelOmegas");
+	this->thetasState = states.registerState(this->numRWJitter, 1, "reactionWheelThetas");
+
+}
+
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 {
-    return;
+	return;
 }
 
 void ReactionWheelStateEffector::updateEffectorMassPropRates(double integTime)
 {
-    return;
+	return;
 }
 
 void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
-    return;
+	Eigen::Vector3d omegaBNLoc_B;
+	Eigen::MatrixXd OmegasLoc;
+	int RWi = 0;
+	std::vector<ReactionWheelConfigData>::iterator RWIt;
+
+	omegaBNLoc_B = hubOmega->getState();
+	OmegasLoc = OmegasState->getState();
+
+	matrixAcontr.setZero();
+	matrixBcontr.setZero();
+	matrixCcontr.setZero();
+	vecTranscontr.setZero();
+
+	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	{
+		matrixDcontr += RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
+		vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,1)*omegaBNLoc_B.cross(RWIt->gsHat_B);
+
+		RWi++;
+	}
+	return;
 }
 
-void ReactionWheelStateEffector::registerStates(DynParamManager& states){}
-void ReactionWheelStateEffector::linkInStates(DynParamManager& states){}
-void ReactionWheelStateEffector::computeDerivatives(double integTime){}
+void ReactionWheelStateEffector::computeDerivatives(double integTime)
+{
+	Eigen::MatrixXd OmegasDot(this->numRW,1);
+	Eigen::Vector3d omegaDotBNLoc_B;
+	int RWi = 0;
+	std::vector<ReactionWheelConfigData>::iterator RWIt;
 
+	//! Grab necessarry values from manager
+	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
+
+	//! - Compute Derivatives
+
+	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	{
+		OmegasDot(RWi,1) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
+
+		RWi++;
+	}
+
+	OmegasState->setDerivative(OmegasDot);
+}
 
 
 
@@ -112,6 +173,15 @@ void ReactionWheelStateEffector::CrossInit()
 	int64_t propsID;
 	SingleMessageHeader localHeader;
 	MassPropsData localProps;
+	Eigen::Matrix3d T_str2Bdy;
+
+	// copy T_str2bdy into eigen
+	for (int i=0; i<3; i++) {
+		for (int j=0; j<3; j++) {
+			T_str2Bdy(i,j) = localProps.T_str2Bdy[3*i+j];
+		}
+	}
+
 
 	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
@@ -132,25 +202,24 @@ void ReactionWheelStateEffector::CrossInit()
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		if (it->gsHat_S.norm() > 0.01) {
-			it->gsHat_B = (RECAST3X3 localProps.T_str2Bdy)*(it->gsHat_S)
-			m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gsHat_S,  it->gsHat_B);
+			it->gsHat_B = T_str2Bdy * it->gsHat_S;
 		} else {
 			std::cerr <<
 			"Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
 		}
 		if (it->usingRWJitter) {
-			if (v3Norm(it->gtHat0_S) > 0.01) {
-				m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gtHat0_S, it->gtHat0_B);
+			if (it->gtHat0_S.norm() > 0.01) {
+				it->gtHat0_B = T_str2Bdy * it->gtHat0_S;
 			} else {
 				std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
 			}
-			if (v3Norm(it->ggHat0_S) > 0.01) {
-				m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->ggHat0_S,  it->ggHat0_B);
+			if (it->ggHat0_S.norm() > 0.01) {
+				it->ggHat0_B = T_str2Bdy * it->ggHat0_S;
 			} else {
 				std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
 			}
 		}
-		m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->rWB_S, it->rWB_B);
+		it->rWB_B = T_str2Bdy * it->rWB_S;
 	}
 }
 
@@ -205,35 +274,35 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 void ReactionWheelStateEffector::ReadInputs()
 {
 //
-//	std::vector<double>::iterator CmdIt;
-//	uint64_t i;
-//	//! Begin method steps
-//	//! - If the input message ID is invalid, return without touching states
-//	if(CmdsInMsgID < 0)
-//	{
-//		return;
-//	}
-//
-//	//! - Zero the command buffer and read the incoming command array
-//	SingleMessageHeader LocalHeader;
-//	memset(IncomingCmdBuffer, 0x0, ReactionWheelData.size()*sizeof(RWCmdStruct));
-//	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-//												ReactionWheelData.size()*sizeof(RWCmdStruct),
-//												reinterpret_cast<uint8_t*> (IncomingCmdBuffer), moduleID);
-//
-//	//! - Check if message has already been read, if stale return
-//	//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
-//	//        return;
-//	//    }
-//	prevCommandTime = LocalHeader.WriteClockNanos;
-//
-//	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
-//	RWCmdStruct *CmdPtr;
-//	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
-//		CmdPtr++, i++)
-//	{
-//		CmdPtr->u_cmd = IncomingCmdBuffer[i].u_cmd;
-//	}
+	std::vector<double>::iterator CmdIt;
+	uint64_t i;
+	//! Begin method steps
+	//! - If the input message ID is invalid, return without touching states
+	if(CmdsInMsgID < 0)
+	{
+		return;
+	}
+
+	//! - Zero the command buffer and read the incoming command array
+	SingleMessageHeader LocalHeader;
+	memset(IncomingCmdBuffer, 0x0, ReactionWheelData.size()*sizeof(RWCmdStruct));
+	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
+												ReactionWheelData.size()*sizeof(RWCmdStruct),
+												reinterpret_cast<uint8_t*> (IncomingCmdBuffer), moduleID);
+
+	//! - Check if message has already been read, if stale return
+	//    if(prevCommandTime==LocalHeader.WriteClockNanos) {
+	//        return;
+	//    }
+	prevCommandTime = LocalHeader.WriteClockNanos;
+
+	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
+	RWCmdStruct *CmdPtr;
+	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
+		CmdPtr++, i++)
+	{
+		CmdPtr->u_cmd = IncomingCmdBuffer[i].u_cmd;
+	}
 
 }
 
@@ -245,58 +314,58 @@ void ReactionWheelStateEffector::ReadInputs()
 // */
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
-//	//! Begin method steps
-//	std::vector<RWCmdStruct>::iterator CmdIt;
-//	int RWIter = 0;
-//	double u_s;
-//	double cosTheta;
-//	double sinTheta;
-//	double gtHat_B[3];
-//	double temp1[3];
-//	double temp2[3];
-//	double omegaCritical;
-//
-//	// zero the sum vectors of RW jitter torque and force
-//	v3SetZero(this->sumTau_B);
-//	v3SetZero(this->sumF_B);
-//
-//	// loop through commands
-//	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
-//	{
-//		// saturation
-//		if (this->ReactionWheelData[RWIter].u_max > 0) {
-//			if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
-//				CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
-//			} else if(CmdIt->u_cmd < -this->ReactionWheelData[RWIter].u_max) {
-//				CmdIt->u_cmd = -this->ReactionWheelData[RWIter].u_max;
-//			}
-//		}
-//
-//		// minimum torque
-//		if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_min) {
-//			CmdIt->u_cmd = 0;
-//		}
-//
-//		// Coulomb friction
-//		if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0.0) {
-//			omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionRatio;
-//		} else {
-//			omegaCritical = 0.0;
-//		}
-//		if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
-//			u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
-//		} else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
-//			u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
-//		} else {
-//			if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0) {
-//				u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
-//			} else {
-//				u_s = CmdIt->u_cmd;
-//			}
-//		}
-//
-//		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
-//
+	//! Begin method steps
+	std::vector<RWCmdStruct>::iterator CmdIt;
+	int RWIter = 0;
+	double u_s;
+	double cosTheta;
+	double sinTheta;
+	double gtHat_B[3];
+	double temp1[3];
+	double temp2[3];
+	double omegaCritical;
+
+	// zero the sum vectors of RW jitter torque and force
+	v3SetZero(this->sumTau_B);
+	v3SetZero(this->sumF_B);
+
+	// loop through commands
+	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
+	{
+		// saturation
+		if (this->ReactionWheelData[RWIter].u_max > 0) {
+			if(CmdIt->u_cmd > this->ReactionWheelData[RWIter].u_max) {
+				CmdIt->u_cmd = this->ReactionWheelData[RWIter].u_max;
+			} else if(CmdIt->u_cmd < -this->ReactionWheelData[RWIter].u_max) {
+				CmdIt->u_cmd = -this->ReactionWheelData[RWIter].u_max;
+			}
+		}
+
+		// minimum torque
+		if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_min) {
+			CmdIt->u_cmd = 0;
+		}
+
+		// Coulomb friction
+		if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0.0) {
+			omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionRatio;
+		} else {
+			omegaCritical = 0.0;
+		}
+		if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
+			u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f;
+		} else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
+			u_s = CmdIt->u_cmd + this->ReactionWheelData[RWIter].u_f;
+		} else {
+			if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0) {
+				u_s = CmdIt->u_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
+			} else {
+				u_s = CmdIt->u_cmd;
+			}
+		}
+
+		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
+
 //		// zero previous RW jitter torque/force vector
 //		v3SetZero(this->ReactionWheelData[RWIter].tau_B);
 //		v3SetZero(this->ReactionWheelData[RWIter].F_B);
@@ -328,10 +397,10 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 //			v3Add(this->ReactionWheelData[RWIter].tau_B, temp2, this->ReactionWheelData[RWIter].tau_B);
 //			v3Add(this->ReactionWheelData[RWIter].tau_B, this->sumTau_B, this->sumTau_B);
 //		}
-//
-//		RWIter++;
-//
-//	}
+
+		RWIter++;
+
+	}
 }
 
 /*! This method is used to compute all the dynamical effects for the RW set.
@@ -357,11 +426,11 @@ void ReactionWheelStateEffector::ComputeDynamics(MassPropsData *Props,
  */
 void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
-//	//! Begin method steps
-//	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
-//	ReadInputs();
-//	ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
-//	WriteOutputMessages(CurrentSimNanos);
+	//! Begin method steps
+	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
+	ReadInputs();
+	ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
+	WriteOutputMessages(CurrentSimNanos);
 //
 }
 

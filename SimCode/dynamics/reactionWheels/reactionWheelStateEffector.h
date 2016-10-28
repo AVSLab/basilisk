@@ -43,6 +43,8 @@ typedef struct {
 	double u_cmd; //!< N-m, torque command for RW
 }RWCmdStruct;
 
+enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+
 typedef struct {
 	std::string typeName;      //!< [], string containing the RW type name
 	Eigen::Vector3d rWB_S;		//!< m, position vector of the RW relative to the spacecraft structural frame
@@ -68,14 +70,16 @@ typedef struct {
 	double mass;               //!< kg, reaction wheel rotor mass
 	Eigen::Vector3d F_B;             //!< N, single RW force with simple jitter model
 	Eigen::Vector3d tau_B;           //!< N-m, single RW torque with simple jitter model
-	bool usingRWJitter;        //!< flag for using imbalance torques
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
+	RWModels RWModel;
 }ReactionWheelConfigData;
 
 
 class ReactionWheelStateEffector:  public SysModel, public StateEffector {
 public:
     EffectorMassProps effProps;
+	int numRW;
+	int numRWJitter;
     
 public:
     ReactionWheelStateEffector();
@@ -120,6 +124,11 @@ private:
 	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
 	RWCmdStruct *IncomingCmdBuffer;                             //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
+
+	StateData *hubSigma;
+	StateData *hubOmega;
+	StateData *OmegasState;
+	StateData *thetasState;
 
 };
 
