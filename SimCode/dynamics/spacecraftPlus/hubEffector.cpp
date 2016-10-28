@@ -61,6 +61,7 @@ void HubEffector::computeDerivatives(double integTime)
 {
     Eigen::Vector3d omegaBNDot_B;
     Eigen::Vector3d rBNDDotLocal_B;
+    Eigen::Vector3d rBNDDotLocal_N;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
     Eigen::Vector3d omegaBNLocal;
@@ -68,6 +69,7 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
+    Eigen::Matrix3d dcmNB;
     MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     Eigen::Matrix3d BN;
@@ -112,7 +114,9 @@ void HubEffector::computeDerivatives(double integTime)
             omegaState->setDerivative(omegaBNDot_B);
             rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP - matrixBSCP*omegaBNDot_B);
             //! - Map rBNDDotLocal_B to rBNDotLocal_N
-            velocityState->setDerivative(rBNDDotLocal_B);
+            dcmNB = sigmaBNLocal.toRotationMatrix();
+            rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
+            velocityState->setDerivative(rBNDDotLocal_N);
         }
         omegaBNDot_B = matrixDSCP.inverse()*vecRotSCP;
         omegaState->setDerivative(omegaBNDot_B);
@@ -122,8 +126,8 @@ void HubEffector::computeDerivatives(double integTime)
         //! - Set kinematic derivative
         posState->setDerivative(rBNDotLocal_N);
         if (this->useRotation==false) {
-            rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP);
-
+            rBNDDotLocal_N = matrixASCP.inverse()*(vecTransSCP);
+            velocityState->setDerivative(rBNDDotLocal_N);
         }
 	}
 }
