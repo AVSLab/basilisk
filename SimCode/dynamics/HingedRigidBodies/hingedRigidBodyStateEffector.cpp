@@ -23,7 +23,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     effProps.IEffPntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
-    effProps.IEffPntBPrime_B.fill(0.0);
+    effProps.IEffPrimePntB_B.fill(0.0);
     return;
 }
 
@@ -77,6 +77,17 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 void HingedRigidBodyStateEffector::updateEffectorMassPropRates(double integTime)
 {
+    //! - Find the body time derivative of the inertia about point B
+    //! First, find the rPrimeSB_B
+    this->rPrimeSB_B = this->d*this->thetaDot*this->sHat3_B;
+    //! - Define tilde matrix of rPrimeSB_B
+    this->rPrimeTildeSB_B << 0 , -this->rPrimeSB_B(2), this->rPrimeSB_B(1), this->rPrimeSB_B(2), 0, -this->rPrimeSB_B(0), -this->rPrimeSB_B(1), this->rPrimeSB_B(0), 0;
+
+    //! - Find body time derivative of IPntS_B
+    this->ISPrimePntS_B = this->thetaDot*(this->IPntS_S(2,2) - this->IPntS_S(0,0))*(this->sHat1_B*this->sHat3_B.transpose() + this->sHat3_B*this->sHat1_B.transpose());
+    //! - Find body time derivative of IPntB_B
+    this->effProps.IEffPrimePntB_B = this->ISPrimePntS_B - this->mass*(this->rPrimeTildeSB_B*this->rTildeSB_B + this->rTildeSB_B*this->rPrimeTildeSB_B);
+
     return;
 }
 

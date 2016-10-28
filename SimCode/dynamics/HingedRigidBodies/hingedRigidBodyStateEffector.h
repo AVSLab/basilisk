@@ -58,6 +58,7 @@ public:
     Eigen::Matrix3d rTildeSB_B;  //!< Tilde matrix of r_SB_B
     Eigen::Vector3d rPrimeSB_B;     //!< Body time derivative of r_SB_B
     Eigen::Matrix3d rPrimeTildeSB_B;//!< Tilde matrix of rPrime_SB_B
+    Eigen::Matrix3d ISPrimePntS_B;  
     double theta;              //!< rad, hinged rigid body angle
     double thetaDot;           //!< rad/s, hinged rigid body angle rate
     Eigen::Vector3d sigmaBNLoc;

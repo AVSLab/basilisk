@@ -29,7 +29,7 @@
 typedef struct {
     Eigen::Matrix3d IEffPntB_B;           //! [kgm2] Inertia of effector relative to effector CoM in B
     Eigen::Vector3d rCB_B;                 //! [m] Center of component with respect to attachment in B
-    Eigen::Matrix3d IEffPntBPrime_B;
+    Eigen::Matrix3d IEffPrimePntB_B;
     double mEff;                           //! [kg] Mass of the effector
 }EffectorMassProps;
 

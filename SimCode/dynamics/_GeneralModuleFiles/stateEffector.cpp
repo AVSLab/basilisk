@@ -21,7 +21,7 @@
 StateEffector::StateEffector()
 {
     effProps.IEffPntB_B.fill(0.0);
-    effProps.IEffPntBPrime_B.fill(0.0);
+    effProps.IEffPrimePntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
 
