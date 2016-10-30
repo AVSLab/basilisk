@@ -177,6 +177,10 @@ void ExtForceTorque::computeBodyForceTorque()
     }
 
 
+    v3Copy(dynEffectorForce_N, this->extForce_N);
+    v3Copy(dynEffectorForce_B, this->extForce_B);
+    v3Copy(dynEffectorTorquePntB_B, this->extTorquePntB_B);
+
     this->forceExternal_N = (Eigen::Vector3d) dynEffectorForce_N;
     this->forceExternal_B = (Eigen::Vector3d)dynEffectorForce_B;
     this->torqueExternalPntB_B = (Eigen::Vector3d) dynEffectorTorquePntB_B;
