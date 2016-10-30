@@ -14,16 +14,16 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
-%module extForceTorque
+%module ExtForceTorque
 %{
-   #include "extForceTorque.h"
+   #include "ExtForceTorque.h"
 %}
 
 %include "swig_common_model.i"
 
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "extForceTorque.h"
+%include "ExtForceTorque.h"
 
 
 %pythoncode %{
