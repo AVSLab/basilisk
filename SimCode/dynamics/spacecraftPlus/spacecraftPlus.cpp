@@ -36,6 +36,11 @@ SpacecraftPlus::~SpacecraftPlus()
     return;
 }
 
+void SpacecraftPlus::addHingedRigidBodyStateEffector(HingedRigidBodyStateEffector *newHingedRigidBody)
+{
+    states.push_back(newHingedRigidBody);
+}
+
 void SpacecraftPlus::computeEnergyMomentum()
 {
     

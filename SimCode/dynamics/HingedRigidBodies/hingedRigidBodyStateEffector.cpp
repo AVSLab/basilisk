@@ -65,18 +65,18 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     interMediateMatrix = this->thetaDotState->getState();
     this->thetaDot = interMediateMatrix(0,0);
     //! - Next find the sHat unit vectors
-    this->SH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
-    this->SB = this->SH*this->HB;
-    this->sHat1_B = this->SB.row(0);
-    this->sHat2_B = this->SB.row(1);
-    this->sHat3_B = this->SB.row(2);
+    this->dcmSH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
+    this->dcmSB = this->dcmSH*this->dcmSB;
+    this->sHat1_B = this->dcmSB.row(0);
+    this->sHat2_B = this->dcmSB.row(1);
+    this->sHat3_B = this->dcmSB.row(2);
     this->rSB_B = this->rHB_B - this->d*this->sHat1_B;
     this->effProps.rCB_B = this->rSB_B;
 
     //! - Find the inertia of the hinged rigid body about point B
     //! - Define rTildeSB_B
     this->rTildeSB_B << 0 , -this->rSB_B(2), this->rSB_B(1), this->rSB_B(2), 0, -this->rSB_B(0), -this->rSB_B(1), this->rSB_B(0), 0;
-    this->effProps.IEffPntB_B = this->SB.transpose()*this->IPntS_S*this->SB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
+    this->effProps.IEffPntB_B = this->dcmSB.transpose()*this->IPntS_S*this->dcmSB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
     return;
 }
 
@@ -99,7 +99,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
 {
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
-    this->omegaBN_S = this->SB*this->omegaBNLoc_B;
+    this->omegaBN_S = this->dcmSB*this->omegaBNLoc_B;
     //! - Define omegaTildeBNLoc_B
     this->omegaTildeBNLoc_B << 0 , -this->omegaBNLoc_B(2), this->omegaBNLoc_B(1), this->omegaBNLoc_B(2), 0, -this->omegaBNLoc_B(0), -this->omegaBNLoc_B(1), this->omegaBNLoc_B(0), 0;
     //! - Define a_theta (need to add in g_N)
