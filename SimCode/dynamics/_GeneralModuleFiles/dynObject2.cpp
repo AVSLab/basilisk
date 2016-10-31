@@ -55,3 +55,8 @@ void DynObject2::initializeDynamics()
     }
     
 }
+
+void DynObject2::addStateEffector(StateEffector *newEffector)
+{
+	states.push_back(newEffector);
+}

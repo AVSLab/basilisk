@@ -63,7 +63,6 @@ public:
     void integrateState(double t);            //! [-] Everyone will need to integrate the state
     void computeEnergyMomentum();             //! [-] User can implement NRG/moment check
     void initializeDynamics();                //! [-] Method to link all spacecraft states
-    void addHingedRigidBodyStateEffector(HingedRigidBodyStateEffector *newHingedRigidBody);   //! [-] Method to add a hinged rigid body to the stateEffector list
 };
 
 #endif /* SPACECRAFT_PLUS_H */

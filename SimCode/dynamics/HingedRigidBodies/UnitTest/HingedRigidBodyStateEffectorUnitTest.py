@@ -70,23 +70,23 @@ def test_hubPropagate(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
 
     # Define Variable for panel 1
-    panel1.mass = 100.0
-    panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    panel1.d = 1.5
-    panel1.k = 100.0
-    panel1.c = 0.0
-    panel1.rHB_B = [[0.5], [0.0], [1.0]]
-    panel1.dcmHB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.mass = 100.0
+    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel1.d = 1.5
+    unitTestSim.panel1.k = 100.0
+    unitTestSim.panel1.c = 0.0
+    unitTestSim.panel1.rHB_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcmHB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
 
     # Define Variables for panel 2
 
     # Add panels to spaceCraft
     # this next line is not working
-    # scObject.addHingedRigidBodyStateEffector(panel1)
+    scObject.addStateEffector(unitTestSim.panel1)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
