@@ -112,8 +112,8 @@ class ThrusterDynamicEffector: public SysModel, public DynamicEffector {
 public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
-    void linkInStates(const DynParamManager& states);
-    void computeBodyForceTorque();
+    void linkInStates(DynParamManager& states);
+    void computeBodyForceTorque(double currentTime);
     
     void SelfInit();
     void CrossInit();
@@ -122,14 +122,14 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void ConfigureThrustRequests(double CurrentTime);
+    void ConfigureThrustRequests(double currentTime);
 /*    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
-                         double CurrentTime);*/
+                         double currentTime);*/
     void ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
-                             double CurrentTime);
+                             double currentTime);
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
-                             double CurrentTime);
-    void updateMassProperties(double CurrentTime);
+                             double currentTime);
+    void updateMassProperties(double currentTime);
     
 
 public:
@@ -144,6 +144,7 @@ public:
     double prevFireTime;                           //!< s  Previous thruster firing time
     double thrFactorToTime(ThrusterConfigData *thrData,
                            std::vector<ThrusterTimePair> *thrRamp);
+    StateData *hubSigma;
     Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
     Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
     

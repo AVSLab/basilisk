@@ -109,7 +109,10 @@ void ThrusterDynamicEffector::CrossInit()
 /*        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrDir_S,
                   it->thrDir_B);
         m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrLoc_S,
-                  it->thrLoc_B);*/
+                  it->thrLoc_B);
+ 
+ */
+    it->thrLoc_B = it->inputThrLoc_S;
     }
     
 }
@@ -202,9 +205,9 @@ bool ThrusterDynamicEffector::ReadInputs()
  active.  Note that for unit testing purposes you can insert firings directly
  into NewThrustCmds.
  @return void
- @param CurrentTime The current simulation time converted to a double
+ @param currentTime The current simulation time converted to a double
  */
-void ThrusterDynamicEffector::ConfigureThrustRequests(double CurrentTime)
+void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
     //! Begin method steps
     std::vector<ThrusterConfigData>::iterator it;
@@ -227,8 +230,8 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double CurrentTime)
             it->ThrustOps.ThrustOnCmd = it->ThrustOps.ThrustFactor > 0.0
             ? *CmdIt : 0.0;
         }
-        it->ThrustOps.ThrusterStartTime = CurrentTime;
-        it->ThrustOps.PreviousIterTime = CurrentTime;
+        it->ThrustOps.ThrusterStartTime = currentTime;
+        it->ThrustOps.PreviousIterTime = currentTime;
         it->ThrustOps.ThrustOnRampTime = 0.0;
         it->ThrustOps.ThrustOnSteadyTime = 0.0;
         it->ThrustOps.ThrustOffRampTime = 0.0;
@@ -238,11 +241,69 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double CurrentTime)
     
 }
 
-void ThrusterDynamicEffector::linkInStates(const DynParamManager& states){
+void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
+    this->hubSigma = states.getStateObject("hubSigma");
 }
 
 
-void ThrusterDynamicEffector::computeBodyForceTorque(){
+void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
+    
+    std::vector<ThrusterConfigData>::iterator it;
+    ThrusterOperationData *ops;
+    Eigen::Vector3d SingleThrusterForce;
+    Eigen::Vector3d SingleThrusterTorque;
+    Eigen::Vector3d CoMRelPos;
+    double mDotSingle;
+    double tmpThrustMag = 0;
+    
+    //! Begin method steps
+    //! - Zero out the structure force/torque for the thruster set
+    // MassProps are missing, so setting CoM to zero momentarily
+    CoMRelPos.setZero();
+    forceExternal_B.setZero();
+    torqueExternalPntB_B.setZero();
+    mDotTotal = 0.0;
+    
+    //! - Iterate through all of the thrusters to aggregate the force/torque in the system
+    for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
+    {
+        ops = &it->ThrustOps;
+        //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
+        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - currentTime) >= 0.0 &&
+           ops->ThrustOnCmd > 0.0)
+        {
+            ComputeThrusterFire(&(*it), currentTime);
+        }
+        //! - If we are not actively firing, continue shutdown process for active thrusters
+        else if(ops->ThrustFactor > 0.0)
+        {
+            ComputeThrusterShut(&(*it), currentTime);
+        }
+        //! - For each thruster, aggregate the current thrust direction into composite body force
+        tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
+        // Apply dispersion to magnitude
+        tmpThrustMag *= (1. + it->thrusterMagDisp);
+        SingleThrusterForce = it->thrDir_B*tmpThrustMag;
+        //v3Add(dynEffectorForce_B, SingleThrusterForce, dynEffectorForce_B);
+        forceExternal_B = SingleThrusterForce + forceExternal_B;
+        
+        //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
+        // CoMRelPos = it->thrLoc_B - Props->CoM;
+        SingleThrusterTorque = CoMRelPos.cross(SingleThrusterForce);
+        torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
+        mDotSingle = 0.0;
+        if(it->steadyIsp * ops->IspFactor > 0.0)
+        {
+            mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
+                                                          it->steadyIsp * ops->IspFactor);
+        }
+        mDotTotal += mDotSingle;
+    }
+    //! - Once all thrusters have been checked, update time-related variables for next evaluation
+    updateMassProperties(currentTime);
+    prevFireTime = currentTime;
+
+    
 }
 
 /*! This method is used to get the current force for a thruster firing.  It uses
@@ -253,7 +314,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(){
  @param CurrentTime The current simulation clock time converted to a double
  */
 void ThrusterDynamicEffector::ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
-                                           double CurrentTime)
+                                           double currentTime)
 {
     //! Begin method steps
     std::vector<ThrusterTimePair>::iterator it;
@@ -265,7 +326,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(ThrusterConfigData *CurrentThr
         ops->ThrustOnRampTime = thrFactorToTime(CurrentThruster,
                                                 &(CurrentThruster->ThrusterOnRamp));
     }
-    double LocalOnRamp = (CurrentTime - ops->PreviousIterTime) +
+    double LocalOnRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOnRampTime;
     double prevValidThrFactor = 0.0;
     double prevValidIspFactor = 0.0;
@@ -285,8 +346,8 @@ void ThrusterDynamicEffector::ComputeThrusterFire(ThrusterConfigData *CurrentThr
             (it->TimeDelta - prevValidDelta) *
             (LocalOnRamp - prevValidDelta) + prevValidIspFactor;
             ops->ThrustOnRampTime = LocalOnRamp;
-            ops->totalOnTime += (CurrentTime - ops->PreviousIterTime);
-            ops->PreviousIterTime = CurrentTime;
+            ops->totalOnTime += (currentTime - ops->PreviousIterTime);
+            ops->PreviousIterTime = currentTime;
             return;
         }
         prevValidThrFactor = it->ThrustFactor;
@@ -295,9 +356,9 @@ void ThrusterDynamicEffector::ComputeThrusterFire(ThrusterConfigData *CurrentThr
     }
     //! - If we did not find the current time in the on-ramp, then we are at steady-state
     
-    ops->ThrustOnSteadyTime += (CurrentTime - ops->PreviousIterTime);
-    ops->totalOnTime += (CurrentTime - ops->PreviousIterTime);
-    ops->PreviousIterTime = CurrentTime;
+    ops->ThrustOnSteadyTime += (currentTime - ops->PreviousIterTime);
+    ops->totalOnTime += (currentTime - ops->PreviousIterTime);
+    ops->PreviousIterTime = currentTime;
     ops->ThrustFactor = ops->IspFactor = 1.0;
     ops->ThrustOffRampTime = 0.0;
 }
@@ -312,7 +373,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(ThrusterConfigData *CurrentThr
  @param CurrentTime The current simulation clock time converted to a double
  */
 void ThrusterDynamicEffector::ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
-                                           double CurrentTime)
+                                           double currentTime)
 {
     //! Begin method steps
     std::vector<ThrusterTimePair>::iterator it;
@@ -325,7 +386,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(ThrusterConfigData *CurrentThr
         ops->ThrustOffRampTime = thrFactorToTime(CurrentThruster,
                                                  &(CurrentThruster->ThrusterOffRamp));
     }
-    double LocalOffRamp = (CurrentTime - ops->PreviousIterTime) +
+    double LocalOffRamp = (currentTime - ops->PreviousIterTime) +
     ops->ThrustOffRampTime;
     double prevValidThrFactor = 1.0;
     double prevValidIspFactor = 1.0;
@@ -344,7 +405,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(ThrusterConfigData *CurrentThr
             (it->TimeDelta - prevValidDelta) *
             (LocalOffRamp - prevValidDelta) + prevValidIspFactor;
             ops->ThrustOffRampTime = LocalOffRamp;
-            ops->PreviousIterTime = CurrentTime;
+            ops->PreviousIterTime = currentTime;
             return;
         }
         prevValidThrFactor = it->ThrustFactor;
@@ -357,9 +418,9 @@ void ThrusterDynamicEffector::ComputeThrusterShut(ThrusterConfigData *CurrentThr
 }
 
 /* */
-void ThrusterDynamicEffector::updateMassProperties(double CurrentTime)
+void ThrusterDynamicEffector::updateMassProperties(double currentTime)
 {
-    double dt = CurrentTime - prevFireTime;
+    double dt = currentTime - prevFireTime;
 //    double oldMass = objProps.Mass;
 //    objProps.Mass = oldMass - mDotTotal*dt;
 //   vScale(objProps.Mass/oldMass, objProps.InertiaTensor, 9,
