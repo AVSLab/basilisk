@@ -36,6 +36,11 @@ SpacecraftPlus::~SpacecraftPlus()
     return;
 }
 
+void SpacecraftPlus::addHingedRigidBodyStateEffector(HingedRigidBodyStateEffector *newHingedRigidBody)
+{
+    states.push_back(newHingedRigidBody);
+}
+
 void SpacecraftPlus::computeEnergyMomentum()
 {
     
@@ -63,6 +68,12 @@ void SpacecraftPlus::equationsOfMotion(double t)
     hub.matrixDSCP.setZero();
     hub.vecTransSCP.setZero();
     hub.vecRotSCP.setZero();
+    (*this->m_SC).setZero();
+    (*this->c_B).setZero();
+    (*this->ISCPntB_B).setZero();
+    (*this->cPrime_B).setZero();
+    (*this->ISCPntBPrime_B).setZero();
+
 
     //! - This is where gravity will be called
     gravField.computeGravityField();
@@ -141,12 +152,7 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*dynIt)->linkInStates(dynManager);
     }
-    //! Zero m_SC, c_B, ISCPntB_B, cPrime_B, and ISCPntBPrime_B in the properties manager
-    (*this->m_SC) << 100;
-    (*this->c_B).setZero();
-    (*this->ISCPntB_B) << 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0;
-    (*this->cPrime_B).setZero();
-    (*this->ISCPntBPrime_B).setZero();
+
     hub.useTranslation = true;
     hub.useRotation = true;
 }

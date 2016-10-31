@@ -27,6 +27,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>
+#include "hingedRigidBodyStateEffector.h"
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
@@ -62,6 +63,7 @@ public:
     void integrateState(double t);            //! [-] Everyone will need to integrate the state
     void computeEnergyMomentum();             //! [-] User can implement NRG/moment check
     void initializeDynamics();                //! [-] Method to link all spacecraft states
+    void addHingedRigidBodyStateEffector(HingedRigidBodyStateEffector *newHingedRigidBody);   //! [-] Method to add a hinged rigid body to the stateEffector list
 };
 
 #endif /* SPACECRAFT_PLUS_H */

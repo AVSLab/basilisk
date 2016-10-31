@@ -18,6 +18,9 @@
 
 #include "hubEffector.h"
 
+using namespace Eigen;
+using namespace std;
+
 HubEffector::HubEffector()
 {
     return;
@@ -44,20 +47,13 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, "hubVelocity");
     this->sigmaState = states.registerState(3, 1, "hubSigma");
     this->omegaState = states.registerState(3, 1, "hubOmega");
-    //# posRef.setState([[1.0], [0.0], [0.0]])
-    //# omegaRef.setState([[0.001], [0.0], [0.0]])
-    //# sigmaRef.setState([[0.0], [0.0], [0.0]])
-    //# velRef.setState([[0.01], [0.0], [0.0]])
-    this->posState->state << 1.0, 0.0, 0.0;
-    this->omegaState->state << 0.001, -0.002, 0.003;
-    this->sigmaState->state.setZero();
-    this->velocityState->state << 55.24, 0.0, 0.0;
 }
 
 void HubEffector::computeDerivatives(double integTime)
 {
     Eigen::Vector3d omegaBNDot_B;
     Eigen::Vector3d rBNDDotLocal_B;
+    Eigen::Vector3d rBNDDotLocal_N;
     Eigen::Matrix3d intermediateMatrix;
     Eigen::Vector3d intermediateVector;
     Eigen::Vector3d omegaBNLocal;
@@ -65,14 +61,11 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d cLocal_B;
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
-    Eigen::Vector3d sigmaBNLocal;
+    Eigen::Matrix3d dcmNB;
+    MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     Eigen::Matrix3d BN;
-    double ms2;
-    double s1s2;
-    double s1s3;
-    double s2s3;
-    sigmaBNLocal = sigmaState->getState();
+    sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
     omegaBNLocal = omegaState->getState();
     rBNDotLocal_N = velocityState->getState();
     cPrimeLocal_B = *cPrime_B;
@@ -80,6 +73,7 @@ void HubEffector::computeDerivatives(double integTime)
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
     *this->m_SC += this->mHub;
     *this->c_B += this->mHub.value()*this->rBcB_B;
+    *this->c_B += *this->c_B/(*this->m_SC).value();
     *ISCPntB_B += this->IHubPntB_B;
 
     //! - Need to scale [A] [B] and vecTrans by m_SC
@@ -102,20 +96,7 @@ void HubEffector::computeDerivatives(double integTime)
 
     if (this->useRotation==true) {
         //! Set kinematic derivative
-        ms2  = 1 - sigmaBNLocal.squaredNorm();
-        s1s2 = sigmaBNLocal(0)*sigmaBNLocal(1);
-        s1s3 = sigmaBNLocal(0)*sigmaBNLocal(2);
-        s2s3 = sigmaBNLocal(1)*sigmaBNLocal(2);
-
-        Bmat(0,0) = ms2 + 2*sigmaBNLocal(0)*sigmaBNLocal(0);
-        Bmat(0,1) = 2*(s1s2 - sigmaBNLocal(2));
-        Bmat(0,2) = 2*(s1s3 + sigmaBNLocal(1));
-        Bmat(1,0) = 2*(s1s2 + sigmaBNLocal(2));
-        Bmat(1,1) = ms2 + 2*sigmaBNLocal(1)*sigmaBNLocal(1);
-        Bmat(1,2) = 2*(s2s3 - sigmaBNLocal(0));
-        Bmat(2,0) = 2*(s1s3 - sigmaBNLocal(1));
-        Bmat(2,1) = 2*(s2s3 + sigmaBNLocal(0));
-        Bmat(2,2) = ms2 + 2*sigmaBNLocal(2)*sigmaBNLocal(2);
+        Bmat = sigmaBNLocal.Bmat();
         sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 
@@ -126,7 +107,9 @@ void HubEffector::computeDerivatives(double integTime)
             omegaState->setDerivative(omegaBNDot_B);
             rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP - matrixBSCP*omegaBNDot_B);
             //! - Map rBNDDotLocal_B to rBNDotLocal_N
-            velocityState->setDerivative(rBNDDotLocal_B);
+            dcmNB = sigmaBNLocal.toRotationMatrix();
+            rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
+            velocityState->setDerivative(rBNDDotLocal_N);
         }
         omegaBNDot_B = matrixDSCP.inverse()*vecRotSCP;
         omegaState->setDerivative(omegaBNDot_B);
@@ -136,8 +119,8 @@ void HubEffector::computeDerivatives(double integTime)
         //! - Set kinematic derivative
         posState->setDerivative(rBNDotLocal_N);
         if (this->useRotation==false) {
-            rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP);
-
+            rBNDDotLocal_N = matrixASCP.inverse()*(vecTransSCP);
+            velocityState->setDerivative(rBNDDotLocal_N);
         }
 	}
 }

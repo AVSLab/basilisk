@@ -32,6 +32,7 @@ import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import macros
 import spacecraftPlus
+import hingedRigidBodyStateEffector
 import sim_model
 import macros
 import ctypes
@@ -68,32 +69,43 @@ def test_hubPropagate(show_plots):
     testProcessRate = macros.sec2nano(0.1)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    panel1.mass = 100.0
+    panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    panel1.d = 1.5
+    panel1.k = 100.0
+    panel1.c = 0.0
+    panel1.rHB_B = [[0.5], [0.0], [1.0]]
+    panel1.dcmHB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+
+    # Define Variables for panel 2
+
+    # Add panels to spaceCraft
+    # this next line is not working
+    # scObject.addHingedRigidBodyStateEffector(panel1)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.InitializeSimulation()
-    
-    # scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
-    # scObject.dynManager.setPropertyValue("centerOfMassSC", [[1.0], [0.0], [0.0]])
-    # scObject.dynManager.setPropertyValue("inertiaSC", [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    # scObject.dynManager.setPropertyValue("inertiaPrimeSC", [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-    # scObject.dynManager.setPropertyValue("centerOfMassPrimeSC", [[0.0], [0.0], [0.0]])
-
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
-    posRef.setState([[1.0], [0.0], [0.0]])
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
+    posRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[0.0], [0.0], [0.0]])
+    omegaRef.setState([[0.1], [-0.1], [0.1]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[55.24], [0.0], [0.0]])
 
-    scObject.hub.mHub = [[100]]
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntB_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.mHub = [[750.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntB_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
     
     unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()
