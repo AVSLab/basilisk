@@ -25,10 +25,10 @@
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
-    effProps.IEffPntCe_B.fill(0.0);
-    effProps.rCe_B.fill(0.0);
-    effProps.re_B.fill(0.0);
+    effProps.IEffPntB_B.fill(0.0);
+    effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
+	effProps.IEffPrimePntB_B.fill(0.0);
 
     return;
 }
