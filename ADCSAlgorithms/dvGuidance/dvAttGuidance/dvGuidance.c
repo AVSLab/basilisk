@@ -35,7 +35,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(attCmdOut), "attCmdOut", moduleID);
+        ConfigData->outputDataName, sizeof(attRefOut), "attCmdOut", moduleID);
     return;
     
 }
@@ -68,13 +68,11 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double T_Inrtl2Burn[3][3];
-    double T_Inrtl2Bdy[3][3];
     double dvUnit[3];
     double burnY[3];
 	double burnTime;
 	double rotPRV[3];
 	double rotDCM[3][3];
-	double omega_BR_N[3];
     uint64_t writeTime;
     uint32_t writeSize;
     NavTransOut navData;
@@ -98,12 +96,11 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
 
-	m33MultM33(RECAST3X3 ConfigData->Tburn2Bdy, T_Inrtl2Burn, T_Inrtl2Bdy);
-	C2MRP(RECAST3X3 &T_Inrtl2Bdy[0][0], ConfigData->attCmd.sigma_BR);
-	v3Scale(localBurnData.dvRotVecMag, T_Inrtl2Burn[2], omega_BR_N);
-	m33MultV3(RECAST3X3 T_Inrtl2Bdy, omega_BR_N, ConfigData->attCmd.omega_BR);
+	C2MRP(RECAST3X3 &T_Inrtl2Burn[0][0], ConfigData->attCmd.sigma_RN);
+	v3Scale(localBurnData.dvRotVecMag, T_Inrtl2Burn[2], ConfigData->attCmd.omega_RN_N);
+    v3SetZero(ConfigData->attCmd.domega_RN_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
         &ConfigData->attCmd, moduleID);
     
     return;

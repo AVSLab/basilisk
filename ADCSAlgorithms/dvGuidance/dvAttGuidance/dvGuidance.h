@@ -41,13 +41,12 @@ typedef struct {
     char inputNavDataName[MAX_STAT_MSG_LENGTH]; /*<! The name of the incoming attitude command*/
     char inputMassPropName[MAX_STAT_MSG_LENGTH];/*<! The name of the mass properties message*/
     char inputBurnDataName[MAX_STAT_MSG_LENGTH];/*<! Input message that configures the vehicle burn*/
-    double Tburn2Bdy[9];     /*!< (-) transformation from burn frame to body*/
     double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
     int32_t inputNavID;      /*!< (-) ID for the incoming IMU data message*/
     int32_t inputMPID;       /*!< (-) ID for the incoming mass properties message*/
     int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
-    attCmdOut attCmd;       /*!< (-) Output attitude command data to send*/
+    attRefOut attCmd;       /*!< (-) Output attitude command data to send*/
 }dvGuidanceConfig;
 
 #ifdef __cplusplus
