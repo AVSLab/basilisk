@@ -29,6 +29,7 @@
 typedef struct {
     Eigen::Matrix3d IEffPntB_B;           //! [kgm2] Inertia of effector relative to effector CoM in B
     Eigen::Vector3d rCB_B;                 //! [m] Center of component with respect to attachment in B
+    Eigen::Vector3d rPrimeCB_B;
     Eigen::Matrix3d IEffPrimePntB_B;
     double mEff;                           //! [kg] Mass of the effector
 }EffectorMassProps;
@@ -42,7 +43,6 @@ public:
     virtual ~StateEffector();
     virtual void registerStates(DynParamManager& states) = 0;
     virtual void linkInStates(DynParamManager& states) = 0;
-//    virtual void updateBackSubstitution(double integTime)=0;
     virtual void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     virtual void computeDerivatives(double integTime)=0;
     virtual void updateEffectorMassProps(double integTime);

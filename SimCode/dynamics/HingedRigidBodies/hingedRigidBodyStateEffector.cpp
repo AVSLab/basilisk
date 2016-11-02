@@ -23,11 +23,12 @@ using namespace std;
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
-    //! - zero the contributions for mass props and mass rates
     effProps.IEffPntB_B.fill(0.0);
-    effProps.rCB_B.fill(0.0);
-    effProps.mEff = 0.0;
     effProps.IEffPrimePntB_B.fill(0.0);
+    effProps.rCB_B.fill(0.0);
+    effProps.rPrimeCB_B.fill(0.0);
+    effProps.mEff = 0.0;
+
     return;
 }
 
@@ -103,7 +104,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
     //! - Define omegaTildeBNLoc_B
     this->omegaTildeBNLoc_B << 0 , -this->omegaBNLoc_B(2), this->omegaBNLoc_B(1), this->omegaBNLoc_B(2), 0, -this->omegaBNLoc_B(0), -this->omegaBNLoc_B(1), this->omegaBNLoc_B(0), 0;
     //! - Define a_theta (need to add in g_N)
-    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2,2)*this->omegaBN_S(0,0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rHB_B;
+    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2)*this->omegaBN_S(0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rHB_B;
 
     //! - Start defining them good old contributions - start with translation
     //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper

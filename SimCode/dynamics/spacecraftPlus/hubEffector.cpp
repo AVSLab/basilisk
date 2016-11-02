@@ -23,6 +23,12 @@ using namespace std;
 
 HubEffector::HubEffector()
 {
+    effProps.IEffPntB_B.fill(0.0);
+    effProps.IEffPrimePntB_B.fill(0.0);
+    effProps.rCB_B.fill(0.0);
+    effProps.rPrimeCB_B.fill(0.0);
+    effProps.mEff = 0.0;
+
     return;
 }
 
@@ -49,6 +55,20 @@ void HubEffector::registerStates(DynParamManager& states)
     this->omegaState = states.registerState(3, 1, "hubOmega");
 }
 
+void HubEffector::updateEffectorMassProps(double integTime)
+{
+    //! Give the mass to mass props
+    effProps.mEff = this->mHub;
+
+    //! Give inertia of hub about point B to mass props
+    Eigen::Matrix3d intermediateMatrix;
+    intermediateMatrix << 0 , -this->rBcB_B(2), this->rBcB_B(1), this->rBcB_B(2), 0, -this->rBcB_B(0), -this->rBcB_B(1), this->rBcB_B(0), 0;
+    effProps.IEffPntB_B = this->IHubPntBc_B + this->mHub*intermediateMatrix*intermediateMatrix.transpose();
+
+    //! Give position of center of mass of hub with respect to point B to mass props
+    effProps.rCB_B = this->rBcB_B;
+}
+
 void HubEffector::computeDerivatives(double integTime)
 {
     Eigen::Vector3d omegaBNDot_B;
@@ -70,29 +90,24 @@ void HubEffector::computeDerivatives(double integTime)
     rBNDotLocal_N = velocityState->getState();
     cPrimeLocal_B = *cPrime_B;
     cLocal_B = *c_B;
-    //! - Need to add hub to m_SC, c_B and ISCPntB_B
-    *this->m_SC += this->mHub;
-    *this->c_B += this->mHub.value()*this->rBcB_B;
-    *this->c_B += *this->c_B/(*this->m_SC).value();
-    *ISCPntB_B += this->IHubPntB_B;
 
     //! - Need to scale [A] [B] and vecTrans by m_SC
-    matrixASCP = matrixASCP/this->m_SC->value();
-    matrixASCP = matrixBSCP/this->m_SC->value();
-    vecTransSCP = vecTransSCP/this->m_SC->value();
+    matrixA = matrixA/(*this->m_SC)(0,0);
+    matrixB = matrixB/(*this->m_SC)(0,0);
+    vecTrans = vecTrans/(*this->m_SC)(0,0);
 
     ////! Need to make contributions to the matrices from the hub
     intermediateMatrix = intermediateMatrix.Identity();
-    matrixASCP += intermediateMatrix;
+    matrixA += intermediateMatrix;
     //! make c_B skew symmetric matrix
     intermediateMatrix <<  0 , -(*c_B)(2,0),
     (*c_B)(1,0), (*c_B)(2,0), 0, -(*c_B)(0,0), -(*c_B)(1,0), (*c_B)(0,0), 0;
-    matrixBSCP -= intermediateMatrix;
-    matrixCSCP += this->m_SC->value()*intermediateMatrix;
-    matrixDSCP += *ISCPntB_B;
-    vecTransSCP += -2*omegaBNLocal.cross(cPrimeLocal_B) -omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
+    matrixB -= intermediateMatrix;
+    matrixC += this->m_SC->value()*intermediateMatrix;
+    matrixD += *ISCPntB_B;
+    vecTrans += -2*omegaBNLocal.cross(cPrimeLocal_B) -omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaBNLocal;
-    vecRotSCP += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
+    vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
 
     if (this->useRotation==true) {
         //! Set kinematic derivative
@@ -101,17 +116,17 @@ void HubEffector::computeDerivatives(double integTime)
         sigmaState->setDerivative(sigmaBNDotLocal);
 
         if (this->useTranslation==true) {
-            intermediateVector = vecRotSCP - matrixCSCP*matrixASCP.inverse()*vecTransSCP;
-            intermediateMatrix = matrixDSCP - matrixCSCP*matrixASCP.inverse()*matrixBSCP;
+            intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
+            intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
             omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
             omegaState->setDerivative(omegaBNDot_B);
-            rBNDDotLocal_B = matrixASCP.inverse()*(vecTransSCP - matrixBSCP*omegaBNDot_B);
+            rBNDDotLocal_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
             //! - Map rBNDDotLocal_B to rBNDotLocal_N
             dcmNB = sigmaBNLocal.toRotationMatrix();
             rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
             velocityState->setDerivative(rBNDDotLocal_N);
         }
-        omegaBNDot_B = matrixDSCP.inverse()*vecRotSCP;
+        omegaBNDot_B = matrixD.inverse()*vecRot;
         omegaState->setDerivative(omegaBNDot_B);
     }
 
@@ -119,11 +134,8 @@ void HubEffector::computeDerivatives(double integTime)
         //! - Set kinematic derivative
         posState->setDerivative(rBNDotLocal_N);
         if (this->useRotation==false) {
-            rBNDDotLocal_N = matrixASCP.inverse()*(vecTransSCP);
+            rBNDDotLocal_N = matrixA.inverse()*(vecTrans);
             velocityState->setDerivative(rBNDDotLocal_N);
         }
 	}
 }
-
-void updateEffectorMassProps(double integTime){}
-void updateEffectorMassPropRates(double integTime){}

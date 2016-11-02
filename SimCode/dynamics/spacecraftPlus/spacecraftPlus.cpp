@@ -41,6 +41,11 @@ void SpacecraftPlus::computeEnergyMomentum()
     
 }
 
+void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
+{
+    hubSigma = statesIn.getStateObject("hubSigma");
+}
+
 void SpacecraftPlus::equationsOfMotion(double t)
 {
     std::vector<StateEffector*>::iterator it;
@@ -51,18 +56,18 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*sysTime) << CurrentSimNanos, t;
 
     //! - Zero all Matrices and vectors
-    matrixAContrSCP.setZero();
-    matrixBContrSCP.setZero();
-    matrixCContrSCP.setZero();
-    matrixDContrSCP.setZero();
-    vecTransContrSCP.setZero();
-    vecRotContrSCP.setZero();
-    hub.matrixASCP.setZero();
-    hub.matrixBSCP.setZero();
-    hub.matrixCSCP.setZero();
-    hub.matrixDSCP.setZero();
-    hub.vecTransSCP.setZero();
-    hub.vecRotSCP.setZero();
+    this->matrixAContr.setZero();
+    this->matrixBContr.setZero();
+    this->matrixCContr.setZero();
+    this->matrixDContr.setZero();
+    this->vecTransContr.setZero();
+    this->vecRotContr.setZero();
+    hub.matrixA.setZero();
+    hub.matrixB.setZero();
+    hub.matrixC.setZero();
+    hub.matrixD.setZero();
+    hub.vecTrans.setZero();
+    hub.vecRot.setZero();
     (*this->m_SC).setZero();
     (*this->c_B).setZero();
     (*this->ISCPntB_B).setZero();
@@ -73,20 +78,39 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - This is where gravity will be called
     gravField.computeGravityField();
 
+    //! Add in hubs mass to the spaceCraft mass props
+    hub.updateEffectorMassProps(t);
+    (*this->m_SC)(0,0) += hub.effProps.mEff;
+    (*this->ISCPntB_B) += hub.effProps.IEffPntB_B;
+    (*this->c_B) += hub.effProps.mEff*hub.effProps.rCB_B;
+
     //! - Loop through state effectors
     for(it = states.begin(); it != states.end(); it++)
     {
+        //! Add in effectors mass props into mass props of spacecraft
         (*it)->updateEffectorMassProps(t);
+        (*this->m_SC)(0,0) += (*it)->effProps.mEff;
+        (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
+        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
+
+        //! Add in effectors mass prop rates into mass prop rates of spacecraft
         (*it)->updateEffectorMassPropRates(t);
-        (*it)->updateContributions(t, matrixAContrSCP, matrixBContrSCP, matrixCContrSCP, matrixDContrSCP, vecTransContrSCP, vecRotContrSCP);
+        (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
+        (*this->cPrime_B) += (*it)->effProps.rPrimeCB_B;
+
         //! Add contributions to matrices
-        hub.matrixASCP += matrixAContrSCP;
-        hub.matrixBSCP += matrixBContrSCP;
-        hub.matrixCSCP += matrixCContrSCP;
-        hub.matrixDSCP += matrixDContrSCP;
-        hub.vecTransSCP += vecTransContrSCP;
-        hub.vecRotSCP += vecRotContrSCP;
+        (*it)->updateContributions(t, matrixAContr, matrixBContr, matrixCContr, matrixDContr, vecTransContr, vecRotContr);
+        hub.matrixA += matrixAContr;
+        hub.matrixB += matrixBContr;
+        hub.matrixC += matrixCContr;
+        hub.matrixD += matrixDContr;
+        hub.vecTrans += vecTransContr;
+        hub.vecRot += vecRotContr;
     }
+
+    //! Divide c_B and cPrime_B by the total mass of the spaceCraft
+    (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
+    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0);
 
     //! - Loop through dynEffectors
     for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
@@ -94,6 +118,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
         //! Empty for now
     }
 
+    //! - Compute the derivatives of the hub states before looping through stateEffectors
     hub.computeDerivatives(t);
 
     //! - Loop through state effectors for compute derivatives
@@ -108,6 +133,16 @@ void SpacecraftPlus::integrateState(double t)
 {
 	double currTimeStep = t - timePrevious;
 	integrator->integrate(t, currTimeStep);
+
+    //! Lets switch those MRPs!!
+    Eigen::Vector3d sigmaBNLoc;
+    this->linkInStates(dynManager);
+    sigmaBNLoc = hubSigma->getState();
+    if (sigmaBNLoc.norm() > 1) {
+        sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
+        hubSigma->setState(sigmaBNLoc);
+    }
+
 	timePrevious = t;
 }
 
@@ -131,6 +166,7 @@ void SpacecraftPlus::initializeDynamics()
     
     gravField.registerProperties(dynManager);
     hub.registerStates(dynManager);
+
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->registerStates(dynManager);
@@ -138,6 +174,7 @@ void SpacecraftPlus::initializeDynamics()
     
     gravField.linkInStates(dynManager);
     hub.linkInStates(dynManager);
+
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->linkInStates(dynManager);
