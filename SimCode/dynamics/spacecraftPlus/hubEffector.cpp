@@ -29,17 +29,17 @@ HubEffector::HubEffector()
     effProps.rPrimeCB_B.fill(0.0);
     effProps.mEff = 0.0;
 
+    this->nameOfHubPosition = "hubPosition";
+    this->nameOfHubVelocity = "hubVelocity";
+    this->nameOfHubSigma = "hubSigma";
+    this->nameOfHubOmega = "hubOmega";
+
     return;
 }
 
 
 HubEffector::~HubEffector()
 {
-    this->nameOfHubPosition = "hubPosition";
-    this->nameOfHubVelocity = "hubVelocity";
-    this->nameOfHubSigma = "hubSigma";
-    this->nameOfHubOmega = "hubOmega";
-
     return;
 }
 
