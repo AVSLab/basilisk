@@ -29,14 +29,15 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     effProps.rPrimeCB_B.fill(0.0);
     effProps.mEff = 0.0;
 
+    this->nameOfThetaState = "hingedRigidBodyTheta";
+    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
+
     return;
 }
 
 
 HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 {
-    this->nameOfThetaState = "hingedRigidBodyTheta";
-    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     return;
 }
 

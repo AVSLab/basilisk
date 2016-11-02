@@ -30,14 +30,15 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
     effProps.mEff = 0.0;
 	effProps.IEffPrimePntB_B.fill(0.0);
 
+    this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
+    this->nameOfReactionWheelThetasState = "reactionWheelThetas";
+    
     return;
 }
 
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
-    this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
-    this->nameOfReactionWheelThetasState = "reactionWheelThetas";
     return;
 }
 
