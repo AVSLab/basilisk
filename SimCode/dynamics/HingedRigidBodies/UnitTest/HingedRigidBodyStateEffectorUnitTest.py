@@ -86,7 +86,7 @@ def test_hubPropagate(show_plots):
 
     # Add panels to spaceCraft
     # this next line is not working
-    scObject.addStateEffector(unitTestSim.panel1)
+    #scObject.addStateEffector(unitTestSim.panel1)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -98,14 +98,14 @@ def test_hubPropagate(show_plots):
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
-    posRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.1], [-0.1], [0.1]])
+    posRef.setState([[1.0], [0.0], [0.0]])
+    velRef.setState([[55.24], [0.0], [0.0]])
+    omegaRef.setState([[1.0], [-1.0], [0.5]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
 
-    scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.mHub = 101
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
     unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()

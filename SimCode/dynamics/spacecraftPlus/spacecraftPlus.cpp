@@ -41,6 +41,11 @@ void SpacecraftPlus::computeEnergyMomentum()
     
 }
 
+void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
+{
+    hubSigma = statesIn.getStateObject("hubSigma");
+}
+
 void SpacecraftPlus::equationsOfMotion(double t)
 {
     std::vector<StateEffector*>::iterator it;
@@ -128,6 +133,16 @@ void SpacecraftPlus::integrateState(double t)
 {
 	double currTimeStep = t - timePrevious;
 	integrator->integrate(t, currTimeStep);
+
+    //! Lets switch those MRPs!!
+    Eigen::Vector3d sigmaBNLoc;
+    this->linkInStates(dynManager);
+    sigmaBNLoc = hubSigma->getState();
+    if (sigmaBNLoc.norm() > 1) {
+        sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
+        hubSigma->setState(sigmaBNLoc);
+    }
+
 	timePrevious = t;
 }
 
@@ -151,6 +166,7 @@ void SpacecraftPlus::initializeDynamics()
     
     gravField.registerProperties(dynManager);
     hub.registerStates(dynManager);
+
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->registerStates(dynManager);
@@ -158,6 +174,7 @@ void SpacecraftPlus::initializeDynamics()
     
     gravField.linkInStates(dynManager);
     hub.linkInStates(dynManager);
+
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->linkInStates(dynManager);

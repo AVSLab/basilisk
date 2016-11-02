@@ -63,6 +63,10 @@ public:
     void integrateState(double t);            //! [-] Everyone will need to integrate the state
     void computeEnergyMomentum();             //! [-] User can implement NRG/moment check
     void initializeDynamics();                //! [-] Method to link all spacecraft states
+    void linkInStates(DynParamManager& statesIn);
+
+private:
+    StateData *hubSigma;                           //! [-] Position
 };
 
 #endif /* SPACECRAFT_PLUS_H */
