@@ -261,7 +261,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         panel2.thetaDot = 0.0
 
         panelSet1.addHingedRigidBody(panel1)
-        #panelSet1.addHingedRigidBody(panel2)
+        panelSet1.addHingedRigidBody(panel2)
         VehDynObject.addHingedRigidBodySet(panelSet1)
 
         VehDynObject.useGravity = False
