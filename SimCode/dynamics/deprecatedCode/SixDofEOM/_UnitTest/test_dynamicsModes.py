@@ -261,7 +261,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
         panel2.thetaDot = 0.0
 
         panelSet1.addHingedRigidBody(panel1)
-        panelSet1.addHingedRigidBody(panel2)
+        #panelSet1.addHingedRigidBody(panel2)
         VehDynObject.addHingedRigidBodySet(panelSet1)
 
         VehDynObject.useGravity = False
@@ -377,6 +377,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
     dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N),:]
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N),:]
+    print dataSigma[-1,:]
 
     # Make all energy and momentum checks false
     checkOrbitalEnergy = False
@@ -741,7 +742,7 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           False,       # useHinged
+                           True,       # useHinged
                            False,       # useFuelSlosh
                            0        # useExtForceTorque
                            )

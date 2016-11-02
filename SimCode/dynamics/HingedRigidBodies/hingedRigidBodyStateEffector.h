@@ -49,6 +49,8 @@ public:
     Eigen::Matrix3d IPntS_S;        //!< kg-m^2, Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rHB_B;          //!< m, vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcmHB;             //!< DCM from body frame to hinge frame
+    std::string nameOfThetaState;
+    std::string nameOfThetaDotState;
 private:
     Eigen::Matrix3d rTildeHB_B;     //!< Tilde matrix of rHB_B
     Eigen::Matrix3d dcmSH;             //!< DCM from hinge to hinged rigid body frame, S

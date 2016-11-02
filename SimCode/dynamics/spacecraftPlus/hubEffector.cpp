@@ -35,6 +35,11 @@ HubEffector::HubEffector()
 
 HubEffector::~HubEffector()
 {
+    this->nameOfHubPosition = "hubPosition";
+    this->nameOfHubVelocity = "hubVelocity";
+    this->nameOfHubSigma = "hubSigma";
+    this->nameOfHubOmega = "hubOmega";
+
     return;
 }
 
@@ -49,10 +54,10 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
 
 void HubEffector::registerStates(DynParamManager& states)
 {
-    this->posState = states.registerState(3, 1, "hubPosition");
-    this->velocityState = states.registerState(3, 1, "hubVelocity");
-    this->sigmaState = states.registerState(3, 1, "hubSigma");
-    this->omegaState = states.registerState(3, 1, "hubOmega");
+    this->posState = states.registerState(3, 1, this->nameOfHubPosition);
+    this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
+    this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
+    this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
 }
 
 void HubEffector::updateEffectorMassProps(double integTime)

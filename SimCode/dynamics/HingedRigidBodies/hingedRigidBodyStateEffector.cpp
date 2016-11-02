@@ -35,6 +35,8 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 
 HingedRigidBodyStateEffector::~HingedRigidBodyStateEffector()
 {
+    this->nameOfThetaState = "hingedRigidBodyTheta";
+    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
     return;
 }
 
@@ -49,8 +51,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
     //! - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->thetaState = states.registerState(1, 1, "hingedRigidBodyTheta");
-    this->thetaDotState = states.registerState(1, 1, "hingedRigidBodyThetaDot");
+    this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
+    this->thetaDotState = states.registerState(1, 1, this->nameOfThetaDotState);
 }
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)

@@ -36,6 +36,8 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 
 ReactionWheelStateEffector::~ReactionWheelStateEffector()
 {
+    this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
+    this->nameOfReactionWheelThetasState = "reactionWheelThetas";
     return;
 }
 
@@ -58,8 +60,8 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 		this->numRW++;
 	}
 
-	this->OmegasState = states.registerState(this->numRW, 1, "reactionWheelOmegas");
-	this->thetasState = states.registerState(this->numRWJitter, 1, "reactionWheelThetas");
+	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
+	this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 
 }
 
