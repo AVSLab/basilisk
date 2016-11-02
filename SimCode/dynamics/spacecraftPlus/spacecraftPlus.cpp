@@ -136,7 +136,6 @@ void SpacecraftPlus::integrateState(double t)
 
     //! Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
-    this->linkInStates(dynManager);
     sigmaBNLoc = hubSigma->getState();
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
@@ -171,7 +170,8 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*it)->registerStates(dynManager);
     }
-    
+
+    this->linkInStates(dynManager);
     gravField.linkInStates(dynManager);
     hub.linkInStates(dynManager);
 
