@@ -23,11 +23,12 @@ using namespace std;
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
-    //! - zero the contributions for mass props and mass rates
     effProps.IEffPntB_B.fill(0.0);
-    effProps.rCB_B.fill(0.0);
-    effProps.mEff = 0.0;
     effProps.IEffPrimePntB_B.fill(0.0);
+    effProps.rCB_B.fill(0.0);
+    effProps.rPrimeCB_B.fill(0.0);
+    effProps.mEff = 0.0;
+
     return;
 }
 
