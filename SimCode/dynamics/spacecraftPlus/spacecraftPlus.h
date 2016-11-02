@@ -35,12 +35,12 @@ class SpacecraftPlus : public DynObject2{
 public:
     HubEffector hub;                          //! [-] The spacecraft hub that effectors spoke off
     GravityEffector gravField;                //! [-] Gravitational field experienced by spacecraft
-    Eigen::Matrix3d matrixAContrSCP;           //! [-] Spacecraft plus holds the value for all matrices
-    Eigen::Matrix3d matrixBContrSCP;
-    Eigen::Matrix3d matrixCContrSCP;
-    Eigen::Matrix3d matrixDContrSCP;
-    Eigen::Vector3d vecTransContrSCP;
-    Eigen::Vector3d vecRotContrSCP;
+    Eigen::Matrix3d matrixAContr;          //! [-] Spacecraft plus holds the value for all matrix contributions
+    Eigen::Matrix3d matrixBContr;
+    Eigen::Matrix3d matrixCContr;
+    Eigen::Matrix3d matrixDContr;
+    Eigen::Vector3d vecTransContr;
+    Eigen::Vector3d vecRotContr;
     Eigen::MatrixXd *m_SC;
     Eigen::MatrixXd *ISCPntB_B;
     Eigen::MatrixXd *cPrime_B;

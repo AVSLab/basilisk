@@ -34,6 +34,7 @@ public:
     ~HubEffector();
     void linkInStates(DynParamManager& statesIn);
     void registerStates(DynParamManager& states);
+    void updateEffectorMassProps(double integTime);
     void computeDerivatives(double integTime);
     Eigen::MatrixXd *m_SC;
     Eigen::MatrixXd *ISCPntB_B;
@@ -41,14 +42,14 @@ public:
     Eigen::MatrixXd *ISCPntBPrime_B;
     Eigen::MatrixXd *c_B;
     double mHub;                                  //!
-    Eigen::Matrix3d IHubPntB_B;
+    Eigen::Matrix3d IHubPntBc_B;
     Eigen::Vector3d rBcB_B;
-    Eigen::Matrix3d matrixASCP;           //! [-] hubEffector holds the value for all matrices
-    Eigen::Matrix3d matrixBSCP;
-    Eigen::Matrix3d matrixCSCP;
-    Eigen::Matrix3d matrixDSCP;
-    Eigen::Vector3d vecTransSCP;
-    Eigen::Vector3d vecRotSCP;
+    Eigen::Matrix3d matrixA;           //! [-] hubEffector holds the value for all matrices
+    Eigen::Matrix3d matrixB;
+    Eigen::Matrix3d matrixC;
+    Eigen::Matrix3d matrixD;
+    Eigen::Vector3d vecTrans;
+    Eigen::Vector3d vecRot;
     bool useTranslation;
     bool useRotation;
 
