@@ -40,7 +40,7 @@ public:
     Eigen::MatrixXd *cPrime_B;
     Eigen::MatrixXd *ISCPntBPrime_B;
     Eigen::MatrixXd *c_B;
-    Eigen::MatrixXd mHub;                                  //!
+    double mHub;                                  //!
     Eigen::Matrix3d IHubPntB_B;
     Eigen::Vector3d rBcB_B;
     Eigen::Matrix3d matrixASCP;           //! [-] hubEffector holds the value for all matrices

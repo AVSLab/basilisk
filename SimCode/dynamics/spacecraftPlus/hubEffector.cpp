@@ -71,8 +71,8 @@ void HubEffector::computeDerivatives(double integTime)
     cPrimeLocal_B = *cPrime_B;
     cLocal_B = *c_B;
     //! - Need to add hub to m_SC, c_B and ISCPntB_B
-    *this->m_SC += this->mHub;
-    *this->c_B += this->mHub.value()*this->rBcB_B;
+    (*this->m_SC)(0,0) += this->mHub;
+    *this->c_B += this->mHub*this->rBcB_B;
     *this->c_B += *this->c_B/(*this->m_SC).value();
     *ISCPntB_B += this->IHubPntB_B;
 

@@ -76,10 +76,19 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - Loop through state effectors
     for(it = states.begin(); it != states.end(); it++)
     {
+        //! Add in effectors mass props into mass props of spacecraft
         (*it)->updateEffectorMassProps(t);
+        (*this->m_SC)(0,0) += (*it)->effProps.mEff;
+        (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
+        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
+
+        //! Add in effectors mass prop rates into mass prop rates of spacecraft
         (*it)->updateEffectorMassPropRates(t);
-        (*it)->updateContributions(t, matrixAContrSCP, matrixBContrSCP, matrixCContrSCP, matrixDContrSCP, vecTransContrSCP, vecRotContrSCP);
+        (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
+        (*this->cPrime_B) += (*it)->effProps.rPrimeCB_B;
+
         //! Add contributions to matrices
+        (*it)->updateContributions(t, matrixAContrSCP, matrixBContrSCP, matrixCContrSCP, matrixDContrSCP, vecTransContrSCP, vecRotContrSCP);
         hub.matrixASCP += matrixAContrSCP;
         hub.matrixBSCP += matrixBContrSCP;
         hub.matrixCSCP += matrixCContrSCP;
