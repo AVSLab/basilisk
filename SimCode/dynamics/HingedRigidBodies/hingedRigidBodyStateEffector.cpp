@@ -29,6 +29,9 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     effProps.rPrimeCB_B.fill(0.0);
     effProps.mEff = 0.0;
 
+    this->nameOfThetaState = "hingedRigidBodyTheta";
+    this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
+
     return;
 }
 
@@ -49,8 +52,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
     //! - Register the states associated with hinged rigid bodies - theta and thetaDot
-    this->thetaState = states.registerState(1, 1, "hingedRigidBodyTheta");
-    this->thetaDotState = states.registerState(1, 1, "hingedRigidBodyThetaDot");
+    this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
+    this->thetaDotState = states.registerState(1, 1, this->nameOfThetaDotState);
 }
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
@@ -83,9 +86,11 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 void HingedRigidBodyStateEffector::updateEffectorMassPropRates(double integTime)
 {
-    //! - Find the body time derivative of the inertia about point B
     //! First, find the rPrimeSB_B
     this->rPrimeSB_B = this->d*this->thetaDot*this->sHat3_B;
+    this->effProps.rPrimeCB_B = this->rPrimeSB_B;
+
+    //! - Next find the body time derivative of the inertia about point B
     //! - Define tilde matrix of rPrimeSB_B
     this->rPrimeTildeSB_B << 0 , -this->rPrimeSB_B(2), this->rPrimeSB_B(1), this->rPrimeSB_B(2), 0, -this->rPrimeSB_B(0), -this->rPrimeSB_B(1), this->rPrimeSB_B(0), 0;
     //! - Find body time derivative of IPntS_B
