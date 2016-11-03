@@ -115,7 +115,7 @@ vehControlOut *contrReq, uint64_t moduleID)
     double localRequest[3];
     
     /*! Begin method steps*/
-    v3Scale(-1.0, contrReq->torqueRequestBody, localRequest);
+    v3Copy(contrReq->torqueRequestBody, localRequest);      /* to generate a positive torque onto the spacecraft */
     mMultV(thrData->thrOnMap, thrData->numEffectors, 3,
            localRequest, unSortOnTime);
     

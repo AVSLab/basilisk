@@ -165,7 +165,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     MatrixOperations inputMatrix;
     vehicleConfigData localConfig;
     
-    ReadMessage(stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas, moduleID);
+    ReadMessage((uint32_t)stInputID, &ClockTime, &ReadSize, sizeof(STOutputData), &stMeas, moduleID);
     ReadMessage(inputSpeedsID, &ClockTime, &ReadSize, sizeof(RWSpeedData), &currentSpeeds, moduleID);
     ReadMessage(inputVehicleConfigDataID, &ClockTime, &ReadSize,
         sizeof(vehicleConfigData), &localConfig, moduleID);
@@ -226,7 +226,7 @@ void STInertialUKF::UpdateState(uint64_t callTime)
     BinvMRP(localOutput.sigma_BN, BMatInv);
     m33MultV3(BMatInv, &(state.vec_vals[3]), localOutput.omega_BN_B);
     v3Scale(4.0, localOutput.omega_BN_B, localOutput.omega_BN_B);
-    WriteMessage(InertialUKFStateID, callTime, sizeof(NavStateOut), &localOutput,
+    WriteMessage(InertialUKFStateID, callTime, sizeof(NavAttOut), &localOutput,
                  moduleID);
     memcpy(MRPPrevious, stMeas.MRP_BdyInrtl, 3*sizeof(double));
     memcpy(&previousSpeeds, &currentSpeeds, sizeof(RWSpeedData));
@@ -282,9 +282,9 @@ void STInertialUKF::SelfInit()
         ConvCounter = 0;
         ReInitFilter = false;
     }
-    char name[]="NavStateOut";
+    char name[]="NavAttOut";
 
-    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavStateOut),
+    InertialUKFStateID = CreateNewMessage((char*) (InertialUKFStateName.c_str()), sizeof(NavAttOut),
                                           name, moduleID);
     return;
 }

@@ -19,9 +19,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define IMU_SENSOR_H
 
 #include <vector>
-#include "utilities/sys_model.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include <random>
+#include "utilities/gauss_markov.h"
 
 typedef struct{
     double DVFramePlatform[3];      //!< m/s Accumulated DVs in platform
@@ -45,20 +46,30 @@ public:
     void computePlatformDV(uint64_t CurrentTime);
     void applySensorErrors(uint64_t CurrentTime);
     void applySensorDiscretization(uint64_t CurrentTime);
-    
+	void applySensorSaturation(uint64_t CurrentTime);
+	void computeSensorErrors(uint64_t CurrentTime);
+
 public:
     std::string InputStateMsg;                  /*!< Message name for spacecraft state */
     std::string InputMassMsg;                   /*!< Mass properties message name */
     std::string OutputDataMsg;                  /*!< Message name for CSS output data */
-    std::vector<double> SensorPosStr;   /// [m[ IMU sensor location in structure
+    std::vector<double> SensorPosStr;   /// [m] IMU sensor location in structure
     double Str2Platform[3][3];          /// -- Transform from body to platform
     double senRotBias[3];               /// [r/s] Rotational Sensor bias value
-    double senRotNoiseStd[3];           /// [r/s] Rotational sensor standard deviation
     double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
-    double senTransNoiseStd[3];         /// [m/s2] Accel sensor standard deviation
+	double senRotMax;					/// [r/s] Gyro saturation value
+	double senTransMax;					/// [r/s] Accelerometer saturation value
     uint64_t OutputBufferCount;         /// -- number of output msgs stored
     bool NominalReady;                  /// -- Flag indicating that system is in run
-    
+	std::vector<double> PMatrixAccel;      //!< [-] Covariance matrix used to perturb state
+	std::vector<double> AMatrixAccel;      //!< [-] AMatrix that we use for error propagation
+	std::vector<double> walkBoundsAccel;   //!< [-] "3-sigma" errors to permit for states
+	std::vector<double> navErrorsAccel;    //!< [-] Current navigation errors applied to truth
+	std::vector<double> PMatrixGyro;      //!< [-] Covariance matrix used to perturb state
+	std::vector<double> AMatrixGyro;      //!< [-] AMatrix that we use for error propagation
+	std::vector<double> walkBoundsGyro;   //!< [-] "3-sigma" errors to permit for states
+	std::vector<double> navErrorsGyro;    //!< [-] Current navigation errors applied to truth
+
     ImuSensorOutput trueValues;         //!< [-] total measurement without perturbations
     ImuSensorOutput sensedValues;       //!< [-] total measurement including perturbations
     
@@ -72,10 +83,8 @@ private:
     OutputStateData StatePrevious;      /// -- Previous state to delta in IMU
     OutputStateData StateCurrent;       /// -- Current SSBI-relative state
     MassPropsData MassCurrent;          /// -- Current mass props for the vehicle
-    std::default_random_engine rot_rgen[3];         /// -- Random number generator for rotation
-    std::normal_distribution<double> rot_rnum[3];   /// -- Random number distribution (rotation)
-    std::default_random_engine trans_rgen[3];       /// -- Random number generator for translation
-    std::normal_distribution<double> trans_rnum[3]; /// -- Random number distribution (translation)
+	GaussMarkov errorModelAccel;           //!< [-] Gauss-markov error states
+	GaussMarkov errorModelGyro;           //!< [-] Gauss-markov error states
 };
 
 #endif

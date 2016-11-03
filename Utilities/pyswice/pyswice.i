@@ -25,12 +25,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %ignore ekucei_c;
 %ignore ekuced_c;
 %include "carrays.i"
+%include "cstring.i"
+%include "typemaps.i"
 %array_functions(double, doubleArray);
 %array_functions(int, intArray);
 typedef char ConstSpiceChar;
 typedef double SpiceDouble;
 %typemap(in) ConstSpiceDouble[][4] {
-    //$1 = (ConstSpiceDouble (*)[4]) ($input);
     void *dataPtr;
     res9 = SWIG_ConvertPtr($input, &dataPtr, $descriptor(ConstSpiceDouble *), 0 |  0);
     double **actData = (double**) dataPtr;
@@ -52,4 +53,9 @@ typedef double ConstSpiceDouble;
 typedef double ConstSpiceDouble;
 typedef int SpiceInt;
 typedef int SpiceBoolean;
+
+
+%cstring_bounded_mutable(SpiceChar *utcstr, 1024);
+
 %include "../../External/cspice/include/SpiceZpr.h"
+

@@ -31,7 +31,6 @@ import unitTestSupport  # general support file with common unit test functions
 import MRP_PD  # import the module that is to be tested
 import sunSafePoint  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
-import rwNullSpace
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -79,13 +78,10 @@ def mrp_PD_tracking(show_plots):
     # Initialize the test module configuration data
     moduleConfig.inputGuidName = "inputGuidName"
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
-    moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
 
     moduleConfig.K = 0.15
     moduleConfig.P = 150.0
-    moduleConfig.numRWAs = 4
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
@@ -98,41 +94,17 @@ def mrp_PD_tracking(show_plots):
 
     guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
-    SimulationBaseClass.SetCArray(sigma_BR,
-                                  'double',
-                                  guidCmdData.sigma_BR)
+    guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
-    SimulationBaseClass.SetCArray(omega_BR_B,
-                                  'double',
-                                  guidCmdData.omega_BR_B)
+    guidCmdData.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    SimulationBaseClass.SetCArray(omega_RN_B,
-                                  'double',
-                                  guidCmdData.omega_RN_B)
+    guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    SimulationBaseClass.SetCArray(domega_RN_B,
-                                  'double',
-                                  guidCmdData.domega_RN_B)
+    guidCmdData.domega_RN_B = domega_RN_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
                                           inputMessageSize,
                                           0,
                                           guidCmdData)
-
-    # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwSpeedMessage = rwNullSpace.RWSpeedData()
-    Omega = [10.0, 25.0, 50.0, 100.0]
-    SimulationBaseClass.SetCArray(Omega,
-                                  'double',
-                                  rwSpeedMessage.wheelSpeeds)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
-                                          inputMessageSize,
-                                          0,
-                                          rwSpeedMessage)
 
     # vehicleConfigData Message:
     inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
@@ -144,41 +116,12 @@ def mrp_PD_tracking(show_plots):
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]
-    SimulationBaseClass.SetCArray(I,
-                                  'double',
-                                  vehicleConfigOut.ISCPntB_B)
+    vehicleConfigOut.ISCPntB_B = I
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
                                           vehicleConfigOut)
 
-    # wheelConfigData Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    i = 0
-    rwClass = vehicleConfigData.RWConstellation()
-    rwPointer = vehicleConfigData.RWConfigurationElement()
-
-    localGsMatrix = [1, 0, 0,
-                    0, 1, 0,
-                    0, 0, 1,
-                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-    while (i < 4):
-        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
-                                       localGsMatrix[i*3+1],
-                                       localGsMatrix[i*3+2]],
-                                      'double',
-                                      rwPointer.Gs_S)
-        rwPointer.Js = 0.1
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-        i += 1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          0,
-                                          rwClass)
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
@@ -194,12 +137,12 @@ def mrp_PD_tracking(show_plots):
     moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
-    print 'Lr = ', moduleOutput
+    print '\n Lr = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
-        [1.883691801261, -3.798535080757, 1.814043279495],
-        [1.883691801261, -3.798535080757, 1.814043279495],
-        [1.883691801261, -3.798535080757, 1.814043279495]
+        [-1.395, 3.555, -1.935],
+        [-1.395, 3.555, -1.935],
+        [-1.395, 3.555, -1.935]
     ]
 
     # compare the module results to the truth values

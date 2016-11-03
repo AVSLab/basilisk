@@ -22,3 +22,13 @@ set_target_properties(SimMessaging PROPERTIES
 LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/modules")
 set_target_properties(SimMessaging PROPERTIES
 LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules")
+
+#Have to copy this file everywhere if we're on Windows.  Ugly kludge, but... Windows!
+if(WIN32)
+    file(GLOB moduleContentsList  ${CMAKE_SOURCE_DIR}/modules/*)
+    foreach(direc ${moduleContentsList})
+        if(IS_DIRECTORY ${direc})
+            add_custom_command(TARGET SimMessaging POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:SimMessaging> "${direc}/")
+        endif()
+    endforeach()
+endif()

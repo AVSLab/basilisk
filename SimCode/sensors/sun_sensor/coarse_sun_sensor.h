@@ -19,9 +19,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define COARSE_SUN_SENSOR_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "environment/spice/spice_interface.h"
-#include "utilities/dyn_effector.h"
+#include "_GeneralModuleFiles/dyn_effector.h"
 #include <random>
 
 typedef enum {
@@ -122,6 +122,7 @@ class CSSConstellation: public SysModel {
     std::string outputConstellationMessage;      //!< [-] Message name for the outgoing message
     int64_t outputConstID;                       //!< [-] output ID for the outgoing message
     std::vector<CoarseSunSensor> sensorList;     //!< [-] List of coarse sun sensors in constellation
+    uint64_t maxNumCSSSensors;                   //!< [-] Maximum size for the outgoing message buffer
  private:
     CSSRawOutputData *outputBuffer;              //!< [-] buffer used to write output message
 };

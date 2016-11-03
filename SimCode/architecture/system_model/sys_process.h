@@ -21,7 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <vector>
 #include <stdint.h>
 #include "architecture/system_model/sys_model_task.h"
-#include "architecture/system_model/sys_interface.h"
+#include "_GeneralModuleFiles/sys_interface.h"
 #include "architecture/messaging/system_messaging.h"
 /*! \addtogroup SimArchGroup
  * @{
@@ -46,7 +46,8 @@ public:
     void addNewTask(SysModelTask *newTask, int32_t taskPriority = -1);
     void selfInitProcess();
     void crossInitProcess();
-    void resetProcess();
+    void resetProcess(uint64_t currentTime);
+    void reInitProcess();
     void enableProcess() { processActive = true; }
     void disableProcess() { processActive = false; }
     void scheduleTask(ModelScheduleEntry & taskCall);
@@ -64,9 +65,10 @@ public:
     
 public:
     std::vector<SysInterface*> intRefs;         //!< -- Interface references to move data to process
-    std::vector<ModelScheduleEntry> taskModels; //!< -- Array that has pointers to all GNC laws
+    std::vector<ModelScheduleEntry> processTasks; //!< -- Array that has pointers to all GNC laws
     uint64_t messageBuffer;                     //!< -- Message buffer for data
     uint64_t nextTaskTime;                      //!< ns time for the next Task
+    uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed
     std::string processName;                      //!< -- Identified for Task
 	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled 
 };

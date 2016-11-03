@@ -60,7 +60,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 
     /*! - Get the control data message ID*/
     ConfigData->inputRWCmdsID = subscribeToMessage(ConfigData->inputRWCommands,
-        sizeof(vehControlOut), moduleID);
+        sizeof(vehEffectorOut), moduleID);
 	/*! - Get the RW speeds ID*/
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
 		sizeof(RWSpeedData), moduleID);
@@ -70,11 +70,12 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     
+    ConfigData->numWheels = localRWData.numRW;
     for(i=0; i<ConfigData->numWheels; i=i+1)
     {
         for(j=0; j<3; j=j+1)
         {
-            GsMatrix[j*ConfigData->numWheels+i] = localRWData.reactionWheels[i].Gs_S[j];
+            GsMatrix[j*ConfigData->numWheels+i] = localRWData.reactionWheels[i].gsHat_S[j];
         }
     }
     

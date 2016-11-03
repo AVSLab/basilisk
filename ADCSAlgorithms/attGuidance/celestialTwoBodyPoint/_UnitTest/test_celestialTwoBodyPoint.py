@@ -157,7 +157,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Navigation Input Message
 
-    inputNavMessageSize = 18 * 8  # 6x3 doubles
+    inputNavMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
 
@@ -165,9 +165,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
                                           inputNavMessageSize, 2)
 
-    NavStateOutData = simple_nav.NavStateOut()  # Create a structure for the input message
-    SimulationBaseClass.SetCArray(r_BN_N, 'double', NavStateOutData.r_BN_N)
-    SimulationBaseClass.SetCArray(v_BN_N, 'double', NavStateOutData.v_BN_N)
+    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
+    NavStateOutData.r_BN_N = r_BN_N
+    NavStateOutData.v_BN_N = v_BN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
                                           inputNavMessageSize,
                                           0, NavStateOutData)
@@ -185,8 +185,8 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                           inputSpiceMessageSize, 2)
 
     CelBodyData = spice_interface.SpicePlanetState()
-    SimulationBaseClass.SetCArray(celPositionVec, 'double', CelBodyData.PositionVector)
-    SimulationBaseClass.SetCArray(celVelocityVec, 'double', CelBodyData.VelocityVector)
+    CelBodyData.PositionVector = celPositionVec
+    CelBodyData.VelocityVector = celVelocityVec
 
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
 
@@ -195,27 +195,16 @@ def celestialTwoBodyPointTestFunction(show_plots):
                                           0, CelBodyData)
 
     #   Spice Input Message of Secondary Body
-
     # unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-    #
     #                                       moduleConfig.inputSecMessName,
-    #
     #                                       inputSpiceMessageSize, 2)
-    #
     # SecBodyData = spice_interface.SpicePlanetState()
-    #
     # secPositionVec = [500., 500., 500.]
-    #
-    # SimulationBaseClass.SetCArray(secPositionVec, 'double', SecBodyData.PositionVector)
-    #
+    # SecBodyData.PositionVector = secPositionVec
     # secVelocityVec = [0., 0., 0.]
-    #
-    # SimulationBaseClass.SetCArray(secVelocityVec, 'double', SecBodyData.VelocityVector)
-    #
+    # SecBodyData.VelocityVector = secVelocityVec
     # unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputSecMessName,
-    #
     #                                       inputSpiceMessageSize,
-    #
     #                                       0, SecBodyData)
 
     # Setup logging on the test module output message so that we get all the writes to it

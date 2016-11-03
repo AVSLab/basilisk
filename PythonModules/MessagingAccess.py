@@ -39,37 +39,45 @@ def getMessageContainers(MessageModule, MessageObj):
 
    return LocalContainer, TotalDict
 
+
 def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    SimContainer, VarName, VarType, startIndex, stopIndex, 
    messageType = sim_model.messageBuffer):
    ## Begin Method steps here
    LocalContainer, TotalDict = getMessageContainers(MessageModule, MessageObj)
+   
    ## - For each message, pull the buffer, and update the keys of the dictionary
    LocalCount = 0
-   swigObject = eval('LocalContainer.' + VarName);
+   swigObject = eval('LocalContainer.' + VarName)
    swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
    TimeValues = array.array('d')
-   if swigObject:
+   if swigObjectGood:
       functionCall = eval('sim_model.' + VarType + 'Array_getitem')
    else: #So this is weird, but weirdly we need to punch a duck now
       RefFunctionString = 'def GetMessage' + MessageName + VarName + '(self):\n'
       RefFunctionString += '   return self.' + VarName
       exec(RefFunctionString)
-      functionCall = eval('GetMessage'+MessageName + VarName)
+      functionCall = eval('GetMessage' + MessageName + VarName)
    while(LocalCount < MessageCount):
       WriteTime = SimContainer.GetWriteData(MessageName, 10000, 
          LocalContainer, messageType, LocalCount)
       currentIndex = stopIndex
       executeLoop = True
+      dataOut = 0
+      if not swigObjectGood:
+          dataOut = functionCall(LocalContainer)
       while executeLoop:
          if swigObjectGood:
             TimeValues.append(functionCall(swigObject, currentIndex))
+         elif startIndex != stopIndex:
+            TimeValues.append(dataOut[currentIndex])
          else:
-            TimeValues.append(functionCall(LocalContainer))
+            TimeValues.append(dataOut)
          currentIndex -= 1
          if currentIndex < startIndex:
             executeLoop = False
       TimeValues.append(WriteTime)
+
       LocalCount += 1
    TimeValues.reverse()
    TheArray = numpy.array(TimeValues)

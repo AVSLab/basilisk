@@ -88,10 +88,12 @@ def eulerRotationTestFunction(show_plots):
     # Initialize the test module configuration data
     moduleConfig.inputRefName = "inputRefName"
     moduleConfig.outputDataName = "outputName"
+    moduleConfig.outputEulerSetName = "outputEulerSetName"
+    moduleConfig.outputEulerRatesName = "outputEulerRatesName"
     angleSet = np.array([0.0, 90.0, 0.0]) * mc.D2R
-    SimulationBaseClass.SetCArray(angleSet, 'double', moduleConfig.angleSet)
+    moduleConfig.angleSet = angleSet
     angleRates = np.array([0.1, 0.0, 0.0]) * mc.D2R
-    SimulationBaseClass.SetCArray(angleRates, 'double', moduleConfig.angleRates)
+    moduleConfig.angleRates = angleRates
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
@@ -107,17 +109,11 @@ def eulerRotationTestFunction(show_plots):
 
     RefStateOutData = eulerRotation.attRefOut()          # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
-    SimulationBaseClass.SetCArray(sigma_R0N,
-                                  'double',
-                                  RefStateOutData.sigma_RN)
+    RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])
-    SimulationBaseClass.SetCArray(omega_R0N_N,
-                                  'double',
-                                  RefStateOutData.omega_RN_N)
+    RefStateOutData.omega_RN_N = omega_R0N_N
     domega_R0N_N = np.array([0.0, 0.0, 0.0])
-    SimulationBaseClass.SetCArray(domega_R0N_N,
-                                  'double',
-                                  RefStateOutData.domega_RN_N)
+    RefStateOutData.domega_RN_N = domega_R0N_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
                                           inputMessageSize,
                                           0,

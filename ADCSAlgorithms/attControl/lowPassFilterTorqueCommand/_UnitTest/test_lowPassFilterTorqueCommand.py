@@ -101,9 +101,7 @@ def subModuleTestFunction(show_plots):
 
     inputMessageData = MRP_Steering.vehControlOut() # Create a structure for the input message
     torqueRequest = [1.0, -0.5, 0.7]                # Set up a list as a 3-vector
-    SimulationBaseClass.SetCArray(torqueRequest,                        # specify message variable
-                                  'double',                             # specify message variable type
-                                  inputMessageData.torqueRequestBody)   # Write torque request to input message
+    inputMessageData.torqueRequestBody = torqueRequest   # Write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputDataName,
                                           inputMessageSize,
                                           0,
@@ -144,7 +142,7 @@ def subModuleTestFunction(show_plots):
     for i in range(0,len(LrFtrue)):
         if not unitTestSupport.isArrayEqual(LrF[i],LrFtrue[i],3,1e-12):
             testFailCount += 1
-            testMessage.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " + moduleOutputName + " unit test at t=" + str(LrF[i,0]*unitTestSupport.NANO2SEC) + "sec\n")
 
 
 

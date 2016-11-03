@@ -22,6 +22,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include <iostream>
 #include <cstring>
 #include <random>
+#include "utilities/gauss_markov.h"
 
 ImuSensor::ImuSensor()
 {
@@ -37,10 +38,8 @@ ImuSensor::ImuSensor()
     this->PreviousTime = 0;
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
-    memset(&this->senRotNoiseStd[0], 0x0, 3*sizeof(double));
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
-    memset(&this->senTransNoiseStd[0], 0x0, 3*sizeof(double));
-    
+
     return;
 }
 
@@ -57,21 +56,51 @@ ImuSensor::~ImuSensor()
 
 void ImuSensor::SelfInit()
 {
-    /// - Initialize randon number generators.  Note the cheat on seeds
-    for(uint32_t i=0; i<3; i++)
-    {
-        std::normal_distribution<double>::param_type
-        UpdateRotPair(senRotBias[i], senRotNoiseStd[i]);
-        rot_rgen[i].seed(RNGSeed+i);
-        rot_rnum[i].param(UpdateRotPair);
-        std::normal_distribution<double>::param_type
-        UpdateTransPair(senTransBias[i], senTransNoiseStd[i]);
-        trans_rgen[i].seed(RNGSeed+i);
-        trans_rnum[i].param(UpdateTransPair);
-    }
+
     OutputDataID = SystemMessaging::GetInstance()->
         CreateNewMessage( OutputDataMsg, sizeof(ImuSensorOutput),
         OutputBufferCount, "ImuSensorOutput", moduleID);
+
+	uint64_t numStates = 3;
+
+	AMatrixAccel.clear();
+	AMatrixAccel.insert(AMatrixAccel.begin(), numStates*numStates, 0.0);
+	mSetIdentity(AMatrixAccel.data(), numStates, numStates);
+	for(uint32_t i=0; i<3; i++)
+	{
+		AMatrixAccel.data()[i * 3 + i] = 1.0;
+	}
+	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+	if(PMatrixAccel.size() != numStates*numStates)
+	{
+		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
+		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
+		PMatrixAccel.insert(PMatrixAccel.begin()+PMatrixAccel.size(), numStates*numStates - PMatrixAccel.size(),
+					   0.0);
+	}
+	errorModelAccel.setNoiseMatrix(PMatrixAccel);
+	errorModelAccel.setRNGSeed(RNGSeed);
+	errorModelAccel.setUpperBounds(walkBoundsAccel);
+
+	AMatrixGyro.clear();
+	AMatrixGyro.insert(AMatrixGyro.begin(), numStates*numStates, 0.0);
+	mSetIdentity(AMatrixGyro.data(), numStates, numStates);
+	for(uint32_t i=0; i<3; i++)
+	{
+		AMatrixGyro.data()[i * 3 + i] = 1.0;
+	}
+	//! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+	if(PMatrixGyro.size() != numStates*numStates)
+	{
+		std::cerr << __FILE__ <<": Your process noise matrix (PMatrix) is not 3*3.";
+		std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
+		PMatrixGyro.insert(PMatrixGyro.begin()+PMatrixGyro.size(), numStates*numStates - PMatrixGyro.size(),
+							0.0);
+	}
+	errorModelGyro.setNoiseMatrix(PMatrixGyro);
+	errorModelGyro.setRNGSeed(RNGSeed);
+	errorModelGyro.setUpperBounds(walkBoundsGyro);
+
 }
 
 void ImuSensor::CrossInit()
@@ -154,7 +183,7 @@ void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
         v3Subtract(sensedValues.AngVelPlatform, scaledMeas, intMeas);
         v3Copy(scaledMeas, sensedValues.AngVelPlatform);
         v3Scale(dt, intMeas, intMeas);
-        v3Subtract(sensedValues.DRFramePlatform, intMeas, sensedValues.DRFramePlatform);
+        v3Subtract(sensedValues.DRFramePlatform, intMeas, sensedValues.DRFramePlatform); // why? -john
     }
     
 }
@@ -169,14 +198,51 @@ void ImuSensor::applySensorErrors(uint64_t CurrentTime)
     
     for(uint32_t i=0; i<3; i++)
     {
-        OmegaErrors[i] = rot_rnum[i](rot_rgen[i]);
+		OmegaErrors[i] = navErrorsGyro[i] + senRotBias[i];
         this->sensedValues.AngVelPlatform[i] =  this->trueValues.AngVelPlatform[i] + OmegaErrors[i];
         this->sensedValues.DRFramePlatform[i] = this->trueValues.DRFramePlatform[i] +  OmegaErrors[i]*dt;
-        AccelErrors[i] = trans_rnum[i](trans_rgen[i]);
+		AccelErrors[i] = navErrorsAccel[i] + senTransBias[i];
         this->sensedValues.AccelPlatform[i] = this->trueValues.AccelPlatform[i] + AccelErrors[i];
         this->sensedValues.DVFramePlatform[i] = this->trueValues.DVFramePlatform[i] + AccelErrors[i]*dt;
     }
     
+}
+
+void ImuSensor::computeSensorErrors(uint64_t CurrentTime)
+{
+	this->errorModelAccel.setPropMatrix(AMatrixAccel);
+	this->errorModelAccel.computeNextState();
+	this->navErrorsAccel = this->errorModelAccel.getCurrentState();
+	this->errorModelGyro.setPropMatrix(AMatrixGyro);
+	this->errorModelGyro.computeNextState();
+	this->navErrorsGyro = this->errorModelGyro.getCurrentState();
+}
+
+
+void ImuSensor::applySensorSaturation(uint64_t CurrentTime)
+{
+	double dt;
+
+	dt = (CurrentTime - PreviousTime)*1.0E-9;
+
+	for(uint32_t i=0; i<3; i++)
+	{
+		if(this->sensedValues.AngVelPlatform[i] > this->senRotMax) {
+			this->sensedValues.AngVelPlatform[i] = this->senRotMax;
+			this->sensedValues.DRFramePlatform[i] = this->senRotMax * dt;
+		} else if (this->sensedValues.AngVelPlatform[i] < -this->senRotMax) {
+			this->sensedValues.AngVelPlatform[i] = -this->senRotMax;
+			this->sensedValues.DRFramePlatform[i] = -this->senRotMax * dt;
+		}
+		if(this->sensedValues.AccelPlatform[i] > this->senTransMax) {
+			this->sensedValues.AccelPlatform[i] = this->senTransMax;
+			this->sensedValues.DVFramePlatform[i] = this->senTransMax * dt;
+		} else if (this->sensedValues.AccelPlatform[i] < -this->senTransMax) {
+			this->sensedValues.AccelPlatform[i] = -this->senTransMax;
+			this->sensedValues.DVFramePlatform[i] = -this->senTransMax * dt;
+		}
+	}
+
 }
 
 void ImuSensor::computePlatformDR()
@@ -229,10 +295,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
                InertialAccel);
     v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
     v3Scale(1.0/dt, InertialAccel, InertialAccel);
-    v3Subtract(InertialAccel, RotForces, InertialAccel);
+    v3Add(InertialAccel, RotForces, InertialAccel);
     m33MultV3(T_Bdy2Platform, InertialAccel, this->trueValues.AccelPlatform);
     v3Scale(dt, RotForces, RotForces);
-    v3Subtract(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
+    v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
     m33MultV3(T_Bdy2Platform, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
     
 }
@@ -240,14 +306,17 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
 void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
+
     if(NominalReady)
     {
         /* Compute true data */
         computePlatformDR();
         computePlatformDV(CurrentSimNanos);
         /* Compute sensed data */
-        applySensorErrors(CurrentSimNanos);
+		computeSensorErrors(CurrentSimNanos);
+		applySensorErrors(CurrentSimNanos);
         applySensorDiscretization(CurrentSimNanos);
+		applySensorSaturation(CurrentSimNanos);
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }

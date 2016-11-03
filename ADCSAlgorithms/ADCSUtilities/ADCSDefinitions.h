@@ -33,5 +33,11 @@ typedef enum {
     BOOL_TRUE
 } boolean_t;
 
+/*! @brief Structure used to define the output definition for component availability */
+ typedef enum {
+    AVAILABLE,
+    UNAVAILABLE
+}FSWdeviceAvailability;
+
 
 #endif

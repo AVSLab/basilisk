@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
+#include "Eigen/Dense"
 #include <math.h>
 #include <cstring>
 #include <iostream>
@@ -115,7 +116,6 @@ void BoreAngCalc::computeAxisPoint()
     double T_inrtl2Bdy[3][3];
     double T_Inrtl2Point[3][3];
     double T_Point2Bdy[3][3];
-    double bdyBoreVec[3];
     double relPosVector[3];
     double relVelVector[3];
     double secPointVector[3];
@@ -133,8 +133,10 @@ void BoreAngCalc::computeAxisPoint()
     v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
             &(T_Inrtl2Point[1][0]));
     m33MultM33t(T_inrtl2Bdy, T_Inrtl2Point, T_Point2Bdy);
-    m33MultV3(localState.T_str2Bdy, strBoreVec, bdyBoreVec);
-    m33tMultV3(T_Point2Bdy, bdyBoreVec, boreVecPoint);
+    Eigen::MatrixXd strVec = Eigen::Map<Eigen::MatrixXd>(strBoreVec, 3, 1);
+    Eigen::MatrixXd dcm_BS = Eigen::Map<Eigen::MatrixXd>(&(localState.T_str2Bdy[0][0]), 3, 3);
+    Eigen::MatrixXd bVec_B = dcm_BS*strVec;
+    m33tMultV3(T_Point2Bdy, bVec_B.data(), boreVecPoint);
     
 }
 /*! This method computes the output structure for messaging. The miss angle is 

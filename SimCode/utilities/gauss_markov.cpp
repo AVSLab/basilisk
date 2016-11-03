@@ -25,7 +25,7 @@ GaussMarkov::GaussMarkov()
 {
     std::normal_distribution<double>::param_type
     UpdatePair(0.0, 1.0/3.0);
-    rGen.seed(RNGSeed);
+    rGen.seed((unsigned int)RNGSeed);
     rNum.param(UpdatePair);
 }
 

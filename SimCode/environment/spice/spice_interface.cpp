@@ -83,10 +83,7 @@ void SpiceInterface::SelfInit()
             printf("Unable to load %s", "de-403-masses.tpc");
         }
         if(loadSpiceKernel((char *)"de430.bsp", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de421.bsp");
-        }
-        if(loadSpiceKernel((char *)"MAR033_2000-2025.bsp", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "MAR033_2000-2025.bsp");
+            printf("Unable to load %s", "de430.bsp");
         }
         SPICELoaded = true;
     }
@@ -233,7 +230,7 @@ void SpiceInterface::ComputePlanetData()
             memset(&NewPlanet, 0x0, sizeof(SpicePlanetState));
             strcpy(NewPlanet.PlanetName, it->c_str());
             //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
-            uint32_t MsgID = SystemMessaging::GetInstance()->
+            uint32_t MsgID = (uint32_t)SystemMessaging::GetInstance()->
                 CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
                 OutputBufferCount, "SpicePlanetState", moduleID);
             std::string planetFrame = *it;
@@ -362,7 +359,7 @@ std::string SpiceInterface::getCurrentTimeString()
 	}
 
 	spiceOutputBuffer = new char[allowedOutputLength];
-	timout_c(J2000Current, timeOutPicture.c_str(), allowedOutputLength, 
+	timout_c(J2000Current, timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
 		spiceOutputBuffer);
 	std::string returnTimeString = spiceOutputBuffer;
 	delete[] spiceOutputBuffer;

@@ -80,12 +80,14 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
                 sizeof(ThrusterCluster), &localThrustData, moduleID);
     
     /*! - Transform from structure S to body B frame */
+    ConfigData->numRWAs = localRWData.numRW;
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,
-                  localRWData.reactionWheels[i].Gs_S, &ConfigData->rwAlignMap[i*3]);
+                  localRWData.reactionWheels[i].gsHat_S, &ConfigData->rwAlignMap[i*3]);
     }
     
+    ConfigData->numThrusters = localThrustData.numThrusters;
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.BS,

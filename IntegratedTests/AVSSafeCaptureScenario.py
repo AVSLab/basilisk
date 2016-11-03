@@ -71,6 +71,7 @@ def checkSlewAccuracy(DataCSSTruth, FSWsHat, CSSEstAccuracyThresh,
 
 
 def executeAVSSafeCapture(TheAVSSim):
+    TheAVSSim.isUsingVisualization = True
     TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
@@ -104,12 +105,8 @@ if __name__ == "__main__":
     TheAVSSim.VehOrbElemObject.CurrentElem.f = 70.0 * math.pi / 180.0
     # Convert those OEs to cartesian
     TheAVSSim.VehOrbElemObject.Elements2Cartesian()
-    PosVec = ctypes.cast(TheAVSSim.VehOrbElemObject.r_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    VelVec = ctypes.cast(TheAVSSim.VehOrbElemObject.v_N.__long__(),
-                         ctypes.POINTER(ctypes.c_double))
-    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector([PosVec[0], PosVec[1], PosVec[2]])
-    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector([VelVec[0], VelVec[1], VelVec[2]])
+    TheAVSSim.VehDynObject.PositionInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.r_N[:])
+    TheAVSSim.VehDynObject.VelocityInit = sim_model.DoubleVector(TheAVSSim.VehOrbElemObject.v_N[:])
 
     executeAVSSafeCapture(TheAVSSim)
 
@@ -118,7 +115,7 @@ if __name__ == "__main__":
     solarArrayMiss = TheAVSSim.pullMessageLogData("solar_array_sun_bore.missAngle")
     numCSSActive = TheAVSSim.GetLogVariableData('CSSWlsEst.numActiveCss')
     controlTorque = TheAVSSim.pullMessageLogData("controlTorqueRaw.torqueRequestBody", range(3))
-
+    onTime = TheAVSSim.pullMessageLogData("acs_thruster_cmds.effectorRequest",range(8))
 
     #boolControlOff = TheAVSSim.GetLogVariableData('errorDeadband.boolWasControlOff')
 
@@ -160,6 +157,22 @@ if __name__ == "__main__":
     plt.xlabel('Time [s]')
     plt.ylabel('Torque [N m]')
     plt.title('Control Torque')
+
+    plt.figure(5)
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 1], 'b')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 2], 'g')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 3], 'r')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 4], 'y')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 5], 'k')
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 6])
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 7])
+    plt.plot(onTime[:, 0] * 1.0E-9, onTime[:, 8])
+    bef = '$T_{\mathrm{on}_' # before
+    aft = '}$' # after
+    plt.legend([bef+'1'+aft, bef+'2'+aft, bef+'3'+aft, bef+'4'+aft, bef+'5'+aft, bef+'6'+aft, bef+'7'+aft, bef+'8'+aft])
+    plt.xlabel('Time [s]')
+    plt.ylabel('$T_\mathrm{on}$ [s]')
+    plt.title('ON Time')
 
     def simpleDeadbandMode():
         attError = TheAVSSim.GetLogVariableData('simpleDeadband.attError')

@@ -21,6 +21,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "messaging/static_messaging.h"
 #include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "rwConfigData/rwConfigData.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -39,21 +40,25 @@ typedef struct {
     double integralLimit;           /*!< [N*m]     Integration limit to avoid wind-up issue */
     uint64_t priorTime;             /*!< [ns]      Last time the attitude control is called */
     double z[3];                    /*!< [rad]     Integral state of delta_omega */
-    double GsMatrix[3*MAX_EFF_CNT]; /*!< [-]       The spin axis matrix used for RWAs*/
-    double JsList[3*MAX_EFF_CNT];   /*!< [kgm2]    The spin axis inertia for RWAs*/
-    uint32_t numRWAs;               /*!< [-]       The number of reaction wheels available on vehicle */
+    
+    double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
+    RWConfigParams rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
     
     /* declare module IO interfaces */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams input message*/
+    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigParams ingoing message */
+    char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
+    int32_t vehConfigInMsgID;
+    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the RWs availability message*/
+    int32_t rwAvailInMsgID;
+    
     char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the control output message */
     int32_t outputMsgID;                                    /*!< [-] ID for the control output message */
     char inputGuidName[MAX_STAT_MSG_LENGTH];                /*!< The name of the input guidance message*/
     int32_t inputGuidID;                                    /*!< [-] ID for the input guidance message*/
-    char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the input vehicle data message*/
-    int32_t inputVehicleConfigDataID;                       /*!< [-] ID for the input vehicle data message*/
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];            /*!< The name for the input reaction wheel speeds message */
     int32_t inputRWSpeedsID;                                /*!< [-] ID for the input reaction wheel speeds message*/
-    char inputRWConfigData[MAX_STAT_MSG_LENGTH];            /*!< The name of the input RWA configuration message*/
-    int32_t inputRWConfID;                                  /*!< [-] ID for the input RWA configuration data*/
+
     vehControlOut controlOut;                               /*!< -- Control output requests*/
 }PRV_SteeringConfig;
 

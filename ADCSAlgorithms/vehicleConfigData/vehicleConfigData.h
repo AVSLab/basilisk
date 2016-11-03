@@ -26,6 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
 #define MAX_EFF_CNT 36
+#define MAX_NUM_CSS_SENSORS 32
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
@@ -37,21 +38,23 @@ typedef struct {
 
 
 typedef struct {
-    double Gs_S[3];             /*!< [-] Spin axis of the wheel in structure */
+    double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
     double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
-    double r_S[3];              /*!< [m] Location of the reaction wheel in structure*/
 }RWConfigurationElement;
 
 typedef struct {
+    int numRW;
     RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
 }RWConstellation;
 
 typedef struct {
     double rThrust_S[3];      /*!< [m] Location of the thruster in the spacecraft*/
     double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
+	double maxThrust;			/*!< [N] Max thrust*/
 }ThrusterPointData;
 
 typedef struct {
+    int numThrusters;
     ThrusterPointData thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
 }ThrusterCluster;
 
@@ -63,6 +66,15 @@ typedef struct {
     char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
 }VehConfigInputData;
+
+typedef struct {
+    double nHat_S[3];          /*! [-] CSS unit normal expressed in structure */
+}CSSConfigurationElement;
+
+typedef struct {
+    uint32_t nCSS;             /*! [-] Number of coarse sun sensors in cluster*/
+    CSSConfigurationElement cssVals[MAX_NUM_CSS_SENSORS]; /*! [-] constellation of CSS elements */
+}CSSConstConfig;
 
 void Update_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t callTime, uint64_t moduleID);
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID);

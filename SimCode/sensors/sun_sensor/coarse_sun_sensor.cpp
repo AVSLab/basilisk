@@ -18,6 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
+#include "../ADCSAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include <math.h>
 #include <iostream>
 #include <cstring>
@@ -200,7 +201,7 @@ void CoarseSunSensor::computeSunData()
     //! - Get the inertial to structure transformation information and convert sHat to structural frame
     MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
     m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
-    m33MultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
+    m33tMultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
 }
 
 /*! This method computes the tru sensed values for the sensor */
@@ -209,7 +210,7 @@ void CoarseSunSensor::computeTrueOutput()
     //! Begin Method Steps
     double temp1 = v3Dot(this->nHatStr, this->sHatStr);
     //! - Get dot product of the CSS normal and the sun vector
-    directValue = 0.0;
+    this->directValue = 0.0;
     //! - If the dot product is within the simulated field of view, set direct value to it
     if(temp1 >= cos(this->fov))
     {
@@ -285,6 +286,7 @@ CSSConstellation::CSSConstellation()
     outputBuffer = NULL;
     sensorList.clear();
     outputBufferCount = 2;
+    maxNumCSSSensors = MAX_NUM_CSS_SENSORS;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
@@ -304,12 +306,12 @@ void CSSConstellation::SelfInit()
     {
         it->SelfInit();
     }
-    outputBuffer = new CSSRawOutputData[sensorList.size()];
-    memset(outputBuffer, 0x0, sensorList.size()*sizeof(CSSRawOutputData));
+    outputBuffer = new CSSRawOutputData[MAX_NUM_CSS_SENSORS];
+    memset(outputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSRawOutputData)*sensorList.size(), outputBufferCount,
+        sizeof(CSSRawOutputData)*maxNumCSSSensors, outputBufferCount,
         "CSSRawOutputData", moduleID);
 }
 
@@ -341,5 +343,5 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         outputBuffer[it - sensorList.begin()].OutputData = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 sensorList.size()*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
+                                                 MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
 }

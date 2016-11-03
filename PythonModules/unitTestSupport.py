@@ -19,6 +19,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
 import math
+import os,errno
+
+import tabulate as T
+del(T.LATEX_ESCAPE_RULES[u'$'])
+del(T.LATEX_ESCAPE_RULES[u'\\'])
+from tabulate import *
+
+import matplotlib.pyplot as plt
 
 
 #
@@ -74,3 +82,53 @@ def isDoubleEqual(result, truth, accuracy):
     return 1        # return 1 to indicate the doubles are equal
 
 
+def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
+
+    texFileName = path+"/../_Documentation/AutoTeX/"+tableName+".tex"
+
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(texFileName, "w") as texTable:
+        table = tabulate(array,
+                         tableHeaders,
+                         tablefmt="latex",
+                         numalign="center"
+                         )
+
+        texTable.write('\\begin{table}[htbp]\n')
+        texTable.write('\caption{' + caption + '}\n')
+        texTable.write('\label{tbl:' + tableName + '}\n')
+        texTable.write('\centering\n')
+        texTable.write(table)
+        texTable.write('\end{table}')
+        texTable.close()
+
+    return
+
+
+def writeFigureLaTeX(figureName, caption, plt, format, path):
+
+    texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(texFileName, "w") as texFigure:
+        texFigure.write('\\begin{figure}[htbp]\n')
+        texFigure.write('\centerline{\n')
+        texFigure.write('\includegraphics['+ format +']{AutoTeX/' + figureName + '}}\n')
+        texFigure.write('\caption{' + caption + '}\n')
+        texFigure.write('\label{fig:'+ figureName +'}\n')
+        texFigure.write('\end{figure}')
+        texFigure.close()
+
+        texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
+        plt.savefig(texFileName)
+
+    return

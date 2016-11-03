@@ -32,7 +32,7 @@ SysProcess :: SysProcess()
  @param InputDelay How long to delay the input by in nanoseconds
  @param FirstStartTime The offset in a given frame to start the Task with.
  */
-SysProcess :: SysProcess(std::string messageContainer)
+SysProcess::SysProcess(std::string messageContainer)
 {
     nextTaskTime = 0;
     processActive = true;
@@ -40,11 +40,12 @@ SysProcess :: SysProcess(std::string messageContainer)
     messageBuffer = SystemMessaging::GetInstance()->
         AttachStorageBucket(messageContainer);
     SystemMessaging::GetInstance()->ClearMessageBuffer();
+    prevRouteTime = 0xFF;
     disableProcess();
 }
 
 //! The destructor.  Everything is handled by STL.
-SysProcess :: ~SysProcess()
+SysProcess::~SysProcess()
 {
     
 }
@@ -59,7 +60,7 @@ void SysProcess::selfInitProcess()
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     nextTaskTime = 0;
     //! - Iterate through model list and call the Task model self-initializer
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->SelfInitTaskList();
@@ -74,7 +75,7 @@ void SysProcess::crossInitProcess()
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->CrossInitTaskList();
@@ -83,20 +84,44 @@ void SysProcess::crossInitProcess()
     return;
 }
 
-void SysProcess::resetProcess()
+/*! This method resets each task and associated model-set inside the process 
+    ensuring that all parameters go back to their default state.
+    @return void
+    @param currentTime [ns] Current simulation time that reset is occurring at
+*/
+void SysProcess::resetProcess(uint64_t currentTime)
+{
+    //! Begin Method steps
+    std::vector<ModelScheduleEntry>::iterator it;
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
+    {
+        SysModelTask *localTask = it->TaskPtr;
+        localTask->ResetTaskList(currentTime); //! Time of reset is zero as we are starting over
+    }
+    
+    return;
+}
+
+/*! This method re-initializes the process and the various tasks contained inside 
+    of it to zero-time for cases when a simulation is re-run or another sim is 
+    started using a previously-run set of simulation architecture.
+    @return void
+*/
+void SysProcess::reInitProcess()
 {
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     std::vector<ModelScheduleEntry> taskPtrs;
     std::vector<ModelScheduleEntry>::iterator taskIt;
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         SysModelTask *localTask = it->TaskPtr;
         localTask->ResetTask();
     }
-    taskPtrs = taskModels;
-    taskModels.clear();
+    taskPtrs = processTasks;
+    processTasks.clear();
     for(taskIt = taskPtrs.begin(); taskIt != taskPtrs.end(); taskIt++)
     {
         addNewTask(taskIt->TaskPtr, taskIt->taskPriority);
@@ -114,8 +139,8 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     //! - Check to make sure that there are models to be called.
     routeInterfaces();
     SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
-    it = taskModels.begin();
-    if(it == taskModels.end())
+    it = processTasks.begin();
+    if(it == processTasks.end())
     {
         std::cerr << "Received a step command on sim that has no active Tasks.";
         std::cerr << std::endl;
@@ -128,16 +153,22 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
         return;
     }
     //! - Call the next scheduled model, and set the time to its start
+    if(currentNanos != prevRouteTime)
+    {
+        routeInterfaces();
+        prevRouteTime = currentNanos;
+    }
+    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     SysModelTask *localTask = it->TaskPtr;
     localTask->ExecuteTaskList(currentNanos);
     
     //! - Erase the current call from the stack and schedule the next call
     localPriority = it->taskPriority;
-    taskModels.erase(it);
+    processTasks.erase(it);
     addNewTask(localTask, localPriority);
     
     //! - Figure out when we are going to be called next for scheduling purposes
-    it = taskModels.begin();
+    it = processTasks.begin();
     nextTaskTime = it->NextTaskStart;
 }
 
@@ -171,19 +202,19 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to find correct place
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         /// - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
            (it->NextTaskStart == taskCall.NextTaskStart &&
             taskCall.taskPriority > it->taskPriority))
         {
-            taskModels.insert(it, taskCall);
+            processTasks.insert(it, taskCall);
             return;
         }
     }
     //! - Default case is to put the Task at the end of the schedule
-    taskModels.push_back(taskCall);
+    processTasks.push_back(taskCall);
 }
 
 /*! This method is used to ensure that all necessary input messages are routed 
@@ -210,7 +241,7 @@ void SysProcess::disableAllTasks()
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to disable them
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         it->TaskPtr->disableTask();
     }
@@ -225,9 +256,30 @@ void SysProcess::enableAllTasks()
     //! Begin Method steps
     std::vector<ModelScheduleEntry>::iterator it;
     //! - Iteratre through all of the task models to disable them
-    for(it = taskModels.begin(); it != taskModels.end(); it++)
+    for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
         it->TaskPtr->enableTask();
     }
 }
+
+//void SysProcess::getAllMessageDefinitions()
+//{
+//    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+//    std::set<std::string>::iterator it;
+//    messageSys->selectMessageBuffer(this->messageBuffer);
+//    for(it=unknownPublisher.begin(); it!=unknownPublisher.end(); it++)
+//    {
+//        int64_t messageID = messageSys->FindMessageID(*it);
+//        if(messageID >= 0)
+//        {
+//            MessageInterfaceMatch newMessage;
+//            newMessage.source = -1;
+//            newMessage.destination = -1;
+//            newMessage.messageSource = *it;
+//            newMessage.messageDest = "";
+//            newMessage.updateCounter = 0;
+//            messageTraffic.push_back(newMessage);
+//        }
+//    }
+//}
 

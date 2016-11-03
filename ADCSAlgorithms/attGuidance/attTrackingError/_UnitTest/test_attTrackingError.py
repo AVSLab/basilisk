@@ -88,9 +88,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.outputDataName = "outputName"
 
     vector = [0.01, 0.05, -0.55]
-    SimulationBaseClass.SetCArray(vector,
-                                  'double',
-                                  moduleConfig.sigma_R0R)
+    moduleConfig.sigma_R0R = vector
 
 
     # Create input message and size it because the regular creator of that message
@@ -98,21 +96,17 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    inputMessageSize = 18*8                             # 6x3 doubles
+    inputMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
+    NavStateOutData = simple_nav.NavAttOut()          # Create a structure for the input message
     sigma_BN = [0.25, -0.45, 0.75]
-    SimulationBaseClass.SetCArray(sigma_BN,
-                                  'double',
-                                  NavStateOutData.sigma_BN)
+    NavStateOutData.sigma_BN = sigma_BN
     omega_BN_B = [-0.015, -0.012, 0.005]
-    SimulationBaseClass.SetCArray(omega_BN_B,
-                                  'double',
-                                  NavStateOutData.omega_BN_B)
+    NavStateOutData.omega_BN_B = omega_BN_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavName,
                                           inputMessageSize,
                                           0,
@@ -129,17 +123,11 @@ def subModuleTestFunction(show_plots):
 
     RefStateOutData = inertial3DSpin.attRefOut()          # Create a structure for the input message
     sigma_RN = [0.35, -0.25, 0.15]
-    SimulationBaseClass.SetCArray(sigma_RN,
-                                  'double',
-                                  RefStateOutData.sigma_RN)
+    RefStateOutData.sigma_RN = sigma_RN
     omega_RN_N = [0.018, -0.032, 0.015]
-    SimulationBaseClass.SetCArray(omega_RN_N,
-                                  'double',
-                                  RefStateOutData.omega_RN_N)
+    RefStateOutData.omega_RN_N = omega_RN_N
     domega_RN_N = [0.048, -0.022, 0.025]
-    SimulationBaseClass.SetCArray(domega_RN_N,
-                                  'double',
-                                  RefStateOutData.domega_RN_N)
+    RefStateOutData.domega_RN_N = domega_RN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRefName,
                                           inputMessageSize,
                                           0,

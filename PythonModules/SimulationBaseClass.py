@@ -22,6 +22,7 @@ sys.path.append(os.path.dirname(os.path.realpath(__file__)) + '/../modules')
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import sim_model
 import sys_model_task
+import alg_contain
 import MessagingAccess
 import types
 import numpy as np
@@ -30,7 +31,6 @@ import xml.etree.ElementTree as ET
 import inspect
 import MonteCarloBaseClass
 import sets
-
 
 class ProcessBaseClass:
     def __init__(self, procName):
@@ -224,7 +224,7 @@ class SimBaseClass:
                 Task.TaskData.AddNewObject(NewModel, ModelPriority)
                 TaskReplaceTag = 'self.TaskList[' + str(i) + ']'
                 TaskReplaceTag += '.TaskModels[' + str(len(Task.TaskModels)) + ']'
-                self.NameReplace[NewModel.ModelTag] = TaskReplaceTag
+                self.NameReplace[TaskReplaceTag] = NewModel.ModelTag
                 if (ModelData != None):
                     Task.TaskModels.append(ModelData)
                     self.simModules.add(inspect.getmodule(ModelData))
@@ -246,6 +246,7 @@ class SimBaseClass:
         Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
+    '''
 
     def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
         SplitName = VarName.split('.')
@@ -254,8 +255,9 @@ class SimBaseClass:
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
         NoDotName = NoDotName.translate(None, '[]')
-        if SplitName[0] in self.NameReplace:
-            LogName = self.NameReplace[SplitName[0]] + '.' + Subname
+        inv_map = {v: k for k, v in self.NameReplace.items()}
+        if SplitName[0] in inv_map:
+            LogName = inv_map[SplitName[0]] + '.' + Subname
             if (LogName in self.VarLogList):
                 return
             if (type(eval(LogName)).__name__ == 'SwigPyObject'):
@@ -287,24 +289,58 @@ class SimBaseClass:
         else:
             print "Could not find a structure that has the ModelTag: %(ModName)s" % \
                   {"ModName": SplitName[0]}
+            '''
 
-    def AddVariableForLogging(self, VarName, LogPeriod=0):
-        i = 0
+    def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         SplitName = VarName.split('.')
         Subname = '.'
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
         NoDotName = NoDotName.translate(None, '[]')
-        if SplitName[0] in self.NameReplace:
-            LogName = self.NameReplace[SplitName[0]] + '.' + Subname
-            if (LogName not in self.VarLogList):
+        inv_map = {v: k for k, v in self.NameReplace.items()}
+        if SplitName[0] in inv_map:
+            LogName = inv_map[SplitName[0]] + '.' + Subname
+            if (LogName in self.VarLogList):
+                return
+            if (type(eval(LogName)).__name__ == 'SwigPyObject'):
+                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+                RefFunctionString += '   return ['
+                LoopTerminate = False
+                i = 0
+                while not LoopTerminate:
+                    RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
+                    RefFunctionString += LogName + ', ' + str(StartIndex + i) + '),'
+                    i += 1
+                    if (i > StopIndex - StartIndex):
+                        LoopTerminate = True
+                RefFunctionString = RefFunctionString[:-1] + ']'
+                exec (RefFunctionString)
+                methodHandle = eval('Get' + NoDotName)
+        
+            elif (type(eval(LogName)).__name__ == 'list'):
+                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+                RefFunctionString += '   if isinstance(' + LogName + '[0], list):\n'
+                RefFunctionString += '      localList = sum(' + LogName + ',[])\n'
+                RefFunctionString += '   else:\n      localList = ' + LogName + '\n'
+                RefFunctionString += '   return ['
+                LoopTerminate = False
+                i = 0
+                while not LoopTerminate:
+                    RefFunctionString +=  'localList[' + str(StartIndex + i) + '],'
+                    i += 1
+                    if (i > StopIndex - StartIndex):
+                        LoopTerminate = True
+                RefFunctionString = RefFunctionString[:-1] + ']'
+                exec (RefFunctionString)
+                methodHandle = eval('Get' + NoDotName)
+            else:
                 RefFunctionString = 'def Get' + NoDotName + '(self):\n'
                 RefFunctionString += '   return ' + LogName
                 exec (RefFunctionString)
                 methodHandle = eval('Get' + NoDotName)
-                self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                        methodHandle)
+            self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
+                                                    methodHandle, StopIndex - StartIndex + 1)
         else:
             print "Could not find a structure that has the ModelTag: %(ModName)s" % \
                   {"ModName": SplitName[0]}
@@ -335,10 +371,11 @@ class SimBaseClass:
             LocalTimeVal = LogValue.TimeValuePairs
             if (LocalPrev != CurrentVal):
                 LocalTimeVal.append(CurrSimTime)
-                if (isinstance(CurrentVal, (list, tuple))):
+                try:
+                    temp = (len(CurrentVal))
                     for Value in CurrentVal:
                         LocalTimeVal.append(Value)
-                else:
+                except TypeError:
                     LocalTimeVal.append(CurrentVal)
                 LogValue.PrevLogTime = CurrSimTime
                 LogValue.PrevValue = CurrentVal
@@ -434,7 +471,8 @@ class SimBaseClass:
         messageCount = self.TotalSim.messageLogs.getLogCount(messageID.processBuffer, messageID.itemID)
         resplit = varName.split(splitName[0] + '.')
         bufferUse = sim_model.logBuffer if messageCount > 0 else sim_model.messageBuffer
-        messageCount = messageCount if messageCount > 0 else headerData.UpdateCounter
+        maxCountMessager = headerData.UpdateCounter if headerData.UpdateCounter < headerData.MaxNumberBuffers else headerData.MaxNumberBuffers
+        messageCount = messageCount if messageCount > 0 else maxCountMessager
         messageCount = messageCount if numRecords < 0 else numRecords
         if (len(indices) <= 0):
             indices_use = [0]
@@ -562,12 +600,69 @@ class SimBaseClass:
         fDesc.write('\n}')
         fDesc.close()
 
+    def setModelDataWrap(self, modelData):
+        algDict = {}
+        STR_SELFINIT = 'SelfInit'
+        STR_CROSSINIT = 'CrossInit'
+        STR_UPDATE = 'Update'
+        STR_RESET = 'Reset'
+
+        # SwigPyObject's Parsing:
+        # Collect all the SwigPyObjects present in the list. Only the methods SelfInit, CrossInit, Update and Restart
+        # are wrapped by Swig in the .i files. Therefore they are the only SwigPyObjects
+        def parseDirList(dirList):
+            algNames = []
+            for methodName in dirList:
+                methodObject = eval('sys.modules["' + module + '"].' + methodName)
+                if type(methodObject).__name__ == "SwigPyObject":
+                    algNames.append(methodName)
+            return algNames
+        # Check the type of the algorithm, i.e. SelfInit, CrossInit, Update or Reset,
+        # and return the key to create a new dictionary D[str_method] = method
+        def checkMethodType(methodName):
+            if methodName[0:len(STR_SELFINIT)] == STR_SELFINIT:
+                return STR_SELFINIT
+            elif methodName[0:len(STR_CROSSINIT)] == STR_CROSSINIT:
+                return STR_CROSSINIT
+            elif methodName[0:len(STR_UPDATE)] == STR_UPDATE:
+                return STR_UPDATE
+            elif methodName[0:len(STR_RESET)] == STR_RESET:
+                return STR_RESET
+            else:
+                raise ValueError('Cannot recognize the method'
+                                 '(I only assess SelfInit, CrossInit, Update and Reset methods). '
+                                 'Parse better.')
+
+        module = modelData.__module__
+        sysMod = sys.modules[module]
+        dirList = dir(sysMod)
+        algList = parseDirList(dirList)
+        moduleName =  module.split('.')[0]
+        currMod = __import__(moduleName)
+        for alg in algList:
+            key = checkMethodType(alg)
+            algDict[key] = alg
+        update = eval('currMod.' + algDict[STR_UPDATE])
+        selfInit = eval('currMod.' + algDict[STR_SELFINIT])
+        crossInit = eval('currMod.' + algDict[STR_CROSSINIT])
+        try:
+            resetArg = algDict[STR_RESET]
+            reset = eval('currMod.' + resetArg)
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit, reset)
+        except:
+            modelWrap = alg_contain.AlgContain(modelData, update, selfInit, crossInit)
+        return modelWrap
+
+
 def SetCArray(InputList, VarType, ArrayPointer):
-    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
-    CurrIndex = 0
-    for CurrElem in InputList:
-        exec (CmdString)
-        CurrIndex += 1
+    try:
+        ArrayPointer[0] = InputList[0]
+    except TypeError:
+        CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
+        CurrIndex = 0
+        for CurrElem in InputList:
+            exec (CmdString)
+            CurrIndex += 1
 
 
 def getCArray(varType, arrayPointer, arraySize):

@@ -60,7 +60,7 @@ extern "C" {
     void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
     void computeNewAttMnvr(attMnvrPointConfig *ConfigData, attCmdOut *endState,
-    NavStateOut *currState);
+        NavAttOut *currState);
     
 #ifdef __cplusplus
 }

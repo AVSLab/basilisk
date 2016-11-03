@@ -58,7 +58,7 @@ public:
     void logThisMessage(std::string messageName, uint64_t messagePeriod=0);
     uint64_t getNumMessages(); //!< Get number of messages in simulation
     std::string getMessageName(uint64_t messageID); //!< Get name for specified message ID
-    messageIdentData getMessageID(std::string messageName); //!< Get the ID associated with message name
+    MessageIdentData getMessageID(std::string messageName); //!< Get the ID associated with message name
     void populateMessageHeader(std::string messageName,
         MessageHeaderData* headerOut); //!< Get header data associated with msg
     std::set<std::string> getUniqueMessageNames();
@@ -67,11 +67,11 @@ public:
     void terminateSimulation();
     
 public:
-    std::vector<SysProcess *> processList;           //!< -- List of processes we've created
-    std::string SimulationName;                      //!< -- Identifier for Task
-    uint64_t CurrentNanos;                        //!< ns Current clock time
-    uint64_t NextTaskTime;                      //!< ns time for the next Task
-    messageLogger messageLogs;                       //!< -- Message log data
+    std::vector<SysProcess *> processList;          //!< -- List of processes we've created
+    std::string SimulationName;                     //!< -- Identifier for Task
+    uint64_t CurrentNanos;                          //!< ns Current clock time
+    uint64_t NextTaskTime;                          //!< ns time for the next Task
+    messageLogger messageLogs;                      //!< -- Message log data
 };
 
 /*! @} */

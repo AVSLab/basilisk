@@ -56,34 +56,11 @@ void SelfInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
  */
 void CrossInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 {
-    
-    RWConstellation localRWData;
-    int i, j;
-    uint64_t ClockTime;
-    uint32_t ReadSize;
-
     /*! - Get the control data message IDs*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(attGuidOut), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(vehicleConfigData), moduleID);
-    ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
-                                                     sizeof(RWSpeedData), moduleID);
-    
-    ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
-                                                   sizeof(RWConstellation), moduleID);
-    
-    ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
-    
-    for(i=0; i<ConfigData->numRWAs; i=i+1)
-    {
-        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-        for(j=0; j<3; j=j+1)
-        {
-            ConfigData->GsMatrix[i*3+j] = localRWData.reactionWheels[i].Gs_S[j];
-        }
-    }
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -107,16 +84,11 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
-    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              Lr[3];              /*!< required control torque vector [Nm] */
     double              L[3];               /*!< known external torque */
-    double              omega_BN_B[3];      /*!< Angular body rate with respect to the inertial N frame
-                                             expressed in body B-frame components */
-    double              h_s;                /*!< Reaction wheel momentum vector */
-    double              *wheelGs;           /*!< Reaction wheel spin axis pointer */
-    int                 i;                  /*!< Iterator */
+    double              omega_BN_B[3];      /*!< Inertial angular body rate expressed in body B-frame components */
     double              v3_temp1[3];        /*!< Temporal vector for insight computations */
     double              v3_temp2[3];        /*!< Temporal vector for insight computations */
 
@@ -128,45 +100,36 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
                 sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
     
-    /* Compute body rate */
+    /*! - Compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
     
     /* Compute known external torque */
     v3SetZero(L);
     
-    /* 
-     Evaluate required attitude control torque:
-     Lr =  K*sigma_BR + P*delta_omega  - omega x ([I]omega + [Gs]h_s - omega_r) +
-            - [I](d(omega_r)/dt - omega x omega_r) + L
+    /*! - Evaluate required attitude control torque:
+     Lr =  K*sigma_BR + P*delta_omega  - omega x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
-    v3Scale(ConfigData->K, guidCmd.sigma_BR, v3_temp1);           /* + K*sigma_BR */
-    v3Scale(ConfigData->P, guidCmd.omega_BR_B, v3_temp2);         /* + P*delta_omega */
+    v3Scale(ConfigData->K, guidCmd.sigma_BR, v3_temp1); /* + K * sigma_BR */
+    v3Scale(ConfigData->P, guidCmd.omega_BR_B, v3_temp2); /* + P * delta_omega */
     v3Add(v3_temp1, v3_temp2, Lr);
-
-    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3_temp1);              /* - omega x ([I]omega + [Gs]h_s - omega_r) */
-    v3Subtract(v3_temp1, guidCmd.omega_RN_B, v3_temp1);
-    for(i = 0; i < ConfigData->numRWAs; i++)
-    {
-        wheelGs = &(ConfigData->GsMatrix[i*3]);
-        h_s = ConfigData->JsList[i] * (v3Dot(omega_BN_B, wheelGs) + wheelSpeeds.wheelSpeeds[i]);
-        v3Scale(h_s, wheelGs, v3_temp2);
-        v3Add(v3_temp1, v3_temp2, v3_temp1);
-    }
+    
+    /* - omega x [I]omega */
+    m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3_temp1);
     v3Cross(omega_BN_B, v3_temp1, v3_temp1);
     v3Subtract(Lr, v3_temp1, Lr);
     
-    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_temp1);             /* - [I](d(omega_r)/dt - omega x omega_r) */
+    /* - [I](d(omega_r)/dt - omega x omega_r) */
+    v3Cross(omega_BN_B, guidCmd.omega_RN_B, v3_temp1);
     v3Subtract(guidCmd.domega_RN_B, v3_temp1, v3_temp1);
     m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_temp1, v3_temp1);
     v3Subtract(Lr, v3_temp1, Lr);
     
-    v3Add(L, Lr, Lr);                                              /* + L */
+    v3Add(L, Lr, Lr); /* + L */
+    v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 
-    /* Store and write the output message */
+    /*! - Store and write the output message */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
                  (void*) &(ConfigData->controlOut), moduleID);

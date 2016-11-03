@@ -31,7 +31,9 @@ import unitTestSupport  # general support file with common unit test functions
 import MRP_Steering  # import the module that is to be tested
 import sunSafePoint  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
+import rwConfigData
 import rwNullSpace
+import rwMotorTorque
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -66,11 +68,7 @@ def mrp_steering_tracking(show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = MRP_Steering.MRP_SteeringConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        MRP_Steering.Update_MRP_Steering,
-                                        MRP_Steering.SelfInit_MRP_Steering,
-                                        MRP_Steering.CrossInit_MRP_Steering,
-                                        MRP_Steering.Reset_MRP_Steering)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "MRP_Steering"
 
     # Add test module to runtime call list
@@ -78,111 +76,96 @@ def mrp_steering_tracking(show_plots):
 
     # Initialize the test module configuration data
     moduleConfig.inputGuidName = "inputGuidName"
-    moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
+    moduleConfig.vehConfigInMsgName = "vehicleConfigName"
+    moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+    moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
     moduleConfig.outputDataName = "outputName"
-    moduleConfig.inputRWConfigData = "rwa_config_data"
 
     moduleConfig.K1 = 0.15
     moduleConfig.K3 = 1.0
     moduleConfig.Ki = 0.01
     moduleConfig.P = 150.0
-    moduleConfig.numRWAs = 4
     moduleConfig.omega_max = 1.5 * macros.D2R
     moduleConfig.integralLimit = 2. / moduleConfig.Ki * 0.1
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    inputMessageSize = 12 * 8  # 4x3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputGuidName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    inputMessageSize = 12*8 # 4 x 3 x size(double)
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
+                                          inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
+    guidCmdData = sunSafePoint.attGuidOut()             # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
-    SimulationBaseClass.SetCArray(sigma_BR,
-                                  'double',
-                                  guidCmdData.sigma_BR)
+    guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
-    SimulationBaseClass.SetCArray(omega_BR_B,
-                                  'double',
-                                  guidCmdData.omega_BR_B)
+    guidCmdData.omega_BR_B = omega_BR_B
     omega_RN_B = np.array([-0.02, -0.01, 0.005])
-    SimulationBaseClass.SetCArray(omega_RN_B,
-                                  'double',
-                                  guidCmdData.omega_RN_B)
+    guidCmdData.omega_RN_B = omega_RN_B
     domega_RN_B = np.array([0.0002, 0.0003, 0.0001])
-    SimulationBaseClass.SetCArray(domega_RN_B,
-                                  'double',
-                                  guidCmdData.domega_RN_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName,
+    guidCmdData.domega_RN_B = domega_RN_B
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputGuidName, inputMessageSize,
+                                          0, guidCmdData)
+
+    # vehicleConfigData Message:
+    inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
+                                          inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    I = [1000., 0., 0.,
+         0., 800., 0.,
+         0., 0., 800.]
+    vehicleConfigOut.ISCPntB_B = I
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
-                                          0,
-                                          guidCmdData)
+                                          0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
+    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 8  # doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     rwSpeedMessage = rwNullSpace.RWSpeedData()
     Omega = [10.0, 25.0, 50.0, 100.0]
-    SimulationBaseClass.SetCArray(Omega,
-                                  'double',
-                                  rwSpeedMessage.wheelSpeeds)
+    rwSpeedMessage.wheelSpeeds = Omega
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
                                           0,
                                           rwSpeedMessage)
 
-    # vehicleConfigData Message:
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
-    SimulationBaseClass.SetCArray(I,
-                                  'double',
-                                  vehicleConfigOut.ISCPntB_B)
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
+    # wheelConfigData message
+    def writeMsgInWheelConfiguration():
+        inputMessageSize = 8*vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1*4
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
+                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
+        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams.GsMatrix_B = [
+            1.0, 0.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            0.5773502691896258, 0.5773502691896258, 0.5773502691896258
+        ]
+        rwConfigParams.JsList = [0.1, 0.1, 0.1, 0.1]
+        rwConfigParams.numRW = 4
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwParamsInMsgName, inputMessageSize,
+                                              0, rwConfigParams)
+    if len(moduleConfig.rwParamsInMsgName)>0:
+        writeMsgInWheelConfiguration()
 
-    # wheelConfigData Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 7 * 8
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    i = 0
-    rwClass = vehicleConfigData.RWConstellation()
-    rwPointer = vehicleConfigData.RWConfigurationElement()
+    # wheelAvailability message
+    def writeMsgInWheelAvailability():
+        inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4 # integers
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
+                                              inputMessageSize, 2) # number of buffers (leave at 2 as default)
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        rwAvailabilityMessage.wheelAvailability = avail
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
+                                              0, rwAvailabilityMessage)
+    if len(moduleConfig.rwAvailInMsgName)>0:
+        writeMsgInWheelAvailability()
 
-    localGsMatrix = [1, 0, 0,
-                    0, 1, 0,
-                    0, 0, 1,
-                    0.5773502691896258, 0.5773502691896258, 0.5773502691896258]
-    while (i < 4):
-        SimulationBaseClass.SetCArray([localGsMatrix[i*3],
-                                       localGsMatrix[i*3+1],
-                                       localGsMatrix[i*3+2]],
-                                      'double',
-                                      rwPointer.Gs_S)
-        rwPointer.Js = 0.1
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, rwPointer)
-        i += 1
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWConfigData,
-                                          inputMessageSize,
-                                          0,
-                                          rwClass)
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
 
@@ -206,11 +189,11 @@ def mrp_steering_tracking(show_plots):
 
     # set the filtered output truth states
     trueVector = [
-        [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
-        , [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
-        , [4.4480000793994314, -8.4093848702156535, 4.8611816778282186]
-        , [4.447838135953905, -8.4091608989577455, 4.8609788769036752]
-        , [4.4480000793994314, -8.4093848702156535, 4.8611816778282186]
+        [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
+        , [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
+        , [-4.4480000793994314, 8.4093848702156535, -4.8611816778282186]
+        , [-4.447838135953905, 8.4091608989577455, -4.8609788769036752]
+        , [-4.4480000793994314, 8.4093848702156535, -4.8611816778282186]
     ]
 
     # compare the module results to the truth values

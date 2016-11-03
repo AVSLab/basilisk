@@ -19,7 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define ORB_ELEM_CONVERT_H
 
 #include <vector>
-#include "utilities/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/orbitalMotion.h"
 
 /*! \addtogroup SimModelGroup

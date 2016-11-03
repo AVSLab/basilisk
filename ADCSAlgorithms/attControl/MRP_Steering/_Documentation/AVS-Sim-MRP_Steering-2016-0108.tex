@@ -1,5 +1,7 @@
-\documentclass[]{AVSSimReportMemo}
+\documentclass[]{BasiliskReportMemo}
 \usepackage{AVS}
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 \newcommand{\ModuleName}{MRP\_Steering}
 \newcommand{\subject}{MRP Steering ADCS Control Module}
@@ -26,6 +28,7 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial Documentation Draft & H. Schaub \\
+0.1 & Updated the sign definition of $\bm L_{r}$ & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -436,11 +439,11 @@ Let $[P]^{T} = [P]>$ be a symmetric positive definite rate feedback gain matrix.
 \end{multline}
 Defining the right-hand-side as $\bm L_{r}$, this is rewritten in compact form as
 \begin{equation}
-	[G_{s}]\bm u_{s} = \bm L_{r}
+	[G_{s}]\bm u_{s} = -\bm L_{r}
 \end{equation}
 The array of RW motor torques can be solved with the typical minimum norm inverse
 \begin{equation}
-	\bm u_{s} = [G_{s}]^{T}\left( [G_{s}][G_{s}]^{T}\right)^{-1} \bm L_{r}
+	\bm u_{s} = [G_{s}]^{T}\left( [G_{s}][G_{s}]^{T}\right)^{-1} (- \bm L_{r})
 \end{equation}
 
 

@@ -51,7 +51,7 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     uint32_t writeSize;
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->InputMsgID = subscribeToMessage(ConfigData->InputDataName,
-        MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), moduleID);
+        sizeof(CSSOutputData), moduleID);
     ConfigData->InputPropsID = subscribeToMessage(ConfigData->InputPropsName,
         sizeof(vehicleConfigData), moduleID);
     ReadMessage(ConfigData->InputPropsID, &writeTime, &writeSize,
@@ -127,7 +127,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     uint64_t ClockTime;
     uint32_t ReadSize;
-    CSSOutputData InputBuffer[MAX_NUM_CSS_SENSORS];
+    CSSOutputData InputBuffer;
     double H[MAX_NUM_CSS_SENSORS*3];
     double y[MAX_NUM_CSS_SENSORS];
     double W[MAX_NUM_CSS_SENSORS*MAX_NUM_CSS_SENSORS];
@@ -136,10 +136,10 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
-    memset(InputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData));
+    memset(&InputBuffer, 0x0, sizeof(CSSOutputData));
     ReadMessage(ConfigData->InputMsgID, &ClockTime, &ReadSize,
-                MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData),
-                (void*) (InputBuffer), moduleID);
+                sizeof(CSSOutputData),
+                (void*) (&InputBuffer), moduleID);
     
     /*! - Zero the observed active CSS count*/
     ConfigData->numActiveCss = 0;
@@ -154,11 +154,11 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
      */
     for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
     {
-        if(InputBuffer[i].CosValue > ConfigData->SensorUseThresh)
+        if(InputBuffer.CosValue[i] > ConfigData->SensorUseThresh)
         {
             v3Scale(ConfigData->CSSData[i].CBias,
                 ConfigData->CSSData[i].nHatBdy, &H[ConfigData->numActiveCss*3]);
-            y[ConfigData->numActiveCss] = InputBuffer[i].CosValue;
+            y[ConfigData->numActiveCss] = InputBuffer.CosValue[i];
             ConfigData->numActiveCss = ConfigData->numActiveCss + 1;
             
         }

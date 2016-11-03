@@ -103,13 +103,28 @@ void SystemMessaging::clearMessaging()
     }
     dataBuffers.clear();
     nextModuleID = 0;
+    CreateFails = 0;
+    WriteFails = 0;
+    ReadFails = 0;
     messageStorage = NULL;
 }
 
-uint64_t SystemMessaging::GetMessageCount()
+uint64_t SystemMessaging::GetMessageCount(int32_t bufferSelect)
 {
-    uint64_t *CurrentMessageCount = reinterpret_cast<uint64_t*>
-    (&messageStorage->messageStorage.StorageBuffer[0]);
+    uint64_t *CurrentMessageCount;
+    if(bufferSelect < 0)
+    {
+       CurrentMessageCount = reinterpret_cast<uint64_t*>
+           (&messageStorage->messageStorage.StorageBuffer[0]);
+    }
+    else
+    {
+        std::vector<MessageStorageContainer *>::iterator it;
+        it = dataBuffers.begin();
+        it += bufferSelect;
+        CurrentMessageCount = reinterpret_cast<uint64_t*>
+        (&((*it)->messageStorage.StorageBuffer[0]));
+    }
     return(*CurrentMessageCount);
 }
 
@@ -151,9 +166,16 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
         }
     	return(FindMessageID(MessageName));
     }
+    if(MessageName == "")
+    {
+        std::cerr << "ERROR: Module ID: " << moduleID << " tried to create a ";
+        std::cerr << "message without a name.  Please try again" << std::endl;
+        CreateFails++;
+        return(-1);
+    }
     if(NumMessageBuffers <= 0)
     {
-        std::cerr << "I can't create a message with zero buffers.  I refuse.";
+        std::cerr << "ERROR: I can't create a message with zero buffers.  I refuse.";
         std::cerr << std::endl;
         CreateFails++;
         return(-1);
@@ -184,23 +206,25 @@ int64_t SystemMessaging::CreateNewMessage(std::string MessageName,
     }
     MessageHeaderData* NewHeader = reinterpret_cast<MessageHeaderData *>
     (MessagingStart);
-    uint32_t NameLength = MessageName.size();
+    uint32_t NameLength = (uint32_t)MessageName.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        std::cout << "Your name length is too long, truncating name" <<std::endl;
+        std::cerr << "Your name length for: " << MessageName <<" is too long, truncating name" <<std::endl;
+        CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->MessageName, MessageName.c_str(), NameLength);
-    NameLength = messageStruct.size();
+    NameLength = (uint32_t)messageStruct.size();
     if(NameLength > MAX_MESSAGE_SIZE)
     {
-        std::cout << "Your struct name length is too long, truncating name" <<std::endl;
+        std::cerr << "Your struct name length for: " << messageStruct << " is too long, truncating name" <<std::endl;
+        CreateFails++;
         NameLength = MAX_MESSAGE_SIZE;
     }
     strncpy(NewHeader->messageStruct, messageStruct.c_str(), NameLength);
     NewHeader->UpdateCounter = 0;
     NewHeader->CurrentReadBuffer = 0;
-    NewHeader->MaxNumberBuffers = NumMessageBuffers;
+    NewHeader->MaxNumberBuffers = (uint32_t)NumMessageBuffers;
     NewHeader->MaxMessageSize = MaxSize;
     NewHeader->CurrentReadSize = 0;
     NewHeader->CurrentReadTime = 0;
@@ -233,7 +257,7 @@ int64_t SystemMessaging::subscribeToMessage(std::string messageName,
     {
         messageID = CreateNewMessage(messageName, messageSize, 2);
     }
-    if(moduleID >= 0)
+    if(moduleID >= 0 && messageID >= 0)
     {
         it = messageStorage->subData.begin();
         it += messageID;
@@ -277,19 +301,18 @@ bool SystemMessaging::obtainReadRights(uint64_t messageID, int64_t moduleID)
     
 }
 
-messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
+MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 {
     int64_t messageID;
     
-    messageIdentData dataFound;
+    MessageIdentData dataFound;
     dataFound.itemFound = false;
     dataFound.itemID = -1;
     dataFound.processBuffer = ~0;
     std::vector<MessageStorageContainer *>::iterator it;
     for(it=dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        messageStorage = (*it);
-        messageID = FindMessageID(messageName);
+        messageID = FindMessageID(messageName, it-dataBuffers.begin());
         if(messageID < 0)
         {
             continue;
@@ -297,9 +320,9 @@ messageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
         dataFound.itemFound = true;
         dataFound.itemID = messageID;
         dataFound.processBuffer = it - dataBuffers.begin();
-        dataFound.bufferName = messageStorage->bufferName;
+        dataFound.bufferName = (*it)->bufferName;
         std::vector<AllowAccessData>::iterator pubIt;
-        pubIt=messageStorage->pubData.begin() + messageID;
+        pubIt=(*it)->pubData.begin() + messageID;
         if(pubIt->accessList.size() > 0 && pubIt->publishedHere)
         {
             return(dataFound);
@@ -333,6 +356,7 @@ bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
             std::cerr << "Received a write request from a module that doesn't publish";
             std::cerr << " for " << FindMessageName(MessageID)<<std::endl;
             std::cerr << "You get nothing."<<std::endl;
+            WriteFails++;
             return(false);
         }
     }
@@ -391,7 +415,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     if(MessageID >= GetMessageCount())
     {
         std::cerr << "Received a read request for invalid message ID: ";
-        std::cerr << MessageID<<std::endl;
+        std::cerr << MessageID <<std::endl;
         ReadFails++;
         return(false);
     }
@@ -443,14 +467,22 @@ void SystemMessaging::PrintAllMessageData()
     }
 }
 
-MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID)
+MessageHeaderData* SystemMessaging::FindMsgHeader(uint64_t MessageID, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
-    if(MessageID >= GetMessageCount())
+    if(MessageID >= GetMessageCount(bufferSelect))
     {
         return NULL;
     }
-    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(messageStorage->messageStorage.
+    MessageStorageContainer *localStorage = messageStorage;
+    if(bufferSelect >= 0)
+    {
+        std::vector<MessageStorageContainer *>::iterator it;
+        it = dataBuffers.begin();
+        it += bufferSelect;
+        localStorage = *it;
+    }
+    MsgHdr = reinterpret_cast<MessageHeaderData*> (&(localStorage->messageStorage.
                                                      StorageBuffer[sizeof(uint64_t)]));
     MsgHdr += MessageID;
     return(MsgHdr);
@@ -471,24 +503,24 @@ void SystemMessaging::PrintMessageStats(uint64_t MessageID)
     std::cout << "NumberMsgs: "<<MsgHdr->MaxNumberBuffers<<std::endl;
 }
 
-std::string SystemMessaging::FindMessageName(uint64_t MessageID)
+std::string SystemMessaging::FindMessageName(uint64_t MessageID, int32_t bufferSelect)
 {
-    if(MessageID >= GetMessageCount())
+    if(MessageID >= GetMessageCount(bufferSelect))
     {
         std::cerr << "Asked to find a message for invalid ID: "<<MessageID;
         std::cerr << std::endl;
     }
-    MessageHeaderData* MsgHdr = FindMsgHeader(MessageID);
+    MessageHeaderData* MsgHdr = FindMsgHeader(MessageID, bufferSelect);
     return(MsgHdr->MessageName);
     
 }
 
-int64_t SystemMessaging::FindMessageID(std::string MessageName)
+int64_t SystemMessaging::FindMessageID(std::string MessageName, int32_t bufferSelect)
 {
     MessageHeaderData* MsgHdr;
-    for(uint64_t i=0; i<GetMessageCount(); i++)
+    for(uint64_t i=0; i<GetMessageCount(bufferSelect); i++)
     {
-        MsgHdr = FindMsgHeader(i);
+        MsgHdr = FindMsgHeader(i, bufferSelect);
         if(MessageName == std::string(MsgHdr->MessageName))
         {
             return(i);
@@ -539,10 +571,9 @@ std::set<std::string> SystemMessaging::getUniqueMessageNames()
     std::vector<MessageStorageContainer *>::iterator it;
     for(it = dataBuffers.begin(); it != dataBuffers.end(); it++)
     {
-        selectMessageBuffer(it - dataBuffers.begin());
-        for(uint64_t i=0; i<GetMessageCount(); i++)
+        for(uint64_t i=0; i<GetMessageCount(it - dataBuffers.begin()); i++)
         {
-            outputNames.insert(FindMessageName(i));
+            outputNames.insert(FindMessageName(i, it - dataBuffers.begin()));
             
         }
     }

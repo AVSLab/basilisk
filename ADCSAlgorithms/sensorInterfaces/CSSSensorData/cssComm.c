@@ -35,7 +35,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
     }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(CSSOutputData)*MAX_NUM_CSS_SENSORS, "CSSOutputData", moduleID);
+        sizeof(CSSOutputData), "CSSOutputData", moduleID);
     
 }
 
@@ -56,8 +56,7 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
     }
     
     ConfigData->SensorMsgID = subscribeToMessage(
-        ConfigData->SensorListName,
-        ConfigData->NumSensors*sizeof(CSSOutputData), moduleID);
+        ConfigData->SensorListName, sizeof(CSSOutputData), moduleID);
 }
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
@@ -74,7 +73,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     uint32_t ReadSize;
     double InputValues[MAX_NUM_CSS_SENSORS];
     double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult;
-    CSSOutputData OutputBuffer[MAX_NUM_CSS_SENSORS];
+    CSSOutputData OutputBuffer;
     
     /*! Begin method steps*/
     /*! - Check for correct values in NumSensors and MaxSensorValue */
@@ -83,9 +82,8 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     {
         return; /* Throw ugly FSW error/crash here */
     }
-    memset(OutputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData));
-    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize,
-                ConfigData->NumSensors*sizeof(CSSOutputData),
+    memset(&OutputBuffer, 0x0, sizeof(CSSOutputData));
+    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize, sizeof(CSSOutputData),
                 (void*) (InputValues), moduleID);
     /*! - Loop over the sensors and compute data
      -# Check appropriate range on sensor and calibrate
@@ -99,12 +97,12 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
         if(InputValues[i] < ConfigData->MaxSensorValue && InputValues[i] >= 0.0)
         {
             /* Scale sensor */
-            OutputBuffer[i].CosValue = (float) InputValues[i]/
+            OutputBuffer.CosValue[i] = (float) InputValues[i]/
             ConfigData->MaxSensorValue;
             /* Seed the polynomial computations*/
-            ValueMult = 2.0*OutputBuffer[i].CosValue;
+            ValueMult = 2.0*OutputBuffer.CosValue[i];
             ChebyPrev = 1.0;
-            ChebyNow = OutputBuffer[i].CosValue;
+            ChebyNow = OutputBuffer.CosValue[i];
             ChebyDiffFactor = 0.0;
             ChebyDiffFactor = ConfigData->ChebyCount > 0 ?
             ChebyPrev*ConfigData->KellyCheby[0] : ChebyDiffFactor;
@@ -119,16 +117,16 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
                 ChebyPrev = ChebyLocalPrev;
                 ChebyDiffFactor += ConfigData->KellyCheby[j]*ChebyNow;
             }
-            OutputBuffer[i].CosValue = OutputBuffer[i].CosValue + ChebyDiffFactor;
+            OutputBuffer.CosValue[i] = OutputBuffer.CosValue[i] + ChebyDiffFactor;
         }
         else
         {
-            OutputBuffer[i].CosValue = 0.0;
+            OutputBuffer.CosValue[i] = 0.0;
         }
     }
     /*! - Write aggregate output into output message */
     WriteMessage(ConfigData->OutputMsgID, callTime,
-                 MAX_NUM_CSS_SENSORS*sizeof(CSSOutputData), (void*) OutputBuffer,
+                 sizeof(CSSOutputData), (void*) &OutputBuffer,
                  moduleID);
     
     return;

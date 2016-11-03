@@ -106,20 +106,14 @@ def velocityPointTestFunction(show_plots):
     #
     #   Navigation Input Message
     #
-    inputNavMessageSize = 18*8                             # 6x3 doubles
+    inputNavMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavDataName,
                                           inputNavMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-    NavStateOutData = simple_nav.NavStateOut()          # Create a structure for the input message
-    #r_BN_N = [500., 500., 1000.]
-    SimulationBaseClass.SetCArray(r_BN_N,
-                                  'double',
-                                  NavStateOutData.r_BN_N)
-    #v_BN_N = [10., 10., 0.]
-    SimulationBaseClass.SetCArray(v_BN_N,
-                                  'double',
-                                  NavStateOutData.v_BN_N)
+    NavStateOutData = simple_nav.NavTransOut()          # Create a structure for the input message
+    NavStateOutData.r_BN_N = r_BN_N
+    NavStateOutData.v_BN_N = v_BN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
                                           inputNavMessageSize,
                                           0,
@@ -137,14 +131,8 @@ def velocityPointTestFunction(show_plots):
                                           inputCelMessageSize,
                                           2)  
     CelBodyData = spice_interface.SpicePlanetState()
-    #planetPos = [-500.,-500., 0.]
-    SimulationBaseClass.SetCArray(planetPos,
-                                  'double',
-                                  CelBodyData.PositionVector)
-    #planetVel = [0., 0., 0.]
-    SimulationBaseClass.SetCArray(planetVel,
-                                  'double',
-                                  CelBodyData.VelocityVector)
+    CelBodyData.PositionVector = planetPos
+    CelBodyData.VelocityVector = planetVel
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
                                           inputCelMessageSize,
                                           0,

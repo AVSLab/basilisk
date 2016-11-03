@@ -17,7 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %module sim_model
 %{
    #include "sim_model.h"
-   #include "sys_interface.h"
+   #include "_GeneralModuleFiles/sys_interface.h"
    #include "utilities/linearAlgebra.h"
    #include "utilities/rigidBodyKinematics.h"
 %}
@@ -28,6 +28,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "std_pair.i"
 %include "stdint.i"
 %include "carrays.i"
+%include "exception.i"
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);
@@ -39,6 +40,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 namespace std {
    %template(IntVector) vector<int>;
    %template(DoubleVector) vector<double>;
+   %template(MultiArray) vector<vector<double>>;
    %template(StringVector) vector<string>;
    %template(StringSet) set<string>;
    %template(intSet) set<unsigned long>;
@@ -46,11 +48,11 @@ namespace std {
    %template(messsageLogVector) vector<messageLogContainer>;
    %template() std::pair<long int, long int>;
    %template() std::pair<long long int, long long int>;
-   %template() std::pair<int64_t,int64_t>;
+   %template() std::pair<int64_t, int64_t>;
    %template(exchangeSet) std::set<std::pair<long int, long int>>;
    %template(modelPriPair) std::vector<ModelPriorityPair>;
    %template(interfaceVector) std::vector<SysInterface*>;
-   %template (interfaceSingVector) std::vector<InterfaceDataExchange *>;
+   %template(interfaceSingVector) std::vector<InterfaceDataExchange *>;
 }
 
 %inline %{
@@ -59,12 +61,22 @@ namespace std {
     }
 %}
 
+%exception {
+    try {
+        $action
+    } catch (const std::exception& e) {
+        SWIG_exception(SWIG_RuntimeError, e.what());
+    } catch (const std::string& e) {
+        SWIG_exception(SWIG_RuntimeError, e.c_str());
+    } 
+}
+
 %include "sys_model_task.h"
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sys_interface.h"
 %include "message_logger.h"
 %include "../messaging/system_messaging.h"
-%include "linearAlgebra.h"
-%include "rigidBodyKinematics.h"
+%include "../utilities/linearAlgebra.h"
+%include "../utilities/rigidBodyKinematics.h"
 %include "sim_model.h"
