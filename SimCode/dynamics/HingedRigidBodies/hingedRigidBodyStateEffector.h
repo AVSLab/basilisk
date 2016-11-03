@@ -48,13 +48,14 @@ public:
     double c;                       //!< N-m-s/rad, rotational damping coefficient of hinge
     Eigen::Matrix3d IPntS_S;        //!< kg-m^2, Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rHB_B;          //!< m, vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcmHB;             //!< DCM from body frame to hinge frame
-    std::string nameOfThetaState;
-    std::string nameOfThetaDotState;
+    Eigen::Matrix3d dcmHB;          //!< DCM from body frame to hinge frame
+    std::string nameOfThetaState;   //!< Identifier for the theta state data container
+    std::string nameOfThetaDotState; //!< Identifier for the thetaDot state data container
+
 private:
     Eigen::Matrix3d rTildeHB_B;     //!< Tilde matrix of rHB_B
-    Eigen::Matrix3d dcmSH;             //!< DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcmSB;             //!< DCM from body to S frame
+    Eigen::Matrix3d dcmSH;          //!< DCM from hinge to hinged rigid body frame, S
+    Eigen::Matrix3d dcmSB;          //!< DCM from body to S frame
     Eigen::Vector3d omegaBN_S;      //!< omega_BN in S frame components
     Eigen::Vector3d sHat1_B;        //!< unit direction vector for the first axis of the S frame
     Eigen::Vector3d sHat2_B;        //!< unit direction vector for the second axis of the S frame
@@ -74,7 +75,6 @@ private:
     StateData *hubVelocity;         //!< state manager access to the hubs rDotBN_N state
     StateData *thetaState;          //!< state manager of theta for hinged rigid body
     StateData *thetaDotState;       //!< state manager of thetaDot for hinged rigid body
-    
 };
 
 #endif /* STATE_EFFECTOR_H */

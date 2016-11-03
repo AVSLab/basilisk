@@ -33,25 +33,25 @@
  */
 class SpacecraftPlus : public DynObject2{
 public:
-    HubEffector hub;                          //! [-] The spacecraft hub that effectors spoke off
-    GravityEffector gravField;                //! [-] Gravitational field experienced by spacecraft
-    Eigen::Matrix3d matrixAContr;          //! [-] Spacecraft plus holds the value for all matrix contributions
-    Eigen::Matrix3d matrixBContr;
-    Eigen::Matrix3d matrixCContr;
-    Eigen::Matrix3d matrixDContr;
-    Eigen::Vector3d vecTransContr;
-    Eigen::Vector3d vecRotContr;
-    Eigen::MatrixXd *m_SC;
-    Eigen::MatrixXd *ISCPntB_B;
-    Eigen::MatrixXd *cPrime_B;
-    Eigen::MatrixXd *ISCPntBPrime_B;
-    Eigen::MatrixXd *c_B;
+    HubEffector hub;                     //! [-] The spacecraft hub that effectors spoke off
+    GravityEffector gravField;           //! [-] Gravitational field experienced by spacecraft
+    Eigen::Matrix3d matrixAContr;        //! [-] The contribution of each stateEffetor to matrix A
+    Eigen::Matrix3d matrixBContr;        //! [-] The contribution of each stateEffetor to matrix B
+    Eigen::Matrix3d matrixCContr;        //! [-] The contribution of each stateEffetor to matrix C
+    Eigen::Matrix3d matrixDContr;        //! [-] The contribution of each stateEffetor to matrix D
+    Eigen::Vector3d vecTransContr;       //! [-] The contribution of each stateEffetor to vecTrans
+    Eigen::Vector3d vecRotContr;         //! [-] The contribution of each stateEffetor to vecRot
+    Eigen::MatrixXd *m_SC;               //! [kg] spacecrafts total mass
+    Eigen::MatrixXd *ISCPntB_B;          //! [kg m^2] Inertia of s/c about point B in B frame components
+    Eigen::MatrixXd *c_B;                //! [m] Vector from point B to CoM of s/c in B frame components
+    Eigen::MatrixXd *cPrime_B;           //! [m] Body time derivative of c_B
+    Eigen::MatrixXd *ISCPntBPrime_B;     //! [m] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;
 	double currTimeStep;
 	double timePrevious;
-    uint64_t simTimePrevious;                 //! [-] Previous simulation time
+    uint64_t simTimePrevious;            //! [-] Previous simulation time
     
-    std::string sysTimePropertyName;          //! [-] Name of the system time property
+    std::string sysTimePropertyName;     //! [-] Name of the system time property
     
 public:
     SpacecraftPlus();
@@ -66,7 +66,7 @@ public:
     void linkInStates(DynParamManager& statesIn);
 
 private:
-    StateData *hubSigma;                           //! [-] Position
+    StateData *hubSigma;                      //! [-] sigmaBN for the hub
 };
 
 #endif /* SPACECRAFT_PLUS_H */

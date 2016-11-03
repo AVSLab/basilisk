@@ -23,11 +23,11 @@ using namespace std;
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    effProps.rCB_B.fill(0.0);
-    effProps.rPrimeCB_B.fill(0.0);
     effProps.mEff = 0.0;
+    effProps.rCB_B.fill(0.0);
+    effProps.IEffPntB_B.fill(0.0);
+    effProps.rPrimeCB_B.fill(0.0);
+    effProps.IEffPrimePntB_B.fill(0.0);
 
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
@@ -70,7 +70,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->thetaDot = interMediateMatrix(0,0);
     //! - Next find the sHat unit vectors
     this->dcmSH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
-    this->dcmSB = this->dcmSH*this->dcmSB;
+    this->dcmSB = this->dcmSH*this->dcmHB;
     this->sHat1_B = this->dcmSB.row(0);
     this->sHat2_B = this->dcmSB.row(1);
     this->sHat3_B = this->dcmSB.row(2);
@@ -117,7 +117,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
     //! - need to define rTildeHB_B
     this->rTildeHB_B << 0 , -this->rHB_B(2), this->rHB_B(1), this->rHB_B(2), 0, -this->rHB_B(0), -this->rHB_B(1), this->rHB_B(0), 0;
     matrixBcontr = -this->mass*this->d*sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)*sHat2_B.transpose() - this->mass*this->d*sHat3_B.transpose()*this->rTildeHB_B);
-    vecTranscontr = -this->mass*this->d*this->a_theta*this->sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d) + this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B;
+    vecTranscontr = -(this->mass*this->d*this->a_theta*this->sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d) + this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B);
 
     //! - Define rotational matrice contributions
     matrixCcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1) - this->mass*this->d*this->d)*this->mass*this->d*sHat3_B.transpose();
@@ -150,7 +150,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
     //! - First is trivial
     thetaState->setDerivative(thetaDotState->getState());
     //! - Second, a little more involved - see Allard, Diaz, Schaub flex/slosh paper
-    thetaDDot(0,0) = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->mass*this->d*this->sHat3_B.dot(rDDotBNLoc_B) - (this->IPntS_S(1,1) + this->mass*this->d*this->d)*sHat2_B.transpose()*(omegaDotBNLoc_B) + this->mass*this->d*this->sHat3_B.transpose()*rTildeHB_B*omegaDotBNLoc_B + this->a_theta);
+    thetaDDot(0,0) = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->mass*this->d*this->sHat3_B.dot(rDDotBNLoc_B) - (this->IPntS_S(1,1) + this->mass*this->d*this->d)*sHat2_B.transpose()*omegaDotBNLoc_B + this->mass*this->d*this->sHat3_B.transpose()*this->rTildeHB_B*omegaDotBNLoc_B + this->a_theta);
     thetaDotState->setDerivative(thetaDDot);
     
 }

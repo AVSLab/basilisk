@@ -23,12 +23,14 @@ using namespace std;
 
 HubEffector::HubEffector()
 {
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    effProps.rCB_B.fill(0.0);
-    effProps.rPrimeCB_B.fill(0.0);
+    //! - zero mass contributions
     effProps.mEff = 0.0;
+    effProps.rCB_B.fill(0.0);
+    effProps.IEffPntB_B.fill(0.0);
+    effProps.rPrimeCB_B.fill(0.0);
+    effProps.IEffPrimePntB_B.fill(0.0);
 
+    //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";
     this->nameOfHubVelocity = "hubVelocity";
     this->nameOfHubSigma = "hubSigma";
@@ -45,6 +47,7 @@ HubEffector::~HubEffector()
 
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
+    //! - Get reference to mass props
     this->m_SC = statesIn.getPropertyReference("m_SC");
     this->c_B = statesIn.getPropertyReference("centerOfMassSC");
     this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
@@ -54,6 +57,7 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
 
 void HubEffector::registerStates(DynParamManager& states)
 {
+    //! - Register the hub states
     this->posState = states.registerState(3, 1, this->nameOfHubPosition);
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
@@ -76,6 +80,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
 void HubEffector::computeDerivatives(double integTime)
 {
+    //! - Define variables needed for derivative calculations
     Eigen::Vector3d omegaBNDot_B;
     Eigen::Vector3d rBNDDotLocal_B;
     Eigen::Vector3d rBNDDotLocal_N;
@@ -96,21 +101,16 @@ void HubEffector::computeDerivatives(double integTime)
     cPrimeLocal_B = *cPrime_B;
     cLocal_B = *c_B;
 
-    //! - Need to scale [A] [B] and vecTrans by m_SC
-    matrixA = matrixA/(*this->m_SC)(0,0);
-    matrixB = matrixB/(*this->m_SC)(0,0);
-    vecTrans = vecTrans/(*this->m_SC)(0,0);
-
     ////! Need to make contributions to the matrices from the hub
     intermediateMatrix = intermediateMatrix.Identity();
-    matrixA += intermediateMatrix;
+    matrixA += (*this->m_SC)(0,0)*intermediateMatrix;
     //! make c_B skew symmetric matrix
     intermediateMatrix <<  0 , -(*c_B)(2,0),
     (*c_B)(1,0), (*c_B)(2,0), 0, -(*c_B)(0,0), -(*c_B)(1,0), (*c_B)(0,0), 0;
-    matrixB -= intermediateMatrix;
-    matrixC += this->m_SC->value()*intermediateMatrix;
+    matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
+    matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
     matrixD += *ISCPntB_B;
-    vecTrans += -2*omegaBNLocal.cross(cPrimeLocal_B) -omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
+    vecTrans += -2.0*(*this->m_SC)(0,0)*omegaBNLocal.cross(cPrimeLocal_B) - (*this->m_SC)(0,0)*omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaBNLocal;
     vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
 
@@ -121,6 +121,7 @@ void HubEffector::computeDerivatives(double integTime)
         sigmaState->setDerivative(sigmaBNDotLocal);
 
         if (this->useTranslation==true) {
+            //! - Complete the Back-Substitution Method
             intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
             omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
@@ -130,15 +131,18 @@ void HubEffector::computeDerivatives(double integTime)
             dcmNB = sigmaBNLocal.toRotationMatrix();
             rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
             velocityState->setDerivative(rBNDDotLocal_N);
+        } else {
+            //! - If its just rotating, only compute rotational terms
+            omegaBNDot_B = matrixD.inverse()*vecRot;
+            omegaState->setDerivative(omegaBNDot_B);
         }
-        omegaBNDot_B = matrixD.inverse()*vecRot;
-        omegaState->setDerivative(omegaBNDot_B);
     }
 
     if (this->useTranslation==true) {
         //! - Set kinematic derivative
         posState->setDerivative(rBNDotLocal_N);
         if (this->useRotation==false) {
+            //! - If it is just translating, only compute translational terms
             rBNDDotLocal_N = matrixA.inverse()*(vecTrans);
             velocityState->setDerivative(rBNDDotLocal_N);
         }

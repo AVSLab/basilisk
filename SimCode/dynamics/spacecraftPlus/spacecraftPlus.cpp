@@ -43,7 +43,7 @@ void SpacecraftPlus::computeEnergyMomentum()
 
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
-    hubSigma = statesIn.getStateObject("hubSigma");
+    hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
 }
 
 void SpacecraftPlus::equationsOfMotion(double t)
@@ -75,7 +75,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->ISCPntBPrime_B).setZero();
 
 
-    //! - This is where gravity will be called
+    //! - This is where gravity is computed
     gravField.computeGravityField();
 
     //! Add in hubs mass to the spaceCraft mass props
@@ -96,7 +96,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
         //! Add in effectors mass prop rates into mass prop rates of spacecraft
         (*it)->updateEffectorMassPropRates(t);
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.rPrimeCB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
 
         //! Add contributions to matrices
         (*it)->updateContributions(t, matrixAContr, matrixBContr, matrixCContr, matrixDContr, vecTransContr, vecRotContr);
@@ -124,7 +124,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
-        //! These matrices should be NULL, because the stateEffectors don't need to know about these Matrices
         (*it)->computeDerivatives(t);
     }
 
@@ -147,6 +146,11 @@ void SpacecraftPlus::integrateState(double t)
 
 void SpacecraftPlus::initializeDynamics()
 {
+    //! - Default simulation to useTranslation and useRotation as true for now
+    hub.useTranslation = true;
+    hub.useRotation = true;
+
+    //! SpaceCraftPlus initiates all of the spaceCraft mass properties
     Eigen::MatrixXd m_SC(1,1);
     Eigen::MatrixXd c_B(3,1);
     Eigen::MatrixXd ISCPntB_B(3,3);
@@ -154,39 +158,46 @@ void SpacecraftPlus::initializeDynamics()
     Eigen::MatrixXd ISCPntBPrime_B(3,3);
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
+    //! - Create the properties
     this->m_SC = dynManager.createProperty("m_SC", m_SC);
     this->c_B = dynManager.createProperty("centerOfMassSC", c_B);
     this->ISCPntB_B = dynManager.createProperty("inertiaSC", ISCPntB_B);
     this->ISCPntBPrime_B = dynManager.createProperty("inertiaPrimeSC", ISCPntBPrime_B);
     this->cPrime_B = dynManager.createProperty("centerOfMassPrimeSC", cPrime_B);
     this->sysTime = dynManager.createProperty(sysTimePropertyName, systemTime);
-    std::vector<StateEffector*>::iterator it;
-    std::vector<DynamicEffector*>::iterator dynIt;
-    
+
+    //! - Register the gravity properties with the dynManagager, erbody wants g_N!
     gravField.registerProperties(dynManager);
+
+    //! - Register the hub states
     hub.registerStates(dynManager);
 
+    //! - Loop through stateEffectors to register their states
+    std::vector<StateEffector*>::iterator it;
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->registerStates(dynManager);
     }
 
+    //! - Link in states for the spaceCraftPlus to switch some MRPs
     this->linkInStates(dynManager);
+
+    //! - Link in states for gravity and the hub
     gravField.linkInStates(dynManager);
     hub.linkInStates(dynManager);
 
+    //! - Loop through the dynamicEffectros to link in the states needed
+    std::vector<DynamicEffector*>::iterator dynIt;
     for(it = states.begin(); it != states.end(); it++)
     {
         (*it)->linkInStates(dynManager);
     }
-    
+
+    //! - Loop though the stateEffectors to link in the states needed
     for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
     {
         (*dynIt)->linkInStates(dynManager);
     }
-
-    hub.useTranslation = true;
-    hub.useRotation = true;
 }
 
 void SpacecraftPlus::SelfInit()
