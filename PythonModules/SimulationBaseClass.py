@@ -246,6 +246,7 @@ class SimBaseClass:
         Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
+    '''
 
     def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
         SplitName = VarName.split('.')
@@ -288,9 +289,9 @@ class SimBaseClass:
         else:
             print "Could not find a structure that has the ModelTag: %(ModName)s" % \
                   {"ModName": SplitName[0]}
+            '''
 
-    def AddVariableForLogging(self, VarName, LogPeriod=0):
-        i = 0
+    def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=-1, VarType=None):
         SplitName = VarName.split('.')
         Subname = '.'
         Subname = Subname.join(SplitName[1:])
@@ -300,13 +301,47 @@ class SimBaseClass:
         inv_map = {v: k for k, v in self.NameReplace.items()}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
-            if (LogName not in self.VarLogList):
+            if (LogName in self.VarLogList):
+                return
+            if (type(eval(LogName)).__name__ == 'SwigPyObject'):
+                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+                RefFunctionString += '   return ['
+                LoopTerminate = False
+                i = 0
+                while not LoopTerminate:
+                    RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
+                    RefFunctionString += LogName + ', ' + str(StartIndex + i) + '),'
+                    i += 1
+                    if (i > StopIndex - StartIndex):
+                        LoopTerminate = True
+                RefFunctionString = RefFunctionString[:-1] + ']'
+                exec (RefFunctionString)
+                methodHandle = eval('Get' + NoDotName)
+                self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
+                                                        methodHandle, StopIndex - StartIndex + 1)
+            elif (type(eval(LogName)).__name__ == 'list'):
+                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
+                RefFunctionString += '   if isinstance(' + LogName + '[0], list):\n'
+                RefFunctionString += '      localList = sum(' + LogName + ',[])\n'
+                RefFunctionString += '   else:\n      localList = ' + LogName + '\n'
+                RefFunctionString += '   return ['
+                LoopTerminate = False
+                i = 0
+                while not LoopTerminate:
+                    RefFunctionString +=  'localList[' + str(StartIndex + i) + '],'
+                    i += 1
+                    if (i > StopIndex - StartIndex):
+                        LoopTerminate = True
+                RefFunctionString = RefFunctionString[:-1] + ']'
+                exec (RefFunctionString)
+                methodHandle = eval('Get' + NoDotName)
+            else:
                 RefFunctionString = 'def Get' + NoDotName + '(self):\n'
                 RefFunctionString += '   return ' + LogName
                 exec (RefFunctionString)
                 methodHandle = eval('Get' + NoDotName)
-                self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                        methodHandle)
+            self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
+                                                    methodHandle, StopIndex - StartIndex + 1)
         else:
             print "Could not find a structure that has the ModelTag: %(ModName)s" % \
                   {"ModName": SplitName[0]}
@@ -337,10 +372,11 @@ class SimBaseClass:
             LocalTimeVal = LogValue.TimeValuePairs
             if (LocalPrev != CurrentVal):
                 LocalTimeVal.append(CurrSimTime)
-                if (isinstance(CurrentVal, (list, tuple))):
+                try:
+                    temp = (len(CurrentVal))
                     for Value in CurrentVal:
                         LocalTimeVal.append(Value)
-                else:
+                except TypeError:
                     LocalTimeVal.append(CurrentVal)
                 LogValue.PrevLogTime = CurrSimTime
                 LogValue.PrevValue = CurrentVal
