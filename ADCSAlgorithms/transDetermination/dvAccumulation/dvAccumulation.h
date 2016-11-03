@@ -41,7 +41,7 @@ typedef struct {
  
     int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
     
-    NavStateOut outputData; /*!< [-] The local storage of the outgoing message data*/
+    NavTransOut outputData; /*!< [-] The local storage of the outgoing message data*/
 }DVAccumulationData;
 
 #ifdef __cplusplus
