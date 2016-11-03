@@ -436,8 +436,8 @@ def testStateUpdateSunLine(show_plots):
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.state = [0.7, 0.7, 0.0]
-    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
-    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
+    unitTestSim.AddVariableForLogging('SunlineUKF.covar', testProcessRate*10, 0, 35, 'double')
+    unitTestSim.AddVariableForLogging('SunlineUKF.state', testProcessRate*10, 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -544,8 +544,8 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    unitTestSim.AddVectorForLogging('SunlineUKF.covar', 'double', 0, 35, testProcessRate*10)
-    unitTestSim.AddVectorForLogging('SunlineUKF.state', 'double', 0, 5, testProcessRate*10)
+    unitTestSim.AddVariableForLogging('SunlineUKF.covar', testProcessRate*10, 0, 35)
+    unitTestSim.AddVariableForLogging('SunlineUKF.state', testProcessRate*10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
