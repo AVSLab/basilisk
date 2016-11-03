@@ -291,7 +291,7 @@ class SimBaseClass:
                   {"ModName": SplitName[0]}
             '''
 
-    def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=-1, VarType=None):
+    def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         SplitName = VarName.split('.')
         Subname = '.'
         Subname = Subname.join(SplitName[1:])
@@ -317,8 +317,7 @@ class SimBaseClass:
                 RefFunctionString = RefFunctionString[:-1] + ']'
                 exec (RefFunctionString)
                 methodHandle = eval('Get' + NoDotName)
-                self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                        methodHandle, StopIndex - StartIndex + 1)
+        
             elif (type(eval(LogName)).__name__ == 'list'):
                 RefFunctionString = 'def Get' + NoDotName + '(self):\n'
                 RefFunctionString += '   if isinstance(' + LogName + '[0], list):\n'

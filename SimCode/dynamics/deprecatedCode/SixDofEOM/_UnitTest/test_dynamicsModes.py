@@ -325,9 +325,9 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
 
     scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalEnergy", macros.sec2nano(120.))
     scSim.AddVariableForLogging("VehicleDynamicsData.totScRotEnergy", macros.sec2nano(120.))
-    scSim.AddVectorForLogging('VehicleDynamicsData.totScOrbitalAngMom_N', 'double', 0, 2, macros.sec2nano(120.))
+    scSim.AddVariableForLogging('VehicleDynamicsData.totScOrbitalAngMom_N', macros.sec2nano(120.0), 0, 2, 'double')
     # scSim.AddVariableForLogging("VehicleDynamicsData.totScOrbitalAngMomMag", macros.sec2nano(120.))
-    scSim.AddVectorForLogging('VehicleDynamicsData.totScRotAngMom_N', 'double', 0, 2, macros.sec2nano(120.))
+    scSim.AddVariableForLogging('VehicleDynamicsData.totScRotAngMom_N', macros.sec2nano(120.0), 0, 2, 'double')
     # scSim.AddVariableForLogging("VehicleDynamicsData.totScRotAngMomMag", macros.sec2nano(120.))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotEnergyRate", macros.sec2nano(0.001))
     # scSim.AddVariableForLogging("VehicleDynamicsData.scRotPower", macros.sec2nano(0.001))
