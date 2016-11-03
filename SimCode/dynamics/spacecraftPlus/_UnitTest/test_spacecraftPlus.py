@@ -91,9 +91,9 @@ def test_hubPropagate(show_plots):
     sigmaRef.setState([[0.0], [0.0], [0.0]])
     velRef.setState([[55.24], [0.0], [0.0]])
 
-    scObject.hub.mHub = [[100]]
+    scObject.hub.mHub = 100
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntB_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
     unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()

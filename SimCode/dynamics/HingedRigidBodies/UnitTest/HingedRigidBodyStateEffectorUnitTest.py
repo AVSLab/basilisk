@@ -81,12 +81,24 @@ def test_hubPropagate(show_plots):
     unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.rHB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcmHB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
 
     # Define Variables for panel 2
+    unitTestSim.panel2.mass = 100.0
+    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel2.d = 1.5
+    unitTestSim.panel2.k = 100.0
+    unitTestSim.panel2.c = 0.0
+    unitTestSim.panel2.rHB_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcmHB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
 
     # Add panels to spaceCraft
     # this next line is not working
-    #scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -97,23 +109,31 @@ def test_hubPropagate(show_plots):
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
+    theta1Ref = scObject.dynManager.getStateObject("hingedRigidBodyTheta1")
+    thetaDot1Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot1")
+    theta2Ref = scObject.dynManager.getStateObject("hingedRigidBodyTheta2")
+    thetaDot2Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot2")
 
-    posRef.setState([[1.0], [0.0], [0.0]])
-    velRef.setState([[55.24], [0.0], [0.0]])
-    omegaRef.setState([[1.0], [-1.0], [0.5]])
+    posRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[0.0], [0.0], [0.0]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
+    omegaRef.setState([[0.1], [-0.1], [0.1]])
+    theta1Ref.setState([[5*numpy.pi/180.0]])
+    thetaDot1Ref.setState([[0.0]])
+    theta2Ref.setState([[0.0]])
+    thetaDot2Ref.setState([[0.0]])
 
-    scObject.hub.mHub = 101
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.mHub = 750
+    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
     
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(600.0))
     unitTestSim.ExecuteSimulation()
 
     print posRef.getState()
     print velRef.getState()
-    print omegaRef.getState()
     print sigmaRef.getState()
+    print omegaRef.getState()
 
     if testFailCount == 0:
         print "PASSED: " + " Hub Propagate"

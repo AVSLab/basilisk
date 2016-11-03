@@ -116,6 +116,8 @@ public:
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
 	Eigen::Vector3d sumF_B;                                           //!< N  Computed jitter force in body frame
 	Eigen::Vector3d sumTau_B;                                         //!< N-m Computed jitter torque in body frame
+    std::string nameOfReactionWheelOmegasState;
+    std::string nameOfReactionWheelThetasState;
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW

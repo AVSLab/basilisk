@@ -52,6 +52,10 @@ public:
     Eigen::Vector3d vecRot;
     bool useTranslation;
     bool useRotation;
+    std::string nameOfHubPosition;
+    std::string nameOfHubVelocity;
+    std::string nameOfHubSigma;
+    std::string nameOfHubOmega;
 
 public:
 	std::string vehicleMassStateName;              //! [-] Name of the vehicle mass state
