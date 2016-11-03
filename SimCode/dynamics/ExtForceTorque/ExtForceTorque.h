@@ -30,7 +30,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //! @brief Input container for external force and torque command requests.
 /*! This structure is .*/
 typedef struct {
-    double cmd[3];         //!< [N or NM], force or torque command
+    Eigen::Vector3d cmd;         //!< [N or NM], force or torque command
 }extForceTorqueCmdStruct;
 
 
@@ -66,9 +66,9 @@ private:
 
 
 public:
-    double extForce_N[3];               //!< [N]  external force in inertial  frame components
-    double extForce_B[3];               //!< [N]  external force in body frame components
-    double extTorquePntB_B[3];          //!< [Nm] external torque in body frame components
+    Eigen::Vector3d extForce_N;         //!< [N]  external force in inertial  frame components
+    Eigen::Vector3d extForce_B;         //!< [N]  external force in body frame components
+    Eigen::Vector3d extTorquePntB_B;    //!< [Nm] external torque in body frame components
     std::string cmdTorqueInMsgName;     //!< -- message used to read torque command inputs
     std::string cmdForceInertialInMsgName; //!< -- message used to read force command inputs
     std::string cmdForceBodyInMsgName;  //!< -- message used to read force command inputs

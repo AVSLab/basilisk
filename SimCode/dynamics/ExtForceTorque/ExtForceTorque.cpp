@@ -18,7 +18,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 //#include <cstring>
-//#include <iostream>
+#include <iostream>
 //#include <fstream>
 //#include <sstream>
 //#include <cmath>
@@ -27,9 +27,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  overriden by the user.*/
 ExtForceTorque::ExtForceTorque()
 {
-    memset(this->extForce_N, 0x0, 3*sizeof(double));
-    memset(this->extForce_B, 0x0, 3*sizeof(double));
-    memset(this->extTorquePntB_B, 0x0, 3*sizeof(double));
+//    memset(this->extForce_N, 0x0, 3*sizeof(double));
+//    memset(this->extForce_B, 0x0, 3*sizeof(double));
+//    memset(this->extTorquePntB_B, 0x0, 3*sizeof(double));
+    this->extForce_N.fill(0.0);
+    this->extForce_B.fill(0.0);
+    this->extTorquePntB_B.fill(0.0);
 
     this->cmdTorqueInMsgName = "extTorquePntB_B_cmds";
     this->cmdForceInertialInMsgName = "extForce_N_cmds";
@@ -73,9 +76,13 @@ void ExtForceTorque::CrossInit()
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
                                                                                    sizeof(extForceTorqueCmdStruct), moduleID);
 
-    v3SetZero(this->incomingCmdTorqueBuffer.cmd);
-    v3SetZero(this->incomingCmdForceInertialBuffer.cmd);
-    v3SetZero(this->incomingCmdForceBodyBuffer.cmd);
+//    v3SetZero(this->incomingCmdTorqueBuffer.cmd);
+//    v3SetZero(this->incomingCmdForceInertialBuffer.cmd);
+//    v3SetZero(this->incomingCmdForceBodyBuffer.cmd);
+
+    this->incomingCmdTorqueBuffer.cmd.fill(0.0);
+    this->incomingCmdForceInertialBuffer.cmd.fill(0.0);
+    this->incomingCmdForceBodyBuffer.cmd.fill(0.0);
 
 }
 
@@ -147,43 +154,48 @@ void ExtForceTorque::readInputMessages()
 void ExtForceTorque::computeBodyForceTorque()
 {
     //! Begin method steps
-    Eigen::Vector3d tmpForce_B(0, 0, 0);
-    Eigen::Vector3d tmpForce_N(0, 0, 0);
-    Eigen::Vector3d tmpTorquePntB_B(0, 0, 0);
-
-    double dynEffectorForce_N[3];
-    double dynEffectorForce_B[3];
-    double dynEffectorTorquePntB_B[3];
+//    double dynEffectorForce_N[3];
+//    double dynEffectorForce_B[3];
+//    double dynEffectorTorquePntB_B[3];
 
     /* add the cmd force in inertial frame components set via Python */
-    v3Copy(this->extForce_N, dynEffectorForce_N);
+//    v3Copy(this->extForce_N, dynEffectorForce_N);
+    this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-        v3Add(this->incomingCmdForceInertialBuffer.cmd, dynEffectorForce_N, dynEffectorForce_N);
+//        v3Add(this->incomingCmdForceInertialBuffer.cmd, dynEffectorForce_N, dynEffectorForce_N);
+        this->forceExternal_N += this->incomingCmdForceInertialBuffer.cmd;
     }
 
     /* add the cmd force in body frame components set via Python */
-    v3Copy(this->extForce_B, dynEffectorForce_B);
+//    v3Copy(this->extForce_B, dynEffectorForce_B);
+    this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-        v3Add(this->incomingCmdForceBodyBuffer.cmd, dynEffectorForce_B, dynEffectorForce_B);
+//        v3Add(this->incomingCmdForceBodyBuffer.cmd, dynEffectorForce_B, dynEffectorForce_B);
+        this->forceExternal_B += this->incomingCmdForceBodyBuffer.cmd;
     }
 
     /* add the cmd torque about Point B in body frame components set via Python */
-    v3Copy(this->extTorquePntB_B, dynEffectorTorquePntB_B);
+//    v3Copy(this->extTorquePntB_B, dynEffectorTorquePntB_B);
+    this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-        v3Add(this->incomingCmdTorqueBuffer.cmd, dynEffectorTorquePntB_B, dynEffectorTorquePntB_B);
+//        v3Add(this->incomingCmdTorqueBuffer.cmd, dynEffectorTorquePntB_B, dynEffectorTorquePntB_B);
+        this->torqueExternalPntB_B += this->incomingCmdTorqueBuffer.cmd;
     }
 
+    std::cout << this->forceExternal_N << std::endl;
+    std::cout << this->forceExternal_B << std::endl;
+    std::cout << this->torqueExternalPntB_B << std::endl;
 
-    v3Copy(dynEffectorForce_N, this->extForce_N);
-    v3Copy(dynEffectorForce_B, this->extForce_B);
-    v3Copy(dynEffectorTorquePntB_B, this->extTorquePntB_B);
-
-    this->forceExternal_N = (Eigen::Vector3d) dynEffectorForce_N;
-    this->forceExternal_B = (Eigen::Vector3d)dynEffectorForce_B;
-    this->torqueExternalPntB_B = (Eigen::Vector3d) dynEffectorTorquePntB_B;
+//    v3Copy(dynEffectorForce_N, this->extForce_N);
+//    v3Copy(dynEffectorForce_B, this->extForce_B);
+//    v3Copy(dynEffectorTorquePntB_B, this->extTorquePntB_B);
+//
+//    this->forceExternal_N = (Eigen::Vector3d) dynEffectorForce_N;
+//    this->forceExternal_B = (Eigen::Vector3d)dynEffectorForce_B;
+//    this->torqueExternalPntB_B = (Eigen::Vector3d) dynEffectorTorquePntB_B;
 }
 
 void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
