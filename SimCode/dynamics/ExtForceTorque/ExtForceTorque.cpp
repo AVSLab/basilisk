@@ -76,10 +76,6 @@ void ExtForceTorque::CrossInit()
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
                                                                                    sizeof(extForceTorqueCmdStruct), moduleID);
 
-//    v3SetZero(this->incomingCmdTorqueBuffer.cmd);
-//    v3SetZero(this->incomingCmdForceInertialBuffer.cmd);
-//    v3SetZero(this->incomingCmdForceBodyBuffer.cmd);
-
     this->incomingCmdTorqueBuffer.cmd.fill(0.0);
     this->incomingCmdForceInertialBuffer.cmd.fill(0.0);
     this->incomingCmdForceBodyBuffer.cmd.fill(0.0);

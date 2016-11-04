@@ -139,19 +139,26 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     scSim.AddModelToTask(unitTaskName, extFTObject)
 
     #
-    #   Setup data logging
+    #   initialize the simulation
     #
-    testProcessRate = macros.sec2nano(0.1);
-    # scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(testProcessRate))
-    variableForceN = "extForce_N"            # name the module variable to be logged
-    scSim.AddVectorForLogging(extFTObject.ModelTag + "." + variableForceN, 'double', 0, 2, testProcessRate)
-    variableForceB = "extForce_B"            # name the module variable to be logged
-    scSim.AddVectorForLogging(extFTObject.ModelTag + "." + variableForceB, 'double', 0, 2, testProcessRate)
-    variableTorque = "extTorquePntB_B"       # name the module variable to be logged
-    scSim.AddVectorForLogging(extFTObject.ModelTag + "." + variableTorque, 'double', 0, 2, testProcessRate)
-
     scSim.InitializeSimulation()
     scSim.ConfigureStopTime(macros.sec2nano(0.001))
+
+
+    #
+    #   Setup data logging
+    #
+    testProcessRate = macros.sec2nano(0.1)
+    variableForceN = "extForce_N"            # name the module variable to be logged
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceN, 'double', 0, 2, testProcessRate)
+    variableForceB = "extForce_B"            # name the module variable to be logged
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceB, 'double', 0, 2, testProcessRate)
+    variableTorque = "extTorquePntB_B"       # name the module variable to be logged
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableTorque, 'double', 0, 2, testProcessRate)
+
+    #
+    #   run the simulation
+    #
     scSim.ExecuteSimulation()
 
     extFTObject.computeBodyForceTorque()
