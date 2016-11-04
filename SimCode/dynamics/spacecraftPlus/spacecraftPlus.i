@@ -22,14 +22,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 %include "swig_common_model.i"
 
+namespace std {
+    %template(GravBodyVector) vector<GravBodyData *>;
+}
+
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynObject2.h"
+%include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
 %include "hubEffector.h"
+
 
 %pythoncode %{
 import sys
