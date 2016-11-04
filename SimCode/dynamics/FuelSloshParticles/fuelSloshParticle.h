@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #include "dynamics\_GeneralModuleFiles\stateEffector.h"
 #include "_GeneralModuleFiles\sys_model.h"
+#include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief Class that implements an effector representing a sloshing particle
 */
@@ -38,11 +39,16 @@ private:
 
 	//Cached values, used in multiple functions
 	Eigen::Vector3d rPrime_PcB_B;
+	Eigen::Matrix3d rPrimeTilde_PcB_B;
 	Eigen::Vector3d r_PcB_B;
-	double a_rho;
+	Eigen::Matrix3d rTilde_PcB_B;
 
-	StateData *rho;			   //!< m, fuel slosh displacement from equilibrium
-	StateData *rhoDot;		   //!< m/s, time derivative of rho;
+	double a_rho;
+	double rho;
+	double rhoDot;
+
+	StateData *rhoState;			   //!< m, fuel slosh displacement from equilibrium
+	StateData *rhoDotState;		   //!< m/s, time derivative of rho;
 	StateData *omegaState;
 	StateData *sigmaState; //TODO: map rDDot in computeDerivatives
 	StateData *velocityState;
