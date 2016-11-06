@@ -377,6 +377,7 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useRW
     dataRotEnergy = dataRotEnergy[1:len(dataRotEnergy),:]
     dataOrbitalAngMom_N = dataOrbitalAngMom_N[1:len(dataOrbitalAngMom_N),:]
     dataRotAngMom_N = dataRotAngMom_N[1:len(dataRotAngMom_N),:]
+    print dataPos[-1,:]
     print dataSigma[-1,:]
 
     # Make all energy and momentum checks false

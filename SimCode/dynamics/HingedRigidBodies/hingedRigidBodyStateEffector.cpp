@@ -63,7 +63,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
     //! - find hinged rigid bodies' position with respect to point B
     //! - First need to grab current states
-    Eigen::MatrixXd interMediateMatrix;
+    Eigen::MatrixXd interMediateMatrix(0,0);
     interMediateMatrix = this->thetaState->getState();
     this->theta = interMediateMatrix(0,0);
     interMediateMatrix = this->thetaDotState->getState();
@@ -113,14 +113,14 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
 
     //! - Start defining them good old contributions - start with translation
     //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    matrixAcontr = this->mass*this->mass*this->d*this->d*sHat3_B*sHat3_B.transpose()/(this->IPntS_S(1,1) + this->mass*this->d*this->d);
+    matrixAcontr = -(this->mass*this->mass*this->d*this->d*this->sHat3_B*this->sHat3_B.transpose()/(this->IPntS_S(1,1) + this->mass*this->d*this->d));
     //! - need to define rTildeHB_B
     this->rTildeHB_B << 0 , -this->rHB_B(2), this->rHB_B(1), this->rHB_B(2), 0, -this->rHB_B(0), -this->rHB_B(1), this->rHB_B(0), 0;
-    matrixBcontr = -this->mass*this->d*sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)*sHat2_B.transpose() - this->mass*this->d*sHat3_B.transpose()*this->rTildeHB_B);
+    matrixBcontr = -(this->mass*this->d*sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)*this->sHat2_B.transpose() - this->mass*this->d*this->sHat3_B.transpose()*this->rTildeHB_B));
     vecTranscontr = -(this->mass*this->d*this->a_theta*this->sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d) + this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B);
 
     //! - Define rotational matrice contributions
-    matrixCcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1) - this->mass*this->d*this->d)*this->mass*this->d*sHat3_B.transpose();
+    matrixCcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->mass*this->d*this->sHat3_B.transpose();
     matrixDcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)*this->sHat2_B.transpose() - this->mass*this->d*this->sHat3_B.transpose()*this->rTildeHB_B);
     vecRotcontr = -(this->thetaDot*this->omegaTildeBNLoc_B*(this->IPntS_S(1,1)*this->sHat2_B+this->mass*this->d*this->rTildeSB_B*this->sHat3_B) + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTildeSB_B*this->sHat1_B + this->a_theta*(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTildeSB_B*this->sHat3_B)/(this->IPntS_S(1,1)+this->mass*this->d*this->d));
 
@@ -144,7 +144,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
-    rDDotBNLoc_B = dcmBN*rDDotBNLoc_B;
+    rDDotBNLoc_B = dcmBN*rDDotBNLoc_N;
 
     //! - Compute Derivatives
     //! - First is trivial

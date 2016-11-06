@@ -124,10 +124,10 @@ def test_hubPropagate(show_plots):
     thetaDot2Ref.setState([[0.0]])
 
     scObject.hub.mHub = 750
-    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
     
-    unitTestSim.ConfigureStopTime(macros.sec2nano(600.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(60.0*10.0))
     unitTestSim.ExecuteSimulation()
 
     print posRef.getState()
