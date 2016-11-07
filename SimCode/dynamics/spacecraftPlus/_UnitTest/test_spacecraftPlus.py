@@ -101,7 +101,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])

@@ -94,7 +94,6 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Matrix3d dcmNB;
     MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
-    Eigen::Matrix3d BN;
     sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
     omegaBNLocal = omegaState->getState();
     rBNDotLocal_N = velocityState->getState();
