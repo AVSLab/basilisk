@@ -36,10 +36,13 @@ typedef struct {
  CSS interface*/
 typedef struct {
     char outputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
+    char accPktInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input accelerometer message*/
     uint32_t msgCount;      /*!< [-] The total number of messages read from inputs */
-    double dcm_PltfS[3*3];  /*!< [-] The dcm representing the transformation from platform to structure*/
+    double dcm_SPltf[3*3];  /*!< [-] The dcm representing the transformation from platform to structure*/
+    uint64_t previousTime;  /*!< [ns] The clock time associated with the previous run of algorithm*/
  
     int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
+    int32_t accPktInMsgID;     /*!< [-] The ID associated with the incoming accelerometer buffer*/
     
     NavTransOut outputData; /*!< [-] The local storage of the outgoing message data*/
 }DVAccumulationData;
