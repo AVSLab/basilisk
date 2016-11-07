@@ -126,14 +126,38 @@ def test_hubPropagate(show_plots):
     scObject.hub.mHub = 750
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-    
-    unitTestSim.ConfigureStopTime(macros.sec2nano(60.0*10.0))
+
+    stopTime = 60.0*10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    print posRef.getState()
-    print velRef.getState()
-    print sigmaRef.getState()
-    print omegaRef.getState()
+    dataPos = posRef.getState()
+    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma =  sigmaRef.getState()
+    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+
+    truePos = [
+                [-13.3842058040891, -13.2968874812058, 0.155873769585104]
+                ]
+    trueSigma = [
+                  [0.228198675962671, -0.329880460528557,  0.266599868549938]
+                  ]
+
+    print dataPos
+    print truePos
+
+    accuracy = 1e-8
+    for i in range(0,len(truePos)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+
+    for i in range(0,len(trueSigma)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
     if testFailCount == 0:
         print "PASSED: " + " Hub Propagate"
