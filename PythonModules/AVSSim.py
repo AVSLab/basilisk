@@ -1402,8 +1402,8 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
 
     def SetdvGuidance(self):
         self.dvGuidanceData.outputDataName = "att_cmd_output"
-        self.dvGuidanceData.inputNavDataName = "simple_trans_nav_output"
-        self.dvGuidanceData.inputMassPropName = "adcs_config_data"
+        #self.dvGuidanceData.inputNavDataName = "simple_trans_nav_output"
+        #self.dvGuidanceData.inputMassPropName = "adcs_config_data"
         self.dvGuidanceData.inputBurnDataName = "vehicle_dv_cmd"
         desiredBurnDir = [1.0, 0.0, 0.0]
         desiredOffAxis = [0.0, 1.0, 0.0]
