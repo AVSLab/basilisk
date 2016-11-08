@@ -19,7 +19,7 @@ import sys, os, inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
-import AVSSim
+import BSKSim
 import matplotlib.pyplot as plt
 #plt.rcParams.bbox_inches="tight"
 # from mpl_toolkits.mplot3d import Axes3D
@@ -640,7 +640,7 @@ def executeGuidance(TheAVSSim):
     #singleTest('inertial3DPoint')
     #doubleTest('inertial3DPoint', 'inertial3DSpin')
     #singleTest('hillPoint')
-    #singleTest('velocityPoint')
+    singleTest('velocityPoint')
     #doubleTest('hillPoint', 'velocityPoint')
     #singleTest('celTwoBodyPoint')
     #doubleTest('velocityPoint', 'celTwoBodyPoint')
@@ -649,11 +649,11 @@ def executeGuidance(TheAVSSim):
     #singleTest('rasterMnvr')
     #singleTest('deadbandGuid')
     #singleTest('rwMotorTorqueControl')
-    singleTest('steeringControl')
+    #singleTest('steeringControl')
     #singleTest('PRVControl')
 
 if __name__ == "__main__":
-    TheAVSSim = AVSSim.AVSSim()
+    TheAVSSim = BSKSim.BSKSim()
     TheAVSSim.TotalSim.logThisMessage("controlTorqueRaw", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("att_ref_output_stage1", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("simple_att_nav_output", int(1E9))
@@ -670,12 +670,14 @@ if __name__ == "__main__":
     TheAVSSim.VehDynObject.gravData[0].IsDisplayBody = False
     TheAVSSim.VehDynObject.gravData[2].IsCentralBody = True
     TheAVSSim.VehDynObject.gravData[2].IsDisplayBody = True
-    TheAVSSim.SpiceObject.zeroBase = "mars"
-    TheAVSSim.SpiceObject.referenceBase = "MARSIAU"
-    TheAVSSim.VehOrbElemObject.mu = TheAVSSim.MarsGravBody.mu
+    TheAVSSim.SpiceObject.zeroBase = "mars barycenter" #"earth"
+    TheAVSSim.SpiceObject.referenceBase = "MARSIAU" #"J2000"
+    TheAVSSim.VehOrbElemObject.mu = TheAVSSim.MarsGravBody.mu #TheAVSSim.EarthGravBody.mu
 
-    TheAVSSim.VehOrbElemObject.CurrentElem.a = af.M_radius * 2.2 * 1000.0
-    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.4
+
+    TheAVSSim.VehOrbElemObject.CurrentElem.a = af.M_radius * 1000.0 * 2.2 #* 4.2
+    TheAVSSim.VehOrbElemObject.CurrentElem.e = 0.4 #0.0
+
     TheAVSSim.VehOrbElemObject.CurrentElem.i = 0.0 * math.pi / 180.0
     TheAVSSim.VehOrbElemObject.CurrentElem.Omega = 0.0
     TheAVSSim.VehOrbElemObject.CurrentElem.omega = 0.0
