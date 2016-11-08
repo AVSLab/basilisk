@@ -74,6 +74,25 @@ def test_hubPropagate(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
+    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.isCentralBody = True
+    unitTestSim.earthGravBody.useSphericalHarmParams = False
+
+    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData.J2000Current = 0.0
+    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    earthEphemData.PlanetName = "earth"
+    
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+     
     unitTestSim.InitializeSimulation()
     
     # scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
@@ -93,30 +112,11 @@ def test_hubPropagate(show_plots):
     sigmaRef.setState([[0.0], [0.0], [0.0]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
-
     scObject.hub.mHub = 100
     scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-    
-    earthEphemData = spice_interface.SpicePlanetState()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
-    
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
     
     unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()
