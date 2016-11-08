@@ -20,6 +20,8 @@ filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 import AVSSim
+import BSKSim
+import hybridControlSim
 import matplotlib.pyplot as plt
 import ctypes
 import math
@@ -76,7 +78,7 @@ def executeAVSSafeCapture(TheAVSSim):
     TheAVSSim.TotalSim.logThisMessage("sun_safe_att_err", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("css_wls_est", int(1E9))
     TheAVSSim.TotalSim.logThisMessage("solar_array_sun_bore", int(1E9))  # solar array boresight angles
-    TheAVSSim.AddVectorForLogging('CSSConstelation.sensorList[0].sHatStr', 'double', 0, 2, int(1E9))
+    TheAVSSim.AddVariableForLogging('CSSConstelation.sensorList[0].sHatStr', int(1E9), 0, 2, 'double')
 
     TheAVSSim.InitializeSimulation()
     TheAVSSim.ConfigureStopTime(int(30 * 1E9))
@@ -88,6 +90,7 @@ def executeAVSSafeCapture(TheAVSSim):
 
 
 if __name__ == "__main__":
+    #TheAVSSim = BSKSim.BSKSim()
     TheAVSSim = AVSSim.AVSSim()
     TheAVSSim.TotalSim.logThisMessage("acs_thruster_cmds", int(1E8))
     TheAVSSim.TotalSim.logThisMessage("inertial_state_output", int(1E9))
