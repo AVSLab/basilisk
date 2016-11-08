@@ -150,11 +150,11 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     #
     testProcessRate = macros.sec2nano(0.1)
     variableForceN = "extForce_N"            # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceN, 'double', 0, 2, testProcessRate)
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceN, testProcessRate, 0, 2, 'double')
     variableForceB = "extForce_B"            # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceB, 'double', 0, 2, testProcessRate)
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceB, testProcessRate, 0, 2, 'double')
     variableTorque = "extTorquePntB_B"       # name the module variable to be logged
-    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableTorque, 'double', 0, 2, testProcessRate)
+    scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableTorque, testProcessRate, 0, 2, 'double')
 
     #
     #   run the simulation
