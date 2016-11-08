@@ -21,7 +21,6 @@ def LoadGravFromFile(FileName, GravBody, JParamsSelect):
                 break
     return (AllJParams)
 
-
 def Add_sunGravityBody(sim, sun):
     sun.BodyMsgName = "sun_planet_data"
     sun.outputMsgName = "sun_display_frame_data"
@@ -42,17 +41,16 @@ def Add_earthGravityBody(sim, earth):
     earth.JParams = six_dof_eom.DoubleVector(JParams)
     sim.VehDynObject.AddGravityBody(earth)
 
-def Add_marsGravityBody(self):
+def Add_marsGravityBody(sim, mars):
     JParamsSelect = [2, 3, 4, 5, 6]
-    MarsGravFile = self.simBasePath + '/External/LocalGravData/GGM2BData.txt'
-    self.MarsGravBody = six_dof_eom.GravityBodyData()
-    self.MarsGravBody.BodyMsgName = "mars barycenter_planet_data"
-    self.MarsGravBody.outputMsgName = "mars barycenter_display_frame_data"
-    self.MarsGravBody.IsCentralBody = False
-    self.MarsGravBody.UseJParams = True
-    JParams = LoadGravFromFile(MarsGravFile, self.MarsGravBody, JParamsSelect)
-    self.MarsGravBody.JParams = six_dof_eom.DoubleVector(JParams)
-    self.VehDynObject.AddGravityBody(self.MarsGravBody)
+    MarsGravFile = sim.simBasePath + '/External/LocalGravData/GGM2BData.txt'
+    mars.BodyMsgName = "mars barycenter_planet_data"
+    mars.outputMsgName = "mars barycenter_display_frame_data"
+    mars.IsCentralBody = False
+    mars.UseJParams = False
+    JParams = LoadGravFromFile(MarsGravFile, mars, JParamsSelect)
+    mars.JParams = six_dof_eom.DoubleVector(JParams)
+    sim.VehDynObject.AddGravityBody(mars)
 
 def Init_spacecraftVehicle(sc, r0, v0, sigma0_BN, omega0_BN, m, I, DCM_BS, CoM):
     sc.PositionInit = six_dof_eom.DoubleVector(r0)
@@ -63,4 +61,3 @@ def Init_spacecraftVehicle(sc, r0, v0, sigma0_BN, omega0_BN, m, I, DCM_BS, CoM):
     sc.baseInertiaInit = six_dof_eom.DoubleVector(I)
     sc.T_Str2BdyInit = six_dof_eom.DoubleVector(DCM_BS)
     sc.baseCoMInit = six_dof_eom.DoubleVector(CoM)
-
