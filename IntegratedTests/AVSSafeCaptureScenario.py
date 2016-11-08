@@ -21,7 +21,6 @@ path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
 import AVSSim
 import BSKSim
-import hybridControlSim
 import matplotlib.pyplot as plt
 import ctypes
 import math
