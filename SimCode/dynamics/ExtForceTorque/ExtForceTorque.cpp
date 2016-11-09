@@ -16,12 +16,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 #include "dynamics/ExtForceTorque/ExtForceTorque.h"
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
-//#include <cstring>
 #include <iostream>
-//#include <fstream>
-//#include <sstream>
-//#include <cmath>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -56,7 +51,7 @@ ExtForceTorque::~ExtForceTorque()
  */
 void ExtForceTorque::SelfInit()
 {
-
+    return;
 }
 
 /*! This method is used to connect the input command message to the thrusters.
@@ -79,6 +74,7 @@ void ExtForceTorque::CrossInit()
     this->incomingCmdForceInertialBuffer.cmd.fill(0.0);
     this->incomingCmdForceBodyBuffer.cmd.fill(0.0);
 
+    return;
 }
 
 void ExtForceTorque::linkInStates(DynParamManager& statesIn)
@@ -176,7 +172,7 @@ void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
         this->torqueExternalPntB_B += this->incomingCmdTorqueBuffer.cmd;
     }
 
-
+    return;
 }
 
 void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)

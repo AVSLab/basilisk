@@ -59,7 +59,7 @@ import ExtForceTorque
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 # 0 - no external force/torque is set
-# 1 - external force/torque is set directly in Class array
+# 1 - external force/torque is set directly from python as an Eigen Vector
 # 2 - external force/torque is set through input message
 # 3 - external force/torque is set through both a Class array and input message
 caseList = []
@@ -225,7 +225,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     accuracy = 1e-12
     if (len(trueTorque_B) != len(dataTorque)):
         testFailCount += 1
-        testMessages.append("FAILED:  ExtForceTorque failed attitude unit test (unequal array sizes)\n")
+        testMessages.append("FAILED:  ExtForceTorque failed torque unit test (unequal array sizes)\n")
     else:
         for i in range(0,len(trueTorque_B)):
             # check a vector values

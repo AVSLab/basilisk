@@ -18,13 +18,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef EXT_FORCE_TORQUE_H
 #define EXT_FORCE_TORQUE_H
 
-//#include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-//#include "../_GeneralModuleFiles/stateData.h"
-//#include "../_GeneralModuleFiles/dynParamManager.h"
-//#include "environment/spice/spice_planet_state.h"
-//#include <array>
 
 
 //! @brief Input container for external force and torque command requests.
