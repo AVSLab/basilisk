@@ -23,17 +23,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //#include <sstream>
 //#include <cmath>
 
-/*! This is the constructor.  It sets some defaul initializers that can be
+/*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
 ExtForceTorque::ExtForceTorque()
 {
-//    memset(this->extForce_N, 0x0, 3*sizeof(double));
-//    memset(this->extForce_B, 0x0, 3*sizeof(double));
-//    memset(this->extTorquePntB_B, 0x0, 3*sizeof(double));
+    /* initialize the 3 output vectors to zero */
     this->extForce_N.fill(0.0);
     this->extForce_B.fill(0.0);
     this->extTorquePntB_B.fill(0.0);
 
+    /* setup default input message names.  These can be over-riden by the user */
     this->cmdTorqueInMsgName = "extTorquePntB_B_cmds";
     this->cmdForceInertialInMsgName = "extForce_N_cmds";
     this->cmdForceBodyInMsgName = "extForce_B_cmds";
@@ -75,7 +74,7 @@ void ExtForceTorque::CrossInit()
                                                                                        sizeof(extForceTorqueCmdStruct), moduleID);
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
                                                                                    sizeof(extForceTorqueCmdStruct), moduleID);
-
+    /* zero the input message vectors */
     this->incomingCmdTorqueBuffer.cmd.fill(0.0);
     this->incomingCmdForceInertialBuffer.cmd.fill(0.0);
     this->incomingCmdForceBodyBuffer.cmd.fill(0.0);
@@ -108,6 +107,7 @@ void ExtForceTorque::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
 
+    /* default the cmdMsg states to false */
     this->goodTorqueCmdMsg = false;
     this->goodForceNCmdMsg = false;
     this->goodForceBCmdMsg = false;
@@ -146,52 +146,37 @@ void ExtForceTorque::readInputMessages()
 }
 
 /*! This method is used to compute the RHS forces and torques.
+    Note:   the module can set any of these three vecors, or a subset.  Regarding the external force, the
+            matrix represnetations in the body (B) and inerial (N) frame components are treated as 2 
+            separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
 void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
 {
     //! Begin method steps
-//    double dynEffectorForce_N[3];
-//    double dynEffectorForce_B[3];
-//    double dynEffectorTorquePntB_B[3];
+
 
     /* add the cmd force in inertial frame components set via Python */
-//    v3Copy(this->extForce_N, dynEffectorForce_N);
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-//        v3Add(this->incomingCmdForceInertialBuffer.cmd, dynEffectorForce_N, dynEffectorForce_N);
         this->forceExternal_N += this->incomingCmdForceInertialBuffer.cmd;
     }
 
     /* add the cmd force in body frame components set via Python */
-//    v3Copy(this->extForce_B, dynEffectorForce_B);
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-//        v3Add(this->incomingCmdForceBodyBuffer.cmd, dynEffectorForce_B, dynEffectorForce_B);
         this->forceExternal_B += this->incomingCmdForceBodyBuffer.cmd;
     }
 
     /* add the cmd torque about Point B in body frame components set via Python */
-//    v3Copy(this->extTorquePntB_B, dynEffectorTorquePntB_B);
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-//        v3Add(this->incomingCmdTorqueBuffer.cmd, dynEffectorTorquePntB_B, dynEffectorTorquePntB_B);
         this->torqueExternalPntB_B += this->incomingCmdTorqueBuffer.cmd;
     }
 
-    std::cout << this->forceExternal_N << std::endl;
-    std::cout << this->forceExternal_B << std::endl;
-    std::cout << this->torqueExternalPntB_B << std::endl;
 
-//    v3Copy(dynEffectorForce_N, this->extForce_N);
-//    v3Copy(dynEffectorForce_B, this->extForce_B);
-//    v3Copy(dynEffectorTorquePntB_B, this->extTorquePntB_B);
-//
-//    this->forceExternal_N = (Eigen::Vector3d) dynEffectorForce_N;
-//    this->forceExternal_B = (Eigen::Vector3d)dynEffectorForce_B;
-//    this->torqueExternalPntB_B = (Eigen::Vector3d) dynEffectorTorquePntB_B;
 }
 
 void ExtForceTorque::UpdateState(uint64_t CurrentSimNanos)
