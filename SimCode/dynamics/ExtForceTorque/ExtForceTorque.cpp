@@ -147,7 +147,7 @@ void ExtForceTorque::readInputMessages()
 
 /*! This method is used to compute the RHS forces and torques.
  */
-void ExtForceTorque::computeBodyForceTorque()
+void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
 {
     //! Begin method steps
 //    double dynEffectorForce_N[3];

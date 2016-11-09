@@ -51,7 +51,7 @@ public:
     void linkInStates(DynParamManager& statesIn);
     void writeOutputMessages(uint64_t currentClock);
     void readInputMessages();
-    void computeBodyForceTorque();
+    void computeBodyForceTorque(uint64_t currentTime);
 
 private:
     int64_t cmdTorqueInMsgID;           //!< -- Message ID for incoming data
