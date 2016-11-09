@@ -92,9 +92,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
-
-        //! Add in effectors mass prop rates into mass prop rates of spacecraft
-        (*it)->updateEffectorMassPropRates(t);
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
         (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
 

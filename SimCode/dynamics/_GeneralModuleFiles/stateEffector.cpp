@@ -40,11 +40,6 @@ void StateEffector::updateEffectorMassProps(double integTime)
     return;
 }
 
-void StateEffector::updateEffectorMassPropRates(double integTime)
-{
-    return;
-}
-
 void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
     return;
