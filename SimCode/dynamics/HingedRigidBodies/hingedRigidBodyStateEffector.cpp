@@ -23,11 +23,11 @@ using namespace std;
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
-    effProps.mEff = 0.0;
-    effProps.rCB_B.fill(0.0);
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.rPrimeCB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
+    this->effProps.mEff = 0.0;
+    this->effProps.rCB_B.fill(0.0);
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.rPrimeCB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
 
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";

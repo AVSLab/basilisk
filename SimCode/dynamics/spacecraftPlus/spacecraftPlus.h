@@ -47,6 +47,9 @@ public:
     Eigen::MatrixXd *cPrime_B;           //! [m] Body time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //! [m] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;
+    Eigen::Vector3d totSCAngMomentum_N;  //! [kg-m^2/s] Total angular momentum of the s/c in N frame compenents
+    double totSCEnergy;                  //! [J]    Total energy of the spacecraft
+    double totSCAngMomentum;             //! [kg-m^2/s] Magnitude of total angular momentum of the s/c
 	double currTimeStep;
 	double timePrevious;
     uint64_t simTimePrevious;            //! [-] Previous simulation time
