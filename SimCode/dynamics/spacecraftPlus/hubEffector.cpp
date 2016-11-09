@@ -53,6 +53,7 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
     this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
     this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
     this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
+    this->g_N = statesIn.getPropertyReference("g_N");
 }
 
 void HubEffector::registerStates(DynParamManager& states)
@@ -89,29 +90,37 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d omegaBNLocal;
     Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d gLocal_N;
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
     Eigen::Matrix3d dcmNB;
+    Eigen::Matrix3d dcmBN;
     Eigen::MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
+    Eigen::Vector3d gravityForce_N;
+    Eigen::Vector3d gravityForce_B;
     sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
     omegaBNLocal = omegaState->getState();
     rBNDotLocal_N = velocityState->getState();
     cPrimeLocal_B = *cPrime_B;
-    cLocal_B = *c_B;
+    cLocal_B = *this->c_B;
+    gLocal_N = *this->g_N;
 
-    ////! Need to make contributions to the matrices from the hub
+    ////! Make additional contributions to the matrices from the hub
     intermediateMatrix = intermediateMatrix.Identity();
-    matrixA += (*this->m_SC)(0,0)*intermediateMatrix;
+    this->matrixA += (*this->m_SC)(0,0)*intermediateMatrix;
     //! make c_B skew symmetric matrix
     intermediateMatrix <<  0 , -(*c_B)(2,0),
     (*c_B)(1,0), (*c_B)(2,0), 0, -(*c_B)(0,0), -(*c_B)(1,0), (*c_B)(0,0), 0;
-    matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
-    matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
-    matrixD += *ISCPntB_B;
-    vecTrans += -2.0*(*this->m_SC)(0,0)*omegaBNLocal.cross(cPrimeLocal_B) - (*this->m_SC)(0,0)*omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
+    this->matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
+    this->matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
+    this->matrixD += *ISCPntB_B;
+    this->vecTrans += -2.0*(*this->m_SC)(0,0)*omegaBNLocal.cross(cPrimeLocal_B) - (*this->m_SC)(0,0)*omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
     intermediateVector = *ISCPntB_B*omegaBNLocal;
-    vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
+    this->vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
+
+    //! - Need to find force of gravity on the spacecraft
+    gravityForce_N = (*this->m_SC)(0,0)*gLocal_N;
 
     if (this->useRotation == true) {
         //! Set kinematic derivative
@@ -120,6 +129,15 @@ void HubEffector::computeDerivatives(double integTime)
         sigmaState->setDerivative(sigmaBNDotLocal);
 
         if (this->useTranslation == true) {
+            //! - Define dcm's
+            dcmNB = sigmaBNLocal.toRotationMatrix();
+            dcmBN = dcmNB.transpose();
+
+            //! - Edit both v_trans and v_rot with gravity
+            gravityForce_B = dcmBN*gravityForce_N;
+            vecTrans += gravityForce_B;
+            vecRot += cLocal_B.cross(gravityForce_B);
+
             //! - Complete the Back-Substitution Method
             intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
@@ -142,6 +160,9 @@ void HubEffector::computeDerivatives(double integTime)
         posState->setDerivative(rBNDotLocal_N);
         if (this->useRotation==false) {
             //! - If it is just translating, only compute translational terms
+            //! - need to add in gravity
+            vecTrans += gravityForce_N;
+            
             rBNDDotLocal_N = matrixA.inverse()*(vecTrans);
             velocityState->setDerivative(rBNDDotLocal_N);
         }
