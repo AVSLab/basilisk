@@ -47,6 +47,8 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->hubVelocity = statesIn.getStateObject("hubVelocity");
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
+
+    return;
 }
 
 void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
@@ -54,6 +56,8 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
     //! - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
     this->thetaDotState = states.registerState(1, 1, this->nameOfThetaDotState);
+
+    return;
 }
 
 void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
@@ -81,6 +85,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     //! - Define rTildeSB_B
     this->rTildeSB_B << 0 , -this->rSB_B(2), this->rSB_B(1), this->rSB_B(2), 0, -this->rSB_B(0), -this->rSB_B(1), this->rSB_B(0), 0;
     this->effProps.IEffPntB_B = this->dcmSB.transpose()*this->IPntS_S*this->dcmSB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
+
     return;
 }
 
@@ -152,5 +157,6 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
     //! - Second, a little more involved - see Allard, Diaz, Schaub flex/slosh paper
     thetaDDot(0,0) = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->mass*this->d*this->sHat3_B.dot(rDDotBNLoc_B) - (this->IPntS_S(1,1) + this->mass*this->d*this->d)*sHat2_B.transpose()*omegaDotBNLoc_B + this->mass*this->d*this->sHat3_B.transpose()*this->rTildeHB_B*omegaDotBNLoc_B + this->a_theta);
     thetaDotState->setDerivative(thetaDDot);
-    
+
+    return;
 }
