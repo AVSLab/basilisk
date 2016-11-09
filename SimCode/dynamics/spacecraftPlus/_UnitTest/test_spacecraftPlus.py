@@ -89,11 +89,12 @@ def test_hubPropagate(show_plots):
     earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     earthEphemData.PlanetName = "earth"
     
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+     
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
-     
     unitTestSim.InitializeSimulation()
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
     
     # scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
     # scObject.dynManager.setPropertyValue("centerOfMassSC", [[1.0], [0.0], [0.0]])
@@ -115,9 +116,7 @@ def test_hubPropagate(show_plots):
     scObject.hub.mHub = 100
     scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-    
+     
     unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
     unitTestSim.ExecuteSimulation()
 
