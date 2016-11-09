@@ -18,7 +18,7 @@
 #ifndef stateVecIntegrator_h
 #define stateVecIntegrator_h
 
-class DynObject2;
+class DynamicObject;
 
 /*!
  @brief Base clase for every StateVecIntegrator. For creating a new StateVecIntegrator, inherit this class and override the integrate() method. integrate() only needs to advance one time step. DO NOT CHANGE THIS CLASS, if possible.
@@ -27,12 +27,12 @@ class StateVecIntegrator
 {
 	
 public:
-    StateVecIntegrator(DynObject2* dynIn);
+    StateVecIntegrator(DynamicObject* dynIn);
     virtual ~StateVecIntegrator(void);
     virtual void integrate(double currentTime, double timeStep) = 0;
     
 protected:
-    DynObject2* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
+    DynamicObject* dynPtr; //!< This is an object that contains the method equationsOfMotion(), also known as the F function.
 };
 
 #endif /* StateVecIntegrator_h */

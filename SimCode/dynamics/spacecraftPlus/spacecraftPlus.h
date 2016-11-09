@@ -23,7 +23,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "hubEffector.h"
 #include "../_GeneralModuleFiles/gravityEffector.h"
-#include "../_GeneralModuleFiles/dynObject2.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>
@@ -31,7 +31,7 @@
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
-class SpacecraftPlus : public DynObject2{
+class SpacecraftPlus : public DynamicObject{
 public:
     HubEffector hub;                     //!< [-] The spacecraft hub that effectors spoke off
     GravityEffector gravField;           //!< [-] Gravitational field experienced by spacecraft

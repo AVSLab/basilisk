@@ -16,8 +16,8 @@
  */
 
 
-#ifndef DYNOBJECT2_H
-#define DYNOBJECT2_H
+#ifndef DYNAMICOBJECT_H
+#define DYNAMICOBJECT_H
 #include "dynParamManager.h"
 #include "stateEffector.h"
 #include "dynamicEffector.h"
@@ -28,7 +28,7 @@
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
-class DynObject2 : public SysModel {
+class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //! [-] Dynamics parameter manager for all effectors
     std::vector<StateEffector*> states;               //! [-] Vector of states for dyn-object to handle
@@ -36,8 +36,8 @@ public:
 	StateVecIntegrator *integrator;                   //! [-] Integrator used to propagate state forward
     
 public:
-    DynObject2();
-    virtual ~DynObject2();
+    DynamicObject();
+    virtual ~DynamicObject();
     virtual void UpdateState(uint64_t callTime) = 0;  //! [-] This hooks the dyn-object into Basilisk arch
     virtual void initializeDynamics();                //! [-] Method to cross-link all states
     virtual void equationsOfMotion(double t) = 0;     //! [-] Everyone will need to provide this EOM
@@ -48,4 +48,4 @@ public:
 
 };
 
-#endif /* DYNOBJECT2_H */
+#endif /* DYNAMICOBJECT_H */

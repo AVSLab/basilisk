@@ -16,25 +16,25 @@
  */
 
 
-#include "dynObject2.h"
+#include "dynamicObject.h"
 
-DynObject2::DynObject2()
+DynamicObject::DynamicObject()
 {
     return;
 }
 
 
-DynObject2::~DynObject2()
+DynamicObject::~DynamicObject()
 {
     return;
 }
 
-void DynObject2::computeEnergyMomentum()
+void DynamicObject::computeEnergyMomentum()
 {
     
 }
 
-void DynObject2::initializeDynamics()
+void DynamicObject::initializeDynamics()
 {
     std::vector<StateEffector*>::iterator it;
     std::vector<DynamicEffector*>::iterator dynIt;
@@ -56,7 +56,7 @@ void DynObject2::initializeDynamics()
     
 }
 
-void DynObject2::addStateEffector(StateEffector *newEffector)
+void DynamicObject::addStateEffector(StateEffector *newEffector)
 {
 	states.push_back(newEffector);
 }

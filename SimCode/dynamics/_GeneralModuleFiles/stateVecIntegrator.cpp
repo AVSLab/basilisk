@@ -15,10 +15,10 @@
  */
 
 #include "stateVecIntegrator.h"
-#include "dynObject2.h"
+#include "dynamicObject.h"
 
 /*! @brief Constructor */
-StateVecIntegrator::StateVecIntegrator(DynObject2* dyn)
+StateVecIntegrator::StateVecIntegrator(DynamicObject* dyn)
 {
     this->dynPtr = dyn;
     

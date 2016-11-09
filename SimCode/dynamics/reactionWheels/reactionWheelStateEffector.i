@@ -27,7 +27,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/dynObject2.h"
+%include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
 
 //%include "spacecraftPlus.h"

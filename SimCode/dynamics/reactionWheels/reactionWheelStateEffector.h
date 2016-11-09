@@ -22,7 +22,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/dynObject2.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
 #include "utilities/simMacros.h"
 #include "_GeneralModuleFiles/sys_model.h"
