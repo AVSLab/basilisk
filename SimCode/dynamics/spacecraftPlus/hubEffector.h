@@ -45,7 +45,8 @@ public:
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m] Body time derivative of c_B
-    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [m] Body time derivative of
+    Eigen::MatrixXd *ISCPntBPrime_B;     //!< [m] Body time derivative of ISCPntB_B
+    Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Matrix3d matrixA;             //!< [-] Back-Substitution matrix A
     Eigen::Matrix3d matrixB;             //!< [-] Back-Substitution matrix B
     Eigen::Matrix3d matrixC;             //!< [-] Back-Substitution matrix C
