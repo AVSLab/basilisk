@@ -23,12 +23,21 @@ using namespace std;
 
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
+    //! - zero the mass props and mass prop rates contributions
     this->effProps.mEff = 0.0;
     this->effProps.rCB_B.fill(0.0);
     this->effProps.IEffPntB_B.fill(0.0);
     this->effProps.rPrimeCB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
+    //! - Initialize the variables to working values
+    this->mass = 0.0;
+    this->d = 1.0;
+    this->k = 1.0;
+    this->c = 0.0;
+    this->IPntS_S.Identity();
+    this->rHB_B.setZero();
+    this->dcmHB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
 
