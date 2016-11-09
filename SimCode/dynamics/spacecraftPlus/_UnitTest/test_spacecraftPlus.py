@@ -44,10 +44,10 @@ import spice_interface
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def spacecraftPlusAllTest(show_plots):
-    [testResults, testMessage] = test_hubPropagate(show_plots)
+    [testResults, testMessage] = test_gravityIntegratedSim(show_plots)
     assert testResults < 1, testMessage
 
-def test_hubPropagate(show_plots):
+def test_gravityIntegratedSim(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -95,13 +95,6 @@ def test_hubPropagate(show_plots):
         unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
-    
-    # scObject.dynManager.setPropertyValue("m_SC", [[100.0]])
-    # scObject.dynManager.setPropertyValue("centerOfMassSC", [[1.0], [0.0], [0.0]])
-    # scObject.dynManager.setPropertyValue("inertiaSC", [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
-    # scObject.dynManager.setPropertyValue("inertiaPrimeSC", [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-    # scObject.dynManager.setPropertyValue("centerOfMassPrimeSC", [[0.0], [0.0], [0.0]])
-
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -114,19 +107,29 @@ def test_hubPropagate(show_plots):
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-     
-    unitTestSim.ConfigureStopTime(macros.sec2nano(10.0))
+
+    stopTime = 60.0*10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    print posRef.getState()
-    print velRef.getState()
-    print omegaRef.getState()
-    print sigmaRef.getState()
+    dataPos = posRef.getState()
+    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+
+    truePos = [
+                [-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
+                ]
+
+    accuracy = 1e-8
+    for i in range(0,len(truePos)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hub Propagate"
+        print "PASSED: " + " SpaceCraftPlus Integrated Dynamics Tests"
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
