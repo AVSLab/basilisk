@@ -67,10 +67,8 @@ for i in range(0, 4):
     for j in range(0, 4):
         for k in range(0, 4):
             caseList.append([i,j,k])
-# @pytest.mark.parametrize("torqueInput, forceNInput, forceBInput", caseList)
-@pytest.mark.parametrize("torqueInput, forceNInput, forceBInput", [
-    (0,0,0)
-])
+@pytest.mark.parametrize("torqueInput, forceNInput, forceBInput", caseList)
+
 
 # provide a unique test method name, starting with test_
 def test_unitDynamicsModes(show_plots, torqueInput, forceNInput, forceBInput):
@@ -149,11 +147,11 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     #   Setup data logging
     #
     testProcessRate = macros.sec2nano(0.1)
-    variableForceN = "extForce_N"            # name the module variable to be logged
+    variableForceN = "forceExternal_N"            # name the module variable to be logged
     scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceN, testProcessRate, 0, 2, 'double')
-    variableForceB = "extForce_B"            # name the module variable to be logged
+    variableForceB = "forceExternal_B"            # name the module variable to be logged
     scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableForceB, testProcessRate, 0, 2, 'double')
-    variableTorque = "extTorquePntB_B"       # name the module variable to be logged
+    variableTorque = "torqueExternalPntB_B"       # name the module variable to be logged
     scSim.AddVariableForLogging (extFTObject.ModelTag + "." + variableTorque, testProcessRate, 0, 2, 'double')
 
     #
@@ -173,16 +171,11 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 
     np.set_printoptions(precision=16)
 
-    # print dataForceN
-
     # Remove time zero from list
     dataForceN = dataForceN[2:len(dataForceN),:]
     dataForceB = dataForceB[2:len(dataForceB),:]
     dataTorque = dataTorque[2:len(dataTorque),:]
 
-    print dataForceN
-    print dataForceB
-    print dataTorque
 
     #
     #   set true position information
@@ -236,7 +229,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     else:
         for i in range(0,len(trueTorque_B)):
             # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataTorque[i],trueTorque_B[i],3,accuracy):
+            if not unitTestSupport.isArrayEqual(dataTorque[i],trueTorque_B[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  ExtForceTorque failed torque unit test at t=" + str(dataTorque[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -246,7 +239,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     else:
         for i in range(0,len(trueForceN)):
             # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataForceN[i],trueForceN[i],3,accuracy):
+            if not unitTestSupport.isArrayEqual(dataForceN[i],trueForceN[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  ExtForceTorque failed force_N unit test at t=" + str(dataForceN[i,0]*macros.NANO2SEC) + "sec\n")
 
@@ -256,7 +249,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     else:
         for i in range(0, len(trueForceB)):
             # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataForceB[i], trueForceB[i], 3, accuracy):
+            if not unitTestSupport.isArrayEqual(dataForceB[i], trueForceB[i], 3, accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED:  ExtForceTorque failed force_B unit test at t="+str(
                     dataForceB[i, 0]*macros.NANO2SEC)+"sec\n")
@@ -275,8 +268,8 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
 #
 if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
-                           3,           # torqueInput
-                           3,           # forceNInput
-                           3            # forceBInput
+                           1,           # torqueInput
+                           0,           # forceNInput
+                           0            # forceBInput
                            )
 
