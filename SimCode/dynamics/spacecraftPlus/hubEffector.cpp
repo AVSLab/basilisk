@@ -18,9 +18,6 @@
 
 #include "hubEffector.h"
 
-using namespace Eigen;
-using namespace std;
-
 HubEffector::HubEffector()
 {
     //! - zero mass contributions
@@ -36,6 +33,9 @@ HubEffector::HubEffector()
     this->nameOfHubSigma = "hubSigma";
     this->nameOfHubOmega = "hubOmega";
 
+    //! - Default simulation to useTranslation and useRotation as true for now
+    this->useTranslation = true;
+    this->useRotation = true;
     return;
 }
 
@@ -92,7 +92,7 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
     Eigen::Matrix3d dcmNB;
-    MRPd sigmaBNLocal;
+    Eigen::MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
     omegaBNLocal = omegaState->getState();
@@ -113,13 +113,13 @@ void HubEffector::computeDerivatives(double integTime)
     intermediateVector = *ISCPntB_B*omegaBNLocal;
     vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
 
-    if (this->useRotation==true) {
+    if (this->useRotation == true) {
         //! Set kinematic derivative
         Bmat = sigmaBNLocal.Bmat();
         sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
         sigmaState->setDerivative(sigmaBNDotLocal);
 
-        if (this->useTranslation==true) {
+        if (this->useTranslation == true) {
             //! - Complete the Back-Substitution Method
             intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;

@@ -31,7 +31,7 @@ namespace std {
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/dynObject2.h"
+%include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
 %include "hubEffector.h"

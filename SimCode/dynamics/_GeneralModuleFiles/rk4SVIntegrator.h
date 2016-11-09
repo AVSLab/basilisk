@@ -27,7 +27,7 @@
 class rk4SVIntegrator : public StateVecIntegrator
 {
 public:
-    rk4SVIntegrator(DynObject2* dyn);
+    rk4SVIntegrator(DynamicObject* dyn);
     virtual ~rk4SVIntegrator();
     virtual void integrate(double currentTime, double timeStep);
     

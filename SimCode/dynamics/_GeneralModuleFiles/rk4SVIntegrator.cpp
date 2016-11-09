@@ -16,10 +16,10 @@
 
 
 #include "rk4SVIntegrator.h"
-#include "dynObject2.h"
+#include "dynamicObject.h"
 #include <stdio.h>
 
-rk4SVIntegrator::rk4SVIntegrator(DynObject2* dyn) : StateVecIntegrator(dyn)
+rk4SVIntegrator::rk4SVIntegrator(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
     
     return;

@@ -39,42 +39,41 @@ public:
     void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
-    void updateEffectorMassPropRates(double integTime);
 
 public:
-    double mass;                    //!< kg, mass of hinged rigid body
-    double d;                       //!< m, distance from hinge point to hinged rigid body center of mass
-    double k;                       //!< N-m/rad, torsional spring constant of hinge
-    double c;                       //!< N-m-s/rad, rotational damping coefficient of hinge
-    Eigen::Matrix3d IPntS_S;        //!< kg-m^2, Inertia of hinged rigid body about point S in S frame components
-    Eigen::Vector3d rHB_B;          //!< m, vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcmHB;          //!< DCM from body frame to hinge frame
-    std::string nameOfThetaState;   //!< Identifier for the theta state data container
-    std::string nameOfThetaDotState; //!< Identifier for the thetaDot state data container
+    double mass;                    //!< [kg] mass of hinged rigid body
+    double d;                       //!< [m] distance from hinge point to hinged rigid body center of mass
+    double k;                       //!< [N-m/rad] torsional spring constant of hinge
+    double c;                       //!< [N-m-s/rad] rotational damping coefficient of hinge
+    Eigen::Matrix3d IPntS_S;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
+    Eigen::Vector3d rHB_B;          //!< [m] vector pointing from body frame origin to Hinge location
+    Eigen::Matrix3d dcmHB;          //!< [-] DCM from body frame to hinge frame
+    std::string nameOfThetaState;   //!< [-] Identifier for the theta state data container
+    std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
 
 private:
-    Eigen::Matrix3d rTildeHB_B;     //!< Tilde matrix of rHB_B
-    Eigen::Matrix3d dcmSH;          //!< DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcmSB;          //!< DCM from body to S frame
-    Eigen::Vector3d omegaBN_S;      //!< omega_BN in S frame components
-    Eigen::Vector3d sHat1_B;        //!< unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat2_B;        //!< unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat3_B;        //!< unit direction vector for the third axis of the S frame
-    Eigen::Vector3d rSB_B;          //!< Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Matrix3d rTildeSB_B;     //!< Tilde matrix of r_SB_B
-    Eigen::Vector3d rPrimeSB_B;     //!< Body time derivative of r_SB_B
-    Eigen::Matrix3d rPrimeTildeSB_B;//!< Tilde matrix of rPrime_SB_B
-    Eigen::Matrix3d ISPrimePntS_B;  //!< time body derivative IPntS in body frame components
-    Eigen::Vector3d omegaBNLoc_B;   //!< local copy of omegaBN
-    Eigen::Matrix3d omegaTildeBNLoc_B; //!< tilde matrix of omegaBN
-    double theta;                   //!< rad, hinged rigid body angle
-    double thetaDot;                //!< rad/s, hinged rigid body angle rate
-    double a_theta;                 //!< term needed for back substitution
-    StateData *hubSigma;            //!< state manager access to the hubs MRP state
-    StateData *hubOmega;            //!< state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;         //!< state manager access to the hubs rDotBN_N state
-    StateData *thetaState;          //!< state manager of theta for hinged rigid body
-    StateData *thetaDotState;       //!< state manager of thetaDot for hinged rigid body
+    Eigen::Matrix3d rTildeHB_B;     //!< [-] Tilde matrix of rHB_B
+    Eigen::Matrix3d dcmSH;          //!< [-] DCM from hinge to hinged rigid body frame, S
+    Eigen::Matrix3d dcmSB;          //!< [-] DCM from body to S frame
+    Eigen::Vector3d omegaBN_S;      //!< [rad/s] omega_BN in S frame components
+    Eigen::Vector3d sHat1_B;        //!< [-] unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat2_B;        //!< [-] unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat3_B;        //!< [-] unit direction vector for the third axis of the S frame
+    Eigen::Vector3d rSB_B;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
+    Eigen::Matrix3d rTildeSB_B;     //!< [-] Tilde matrix of rSB_B
+    Eigen::Vector3d rPrimeSB_B;     //!< [m/s] Body time derivative of rSB_B
+    Eigen::Matrix3d rPrimeTildeSB_B;//!< [-] Tilde matrix of rPrime_SB_B
+    Eigen::Matrix3d ISPrimePntS_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
+    Eigen::Vector3d omegaBNLoc_B;   //!< [rad/s] local copy of omegaBN
+    Eigen::Matrix3d omegaTildeBNLoc_B; //!< [-] tilde matrix of omegaBN
+    double theta;                   //!< [rad] hinged rigid body angle
+    double thetaDot;                //!< [rad/s] hinged rigid body angle rate
+    double a_theta;                 //!< [-] term needed for back substitution
+    StateData *hubSigma;            //!< [-] state manager access to the hubs MRP state
+    StateData *hubOmega;            //!< [-] state manager access to the hubs omegaBN_B state
+    StateData *hubVelocity;         //!< [-] state manager access to the hubs rDotBN_N state
+    StateData *thetaState;          //!< [-] state manager of theta for hinged rigid body
+    StateData *thetaDotState;       //!< [-] state manager of thetaDot for hinged rigid body
 };
 
 #endif /* STATE_EFFECTOR_H */

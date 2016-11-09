@@ -143,9 +143,6 @@ def test_hubPropagate(show_plots):
                   [0.228198675962671, -0.329880460528557,  0.266599868549938]
                   ]
 
-    print dataPos
-    print truePos
-
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values

@@ -22,7 +22,7 @@
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/dynObject2.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
 #include "utilities/simMacros.h"
 #include "_GeneralModuleFiles/sys_model.h"
@@ -90,7 +90,6 @@ public:
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
-    void updateEffectorMassPropRates(double integTime);
 
 public:
 
