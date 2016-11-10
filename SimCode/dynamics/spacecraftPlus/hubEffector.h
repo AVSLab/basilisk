@@ -53,6 +53,9 @@ public:
     Eigen::Matrix3d matrixD;             //!< [-] Back-Substitution matrix D
     Eigen::Vector3d vecTrans;            //!< [-] Back-Substitution translation vector
     Eigen::Vector3d vecRot;              //!< [-] Back-Substitution rotation vector
+    Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
+    Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
+    Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
     bool useTranslation;                 //!< [-] Whether the s/c has translational states
     bool useRotation;                    //!< [-] Whether the s/c has rotational states
     std::string nameOfHubPosition;       //!< [-] Identifier for hub position states
