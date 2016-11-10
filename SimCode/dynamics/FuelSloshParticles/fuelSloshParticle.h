@@ -50,7 +50,7 @@ private:
 	StateData *rhoState;			   //!< m, fuel slosh displacement from equilibrium
 	StateData *rhoDotState;		   //!< m/s, time derivative of rho;
 	StateData *omegaState;
-	StateData *sigmaState; //TODO: map rDDot in computeDerivatives
+	StateData *sigmaState;
 	StateData *velocityState;
 
 public:

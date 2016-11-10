@@ -15,7 +15,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
-#include "FuelSloshParticle.h"
+#include "fuelSloshParticle.h"
 
 #define tilde(vector) 0, -vector(2), vector(1), vector(2), 0, -vector(0), -vector(1), vector(0), 0
 
@@ -54,7 +54,7 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 
 void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Cached values used in this function
-	rho = rhoState->getState()[0];
+	rho = rhoState->getState()(0,0);
 	r_PcB_B = rho * pHat_B + r_PB_B;
 
 	//Update the effectors mass
@@ -67,7 +67,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 }
 void FuelSloshParticle::updateEffectorMassPropRates(double integTime) {
 	//Cached values used in this function
-	rhoDot = rhoDotState->getState()[0];
+	rhoDot = rhoDotState->getState()(0, 0);
 	rPrime_PcB_B = rhoDot * pHat_B;
 
 	//Update derivative of CoM
@@ -80,20 +80,26 @@ void FuelSloshParticle::updateEffectorMassPropRates(double integTime) {
 void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
-	Eigen::Matrix3d omega_BN_B_local = omegaState->getState();
+	Eigen::Vector3d omega_BN_B_local = omegaState->getState();
 
+	Eigen::Matrix3d omegaTilde_BN_B_local;
+	omegaTilde_BN_B_local << tilde(omega_BN_B_local);
+
+	//Cached value, used in computeDerivatives as well
 	a_rho = /*pHat_B.dot(F_G_local)*/ - k*rho - c*rhoDot
-		- 2 * massFSP*pHat_B.dot(omega_BN_B_local.cross(rPrime_PcB_B))
-		- massFSP*pHat_B.dot(omega_BN_B_local.cross(omega_BN_B_local.cross(r_PcB_B)));
+		- 2 * massFSP*pHat_B.dot(omegaTilde_BN_B_local * rPrime_PcB_B)
+		- massFSP*pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*r_PcB_B);
+
+	//Compute matrix/vector contributions
 
 	matrixAcontr = -massFSP*pHat_B*pHat_B.transpose();
-	matrixBcontr = massFSP*pHat_B*pHat_B.cross(r_PcB_B).transpose();
-	matrixCcontr = -massFSP*r_PcB_B.cross(pHat_B)*pHat_B;
-	matrixDcontr = massFSP*r_PcB_B.cross(pHat_B) * pHat_B.cross(r_PcB_B).transpose();
+	matrixBcontr = massFSP*pHat_B*pHat_B.transpose()*rTilde_PcB_B;
+	matrixCcontr = -massFSP*rTilde_PcB_B*pHat_B*pHat_B.transpose();
+	matrixDcontr = massFSP*rTilde_PcB_B*pHat_B*pHat_B.transpose()*rTilde_PcB_B;
 
 	vecTranscontr = -pHat_B*a_rho;
-	vecRotcontr = -massFSP*omega_BN_B_local.cross(r_PcB_B.cross(rPrime_PcB_B)) +
-		a_rho*r_PcB_B.cross(pHat_B);
+	vecRotcontr = -massFSP*omegaTilde_BN_B_local * rTilde_PcB_B *rPrime_PcB_B -
+		a_rho*rTilde_PcB_B * pHat_B;
 }
 
 void FuelSloshParticle::computeDerivatives(double integTime)
@@ -115,8 +121,8 @@ void FuelSloshParticle::computeDerivatives(double integTime)
 
 	//Compute rhoDDot
 	Eigen::MatrixXd conv(1,1);
-	conv[0] = 1 / massFSP*(-massFSP*pHat_B.dot(rDDot_BN_B_local) +
-		massFSP*pHat_B.dot(r_PcB_B.cross(omegaDot_BN_B_local)) + 
+	conv(0, 0) = 1 / massFSP*(-massFSP*pHat_B.dot(rDDot_BN_B_local) +
+		massFSP*pHat_B.dot(rTilde_PcB_B*omegaDot_BN_B_local) + 
 		a_rho);
 	rhoDotState->setDerivative(conv);
 }
