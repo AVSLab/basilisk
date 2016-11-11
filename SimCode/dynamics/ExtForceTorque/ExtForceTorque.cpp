@@ -17,6 +17,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #include "dynamics/ExtForceTorque/ExtForceTorque.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
+#include "../utilities/avsEigenSupport.h"
+
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -70,9 +72,9 @@ void ExtForceTorque::CrossInit()
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
                                                                                    sizeof(extForceTorqueCmdStruct), moduleID);
     /* zero the input message vectors */
-    this->incomingCmdTorqueBuffer.cmd.fill(0.0);
-    this->incomingCmdForceInertialBuffer.cmd.fill(0.0);
-    this->incomingCmdForceBodyBuffer.cmd.fill(0.0);
+    memset(&(this->incomingCmdTorqueBuffer.cmd), 0x0, 3*sizeof(double));
+    memset(&(this->incomingCmdForceInertialBuffer.cmd), 0x0, 3*sizeof(double));
+    memset(&(this->incomingCmdForceBodyBuffer.cmd), 0x0, 3*sizeof(double));
 
     return;
 }
@@ -155,21 +157,21 @@ void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-        this->forceExternal_N += this->incomingCmdForceInertialBuffer.cmd;
+        this->forceExternal_N += array2EigenVector3d(this->incomingCmdForceInertialBuffer.cmd);
     }
 
     /* add the cmd force in body frame components set via Python */
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-        this->forceExternal_B += this->incomingCmdForceBodyBuffer.cmd;
+        this->forceExternal_B += array2EigenVector3d(this->incomingCmdForceBodyBuffer.cmd);
     }
 
     /* add the cmd torque about Point B in body frame components set via Python */
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-        this->torqueExternalPntB_B += this->incomingCmdTorqueBuffer.cmd;
+        this->torqueExternalPntB_B += array2EigenVector3d(this->incomingCmdTorqueBuffer.cmd);
     }
 
     return;

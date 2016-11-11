@@ -25,7 +25,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //! @brief Input container for external force and torque command requests.
 /*! This structure is .*/
 typedef struct {
-    Eigen::Vector3d cmd;         //!< [N or NM], force or torque command
+    double cmd[3];                      //!< [N or NM], force or torque command
 }extForceTorqueCmdStruct;
 
 
