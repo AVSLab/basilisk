@@ -271,7 +271,7 @@ def test_EigenConversions(show_plots):
 
     inputArray = [[3.0], [1.0], [2.0]]
     outputArray = sim_model.new_doubleArray(3)
-    stateArchitecture.eigen2CArray(inputArray, outputArray)
+    stateArchitecture.eigenVector3d2CArray(inputArray, outputArray)
     
     flatList =  [y for x in inputArray for y in x]
 
@@ -282,7 +282,7 @@ def test_EigenConversions(show_plots):
 
     inputArray = [[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]]
     outputArray = sim_model.new_doubleArray(9)
-    stateArchitecture.eigen2CArray(inputArray, outputArray)
+    stateArchitecture.eigenMatrix3d2CArray(inputArray, outputArray)
     
     flatList =  [y for x in inputArray for y in x]
 
@@ -291,6 +291,18 @@ def test_EigenConversions(show_plots):
             print sim_model.doubleArray_getitem(outputArray, i)
             testFailCount += 1
             testMessages.append("3x3 matrix conversion failed")
+
+    inputArray = [[0.0, 1.0, 0.0, 2.0], [0.0, 0.0, 1.0, 0.5], [1.0, 0.0, 0.0, 2.7]]
+    outputArray = sim_model.new_doubleArray(12)
+    stateArchitecture.eigenMatrixXd2CArray(inputArray, outputArray)
+    
+    flatList =  [y for x in inputArray for y in x]
+
+    for i in range(len(flatList)):
+        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+            print sim_model.doubleArray_getitem(outputArray, i)
+            testFailCount += 1
+            testMessages.append("3x4 matrix conversion failed")
 
     if testFailCount == 0:
         print "PASSED: " + " Eigen Conversions"
