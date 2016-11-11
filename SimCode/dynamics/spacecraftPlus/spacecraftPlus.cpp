@@ -102,12 +102,12 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
         //! Add contributions to matrices
         (*it)->updateContributions(t, matrixAContr, matrixBContr, matrixCContr, matrixDContr, vecTransContr, vecRotContr);
-        hub.matrixA += matrixAContr;
-        hub.matrixB += matrixBContr;
-        hub.matrixC += matrixCContr;
-        hub.matrixD += matrixDContr;
-        hub.vecTrans += vecTransContr;
-        hub.vecRot += vecRotContr;
+        this->hub.matrixA += matrixAContr;
+        this->hub.matrixB += matrixBContr;
+        this->hub.matrixC += matrixCContr;
+        this->hub.matrixD += matrixDContr;
+        this->hub.vecTrans += vecTransContr;
+        this->hub.vecRot += vecRotContr;
     }
 
     //! Divide c_B and cPrime_B by the total mass of the spaceCraft
@@ -117,7 +117,11 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - Loop through dynEffectors
     for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
     {
-        //! Empty for now
+        //! - Compute the force and torque contributions from the dynamicEffectors
+        (*dynIt)->computeBodyForceTorque(t);
+        this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
+        this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
+        this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
     //! - Compute the derivatives of the hub states before looping through stateEffectors

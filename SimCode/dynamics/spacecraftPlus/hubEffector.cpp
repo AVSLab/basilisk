@@ -93,8 +93,6 @@ void HubEffector::computeDerivatives(double integTime)
     Eigen::Vector3d gLocal_N;
     Eigen::Vector3d rBNDotLocal_N;
     Eigen::Matrix3d Bmat;
-    Eigen::Matrix3d dcmNB;
-    Eigen::Matrix3d dcmBN;
     Eigen::MRPd sigmaBNLocal;
     Eigen::Vector3d sigmaBNDotLocal;
     Eigen::Vector3d gravityForce_N;
@@ -129,14 +127,22 @@ void HubEffector::computeDerivatives(double integTime)
         sigmaState->setDerivative(sigmaBNDotLocal);
 
         if (this->useTranslation == true) {
+            //! - Define values only needed for rotation and translation together
+            Eigen::Matrix3d dcmNB;
+            Eigen::Matrix3d dcmBN;
+            Eigen::Vector3d sumForceExternalMappedToB;
+
             //! - Define dcm's
             dcmNB = sigmaBNLocal.toRotationMatrix();
             dcmBN = dcmNB.transpose();
 
-            //! - Edit both v_trans and v_rot with gravity
+            //! - Map external force_N to the body frame
+            sumForceExternalMappedToB = dcmBN*this->sumForceExternal_N;
+
+            //! - Edit both v_trans and v_rot with gravity and external force and torque
             gravityForce_B = dcmBN*gravityForce_N;
-            vecTrans += gravityForce_B;
-            vecRot += cLocal_B.cross(gravityForce_B);
+            vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
+            vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
             //! - Complete the Back-Substitution Method
             intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
@@ -149,7 +155,10 @@ void HubEffector::computeDerivatives(double integTime)
             rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
             velocityState->setDerivative(rBNDDotLocal_N);
         } else {
-            //! - If its just rotating, only compute rotational terms
+            //! - Edit only v_rot with gravity
+            vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+
+            //! - Only compute rotational terms
             omegaBNDot_B = matrixD.inverse()*vecRot;
             omegaState->setDerivative(omegaBNDot_B);
         }
@@ -161,7 +170,7 @@ void HubEffector::computeDerivatives(double integTime)
         if (this->useRotation==false) {
             //! - If it is just translating, only compute translational terms
             //! - need to add in gravity
-            vecTrans += gravityForce_N;
+            vecTrans += gravityForce_N + this->sumForceExternal_N;
             
             rBNDDotLocal_N = matrixA.inverse()*(vecTrans);
             velocityState->setDerivative(rBNDDotLocal_N);
