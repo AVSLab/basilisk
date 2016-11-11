@@ -66,6 +66,10 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
       dataOut = 0
       if not swigObjectGood:
           dataOut = functionCall(LocalContainer)
+          try:
+              dataOut = [y for x in dataOut for y in x]
+          except TypeError:
+              placeHold = 1
       while executeLoop:
          if swigObjectGood:
             TimeValues.append(functionCall(swigObject, currentIndex))

@@ -27,6 +27,8 @@ SpacecraftPlus::SpacecraftPlus()
 	integrator = new rk4SVIntegrator(this);
     sysTimePropertyName = "systemTime";
     simTimePrevious = 0;
+	scStateOutMsgName = "inertial_state_output";
+	numOutMsgBuffers = 2;
     return;
 }
 
@@ -43,7 +45,10 @@ void SpacecraftPlus::computeEnergyMomentum()
 
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
+	hubR_N = statesIn.getStateObject("hubPosition");
+	hubV_N = statesIn.getStateObject("hubVelocity");
     hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
+	hubOmega_BN_B = statesIn.getStateObject("hubOmega");
 }
 
 void SpacecraftPlus::equationsOfMotion(double t)
@@ -196,8 +201,24 @@ void SpacecraftPlus::initializeDynamics()
     }
 }
 
+void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
+{
+	SCPlusOutputStateData stateOut;
+
+	stateOut.r_N = hubR_N->getState();
+	stateOut.v_N = hubV_N->getState();
+	stateOut.sigma_BN = hubSigma->getState();
+	stateOut.omega_BN_B = hubOmega_BN_B->getState();
+	stateOut.dcm_BS.Identity();
+
+	SystemMessaging::GetInstance()->WriteMessage(scStateOutMsgID, clockTime, sizeof(SCPlusOutputStateData),
+		reinterpret_cast<uint8_t*> (&stateOut), moduleID);
+}
+
 void SpacecraftPlus::SelfInit()
 {
+	scStateOutMsgID = SystemMessaging::GetInstance()->CreateNewMessage(scStateOutMsgName,
+		sizeof(SCPlusOutputStateData), numOutMsgBuffers, "SCPlusOutputStateData", moduleID);
     this->gravField.SelfInit();
 }
 void SpacecraftPlus::CrossInit()
@@ -210,5 +231,6 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 	double newTime = CurrentSimNanos*NANO2SEC;
     this->gravField.UpdateState(CurrentSimNanos);
 	this->integrateState(newTime);
+	writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
 }

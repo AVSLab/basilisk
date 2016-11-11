@@ -90,7 +90,9 @@ def test_gravityIntegratedSim(show_plots):
     earthEphemData.PlanetName = "earth"
     
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-     
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)     
+
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
@@ -120,6 +122,10 @@ def test_gravityIntegratedSim(show_plots):
     truePos = [
                 [-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
                 ]
+
+    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+                                                  range(3))
+    print moduleOutput[-1, :]
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):

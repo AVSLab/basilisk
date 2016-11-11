@@ -34,6 +34,7 @@ namespace std {
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
+%include "spacecraftPlusMsg.h"
 %include "hubEffector.h"
 
 

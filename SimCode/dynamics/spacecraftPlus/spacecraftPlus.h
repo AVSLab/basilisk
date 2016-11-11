@@ -27,6 +27,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>
+#include "spacecraftPlusMsg.h"
 #include "hingedRigidBodyStateEffector.h"
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
@@ -53,8 +54,10 @@ public:
 	double currTimeStep;
 	double timePrevious;
     uint64_t simTimePrevious;            //!< [-] Previous simulation time
+	uint64_t numOutMsgBuffers;           //!< [-] Number of output message buffers for I/O
     
     std::string sysTimePropertyName;     //!< [-] Name of the system time property
+	std::string scStateOutMsgName;       //!< [-] Name of the state output message
     
 public:
     SpacecraftPlus();
@@ -67,9 +70,15 @@ public:
     void computeEnergyMomentum();              //!< [-] User can implement NRG/moment check
     void initializeDynamics();                 //!< [-] Method to link all spacecraft states
     void linkInStates(DynParamManager& statesIn);
+	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages
 
 private:
-    StateData *hubSigma;                       //!< [-] sigmaBN for the hub
+	StateData *hubR_N;                         //!< [-] Inertial position for the hub
+	StateData *hubV_N;                         //!< [-] Inertial velocity for the hub
+	StateData *hubOmega_BN_B;                  //!< [-] Attitude rate of the hub
+	StateData *hubSigma;                       //!< [-] sigmaBN for the hub
+
+	int64_t scStateOutMsgID;                  //!< [-] Message ID for the outgoing spacecraft state
 };
 
 #endif /* SPACECRAFT_PLUS_H */
