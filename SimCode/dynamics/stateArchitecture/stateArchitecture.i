@@ -17,12 +17,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 %module stateArchitecture
 %{
    #include "../_GeneralModuleFiles/dynParamManager.h"
+   #include "../../utilities/avsEigenSupport.h"
 %}
 
 %include "swig_common_model.i"
 
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/StateData.h"
+%include "../../utilities/avsEigenSupport.h"
 
 %pythoncode %{
 import sys

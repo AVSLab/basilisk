@@ -47,6 +47,8 @@ def stateArchitectureAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_stateProperties(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_EigenConversions(show_plots)
+    assert testResults < 1, testMessage
 
 def test_stateData(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -254,6 +256,44 @@ def test_stateArchitecture(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " State manager"
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+def test_EigenConversions(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    inputArray = [[3.0], [1.0], [2.0]]
+    outputArray = sim_model.new_doubleArray(3)
+    stateArchitecture.eigen2CArray(inputArray, outputArray)
+    
+    flatList =  [y for x in inputArray for y in x]
+
+    for i in range(len(flatList)):
+        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+            testFailCount += 1
+            testMessages.append("3-vector conversion failed")
+
+    inputArray = [[0.0, 1.0, 0.0], [0.0, 0.0, 1.0], [1.0, 0.0, 0.0]]
+    outputArray = sim_model.new_doubleArray(9)
+    stateArchitecture.eigen2CArray(inputArray, outputArray)
+    
+    flatList =  [y for x in inputArray for y in x]
+
+    for i in range(len(flatList)):
+        if(flatList[i] != sim_model.doubleArray_getitem(outputArray, i)):
+            print sim_model.doubleArray_getitem(outputArray, i)
+            testFailCount += 1
+            testMessages.append("3x3 matrix conversion failed")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Eigen Conversions"
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

@@ -150,6 +150,7 @@ void ExtForceTorque::readInputMessages()
  */
 void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
 {
+	Eigen::Vector3d cmdVec;
     //! Begin method steps
 
 
@@ -157,21 +158,24 @@ void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-        this->forceExternal_N += array2EigenVector3d(this->incomingCmdForceInertialBuffer.cmd);
+		cArray2Eigen(this->incomingCmdForceInertialBuffer.cmd, cmdVec);
+		this->forceExternal_N += cmdVec;
     }
 
     /* add the cmd force in body frame components set via Python */
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-        this->forceExternal_B += array2EigenVector3d(this->incomingCmdForceBodyBuffer.cmd);
+		cArray2Eigen(this->incomingCmdForceBodyBuffer.cmd, cmdVec);
+        this->forceExternal_B +=cmdVec;
     }
 
     /* add the cmd torque about Point B in body frame components set via Python */
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-        this->torqueExternalPntB_B += array2EigenVector3d(this->incomingCmdTorqueBuffer.cmd);
+		cArray2Eigen(this->incomingCmdTorqueBuffer.cmd, cmdVec);
+        this->torqueExternalPntB_B += cmdVec;
     }
 
     return;
