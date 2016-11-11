@@ -33,7 +33,7 @@ in a lot of cases.
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array (sized by the user!) we copy in to
 */
-void eigen2CArray(Eigen::MatrixXd inMat, double *outArray)
+void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray)
 {
 	Eigen::MatrixXd tempMat = inMat.transpose();
 	memcpy(outArray, tempMat.data(), inMat.rows()*inMat.cols()*sizeof(double));
@@ -46,7 +46,7 @@ and the transpose that would have been performed by the general case.
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array (sized by the user!) we copy in to
 */
-void eigen2CArray(Eigen::Vector3d & inMat, double *outArray)
+void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray)
 {
 	memcpy(outArray, inMat.data(), 3 * sizeof(double));
 }
@@ -58,7 +58,7 @@ that would have been performed by the general case.
 @param inMat The source Eigen matrix that we are converting
 @param outArray The destination array (sized by the user!) we copy in to
 */
-void eigen2CArray(Eigen::Matrix3d & inMat, double *outArray)
+void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray)
 {
 	Eigen::MatrixXd tempMat = inMat.transpose();
 	memcpy(outArray, tempMat.data(), 9 * sizeof(double));
@@ -71,7 +71,7 @@ information to ingest the C array.
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2Eigen(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols)
+void cArray2EigenMatrixXd(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols)
 {
 	outMat.resize(nRows, nCols);
 	outMat = Eigen::Map<Eigen::MatrixXd>(inArray, outMat.rows(), outMat.cols());
@@ -83,7 +83,7 @@ in order to save an unnecessary conversion between types
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2Eigen(double *inArray, Eigen::Vector3d & outMat)
+void cArray2EigenVector3d(double *inArray, Eigen::Vector3d & outMat)
 {
 	outMat = Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
 }
@@ -94,7 +94,7 @@ in order to save an unnecessary conversion between types
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2Eigen(double *inArray, Eigen::Matrix3d & outMat)
+void cArray2EigenMatrix3d(double *inArray, Eigen::Matrix3d & outMat)
 {
 	outMat = Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3);
 }

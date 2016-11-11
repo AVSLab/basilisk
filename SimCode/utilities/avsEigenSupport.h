@@ -25,17 +25,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
 //!@brief General conversion between any Eigen matrix and output array
-void eigen2CArray(Eigen::MatrixXd inMat, double *outArray);
+void eigenMatrixXd2CArray(Eigen::MatrixXd inMat, double *outArray);
 //!@brief Rapid conversion between 3-vector and output array
-void eigen2CArray(Eigen::Vector3d & inMat, double *outArray);
+void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray);
 //!@brief Rapid conversion between 3x3 matrix and output array
-void eigen2CArray(Eigen::Matrix3d & inMat, double *outArray);
+void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray);
 //!@brief General conversion between a C array and an Eigen matrix
-void cArray2Eigen(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols);
+void cArray2EigenMatrixXd(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols);
 //!@brief Specific conversion between a C array and an Eigen 3-vector
-void cArray2Eigen(double *inArray, Eigen::Vector3d & outMat);
+void cArray2EigenVector3d(double *inArray, Eigen::Vector3d & outMat);
 //!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
-void cArray2Eigen(double *inArray, Eigen::Matrix3d & outMat);
+void cArray2EigenMatrix3d(double *inArray, Eigen::Matrix3d & outMat);
 
 
 #endif /* _GaussMarkov_HH_ */
