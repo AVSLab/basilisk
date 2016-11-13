@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="utf-8"?>
+<srp_values>
+   <sHatBValues>
+      <sHat_B index="0">
+         <value_1>0.0000000000000000</value_1>
+         <value_2>0.0000000000000000</value_2>
+         <value_3>1.0000000000000000</value_3>
+      </sHat_B>
+      <sHat_B index="1">
+         <value_1>-0.2085159772655856</value_1>
+         <value_2>0.1910177158662222</value_2>
+         <value_3>0.9591836734693877</value_3>
+      </sHat_B>
+      <sHat_B index="2">
+         <value_1>0.0345968918147294</value_1>
+         <value_2>-0.3942137379054599</value_2>
+         <value_3>0.9183673469387755</value_3>
+      </sHat_B>
+      <sHat_B index="3">
+         <value_1>0.2917362548924182</value_1>
+         <value_2>0.3805182836105743</value_2>
+         <value_3>0.8775510204081632</value_3>
+      </sHat_B>
+      <sHat_B index="4">
+         <value_1>-0.5392374591492339</value_1>
+         <value_2>-0.0953835138371363</value_2>
+         <value_3>0.8367346938775511</value_3>
+      </sHat_B>
+      <sHat_B index="5">
+         <value_1>0.5108127951727888</value_1>
+         <value_2>-0.3249372874995203</value_2>
+         <value_3>0.7959183673469388</value_3>
+      </sHat_B>
+      <sHat_B index="6">
+         <value_1>-0.1701984726812007</value_1>
+         <value_2>0.6331298349090851</value_2>
+         <value_3>0.7551020408163265</value_3>
+      </sHat_B>
+      <sHat_B index="7">
+         <value_1>-0.3225677226891745</value_1>
+         <value_2>-0.6210845213386554</value_2>
+         <value_3>0.7142857142857143</value_3>
+      </sHat_B>
+      <sHat_B index="8">
+         <value_1>0.6943604985036228</value_1>
+         <value_2>0.2535793403938270</value_2>
+         <value_3>0.6734693877551021</value_3>
+      </sHat_B>
+      <sHat_B index="9">
+         <value_1>-0.7158458699878787</value_1>
+         <value_2>0.2954907689667798</value_2>
+         <value_3>0.6326530612244898</value_3>
+      </sHat_B>
+      <sHat_B index="10">
+         <value_1>0.3416443972625526</value_1>
+         <value_2>-0.7300742327229442</value_2>
+         <value_3>0.5918367346938775</value_3>
+      </sHat_B>
+      <sHat_B index="11">
+         <value_1>0.2497499209822076</value_1>
+         <value_2>0.7962421031049348</value_2>
+         <value_3>0.5510204081632653</value_3>
+      </sHat_B>
+      <sHat_B index="12">
+         <value_1>-0.7441278146160684</value_1>
+         <value_2>-0.4312372787690036</value_2>
+         <value_3>0.5102040816326531</value_3>
+      </sHat_B>
+      <sHat_B index="13">
+         <value_1>0.8623970403232296</value_1>
+         <value_2>-0.1895955701012037</value_2>
+         <value_3>0.4693877551020407</value_3>
+      </sHat_B>
+      <sHat_B index="14">
+         <value_1>-0.5196339844211401</value_1>
+         <value_2>0.7391258707736154</value_2>
+         <value_3>0.4285714285714287</value_3>
+      </sHat_B>
+      <sHat_B index="15">
+         <value_1>-0.1184563259528041</value_1>
+         <value_2>-0.9141192918230526</value_2>
+         <value_3>0.3877551020408163</value_3>
+      </sHat_B>
+      <sHat_B index="16">
+         <value_1>0.7171549480831977</value_1>
+         <value_2>0.6044189494773192</value_2>
+         <value_3>0.3469387755102041</value_3>
+      </sHat_B>
+      <sHat_B index="17">
+         <value_1>-0.9511791962189340</value_1>
+         <value_2>0.0393342460337034</value_2>
+         <value_3>0.3061224489795918</value_3>
+      </sHat_B>
+      <sHat_B index="18">
+         <value_1>0.6834279660681245</value_1>
+         <value_2>-0.6801021074714249</value_2>
+         <value_3>0.2653061224489796</value_3>
+      </sHat_B>
+      <sHat_B index="19">
+         <value_1>-0.0450124757845231</value_1>
+         <value_2>0.9734362889025031</value_2>
+         <value_3>0.2244897959183674</value_3>
+      </sHat_B>
+      <sHat_B index="20">
+         <value_1>-0.6298089605369295</value_1>
+         <value_2>-0.7547216240909346</value_2>
+         <value_3>0.1836734693877552</value_3>
+      </sHat_B>
+      <sHat_B index="21">
+         <value_1>0.9809043295321613</value_1>
+         <value_2>0.1319792901926469</value_2>
+         <value_3>0.1428571428571429</value_3>
+      </sHat_B>
+      <sHat_B index="22">
+         <value_1>-0.8165736311358974</value_1>
+         <value_2>0.5681506637652997</value_2>
+         <value_3>0.1020408163265307</value_3>
+      </sHat_B>
+      <sHat_B index="23">
+         <value_1>0.2190696268674844</value_1>
+         <value_2>-0.9737864552525727</value_2>
+         <value_3>0.0612244897959183</value_3>
+      </sHat_B>
+      <sHat_B index="24">
+         <value_1>0.4970773279736434</value_1>
+         <value_2>0.8674662165679535</value_2>
+         <value_3>0.0204081632653061</value_3>
+      </sHat_B>
+      <sHat_B index="25">
+         <value_1>-0.9524943615375113</value_1>
+         <value_2>-0.3038716803379103</value_2>
+         <value_3>-0.0204081632653062</value_3>
+      </sHat_B>
+      <sHat_B index="26">
+         <value_1>0.9060881367324388</value_1>
+         <value_2>-0.4186357012032859</value_2>
+         <value_3>-0.0612244897959184</value_3>
+      </sHat_B>
+      <sHat_B index="27">
+         <value_1>-0.3840459255140067</value_1>
+         <value_2>0.9176581056687209</value_2>
+         <value_3>-0.1020408163265306</value_3>
+      </sHat_B>
+      <sHat_B index="28">
+         <value_1>-0.3349808822787693</value_1>
+         <value_2>-0.9313321884496590</value_2>
+         <value_3>-0.1428571428571428</value_3>
+      </sHat_B>
+      <sHat_B index="29">
+         <value_1>0.8701299861745887</value_1>
+         <value_2>0.4573159343417584</value_2>
+         <value_3>-0.1836734693877551</value_3>
+      </sHat_B>
+      <sHat_B index="30">
+         <value_1>-0.9422894879774649</value_1>
+         <value_2>0.2483844849737935</value_2>
+         <value_3>-0.2244897959183675</value_3>
+      </sHat_B>
+      <sHat_B index="31">
+         <value_1>0.5214564012726958</value_1>
+         <value_2>-0.8109845146257827</value_2>
+         <value_3>-0.2653061224489797</value_3>
+      </sHat_B>
+      <sHat_B index="32">
+         <value_1>0.1612447859596757</value_1>
+         <value_2>0.9382372648917520</value_2>
+         <value_3>-0.3061224489795917</value_3>
+      </sHat_B>
+      <sHat_B index="33">
+         <value_1>-0.7415158135940245</value_1>
+         <value_2>-0.5742715248360066</value_2>
+         <value_3>-0.3469387755102040</value_3>
+      </sHat_B>
+      <sHat_B index="34">
+         <value_1>0.9186152348910062</value_1>
+         <value_2>-0.0761053944701527</value_2>
+         <value_3>-0.3877551020408164</value_3>
+      </sHat_B>
+      <sHat_B index="35">
+         <value_1>-0.6135535562198380</value_1>
+         <value_2>0.6632334161230380</value_2>
+         <value_3>-0.4285714285714286</value_3>
+      </sHat_B>
+      <sHat_B index="36">
+         <value_1>0.0043074804364479</value_1>
+         <value_2>-0.8829816424889908</value_2>
+         <value_3>-0.4693877551020410</value_3>
+      </sHat_B>
+      <sHat_B index="37">
+         <value_1>0.5778571004492351</value_1>
+         <value_2>0.6370031134506201</value_2>
+         <value_3>-0.5102040816326532</value_3>
+      </sHat_B>
+      <sHat_B index="38">
+         <value_1>-0.8309307411760506</value_1>
+         <value_2>-0.0770104743278976</value_2>
+         <value_3>-0.5510204081632653</value_3>
+      </sHat_B>
+      <sHat_B index="39">
+         <value_1>0.6420730018407561</value_1>
+         <value_2>-0.4873105167899514</value_2>
+         <value_3>-0.5918367346938773</value_3>
+      </sHat_B>
+      <sHat_B index="40">
+         <value_1>-0.1386112130048907</value_1>
+         <value_2>0.7619298102532770</value_2>
+         <value_3>-0.6326530612244899</value_3>
+      </sHat_B>
+      <sHat_B index="41">
+         <value_1>-0.3937101045114644</value_1>
+         <value_2>-0.6256447373408809</value_2>
+         <value_3>-0.6734693877551021</value_3>
+      </sHat_B>
+      <sHat_B index="42">
+         <value_1>0.6749654100482262</value_1>
+         <value_2>0.1849800356951438</value_2>
+         <value_3>-0.7142857142857144</value_3>
+      </sHat_B>
+      <sHat_B index="43">
+         <value_1>-0.5832848180010863</value_1>
+         <value_2>0.2993321383421071</value_2>
+         <value_3>-0.7551020408163265</value_3>
+      </sHat_B>
+      <sHat_B index="44">
+         <value_1>0.2104485979734934</value_1>
+         <value_2>-0.5676489585393198</value_2>
+         <value_3>-0.7959183673469388</value_3>
+      </sHat_B>
+      <sHat_B index="45">
+         <value_1>0.2064717565796532</value_1>
+         <value_2>0.5071927304255782</value_2>
+         <value_3>-0.8367346938775511</value_3>
+      </sHat_B>
+      <sHat_B index="46">
+         <value_1>-0.4332878656698556</value_1>
+         <value_2>-0.2053432054971691</value_2>
+         <value_3>-0.8775510204081632</value_3>
+      </sHat_B>
+      <sHat_B index="47">
+         <value_1>0.3781636498836639</value_1>
+         <value_2>-0.1165918950154792</value_2>
+         <value_3>-0.9183673469387754</value_3>
+      </sHat_B>
+      <sHat_B index="48">
+         <value_1>-0.1429818136393151</value_1>
+         <value_2>0.2439731163841278</value_2>
+         <value_3>-0.9591836734693877</value_3>
+      </sHat_B>
+      <sHat_B index="49">
+         <value_1>-0.0000000000000000</value_1>
+         <value_2>-0.0000000000000001</value_2>
+         <value_3>-1.0000000000000000</value_3>
+      </sHat_B>
+   </sHatBValues>
+   <forceBValues>
+      <force_B index="0">
+         <value_1>0.0000000000000000</value_1>
+         <value_2>0.0000000000000000</value_2>
+         <value_3>1.0000000000000000</value_3>
+      </force_B>
+      <force_B index="1">
+         <value_1>-0.2085159772655856</value_1>
+         <value_2>0.1910177158662222</value_2>
+         <value_3>0.9591836734693877</value_3>
+      </force_B>
+      <force_B index="2">
+         <value_1>0.0345968918147294</value_1>
+         <value_2>-0.3942137379054599</value_2>
+         <value_3>0.9183673469387755</value_3>
+      </force_B>
+      <force_B index="3">
+         <value_1>0.2917362548924182</value_1>
+         <value_2>0.3805182836105743</value_2>
+         <value_3>0.8775510204081632</value_3>
+      </force_B>
+      <force_B index="4">
+         <value_1>-0.5392374591492339</value_1>
+         <value_2>-0.0953835138371363</value_2>
+         <value_3>0.8367346938775511</value_3>
+      </force_B>
+      <force_B index="5">
+         <value_1>0.5108127951727888</value_1>
+         <value_2>-0.3249372874995203</value_2>
+         <value_3>0.7959183673469388</value_3>
+      </force_B>
+      <force_B index="6">
+         <value_1>-0.1701984726812007</value_1>
+         <value_2>0.6331298349090851</value_2>
+         <value_3>0.7551020408163265</value_3>
+      </force_B>
+      <force_B index="7">
+         <value_1>-0.3225677226891745</value_1>
+         <value_2>-0.6210845213386554</value_2>
+         <value_3>0.7142857142857143</value_3>
+      </force_B>
+      <force_B index="8">
+         <value_1>0.6943604985036228</value_1>
+         <value_2>0.2535793403938270</value_2>
+         <value_3>0.6734693877551021</value_3>
+      </force_B>
+      <force_B index="9">
+         <value_1>-0.7158458699878787</value_1>
+         <value_2>0.2954907689667798</value_2>
+         <value_3>0.6326530612244898</value_3>
+      </force_B>
+      <force_B index="10">
+         <value_1>0.3416443972625526</value_1>
+         <value_2>-0.7300742327229442</value_2>
+         <value_3>0.5918367346938775</value_3>
+      </force_B>
+      <force_B index="11">
+         <value_1>0.2497499209822076</value_1>
+         <value_2>0.7962421031049348</value_2>
+         <value_3>0.5510204081632653</value_3>
+      </force_B>
+      <force_B index="12">
+         <value_1>-0.7441278146160684</value_1>
+         <value_2>-0.4312372787690036</value_2>
+         <value_3>0.5102040816326531</value_3>
+      </force_B>
+      <force_B index="13">
+         <value_1>0.8623970403232296</value_1>
+         <value_2>-0.1895955701012037</value_2>
+         <value_3>0.4693877551020407</value_3>
+      </force_B>
+      <force_B index="14">
+         <value_1>-0.5196339844211401</value_1>
+         <value_2>0.7391258707736154</value_2>
+         <value_3>0.4285714285714287</value_3>
+      </force_B>
+      <force_B index="15">
+         <value_1>-0.1184563259528041</value_1>
+         <value_2>-0.9141192918230526</value_2>
+         <value_3>0.3877551020408163</value_3>
+      </force_B>
+      <force_B index="16">
+         <value_1>0.7171549480831977</value_1>
+         <value_2>0.6044189494773192</value_2>
+         <value_3>0.3469387755102041</value_3>
+      </force_B>
+      <force_B index="17">
+         <value_1>-0.9511791962189340</value_1>
+         <value_2>0.0393342460337034</value_2>
+         <value_3>0.3061224489795918</value_3>
+      </force_B>
+      <force_B index="18">
+         <value_1>0.6834279660681245</value_1>
+         <value_2>-0.6801021074714249</value_2>
+         <value_3>0.2653061224489796</value_3>
+      </force_B>
+      <force_B index="19">
+         <value_1>-0.0450124757845231</value_1>
+         <value_2>0.9734362889025031</value_2>
+         <value_3>0.2244897959183674</value_3>
+      </force_B>
+      <force_B index="20">
+         <value_1>-0.6298089605369295</value_1>
+         <value_2>-0.7547216240909346</value_2>
+         <value_3>0.1836734693877552</value_3>
+      </force_B>
+      <force_B index="21">
+         <value_1>0.9809043295321613</value_1>
+         <value_2>0.1319792901926469</value_2>
+         <value_3>0.1428571428571429</value_3>
+      </force_B>
+      <force_B index="22">
+         <value_1>-0.8165736311358974</value_1>
+         <value_2>0.5681506637652997</value_2>
+         <value_3>0.1020408163265307</value_3>
+      </force_B>
+      <force_B index="23">
+         <value_1>0.2190696268674844</value_1>
+         <value_2>-0.9737864552525727</value_2>
+         <value_3>0.0612244897959183</value_3>
+      </force_B>
+      <force_B index="24">
+         <value_1>0.4970773279736434</value_1>
+         <value_2>0.8674662165679535</value_2>
+         <value_3>0.0204081632653061</value_3>
+      </force_B>
+      <force_B index="25">
+         <value_1>-0.9524943615375113</value_1>
+         <value_2>-0.3038716803379103</value_2>
+         <value_3>-0.0204081632653062</value_3>
+      </force_B>
+      <force_B index="26">
+         <value_1>0.9060881367324388</value_1>
+         <value_2>-0.4186357012032859</value_2>
+         <value_3>-0.0612244897959184</value_3>
+      </force_B>
+      <force_B index="27">
+         <value_1>-0.3840459255140067</value_1>
+         <value_2>0.9176581056687209</value_2>
+         <value_3>-0.1020408163265306</value_3>
+      </force_B>
+      <force_B index="28">
+         <value_1>-0.3349808822787693</value_1>
+         <value_2>-0.9313321884496590</value_2>
+         <value_3>-0.1428571428571428</value_3>
+      </force_B>
+      <force_B index="29">
+         <value_1>0.8701299861745887</value_1>
+         <value_2>0.4573159343417584</value_2>
+         <value_3>-0.1836734693877551</value_3>
+      </force_B>
+      <force_B index="30">
+         <value_1>-0.9422894879774649</value_1>
+         <value_2>0.2483844849737935</value_2>
+         <value_3>-0.2244897959183675</value_3>
+      </force_B>
+      <force_B index="31">
+         <value_1>0.5214564012726958</value_1>
+         <value_2>-0.8109845146257827</value_2>
+         <value_3>-0.2653061224489797</value_3>
+      </force_B>
+      <force_B index="32">
+         <value_1>0.1612447859596757</value_1>
+         <value_2>0.9382372648917520</value_2>
+         <value_3>-0.3061224489795917</value_3>
+      </force_B>
+      <force_B index="33">
+         <value_1>-0.7415158135940245</value_1>
+         <value_2>-0.5742715248360066</value_2>
+         <value_3>-0.3469387755102040</value_3>
+      </force_B>
+      <force_B index="34">
+         <value_1>0.9186152348910062</value_1>
+         <value_2>-0.0761053944701527</value_2>
+         <value_3>-0.3877551020408164</value_3>
+      </force_B>
+      <force_B index="35">
+         <value_1>-0.6135535562198380</value_1>
+         <value_2>0.6632334161230380</value_2>
+         <value_3>-0.4285714285714286</value_3>
+      </force_B>
+      <force_B index="36">
+         <value_1>0.0043074804364479</value_1>
+         <value_2>-0.8829816424889908</value_2>
+         <value_3>-0.4693877551020410</value_3>
+      </force_B>
+      <force_B index="37">
+         <value_1>0.5778571004492351</value_1>
+         <value_2>0.6370031134506201</value_2>
+         <value_3>-0.5102040816326532</value_3>
+      </force_B>
+      <force_B index="38">
+         <value_1>-0.8309307411760506</value_1>
+         <value_2>-0.0770104743278976</value_2>
+         <value_3>-0.5510204081632653</value_3>
+      </force_B>
+      <force_B index="39">
+         <value_1>0.6420730018407561</value_1>
+         <value_2>-0.4873105167899514</value_2>
+         <value_3>-0.5918367346938773</value_3>
+      </force_B>
+      <force_B index="40">
+         <value_1>-0.1386112130048907</value_1>
+         <value_2>0.7619298102532770</value_2>
+         <value_3>-0.6326530612244899</value_3>
+      </force_B>
+      <force_B index="41">
+         <value_1>-0.3937101045114644</value_1>
+         <value_2>-0.6256447373408809</value_2>
+         <value_3>-0.6734693877551021</value_3>
+      </force_B>
+      <force_B index="42">
+         <value_1>0.6749654100482262</value_1>
+         <value_2>0.1849800356951438</value_2>
+         <value_3>-0.7142857142857144</value_3>
+      </force_B>
+      <force_B index="43">
+         <value_1>-0.5832848180010863</value_1>
+         <value_2>0.2993321383421071</value_2>
+         <value_3>-0.7551020408163265</value_3>
+      </force_B>
+      <force_B index="44">
+         <value_1>0.2104485979734934</value_1>
+         <value_2>-0.5676489585393198</value_2>
+         <value_3>-0.7959183673469388</value_3>
+      </force_B>
+      <force_B index="45">
+         <value_1>0.2064717565796532</value_1>
+         <value_2>0.5071927304255782</value_2>
+         <value_3>-0.8367346938775511</value_3>
+      </force_B>
+      <force_B index="46">
+         <value_1>-0.4332878656698556</value_1>
+         <value_2>-0.2053432054971691</value_2>
+         <value_3>-0.8775510204081632</value_3>
+      </force_B>
+      <force_B index="47">
+         <value_1>0.3781636498836639</value_1>
+         <value_2>-0.1165918950154792</value_2>
+         <value_3>-0.9183673469387754</value_3>
+      </force_B>
+      <force_B index="48">
+         <value_1>-0.1429818136393151</value_1>
+         <value_2>0.2439731163841278</value_2>
+         <value_3>-0.9591836734693877</value_3>
+      </force_B>
+      <force_B index="49">
+         <value_1>-0.0000000000000000</value_1>
+         <value_2>-0.0000000000000001</value_2>
+         <value_3>-1.0000000000000000</value_3>
+      </force_B>
+   </forceBValues>
+   <torqueBValues>
+      <torque_B index="0">
+         <value_1>0.0000000000000000</value_1>
+         <value_2>0.0000000000000000</value_2>
+         <value_3>1.0000000000000000</value_3>
+      </torque_B>
+      <torque_B index="1">
+         <value_1>-0.2085159772655856</value_1>
+         <value_2>0.1910177158662222</value_2>
+         <value_3>0.9591836734693877</value_3>
+      </torque_B>
+      <torque_B index="2">
+         <value_1>0.0345968918147294</value_1>
+         <value_2>-0.3942137379054599</value_2>
+         <value_3>0.9183673469387755</value_3>
+      </torque_B>
+      <torque_B index="3">
+         <value_1>0.2917362548924182</value_1>
+         <value_2>0.3805182836105743</value_2>
+         <value_3>0.8775510204081632</value_3>
+      </torque_B>
+      <torque_B index="4">
+         <value_1>-0.5392374591492339</value_1>
+         <value_2>-0.0953835138371363</value_2>
+         <value_3>0.8367346938775511</value_3>
+      </torque_B>
+      <torque_B index="5">
+         <value_1>0.5108127951727888</value_1>
+         <value_2>-0.3249372874995203</value_2>
+         <value_3>0.7959183673469388</value_3>
+      </torque_B>
+      <torque_B index="6">
+         <value_1>-0.1701984726812007</value_1>
+         <value_2>0.6331298349090851</value_2>
+         <value_3>0.7551020408163265</value_3>
+      </torque_B>
+      <torque_B index="7">
+         <value_1>-0.3225677226891745</value_1>
+         <value_2>-0.6210845213386554</value_2>
+         <value_3>0.7142857142857143</value_3>
+      </torque_B>
+      <torque_B index="8">
+         <value_1>0.6943604985036228</value_1>
+         <value_2>0.2535793403938270</value_2>
+         <value_3>0.6734693877551021</value_3>
+      </torque_B>
+      <torque_B index="9">
+         <value_1>-0.7158458699878787</value_1>
+         <value_2>0.2954907689667798</value_2>
+         <value_3>0.6326530612244898</value_3>
+      </torque_B>
+      <torque_B index="10">
+         <value_1>0.3416443972625526</value_1>
+         <value_2>-0.7300742327229442</value_2>
+         <value_3>0.5918367346938775</value_3>
+      </torque_B>
+      <torque_B index="11">
+         <value_1>0.2497499209822076</value_1>
+         <value_2>0.7962421031049348</value_2>
+         <value_3>0.5510204081632653</value_3>
+      </torque_B>
+      <torque_B index="12">
+         <value_1>-0.7441278146160684</value_1>
+         <value_2>-0.4312372787690036</value_2>
+         <value_3>0.5102040816326531</value_3>
+      </torque_B>
+      <torque_B index="13">
+         <value_1>0.8623970403232296</value_1>
+         <value_2>-0.1895955701012037</value_2>
+         <value_3>0.4693877551020407</value_3>
+      </torque_B>
+      <torque_B index="14">
+         <value_1>-0.5196339844211401</value_1>
+         <value_2>0.7391258707736154</value_2>
+         <value_3>0.4285714285714287</value_3>
+      </torque_B>
+      <torque_B index="15">
+         <value_1>-0.1184563259528041</value_1>
+         <value_2>-0.9141192918230526</value_2>
+         <value_3>0.3877551020408163</value_3>
+      </torque_B>
+      <torque_B index="16">
+         <value_1>0.7171549480831977</value_1>
+         <value_2>0.6044189494773192</value_2>
+         <value_3>0.3469387755102041</value_3>
+      </torque_B>
+      <torque_B index="17">
+         <value_1>-0.9511791962189340</value_1>
+         <value_2>0.0393342460337034</value_2>
+         <value_3>0.3061224489795918</value_3>
+      </torque_B>
+      <torque_B index="18">
+         <value_1>0.6834279660681245</value_1>
+         <value_2>-0.6801021074714249</value_2>
+         <value_3>0.2653061224489796</value_3>
+      </torque_B>
+      <torque_B index="19">
+         <value_1>-0.0450124757845231</value_1>
+         <value_2>0.9734362889025031</value_2>
+         <value_3>0.2244897959183674</value_3>
+      </torque_B>
+      <torque_B index="20">
+         <value_1>-0.6298089605369295</value_1>
+         <value_2>-0.7547216240909346</value_2>
+         <value_3>0.1836734693877552</value_3>
+      </torque_B>
+      <torque_B index="21">
+         <value_1>0.9809043295321613</value_1>
+         <value_2>0.1319792901926469</value_2>
+         <value_3>0.1428571428571429</value_3>
+      </torque_B>
+      <torque_B index="22">
+         <value_1>-0.8165736311358974</value_1>
+         <value_2>0.5681506637652997</value_2>
+         <value_3>0.1020408163265307</value_3>
+      </torque_B>
+      <torque_B index="23">
+         <value_1>0.2190696268674844</value_1>
+         <value_2>-0.9737864552525727</value_2>
+         <value_3>0.0612244897959183</value_3>
+      </torque_B>
+      <torque_B index="24">
+         <value_1>0.4970773279736434</value_1>
+         <value_2>0.8674662165679535</value_2>
+         <value_3>0.0204081632653061</value_3>
+      </torque_B>
+      <torque_B index="25">
+         <value_1>-0.9524943615375113</value_1>
+         <value_2>-0.3038716803379103</value_2>
+         <value_3>-0.0204081632653062</value_3>
+      </torque_B>
+      <torque_B index="26">
+         <value_1>0.9060881367324388</value_1>
+         <value_2>-0.4186357012032859</value_2>
+         <value_3>-0.0612244897959184</value_3>
+      </torque_B>
+      <torque_B index="27">
+         <value_1>-0.3840459255140067</value_1>
+         <value_2>0.9176581056687209</value_2>
+         <value_3>-0.1020408163265306</value_3>
+      </torque_B>
+      <torque_B index="28">
+         <value_1>-0.3349808822787693</value_1>
+         <value_2>-0.9313321884496590</value_2>
+         <value_3>-0.1428571428571428</value_3>
+      </torque_B>
+      <torque_B index="29">
+         <value_1>0.8701299861745887</value_1>
+         <value_2>0.4573159343417584</value_2>
+         <value_3>-0.1836734693877551</value_3>
+      </torque_B>
+      <torque_B index="30">
+         <value_1>-0.9422894879774649</value_1>
+         <value_2>0.2483844849737935</value_2>
+         <value_3>-0.2244897959183675</value_3>
+      </torque_B>
+      <torque_B index="31">
+         <value_1>0.5214564012726958</value_1>
+         <value_2>-0.8109845146257827</value_2>
+         <value_3>-0.2653061224489797</value_3>
+      </torque_B>
+      <torque_B index="32">
+         <value_1>0.1612447859596757</value_1>
+         <value_2>0.9382372648917520</value_2>
+         <value_3>-0.3061224489795917</value_3>
+      </torque_B>
+      <torque_B index="33">
+         <value_1>-0.7415158135940245</value_1>
+         <value_2>-0.5742715248360066</value_2>
+         <value_3>-0.3469387755102040</value_3>
+      </torque_B>
+      <torque_B index="34">
+         <value_1>0.9186152348910062</value_1>
+         <value_2>-0.0761053944701527</value_2>
+         <value_3>-0.3877551020408164</value_3>
+      </torque_B>
+      <torque_B index="35">
+         <value_1>-0.6135535562198380</value_1>
+         <value_2>0.6632334161230380</value_2>
+         <value_3>-0.4285714285714286</value_3>
+      </torque_B>
+      <torque_B index="36">
+         <value_1>0.0043074804364479</value_1>
+         <value_2>-0.8829816424889908</value_2>
+         <value_3>-0.4693877551020410</value_3>
+      </torque_B>
+      <torque_B index="37">
+         <value_1>0.5778571004492351</value_1>
+         <value_2>0.6370031134506201</value_2>
+         <value_3>-0.5102040816326532</value_3>
+      </torque_B>
+      <torque_B index="38">
+         <value_1>-0.8309307411760506</value_1>
+         <value_2>-0.0770104743278976</value_2>
+         <value_3>-0.5510204081632653</value_3>
+      </torque_B>
+      <torque_B index="39">
+         <value_1>0.6420730018407561</value_1>
+         <value_2>-0.4873105167899514</value_2>
+         <value_3>-0.5918367346938773</value_3>
+      </torque_B>
+      <torque_B index="40">
+         <value_1>-0.1386112130048907</value_1>
+         <value_2>0.7619298102532770</value_2>
+         <value_3>-0.6326530612244899</value_3>
+      </torque_B>
+      <torque_B index="41">
+         <value_1>-0.3937101045114644</value_1>
+         <value_2>-0.6256447373408809</value_2>
+         <value_3>-0.6734693877551021</value_3>
+      </torque_B>
+      <torque_B index="42">
+         <value_1>0.6749654100482262</value_1>
+         <value_2>0.1849800356951438</value_2>
+         <value_3>-0.7142857142857144</value_3>
+      </torque_B>
+      <torque_B index="43">
+         <value_1>-0.5832848180010863</value_1>
+         <value_2>0.2993321383421071</value_2>
+         <value_3>-0.7551020408163265</value_3>
+      </torque_B>
+      <torque_B index="44">
+         <value_1>0.2104485979734934</value_1>
+         <value_2>-0.5676489585393198</value_2>
+         <value_3>-0.7959183673469388</value_3>
+      </torque_B>
+      <torque_B index="45">
+         <value_1>0.2064717565796532</value_1>
+         <value_2>0.5071927304255782</value_2>
+         <value_3>-0.8367346938775511</value_3>
+      </torque_B>
+      <torque_B index="46">
+         <value_1>-0.4332878656698556</value_1>
+         <value_2>-0.2053432054971691</value_2>
+         <value_3>-0.8775510204081632</value_3>
+      </torque_B>
+      <torque_B index="47">
+         <value_1>0.3781636498836639</value_1>
+         <value_2>-0.1165918950154792</value_2>
+         <value_3>-0.9183673469387754</value_3>
+      </torque_B>
+      <torque_B index="48">
+         <value_1>-0.1429818136393151</value_1>
+         <value_2>0.2439731163841278</value_2>
+         <value_3>-0.9591836734693877</value_3>
+      </torque_B>
+      <torque_B index="49">
+         <value_1>-0.0000000000000000</value_1>
+         <value_2>-0.0000000000000001</value_2>
+         <value_3>-1.0000000000000000</value_3>
+      </torque_B>
+   </torqueBValues>
+</srp_values>
