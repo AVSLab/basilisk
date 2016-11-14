@@ -68,7 +68,7 @@ void ThrusterDynamicEffector::SelfInit()
     int thrustIdx = 0;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
-        /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
+         /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
          In the future a better way to handle this distinction should be implemented - Mar Cols */
         if (std::strcmp(this->ModelTag.c_str(), "ACSThrusterDynamics") == 0)
         {
@@ -89,8 +89,7 @@ void ThrusterDynamicEffector::SelfInit()
  message is not successfully linked, it will warn the user.
  @return void
  */
-void ThrusterDynamicEffector::CrossInit()
-{
+void ThrusterDynamicEffector::CrossInit(){
  /*   MassPropsData localProps;*/
     SingleMessageHeader localHeader;
     //! Begin method steps
@@ -112,6 +111,7 @@ void ThrusterDynamicEffector::CrossInit()
                   it->thrLoc_B);
  
  */
+    it->thrDir_B = it->inputThrDir_S;
     it->thrLoc_B = it->inputThrLoc_S;
     }
     
@@ -246,7 +246,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 }
 
 
-void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
+void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
     
     std::vector<ThrusterConfigData>::iterator it;
     ThrusterOperationData *ops;
@@ -261,6 +261,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
     // MassProps are missing, so setting CoM to zero momentarily
     CoMRelPos.setZero();
     forceExternal_B.setZero();
+    forceExternal_N.setZero();
     torqueExternalPntB_B.setZero();
     mDotTotal = 0.0;
     
