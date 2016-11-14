@@ -85,7 +85,7 @@ def isArrayZero(result, dim, accuracy):
 #   function to check if a double equals a truth value
 #
 def isDoubleEqual(result, truth, accuracy):
-    if (np.isnan(result) or np.isnan(truth)):
+    if (np.isnan(np.sum(result)) or np.isnan(truth)):
         return 0  # return 0 to indicate a NaN value was found
 
 
