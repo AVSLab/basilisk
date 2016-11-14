@@ -21,14 +21,14 @@
 HubEffector::HubEffector()
 {
     //! - zero mass contributions
-    effProps.mEff = 0.0;
-    effProps.rCB_B.fill(0.0);
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.rPrimeCB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    sumForceExternal_N.fill(0.0);
-    sumForceExternal_B.fill(0.0);
-    sumTorquePntB_B.fill(0.0);
+    this->effProps.mEff = 0.0;
+    this->effProps.rCB_B.fill(0.0);
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.rPrimeCB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->sumForceExternal_N.fill(0.0);
+    this->sumForceExternal_B.fill(0.0);
+    this->sumTorquePntB_B.fill(0.0);
 
     //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";

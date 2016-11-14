@@ -45,10 +45,10 @@ void SpacecraftPlus::computeEnergyMomentum()
 
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
-	hubR_N = statesIn.getStateObject("hubPosition");
-	hubV_N = statesIn.getStateObject("hubVelocity");
-    hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
-	hubOmega_BN_B = statesIn.getStateObject("hubOmega");
+	this->hubR_N = statesIn.getStateObject("hubPosition");
+	this->hubV_N = statesIn.getStateObject("hubVelocity");
+    this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
+	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
 }
 
 void SpacecraftPlus::equationsOfMotion(double t)
