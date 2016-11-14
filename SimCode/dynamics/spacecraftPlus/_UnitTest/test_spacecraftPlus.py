@@ -137,7 +137,7 @@ def test_gravityIntegratedSim(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: Gravity Integrated test failed pos unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " Gravity Integrated Sim Test"
@@ -196,10 +196,10 @@ def test_extForceBodyAndTorque(show_plots):
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [-1, 1, -1]
-    extFTObject.extForce_B = [1,2,3]
-    VehDynObject.addBodyEffector(extFTObject)
-    scSim.AddModelToTask(unitTaskName, extFTObject)
+    extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
+    extFTObject.extForce_B = [[1], [2], [3]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -232,18 +232,23 @@ def test_extForceBodyAndTorque(show_plots):
                 [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
                 ]
 
+    print truePos
+    print dataPos
+    print trueSigma
+    print dataSigma
+
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: External Body Force and Torque failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: External Body Force and Torque failed pos unit test")
 
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: External Body Force and Torque failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: External Body Force and Torque failed attitude unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " External Body Force and Torque Inegrated Sim Test"
@@ -302,10 +307,10 @@ def test_extForceInertialAndTorque1(show_plots):
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
-    extFTObject.extTorquePntB_B = [-1, 1, -1]
-    extFTObject.extForce_N = [-1, -0.5, 0.5]
-    VehDynObject.addBodyEffector(extFTObject)
-    scSim.AddModelToTask(unitTaskName, extFTObject)
+    extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
+    extFTObject.extForce_N = [[-1], [-0.5], [0.5]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -338,18 +343,23 @@ def test_extForceInertialAndTorque1(show_plots):
                 [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
                 ]
 
+    print truePos
+    print dataPos
+    print trueSigma
+    print dataSigma
+
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: External Inertial Force and Torque failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: External Inertial Force and Torque failed pos unit test")
 
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: External Inertial Force and Torque failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED: External Inertial Force and Torque failed attitude unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " External Inertial Force and Torque Inegrated Sim Test"
