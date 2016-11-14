@@ -40,8 +40,7 @@ def isArrayEqual(result, truth, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
-    if (np.isnan(np.sum(result)) or np.isnan(np.sum(truth))):
-        return 0        # return 0 to indicate a NaN value was found
+    if foundNAN(result): return 0
 
     for i in range(0,dim):
         if math.fabs(result[i+1] - truth[i]) > accuracy:
@@ -55,8 +54,7 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
-    if (np.isnan(np.sum(result)) or np.isnan(np.sum(truth))):
-        return 0        # return 0 to indicate a NaN value was found
+    if foundNAN(result): return 0
 
     for i in range(0,dim):
         if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
@@ -71,8 +69,7 @@ def isArrayZero(result, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
-    if (np.isnan(np.sum(result))):
-        return 0  # return 0 to indicate a NaN value was found
+    if foundNAN(result): return 0
 
     for i in range(0,dim):
         if (math.fabs(result[i+1]) > accuracy):
@@ -85,9 +82,7 @@ def isArrayZero(result, dim, accuracy):
 #   function to check if a double equals a truth value
 #
 def isDoubleEqual(result, truth, accuracy):
-    if (np.isnan(np.sum(result)) or np.isnan(truth)):
-        return 0  # return 0 to indicate a NaN value was found
-
+    if foundNAN(result): return 0
 
     # the result array is of dimension dim+1, as the first entry is the time stamp
     if (math.fabs(result[1] - truth) > accuracy):
@@ -146,3 +141,9 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         plt.savefig(texFileName)
 
     return
+
+def foundNAN(array):
+    if (np.isnan(np.sum(array))):
+        print "Warning: found NaN value."
+        return 1        # return 1 to indicate a NaN value was found
+    return 0
