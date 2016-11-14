@@ -29,6 +29,15 @@ FuelSloshParticle::FuelSloshParticle()
 	effProps.rPrimeCB_B.fill(0.0);
 	effProps.mEff = 0.0;
 	effProps.IEffPrimePntB_B.fill(0.0);
+
+	//! - Initialize the variables to working values
+	massFSP = 0.0;  
+	r_PB_B.setZero();   
+	pHat_B.setIdentity();   
+	k = 1.0;                  
+	c = 0.0;                  
+	nameOfRhoState = "fuelSloshParticleRho";
+	nameOfRhoDotState = "fuelSloshParticleRhoDot";
 	return;
 }
 
@@ -47,9 +56,8 @@ void FuelSloshParticle::linkInStates(DynParamManager& statesIn)
 
 void FuelSloshParticle::registerStates(DynParamManager& states)
 {
-	this->rhoState = states.registerState(1, 1, "fspRho");
-	this->rhoDotState = states.registerState(1, 1, "fspRhoDot");
-	//Initialize states?
+	this->rhoState = states.registerState(1, 1, nameOfRhoState);
+	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
 }
 
 void FuelSloshParticle::updateEffectorMassProps(double integTime) {
@@ -64,8 +72,8 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Update the inertia about B
 	rTilde_PcB_B << tilde(r_PcB_B);
 	effProps.IEffPntB_B = massFSP * rTilde_PcB_B * rTilde_PcB_B.transpose();
-}
-void FuelSloshParticle::updateEffectorMassPropRates(double integTime) {
+
+
 	//Cached values used in this function
 	rhoDot = rhoDotState->getState()(0, 0);
 	rPrime_PcB_B = rhoDot * pHat_B;

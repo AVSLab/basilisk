@@ -33,6 +33,8 @@ public:
 	Eigen::Vector3d pHat_B;    //!< slosh direction unit vector, in body frame
 	double k;                  //!< N/m, linear spring constant for fuel slosh
 	double c;                  //!< N-s/m, linear damping term for fuel slosh
+	std::string nameOfRhoState;   //!< [-] Identifier for the rho state data container
+	std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 
 private:
 	//Eigen::MatrixXd *F_G;
@@ -56,15 +58,13 @@ private:
 public:
 	FuelSloshParticle();
 	~FuelSloshParticle();
-	void registerStates(DynParamManager& states) = 0;
-	void linkInStates(DynParamManager& states) = 0;
-	//    virtual void updateBackSubstitution(double integTime)=0;
+	void registerStates(DynParamManager& states);
+	void linkInStates(DynParamManager& states);
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 		Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 		Eigen::Vector3d & vecRotcontr);
-	void computeDerivatives(double integTime) = 0;
+	void computeDerivatives(double integTime);
 	void updateEffectorMassProps(double integTime);
-	void updateEffectorMassPropRates(double integTime);
 };
 
 #endif
