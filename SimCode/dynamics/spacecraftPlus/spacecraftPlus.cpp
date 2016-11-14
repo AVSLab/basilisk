@@ -69,10 +69,13 @@ void SpacecraftPlus::equationsOfMotion(double t)
     this->vecRotContr.setZero();
     this->hub.matrixA.setZero();
     this->hub.matrixB.setZero();
-    hub.matrixC.setZero();
-    hub.matrixD.setZero();
-    hub.vecTrans.setZero();
-    hub.vecRot.setZero();
+    this->hub.matrixC.setZero();
+    this->hub.matrixD.setZero();
+    this->hub.vecTrans.setZero();
+    this->hub.vecRot.setZero();
+    this->hub.sumForceExternal_B.setZero();
+    this->hub.sumForceExternal_N.setZero();
+    this->hub.sumTorquePntB_B.setZero();
     (*this->m_SC).setZero();
     (*this->c_B).setZero();
     (*this->ISCPntB_B).setZero();
