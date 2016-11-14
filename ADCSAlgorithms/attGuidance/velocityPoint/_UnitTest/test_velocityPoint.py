@@ -88,6 +88,7 @@ def velocityPointTestFunction(show_plots):
     moduleConfig.inputNavDataName  = "inputNavName"
     moduleConfig.inputCelMessName = "inputCelName"
     moduleConfig.outputDataName = "outputName"
+    moduleConfig.mu = af.mu_E
 
     a = af.E_radius * 2.8
     e = 0.0
