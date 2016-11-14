@@ -44,7 +44,8 @@ public:
     virtual void integrateState(double t) = 0;        //! [-] Everyone will need to integrate the state
     virtual void computeEnergyMomentum();             //! [-] User can implement NRG/moment check 
 	virtual void setIntegator(StateVecIntegrator *newInt) { integrator = newInt; } //!< [-] Setter for integrator
-	void addStateEffector(StateEffector *newEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
+	void addStateEffector(StateEffector *newSateEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
+	void addDynamicEffector(DynamicEffector *newDynamicEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
 
 };
 
