@@ -26,6 +26,9 @@ HubEffector::HubEffector()
     effProps.IEffPntB_B.fill(0.0);
     effProps.rPrimeCB_B.fill(0.0);
     effProps.IEffPrimePntB_B.fill(0.0);
+    sumForceExternal_N.fill(0.0);
+    sumForceExternal_B.fill(0.0);
+    sumTorquePntB_B.fill(0.0);
 
     //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";

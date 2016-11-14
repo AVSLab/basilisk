@@ -113,18 +113,17 @@ def test_singleGravityBody(show_plots):
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([(1000.0*stateOut[0:3].transpose()).tolist()])
+    posRef.setState((1000.0*stateOut[0:3].reshape(3,1)).tolist())
     omegaRef.setState([[0.001], [-0.002], [0.003]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([(1000.0*stateOut[3:6].transpose()).tolist()])
+    velRef.setState((1000.0*stateOut[3:6].reshape(3,1)).tolist())
     
     scObject.hub.mHub = 100
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 1.0
-    totalTime = 0.25
+    totalTime = 3000.0
     currentTime = 0.0
     posArray = []
     velArray = []
