@@ -256,7 +256,7 @@ def test_extForceBodyAndTorque(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_extForceInertialAndTorque1(show_plots):
+def test_extForceInertialAndTorque(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -368,4 +368,4 @@ def test_extForceInertialAndTorque1(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(False)
+    test_extForceBodyAndTorque(False)
