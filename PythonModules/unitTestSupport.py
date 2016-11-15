@@ -20,6 +20,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 import math
 import os,errno
+import numpy as np
 
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
@@ -39,6 +40,8 @@ def isArrayEqual(result, truth, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
+    if foundNAN(result): return 0
+
     for i in range(0,dim):
         if math.fabs(result[i+1] - truth[i]) > accuracy:
             return 0    # return 0 to indicate the array's are not equal
@@ -50,6 +53,8 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
     if dim < 1:
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
+
+    if foundNAN(result): return 0
 
     for i in range(0,dim):
         if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
@@ -64,6 +69,8 @@ def isArrayZero(result, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
+    if foundNAN(result): return 0
+
     for i in range(0,dim):
         if (math.fabs(result[i+1]) > accuracy):
             return 0    # return 0 to indicate the array's are not equal
@@ -75,6 +82,8 @@ def isArrayZero(result, dim, accuracy):
 #   function to check if a double equals a truth value
 #
 def isDoubleEqual(result, truth, accuracy):
+    if foundNAN(result): return 0
+
     # the result array is of dimension dim+1, as the first entry is the time stamp
     if (math.fabs(result[1] - truth) > accuracy):
         return 0    # return 0 to indicate the doubles are not equal
@@ -132,3 +141,9 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         plt.savefig(texFileName)
 
     return
+
+def foundNAN(array):
+    if (np.isnan(np.sum(array))):
+        print "Warning: found NaN value."
+        return 1        # return 1 to indicate a NaN value was found
+    return 0
