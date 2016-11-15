@@ -3700,6 +3700,18 @@ void MRPswitch(double *q, double s2, double *s)
 }
 
 /*
+ * MRPshadow forces a switch from the current MRP to its shadow set
+ */
+void MRPshadow(double *qIn, double *qOut)
+{
+    double q2;
+    
+    q2 = v3Dot(qIn, qIn);
+    v3Scale(-1. / q2, qIn, qOut);
+    return;
+}
+
+/*
  * Makes sure that the angle x lies within +/- Pi.
  */
 double wrapToPi(double x)

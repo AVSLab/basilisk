@@ -213,6 +213,7 @@ extern "C" {
     void   MRP2Gibbs(double *q1, double *q);
     void   MRP2PRV(double *q1, double *q);
     void   MRPswitch(double *q, double s2, double *s);
+    void   MRPshadow(double *qIn, double *qOut);
     double wrapToPi(double x);
     void   PRV2C(double *q, double C[3][3]);
     void   PRV2elem(double *r, double *q);
