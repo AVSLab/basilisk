@@ -137,8 +137,6 @@ void SysProcess::singleStepNextTask(uint64_t currentNanos)
     int32_t localPriority;
     //! Begin Method steps
     //! - Check to make sure that there are models to be called.
-    routeInterfaces();
-    SystemMessaging::GetInstance()->selectMessageBuffer(messageBuffer);
     it = processTasks.begin();
     if(it == processTasks.end())
     {
