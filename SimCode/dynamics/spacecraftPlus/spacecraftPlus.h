@@ -50,7 +50,7 @@ public:
     Eigen::MatrixXd *sysTime;
     Eigen::MatrixXd *property_dcm_BS;    //!< [-] Dynamic property version of the structure to body
     Eigen::Vector3d totSCAngMomentum_N;  //!< [kg-m^2/s] Total angular momentum of the s/c in N frame compenents
-    Eigen::MatrixXd dcm_BS;              //!< [-] Transformation from structure to body frame
+    Eigen::Matrix3d dcm_BS;              //!< [-] Transformation from structure to body frame
     double totSCEnergy;                  //!< [J]    Total energy of the spacecraft
     double totSCAngMomentum;             //!< [kg-m^2/s] Magnitude of total angular momentum of the s/c
 	double currTimeStep;
