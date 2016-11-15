@@ -29,6 +29,8 @@ SpacecraftPlus::SpacecraftPlus()
     simTimePrevious = 0;
 	scStateOutMsgName = "inertial_state_output";
 	numOutMsgBuffers = 2;
+    dcm_BS.Identity();
+    struct2BdyPropertyName = "dcm_BS";
     return;
 }
 
@@ -169,6 +171,7 @@ void SpacecraftPlus::initializeDynamics()
     this->ISCPntB_B = dynManager.createProperty("inertiaSC", initISCPntB_B);
     this->ISCPntBPrime_B = dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
     this->cPrime_B = dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
+    this->property_dcm_BS = dynManager.createProperty(this->struct2BdyPropertyName, this->dcm_BS);
     this->sysTime = dynManager.createProperty(sysTimePropertyName, systemTime);
 
     //! - Register the gravity properties with the dynManager, 'erbody wants g_N!
