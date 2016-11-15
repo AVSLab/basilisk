@@ -34,8 +34,12 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     , CmdsInMsgID(-1)
     , IncomingCmdBuffer(NULL)
     , prevCommandTime(0xFFFFFFFFFFFFFFFF)
+    , inputBSName("dcm_BS")
 {
     CallCounts = 0;
+    forceExternal_B.fill(0.0);
+    torqueExternalPntB_B.fill(0.0);
+    forceExternal_N.fill(0.0);
     return;
 }
 
@@ -89,31 +93,14 @@ void ThrusterDynamicEffector::SelfInit()
  message is not successfully linked, it will warn the user.
  @return void
  */
-void ThrusterDynamicEffector::CrossInit(){
- /*   MassPropsData localProps;*/
-    SingleMessageHeader localHeader;
+void ThrusterDynamicEffector::CrossInit()
+{
+
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
                                                                      MAX_EFF_CNT*sizeof(ThrustCmdStruct), moduleID);
-    
-/*    propsInID = SystemMessaging::GetInstance()->subscribeToMessage(inputProperties,
-                                                                   sizeof(MassPropsData), moduleID);
-    SystemMessaging::GetInstance()->ReadMessage(propsInID, &localHeader,
-                                                sizeof(MassPropsData), reinterpret_cast<uint8_t *>(&localProps)); */
-    std::vector<ThrusterConfigData>::iterator it;
-    for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
-    {
-/*        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrDir_S,
-                  it->thrDir_B);
-        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrLoc_S,
-                  it->thrLoc_B);
- 
- */
-    it->thrDir_B = it->inputThrDir_S;
-    it->thrLoc_B = it->inputThrLoc_S;
-    }
     
 }
 
@@ -145,17 +132,12 @@ void ThrusterDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
             tmpThruster.thrusterDirection[2] = it->thrDir_B[2];
             tmpThruster.maxThrust = it->MaxThrust;
             tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
-            //            if (it->ThrustOps.ThrustFactor > 0.0)
-            //            {
-            //                std::cout << it->ThrustOps.ThrustFactor <<std::endl;
-            //            }
             
             SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
                                                          CurrentClock,
                                                          sizeof(ThrusterOutputData),
                                                          reinterpret_cast<uint8_t*>(&tmpThruster),
                                                          moduleID);
-            //            acsThrusters.push_back(tempThruster);
             idx ++;
         }
     }
@@ -243,6 +225,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
+    this->dcm_BS = states.getPropertyReference(inputBSName);
 }
 
 
@@ -269,6 +252,8 @@ void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
     for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
         ops = &it->ThrustOps;
+        it->thrDir_B = (*this->dcm_BS) * it->inputThrDir_S;
+        it->thrLoc_B = (*this->dcm_BS) * it->inputThrLoc_S;
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
         if((ops->ThrustOnCmd + ops->ThrusterStartTime  - currentTime) >= 0.0 &&
            ops->ThrustOnCmd > 0.0)
@@ -285,12 +270,10 @@ void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = it->thrDir_B*tmpThrustMag;
-        //v3Add(dynEffectorForce_B, SingleThrusterForce, dynEffectorForce_B);
         forceExternal_B = SingleThrusterForce + forceExternal_B;
         
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
-        // CoMRelPos = it->thrLoc_B - Props->CoM;
-        SingleThrusterTorque = CoMRelPos.cross(SingleThrusterForce);
+        SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
