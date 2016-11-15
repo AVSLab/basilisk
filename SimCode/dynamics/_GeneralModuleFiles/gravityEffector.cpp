@@ -376,7 +376,7 @@ void GravityEffector::computeGravityField()
             if(centralBody != (*it))
             {
                 Eigen::Vector3d frmGrav =
-                    (*it)->computeGravityInertial(centralPos-mappedPos , systemClock);
+                    (*it)->computeGravityInertial(mappedPos-centralPos , systemClock);
                 gravOut += frmGrav;
             }
         }
