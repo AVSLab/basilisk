@@ -141,6 +141,9 @@ def test_gravityIntegratedSim(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " Gravity Integrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -189,6 +192,8 @@ def test_extForceBodyAndTorque(show_plots):
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
@@ -232,6 +237,16 @@ def test_extForceBodyAndTorque(show_plots):
                 [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
                 ]
 
+    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+                                                  range(3))
+    moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
+                                                  range(3))
+
+    print moduleOutputSigma
+
+    plt.plot(moduleOutputSigma[:,0],moduleOutputSigma[:,1])
+    plt.show()
+
     print truePos
     print dataPos
     print trueSigma
@@ -250,8 +265,13 @@ def test_extForceBodyAndTorque(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: External Body Force and Torque failed attitude unit test")
 
+    print testFailCount
+
     if testFailCount == 0:
         print "PASSED: " + " External Body Force and Torque Inegrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
@@ -361,8 +381,13 @@ def test_extForceInertialAndTorque(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: External Inertial Force and Torque failed attitude unit test")
 
+    print testFailCount
+
     if testFailCount == 0:
         print "PASSED: " + " External Inertial Force and Torque Inegrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
