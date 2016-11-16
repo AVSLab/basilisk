@@ -56,6 +56,7 @@ void HingedRigidBodyStateEffector::linkInStates(DynParamManager& statesIn)
     this->hubVelocity = statesIn.getStateObject("hubVelocity");
     this->hubSigma = statesIn.getStateObject("hubSigma");
     this->hubOmega = statesIn.getStateObject("hubOmega");
+    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }
@@ -112,13 +113,29 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
+    MRPd sigmaBNLocal;
+    Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+    Eigen::Vector3d gravityTorquePntH_B;          /* torque of gravity on HRB about Pnt H */
+    Eigen::Vector3d g_N;                          /* gravitational acceleration in N frame */
+    Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
+    g_N = *this->g_N;
+
+    //! - Find dcmBN
+    sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+    dcmNB = sigmaBNLocal.toRotationMatrix();
+    dcmBN = dcmNB.transpose();
+    //! - Map gravity to body frame
+    g_B = dcmBN*g_N;
+
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
     this->omegaBN_S = this->dcmSB*this->omegaBNLoc_B;
     //! - Define omegaTildeBNLoc_B
     this->omegaTildeBNLoc_B << 0 , -this->omegaBNLoc_B(2), this->omegaBNLoc_B(1), this->omegaBNLoc_B(2), 0, -this->omegaBNLoc_B(0), -this->omegaBNLoc_B(1), this->omegaBNLoc_B(0), 0;
-    //! - Define a_theta (need to add in g_N)
-    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2)*this->omegaBN_S(0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rHB_B;
+    //! - Define a_theta
+    gravityTorquePntH_B = -this->d*this->sHat1_B.cross(this->mass*g_B);
+    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2)*this->omegaBN_S(0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rHB_B;
 
     //! - Start defining them good old contributions - start with translation
     //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
