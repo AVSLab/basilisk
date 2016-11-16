@@ -56,12 +56,22 @@ def listStack(vec,simStopTime,unitProcRate):
 def writeNewRWCmds(self,u_cmd,numRW):
     NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
     cmds = reactionWheelStateEffector.RWCmdStruct()
-    cmds.u_cmd = u_cmd
-    NewRWCmdsVec[0] = cmds # set the data
-    self.NewRWCmds = NewRWCmdsVec # set in module
+    for i in range(0,numRW):
+        cmds.u_cmd = u_cmd
+        NewRWCmdsVec[i] = cmds # set the data
+        self.NewRWCmds = NewRWCmdsVec # set in module
 
 def defaultReactionWheel():
     RW = reactionWheelStateEffector.ReactionWheelConfigData()
+    RW.typeName = ''
+    RW.rWB_S = [[0.],[0.],[0.]]
+    RW.gsHat_S = [[0.],[0.],[0.]]
+    RW.gtHat0_S = [[0.],[0.],[0.]]
+    RW.ggHat0_S = [[0.],[0.],[0.]]
+    RW.rWB_B = [[0.],[0.],[0.]]
+    RW.gsHat_B = [[0.],[0.],[0.]]
+    RW.gtHat0_B = [[0.],[0.],[0.]]
+    RW.ggHat0_B = [[0.],[0.],[0.]]
     RW.theta = 0.
     RW.u_current = 0.
     RW.u_max = 0.
@@ -75,6 +85,8 @@ def defaultReactionWheel():
     RW.U_s = 0.
     RW.U_d = 0.
     RW.mass = 0.
+    RW.F_B = [[0.],[0.],[0.]]
+    RW.tau_B = [[0.],[0.],[0.]]
     RW.linearFrictionRatio = 0.
     RW.RWModel = 0
     return RW
@@ -120,9 +132,9 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         pass
 
     elif testCase is 'saturation':
-        RW.u_max = 1.
+        RWs[0].u_max = 1.
         u_cmd = -1.2
-        writeNewRWCmds(ReactionWheel,u_cmd)
+        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
         expOut['u_current'] = -1.
 
@@ -151,7 +163,8 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     else:
         raise Exception('invalid test case')
 
-    ReactionWheel.AddReactionWheel(RW)
+    for i in range(0,len(RWs)):
+        ReactionWheel.AddReactionWheel(RWs[i])
 
     print "u_current: " + str(ReactionWheel.ReactionWheelData[0].u_current)
     ReactionWheel.ConfigureRWRequests(0.)
@@ -191,5 +204,5 @@ if __name__ == "__main__":
     test_unitSimReactionWheel(
         False, # show_plots
         False, # useFlag
-        'friction' # testCase
+        'saturation' # testCase
     )
