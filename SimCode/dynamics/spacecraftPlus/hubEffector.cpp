@@ -57,6 +57,8 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
     this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
     this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
     this->g_N = statesIn.getPropertyReference("g_N");
+
+    return;
 }
 
 void HubEffector::registerStates(DynParamManager& states)
@@ -66,6 +68,8 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
+
+    return;
 }
 
 void HubEffector::updateEffectorMassProps(double integTime)

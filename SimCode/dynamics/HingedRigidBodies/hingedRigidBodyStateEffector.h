@@ -45,6 +45,7 @@ public:
     double d;                       //!< [m] distance from hinge point to hinged rigid body center of mass
     double k;                       //!< [N-m/rad] torsional spring constant of hinge
     double c;                       //!< [N-m-s/rad] rotational damping coefficient of hinge
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Matrix3d IPntS_S;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rHB_B;          //!< [m] vector pointing from body frame origin to Hinge location
     Eigen::Matrix3d dcmHB;          //!< [-] DCM from body frame to hinge frame
