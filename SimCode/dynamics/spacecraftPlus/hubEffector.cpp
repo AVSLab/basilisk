@@ -21,14 +21,14 @@
 HubEffector::HubEffector()
 {
     //! - zero mass contributions
-    effProps.mEff = 0.0;
-    effProps.rCB_B.fill(0.0);
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.rPrimeCB_B.fill(0.0);
-    effProps.IEffPrimePntB_B.fill(0.0);
-    sumForceExternal_N.fill(0.0);
-    sumForceExternal_B.fill(0.0);
-    sumTorquePntB_B.fill(0.0);
+    this->effProps.mEff = 0.0;
+    this->effProps.rCB_B.fill(0.0);
+    this->effProps.IEffPntB_B.fill(0.0);
+    this->effProps.rPrimeCB_B.fill(0.0);
+    this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->sumForceExternal_N.fill(0.0);
+    this->sumForceExternal_B.fill(0.0);
+    this->sumTorquePntB_B.fill(0.0);
 
     //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";
@@ -144,11 +144,11 @@ void HubEffector::computeDerivatives(double integTime)
 
             //! - Edit both v_trans and v_rot with gravity and external force and torque
             gravityForce_B = dcmBN*gravityForce_N;
-            vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
-            vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+            this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
+            this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
             //! - Complete the Back-Substitution Method
-            intermediateVector = vecRot - matrixC*matrixA.inverse()*vecTrans;
+            intermediateVector = this->vecRot - this->matrixC*this->matrixA.inverse()*this->vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
             omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
             omegaState->setDerivative(omegaBNDot_B);

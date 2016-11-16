@@ -45,10 +45,10 @@ void SpacecraftPlus::computeEnergyMomentum()
 
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 {
-	hubR_N = statesIn.getStateObject("hubPosition");
-	hubV_N = statesIn.getStateObject("hubVelocity");
-    hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
-	hubOmega_BN_B = statesIn.getStateObject("hubOmega");
+	this->hubR_N = statesIn.getStateObject("hubPosition");
+	this->hubV_N = statesIn.getStateObject("hubVelocity");
+    this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
+	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
 }
 
 void SpacecraftPlus::equationsOfMotion(double t)
@@ -69,10 +69,13 @@ void SpacecraftPlus::equationsOfMotion(double t)
     this->vecRotContr.setZero();
     this->hub.matrixA.setZero();
     this->hub.matrixB.setZero();
-    hub.matrixC.setZero();
-    hub.matrixD.setZero();
-    hub.vecTrans.setZero();
-    hub.vecRot.setZero();
+    this->hub.matrixC.setZero();
+    this->hub.matrixD.setZero();
+    this->hub.vecTrans.setZero();
+    this->hub.vecRot.setZero();
+    this->hub.sumForceExternal_B.setZero();
+    this->hub.sumForceExternal_N.setZero();
+    this->hub.sumTorquePntB_B.setZero();
     (*this->m_SC).setZero();
     (*this->c_B).setZero();
     (*this->ISCPntB_B).setZero();

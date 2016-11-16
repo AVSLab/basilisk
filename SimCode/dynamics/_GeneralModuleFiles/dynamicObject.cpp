@@ -31,7 +31,7 @@ DynamicObject::~DynamicObject()
 
 void DynamicObject::computeEnergyMomentum()
 {
-    
+    return;
 }
 
 void DynamicObject::initializeDynamics()
@@ -53,10 +53,20 @@ void DynamicObject::initializeDynamics()
     {
         (*dynIt)->linkInStates(dynManager);
     }
-    
+
+    return;
 }
 
-void DynamicObject::addStateEffector(StateEffector *newEffector)
+void DynamicObject::addStateEffector(StateEffector *newStateEffector)
 {
-	states.push_back(newEffector);
+	this->states.push_back(newStateEffector);
+
+    return;
+}
+
+void DynamicObject::addDynamicEffector(DynamicEffector *newDynamicEffector)
+{
+    this->dynEffectors.push_back(newDynamicEffector);
+
+    return;
 }
