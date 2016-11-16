@@ -25,8 +25,17 @@
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
+	CallCounts = 0;
 	InputCmds = "reactionwheel_cmds";
 	OutputDataString = "reactionwheel_output_states";
+	OutputBufferCount = 2;
+	CmdsInMsgID = -1;
+	StateOutMsgID = -1;
+	IncomingCmdBuffer = NULL;
+	prevCommandTime = 0xFFFFFFFFFFFFFFFF;
+	this->sumF_B.setZero();
+	this->sumTau_B.setZero();
+
     effProps.IEffPntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
