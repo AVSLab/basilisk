@@ -130,7 +130,6 @@ def test_gravityIntegratedSim(show_plots):
 
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
                                                   range(3))
-    print moduleOutput[-1, :]
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
@@ -212,13 +211,13 @@ def test_extForceBodyAndTorque(show_plots):
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
+    sigmaRef.setState([[0.1], [0.2], [-0.3]])
+    omegaRef.setState([[0.001], [-0.01], [0.03]])
 
-    scObject.hub.mHub = 100
+    scObject.hub.mHub = 750.0
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -242,16 +241,6 @@ def test_extForceBodyAndTorque(show_plots):
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
 
-    print moduleOutputSigma
-
-    plt.plot(moduleOutputSigma[:,0],moduleOutputSigma[:,1])
-    plt.show()
-
-    print truePos
-    print dataPos
-    print trueSigma
-    print dataSigma
-
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
@@ -264,8 +253,6 @@ def test_extForceBodyAndTorque(show_plots):
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: External Body Force and Torque failed attitude unit test")
-
-    print testFailCount
 
     if testFailCount == 0:
         print "PASSED: " + " External Body Force and Torque Inegrated Sim Test"
@@ -338,13 +325,13 @@ def test_extForceInertialAndTorque(show_plots):
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
+    sigmaRef.setState([[0.1], [0.2], [-0.3]])
+    omegaRef.setState([[0.001], [-0.01], [0.03]])
 
-    scObject.hub.mHub = 100
+    scObject.hub.mHub = 750.0
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -363,11 +350,6 @@ def test_extForceInertialAndTorque(show_plots):
                 [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
                 ]
 
-    print truePos
-    print dataPos
-    print trueSigma
-    print dataSigma
-
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
@@ -380,8 +362,6 @@ def test_extForceInertialAndTorque(show_plots):
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: External Inertial Force and Torque failed attitude unit test")
-
-    print testFailCount
 
     if testFailCount == 0:
         print "PASSED: " + " External Inertial Force and Torque Inegrated Sim Test"

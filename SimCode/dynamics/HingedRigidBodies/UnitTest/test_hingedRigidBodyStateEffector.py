@@ -123,7 +123,7 @@ def test_hubPropagate(show_plots):
     theta2Ref.setState([[0.0]])
     thetaDot2Ref.setState([[0.0]])
 
-    scObject.hub.mHub = 750
+    scObject.hub.mHub = 750.0
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 

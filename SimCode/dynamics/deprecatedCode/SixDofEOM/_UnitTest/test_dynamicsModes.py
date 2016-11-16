@@ -743,8 +743,8 @@ if __name__ == "__main__":
                            False,        # useRW
                            False,        # useJitter
                            False,       # useThruster
-                           True,       # useHinged
+                           False,       # useHinged
                            False,       # useFuelSlosh
-                           0        # useExtForceTorque
+                           1        # useExtForceTorque
                            )
 
