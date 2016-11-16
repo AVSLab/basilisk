@@ -29,12 +29,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
+%include "std_vector.i"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
 
 namespace std {
     %template(RWConfigVector) vector<ReactionWheelConfigData>;
+	%template(RWCmdVector) vector<RWCmdStruct>;
 }
 
 %pythoncode %{

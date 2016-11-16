@@ -71,28 +71,19 @@ typedef struct {
 	Eigen::Vector3d F_B;             //!< N, single RW force with simple jitter model
 	Eigen::Vector3d tau_B;           //!< N-m, single RW torque with simple jitter model
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-	RWModels RWModel;
+	RWModels RWModel; // needs comment!
 }ReactionWheelConfigData;
 
 
 class ReactionWheelStateEffector:  public SysModel, public StateEffector {
 public:
-    EffectorMassProps effProps;
-	int numRW;
-	int numRWJitter;
-    
-public:
     ReactionWheelStateEffector();
 	~ReactionWheelStateEffector();
 	void registerStates(DynParamManager& states);
 	void linkInStates(DynParamManager& states);
-//    virtual void updateBackSubstitution(double integTime)=0;
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     void computeDerivatives(double integTime);
     void updateEffectorMassProps(double integTime);
-
-public:
-
 
 	void SelfInit();
 	void CrossInit();
@@ -109,7 +100,7 @@ public:
 	std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
-	std::string inputVehProps;                                  //!< [-] Input mass properties of vehicle
+	std::string rwVehPropsInMsgName;                                  //!< [-] Input mass properties of vehicle
 	uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
@@ -117,6 +108,8 @@ public:
 	Eigen::Vector3d sumTau_B;                                         //!< N-m Computed jitter torque in body frame
     std::string nameOfReactionWheelOmegasState;
     std::string nameOfReactionWheelThetasState;
+	int numRW;
+	int numRWJitter;
 
 private:
 	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW

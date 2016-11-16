@@ -25,10 +25,13 @@
 
 ReactionWheelStateEffector::ReactionWheelStateEffector()
 {
+	InputCmds = "reactionwheel_cmds";
+	OutputDataString = "reactionwheel_output_states";
     effProps.IEffPntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
 	effProps.IEffPrimePntB_B.fill(0.0);
+	effProps.rPrimeCB_B.fill(0.0);
 
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";
@@ -62,7 +65,10 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 	}
 
 	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
-	this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+
+	if (numRWJitter > 0) {
+		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+	}
 
 }
 
@@ -90,7 +96,6 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	{
 		matrixDcontr += RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
 		vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,1)*omegaBNLoc_B.cross(RWIt->gsHat_B);
-
 		RWi++;
 	}
 	return;
@@ -107,11 +112,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
 
 	//! - Compute Derivatives
-
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		OmegasDot(RWi,1) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
-
 		RWi++;
 	}
 
@@ -192,7 +195,7 @@ void ReactionWheelStateEffector::CrossInit()
 		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
 	}
 
-	propsID = SystemMessaging::GetInstance()->subscribeToMessage(inputVehProps,
+	propsID = SystemMessaging::GetInstance()->subscribeToMessage(rwVehPropsInMsgName,
 																 sizeof(MassPropsData), moduleID);
 	SystemMessaging::GetInstance()->ReadMessage(propsID, &localHeader,
 												sizeof(MassPropsData), reinterpret_cast<uint8_t*>(&localProps));
@@ -341,7 +344,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 
 		// minimum torque
 		if( std::abs(CmdIt->u_cmd) < this->ReactionWheelData[RWIter].u_min) {
-			CmdIt->u_cmd = 0;
+			CmdIt->u_cmd = 0.0;
 		}
 
 		// Coulomb friction

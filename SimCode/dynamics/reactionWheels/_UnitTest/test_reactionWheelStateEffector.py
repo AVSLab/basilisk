@@ -53,28 +53,31 @@ def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def defaultReactionWheel():
- RW = reactionWheelStateEffector.ReactionWheelConfigData()
- # RW.rWB_S = [0.9,0.0,0.0]
- # RW.gsHat_S = [1.0,0.0,0.0]
- # RW.ggHat0_S = [0.0,1.0,0.0]
- # RW.gtHat0_S = [0.0,0.0,1.0]
- RW.u_max = 1.0 # arbitrary
- RW.u_min = 0.1 # arbitrary
- RW.u_f = 0.01 # arbitrary
- RW.U_s = 8.5E-6 # kg-m, Honeywell HR-16 100 Nms standard balance option EOL
- RW.U_s *= 1000
- RW.U_d = 28.3E-7 # kg-m^2, Honeywell HR-16 100 Nms standard balance option EOL
- RW.U_d *= 1000
- RW.RWModel = 0
- return RW
-
-def writeNewRWCmds(self,u_cmd):
+def writeNewRWCmds(self,u_cmd,numRW):
+    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
     cmds = reactionWheelStateEffector.RWCmdStruct()
     cmds.u_cmd = u_cmd
-    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(1) # create standard vector from SWIG template (see .i file)
     NewRWCmdsVec[0] = cmds # set the data
     self.NewRWCmds = NewRWCmdsVec # set in module
+
+def defaultReactionWheel():
+    RW = reactionWheelStateEffector.ReactionWheelConfigData()
+    RW.theta = 0.
+    RW.u_current = 0.
+    RW.u_max = 0.
+    RW.u_min = 0.
+    RW.u_f = 0.
+    RW.Omega = 0.
+    RW.Omega_max = 0.
+    RW.Js = 0.
+    RW.Jt = 0.
+    RW.Jg = 0.
+    RW.U_s = 0.
+    RW.U_d = 0.
+    RW.mass = 0.
+    RW.linearFrictionRatio = 0.
+    RW.RWModel = 0
+    return RW
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -104,16 +107,10 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector()
     ReactionWheel.ModelTag = "ReactionWheel"
 
-    # RW = defaultReactionWheel()
-    RW = reactionWheelStateEffector.ReactionWheelConfigData()
-    RW.u_max = 1.e10
-    RW.u_min = 0.
-    RW.u_f = 0.
-    RW.U_s = 0.
-    RW.U_d = 0.
-    RW.RWModel = 0 # wheels are balanced
+    RWs = []
+    RWs.append(defaultReactionWheel())
 
-    writeNewRWCmds(ReactionWheel,0.0)
+    print dir(RWs[0])
 
 
     expOut = dict() # expected output
