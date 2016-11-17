@@ -24,6 +24,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 %include "sys_model.h"
 %include "dyn_effector.h"
 %include "reactionwheel_dynamics.h"
+%include "../../../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 
 namespace std {
     %template(RWConfigVector) vector<ReactionWheelConfigData>;

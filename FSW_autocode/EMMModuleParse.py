@@ -12,6 +12,15 @@
                     continue
                 autocodeObject(TaskList[i].TaskModels[j],prefix, sourceFile)
                 handledModels.append(prefix)
+
+    def printList(input, prefix, sourceFile):
+        for i in range(len(input)):
+            prefixIn = prefix + '[' + str(i) + ']'
+            if type(input[i]).__name__ == 'list':
+                printList(input[i], prefixIn, sourceFile)
+            else:
+                sourceFile.write(prefixIn + ' = ' + str(input[i])+';\n')
+            
     # This method recursively autocodes the input object.
     def autocodeObject(input, prefix, sourceFile):
         fieldNames = dir(input) # list all the variable names under current TaskModel. input = TaskList[i].TaskModels[j]
@@ -29,7 +38,7 @@
             elif fieldTypeFull[1:6] == 'class':
                 autocodeObject(fieldValue, prefix + '.' + fieldName, sourceFile)
             # list of class/struct
-            elif fieldTypeName == 'list' and str(type(fieldValue[0]))[1:6] == 'class':
+            elif fieldTypeName == 'list' and (str(type(fieldValue[0]))[1:6] == 'class'):
                 for l in range(0,len(fieldValue)):
                     autocodeObject(fieldValue[l], prefix + '.' + fieldName + '[' + str(l) + ']', sourceFile)
             # character array
@@ -38,9 +47,7 @@
                 sourceFile.write('\t' + 'strcpy(' + dest + ',' + '"' + str(fieldValue) + '"' + ')' + ';\n')
             # handle numeric lists
             elif fieldTypeName == 'list':
-                for l in range(0,len(fieldValue)):
-                    sourceFile.write('\t' + dataStr + prefix + '.' + \
-                                 str(fieldName) + '[' + str(l) + '] = ' + str(fieldValue[l])+';\n')
+                printList(fieldValue, '\t' + dataStr + prefix + '.' + str(fieldName), sourceFile)
             # non-array variable
             else:
                 sourceFile.write('\t' + dataStr + prefix + '.')
