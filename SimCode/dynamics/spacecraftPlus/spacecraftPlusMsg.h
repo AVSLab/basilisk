@@ -29,21 +29,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /*! This structure is used in the messaging system to communicate what the mass 
     properties of the vehicle are currently.*/
 typedef struct {
-    double Mass;                      //!< kg   Current spacecraft mass
-    Eigen::Vector3d rC_B;                    //!< m    Center of mass of spacecraft (relative to struct)
-    Eigen::Matrix3d ISC_PntB_B;       //!< kgm2 Inertia tensor of spacecraft (relative to body)
-    Eigen::Matrix3d dcm_BS;           //!< -- Transformation from str to body
+    double Mass;                     //!< kg   Current spacecraft mass
+    double rC_B[3];                  //!< m    Center of mass of spacecraft (relative to struct)
+    double ISC_PntB_B[3][3];         //!< kgm2 Inertia tensor of spacecraft (relative to body)
+    double dcm_BS[3][3];             //!< -- Transformation from str to body
 }SCPlusMassPropsData;
 
 /*! This structure is used in the messaging system to communicate what the 
     state of the vehicle is currently.*/
 typedef struct {
-	Eigen::Vector3d r_N;                    //!< m  Current position vector (inertial)
-	Eigen::Vector3d v_N;                    //!< m/s Current velocity vector (inertial)
-    Eigen::Vector3d sigma_BN;                  //!< -- Current MRPs (inertial)
-	Eigen::Vector3d omega_BN_B;                  //!< r/s Current angular velocity (inertial)
-	Eigen::Matrix3d dcm_BS;           //!< -- Transformation from str to body
-	Eigen::Vector3d TotalAccumDVBdy;        //!< m/s Accumulated DV for simulation
+	double r_N[3];                    //!< m  Current position vector (inertial)
+	double v_N[3];                    //!< m/s Current velocity vector (inertial)
+    double sigma_BN[3];               //!< -- Current MRPs (inertial)
+	double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
+	double dcm_BS[3][3];              //!< -- Transformation from str to body
+	double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
 }SCPlusOutputStateData;
 
