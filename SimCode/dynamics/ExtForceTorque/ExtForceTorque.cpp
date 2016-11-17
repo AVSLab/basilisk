@@ -148,7 +148,7 @@ void ExtForceTorque::readInputMessages()
             matrix represnetations in the body (B) and inerial (N) frame components are treated as 2 
             separate vectors.  Only set both if you mean to, as both vectors will be included.
  */
-void ExtForceTorque::computeBodyForceTorque(uint64_t currentTime)
+void ExtForceTorque::computeBodyForceTorque(double integTime)
 {
 	Eigen::Vector3d cmdVec;
     //! Begin method steps
