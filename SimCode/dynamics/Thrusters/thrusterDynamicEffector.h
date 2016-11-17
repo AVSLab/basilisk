@@ -113,7 +113,7 @@ public:
     ThrusterDynamicEffector();
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states);
-    void computeBodyForceTorque(double currentTime);
+    void computeBodyForceTorque(double integTime);
     
     void SelfInit();
     void CrossInit();
@@ -123,8 +123,6 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-/*    void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
-                         double currentTime);*/
     void ComputeThrusterFire(ThrusterConfigData *CurrentThruster,
                              double currentTime);
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
@@ -137,6 +135,7 @@ public:
     std::vector<ThrusterConfigData> ThrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
+    std::string inputBSName;                       //!< [-] Structure to body dynamic property
     uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
     std::vector<std::string> thrusterOutMsgNames;                //!< -- Message name for all thruster data
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
@@ -150,13 +149,14 @@ public:
     
 private:
     //    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
+    Eigen::MatrixXd *dcm_BS;               //!< [kg] spacecrafts total mass
     std::vector<uint64_t> thrusterOutMsgIds;                      //!< -- Message ID of each thruster
     std::vector<ThrusterOutputData> thrusterOutBuffer; //!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
-    int64_t propsInID;                              //!< [-] The ID associated with the mss props msg
+    //int64_t propsInID;                              //!< [-] The ID associated with the mss props msg
     ThrustCmdStruct *IncomingCmdBuffer;             //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
-    //End of copy paste
+
 };
 
 #endif /* THRUSTER_DYNAMIC_EFFECTOR_H */

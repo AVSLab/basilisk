@@ -34,8 +34,12 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     , CmdsInMsgID(-1)
     , IncomingCmdBuffer(NULL)
     , prevCommandTime(0xFFFFFFFFFFFFFFFF)
+    , inputBSName("dcm_BS")
 {
     CallCounts = 0;
+    forceExternal_B.fill(0.0);
+    torqueExternalPntB_B.fill(0.0);
+    forceExternal_N.fill(0.0);
     return;
 }
 
@@ -68,7 +72,7 @@ void ThrusterDynamicEffector::SelfInit()
     int thrustIdx = 0;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
-        /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
+         /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
          In the future a better way to handle this distinction should be implemented - Mar Cols */
         if (std::strcmp(this->ModelTag.c_str(), "ACSThrusterDynamics") == 0)
         {
@@ -91,29 +95,12 @@ void ThrusterDynamicEffector::SelfInit()
  */
 void ThrusterDynamicEffector::CrossInit()
 {
- /*   MassPropsData localProps;*/
-    SingleMessageHeader localHeader;
+
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
                                                                      MAX_EFF_CNT*sizeof(ThrustCmdStruct), moduleID);
-    
-/*    propsInID = SystemMessaging::GetInstance()->subscribeToMessage(inputProperties,
-                                                                   sizeof(MassPropsData), moduleID);
-    SystemMessaging::GetInstance()->ReadMessage(propsInID, &localHeader,
-                                                sizeof(MassPropsData), reinterpret_cast<uint8_t *>(&localProps)); */
-    std::vector<ThrusterConfigData>::iterator it;
-    for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
-    {
-/*        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrDir_S,
-                  it->thrDir_B);
-        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrLoc_S,
-                  it->thrLoc_B);
- 
- */
-    it->thrLoc_B = it->inputThrLoc_S;
-    }
     
 }
 
@@ -145,17 +132,12 @@ void ThrusterDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
             tmpThruster.thrusterDirection[2] = it->thrDir_B[2];
             tmpThruster.maxThrust = it->MaxThrust;
             tmpThruster.thrustFactor = it->ThrustOps.ThrustFactor;
-            //            if (it->ThrustOps.ThrustFactor > 0.0)
-            //            {
-            //                std::cout << it->ThrustOps.ThrustFactor <<std::endl;
-            //            }
             
             SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
                                                          CurrentClock,
                                                          sizeof(ThrusterOutputData),
                                                          reinterpret_cast<uint8_t*>(&tmpThruster),
                                                          moduleID);
-            //            acsThrusters.push_back(tempThruster);
             idx ++;
         }
     }
@@ -243,10 +225,11 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
+    this->dcm_BS = states.getPropertyReference(inputBSName);
 }
 
 
-void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
+void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     
     std::vector<ThrusterConfigData>::iterator it;
     ThrusterOperationData *ops;
@@ -261,6 +244,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
     // MassProps are missing, so setting CoM to zero momentarily
     CoMRelPos.setZero();
     forceExternal_B.setZero();
+    forceExternal_N.setZero();
     torqueExternalPntB_B.setZero();
     mDotTotal = 0.0;
     
@@ -268,28 +252,28 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
     for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
         ops = &it->ThrustOps;
+        it->thrDir_B = (*this->dcm_BS) * it->inputThrDir_S;
+        it->thrLoc_B = (*this->dcm_BS) * it->inputThrLoc_S;
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
-        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - currentTime) >= 0.0 &&
+        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= 0.0 &&
            ops->ThrustOnCmd > 0.0)
         {
-            ComputeThrusterFire(&(*it), currentTime);
+            ComputeThrusterFire(&(*it), integTime);
         }
         //! - If we are not actively firing, continue shutdown process for active thrusters
         else if(ops->ThrustFactor > 0.0)
         {
-            ComputeThrusterShut(&(*it), currentTime);
+            ComputeThrusterShut(&(*it), integTime);
         }
         //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = it->thrDir_B*tmpThrustMag;
-        //v3Add(dynEffectorForce_B, SingleThrusterForce, dynEffectorForce_B);
         forceExternal_B = SingleThrusterForce + forceExternal_B;
         
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
-        // CoMRelPos = it->thrLoc_B - Props->CoM;
-        SingleThrusterTorque = CoMRelPos.cross(SingleThrusterForce);
+        SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
@@ -300,8 +284,8 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double currentTime){
         mDotTotal += mDotSingle;
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
-    updateMassProperties(currentTime);
-    prevFireTime = currentTime;
+    updateMassProperties(integTime);
+    prevFireTime = integTime;
 
     
 }

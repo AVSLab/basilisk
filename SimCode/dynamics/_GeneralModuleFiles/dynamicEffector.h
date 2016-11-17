@@ -31,7 +31,7 @@ public:
     DynamicEffector();
     virtual ~DynamicEffector();
     virtual void linkInStates(DynParamManager& states) = 0;
-    virtual void computeBodyForceTorque(uint64_t currentTime)=0;
+    virtual void computeBodyForceTorque(double integTime)=0;
     
 public:
     Eigen::Vector3d forceExternal_N;      //! [-] External force applied by this effector in inertial frame components
