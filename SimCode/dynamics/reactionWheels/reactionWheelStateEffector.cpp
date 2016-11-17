@@ -62,22 +62,33 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
 
 void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 {
-	this->numRWJitter = 0;
-	this->numRW = 0;
-	std::vector<ReactionWheelConfigData>::iterator RWIt;
+    //! - Find number of RWs and number of RWs with jitter
+    this->numRWJitter = 0;
+    this->numRW = 0;
+    std::vector<ReactionWheelConfigData>::iterator RWIt;
 
-	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
-		if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
-			this->numRWJitter++;
-		}
-		this->numRW++;
-	}
-
+    for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
+        if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
+            this->numRWJitter++;
+        }
+        this->numRW++;
+    }
+    
 	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
 
 	if (numRWJitter > 0) {
 		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 	}
+
+    //! zero the RW Omega and theta values (is there I should do this?)
+    Eigen::MatrixXd omegasForZeroing(this->numRW,1);
+    omegasForZeroing.setZero();
+    this->OmegasState->setState(omegasForZeroing);
+    if (this->numRWJitter > 0) {
+        Eigen::MatrixXd thetasForZeroing(this->numRWJitter,1);
+        thetasForZeroing.setZero();
+        this->thetasState->setState(thetasForZeroing);
+    }
 
 }
 
@@ -103,8 +114,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
-		matrixDcontr += RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
-		vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,1)*omegaBNLoc_B.cross(RWIt->gsHat_B);
+		matrixDcontr -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
+		vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,0)*omegaBNLoc_B.cross(RWIt->gsHat_B);
 		RWi++;
 	}
 	return;
@@ -123,17 +134,12 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	//! - Compute Derivatives
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
-		OmegasDot(RWi,1) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
+		OmegasDot(RWi,0) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
 		RWi++;
 	}
 
 	OmegasState->setDerivative(OmegasDot);
 }
-
-
-
-
-
 
 /*! This method is used to clear out the current RW states and make sure
  that the overall model is ready
@@ -170,6 +176,8 @@ void ReactionWheelStateEffector::SelfInit()
 
 	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedData),
 												 OutputBufferCount, "RWSpeedData", moduleID);
+
+    return;
 }
 
 /*! This method is used to connect the input command message to the RWs.
@@ -179,19 +187,9 @@ void ReactionWheelStateEffector::SelfInit()
  */
 void ReactionWheelStateEffector::CrossInit()
 {
-
-	int64_t propsID;
-	SingleMessageHeader localHeader;
-	MassPropsData localProps;
-	Eigen::Matrix3d T_str2Bdy;
-
-	// copy T_str2bdy into eigen
-	for (int i=0; i<3; i++) {
-		for (int j=0; j<3; j++) {
-			T_str2Bdy(i,j) = localProps.T_str2Bdy[3*i+j];
-		}
-	}
-
+    //! massProps doesn't exist anymore, hardcode structure to body for now (NEEDS TO CHANGE)
+    Eigen::Matrix3d dcmBodyStru;
+    dcmBodyStru.setIdentity();
 
 	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
@@ -204,32 +202,28 @@ void ReactionWheelStateEffector::CrossInit()
 		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
 	}
 
-	propsID = SystemMessaging::GetInstance()->subscribeToMessage(rwVehPropsInMsgName,
-																 sizeof(MassPropsData), moduleID);
-	SystemMessaging::GetInstance()->ReadMessage(propsID, &localHeader,
-												sizeof(MassPropsData), reinterpret_cast<uint8_t*>(&localProps));
 	std::vector<ReactionWheelConfigData>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		if (it->gsHat_S.norm() > 0.01) {
-			it->gsHat_B = T_str2Bdy * it->gsHat_S;
+			it->gsHat_B = dcmBodyStru * it->gsHat_S;
 		} else {
 			std::cerr <<
 			"Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
 		}
 		if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
 			if (it->gtHat0_S.norm() > 0.01) {
-				it->gtHat0_B = T_str2Bdy * it->gtHat0_S;
+				it->gtHat0_B = dcmBodyStru * it->gtHat0_S;
 			} else {
 				std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
 			}
 			if (it->ggHat0_S.norm() > 0.01) {
-				it->ggHat0_B = T_str2Bdy * it->ggHat0_S;
+				it->ggHat0_B = dcmBodyStru * it->ggHat0_S;
 			} else {
 				std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
 			}
 		}
-		it->rWB_B = T_str2Bdy * it->rWB_S;
+		it->rWB_B = dcmBodyStru * it->rWB_S;
 	}
 }
 
@@ -409,19 +403,6 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 
 	}
 }
-
-/*! This method is used to compute all the dynamical effects for the RW set.
- It is an inherited method from the DynEffector class and is designed to be called
- by the dynamics plant for the simulation.
- @return void
- @param Props Current mass properties of the vehicle (using center of mass and str2bdy transformation
- @param Bstate Current state of the vehicle (not used by RW dynamics)
- @param CurrentTime Current simulation time converted to double precision
- */
-void ReactionWheelStateEffector::ComputeDynamics(MassPropsData *Props,
-											OutputStateData *Bstate,
-											double CurrentTime)
-{}
 
 /*! This method is the main cyclical call for the scheduled part of the RW
  dynamics model.  It reads the current commands array and sets the RW

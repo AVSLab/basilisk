@@ -93,9 +93,7 @@ public:
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
-	void ComputeDynamics(MassPropsData *Props, OutputStateData *Bstate,
-						 double CurrentTime);
-
+    
 public:
 	std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
 	std::string InputCmds;                                      //!< -- message used to read command inputs
