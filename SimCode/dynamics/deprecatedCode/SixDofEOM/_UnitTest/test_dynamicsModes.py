@@ -740,11 +740,11 @@ if __name__ == "__main__":
     test_unitDynamicsModes(False,       # show_plots
                            True,       # useTranslation
                            True,        # useRotation
-                           False,        # useRW
+                           True,        # useRW
                            False,        # useJitter
                            False,       # useThruster
                            False,       # useHinged
                            False,       # useFuelSlosh
-                           1        # useExtForceTorque
+                           0        # useExtForceTorque
                            )
 

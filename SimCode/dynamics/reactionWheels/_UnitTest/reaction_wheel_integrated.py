@@ -110,14 +110,10 @@ def test_reactionWheelIntegratedTest(show_plots):
     sim_model.doubleArray_setitem(cmdArray, 1, 0.010) # RW-2 [Nm]
     sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
     unitTestSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
-
-    # unitTestSim.InitializeSimulation() # HACK!!
-
-    print 'test1'
     
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, scObject)
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
@@ -144,8 +140,6 @@ def test_reactionWheelIntegratedTest(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    print 'test2'
-
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -165,13 +159,26 @@ def test_reactionWheelIntegratedTest(show_plots):
     unitTestSim.ExecuteSimulation()
 
     dataPos = posRef.getState()
+    dataSigma = sigmaRef.getState()
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
                 [-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
                 ]
 
-    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+    trueSigma = [
+                [-2.37038506e-02,  -1.91520817e-01,   4.94757184e-01]
+                ]
+
+    print dataPos
+    print truePos
+    print dataSigma
+    print trueSigma
+
+    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+                                                  range(3))
+    moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
 
     accuracy = 1e-8
@@ -179,10 +186,16 @@ def test_reactionWheelIntegratedTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Gravity Integrated test failed pos unit test")
+            testMessages.append("FAILED: Reaction Wheel Integrated Test failed pos unit test")
+
+    for i in range(0,len(trueSigma)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Reaction Wheel Integrated Test failed attitude unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Gravity Integrated Sim Test"
+        print "PASSED: " + " Reaction Wheel Integrated Sim Test"
 
     assert testFailCount < 1, testMessages
 
