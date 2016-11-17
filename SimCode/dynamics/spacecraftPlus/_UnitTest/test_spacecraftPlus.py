@@ -30,7 +30,6 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
-import macros
 import spacecraftPlus
 import sim_model
 import macros
