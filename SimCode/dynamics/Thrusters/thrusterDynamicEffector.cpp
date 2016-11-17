@@ -229,7 +229,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 }
 
 
-void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
+void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     
     std::vector<ThrusterConfigData>::iterator it;
     ThrusterOperationData *ops;
@@ -255,15 +255,15 @@ void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
         it->thrDir_B = (*this->dcm_BS) * it->inputThrDir_S;
         it->thrLoc_B = (*this->dcm_BS) * it->inputThrLoc_S;
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
-        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - currentTime) >= 0.0 &&
+        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= 0.0 &&
            ops->ThrustOnCmd > 0.0)
         {
-            ComputeThrusterFire(&(*it), currentTime);
+            ComputeThrusterFire(&(*it), integTime);
         }
         //! - If we are not actively firing, continue shutdown process for active thrusters
         else if(ops->ThrustFactor > 0.0)
         {
-            ComputeThrusterShut(&(*it), currentTime);
+            ComputeThrusterShut(&(*it), integTime);
         }
         //! - For each thruster, aggregate the current thrust direction into composite body force
         tmpThrustMag = it->MaxThrust*ops->ThrustFactor;
@@ -284,8 +284,8 @@ void ThrusterDynamicEffector::computeBodyForceTorque(uint64_t currentTime){
         mDotTotal += mDotSingle;
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
-    updateMassProperties(currentTime);
-    prevFireTime = currentTime;
+    updateMassProperties(integTime);
+    prevFireTime = integTime;
 
     
 }
