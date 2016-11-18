@@ -187,17 +187,17 @@ void SimpleNav::applyErrors()
 void SimpleNav::computeTrueOutput(uint64_t Clock)
 {
     //! - Set output state to truth data
-    v3Copy(inertialState.r_N, trueTransState.r_BN_N);
-    v3Copy(inertialState.v_N, trueTransState.v_BN_N);
-    v3Copy(inertialState.sigma, trueAttState.sigma_BN);
-    v3Copy(inertialState.omega, trueAttState.omega_BN_B);
+    v3Copy(inertialState.r_BN_N, trueTransState.r_BN_N);
+    v3Copy(inertialState.v_BN_N, trueTransState.v_BN_N);
+    v3Copy(inertialState.sigma_BN, trueAttState.sigma_BN);
+    v3Copy(inertialState.omega_BN_B, trueAttState.omega_BN_B);
     v3Copy(inertialState.TotalAccumDVBdy, trueTransState.vehAccumDV);
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     double sc2SunInrtl[3];
     double T_inrtl2bdy[3][3];
-    v3Subtract(sunState.PositionVector, inertialState.r_N, sc2SunInrtl);
+    v3Subtract(sunState.PositionVector, inertialState.r_BN_N, sc2SunInrtl);
     v3Normalize(sc2SunInrtl, sc2SunInrtl);
-    MRP2C(inertialState.sigma, T_inrtl2bdy);
+    MRP2C(inertialState.sigma_BN, T_inrtl2bdy);
     m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueAttState.vehSunPntBdy);
 }
 

@@ -253,8 +253,8 @@ void ImuSensor::computePlatformDR()
     double DRBodyFrame[3];
     double T_Bdy2Platform[3][3];
     
-    m33MultM33t(Str2Platform, StateCurrent.T_str2Bdy, T_Bdy2Platform);
-    v3Scale(-1.0, StatePrevious.sigma, MRP_Bdy2Inrtl_Prev);
+    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, T_Bdy2Platform);
+    v3Scale(-1.0, StatePrevious.sigma_BN, MRP_Bdy2Inrtl_Prev);
     if(StateCurrent.MRPSwitchCount != StatePrevious.MRPSwitchCount)
     {
         for(uint32_t i=0; i<(StateCurrent.MRPSwitchCount -
@@ -264,10 +264,10 @@ void ImuSensor::computePlatformDR()
             v3Scale(-1.0/Smag/Smag, MRP_Bdy2Inrtl_Prev, MRP_Bdy2Inrtl_Prev);
         }
     }
-    addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma, MRP_BdyPrev2BdyNow);
+    addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma_BN, MRP_BdyPrev2BdyNow);
     MRP2PRV(MRP_BdyPrev2BdyNow, DRBodyFrame);
     m33MultV3(T_Bdy2Platform, DRBodyFrame, this->trueValues.DRFramePlatform);
-    m33MultV3(T_Bdy2Platform, StateCurrent.omega, this->trueValues.AngVelPlatform);
+    m33MultV3(T_Bdy2Platform, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
 }
 
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
@@ -281,15 +281,15 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double InertialAccel[3];
     double dt;
     double T_Bdy2Platform[3][3];
-    m33MultM33t(Str2Platform, StateCurrent.T_str2Bdy, T_Bdy2Platform);
+    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, T_Bdy2Platform);
     v3Subtract(SensorPosStr.data(), MassCurrent.CoM, CmRelPos);
-    m33MultV3(StateCurrent.T_str2Bdy, CmRelPos, CmRelPos);
+    m33MultV3(StateCurrent.dcm_BS, CmRelPos, CmRelPos);
     dt = (CurrentTime - PreviousTime)*1.0E-9;
-    v3Subtract(StateCurrent.omega, StatePrevious.omega, AlphaBodyRough);
+    v3Subtract(StateCurrent.omega_BN_B, StatePrevious.omega_BN_B, AlphaBodyRough);
     v3Scale(1.0/dt, AlphaBodyRough, AlphaBodyRough);
     v3Cross(AlphaBodyRough, CmRelPos, alpha_x_r);
-    v3Cross(StateCurrent.omega, CmRelPos, omeg_x_omeg_x_r);
-    v3Cross(StateCurrent.omega, omeg_x_omeg_x_r, omeg_x_omeg_x_r);
+    v3Cross(StateCurrent.omega_BN_B, CmRelPos, omeg_x_omeg_x_r);
+    v3Cross(StateCurrent.omega_BN_B, omeg_x_omeg_x_r, omeg_x_omeg_x_r);
     v3Add(omeg_x_omeg_x_r, alpha_x_r, RotForces);
     v3Subtract(StateCurrent.TotalAccumDVBdy, StatePrevious.TotalAccumDVBdy,
                InertialAccel);
