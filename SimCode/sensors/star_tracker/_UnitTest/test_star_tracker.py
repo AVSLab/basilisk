@@ -106,11 +106,11 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
 
     # configure module input message
     OutputStateData = six_dof_eom.OutputStateData()
-    OutputStateData.r_N = [0,0,0]
-    OutputStateData.v_N = [0,0,0]
-    OutputStateData.sigma = np.array([0,0,0])
-    OutputStateData.omega = [0,0,0]
-    OutputStateData.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
+    OutputStateData.r_BN_N = [0,0,0]
+    OutputStateData.v_BN_N = [0,0,0]
+    OutputStateData.sigma_BN = np.array([0,0,0])
+    OutputStateData.omega_BN_B = [0,0,0]
+    OutputStateData.dcm_BS = [[1,0,0],[0,1,0],[0,0,1]]
     OutputStateData.TotalAccumDVBdy = [0,0,0]
     OutputStateData.MRPSwitchCount = 0
 
@@ -139,7 +139,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         # this test verifies basic input and output
         simStopTime = 0.5
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        OutputStateData.sigma = sigma
+        OutputStateData.sigma_BN = sigma
         J2000Current = 6129.15171032306 # 12-Oct-2016 15:38:27.7719122171402
         SpiceTimeOutput.J2000Current = J2000Current
         trueVector['qInrtl2Case'] = listStack(rbk.MRP2EP(sigma),simStopTime,unitProcRate)
@@ -149,10 +149,10 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         # this test verifies the structure to body transformation works properly
         simStopTime = 0.5
         sigma_str2Bdy = np.array([-0.589909452160510,-0.188883722330776,0.574331363764254])
-        T_str2Bdy = rbk.MRP2C(sigma_str2Bdy)
-        OutputStateData.T_str2Bdy = T_str2Bdy
+        dcm_BS = rbk.MRP2C(sigma_str2Bdy)
+        OutputStateData.dcm_BS = dcm_BS
         sigma = np.array([-0.390614710591786, -0.503642740963740, 0.462959869561285])
-        OutputStateData.sigma = sigma
+        OutputStateData.sigma_BN = sigma
         beta_str2Inrtl = rbk.C2EP(np.dot(rbk.MRP2C(-sigma_str2Bdy),rbk.MRP2C(sigma)))
         trueVector['qInrtl2Case'] = listStack(beta_str2Inrtl,simStopTime,unitProcRate)
         trueVector['timeTag'] =  np.arange(0,simStopTime,unitProcRate_s)
@@ -163,7 +163,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [1.0e-13] * 3)
         sigma = np.array([0,0,0])
-        OutputStateData.sigma = sigma
+        OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [noiseStd] * 3
         trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
 
@@ -175,7 +175,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
         walkBound = 0.1
         setRandomWalk(StarTracker, noiseStd*stdCorrectionFactor, [walkBound] * 3)
         sigma = np.array([0,0,0])
-        OutputStateData.sigma = sigma
+        OutputStateData.sigma_BN = sigma
         trueVector['qInrtl2Case'] = [walkBound + noiseStd*3] * 3
         trueVector['timeTag'] =  np.arange(0,simStopTime+unitProcRate_s,unitProcRate_s)
 

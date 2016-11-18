@@ -136,7 +136,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
-    SimulationBaseClass.SetCArray(vehPosition, 'double', stateMessage.r_N)
+    SimulationBaseClass.SetCArray(vehPosition, 'double', stateMessage.r_BN_N)
     SimulationBaseClass.SetCArray(sunPosition, 'double', spiceMessage.PositionVector)
     spiceMessage.PlanetName = "sun"
 

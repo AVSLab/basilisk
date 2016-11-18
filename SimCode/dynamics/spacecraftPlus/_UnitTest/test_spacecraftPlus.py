@@ -127,7 +127,7 @@ def test_gravityIntegratedSim(show_plots):
                 [-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
                 ]
 
-    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
                                                   range(3))
 
     accuracy = 1e-8
@@ -235,7 +235,7 @@ def test_extForceBodyAndTorque(show_plots):
                 [4.91025978e-01, -4.21586707e-01,  3.61459503e-01]
                 ]
 
-    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
                                                   range(3))
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))

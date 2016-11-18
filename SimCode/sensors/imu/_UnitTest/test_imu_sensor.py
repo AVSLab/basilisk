@@ -140,11 +140,11 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     # configure module input message
     StateCurrent = six_dof_eom.OutputStateData()
-    StateCurrent.r_N = [0,0,0]
-    StateCurrent.v_N = [0,0,0]
-    StateCurrent.sigma = np.array([0,0,0])
-    StateCurrent.omega = [0,0,0]
-    StateCurrent.T_str2Bdy = [[1,0,0],[0,1,0],[0,0,1]]
+    StateCurrent.r_BN_N = [0,0,0]
+    StateCurrent.v_BN_N = [0,0,0]
+    StateCurrent.sigma_BN = np.array([0,0,0])
+    StateCurrent.omega_BN_B = [0,0,0]
+    StateCurrent.dcm_BS = [[1,0,0],[0,1,0],[0,0,1]]
     StateCurrent.TotalAccumDVBdy = [0,0,0]
     StateCurrent.MRPSwitchCount = 0
 
@@ -165,9 +165,9 @@ def unitSimIMU(show_plots, useFlag, testCase):
     if testCase == 'mrp switch':
         # this test verifies basic input and output and checks the MRP switch
         simStopTime = 6.0 * 4 # run the sim long enough for the MRP to switch
-        StateCurrent.sigma = np.array([0.9,0,0])
+        StateCurrent.sigma_BN = np.array([0.9,0,0])
         omega = myRand(3)*0.1
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         accel = myRand(3)*0.1
         trueVector['AngVelPlatform'] = listStack(omega,simStopTime,unitProcRate)
         trueVector['AccelPlatform'] = listStack(accel,simStopTime,unitProcRate)
@@ -180,7 +180,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         senRotBias = myRand(3)
         ImuSensor.senRotBias = senRotBias
         omega = myRand(3)
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         omegaOut = np.asarray(omega) + np.asarray(senRotBias) # sensor sees the sum of bias and truth
         accel = myRand(3)
         senTransBias = myRand(3)
@@ -212,7 +212,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         ImuSensor.accelLSB = accelLSB # 2.77E-4 * 9.80665
         ImuSensor.gyroLSB = gyroLSB # 8.75E-3 * math.pi / 180.0
         omega = myRand(3)*0.1 # [1.05,1.15,-1.29]
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         accel = myRand(3)*0.1 # [1.05,1.15,-1.29]
         omegaDiscretized = np.fix(np.asarray(omega)/gyroLSB)*gyroLSB
         DR = omegaDiscretized*unitProcRate_s
@@ -229,7 +229,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         ImuSensor.senRotMax = .2
         ImuSensor.senTransMax = .3
         omega = [1.,-1.,0.123]
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         omegaSaturated = [.2,-.2,0.123]
         accel = [2.,-0.213,-2.]
         accelSaturated = [.3,-0.213,-.3]
@@ -248,7 +248,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         CoM = myRand(3)
         MassPropsData.CoM = CoM
         omega = myRand(3)*0.1
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         accel = myRand(3)
         domega = myRand(3)*0.1
         r_SC = SensorPosStr - CoM
@@ -275,7 +275,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         euler = myRand(3)*(np.pi/2 - 1e-3)
         ImuSensor.setStructureToPlatformDCM(euler[0], euler[1], euler[2])
         omega = myRand(3)
-        StateCurrent.omega = omega
+        StateCurrent.omega_BN_B = omega
         omegaOut = np.dot(rbk.euler3212C(euler),np.asarray(omega))
         accel = myRand(3)
         accelOut = np.dot(rbk.euler3212C(euler),np.asarray(accel))
@@ -334,10 +334,10 @@ def unitSimIMU(show_plots, useFlag, testCase):
         prevSimNanos = currSimNanos
         velStep = np.asarray(accel)*unitProcRate_s
         StateCurrent.TotalAccumDVBdy = np.asarray(StateCurrent.TotalAccumDVBdy) + np.asarray(velStep)
-        StateCurrent.omega = np.asarray(StateCurrent.omega) + np.asarray(omegaStep)
-        StateCurrent.sigma = nextMRP(StateCurrent.sigma,StateCurrent.omega,dt)
-        if np.dot(StateCurrent.sigma,StateCurrent.sigma) > 1.:
-            StateCurrent.sigma = rbk.MRPswitch(np.asarray(StateCurrent.sigma),1.)
+        StateCurrent.omega_BN_B = np.asarray(StateCurrent.omega_BN_B) + np.asarray(omegaStep)
+        StateCurrent.sigma_BN = nextMRP(StateCurrent.sigma_BN,StateCurrent.omega_BN_B,dt)
+        if np.dot(StateCurrent.sigma_BN,StateCurrent.sigma_BN) > 1.:
+            StateCurrent.sigma_BN = rbk.MRPswitch(np.asarray(StateCurrent.sigma_BN),1.)
             StateCurrent.MRPSwitchCount += 1
         unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, currSimNanos, StateCurrent )
         unitSim.ConfigureStopTime(macros.sec2nano(simStopTimeStep*float(i)))
