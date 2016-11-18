@@ -30,6 +30,7 @@ ClockSynch::ClockSynch()
 	accelFactor = 1.0;
     clockOutputID = -1;
     outputBufferCount = 2;
+	displayTime = true;
     return;
 }
 
@@ -131,4 +132,9 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
     SystemMessaging::GetInstance()->
     WriteMessage(clockOutputID, CurrentSimNanos, sizeof(SynchClockOutput),
                  reinterpret_cast<uint8_t*> (&outputData), moduleID);
+
+	if (displayTime)
+	{
+		std::cout << "\rSeconds Elapsed: " << CurrentSimNanos*1.0E-9 << std::flush;
+	}
 }
