@@ -57,7 +57,7 @@ def writeNewRWCmds(self,u_cmd,numRW):
     NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
     cmds = reactionWheelStateEffector.RWCmdStruct()
     for i in range(0,numRW):
-        cmds.u_cmd = u_cmd
+        cmds.u_cmd = u_cmd[i]
         NewRWCmdsVec[i] = cmds # set the data
         self.NewRWCmds = NewRWCmdsVec # set in module
 
@@ -65,13 +65,13 @@ def defaultReactionWheel():
     RW = reactionWheelStateEffector.ReactionWheelConfigData()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
-    RW.gsHat_S = [[0.],[0.],[0.]]
-    RW.gtHat0_S = [[0.],[0.],[0.]]
-    RW.ggHat0_S = [[0.],[0.],[0.]]
+    RW.gsHat_S = [[1.],[0.],[0.]]
+    RW.gtHat0_S = [[0.],[1.],[0.]]
+    RW.ggHat0_S = [[0.],[0.],[1.]]
     RW.rWB_B = [[0.],[0.],[0.]]
-    RW.gsHat_B = [[0.],[0.],[0.]]
-    RW.gtHat0_B = [[0.],[0.],[0.]]
-    RW.ggHat0_B = [[0.],[0.],[0.]]
+    RW.gsHat_B = [[1.],[0.],[0.]]
+    RW.gtHat0_B = [[0.],[1.],[0.]]
+    RW.ggHat0_B = [[0.],[0.],[1.]]
     RW.theta = 0.
     RW.u_current = 0.
     RW.u_max = 0.
@@ -90,6 +90,12 @@ def defaultReactionWheel():
     RW.linearFrictionRatio = 0.
     RW.RWModel = 0
     return RW
+
+def asEigen(v):
+    out = []
+    for i in range(0,len(v)):
+        out.append([v[i]])
+    return out
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -119,10 +125,11 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector()
     ReactionWheel.ModelTag = "ReactionWheel"
 
-    RWs = []
-    RWs.append(defaultReactionWheel())
+    numRW = 2
 
-    print dir(RWs[0])
+    RWs = []
+    for i in range(0,numRW):
+        RWs.append(defaultReactionWheel())
 
 
     expOut = dict() # expected output
@@ -133,32 +140,54 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 
     elif testCase is 'saturation':
         RWs[0].u_max = 1.
-        u_cmd = -1.2
+        RWs[1].u_max = 2.
+        u_cmd = [-1.2,1.5]
         writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = -1.
+        expOut['u_current'] = [-1.,1.5]
 
     elif testCase is 'minimum':
-        RW.u_min = .1
-        u_cmd = -.09
-        writeNewRWCmds(ReactionWheel,u_cmd)
+        RWs[0].u_min = .1
+        RWs[1].u_min = .0
+        u_cmd = [-.09,0.0001]
+        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = 0.
+        expOut['u_current'] = [0.,0.0001]
 
     elif testCase is 'friction':
-        u_f = 0.1
-        RW.u_f = u_f
-        Omega = -20.
-        RW.Omega = Omega
-        Omega_max = 100.
-        RW.Omega_max = Omega_max
-        linearFrictionRatio = 0.1
-        RW.linearFrictionRatio = linearFrictionRatio
-        omegaCritical = linearFrictionRatio * Omega_max
-        u_cmd = -1.
-        writeNewRWCmds(ReactionWheel,u_cmd)
+        u_f = [0.1,0.]
+        Omega = [-20.,0.]
+        Omega_max = [100.,0.]
+        linearFrictionRatio = [0.1,0.]
+        for i in range(0,numRW):
+            RWs[i].u_f = u_f[i]
+            RWs[i].Omega = Omega[i]
+            RWs[i].Omega_max = Omega_max[i]
+            RWs[i].linearFrictionRatio = linearFrictionRatio[i]
+        u_cmd = [-1.,0.]
+        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
-        expOut['u_current'] = u_cmd + u_f
+        expOut['u_current'] = np.asarray(u_cmd) + np.asarray(u_f)
+
+    elif testCase is 'jittersimple':
+        # don't run this test anymore after moving simple jitter to updateContributions -john
+        RWs[0].RWModel = 1 # simple jitter model
+        Omega = -20.
+        RWs[0].Omega = Omega
+        RWs[0].U_s = 1.
+        RWs[0].U_d = 1.
+        RWs[0].Js = 1.
+        RWs[0].Jt = 1.
+        RWs[0].Jg = 1.
+        RWs[0].u_max = 1.e4
+        RWs[0].u_min = 0.
+        RWs[0].mass = 1.
+
+        u_cmd = [0.,0.]
+        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+
+        expOut['tau_B'] = [asEigen([0.,400.,0.]),asEigen([0.,0.,0.])]
+        expOut['F_B'] = [asEigen([0.,400.,0.]),asEigen([0.,0.,0.])]
 
     else:
         raise Exception('invalid test case')
@@ -166,9 +195,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
     for i in range(0,len(RWs)):
         ReactionWheel.AddReactionWheel(RWs[i])
 
-    print "u_current: " + str(ReactionWheel.ReactionWheelData[0].u_current)
     ReactionWheel.ConfigureRWRequests(0.)
-    print "u_current: " + str(ReactionWheel.ReactionWheelData[0].u_current)
 
 
 
@@ -176,8 +203,13 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         accuracy = 1e-10
 
     for outputName in expOut.keys():
-        if expOut[outputName] != getattr(ReactionWheel.ReactionWheelData[0],outputName):
-            testFail = 1
+        for i in range(0,numRW):
+            if expOut[outputName][i] != getattr(ReactionWheel.ReactionWheelData[i],outputName):
+                print "expected: " + str(expOut[outputName][i])
+                print "got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName))
+                testFail = 1
+                break
+        if testFail:
             break
 
 
@@ -204,5 +236,5 @@ if __name__ == "__main__":
     test_unitSimReactionWheel(
         False, # show_plots
         False, # useFlag
-        'saturation' # testCase
+        'friction' # testCase
     )
