@@ -101,13 +101,8 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	Eigen::MatrixXd OmegasLoc;
 	int RWi = 0;
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
-	double cosTheta;
-	double sinTheta;
 	Eigen::Vector3d gtHat_B;
-	Eigen::Vector3d temp1;
-	Eigen::Vector3d temp2;
 	Eigen::Vector3d tempF;
-	Eigen::Vector3d tempL;
 
 	omegaBNLoc_B = hubOmega->getState();
 	OmegasLoc = OmegasState->getState();
@@ -115,6 +110,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	matrixAcontr.setZero();
 	matrixBcontr.setZero();
 	matrixCcontr.setZero();
+	matrixDcontr.setZero();
 	vecTranscontr.setZero();
 	vecRotcontr.setZero();
 
@@ -126,24 +122,16 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 		// imbalance torque
 		if (RWIt->RWModel == JitterSimple) {
 
-			cosTheta = cos(RWIt->theta);
-			sinTheta = sin(RWIt->theta);
+			gtHat_B = cos(RWIt->theta)*RWIt->gtHat0_B + sin(RWIt->theta)*RWIt->ggHat0_B; // current gtHat axis vector represented in body frame
 
-			temp1 = cosTheta * RWIt->gtHat0_B;
-			temp2 = sinTheta * RWIt->ggHat0_B;
-			gtHat_B = temp1 + temp2; // current gtHat axis vector represented in body frame
-
-			/* Fs = Us * Omega^2 */ // calculate static imbalance force
+			/* Fs = Us * Omega^2 */ // static imbalance force
 			tempF = RWIt->U_s * pow(RWIt->Omega,2) * gtHat_B;
 			vecTranscontr += tempF;
 
-			/* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
-			tempL = RWIt->rWB_B.cross(tempF);
-			/* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
-			temp2 = RWIt->U_d*pow(RWIt->Omega,2) * gtHat_B;
 			// add in dynamic imbalance torque
-			tempL += temp2;
-			vecRotcontr += tempL;
+			/* tau_s = cross(r_B,Fs) */ // static imbalance torque
+			/* tau_d = Ud * Omega^2 */ // dynamic imbalance torque
+			vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(RWIt->Omega,2) * gtHat_B );
 
 
 		} else if (RWIt->RWModel == JitterFullyCoupled) {
