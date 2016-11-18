@@ -190,8 +190,8 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     scSim.ExecuteSimulation()
 
     # log the data
-    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma_BN", range(3))
+    dataPos = scSim.pullMessageLogData("inertial_state_output.r_BN_N", range(3))
 
 
     np.set_printoptions(precision=16)

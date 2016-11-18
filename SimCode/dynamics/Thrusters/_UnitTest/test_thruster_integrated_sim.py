@@ -170,7 +170,7 @@ def test_thrusterIntegratedTest(show_plots):
     print dataSigma
     print trueSigma
 
-    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_N',
+    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
                                                   range(3))
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))

@@ -112,8 +112,8 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 		else
 		{
 			memset(&LocalState, 0x0, sizeof(OutputStateData));
-			memcpy(LocalState.r_N, r_N, 3 * sizeof(double));
-			memcpy(LocalState.v_N, v_N, 3 * sizeof(double));
+			memcpy(LocalState.r_BN_N, r_N, 3 * sizeof(double));
+			memcpy(LocalState.v_BN_N, v_N, 3 * sizeof(double));
 		}
         SystemMessaging::GetInstance()->WriteMessage(StateOutMsgID, CurrentClock,
                                                      stateMsgSize, msgPtr, moduleID);
@@ -184,8 +184,8 @@ void OrbElemConvert::ReadInputs()
 		}
 		else
 		{
-			memcpy(r_N, LocalState.r_N, 3 * sizeof(double));
-			memcpy(v_N, LocalState.v_N, 3 * sizeof(double));
+			memcpy(r_N, LocalState.r_BN_N, 3 * sizeof(double));
+			memcpy(v_N, LocalState.v_BN_N, 3 * sizeof(double));
 		}
     }
     

@@ -121,9 +121,9 @@ void BoreAngCalc::computeAxisPoint()
     double secPointVector[3];
     double primPointVector[3];
     
-    MRP2C(localState.sigma, T_inrtl2Bdy);
-    v3Subtract(localPlanet.PositionVector, localState.r_N, relPosVector);
-    v3Subtract(localPlanet.VelocityVector, localState.v_N, relVelVector);
+    MRP2C(localState.sigma_BN, T_inrtl2Bdy);
+    v3Subtract(localPlanet.PositionVector, localState.r_BN_N, relPosVector);
+    v3Subtract(localPlanet.VelocityVector, localState.v_BN_N, relVelVector);
     v3Cross(relPosVector, relVelVector, secPointVector);
     v3Normalize(secPointVector, secPointVector);
     v3Normalize(relPosVector, primPointVector);
@@ -134,7 +134,7 @@ void BoreAngCalc::computeAxisPoint()
             &(T_Inrtl2Point[1][0]));
     m33MultM33t(T_inrtl2Bdy, T_Inrtl2Point, T_Point2Bdy);
     Eigen::MatrixXd strVec = Eigen::Map<Eigen::MatrixXd>(strBoreVec, 3, 1);
-    Eigen::MatrixXd dcm_BS = Eigen::Map<Eigen::MatrixXd>(&(localState.T_str2Bdy[0][0]), 3, 3);
+    Eigen::MatrixXd dcm_BS = Eigen::Map<Eigen::MatrixXd>(&(localState.dcm_BS[0][0]), 3, 3);
     Eigen::MatrixXd bVec_B = dcm_BS*strVec;
     m33tMultV3(T_Point2Bdy, bVec_B.data(), boreVecPoint);
     

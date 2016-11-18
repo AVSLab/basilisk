@@ -137,8 +137,8 @@ def unitIntegratorsTestFunction(show_plots, useRK4, useEuler):
 
 
     # log the data
-    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    #dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma_BN", range(3))
+    #dataPos = scSim.pullMessageLogData("inertial_state_output.r_BN_N", range(3))
 
     # set expected results
     trueSigma = [

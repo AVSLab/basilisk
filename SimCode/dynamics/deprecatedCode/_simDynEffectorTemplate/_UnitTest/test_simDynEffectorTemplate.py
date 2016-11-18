@@ -208,8 +208,8 @@ def unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
     scSim.ExecuteSimulation()
 
     # log the data
-    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma_BN", range(3))
+    dataPos = scSim.pullMessageLogData("inertial_state_output.r_BN_N", range(3))
     dataOrbitalEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalEnergy")
     dataRotEnergy = scSim.GetLogVariableData("VehicleDynamicsData.totScRotEnergy")
     dataOrbitalAngMom_N = scSim.GetLogVariableData("VehicleDynamicsData.totScOrbitalAngMom_N")

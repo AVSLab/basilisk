@@ -118,7 +118,7 @@ void StarTracker::applySensorErrors()
 {
     double sigmaSensed[3];
     PRV2MRP(&(navErrors.data()[0]), this->mrpErrors);
-    addMRP(scState.sigma, this->mrpErrors, sigmaSensed);
+    addMRP(scState.sigma_BN, this->mrpErrors, sigmaSensed);
     computeQuaternion(sigmaSensed, &this->sensedValues);
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
@@ -129,7 +129,7 @@ void StarTracker::computeQuaternion(double *sigma, StarTrackerHWOutput *sensorVa
     double T_StrInrtl[3][3];
     double T_CaseInrtl[3][3];
     MRP2C(sigma, T_BdyInrtl);
-    m33tMultM33(scState.T_str2Bdy, T_BdyInrtl, T_StrInrtl);
+    m33tMultM33(scState.dcm_BS, T_BdyInrtl, T_StrInrtl);
     m33MultM33(RECAST3X3 T_CaseStr, T_StrInrtl, T_CaseInrtl);
     C2EP(T_CaseInrtl, sensorValues->qInrtl2Case);
 }
@@ -143,7 +143,7 @@ void StarTracker::computeSensorTimeTag(uint64_t CurrentSimNanos)
 void StarTracker::computeTrueOutput()
 {
     this->trueValues.timeTag = this->sensorTimeTag;
-    computeQuaternion(this->scState.sigma, &this->trueValues);
+    computeQuaternion(this->scState.sigma_BN, &this->trueValues);
 }
 
 

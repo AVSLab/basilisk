@@ -1035,11 +1035,11 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         m33MultV3(B, omega_BN_BLoc, dX + this->useTranslation*6);
 
         //! - Copy out the current state for DynEffector calls
-        memcpy(StateCurrent.r_N, r_BN_NLoc, 3*sizeof(double));
-        memcpy(StateCurrent.v_N, v_BN_NLoc, 3*sizeof(double));
-        memcpy(StateCurrent.sigma, sigma_BNLoc, 3*sizeof(double));
-        memcpy(StateCurrent.omega, omega_BN_BLoc, 3*sizeof(double));
-        memcpy(StateCurrent.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(StateCurrent.r_BN_N, r_BN_NLoc, 3*sizeof(double));
+        memcpy(StateCurrent.v_BN_N, v_BN_NLoc, 3*sizeof(double));
+        memcpy(StateCurrent.sigma_BN, sigma_BNLoc, 3*sizeof(double));
+        memcpy(StateCurrent.omega_BN_B, omega_BN_BLoc, 3*sizeof(double));
+        memcpy(StateCurrent.dcm_BS, this->T_str2Bdy, 9*sizeof(double));
         
         //! - Copy out the current mass properties for DynEffector calls
         MassProps.Mass = this->compMass;
@@ -2231,11 +2231,11 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
     if(StateOutMsgID >= 0)
     {
         OutputStateData stateOut;
-        memcpy(stateOut.r_N, this->r_BN_N, 3*sizeof(double));
-        memcpy(stateOut.v_N, this->v_BN_N, 3*sizeof(double));
-        memcpy(stateOut.sigma, this->sigma_BN, 3*sizeof(double));
-        memcpy(stateOut.omega, this->omega_BN_B, 3*sizeof(double));
-        memcpy(stateOut.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(stateOut.r_BN_N, this->r_BN_N, 3*sizeof(double));
+        memcpy(stateOut.v_BN_N, this->v_BN_N, 3*sizeof(double));
+        memcpy(stateOut.sigma_BN, this->sigma_BN, 3*sizeof(double));
+        memcpy(stateOut.omega_BN_B, this->omega_BN_B, 3*sizeof(double));
+        memcpy(stateOut.dcm_BS, this->T_str2Bdy, 9*sizeof(double));
         memcpy(stateOut.TotalAccumDVBdy, this->AccumDVBdy, 3*sizeof(double));
         stateOut.MRPSwitchCount = this->MRPSwitchCount;
         messageSys->WriteMessage(StateOutMsgID, CurrentClock,

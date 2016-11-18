@@ -32,7 +32,7 @@ SpacecraftPlus::SpacecraftPlus()
     simTimePrevious = 0;
 	scStateOutMsgName = "inertial_state_output";
 	numOutMsgBuffers = 2;
-    dcm_BS = dcm_BS.Identity();
+    dcm_BS.setIdentity();
     struct2BdyPropertyName = "dcm_BS";
     return;
 }
@@ -218,8 +218,8 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 {
 	SCPlusOutputStateData stateOut;
 
-    eigenMatrixXd2CArray(hubR_N->getState(), stateOut.r_N);
-    eigenMatrixXd2CArray(hubV_N->getState(), stateOut.v_N);
+    eigenMatrixXd2CArray(hubR_N->getState(), stateOut.r_BN_N);
+    eigenMatrixXd2CArray(hubV_N->getState(), stateOut.v_BN_N);
     eigenMatrixXd2CArray(hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);

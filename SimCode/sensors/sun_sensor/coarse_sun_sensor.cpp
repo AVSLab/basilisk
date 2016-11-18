@@ -190,18 +190,18 @@ void CoarseSunSensor::computeSunData()
 {
     double Sc2Sun_Inrtl[3];
     double sHatSunBdy[3];
-    double T_Irtl2Bdy[3][3];
+    double dcm_BN[3][3];
     
     //! Begin Method Steps
     //! - Get the position from spacecraft to Sun
-    v3Scale(-1.0, StateCurrent.r_N, Sc2Sun_Inrtl);
+    v3Scale(-1.0, StateCurrent.r_BN_N, Sc2Sun_Inrtl);
     v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
     //! - Normalize the relative position into a unit vector
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
     //! - Get the inertial to structure transformation information and convert sHat to structural frame
-    MRP2C(StateCurrent.sigma, T_Irtl2Bdy);
-    m33MultV3(T_Irtl2Bdy, Sc2Sun_Inrtl, sHatSunBdy);
-    m33tMultV3(this->StateCurrent.T_str2Bdy, sHatSunBdy, this->sHatStr);
+    MRP2C(StateCurrent.sigma_BN, dcm_BN);
+    m33MultV3(dcm_BN, Sc2Sun_Inrtl, sHatSunBdy);
+    m33tMultV3(this->StateCurrent.dcm_BS, sHatSunBdy, this->sHatStr);
 }
 
 /*! This method computes the tru sensed values for the sensor */

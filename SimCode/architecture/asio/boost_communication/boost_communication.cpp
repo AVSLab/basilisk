@@ -241,10 +241,10 @@ void OpenGLIO::computeSunHeadingData()
     double Sc2Sun_Inrtl[3];
     double T_Irtl2Bdy[3][3];
     
-    v3Scale(-1.0, this->stateInMsgBuffer.r_N, Sc2Sun_Inrtl);
+    v3Scale(-1.0, this->stateInMsgBuffer.r_BN_N, Sc2Sun_Inrtl);
     v3Add(Sc2Sun_Inrtl, this->sunEphmInMsgBuffer.PositionVector, Sc2Sun_Inrtl);
     v3Normalize(Sc2Sun_Inrtl, this->scSim->sHatN);
-    MRP2C(this->stateInMsgBuffer.sigma, T_Irtl2Bdy);
+    MRP2C(this->stateInMsgBuffer.sigma_BN, T_Irtl2Bdy);
     m33MultV3(T_Irtl2Bdy, this->scSim->sHatN, this->scSim->sHatB);
 }
 
@@ -257,7 +257,7 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
     // map sim time
     this->scSim->time = currentSimNanos*1.0E-9;
     // map helicentric distance to sun from spacecraft
-    v3Scale(-1.0, this->stateInMsgBuffer.r_N, sc2Sun_N);
+    v3Scale(-1.0, this->stateInMsgBuffer.r_BN_N, sc2Sun_N);
     v3Add(sc2Sun_N, this->sunEphmInMsgBuffer.PositionVector, sc2Sun_N);
     this->scSim->helioRadius =  v3Norm(sc2Sun_N)*m2km;   /* km */
   
@@ -277,9 +277,9 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
     }
     
     // map the spacecraft state
-    v3Set(this->stateInMsgBuffer.sigma[0], this->stateInMsgBuffer.sigma[1], this->stateInMsgBuffer.sigma[2], this->scSim->sigma);
-    v3Set(this->stateInMsgBuffer.r_N[0]*m2km, this->stateInMsgBuffer.r_N[1]*m2km, this->stateInMsgBuffer.r_N[2]*m2km, this->scSim->r_N);
-    v3Set(this->stateInMsgBuffer.v_N[0]*m2km, this->stateInMsgBuffer.v_N[1]*m2km, this->stateInMsgBuffer.v_N[2]*m2km, this->scSim->v_N);
+    v3Set(this->stateInMsgBuffer.sigma_BN[0], this->stateInMsgBuffer.sigma_BN[1], this->stateInMsgBuffer.sigma_BN[2], this->scSim->sigma);
+    v3Set(this->stateInMsgBuffer.r_BN_N[0]*m2km, this->stateInMsgBuffer.r_BN_N[1]*m2km, this->stateInMsgBuffer.r_BN_N[2]*m2km, this->scSim->r_N);
+    v3Set(this->stateInMsgBuffer.v_BN_N[0]*m2km, this->stateInMsgBuffer.v_BN_N[1]*m2km, this->stateInMsgBuffer.v_BN_N[2]*m2km, this->scSim->v_N);
     
     rv2elem(this->scSim->mu, this->scSim->r_N, this->scSim->v_N, &this->scSim->oe);
     
