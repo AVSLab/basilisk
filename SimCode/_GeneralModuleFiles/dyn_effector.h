@@ -37,11 +37,11 @@ typedef struct {
 /*! This structure is used in the messaging system to communicate what the 
     state of the vehicle is currently.*/
 typedef struct {
-    double r_N[3];                    //!< m  Current position vector (inertial)
-    double v_N[3];                    //!< m/s Current velocity vector (inertial)
-    double sigma[3];                  //!< -- Current MRPs (inertial)
-    double omega[3];                  //!< r/s Current angular velocity (inertial)
-    double T_str2Bdy[3][3];           //!< -- Trans from st2bdy Double booked for ease
+    double r_BN_N[3];                 //!< m  Current position vector (inertial)
+    double v_BN_N[3];                 //!< m/s Current velocity vector (inertial)
+    double sigma_BN[3];               //!< -- Current MRPs (inertial)
+    double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
+    double dcm_BS[3][3];              //!< -- Trans from st2bdy Double booked for ease
     double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
 }OutputStateData;
