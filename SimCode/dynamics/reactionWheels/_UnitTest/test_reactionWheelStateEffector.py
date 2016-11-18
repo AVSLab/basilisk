@@ -85,8 +85,6 @@ def defaultReactionWheel():
     RW.U_s = 0.
     RW.U_d = 0.
     RW.mass = 0.
-    RW.F_B = [[0.],[0.],[0.]]
-    RW.tau_B = [[0.],[0.],[0.]]
     RW.linearFrictionRatio = 0.
     RW.RWModel = 0
     return RW
@@ -168,26 +166,6 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
 
         expOut['u_current'] = np.asarray(u_cmd) + np.asarray(u_f)
-
-    elif testCase is 'jittersimple':
-        # don't run this test anymore after moving simple jitter to updateContributions -john
-        RWs[0].RWModel = 1 # simple jitter model
-        Omega = -20.
-        RWs[0].Omega = Omega
-        RWs[0].U_s = 1.
-        RWs[0].U_d = 1.
-        RWs[0].Js = 1.
-        RWs[0].Jt = 1.
-        RWs[0].Jg = 1.
-        RWs[0].u_max = 1.e4
-        RWs[0].u_min = 0.
-        RWs[0].mass = 1.
-
-        u_cmd = [0.,0.]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
-
-        expOut['tau_B'] = [asEigen([0.,400.,0.]),asEigen([0.,0.,0.])]
-        expOut['F_B'] = [asEigen([0.,400.,0.]),asEigen([0.,0.,0.])]
 
     else:
         raise Exception('invalid test case')

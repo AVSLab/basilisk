@@ -33,8 +33,6 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 	StateOutMsgID = -1;
 	IncomingCmdBuffer = NULL;
 	prevCommandTime = 0xFFFFFFFFFFFFFFFF;
-	this->sumF_B.setZero();
-	this->sumTau_B.setZero();
 
     effProps.IEffPntB_B.fill(0.0);
     effProps.rCB_B.fill(0.0);
@@ -103,6 +101,13 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	Eigen::MatrixXd OmegasLoc;
 	int RWi = 0;
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
+	double cosTheta;
+	double sinTheta;
+	Eigen::Vector3d gtHat_B;
+	Eigen::Vector3d temp1;
+	Eigen::Vector3d temp2;
+	Eigen::Vector3d tempF;
+	Eigen::Vector3d tempL;
 
 	omegaBNLoc_B = hubOmega->getState();
 	OmegasLoc = OmegasState->getState();
@@ -111,11 +116,39 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	matrixBcontr.setZero();
 	matrixCcontr.setZero();
 	vecTranscontr.setZero();
+	vecRotcontr.setZero();
 
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		matrixDcontr -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
 		vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,0)*omegaBNLoc_B.cross(RWIt->gsHat_B);
+
+		// imbalance torque
+		if (RWIt->RWModel == JitterSimple) {
+
+			cosTheta = cos(RWIt->theta);
+			sinTheta = sin(RWIt->theta);
+
+			temp1 = cosTheta * RWIt->gtHat0_B;
+			temp2 = sinTheta * RWIt->ggHat0_B;
+			gtHat_B = temp1 + temp2; // current gtHat axis vector represented in body frame
+
+			/* Fs = Us * Omega^2 */ // calculate static imbalance force
+			tempF = RWIt->U_s * pow(RWIt->Omega,2) * gtHat_B;
+			vecTranscontr += tempF;
+
+			/* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
+			tempL = RWIt->rWB_B.cross(tempF);
+			/* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
+			temp2 = RWIt->U_d*pow(RWIt->Omega,2) * gtHat_B;
+			// add in dynamic imbalance torque
+			tempL += temp2;
+			vecRotcontr += tempL;
+
+
+		} else if (RWIt->RWModel == JitterFullyCoupled) {
+			std::cerr << "Error: fully-coupled reaction wheel jitter not currently supported.";
+		}
 		RWi++;
 	}
 	return;
@@ -322,16 +355,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 	std::vector<RWCmdStruct>::iterator CmdIt;
 	int RWIter = 0;
 	double u_s;
-	double cosTheta;
-	double sinTheta;
-	Eigen::Vector3d gtHat_B;
-	Eigen::Vector3d temp1;
-	Eigen::Vector3d temp2;
 	double omegaCritical;
-
-	// zero the sum vectors of RW jitter torque and force
-	this->sumTau_B.setZero();
-	this->sumF_B.setZero();
 
 	// loop through commands
 	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
@@ -369,35 +393,6 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 		}
 
 		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
-
-		// zero previous RW jitter torque/force vector
-		this->ReactionWheelData[RWIter].tau_B.setZero();
-		this->ReactionWheelData[RWIter].F_B.setZero();
-		// imbalance torque
-		if (this->ReactionWheelData[RWIter].RWModel == JitterSimple) {
-
-			cosTheta = cos(this->ReactionWheelData[RWIter].theta);
-			sinTheta = sin(this->ReactionWheelData[RWIter].theta);
-
-			temp1 = cosTheta * this->ReactionWheelData[RWIter].gtHat0_B;
-			temp2 = sinTheta * this->ReactionWheelData[RWIter].ggHat0_B;
-			gtHat_B = temp1 + temp2; // current gtHat axis vector represented in body frame
-
-			/* Fs = Us * Omega^2 */ // calculate static imbalance force
-			this->ReactionWheelData[RWIter].F_B = this->ReactionWheelData[RWIter].U_s * pow(this->ReactionWheelData[RWIter].Omega,2) * gtHat_B;
-			this->sumF_B = this->ReactionWheelData[RWIter].F_B + this->sumF_B;
-
-			/* tau_s = cross(r_B,Fs) */ // calculate static imbalance torque
-			this->ReactionWheelData[RWIter].tau_B = this->ReactionWheelData[RWIter].rWB_B.cross(this->ReactionWheelData[RWIter].F_B);
-			/* tau_d = Ud * Omega^2 */ // calculate dynamic imbalance torque
-			temp2 = this->ReactionWheelData[RWIter].U_d*pow(this->ReactionWheelData[RWIter].Omega,2) * gtHat_B;
-			// add in dynamic imbalance torque
-			this->ReactionWheelData[RWIter].tau_B = this->ReactionWheelData[RWIter].tau_B + temp2;
-			this->sumTau_B = this->ReactionWheelData[RWIter].tau_B + this->sumTau_B;
-
-		} else if (this->ReactionWheelData[RWIter].RWModel == JitterFullyCoupled) {
-
-		}
 
 		RWIter++;
 

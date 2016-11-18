@@ -68,8 +68,6 @@ typedef struct {
 	double U_s;                //!< kg-m, static imbalance
 	double U_d;                //!< kg-m^2, dynamic imbalance
 	double mass;               //!< kg, reaction wheel rotor mass
-	Eigen::Vector3d F_B;             //!< N, single RW force with simple jitter model
-	Eigen::Vector3d tau_B;           //!< N-m, single RW torque with simple jitter model
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 	RWModels RWModel; // needs comment!
 }ReactionWheelConfigData;
@@ -102,8 +100,6 @@ public:
 	uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<RWCmdStruct> NewRWCmds;                         //!< -- Incoming attitude commands
 	RWSpeedData outputStates;                                   //!< (-) Output data from the reaction wheels
-	Eigen::Vector3d sumF_B;                                           //!< N  Computed jitter force in body frame
-	Eigen::Vector3d sumTau_B;                                         //!< N-m Computed jitter torque in body frame
     std::string nameOfReactionWheelOmegasState;
     std::string nameOfReactionWheelThetasState;
 	int numRW;
