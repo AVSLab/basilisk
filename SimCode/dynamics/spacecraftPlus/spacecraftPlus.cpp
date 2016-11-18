@@ -32,7 +32,7 @@ SpacecraftPlus::SpacecraftPlus()
     simTimePrevious = 0;
 	scStateOutMsgName = "inertial_state_output";
 	numOutMsgBuffers = 2;
-    dcm_BS = dcm_BS.Identity();
+    dcm_BS.setIdentity();
     struct2BdyPropertyName = "dcm_BS";
     return;
 }
