@@ -38,8 +38,8 @@ typedef struct {
 /*! This structure is used in the messaging system to communicate what the 
     state of the vehicle is currently.*/
 typedef struct {
-	double r_N[3];                    //!< m  Current position vector (inertial)
-	double v_N[3];                    //!< m/s Current velocity vector (inertial)
+	double r_BN_N[3];                 //!< m  Current position vector (inertial)
+	double v_BN_N[3];                 //!< m/s Current velocity vector (inertial)
     double sigma_BN[3];               //!< -- Current MRPs (inertial)
 	double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
 	double dcm_BS[3][3];              //!< -- Transformation from str to body
