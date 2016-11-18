@@ -105,9 +105,8 @@ def test_thrusterIntegratedTest(show_plots):
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
 
-    
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, thrusterDynamicEffector)
+    unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
@@ -145,9 +144,9 @@ def test_thrusterIntegratedTest(show_plots):
     sigmaRef.setState([[0.1], [0.2], [-0.3]])
     omegaRef.setState([[0.001], [-0.01], [0.03]])
 
-    scObject.hub.mHub = 750.0
+    scObject.hub.mHub = 790.0
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.IHubPntBc_B = [[905.46063422339966, 0.0, 0.0], [0.0, 805.46063422339967, 0.0], [0.0, 0.0, 605.46063422339967]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -159,11 +158,11 @@ def test_thrusterIntegratedTest(show_plots):
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
-                [-6.78159336e+06,   4.94686853e+06,   5.48674175e+06]
+                [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
                 ]
 
     trueSigma = [
-                [ 1.18593650e-01, -3.64833149e-01,  4.52223736e-01]
+                [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
                 ]
 
     print dataPos
@@ -183,6 +182,7 @@ def test_thrusterIntegratedTest(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Thruster Integrated Test failed pos unit test")
 
+    accuracy = 1e-5
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
@@ -199,4 +199,4 @@ def test_thrusterIntegratedTest(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_thrusterIntegratedTest()(False)
+    test_thrusterIntegratedTest(False)

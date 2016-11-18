@@ -243,9 +243,9 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     //! - Zero out the structure force/torque for the thruster set
     // MassProps are missing, so setting CoM to zero momentarily
     CoMRelPos.setZero();
-    forceExternal_B.setZero();
-    forceExternal_N.setZero();
-    torqueExternalPntB_B.setZero();
+    this->forceExternal_B.setZero();
+    this->forceExternal_N.setZero();
+    this->torqueExternalPntB_B.setZero();
     mDotTotal = 0.0;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
@@ -270,11 +270,11 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         // Apply dispersion to magnitude
         tmpThrustMag *= (1. + it->thrusterMagDisp);
         SingleThrusterForce = it->thrDir_B*tmpThrustMag;
-        forceExternal_B = SingleThrusterForce + forceExternal_B;
+        this->forceExternal_B = SingleThrusterForce + forceExternal_B;
         
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
-        torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
+        this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
         {

@@ -133,7 +133,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     }
 
     //! - Compute the derivatives of the hub states before looping through stateEffectors
-    hub.computeDerivatives(t);
+    this->hub.computeDerivatives(t);
 
     //! - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)

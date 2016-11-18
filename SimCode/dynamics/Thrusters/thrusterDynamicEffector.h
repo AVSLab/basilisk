@@ -144,8 +144,6 @@ public:
     double thrFactorToTime(ThrusterConfigData *thrData,
                            std::vector<ThrusterTimePair> *thrRamp);
     StateData *hubSigma;
-    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector
-    Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
     
 private:
     //    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
