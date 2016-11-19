@@ -42,6 +42,7 @@ SimpleNav::SimpleNav()
     memset(&trueAttState, 0x0, sizeof(NavAttOut));
     memset(&estTransState, 0x0, sizeof(NavTransOut));
     memset(&trueTransState, 0x0, sizeof(NavTransOut));
+    this->useErrors = true;
     return;
 }
 
@@ -75,35 +76,38 @@ void SimpleNav::SelfInit()
     outputTransID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputTransName, sizeof(NavTransOut), outputBufferCount,
                      "NavTransOut", moduleID);
-    //! - Initialize the propagation matrix to default values for use in update
-    AMatrix.clear();
-    AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
-    mSetIdentity(AMatrix.data(), numStates, numStates);
-    it = AMatrix.begin();
-    //! - Depending on whether we cross-prop position/attitude, set off-diagonal terms
-    for(uint32_t i=0; i<3 && (crossTrans || crossAtt); i++)
-    {
-        it += i + 3;  // Velocity propagation location
-        *it = crossTrans ? 1.0 : 0.0; // Scale this by dt in the UpdateState method
-        it += 6;
-        *it = crossAtt ? 0.25 : 0.0; // MRPs propagate as 1/4 omega when near zero (SAA for errors)
-        it += 9 - i;
+
+    if (this->useErrors) {
+        //! - Initialize the propagation matrix to default values for use in update
+        AMatrix.clear();
+        AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
+        mSetIdentity(AMatrix.data(), numStates, numStates);
+        it = AMatrix.begin();
+        //! - Depending on whether we cross-prop position/attitude, set off-diagonal terms
+        for(uint32_t i=0; i<3 && (crossTrans || crossAtt); i++)
+        {
+            it += i + 3;  // Velocity propagation location
+            *it = crossTrans ? 1.0 : 0.0; // Scale this by dt in the UpdateState method
+            it += 6;
+            *it = crossAtt ? 0.25 : 0.0; // MRPs propagate as 1/4 omega when near zero (SAA for errors)
+            it += 9 - i;
+        }
+        //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
+        if(PMatrix.size() != numStates*numStates)
+        {
+            std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
+            std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
+            PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
+                           0.0);
+        }
+        //! - Set the matrices of the lower level error propagation (GaussMarkov)
+        errorModel.setNoiseMatrix(PMatrix);
+        errorModel.setRNGSeed(RNGSeed);
+        errorModel.setUpperBounds(walkBounds);
     }
-    //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(PMatrix.size() != numStates*numStates)
-    {
-        std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
-        std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
-        PMatrix.insert(PMatrix.begin()+PMatrix.size(), numStates*numStates - PMatrix.size(),
-                       0.0);
-    }
-    //! - Set the matrices of the lower level error propagation (GaussMarkov)
-    errorModel.setNoiseMatrix(PMatrix);
-    errorModel.setRNGSeed(RNGSeed);
-    errorModel.setUpperBounds(walkBounds);
 }
 
-/*! This method pulls the input message IDs from the messaging system.  It will 
+/*! This method pulls the input message IDs from the messaging system.  It will
     alert the user if either of them are not found in the messaging database
     @return void
 */
@@ -181,6 +185,21 @@ void SimpleNav::applyErrors()
     }
 }
 
+void SimpleNav::applyNoErrors()
+{
+    //! - Add errors to the simple cases (everything except sun-pointing)
+    v3Copy(trueTransState.r_BN_N, estTransState.r_BN_N);
+    v3Copy(trueTransState.v_BN_N, estTransState.v_BN_N);
+    v3Copy(trueAttState.sigma_BN, estAttState.sigma_BN);
+    v3Copy(trueAttState.omega_BN_B, estAttState.omega_BN_B);
+    v3Copy(trueTransState.vehAccumDV, estTransState.vehAccumDV);
+    //! - Add errors to  sun-pointing
+    if(inputSunID >= 0) {
+        v3Copy(trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
+    }
+}
+
+
 /*! This method uses the input messages as well as the calculated model errors to
  compute what the output navigation state should be.
     @return void
@@ -242,8 +261,12 @@ void SimpleNav::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
     computeTrueOutput(CurrentSimNanos);
-    computeErrors(CurrentSimNanos);
-    applyErrors();
+    if (this->useErrors) {
+        computeErrors(CurrentSimNanos);
+        applyErrors();
+    } else {
+        applyNoErrors();
+    }
     writeOutputMessages(CurrentSimNanos);
     this->prevTime = CurrentSimNanos;
 }
