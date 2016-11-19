@@ -16,9 +16,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 '''
 #
 #   Integrated Unit Test Script
-#   Purpose:  Run the external ForceTorque dynEffector by specifying the forces and torques in a FSW module
+#   Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
+#             MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
 #   Author:  Hanspeter Schaub
-#   Creation Date:  Oct. 11, 2016
+#   Creation Date:  Nov. 19, 2016
 #
 
 import pytest
@@ -39,15 +40,18 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
+# import general simulation support files
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
 import macros
+
+# import simulation related support
 import spacecraftPlus
 import sim_model
+import ExtForceTorque
+import simIncludeGravity
 
-import spice_interface
-import six_dof_eom
-import ExternalForceTorque
+# import FSW Algorithm related support
 import MRP_Steering
 import vehicleConfigData
 
@@ -63,103 +67,73 @@ import vehicleConfigData
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useTranslation, useRotation, useExtForceTorque", [
-     (True, True, 1)
-    ,(True, True, 2)
+@pytest.mark.parametrize("useTranslation, useRotation", [
+     (True, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(show_plots, useTranslation, useRotation, useExtForceTorque):
+def test_bskAttitudeFeedback(show_plots, useTranslation, useRotation):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitDynamicsModesTestFunction(
-            show_plots, useTranslation, useRotation, useExtForceTorque)
+    [testResults, testMessage] = bskAttitudeFeedback(
+            show_plots, useTranslation, useRotation)
     assert testResults < 1, testMessage
 
 
 
-def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useExtForceTorque):
+def bskAttitudeFeedback(show_plots, useTranslation, useRotation):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     simTaskName = "simTask"
     simProcessName = "simProcess"
-    fswTaskName = "fswTask"
-    fswProcessName = "fswProcess"
 
+    #  Create a sim module as an empty container
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
 
 
     #
-    #  create the dynamics simulation process
+    #  create the simulation process
     #
-
     dynProcess = scSim.CreateNewProcess(simProcessName)
+
     # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask(simTaskName, macros.sec2nano(0.1)))
+    simulationTimeStep = macros.sec2nano(.1)
+    dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
 
-    VehDynObject = six_dof_eom.SixDofEOM()
-    spiceObject = spice_interface.SpiceInterface()
+    #
+    #   setup the simulation tasks/objects
+    #
 
-    #Initialize the ephemeris module
-    spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = splitPath[0] + '/Basilisk/External/EphemerisData/'
-    spiceObject.UTCCalInit = "2014 March 27, 14:00:00.0"
-    spiceObject.OutputBufferCount = 2
-    spiceObject.PlanetNames = spice_interface.StringVector(
-        ["earth"])
-    spiceObject.zeroBase = "earth"
+    # initialize spacecraftPlus object and set properties
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+    scObject.hub.mHub = 750.0                   # kg - spacecraft mass
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]] # kg*m^2
+    scObject.hub.useTranslation = True
+    scObject.hub.useRotation = True
 
-    mu_earth = 0.3986004415E+15 # [m^3/s^2]
-    reference_radius_earth = 0.6378136300E+07 # [m]
-    EarthGravBody = six_dof_eom.GravityBodyData()
-    EarthGravBody.BodyMsgName = "earth_planet_data"
-    EarthGravBody.outputMsgName = "earth_display_frame_data"
-    EarthGravBody.IsCentralBody = True
-    EarthGravBody.mu = mu_earth
+    # add spacecraftPlus object to the simulation process
+    scSim.AddModelToTask(simTaskName, scObject)
 
-    scSim.AddModelToTask(simTaskName, spiceObject)
 
-    # Initialize Spacecraft Data
-    VehDynObject.ModelTag = "VehicleDynamicsData"
-    VehDynObject.PositionInit = six_dof_eom.DoubleVector([-4020338.690396649,	7490566.741852513,	5248299.211589362])
-    VehDynObject.VelocityInit = six_dof_eom.DoubleVector([-5199.77710904224,	-3436.681645356935,	1041.576797498721])
-    #Note that the above position/velocity get overwritten by the ICs from the target ephemeris
-    VehDynObject.AttitudeInit = six_dof_eom.DoubleVector([0.1, 0.2, -.3])
-    VehDynObject.AttRateInit = six_dof_eom.DoubleVector([0.001, -0.01, 0.03])
-    VehDynObject.baseMass = 750.0
-    VehDynObject.baseInertiaInit = six_dof_eom.DoubleVector([900, 0.0, 0.0,
-                                                         0.0, 800.0, 0.0,
-                                                         0.0, 0.0, 600.0])
-    VehDynObject.baseCoMInit = six_dof_eom.DoubleVector([0.0, 0.0, 1.0])
+    # setup Earth Gravity Body
+    earthGravBody = simIncludeGravity.addEarth()
+    earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
+    earthEphemData = simIncludeGravity.addEarthEphemData()
 
-    VehDynObject.AddGravityBody(EarthGravBody)
+    # attach gravity model to spaceCraftPlus
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody])
 
-    VehDynObject.useTranslation = useTranslation
-    VehDynObject.useRotation = useRotation
 
-    scSim.AddModelToTask(simTaskName, VehDynObject)
-
-    if useExtForceTorque:
-        extFTObject = ExternalForceTorque.ExternalForceTorque()
-        extFTObject.ModelTag = "externalDisturbance"
-        extFTObject.extTorquePntB_B = [-1, 1, -1]
-        extFTObject.extTorquePntB_B = [0, 0, 0]
-
-        torqueCmdName = "extTorquePntB_B_cmds"
-        scSim.TotalSim.CreateNewMessage(simProcessName, torqueCmdName, 8*3, 2)
-        cmdArray = sim_model.new_doubleArray(3)
-        sim_model.doubleArray_setitem(cmdArray, 0,-1.0)
-        sim_model.doubleArray_setitem(cmdArray, 1, 1.0)
-        sim_model.doubleArray_setitem(cmdArray, 2,-1.0)
-        scSim.TotalSim.WriteMessageData(torqueCmdName, 8*3, 1, cmdArray )
-
-        if useExtForceTorque == 1:
-            extFTObject.extForce_B = np.array([1.,2.,3.])
-        else:
-            extFTObject.extForce_N = [-1, -0.5, 0.5]
-        VehDynObject.addBodyEffector(extFTObject)
-        scSim.AddModelToTask(simTaskName, extFTObject)
+    # setup extForceTorque module
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[-1], [1], [-1]]
+    extFTObject.extForce_B = [[1], [2], [3]]
+    scObject.addDynamicEffector(extFTObject)
+    scSim.AddModelToTask(simTaskName, extFTObject)
 
 
 
@@ -169,71 +143,110 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useEx
 
 
     #
-    #   Setup FSW process with attitude control module
+    #   Setup data logging before the simulation is initialized
     #
-
-    fswProcess = scSim.CreateNewProcess(fswProcessName)
-    # create the FSW task and specify the update time
-    fswProcess.addTask(scSim.CreateNewTask(fswTaskName, macros.sec2nano(0.1)))
-
-    # Construct algorithm and associated C++ container
-    controlModuleConfig = MRP_Steering.MRP_SteeringConfig()
-    controlModuleWrap = scSim.setModelDataWrap(controlModuleConfig)
-    controlModuleWrap.ModelTag = "MRP_Steering"
-
-    # Add test module to runtime call list
-    scSim.AddModelToTask(fswTaskName, controlModuleWrap, controlModuleConfig)
-
-    # Initialize the test module configuration data
-    controlModuleConfig.inputGuidName = "inputGuidName"
-    controlModuleConfig.vehConfigInMsgName = "vehicleConfigName"
-    controlModuleConfig.outputDataName = "outputName"
-
-    controlModuleConfig.K1 = 0.15
-    controlModuleConfig.K3 = 1.0
-    controlModuleConfig.Ki = 0.01
-    controlModuleConfig.P = 150.0
-    controlModuleConfig.omega_max = 1.5*macros.D2R
-    controlModuleConfig.integralLimit = 2./controlModuleConfig.Ki*0.1
-
-    # vehicleConfigData Message:
-    inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
-    scSim.TotalSim.CreateNewMessage(fswProcessName, controlModuleConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    scSim.TotalSim.WriteMessageData(controlModuleConfig.vehConfigInMsgName,
-                                    inputMessageSize,
-                                    0, vehicleConfigOut)
+    scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, macros.minute2nano(2.))
 
 
+    # create simulation messages
+    scSim.TotalSim.CreateNewMessage(simProcessName,
+                                          earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
+                                          earthEphemData)
 
     #
-    #   Setup data logging
+    #   initialize Simulation
     #
-    scSim.TotalSim.logThisMessage("inertial_state_output", macros.sec2nano(120.))
-
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(60*10.)) #Just a simple run to get initial conditions from ephem
-    # scSim.ConfigureStopTime(macros.sec2nano(1.)) #Just a simple run to get initial conditions from ephem
+
+
+    #
+    #   initialize Spacecraft States within the state manager
+    #   this must occur after the initialization
+    #
+    posRef = scObject.dynManager.getStateObject("hubPosition")
+    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    omegaRef = scObject.dynManager.getStateObject("hubOmega")
+
+    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])  # m - r_BN_N
+    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])  # m/s - v_BN_N
+    sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
+    omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
+
+
+
+
+
+
+
+
+
+
+    # #
+    # #   Setup FSW process with attitude control module
+    # #
+    #
+    # fswProcess = scSim.CreateNewProcess(fswProcessName)
+    # # create the FSW task and specify the update time
+    # fswProcess.addTask(scSim.CreateNewTask(fswTaskName, macros.sec2nano(0.1)))
+    #
+    # # Construct algorithm and associated C++ container
+    # controlModuleConfig = MRP_Steering.MRP_SteeringConfig()
+    # controlModuleWrap = scSim.setModelDataWrap(controlModuleConfig)
+    # controlModuleWrap.ModelTag = "MRP_Steering"
+    #
+    # # Add test module to runtime call list
+    # scSim.AddModelToTask(fswTaskName, controlModuleWrap, controlModuleConfig)
+    #
+    # # Initialize the test module configuration data
+    # controlModuleConfig.inputGuidName = "inputGuidName"
+    # controlModuleConfig.vehConfigInMsgName = "vehicleConfigName"
+    # controlModuleConfig.outputDataName = "outputName"
+    #
+    # controlModuleConfig.K1 = 0.15
+    # controlModuleConfig.K3 = 1.0
+    # controlModuleConfig.Ki = 0.01
+    # controlModuleConfig.P = 150.0
+    # controlModuleConfig.omega_max = 1.5*macros.D2R
+    # controlModuleConfig.integralLimit = 2./controlModuleConfig.Ki*0.1
+    #
+    # # vehicleConfigData Message:
+    # inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
+    # scSim.TotalSim.CreateNewMessage(fswProcessName, controlModuleConfig.vehConfigInMsgName,
+    #                                       inputMessageSize, 2)
+    # vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    # I = [1000., 0., 0.,
+    #      0., 800., 0.,
+    #      0., 0., 800.]
+    # vehicleConfigOut.ISCPntB_B = I
+    # scSim.TotalSim.WriteMessageData(controlModuleConfig.vehConfigInMsgName,
+    #                                 inputMessageSize,
+    #                                 0, vehicleConfigOut)
+
+
+
+
+    #
+    #   configure a simulation stop time time and execute the simulation run
+    #
+    scSim.ConfigureStopTime(macros.minute2nano(10.))
     scSim.ExecuteSimulation()
 
-    # log the data
-    dataSigma = scSim.pullMessageLogData("inertial_state_output.sigma", range(3))
-    dataPos = scSim.pullMessageLogData("inertial_state_output.r_N", range(3))
+    #
+    #   retrieve the logged data
+    #
+    dataSigma = scSim.pullMessageLogData(scObject.scStateOutMsgName+".sigma_BN", range(3))
+    dataPos = scSim.pullMessageLogData(scObject.scStateOutMsgName+".r_BN_N", range(3))
 
 
     np.set_printoptions(precision=16)
-
 
     # Remove time zero from list
     dataPos = dataPos[1:len(dataPos),:]
     dataSigma = dataSigma[1:len(dataSigma),:]
 
-
+    useExtForceTorque = 1
     if useTranslation==True:
         if useRotation == True and useExtForceTorque == 1:
             truePos = [
@@ -282,19 +295,27 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useEx
 
     # compare the module results to the truth values
     accuracy = 1e-8
-    if useRotation==True:
-        for i in range(0,len(trueSigma)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
+    if useRotation == True:
+        if (len(trueSigma) != len(dataSigma)):
+            testFailCount += 1
+            testMessages.append("FAILED: unequal sigma data array sizes\n")
+        else:
+            for i in range(0,len(trueSigma)):
+                # check a vector values
+                if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
+                    testFailCount += 1
+                    testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i,0]*macros.NANO2SEC) + "sec\n")
 
     if useTranslation==True:
-        for i in range(0,len(truePos)):
-            # check a vector values
-            if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
-                testFailCount += 1
-                testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
+        if (len(truePos) != len(dataPos)):
+            testFailCount += 1
+            testMessages.append("FAILED: unequal position data array sizes\n")
+        else:
+            for i in range(0,len(truePos)):
+                # check a vector values
+                if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+                    testFailCount += 1
+                    testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i,0]*macros.NANO2SEC) + "sec\n")
 
 
     #   print out success message if no error were found
@@ -310,9 +331,8 @@ def unitDynamicsModesTestFunction(show_plots, useTranslation, useRotation, useEx
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitDynamicsModes(False,       # show_plots
-                           True,       # useTranslation
-                           True,        # useRotation
-                           1        # useExtForceTorque
+    test_bskAttitudeFeedback(False,       # show_plots
+                             True,        # useTranslation
+                             True         # useRotation
                            )
 
