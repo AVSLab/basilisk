@@ -174,12 +174,14 @@ void SimpleNav::applyErrors()
     v3Add(trueAttState.omega_BN_B, &(navErrors.data()[9]), estAttState.omega_BN_B);
     v3Add(trueTransState.vehAccumDV, &(navErrors.data()[15]), estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
-    double T_bdyT2bdyO[3][3];
-    MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
-    m33MultV3(T_bdyT2bdyO, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
+    if(inputSunID >= 0) {
+        double T_bdyT2bdyO[3][3];
+        MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
+        m33MultV3(T_bdyT2bdyO, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
+    }
 }
 
-/*! This method uses the input messages as well as the calculated model errors to 
+/*! This method uses the input messages as well as the calculated model errors to
  compute what the output navigation state should be.
     @return void
     @param Clock The clock time associated with the model's update call
@@ -192,13 +194,16 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     v3Copy(inertialState.sigma_BN, trueAttState.sigma_BN);
     v3Copy(inertialState.omega_BN_B, trueAttState.omega_BN_B);
     v3Copy(inertialState.TotalAccumDVBdy, trueTransState.vehAccumDV);
+
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
-    double sc2SunInrtl[3];
-    double T_inrtl2bdy[3][3];
-    v3Subtract(sunState.PositionVector, inertialState.r_BN_N, sc2SunInrtl);
-    v3Normalize(sc2SunInrtl, sc2SunInrtl);
-    MRP2C(inertialState.sigma_BN, T_inrtl2bdy);
-    m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueAttState.vehSunPntBdy);
+    if(inputSunID >= 0) {
+        double sc2SunInrtl[3];
+        double T_inrtl2bdy[3][3];
+        v3Subtract(sunState.PositionVector, inertialState.r_BN_N, sc2SunInrtl);
+        v3Normalize(sc2SunInrtl, sc2SunInrtl);
+        MRP2C(inertialState.sigma_BN, T_inrtl2bdy);
+        m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueAttState.vehSunPntBdy);
+    }
 }
 
 /*! This method sets the propagation matrix and requests new random errors from
