@@ -44,7 +44,6 @@ public:
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
-    void applyNoErrors();
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
     
@@ -65,7 +64,6 @@ public:
     NavTransOut estTransState;         //!< -- translation nav state including errors
     OutputStateData inertialState;     //!< -- input inertial state from Star Tracker
     SpicePlanetState sunState;         //!< -- input Sun state
-    bool useErrors;                    //!< -- flag to use or turn off a sensor corruptions
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state
