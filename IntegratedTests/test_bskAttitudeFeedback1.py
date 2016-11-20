@@ -242,15 +242,21 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])  # m - r_BN_N
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])  # m/s - v_BN_N
+    # setup the orbit using classical orbit elements
+    oe = orbitalMotion.ClassicElements()
+    oe.a     = 10000000.0           # meters
+    oe.e     = 0.01
+    oe.i     = 33.3*macros.D2R
+    oe.Omega = 48.2*macros.D2R
+    oe.omega = 347.8*macros.D2R
+    oe.f     = 85.3*macros.D2R
+    rN, vN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
+
+    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - r_BN_N
     sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
     omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
 
-    # rN = np.array([-4020338.690396649, 7490566.741852513, 5248299.211589362])
-    # vN = np.array([-5199.77710904224, -3436.681645356935, 1041.576797498721])
-    # oe = orbitalMotion.rv2elem(earthGravBody.mu, rN, vN)
-    # print oe
 
     #
     #   configure a simulation stop time time and execute the simulation run
