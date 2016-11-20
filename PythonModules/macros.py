@@ -38,6 +38,8 @@ def day2nano(time):
 
 #   variable to convert nano-seconds to seconds
 NANO2SEC = 1E-9
+NANO2MIN = (1./60.*1E-9)
+NANO2HOUR = (1./60./60.*1E-9)
 
 #   variable to convert degrees to radians
 D2R = (math.pi/180.)
