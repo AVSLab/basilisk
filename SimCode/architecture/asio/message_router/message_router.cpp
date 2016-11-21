@@ -216,7 +216,7 @@ void MessageRouter::discoverMessages()
 
 void MessageRouter::UpdateState(uint64_t CurrentSimNanos)
 {
-    if(!runAsServer)
+    if(!runAsServer  || !theConnection->isOpen())
     {
         return;
     }
@@ -255,6 +255,10 @@ void MessageRouter::UpdateState(uint64_t CurrentSimNanos)
 
 void MessageRouter::routeMessages()
 {
+    if(!theConnection->isOpen())
+    {
+        return;
+    }
     std::vector<char> inSize(4, 0x00);
     theConnection->receiveData(inSize);
     uint32_t stringLength;
@@ -279,3 +283,9 @@ void MessageRouter::routeMessages()
     }
     
 }
+
+void MessageRouter::closeConnection()
+{
+    theConnection->close();
+}
+

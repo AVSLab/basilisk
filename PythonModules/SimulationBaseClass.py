@@ -514,6 +514,8 @@ class SimBaseClass:
             print "You asked me to set the status of an event that I don't have."
             return
         self.eventMap[eventName].eventActive = activityCommand
+    def terminateSimulation(self):
+        self.TotalSim.terminateSimulation()
     def findMessagePairs(self, messageName, processList):
         dataPairs = self.TotalSim.getMessageExchangeData(messageName, processList)
         outputDataPairs = []

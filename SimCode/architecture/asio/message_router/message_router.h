@@ -59,6 +59,7 @@ public:
     void requestUnknownMessages();
     void receiveUnknownMessages();
     void routeMessages();
+    void closeConnection();
      
 public:
     bool runAsServer;

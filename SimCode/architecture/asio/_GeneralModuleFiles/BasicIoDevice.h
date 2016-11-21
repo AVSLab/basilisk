@@ -95,6 +95,7 @@ bool BasicIoObject_t<StreamType>::close(void)
             std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
             return false;
         }
+        m_stream = nullptr;
         m_inboundBuffer.clear();
         m_outboundBuffer.clear();
     }
