@@ -34,6 +34,7 @@ import macros
 import spacecraftPlus
 import hingedRigidBodyStateEffector
 import fuelSloshParticle
+import fuelTank
 import sim_model
 import macros
 import ctypes
@@ -102,11 +103,15 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
     unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
 
+    #define the fuel tank
+    unitTestSim.tank1 = fuelTank.FuelTank()
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle2)
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle3)
+
     # Add panels to spaceCraft
     # this next line is not working
-    scObject.addStateEffector(unitTestSim.particle1)
-    scObject.addStateEffector(unitTestSim.particle2)
-    scObject.addStateEffector(unitTestSim.particle3)
+    scObject.addStateEffector(unitTestSim.tank1)
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)

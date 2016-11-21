@@ -35,6 +35,7 @@ public:
 public:
 	FuelTank();
 	~FuelTank();
+	void pushFuelSloshParticle(FuelSloshParticle particle);
 	void registerStates(DynParamManager& states);
 	void linkInStates(DynParamManager& states);
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,

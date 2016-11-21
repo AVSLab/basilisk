@@ -26,6 +26,10 @@ FuelTank::~FuelTank() {
 
 }
 
+void FuelTank::pushFuelSloshParticle(FuelSloshParticle particle) {
+	fuelSloshParticles.push_back(particle);
+}
+
 void FuelTank::linkInStates(DynParamManager& statesIn)
 {
 	std::vector<FuelSloshParticle>::iterator i;
@@ -50,9 +54,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 		effProps.mEff += i->effProps.mEff;
 		effProps.IEffPntB_B += i->effProps.IEffPntB_B;
 		effProps.IEffPrimePntB_B += i->effProps.IEffPrimePntB_B;
-		effProps.rCB_B += i->effProps.rCB_B;
-		effProps.rPrimeCB_B += i->effProps.rPrimeCB_B;
+		effProps.rCB_B += i->effProps.mEff * i->effProps.rCB_B;
+		effProps.rPrimeCB_B += i->effProps.mEff * i->effProps.rPrimeCB_B;
 	}
+	effProps.rCB_B /= effProps.mEff;
+	effProps.rPrimeCB_B /= effProps.mEff;
 }
 
 void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
