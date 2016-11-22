@@ -147,7 +147,6 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     # velocity navigation message
     sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
-    sNavObject.useErrors = False            # turn off any sensor error modeling
     scSim.AddModelToTask(simTaskName, sNavObject)
 
 
@@ -397,7 +396,7 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_bskAttitudeFeedback(False,       # show_plots
+    test_bskAttitudeFeedback(True,       # show_plots
                              False,       # useUnmodeledTorque
                              False        # useIntGain
                            )
