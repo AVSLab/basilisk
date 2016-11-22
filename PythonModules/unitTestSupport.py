@@ -203,3 +203,10 @@ def getLineColor(idx,maxNum):
 
 def np2EigenVector3d(vec):
     return [[vec[0]],[vec[1]],[vec[2]]]
+
+def np2EigenMatrixXd(mat):
+    return [
+        [mat[0], mat[1], mat[2]]
+        ,[mat[3], mat[4], mat[5]]
+        ,[mat[6], mat[7], mat[8]]
+    ]
