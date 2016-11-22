@@ -91,7 +91,10 @@ void SimpleNav::SelfInit()
         it += 9 - i;
     }
     //! - Alert the user if the noise matrix was not the right size.  That'd be bad.
-    if(PMatrix.size() != numStates*numStates)
+    if (PMatrix.size() == 0) {
+        PMatrix.insert(PMatrix.begin(), numStates*numStates, 0.0);
+    }
+    else if(PMatrix.size() != numStates*numStates)
     {
         std::cerr << "Your process noise matrix (PMatrix) is not 18*18.";
         std::cerr << "  You should fix that.  Popping zeros onto end"<<std::endl;
@@ -101,6 +104,9 @@ void SimpleNav::SelfInit()
     //! - Set the matrices of the lower level error propagation (GaussMarkov)
     errorModel.setNoiseMatrix(PMatrix);
     errorModel.setRNGSeed(RNGSeed);
+    if (this->walkBounds.size() == 0) {
+        walkBounds.insert(walkBounds.begin(), numStates, 0.0);
+    }
     errorModel.setUpperBounds(walkBounds);
 }
 
