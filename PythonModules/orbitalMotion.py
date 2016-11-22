@@ -580,7 +580,7 @@ def rv2elem_parab(mu, rVec, vVec):
 
     return elements
 
-def rv2elem(mu, rVec, vVec, elements):
+def rv2elem(mu, rVec, vVec):
     """
     Function: rv2elem
     Purpose: Translates the orbit elements inertial Cartesian position
@@ -608,6 +608,8 @@ def rv2elem(mu, rVec, vVec, elements):
     nVec = [0.0] * 3
     eVec = [0.0] * 3
     eVec2 = [0.0] * 3
+
+    elements = ClassicElements()
 
     # Calculate the specific angular momentum and its magnitude #
     hVec = np.cross(rVec, vVec)

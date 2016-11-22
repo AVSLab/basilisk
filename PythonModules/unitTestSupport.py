@@ -21,13 +21,25 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 import math
 import os,errno
 import numpy as np
+import matplotlib as mpl
+mpl.rc("figure", facecolor="white")
+mpl.rc('xtick', labelsize=9)
+mpl.rc('ytick', labelsize=9)
+mpl.rc("figure", figsize=(5.5,2.5))
+mpl.rc('axes', labelsize=10)
+mpl.rc('legend', fontsize=9)
+mpl.rc('figure', autolayout=True)
+
+import matplotlib.colors as colors
+import matplotlib.cm as cmx
+
+import macros
 
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
 del(T.LATEX_ESCAPE_RULES[u'\\'])
 from tabulate import *
 
-import matplotlib.pyplot as plt
 
 
 #
@@ -77,6 +89,35 @@ def isArrayZero(result, dim, accuracy):
 
     return 1            # return 1 to indicate the two array's are equal
 
+#
+#   Compare two arrays size and values and check absolute accuracy
+#
+def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    else:
+        for i in range(0, len(trueStates)):
+            # check a vector values
+            if not isArrayEqual(dataStates[i], trueStates[i], 3, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+    return testFailCount, testMessages
+
+#
+#   Compare two arrays size and values and check relative accuracy
+#
+def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    else:
+        for i in range(0, len(trueStates)):
+            # check a vector values
+            if not isArrayEqualRelative(dataStates[i], trueStates[i], 3, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+    return testFailCount, testMessages
 
 #
 #   function to check if a double equals a truth value
@@ -147,3 +188,25 @@ def foundNAN(array):
         print "Warning: found NaN value."
         return 1        # return 1 to indicate a NaN value was found
     return 0
+
+
+#
+#   pick a nicer color pattern to plot 3 vector components
+#
+
+def getLineColor(idx,maxNum):
+    values = range(0, maxNum+2)
+    colorMap = mpl.pyplot.get_cmap('gist_earth')
+    cNorm = colors.Normalize(vmin=0, vmax=values[-1])
+    scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
+    return scalarMap.to_rgba(values[idx])
+
+def np2EigenVector3d(vec):
+    return [[vec[0]],[vec[1]],[vec[2]]]
+
+def np2EigenMatrixXd(mat):
+    return [
+        [mat[0], mat[1], mat[2]]
+        ,[mat[3], mat[4], mat[5]]
+        ,[mat[6], mat[7], mat[8]]
+    ]
