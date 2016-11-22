@@ -90,9 +90,24 @@ def isArrayZero(result, dim, accuracy):
     return 1            # return 1 to indicate the two array's are equal
 
 #
-#   Compare two arrays size and values
+#   Compare two arrays size and values and check absolute accuracy
 #
 def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    else:
+        for i in range(0, len(trueStates)):
+            # check a vector values
+            if not isArrayEqual(dataStates[i], trueStates[i], 3, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+    return testFailCount, testMessages
+
+#
+#   Compare two arrays size and values and check relative accuracy
+#
+def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
