@@ -79,15 +79,22 @@ import vehicleConfigData
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = bskAttitudeFeedback(
+    [testResults, testMessage] = bskAttitudeFeedback( True,
             show_plots, useUnmodeledTorque, useIntGain)
     assert testResults < 1, testMessage
 
 
 
-def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
+def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
+
+    #
+    #  From here on there scenario python code is found.  Above this line the code is to setup a
+    #  unitTest environment.  The above code is not critical if learning how to code BSK.
+    #
+
+    # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
 
@@ -95,6 +102,7 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     scSim = SimulationBaseClass.SimBaseClass()
     scSim.TotalSim.terminateSimulation()
 
+    # set the simulation time variable used later on
     simulationTime = macros.minute2nano(10.)
 
     #
@@ -114,9 +122,14 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
+    # define the simulation inertia
+    I = [900., 0., 0.,
+         0., 800., 0.,
+         0., 0., 600.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]] # kg*m^2
+    # scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]] # kg*m^2
+    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrixXd(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
 
@@ -125,9 +138,8 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 
 
     # setup Earth Gravity Body
-    earthGravBody = simIncludeGravity.addEarth()
+    earthGravBody, earthEphemData = simIncludeGravity.addEarth()
     earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
-    earthEphemData = simIncludeGravity.addEarthEphemData()
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody])
@@ -137,6 +149,9 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     # the control torque is read in through the messaging system
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
+    # use the input flag to determine which external torque should be applied
+    # Note that all variables are initialized to zero.  Thus, not setting this
+    # vector would leave it's components all zero for the simulation.
     if useUnmodeledTorque:
         extFTObject.extTorquePntB_B = [[0.25],[-0.25],[0.1]]
     scObject.addDynamicEffector(extFTObject)
@@ -217,9 +232,7 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     scSim.TotalSim.CreateNewMessage(simProcessName, mrpControlConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    I = [900., 0., 0.,
-         0., 800., 0.,
-         0., 0., 600.]
+    # use the same inertia in the FSW algorithm as in the simulation
     vehicleConfigOut.ISCPntB_B = I
     scSim.TotalSim.WriteMessageData(mrpControlConfig.vehConfigInMsgName,
                                     inputMessageSize,
@@ -307,7 +320,12 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
     if show_plots:
         plt.show()
 
-    else :
+
+    #
+    #   the python code below is for the unit testing mode.  If you are studying the scenario
+    #   to learn how to run BSK, you can stop reading below this line.
+    #
+    if doUnitTests:
         numTruthPoints = 5
         skipValue = int(numDataPoints/numTruthPoints)
         dataLrRed = dataLr[::skipValue]
@@ -396,8 +414,9 @@ def bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_bskAttitudeFeedback(True,       # show_plots
-                             False,       # useUnmodeledTorque
-                             False        # useIntGain
-                           )
+    bskAttitudeFeedback( False,       # do unit tests
+                         True,       # show_plots
+                         False,       # useUnmodeledTorque
+                         False        # useIntGain
+                       )
 
