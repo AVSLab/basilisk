@@ -31,9 +31,7 @@ def addEarth():
     earthGravBody.mu = 0.3986004415E+15 # meters!
     earthGravBody.isCentralBody = False
     earthGravBody.useSphericalHarmParams = False
-    return earthGravBody
 
-def addEarthEphemData():
     earthEphemData = spice_interface.SpicePlanetState()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
@@ -41,4 +39,5 @@ def addEarthEphemData():
     earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
     earthEphemData.PlanetName = "earth"
-    return earthEphemData
+
+    return earthGravBody, earthEphemData
