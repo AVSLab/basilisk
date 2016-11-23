@@ -14,13 +14,11 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 
 */
-%module fuelTank
-%{
-   #include "fuelTank.h"
-   #include "fuelSloshParticle.h"
-%}
 
-%import "fuelSloshParticle.i"
+%module fuelSloshParticle
+%{
+	#include "fuelSloshParticle.h"
+%}
 
 
 %include "swig_common_model.i"
@@ -30,7 +28,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "fuelSloshParticle.h"
-%include "fuelTank.h"
 
 %pythoncode %{
 import sys
