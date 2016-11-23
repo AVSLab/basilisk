@@ -17,11 +17,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 %module fuelTank
 %{
    #include "fuelTank.h"
-   #include "fuelSloshParticle.h"
 %}
-
-%import "fuelSloshParticle.i"
-
 
 %include "swig_common_model.i"
 
@@ -29,7 +25,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS S  OFTWARE  .
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "fuelSloshParticle.h"
 %include "fuelTank.h"
 
 %pythoncode %{

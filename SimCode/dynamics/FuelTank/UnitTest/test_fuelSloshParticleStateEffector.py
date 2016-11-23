@@ -169,17 +169,17 @@ def test_hubPropagate(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode failed pos unit test at t=" + str(dataPos[i][0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Fuel Slosh failed pos unit test at t=" + str(dataPos[i][0]*macros.NANO2SEC) + "sec\n")
 
     for i in range(0,len(trueSigma)):
         print(dataSigma[i])
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED:  Dynamics Mode failed attitude unit test at t=" + str(dataSigma[i][0]*macros.NANO2SEC) + "sec\n")
+            testMessages.append("FAILED:  Fuel Slosh failed attitude unit test at t=" + str(dataSigma[i][0]*macros.NANO2SEC) + "sec\n")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hub Propagate"
+        print "PASSED: " + " Fuel Slosh Test"
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

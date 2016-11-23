@@ -18,8 +18,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H
 
-#include "dynamics\_GeneralModuleFiles\stateEffector.h"
-#include "_GeneralModuleFiles\sys_model.h"
+#include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 #include "fuelSloshParticle.h"
 #include <vector>

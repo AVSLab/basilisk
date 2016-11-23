@@ -18,8 +18,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #ifndef FUEL_SLOSH_PARTICLE_H
 #define FUEL_SLOSH_PARTICLE_H
 
-#include "dynamics\_GeneralModuleFiles\stateEffector.h"
-#include "_GeneralModuleFiles\sys_model.h"
+#include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief Class that implements an effector representing a sloshing particle
