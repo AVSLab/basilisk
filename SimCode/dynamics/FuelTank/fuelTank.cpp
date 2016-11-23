@@ -123,4 +123,6 @@ void FuelTank::computeDerivatives(double integTime)
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -fuelConsumption;
 	this->massState->setDerivative(conv);
+
+    return;
 }
