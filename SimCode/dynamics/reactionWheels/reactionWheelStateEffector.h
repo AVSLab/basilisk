@@ -85,7 +85,6 @@ public:
 
 	void SelfInit();
 	void CrossInit();
-	//! Add a new thruster to the thruster set
 	void AddReactionWheel(ReactionWheelConfigData *NewRW) {ReactionWheelData.push_back(*NewRW);}
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);

@@ -51,6 +51,7 @@ public:
 		Eigen::Vector3d & vecRotcontr);
 	void computeDerivatives(double integTime);
 	void updateEffectorMassProps(double integTime);
+    void addThrusterSet(DynamicEffector *NewdynEff) {dynEffectors.push_back(NewdynEff);}
 };
 
 
