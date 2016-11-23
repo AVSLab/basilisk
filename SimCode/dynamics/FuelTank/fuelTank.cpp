@@ -115,5 +115,5 @@ void FuelTank::computeDerivatives(double integTime)
 	//TODO: add in the contributions from the thrusters
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -fuelConsumption;
-	massState->setDerivative(conv);
+	this->massState->setDerivative(conv);
 }
