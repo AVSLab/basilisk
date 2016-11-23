@@ -21,80 +21,82 @@ FuelTank::FuelTank()
 	:fuelSloshParticles()
 {
 	//! - zero the contributions for mass props and mass rates
-	effProps.IEffPntB_B.fill(0.0);
-	effProps.rCB_B.fill(0.0);
-	effProps.rPrimeCB_B.fill(0.0);
-	effProps.mEff = 0.0;
-	effProps.IEffPrimePntB_B.fill(0.0);
+	this->effProps.IEffPntB_B.fill(0.0);
+	this->effProps.rCB_B.fill(0.0);
+	this->effProps.rPrimeCB_B.fill(0.0);
+	this->effProps.mEff = 0.0;
+	this->effProps.IEffPrimePntB_B.fill(0.0);
 
 	//! - Initialize the variables to working values
-	r_TB_B.setZero();
-	nameOfMassState = "fuelTankMass";
+	this->r_TB_B.setZero();
+	this->nameOfMassState = "fuelTankMass";
+
+    return;
 }
 
 FuelTank::~FuelTank() {
-
+    return;
 }
 
 void FuelTank::pushFuelSloshParticle(FuelSloshParticle particle) {
-	fuelSloshParticles.push_back(particle);
+	this->fuelSloshParticles.push_back(particle);
+
+    return;
 }
 
 void FuelTank::linkInStates(DynParamManager& statesIn)
 {
-	std::vector<FuelSloshParticle>::iterator i;
-	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++)
-		i->linkInStates(statesIn);
+	std::vector<FuelSloshParticle>::iterator intFSP;
+	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++)
+		intFSP->linkInStates(statesIn);
 }
 
 void FuelTank::registerStates(DynParamManager& statesIn)
 {
-	std::vector<FuelSloshParticle>::iterator i;
-	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++)
-		i->registerStates(statesIn);
-	this->massState = statesIn.registerState(1, 1, nameOfMassState);
+	std::vector<FuelSloshParticle>::iterator intFSP;
+	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
+		intFSP->registerStates(statesIn);
+	this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
 }
 
 void FuelTank::updateEffectorMassProps(double integTime) {
-	std::vector<FuelSloshParticle>::iterator i;
-	effProps.mEff = 0;
-	effProps.IEffPntB_B = effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
-	effProps.rCB_B = effProps.rPrimeCB_B = Eigen::Vector3d::Zero();
+	std::vector<FuelSloshParticle>::iterator intFSP;
+	this->effProps.mEff = 0.0;
+	this->effProps.IEffPntB_B = this->effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
+	this->effProps.rCB_B = effProps.rPrimeCB_B = Eigen::Vector3d::Zero();
 	//Incorperate the effects of all of the particles
-	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++) {
-		i->updateEffectorMassProps(integTime);
-		effProps.mEff += i->effProps.mEff;
-		effProps.IEffPntB_B += i->effProps.IEffPntB_B;
-		effProps.IEffPrimePntB_B += i->effProps.IEffPrimePntB_B;
-		effProps.rCB_B += i->effProps.mEff * i->effProps.rCB_B;
-		effProps.rPrimeCB_B += i->effProps.mEff * i->effProps.rPrimeCB_B;
+	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++) {
+		intFSP->updateEffectorMassProps(integTime);
+		this->effProps.mEff += intFSP->effProps.mEff;
+		this->effProps.IEffPntB_B += intFSP->effProps.IEffPntB_B;
+		this->effProps.IEffPrimePntB_B += intFSP->effProps.IEffPrimePntB_B;
+		this->effProps.rCB_B += intFSP->effProps.mEff * intFSP->effProps.rCB_B;
+		this->effProps.rPrimeCB_B += intFSP->effProps.mEff * intFSP->effProps.rPrimeCB_B;
 	}
 
 	//Contributions of the mass of the tank
-	double massLocal = massState->getState()(0, 0);
-	double massDotLocal = massState->getState()(0, 0);
-	effProps.mEff += massLocal;
-	effProps.IEffPntB_B += (2 / 5 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
-	effProps.IEffPrimePntB_B += (2 / 5 * massDotLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massDotLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
-	effProps.rCB_B += massLocal * r_TB_B;
-	effProps.rPrimeCB_B += massDotLocal * r_TB_B;
+	double massLocal = this->massState->getState()(0, 0);
+	this->effProps.mEff += massLocal;
+	this->effProps.IEffPntB_B += (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
+	this->effProps.rCB_B += massLocal * r_TB_B;
 
-	effProps.rCB_B /= effProps.mEff;
-	effProps.rPrimeCB_B /= effProps.mEff;
+    //! - Scale the center of mass location by 1/m_tot
+	this->effProps.rCB_B /= effProps.mEff;
+	this->effProps.rPrimeCB_B /= effProps.mEff;
 
-
+    return;
 }
 
 void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
-	std::vector<FuelSloshParticle>::iterator i;
+	std::vector<FuelSloshParticle>::iterator intFSP;
 	matrixAcontr = matrixBcontr = matrixCcontr = matrixDcontr = Eigen::Matrix3d::Zero();
 	vecTranscontr = vecRotcontr = Eigen::Vector3d::Zero();
-	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++) {
+	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
 		Eigen::Matrix3d Acontr, Bcontr, Ccontr, Dcontr;
 		Eigen::Vector3d Transcontr, Rotcontr;
-		i->updateContributions(integTime, Acontr, Bcontr, Ccontr, Dcontr, Transcontr, Rotcontr);
+		intFSP->updateContributions(integTime, Acontr, Bcontr, Ccontr, Dcontr, Transcontr, Rotcontr);
 		matrixAcontr += Acontr;
 		matrixBcontr += Bcontr;
 		matrixCcontr += Ccontr;
@@ -106,9 +108,9 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 
 void FuelTank::computeDerivatives(double integTime)
 {
-	std::vector<FuelSloshParticle>::iterator i;
-	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++)
-		i->computeDerivatives(integTime);
+	std::vector<FuelSloshParticle>::iterator intFSP;
+	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
+		intFSP->computeDerivatives(integTime);
 	
 	//! - Mass depletion
 	double fuelConsumption = 0.0;

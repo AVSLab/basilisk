@@ -74,11 +74,8 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
     //! - find hinged rigid bodies' position with respect to point B
     //! - First need to grab current states
-    Eigen::MatrixXd interMediateMatrix(0,0);
-    interMediateMatrix = this->thetaState->getState();
-    this->theta = interMediateMatrix(0,0);
-    interMediateMatrix = this->thetaDotState->getState();
-    this->thetaDot = interMediateMatrix(0,0);
+    this->theta = this->thetaState->getState()(0, 0);
+    this->thetaDot = this->thetaDotState->getState()(0, 0);
     //! - Next find the sHat unit vectors
     this->dcmSH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
     this->dcmSB = this->dcmSH*this->dcmHB;
