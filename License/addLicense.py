@@ -21,8 +21,8 @@ def update_source(filename, oldcopyright, copyright):
         oldcopyright = "/*" + oldcopyright + " */\n"
         knownFileType = True
     if (filename.endswith(".py")  ):
-        copyright    = "'''" + copyright + "'''\n"
-        oldcopyright = "'''" + oldcopyright + "'''\n"
+        copyright    = "''' '''\n'''" + copyright + "'''\n"
+        oldcopyright = "''' '''\n'''" + oldcopyright + "'''\n"
         knownFileType = True
 
     if (oldcopyright != None):
