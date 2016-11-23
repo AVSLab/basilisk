@@ -1,5 +1,7 @@
 /*
- Copyright (c) 2016, Autonomous Vehicle Systems Lab, Univeristy of Colorado at Boulder
+ ISC License
+
+ Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
 
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -14,6 +16,7 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+
 
 #ifndef EIGEN_MRP_H
 #define EIGEN_MRP_H

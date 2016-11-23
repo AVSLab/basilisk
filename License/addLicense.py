@@ -17,11 +17,11 @@ def update_source(filename, oldcopyright, copyright):
         fdata = fdata[3:]
 
     if (filename.endswith(".c") or filename.endswith(".h") or filename.endswith(".cpp") or filename.endswith(".hpp") or filename.endswith(".i")  ):
-        copyright    = "/*" + copyright + "*/\n"
+        copyright    = "/*" + copyright + " */\n"
         oldcopyright = "/*" + oldcopyright + "*/\n"
         knownFileType = True
     if (filename.endswith(".py")  ):
-        copyright    = "'''" + copyright + "'''\n"
+        copyright    = "''' '''\n'''" + copyright + "'''\n"
         oldcopyright = "'''" + oldcopyright + "'''\n"
         knownFileType = True
 
