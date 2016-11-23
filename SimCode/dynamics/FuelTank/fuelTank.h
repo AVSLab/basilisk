@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #define FUEL_TANK_H
 
 #include "../_GeneralModuleFiles/stateEffector.h"
+#include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 #include "fuelSloshParticle.h"
@@ -31,6 +32,7 @@ class FuelTank :
 {
 public:
 	std::vector<FuelSloshParticle> fuelSloshParticles;
+    std::vector<DynamicEffector*> dynEffectors;       //! [-] Vector of dynamic effectors attached to dyn
 	double radiusTank;
 	Eigen::Vector3d r_TB_B;
 	std::string nameOfMassState;

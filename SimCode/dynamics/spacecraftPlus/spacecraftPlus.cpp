@@ -209,7 +209,7 @@ void SpacecraftPlus::initializeDynamics()
         (*it)->linkInStates(dynManager);
     }
 
-    //! - Loop though the stateEffectors to link in the states needed
+    //! - Loop though the dynamicEffectors to link in the states needed
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         (*dynIt)->linkInStates(this->dynManager);

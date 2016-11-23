@@ -111,10 +111,14 @@ void FuelTank::computeDerivatives(double integTime)
 	std::vector<FuelSloshParticle>::iterator intFSP;
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
 		intFSP->computeDerivatives(integTime);
-	
+    
+	std::vector<DynamicEffector*>::iterator dynIt;
 	//! - Mass depletion
 	double fuelConsumption = 0.0;
-	//TODO: add in the contributions from the thrusters
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+    {
+        fuelConsumption += (*dynIt)->stateDerivContribution(0);
+    }
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -fuelConsumption;
 	this->massState->setDerivative(conv);
