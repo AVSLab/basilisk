@@ -117,6 +117,7 @@ void FuelTank::computeDerivatives(double integTime)
 	double fuelConsumption = 0.0;
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
+        (*dynIt)->computeStateContribution(integTime);
         fuelConsumption += (*dynIt)->stateDerivContribution(0);
     }
 	Eigen::MatrixXd conv(1, 1);
