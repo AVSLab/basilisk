@@ -32,25 +32,23 @@ import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import macros
 import spacecraftPlus
-import sim_model
-import ctypes
-import gravityEffector
-import spice_interface
-import simIncludeThruster
-import thrusterDynamicEffector
-import vehicleConfigData
+import hingedRigidBodyStateEffector
+import fuelSloshParticle
 import fuelTank
+import sim_model
+import macros
+import ctypes
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def thrusterIntegratedTest(show_plots):
-    [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
+def spacecraftPlusAllTest(show_plots):
+    [testResults, testMessage] = test_hubPropagate(show_plots)
     assert testResults < 1, testMessage
 
-def test_thrusterIntegratedTest(show_plots):
+def test_hubPropagate(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -64,7 +62,6 @@ def test_thrusterIntegratedTest(show_plots):
     
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    thrusterCommandName = "acs_thruster_cmds"
     
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -75,76 +72,78 @@ def test_thrusterIntegratedTest(show_plots):
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
-    # add thruster devices
-    # The clearThrusterSetup() is critical if the script is to run multiple times
-    simIncludeThruster.clearSetup()
-    simIncludeThruster.create(
-        'MOOG_Monarc_1',
-        [1,0,0],                # location in S frame
-        [0,1,0]                 # direction in S frame
-    )
+    unitTestSim.particle1 = fuelSloshParticle.FuelSloshParticle()
+    unitTestSim.particle2 = fuelSloshParticle.FuelSloshParticle()
+    unitTestSim.particle3 = fuelSloshParticle.FuelSloshParticle()
 
-    # create thruster object container and tie to spacecraft object
-    thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+    # Define Variables for particle 1
+    unitTestSim.particle1.massFSP = 10
+    unitTestSim.particle1.k = 100.0
+    unitTestSim.particle1.c = 0.0
+    unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
+    unitTestSim.particle1.pHat_B = [[1], [0], [0]]
+    unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
+    unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
 
-    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
-    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
-    unitTestSim.fuelTankStateEffector.radiusTank = 46.0 / 2.0 / 3.2808399 / 12.0
+    # Define Variables for particle 2
+    unitTestSim.particle2.massFSP = 20
+    unitTestSim.particle2.k = 100.0
+    unitTestSim.particle2.c = 0.0
+    unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
+    unitTestSim.particle2.pHat_B = [[0], [1], [0]]
+    unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
+    unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
 
-    # Add tank and thruster
-    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
-    simIncludeThruster.addToSpacecraft(  "Thrusters",
-                                       thrustersDynamicEffector,
-                                       scObject, unitTestSim.fuelTankStateEffector)
+    # Define Variables for particle 3
+    unitTestSim.particle3.massFSP = 15
+    unitTestSim.particle3.k = 100.0
+    unitTestSim.particle3.c = 0.0
+    unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
+    unitTestSim.particle3.pHat_B = [[0], [0], [1]]
+    unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
+    unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
 
-    # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    ThrustMessage.OnTimeRequest = 10.0
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
-    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
+    #define the fuel tank
+    unitTestSim.tank1 = fuelTank.FuelTank()
+    unitTestSim.tank1.radiusTank = 0;
+    unitTestSim.tank1.r_TB_B = [[0],[0],[0]]
+    unitTestSim.tank1.nameOfMassState = "fuelTankMass1"
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle2)
+    unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle3)
 
+    # Add panels to spaceCraft
+    # this next line is not working
+    scObject.addStateEffector(unitTestSim.tank1)
+    
     # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
-
-    earthEphemData = spice_interface.SpicePlanetState()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
-
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
-
     unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    massTankRef = scObject.dynManager.getStateObject("fuelTankMass")
+    rho1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho1")
+    rhoDot1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot1")
+    rho2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho2")
+    rhoDot2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot2")
+    rho3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho3")
+    rhoDot3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot3")
 
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
-    massTankRef.setState([[40.0]])
+    posRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[0.0], [0.0], [0.0]])
+    sigmaRef.setState([[0.0], [0.0], [0.0]])
+    omegaRef.setState([[0.1], [-0.1], [0.1]])
+    rho1Ref.setState([[0.05]])
+    rhoDot1Ref.setState([[0.0]])
+    rho2Ref.setState([[-0.025]])
+    rhoDot2Ref.setState([[0.0]])
+    rho3Ref.setState([[-0.015]])
+    rhoDot3Ref.setState([[0.0]])
 
-    scObject.hub.mHub = 750.0
+    scObject.hub.mHub = 750
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
@@ -153,45 +152,37 @@ def test_thrusterIntegratedTest(show_plots):
     unitTestSim.ExecuteSimulation()
 
     dataPos = posRef.getState()
-    dataSigma = sigmaRef.getState()
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma =  sigmaRef.getState()
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
-                [-6.7815933935338277e+06, 4.9468685979815889e+06, 5.4867416696776701e+06]
+                [-1.36388979e-01, -1.70517452e-01, -3.27473799e-02]
                 ]
-
     trueSigma = [
-                [1.4401781243854264e-01, -6.4168702021364002e-02, 3.0166086824900967e-01]
-                ]
-
-    moduleOutputr_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
-                                                  range(3))
-    moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
-                                                  range(3))
+                  [-2.46306074e-01, 8.25425414e-01, -3.37112618e-01]
+                  ]
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
+        print(dataPos[i])
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed pos unit test")
+            testMessages.append("FAILED:  Fuel Slosh failed pos unit test at t=" + str(dataPos[i][0]*macros.NANO2SEC) + "sec\n")
 
-    accuracy = 1e-7
     for i in range(0,len(trueSigma)):
+        print(dataSigma[i])
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
+            testMessages.append("FAILED:  Fuel Slosh failed attitude unit test at t=" + str(dataSigma[i][0]*macros.NANO2SEC) + "sec\n")
 
     if testFailCount == 0:
-        print "PASSED: " + " Thruster Integrated Sim Test"
-
-    assert testFailCount < 1, testMessages
-
+        print "PASSED: " + " Fuel Slosh Test"
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_thrusterIntegratedTest(False)
+    spacecraftPlusAllTest(False)

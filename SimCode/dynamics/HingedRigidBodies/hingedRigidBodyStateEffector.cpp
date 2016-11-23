@@ -18,9 +18,6 @@
 
 #include "hingedRigidBodyStateEffector.h"
 
-using namespace Eigen;
-using namespace std;
-
 HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
     //! - zero the mass props and mass prop rates contributions
@@ -77,11 +74,8 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
     //! - find hinged rigid bodies' position with respect to point B
     //! - First need to grab current states
-    Eigen::MatrixXd interMediateMatrix(0,0);
-    interMediateMatrix = this->thetaState->getState();
-    this->theta = interMediateMatrix(0,0);
-    interMediateMatrix = this->thetaDotState->getState();
-    this->thetaDot = interMediateMatrix(0,0);
+    this->theta = this->thetaState->getState()(0, 0);
+    this->thetaDot = this->thetaDotState->getState()(0, 0);
     //! - Next find the sHat unit vectors
     this->dcmSH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
     this->dcmSB = this->dcmSH*this->dcmHB;
@@ -113,20 +107,20 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
 void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
-    MRPd sigmaBNLocal;
+    Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
     Eigen::Vector3d gravityTorquePntH_B;          /* torque of gravity on HRB about Pnt H */
-    Eigen::Vector3d g_N;                          /* gravitational acceleration in N frame */
+    Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
     Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
-    g_N = *this->g_N;
+    gLocal_N = *this->g_N;
 
     //! - Find dcmBN
     sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
     dcmNB = sigmaBNLocal.toRotationMatrix();
     dcmBN = dcmNB.transpose();
     //! - Map gravity to body frame
-    g_B = dcmBN*g_N;
+    g_B = dcmBN*gLocal_N;
 
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
@@ -156,7 +150,7 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
 void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 {
     //! - Define necessarry variables
-    MRPd sigmaBNLocal;
+    Eigen::MRPd sigmaBNLocal;
     Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
     Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
     Eigen::MatrixXd thetaDDot(1,1);               /* thetaDDot variable to send to state manager */

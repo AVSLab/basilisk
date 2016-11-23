@@ -66,12 +66,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*sysTime) << CurrentSimNanos, t;
 
     //! - Zero all Matrices and vectors
-    this->matrixAContr.setZero();
-    this->matrixBContr.setZero();
-    this->matrixCContr.setZero();
-    this->matrixDContr.setZero();
-    this->vecTransContr.setZero();
-    this->vecRotContr.setZero();
     this->hub.matrixA.setZero();
     this->hub.matrixB.setZero();
     this->hub.matrixC.setZero();
@@ -100,6 +94,14 @@ void SpacecraftPlus::equationsOfMotion(double t)
     //! - Loop through state effectors
     for(it = this->states.begin(); it != states.end(); it++)
     {
+        //! - Set the matrices to zero
+        this->matrixAContr.setZero();
+        this->matrixBContr.setZero();
+        this->matrixCContr.setZero();
+        this->matrixDContr.setZero();
+        this->vecTransContr.setZero();
+        this->vecRotContr.setZero();
+
         //! Add in effectors mass props into mass props of spacecraft
         (*it)->updateEffectorMassProps(t);
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
@@ -207,7 +209,7 @@ void SpacecraftPlus::initializeDynamics()
         (*it)->linkInStates(dynManager);
     }
 
-    //! - Loop though the stateEffectors to link in the states needed
+    //! - Loop though the dynamicEffectors to link in the states needed
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         (*dynIt)->linkInStates(this->dynManager);

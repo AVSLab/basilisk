@@ -30,6 +30,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import SimulationBaseClass
 import thrusterDynamicEffector
+import fuelTank
 
 class thrusterOptions:
     useMinPulseTime = True
@@ -93,12 +94,14 @@ def create(
 #   It creates the C-class container for the array of thruster devices, and attaches
 #   this container to the spacecraft object
 #
-def addToSpacecraft(modelTag, thDynamicEffector, scPlus):
+def addToSpacecraft(modelTag, thDynamicEffector, scPlus, fuelTankEffector):
     global thrusterList
 
     thDynamicEffector.ModelTag = modelTag
 
     thDynamicEffector.ThrusterData = thrusterDynamicEffector.ThrusterConfigVector(thrusterList)
+
+    fuelTankEffector.addThrusterSet(thDynamicEffector)
 
     scPlus.addDynamicEffector(thDynamicEffector)
 
