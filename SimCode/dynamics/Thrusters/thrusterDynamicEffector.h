@@ -114,7 +114,7 @@ public:
     ~ThrusterDynamicEffector();
     void linkInStates(DynParamManager& states);
     void computeBodyForceTorque(double integTime);
-    
+    void computeStateContribution(double integTime);
     void SelfInit();
     void CrossInit();
     //! Add a new thruster to the thruster set
@@ -127,7 +127,6 @@ public:
                              double currentTime);
     void ComputeThrusterShut(ThrusterConfigData *CurrentThruster,
                              double currentTime);
-    void updateMassProperties(double currentTime);
     
 
 public:

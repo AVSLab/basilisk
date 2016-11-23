@@ -40,6 +40,8 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);
+    this->stateDerivContribution.resize(1);
+    this->stateDerivContribution.setZero();
     return;
 }
 
@@ -236,7 +238,6 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
-    double mDotSingle;
     double tmpThrustMag = 0;
     
     //! Begin method steps
@@ -275,20 +276,37 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
+    }
+    //! - Once all thrusters have been checked, update time-related variables for next evaluation
+    prevFireTime = integTime;
+
+    
+}
+
+void ThrusterDynamicEffector::computeStateContribution(double integTime){
+
+    std::vector<ThrusterConfigData>::iterator it;
+    ThrusterOperationData *ops;
+    double mDotSingle;
+    this->mDotTotal = 0.0;
+
+    //! - Iterate through all of the thrusters to aggregate the force/torque in the system
+    for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
+    {
+        ops = &it->ThrustOps;
         mDotSingle = 0.0;
         if(it->steadyIsp * ops->IspFactor > 0.0)
         {
             mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
                                                           it->steadyIsp * ops->IspFactor);
         }
-        mDotTotal += mDotSingle;
+        this->mDotTotal += mDotSingle;
     }
-    //! - Once all thrusters have been checked, update time-related variables for next evaluation
-    updateMassProperties(integTime);
-    prevFireTime = integTime;
+    this->stateDerivContribution(0) = this->mDotTotal;
 
-    
+    return;
 }
+
 
 /*! This method is used to get the current force for a thruster firing.  It uses
  the configuration data associated with a given thruster and the current clock
@@ -400,18 +418,6 @@ void ThrusterDynamicEffector::ComputeThrusterShut(ThrusterConfigData *CurrentThr
     ops->ThrustFactor = ops->IspFactor = 0.0;
     ops->ThrustOnRampTime = 0.0;
 }
-
-/* */
-void ThrusterDynamicEffector::updateMassProperties(double currentTime)
-{
-    double dt = currentTime - prevFireTime;
-//    double oldMass = objProps.Mass;
-//    objProps.Mass = oldMass - mDotTotal*dt;
-//   vScale(objProps.Mass/oldMass, objProps.InertiaTensor, 9,
-//           objProps.InertiaTensor);
-    
-}
-
 
 /*! This method finds the location in the time in the specified ramp that
  corresponds to the current thruster thrust factor.  It is designed to
