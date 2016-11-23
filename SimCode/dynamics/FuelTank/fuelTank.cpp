@@ -20,6 +20,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 FuelTank::FuelTank() 
 	:fuelSloshParticles()
 {
+	//! - zero the contributions for mass props and mass rates
+	effProps.IEffPntB_B.fill(0.0);
+	effProps.rCB_B.fill(0.0);
+	effProps.rPrimeCB_B.fill(0.0);
+	effProps.mEff = 0.0;
+	effProps.IEffPrimePntB_B.fill(0.0);
+
+	//! - Initialize the variables to working values
+	r_TB_B.setZero();
+	nameOfMassState = "fuelTankMass";
 }
 
 FuelTank::~FuelTank() {
@@ -42,6 +52,7 @@ void FuelTank::registerStates(DynParamManager& statesIn)
 	std::vector<FuelSloshParticle>::iterator i;
 	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++)
 		i->registerStates(statesIn);
+	this->massState = statesIn.registerState(1, 1, nameOfMassState);
 }
 
 void FuelTank::updateEffectorMassProps(double integTime) {
@@ -49,6 +60,7 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	effProps.mEff = 0;
 	effProps.IEffPntB_B = effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
 	effProps.rCB_B = effProps.rPrimeCB_B = Eigen::Vector3d::Zero();
+	//Incorperate the effects of all of the particles
 	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++) {
 		i->updateEffectorMassProps(integTime);
 		effProps.mEff += i->effProps.mEff;
@@ -57,8 +69,20 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 		effProps.rCB_B += i->effProps.mEff * i->effProps.rCB_B;
 		effProps.rPrimeCB_B += i->effProps.mEff * i->effProps.rPrimeCB_B;
 	}
+
+	//Contributions of the mass of the tank
+	double massLocal = massState->getState()(0, 0);
+	double massDotLocal = massState->getState()(0, 0);
+	effProps.mEff += massLocal;
+	effProps.IEffPntB_B += (2 / 5 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
+	effProps.IEffPrimePntB_B += (2 / 5 * massDotLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massDotLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
+	effProps.rCB_B += massLocal * r_TB_B;
+	effProps.rPrimeCB_B += massDotLocal * r_TB_B;
+
 	effProps.rCB_B /= effProps.mEff;
 	effProps.rPrimeCB_B /= effProps.mEff;
+
+
 }
 
 void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
@@ -85,4 +109,11 @@ void FuelTank::computeDerivatives(double integTime)
 	std::vector<FuelSloshParticle>::iterator i;
 	for (i = fuelSloshParticles.begin(); i < fuelSloshParticles.end(); i++)
 		i->computeDerivatives(integTime);
+	
+	//! - Mass depletion
+	double fuelConsumption = 0.0;
+	//TODO: add in the contributions from the thrusters
+	Eigen::MatrixXd conv(1, 1);
+	conv(0, 0) = -fuelConsumption;
+	massState->setDerivative(conv);
 }

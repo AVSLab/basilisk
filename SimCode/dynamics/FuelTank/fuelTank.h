@@ -31,6 +31,12 @@ class FuelTank :
 {
 public:
 	std::vector<FuelSloshParticle> fuelSloshParticles;
+	double radiusTank;
+	Eigen::Vector3d r_TB_B;
+	std::string nameOfMassState;
+
+private:
+	StateData *massState;
 
 public:
 	FuelTank();
