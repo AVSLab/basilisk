@@ -28,17 +28,15 @@ class FuelSloshParticle :
 	public StateEffector, public SysModel
 {
 public:
-	double massFSP;            //!< kg, mass of fuel slosh particle
-	Eigen::Vector3d r_PB_B;    //!< m, position vector from B point to slosh equilibrium, P, in body frame
-	Eigen::Vector3d pHat_B;    //!< slosh direction unit vector, in body frame
-	double k;                  //!< N/m, linear spring constant for fuel slosh
-	double c;                  //!< N-s/m, linear damping term for fuel slosh
-	std::string nameOfRhoState;   //!< [-] Identifier for the rho state data container
+	double massFSP;              //!< [kg] mass of fuel slosh particle
+	Eigen::Vector3d r_PB_B;      //!< [m] position vector from B point to slosh equilibrium, P, in body frame
+	Eigen::Vector3d pHat_B;      //!< [-] slosh direction unit vector, in body frame
+	double k;                    //!< [N/m] linear spring constant for fuel slosh
+	double c;                    //!< [N-s/m] linear damping term for fuel slosh
+	std::string nameOfRhoState;  //!< [-] Identifier for the rho state data container
 	std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 
 private:
-	//Eigen::MatrixXd *F_G;
-
 	//Cached values, used in multiple functions
 	Eigen::Vector3d rPrime_PcB_B;
 	Eigen::Matrix3d rPrimeTilde_PcB_B;
@@ -49,8 +47,9 @@ private:
 	double rho;
 	double rhoDot;
 
-	StateData *rhoState;			   //!< m, fuel slosh displacement from equilibrium
-	StateData *rhoDotState;		   //!< m/s, time derivative of rho;
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
+	StateData *rhoState;			//!< [m] fuel slosh displacement from equilibrium
+	StateData *rhoDotState;		    //!< [m/s] time derivative of rho;
 	StateData *omegaState;
 	StateData *sigmaState;
 	StateData *velocityState;

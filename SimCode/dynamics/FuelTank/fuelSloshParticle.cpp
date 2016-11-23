@@ -51,6 +51,7 @@ void FuelSloshParticle::linkInStates(DynParamManager& statesIn)
 	this->omegaState = statesIn.getStateObject("hubOmega");
 	this->sigmaState = statesIn.getStateObject("hubSigma");
 	this->velocityState = statesIn.getStateObject("hubVelocity");
+    this->g_N = statesIn.getPropertyReference("g_N");
 
     return;
 }
@@ -92,13 +93,25 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
-	Eigen::Vector3d omega_BN_B_local = omegaState->getState();
-
+    Eigen::MRPd sigmaBNLocal;
+    Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+	Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
 	Eigen::Matrix3d omegaTilde_BN_B_local;
+    Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
+    Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
+    gLocal_N = *this->g_N;
+
+    //! - Find dcmBN
+    sigmaBNLocal = (Eigen::Vector3d ) this->sigmaState->getState();
+    dcmNB = sigmaBNLocal.toRotationMatrix();
+    dcmBN = dcmNB.transpose();
+    //! - Map gravity to body frame
+    g_B = dcmBN*gLocal_N;
 	omegaTilde_BN_B_local << tilde(omega_BN_B_local);
 
 	//Cached value, used in computeDerivatives as well
-	a_rho = /*pHat_B.dot(F_G_local)*/ - this->k*this->rho - this->c*this->rhoDot
+	a_rho = this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
 		- 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
 		- this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B);
 
