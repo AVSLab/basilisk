@@ -32,7 +32,7 @@ public:
     virtual ~DynamicEffector();
     virtual void linkInStates(DynParamManager& states) = 0;
     virtual void computeBodyForceTorque(double integTime)=0;
-    virtual void computeStateContribution(double integTime)=0;
+    virtual void computeStateContribution(double integTime);
     
 public:
     Eigen::VectorXd stateDerivContribution; //! [-] DynamicEffectors contribution to a stateEffector

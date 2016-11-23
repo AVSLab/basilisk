@@ -32,3 +32,8 @@ DynamicEffector::~DynamicEffector()
 {
     return;
 }
+
+void DynamicEffector::computeStateContribution(double integTime)
+{
+    return;
+}
