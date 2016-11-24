@@ -17,13 +17,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
 #
-#   Integrated Unit Test Script
-#   Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
-#             MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-#   Author:  Hanspeter Schaub
-#   Creation Date:  Nov. 19, 2016
+# Basilisk Scenario Script and Integrated TEst
 #
+# Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
+#           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
+# Author:   Hanspeter Schaub
+# Creation Date:  Nov. 19, 2016
+#
+
+
 
 import pytest
 import sys, os, inspect
@@ -36,12 +40,13 @@ import math
 import csv
 import logging
 
-
+# @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+# @endcond
 
 # import general simulation support files
 import SimulationBaseClass
@@ -81,14 +86,130 @@ import vehicleConfigData
 
 # provide a unique test method name, starting with test_
 def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
+    '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = bskAttitudeFeedback( True,
+    [testResults, testMessage] = run( True,
             show_plots, useUnmodeledTorque, useIntGain)
     assert testResults < 1, testMessage
 
 
 
-def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
+## This scenario demonstrates how to stabilize the tumble of a spacecraft orbiting the
+# Earth that is initially tumbling.
+#
+# Attitude Detumbling Simulation in a Single Simulation Process
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The scenario is
+# setup to be run in three different setups:
+# Scenarios Simulation Setup Cases
+#
+# Setup | useUnmodeledTorque  | useIntGain
+# ----- | ------------------- | -------------
+# 1     | False               | False
+# 2     | True                | False
+# 3     | True                | True
+#
+# To run the default scenario 1., call the python script through
+#
+#       python test_scenarioAttitudeFeedback.py
+#
+# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
+# tracking errors, as well as the control torque vector.
+#
+# The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
+# effector is attached.  Note that both the rotational and translational degrees of
+# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.
+#
+# The control torque is simulated usign the extForceTorque() module.  This module can
+# accept a torque in body frame components either through an input message, or through
+# a module internal torque vector which can be set in python.  In this simulation, the
+# flight software is providing the attitude control torque message which is connected to
+# the torque input message of this module.  If an external torque is being simulated,
+# then the module internal torque vector is set to a constant value.
+#
+# Lastly, the flight software algorithm module require a navigation message with the
+# spacecraft orientation and attitude rates.  This is setup using the simpleNav()
+# module. By just invoking a sensor module it is setup to run without any simulated
+# corruptions.  Thus in this simulation it will return truth measurements.
+#
+# Next the flight software algorithms need to be setup.  The inertial pointing reference
+# frame definition is provided through the simple inertial3D() module.  The only input
+# it requires is the desired inertial heading.
+#
+# The reference frame states and the navigation message (output of simpleNav()) are fed
+# into the attTrackingError() module.  It is setup to compute the attitude tracking error
+# between the body frame B and the reference frame R.  If a body fixed frame other than B
+# needs to be driven towards R, this could be configured as well in this module.
+#
+# Finally the tracking errors are fed to the classic MRP feedback control module.  The
+# algorithm of this is discussed in the text book *Analytical Mechanics of Space Systems*
+# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The control torque output vector message of this
+# module is connected back to the input message of the extForceTorque() module to close
+# the control loop.
+#
+#
+# Setup 1
+# -----
+#
+# Which scenario is run is controlled at the bottom of the file in the code
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#          True,       # show_plots
+#          False,       # useUnmodeledTorque
+#          False        # useIntGain
+#        )
+# ~~~~~~~~~~~~~
+# The first 2 arguments can be left as is.  The last 2 arguments control the
+# simulation scenario flags to turn on or off certain simulation conditions.  The
+# default scenario has both the unmodeled torque and integral feedback turned off.  The
+# resulting attitude and control torque histories are shown below.
+# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback100.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback200.svg "Torque history")
+#
+# Setup 2
+# ------
+#
+# Here the python main function is changed to read:
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#          True,       # show_plots
+#          True,       # useUnmodeledTorque
+#          False        # useIntGain
+#        )
+# ~~~~~~~~~~~~~
+# The resulting attitude and control torques are shown below.  Note that, as expected,
+# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
+# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
+# non-zero steady-state values.
+# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback110.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback210.svg "Torque history")
+#
+# Setup 3
+# ------
+#
+# The final scenario turns on both the unmodeled external torque and the integral
+# feedback term:
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#          True,       # show_plots
+#          True,       # useUnmodeledTorque
+#          True        # useIntGain
+#        )
+# ~~~~~~~~~~~~~
+# The resulting attitude and control torques are shown below.  In this case
+# the orientation error does settle to zero.  The integral term changes the control torque
+# to settle on a value that matches the unmodeled external torque.
+# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback111.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback211.svg "Torque history")
+#
+def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
+    '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
 
@@ -291,7 +412,7 @@ def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain)
     #
     #   plot the results
     #
-
+    figureName = "bskAttitudeFeedback"
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
@@ -300,6 +421,7 @@ def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain)
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
+    unitTestSupport.saveScenarioFigure(figureName+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
 
     plt.figure(2)
     for idx in range(1,4):
@@ -309,6 +431,7 @@ def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain)
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
+    unitTestSupport.saveScenarioFigure(figureName+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
 
     plt.figure(3)
     for idx in range(1,4):
@@ -321,6 +444,10 @@ def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain)
 
     if show_plots:
         plt.show()
+
+    # close the plots being saved off to avoid over-writing old and new figures
+    plt.close(1)
+    plt.close(2)
 
 
     #
@@ -416,9 +543,9 @@ def bskAttitudeFeedback(doUnitTests, show_plots, useUnmodeledTorque, useIntGain)
 # stand-along python script
 #
 if __name__ == "__main__":
-    bskAttitudeFeedback( False,       # do unit tests
-                         True,       # show_plots
-                         False,       # useUnmodeledTorque
-                         False        # useIntGain
-                       )
+    run( False,       # do unit tests
+         True,       # show_plots
+         False,       # useUnmodeledTorque
+         False        # useIntGain
+       )
 

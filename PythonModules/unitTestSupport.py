@@ -162,6 +162,18 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
     return
 
+#
+#   save a python scenario result into the Doxygen image folder
+#
+def saveScenarioFigure(figureName, plt, path):
+    texFileName = path+"/../Images/Scenarios/"+figureName+".svg"
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    plt.savefig(texFileName)
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
