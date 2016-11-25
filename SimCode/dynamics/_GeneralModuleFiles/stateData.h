@@ -42,8 +42,8 @@ public:
     Eigen::MatrixXd getState() const {return state;}
     Eigen::MatrixXd getStateDeriv() const {return stateDeriv;}
     std::string getName() const {return stateName;}
-    uint32_t getRowSize() const {return(state.innerSize());}
-    uint32_t getColumnSize() const {return(state.outerSize());}
+    uint32_t getRowSize() const {return((uint32_t)state.innerSize());}
+    uint32_t getColumnSize() const {return((uint32_t)state.outerSize());}
     bool isStateActive() {return stateEnabled;}
     void disable() {stateEnabled = false;}
     void enable() {stateEnabled = true;}
