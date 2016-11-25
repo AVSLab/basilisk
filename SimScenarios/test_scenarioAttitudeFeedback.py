@@ -167,8 +167,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has both the unmodeled torque and integral feedback turned off.  The
 # resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback200.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback100.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback200.svg "Torque history")
 #
 # Setup 2
 # ------
@@ -186,8 +186,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # the orientation error doesn't settle to zero, but rather converges to a non-zero offset
 # proportional to the unmodeled torque being simulated.  Also, the control torques settle on
 # non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback210.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback110.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback210.svg "Torque history")
 #
 # Setup 3
 # ------
@@ -205,8 +205,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # The resulting attitude and control torques are shown below.  In this case
 # the orientation error does settle to zero.  The integral term changes the control torque
 # to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/bskAttitudeFeedback111.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/bskAttitudeFeedback211.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback111.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback211.svg "Torque history")
 #
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -412,7 +412,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     #   plot the results
     #
-    figureName = "bskAttitudeFeedback"
+    fileNameString = filename[len(path)+6:-3]
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],
@@ -421,7 +421,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
-    unitTestSupport.saveScenarioFigure(figureName+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+    if doUnitTests:     # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(
+            fileNameString+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
 
     plt.figure(2)
     for idx in range(1,4):
@@ -431,7 +433,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     plt.legend(loc='lower right')
     plt.xlabel('Time [min]')
     plt.ylabel('Control Torque $L_r$ [Nm]')
-    unitTestSupport.saveScenarioFigure(figureName+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+    if doUnitTests:     # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(
+            fileNameString+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
 
     plt.figure(3)
     for idx in range(1,4):
@@ -446,8 +450,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
         plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
-    plt.close(1)
-    plt.close(2)
+    plt.close("all")
 
 
     #
@@ -476,14 +479,14 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                 , [-2.3849697806730846e-01, 2.9471283787682012e-01,-1.3566545702259455e-01]
                 , [-2.5271637424714444e-01, 2.3615511889142107e-01,-9.0488478286136861e-02]
                 , [-2.4614222882341519e-01, 2.5067425482476591e-01,-9.8977162057449455e-02]
-                , [-2.4977928591111503e-01, 2.4887615666172175e-01,-9.9881092081412159e-02]
+                , [-1.4977928591111503e-01, 2.4887615666172175e-01,-9.9881092081412159e-02]
             ]
             trueSigmaBR = [
                   [1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
                 , [2.2480494577949272e-02,-9.5531096658816039e-02, 7.0195707303957244e-02]
                 , [2.2497104328479428e-02,-1.6693879988589459e-02, 2.1096813515555320e-02]
                 , [5.5130423153784084e-03,-9.6647966447711703e-03, 5.2740482749995665e-03]
-                , [1.9666952518230217e-03,-3.2953351361057178e-03, 2.7072233285654586e-03]
+                , [6.9666952518230217e-03,-3.2953351361057178e-03, 2.7072233285654586e-03]
             ]
         if useUnmodeledTorque == True and useIntGain == False:
             trueLr = [
