@@ -34,7 +34,8 @@ typedef struct {
     /* declare module private variables */
     double K;                           /*!< [rad/sec] Proportional gain applied to MRP errors */
     double P;                           /*!< [N*m*s]   Rate error feedback gain applied  */
-
+    double knownTorquePnt_B_B[3];       /*!< [N*m]     known external torque in body frame vector components */
+    
     /* declare module IO interfaces */
     char outputDataName[MAX_STAT_MSG_LENGTH];               /*!< The name of the output message*/
     int32_t outputMsgID;                                    /*!< [] ID for the outgoing body accel requests*/

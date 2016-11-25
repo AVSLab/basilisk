@@ -130,7 +130,6 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
     double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              L[3];               /*!< known external torque */
     double              omega_BN_B[3];
     double              v3[3];
     double              v3_1[3];
@@ -168,9 +167,6 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
     
-    /* compute known external torque */
-    v3Set(0.0, 0.0, 0.0, L);
-
     /* evaluate integral term */
     if (ConfigData->Ki > 0) {   /* check if integral feedback is turned on  */
         v3Scale(ConfigData->K * dt, guidCmd.sigma_BR, v3);
@@ -215,7 +211,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     m33MultV3(RECAST3X3 ConfigData->ISCPntB_B, v3_1, v3);                    /* +[I](-d(omega_r)/dt + omega x omega_r) */
     v3Add(v3, Lr, Lr);
 
-    v3Add(L, Lr, Lr);                                       /* +L */
+    v3Add(ConfigData->knownTorquePnt_B_B, Lr, Lr);                                       /* +L */
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 

@@ -89,7 +89,6 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t            clockTime;
     uint32_t            readSize;
     double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              L[3];               /*!< known external torque */
     double              omega_BN_B[3];      /*!< Inertial angular body rate expressed in body B-frame components */
     double              v3_temp1[3];        /*!< Temporal vector for insight computations */
     double              v3_temp2[3];        /*!< Temporal vector for insight computations */
@@ -105,10 +104,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     
     /*! - Compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
-    
-    /* Compute known external torque */
-    v3SetZero(L);
-    
+        
     /*! - Evaluate required attitude control torque:
      Lr =  K*sigma_BR + P*delta_omega  - omega x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
@@ -127,7 +123,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_temp1, v3_temp1);
     v3Subtract(Lr, v3_temp1, Lr);
     
-    v3Add(L, Lr, Lr); /* + L */
+    v3Add(ConfigData->knownTorquePnt_B_B, Lr, Lr); /* + L */
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 

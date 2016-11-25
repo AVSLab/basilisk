@@ -170,9 +170,6 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
 
-    /* compute known external torque */
-    v3SetZero(L);
-
     /* evalute MRP kinematic steering law */
     PRVSteeringLaw(ConfigData, guidCmd.sigma_BR, omega_BastR_B, omegap_BastR_B);
     
@@ -222,7 +219,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Subtract(Lr, v3, Lr);
     
     /* Add external torque: Lr += L */
-    v3Add(L, Lr, Lr);
+    v3Add(ConfigData->knownTorquePnt_B_B, Lr, Lr);
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);

@@ -91,6 +91,7 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.P = 150.0
     moduleConfig.omega_max = 1.5 * macros.D2R
     moduleConfig.integralLimit = 2. / moduleConfig.Ki * 0.1
+    moduleConfig.knownTorquePnt_B_B = [0., 0., 0.]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.

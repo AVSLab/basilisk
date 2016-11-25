@@ -41,6 +41,7 @@ typedef struct {
     double z[3];                        /*!< [rad]     integral state of delta_omega */
     double int_sigma[3];                /*!< [s]       integral of the MPR attitude error */
     double domega0[3];                  /*!< [rad/sec] initial omega tracking error */
+    double knownTorquePnt_B_B[3];       /*!< [N*m]     known external torque in body frame vector components */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
     RWConfigParams rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */

@@ -33,15 +33,16 @@
 /*! @brief Top level structure for the MRP Steering attitude control routine. */
 typedef struct {
     /* declare module private variables */
-    double K1;                     /*!< [rad/sec] Proportional gain applied to MRP errors */
-    double K3;                     /*!< [rad/sec] Cubic gain applied to MRP error in steering saturation function */
-    double omega_max;              /*!< [rad/sec] Maximum rate command of steering control */
-    double P;                      /*!< [N*m*s]   Rate error feedback gain applied  */
-    double Ki;                     /*!< [N*m]     Integration feedback error on rate error  */
-    double integralLimit;          /*!< [N*m]     Integration limit to avoid wind-up issue */
-    uint64_t priorTime;            /*!< [ns]      Last time the attitude control is called */
-    double z[3];                   /*!< [rad]     integral state of delta_omega */
-    
+    double K1;                          /*!< [rad/sec] Proportional gain applied to MRP errors */
+    double K3;                          /*!< [rad/sec] Cubic gain applied to MRP error in steering saturation function */
+    double omega_max;                   /*!< [rad/sec] Maximum rate command of steering control */
+    double P;                           /*!< [N*m*s]   Rate error feedback gain applied  */
+    double Ki;                          /*!< [N*m]     Integration feedback error on rate error  */
+    double integralLimit;               /*!< [N*m]     Integration limit to avoid wind-up issue */
+    uint64_t priorTime;                 /*!< [ns]      Last time the attitude control is called */
+    double z[3];                        /*!< [rad]     integral state of delta_omega */
+    double knownTorquePnt_B_B[3];       /*!< [N*m]     known external torque in body frame vector components */
+
     uint32_t ignoreOuterLoopFeedforward;/*!< []      Boolean flag indicating if outer feedforward term should be included */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */

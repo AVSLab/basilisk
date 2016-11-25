@@ -42,6 +42,7 @@ typedef struct {
     double integralLimit;           /*!< [N*m]     Integration limit to avoid wind-up issue */
     uint64_t priorTime;             /*!< [ns]      Last time the attitude control is called */
     double z[3];                    /*!< [rad]     Integral state of delta_omega */
+    double knownTorquePnt_B_B[3];       /*!< [N*m]     known external torque in body frame vector components */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
     RWConfigParams rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
