@@ -78,18 +78,19 @@ import vehicleConfigData
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useUnmodeledTorque, useIntGain", [
-      (False, False)
-    , (True, False)
-    , (True, True)
+@pytest.mark.parametrize("useUnmodeledTorque, useIntGain, useKnownTorque", [
+      (False, False, False)
+    , (True, False, False)
+    , (True, True, False)
+    , (True, False, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
+def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
-            show_plots, useUnmodeledTorque, useIntGain)
+            show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     assert testResults < 1, testMessage
 
 
@@ -103,14 +104,13 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The scenario is
-# setup to be run in three different setups:
-# Scenarios Simulation Setup Cases
-#
-# Setup | useUnmodeledTorque  | useIntGain
-# ----- | ------------------- | -------------
-# 1     | False               | False
-# 2     | True                | False
-# 3     | True                | True
+# setup to be run in four different setups:
+# Setup | useUnmodeledTorque  | useIntGain | useKnownTorque
+# ----- | ------------------- | ---------- | --------------
+# 1     | False               | False      | False
+# 2     | True                | False      | False
+# 3     | True                | True       | False
+# 4     | True                | False      | True
 #
 # To run the default scenario 1., call the python script through
 #
@@ -158,17 +158,18 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
-#          True,       # show_plots
+#          True,        # show_plots
 #          False,       # useUnmodeledTorque
-#          False        # useIntGain
+#          False,       # useIntGain
+#          False        # useKnownTorque
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The last 2 arguments control the
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has both the unmodeled torque and integral feedback turned off.  The
 # resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback200.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
 #
 # Setup 2
 # ------
@@ -177,38 +178,62 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
-#          True,       # show_plots
-#          True,       # useUnmodeledTorque
-#          False        # useIntGain
+#          True,        # show_plots
+#          True,        # useUnmodeledTorque
+#          False,       # useIntGain
+#          False        # useKnownTorque
 #        )
 # ~~~~~~~~~~~~~
 # The resulting attitude and control torques are shown below.  Note that, as expected,
 # the orientation error doesn't settle to zero, but rather converges to a non-zero offset
 # proportional to the unmodeled torque being simulated.  Also, the control torques settle on
 # non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback210.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1100.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2100.svg "Torque history")
 #
 # Setup 3
 # ------
 #
-# The final scenario turns on both the unmodeled external torque and the integral
+# The 3rd scenario turns on both the unmodeled external torque and the integral
 # feedback term:
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
-#          True,       # show_plots
-#          True,       # useUnmodeledTorque
-#          True        # useIntGain
+#          True,        # show_plots
+#          True,        # useUnmodeledTorque
+#          False,       # useIntGain
+#          False        # useKnownTorque
 #        )
 # ~~~~~~~~~~~~~
 # The resulting attitude and control torques are shown below.  In this case
 # the orientation error does settle to zero.  The integral term changes the control torque
 # to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback111.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback211.svg "Torque history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1110.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2110.svg "Torque history")
 #
-def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
+# Setup 4
+# ------
+#
+# The 4th scenario turns on the unmodeled external torque but keeps the integral
+# feedback term off.  Instead, the external disturbance is fed forward in the
+# attitude control solution.
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#          True,        # show_plots
+#          True,        # useUnmodeledTorque
+#          False,       # useIntGain
+#          True         # useKnownTorque
+#        )
+# ~~~~~~~~~~~~~
+# The resulting attitude and control torques are shown below.  In this case
+# the orientation error does settle to zero as the feedforward term compensates for
+# the external torque.  The control torque is now caused
+# to settle on a value that matches the unmodeled external torque.
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
+# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
+
+def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -325,7 +350,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
         mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
     mrpControlConfig.P  = 30.0
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
-
+    mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
+    if useKnownTorque:
+        mrpControlConfig.knownTorquePnt_B_B = [0.25,-0.25,0.1]
 
 
 
@@ -423,7 +450,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+            fileNameString+"1"+str(int(useUnmodeledTorque))+str(int(useIntGain))
+            +str(int(useKnownTorque))
+            , plt, path)
 
     plt.figure(2)
     for idx in range(1,4):
@@ -435,7 +464,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     plt.ylabel('Control Torque $L_r$ [Nm]')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain)), plt, path)
+            fileNameString+"2"+str(int(useUnmodeledTorque))+str(int(useIntGain))
+            +str(int(useKnownTorque))
+            , plt, path)
 
     plt.figure(3)
     for idx in range(1,4):
@@ -473,7 +504,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                     , [-6.3454267104367241e+06, 5.4683721059305444e+06, 5.5014852653880799e+06]
                 ]
         trueLr = trueSigmaBR = []
-        if useUnmodeledTorque == True and useIntGain == True:
+
+        if useUnmodeledTorque == True and useIntGain == True and useKnownTorque == False:
             trueLr = [
                   [-3.8540000000000002e-01,-3.5200000000000009e-01, 4.2000000000000121e-02]
                 , [-2.3849697806730846e-01, 2.9471283787682012e-01,-1.3566545702259455e-01]
@@ -488,7 +520,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                 , [5.5130423153784084e-03,-9.6647966447711703e-03, 5.2740482749995665e-03]
                 , [1.9666952518230217e-03,-3.2953351361057178e-03, 2.7072233285654586e-03]
             ]
-        if useUnmodeledTorque == True and useIntGain == False:
+        if useUnmodeledTorque == True and useIntGain == False and useKnownTorque == False:
             trueLr = [
                   [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
                 , [-2.6249726949900559e-01, 2.5589984841560653e-01,-1.0917765643851718e-01]
@@ -503,7 +535,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                 , [7.1220889524830688e-02,-7.1510953126517118e-02, 2.8814970926949179e-02]
                 , [7.1456109973308091e-02,-7.1435046045892472e-02, 2.8534341637639557e-02]
             ]
-        if useUnmodeledTorque == False and useIntGain == False:
+        if useUnmodeledTorque == False and useIntGain == False and useKnownTorque == False:
             trueLr = [
                   [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
                 , [ 4.3304295406265583e-02, 7.7970819853086931e-03, 1.2148680350980004e-02]
@@ -515,6 +547,21 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                   [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
                 , [-1.7700318439403492e-02,-1.4154347776578310e-02, 1.2434108941675513e-02]
                 , [ 2.3210853655701645e-03, 1.3316275028241674e-03,-4.1569615433473430e-04]
+                , [-3.0275893560215703e-04,-1.1614876733451711e-04, 8.6068784583440090e-06]
+                , [ 3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
+            ]
+        if useUnmodeledTorque == True and useIntGain == False and useKnownTorque == True:
+            trueLr = [
+                  [-6.3000000000000000e-01,-1.5000000000000008e-01, 5.0000000000000128e-02]
+                , [-2.0669233648787125e-01, 2.5765561543404975e-01,-8.7857327347252573e-02]
+                , [-2.5484394926182946e-01, 2.5027978077275026e-01,-1.0141318726877116e-01]
+                , [-2.4947595336005560e-01, 2.4986116764798483e-01,-9.9910231437738084e-02]
+                , [-2.5005384173665213e-01, 2.5002409166692252e-01,-1.0000456570945075e-01]
+            ]
+            trueSigmaBR = [
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [-1.7696313533933930e-02,-1.4143120263281624e-02, 1.2430697844911655e-02]
+                , [ 2.3206734210692009e-03, 1.3296808140089579e-03,-4.1561415351098834e-04]
                 , [-3.0275893560215703e-04,-1.1614876733451711e-04, 8.6068784583440090e-06]
                 , [ 3.9002194932293482e-05, 9.3813814117398300e-06, 1.5011853130355206e-07]
             ]
@@ -547,8 +594,9 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 #
 if __name__ == "__main__":
     run( False,       # do unit tests
-         True,       # show_plots
-         False,       # useUnmodeledTorque
-         False        # useIntGain
+         True,        # show_plots
+         True,        # useUnmodeledTorque
+         False,       # useIntGain
+         True         # useKnownTorque
        )
 
