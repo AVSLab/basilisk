@@ -101,13 +101,14 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 ## This scenario demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling.
 #
-# Attitude Detumbling Simulation in a Two Process Simulation Setup
+# Attitude Detumbling Simulation in a Two Process Simulation Setup {#scenarioAttitudeFeedback2T}
 # ====
 #
 # Scenario Description
 # -----
 # This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
-# is similar to the test_scenarioAttitudeFeedback.py, but here the dynamics
+# is similar to the [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+# but here the dynamics
 # simulation and the Flight Software (FSW) algorithms are run at different time steps.
 # The scenario is again
 # setup to be run in three different setups:

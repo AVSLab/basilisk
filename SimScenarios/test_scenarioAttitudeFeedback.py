@@ -97,7 +97,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 ## This scenario demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling.
 #
-# Attitude Detumbling Simulation in a Single Simulation Process
+# Attitude Detumbling Simulation in a Single Simulation Process {#scenarioAttitudeFeedback}
 # ====
 #
 # Scenario Description
@@ -123,7 +123,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # effector is attached.  Note that both the rotational and translational degrees of
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.
 #
-# The control torque is simulated usign the extForceTorque() module.  This module can
+# The control torque is simulated usign the ExtForceTorque() module.  This module can
 # accept a torque in body frame components either through an input message, or through
 # a module internal torque vector which can be set in python.  In this simulation, the
 # flight software is providing the attitude control torque message which is connected to
@@ -131,7 +131,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # then the module internal torque vector is set to a constant value.
 #
 # Lastly, the flight software algorithm module require a navigation message with the
-# spacecraft orientation and attitude rates.  This is setup using the simpleNav()
+# spacecraft orientation and attitude rates.  This is setup using the simple_nav()
 # module. By just invoking a sensor module it is setup to run without any simulated
 # corruptions.  Thus in this simulation it will return truth measurements.
 #
@@ -139,10 +139,10 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
 # frame definition is provided through the simple inertial3D() module.  The only input
 # it requires is the desired inertial heading.
 #
-# The reference frame states and the navigation message (output of simpleNav()) are fed
+# The reference frame states and the navigation message (output of simple_nav()) are fed
 # into the attTrackingError() module.  It is setup to compute the attitude tracking error
-# between the body frame B and the reference frame R.  If a body fixed frame other than B
-# needs to be driven towards R, this could be configured as well in this module.
+# between the body frame *B* and the reference frame *R*.  If a body fixed frame other than *B*
+# needs to be driven towards *R*, this could be configured as well in this module.
 #
 # Finally the tracking errors are fed to the classic MRP feedback control module.  The
 # algorithm of this is discussed in the text book *Analytical Mechanics of Space Systems*
