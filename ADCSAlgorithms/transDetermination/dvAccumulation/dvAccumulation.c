@@ -86,11 +86,11 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
 {
     uint64_t writeTime;
     uint32_t writeSize;
-    uint64_t measTime[MAX_ACC_BUF_PKT];
-    double accel_pltf[MAX_ACC_BUF_PKT];
-    double DV[MAX_ACC_BUF_PKT];
-    double sum[MAX_ACC_BUF_PKT];
-    double dvMean[MAX_ACC_BUF_PKT];
+//    uint64_t measTime[MAX_ACC_BUF_PKT];
+//    double accel_pltf[MAX_ACC_BUF_PKT];
+//    double DV[MAX_ACC_BUF_PKT];
+//    double sum[MAX_ACC_BUF_PKT];
+//    double dvMean[MAX_ACC_BUF_PKT];
     double dt;
     double frameDVPlt[3];
     double frameDVBdy[3];
