@@ -164,7 +164,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 #          False        # useKnownTorque
 #        )
 # ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 2 arguments control the
+# The first 2 arguments can be left as is.  The last 3 arguments control the
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has both the unmodeled torque and integral feedback turned off.  The
 # resulting attitude and control torque histories are shown below.
@@ -582,7 +582,10 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
 
         #   print out success message if no error were found
         if testFailCount == 0:
-            print   "PASSED "
+            print "PASSED "
+        else:
+            print testFailCount
+            print testMessages
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found

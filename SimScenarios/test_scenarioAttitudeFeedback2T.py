@@ -587,7 +587,10 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
         #   print out success message if no error were found
         if testFailCount == 0:
-            print   "PASSED "
+            print "PASSED "
+        else:
+            print testFailCount
+            print testMessages
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
