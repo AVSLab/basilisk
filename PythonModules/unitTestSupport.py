@@ -173,7 +173,7 @@ def saveScenarioFigure(figureName, plt, path):
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
-    plt.savefig(texFileName)
+    plt.savefig(texFileName, transparent=True)
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
@@ -194,7 +194,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         texFigure.close()
 
         texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-        plt.savefig(texFileName)
+        plt.savefig(texFileName, transparent=True)
 
     return
 
