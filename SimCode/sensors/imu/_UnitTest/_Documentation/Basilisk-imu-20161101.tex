@@ -43,7 +43,7 @@ Draft & Initial document creation & J. Alcorn \\
 
 
 \section{Introduction}
-The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body rates and acceleration from simulation truth values.
+The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body rates and acceleration from simulation truth values. Each check within {\tt test\_imu\_sensor.py} sets initial attitude MRP, body rates, and accumulated Delta V and validates output for a range of time.
 
 \section{{\tt test\_imu\_sensor} Test Description}
 
@@ -71,8 +71,11 @@ This section describes the test input/output for each of the checks. Table \ref{
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c }
 		\hline
-		Test   & Input & Expected Output \\ \hline
-		Attitude I/O & MRP: [-0.3906, -0.5036, 0.4630]$^T$ & EP: [0.2341   -0.4821   -0.6216    0.5714]$^T$ \\ \hline
+		\textbf{Test}   & \textbf{Input} & \textbf{Expected Output} \\ \hline
+		Gyro/Accel I/O & Initial $\bm \sigma$, $\bm \omega$, $\Delta V$ & constant $\bm \omega$, $\ddot{\bm r}$ \\ \hline
+		MRP Switch & Initial $\bm \sigma$ propagated  & MRP Switch flag = True \\ \hline
+		Static Bias & gyro/accel static bias value & gyro/accel static bias value \\ \hline
+		Process Noise & noise mean and std dev
 	\end{tabular}
 \end{table}
 
