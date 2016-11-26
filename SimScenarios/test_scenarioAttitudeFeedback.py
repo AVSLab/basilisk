@@ -121,7 +121,8 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 #
 # The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
 # effector is attached.  Note that both the rotational and translational degrees of
-# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.
+# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
+# information on how to setup orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
 # The control torque is simulated usign the ExtForceTorque() module.  This module can
 # accept a torque in body frame components either through an input message, or through
