@@ -32,6 +32,7 @@ def addEarth():
     earthGravBody.bodyMsgName = "earth_planet_data"
     earthGravBody.outputMsgName = "earth_display_frame_data"
     earthGravBody.mu = 0.3986004415E+15 # meters!
+    earthGravBody.radEquator = 6378136.6 # meters
     earthGravBody.isCentralBody = False
     earthGravBody.useSphericalHarmParams = False
 
