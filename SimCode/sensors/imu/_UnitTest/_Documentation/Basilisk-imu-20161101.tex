@@ -1,0 +1,97 @@
+\documentclass[]{BasiliskReportMemo}
+\usepackage{AVS}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+\newcommand{\ModuleName}{imu\_sensor}
+\newcommand{\subject}{Testing IMU Sensor Model}
+\newcommand{\status}{Initial document draft}
+\newcommand{\preparer}{J. Alcorn}
+\newcommand{\summary}{This unit test validates the internal aspects of the Basilisk IMU module {\tt test\_imu\_sensor.py} by comparing module output to expected output. The Basilisk IMU module is responsible for producing sensed body rates and acceleration from simulation truth values. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. The unit test validates MRP switching, static bias, process noise, discretization, saturation, spacecraft center of mass (CoM) offset, sensor misalignment, and bias walk bounds for both the gyroscope and accelerometer.}
+
+
+\begin{document}
+
+
+\makeCover
+
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{1.1}
+\noindent
+\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+\hline
+{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+\hline
+Draft & Initial document creation & J. Alcorn \\
+\hline
+
+\end{longtable}
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents
+~\\ \hrule ~\\
+
+
+\section{Introduction}
+The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body rates and acceleration from simulation truth values.
+
+\section{{\tt test\_imu\_sensor} Test Description}
+
+This test is located in {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_sensor.py}. In order to get good coverage of all the aspects of the module, the test is broken up into several parts: \par
+
+\begin{enumerate}
+	\item \underline{Gyro/Accel I/O} The check verifies basic I/O of body rates and acceleration.
+	\item \underline{MRP Switch} The check validates that the module accounts for attitude MRP switching in calculation of body rates.
+	\item \underline{Static Bias} The check validates static bias in gyro/accel measurements.
+	\item \underline{Process Noise} The check verifies that the Gauss-Markov model applies noise of appropriate mean and standard deviation to the attitude coordinate output. This check does not consider bias random walk.
+	\item \underline{Discretization} The check verifies that the module correctly discretizes the gyro/accel data according to the specified least significant bit (LSB).
+	\item \underline{Saturation} The check verifies that the module saturates the output according to specified values.
+	\item \underline{Center of Mass Offset} The check validates that the accelerometer will give appropriate output based on an offset in center of mass from accelerometer.
+	\item \underline{Misalignment} The check validates measurements taken when the IMU is not correctly aligned (i.e. the IMU measurements are taken in a frame with constant rotational offset from assumed IMU orientation).
+	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the gyro and accelerometer output. Specified walk bounds are validated.
+\end{enumerate} 
+
+\section{Test Parameters}
+
+This section describes the test input/output for each of the checks. Table \ref{tab:parameters} shows the input/output parameters for the test.
+
+\begin{table}[htbp]
+	\caption{Test I/O.}
+	\label{tab:parameters}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c }
+		\hline
+		Test   & Input & Expected Output \\ \hline
+		Attitude I/O & MRP: [-0.3906, -0.5036, 0.4630]$^T$ & EP: [0.2341   -0.4821   -0.6216    0.5714]$^T$ \\ \hline
+	\end{tabular}
+\end{table}
+
+
+\section{Test Results}
+
+All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results.
+
+\begin{table}[htbp]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c | c | c | c } % Column formatting, 
+		\hline
+		   & Attitude I/O & Time Stamp I/O & T\_str2Bdy & Process Noise & Bias Walk Bounds \\
+		\hline
+		Pass/Fail & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed}\\
+		\hline
+	\end{tabular}
+\end{table}
+
+\end{document}
