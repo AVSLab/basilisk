@@ -28,7 +28,7 @@ import matplotlib as mpl
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
 mpl.rc('ytick', labelsize=9)
-mpl.rc("figure", figsize=(5.5,2.5))
+mpl.rc("figure", figsize=(5.75,2.5))
 mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
