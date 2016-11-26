@@ -19,7 +19,7 @@
 '''
 
 #
-# Basilisk Scenario Script and Integrated TEst
+# Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraftPlus(), extForceTorque, simpleNav() and
 #           MRP_Feedback() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit.
@@ -89,7 +89,7 @@ import vehicleConfigData
 ])
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain):
+def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
