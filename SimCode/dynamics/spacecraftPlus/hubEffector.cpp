@@ -38,6 +38,9 @@ HubEffector::HubEffector()
     this->nameOfHubSigma = "hubSigma";
     this->nameOfHubOmega = "hubOmega";
 
+    // define a default mass of 1kg.
+    this->mHub = 1.0;                       /*!< [kg]   default mass value */
+
     //! - Default simulation to useTranslation and useRotation as true for now
     this->useTranslation = true;
     this->useRotation = true;
