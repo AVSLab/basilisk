@@ -129,7 +129,6 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     double              dt;                 /*!< [s] control update period */
     
     double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              L[3];               /*!< known external torque */
     double              omega_BastR_B[3];   /*!< angular velocity of desired Bast frame relative to reference frame R */
     double              omegap_BastR_B[3];  /*!< body frame derivative of omega_BastR */
     double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
