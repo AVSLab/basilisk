@@ -40,6 +40,8 @@ HubEffector::HubEffector()
 
     // define a default mass of 1kg.
     this->mHub = 1.0;                       /*!< [kg]   default mass value */
+    this->IHubPntBc_B.setIdentity();
+    this->rBcB_B.fill(0.0);
 
     //! - Default simulation to useTranslation and useRotation as true for now
     this->useTranslation = true;
