@@ -98,7 +98,7 @@ def test_scenarioOrbitEarth(show_plots, orbitCase, useSphericalHarmonics, planet
 # Scenario Description
 # -----
 # This script sets up a 3-DOF spacecraft which is orbiting a planet.  The purpose
-# is to illustrate how to create a spacecraft, attachah a gravity model, and run
+# is to illustrate how to create a spacecraft, attach a gravity model, and run
 # a basic Basilisk simulation.  The scenarios can be run with the followings setups
 # parameters:
 # Setup | orbitCase           | useSphericalHarmonics | planetCase
@@ -382,7 +382,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
     posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
 
 
     #
