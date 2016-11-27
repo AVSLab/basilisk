@@ -81,7 +81,7 @@ import simIncludeGravity
 ])
 
 # provide a unique test method name, starting with test_
-def test_scenarioOrbitEarth(show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
@@ -398,6 +398,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
 
     np.set_printoptions(precision=16)
+    print posData
 
     #
     #   plot the results
