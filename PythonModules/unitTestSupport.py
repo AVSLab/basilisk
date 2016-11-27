@@ -225,3 +225,7 @@ def np2EigenMatrixXd(mat):
         ,[mat[3], mat[4], mat[5]]
         ,[mat[6], mat[7], mat[8]]
     ]
+
+def EigenVector3d2np(eig):
+    return np.array([eig[0][0], eig[1][0], eig[2][0]])
+
