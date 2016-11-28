@@ -52,9 +52,10 @@ void swap(AccPktData *p, AccPktData *q){
     *q=t;
 }
 int partition(AccPktData *A, int start, int end){
+    int i;
     uint64_t pivot=A[end].measTime;
     int partitionIndex=start;
-    for(int i=start; i<end; i++){
+    for(i=start; i<end; i++){
         if(A[i].measTime<=pivot){
             swap(&(A[i]), &(A[partitionIndex]));
             partitionIndex++;

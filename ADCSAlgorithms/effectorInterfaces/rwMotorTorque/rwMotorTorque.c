@@ -95,6 +95,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
 {
     uint64_t clockTime;
     uint32_t readSize;
+    int i;
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
                 sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
@@ -102,7 +103,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     if (ConfigData->rwAvailInMsgID < 0){
         /* If no info is provided about RW availability we'll assume that all are available */
         ConfigData->numAvailRW =ConfigData->rwConfigParams.numRW;
-        for (int i = 0; i < ConfigData->rwConfigParams.numRW; i++){
+        for (i = 0; i < ConfigData->rwConfigParams.numRW; i++){
             v3Copy(&ConfigData->rwConfigParams.GsMatrix_B[i * 3], &ConfigData->GsMatrix_B[i * 3]);
         }
     }
