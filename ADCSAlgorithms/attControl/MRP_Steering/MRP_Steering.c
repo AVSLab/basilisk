@@ -130,7 +130,6 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     double              dt;                 /*!< [s] control update period */
     
     double              Lr[3];              /*!< required control torque vector [Nm] */
-    double              L[3];               /*!< known external torque */
     double              omega_BastR_B[3];   /*!< angular velocity of desired Bast frame relative to reference frame R */
     double              omegap_BastR_B[3];  /*!< body frame derivative of omega_BastR */
     double              omega_BastN_B[3];   /*!< angular velocity of B^ast relative to inertial N, in body frame components */
@@ -170,9 +169,6 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     
     /* compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
-
-    /* compute known external torque */
-    v3SetZero(L);
 
     /* evalute MRP kinematic steering law */
     MRPSteeringLaw(ConfigData, guidCmd.sigma_BR, omega_BastR_B, omegap_BastR_B);
@@ -223,7 +219,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     v3Subtract(Lr, v3, Lr);
     
     /* Add external torque: Lr += L */
-    v3Add(L, Lr, Lr);
+    v3Add(ConfigData->knownTorquePntB_B, Lr, Lr);
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);

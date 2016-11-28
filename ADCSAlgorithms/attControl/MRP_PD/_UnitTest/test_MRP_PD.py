@@ -85,6 +85,7 @@ def mrp_PD_tracking(show_plots):
 
     moduleConfig.K = 0.15
     moduleConfig.P = 150.0
+    moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
