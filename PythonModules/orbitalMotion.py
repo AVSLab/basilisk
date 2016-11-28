@@ -615,6 +615,19 @@ def rv2elem(mu, rVec, vVec):
 
     elements = ClassicElements()
 
+    if (np.isnan(np.sum(rVec)) or np.isnan(np.sum(vVec))):
+        print "ERROR: received NAN rVec or vVec values."
+        elements.a = np.NaN
+        elements.alpha = np.NaN
+        elements.e = np.NaN
+        elements.i = np.NaN
+        elements.AN = np.NaN
+        elements.AP = np.NaN
+        elements.f = np.NaN
+        elements.rmag = np.NaN
+        return
+
+
     # Calculate the specific angular momentum and its magnitude #
     hVec = np.cross(rVec, vVec)
     h = la.norm(hVec)

@@ -49,8 +49,7 @@ ExtForceTorque::~ExtForceTorque()
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firings
+/*! No Action is performed in this function.
  @return void
  */
 void ExtForceTorque::SelfInit()
@@ -58,7 +57,7 @@ void ExtForceTorque::SelfInit()
     return;
 }
 
-/*! This method is used to connect the input command message to the thrusters.
+/*! This method is used to connect the input message.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
  @return void
@@ -87,10 +86,7 @@ void ExtForceTorque::linkInStates(DynParamManager& statesIn)
 }
 
 
-/*! This method is here to write the output message structure into the specified
- message.  It is currently blank but we will certainly have an output message
- soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.
+/*! This module does not write any output messages.
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */

@@ -28,19 +28,39 @@ import spice_interface
 
 
 def addEarth():
-    earthGravBody = gravityEffector.GravBodyData()
-    earthGravBody.bodyMsgName = "earth_planet_data"
-    earthGravBody.outputMsgName = "earth_display_frame_data"
-    earthGravBody.mu = 0.3986004415E+15 # meters!
-    earthGravBody.isCentralBody = False
-    earthGravBody.useSphericalHarmParams = False
+    gravBody = gravityEffector.GravBodyData()
+    gravBody.bodyMsgName = "earth_planet_data"
+    gravBody.outputMsgName = "earth_display_frame_data"
+    gravBody.mu = 0.3986004415E+15 # meters!
+    gravBody.radEquator = 6378136.6 # meters
+    gravBody.isCentralBody = False
+    gravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
+    ephemData = spice_interface.SpicePlanetState()
+    ephemData.J2000Current = 0.0
+    ephemData.PositionVector = [0.0, 0.0, 0.0]
+    ephemData.VelocityVector = [0.0, 0.0, 0.0]
+    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    ephemData.PlanetName = "earth"
 
-    return earthGravBody, earthEphemData
+    return gravBody, ephemData
+
+def addMars():
+    gravBody = gravityEffector.GravBodyData()
+    gravBody.bodyMsgName = "mars_barycenter_planet_data"
+    gravBody.outputMsgName = "mars_barycenter_display_frame_data"
+    gravBody.mu = 4.28283100e13 # meters!
+    gravBody.radEquator = 3396190 # meters
+    gravBody.isCentralBody = False
+    gravBody.useSphericalHarmParams = False
+
+    ephemData = spice_interface.SpicePlanetState()
+    ephemData.J2000Current = 0.0
+    ephemData.PositionVector = [0.0, 0.0, 0.0]
+    ephemData.VelocityVector = [0.0, 0.0, 0.0]
+    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    ephemData.PlanetName = "mars"
+
+    return gravBody, ephemData

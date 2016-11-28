@@ -1,6 +1,7 @@
 build/*
 modules/*
 html/*
+Images/Scenarios/*
 xml/*
 *.swp
 *.pyc

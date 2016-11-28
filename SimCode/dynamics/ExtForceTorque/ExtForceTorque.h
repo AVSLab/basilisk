@@ -35,7 +35,7 @@ typedef struct {
  * @{
  */
     
-//! @brief Thruster dynamics class used to provide thruster effects on body
+//! @brief dynEffector Class used to provide a direct external force and torque on body
 /*! This class is used to ...*/
 class ExtForceTorque: public SysModel, public DynamicEffector{
 public:

@@ -28,7 +28,7 @@ import matplotlib as mpl
 mpl.rc("figure", facecolor="white")
 mpl.rc('xtick', labelsize=9)
 mpl.rc('ytick', labelsize=9)
-mpl.rc("figure", figsize=(5.5,2.5))
+mpl.rc("figure", figsize=(5.75,2.5))
 mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
@@ -162,6 +162,18 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
     return
 
+#
+#   save a python scenario result into the Doxygen image folder
+#
+def saveScenarioFigure(figureName, plt, path):
+    texFileName = path+"/../Images/Scenarios/"+figureName+".svg"
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    plt.savefig(texFileName, transparent=True)
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
@@ -182,7 +194,7 @@ def writeFigureLaTeX(figureName, caption, plt, format, path):
         texFigure.close()
 
         texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".pdf"
-        plt.savefig(texFileName)
+        plt.savefig(texFileName, transparent=True)
 
     return
 
@@ -213,3 +225,7 @@ def np2EigenMatrixXd(mat):
         ,[mat[3], mat[4], mat[5]]
         ,[mat[6], mat[7], mat[8]]
     ]
+
+def EigenVector3d2np(eig):
+    return np.array([eig[0][0], eig[1][0], eig[2][0]])
+
