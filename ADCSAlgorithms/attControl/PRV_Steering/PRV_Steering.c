@@ -218,7 +218,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     v3Subtract(Lr, v3, Lr);
     
     /* Add external torque: Lr += L */
-    v3Add(ConfigData->knownTorquePnt_B_B, Lr, Lr);
+    v3Add(ConfigData->knownTorquePntB_B, Lr, Lr);
     
     /* Change sign to compute the net positive control torque onto the spacecraft */
     v3Scale(-1.0, Lr, Lr);

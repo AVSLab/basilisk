@@ -41,7 +41,7 @@ typedef struct {
     double integralLimit;               /*!< [N*m]     Integration limit to avoid wind-up issue */
     uint64_t priorTime;                 /*!< [ns]      Last time the attitude control is called */
     double z[3];                        /*!< [rad]     integral state of delta_omega */
-    double knownTorquePnt_B_B[3];       /*!< [N*m]     known external torque in body frame vector components */
+    double knownTorquePntB_B[3];        /*!< [N*m]     known external torque in body frame vector components */
 
     uint32_t ignoreOuterLoopFeedforward;/*!< []      Boolean flag indicating if outer feedforward term should be included */
     

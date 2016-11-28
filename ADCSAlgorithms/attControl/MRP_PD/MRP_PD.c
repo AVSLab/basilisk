@@ -123,7 +123,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     m33MultV3(RECAST3X3 sc.ISCPntB_B, v3_temp1, v3_temp1);
     v3Subtract(Lr, v3_temp1, Lr);
     
-    v3Add(ConfigData->knownTorquePnt_B_B, Lr, Lr); /* + L */
+    v3Add(ConfigData->knownTorquePntB_B, Lr, Lr); /* + L */
     v3Scale(-1.0, Lr, Lr);                                  /* compute the net positive control torque onto the spacecraft */
 
 

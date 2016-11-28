@@ -107,7 +107,7 @@ def subModuleTestFunction(show_plots):
     moduleConfig.P  = 150.0
     moduleConfig.integralLimit = 2./moduleConfig.Ki * 0.1
     moduleConfig.domega0 = [0., 0., 0.]
-    moduleConfig.knownTorquePnt_B_B = [0., 0., 0.]
+    moduleConfig.knownTorquePntB_B = [0., 0., 0.]
 
 
     #   Create input message and size it because the regular creator of that message
