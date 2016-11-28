@@ -50,6 +50,8 @@ int TcpClient::connect(std::string ipAddress, uint32_t portNum)
             if(attempCount == MAX_CONNECT_ATTEMPTS - 1) {
                 std::cout << std::endl;
                 std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
+                close();
+                m_stream = nullptr;
                 return 1;
             } else {
                 // Wait before attempting another connection
@@ -68,6 +70,7 @@ int TcpClient::connect(std::string ipAddress, uint32_t portNum)
     }
     // If we still can't connect then abort
     if(ec) {
+        close();
         return 1;
     }
     return 0;
@@ -78,18 +81,24 @@ bool TcpClient::receiveData(std::vector<char> &data)
     boost::system::error_code ec;
 	std::vector<char> dataOut;
     m_inboundBuffer = data;
-	size_t dataReceived = 0; 
-	while(dataReceived < data.size())
-	{
-		size_t dataTime = m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
-		dataOut.insert(dataOut.end(), m_inboundBuffer.begin(), m_inboundBuffer.begin() + dataTime);
-		dataReceived += dataTime;
-	}
-	if (dataReceived != data.size())
-	{
-		std::cout << "Uh oh, missing data" << std::endl;
-	}
-    if(ec) {
+    size_t dataReceived = 0;
+    while(dataReceived < data.size() && isOpen() && ec.value() != boost::asio::error::eof)
+    {
+    	size_t dataTime = m_stream->read_some(boost::asio::buffer(m_inboundBuffer), ec);
+    	dataOut.insert(dataOut.end(), m_inboundBuffer.begin(), m_inboundBuffer.begin() + dataTime);
+    	dataReceived += dataTime;
+    }
+    if (dataReceived != data.size())
+    {
+    	std::cout << "Uh oh, missing data" << std::endl;
+        if(ec.value() == boost::asio::error::eof)
+        {
+            close();
+            m_stream = nullptr;
+        }
+    	return false;
+    }
+    if(ec && isOpen()) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
     }
@@ -104,6 +113,12 @@ bool TcpClient::sendData(std::vector<char> &data)
     m_outboundBuffer = data;
     boost::asio::write(*m_stream, boost::asio::buffer(m_outboundBuffer), ec);
     if(ec) {
+        if(ec.value() == boost::asio::error::broken_pipe)
+        {
+            close();
+            m_stream = nullptr;
+        }
+
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;
     }
@@ -114,7 +129,12 @@ bool TcpClient::close()
 {
 
     boost::system::error_code ec;
+    if(!m_stream)
+    {
+       return true;
+    }
     m_stream->shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
+   
     if(ec) {
         std::cout << "Error in " << __FUNCTION__ << " (" << ec.value() << ") " << ec.message() << std::endl;
         return false;

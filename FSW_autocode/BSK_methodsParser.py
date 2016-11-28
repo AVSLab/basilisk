@@ -29,10 +29,8 @@ import sim_model
 import numpy as np
 
 
-def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData):
-    # Create a dictionary  {task index: task activity flag} for all those task names
-    # in the input list that are found in the sim task list. P
-    # The tasks that have a match will be parsed. Print their names.
+def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
+    simTag='TheSim'):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
         print 'TASKS BEING PARSED: '
         taskIdxDir = {}
@@ -187,10 +185,10 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData)
     CrossInit_dict = {}  # dictionary D = {modelTag: CrossInit alg address, moduleID}
     Update_dict = {}  # dictionary D = {modelTag: Update alg address, moduleID}
     Reset_dict = {}  # dictionary D = {modelTag: Reset alg address, moduleID}
-    TheSimList = dir(TheSim)
+    TheSimList = dir(eval(simTag))
     i = 0
     for elemName in TheSimList:
-        elem = eval('TheSim.' + elemName)
+        elem = eval(simTag + '.' + elemName)
         if type(elem) == alg_contain.AlgContain:
             SelfInit_dict[elem.ModelTag] = (int(elem.getSelfInitAddress()), i)
             CrossInit_dict[elem.ModelTag] = (int(elem.getCrossInitAddress()), i)
@@ -234,8 +232,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData)
             addressDict = evalParsedList(parsed_dirList, module)
             for k, v in addressDict.items():
                 (methodType, methodCallTime) = checkMethodType(k)
-                dict = eval(methodType + '_dict')
-                modelID = findAddressMatch(v, modelTag, dict)
+                dictUse = eval(methodType + '_dict')
+                modelID = findAddressMatch(v, modelTag, dictUse)
                 theString = k +'(&(data->' + modelTag + ')' + methodCallTime + ', ' + str(modelID) + ')'
                 theList = eval('allAlg' + methodType)
                 if not(theString in theList):
@@ -319,8 +317,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData)
             swigFile.write(constant_str + ignore_str)
         return
     ## begin swig code
-    alg_swig.write('%module ' + outputFileName + '\n' + '%{' + '\n')
-    alg_swig.write('\t' + '#include "' + outputFileName + '.h"' + '\n' + '%}' + '\n\n')
+    alg_swig.write('%module ' + outputCFileName + '\n' + '%{' + '\n')
+    alg_swig.write('\t' + '#include "' + outputCFileName + '.h"' + '\n' + '%}' + '\n\n')
     alg_swig.write('%include "swig_conly_data.i"' + '\n\n')
     ## wrap C auto-code algorithms
     configData_paramsDefault = '(void*, unit64_t)'
@@ -334,7 +332,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData)
     ]
     writeSwigAlgCode(algNames, alg_swig)
     ## end swig code
-    alg_swig.write('%include "'+ outputFileName + '.h"' + '\n\n')
+    alg_swig.write('%include "'+ outputCFileName + '.h"' + '\n\n')
     alg_swig.write('%pythoncode %{' + '\n' + 'import sys' + '\n' +
                    'protectAllClasses(sys.modules[__name__])' + '\n' + '%}')
 
@@ -380,6 +378,16 @@ if __name__ == "__main__":
     outputFileName = 'EMM_FSW_Autocode'
     str_ConfigData = 'EMMConfigData'
     parseSimAlgorithms(TheAVSSim, taskActivityDir, outputFileName, str_ConfigData)
+
+
+#TheAVSSim = AVSSim.AVSSim()
+#taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+#taskIdxActivityDir = {}
+#for taskIdx in taskIdxList:
+#    taskIdxActivityDir[taskIdx] = str(1)
+#outputCFileName = 'EMM_FSW_Autocode'
+#str_ConfigData = 'EMMConfigData'
+#parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputCFileName, str_ConfigData)
 
 
 

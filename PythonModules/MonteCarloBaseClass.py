@@ -331,7 +331,7 @@ class MonteCarloBaseClass:
                     str(caseNumber) + ".py"
                 continue
             if previousSimulation is not None:
-                previousSimulation.TotalSim.terminateSimulation()
+                previousSimulation.terminateSimulation()
         
             newSim = self.simulationObject()
             if self.configureModule is not None:
@@ -357,10 +357,10 @@ class MonteCarloBaseClass:
             os.mkdir(self.archiveDir)
         while simRunCounter < self.executionCount:
             fHandle = None
+            if previousSimulation is not None:
+                previousSimulation.terminateSimulation()
             if(self.archiveSettings):
                 fHandle = open(self.archiveDir + '/Run' + str(simRunCounter) + '.py', 'w')
-            if previousSimulation is not None:
-                previousSimulation.TotalSim.terminateSimulation()
             newSim = self.simulationObject()
             
             if self.configureModule is not None:

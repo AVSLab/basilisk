@@ -19,7 +19,7 @@
 
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "SimCode/utilities/RigidBodyKinematics.h"
+#include "SimCode/utilities/rigidBodyKinematics.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 

@@ -20,6 +20,7 @@
 #define EMM_FSW_AUTOCODE_
 
 #include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
+#include "../ADCSAlgorithms/rwConfigData/rwConfigData.h"
 #include "../ADCSAlgorithms/sensorInterfaces/IMUSensorData/imuComm.h"
 #include "../ADCSAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include "../ADCSAlgorithms/attDetermination/CSSEst/cssWlsEst.h"
@@ -29,9 +30,9 @@
 #include "../ADCSAlgorithms/attGuidance/celestialBodyPoint/celestialBodyPoint.h"
 #include "../ADCSAlgorithms/attGuidance/attRefGen/attRefGen.h"
 #include "../ADCSAlgorithms/attControl/MRP_Steering/MRP_Steering.h"
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
-#include "../ADCSAlgorithms/effectorInterfaces/rwNullSpace/rwNullSpace.h"
+#include "../ADCSAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 #include "../ADCSAlgorithms/dvGuidance/dvAttGuidance/dvGuidance.h"
+#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "../ADCSAlgorithms/effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
 #include "../ADCSAlgorithms/effectorInterfaces/thrForceMapping/thrForceMapping.h"
 #include "../ADCSAlgorithms/effectorInterfaces/thrFiringSchmitt/thrFiringSchmitt.h"
@@ -45,10 +46,10 @@
 #include "../ADCSAlgorithms/attGuidance/inertial3DSpin/inertial3DSpin.h"
 #include "../ADCSAlgorithms/attGuidance/attTrackingError/attTrackingError.h"
 #include "../ADCSAlgorithms/attControl/MRP_Feedback/MRP_Feedback.h"
-#include "../ADCSAlgorithms/effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 
 typedef struct{
 	VehConfigInputData vehConfigData;
+	rwConfigData rwConfigData;
 	IMUConfigData imuSensorDecode;
 	CSSConfigData cssSensorDecode;
 	CSSWLSConfig CSSWlsEst;
@@ -60,8 +61,7 @@ typedef struct{
 	celestialBodyPointConfig marsPoint;
 	attRefGenConfig attMnvrPoint;
 	MRP_SteeringConfig MRP_SteeringRWA;
-	dvAttEffectConfig RWAMappingData;
-	rwNullSpaceConfig RWNullSpace;
+	rwMotorTorqueConfig rwMotorTorque;
 	dvGuidanceConfig dvGuidance;
 	MRP_SteeringConfig MRP_SteeringMOI;
 	dvAttEffectConfig dvAttEffect;
@@ -78,26 +78,24 @@ typedef struct{
 	inertial3DSpinConfig inertial3DSpin;
 	attTrackingErrorConfig attTrackingError;
 	MRP_FeedbackConfig MRP_FeedbackRWA;
-	rwMotorTorqueConfig rwMotorTorque;
-	uint32_t earthPointTask_isActive;
-	uint32_t inertial3DSpinTask_isActive;
-	uint32_t inertial3DPointTask_isActive;
-	uint32_t hillPointTask_isActive;
-	uint32_t vehicleDVPrepFSWTask_isActive;
-	uint32_t attitudeControlMnvrTask_isActive;
-	uint32_t rasterMnvrTask_isActive;
-	uint32_t initOnlyTask_isActive;
+	uint32_t sunSafeFSWTask_isActive;
 	uint32_t velocityPointTask_isActive;
+	uint32_t rasterMnvrTask_isActive;
+	uint32_t earthPointTask_isActive;
 	uint32_t thrFiringSchmittTask_isActive;
+	uint32_t vehicleAttMnvrFSWTask_isActive;
+	uint32_t inertial3DPointTask_isActive;
+	uint32_t marsPointTask_isActive;
+	uint32_t hillPointTask_isActive;
 	uint32_t thrForceMappingTask_isActive;
+	uint32_t celTwoBodyPointTask_isActive;
+	uint32_t vehicleDVPrepFSWTask_isActive;
+	uint32_t initOnlyTask_isActive;
+	uint32_t vehicleDVMnvrFSWTask_isActive;
+	uint32_t inertial3DSpinTask_isActive;
+	uint32_t feedbackControlMnvrTask_isActive;
 	uint32_t RWADesatTask_isActive;
 	uint32_t sensorProcessing_isActive;
-	uint32_t sunSafeFSWTask_isActive;
-	uint32_t vehicleAttMnvrFSWTask_isActive;
-	uint32_t marsPointTask_isActive;
-	uint32_t celTwoBodyPointTask_isActive;
-	uint32_t vehicleDVMnvrFSWTask_isActive;
-	uint32_t feedbackControlMnvrTask_isActive;
 	uint32_t eulerRotationTask_isActive;
 	uint32_t sunPointTask_isActive;
 	uint32_t simpleRWControlTask_isActive;
@@ -107,6 +105,7 @@ typedef struct{
 extern "C" {
 #endif
 	void initOnlyTask_Update(EMMConfigData *data, uint64_t callTime);
+	void initOnlyTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void sunSafeFSWTask_Update(EMMConfigData *data, uint64_t callTime);
 	void sunSafeFSWTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void sunPointTask_Update(EMMConfigData *data, uint64_t callTime);
@@ -131,14 +130,13 @@ extern "C" {
 	void velocityPointTask_Update(EMMConfigData *data, uint64_t callTime);
 	void velocityPointTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void celTwoBodyPointTask_Update(EMMConfigData *data, uint64_t callTime);
+	void celTwoBodyPointTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void rasterMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
 	void rasterMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void eulerRotationTask_Update(EMMConfigData *data, uint64_t callTime);
 	void eulerRotationTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void inertial3DSpinTask_Update(EMMConfigData *data, uint64_t callTime);
 	void inertial3DSpinTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void attitudeControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
-	void attitudeControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void feedbackControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
 	void feedbackControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
 	void simpleRWControlTask_Update(EMMConfigData *data, uint64_t callTime);

@@ -28,8 +28,8 @@
 %ignore SelfInit_aggregateNav;
 %constant void CrossInit_aggregateNav(void*, uint64_t);
 %ignore CrossInit_aggregateNav;
-%array_functions(AggregateAttInput, AggAttArray);
-%array_functions(AggregateTransInput, AggTransArray);
+STRUCTASLIST(AggregateAttInput)
+STRUCTASLIST(AggregateTransInput)
 %include "navAggregate.h"
 %pythoncode %{
 import sys

@@ -31,7 +31,7 @@
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
-%include "std_vector.i"
+%include "../../../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"

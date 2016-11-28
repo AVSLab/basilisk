@@ -90,11 +90,12 @@ void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint6
     /*! - Read the input messages */
     uint64_t clockTime;
     uint32_t readSize;
-    
+    int i;    
+
     vehicleConfigData sc;
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    for (int i=0; i < 9; i++){
+    for (i=0; i < 9; i++){
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
     
