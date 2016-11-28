@@ -1,23 +1,5 @@
-/*
- ISC License
-
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-#ifndef EMM_FSW_AUTOCODE_
-#define EMM_FSW_AUTOCODE_
+#ifndef AVS_FSW_AUTOCODE_
+#define AVS_FSW_AUTOCODE_
 
 #include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "../ADCSAlgorithms/rwConfigData/rwConfigData.h"
@@ -99,53 +81,53 @@ typedef struct{
 	uint32_t eulerRotationTask_isActive;
 	uint32_t sunPointTask_isActive;
 	uint32_t simpleRWControlTask_isActive;
-}EMMConfigData;
+}AVSConfigData;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-	void initOnlyTask_Update(EMMConfigData *data, uint64_t callTime);
-	void initOnlyTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void sunSafeFSWTask_Update(EMMConfigData *data, uint64_t callTime);
-	void sunSafeFSWTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void sunPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void earthPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void marsPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void vehicleAttMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime);
-	void vehicleAttMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void vehicleDVPrepFSWTask_Update(EMMConfigData *data, uint64_t callTime);
-	void vehicleDVMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime);
-	void vehicleDVMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void RWADesatTask_Update(EMMConfigData *data, uint64_t callTime);
-	void RWADesatTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void thrForceMappingTask_Update(EMMConfigData *data, uint64_t callTime);
-	void thrForceMappingTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void thrFiringSchmittTask_Update(EMMConfigData *data, uint64_t callTime);
-	void thrFiringSchmittTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void sensorProcessing_Update(EMMConfigData *data, uint64_t callTime);
-	void inertial3DPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void inertial3DPointTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void hillPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void hillPointTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void velocityPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void velocityPointTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void celTwoBodyPointTask_Update(EMMConfigData *data, uint64_t callTime);
-	void celTwoBodyPointTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void rasterMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
-	void rasterMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void eulerRotationTask_Update(EMMConfigData *data, uint64_t callTime);
-	void eulerRotationTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void inertial3DSpinTask_Update(EMMConfigData *data, uint64_t callTime);
-	void inertial3DSpinTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void feedbackControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime);
-	void feedbackControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void simpleRWControlTask_Update(EMMConfigData *data, uint64_t callTime);
-	void simpleRWControlTask_Reset(EMMConfigData *data, uint64_t callTime);
-	void AllAlg_SelfInit(EMMConfigData *data);
-	void AllAlg_CrossInit(EMMConfigData *data);
-	void AllAlg_Reset(EMMConfigData *data, uint64_t callTime);
-	void AllTasks_Update(EMMConfigData *data, uint64_t callTime);
-	void DataInit(EMMConfigData *data);
+	void initOnlyTask_Update(AVSConfigData *data, uint64_t callTime);
+	void initOnlyTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void sunSafeFSWTask_Update(AVSConfigData *data, uint64_t callTime);
+	void sunSafeFSWTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void sunPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void earthPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void marsPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void vehicleAttMnvrFSWTask_Update(AVSConfigData *data, uint64_t callTime);
+	void vehicleAttMnvrFSWTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void vehicleDVPrepFSWTask_Update(AVSConfigData *data, uint64_t callTime);
+	void vehicleDVMnvrFSWTask_Update(AVSConfigData *data, uint64_t callTime);
+	void vehicleDVMnvrFSWTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void RWADesatTask_Update(AVSConfigData *data, uint64_t callTime);
+	void RWADesatTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void thrForceMappingTask_Update(AVSConfigData *data, uint64_t callTime);
+	void thrForceMappingTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void thrFiringSchmittTask_Update(AVSConfigData *data, uint64_t callTime);
+	void thrFiringSchmittTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void sensorProcessing_Update(AVSConfigData *data, uint64_t callTime);
+	void inertial3DPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void inertial3DPointTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void hillPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void hillPointTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void velocityPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void velocityPointTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void celTwoBodyPointTask_Update(AVSConfigData *data, uint64_t callTime);
+	void celTwoBodyPointTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void rasterMnvrTask_Update(AVSConfigData *data, uint64_t callTime);
+	void rasterMnvrTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void eulerRotationTask_Update(AVSConfigData *data, uint64_t callTime);
+	void eulerRotationTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void inertial3DSpinTask_Update(AVSConfigData *data, uint64_t callTime);
+	void inertial3DSpinTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void feedbackControlMnvrTask_Update(AVSConfigData *data, uint64_t callTime);
+	void feedbackControlMnvrTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void simpleRWControlTask_Update(AVSConfigData *data, uint64_t callTime);
+	void simpleRWControlTask_Reset(AVSConfigData *data, uint64_t callTime);
+	void AllAlg_SelfInit(AVSConfigData *data);
+	void AllAlg_CrossInit(AVSConfigData *data);
+	void AllAlg_Reset(AVSConfigData *data, uint64_t callTime);
+	void AllTasks_Update(AVSConfigData *data, uint64_t callTime);
+	void DataInit(AVSConfigData *data);
 #ifdef __cplusplus
 }
 #endif

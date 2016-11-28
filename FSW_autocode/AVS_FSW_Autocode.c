@@ -1,33 +1,15 @@
-/*
- ISC License
+#include "AVS_FSW_Autocode.h"
 
- Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
-
- Permission to use, copy, modify, and/or distribute this software for any
- purpose with or without fee is hereby granted, provided that the above
- copyright notice and this permission notice appear in all copies.
-
- THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-
- */
-#include "EMM_FSW_Autocode.h"
-
-void initOnlyTask_Update(EMMConfigData *data, uint64_t callTime)
+void initOnlyTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_vehicleConfigData(&(data->vehConfigData), callTime, 12);
 	Update_rwConfigData(&(data->rwConfigData), callTime, 25);
 }
-void initOnlyTask_Reset(EMMConfigData *data, uint64_t callTime)
+void initOnlyTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_rwConfigData(&(data->rwConfigData), callTime, 25);
 }
-void sunSafeFSWTask_Update(EMMConfigData *data, uint64_t callTime)
+void sunSafeFSWTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_imuProcessTelem(&(data->imuSensorDecode), callTime, 2);
 	Update_cssProcessTelem(&(data->cssSensorDecode), callTime, 0);
@@ -36,165 +18,165 @@ void sunSafeFSWTask_Update(EMMConfigData *data, uint64_t callTime)
 	Update_simpleDeadband(&(data->simpleDeadband), callTime, 27);
 	Update_MRP_PD(&(data->MRP_PD), callTime, 4);
 }
-void sunSafeFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
+void sunSafeFSWTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_simpleDeadband(&(data->simpleDeadband), callTime, 27);
 	Reset_MRP_PD(&(data->MRP_PD), callTime, 4);
 }
-void sunPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void sunPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_celestialBodyPoint(&(data->sunPoint), callTime, 28);
 }
-void earthPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void earthPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_celestialBodyPoint(&(data->earthPoint), callTime, 18);
 }
-void marsPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void marsPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_celestialBodyPoint(&(data->marsPoint), callTime, 23);
 }
-void vehicleAttMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime)
+void vehicleAttMnvrFSWTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_attRefGen(&(data->attMnvrPoint), callTime, 13);
 	Update_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
 	Update_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void vehicleAttMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
+void vehicleAttMnvrFSWTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_attRefGen(&(data->attMnvrPoint), callTime, 13);
 	Reset_MRP_Steering(&(data->MRP_SteeringRWA), callTime, 6);
 	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void vehicleDVPrepFSWTask_Update(EMMConfigData *data, uint64_t callTime)
+void vehicleDVPrepFSWTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_dvGuidance(&(data->dvGuidance), callTime, 17);
 }
-void vehicleDVMnvrFSWTask_Update(EMMConfigData *data, uint64_t callTime)
+void vehicleDVMnvrFSWTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_dvGuidance(&(data->dvGuidance), callTime, 17);
 	Update_attRefGen(&(data->attMnvrPoint), callTime, 13);
 	Update_MRP_Steering(&(data->MRP_SteeringMOI), callTime, 5);
 	Update_dvAttEffect(&(data->dvAttEffect), callTime, 16);
 }
-void vehicleDVMnvrFSWTask_Reset(EMMConfigData *data, uint64_t callTime)
+void vehicleDVMnvrFSWTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_attRefGen(&(data->attMnvrPoint), callTime, 13);
 	Reset_MRP_Steering(&(data->MRP_SteeringMOI), callTime, 5);
 	Reset_dvAttEffect(&(data->dvAttEffect), callTime, 16);
 }
-void RWADesatTask_Update(EMMConfigData *data, uint64_t callTime)
+void RWADesatTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_thrustRWDesat(&(data->thrustRWDesat), callTime, 32);
 }
-void RWADesatTask_Reset(EMMConfigData *data, uint64_t callTime)
+void RWADesatTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_thrustRWDesat(&(data->thrustRWDesat), callTime, 32);
 }
-void thrForceMappingTask_Update(EMMConfigData *data, uint64_t callTime)
+void thrForceMappingTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_thrForceMapping(&(data->thrForceMapping), callTime, 31);
 }
-void thrForceMappingTask_Reset(EMMConfigData *data, uint64_t callTime)
+void thrForceMappingTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_thrForceMapping(&(data->thrForceMapping), callTime, 31);
 }
-void thrFiringSchmittTask_Update(EMMConfigData *data, uint64_t callTime)
+void thrFiringSchmittTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_thrFiringSchmitt(&(data->thrFiringSchmitt), callTime, 30);
 }
-void thrFiringSchmittTask_Reset(EMMConfigData *data, uint64_t callTime)
+void thrFiringSchmittTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_thrFiringSchmitt(&(data->thrFiringSchmitt), callTime, 30);
 }
-void sensorProcessing_Update(EMMConfigData *data, uint64_t callTime)
+void sensorProcessing_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_cssProcessTelem(&(data->cssSensorDecode), callTime, 0);
 	Update_imuProcessTelem(&(data->imuSensorDecode), callTime, 2);
 	Update_stProcessTelem(&(data->stSensorDecode), callTime, 11);
 }
-void inertial3DPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void inertial3DPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_inertial3D(&(data->inertial3D), callTime, 22);
 }
-void inertial3DPointTask_Reset(EMMConfigData *data, uint64_t callTime)
+void inertial3DPointTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_inertial3D(&(data->inertial3D), callTime, 22);
 }
-void hillPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void hillPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_hillPoint(&(data->hillPoint), callTime, 20);
 }
-void hillPointTask_Reset(EMMConfigData *data, uint64_t callTime)
+void hillPointTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_hillPoint(&(data->hillPoint), callTime, 20);
 }
-void velocityPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void velocityPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_velocityPoint(&(data->velocityPoint), callTime, 33);
 }
-void velocityPointTask_Reset(EMMConfigData *data, uint64_t callTime)
+void velocityPointTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_velocityPoint(&(data->velocityPoint), callTime, 33);
 }
-void celTwoBodyPointTask_Update(EMMConfigData *data, uint64_t callTime)
+void celTwoBodyPointTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_celestialTwoBodyPoint(&(data->celTwoBodyPoint), callTime, 15);
 }
-void celTwoBodyPointTask_Reset(EMMConfigData *data, uint64_t callTime)
+void celTwoBodyPointTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_celestialTwoBodyPoint(&(data->celTwoBodyPoint), callTime, 15);
 }
-void rasterMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
+void rasterMnvrTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_rasterManager(&(data->rasterManager), callTime, 24);
 	Update_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void rasterMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
+void rasterMnvrTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_rasterManager(&(data->rasterManager), callTime, 24);
 	Reset_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void eulerRotationTask_Update(EMMConfigData *data, uint64_t callTime)
+void eulerRotationTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void eulerRotationTask_Reset(EMMConfigData *data, uint64_t callTime)
+void eulerRotationTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_eulerRotation(&(data->eulerRotation), callTime, 19);
 }
-void inertial3DSpinTask_Update(EMMConfigData *data, uint64_t callTime)
+void inertial3DSpinTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_inertial3DSpin(&(data->inertial3DSpin), callTime, 21);
 }
-void inertial3DSpinTask_Reset(EMMConfigData *data, uint64_t callTime)
+void inertial3DSpinTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_inertial3DSpin(&(data->inertial3DSpin), callTime, 21);
 }
-void feedbackControlMnvrTask_Update(EMMConfigData *data, uint64_t callTime)
+void feedbackControlMnvrTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
 	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
 	Update_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void feedbackControlMnvrTask_Reset(EMMConfigData *data, uint64_t callTime)
+void feedbackControlMnvrTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
 	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
 	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void simpleRWControlTask_Update(EMMConfigData *data, uint64_t callTime)
+void simpleRWControlTask_Update(AVSConfigData *data, uint64_t callTime)
 {
 	Update_attTrackingError(&(data->attTrackingError), callTime, 14);
 	Update_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
 	Update_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void simpleRWControlTask_Reset(EMMConfigData *data, uint64_t callTime)
+void simpleRWControlTask_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
 	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
 	Reset_rwMotorTorque(&(data->rwMotorTorque), callTime, 26);
 }
-void AllAlg_SelfInit(EMMConfigData *data)
+void AllAlg_SelfInit(AVSConfigData *data)
 {
 	SelfInit_vehicleConfigData(&(data->vehConfigData), 12);
 	SelfInit_rwConfigData(&(data->rwConfigData), 25);
@@ -227,7 +209,7 @@ void AllAlg_SelfInit(EMMConfigData *data)
 	SelfInit_attTrackingError(&(data->attTrackingError), 14);
 	SelfInit_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
 }
-void AllAlg_CrossInit(EMMConfigData *data)
+void AllAlg_CrossInit(AVSConfigData *data)
 {
 	CrossInit_vehicleConfigData(&(data->vehConfigData), 12);
 	CrossInit_rwConfigData(&(data->rwConfigData), 25);
@@ -260,7 +242,7 @@ void AllAlg_CrossInit(EMMConfigData *data)
 	CrossInit_attTrackingError(&(data->attTrackingError), 14);
 	CrossInit_MRP_Feedback(&(data->MRP_FeedbackRWA), 3);
 }
-void AllAlg_Reset(EMMConfigData *data, uint64_t callTime)
+void AllAlg_Reset(AVSConfigData *data, uint64_t callTime)
 {
 	Reset_rwConfigData(&(data->rwConfigData), callTime, 25);
 	Reset_simpleDeadband(&(data->simpleDeadband), callTime, 27);
@@ -283,7 +265,7 @@ void AllAlg_Reset(EMMConfigData *data, uint64_t callTime)
 	Reset_attTrackingError(&(data->attTrackingError), callTime, 14);
 	Reset_MRP_Feedback(&(data->MRP_FeedbackRWA), callTime, 3);
 }
-void AllTasks_Update(EMMConfigData *data, uint64_t callTime)
+void AllTasks_Update(AVSConfigData *data, uint64_t callTime)
 {
 	if (data->sunSafeFSWTask_isActive){
 		sunSafeFSWTask_Update(data, callTime);
@@ -350,7 +332,7 @@ void AllTasks_Update(EMMConfigData *data, uint64_t callTime)
 	}
 }
 
-void DataInit(EMMConfigData *data){
+void DataInit(AVSConfigData *data){
 	data->sunSafeFSWTask_isActive = 1;
 	data->velocityPointTask_isActive = 1;
 	data->rasterMnvrTask_isActive = 1;
@@ -984,6 +966,9 @@ void DataInit(EMMConfigData *data){
 	strcpy(data->MRP_PD.inputGuidName,"db_att_guid_out");
 	data->MRP_PD.inputVehicleConfigDataID = 0;
 	strcpy(data->MRP_PD.inputVehicleConfigDataName,"adcs_config_data");
+	data->MRP_PD.knownTorquePntB_B[0] = 0.0;
+	data->MRP_PD.knownTorquePntB_B[1] = 0.0;
+	data->MRP_PD.knownTorquePntB_B[2] = 0.0;
 	strcpy(data->MRP_PD.outputDataName,"controlTorqueRaw");
 	data->MRP_PD.outputMsgID = 0;
 	data->sunPoint.TPoint2Bdy[0] = 0.0;
@@ -1128,6 +1113,9 @@ void DataInit(EMMConfigData *data){
 	data->MRP_SteeringRWA.inputRWSpeedsID = 0;
 	strcpy(data->MRP_SteeringRWA.inputRWSpeedsName,"reactionwheel_output_states");
 	data->MRP_SteeringRWA.integralLimit = 0.0;
+	data->MRP_SteeringRWA.knownTorquePntB_B[0] = 0.0;
+	data->MRP_SteeringRWA.knownTorquePntB_B[1] = 0.0;
+	data->MRP_SteeringRWA.knownTorquePntB_B[2] = 0.0;
 	data->MRP_SteeringRWA.omega_max = 0.0261799387799;
 	strcpy(data->MRP_SteeringRWA.outputDataName,"controlTorqueRaw");
 	data->MRP_SteeringRWA.outputMsgID = 0;
@@ -1738,6 +1726,9 @@ void DataInit(EMMConfigData *data){
 	data->MRP_SteeringMOI.inputRWSpeedsID = 0;
 	strcpy(data->MRP_SteeringMOI.inputRWSpeedsName,"");
 	data->MRP_SteeringMOI.integralLimit = 0.5;
+	data->MRP_SteeringMOI.knownTorquePntB_B[0] = 0.0;
+	data->MRP_SteeringMOI.knownTorquePntB_B[1] = 0.0;
+	data->MRP_SteeringMOI.knownTorquePntB_B[2] = 0.0;
 	data->MRP_SteeringMOI.omega_max = 0.0261799387799;
 	strcpy(data->MRP_SteeringMOI.outputDataName,"controlTorqueRaw");
 	data->MRP_SteeringMOI.outputMsgID = 0;
@@ -3761,6 +3752,9 @@ void DataInit(EMMConfigData *data){
 	data->MRP_FeedbackRWA.int_sigma[1] = 0.0;
 	data->MRP_FeedbackRWA.int_sigma[2] = 0.0;
 	data->MRP_FeedbackRWA.integralLimit = 0.0;
+	data->MRP_FeedbackRWA.knownTorquePntB_B[0] = 0.0;
+	data->MRP_FeedbackRWA.knownTorquePntB_B[1] = 0.0;
+	data->MRP_FeedbackRWA.knownTorquePntB_B[2] = 0.0;
 	strcpy(data->MRP_FeedbackRWA.outputDataName,"controlTorqueRaw");
 	data->MRP_FeedbackRWA.outputMsgID = 0;
 	data->MRP_FeedbackRWA.priorTime = 0;

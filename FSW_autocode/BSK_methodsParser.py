@@ -18,7 +18,7 @@
 
 '''
 import sys, os, inspect
-import EMMModuleParse as dataParser
+import BSKModuleParse as dataParser
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -286,7 +286,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # Write header file
     ## begin header file
-    defName = 'EMM_FSW_AUTOCODE_'
+    defName = 'AVS_FSW_AUTOCODE_'
     alg_header.write('#ifndef ' + defName + '\n' + '#define ' + defName + '\n\n')
     ## define auto-code init data
     for header in theHeadersList:
@@ -375,8 +375,8 @@ def defaultAVSSimTasks(taskActivityDir):
 if __name__ == "__main__":
     TheAVSSim = AVSSim.AVSSim()
     taskActivityDir = defaultAVSSimTasks({})
-    outputFileName = 'EMM_FSW_Autocode'
-    str_ConfigData = 'EMMConfigData'
+    outputFileName = 'AVS_FSW_Autocode'
+    str_ConfigData = 'AVSConfigData'
     parseSimAlgorithms(TheAVSSim, taskActivityDir, outputFileName, str_ConfigData)
 
 
@@ -385,8 +385,8 @@ if __name__ == "__main__":
 #taskIdxActivityDir = {}
 #for taskIdx in taskIdxList:
 #    taskIdxActivityDir[taskIdx] = str(1)
-#outputCFileName = 'EMM_FSW_Autocode'
-#str_ConfigData = 'EMMConfigData'
+#outputCFileName = 'AVS_FSW_Autocode'
+#str_ConfigData = 'AVSConfigData'
 #parseSimAlgorithms(TheAVSSim, taskIdxActivityDir, outputCFileName, str_ConfigData)
 
 
