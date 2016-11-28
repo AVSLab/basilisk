@@ -5,7 +5,7 @@
 import os
 
 # add the list of directories to be excluded
-excludedir = ["../License","../build","../External","../modules"]
+excludedir = ["../License","../build","../External","../modules","../PythonModules/External","../.git"]
 
 def update_source(filename, oldcopyright, copyright):
     utfstr = chr(0xef)+chr(0xbb)+chr(0xbf)
