@@ -107,7 +107,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # 2     | 1 (GTO)             | False                 | 0 (Earth)
 # 3     | 2 (GEO)             | False                 | 0 (Earth)
 # 4     | 0 (LEO)             | True                  | 0 (Earth)
-# 5     | 0 (LMO)             | False                 | 0 (Mars)
+# 5     | 0 (LMO)             | False                 | 1 (Mars)
 #
 # To run the default scenario 1., call the python script through
 #
