@@ -353,7 +353,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
     if useKnownTorque:
-        mrpControlConfig.knownTorquePnt_B_B = [0.25,-0.25,0.1]
+        mrpControlConfig.knownTorquePntB_B = [0.25,-0.25,0.1]
 
 
 
