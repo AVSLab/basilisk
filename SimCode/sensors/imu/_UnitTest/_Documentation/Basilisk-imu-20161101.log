@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  25 NOV 2016 22:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2014.5.25)  27 NOV 2016 20:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1252,41 +1252,56 @@ been already used, duplicate ignored
 <to be read again> 
                    \relax 
 l.62 	\end{equation}
-                     [1] 
+                     [1]
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 72.
+
+LaTeX Font Info:    No file OMScmss.fd. on input line 72.
+
+
+LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbullet' on input line 72.
+
+
 AED: lastpage setting LastPage
 [2]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 90.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 90.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 119.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 119.
  (./Basilisk-imu-20161101.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 90.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 90.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 119.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 119.
 Package rerunfilecheck Info: File `Basilisk-imu-20161101.out' has not changed.
 (rerunfilecheck)             Checksum: 775B09887F977662FEDE652866116EC3;217.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 90.
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 119.
  ) 
 Here is how much of TeX's memory you used:
- 19797 strings out of 493117
- 359421 string characters out of 6135433
- 439721 words of memory out of 5000000
- 22837 multiletter control sequences out of 15000+600000
+ 19805 strings out of 493117
+ 359516 string characters out of 6135433
+ 441781 words of memory out of 5000000
+ 22842 multiletter control sequences out of 15000+600000
  25233 words of font info for 89 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,13n,75p,633b,426s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 69i,13n,75p,633b,457s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb>
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb>
 </usr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></u
 sr/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></us
 r/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/
 local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr
-/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/
-local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/l
-ocal/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr
-/local/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></us
-r/local/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb>
-Output written on Basilisk-imu-20161101.pdf (3 pages, 462139 bytes).
+/local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/
+local/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/l
+ocal/texlive/2014/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/lo
+cal/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr/
+local/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr
+/local/texlive/2014/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb>
+Output written on Basilisk-imu-20161101.pdf (3 pages, 470565 bytes).
 PDF statistics:
- 159 PDF objects out of 1000 (max. 8388607)
- 123 compressed objects within 2 object streams
- 19 named destinations out of 1000 (max. 500000)
+ 165 PDF objects out of 1000 (max. 8388607)
+ 128 compressed objects within 2 object streams
+ 20 named destinations out of 1000 (max. 500000)
  50 words of extra memory for PDF output out of 10000 (max. 10000000)
 
