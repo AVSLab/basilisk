@@ -30,7 +30,7 @@ import numpy as np
 
 
 def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
-    simTag='TheSim'):
+    simTag='TheSim', localPath = os.path.dirname(os.path.abspath(filename))):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
         print 'TASKS BEING PARSED: '
         taskIdxDir = {}
@@ -265,7 +265,6 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # Open/Create C source&header files and swig file
     filename = inspect.getframeinfo(inspect.currentframe()).filename
-    localPath = os.path.dirname(os.path.abspath(filename))
     fileMode = 'w+'  # create file to be written if it doesn't exist
     alg_source = open(localPath + '/' + outputCFileName + '.c', fileMode)  # source file
     alg_header = open(localPath + '/' + outputCFileName + '.h', fileMode)  # header file

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module EMM_FSW_Autocode
+%module AVS_FSW_Autocode
 %{
-	#include "EMM_FSW_Autocode.h"
+	#include "AVS_FSW_Autocode.h"
 %}
 
 %include "swig_conly_data.i"
@@ -33,7 +33,7 @@
 %ignore AllAlg_Reset(void*, unit64_t, uint64_t);
 %constant void AllTasks_Update(void*, unit64_t, uint64_t);
 %ignore AllTasks_Update(void*, unit64_t, uint64_t);
-%include "EMM_FSW_Autocode.h"
+%include "AVS_FSW_Autocode.h"
 
 %pythoncode %{
 import sys
