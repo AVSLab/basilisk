@@ -10,7 +10,8 @@ import sim_model
 import numpy as np
 
 
-def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData):
+def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
+    simTag='TheSim'):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
         print 'TASKS BEING PARSED: '
         taskIdxDir = {}
@@ -165,10 +166,10 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData)
     CrossInit_dict = {}  # dictionary D = {modelTag: CrossInit alg address, moduleID}
     Update_dict = {}  # dictionary D = {modelTag: Update alg address, moduleID}
     Reset_dict = {}  # dictionary D = {modelTag: Reset alg address, moduleID}
-    TheSimList = dir(TheSim.fswModels)
+    TheSimList = dir(eval(simTag))
     i = 0
     for elemName in TheSimList:
-        elem = eval('TheSim.fswModels.' + elemName)
+        elem = eval(simTag + '.' + elemName)
         if type(elem) == alg_contain.AlgContain:
             SelfInit_dict[elem.ModelTag] = (int(elem.getSelfInitAddress()), i)
             CrossInit_dict[elem.ModelTag] = (int(elem.getCrossInitAddress()), i)
@@ -351,6 +352,14 @@ def defaultAVSSimTasks(taskActivityDir):
     taskActivityDir["attitudeControlMnvrTask"] = 1
     taskActivityDir["simpleRWControlTask"] = 1
     return taskActivityDir
+
+if __name__ == "__main__":
+    TheAVSSim = AVSSim.AVSSim()
+    taskActivityDir = defaultAVSSimTasks({})
+    outputFileName = 'EMM_FSW_Autocode'
+    str_ConfigData = 'EMMConfigData'
+    parseSimAlgorithms(TheAVSSim, taskActivityDir, outputFileName, str_ConfigData)
+
 
 #TheAVSSim = AVSSim.AVSSim()
 #taskIdxList = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]

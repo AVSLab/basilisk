@@ -70,7 +70,6 @@ import clock_synch
 import rwNullSpace
 import thrustRWDesat
 import thrFiringSchmitt
-import attitude_ukf
 import inertial3D
 import hillPoint
 import velocityPoint
@@ -219,8 +218,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.MRP_PDSafeWrap = self.setModelDataWrap(self.MRP_PDSafeData)
         self.MRP_PDSafeWrap.ModelTag = "MRP_PD"
 
-        self.AttUKF = attitude_ukf.STInertialUKF()
-
         self.attMnvrPointData = attRefGen.attRefGenConfig()
         self.attMnvrPointWrap = self.setModelDataWrap(self.attMnvrPointData)
         self.attMnvrPointWrap.ModelTag = "attMnvrPoint"
@@ -343,8 +340,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask("sensorProcessing", self.CSSAlgWrap, self.CSSDecodeFSWConfig, 9)
         self.AddModelToTask("sensorProcessing", self.IMUCommWrap, self.IMUCommData, 10)
         self.AddModelToTask("sensorProcessing", self.STCommWrap, self.STCommData, 11)
-
-        self.AddModelToTask("attitudeNav", self.AttUKF, None, 10)
 
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.attMnvrPointWrap, self.attMnvrPointData, 10)
         self.AddModelToTask("vehicleAttMnvrFSWTask", self.MRP_SteeringRWAWrap, self.MRP_SteeringRWAData, 9)
@@ -1470,30 +1465,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.thrFiringSchmittData.thrMinFireTime = 0.030
         self.thrFiringSchmittData.baseThrustState = 0
 
-    def SetAttUKF(self):
-        self.AttUKF.ModelTag = "AttitudeUKF"
-        initialCovariance = [0.0] * 6 * 6
-        initialCovariance[0 * 6 + 0] = initialCovariance[1 * 6 + 1] = initialCovariance[2 * 6 + 2] = 0.02
-        initialCovariance[3 * 6 + 3] = initialCovariance[4 * 6 + 4] = initialCovariance[5 * 6 + 5] = 0.0006
-        self.AttUKF.CovarInit = initialCovariance
-        obsNoise = [0.0] * 3 * 3
-        obsNoise[0 * 3 + 0] = obsNoise[1 * 3 + 1] = obsNoise[2 * 3 + 2] = 0.062
-        #obsNoise[3 * 6 + 3] = obsNoise[4 * 6 + 4] = obsNoise[5 * 6 + 5] = 0.008
-        self.AttUKF.QStObs = obsNoise
-        Qnoise = [0.0] * 6 * 6
-        Qnoise[0 * 6 + 0] = Qnoise[1 * 6 + 1] = Qnoise[2 * 6 + 2] = 0.00002
-        Qnoise[3 * 6 + 3] = Qnoise[4 * 6 + 4] = Qnoise[5 * 6 + 5] = 0.002
-        self.AttUKF.QNoiseInit = Qnoise
-        self.AttUKF.stInputName = "parsed_st_data"
-        self.AttUKF.InertialUKFStateName = "attitude_filter_state"
-        self.AttUKF.inputRWSpeeds = "reactionwheel_output_states"
-        self.AttUKF.inputVehicleConfigDataName = "adcs_config_data"
-        self.AttUKF.alpha = 0.1
-        self.AttUKF.beta = 2.1
-        self.AttUKF.kappa = 2.0
-        self.AttUKF.ReInitFilter = True
-        self.AttUKF.initToMeas = True
-
     def InitAllDynObjects(self):
         self.SetSpiceObject()
         self.SetIMUSensor()
@@ -1539,7 +1510,6 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.SetthrustRWDesat()
         self.SetthrForceMapping()
         self.SetthrFiringSchmitt()
-        self.SetAttUKF()
         # Guidance FSW Objects
         self.setInertial3D()
         self.setHillPoint()
