@@ -156,7 +156,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-		cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.cmd, cmdVec);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.cmd);
 		this->forceExternal_N += cmdVec;
     }
 
@@ -164,7 +164,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-		cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.cmd, cmdVec);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.cmd);
         this->forceExternal_B +=cmdVec;
     }
 
@@ -172,7 +172,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-		cArray2EigenVector3d(this->incomingCmdTorqueBuffer.cmd, cmdVec);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdTorqueBuffer.cmd);
         this->torqueExternalPntB_B += cmdVec;
     }
 

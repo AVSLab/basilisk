@@ -33,11 +33,17 @@ void eigenVector3d2CArray(Eigen::Vector3d & inMat, double *outArray);
 //!@brief Rapid conversion between 3x3 matrix and output array
 void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray);
 //!@brief General conversion between a C array and an Eigen matrix
-void cArray2EigenMatrixXd(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols);
+Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols);
 //!@brief Specific conversion between a C array and an Eigen 3-vector
-void cArray2EigenVector3d(double *inArray, Eigen::Vector3d & outMat);
+Eigen::Vector3d cArray2EigenVector3d(double *inArray);
 //!@brief Specfici conversion between a C array and an Eigen 3x3 matrix
-void cArray2EigenMatrix3d(double *inArray, Eigen::Matrix3d & outMat);
+Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray);
+//!@brief returns the first axis DCM with the input angle 
+Eigen::Matrix3d eigenM1(double angle);
+//!@brief returns the second axis DCM with the input angle
+Eigen::Matrix3d eigenM2(double angle);
+//!@brief returns the third axis DCM with the input angle
+Eigen::Matrix3d eigenM3(double angle);
 
 
 #endif /* _GaussMarkov_HH_ */
