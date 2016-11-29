@@ -28,6 +28,8 @@
 %ignore SelfInit_dvGuidance;
 %constant void CrossInit_dvGuidance(void*, uint64_t);
 %ignore CrossInit_dvGuidance;
+GEN_SIZEOF(DvBurnCmdData);
+GEN_SIZEOF(dvGuidanceConfig);
 %include "dvGuidance.h"
 
 %pythoncode %{

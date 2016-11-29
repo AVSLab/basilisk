@@ -30,6 +30,7 @@
 %ignore CrossInit_inertial3DSpin;
 %constant void Reset_inertial3DSpin(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3DSpin;
+GEN_SIZEOF(inertial3DSpinConfig);
 %include "inertial3DSpin.h"
 
 // sample Module supportfile to be included in this sub-module

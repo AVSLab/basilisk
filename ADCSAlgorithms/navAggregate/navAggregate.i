@@ -30,6 +30,9 @@
 %ignore CrossInit_aggregateNav;
 STRUCTASLIST(AggregateAttInput)
 STRUCTASLIST(AggregateTransInput)
+GEN_SIZEOF(AggregateAttInput);
+GEN_SIZEOF(AggregateTransInput);
+GEN_SIZEOF(NavAggregateData);
 %include "navAggregate.h"
 %pythoncode %{
 import sys

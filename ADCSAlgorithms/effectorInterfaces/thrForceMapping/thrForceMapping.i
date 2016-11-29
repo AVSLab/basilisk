@@ -30,6 +30,7 @@
 %ignore CrossInit_thrForceMapping;
 %constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
 %ignore Reset_thrForceMapping;
+GEN_SIZEOF(thrForceMappingConfig);
 %include "thrForceMapping.h"
 
 // sample Module supportfile to be included in this sub-module

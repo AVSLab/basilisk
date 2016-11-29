@@ -32,6 +32,8 @@
 %constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineUKF;
 STRUCTASLIST(SingleCSSConfig)
+GEN_SIZEOF(SunlineMeasOut);
+GEN_SIZEOF(SunlineUKFConfig);
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/UKFUtilities.h"
 

@@ -32,6 +32,9 @@
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
 %include "vehEffectorOut.h"
+GEN_SIZEOF(effPairs);
+GEN_SIZEOF(ThrustGroupData);
+GEN_SIZEOF(dvAttEffectConfig);
 %include "dvAttEffect.h"
 %pythoncode %{
 import sys
