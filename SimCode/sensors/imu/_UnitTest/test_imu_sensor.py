@@ -156,6 +156,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     fieldNames = list()
     for fieldName in dir(ImuSensorOutput):
         if fieldName.find('__') < 0 and fieldName.find('this') < 0:
+            if(callable(getattr(ImuSensorOutput,fieldName))):
+                continue
             fieldNames.append(fieldName)
 
     trueVector = dict()

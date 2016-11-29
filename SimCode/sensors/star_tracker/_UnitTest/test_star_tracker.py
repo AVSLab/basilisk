@@ -130,6 +130,8 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     fieldLengths = list()
     for fieldName in dir(StarTrackerOutput):
         if fieldName.find('__') < 0 and fieldName.find('this') < 0:
+            if(callable(getattr(StarTrackerOutput,fieldName))):
+                continue
             fieldNames.append(fieldName)
             if type(getattr(StarTrackerOutput,fieldName)).__name__ == 'list':
                 fieldLengths.append(len(getattr(StarTrackerOutput,fieldName)))
