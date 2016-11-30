@@ -44,6 +44,8 @@ Eigen::Matrix3d eigenM1(double angle);
 Eigen::Matrix3d eigenM2(double angle);
 //!@brief returns the third axis DCM with the input angle
 Eigen::Matrix3d eigenM3(double angle);
+//!@brief returns the tilde matrix representation of a vector (equivalent to a vector cross product)
+Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
 
 
 #endif /* _GaussMarkov_HH_ */

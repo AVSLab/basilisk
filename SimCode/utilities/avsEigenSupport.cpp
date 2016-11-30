@@ -108,8 +108,7 @@ Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
  by the angle theta.  The DCM is the positive theta rotation from the original
  frame to the final frame.
  @return Eigen::Matrix3d
- @param inArray The input array (row-major)
- @param outMat The output Eigen matrix
+ @param angle The input rotation angle
  */
 Eigen::Matrix3d eigenM1(double angle)
 {
@@ -130,8 +129,7 @@ Eigen::Matrix3d eigenM1(double angle)
  by the angle theta.  The DCM is the positive theta rotation from the original
  frame to the final frame.
  @return Eigen::Matrix3d
- @param inArray The input array (row-major)
- @param outMat The output Eigen matrix
+ @param angle The input rotation angle
  */
 Eigen::Matrix3d eigenM2(double angle)
 {
@@ -152,8 +150,7 @@ Eigen::Matrix3d eigenM2(double angle)
  by the angle theta.  The DCM is the positive theta rotation from the original
  frame to the final frame.
  @return Eigen::Matrix3d
- @param inArray The input array (row-major)
- @param outMat The output Eigen matrix
+ @param angle The input rotation angle
  */
 Eigen::Matrix3d eigenM3(double angle)
 {
@@ -168,3 +165,27 @@ Eigen::Matrix3d eigenM3(double angle)
 
     return mOut;
 }
+
+
+/*! This function returns the tilde matrix version of a vector. The tilde
+ matrix is the matrixi equivalent of a vector cross product, where
+ [tilde_a] b == a x b
+ @return Eigen::Matrix3d
+ @param vec The input vector
+ */
+Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
+{
+    Eigen::Matrix3d mOut;
+
+    mOut(0,0) = mOut(1,1) = mOut(2,2) = 0.0;
+
+    mOut(0,1) = -vec(2);
+    mOut(1,0) =  vec(2);
+    mOut(0,2) =  vec(1);
+    mOut(2,0) = -vec(1);
+    mOut(1,2) = -vec(0);
+    mOut(2,1) =  vec(0);
+
+    return mOut;
+}
+
