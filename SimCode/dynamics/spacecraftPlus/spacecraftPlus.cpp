@@ -21,7 +21,7 @@
 #include "spacecraftPlus.h"
 #include "utilities/simMacros.h"
 #include "../_GeneralModuleFiles/rk4SVIntegrator.h"
-#include "../utilities/avsEigenSupport.h"
+#include "utilities/avsEigenSupport.h"
 #include <iostream>
 
 

@@ -22,7 +22,7 @@
 #define FUEL_SLOSH_PARTICLE_H
 
 #include "../_GeneralModuleFiles/stateEffector.h"
-#include "../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief Class that implements an effector representing a sloshing particle

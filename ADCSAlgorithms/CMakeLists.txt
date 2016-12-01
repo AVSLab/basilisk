@@ -49,7 +49,6 @@ foreach(module ${swig_modules})
 	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 	endforeach()
 	
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files})
@@ -59,7 +58,7 @@ foreach(module ${swig_modules})
 	foreach(LibFile ${ALG_LIST})
   	    SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
     endforeach()
-	
+    target_include_directories(${SWIG_MODULE_${FileBase}_REAL_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})	
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES 
 	FOLDER "${DIR_NAME_STRING}/${FileDir}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES

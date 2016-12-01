@@ -103,7 +103,6 @@ def test_reactionWheelIntegratedTest(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.rwVehPropsInMsgName = "spacecraft_mass_props"
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command

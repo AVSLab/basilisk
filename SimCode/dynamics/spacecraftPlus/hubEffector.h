@@ -58,6 +58,10 @@ public:
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
+    Eigen::Vector3d r_NInit;             //!< [m] Initial position of the spacecraft wrt to base
+    Eigen::Vector3d v_NInit;             //!< [m/s Initial velocity of the spacecraft wrt base
+    Eigen::Vector3d sigma_BNInit;        //!< [-] Initial attitude of the spacecraft wrt base
+    Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
     bool useTranslation;                 //!< [-] Whether the s/c has translational states
     bool useRotation;                    //!< [-] Whether the s/c has rotational states
     std::string nameOfHubPosition;       //!< [-] Identifier for hub position states

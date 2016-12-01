@@ -30,7 +30,6 @@
 #include <vector>
 #include <stdint.h>
 #include "spacecraftPlusMsg.h"
-#include "hingedRigidBodyStateEffector.h"
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */

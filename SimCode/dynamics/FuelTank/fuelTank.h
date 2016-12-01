@@ -23,7 +23,7 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 #include "fuelSloshParticle.h"
 #include <vector>
@@ -39,6 +39,7 @@ public:
 	double radiusTank;
 	Eigen::Vector3d r_TB_B;
 	std::string nameOfMassState;
+    double propMassInit;                              //! [kg] Initial propellant mass in tank
 
 private:
 	StateData *massState;

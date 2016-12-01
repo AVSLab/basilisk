@@ -29,6 +29,7 @@ FuelTank::FuelTank()
 	this->effProps.rPrimeCB_B.fill(0.0);
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPrimePntB_B.fill(0.0);
+    this->propMassInit = 0.0;
 
 	//! - Initialize the variables to working values
 	this->r_TB_B.setZero();
@@ -57,9 +58,12 @@ void FuelTank::linkInStates(DynParamManager& statesIn)
 void FuelTank::registerStates(DynParamManager& statesIn)
 {
 	std::vector<FuelSloshParticle>::iterator intFSP;
+    Eigen::MatrixXd massMatrix(1,1);
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
 		intFSP->registerStates(statesIn);
 	this->massState = statesIn.registerState(1, 1, this->nameOfMassState);
+    massMatrix(0,0) = propMassInit;
+    this->massState->setState(massMatrix);
 }
 
 void FuelTank::updateEffectorMassProps(double integTime) {

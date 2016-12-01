@@ -23,7 +23,7 @@
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include "../_GeneralModuleFiles/sys_model.h"
+#include "_GeneralModuleFiles/sys_model.h"
 #include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
