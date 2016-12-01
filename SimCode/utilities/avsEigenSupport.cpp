@@ -69,34 +69,123 @@ void eigenMatrix3d2CArray(Eigen::Matrix3d & inMat, double *outArray)
 and an Eigen matrix.  Note that to use this function the user MUST size
 the Eigen matrix ahead of time so that the internal map call has enough
 information to ingest the C array.
-@return void
+@return Eigen::MatrixXd
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2EigenMatrixXd(double *inArray, Eigen::MatrixXd & outMat, int nRows, int nCols)
+Eigen::MatrixXd cArray2EigenMatrixXd(double *inArray, int nRows, int nCols)
 {
-	outMat.resize(nRows, nCols);
+    Eigen::MatrixXd outMat;
+    outMat.resize(nRows, nCols);
 	outMat = Eigen::Map<Eigen::MatrixXd>(inArray, outMat.rows(), outMat.cols());
+    return outMat;
 }
 /*! This function performs the conversion between an input C array
 3-vector and an output Eigen vector3d.  This function is provided
 in order to save an unnecessary conversion between types
-@return void
+@return Eigen::Vector3d
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2EigenVector3d(double *inArray, Eigen::Vector3d & outMat)
+Eigen::Vector3d cArray2EigenVector3d(double *inArray)
 {
-	outMat = Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
+    return Eigen::Map<Eigen::Vector3d>(inArray, 3, 1);
 }
 /*! This function performs the conversion between an input C array
 3x3-matrix and an output Eigen vector3d.  This function is provided
 in order to save an unnecessary conversion between types
-@return void
+@return Eigen::Matrix3d
 @param inArray The input array (row-major)
 @param outMat The output Eigen matrix
 */
-void cArray2EigenMatrix3d(double *inArray, Eigen::Matrix3d & outMat)
+Eigen::Matrix3d cArray2EigenMatrix3d(double *inArray)
 {
-	outMat = Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3);
+	return Eigen::Map<Eigen::Matrix3d>(inArray, 3, 3);
 }
+
+
+/*! This function returns the Eigen DCM that corresponds to a 1-axis rotation
+ by the angle theta.  The DCM is the positive theta rotation from the original
+ frame to the final frame.
+ @return Eigen::Matrix3d
+ @param angle The input rotation angle
+ */
+Eigen::Matrix3d eigenM1(double angle)
+{
+    Eigen::Matrix3d mOut;
+
+    mOut.setIdentity();
+
+    mOut(1,1) = cos(angle);
+    mOut(1,2) = sin(angle);
+    mOut(2,1) = -mOut(1,2);
+    mOut(2,2) = mOut(1,1);
+
+    return mOut;
+}
+
+
+/*! This function returns the Eigen DCM that corresponds to a 2-axis rotation
+ by the angle theta.  The DCM is the positive theta rotation from the original
+ frame to the final frame.
+ @return Eigen::Matrix3d
+ @param angle The input rotation angle
+ */
+Eigen::Matrix3d eigenM2(double angle)
+{
+    Eigen::Matrix3d mOut;
+
+    mOut.setIdentity();
+
+    mOut(0,0) = cos(angle);
+    mOut(0,2) = -sin(angle);
+    mOut(2,0) = -mOut(0,2);
+    mOut(2,2) = mOut(0,0);
+
+    return mOut;
+}
+
+
+/*! This function returns the Eigen DCM that corresponds to a 3-axis rotation
+ by the angle theta.  The DCM is the positive theta rotation from the original
+ frame to the final frame.
+ @return Eigen::Matrix3d
+ @param angle The input rotation angle
+ */
+Eigen::Matrix3d eigenM3(double angle)
+{
+    Eigen::Matrix3d mOut;
+
+    mOut.setIdentity();
+
+    mOut(0,0) = cos(angle);
+    mOut(0,1) = sin(angle);
+    mOut(1,0) = -mOut(0,1);
+    mOut(1,1) = mOut(0,0);
+
+    return mOut;
+}
+
+
+/*! This function returns the tilde matrix version of a vector. The tilde
+ matrix is the matrixi equivalent of a vector cross product, where
+ [tilde_a] b == a x b
+ @return Eigen::Matrix3d
+ @param vec The input vector
+ */
+Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
+{
+    Eigen::Matrix3d mOut;
+
+    mOut(0,0) = mOut(1,1) = mOut(2,2) = 0.0;
+
+    mOut(0,1) = -vec(2);
+    mOut(1,0) =  vec(2);
+    mOut(0,2) =  vec(1);
+    mOut(2,0) = -vec(1);
+    mOut(1,2) = -vec(0);
+    mOut(2,1) =  vec(0);
+
+    return mOut;
+}
+
