@@ -63,6 +63,15 @@ public:
 class GravBodyData
 {
 public:
+    // Default constructor
+    GravBodyData();
+    ~GravBodyData();
+    
+    void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
+    Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
+    void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
+    
+public:
     bool isCentralBody;             //!<          Flag indicating that object is center
     bool isDisplayBody;             //!<          Flag indicating that body is display
     bool useSphericalHarmParams;    //!<          Flag indicating to use spherical harmonics perturbations
@@ -80,15 +89,6 @@ public:
     int64_t bodyMsgID;              //!<          ID for ephemeris data message
     SphericalHarmonics spherHarm;   //!<          Object that computes the spherical harmonics gravity field
     
-    
-    // Default constructor
-    GravBodyData();
-    ~GravBodyData();
-    
-    void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
-    Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
-    void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
-    
 };
 
 /*! @brief Abstract class that is used to implement an effector impacting a GRAVITY body
@@ -99,23 +99,31 @@ class GravityEffector : public SysModel {
 public:
     GravityEffector();
     ~GravityEffector();
-    void linkInStates(DynParamManager& statesIn);
-    void registerProperties(DynParamManager& statesIn);
-    void computeGravityField();
     void SelfInit();
     void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
+    void linkInStates(DynParamManager& statesIn);
+    void registerProperties(DynParamManager& statesIn);
+    void computeGravityField();
 
+private:
+    void writeOutputMessages(uint64_t currentSimNanos);
+    
 public:
 	std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
 	std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
     std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
     GravBodyData* centralBody;         //!<  Central body
+    
 private:
-    StateData *posState;                           //! [-] Position state of the vehicle
-    Eigen::MatrixXd *gravProperty;                 //! [-] g_N property for output
-    Eigen::MatrixXd *timeCorr;                     //! [-] Time correlation property
+    StateData *posState;                            //! [-] Position state of the vehicle
+    Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
+    Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
+    int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message
+    std::string centralBodyOutMsgName;              //! [-] Unique name for the central body spice data output message
+    Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    std::string inertialPositionPropName;           //! [-] Name of the inertial position property
 
 };
 

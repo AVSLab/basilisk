@@ -76,14 +76,18 @@ public:
     void initializeDynamics();                 //!< [-] Method to link all spacecraft states
     void linkInStates(DynParamManager& statesIn);
 	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages
+    void readInputMessages();                   //! [-] 
 
 private:
-	StateData *hubR_N;                         //!< [-] Inertial position for the hub
-	StateData *hubV_N;                         //!< [-] Inertial velocity for the hub
-	StateData *hubOmega_BN_B;                  //!< [-] Attitude rate of the hub
-	StateData *hubSigma;                       //!< [-] sigmaBN for the hub
-
-	int64_t scStateOutMsgID;                  //!< [-] Message ID for the outgoing spacecraft state
+	StateData *hubR_N;                          //!< [-] Inertial position for the hub
+	StateData *hubV_N;                          //!< [-] Inertial velocity for the hub
+	StateData *hubOmega_BN_B;                   //!< [-] Attitude rate of the hub
+	StateData *hubSigma;                        //!< [-] sigmaBN for the hub
+    Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+	int64_t scStateOutMsgId;                    //!< [-] Message ID for the outgoing spacecraft state
+    int64_t centralBodyInMsgId;                 //! [-] Id for the incoming message containing the current central body spice data
+    SpicePlanetState centralBodySpiceData;
+    std::string centralBodyInMsgName;
 };
 
 #endif /* SPACECRAFT_PLUS_H */
