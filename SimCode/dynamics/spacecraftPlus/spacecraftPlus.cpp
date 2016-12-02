@@ -59,15 +59,11 @@ void SpacecraftPlus::CrossInit()
 {
     this->gravField.CrossInit();
     this->initializeDynamics();
-    // SpacecraftPlus is responsible for outputing the hub
-    // inertial position vector relative to the spice inertial frame.
-    this->centralBodyInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetState), this->moduleID);
 }
 
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 {
     double newTime = CurrentSimNanos*NANO2SEC;
-    this->readInputMessages();
     this->gravField.UpdateState(CurrentSimNanos);
     this->integrateState(newTime);
     this->writeOutputMessages(CurrentSimNanos);
@@ -260,10 +256,4 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
-}
-
-void SpacecraftPlus::readInputMessages()
-{
-    SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
-    SystemMessaging::GetInstance()->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&this->centralBodySpiceData));
 }

@@ -119,7 +119,7 @@ def test_reactionWheelIntegratedTest(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
@@ -138,8 +138,8 @@ def test_reactionWheelIntegratedTest(show_plots):
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+        unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
 

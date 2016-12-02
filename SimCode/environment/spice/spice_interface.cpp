@@ -150,7 +150,7 @@ void SpiceInterface::ComputeGPSData()
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
-void SpiceInterface::SendOutputData(uint64_t CurrentClock)
+void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     std::map<uint32_t, SpicePlanetState>::iterator planit;
     SpiceTimeOutput OutputData;
@@ -194,7 +194,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     //! Get GPS and Planet data and then write the message outputs
     ComputeGPSData();
     ComputePlanetData();
-    SendOutputData(CurrentSimNanos);
+    this->writeOutputMessages(CurrentSimNanos);
 }
 
 /*! This method gets the state of each planet that has been added to the model

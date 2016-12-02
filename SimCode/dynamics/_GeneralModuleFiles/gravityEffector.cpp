@@ -327,10 +327,10 @@ GravityEffector::GravityEffector()
     this->systemTimeCorrPropName = "systemTime";
     this->vehicleGravityPropName = "g_N";
     this->centralBodyOutMsgName = "central_body_spice";
+    this->centralBodyOutMsgId = -1;
     this->inertialPositionPropName = "r_BN_N";
     return;
 }
-
 
 GravityEffector::~GravityEffector()
 {
@@ -339,7 +339,9 @@ GravityEffector::~GravityEffector()
 
 void GravityEffector::SelfInit()
 {
-    this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetState), 2, "SpicePlanetState", this->moduleID);
+    if (this->centralBody) {
+        this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetState), 2, "SpicePlanetState", this->moduleID);
+    }
 }
 
 void GravityEffector::CrossInit()
@@ -373,7 +375,9 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
-    SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
+    if (this->centralBodyOutMsgId > 0) {
+        SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
+    }
 }
 
 void GravityEffector::registerProperties(DynParamManager& statesIn)

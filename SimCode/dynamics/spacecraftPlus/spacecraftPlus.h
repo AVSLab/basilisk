@@ -76,7 +76,6 @@ public:
     void initializeDynamics();                 //!< [-] Method to link all spacecraft states
     void linkInStates(DynParamManager& statesIn);
 	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages
-    void readInputMessages();                   //! [-] 
 
 private:
 	StateData *hubR_N;                          //!< [-] Inertial position for the hub
