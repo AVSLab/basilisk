@@ -82,7 +82,7 @@ public:
     double radEquator;              //!< [m]      Equatorial radius for the body
     SpicePlanetState localPlanet;   //!< [-]      Class storage of ephemeris info from scheduled portion
     SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
-    std::string bodyMsgName;        //!<          Gravitational body name
+    std::string bodyInMsgName;        //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame
     std::string planetEphemName;    //!<          Ephemeris name for the planet
     int64_t outputMsgID;            //!<          ID for output message data
