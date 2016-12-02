@@ -419,7 +419,7 @@ void GravityEffector::computeGravityField()
         if(this->centralBody)
         {
             dt = (systemClock - this->centralBody->localHeader.WriteClockNanos)*NANO2SEC;
-            centralPos = Eigen::Map<Eigen::Vector3d>(&(this->centralBody->localPlanet.PositionVector[0]), 3, 1)*dt;
+            centralPos = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.PositionVector[0]), 3, 1);
             centralPos += Eigen::Map<Eigen::Vector3d>
             (&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1)*dt;
             posRelBody_N += centralPos;

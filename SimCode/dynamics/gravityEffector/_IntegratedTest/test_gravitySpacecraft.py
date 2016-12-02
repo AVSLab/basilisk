@@ -175,7 +175,6 @@ def test_singleGravityBody(show_plots):
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
 
-
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')

@@ -163,12 +163,12 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
     //! Add in hubs mass to the spaceCraft mass props
     this->hub.updateEffectorMassProps(t);
-    (*this->m_SC)(0,0) += hub.effProps.mEff;
-    (*this->ISCPntB_B) += hub.effProps.IEffPntB_B;
-    (*this->c_B) += hub.effProps.mEff*hub.effProps.rCB_B;
+    (*this->m_SC)(0,0) += this->hub.effProps.mEff;
+    (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
+    (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
 
     //! - Loop through state effectors
-    for(it = this->states.begin(); it != states.end(); it++)
+    for(it = this->states.begin(); it != this->states.end(); it++)
     {
         //! - Set the matrices to zero
         this->matrixAContr.setZero();
@@ -187,13 +187,13 @@ void SpacecraftPlus::equationsOfMotion(double t)
         (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
 
         //! Add contributions to matrices
-        (*it)->updateContributions(t, matrixAContr, matrixBContr, matrixCContr, matrixDContr, vecTransContr, vecRotContr);
-        this->hub.matrixA += matrixAContr;
-        this->hub.matrixB += matrixBContr;
-        this->hub.matrixC += matrixCContr;
-        this->hub.matrixD += matrixDContr;
-        this->hub.vecTrans += vecTransContr;
-        this->hub.vecRot += vecRotContr;
+        (*it)->updateContributions(t, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr, this->vecTransContr, this->vecRotContr);
+        this->hub.matrixA += this->matrixAContr;
+        this->hub.matrixB += this->matrixBContr;
+        this->hub.matrixC += this->matrixCContr;
+        this->hub.matrixD += this->matrixDContr;
+        this->hub.vecTrans += this->vecTransContr;
+        this->hub.vecRot += this->vecRotContr;
     }
 
     //! Divide c_B and cPrime_B by the total mass of the spaceCraft
@@ -201,7 +201,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0);
 
     //! - Loop through dynEffectors
-    for(dynIt = dynEffectors.begin(); dynIt != dynEffectors.end(); dynIt++)
+    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         //! - Compute the force and torque contributions from the dynamicEffectors
         (*dynIt)->computeBodyForceTorque(t);
