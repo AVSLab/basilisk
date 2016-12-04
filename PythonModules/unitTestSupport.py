@@ -237,3 +237,7 @@ def np2EigenMatrixXd(mat):
 def EigenVector3d2np(eig):
     return np.array([eig[0][0], eig[1][0], eig[2][0]])
 
+def pullVectorSetFromData(inpMat):
+    outMat = np.array(inpMat).transpose()
+    return outMat[1:].transpose()
+
