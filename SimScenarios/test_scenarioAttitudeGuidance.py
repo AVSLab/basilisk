@@ -133,13 +133,14 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
 #     attGuidanceWrap.ModelTag = "hillPoint"
 #     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
+#     attGuidanceConfig.inputCelMessName = earthGravBody.bodyMsgName
 #     attGuidanceConfig.outputDataName = "guidanceOut"
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
 #
 # In contrast to the simple inertial pointing guidance module, this modulel also requires the
-# spacecraft's position and velocity information.  This is set through the `inputNavDataName` variable.
-# The module has an optional input message called  `inputCelMessName` where the planets inertial motion can be specified.
+# spacecraft's position and velocity information.  The planet ephemerise message relative to which the Hill pointing
+# is being achieved by setting the `inputCelMessName` message.
 # This is useful, for example, if orbiting the sun, and wanting to point the spacecraft back at the
 # Earth which is also orbiting the sun.  In this sceneario, however, the spacecraft is to point at the
 # Earth while already oribting the Earth.  Thus, this planet ephemeris input message is not set, which
@@ -286,6 +287,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
+    attGuidanceConfig.inputCelMessName = earthGravBody.bodyMsgName
     attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
