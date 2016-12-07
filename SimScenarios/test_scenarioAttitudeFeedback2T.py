@@ -367,8 +367,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
     # create the gravity ephemerise message
     scSim.TotalSim.CreateNewMessage(dynProcessName,
-                                          earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
+                                          earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
                                           earthEphemData)
 
 

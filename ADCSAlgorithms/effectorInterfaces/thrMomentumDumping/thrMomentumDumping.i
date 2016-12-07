@@ -30,6 +30,7 @@
 %ignore CrossInit_thrMomentumDumping;
 %constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumDumping;
+GEN_SIZEOF(thrMomentumDumpingConfig);
 %include "thrMomentumDumping.h"
 
 // sample Module supportfile to be included in this sub-module

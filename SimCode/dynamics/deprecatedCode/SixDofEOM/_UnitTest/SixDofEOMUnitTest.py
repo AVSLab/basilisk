@@ -136,14 +136,14 @@ JupiterGravBody.IsDisplayBody = False
 JupiterGravBody.UseJParams = False
 
 #MoonGravBody = six_dof_eom.GravityBodyData()
-#MoonGravBody.BodyMsgName = "moon_planet_data"
+#MoonGravBody.bodyInMsgName = "moon_planet_data"
 #MoonGravBody.mu = 4902.799*1000*1000*1000 #meters!
 #MoonGravBody.IsCentralBody = False
 #MoonGravBody.IsDisplayBody = False
 #MoonGravBody.UseJParams = False
 
 #VenusGravBody = six_dof_eom.GravityBodyData()
-#VenusGravBody.BodyMsgName = "venus_planet_data"
+#VenusGravBody.bodyInMsgName = "venus_planet_data"
 #VenusGravBody.mu = 3.257E14 #meters!
 #VenusGravBody.IsCentralBody = False
 #VenusGravBody.IsDisplayBody = False

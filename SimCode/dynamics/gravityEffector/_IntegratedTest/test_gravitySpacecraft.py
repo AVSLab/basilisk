@@ -88,28 +88,28 @@ def test_singleGravityBody(show_plots):
     unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt', unitTestSim.earthGravBody.spherHarm, 100)
 
     unitTestSim.sunGravBody = gravityEffector.GravBodyData()
-    unitTestSim.sunGravBody.bodyMsgName = "sun_planet_data"
+    unitTestSim.sunGravBody.bodyInMsgName = "sun_planet_data"
     unitTestSim.sunGravBody.outputMsgName = "sun_display_frame_data"
     unitTestSim.sunGravBody.mu = 1.32712440018E20  # meters!
     unitTestSim.sunGravBody.isCentralBody = False
     unitTestSim.sunGravBody.useSphericalHarmParams = False   
  
     unitTestSim.moonGravBody = gravityEffector.GravBodyData()
-    unitTestSim.moonGravBody.bodyMsgName = "moon_planet_data"
+    unitTestSim.moonGravBody.bodyInMsgName = "moon_planet_data"
     unitTestSim.moonGravBody.outputMsgName = "moon_display_frame_data"
     unitTestSim.moonGravBody.mu = 4.902799E12  # meters!
     unitTestSim.moonGravBody.isCentralBody = False
     unitTestSim.moonGravBody.useSphericalHarmParams = False
     
     unitTestSim.jupiterGravBody = gravityEffector.GravBodyData()
-    unitTestSim.jupiterGravBody.bodyMsgName = "jupiter barycenter_planet_data"
+    unitTestSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
     unitTestSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
     unitTestSim.jupiterGravBody.mu = 1.266865349093058E17 # meters!
     unitTestSim.jupiterGravBody.isCentralBody = False
@@ -175,7 +175,6 @@ def test_singleGravityBody(show_plots):
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
 
-
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
@@ -227,35 +226,35 @@ def test_multiBodyGravity(show_plots):
     unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.isCentralBody = False
     unitTestSim.earthGravBody.useSphericalHarmParams = False
     unitTestSim.earthGravBody.mu = 3.986004415E14
 
     unitTestSim.sunGravBody = gravityEffector.GravBodyData()
-    unitTestSim.sunGravBody.bodyMsgName = "sun_planet_data"
+    unitTestSim.sunGravBody.bodyInMsgName = "sun_planet_data"
     unitTestSim.sunGravBody.outputMsgName = "sun_display_frame_data"
     unitTestSim.sunGravBody.mu = 1.32712440018E20  # meters!
     unitTestSim.sunGravBody.isCentralBody = True
     unitTestSim.sunGravBody.useSphericalHarmParams = False   
  
     unitTestSim.moonGravBody = gravityEffector.GravBodyData()
-    unitTestSim.moonGravBody.bodyMsgName = "moon_planet_data"
+    unitTestSim.moonGravBody.bodyInMsgName = "moon_planet_data"
     unitTestSim.moonGravBody.outputMsgName = "moon_display_frame_data"
     unitTestSim.moonGravBody.mu = 4.902799E12  # meters!
     unitTestSim.moonGravBody.isCentralBody = False
     unitTestSim.moonGravBody.useSphericalHarmParams = False
     
     unitTestSim.marsGravBody = gravityEffector.GravBodyData()
-    unitTestSim.marsGravBody.bodyMsgName = "moon_planet_data"
+    unitTestSim.marsGravBody.bodyInMsgName = "moon_planet_data"
     unitTestSim.marsGravBody.outputMsgName = "moon_display_frame_data"
     unitTestSim.marsGravBody.mu = 4.2828371901284001E+13  # meters!
     unitTestSim.marsGravBody.isCentralBody = False
     unitTestSim.marsGravBody.useSphericalHarmParams = False
     
     unitTestSim.jupiterGravBody = gravityEffector.GravBodyData()
-    unitTestSim.jupiterGravBody.bodyMsgName = "jupiter barycenter_planet_data"
+    unitTestSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
     unitTestSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
     unitTestSim.jupiterGravBody.mu = 1.266865349093058E17 # meters!
     unitTestSim.jupiterGravBody.isCentralBody = False
@@ -286,7 +285,7 @@ def test_multiBodyGravity(show_plots):
     posRef.setState((1000.0*stateOut[0:3].reshape(3,1)).tolist())
     omegaRef.setState([[0.001], [-0.002], [0.003]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velStart =  1000.0*stateOut[3:6] 
+    velStart = 1000.0*stateOut[3:6]
     velRef.setState((velStart.reshape(3,1)).tolist())
     
     scObject.hub.mHub = 100
@@ -300,7 +299,7 @@ def test_multiBodyGravity(show_plots):
     velArray = []
     posError = []
     posInc = []
-    while(currentTime < totalTime):
+    while currentTime < totalTime:
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
         timeString = pyswice.et2utc_c(unitTestSim.SpiceObject.J2000Current, 'C', 4, 1024, "Yo")
@@ -319,7 +318,7 @@ def test_multiBodyGravity(show_plots):
         if currentTime > 0.0 + dt/2.0:
             posJump = stateOut[0:3]*1000.0 - numpy.array(posPrevious)
             posInc.append(posJump.tolist())
-        posPrevious = stateOut[0:3]*1000.0;
+        posPrevious = stateOut[0:3]*1000.0
         currentTime += dt
 
     stateOut = pyswice_ck_utilities.spkRead('NEW HORIZONS', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'SUN')
@@ -350,4 +349,3 @@ def test_multiBodyGravity(show_plots):
 
 if __name__ == "__main__":
     gravityEffectorAllTest(False)
-    

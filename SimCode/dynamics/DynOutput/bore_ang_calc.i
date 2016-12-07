@@ -21,9 +21,12 @@
    #include "bore_ang_calc.h"
 %}
 
+%include "cmalloc.i"
 %include "swig_common_model.i"
 
 %include "sys_model.h"
+GEN_SIZEOF(BoreAngCalc);
+GEN_SIZEOF(AngOffValues);
 %include "bore_ang_calc.h"
 
 %pythoncode %{

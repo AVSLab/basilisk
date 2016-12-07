@@ -29,6 +29,8 @@
 %constant void CrossInit_stProcessTelem(void*, uint64_t);
 %ignore CrossInit_stProcessTelem;
 %include "stHwInterface.h"
+GEN_SIZEOF(STOutputData);
+GEN_SIZEOF(STConfigData);
 %include "stComm.h"
 %pythoncode %{
 import sys

@@ -30,6 +30,7 @@
 %ignore CrossInit_thrFiringSchmitt;
 %constant void Reset_thrFiringSchmitt(void*, uint64_t, uint64_t);
 %ignore Reset_thrFiringSchmitt;
+GEN_SIZEOF(thrFiringSchmittConfig);
 %include "thrFiringSchmitt.h"
 %include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"
 %pythoncode %{

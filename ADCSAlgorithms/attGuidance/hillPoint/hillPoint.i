@@ -30,6 +30,7 @@
 %ignore CrossInit_hillPoint;
 %constant void Reset_hillPoint(void*, uint64_t, uint64_t);
 %ignore Reset_hillPoint;
+GEN_SIZEOF(hillPointConfig);
 %include "hillPoint.h"
 
 // sample Module supportfile to be included in this sub-module

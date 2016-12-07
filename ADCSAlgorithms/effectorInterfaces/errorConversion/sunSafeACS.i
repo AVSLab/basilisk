@@ -29,6 +29,7 @@
 %constant void CrossInit_sunSafeACS(void*, uint64_t);
 %ignore CrossInit_sunSafeACS;
 %include "dvAttEffect.h"
+GEN_SIZEOF(sunSafeACSConfig);
 %include "sunSafeACS.h"
 %pythoncode %{
 import sys

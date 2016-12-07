@@ -82,7 +82,7 @@ def test_gravityIntegratedSim(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
@@ -101,9 +101,9 @@ def test_gravityIntegratedSim(show_plots):
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)     
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -177,7 +177,7 @@ def test_extForceBodyAndTorque(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
@@ -196,9 +196,9 @@ def test_extForceBodyAndTorque(show_plots):
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
@@ -293,7 +293,7 @@ def test_extForceInertialAndTorque(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
@@ -310,9 +310,9 @@ def test_extForceInertialAndTorque(show_plots):
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"

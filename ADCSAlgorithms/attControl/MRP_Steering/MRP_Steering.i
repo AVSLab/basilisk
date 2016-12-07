@@ -31,6 +31,7 @@
 %constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+GEN_SIZEOF(MRP_SteeringConfig);
 %include "MRP_Steering.h"
 %pythoncode %{
 import sys

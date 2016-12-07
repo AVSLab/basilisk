@@ -189,6 +189,8 @@ ARRAY2ASLIST(unsigned int)
 %enddef
 
 %include "carrays.i"
+%include "cmalloc.i"
+#define GEN_SIZEOF(type) %sizeof(type, type)
 
 %array_functions(double, doubleArray);
 %array_functions(long, longArray);
@@ -197,18 +199,31 @@ ARRAY2ASLIST(unsigned int)
 
 %pythoncode %{
 
+def getStructSize(self):
+    try:
+        return eval('sizeof_' + repr(self).split(';')[0].split('.')[-1])
+    except (NameError) as e:
+        typeString = 'sizeof_' + repr(self).split(';')[0].split('.')[-1]
+        raise NameError(e.message + '\nYou tried to get this size macro: ' + typeString + 
+            '\n It appears to be undefined.  \nYou need to run the SWIG GEN_SIZEOF' +  
+            ' SWIG macro against the class/struct in your SWIG file if you want to ' + 
+            ' make this call.\n')
+
+
 def protectSetAttr(self, name, value):
     if(hasattr(self, name) or name == 'this'):
         object.__setattr__(self, name, value)
     else:
-        raise ValueError('You tried to add this variable: ' + name + '\n' + \
+        raise ValueError('You tried to add this variable: ' + name + '\n' + 
             'To this class: ' + str(self))
+
 def protectAllClasses(moduleType):
     import inspect
     clsmembers = inspect.getmembers(sys.modules[__name__], inspect.isclass)
     for member in clsmembers:
         try:
             exec(str(member[0]) + '.__setattr__ = protectSetAttr')
+            exec(str(member[0]) + '.getStructSize = getStructSize') 
         except (AttributeError, TypeError) as e:
             pass
     

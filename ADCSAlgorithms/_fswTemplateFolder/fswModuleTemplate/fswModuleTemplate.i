@@ -30,6 +30,7 @@
 %ignore CrossInit_fswModuleTemplate;
 %constant void Reset_fswModuleTemplate(void*, uint64_t, uint64_t);
 %ignore Reset_fswModuleTemplate;
+GEN_SIZEOF(fswModuleTemplateConfig);
 %include "fswModuleTemplate.h"
 
 // sample Module supportfile to be included in this sub-module

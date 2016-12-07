@@ -31,6 +31,14 @@ STRUCTASLIST(CSSConfigurationElement)
 %ignore SelfInit_vehicleConfigData;
 %constant void CrossInit_vehicleConfigData(void*, uint64_t);
 %ignore CrossInit_vehicleConfigData;
+GEN_SIZEOF(vehicleConfigData);
+GEN_SIZEOF(RWConfigurationElement);
+GEN_SIZEOF(RWConstellation);
+GEN_SIZEOF(ThrusterPointData);
+GEN_SIZEOF(ThrusterCluster);
+GEN_SIZEOF(VehConfigInputData);
+GEN_SIZEOF(CSSConfigurationElement);
+GEN_SIZEOF(CSSConstConfig);
 
 %include "vehicleConfigData.h"
 

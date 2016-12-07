@@ -27,8 +27,6 @@
 # Creation Date:  Nov. 26, 2016
 #
 
-
-
 import pytest
 import sys, os, inspect
 import matplotlib
@@ -59,12 +57,6 @@ import spacecraftPlus
 import gravityEffector
 import simIncludeGravity
 
-
-
-
-
-
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -79,7 +71,6 @@ import simIncludeGravity
     , (0, True, 0)
     , (0, False,1)
 ])
-
 # provide a unique test method name, starting with test_
 def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''This function is called by the py.test environment.'''
@@ -87,8 +78,6 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
     [testResults, testMessage] = run( True,
             show_plots, orbitCase, useSphericalHarmonics, planetCase)
     assert testResults < 1, testMessage
-
-
 
 ## This scenario demonstrates how to setup basic 3-DOF orbits.
 #
@@ -247,6 +236,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2001.svg "Orbit Illustration")
 #
 
+
 def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -274,7 +264,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
     #
     #   setup the simulation tasks/objects
     #
@@ -288,7 +277,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-
     # setup Gravity Body
     if planetCase == 1:     # Mars
         gravBody, ephemData = simIncludeGravity.addMars()
@@ -297,7 +285,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             gravBody.useSphericalHarmParams = True
             gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM2BData.txt'
                                              , gravBody.spherHarm
-                                             ,3
+                                             , 3
                                              )
         mu = gravBody.mu
     else:                   # Earth
@@ -319,8 +307,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000;      # meters
-    rGEO = 42000.*1000;     # meters
+    rLEO = 7000.*1000      # meters
+    rGEO = 42000.*1000     # meters
     if orbitCase == 2:      # GTO case
         oe.a     = rGEO
         oe.e     = 0.00001
@@ -336,7 +324,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe)
+    r_N, v_N = orbitalMotion.elem2rv(mu, oe)
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -356,23 +344,20 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-
     #
     # create simulation messages
     #
 
     # create the gravity ephemerise message
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                    gravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
+                                    gravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
                                           ephemData)
-
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
 
     #
     #   initialize Spacecraft States within the state manager
@@ -381,9 +366,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
-
+    posRef.setState(unitTestSupport.np2EigenVector3d(r_N))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVector3d(v_N))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -572,5 +556,4 @@ if __name__ == "__main__":
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
          True,       # useSphericalHarmonics
          0            # planetCase (0 - Earth, 1 - Mars)
-       )
-
+    )

@@ -30,6 +30,7 @@
 %ignore CrossInit_inertial3D;
 %constant void Reset_inertial3D(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3D;
+GEN_SIZEOF(inertial3DConfig);
 %include "inertial3D.h"
 
 // sample Module supportfile to be included in this sub-module
