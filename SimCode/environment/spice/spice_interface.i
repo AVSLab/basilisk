@@ -26,6 +26,7 @@
 %include "sys_model.h"
 %include "spice_planet_state.h"
 %include "spice_interface.h"
+GEN_SIZEOF(SpicePlanetState);
 
 %pythoncode %{
 import sys
