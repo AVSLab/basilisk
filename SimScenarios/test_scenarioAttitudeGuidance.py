@@ -335,22 +335,23 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
 
     # create the gravity ephemerise message
+    messageSize = earthEphemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
+                                          earthGravBody.bodyMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, messageSize, 0,
                                           earthEphemData)
 
+
     # create the FSW vehicle configuration message
-    inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
-    scSim.TotalSim.CreateNewMessage(simProcessName, mrpControlConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    messageSize = vehicleConfigOut.getStructSize()
+    scSim.TotalSim.CreateNewMessage(simProcessName, mrpControlConfig.vehConfigInMsgName,
+                                    messageSize, 2)
     # use the same inertia in the FSW algorithm as in the simulation
     vehicleConfigOut.ISCPntB_B = I
     scSim.TotalSim.WriteMessageData(mrpControlConfig.vehConfigInMsgName,
-                                    inputMessageSize,
+                                    messageSize,
                                     0, vehicleConfigOut)
-
 
     #
     #   initialize Simulation
