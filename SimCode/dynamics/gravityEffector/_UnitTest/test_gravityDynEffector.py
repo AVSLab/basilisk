@@ -272,7 +272,10 @@ def test_multiBodyGravity(show_plots):
     positionName = "hubPosition"
     stateDim = [3, 1]
     posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
+    velocityName = "hubVelocity"
+    velState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], velocityName)
     TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
+    
     
     allGrav = gravityEffector.GravityEffector()
     allGrav.gravBodies = gravityEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])
