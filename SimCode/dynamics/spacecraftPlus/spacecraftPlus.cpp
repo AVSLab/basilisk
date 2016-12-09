@@ -253,7 +253,7 @@ void SpacecraftPlus::integrateState(double t)
     newV_N = this->hubV_N->getState();
     dV_N = newV_N - initV_N;
     dV_N -= g_N*localTimeStep;
-    this->dvAccum_B += dV_N;
+    this->dvAccum_B += dcm_BN*dV_N;
     
 
     //! - Compute Energy and Momentum
