@@ -32,8 +32,6 @@
 import pytest
 import sys, os, inspect
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -51,6 +49,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 # import general simulation support files
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 

@@ -33,8 +33,6 @@
 import pytest
 import sys, os, inspect
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -52,6 +50,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 # import general simulation support files
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 
@@ -478,8 +477,8 @@ def run(doUnitTests, show_plots, maneuverCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( True,       # do unit tests
+    run( False,       # do unit tests
          True,        # show_plots
-         1            # Maneuver Case (0 - Hohmann, 1 - Inclination)
+         0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
        )
 
