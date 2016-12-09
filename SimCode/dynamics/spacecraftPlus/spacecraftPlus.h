@@ -52,6 +52,7 @@ public:
     Eigen::MatrixXd *property_dcm_BS;    //!< [-] Dynamic property version of the structure to body
     Eigen::Vector3d totSCAngMomentum_N;  //!< [kg-m^2/s] Total angular momentum of the s/c in N frame compenents
     Eigen::Matrix3d dcm_BS;              //!< [-] Transformation from structure to body frame
+    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
     double totSCEnergy;                  //!< [J]    Total energy of the spacecraft
     double totSCAngMomentum;             //!< [kg-m^2/s] Magnitude of total angular momentum of the s/c
 	double currTimeStep;
@@ -82,6 +83,7 @@ private:
 	StateData *hubOmega_BN_B;                   //!< [-] Attitude rate of the hub
 	StateData *hubSigma;                        //!< [-] sigmaBN for the hub
     Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialVelocityProperty;             //! [m] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 	int64_t scStateOutMsgId;                    //!< [-] Message ID for the outgoing spacecraft state
     int64_t centralBodyInMsgId;                 //! [-] Id for the incoming message containing the current central body spice data
     SpicePlanetState centralBodySpiceData;

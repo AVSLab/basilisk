@@ -66,11 +66,14 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     this->numRWJitter = 0;
     this->numRW = 0;
     std::vector<ReactionWheelConfigData>::iterator RWIt;
+    //! zero the RW Omega and theta values (is there I should do this?)
+    Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
     for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
         if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
+        omegasForInit(RWIt - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
     
@@ -80,10 +83,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 	}
 
-    //! zero the RW Omega and theta values (is there I should do this?)
-    Eigen::MatrixXd omegasForZeroing(this->numRW,1);
-    omegasForZeroing.setZero();
-    this->OmegasState->setState(omegasForZeroing);
+    this->OmegasState->setState(omegasForInit);
     if (this->numRWJitter > 0) {
         Eigen::MatrixXd thetasForZeroing(this->numRWJitter,1);
         thetasForZeroing.setZero();

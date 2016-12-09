@@ -22,6 +22,7 @@
 #include "utilities/simMacros.h"
 #include "../_GeneralModuleFiles/rk4SVIntegrator.h"
 #include "utilities/avsEigenSupport.h"
+#include "utilities/avsEigenMRP.h"
 #include <iostream>
 
 
@@ -39,6 +40,7 @@ SpacecraftPlus::SpacecraftPlus()
 	this->numOutMsgBuffers = 2;
     this->dcm_BS.setIdentity();
     this->struct2BdyPropertyName = "dcm_BS";
+    this->dvAccum_B.fill(0.0);
     return;
 }
 
@@ -77,6 +79,7 @@ void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
     this->hubSigma = statesIn.getStateObject("hubSigma");   /* Need sigmaBN for MRP switching */
 	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
+    this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
 }
 
 void SpacecraftPlus::initializeDynamics()
@@ -222,17 +225,36 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
 void SpacecraftPlus::integrateState(double t)
 {
-	double currTimeStep = t - timePrevious;
-	this->integrator->integrate(t, currTimeStep);
+    Eigen::MRPd sigma_BN;
+    Eigen::Matrix3d dcm_BN;
+    Eigen::Vector3d g_N;
+    Eigen::Vector3d initV_N;
+    Eigen::Vector3d newV_N;
+    Eigen::Vector3d dV_N;
+	double localTimeStep = t - timePrevious;
+    initV_N = this->hubV_N->getState();
+	this->integrator->integrate(t, localTimeStep);
 	this->timePrevious = t;
+    
 
     //! Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
-    sigmaBNLoc = this->hubSigma->getState();
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
         this->hubSigma->setState(sigmaBNLoc);
     }
+    
+    // = (Eigen::Vector3d) this->hubSigma->getState();
+    sigma_BN = sigmaBNLoc;
+    dcm_BN = sigma_BN.toRotationMatrix();
+    dcm_BN.transposeInPlace();
+    g_N = *(this->hub.g_N);
+    newV_N = this->hubV_N->getState();
+    dV_N = newV_N - initV_N;
+    dV_N -= g_N*localTimeStep;
+    this->dvAccum_B += dV_N;
+    
 
     //! - Compute Energy and Momentum
     this->computeEnergyMomentum();
@@ -249,10 +271,11 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 	SCPlusOutputStateData stateOut;
 
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
-    eigenMatrixXd2CArray(this->hubV_N->getState(), stateOut.v_BN_N);
+    eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
+    eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);

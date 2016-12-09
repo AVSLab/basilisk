@@ -324,11 +324,13 @@ GravityEffector::GravityEffector()
 {
     this->centralBody = nullptr;
     this->vehiclePositionStateName = "hubPosition";
+    this->vehicleVelocityStateName = "hubVelocity";
     this->systemTimeCorrPropName = "systemTime";
     this->vehicleGravityPropName = "g_N";
     this->centralBodyOutMsgName = "central_body_spice";
     this->centralBodyOutMsgId = -1;
     this->inertialPositionPropName = "r_BN_N";
+    this->inertialVelocityPropName = "v_BN_N";
     return;
 }
 
@@ -386,11 +388,13 @@ void GravityEffector::registerProperties(DynParamManager& statesIn)
     gravInit.fill(0.0);
     this->gravProperty = statesIn.createProperty(this->vehicleGravityPropName, gravInit);
     this->inertialPositionProperty = statesIn.createProperty(this->inertialPositionPropName, gravInit);
+    this->inertialVelocityProperty = statesIn.createProperty(this->inertialVelocityPropName, gravInit);
 }
 
 void GravityEffector::linkInStates(DynParamManager& statesIn)
 {
     this->posState = statesIn.getStateObject(this->vehiclePositionStateName);
+    this->velState = statesIn.getStateObject(this->vehicleVelocityStateName);
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
 }
 
@@ -399,7 +403,9 @@ void GravityEffector::computeGravityField()
     std::vector<GravBodyData *>::iterator it;
     uint64_t systemClock = this->timeCorr->data()[0];
     Eigen::Vector3d centralPos;
+    Eigen::Vector3d centralVel;
     centralPos.fill(0.0);
+    centralVel.fill(0.0);
     Eigen::Vector3d gravOut;
     gravOut.fill(0.0);
     
@@ -422,6 +428,7 @@ void GravityEffector::computeGravityField()
             centralPos = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.PositionVector[0]), 3, 1);
             centralPos += Eigen::Map<Eigen::Vector3d>
             (&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1)*dt;
+            centralVel = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1);
             posRelBody_N += centralPos;
             if(this->centralBody != (*it))
             {
@@ -438,11 +445,13 @@ void GravityEffector::computeGravityField()
     // Here we explicetly update the system inertial spacecraft position
     // in the spice reference frame if we are computing dynamics
     // relative to a central body
-    if (this->centralBody)
-    {
-        *this->inertialPositionProperty = Eigen::Vector3d(centralPos[0], centralPos[1], centralPos[2]) + this->posState->getState();
-    } else {
-        *this->inertialPositionProperty = this->posState->getState();
-    }
+    *this->inertialPositionProperty = this->posState->getState() + centralPos;
+    *this->inertialVelocityProperty = this->velState->getState() + centralVel;
+//    if (this->centralBody)
+//    {
+//        *this->inertialPositionProperty += centralPos;
+//    } else {
+//        *this->inertialPositionProperty = this->posState->getState();
+//    }
     *this->gravProperty = gravOut;
 }

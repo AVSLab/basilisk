@@ -112,18 +112,22 @@ private:
 public:
 	std::string vehicleGravityPropName;            //! [-] Name of the vehicle mass state
 	std::string vehiclePositionStateName;          //! [-] Name of the vehicle position state
+    std::string vehicleVelocityStateName;          //! [-] Name of the vehicle position state
     std::string systemTimeCorrPropName;            //! [-] Name of the correlation between times
     std::vector<GravBodyData*> gravBodies;         //! [-] Vector of bodies we feel gravity from
     GravBodyData* centralBody;         //!<  Central body
+    std::string inertialPositionPropName;           //! [-] Name of the inertial position property
+    std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
     
 private:
     StateData *posState;                            //! [-] Position state of the vehicle
+    StateData *velState;                            //! [-] Position state of the vehicle
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
     int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message
     std::string centralBodyOutMsgName;              //! [-] Unique name for the central body spice data output message
     Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
-    std::string inertialPositionPropName;           //! [-] Name of the inertial position property
+    Eigen::MatrixXd *inertialVelocityProperty;             //! [m/s] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 
 };
 
