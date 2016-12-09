@@ -23,6 +23,7 @@
 
 import math
 import os,errno
+import platform
 import numpy as np
 import matplotlib as mpl
 mpl.rc("figure", facecolor="white")
@@ -32,6 +33,13 @@ mpl.rc("figure", figsize=(5.75,2.5))
 mpl.rc('axes', labelsize=10)
 mpl.rc('legend', fontsize=9)
 mpl.rc('figure', autolayout=True)
+
+if platform.system() == 'Darwin':
+    mpl.use('MacOSX')
+else:
+    mpl.use('TkAgg')
+
+
 
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
