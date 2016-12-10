@@ -581,7 +581,7 @@ if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
-         True,       # useSphericalHarmonics
+         False,       # useSphericalHarmonics
          0            # planetCase (0 - Earth, 1 - Mars)
        )
 
