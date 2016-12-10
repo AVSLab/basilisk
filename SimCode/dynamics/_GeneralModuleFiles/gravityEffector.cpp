@@ -304,6 +304,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
         Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>
         (&(this->localPlanet.J20002Pfix_dot[0][0]), 3, 3);
         dcm_PfixN += dcm_PfixN_dot * dt;
+        dcm_PfixN.transposeInPlace();
         Eigen::Vector3d r_Pfix = dcm_PfixN*r_I;
         Eigen::Vector3d gravPert_Pfix = this->spherHarm.computeField(r_Pfix,
             this->spherHarm.maxDeg, false);
