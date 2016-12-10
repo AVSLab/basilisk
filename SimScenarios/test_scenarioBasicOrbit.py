@@ -32,8 +32,6 @@
 import pytest
 import sys, os, inspect
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -51,6 +49,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 # import general simulation support files
 import SimulationBaseClass
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 
@@ -147,6 +146,17 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~~~~
 # The value 3 indidates that the first three harmonics, including the 0th order harmonic,
 # is included.
+#
+# Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
+# a fixed location, so this message is not updated.  If the planets move with time, such as with the SPICE
+# functions, then this message can be writen dynamically as well.
+#~~~~~~~~~~~~~~~~~{.py}
+#     messageSize = ephemData.getStructSize()
+#     scSim.TotalSim.CreateNewMessage(simProcessName,
+#                                           gravBody.bodyMsgName, messageSize, 2)
+#     scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
+#                                     ephemData)
+#~~~~~~~~~~~~~~~~~
 #
 #
 # Setup 1
@@ -362,10 +372,11 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
 
     # create the gravity ephemerise message
+    messageSize = ephemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                    gravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
-                                          ephemData)
+                                          gravBody.bodyMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
+                                    ephemData)
 
 
     #

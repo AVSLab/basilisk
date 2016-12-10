@@ -35,8 +35,6 @@
 import pytest
 import sys, os, inspect
 import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -55,6 +53,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 import SimulationBaseClass
 import sim_model
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
 
@@ -366,9 +365,10 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # create the gravity ephemerise message
+    messageSize = earthEphemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(dynProcessName,
-                                          earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0,
+                                          earthGravBody.bodyMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, messageSize, 0,
                                           earthEphemData)
 
 
@@ -377,10 +377,10 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # create the FSW vehicle configuration message
-    inputMessageSize = 18*8+8                           # 18 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     scSim.TotalSim.CreateNewMessage(fswProcessName, mrpControlConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     # use the same inertia in the FSW algorithm as in the simulation
     vehicleConfigOut.ISCPntB_B = I
     scSim.TotalSim.WriteMessageData(mrpControlConfig.vehConfigInMsgName,
