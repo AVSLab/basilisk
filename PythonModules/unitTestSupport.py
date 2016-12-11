@@ -54,6 +54,19 @@ from tabulate import *
 
 
 #
+#   function to check if a 3D vector is the same as the truth values
+#
+def isVectorEqual(result, truth, accuracy):
+
+    if foundNAN(result): return 0
+
+    if np.linalg.norm(result - truth) > accuracy:
+        return 0        # return 0 to indicate the array's are not equal
+    return 1            # return 1 to indicate the two array's are equal
+
+
+
+#
 #   function to check if an array of values is the same as the truth values
 #
 def isArrayEqual(result, truth, dim, accuracy):
@@ -99,6 +112,21 @@ def isArrayZero(result, dim, accuracy):
             return 0    # return 0 to indicate the array's are not equal
 
     return 1            # return 1 to indicate the two array's are equal
+
+
+#
+#   Compare two vector size and values and check absolute accuracy
+#
+def compareVector(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    else:
+        if not isVectorEqual(dataStates, trueStates, accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: "+msg+"\n")
+    return testFailCount, testMessages
+
 
 #
 #   Compare two arrays size and values and check absolute accuracy
