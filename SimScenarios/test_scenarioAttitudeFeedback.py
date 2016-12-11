@@ -252,7 +252,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     scSim.TotalSim.terminateSimulation()
 
     # set the simulation time variable used later on
-    simulationTime = macros.minute2nano(10.)
+    simulationTime = macros.min2nano(10.)
 
     #
     #  create the simulation process
