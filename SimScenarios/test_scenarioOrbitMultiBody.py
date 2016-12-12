@@ -37,6 +37,9 @@ import math
 import csv
 import logging
 
+from datetime import datetime
+from datetime import timedelta
+
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -52,6 +55,7 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
+import astroFunctions
 
 # import simulation related support
 import spacecraftPlus
@@ -75,87 +79,111 @@ import pyswice_ck_utilities
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("orbitCase, useSphericalHarmonics, planetCase", [
-      (0, False,0)
+@pytest.mark.parametrize("scCase", [
+      (0)
+    , (1)
 ])
 
 # provide a unique test method name, starting with test_
-def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def test_scenarioOrbitMultiBody(show_plots, scCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
-            show_plots, orbitCase, useSphericalHarmonics, planetCase)
+            show_plots, scCase)
     assert testResults < 1, testMessage
 
 
 
-## This scenario demonstrates how to setup basic 3-DOF orbits.
+## This scenario demonstrates how to setup orbital simulation with multiple gravitational bodies.
 #
-# Basic Orbit Setup and Translational Motion SImulation {#scenarioBasicOrbit}
+# Orbit Setup to Simulate Translation with Multiple Gravitational Bodies {#scenarioOrbitMultiBody}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting a planet.  The purpose
-# is to illustrate how to create a spacecraft, attach a gravity model, and run
-# a basic Basilisk simulation.  The scenarios can be run with the followings setups
+# This script sets up a 3-DOF spacecraft which is traveling in a multi-gravity environment.  The purpose
+# is to illustrate how to attach a multiple gravity model, and compare the output to SPICE generated
+# trajectories.  The scenarios can be run with the followings setups
 # parameters:
-# Setup | orbitCase           | useSphericalHarmonics | planetCase
-# ----- | ------------------- | --------------------- | -----------
-# 1     | 0 (LEO)             | False                 | 0 (Earth)
-# 2     | 1 (GTO)             | False                 | 0 (Earth)
-# 3     | 2 (GEO)             | False                 | 0 (Earth)
-# 4     | 0 (LEO)             | True                  | 0 (Earth)
-# 5     | 0 (LMO)             | False                 | 1 (Mars)
+# Setup | scCase
+# ----- | -------------------
+# 1     | 0 (Hubble Space Telescope)
+# 2     | 1 (New Horizons)
 #
-# To run the default scenario 1., call the python script through
+# To run the default scenario 1, call the python script through
 #
-#       python test_scenarioBasicOrbit.py
+#       python test_scenarioOrbitMultiBody.py
 #
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
-# the inertial position vector components, while the second plot either shows a planar
-# orbit view relative to the perfocal frame (no spherical harmonics), or the
-# semi-major axis time history plot (with spherical harmonics turned on).
+# When the simulation completes 2-3 plots are shown for each case.  One plot always shows
+# the inertial position vector components, while the third plot shows the inertial differences
+# between the Basilisk simulation trajectory and the SPICE spacecraft trajectory.  Read
+# [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
+# orbit simulation.
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module.  Note that the rotational motion simulation is turned off to leave
-# pure 3-DOF translation motion simulation.
+# The spacecraftPlus() module is setup as before, except that it isn't added to the simulation task
+# list until all the gravitational bodies are added.  The Earth is included in this scenario with the
+# spherical harmonics turned on.  Not that this is true for both spacecraft simulations.
 #~~~~~~~~~~~~~~~~~{.py}
-#     scObject = spacecraftPlus.SpacecraftPlus()
-#     scObject.ModelTag = "spacecraftBody"
-#     scObject.hub.useTranslation = True
-#     scObject.hub.useRotation = False
-#~~~~~~~~~~~~~~~~~
-# Next, this module is attached to the simulation process
-#~~~~~~~~~~~~~~~~~{.py}
-#   scSim.AddModelToTask(simTaskName, scObject)
-#~~~~~~~~~~~~~~~~~
-# To attach an Earth gravity model to this spacecraft, the following macro is invoked:
-#~~~~~~~~~~~~~~~~~{.py}
-#     gravBody, ephemData = simIncludeGravity.addEarth()
-#     gravBody.isCentralBody = True          # ensure this is the central gravitational body
-#~~~~~~~~~~~~~~~~~
-# If extra customization is required, see teh addEarth() macro to change additional values.
-# For example, the spherical harmonics are turned off by default.  To engage them, the following code
-# is used
-#~~~~~~~~~~~~~~~~~{.py}
-#     gravBody.useSphericalHarmParams = True
-#     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/SphericalHarmonics/Earth_GGM03S.txt'
-#                                      , gravBody.spherHarm
-#                                      ,3
+#       earthGravBody, ephemData = simIncludeGravity.addEarth()
+#       earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
+#       earthGravBody.useSphericalHarmParams = True
+#       gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
+#                                      , earthGravBody.spherHarm
+#                                      ,100
 #                                      )
 #~~~~~~~~~~~~~~~~~
-# The value 3 indidates that the first three harmonics, including the 0th order harmonic,
-# is included.
-#
-# Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
-# a fixed location, so this message is not updated.  If the planets move with time, such as with the SPICE
-# functions, then this message can be writen dynamically as well.
+# Next, this the gravity support macros are used to create the other planetary bodies.  Note that
+# the default (all zero) planet ephemerise data sets from these support macros are not used in this
+# scenario.
 #~~~~~~~~~~~~~~~~~{.py}
-#     messageSize = ephemData.getStructSize()
-#     scSim.TotalSim.CreateNewMessage(simProcessName,
-#                                           gravBody.bodyMsgName, messageSize, 2)
-#     scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
-#                                     ephemData)
+#       sunGravBody, ephemData = simIncludeGravity.addSun()
+#       moonGravBody, ephemData = simIncludeGravity.addMoon()
+#       marsGravBody, ephemData = simIncludeGravity.addMars()
+#       jupiterGravBody, ephemData = simIncludeGravity.addJupiter()
+#
+#       # attach gravity model to spaceCraftPlus
+#       scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody, sunGravBody, marsGravBody,
+#                                                                      moonGravBody, jupiterGravBody])
+#~~~~~~~~~~~~~~~~~
+# The bodies are then attached to spacecraftPlus() as a list of gravitational bodies.  Next, the
+# SPICE module is create and configured:
+#~~~~~~~~~~~~~~~~~{.py}
+#       # setup SPICE ephemerise support
+#       spiceObject = spice_interface.SpiceInterface()
+#       spiceObject.ModelTag = "SpiceInterfaceData"
+#       spiceObject.SPICEDataPath = splitPath[0] + '/Basilisk/External/EphemerisData/'
+#       spiceObject.OutputBufferCount = 10000
+#       spiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+#
+#       #
+#       # pull in SPICE support libraries
+#       #
+#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')           # solar system bodies
+#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')        # leap second file
+#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')   # solar system masses
+#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')        # generic Planetary Constants Kernel
+#       # load in spacecraft SPICE ephemeris data
+#       if scCase == 1:
+#           scEphemerisName = 'nh_pred_od077.bsp'
+#           scSpiceName = 'NEW HORIZONS'
+#           mu = sunGravBody.mu
+#       else:   # default case 0
+#           scEphemerisName = 'hst_edited.bsp'
+#           scSpiceName = 'HUBBLE SPACE TELESCOPE'
+#           mu = earthGravBody.mu
+#       pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
+#
+#       spiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
+#       timeInitString = spiceObject.UTCCalInit
+#       spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+#       timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
+#
+#       scSim.AddModelToTask(simTaskName, spiceObject)
+#~~~~~~~~~~~~~~~~~
+# Note that the SPICE module requires the time to be provided as a text string formated in a particular
+# manner.  Finally, the spacecraftPlus() is added to the task list.
+#~~~~~~~~~~~~~~~~~{.py}
+#     scSim.AddModelToTask(simTaskName, scObject)
 #~~~~~~~~~~~~~~~~~
 #
 #
@@ -167,18 +195,17 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          0,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
+#          0            # orbit Case (0 - HST, 1 - New Horizon)
 #        )
 # ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 2 arguments control the
+# The first 2 arguments can be left as is.  The remaining argument(s) control the
 # simulation scenario flags to turn on or off certain simulation conditions.  The default
-# scenario places the spacecraft about the Earth in a LEO orbit and without considering
-# gravitational spherical harmonics.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1000.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2000.svg "Orbit Illustration")
+# scenario simulates the Hubble Space Telescope (HST) spacecraft about the Earth in a LEO orbit.
+# The resulting position coordinates and orbit illustration are shown below.  A 2000 second simulation is
+# performed, and the Basilisk and SPICE generated orbits match up very well.
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody10.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioOrbitMultiBody20.svg "Orbit Illustration")
+# ![Trajectory Differences](Images/Scenarios/scenarioOrbitMultiBody30.svg "Trajectory Differences")
 #
 # Setup 2
 # -----
@@ -188,76 +215,16 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          1,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
+#          1            # orbit Case (0 - HST, 1 - New Horizon)
 #        )
 # ~~~~~~~~~~~~~
-# This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1100.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2100.svg "Orbit Illustration")
+# This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
+# large distance from the sun.  The
+# resulting position coordinates and trajectorie differences are shown below.
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody11.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody31.svg "Trajectory Difference")
 #
-# Setup 3
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          2,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1200.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2200.svg "Orbit Illustration")
-#
-#  Setup 4
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          0,           # orbit Case
-#          True,        # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular LEO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1010.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2010.svg "Orbit Illustration")
-#
-# Setup 5
-# -------
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          0,           # orbit Case
-#          True,        # useSphericalHarmonics
-#          1            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1001.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2001.svg "Orbit Illustration")
-#
-
-def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
+def run(doUnitTests, show_plots, scCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -281,7 +248,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(5.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
 
@@ -303,15 +270,16 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     earthGravBody.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
                                      , earthGravBody.spherHarm
-                                     ,3
+                                     ,100
                                      )
 
     sunGravBody, ephemData = simIncludeGravity.addSun()
     moonGravBody, ephemData = simIncludeGravity.addMoon()
+    marsGravBody, ephemData = simIncludeGravity.addMars()
     jupiterGravBody, ephemData = simIncludeGravity.addJupiter()
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody, sunGravBody,
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody, sunGravBody, marsGravBody,
                                                                    moonGravBody, jupiterGravBody])
 
 
@@ -322,15 +290,30 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     spiceObject.OutputBufferCount = 10000
     spiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
 
-    # pull in support libraries
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'hst_edited.bsp')
+    #
+    # pull in SPICE support libraries
+    #
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')           # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')        # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')   # solar system masses
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')        # generic Planetary Constants Kernel
+    # load in spacecraft SPICE ephemeris data
+    if scCase == 1:
+        scEphemerisName = 'nh_pred_od077.bsp'
+        scSpiceName = 'NEW HORIZONS'
+        mu = sunGravBody.mu
+    else:   # default case 0
+        scEphemerisName = 'hst_edited.bsp'
+        scSpiceName = 'HUBBLE SPACE TELESCOPE'
+        mu = earthGravBody.mu
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
+
 
     spiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
-    stringCurrent = spiceObject.UTCCalInit
+    timeInitString = spiceObject.UTCCalInit
+    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
+
     scSim.AddModelToTask(simTaskName, spiceObject)
 
     # add spacecraftPlus object to the simulation process
@@ -340,15 +323,15 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   Setup spacecraft initial states
     #
-    scInitialState = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
-    rN = 1000.0*scInitialState[0:3]         # meters
-    vN = 1000.0*scInitialState[3:6]         # m/s
+    scInitialState = 1000*pyswice_ck_utilities.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
+    rN = scInitialState[0:3]         # meters
+    vN = scInitialState[3:6]         # m/s
+
 
     #
     #   Setup simulation time
     #
-    simulationTime = macros.hour2nano(2.0)
-
+    simulationTime = macros.sec2nano(2000.)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -356,7 +339,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
 
 
 
@@ -383,15 +365,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    #
-    #   unload the SPICE libraries that were loaded earlier
-    #
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0011.tls')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'hst_edited.bsp')
-
 
     #
     #   retrieve the logged data
@@ -411,82 +384,120 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
+    if scCase == 1:
+        axesScale = astroFunctions.AU*1000.     # convert to AU
+        axesLabel = '[AU]'
+        timeScale = macros.NANO2MIN/60/24       # convert to days
+        timeLabel = '[days]'
+    else:
+        axesScale = 1000.                       # convert to km
+        axesLabel = '[km]'
+        timeScale = macros.NANO2MIN             # convert to minutes
+        timeLabel = '[min]'
     for idx in range(1,4):
-        plt.plot(posData[:, 0]*macros.NANO2MIN, posData[:, idx]/1000.,
+        plt.plot(posData[:, 0]*timeScale, posData[:, idx]/axesScale,
                  color=unitTestSupport.getLineColor(idx,3),
                  label='$r_{BN,'+str(idx)+'}$')
     plt.legend(loc='lower right')
-    plt.xlabel('Time [min]')
-    plt.ylabel('Inertial Position [km]')
+    plt.xlabel('Time ' + timeLabel)
+    plt.ylabel('Inertial Position ' + axesLabel)
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(orbitCase))+str(int(useSphericalHarmonics))
-            +str(int(planetCase))
+            fileNameString+"1"+str(int(scCase))
             , plt, path)
 
-    if useSphericalHarmonics == False:
+    rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
+    if scCase == 0:
+        #
         # draw orbit in perifocal frame
-        oeData = orbitalMotion.rv2elem(earthGravBody.mu,posData[0,1:4],velData[0,1:4])
+        #
+        oeData = orbitalMotion.rv2elem(mu,posData[0,1:4],velData[0,1:4])
+        omega0 = oeData.omega
         b = oeData.a*np.sqrt(1-oeData.e*oeData.e)
         p = oeData.a*(1-oeData.e*oeData.e)
         plt.figure(2,figsize=np.array((1.0, b/oeData.a))*4.75,dpi=100)
         plt.axis(np.array([-oeData.rApoap, oeData.rPeriap, -b, b])/1000*1.25)
+
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
-        if planetCase == 1:
-            planetColor = '#884400'
-        else:
-            planetColor= '#008800'
+        planetColor= '#008800'
         planetRadius = earthGravBody.radEquator/1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
+
         # draw the actual orbit
         rData=[]
         fData=[]
         for idx in range(0,len(posData)):
-            oeData = orbitalMotion.rv2elem(earthGravBody.mu,posData[idx,1:4],velData[idx,1:4])
+            oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
             rData.append(oeData.rmag)
-            fData.append(oeData.f)
+            fData.append(oeData.f + oeData.omega - omega0)
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
                  ,color='#aa0000'
-                 ,linewidth = 3.0
+                 ,linewidth = 0.5
+                 ,label = 'Basilisk'
                  )
-        # draw the full osculating orbit from the initial conditions
-        fData = np.linspace(0,2*np.pi,100)
-        rData = []
-        for idx in range(0,len(fData)):
-            rData.append(p/(1+oeData.e*np.cos(fData[idx])))
+        plt.legend(loc='lower right')
+
+        # draw the full SPICE orbit
+        time = timeInit
+        rData=[]
+        fData=[]
+        sec = int(macros.NANO2SEC * simulationTime / numDataPoints)
+        usec = (macros.NANO2SEC * simulationTime / numDataPoints - sec) * 1000000
+        for idx in range(0,numDataPoints):
+            time += timedelta(seconds = sec, microseconds=usec)
+            timeString = time.strftime(spiceTimeStringFormat)
+            scState = pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+            rN = 1000.0 * scState[0:3]  # meters
+            vN = 1000.0 * scState[3:6]  # m/s
+            oeData = orbitalMotion.rv2elem(mu, rN, vN)
+            rData.append(oeData.rmag)
+            fData.append(oeData.f + oeData.omega - omega0)
+            rTrue = rN      # store the last position to compare to the BSK position
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
                  ,'--'
                  , color='#555555'
+                 , linewidth = 1.0
+                 ,label = 'Spice'
                  )
+        plt.legend(loc='lower right')
         plt.xlabel('$i_e$ Cord. [km]')
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
         if doUnitTests:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString+"2"+str(int(orbitCase))+str(int(useSphericalHarmonics))
-                +str(int(planetCase))
+                fileNameString+"2"+str(int(scCase))
                 , plt, path)
     else:
-        plt.figure(2)
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        smaData = []
-        for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(earthGravBody.mu, posData[idx, 1:4], velData[idx, 1:4])
-            smaData.append(oeData.a/1000.)
-        plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
-                 ,color='#aa0000',
-                 )
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('SMA [km]')
-        if doUnitTests:     # only save off the figure if doing a unit test run
-            unitTestSupport.saveScenarioFigure(
-                fileNameString+"2"+str(int(orbitCase))+str(int(useSphericalHarmonics))
-                +str(int(planetCase))
-                , plt, path)
+        scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        rTrue = scState[0:3]
+
+    # plot the differences between BSK and SPICE position data
+    plt.figure(3)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    posError = [];
+    numDataPoints = len(posData)
+    for idx in range(0, numDataPoints):
+        sec = int(macros.NANO2SEC*posData[idx, 0])
+        usec = (macros.NANO2SEC*posData[idx, 0] - sec) * 1000000
+        time = timeInit +  timedelta(seconds=sec, microseconds=usec)
+        timeString = time.strftime(spiceTimeStringFormat)
+        scState = 1000*pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+        posError.append(posData[idx,1:4]-np.array(scState[0:3]))  # meters
+    for idx in range(1,4):
+        plt.plot(posData[:, 0]*macros.NANO2MIN, np.array(posError)[:,idx-1],
+                 color=unitTestSupport.getLineColor(idx,3),
+                 label='$\Delta r_{'+str(idx)+'}$')
+    plt.legend(loc='lower right')
+    plt.xlabel('Time [min]' )
+    plt.ylabel('Inertial Position Differences [m]')
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "3" + str(int(scCase))
+            , plt, path)
 
     if show_plots:
         plt.show()
@@ -494,63 +505,27 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
 
+    #
+    #   unload the SPICE libraries that were loaded earlier
+    #
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0011.tls')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')
+    pyswice.unload_c(spiceObject.SPICEDataPath + scEphemerisName)
+
 
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
     #
-    if doUnitTests:
-        numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
-        dataPosRed = posData[::skipValue]
 
-        # setup truth data for unit test
-        if orbitCase == 0 and useSphericalHarmonics == False and planetCase == 0:
-            truePos = [
-                  [-2.8168016010234905e+06, 5.2481748469161475e+06, 3.6771572646772973e+06]
-                , [-6.3832193594279224e+06,-9.1678071954736591e+05, 2.7243803573345565e+06]
-                , [-3.2242072294495562e+06,-6.1159997531577712e+06,-1.0989183586217165e+06]
-                , [ 3.3316899420044743e+06,-4.8713265646545375e+06,-3.7642954993209662e+06]
-                , [ 6.3762384860987831e+06, 1.5066729924376707e+06,-2.4626893874916704e+06]
-            ]
-        if orbitCase == 1 and useSphericalHarmonics == False and planetCase == 0:
-            truePos = [
-                  [-5.8895298480664780e+06, 9.6865748900076691e+06, 0.0000000000000000e+00]
-                , [-2.9841899868063834e+07,-1.5137720479948777e+06, 0.0000000000000000e+00]
-                , [-3.6242114305386089e+07,-1.4587361330633366e+07, 0.0000000000000000e+00]
-                , [-3.4141961579096034e+07,-2.4456639423504535e+07, 0.0000000000000000e+00]
-                , [-2.5748797606003813e+07,-2.9822602085271571e+07, 0.0000000000000000e+00]
-            ]
-        if orbitCase == 2 and useSphericalHarmonics == False and planetCase == 0:
-            truePos = [
-                  [-2.1819784817951124e+07, 3.5887241456518754e+07, 0.0000000000000000e+00]
-                , [-4.1894573568364032e+07, 2.9785407713101692e+06, 0.0000000000000000e+00]
-                , [-2.6678165220398702e+07,-3.2439322536990236e+07, 0.0000000000000000e+00]
-                , [ 1.1011283367405793e+07,-4.0531027214480065e+07, 0.0000000000000000e+00]
-                , [ 3.9424800586523451e+07,-1.4479829266943770e+07, 0.0000000000000000e+00]
-            ]
-        if orbitCase == 0 and useSphericalHarmonics == True and planetCase == 0:
-            truePos = [
-                  [-2.8168016010234905e+06, 5.2481748469161475e+06, 3.6771572646772973e+06]
-                , [ 6.3768027982985154e+06, 1.5301978565714115e+06,-2.4340171199729838e+06]
-                , [-2.1234793124024896e+06,-6.4156882591431364e+06,-1.8098650417713353e+06]
-                , [-4.7524455240083179e+06, 3.4339560991056389e+06, 3.8240860083611421e+06]
-                , [ 5.7958244639578946e+06, 3.7597384950639764e+06,-1.1050131437256800e+06]
-            ]
-        if orbitCase == 0 and useSphericalHarmonics == False and planetCase == 1:
-            truePos = [
-                  [-2.8168016010234905e+06, 5.2481748469161475e+06, 3.6771572646772973e+06]
-                , [-6.3377484427205361e+06,-3.4255546782816760e+05, 2.9535269173761583e+06]
-                , [-4.1455299024167331e+06,-5.6246507782849586e+06,-4.3263203566448629e+05]
-                , [ 1.7834756999182550e+06,-5.8365487146244226e+06,-3.4287595557745439e+06]
-                , [ 6.1043005786560886e+06,-7.8646594985982473e+05,-3.3335301636885651e+06]
-            ]
+    if doUnitTests:
 
         # compare the results to the truth values
-        accuracy = 1e-6
-
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPosRed, accuracy, "r_BN_N Vector",
+        accuracy = 100.0 # meters
+        testFailCount, testMessages = unitTestSupport.compareVector(
+            rTrue, rBSK, accuracy, "|r_BN_N| error",
             testFailCount, testMessages)
 
         #   print out success message if no error were found
@@ -571,8 +546,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
-         False,       # useSphericalHarmonics
-         0            # planetCase (0 - Earth, 1 - Mars)
+         0            # orbit Case (0 - HST, 1 - New Horizon)
        )
 
