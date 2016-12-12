@@ -660,14 +660,13 @@ class SimBaseClass:
 
 
 def SetCArray(InputList, VarType, ArrayPointer):
-    try:
-        ArrayPointer[0] = InputList[0]
-    except TypeError:
-        CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
-        CurrIndex = 0
-        for CurrElem in InputList:
-            exec (CmdString)
-            CurrIndex += 1
+    if(isinstance(ArrayPointer, (list, tuple))):
+        raise TypeError('Cannot set a C array if it is actually a python list.  Just assign the variable to the list directly.')
+    CmdString = 'sim_model.' + VarType + 'Array_setitem(ArrayPointer, CurrIndex, CurrElem)'
+    CurrIndex = 0
+    for CurrElem in InputList:
+        exec (CmdString)
+        CurrIndex += 1
 
 
 def getCArray(varType, arrayPointer, arraySize):
