@@ -387,8 +387,8 @@ def run(doUnitTests, show_plots, scCase):
     if scCase == 1:
         axesScale = astroFunctions.AU*1000.     # convert to AU
         axesLabel = '[AU]'
-        timeScale = macros.NANO2MIN/60/24       # convert to days
-        timeLabel = '[days]'
+        timeScale = macros.NANO2MIN             # convert to minutes
+        timeLabel = '[min]'
     else:
         axesScale = 1000.                       # convert to km
         axesLabel = '[km]'
@@ -448,9 +448,9 @@ def run(doUnitTests, show_plots, scCase):
         for idx in range(0,numDataPoints):
             time += timedelta(seconds = sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
-            scState = pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
-            rN = 1000.0 * scState[0:3]  # meters
-            vN = 1000.0 * scState[3:6]  # m/s
+            scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+            rN = scState[0:3]  # meters
+            vN = scState[3:6]  # m/s
             oeData = orbitalMotion.rv2elem(mu, rN, vN)
             rData.append(oeData.rmag)
             fData.append(oeData.f + oeData.omega - omega0)
