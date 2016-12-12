@@ -28,7 +28,7 @@ def sec2nano(time):
     return int(time*1E9)
 
 #   function to convert minutes to an integer nanoseconds value
-def minute2nano(time):
+def min2nano(time):
     return int(time*1E9*60)
 
 #   function to convert hours to an integer nanoseconds value

@@ -91,7 +91,7 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 
 ## This scenario demonstrates how to setup basic 3-DOF orbits.
 #
-# Basic Orbit Setup and Translational Motion SImulation {#scenarioBasicOrbit}
+# Basic Orbit Setup and Translational Motion Simulation {#scenarioBasicOrbit}
 # ====
 #
 # Scenario Description
@@ -581,7 +581,7 @@ if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
-         True,       # useSphericalHarmonics
+         False,       # useSphericalHarmonics
          0            # planetCase (0 - Earth, 1 - Mars)
        )
 
