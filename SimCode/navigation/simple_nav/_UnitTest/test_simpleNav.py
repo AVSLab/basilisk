@@ -139,8 +139,8 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
-    SimulationBaseClass.SetCArray(vehPosition, 'double', stateMessage.r_BN_N)
-    SimulationBaseClass.SetCArray(sunPosition, 'double', spiceMessage.PositionVector)
+    stateMessage.r_BN_N = vehPosition 
+    spiceMessage.PositionVector = sunPosition
     spiceMessage.PlanetName = "sun"
 
     # Inertial State output Message
