@@ -26,7 +26,6 @@
 
 import pytest
 import sys, os, inspect
-import matplotlib.pyplot as plt
 import numpy as np
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
@@ -40,6 +39,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import eulerRotation                    # import the module that is to be tested
 import macros as mc
 

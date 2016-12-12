@@ -18,9 +18,6 @@
 
 '''
 import sys, os, inspect
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy
 import pytest
 import math
@@ -33,6 +30,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import stateArchitecture
 import sim_model

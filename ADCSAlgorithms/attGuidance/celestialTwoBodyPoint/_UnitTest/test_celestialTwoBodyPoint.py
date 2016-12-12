@@ -30,23 +30,15 @@
 #
 
 import pytest
-
 import sys, os, inspect
 
-import matplotlib.pyplot as plt
-
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
-
 import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
-
 path = os.path.dirname(os.path.abspath(filename))
-
 splitPath = path.split('ADCSAlgorithms')
-
 sys.path.append(splitPath[0] + '/modules')
-
 sys.path.append(splitPath[0] + '/PythonModules')
 
 # Import all of the modules that we are going to be called in this simulation
@@ -54,6 +46,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import celestialTwoBodyPoint  # module that is to be tested
 import simple_nav  # module that creates needed input
 import spice_interface  # module that creates needed input

@@ -18,9 +18,6 @@
 
 '''
 import sys, os, inspect
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy
 import pytest
 import math
@@ -34,6 +31,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import sunlineUKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData

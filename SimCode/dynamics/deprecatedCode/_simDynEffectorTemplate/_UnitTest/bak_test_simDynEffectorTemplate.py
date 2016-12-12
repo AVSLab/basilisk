@@ -26,10 +26,6 @@
 
 import pytest
 import sys, os, inspect
-import matplotlib
-
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy
 import ctypes
 import math
@@ -48,6 +44,7 @@ import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import vehicleConfigData
 import simDynEffectorTemplate
@@ -346,4 +343,8 @@ def unitSimDynEffectorTemplate(plotFixture, show_plots, useFlag):
 # This statement below ensures that the unit test script can be run stand alone
 #
 if __name__ == "__main__":
-    test_unitSimDynEffectorTemplate(False)  # defaulting show_plots to false
+    test_unitSimDynEffectorTemplate(
+                 plotFixture
+                ,False
+                ,False
+                ) 

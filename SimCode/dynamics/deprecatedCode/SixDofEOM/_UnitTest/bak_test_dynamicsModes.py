@@ -26,9 +26,6 @@
 
 import pytest
 import sys, os, inspect
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy
 import ctypes
 import math
@@ -48,6 +45,7 @@ import MessagingAccess
 import SimulationBaseClass
 import sim_model
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import simSetupRW                       # RW simulation setup utilties
 import simSetupThruster                 # Thruster simulation setup utilties
 import reactionwheel_dynamics

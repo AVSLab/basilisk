@@ -27,7 +27,6 @@
 import pytest
 import sys, os, inspect
 import numpy as np
-import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -40,6 +39,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import inertial3DSpin                   # import the module that is to be tested
 import macros as mc
 

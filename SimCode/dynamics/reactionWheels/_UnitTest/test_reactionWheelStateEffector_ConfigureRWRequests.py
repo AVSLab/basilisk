@@ -26,10 +26,6 @@
 
 import pytest
 import sys, os, inspect
-import matplotlib
-
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -45,6 +41,7 @@ sys.path.append(splitPath[0]+'/basilisk/PythonModules')
 import MessagingAccess
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import macros
 import reactionWheelStateEffector
 import sim_model

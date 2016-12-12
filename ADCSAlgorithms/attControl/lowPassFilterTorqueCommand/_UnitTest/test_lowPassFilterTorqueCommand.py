@@ -25,7 +25,6 @@
 #
 import pytest
 import sys, os, inspect
-import matplotlib.pyplot as plt
 import math
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 
@@ -42,6 +41,7 @@ import SimulationBaseClass
 import sim_model
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import lowPassFilterTorqueCommand       # import the module that is to be tested
 import MRP_Steering                     # import a sample module that creates the neede input message declaration
 import macros

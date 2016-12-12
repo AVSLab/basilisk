@@ -26,7 +26,6 @@
 
 import pytest
 import sys, os, inspect
-import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 
@@ -40,6 +39,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
+import matplotlib.pyplot as plt
 import fswModuleTemplate                # import the module that is to be tested
 import MRP_Steering                     # import module(s) that creates the needed input message declaration
 import macros

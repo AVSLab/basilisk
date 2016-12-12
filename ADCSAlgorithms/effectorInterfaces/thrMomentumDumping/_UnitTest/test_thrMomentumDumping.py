@@ -25,7 +25,6 @@
 #
 
 import sys, os, inspect
-import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 
@@ -41,6 +40,7 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import thrMomentumDumping            # import the module that is to be tested
+import matplotlib.pyplot as plt
 import macros
 import fswSetupThrusters
 import vehicleConfigData

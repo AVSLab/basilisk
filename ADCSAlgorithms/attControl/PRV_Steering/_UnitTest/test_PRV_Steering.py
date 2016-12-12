@@ -25,7 +25,6 @@
 #
 import pytest
 import sys, os, inspect
-import matplotlib.pyplot as plt
 # import packages as needed e.g. 'numpy', 'ctypes, 'math' etc.
 import numpy as np
 import ctypes
@@ -45,6 +44,7 @@ import alg_contain
 # general support files with common unit test functions
 import macros
 import unitTestSupport
+import matplotlib.pyplot as plt
 # import the module that is to be tested
 import PRV_Steering
 # import module(s) that creates the needed input message declaration
