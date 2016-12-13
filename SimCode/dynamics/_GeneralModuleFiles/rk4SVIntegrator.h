@@ -34,11 +34,6 @@ public:
     virtual ~rk4SVIntegrator();
     virtual void integrate(double currentTime, double timeStep);
     
-    StateVector X2;       /* integration state space */
-	StateVector k1;       /* intermediate RK results */
-	StateVector k2;
-	StateVector k3;
-	StateVector k4;
 };
 
 #endif /* rk4SVIntegrator_h */
