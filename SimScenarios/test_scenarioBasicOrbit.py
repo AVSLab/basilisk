@@ -455,7 +455,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         for idx in range(0,len(posData)):
             oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
             rData.append(oeData.rmag)
-            fData.append(oeData.f)
+            fData.append(oeData.f + oeData.omega - oe.omega)
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
                  ,color='#aa0000'
                  ,linewidth = 3.0
