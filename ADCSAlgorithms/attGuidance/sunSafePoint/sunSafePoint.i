@@ -32,6 +32,7 @@
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
 GEN_SIZEOF(sunSafePointConfig);
+GEN_SIZEOF(attGuidOut);
 %include "sunSafePoint.h"
 
 %pythoncode %{

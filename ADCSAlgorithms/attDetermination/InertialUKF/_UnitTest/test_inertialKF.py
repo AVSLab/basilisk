@@ -115,14 +115,14 @@ def testStateUpdateInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    
-    
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+
     I = [1000., 0., 0.,
      0., 800., 0.,
      0., 0., 800.]
@@ -139,7 +139,7 @@ def testStateUpdateInertialAttitude(show_plots):
     stMessage = stComm.STOutputData()
     stMessage.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
-    inputMessageSize = 4*8
+    inputMessageSize = stMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                       moduleConfig.stDataInMsgName,
                                       inputMessageSize,
@@ -247,12 +247,12 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
      0., 800., 0.,
      0., 0., 800.]
@@ -329,12 +329,12 @@ def test_StatePropRateInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
      0., 800., 0.,
      0., 0., 800.]

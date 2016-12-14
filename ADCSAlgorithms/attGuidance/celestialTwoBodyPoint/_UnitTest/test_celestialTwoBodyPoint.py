@@ -153,7 +153,9 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Navigation Input Message
 
-    inputNavMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
+    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
+
+    inputNavMessageSize = NavStateOutData.getStructSize()
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
 
@@ -161,7 +163,6 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
                                           inputNavMessageSize, 2)
 
-    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
     NavStateOutData.r_BN_N = r_BN_N
     NavStateOutData.v_BN_N = v_BN_N
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputNavDataName,
@@ -170,17 +171,15 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Spice Input Message of Primary Body
 
-    inputSpiceMessageSize = (1 + 2 * 3 + 3 * 3) * 8 + 1 * 4 + 64 * 1  # Size of SpicePlanetState:
-    # (1, 2*v3, M33) * doubles[8]
-    # 1 * int[4]
-    # (maxLength = 64) * char[1]
+    CelBodyData = spice_interface.SpicePlanetState()
+    inputSpiceMessageSize = CelBodyData.getStructSize() # Size of SpicePlanetState
+
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
 
                                           moduleConfig.inputCelMessName,
 
                                           inputSpiceMessageSize, 2)
 
-    CelBodyData = spice_interface.SpicePlanetState()
     CelBodyData.PositionVector = celPositionVec
     CelBodyData.VelocityVector = celVelocityVec
 

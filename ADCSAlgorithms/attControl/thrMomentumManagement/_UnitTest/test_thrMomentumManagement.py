@@ -112,12 +112,13 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     moduleConfig.deltaHOutMsgName = "outputName"
 
     # wheelSpeeds Message
-    inputMessageSize = 36 * 8  # 36 doubles
+    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.rwSpeedsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwSpeedMessage = rwNullSpace.RWSpeedData()
+
     rwSpeedMessage.wheelSpeeds = [10.0, -25.0, 50.0, 100.]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwSpeedsInMsgName,
                                           inputMessageSize,
@@ -125,12 +126,12 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
                                           rwSpeedMessage)
 
     # vehicleConfigData Message:
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.vehicleConfigDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     vehicleConfigOut.BS = [1.0, 0.0, 0.0,
           0.0, 1.0, 0.0,
           0.0, 0.0, 1.0]

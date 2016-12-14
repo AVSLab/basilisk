@@ -104,13 +104,13 @@ def eulerRotationTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    inputMessageSize = 12*8                             # 4x3 doubles
+    RefStateOutData = eulerRotation.attRefOut()  # Create a structure for the input message
+    inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    RefStateOutData = eulerRotation.attRefOut()          # Create a structure for the input message
     sigma_R0N = np.array([0.1, 0.2, 0.3])
     RefStateOutData.sigma_RN = sigma_R0N
     omega_R0N_N = np.array([0.1, 0.0, 0.0])

@@ -400,13 +400,13 @@ def testStateUpdateSunLine(show_plots):
     unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
                                     vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 2, "CSSConstellation")
     unitTestSim.TotalSim.WriteMessageData("css_config_data", vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 0, cssConstelation)
-    
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
      0., 800., 0.,
      0., 0., 800.]
@@ -428,7 +428,7 @@ def testStateUpdateSunLine(show_plots):
         dotList.append(dotProd)
     inputData.CosValue = dotList
 
-    inputMessageSize = vehicleConfigData.MAX_NUM_CSS_SENSORS*8
+    inputMessageSize = vehicleConfigData.MAX_NUM_CSS_SENSORS * 8
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                       moduleConfig.cssDataInMsgName,
                                       inputMessageSize,

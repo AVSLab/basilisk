@@ -99,13 +99,12 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    inputMessageSize = (1 + 3 + 3 + 3) * 8  # 10 doubles
+    NavStateOutData = simple_nav.NavAttOut()  # Create a structure for the input message
+    inputMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    NavStateOutData = simple_nav.NavAttOut()          # Create a structure for the input message
     sigma_BN = [0.25, -0.45, 0.75]
     NavStateOutData.sigma_BN = sigma_BN
     omega_BN_B = [-0.015, -0.012, 0.005]
@@ -118,13 +117,12 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    inputMessageSize = 12*8                             # 4x3 doubles
+    RefStateOutData = inertial3DSpin.attRefOut()  # Create a structure for the input message
+    inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    RefStateOutData = inertial3DSpin.attRefOut()          # Create a structure for the input message
     sigma_RN = [0.35, -0.25, 0.15]
     RefStateOutData.sigma_RN = sigma_RN
     omega_RN_N = [0.018, -0.032, 0.015]

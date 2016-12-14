@@ -102,17 +102,17 @@ def rwMotorTorqueTest(show_plots):
 
 
     # attControl message
-    inputMessageSize = 3*8 # 3 doubles
+    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
+    inputMessageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputVehControlName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
-    inputMessageData = MRP_Steering.vehControlOut() # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7] # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName, inputMessageSize,
                                           0, inputMessageData) # write data into the simulator
 
     # wheelConfigData message
-    inputMessageSize = 8*vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1*4
+    inputMessageSize = 8 * vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1 * 4
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
     rwConfigParams = rwConfigData.RWConfigParams()

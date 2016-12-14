@@ -116,11 +116,11 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    inputMessageSize = 12 * 8  # 4 x 3 x size(double)
+    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
     sigma_BR = np.array([0.3, -0.5, 0.7])
     guidCmdData.sigma_BR = sigma_BR
     omega_BR_B = np.array([0.010, -0.020, 0.015])
@@ -133,11 +133,11 @@ def subModuleTestFunction(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    inputMessageSize = 18 * 8 + 8  # 18 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     I = [1000., 0., 0.,
          0., 800., 0.,
          0., 0., 800.]

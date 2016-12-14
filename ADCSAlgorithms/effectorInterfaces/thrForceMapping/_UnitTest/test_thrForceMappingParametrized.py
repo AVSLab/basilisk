@@ -107,12 +107,12 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
 
     # write vehicle configuration message
-    inputMessageSize = 21 * 8 + 8  # 21 doubles + 1 32bit integer
+    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     BS = [1.0, 0., 0.,
          0., 1.0, 0.,
          0., 0., 1.0]
@@ -129,13 +129,13 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageSize = 3*8                              # 3 doubles
+    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
+    inputMessageSize = inputMessageData.getStructSize()                           # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehControlName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
 
-    inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
     requestedTorque = [1.0, -0.5, 0.7]              # Set up a list as a 3-vector
     inputMessageData.torqueRequestBody = requestedTorque   # write torque request to input message
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehControlName,

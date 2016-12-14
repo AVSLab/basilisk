@@ -32,6 +32,7 @@
 %ignore Reset_MRP_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 GEN_SIZEOF(MRP_SteeringConfig);
+GEN_SIZEOF(vehControlOut);
 %include "MRP_Steering.h"
 %pythoncode %{
 import sys

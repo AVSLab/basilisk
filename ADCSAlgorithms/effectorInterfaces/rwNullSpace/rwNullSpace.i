@@ -31,6 +31,7 @@
 %constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
 %ignore Reset_rwNullSpace;
 GEN_SIZEOF(rwNullSpaceConfig);
+GEN_SIZEOF(RWSpeedData);
 %include "rwNullSpace.h"
 %include "../_GeneralModuleFiles/rwSpeedData.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"

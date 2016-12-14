@@ -103,13 +103,12 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageSize = 3*8                              # 3 doubles
+    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
+    inputMessageSize = inputMessageData.getStructSize()                             # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.dataInMsgName,
                                           inputMessageSize,
                                           2)            # number of buffers (leave at 2 as default, don't make zero)
-
-    inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
     inputMessageData.torqueRequestBody = [param1, param2, 0.7]       # Set up a list as a 3-vector
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.dataInMsgName,
                                           inputMessageSize,
