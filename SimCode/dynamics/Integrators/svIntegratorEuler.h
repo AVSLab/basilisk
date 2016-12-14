@@ -20,8 +20,8 @@
 #ifndef svIntegratorEuler_h
 #define svIntegratorEuler_h
 
-#include "stateVecIntegrator.h"
-#include "dynParamManager.h"
+#include "../_GeneralModuleFiles/stateVecIntegrator.h"
+#include "../_GeneralModuleFiles/dynParamManager.h"
 #include <stdint.h>
 
 /*!

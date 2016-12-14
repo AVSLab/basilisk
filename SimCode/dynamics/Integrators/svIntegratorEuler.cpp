@@ -19,7 +19,7 @@
 
 
 #include "svIntegratorEuler.h"
-#include "dynamicObject.h"
+#include "../_GeneralModuleFiles/dynamicObject.h"
 #include <stdio.h>
 
 svIntegratorEuler::svIntegratorEuler(DynamicObject* dyn) : StateVecIntegrator(dyn)

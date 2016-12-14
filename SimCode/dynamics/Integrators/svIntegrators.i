@@ -21,7 +21,7 @@
 %{
    #include "../_GeneralModuleFiles/stateVecIntegrator.h"
    #include "../_GeneralModuleFiles/svIntegratorRK4.h"
-   #include "../_GeneralModuleFiles/svIntegratorEuler.h"
+   #include "svIntegratorEuler.h"
    #include "_GeneralModuleFiles/sys_model.h"
 %}
 
@@ -30,7 +30,7 @@
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateVecIntegrator.h"
 %include "../_GeneralModuleFiles/svIntegratorRK4.h"
-%include "../_GeneralModuleFiles/svIntegratorEuler.h"
+%include "svIntegratorEuler.h"
 
 %pythoncode %{
 import sys
