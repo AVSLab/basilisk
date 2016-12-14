@@ -42,8 +42,6 @@ SpacecraftPlus::SpacecraftPlus()
 
 SpacecraftPlus::~SpacecraftPlus()
 {
-    delete integrator;
-
     return;
 }
 
@@ -261,11 +259,10 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 void SpacecraftPlus::setIntegrator(StateVecIntegrator *newIntegrator)
 {
 
-//    if (newIntegrator != nullptr) {
-//        delete integrator;
-//        integrator = newIntegrator;
-//
-//    }
+    if (newIntegrator != nullptr) {
+        delete integrator;
+        integrator = newIntegrator;
+    }
 
     return;
 }
