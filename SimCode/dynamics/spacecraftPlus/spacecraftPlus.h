@@ -26,6 +26,7 @@
 #include "hubEffector.h"
 #include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
+#include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>
@@ -76,6 +77,7 @@ public:
     void initializeDynamics();                 //!< [-] Method to link all spacecraft states
     void linkInStates(DynParamManager& statesIn);
 	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages
+    void setIntegrator(StateVecIntegrator *newIntegrator);
 
 private:
 	StateData *hubR_N;                         //!< [-] Inertial position for the hub

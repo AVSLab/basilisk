@@ -20,7 +20,7 @@
 
 #include "spacecraftPlus.h"
 #include "utilities/simMacros.h"
-#include "../_GeneralModuleFiles/rk4SVIntegrator.h"
+#include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "../utilities/avsEigenSupport.h"
 #include <iostream>
 
@@ -29,7 +29,7 @@ SpacecraftPlus::SpacecraftPlus()
 {
 	currTimeStep = 0.0;
 	timePrevious = 0.0;
-	integrator = new rk4SVIntegrator(this);
+    integrator = new svIntegratorRK4(this);
     sysTimePropertyName = "systemTime";
     simTimePrevious = 0;
 	scStateOutMsgName = "inertial_state_output";
@@ -42,6 +42,8 @@ SpacecraftPlus::SpacecraftPlus()
 
 SpacecraftPlus::~SpacecraftPlus()
 {
+    delete integrator;
+
     return;
 }
 
@@ -250,4 +252,20 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 	this->integrateState(newTime);
 	writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
+}
+
+/*!
+ * @brief This method changes the integrator in use (Default integrator: RK4)
+ * @param Pointer to an integrator object.
+ */
+void SpacecraftPlus::setIntegrator(StateVecIntegrator *newIntegrator)
+{
+
+//    if (newIntegrator != nullptr) {
+//        delete integrator;
+//        integrator = newIntegrator;
+//
+//    }
+
+    return;
 }

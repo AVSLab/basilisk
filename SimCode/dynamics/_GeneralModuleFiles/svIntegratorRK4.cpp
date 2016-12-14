@@ -18,22 +18,22 @@
  */
 
 
-#include "rk4SVIntegrator.h"
+#include "svIntegratorRK4.h"
 #include "dynamicObject.h"
 #include <stdio.h>
 
-rk4SVIntegrator::rk4SVIntegrator(DynamicObject* dyn) : StateVecIntegrator(dyn)
+svIntegratorRK4::svIntegratorRK4(DynamicObject* dyn) : StateVecIntegrator(dyn)
 {
     
     return;
 }
 
-rk4SVIntegrator::~rk4SVIntegrator()
+svIntegratorRK4::~svIntegratorRK4()
 {
     return;
 }
 
-void rk4SVIntegrator::integrate(double currentTime, double timeStep)
+void svIntegratorRK4::integrate(double currentTime, double timeStep)
 {
 	StateVector stateOut;
 	StateVector stateInit;

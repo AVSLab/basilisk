@@ -17,8 +17,8 @@
 
  */
 
-#ifndef rk4SVIntegrator_h
-#define rk4SVIntegrator_h
+#ifndef svIntegratorRK4_h
+#define svIntegratorRK4_h
 
 #include "stateVecIntegrator.h"
 #include "dynParamManager.h"
@@ -27,13 +27,13 @@
 /*!
  @brief RK4 integrator. It only implements the method integrate() to advance one time step.
  */
-class rk4SVIntegrator : public StateVecIntegrator
+class svIntegratorRK4 : public StateVecIntegrator
 {
 public:
-    rk4SVIntegrator(DynamicObject* dyn);
-    virtual ~rk4SVIntegrator();
+    svIntegratorRK4(DynamicObject* dyn);
+    virtual ~svIntegratorRK4();
     virtual void integrate(double currentTime, double timeStep);
     
 };
 
-#endif /* rk4SVIntegrator_h */
+#endif /* svIntegratorRK4_h */
