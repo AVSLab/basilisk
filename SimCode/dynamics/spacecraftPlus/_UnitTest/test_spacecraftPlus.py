@@ -98,10 +98,11 @@ def test_gravityIntegratedSim(show_plots):
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)     
 
+    msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, msgSize, 0, earthEphemData)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -193,10 +194,11 @@ def test_extForceBodyAndTorque(show_plots):
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
+    msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, msgSize, 0, earthEphemData)
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
@@ -307,10 +309,11 @@ def test_extForceInertialAndTorque(show_plots):
 
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
+    msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
+        unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
     unitTestSim.InitializeSimulation()
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, msgSize, 0, earthEphemData)
 
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"

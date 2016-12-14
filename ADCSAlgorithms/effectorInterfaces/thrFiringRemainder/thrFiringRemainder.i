@@ -31,6 +31,7 @@
 %constant void Reset_thrFiringRemainder(void*, uint64_t, uint64_t);
 %ignore Reset_thrFiringRemainder;
 GEN_SIZEOF(thrFiringRemainderConfig);
+GEN_SIZEOF(vehEffectorOut);
 %include "thrFiringRemainder.h"
 %include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"
 %pythoncode %{

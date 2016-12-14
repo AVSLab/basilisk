@@ -397,9 +397,10 @@ def testStateUpdateSunLine(show_plots):
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
+    msgSize = cssConstelation.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
-                                    vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 2, "CSSConstellation")
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", vehicleConfigData.MAX_NUM_CSS_SENSORS*3*8+8, 0, cssConstelation)
+                                          msgSize, 2, "CSSConstellation")
+    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
 
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
     inputMessageSize = vehicleConfigOut.getStructSize()
@@ -427,8 +428,7 @@ def testStateUpdateSunLine(show_plots):
         dotProd = numpy.dot(numpy.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-
-    inputMessageSize = vehicleConfigData.MAX_NUM_CSS_SENSORS * 8
+    inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                       moduleConfig.cssDataInMsgName,
                                       inputMessageSize,

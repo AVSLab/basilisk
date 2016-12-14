@@ -45,7 +45,7 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
 import star_tracker
-import six_dof_eom
+import spacecraftPlus
 import sim_model
 import RigidBodyKinematics as rbk
 import spice_interface
@@ -105,7 +105,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = six_dof_eom.OutputStateData()
+    OutputStateData = spacecraftPlus.SCPlusOutputStateData()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = np.array([0,0,0])
@@ -191,12 +191,14 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     unitSim.TotalSim.logThisMessage(StarTracker.outputStateMessage, unitProcRate)
 
     # configure inertial_state_output message
-    OutputStateData_messageSize = 8*3*11
+    # OutputStateData_messageSize = 8*3*11
+    OutputStateData_messageSize = OutputStateData.getStructSize()
     unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", OutputStateData_messageSize, 2)
     unitSim.TotalSim.WriteMessageData("inertial_state_output", OutputStateData_messageSize, 0, OutputStateData )
 
     # configure spice_time_output_data message
     SpiceTimeOutput_messageSize = 8*3+16+64
+    SpiceTimeOutput_messageSize = SpiceTimeOutput.getStructSize()
     unitSim.TotalSim.CreateNewMessage("TestProcess", "spice_time_output_data", SpiceTimeOutput_messageSize, 2)
     unitSim.TotalSim.WriteMessageData("spice_time_output_data", SpiceTimeOutput_messageSize, 0, SpiceTimeOutput )
 

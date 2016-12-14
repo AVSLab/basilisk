@@ -143,9 +143,8 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    messageSize = vehicleConfigData.MAX_EFF_CNT * 8
-
     inputMessageData = thrFiringRemainder.vehEffectorOut()
+    messageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,
                                           messageSize,
@@ -299,7 +298,8 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_thrFiringRemainder(              # update "module" in function name
-                 True,
-                 True           # hsMinCheck
+    test_thrFiringRemainder(
+                 True,            # show plots
+                 False,           #
+                 False
                )

@@ -27,6 +27,7 @@
 %include "spice_planet_state.h"
 %include "spice_interface.h"
 GEN_SIZEOF(SpicePlanetState);
+GEN_SIZEOF(SpiceTimeOutput);
 
 %pythoncode %{
 import sys

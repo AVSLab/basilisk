@@ -147,12 +147,12 @@ def subModuleTestFunction(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 8  # doubles
+    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    rwSpeedMessage = rwNullSpace.RWSpeedData()
     Omega = [10.0, 25.0, 50.0, 100.0]
     rwSpeedMessage.wheelSpeeds = Omega
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsName,
@@ -162,10 +162,10 @@ def subModuleTestFunction(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        inputMessageSize = 8 * vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1 * 4
+        rwConfigParams = rwConfigData.RWConfigParams()
+        inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2)  # number of buffers (leave at 2 as default)
-        rwConfigParams = rwConfigData.RWConfigParams()
         rwConfigParams.GsMatrix_B = [
             0.0, 0.0, 0.0,
             0.0, 0.0, 0.0,
@@ -182,10 +182,10 @@ def subModuleTestFunction(show_plots):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4  # integers
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2)  # number of buffers (leave at 2 as default)
-        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
         avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,

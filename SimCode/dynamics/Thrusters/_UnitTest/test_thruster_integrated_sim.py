@@ -100,9 +100,10 @@ def test_thrusterIntegratedTest(show_plots):
 
     # set thruster commands
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+    msgSize = ThrustMessage.getStructSize()
     ThrustMessage.OnTimeRequest = 10.0
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
-    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, 8, 0, ThrustMessage)
+    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
@@ -127,9 +128,10 @@ def test_thrusterIntegratedTest(show_plots):
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
+    msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, 8+8*3+8*3+8*9+8*9+8+64, 0, earthEphemData)
+        unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, msgSize, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
 

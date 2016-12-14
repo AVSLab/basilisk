@@ -41,7 +41,7 @@ import math
 #Import all of the modules that we are going to call in this simulation
 import simple_nav
 import spice_interface
-import six_dof_eom
+import spacecraftPlus
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
@@ -135,7 +135,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
     spiceMessage = spice_interface.SpicePlanetState()
-    stateMessage = six_dof_eom.OutputStateData()
+    stateMessage = spacecraftPlus.SCPlusOutputStateData()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 
@@ -144,7 +144,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     spiceMessage.PlanetName = "sun"
 
     # Inertial State output Message
-    inputMessageSize = 25 * 8  # 25 doubles
+    inputMessageSize =  stateMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           "inertial_state_output",
                                           inputMessageSize,
@@ -155,7 +155,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
                                           stateMessage)
 
     # Sun Planet Data Message
-    inputMessageSize = 7 * 8  + 64
+    inputMessageSize =  spiceMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           "sun_planet_data",
                                           inputMessageSize,
@@ -305,5 +305,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitSpice(False  # show_plots
+    test_unitSimpleNav(testPlottingFixture,
+                       False, # show_plots
+                       False
                    )

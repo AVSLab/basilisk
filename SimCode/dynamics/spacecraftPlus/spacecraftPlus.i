@@ -39,7 +39,7 @@ namespace std {
 %include "spacecraftPlus.h"
 %include "spacecraftPlusMsg.h"
 %include "hubEffector.h"
-
+GEN_SIZEOF(SCPlusOutputStateData)
 
 %pythoncode %{
 import sys

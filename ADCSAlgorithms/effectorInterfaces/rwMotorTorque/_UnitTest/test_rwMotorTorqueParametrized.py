@@ -122,10 +122,10 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           0, inputMessageData) # write data into the simulator
 
     # wheelConfigData message
-    inputMessageSize = 8 * vehicleConfigData.MAX_EFF_CNT * (3 + 1) + 1 * 4
+    rwConfigParams = rwConfigData.RWConfigParams()
+    inputMessageSize = rwConfigParams.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
-    rwConfigParams = rwConfigData.RWConfigParams()
     rwConfigParams.GsMatrix_B = [
         1.0, 0.0, 0.0,
         0.0, 1.0, 0.0,
@@ -139,10 +139,10 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        inputMessageSize = vehicleConfigData.MAX_EFF_CNT * 4 # integers
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
         avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,

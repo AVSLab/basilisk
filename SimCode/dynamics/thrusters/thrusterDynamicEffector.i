@@ -35,7 +35,7 @@ namespace std {
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterDynamicEffector.h"
-
+GEN_SIZEOF(ThrustCmdStruct)
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
