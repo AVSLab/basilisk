@@ -1,0 +1,39 @@
+# -------------------------------------------------------------
+#
+# ... SPKReader.py
+#
+# ... Purpose - Read a SPICE SPK file to provide Ephemeris
+# ...           object state
+#
+# ... Input:
+# ...            target - name of the target body, can be ID or object name
+# ...            time - UTC Gregorian time string at the desired instance
+# ...            ref - Reference frame string
+# ...            observer - name of the observing body
+#
+# ... Output:
+# ...            state - position and velocity vector
+# ...                    first 3 values are position cartesian coordinates
+# ...                    last 3 values are velocity components
+# ...            lt - light time in seconds
+#
+# ... G. D. Chapel     LASP             27 Jun 2016
+# ...                  ADCS Team
+# ...
+# --------------------------------------------------------------
+import sys, os, inspect
+import pyswice
+import numpy
+
+def spkRead(target, time, ref, observer):
+    et = pyswice.new_doubleArray(1)
+    pyswice.str2et_c(time, et)
+    state = pyswice.new_doubleArray(6)
+    lt = pyswice.new_doubleArray(1)
+
+    pyswice.spkezr_c(target, pyswice.doubleArray_getitem(et, 0), ref, "NONE", observer, state, lt)
+    stateArray = numpy.zeros(6)
+    lightTime = pyswice.doubleArray_getitem(lt, 0)
+    for i in range(6):
+        stateArray[i] = pyswice.doubleArray_getitem(state, i)
+    return stateArray
