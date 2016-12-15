@@ -347,6 +347,10 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+                                                # with circular or equatorial orbit, some angles are
+                                                # arbitrary
+
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -435,11 +439,10 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 
     if useSphericalHarmonics == False:
         # draw orbit in perifocal frame
-        oeData = orbitalMotion.rv2elem(mu,posData[0,1:4],velData[0,1:4])
-        b = oeData.a*np.sqrt(1-oeData.e*oeData.e)
-        p = oeData.a*(1-oeData.e*oeData.e)
-        plt.figure(2,figsize=np.array((1.0, b/oeData.a))*4.75,dpi=100)
-        plt.axis(np.array([-oeData.rApoap, oeData.rPeriap, -b, b])/1000*1.25)
+        b = oe.a*np.sqrt(1-oe.e*oe.e)
+        p = oe.a*(1-oe.e*oe.e)
+        plt.figure(2,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)
+        plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
@@ -455,7 +458,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         for idx in range(0,len(posData)):
             oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
             rData.append(oeData.rmag)
-            fData.append(oeData.f)
+            fData.append(oeData.f + oeData.omega - oe.omega)
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
                  ,color='#aa0000'
                  ,linewidth = 3.0
@@ -464,7 +467,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         fData = np.linspace(0,2*np.pi,100)
         rData = []
         for idx in range(0,len(fData)):
-            rData.append(p/(1+oeData.e*np.cos(fData[idx])))
+            rData.append(p/(1+oe.e*np.cos(fData[idx])))
         plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
                  ,'--'
                  , color='#555555'

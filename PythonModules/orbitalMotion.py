@@ -678,7 +678,7 @@ def rv2elem(mu, rVec, vVec):
         # Equatorial orbit has no ascending node #
         elements.Omega = 0.0
         # True longitude of periapsis, omegatilde_true #
-        elements.Omega = math.acos(eVec[0] / elements.e)
+        elements.omega = math.acos(eVec[0] / elements.e)
         if eVec[1] < 0.0:
             elements.omega = 2.0 * np.pi - elements.omega
         elements.f = math.acos(np.dot(eVec, rVec) / elements.e / r)

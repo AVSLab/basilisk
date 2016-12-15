@@ -16,29 +16,25 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
+%module svIntegrators
+#pragma SWIG nowarn=362
+%{
+   #include "../_GeneralModuleFiles/stateVecIntegrator.h"
+   #include "../_GeneralModuleFiles/svIntegratorRK4.h"
+   #include "svIntegratorEuler.h"
+   #include "svIntegratorRK2.h"
+   #include "_GeneralModuleFiles/sys_model.h"
+%}
 
-#ifndef rk4SVIntegrator_h
-#define rk4SVIntegrator_h
+%include "swig_common_model.i"
 
-#include "stateVecIntegrator.h"
-#include "dynParamManager.h"
-#include <stdint.h>
+%include "sys_model.h"
+%include "../_GeneralModuleFiles/stateVecIntegrator.h"
+%include "../_GeneralModuleFiles/svIntegratorRK4.h"
+%include "svIntegratorEuler.h"
+%include "svIntegratorRK2.h"
 
-/*!
- @brief RK4 integrator. It only implements the method integrate() to advance one time step.
- */
-class rk4SVIntegrator : public StateVecIntegrator
-{
-public:
-    rk4SVIntegrator(DynamicObject* dyn);
-    virtual ~rk4SVIntegrator();
-    virtual void integrate(double currentTime, double timeStep);
-    
-    StateVector X2;       /* integration state space */
-	StateVector k1;       /* intermediate RK results */
-	StateVector k2;
-	StateVector k3;
-	StateVector k4;
-};
-
-#endif /* rk4SVIntegrator_h */
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

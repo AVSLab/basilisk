@@ -26,6 +26,7 @@
 #include "hubEffector.h"
 #include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
+#include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include <vector>
 #include <stdint.h>

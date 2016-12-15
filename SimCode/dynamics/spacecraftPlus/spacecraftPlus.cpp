@@ -20,7 +20,7 @@
 
 #include "spacecraftPlus.h"
 #include "utilities/simMacros.h"
-#include "../_GeneralModuleFiles/rk4SVIntegrator.h"
+#include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "../utilities/avsEigenSupport.h"
 #include <iostream>
 
@@ -29,7 +29,7 @@ SpacecraftPlus::SpacecraftPlus()
 {
 	currTimeStep = 0.0;
 	timePrevious = 0.0;
-	integrator = new rk4SVIntegrator(this);
+    integrator = new svIntegratorRK4(this);
     sysTimePropertyName = "systemTime";
     simTimePrevious = 0;
 	scStateOutMsgName = "inertial_state_output";
