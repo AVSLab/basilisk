@@ -48,6 +48,7 @@ public:
 	virtual void setIntegator(StateVecIntegrator *newInt) { integrator = newInt; } //!< [-] Setter for integrator
 	void addStateEffector(StateEffector *newSateEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
 	void addDynamicEffector(DynamicEffector *newDynamicEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
+    void setIntegrator(StateVecIntegrator *newIntegrator);
 
 };
 

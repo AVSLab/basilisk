@@ -251,18 +251,3 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
 	writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
 }
-
-/*!
- * @brief This method changes the integrator in use (Default integrator: RK4)
- * @param Pointer to an integrator object.
- */
-void SpacecraftPlus::setIntegrator(StateVecIntegrator *newIntegrator)
-{
-
-    if (newIntegrator != nullptr) {
-        delete integrator;
-        integrator = newIntegrator;
-    }
-
-    return;
-}
