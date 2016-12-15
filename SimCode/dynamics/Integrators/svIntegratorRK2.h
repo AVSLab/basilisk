@@ -16,25 +16,24 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module svIntegrators
-#pragma SWIG nowarn=362
-%{
-   #include "../_GeneralModuleFiles/stateVecIntegrator.h"
-   #include "../_GeneralModuleFiles/svIntegratorRK4.h"
-   #include "svIntegratorEuler.h"
-   #include "svIntegratorRK2.h"
-   #include "_GeneralModuleFiles/sys_model.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef svIntegratorRK2_h
+#define svIntegratorRK2_h
 
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/stateVecIntegrator.h"
-%include "../_GeneralModuleFiles/svIntegratorRK4.h"
-%include "svIntegratorEuler.h"
-%include "svIntegratorRK2.h"
+#include "../_GeneralModuleFiles/stateVecIntegrator.h"
+#include "../_GeneralModuleFiles/dynParamManager.h"
+#include <stdint.h>
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*!
+ @brief RK4 integrator. It only implements the method integrate() to advance one time step.
+ */
+class svIntegratorRK2 : public StateVecIntegrator
+{
+public:
+    svIntegratorRK2(DynamicObject* dyn);
+    virtual ~svIntegratorRK2();
+    virtual void integrate(double currentTime, double timeStep);
+    
+};
+
+#endif /* svIntegratorRK2_h */
