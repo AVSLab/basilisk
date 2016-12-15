@@ -55,7 +55,6 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import gravityEffector
 import simIncludeGravity
 
 import svIntegrators
@@ -74,8 +73,8 @@ import svIntegrators
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("integratorCase", [
       (0)
-    # , (1)
-    # , (2)
+    , (1)
+    , (2)
 ])
 
 # provide a unique test method name, starting with test_
@@ -90,171 +89,59 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 
 ## This scenario demonstrates how to setup basic 3-DOF orbits.
 #
-# Basic Orbit Setup and Translational Motion Simulation {#scenarioBasicOrbit}
+# Specifying a Dynamics Integrator Module {#scenarioIntegrators}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting a planet.  The purpose
-# is to illustrate how to create a spacecraft, attach a gravity model, and run
-# a basic Basilisk simulation.  The scenarios can be run with the followings setups
-# parameters:
-# Setup | orbitCase           | useSphericalHarmonics | planetCase
-# ----- | ------------------- | --------------------- | -----------
-# 1     | 0 (LEO)             | False                 | 0 (Earth)
-# 2     | 1 (GTO)             | False                 | 0 (Earth)
-# 3     | 2 (GEO)             | False                 | 0 (Earth)
-# 4     | 0 (LEO)             | True                  | 0 (Earth)
-# 5     | 0 (LMO)             | False                 | 1 (Mars)
+# This script sets up a 3-DOF spacecraft which is orbiting a Earth.  The purpose
+# is to illustrate how to specify a particular integrator to be used.
+# The scenarios can be run with the followings setups parameters:
+# Setup | integratorCase
+# ----- | -------------------
+# 1     | 0 (RK4 - default)
+# 2     | 1 (Euler)
+# 3     | 2 (RK2)
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioBasicOrbit.py
+#       python test_scenarioIntegrators.py
 #
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
-# the inertial position vector components, while the second plot either shows a planar
-# orbit view relative to the perfocal frame (no spherical harmonics), or the
-# semi-major axis time history plot (with spherical harmonics turned on).
+# When the simulation completes a plot is shown for illustrating both the true and the numerically
+# evaluated orbit.
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module.  Note that the rotational motion simulation is turned off to leave
-# pure 3-DOF translation motion simulation.
+# If spacecraftPlus(), or any other dynamics module, is created without specifying a particular
+# integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
+# different integration scheme, the following code is used before the dynamics module is added to the
+# python task list:
 #~~~~~~~~~~~~~~~~~{.py}
-#     scObject = spacecraftPlus.SpacecraftPlus()
-#     scObject.ModelTag = "spacecraftBody"
-#     scObject.hub.useTranslation = True
-#     scObject.hub.useRotation = False
+#   integratorObject = svIntegrators.svIntegratorEuler(scObject)
+#   scObject.setIntegrator(integratorObject)
 #~~~~~~~~~~~~~~~~~
-# Next, this module is attached to the simulation process
-#~~~~~~~~~~~~~~~~~{.py}
-#   scSim.AddModelToTask(simTaskName, scObject)
-#~~~~~~~~~~~~~~~~~
-# To attach an Earth gravity model to this spacecraft, the following macro is invoked:
-#~~~~~~~~~~~~~~~~~{.py}
-#     gravBody, ephemData = simIncludeGravity.addEarth()
-#     gravBody.isCentralBody = True          # ensure this is the central gravitational body
-#~~~~~~~~~~~~~~~~~
-# If extra customization is required, see teh addEarth() macro to change additional values.
-# For example, the spherical harmonics are turned off by default.  To engage them, the following code
-# is used
-#~~~~~~~~~~~~~~~~~{.py}
-#     gravBody.useSphericalHarmParams = True
-#     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/SphericalHarmonics/Earth_GGM03S.txt'
-#                                      , gravBody.spherHarm
-#                                      ,3
-#                                      )
-#~~~~~~~~~~~~~~~~~
-# The value 3 indidates that the first three harmonics, including the 0th order harmonic,
-# is included.
+# The first line invokes an instance of the desired state vector integration module, and provides
+# the dynamics module (spacecraftPlus() in this case) as the input.  This specifies to the integrator
+# module which other module will provide the equationOfMotion() function to evaluate the derivatives of
+# the state vector.  The send line ties the integration moduel to the dynamics module.  After that we are
+# done.
 #
-# Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
-# a fixed location, so this message is not updated.  If the planets move with time, such as with the SPICE
-# functions, then this message can be writen dynamically as well.
-#~~~~~~~~~~~~~~~~~{.py}
-#     messageSize = ephemData.getStructSize()
-#     scSim.TotalSim.CreateNewMessage(simProcessName,
-#                                           gravBody.bodyMsgName, messageSize, 2)
-#     scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
-#                                     ephemData)
-#~~~~~~~~~~~~~~~~~
+# The integrator scenario script is setup to evaluate the default integration method (RK4), a first order
+# Euler integration method, as well as a second order RK2 method.  The following figure illustrates the resulting
+# trajectories relative to the true trajectory using a very coarse integration time step of 120 seconds.
+# ![Orbit Illustration](Images/Scenarios/scenarioIntegrators.svg "orbit comparison")
+# The RK4 method still approximates the true orbit well, while the RK2 method is starting to show some visible
+# errors. The first order Euler method provides a horrible estimate of the resulting trajectory, illustrating
+# that much smaller time steps must be used with this method in this scenario.
 #
-#
-# Setup 1
+# Creating new Integration modules
 # -----
 #
-# Which scenario is run is controlled at the bottom of the file in the code
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          0,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 2 arguments control the
-# simulation scenario flags to turn on or off certain simulation conditions.  The default
-# scenario places the spacecraft about the Earth in a LEO orbit and without considering
-# gravitational spherical harmonics.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1000.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2000.svg "Orbit Illustration")
-#
-# Setup 2
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          1,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates an elliptical Geosynchronous Transfer Orbit (GTO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1100.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2100.svg "Orbit Illustration")
-#
-# Setup 3
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          2,           # orbit Case
-#          False,       # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Geosynchronous Orbit (GEO) with zero orbit
-# inclination.  The
-# resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1200.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2200.svg "Orbit Illustration")
-#
-#  Setup 4
-# -----
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          0,           # orbit Case
-#          True,        # useSphericalHarmonics
-#          0            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular LEO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1010.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2010.svg "Orbit Illustration")
-#
-# Setup 5
-# -------
-#
-# The next scenario is run by changing the bottom of the file in the scenario code to read
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          0,           # orbit Case
-#          True,        # useSphericalHarmonics
-#          1            # planet Case
-#        )
-# ~~~~~~~~~~~~~
-# This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
-# resulting position coordinates and semi-major axis time histories are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1001.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2001.svg "Orbit Illustration")
-#
+# New integration modules can readily be created for Basilik.  They are all stored in the folder
+#~~~~~~~~~~~~~~~~~
+#   Basilisk/SimCode/dynamics/Integrators/
+#~~~~~~~~~~~~~~~~~
+# The integrators must be created to function on a general state vector and be independent of the particular
+# dynamics being integrated.  Note that the default integrator is placed inside the `_GeneralModulesFiles`
+# folder within the `dynamics` folder.
 
 def run(doUnitTests, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
@@ -280,7 +167,7 @@ def run(doUnitTests, show_plots, integratorCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(120.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
 
@@ -299,7 +186,9 @@ def run(doUnitTests, show_plots, integratorCase):
     if integratorCase == 1:
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
-
+    elif integratorCase == 2:
+        integratorObject = svIntegrators.svIntegratorRK2(scObject)
+        scObject.setIntegrator(integratorObject)
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -324,6 +213,7 @@ def run(doUnitTests, show_plots, integratorCase):
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    oe = orbitalMotion.rv2elem(mu,rN,vN)
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -334,9 +224,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #   Setup data logging before the simulation is initialized
     #
     numDataPoints = 100
-    samplingTime = simulationTime / (numDataPoints-1)
+    samplingTime = simulationTime / numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
-
 
     #
     # create simulation messages
@@ -387,11 +276,10 @@ def run(doUnitTests, show_plots, integratorCase):
     fileNameString = filename[len(path)+6:-3]
 
     # draw orbit in perifocal frame
-    oeData = orbitalMotion.rv2elem(mu,posData[0,1:4],velData[0,1:4])
-    b = oeData.a*np.sqrt(1-oeData.e*oeData.e)
-    p = oeData.a*(1-oeData.e*oeData.e)
-    plt.figure(2,figsize=np.array((1.0, b/oeData.a))*4.75,dpi=100)
-    plt.axis(np.array([-oeData.rApoap, oeData.rPeriap, -b, b])/1000*1.25)
+    b = oe.a*np.sqrt(1-oe.e*oe.e)
+    p = oe.a*(1-oe.e*oe.e)
+    plt.figure(1,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)
+    plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)
     # draw the planet
     fig = plt.gcf()
     ax = fig.gca()
@@ -401,36 +289,39 @@ def run(doUnitTests, show_plots, integratorCase):
     # draw the actual orbit
     rData=[]
     fData=[]
+    labelString = ('RK4', 'Euler', 'RK2')
     for idx in range(0,len(posData)):
         oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-             ,color='#aa0000'
+             ,color=unitTestSupport.getLineColor(integratorCase+1,3)
+             ,label = labelString[integratorCase]
              ,linewidth = 3.0
              )
     # draw the full osculating orbit from the initial conditions
     fData = np.linspace(0,2*np.pi,100)
     rData = []
     for idx in range(0,len(fData)):
-        rData.append(p/(1+oeData.e*np.cos(fData[idx])))
+        rData.append(p/(1+oe.e*np.cos(fData[idx])))
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
              ,'--'
              , color='#555555'
              )
     plt.xlabel('$i_e$ Cord. [km]')
     plt.ylabel('$i_p$ Cord. [km]')
+    plt.legend(loc='lower right')
     plt.grid()
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+str(int(integratorCase))
+            fileNameString
             , plt, path)
 
     if show_plots:
         plt.show()
 
-    # close the plots being saved off to avoid over-writing old and new figures
-    plt.close("all")
+    # # close the plots being saved off to avoid over-writing old and new figures
+    # plt.close("all")
 
 
     #
@@ -439,17 +330,33 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     if doUnitTests:
         numTruthPoints = 5
-        skipValue = int(numDataPoints/numTruthPoints)
+        skipValue = int(len(posData)/(numTruthPoints-1))
         dataPosRed = posData[::skipValue]
 
         # setup truth data for unit test
         if integratorCase == 0 :
             truePos = [
-                  [-2.8168016010234905e+06, 5.2481748469161475e+06, 3.6771572646772973e+06]
-                , [-6.3832193594279224e+06,-9.1678071954736591e+05, 2.7243803573345565e+06]
-                , [-3.2242072294495562e+06,-6.1159997531577712e+06,-1.0989183586217165e+06]
-                , [ 3.3316899420044743e+06,-4.8713265646545375e+06,-3.7642954993209662e+06]
-                , [ 6.3762384860987831e+06, 1.5066729924376707e+06,-2.4626893874916704e+06]
+                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
+                , [-6.379381729116369e6,-1.468856486079309e6,2.4807857911251383e6]
+                , [-2.2300944018379333e6,-6.41042000170595e6,-1.7146277123048403e6]
+                , [ 4.614900552629264e6,-3.602242207702853e6,-3.837022831137362e6]
+                , [ 5.879095266351474e6,3.5614954800955867e6,-1.3195822863096392e6]
+            ]
+        if integratorCase == 1 :
+            truePos = [
+                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
+                , [-7.061548520035791e6,-1.448879030405048e6,2.8235801868634606e6]
+                , [-4.831279739240132e6,-8.015202579031518e6,-1.1434850905675632e6]
+                , [ 719606.4841551293,-1.0537603267809e7,-4.966060182111749e6]
+                , [ 6.431096936243265e6,-9.795566279580947e6,-7.438012208149386e6]
+            ]
+        if integratorCase == 2 :
+            truePos = [
+                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
+                , [-6.425636529823203e6,-1.4666931633078551e6,2.5043832965058694e6]
+                , [-2.4666425868630186e6,-6.509473968241057e6,-1.6421621274477267e6]
+                , [ 4.342561229118839e6,-4.1593823787188856e6,-3.947594701390388e6]
+                , [ 6.279757209209925e6,2.8527384153736155e6,-1.8260960162261447e6]
             ]
 
         # compare the results to the truth values
@@ -477,6 +384,6 @@ def run(doUnitTests, show_plots, integratorCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         0            # integrator case(0 - RK4, 1 - Euler)
+         0            # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
        )
 
