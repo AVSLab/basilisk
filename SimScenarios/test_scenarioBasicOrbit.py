@@ -347,6 +347,10 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
+                                                # with circular or equatorial orbit, some angles are
+                                                # arbitrary
+
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
