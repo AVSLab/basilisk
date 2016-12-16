@@ -35,18 +35,17 @@ def loadGravFromFile(fileName, spherHarm, maxDeg=2):
 
         clmRow = []
         slmRow = []
-        clmList.append(clmRow)
-        slmList.append(slmRow)
-        clmRow = [0.0, 0.0]
-        slmRow = [0.0, 0.0]
         currDeg = 0
         for gravRow in gravReader:
-           if int(gravRow[0]) != currDeg:
+           while int(gravRow[0]) > currDeg:
+               if( len(clmRow) < currDeg+1):
+                   clmRow.extend([0.0]*(currDeg+1 - len(clmRow)))
+                   slmRow.extend([0.0]*(currDeg+1 - len(slmRow)))
                clmList.append(clmRow)
                slmList.append(slmRow)
                clmRow = []
                slmRow = []
-               currDeg = int(gravRow[0])
+               currDeg += 1
            clmRow.append(float(gravRow[2]))
            slmRow.append(float(gravRow[3]))
     
