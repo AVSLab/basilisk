@@ -205,7 +205,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000;      # meters
+    rLEO = 7000.*1000      # meters
     oe.a     = rLEO
     oe.e     = 0.0001
     oe.i     = 33.3*macros.D2R
