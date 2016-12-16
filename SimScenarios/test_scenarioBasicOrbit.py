@@ -567,7 +567,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( True,       # do unit tests
+    run( False,       # do unit tests
          True,        # show_plots
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
          False,       # useSphericalHarmonics
