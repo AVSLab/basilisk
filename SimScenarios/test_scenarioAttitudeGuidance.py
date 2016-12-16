@@ -132,7 +132,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
 #     attGuidanceWrap.ModelTag = "hillPoint"
 #     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-#     attGuidanceConfig.inputCelMessName = earthGravBody.bodyMsgName
+#     attGuidanceConfig.inputCelMessName = earthGravBody.bodyInMsgName
 #     attGuidanceConfig.outputDataName = "guidanceOut"
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
@@ -286,7 +286,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    attGuidanceConfig.inputCelMessName = earthGravBody.bodyMsgName
+    attGuidanceConfig.inputCelMessName = earthGravBody.bodyInMsgName
     attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
@@ -336,8 +336,8 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     # create the gravity ephemerise message
     messageSize = earthEphemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          earthGravBody.bodyMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, messageSize, 0,
+                                          earthGravBody.bodyInMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyInMsgName, messageSize, 0,
                                           earthEphemData)
 
 

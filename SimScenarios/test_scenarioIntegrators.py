@@ -234,8 +234,8 @@ def run(doUnitTests, show_plots, integratorCase):
     # create the gravity ephemerise message
     messageSize = ephemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
+                                          gravBody.bodyInMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
                                     ephemData)
 
 

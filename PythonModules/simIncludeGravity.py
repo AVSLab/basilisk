@@ -28,7 +28,7 @@ import spice_interface
 
 def addSun():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "sun_planet_data"
+    gravBody.bodyInMsgName = "sun_planet_data"
     gravBody.outputMsgName = "sun_display_frame_data"
     gravBody.mu = 1.32712440018E20 # meters^3/s^2
     gravBody.radEquator = 695508000.0 # meters
@@ -39,7 +39,7 @@ def addSun():
 
 def addMercury():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "mercury_planet_data"
+    gravBody.bodyInMsgName = "mercury_planet_data"
     gravBody.outputMsgName = "mercury_display_frame_data"
     gravBody.mu = 4.28283100e13 # meters^3/s^2
     gravBody.radEquator = 2439700.0 # meters
@@ -50,7 +50,7 @@ def addMercury():
 
 def addVenus():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "venus_planet_data"
+    gravBody.bodyInMsgName = "venus_planet_data"
     gravBody.outputMsgName = "venus_display_frame_data"
     gravBody.mu = 3.24858599e14 # meters^3/s^2
     gravBody.radEquator = 6051800.0 # meters
@@ -72,7 +72,7 @@ def addEarth():
 
 def addMoon():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "moon_planet_data"
+    gravBody.bodyInMsgName = "moon_planet_data"
     gravBody.outputMsgName = "moon_display_frame_data"
     gravBody.mu = 4.902799E12 # meters^3/s^2
     gravBody.radEquator = 1738100.0 # meters
@@ -95,7 +95,7 @@ def addMars():
 
 def addJupiter():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "jupiter_barycenter_planet_data"
+    gravBody.bodyInMsgName = "jupiter_barycenter_planet_data"
     gravBody.outputMsgName = "jupiter_display_frame_data"
     gravBody.mu = 1.266865349093058E17 # meters^3/s^2
     gravBody.radEquator = 71492000.0 # meters
@@ -106,7 +106,7 @@ def addJupiter():
 
 def addSaturn():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "saturn_barycenter_planet_data"
+    gravBody.bodyInMsgName = "saturn_barycenter_planet_data"
     gravBody.outputMsgName = "saturn_display_frame_data"
     gravBody.mu = 3.79395000E16 # meters^3/s^2
     gravBody.radEquator = 60268000.0 # meters
@@ -117,7 +117,7 @@ def addSaturn():
 
 def addUranus():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "uranus_barycenter_planet_data"
+    gravBody.bodyInMsgName = "uranus_barycenter_planet_data"
     gravBody.outputMsgName = "uranus_display_frame_data"
     gravBody.mu = 5.79396566E15 # meters^3/s^2
     gravBody.radEquator = 25559000.0 # meters
@@ -128,7 +128,7 @@ def addUranus():
 
 def addNeptune():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "neptune_barycenter_planet_data"
+    gravBody.bodyInMsgName = "neptune_barycenter_planet_data"
     gravBody.outputMsgName = "neptune_display_frame_data"
     gravBody.mu = 6.83509920E15 # meters^3/s^2
     gravBody.radEquator = 24764000.0 # meters

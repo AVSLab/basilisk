@@ -136,7 +136,7 @@ def test_reactionWheelIntegratedTest(show_plots):
 
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
+        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
