@@ -59,7 +59,7 @@ import simIncludeGravity
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-@pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
+# @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -381,8 +381,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(r_N))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(v_N))  # m - v_BN_N
+    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -499,31 +499,30 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         numTruthPoints = 5
         skipValue = int(len(posData)/(numTruthPoints-1))
         dataPosRed = posData[::skipValue]
-        print dataPosRed
 
         # setup truth data for unit test
         if orbitCase == 0 and useSphericalHarmonics == False and planetCase == 0:
             truePos = [
-                  [-2.8168016010206547e6,5.248174846918056e6,3.677157264676744e6]
-                , [-6.371031043741273e6,-1.6053383896922336e6,2.4169407041580593e6]
-                , [-1.9701254434068222e6,-6.454584884129508e6,-1.8612676350966396e6]
-                , [ 4.890526030465493e6,-3.244070209218091e6,-3.815174379843309e6]
+                  [-2.8168016010234966e6,5.248174846916143e6,3.6771572646772987e6]
+                , [-6.3710310400031125e6,-1.6053384413404597e6,2.4169406797143915e6]
+                , [-1.970125344005881e6,-6.454584898598424e6,-1.8612676901068345e6]
+                , [ 4.890526131271289e6,-3.2440700705588777e6,-3.815174368497354e6]
             ]
         if orbitCase == 1 and useSphericalHarmonics == False and planetCase == 0:
             truePos = [
                   [-5.889529848066479e6,9.686574890007671e6,0.]
-                , [-3.202656563105511e7,-4.305001765487548e6,0.]
-                , [-3.624269189590486e7,-1.8990291025241878e7,0.]
-                , [-2.9802077625266302e7,-2.8319578366928123e7,0.]
-                , [-1.493298171897125e7,-2.939523322070207e7,0.]
+                , [-3.2026565710377645e7,-4.305001879844011e6,0.]
+                , [-3.624269187139845e7,-1.8990291195663467e7,0.]
+                , [-2.9802077401931673e7,-2.831957848900475e7,0.]
+                , [-1.4932981196798025e7,-2.939523308237971e7,0.]
             ]
         if orbitCase == 2 and useSphericalHarmonics == False and planetCase == 0:
             truePos = [
                   [-2.1819784817951165e7,3.588724145651873e7,0.]
-                , [-4.169969339026251e7,-5.016610995318371e6,0.]
-                , [-1.2686253187718624e7,-4.003857352228714e7,0.]
-                , [ 3.1201814471707206e7,-2.8114755036203798e7,0.]
-                , [ 3.850428067757058e7,1.6774561709148446e7,0.]
+                , [-4.16996933506621e7,-5.016611324503355e6,0.]
+                , [-1.2686252555573342e7,-4.0038573722578734e7,0.]
+                , [ 3.1201815137542922e7,-2.8114754297243357e7,0.]
+                , [ 3.850428014786283e7,1.677456292503084e7,0.]
             ]
         if orbitCase == 0 and useSphericalHarmonics == True and planetCase == 0:
             truePos = [
@@ -536,16 +535,13 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         if orbitCase == 0 and useSphericalHarmonics == False and planetCase == 1:
             truePos = [
                   [-2.8168016010234966e6,5.248174846916143e6,3.6771572646772987e6]
-                , [-6.370345912426974e6,-1.614705816780056e6,2.412503864225198e6]
-                , [-1.9520848025381358e6,-6.457181211724201e6,-1.871238638146856e6]
-                , [ 4.908764490099604e6,-3.218884221201837e6,-3.8130783208338753e6]
+                , [-6.370345938284969e6,-1.6147054668864955e6,2.412504030081398e6]
+                , [-1.9520854768447054e6,-6.457181115789631e6,-1.8712382659451987e6]
+                , [ 4.90876381054031e6,-3.2188851633259663e6,-3.8130784005532693e6]
             ]
 
         # compare the results to the truth values
-        if orbitCase == 2:
-            accuracy = 10.0
-        else:
-            accuracy = 1.0  # meters
+        accuracy = 1.0  # meters
 
         testFailCount, testMessages = unitTestSupport.compareArray(
             truePos, dataPosRed, accuracy, "r_BN_N Vector",
@@ -567,10 +563,10 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( True,       # do unit tests
-         False,        # show_plots
+    run( False,       # do unit tests
+         True,        # show_plots
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
          False,       # useSphericalHarmonics
-         1            # planetCase (0 - Earth, 1 - Mars)
+         0            # planetCase (0 - Earth, 1 - Mars)
        )
 
