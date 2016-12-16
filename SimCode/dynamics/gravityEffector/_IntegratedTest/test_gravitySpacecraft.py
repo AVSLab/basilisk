@@ -167,7 +167,7 @@ def test_singleGravityBody(show_plots):
         posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
-        assert numpy.linalg.norm(posDiff) < 100.0
+        assert numpy.linalg.norm(posDiff) < 1000.0
         
         currentTime += dt
 

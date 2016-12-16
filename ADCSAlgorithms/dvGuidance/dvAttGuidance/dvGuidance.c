@@ -88,8 +88,10 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     v3Normalize(T_Inrtl2Burn[2], T_Inrtl2Burn[2]);
 
 	burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
-	v3Scale(burnTime*localBurnData.dvRotVecMag, localBurnData.dvRotVecUnit, rotPRV);
-	PRV2C(rotPRV, rotDCM);
+    v3SetZero(rotPRV);
+    rotPRV[2] = 1.0;
+    v3Scale(burnTime*localBurnData.dvRotVecMag, rotPRV, rotPRV);
+    PRV2C(rotPRV, rotDCM);
 	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
 
 	C2MRP(RECAST3X3 &T_Inrtl2Burn[0][0], ConfigData->attCmd.sigma_RN);
