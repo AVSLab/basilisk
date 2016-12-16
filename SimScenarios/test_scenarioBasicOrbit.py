@@ -541,10 +541,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             ]
 
         # compare the results to the truth values
-        if orbitCase == 2:
-            accuracy = 10.0
-        else:
-            accuracy = 1.0  # meters
+        accuracy = 1.0  # meters
 
         testFailCount, testMessages = unitTestSupport.compareArray(
             truePos, dataPosRed, accuracy, "r_BN_N Vector",
