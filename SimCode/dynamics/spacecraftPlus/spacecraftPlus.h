@@ -31,7 +31,6 @@
 #include <vector>
 #include <stdint.h>
 #include "spacecraftPlusMsg.h"
-#include "hingedRigidBodyStateEffector.h"
 
 /*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
  */
@@ -54,6 +53,7 @@ public:
     Eigen::MatrixXd *property_dcm_BS;    //!< [-] Dynamic property version of the structure to body
     Eigen::Vector3d totSCAngMomentum_N;  //!< [kg-m^2/s] Total angular momentum of the s/c in N frame compenents
     Eigen::Matrix3d dcm_BS;              //!< [-] Transformation from structure to body frame
+    Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
     double totSCEnergy;                  //!< [J]    Total energy of the spacecraft
     double totSCAngMomentum;             //!< [kg-m^2/s] Magnitude of total angular momentum of the s/c
 	double currTimeStep;
@@ -79,12 +79,16 @@ public:
 	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages
 
 private:
-	StateData *hubR_N;                         //!< [-] Inertial position for the hub
-	StateData *hubV_N;                         //!< [-] Inertial velocity for the hub
-	StateData *hubOmega_BN_B;                  //!< [-] Attitude rate of the hub
-	StateData *hubSigma;                       //!< [-] sigmaBN for the hub
-
-	int64_t scStateOutMsgID;                  //!< [-] Message ID for the outgoing spacecraft state
+	StateData *hubR_N;                          //!< [-] Inertial position for the hub
+	StateData *hubV_N;                          //!< [-] Inertial velocity for the hub
+	StateData *hubOmega_BN_B;                   //!< [-] Attitude rate of the hub
+	StateData *hubSigma;                        //!< [-] sigmaBN for the hub
+    Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
+    Eigen::MatrixXd *inertialVelocityProperty;             //! [m] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
+	int64_t scStateOutMsgId;                    //!< [-] Message ID for the outgoing spacecraft state
+    int64_t centralBodyInMsgId;                 //! [-] Id for the incoming message containing the current central body spice data
+    SpicePlanetState centralBodySpiceData;
+    std::string centralBodyInMsgName;
 };
 
 #endif /* SPACECRAFT_PLUS_H */

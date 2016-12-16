@@ -56,7 +56,7 @@ public:
     void InitTimeData();
     void ComputeGPSData();
     void ComputePlanetData();
-    void SendOutputData(uint64_t CurrentClock);
+    void writeOutputMessages(uint64_t CurrentClock);
     
 public:
     std::string SPICEDataPath;           //!< -- Path on file to SPICE data

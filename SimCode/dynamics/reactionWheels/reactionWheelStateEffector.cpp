@@ -66,11 +66,14 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     this->numRWJitter = 0;
     this->numRW = 0;
     std::vector<ReactionWheelConfigData>::iterator RWIt;
+    //! zero the RW Omega and theta values (is there I should do this?)
+    Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
     for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
         if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
+        omegasForInit(RWIt - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
     
@@ -80,10 +83,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
 	}
 
-    //! zero the RW Omega and theta values (is there I should do this?)
-    Eigen::MatrixXd omegasForZeroing(this->numRW,1);
-    omegasForZeroing.setZero();
-    this->OmegasState->setState(omegasForZeroing);
+    this->OmegasState->setState(omegasForInit);
     if (this->numRWJitter > 0) {
         Eigen::MatrixXd thetasForZeroing(this->numRWJitter,1);
         thetasForZeroing.setZero();
@@ -123,17 +123,19 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 
 		// imbalance torque
 		if (RWIt->RWModel == JitterSimple) {
+            double thetaCurrent = this->thetasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+            double omegaCurrent = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
 
-			gtHat_B = cos(RWIt->theta)*RWIt->gtHat0_B + sin(RWIt->theta)*RWIt->ggHat0_B; // current gtHat axis vector represented in body frame
+			gtHat_B = cos(thetaCurrent)*RWIt->gtHat0_B + sin(thetaCurrent)*RWIt->ggHat0_B; // current gtHat axis vector represented in body frame
 
 			/* Fs = Us * Omega^2 */ // static imbalance force
-			tempF = RWIt->U_s * pow(RWIt->Omega,2) * gtHat_B;
+			tempF = RWIt->U_s * pow(omegaCurrent,2) * gtHat_B;
 			vecTranscontr += tempF;
 
 			// add in dynamic imbalance torque
 			/* tau_s = cross(r_B,Fs) */ // static imbalance torque
 			/* tau_d = Ud * Omega^2 */ // dynamic imbalance torque
-			vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(RWIt->Omega,2) * gtHat_B );
+			vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(omegaCurrent,2) * gtHat_B );
 
 
 		} else if (RWIt->RWModel == JitterFullyCoupled) {
@@ -191,7 +193,7 @@ void ReactionWheelStateEffector::SelfInit()
 	std::vector<ReactionWheelConfigData>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
-		tmpWheelMsgName = "rw_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
+		tmpWheelMsgName = "rw_bla" + std::to_string(it - ReactionWheelData.begin()) + "_data";
 		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(ReactionWheelConfigData), OutputBufferCount, "ReactionWheelConfigData", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
@@ -264,6 +266,12 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	std::vector<ReactionWheelConfigData>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
+        if (numRWJitter > 0) {
+            double thetaCurrent = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
+            it->theta = thetaCurrent;
+        }
+        double omegaCurrent = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
+        it->Omega = omegaCurrent;
 		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
 
 		tmpRW.rWB_S = it->rWB_S;

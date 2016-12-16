@@ -62,7 +62,6 @@ foreach(module ${swig_modules})
 	set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
     set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
 	# MESSAGE("${SWIG_FLAGS}")
@@ -83,6 +82,7 @@ foreach(module ${swig_modules})
 	
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES 
 		FOLDER "${DIR_NAME_STRING}/${FileDir}")
+    target_include_directories(${SWIG_MODULE_${FileBase}_REAL_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
 	# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
 	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES

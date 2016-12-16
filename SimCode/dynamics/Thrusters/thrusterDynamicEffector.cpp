@@ -29,14 +29,14 @@
 #include <cmath>
 
 ThrusterDynamicEffector::ThrusterDynamicEffector()
-    : stepsInRamp(30) 
+    : stepsInRamp(30)
     , InputCmds("acs_thruster_cmds")
+    , inputBSName("dcm_BS")
     , thrusterOutMsgNameBufferCount(2)
     , prevFireTime(0.0)
     , CmdsInMsgID(-1)
     , IncomingCmdBuffer(NULL)
     , prevCommandTime(0xFFFFFFFFFFFFFFFF)
-    , inputBSName("dcm_BS")
 {
     CallCounts = 0;
     forceExternal_B.fill(0.0);

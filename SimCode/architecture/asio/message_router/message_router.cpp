@@ -245,6 +245,7 @@ void MessageRouter::UpdateState(uint64_t CurrentSimNanos)
                 (char*) &localHdr + sizeof(localHdr));
             outPayload.insert(outPayload.end(), (char*) msgBuffer,
                 (char*) msgBuffer + localHdr.headerData.WriteSize);
+            it->second.lastWriteCounter = msgHdr->UpdateCounter;
             delete [] msgBuffer;
         }
     }

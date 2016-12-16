@@ -60,21 +60,15 @@ import gravityEffector
 import simIncludeGravity
 
 
-
-
-
-
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
+# The following 'parametrize' function decorator provides the parameters for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("maneuverCase", [
-      (0)
-    , (1)
+    0
+    , 1
 ])
 
 # provide a unique test method name, starting with test_
@@ -84,8 +78,6 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
     [testResults, testMessage] = run( True,
             show_plots, maneuverCase)
     assert testResults < 1, testMessage
-
-
 
 ## This scenario demonstrates how to perform orbit maneuvers within Python.
 #
@@ -268,8 +260,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     # create the gravity ephemerise message
     messageSize = ephemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyMsgName, messageSize, 0,
+                                          gravBody.bodyInMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
                                     ephemData)
 
 

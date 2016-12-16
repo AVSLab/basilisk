@@ -101,7 +101,6 @@ def test_reactionWheelIntegratedTest(show_plots):
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    rwStateEffector.rwVehPropsInMsgName = "spacecraft_mass_props"
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
@@ -117,7 +116,7 @@ def test_reactionWheelIntegratedTest(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
     unitTestSim.earthGravBody.isCentralBody = True
@@ -138,7 +137,7 @@ def test_reactionWheelIntegratedTest(show_plots):
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyMsgName, msgSize, 0, earthEphemData)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
 

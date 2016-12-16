@@ -30,7 +30,7 @@
 %ignore CrossInit_thrustRWDesat;
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
-%include "vehEffectorOut.h"
+%include "../errorConversion/vehEffectorOut.h"
 GEN_SIZEOF(thrustRWDesatConfig);
 %include "thrustRWDesat.h"
 

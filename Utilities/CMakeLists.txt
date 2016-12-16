@@ -23,44 +23,68 @@ foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
     get_filename_component(FileDir ${module} DIRECTORY)
 	set(CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
-
-    file(GLOB gen_files 
-        "../SimCode/_GeneralModuleFiles/*.cpp"
-        "../SimCode/_GeneralModuleFiles/*.h" 
-        "../SimCode/_GeneralModuleFiles/*.c")
+	
+	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/CMakeLists.txt")
+        continue()
+    endif()
     file(GLOB impl_files
 	    "${FileDir}/*.cpp"
 	    "${FileDir}/*.c"
 	    "${FileDir}/*.h"
-	    "${FileDir}/../_GeneralModuleFiles/*.cpp"
-	    "${FileDir}/../_GeneralModuleFiles/*.h"
-	    "${FileDir}/../_GeneralModuleFiles/*.c")
-	file(GLOB cpp_files
-	    "${FileDir}/*.cpp"
-		"${FileDir}/../_GeneralModuleFiles/*.cpp")
-	
-	# Make a python package directory and add an __init__.py fiel or 
-	# copy an existing custom __init__.py file.
+	)
+    set(gen_files "")
+    set(swig_dep_files "")
+    file(GLOB gen_files 
+        "_GeneralModuleFiles/*.cpp"
+        "_GeneralModuleFiles/*.h" 
+        "_GeneralModuleFiles/*.c")
+    file(GLOB swig_dep_files
+        "_GeneralModuleFiles/*.i")
+    string(REPLACE "/" ";" DirList ${FileDir})
+    list(LENGTH DirList dirLength)
+    set(currentDir "")
+    set(endDir "")
+    foreach(localDir ${DirList})
+        set(currentDir "${currentDir}${localDir}/")
+        file(GLOB gen_files_loc "${currentDir}_GeneralModuleFiles/*.cpp"
+            "${currentDir}_GeneralModuleFiles/*.h"
+            "${currentDir}_GeneralModuleFiles/*.c")
+        file(GLOB swig_dep_loc "${currentDir}_GeneralModuleFiles/*.i")
+        set(gen_files "${gen_files};${gen_files_loc}")
+        set(swig_dep_files "${swig_dep_files};${swig_dep_loc}")
+    set(endDir ${localDir})
+    endforeach()
+    if("${endDir}" STREQUAL "_GeneralModuleFiles")
+        continue()
+    endif()
+
+	# Make a python package
 	set(moduleFilePath "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
 	make_python_package(${FileBase} ${FileDir} ${moduleFilePath})
 
-	set_source_files_properties(${module} PROPERTIES CPLUSPLUS OFF)
-	foreach(localFile ${cpp_files})
-	    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
-	endforeach()
-	
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})
+    set_source_files_properties(${module} PROPERTIES CPLUSPLUS ON)
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
-	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files})
+	# MESSAGE("${SWIG_FLAGS}")
+    #set_source_files_properties(${module} PROPERTIES SWIG_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
+	set_source_files_properties( ${swig_generated_file_fullname}
+               PROPERTIES COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode")
+    set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${swig_dep_files})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
-    
-	foreach(LibFile ${ALG_LIST})
-  	    SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
+
+    foreach(LibFile ${LIBRARY_BUILD_LIST})
+         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
     endforeach()
-    target_include_directories(${SWIG_MODULE_${FileBase}_REAL_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${FileDir})	
+
+    foreach(LibFile ${library_dependencies})
+         SWIG_LINK_LIBRARIES(${FileBase} ${LibFile})
+    endforeach()
+	
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES 
-	FOLDER "${DIR_NAME_STRING}/${FileDir}")
+		FOLDER "${DIR_NAME_STRING}/${FileDir}")
+	# set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
+	#     CMAKE_SWIG_OUTDIR "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
@@ -68,6 +92,5 @@ foreach(module ${swig_modules})
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/modules/${FileBase}")
     set_target_properties(${SWIG_MODULE_${FileBase}_REAL_NAME} PROPERTIES
-              COMPILE_FLAGS "-I${CMAKE_SOURCE_DIR}/ADCSAlgorithms")
+	    COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR}")
 endforeach()
-

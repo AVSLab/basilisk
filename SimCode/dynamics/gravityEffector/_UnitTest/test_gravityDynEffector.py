@@ -136,7 +136,7 @@ def test_singleGravityBody(show_plots):
     
 
     earthGravBody = gravityEffector.GravBodyData()
-    earthGravBody.bodyMsgName = "earth_planet_data"
+    earthGravBody.bodyInMsgName = "earth_planet_data"
     earthGravBody.outputMsgName = "earth_display_frame_data"
     earthGravBody.isCentralBody = False
     earthGravBody.useSphericalHarmParams = True
@@ -239,28 +239,28 @@ def test_multiBodyGravity(show_plots):
     SpiceObject.UTCCalInit = "1994 JAN 26 00:02:00.184"
 
     TotalSim.earthGravBody = gravityEffector.GravBodyData()
-    TotalSim.earthGravBody.bodyMsgName = "earth_planet_data"
+    TotalSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     TotalSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     TotalSim.earthGravBody.isCentralBody = False
     TotalSim.earthGravBody.useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(path + '/GGM03S.txt', TotalSim.earthGravBody.spherHarm, 60)
     
     TotalSim.marsGravBody = gravityEffector.GravBodyData()
-    TotalSim.marsGravBody.bodyMsgName = "mars barycenter_planet_data"
+    TotalSim.marsGravBody.bodyInMsgName = "mars barycenter_planet_data"
     TotalSim.marsGravBody.outputMsgName = "mars_display_frame_data"
     TotalSim.marsGravBody.mu = 4.305e4*1000*1000*1000 # meters!
     TotalSim.marsGravBody.isCentralBody = False
     TotalSim.marsGravBody.useSphericalHarmParams = False
     
     TotalSim.jupiterGravBody = gravityEffector.GravBodyData()
-    TotalSim.jupiterGravBody.bodyMsgName = "jupiter barycenter_planet_data"
+    TotalSim.jupiterGravBody.bodyInMsgName = "jupiter barycenter_planet_data"
     TotalSim.jupiterGravBody.outputMsgName = "jupiter_display_frame_data"
     TotalSim.jupiterGravBody.mu = 4.305e4*1000*1000*1000 # meters!
     TotalSim.jupiterGravBody.isCentralBody = False
     TotalSim.jupiterGravBody.useSphericalHarmParams = False
     
     TotalSim.sunGravBody = gravityEffector.GravBodyData()
-    TotalSim.sunGravBody.bodyMsgName = "sun_planet_data"
+    TotalSim.sunGravBody.bodyInMsgName = "sun_planet_data"
     TotalSim.sunGravBody.outputMsgName = "sun_display_frame_data"
     TotalSim.sunGravBody.mu = 1.32712440018E20  # meters!
     TotalSim.sunGravBody.isCentralBody = True
@@ -270,7 +270,10 @@ def test_multiBodyGravity(show_plots):
     positionName = "hubPosition"
     stateDim = [3, 1]
     posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
+    velocityName = "hubVelocity"
+    velState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], velocityName)
     TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
+    
     
     allGrav = gravityEffector.GravityEffector()
     allGrav.gravBodies = gravityEffector.GravBodyVector([TotalSim.earthGravBody, TotalSim.sunGravBody, TotalSim.marsGravBody, TotalSim.jupiterGravBody])

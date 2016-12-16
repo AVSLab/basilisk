@@ -20,7 +20,6 @@
 #pragma SWIG nowarn=362
 %{
    #include "six_dof_eom.h"
-   #include "eulerIntegrator.h"
 %}
 
 %include "swig_common_model.i"

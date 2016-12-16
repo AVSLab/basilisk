@@ -31,6 +31,10 @@ HubEffector::HubEffector()
     this->sumForceExternal_N.fill(0.0);
     this->sumForceExternal_B.fill(0.0);
     this->sumTorquePntB_B.fill(0.0);
+    this->r_NInit.fill(0.0);
+    this->v_NInit.fill(0.0);
+    this->sigma_BNInit.fill(0.0);
+    this->omega_BN_BInit.fill(0.0);
 
     //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";
@@ -64,7 +68,6 @@ void HubEffector::linkInStates(DynParamManager& statesIn)
     this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
     this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
     this->g_N = statesIn.getPropertyReference("g_N");
-
     return;
 }
 
@@ -75,6 +78,10 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
+    this->posState->setState(this->r_NInit);
+    this->velocityState->setState(this->v_NInit);
+    this->sigmaState->setState(this->sigma_BNInit);
+    this->omegaState->setState(this->omega_BN_BInit);
 
     return;
 }

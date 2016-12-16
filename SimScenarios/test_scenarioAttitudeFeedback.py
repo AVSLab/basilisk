@@ -374,8 +374,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     # create the gravity ephemerise message
     messageSize = earthEphemData.getStructSize()
     scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          earthGravBody.bodyMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyMsgName, messageSize, 0,
+                                          earthGravBody.bodyInMsgName, messageSize, 2)
+    scSim.TotalSim.WriteMessageData(earthGravBody.bodyInMsgName, messageSize, 0,
                                           earthEphemData)
 
     # create the FSW vehicle configuration message

@@ -70,8 +70,10 @@ def ckWrite(handle, time, MRPArray, avArray, startSeg, sc = -62, rf = "J2000"):
         for j in range(4):
             if shapeMRP[1] == 4:
                 quat = RigidBodyKinematics.MRP2EP(MRPArray[i, 1:4])
+                quat[1:4] = -quat[1:4]
             else:
                 quat = RigidBodyKinematics.MRP2EP(MRPArray[i, 0:3])
+                quat[1:4] = -quat[1:4]
             pyswice.doubleArray_setitem(quatArray, (4 * i) + j, quat[j])
         pyswice.doubleArray_setitem(timeArray, i, time[i] * 1E-9 + zeroTime)
     # Getting time into usable format

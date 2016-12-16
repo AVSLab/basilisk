@@ -61,7 +61,7 @@ def addVenus():
 
 def addEarth():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "earth_planet_data"
+    gravBody.bodyInMsgName = "earth_planet_data"
     gravBody.outputMsgName = "earth_display_frame_data"
     gravBody.mu = 0.3986004415E+15 # meters^3/s^2
     gravBody.radEquator = 6378136.6 # meters
@@ -83,7 +83,7 @@ def addMoon():
 
 def addMars():
     gravBody = gravityEffector.GravBodyData()
-    gravBody.bodyMsgName = "mars_barycenter_planet_data"
+    gravBody.bodyInMsgName = "mars_barycenter_planet_data"
     gravBody.outputMsgName = "mars_barycenter_display_frame_data"
     gravBody.mu = 4.28283100e13 # meters^3/s^2
     gravBody.radEquator = 3396190 # meters

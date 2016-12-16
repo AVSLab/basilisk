@@ -34,7 +34,7 @@ CoarseSunSensor::CoarseSunSensor()
     InputSunID = -1;
     InputStateID = -1;
     InputStateMsg = "inertial_state_output";
-    InputSunMsg = "sun_display_frame_data";
+    InputSunMsg = "sun_planet_data";
     OutputDataMsg = "";
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
