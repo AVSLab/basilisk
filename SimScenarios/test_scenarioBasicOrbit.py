@@ -59,7 +59,7 @@ import simIncludeGravity
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-@pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
+# @pytest.mark.xfail(True, reason="Previously set sim parameters are not consistent with new formulation\n")
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
@@ -381,8 +381,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(r_N))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(v_N))  # m - v_BN_N
+    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -568,9 +568,9 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
 #
 if __name__ == "__main__":
     run( True,       # do unit tests
-         False,        # show_plots
+         True,        # show_plots
          0,           # orbit Case (0 - LEO, 1 - GTO, 2 - GEO)
          False,       # useSphericalHarmonics
-         1            # planetCase (0 - Earth, 1 - Mars)
+         0            # planetCase (0 - Earth, 1 - Mars)
        )
 
