@@ -4,8 +4,11 @@
 
 **Status:** Limited public release expected by January 2017
 
+
 - - - - - - 
 
+Architecture
+------------
 The Basilisk astrodynamics software architecture is being designed to be 
 capable of both faster-than realtime simulations, including repeatable 
 Monte-Carlo simulation options, as well as providing real-time options for 
@@ -20,9 +23,15 @@ simulations that include hardware-in-the-loop scenarios.
 
 \image html Images/bskImg1.png "Basilisk Concept Illustration" width=245px 
 
+Name/Logo Description
+---------------------
 The name Basilisk was chosen to reflect both the reptilian (Python) 
 nature of the product-design as well as a nod to the speed requirements as the 
-South American common basilisk runs so fast that it can even run across water.  The Basilisk framework is being designed from inception to support several different (often competing) requirements.
+South American common basilisk runs so fast that it can even run across water.  
+
+Basilisk Design Goals
+---------------------
+The Basilisk framework is being designed from inception to support several different (often competing) requirements.
 
 - **Speed:** Even though the system is operated through a Python 
     interface, the underlying simulation executes entirely in C/C++ which 
