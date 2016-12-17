@@ -87,7 +87,9 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 
 
 
-## This scenario demonstrates how to setup basic 3-DOF orbits.
+## \defgroup Tutorials_1_1
+##   @{
+## How to setup different integration methods for a basic 3-DOF orbit scenario.
 #
 # Specifying a Dynamics Integrator Module {#scenarioIntegrators}
 # ====
@@ -142,7 +144,8 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # The integrators must be created to function on a general state vector and be independent of the particular
 # dynamics being integrated.  Note that the default integrator is placed inside the `_GeneralModulesFiles`
 # folder within the `dynamics` folder.
-
+#
+##  @}
 def run(doUnitTests, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
