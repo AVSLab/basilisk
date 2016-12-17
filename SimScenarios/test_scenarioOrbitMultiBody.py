@@ -414,7 +414,7 @@ def run(doUnitTests, show_plots, scCase):
         #
         # draw orbit in perifocal frame
         #
-        oeData = orbitalMotion.rv2elem(mu,posData[0,1:4],velData[0,1:4])
+        oeData = orbitalMotion.rv2elem(mu,rN,vN)
         omega0 = oeData.omega
         b = oeData.a*np.sqrt(1-oeData.e*oeData.e)
         p = oeData.a*(1-oeData.e*oeData.e)
