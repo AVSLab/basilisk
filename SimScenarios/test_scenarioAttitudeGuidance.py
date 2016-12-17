@@ -93,8 +93,9 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     assert testResults < 1, testMessage
 
 
-
-## This scenario demonstrates how to align the spacecraft frame to the orbit or Hill frame.
+## \defgroup Tutorials_2_2
+##   @{
+## How to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 #
 # Attitude Alignment with Hill Orbit Frame {#scenarioAttitudeGuidance}
 # ====
@@ -198,6 +199,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeGuidance21.svg "Torque history")
 # ![Body/Hill Frame Axis Projections](Images/Scenarios/scenarioAttitudeGuidance41.svg "Axes Projection")
 #
+##  @}
 def run(doUnitTests, show_plots, useAltBodyFrame):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

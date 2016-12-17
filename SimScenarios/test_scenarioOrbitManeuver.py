@@ -79,7 +79,10 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
             show_plots, maneuverCase)
     assert testResults < 1, testMessage
 
-## This scenario demonstrates how to perform orbit maneuvers within Python.
+
+## \defgroup Tutorials_1_2
+##   @{
+## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #
 # Orbit Maneuvers using Simulation Starting/Stopping in Python {#scenarioOrbitManeuver}
 # ====
@@ -175,6 +178,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
 # ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
+##  @}
 def run(doUnitTests, show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter

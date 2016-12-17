@@ -94,7 +94,9 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 
 
 
-## This scenario demonstrates how to setup orbital simulation with multiple gravitational bodies.
+## \defgroup Tutorials_1_4
+##   @{
+## How to setup orbital simulation with multiple gravitational bodies.
 #
 # Orbit Setup to Simulate Translation with Multiple Gravitational Bodies {#scenarioOrbitMultiBody}
 # ====
@@ -224,6 +226,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody11.svg "Position history")
 # ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody31.svg "Trajectory Difference")
 #
+## @}
 def run(doUnitTests, show_plots, scCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
