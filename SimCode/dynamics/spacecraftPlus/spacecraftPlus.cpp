@@ -55,12 +55,14 @@ void SpacecraftPlus::SelfInit()
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
                                                                              sizeof(SCPlusOutputStateData), this->numOutMsgBuffers, "SCPlusOutputStateData", this->moduleID);
     this->gravField.SelfInit();
+    return;
 }
 
 void SpacecraftPlus::CrossInit()
 {
     this->gravField.CrossInit();
     this->initializeDynamics();
+    return;
 }
 
 void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
@@ -70,6 +72,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     this->integrateState(newTime);
     this->writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
+    return;
 }
 
 void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
@@ -80,6 +83,7 @@ void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
+    return;
 }
 
 void SpacecraftPlus::initializeDynamics()
@@ -133,6 +137,7 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*dynIt)->linkInStates(this->dynManager);
     }
+    return;
 }
 
 void SpacecraftPlus::equationsOfMotion(double t)
@@ -221,6 +226,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     {
         (*it)->computeDerivatives(t);
     }
+    return;
 }
 
 void SpacecraftPlus::integrateState(double t)
@@ -258,12 +264,12 @@ void SpacecraftPlus::integrateState(double t)
 
     //! - Compute Energy and Momentum
     this->computeEnergyMomentum();
-
+    return;
 }
 
 void SpacecraftPlus::computeEnergyMomentum()
 {
-    
+    return;
 }
 
 void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
@@ -279,4 +285,5 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
+    return;
 }
