@@ -305,16 +305,19 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     this->totRotEnergy = 0.0;
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
-    this->rotAngMomPntCContr_N.setZero();
+    totRotAngMomPntC_B.setZero();
+    this->rotAngMomPntCContr_B.setZero();
     this->rotEnergyContr = 0.0;
     cLocal_B.setZero();
     cPrimeLocal_B.setZero();
     cDotLocal_B.setZero();
 
     // - Get the hubs contribution
-    this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_N, this->rotEnergyContr);
+    this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
     mSCLocal += this->hub.effProps.mEff;
     cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
+    totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
+    this->totRotEnergy += this->rotEnergyContr;
 
     // - Loop over stateEffectors to get their contributions to energy and momentum
 
@@ -328,10 +331,16 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     // - Find orbital kinetic energy for the spacecraft
     this->totOrbKinEnergy += 1.0/2.0*mSCLocal*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B) + cDotLocal_B.dot(cDotLocal_B));
 
+    // - Find total rotational energy
+    this->totRotEnergy += -1.0/2.0*mSCLocal*cDotLocal_B.dot(cDotLocal_B);
+
     // - Find orbital angular momentum for the spacecraft
     totOrbAngMomPntN_B = mSCLocal*(rBNLocal_B.cross(rDotBNLocal_B) + rBNLocal_B.cross(cDotLocal_B) + cLocal_B.cross(rDotBNLocal_B) + cLocal_B.cross(cLocal_B));
     this->totOrbAngMomPntN_N = dcmNBLocal*totOrbAngMomPntN_B;
 
+    // - Find rotational angular momentum for the spacecraft
+    totRotAngMomPntC_B += -mSCLocal*cLocal_B.cross(cDotLocal_B);
+    this->totRotAngMomPntC_N = dcmNBLocal*totRotAngMomPntC_B;
     return;
 }
 

@@ -203,9 +203,22 @@ void HubEffector::computeDerivatives(double integTime)
 	}
 }
 
-void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_N, double rotEnergyContr)
+void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
 {
+    // Get variables needed for energy momentum calcs
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = omegaState->getState();
+
     // Call mass props to get current information on states
     this->updateEffectorMassProps(integTime);
+
+    // Find rotational angular momentum contribution from hub
+    Eigen::Vector3d rDotBcB_B;
+    rDotBcB_B = omegaLocal_BN_B.cross(rBcB_B);
+    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*rBcB_B.cross(rDotBcB_B);
+
+    // Find rotational energy contribution from the hub
+    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDotBcB_B.dot(rDotBcB_B);
+    
     return;
 }

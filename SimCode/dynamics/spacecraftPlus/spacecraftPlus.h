@@ -55,7 +55,7 @@ public:
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
     Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg-m^2/s] Total orbital angular momentum about N in N frame compenents
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg-m^2/s] Total rotational angular momentum about C in N frame compenents
-    Eigen::Vector3d rotAngMomPntCContr_N; //!< [kg-m^2/s] Contribution of stateEffector to total rotational angular momentum about C in N frame compenents
+    Eigen::Vector3d rotAngMomPntCContr_B; //!< [kg-m^2/s] Contribution of stateEffector to total rotational angular momentum about C in N frame compenents
     double totOrbKinEnergy;              //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
