@@ -122,7 +122,7 @@ def test_SCHubIntegratedSim(show_plots):
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
-    stopTime = 60.0
+    stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -136,7 +136,7 @@ def test_SCHubIntegratedSim(show_plots):
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
 
     truePos = [
-                [-4329359.504014721, 7279028.769446707, 5307004.770807516]
+                [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
                 ]
 
     initialAngMom_N = [
