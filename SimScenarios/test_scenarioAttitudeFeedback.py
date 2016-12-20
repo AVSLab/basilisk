@@ -602,8 +602,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         True,        # useUnmodeledTorque
+         False,        # useUnmodeledTorque
          False,       # useIntGain
-         True         # useKnownTorque
+         False         # useKnownTorque
        )
 
