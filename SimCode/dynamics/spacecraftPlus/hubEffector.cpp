@@ -98,6 +98,10 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
     //! Give position of center of mass of hub with respect to point B to mass props
     effProps.rCB_B = this->rBcB_B;
+
+    //! Zero body derivatives for position and inertia;
+    effProps.rPrimeCB_B.setZero();
+    effProps.IEffPrimePntB_B.setZero();
 }
 
 void HubEffector::computeDerivatives(double integTime)
@@ -197,4 +201,11 @@ void HubEffector::computeDerivatives(double integTime)
             velocityState->setDerivative(rBNDDotLocal_N);
         }
 	}
+}
+
+void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_N, double rotEnergyContr)
+{
+    // Call mass props to get current information on states
+    this->updateEffectorMassProps(integTime);
+    return;
 }

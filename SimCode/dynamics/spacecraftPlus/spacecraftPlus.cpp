@@ -263,12 +263,75 @@ void SpacecraftPlus::integrateState(double t)
     
 
     //! - Compute Energy and Momentum
-    this->computeEnergyMomentum();
+    this->computeEnergyMomentum(t);
     return;
 }
 
-void SpacecraftPlus::computeEnergyMomentum()
+void SpacecraftPlus::computeEnergyMomentum(double t)
 {
+    // - Define variables needed for calculations
+    Eigen::Vector3d rBNLocal_N;
+    Eigen::Vector3d rDotBNLocal_N;
+    Eigen::Vector3d rBNLocal_B;
+    Eigen::Vector3d rDotBNLocal_B;
+    Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cPrimeLocal_B;
+    Eigen::Vector3d cDotLocal_B;
+    Eigen::MRPd sigmaLocal_BN;
+    Eigen::Vector3d omegaLocal_BN_B;
+    Eigen::Matrix3d dcmNBLocal;
+    Eigen::Matrix3d dcmBNLocal;
+    Eigen::Vector3d totOrbAngMomPntN_B;
+    Eigen::Vector3d totRotAngMomPntC_B;
+
+    double mSCLocal = 0.0;
+
+    // - Grab values from state Manager
+    rBNLocal_N = hubR_N->getState();
+    rDotBNLocal_N = hubV_N->getState();
+    sigmaLocal_BN = (Eigen::Vector3d ) hubSigma->getState();
+    omegaLocal_BN_B = hubOmega_BN_B->getState();
+
+    // - Find DCM's
+    dcmNBLocal = sigmaLocal_BN.toRotationMatrix();
+    dcmBNLocal = dcmNBLocal.transpose();
+
+    // - Convert from inertial frame to body frame
+    rBNLocal_B = dcmBNLocal*rBNLocal_N;
+    rDotBNLocal_B = dcmBNLocal*rDotBNLocal_N;
+
+    // - zero necessarry variables
+    this->totOrbKinEnergy = 0.0;
+    this->totRotEnergy = 0.0;
+    this->totOrbAngMomPntN_N.setZero();
+    this->totRotAngMomPntC_N.setZero();
+    this->rotAngMomPntCContr_N.setZero();
+    this->rotEnergyContr = 0.0;
+    cLocal_B.setZero();
+    cPrimeLocal_B.setZero();
+    cDotLocal_B.setZero();
+
+    // - Get the hubs contribution
+    this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_N, this->rotEnergyContr);
+    mSCLocal += this->hub.effProps.mEff;
+    cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
+
+    // - Loop over stateEffectors to get their contributions to energy and momentum
+
+    // - correct c_B and cPrime_B by 1/mSC
+    cLocal_B = cLocal_B/mSCLocal;
+    cPrimeLocal_B = cPrimeLocal_B/mSCLocal;
+
+    // - Find cDot_B
+    cDotLocal_B = cPrimeLocal_B + omegaLocal_BN_B.cross(cLocal_B);
+
+    // - Find orbital kinetic energy for the spacecraft
+    this->totOrbKinEnergy += 1.0/2.0*mSCLocal*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B) + cDotLocal_B.dot(cDotLocal_B));
+
+    // - Find orbital angular momentum for the spacecraft
+    totOrbAngMomPntN_B = mSCLocal*(rBNLocal_B.cross(rDotBNLocal_B) + rBNLocal_B.cross(cDotLocal_B) + cLocal_B.cross(rDotBNLocal_B) + cLocal_B.cross(cLocal_B));
+    this->totOrbAngMomPntN_N = dcmNBLocal*totOrbAngMomPntN_B;
+
     return;
 }
 

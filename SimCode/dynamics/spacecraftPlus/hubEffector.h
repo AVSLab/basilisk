@@ -38,6 +38,7 @@ public:
     void registerStates(DynParamManager& states);
     void updateEffectorMassProps(double integTime);
     void computeDerivatives(double integTime);
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_N, double rotEnergyContr);
 
 public:
     double mHub;                         //!< [kg] mass of the hub

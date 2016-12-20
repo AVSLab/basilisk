@@ -45,12 +45,132 @@ import ExtForceTorque
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def spacecraftPlusAllTest(show_plots):
+    [testResults, testMessage] = test_SCHubIntegratedSim(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = test_gravityIntegratedSim(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_extForceBodyAndTorque(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_extForceInertialAndTorque(show_plots)
     assert testResults < 1, testMessage
+
+def test_SCHubIntegratedSim(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.isCentralBody = True
+    unitTestSim.earthGravBody.useSphericalHarmParams = False
+
+    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData.J2000Current = 0.0
+    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    earthEphemData.PlanetName = "earth"
+
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    msgSize = earthEphemData.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+
+    posRef = scObject.dynManager.getStateObject("hubPosition")
+    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    omegaRef = scObject.dynManager.getStateObject("hubOmega")
+
+    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
+    omegaRef.setState([[0.001], [-0.002], [0.003]])
+    sigmaRef.setState([[0.0], [0.0], [0.0]])
+    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
+
+    scObject.hub.mHub = 100
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+    stopTime = 60.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
+
+    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.title("Change in Orbital Angular Momentum")
+    if show_plots == True:
+        plt.show()
+
+    dataPos = posRef.getState()
+    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+
+    truePos = [
+                [-4329359.504014721, 7279028.769446707, 5307004.770807516]
+                ]
+
+    initialAngMom_N = [
+                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+                ]
+
+    finalAngMom = [
+                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                 ]
+
+    moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
+                                                  range(3))
+
+    accuracy = 1e-8
+    for i in range(0,len(truePos)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: SCHub test failed pos unit test")
+
+    for i in range(0,len(initialAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalAngMom[i],initialAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: SCHub test failed orbital angular momentum unit test")
+
+    if testFailCount == 0:
+        print "PASSED: " + " SCHub Integrated Sim Test"
+
+    assert testFailCount < 1, testMessages
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
 
 def test_gravityIntegratedSim(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -376,4 +496,4 @@ def test_extForceInertialAndTorque(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_extForceBodyAndTorque(False)
+    test_SCHubIntegratedSim(True)
