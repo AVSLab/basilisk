@@ -31,7 +31,7 @@ DynamicObject::~DynamicObject()
     return;
 }
 
-void DynamicObject::computeEnergyMomentum()
+void DynamicObject::computeEnergyMomentum(double t)
 {
     return;
 }
