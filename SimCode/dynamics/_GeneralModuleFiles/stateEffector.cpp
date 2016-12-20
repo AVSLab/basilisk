@@ -46,3 +46,8 @@ void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matr
 {
     return;
 }
+
+void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_N, double rotEnergyContr)
+{
+    return;
+}
