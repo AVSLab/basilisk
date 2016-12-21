@@ -116,15 +116,15 @@ def test_SCHubIntegratedSim(show_plots):
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
+    omegaRef.setState([[0.01], [-0.02], [0.03]])
+    sigmaRef.setState([[0.1], [0.2], [-0.3]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
 
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
 
-    stopTime = 10.0
+    stopTime = 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -144,16 +144,17 @@ def test_SCHubIntegratedSim(show_plots):
         plt.show()
 
     dataPos = posRef.getState()
+    dataVel = velRef.getState()
     dataSigma = sigmaRef.getState()
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
-                [-4072255.7737936215, 7456050.4649078, 5258610.029627514]
+                [-4072255.738235599, 7456050.461916342, 5258610.049290339]
                 ]
 
     trueSigma = [
-                [0.002500343763047216, -0.005037521299831225, 0.007475030934148642]
+                [0.11087869832267283, 0.11523091184772713, -0.24112655331416316]
                 ]
 
     initialOrbAngMom_N = [
@@ -544,4 +545,4 @@ def test_extForceInertialAndTorque(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCHubIntegratedSim(True)
+    test_SCHubIntegratedSim(False)
