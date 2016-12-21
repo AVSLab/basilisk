@@ -14,8 +14,18 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-# this is the initial version of the thruster unit test
-#Very simple simulation.
+
+#
+# Thurster Unit Test
+#
+# Purpose:  Test the proper function of the Thruster Dynamics module.
+#           This is done by comparing expected torques and forces to
+#           what is sumulated
+# Author:   Thibaud Teil
+# Creation Date:  Dec. 20, 2016
+#
+
+# @cond DOXYGEN_IGNORE
 import sys, os
 import matplotlib
 matplotlib.use('TkAgg')
@@ -29,6 +39,7 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
+# @endcond
 
 #Import all of the modules that we are going to call in this simulation
 import MessagingAccess
@@ -40,9 +51,11 @@ import stateArchitecture
 import spacecraftPlus
 import macros
 
+# provide a unique test method name, starting with test_
 def thrusterEffectorAllTests(show_plots):
    [testResults, testMessage] = test_unitThrusters(show_plots)
 
+# Create function to run the simulation who's results will be comprared to expected values
 def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
     newStopTime = simContainer.TotalSim.CurrentNanos + totalTime
     while(simContainer.TotalSim.CurrentNanos < newStopTime):
@@ -53,13 +66,18 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
         thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9/2.0)
         thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9)
 
-
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 #@pytest.mark.parametrize("UseFlag", [False])
+# uncomment this line if this test has an expected failure, adjust message as needed
+# @pytest.mark.xfail(True)
+
+# provide a unique test method name, starting with test_
 def test_unitThrusters(show_plots):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitThrusters(show_plots)
     assert testResults < 1, testMessage
 
+# Run the test
 def unitThrusters(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -69,9 +87,11 @@ def unitThrusters(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
+    #  Create thrusters
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
+    #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
     angledeg = 30.0
     anglerad = angledeg*math.pi/180.0
     thruster1 = thrusterDynamicEffector.ThrusterConfigData()
@@ -82,6 +102,7 @@ def unitThrusters(show_plots):
     thruster1.MinOnTime = 0.006
     thrusterSet.AddThruster(thruster1)
 
+    #  Create a Simulation
     testRate = int(1E8)
     TotalSim = SimulationBaseClass.SimBaseClass()
     #Create a new process for the unit test task and add the module to tasking
@@ -91,11 +112,11 @@ def unitThrusters(show_plots):
     TotalSim.scObject = spacecraftPlus.SpacecraftPlus()
     TotalSim.scObject.ModelTag = "spacecraftBody"
 
-
+    #  Create a task manager
     TotalSim.newManager = stateArchitecture.DynParamManager()
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
-
+    #  Define the start of the thrust and it's duration
     thrStartTime=10.0
     thrDurationTime=10.0
 
@@ -107,21 +128,23 @@ def unitThrusters(show_plots):
     TotalSim.TotalSim.CreateNewMessage("TestProcess", "acs_thruster_cmds", 8, 2)
     TotalSim.InitializeSimulation()
 
+    #Configure the hub and link states
     dcmBS = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     dcmName = "dcm_BS"
     TotalSim.newManager.createProperty(dcmName, dcmBS)
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
     thrusterSet.linkInStates(TotalSim.newManager)
 
+    # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime*1E9))
     TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage);
     executeSimRun(TotalSim, thrusterSet, testRate, int(2.0*1E9))
 
+    # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
     thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
-    #print thrForce[-1,:]
-    #print thrTorque[-1,:]
 
+    # Plot if show_plots is true
     if show_plots==True:
         plt.figure(1)
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2])
@@ -138,8 +161,7 @@ def unitThrusters(show_plots):
         plt.show()
 
 
-    # Create Expected point array and error array to test against thrForce
-    error=np.zeros([3,np.shape(thrForce)[0]])
+    # Create expected Force to test against thrForce
     expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
     for i in range(np.shape(thrForce)[0]):
         if (i<thrStartTime*1.0E9/testRate + 2): # Thrust fires 2 times steps after the pause of sim and restart
@@ -149,25 +171,19 @@ def unitThrusters(show_plots):
             expectedpoints[0,i] = math.cos(anglerad)
             expectedpoints[1,i] = math.sin(anglerad)
 
-    #Compute errors
-    error[0,:] = (thrForce[:,1] - expectedpoints[0,:])#/thrForce[:,1]*100
-    error[1,:] = (thrForce[:,2] - expectedpoints[1,:])#/thrForce[:,2]*100
-    error[2,:] = (thrForce[:,3] - expectedpoints[2,:])#/thrForce[:,3]*100
-    #print error[2,:]
-
+    # Modify expected values for comparison and define errorTolerance
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
 
+    # Compare Force values
     for i in range(0, len(thrForce)):
-        # check a vector values
         if not unitTestSupport.isArrayEqual(thrForce[i], ThruthForce[i], 1, ErrTolerance):
             testFailCount += 1
             testMessages.append("FAILED: Error in force at t=" + str(
                 thrForce[i, 0] * macros.NANO2SEC) + "sec\n")
 
 
-        # Create Expected point array and error array to test against thrForce
-    errortor = np.zeros([3, np.shape(thrForce)[0]])
+        # Create expected Torque to test against thrTorque
     expectedpointstor = np.zeros([3, np.shape(thrForce)[0]])
     for i in range(np.shape(thrForce)[0]):
         if (i < thrStartTime * 1.0E9 / testRate + 2):  # Thrust fires 2 times steps after the pause of sim and restart
@@ -179,14 +195,12 @@ def unitThrusters(show_plots):
             expectedpointstor[1, i] = thrForce[-1,1]*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
             expectedpointstor[2, i] = thrForce[-1,2]*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
 
-
+    # Modify expected values for comparison and define errorTolerance
     TruthTorque = np.transpose(expectedpointstor)
-    print TruthTorque
-    #print thrTorque
     ErrTolerance = 10E-9
 
+    # Compare Torque values
     for i in range(0, len(thrTorque)):
-        # check a vector values
         if not unitTestSupport.isArrayEqual(thrTorque[i], TruthTorque[i], 1, ErrTolerance):
             testFailCount += 1
             testMessages.append("FAILED: Error in torque at t=" + str(
