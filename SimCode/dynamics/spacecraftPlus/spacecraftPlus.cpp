@@ -165,17 +165,32 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->cPrime_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
 
-
-    //! - This is where gravity is computed
-    this->gravField.computeGravityField();
-
     //! Add in hubs mass to the spaceCraft mass props
     this->hub.updateEffectorMassProps(t);
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
     (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
 
-    //! - Loop through state effectors
+    //! - Loop through state effectors to get mass props
+    for(it = this->states.begin(); it != this->states.end(); it++)
+    {
+        //! Add in effectors mass props into mass props of spacecraft
+        (*it)->updateEffectorMassProps(t);
+        (*this->m_SC)(0,0) += (*it)->effProps.mEff;
+        (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
+        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
+        (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
+    }
+
+    //! Divide c_B and cPrime_B by the total mass of the spaceCraft
+    (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
+    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0);
+
+    //! - This is where gravity is computed
+    this->gravField.computeGravityField();
+
+    //! - Loop through state effectors to get contributions
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
         //! - Set the matrices to zero
@@ -186,14 +201,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
         this->vecTransContr.setZero();
         this->vecRotContr.setZero();
 
-        //! Add in effectors mass props into mass props of spacecraft
-        (*it)->updateEffectorMassProps(t);
-        (*this->m_SC)(0,0) += (*it)->effProps.mEff;
-        (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
-        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
-        (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
-
         //! Add contributions to matrices
         (*it)->updateContributions(t, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr, this->vecTransContr, this->vecRotContr);
         this->hub.matrixA += this->matrixAContr;
@@ -203,10 +210,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
         this->hub.vecTrans += this->vecTransContr;
         this->hub.vecRot += this->vecRotContr;
     }
-
-    //! Divide c_B and cPrime_B by the total mass of the spaceCraft
-    (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
-    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0);
 
     //! - Loop through dynEffectors
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
@@ -305,6 +308,7 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     this->totRotEnergy = 0.0;
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
+    totOrbAngMomPntN_B.setZero();
     totRotAngMomPntC_B.setZero();
     this->rotAngMomPntCContr_B.setZero();
     this->rotEnergyContr = 0.0;
@@ -320,6 +324,24 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     this->totRotEnergy += this->rotEnergyContr;
 
     // - Loop over stateEffectors to get their contributions to energy and momentum
+    std::vector<StateEffector*>::iterator it;
+    for(it = this->states.begin(); it != this->states.end(); it++)
+    {
+        // - Set the matrices to zero
+        this->rotAngMomPntCContr_B.setZero();
+        this->rotEnergyContr = 0.0;
+
+        // - Add in effectors mass props into mass props of spacecraft
+        (*it)->updateEffectorMassProps(t);
+        mSCLocal += (*it)->effProps.mEff;
+        cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
+        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
+
+        // - Call energy and momentum calulations for stateEffectors
+        (*it)->updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
+        totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
+        this->totRotEnergy += this->rotEnergyContr;
+    }
 
     // - correct c_B and cPrime_B by 1/mSC
     cLocal_B = cLocal_B/mSCLocal;
@@ -335,8 +357,11 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     this->totRotEnergy += -1.0/2.0*mSCLocal*cDotLocal_B.dot(cDotLocal_B);
 
     // - Find orbital angular momentum for the spacecraft
-    totOrbAngMomPntN_B = mSCLocal*(rBNLocal_B.cross(rDotBNLocal_B) + rBNLocal_B.cross(cDotLocal_B) + cLocal_B.cross(rDotBNLocal_B) + cLocal_B.cross(cLocal_B));
-    this->totOrbAngMomPntN_N = dcmNBLocal*totOrbAngMomPntN_B;
+    Eigen::Vector3d rCN_N;
+    Eigen::Vector3d rDotCN_N;
+    rCN_N = rBNLocal_N + dcmNBLocal*cLocal_B;
+    rDotCN_N = rDotBNLocal_N + dcmNBLocal*cDotLocal_B;
+    this->totOrbAngMomPntN_N = mSCLocal*(rCN_N.cross(rDotCN_N));
 
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -mSCLocal*cLocal_B.cross(cDotLocal_B);
