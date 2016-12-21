@@ -41,34 +41,34 @@ typedef struct {
 }RWConfigOutputData;
 
 typedef struct {
-	double u_cmd; //!< N-m, torque command for RW
+	double u_cmd; //!< [N-m], torque command for RW
 }RWCmdStruct;
 
 enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 
 typedef struct {
-	std::string typeName;      //!< [], string containing the RW type name
-	Eigen::Vector3d rWB_S;		//!< m, position vector of the RW relative to the spacecraft structural frame
-	Eigen::Vector3d gsHat_S;	//!< spin axis unit vector in structural frame
-	Eigen::Vector3d gtHat0_S;	//!< initial torque axis unit vector in structural
-	Eigen::Vector3d ggHat0_S;	//!< initial gimbal axis unit vector in structural frame
-	Eigen::Vector3d rWB_B;		//!< m, position vector of the RW relative to the spacecraft body frame
-	Eigen::Vector3d gsHat_B;	//!< spin axis unit vector in body frame
-	Eigen::Vector3d gtHat0_B;	//!< initial torque axis unit vector in body frame
-	Eigen::Vector3d ggHat0_B;	//!< initial gimbal axis unit vector in body frame
-	double theta;              //!< rad, wheel angle
-	double u_current;          //!< N-m, current motor torque
-	double u_max;              //!< N-m, Max torque
-	double u_min;              //!< N-m, Min torque
-	double u_f;                //!< N-m, Coulomb friction torque magnitude
-	double Omega;              //!< rad/s, wheel speed
-	double Omega_max;          //!< rad/s, max wheel speed
-	double Js;                 //!< kg-m^2, spin axis gsHat rotor moment of inertia
-	double Jt;                 //!< kg-m^2, gtHat axis rotor moment of inertia
-	double Jg;                 //!< kg-m^2, ggHat axis rotor moment of inertia
-	double U_s;                //!< kg-m, static imbalance
-	double U_d;                //!< kg-m^2, dynamic imbalance
-	double mass;               //!< kg, reaction wheel rotor mass
+	std::string typeName;      //!< [-], string containing the RW type name
+	Eigen::Vector3d rWB_S;		//!< [m], position vector of the RW relative to the spacecraft structural frame
+	Eigen::Vector3d gsHat_S;	//!< [-] spin axis unit vector in structural frame
+	Eigen::Vector3d gtHat0_S;	//!< [-] initial torque axis unit vector in structural
+	Eigen::Vector3d ggHat0_S;	//!< [-] initial gimbal axis unit vector in structural frame
+	Eigen::Vector3d rWB_B;		//!< [m], position vector of the RW relative to the spacecraft body frame
+	Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
+	Eigen::Vector3d gtHat0_B;	//!< [-] initial torque axis unit vector in body frame
+	Eigen::Vector3d ggHat0_B;	//!< [-] initial gimbal axis unit vector in body frame
+	double theta;              //!< [rad], wheel angle
+	double u_current;          //!< [N-m], current motor torque
+	double u_max;              //!< [N-m], Max torque
+	double u_min;              //!< [N-m], Min torque
+	double u_f;                //!< [N-m], Coulomb friction torque magnitude
+	double Omega;              //!< [rad/s], wheel speed
+	double Omega_max;          //!< [rad/s], max wheel speed
+	double Js;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
+	double Jt;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
+	double Jg;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
+	double U_s;                //!< [kg-m], static imbalance
+	double U_d;                //!< [kg-m^2], dynamic imbalance
+	double mass;               //!< [kg], reaction wheel rotor mass
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 	RWModels RWModel;          //!< [], flag to indicate what the RW model is (i.e. BalancedWheels, JitterSimple, etc.)
 }ReactionWheelConfigData;
