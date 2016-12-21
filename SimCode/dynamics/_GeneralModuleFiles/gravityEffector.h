@@ -118,10 +118,12 @@ public:
     GravBodyData* centralBody;         //!<  Central body
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
+    Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
     
 private:
     StateData *posState;                            //! [-] Position state of the vehicle
     StateData *velState;                            //! [-] Position state of the vehicle
+	StateData *hubSigma;                            //! [-] sigmaBN for the hub
     Eigen::MatrixXd *gravProperty;                  //! [-] g_N property for output
     Eigen::MatrixXd *timeCorr;                      //! [-] Time correlation property
     int64_t centralBodyOutMsgId;                //! [-] Id for the central body spice data output message
