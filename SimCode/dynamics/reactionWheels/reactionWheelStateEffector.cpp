@@ -166,6 +166,20 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	OmegasState->setDerivative(OmegasDot);
 }
 
+void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+{
+    //! - Compute energy and momentum contribution of each wheel
+    std::vector<ReactionWheelConfigData>::iterator RWIt;
+    for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+    {
+        double omegaCurrent = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+        rotAngMomPntCContr_B += RWIt->Js*RWIt->gsHat_B*omegaCurrent;
+        rotEnergyContr += 1.0/2.0*RWIt->Js*omegaCurrent*omegaCurrent;
+    }
+
+    return;
+}
+
 /*! This method is used to clear out the current RW states and make sure
  that the overall model is ready
  @return void
