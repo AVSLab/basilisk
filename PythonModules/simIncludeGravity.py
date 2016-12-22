@@ -33,6 +33,7 @@ spicePlanetNames = []
 
 def addSun():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "sun_planet_data"
     gravBody.outputMsgName = "sun_display_frame_data"
@@ -47,6 +48,7 @@ def addSun():
 
 def addMercury():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "mercury_planet_data"
     gravBody.outputMsgName = "mercury_display_frame_data"
@@ -61,6 +63,7 @@ def addMercury():
 
 def addVenus():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "venus_planet_data"
     gravBody.outputMsgName = "venus_display_frame_data"
@@ -75,6 +78,7 @@ def addVenus():
 
 def addEarth():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "earth_planet_data"
     gravBody.outputMsgName = "earth_display_frame_data"
@@ -89,6 +93,7 @@ def addEarth():
 
 def addMoon():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "moon_planet_data"
     gravBody.outputMsgName = "moon_display_frame_data"
@@ -103,6 +108,7 @@ def addMoon():
 
 def addMars():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "mars barycenter_planet_data"
     gravBody.outputMsgName = "mars_barycenter_display_frame_data"
@@ -118,6 +124,7 @@ def addMars():
 
 def addJupiter():
     global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "jupiter barycenter_planet_data"
     gravBody.outputMsgName = "jupiter_display_frame_data"
@@ -131,6 +138,7 @@ def addJupiter():
     return
 
 def addSaturn():
+    global spicePlanetNames
     global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "saturn barycenter_planet_data"
@@ -145,6 +153,7 @@ def addSaturn():
     return
 
 def addUranus():
+    global spicePlanetNames
     global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "uranus barycenter_planet_data"
@@ -159,6 +168,7 @@ def addUranus():
     return
 
 def addNeptune():
+    global spicePlanetNames
     global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "neptune barycenter_planet_data"
