@@ -373,13 +373,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
-    # # create the gravity ephemerise message
-    # messageSize = ephemData.getStructSize()
-    # scSim.TotalSim.CreateNewMessage(simProcessName,
-    #                                       gravBody.bodyInMsgName, messageSize, 2)
-    # scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
-    #                                 ephemData)
-
     #
     #   initialize Simulation
     #
