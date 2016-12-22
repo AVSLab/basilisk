@@ -51,11 +51,14 @@ public:
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [m] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;
     Eigen::MatrixXd *property_dcm_BS;    //!< [-] Dynamic property version of the structure to body
-    Eigen::Vector3d totSCAngMomentum_N;  //!< [kg-m^2/s] Total angular momentum of the s/c in N frame compenents
     Eigen::Matrix3d dcm_BS;              //!< [-] Transformation from structure to body frame
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
-    double totSCEnergy;                  //!< [J]    Total energy of the spacecraft
-    double totSCAngMomentum;             //!< [kg-m^2/s] Magnitude of total angular momentum of the s/c
+    Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg-m^2/s] Total orbital angular momentum about N in N frame compenents
+    Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg-m^2/s] Total rotational angular momentum about C in N frame compenents
+    Eigen::Vector3d rotAngMomPntCContr_B; //!< [kg-m^2/s] Contribution of stateEffector to total rotational angular momentum about C in N frame compenents
+    double totOrbKinEnergy;              //!< [J] Total orbital kinetic energy
+    double totRotEnergy;                 //!< [J] Total rotational energy
+    double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
 	double currTimeStep;
 	double timePrevious;
     uint64_t simTimePrevious;            //!< [-] Previous simulation time
@@ -73,7 +76,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);//!< [-] Runtime hook back into Basilisk arch
     void equationsOfMotion(double t);          //!< [-] Everyone will need to provide this EOM
     void integrateState(double t);             //!< [-] Everyone will need to integrate the state
-    void computeEnergyMomentum();              //!< [-] User can implement NRG/moment check
+    void computeEnergyMomentum(double t);              //!< [-] User can implement NRG/moment check
     void initializeDynamics();                 //!< [-] Method to link all spacecraft states
     void linkInStates(DynParamManager& statesIn);
 	void writeOutputMessages(uint64_t clockTime); //! [-] Method to write all of the class output messages

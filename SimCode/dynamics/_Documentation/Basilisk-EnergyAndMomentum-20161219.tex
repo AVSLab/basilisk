@@ -1,0 +1,158 @@
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{AVS}
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+\newcommand{\ModuleName}{EnergyAndMomentum}
+\newcommand{\subject}{Formulation of the Energy and Momentum of the Spacecraft}
+\newcommand{\status}{Reviewed}
+\newcommand{\preparer}{C. Allard}
+\newcommand{\summary}{Summary of total kinetic energy, potential energy and momentum of the spacecraft. The spacecraft is assumed to have a generic offset from the center of mass of the spacecraft and the body frame origin. Additionally, state effectors are attached to the hub.}
+
+
+\begin{document}
+
+
+\makeCover
+
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{1.1}
+\noindent
+\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+\hline
+{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+\hline
+Draft & Updated after review & C. Allard \\
+\hline
+
+\end{longtable}
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents
+~\\ \hrule ~\\
+
+\section{Energy}
+
+\subsection{Total Orbital Kinetic Energy}
+
+The total orbital kinetic energy (i.e. kinetic energy of the center of mass) of the spacecraft is
+\begin{equation}
+	T_{\text{orb}} = \frac{1}{2} m_{sc} \dot{\bm r}_{C/N} \cdot \dot{\bm r}_{C/N}
+\end{equation}
+Expanding $\dot{\bm r}_{C/N}$ to be in terms of $\dot{\bm r}_{B/N}$ and $\dot{\bm c}$ results in
+\begin{equation}
+	T_{\text{orb}} = \frac{1}{2} m_{sc} (\dot{\bm r}_{B/N} + \dot{\bm c}) \cdot (\dot{\bm r}_{B/N} + \dot{\bm c})
+\end{equation}
+Which simplifies to final desired equation
+\begin{equation}
+	T_{\text{orb}} = \frac{1}{2} m_{sc} (\dot{\bm r}_{B/N}\cdot \dot{\bm r}_{B/N} + 2 \dot{\bm r}_{B/N} \cdot \dot{\bm c} + \dot{\bm c} \cdot \dot{\bm c})
+\end{equation}
+
+\subsection{Total Rotational and Deformational Kinetic Energy}
+
+The total rotational and deformational kinetic energy (i.e. kinetic energy about the center of mass) of the spacecraft is
+\begin{multline}
+	T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} \dot{\bm r}_{B_c/C} \cdot \dot{\bm r}_{B_c/C} \\
+	+ \sum\limits_{i}^{N}\Big(\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ \frac{1}{2} m_{\text{eff}} \dot{\bm r}_{E_{c,i}/C} \cdot \dot{\bm r}_{E_{c,i}/C}\Big)
+\end{multline}
+Where $N$ is the number of state effectors attached to the hub, ``eff" is the current state effector which a frame specified as $\cal{E}_{\textit{i}}$ and a center of mass location labeled as point $E_{c,i}$. Expanding these terms similar to orbital kinetic energy results in 
+\begin{multline}
+	T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} (\dot{\bm r}_{B_c/B} - \dot{\bm c}) \cdot (\dot{\bm r}_{B_c/B} - \dot{\bm c}) \\
+	+ \sum\limits_{i}^{N}\Big[\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ \frac{1}{2} m_{\text{eff}} (\dot{\bm r}_{E_{c,i}/B} - \dot{\bm c}) \cdot (\dot{\bm r}_{E_{c,i}/B} - \dot{\bm c})\Big]
+\end{multline}
+Expanding further
+\begin{multline}
+	T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} (\dot{\bm r}_{B_c/B}\cdot\dot{\bm r}_{B_c/B} - 2 \dot{\bm r}_{B_c/B} \cdot \dot{\bm c}  + \dot{\bm c} \cdot \dot{\bm c}) \\
+	+ \sum\limits_{i}^{N}\Big[\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ \frac{1}{2} m_{\text{eff}} (\dot{\bm r}_{E_{c,i}/B} \cdot \dot{\bm r}_{E_{c,i}/B} - 2 \dot{\bm r}_{E_{c,i}/B} \cdot \dot{\bm c} + \dot{\bm c} \cdot \dot{\bm c})\Big]
+\end{multline}
+Combining like terms results in
+\begin{multline}
+	T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} \dot{\bm r}_{B_c/B}\cdot\dot{\bm r}_{B_c/B} + \sum\limits_{i}^{N}\Big[\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ \frac{1}{2} m_{\text{eff}}\dot{\bm r}_{E_{c,i}/B} \cdot \dot{\bm r}_{E_{c,i}/B} \Big]\\
+	- \Big[ m_{\text{hub}} \dot{\bm r}_{B_c/B} + \sum\limits_{i}^{N} m_{\text{eff}} \dot{\bm r}_{E_{c,i}/B} \Big] \cdot \dot{\bm c} + \frac{1}{2} \Big[m_{\text{hub}} + \sum\limits_{i}^{N} m_{\text{eff}} \Big]\dot{\bm c} \cdot \dot{\bm c}
+\end{multline}
+Performing a final simplification yields
+\begin{multline}
+	T_{\text{rot}} = \frac{1}{2} \bm \omega_{\cal{B/N}}^T [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + \frac{1}{2} m_{\text{hub}} \dot{\bm r}_{B_c/B}\cdot\dot{\bm r}_{B_c/B} \\
+	+ \sum\limits_{i}^{N}\Big[\frac{1}{2} \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}^T [I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ \frac{1}{2} m_{\text{eff}}\dot{\bm r}_{E_{c,i}/B} \cdot \dot{\bm r}_{E_{c,i}/B} \Big]
+	- \frac{1}{2} m_{sc}\dot{\bm c} \cdot \dot{\bm c}
+\end{multline}
+
+\subsection{Total Rotational Potential Energy}
+
+The total rotational potential energy is specific to each stateEffector. For example, the potential energy for hinged rigid bodies can be seen in the following equation.
+
+\begin{equation}
+	V_{\text{rot}} = \frac{1}{2}k_{\theta} \theta^2
+\end{equation}
+Each stateEffector might not have a potential energy contribution, however each stateEffector will have the ability to add their contribution to the total potential energy.
+
+\subsection{Total Rotational Energy}
+
+Since the total rotational energy of the spacecraft must be conserved, it convenient to combine the kinetic and potential energies into one term, $E_{\text{rot}}$. This can be seen in the following equation.
+
+\begin{equation}
+	E_{\text{rot}} = T_{\text{rot}} + V_{\text{rot}}
+\end{equation}
+
+\section{Angular Momentum}
+
+\subsection{Total Orbital Angular Momentum}
+
+The total orbital angular momentum of the spacecraft about point $N$ is
+\begin{equation}
+	\bm H_{\text{orb},N} = m_{sc} \bm r_{C/N} \times \dot{\bm r}_{C/N}
+\end{equation}
+Expanding these terms yields
+\begin{equation}
+	\bm H_{\text{orb},N} = m_{sc} (\bm r_{B/N} + \bm c) \times (\dot{\bm r}_{B/N} + \dot{\bm c})
+\end{equation}
+The final form of this equation is
+\begin{equation}
+	\bm H_{\text{orb},N} = m_{sc} \Big[\bm r_{B/N} \times \dot{\bm r}_{B/N} + \bm r_{B/N} \times \dot{\bm c} + \bm c \times \dot{\bm r}_{B/N} + \bm c \times \dot{\bm c}\Big]
+\end{equation}
+
+\subsection{Total Rotational Angular Momentum}
+
+The total rotational angular momentum of the spacecraft about point $C$ is
+\begin{multline}
+	\bm H_{\text{rot},C} = [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + m_{\text{hub}} \bm r_{B_c/C}\times \dot{\bm r}_{B_c/C}\\
+	+ \sum\limits_{i}^{N}\Big[[I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ m_{\text{eff}} \bm r_{E_{c,i}/C} \times \dot{\bm r}_{E_{c,i}/C} \Big]
+\end{multline}
+Expanding these terms yields
+\begin{multline}
+	\bm H_{\text{rot},C} = [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + m_{\text{hub}} (\bm r_{B_c/B} - \bm c)\times (\dot{\bm r}_{B_c/B} - \dot{\bm c})\\
+	+ \sum\limits_{i}^{N}\Big[[I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ m_{\text{eff}} (\bm r_{E_{c,i}/B} - \bm c) \times (\dot{\bm r}_{E_{c,i}/B} - \dot{\bm c}) \Big]
+\end{multline}
+Distributing this result
+\begin{multline}
+	\bm H_{\text{rot},C} = [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + m_{\text{hub}} \Big(\bm r_{B_c/B} \times \dot{\bm r}_{B_c/B} - \bm r_{B_c/B} \times \dot{\bm c} - \bm c \times \dot{\bm r}_{B_c/B} + \bm c \times \dot{\bm c}\Big)\\
+	+ \sum\limits_{i}^{N}\bigg[[I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ m_{\text{eff}} \Big(\bm r_{E_{c,i}/B} \times \dot{\bm r}_{E_{c,i}/B} - \bm r_{E_{c,i}/B} \times \dot{\bm c} - \bm c \times \dot{\bm r}_{E_{c,i}/B} + \bm c \times \dot{\bm c}\Big) \bigg]
+\end{multline}
+Simplifying this result yields the final equation
+\begin{multline}
+	\bm H_{\text{rot},C} = [I_{\text{hub},B_c}] \bm \omega_{\cal{B/N}} + m_{\text{hub}} \bm r_{B_c/B} \times \dot{\bm r}_{B_c/B}\\
+	+ \sum\limits_{i}^{N}\bigg[[I_{\text{eff},E_{c,i}}] \bm \omega_{\cal{E}_{\textit{i}}/\cal{N}}
+	+ m_{\text{eff}} \bm r_{E_{c,i}/B} \times \dot{\bm r}_{E_{c,i}/B} \bigg] - m_{sc} \bm c \times \dot{\bm c}
+\end{multline}
+
+\section{Contributions from Hub and State Effectors}
+The equations developed allow the calculation of energy and momentum to be modular which will fit cleanly in the new dynamics architecture. During the integrate state method (after the integrator call), the spaceCraftPlus will ask both the hubEffector and stateEffectors for their contributions to $\bm c$, $\dot{\bm c}$, $T_{\text{orb}}$, $E_{\text{rot}}$, $\bm H_{\text{orb},N}$ and $\bm H_{\text{rot},C}$. The spaceCraftPlus will then manage the addition of these values and the modfying factors seen in the equations above. 
+
+\end{document}

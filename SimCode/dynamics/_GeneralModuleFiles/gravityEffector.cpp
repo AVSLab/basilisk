@@ -20,6 +20,7 @@
 
 #include "gravityEffector.h"
 #include "utilities/simMacros.h"
+#include "utilities/avsEigenMRP.h"
 
 SphericalHarmonics::SphericalHarmonics()
 {
@@ -396,7 +397,9 @@ void GravityEffector::linkInStates(DynParamManager& statesIn)
 {
     this->posState = statesIn.getStateObject(this->vehiclePositionStateName);
     this->velState = statesIn.getStateObject(this->vehicleVelocityStateName);
+    this->hubSigma = statesIn.getStateObject("hubSigma");
     this->timeCorr = statesIn.getPropertyReference(this->systemTimeCorrPropName);
+    this->c_B = statesIn.getPropertyReference("centerOfMassSC");
 }
 
 void GravityEffector::computeGravityField()
@@ -409,11 +412,21 @@ void GravityEffector::computeGravityField()
     centralVel.fill(0.0);
     Eigen::Vector3d gravOut;
     gravOut.fill(0.0);
+    Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cLocal_N;
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcmNB;
+
+    cLocal_B = *this->c_B;
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
+    dcmNB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcmNB*cLocal_B;
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
         posRelBody_N = this->posState->getState();
+        posRelBody_N += cLocal_N;
         Eigen::Vector3d mappedPos;
         mappedPos.fill(0.0);
         double dt;

@@ -177,3 +177,28 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 
     return;
 }
+
+void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+{
+    // Get variables needed for energy momentum calcs
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = hubOmega->getState();
+    Eigen::Vector3d omegaSB_B;
+    Eigen::Vector3d omegaSN_B;
+    Eigen::Matrix3d IPntS_B;
+    Eigen::Vector3d rDotSB_B;
+
+    // Call mass props to get current information on states
+    this->updateEffectorMassProps(integTime);
+
+    // Find rotational angular momentum contribution from hub
+    omegaSB_B = this->thetaDot*this->sHat2_B;
+    omegaSN_B = omegaSB_B + omegaLocal_BN_B;
+    IPntS_B = this->dcmSB.transpose()*this->IPntS_S*this->dcmSB;
+    rDotSB_B = this->rPrimeSB_B + omegaLocal_BN_B.cross(this->rSB_B);
+    rotAngMomPntCContr_B = IPntS_B*omegaSN_B + this->mass*this->rSB_B.cross(rDotSB_B);
+
+    // Find rotational energy contribution from the hub
+    rotEnergyContr = 1.0/2.0*omegaSN_B.dot(IPntS_B*omegaSN_B) + 1.0/2.0*this->mass*rDotSB_B.dot(rDotSB_B) + 1.0/2.0*this->k*this->theta*this->theta;
+    return;
+}

@@ -48,6 +48,7 @@ public:
     virtual void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
     virtual void computeDerivatives(double integTime)=0;
     virtual void updateEffectorMassProps(double integTime);
+    virtual void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 };
 
 #endif /* STATE_EFFECTOR_H */
