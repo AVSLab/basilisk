@@ -272,6 +272,10 @@ def test_multiBodyGravity(show_plots):
     posState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], positionName)
     velocityName = "hubVelocity"
     velState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], velocityName)
+    sigmaName = "hubSigma"
+    sigmaState = TotalSim.newManager.registerState(stateDim[0], stateDim[1], sigmaName)
+    initC_B = [[0.0], [0.0], [0.0]]
+    TotalSim.newManager.createProperty("centerOfMassSC", initC_B)
     TotalSim.newManager.createProperty("systemTime", [[0], [0.0]])
     
     
