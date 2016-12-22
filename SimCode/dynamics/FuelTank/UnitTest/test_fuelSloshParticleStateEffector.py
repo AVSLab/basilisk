@@ -268,4 +268,4 @@ def test_hubPropagate(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(True)
+    spacecraftPlusAllTest(False)
