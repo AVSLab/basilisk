@@ -37,7 +37,7 @@ public:
 	std::vector<FuelSloshParticle> fuelSloshParticles;
     std::vector<DynamicEffector*> dynEffectors;       //! [-] Vector of dynamic effectors attached to dyn
 	double radiusTank;
-	Eigen::Vector3d r_TB_B;
+	Eigen::Vector3d rTB_B;
 	std::string nameOfMassState;
     double propMassInit;                              //! [kg] Initial propellant mass in tank
 

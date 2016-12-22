@@ -32,7 +32,7 @@ FuelTank::FuelTank()
     this->propMassInit = 0.0;
 
 	//! - Initialize the variables to working values
-	this->r_TB_B.setZero();
+	this->rTB_B.setZero();
 	this->nameOfMassState = "fuelTankMass";
 
     return;
@@ -84,8 +84,8 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	//Contributions of the mass of the tank
 	double massLocal = this->massState->getState()(0, 0);
 	this->effProps.mEff += massLocal;
-	this->effProps.IEffPntB_B += (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
-	this->effProps.rCB_B += massLocal * r_TB_B;
+	this->effProps.IEffPntB_B += (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (rTB_B.dot(rTB_B)*Eigen::Matrix3d::Identity() - rTB_B * rTB_B.transpose());
+	this->effProps.rCB_B += massLocal * rTB_B;
 
     //! - Scale the center of mass location by 1/m_tot
 	this->effProps.rCB_B /= effProps.mEff;
