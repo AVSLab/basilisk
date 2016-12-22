@@ -229,13 +229,13 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     # plt.show()
 
 
-    for i in range(0,4):
-        # plt.figure()
-        plt.plot(moduleOutput['qInrtl2Case'][:,0]*macros.NANO2SEC,moduleOutput['qInrtl2Case'][:,i+1])
-        plt.xlabel('Time (s)')
-        plt.ylabel('Quaternion')
-        # plt.xlim((0,1000))
-    plt.show()
+    # for i in range(0,4):
+    #     # plt.figure()
+    #     plt.plot(moduleOutput['qInrtl2Case'][:,0]*macros.NANO2SEC,moduleOutput['qInrtl2Case'][:,i+1])
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel('Quaternion')
+    #     # plt.xlim((0,1000))
+    # plt.show()
 
 
     if not 'accuracy' in vars():
