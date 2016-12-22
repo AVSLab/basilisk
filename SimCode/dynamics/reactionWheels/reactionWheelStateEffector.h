@@ -30,6 +30,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
@@ -50,12 +51,12 @@ typedef struct {
 	std::string typeName;      //!< [-], string containing the RW type name
 	Eigen::Vector3d rWB_S;		//!< [m], position vector of the RW relative to the spacecraft structural frame
 	Eigen::Vector3d gsHat_S;	//!< [-] spin axis unit vector in structural frame
-	Eigen::Vector3d gtHat0_S;	//!< [-] initial torque axis unit vector in structural
-	Eigen::Vector3d ggHat0_S;	//!< [-] initial gimbal axis unit vector in structural frame
+	Eigen::Vector3d w2Hat0_S;	//!< [-] initial torque axis unit vector in structural
+	Eigen::Vector3d w3Hat0_S;	//!< [-] initial gimbal axis unit vector in structural frame
 	Eigen::Vector3d rWB_B;		//!< [m], position vector of the RW relative to the spacecraft body frame
 	Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
-	Eigen::Vector3d gtHat0_B;	//!< [-] initial torque axis unit vector in body frame
-	Eigen::Vector3d ggHat0_B;	//!< [-] initial gimbal axis unit vector in body frame
+	Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
+	Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
 	double theta;              //!< [rad], wheel angle
 	double u_current;          //!< [N-m], current motor torque
 	double u_max;              //!< [N-m], Max torque
@@ -68,9 +69,14 @@ typedef struct {
 	double Jg;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
 	double U_s;                //!< [kg-m], static imbalance
 	double U_d;                //!< [kg-m^2], dynamic imbalance
+	double d;                	//!< [m], wheel center of mass offset from wheel frame origin
+	double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
 	double mass;               //!< [kg], reaction wheel rotor mass
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-	RWModels RWModel;          //!< [], flag to indicate what the RW model is (i.e. BalancedWheels, JitterSimple, etc.)
+	RWModels RWModel; //!< [-], Type of imbalance model to use
+	Eigen::Vector3d aOmega;
+	Eigen::Vector3d bOmega;
+	double cOmega;
 }ReactionWheelConfigData;
 
 
@@ -114,6 +120,7 @@ private:
 
 	StateData *hubSigma;
 	StateData *hubOmega;
+	StateData *hubVelocity;
 	StateData *OmegasState;
 	StateData *thetasState;
 
