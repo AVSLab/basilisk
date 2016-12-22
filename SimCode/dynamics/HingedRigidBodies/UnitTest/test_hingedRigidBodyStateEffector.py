@@ -238,7 +238,6 @@ def test_hubPropagate(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Hinged Rigid Body unit test failed orbital kinetic energy unit test")
 
-
     if testFailCount == 0:
         print "PASSED: " + " Hinged Rigid Body unit test"
     # return fail count and join into a single string all messages in the list
