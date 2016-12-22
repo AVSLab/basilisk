@@ -62,7 +62,6 @@ import spacecraftPlus
 import gravityEffector
 import simIncludeGravity
 
-import spice_interface
 import pyswice
 import pyswice_ck_utilities
 
@@ -80,8 +79,8 @@ import pyswice_ck_utilities
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("scCase", [
-      (0)
-    , (1)
+      ('Hubble')
+    , ('NewHorizon')
 ])
 
 # provide a unique test method name, starting with test_
@@ -109,8 +108,8 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # parameters:
 # Setup | scCase
 # ----- | -------------------
-# 1     | 0 (Hubble Space Telescope)
-# 2     | 1 (New Horizons)
+# 1     | Hubble
+# 2     | New Horizon
 #
 # To run the default scenario 1, call the python script through
 #
@@ -123,76 +122,70 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # orbit simulation.
 #
 # The spacecraftPlus() module is setup as before, except that it isn't added to the simulation task
-# list until all the gravitational bodies are added.  The Earth is included in this scenario with the
+# list until all the gravitational bodies are added.  The first step is to clear any prior gravity body
+# settings using
+#~~~~~~~~~~~~~~~~~{.py}
+#   simIncludeGravity.clearSetup()
+#~~~~~~~~~~~~~~~~~
+# This is required if the script is run multiple times using 'py.test' or in Monte-Carlo runs.
+# The Earth is included in this scenario with the
 # spherical harmonics turned on.  Note that this is true for both spacecraft simulations.
 #~~~~~~~~~~~~~~~~~{.py}
-#       earthGravBody, ephemData = simIncludeGravity.addEarth()
-#       earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
-#       earthGravBody.useSphericalHarmParams = True
+#       simIncludeGravity.addEarth()
+#       simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+#       simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
 #       gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
-#                                      , earthGravBody.spherHarm
+#                                      , simIncludeGravity.gravBodyList[-1].spherHarm
 #                                      ,100
 #                                      )
 #~~~~~~~~~~~~~~~~~
-# Next, this the gravity support macros are used to create the other planetary bodies.  Note that
-# the default (all zero) planet ephemerise data sets from these support macros are not used in this
-# scenario.
+# Next, this the gravity support macros are used to create the other planetary bodies.  At the end the
+# list of gravitational bodies is passed along the gravity field setting of the spacecraftPlus() object.
 #~~~~~~~~~~~~~~~~~{.py}
-#       sunGravBody, ephemData = simIncludeGravity.addSun()
-#       moonGravBody, ephemData = simIncludeGravity.addMoon()
-#       marsGravBody, ephemData = simIncludeGravity.addMars()
-#       jupiterGravBody, ephemData = simIncludeGravity.addJupiter()
+#       simIncludeGravity.addSun()
+#       simIncludeGravity.addMoon()
+#       simIncludeGravity.addMars()
+#       simIncludeGravity.addJupiter()
 #
 #       # attach gravity model to spaceCraftPlus
-#       scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody, sunGravBody, marsGravBody,
-#                                                                      moonGravBody, jupiterGravBody])
+#       scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 #~~~~~~~~~~~~~~~~~
-# The bodies are then attached to spacecraftPlus() as a list of gravitational bodies.  Next, the
-# SPICE module is create and configured:
+# Next, the default SPICE support module is created and configured.  The first step is to store
+# the date and time of the start of the simulation.
 #~~~~~~~~~~~~~~~~~{.py}
-#       # setup SPICE ephemerise support
-#       spiceObject = spice_interface.SpiceInterface()
-#       spiceObject.ModelTag = "SpiceInterfaceData"
-#       spiceObject.SPICEDataPath = splitPath[0] + '/Basilisk/External/EphemerisData/'
-#       spiceObject.OutputBufferCount = 10000
-#       spiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
-#
-#       spiceObject.zeroBase = 'Earth'
-#
-#       #
-#       # pull in SPICE support libraries
-#       #
-#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')           # solar system bodies
-#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')        # leap second file
-#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')   # solar system masses
-#       pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')        # generic Planetary Constants Kernel
-#       # load in spacecraft SPICE ephemeris data
-#       if scCase == 1:
-#           scEphemerisName = 'nh_pred_od077.bsp'
-#           scSpiceName = 'NEW HORIZONS'
-#           mu = sunGravBody.mu
-#       else:   # default case 0
-#           scEphemerisName = 'hst_edited.bsp'
-#           scSpiceName = 'HUBBLE SPACE TELESCOPE'
-#           mu = earthGravBody.mu
-#       pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
-#
-#       spiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
-#       timeInitString = spiceObject.UTCCalInit
+#       timeInitString = "2012 MAY 1 00:28:30.0"
 #       spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
 #       timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
-#
-#       scSim.AddModelToTask(simTaskName, spiceObject)
 #~~~~~~~~~~~~~~~~~
-# Note that the SPICE module requires the time to be provided as a text string formated in a particular
-# manner. Further, the simulation defaults to all
-# planet or spacecraft ephemeris being given in the SPICE object default frame, which is the solar system barycent
+# The following is a support macro that creates a `spiceObject` instance, and fills in typical
+# default parameters.
+#~~~~~~~~~~~~~~~~~{.py}
+#       simIncludeGravity.addSpiceInterface(splitPath[0], timeInitString)
+#~~~~~~~~~~~~~~~~~
+# Next the SPICE module is costumized.  The first step is to specify the zeroBase.  This is the inertial
+# origin relative to which all spacecraft message states are taken.  The simulation defaults to all
+# planet or spacecraft ephemeris being given in the SPICE object default frame, which is the solar system barycenter
 # or SSB for short.  The spacecraftPlus() state output message is relative to this SBB frame by default.  To change
 # this behavior, the zero based point must be redefined from SBB to another body.  In this simulation we use the Earth.
 #~~~~~~~~~~~~~~~~~{.py}
-#     spiceObject.zeroBase = 'Earth'
+#   simIncludeGravity.spiceObject.zeroBase = 'Earth'
 #~~~~~~~~~~~~~~~~~
+# The next customization is importing spacecraft particular SPICE ephemeris data.  This is done with
 # Finally, the spacecraftPlus() is added to the task list.
+# ~~~~~~~~~~~~~~~~~{.py}
+#       if scCase is 'NewHorizons':
+#           scEphemerisName = 'nh_pred_od077.bsp'
+#           scSpiceName = 'NEW HORIZONS'
+#       else:   # default case
+#           scEphemerisName = 'hst_edited.bsp'
+#           scSpiceName = 'HUBBLE SPACE TELESCOPE'
+#       pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
+#~~~~~~~~~~~~~~~~~
+# Finally, the SPICE object is added to the simulation task list through the typical call
+#~~~~~~~~~~~~~~~~~{.py}
+#       scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject)
+#~~~~~~~~~~~~~~~~~
+# At this point the spacecraftPlus() object can be added to the simulation task list.
 #~~~~~~~~~~~~~~~~~{.py}
 #     scSim.AddModelToTask(simTaskName, scObject)
 #~~~~~~~~~~~~~~~~~
@@ -213,7 +206,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
 #~~~~~~~~~~~~~~~~~
 # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
-# actually setup above where we set 'earthGravBody.isCentralBody = True' and mark the Earth as are central body.
+# actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
 # Without this statement, the code would assume the spacecraftPlus() states are relative to the default zeroBase frame.
 # In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.  This is because there
 # the planets ephemeris message is being set to the default messages which zero's both the position and orientation
@@ -227,7 +220,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          0            # orbit Case (0 - HST, 1 - New Horizon)
+#          'Hubble'
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The remaining argument(s) control the
@@ -235,9 +228,9 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # scenario simulates the Hubble Space Telescope (HST) spacecraft about the Earth in a LEO orbit.
 # The resulting position coordinates and orbit illustration are shown below.  A 2000 second simulation is
 # performed, and the Basilisk and SPICE generated orbits match up very well.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody10.svg "Position history")
-# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioOrbitMultiBody20.svg "Orbit Illustration")
-# ![Trajectory Differences](Images/Scenarios/scenarioOrbitMultiBody30.svg "Trajectory Differences")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1Hubble.svg "Position history")
+# ![Perifocal Orbit Illustration](Images/Scenarios/scenarioOrbitMultiBody2Hubble.svg "Orbit Illustration")
+# ![Trajectory Differences](Images/Scenarios/scenarioOrbitMultiBody3Hubble.svg "Trajectory Differences")
 #
 # Setup 2
 # -----
@@ -247,14 +240,14 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          1            # orbit Case (0 - HST, 1 - New Horizon)
+#          'NewHorizon'
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
 # large distance from the sun.  The
 # resulting position coordinates and trajectorie differences are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody11.svg "Position history")
-# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody31.svg "Trajectory Difference")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizon.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizon.svg "Trajectory Difference")
 #
 ## @}
 def run(doUnitTests, show_plots, scCase):
@@ -295,65 +288,52 @@ def run(doUnitTests, show_plots, scCase):
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = False
 
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
 
     # setup Gravity Bodies
-    earthGravBody, ephemData = simIncludeGravity.addEarth()
-    # NOTE: default ephemData is not used in this setup, this comes from SPICE
-    earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
-    earthGravBody.useSphericalHarmParams = True
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
-                                     , earthGravBody.spherHarm
+                                     , simIncludeGravity.gravBodyList[-1].spherHarm
                                      ,100
                                      )
+    muEarth = simIncludeGravity.gravBodyList[-1].mu
 
-    sunGravBody, ephemData = simIncludeGravity.addSun()
-    moonGravBody, ephemData = simIncludeGravity.addMoon()
-    marsGravBody, ephemData = simIncludeGravity.addMars()
-    jupiterGravBody, ephemData = simIncludeGravity.addJupiter()
+    simIncludeGravity.addSun()
+    simIncludeGravity.addMoon()
+    simIncludeGravity.addMars()
+    simIncludeGravity.addJupiter()
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody, sunGravBody, moonGravBody
-                                                                      , marsGravBody, jupiterGravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
+    # setup simulation start date/time
+    timeInitString = "2012 MAY 1 00:28:30.0"
+    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
+    timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
 
-    # setup SPICE ephemerise support
-    spiceObject = spice_interface.SpiceInterface()
-    spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = splitPath[0] + '/Basilisk/External/EphemerisData/'
-    spiceObject.OutputBufferCount = 10000
-    spiceObject.PlanetNames = spice_interface.StringVector(["earth", "sun", "moon"
-                                                               , "mars barycenter", "jupiter barycenter"])
+    # setup SPICE interface
+    simIncludeGravity.addSpiceInterface(splitPath[0], timeInitString)
 
     # by default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
     # name of the SPICE object needs to be changed.
-    spiceObject.zeroBase = 'Earth'
+    simIncludeGravity.spiceObject.zeroBase = 'Earth'
 
-    #
-    # pull in SPICE support libraries
-    #
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')           # solar system bodies
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')        # leap second file
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')   # solar system masses
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')        # generic Planetary Constants Kernel
     # load in spacecraft SPICE ephemeris data
-    if scCase == 1:
+    if scCase is 'NewHorizons':
         scEphemerisName = 'nh_pred_od077.bsp'
         scSpiceName = 'NEW HORIZONS'
-        mu = sunGravBody.mu
-    else:   # default case 0
+    else:   # default case
         scEphemerisName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
-        mu = earthGravBody.mu
-    pyswice.furnsh_c(spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
+        mu = muEarth
+    pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
 
-
-    spiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
-    timeInitString = spiceObject.UTCCalInit
-    spiceTimeStringFormat = '%Y %B %d %H:%M:%S.%f'
-    timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
-
-    scSim.AddModelToTask(simTaskName, spiceObject)
+    # add spice interface object to task list
+    scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject)
 
     # add spacecraftPlus object to the simulation process
     # Note: this step must happen after the spiceOjbect is added to the task list
@@ -423,7 +403,7 @@ def run(doUnitTests, show_plots, scCase):
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
-    if scCase == 1:
+    if scCase is 'NewHorizons':
         axesScale = astroFunctions.AU*1000.     # convert to AU
         axesLabel = '[AU]'
         timeScale = macros.NANO2MIN             # convert to minutes
@@ -442,11 +422,11 @@ def run(doUnitTests, show_plots, scCase):
     plt.ylabel('Inertial Position ' + axesLabel)
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(scCase))
+            fileNameString+"1"+scCase
             , plt, path)
 
     rBSK = posData[-1, 1:4]  # store the last position to compare to the SPICE position
-    if scCase == 0:
+    if scCase is 'Hubble':
         #
         # draw orbit in perifocal frame
         #
@@ -461,7 +441,7 @@ def run(doUnitTests, show_plots, scCase):
         fig = plt.gcf()
         ax = fig.gca()
         planetColor= '#008800'
-        planetRadius = earthGravBody.radEquator/1000
+        planetRadius = simIncludeGravity.gravBodyList[0].radEquator/1000
         ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
 
         # draw the actual orbit
@@ -506,10 +486,10 @@ def run(doUnitTests, show_plots, scCase):
         plt.grid()
         if doUnitTests:     # only save off the figure if doing a unit test run
             unitTestSupport.saveScenarioFigure(
-                fileNameString+"2"+str(int(scCase))
+                fileNameString+"2"+scCase
                 , plt, path)
     else:
-        scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, simIncludeGravity.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
         rTrue = scState[0:3]
 
     # plot the differences between BSK and SPICE position data
@@ -535,7 +515,7 @@ def run(doUnitTests, show_plots, scCase):
     plt.ylabel('Inertial Position Differences [m]')
     if doUnitTests:  # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString + "3" + str(int(scCase))
+            fileNameString + "3" + scCase
             , plt, path)
 
     if show_plots:
@@ -547,11 +527,8 @@ def run(doUnitTests, show_plots, scCase):
     #
     #   unload the SPICE libraries that were loaded earlier
     #
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0011.tls')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')
-    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')
-    pyswice.unload_c(spiceObject.SPICEDataPath + scEphemerisName)
+    simIncludeGravity.unloadDefaultSpiceLibraries()
+    pyswice.unload_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
 
 
     #
@@ -585,6 +562,6 @@ def run(doUnitTests, show_plots, scCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         0            # orbit Case (0 - HST, 1 - New Horizon)
+         'Hubble'
        )
 
