@@ -196,12 +196,15 @@ def run(doUnitTests, show_plots, integratorCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    gravBody, ephemData = simIncludeGravity.addEarth()
-    gravBody.isCentralBody = True          # ensure this is the central gravitational body
-    mu = gravBody.mu
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
+
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([gravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     #
     #   setup orbit and simulation time
@@ -234,12 +237,7 @@ def run(doUnitTests, show_plots, integratorCase):
     # create simulation messages
     #
 
-    # create the gravity ephemerise message
-    messageSize = ephemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
-                                    ephemData)
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
 
     #
@@ -287,7 +285,7 @@ def run(doUnitTests, show_plots, integratorCase):
     fig = plt.gcf()
     ax = fig.gca()
     planetColor= '#008800'
-    planetRadius = gravBody.radEquator/1000
+    planetRadius = simIncludeGravity.gravBodyList[-1].radEquator/1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
     rData=[]
@@ -385,8 +383,8 @@ def run(doUnitTests, show_plots, integratorCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( True,       # do unit tests
-         False,        # show_plots
+    run( False,       # do unit tests
+         True,        # show_plots
          0            # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
        )
 

@@ -133,7 +133,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
 #     attGuidanceWrap.ModelTag = "hillPoint"
 #     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-#     attGuidanceConfig.inputCelMessName = earthGravBody.bodyInMsgName
+#     attGuidanceConfig.inputCelMessName = simIncludeGravity.gravBodyList[-1].bodyInMsgName
 #     attGuidanceConfig.outputDataName = "guidanceOut"
 #     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 # ~~~~~~~~~~~~~
@@ -251,13 +251,16 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
 
     # setup Earth Gravity Body
-    earthGravBody, earthEphemData = simIncludeGravity.addEarth()
-    earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
 
     # setup extForceTorque module
@@ -288,7 +291,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     attGuidanceWrap = scSim.setModelDataWrap(attGuidanceConfig)
     attGuidanceWrap.ModelTag = "hillPoint"
     attGuidanceConfig.inputNavDataName = sNavObject.outputTransName
-    attGuidanceConfig.inputCelMessName = earthGravBody.bodyInMsgName
+    attGuidanceConfig.inputCelMessName = simIncludeGravity.gravBodyList[-1].bodyInMsgName
     attGuidanceConfig.outputDataName = "guidanceOut"
     scSim.AddModelToTask(simTaskName, attGuidanceWrap, attGuidanceConfig)
 
@@ -334,13 +337,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     # create simulation messages
     #
-
-    # create the gravity ephemerise message
-    messageSize = earthEphemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          earthGravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyInMsgName, messageSize, 0,
-                                          earthEphemData)
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
 
     # create the FSW vehicle configuration message
@@ -377,7 +374,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
-    rN, vN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
+    rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
     velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - r_BN_N

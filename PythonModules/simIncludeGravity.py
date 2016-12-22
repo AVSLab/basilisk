@@ -25,8 +25,15 @@
 
 import gravityEffector
 import spice_interface
+import pyswice
+
+gravBodyList = []
+spiceObject = 0
+spicePlanetNames = []
 
 def addSun():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "sun_planet_data"
     gravBody.outputMsgName = "sun_display_frame_data"
@@ -34,10 +41,14 @@ def addSun():
     gravBody.radEquator = 695508000.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("sun")
+    return
 
 def addMercury():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "mercury_planet_data"
     gravBody.outputMsgName = "mercury_display_frame_data"
@@ -45,10 +56,14 @@ def addMercury():
     gravBody.radEquator = 2439700.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("mercury")
+    return
 
 def addVenus():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "venus_planet_data"
     gravBody.outputMsgName = "venus_display_frame_data"
@@ -56,10 +71,14 @@ def addVenus():
     gravBody.radEquator = 6051800.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("venus")
+    return
 
 def addEarth():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "earth_planet_data"
     gravBody.outputMsgName = "earth_display_frame_data"
@@ -67,10 +86,14 @@ def addEarth():
     gravBody.radEquator = 6378136.6 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("earth")
+    return
 
 def addMoon():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "moon_planet_data"
     gravBody.outputMsgName = "moon_display_frame_data"
@@ -78,10 +101,14 @@ def addMoon():
     gravBody.radEquator = 1738100.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("moon")
+    return
 
 def addMars():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "mars barycenter_planet_data"
     gravBody.outputMsgName = "mars_barycenter_display_frame_data"
@@ -89,11 +116,15 @@ def addMars():
     gravBody.radEquator = 3396190 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("mars")
+    return
 
 
 def addJupiter():
+    global gravBodyList
+    global spicePlanetNames
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "jupiter barycenter_planet_data"
     gravBody.outputMsgName = "jupiter_display_frame_data"
@@ -101,10 +132,14 @@ def addJupiter():
     gravBody.radEquator = 71492000.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("jupiter")
+    return
 
 def addSaturn():
+    global spicePlanetNames
+    global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "saturn barycenter_planet_data"
     gravBody.outputMsgName = "saturn_display_frame_data"
@@ -112,10 +147,14 @@ def addSaturn():
     gravBody.radEquator = 60268000.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("saturn")
+    return
 
 def addUranus():
+    global spicePlanetNames
+    global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "uranus barycenter_planet_data"
     gravBody.outputMsgName = "uranus_display_frame_data"
@@ -123,10 +162,14 @@ def addUranus():
     gravBody.radEquator = 25559000.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("uranus")
+    return
 
 def addNeptune():
+    global spicePlanetNames
+    global gravBodyList
     gravBody = gravityEffector.GravBodyData()
     gravBody.bodyInMsgName = "neptune barycenter_planet_data"
     gravBody.outputMsgName = "neptune_display_frame_data"
@@ -134,8 +177,10 @@ def addNeptune():
     gravBody.radEquator = 24764000.0 # meters
     gravBody.isCentralBody = False
     gravBody.useSphericalHarmParams = False
+    gravBodyList.append(gravBody)
+    spicePlanetNames.append(gravBody.bodyInMsgName[:-12])
 
-    return gravBody, defaultEphemData("neptune")
+    return
 
 
 
@@ -149,3 +194,65 @@ def defaultEphemData(name):
     ephemData.PlanetName = name
 
     return ephemData
+
+def clearSetup():
+    global gravBodyList
+    global spiceObject
+    global spicePlanetNames
+
+    gravBodyList = []
+    spiceObject = 0
+    spicePlanetNames = []
+
+    return
+
+def addSpiceInterface(path, timeString):
+    global spicePlanetNames
+    global spiceObject
+
+    # setup SPICE ephemerise support
+    spiceObject = spice_interface.SpiceInterface()
+    spiceObject.ModelTag = "SpiceInterfaceData"
+    spiceObject.SPICEDataPath = path + '/Basilisk/External/EphemerisData/'
+    spiceObject.OutputBufferCount = 10000
+    spiceObject.PlanetNames = spice_interface.StringVector(spicePlanetNames)
+
+    #
+    # pull in SPICE support libraries
+    #
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')           # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')        # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')   # solar system masses
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')        # generic Planetary Constants Kernel
+
+    spiceObject.UTCCalInit = timeString
+
+
+    return
+
+
+def unloadDefaultSpiceLibraries():
+    global spiceObject
+
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de430.bsp')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'naif0011.tls')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')
+    pyswice.unload_c(spiceObject.SPICEDataPath + 'pck00010.tpc')
+
+    return
+
+def addDefaultEphemerisMsg(obj,processName):
+    global gravBodyList
+
+    if len(gravBodyList)>1:
+        print "WARNING:  addDefaultEphemerisMsg() should not be used if more than one gravity body is setup."
+        exit()
+
+    msgName = gravBodyList[0].bodyInMsgName
+    ephemData = defaultEphemData(msgName)
+    messageSize = ephemData.getStructSize()
+    obj.CreateNewMessage(processName,
+                         msgName, messageSize, 2)
+    obj.WriteMessageData(msgName, messageSize, 0,
+                                    ephemData)
+    return

@@ -220,14 +220,16 @@ def run(doUnitTests, show_plots, maneuverCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
 
     # setup Gravity Body
-    gravBody, ephemData = simIncludeGravity.addEarth()
-    gravBody.isCentralBody = True          # ensure this is the central gravitational body
-    mu = gravBody.mu
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([gravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     #
     #   setup orbit and simulation time
@@ -260,13 +262,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     # create simulation messages
     #
-
-    # create the gravity ephemerise message
-    messageSize = ephemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
-                                    ephemData)
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
 
     #
