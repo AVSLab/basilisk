@@ -362,6 +362,14 @@ def unitSimIMU(show_plots, useFlag, testCase):
             del moduleOutput[moduleOutputName]
             moduleOutput[moduleOutputName] = newArr
 
+    # for i in range(0,3):
+    #     # plt.figure()
+    #     plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel('Angular velocity (rad/s)')
+    #     plt.xlim((0,1000))
+    # plt.show()
+
 
     # compare the module results to the truth values
     if not 'accuracy' in vars():
@@ -414,5 +422,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         False, # show_plots
         False, # useFlag
-        'CoM offset' # testCase
+        'noise' # testCase
     )

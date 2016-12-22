@@ -95,7 +95,7 @@ There are specific error tolerances for each test. Error tolerances are determin
 
 \section{Test Results}
 
-All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results.
+All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results. Figures \ref{fig:noise}-\ref{fig:walk} show the module output for the process noise and walk bounds checks, respectively.
 
 \begin{table}[htbp]
 	\caption{Test results.}
@@ -115,5 +115,20 @@ All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:result
 		Bias Walk Bounds & \textcolor{ForestGreen}{Passed} & \\ \hline
 	\end{tabular}
 \end{table}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Figures/noise}
+	\caption{Module output of noise standard deviation check.}
+	\label{fig:noise}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Figures/walk}
+	\caption{Module output for random walk bounds check.}
+	\label{fig:walk}
+\end{figure}
+
 
 \end{document}
