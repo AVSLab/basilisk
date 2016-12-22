@@ -53,6 +53,7 @@ void FuelTank::linkInStates(DynParamManager& statesIn)
 	std::vector<FuelSloshParticle>::iterator intFSP;
 	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++)
 		intFSP->linkInStates(statesIn);
+	this->omegaState = statesIn.getStateObject("hubOmega");
 }
 
 void FuelTank::registerStates(DynParamManager& statesIn)
@@ -84,7 +85,8 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	//Contributions of the mass of the tank
 	double massLocal = this->massState->getState()(0, 0);
 	this->effProps.mEff += massLocal;
-	this->effProps.IEffPntB_B += (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity() + massLocal * (rTB_B.dot(rTB_B)*Eigen::Matrix3d::Identity() - rTB_B * rTB_B.transpose());
+    this->ITankPntT_B = (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity();
+	this->effProps.IEffPntB_B += this->ITankPntT_B + massLocal * (rTB_B.dot(rTB_B)*Eigen::Matrix3d::Identity() - rTB_B * rTB_B.transpose());
 	this->effProps.rCB_B += massLocal * rTB_B;
 
     //! - Scale the center of mass location by 1/m_tot
@@ -131,5 +133,41 @@ void FuelTank::computeDerivatives(double integTime)
 	conv(0, 0) = -fuelConsumption;
 	this->massState->setDerivative(conv);
 
+    return;
+}
+
+void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+{
+    // - call updateMassProps to get current mass props info
+    this->updateEffectorMassProps(integTime);
+    
+    std::vector<FuelSloshParticle>::iterator intFSP;
+    for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
+    {
+        Eigen::Vector3d rotAngMomPntCContrFSP_B;
+        double rotEnergyContrFSP = 0.0;
+        rotAngMomPntCContrFSP_B.setZero();
+
+        intFSP->updateEnergyMomContributions(integTime, rotAngMomPntCContrFSP_B, rotEnergyContrFSP);
+        rotAngMomPntCContr_B += rotAngMomPntCContrFSP_B;
+        rotEnergyContr += rotEnergyContrFSP;
+    }
+
+    // Get variables needed for energy momentum calcs
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = omegaState->getState();
+    Eigen::Vector3d rDotTB_B;
+
+    // Call mass props to get current information on states
+    this->updateEffectorMassProps(integTime);
+
+    // Find rotational angular momentum contribution from hub
+    double massLocal = this->massState->getState()(0, 0);
+    rDotTB_B = omegaLocal_BN_B.cross(this->rTB_B);
+    rotAngMomPntCContr_B += this->ITankPntT_B*omegaLocal_BN_B + massLocal*this->rTB_B.cross(rDotTB_B);
+
+    // Find rotational energy contribution from the hub
+    rotEnergyContr += 1.0/2.0*omegaLocal_BN_B.dot(this->ITankPntT_B*omegaLocal_BN_B) + 1.0/2.0*massLocal*rDotTB_B.dot(rDotTB_B);
+    
     return;
 }
