@@ -33,7 +33,7 @@ FuelSloshParticle::FuelSloshParticle()
 
 	//! - Initialize the variables to working values
 	this->massFSP = 0.0;
-	this->r_PB_B.setZero();
+	this->rPB_B.setZero();
 	this->pHat_B.setIdentity();
 	this->k = 1.0;
 	this->c = 0.0;
@@ -70,25 +70,25 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Cached values used in this function
 	this->rho = this->rhoState->getState()(0,0);
-	this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
+	this->rPcB_B = this->rho * this->pHat_B + this->rPB_B;
 
 	//Update the effectors mass
 	this->effProps.mEff = this->massFSP;
 	//Update the position of CoM
-	this->effProps.rCB_B = this->r_PcB_B;
+	this->effProps.rCB_B = this->rPcB_B;
 	//Update the inertia about B
-	this->rTilde_PcB_B << tilde(this->r_PcB_B);
-	this->effProps.IEffPntB_B = this->massFSP * this->rTilde_PcB_B * this->rTilde_PcB_B.transpose();
+	this->rTildePcB_B << tilde(this->rPcB_B);
+	this->effProps.IEffPntB_B = this->massFSP * this->rTildePcB_B * this->rTildePcB_B.transpose();
 
 	//Cached values used in this function
 	this->rhoDot = this->rhoDotState->getState()(0, 0);
-	this->rPrime_PcB_B = this->rhoDot * this->pHat_B;
+	this->rPrimePcB_B = this->rhoDot * this->pHat_B;
 
 	//Update derivative of CoM
-	this->effProps.rPrimeCB_B = this->rPrime_PcB_B;
+	this->effProps.rPrimeCB_B = this->rPrimePcB_B;
 	//Update the body time derivative of inertia about B
-	this->rPrimeTilde_PcB_B << tilde(this->rPrime_PcB_B);
-	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTilde_PcB_B*this->rTilde_PcB_B + this->rTilde_PcB_B*this->rPrimeTilde_PcB_B);
+	this->rPrimeTildePcB_B << tilde(this->rPrimePcB_B);
+	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTildePcB_B*this->rTildePcB_B + this->rTildePcB_B*this->rPrimeTildePcB_B);
 
     return;
 }
@@ -115,18 +115,18 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
 
 	//Cached value, used in computeDerivatives as well
 	a_rho = this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
-		- 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
-		- this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B);
+		- 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrimePcB_B)
+		- this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->rPcB_B);
 
 	//Compute matrix/vector contributions
 	matrixAcontr = -this->massFSP*this->pHat_B*this->pHat_B.transpose();
-	matrixBcontr = this->massFSP*this->pHat_B*this->pHat_B.transpose()*this->rTilde_PcB_B;
-	matrixCcontr = -this->massFSP*this->rTilde_PcB_B*this->pHat_B*pHat_B.transpose();
-	matrixDcontr = this->massFSP*this->rTilde_PcB_B*this->pHat_B*this->pHat_B.transpose()*this->rTilde_PcB_B;
+	matrixBcontr = this->massFSP*this->pHat_B*this->pHat_B.transpose()*this->rTildePcB_B;
+	matrixCcontr = -this->massFSP*this->rTildePcB_B*this->pHat_B*pHat_B.transpose();
+	matrixDcontr = this->massFSP*this->rTildePcB_B*this->pHat_B*this->pHat_B.transpose()*this->rTildePcB_B;
 
 	vecTranscontr = -this->pHat_B*this->a_rho;
-	vecRotcontr = -this->massFSP*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
-		this->a_rho*this->rTilde_PcB_B * this->pHat_B;
+	vecRotcontr = -this->massFSP*omegaTilde_BN_B_local * this->rTildePcB_B *this->rPrimePcB_B -
+		this->a_rho*this->rTildePcB_B * this->pHat_B;
 
     return;
 }
@@ -151,10 +151,29 @@ void FuelSloshParticle::computeDerivatives(double integTime)
 	//Compute rhoDDot
 	Eigen::MatrixXd conv(1,1);
 	conv(0, 0) = 1 / this->massFSP*(-this->massFSP*this->pHat_B.dot(rDDot_BN_B_local) +
-		this->massFSP*this->pHat_B.dot(this->rTilde_PcB_B*omegaDot_BN_B_local) +
+		this->massFSP*this->pHat_B.dot(this->rTildePcB_B*omegaDot_BN_B_local) +
 		this->a_rho);
 	this->rhoDotState->setDerivative(conv);
 
+    return;
+}
+
+void FuelSloshParticle::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+{
+    // Get variables needed for energy momentum calcs
+    Eigen::Vector3d omegaLocal_BN_B;
+    omegaLocal_BN_B = omegaState->getState();
+    Eigen::Vector3d rDotPcB_B;
+
+    // Call mass props to get current information on states
+    this->updateEffectorMassProps(integTime);
+
+    // Find rotational angular momentum contribution from hub
+    rDotPcB_B = this->rPrimePcB_B + omegaLocal_BN_B.cross(this->rPcB_B);
+    rotAngMomPntCContr_B = this->massFSP*this->rPcB_B.cross(rDotPcB_B);
+
+    // Find rotational energy contribution from the hub
+    rotEnergyContr = 1.0/2.0*this->massFSP*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
     return;
 }
 
