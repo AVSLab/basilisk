@@ -93,7 +93,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 
 
 
-## \defgroup Tutorials_1_4
+## \defgroup Tutorials_1_3
 ##   @{
 ## How to setup orbital simulation with multiple gravitational bodies.
 #
