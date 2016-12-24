@@ -412,36 +412,25 @@ void GravityEffector::computeGravityField()
     centralVel.fill(0.0);
     Eigen::Vector3d gravOut;
     gravOut.fill(0.0);
-    Eigen::Vector3d cLocal_B;
     Eigen::Vector3d cLocal_N;
     Eigen::MRPd sigmaBNLoc;
     Eigen::Matrix3d dcmNB;
 
-    cLocal_B = *this->c_B;
     sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
     dcmNB = sigmaBNLoc.toRotationMatrix();
-    cLocal_N = dcmNB*cLocal_B;
+    cLocal_N = dcmNB*(*this->c_B);
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {
         Eigen::Vector3d posRelBody_N;
         posRelBody_N = this->posState->getState();
         posRelBody_N += cLocal_N;
-        Eigen::Vector3d mappedPos;
-        mappedPos.fill(0.0);
-        double dt;
-        dt = (systemClock - (*it)->localHeader.WriteClockNanos)*NANO2SEC;
-        mappedPos = Eigen::Map<Eigen::MatrixXd>
-            (&((*it)->localPlanet.PositionVector[0]), 3, 1);
-        mappedPos += Eigen::Map<Eigen::Vector3d>
-            (&((*it)->localPlanet.VelocityVector[0]), 3, 1)*dt;
+        Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
         posRelBody_N -= mappedPos;
+        
         if(this->centralBody)
         {
-            dt = (systemClock - this->centralBody->localHeader.WriteClockNanos)*NANO2SEC;
-            centralVel = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1);
-            centralPos = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.PositionVector[0]), 3, 1);
-            centralPos += centralVel*dt;
+            centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
             posRelBody_N += centralPos;
             if(this->centralBody != (*it))
             {
@@ -455,16 +444,33 @@ void GravityEffector::computeGravityField()
             systemClock);
         gravOut += bodyGrav;
     }
-    // Here we explicetly update the system inertial spacecraft position
-    // in the spice reference frame if we are computing dynamics
-    // relative to a central body
-    *this->inertialPositionProperty = this->posState->getState() + centralPos;
-    *this->inertialVelocityProperty = this->velState->getState() + centralVel;
-//    if (this->centralBody)
-//    {
-//        *this->inertialPositionProperty += centralPos;
-//    } else {
-//        *this->inertialPositionProperty = this->posState->getState();
-//    }
+    this->updateInertialPosAndVel();
     *this->gravProperty = gravOut;
 }
+
+void GravityEffector::updateInertialPosAndVel()
+{
+    if(this->centralBody)
+    {
+        Eigen::Vector3d centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
+        *this->inertialPositionProperty = centralPos + this->posState->getState();
+        *this->inertialVelocityProperty = Eigen::Map<Eigen::MatrixXd>(&(this->centralBody->localPlanet.VelocityVector[0]), 3, 1) + this->velState->getState();
+    } else {
+        *this->inertialPositionProperty = this->posState->getState();
+        *this->inertialVelocityProperty = this->velState->getState();
+    }
+}
+
+Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *bodyData)
+{
+    Eigen::Vector3d mappedPos;
+    mappedPos.fill(0.0);
+    uint64_t systemClock = this->timeCorr->data()[0];
+    double dt = (systemClock - bodyData->localHeader.WriteClockNanos)*NANO2SEC;
+    mappedPos = Eigen::Map<Eigen::MatrixXd>
+    (&(bodyData->localPlanet.PositionVector[0]), 3, 1);
+    mappedPos += Eigen::Map<Eigen::Vector3d>
+    (&(bodyData->localPlanet.VelocityVector[0]), 3, 1)*dt;
+    return mappedPos;
+}
+
