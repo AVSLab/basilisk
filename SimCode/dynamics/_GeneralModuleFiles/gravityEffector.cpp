@@ -450,6 +450,9 @@ void GravityEffector::computeGravityField()
 
 void GravityEffector::updateInertialPosAndVel()
 {
+    // Here we explicetly update the system inertial spacecraft position
+    // in the spice reference frame if we are computing dynamics
+    // relative to a central body
     if(this->centralBody)
     {
         Eigen::Vector3d centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
