@@ -359,4 +359,4 @@ def run(doUnitTests, show_plots, integratorCase):
 if __name__ == "__main__":
     run(False,       # do unit tests
         True,        # show_plots
-        0)            # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
+        'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
