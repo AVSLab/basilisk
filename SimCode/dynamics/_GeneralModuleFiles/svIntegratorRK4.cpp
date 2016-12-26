@@ -71,7 +71,6 @@ void svIntegratorRK4::integrate(double currentTime, double timeStep)
 	{
 		itOut->second.setDerivative(it->second.getStateDeriv());
 		itOut->second.propagateState(timeStep / 6.0);
-//		it->second.state = itInit->second.state + 0.5*timeStep*it->second.stateDeriv;
 	}
 
 	dynPtr->dynManager.updateStateVector(stateOut);	
