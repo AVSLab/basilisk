@@ -105,8 +105,10 @@ public:
     void linkInStates(DynParamManager& statesIn);
     void registerProperties(DynParamManager& statesIn);
     void computeGravityField();
+    void updateInertialPosAndVel();
 
 private:
+    Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
     void writeOutputMessages(uint64_t currentSimNanos);
     
 public:

@@ -70,6 +70,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     double newTime = CurrentSimNanos*NANO2SEC;
     this->gravField.UpdateState(CurrentSimNanos);
     this->integrateState(newTime);
+    this->gravField.updateInertialPosAndVel();
     this->writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
     return;
@@ -165,6 +166,9 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->cPrime_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
 
+    //! - This is where gravity is computed
+    this->gravField.computeGravityField();
+
     //! Add in hubs mass to the spaceCraft mass props
     this->hub.updateEffectorMassProps(t);
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
@@ -245,7 +249,6 @@ void SpacecraftPlus::integrateState(double t)
 	this->integrator->integrate(t, localTimeStep);
 	this->timePrevious = t;
     
-
     //! Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
     sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
