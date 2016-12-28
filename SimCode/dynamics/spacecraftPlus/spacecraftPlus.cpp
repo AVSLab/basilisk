@@ -166,9 +166,6 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->cPrime_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
 
-    //! - This is where gravity is computed
-    this->gravField.computeGravityField();
-
     //! Add in hubs mass to the spaceCraft mass props
     this->hub.updateEffectorMassProps(t);
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
