@@ -79,7 +79,10 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
             show_plots, maneuverCase)
     assert testResults < 1, testMessage
 
-## This scenario demonstrates how to perform orbit maneuvers within Python.
+
+## \defgroup Tutorials_1_2
+##   @{
+## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #
 # Orbit Maneuvers using Simulation Starting/Stopping in Python {#scenarioOrbitManeuver}
 # ====
@@ -175,6 +178,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
 # ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
 #
+##  @}
 def run(doUnitTests, show_plots, maneuverCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -216,14 +220,16 @@ def run(doUnitTests, show_plots, maneuverCase):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
 
     # setup Gravity Body
-    gravBody, ephemData = simIncludeGravity.addEarth()
-    gravBody.isCentralBody = True          # ensure this is the central gravitational body
-    mu = gravBody.mu
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([gravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     #
     #   setup orbit and simulation time
@@ -256,13 +262,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     # create simulation messages
     #
-
-    # create the gravity ephemerise message
-    messageSize = ephemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
-                                    ephemData)
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
 
     #

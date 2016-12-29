@@ -57,9 +57,9 @@ private:
     extForceTorqueCmdStruct incomingCmdTorqueBuffer;        //!< -- One-time allocation for savings
     extForceTorqueCmdStruct incomingCmdForceInertialBuffer; //!< -- One-time allocation for savings
     extForceTorqueCmdStruct incomingCmdForceBodyBuffer;     //!< -- One-time allocation for savings
-    bool goodTorqueCmdMsg;              //!< -- flat indicating if a torque command message was read
-    bool goodForceBCmdMsg;              //!< -- flat indicating if a inertial force command message was read
-    bool goodForceNCmdMsg;              //!< -- flat indicating if a body-relative force command message was read
+    bool goodTorqueCmdMsg;              //!< -- flag indicating if a torque command message was read
+    bool goodForceBCmdMsg;              //!< -- flag indicating if a inertial force command message was read
+    bool goodForceNCmdMsg;              //!< -- flag indicating if a body-relative force command message was read
 
 
 public:

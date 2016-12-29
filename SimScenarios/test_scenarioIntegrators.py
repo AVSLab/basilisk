@@ -27,8 +27,6 @@
 # Creation Date:  Dec. 14, 2016
 #
 
-
-
 import pytest
 import sys, os, inspect
 import matplotlib
@@ -52,32 +50,19 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import macros
 import orbitalMotion
-
 # import simulation related support
 import spacecraftPlus
 import simIncludeGravity
-
 import svIntegrators
-
-
-
-
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
-@pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
-
+# @pytest.mark.xfail(True, reason="Scott's brain no-worky\n")
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("integratorCase", [
-      (0)
-    , (1)
-    , (2)
-])
-
-# provide a unique test method name, starting with test_
+@pytest.mark.parametrize("integratorCase", ["rk4", "euler", "rk2"])
 def test_scenarioIntegrators(show_plots, integratorCase):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
@@ -86,8 +71,9 @@ def test_scenarioIntegrators(show_plots, integratorCase):
     assert testResults < 1, testMessage
 
 
-
-## This scenario demonstrates how to setup basic 3-DOF orbits.
+## \defgroup Tutorials_1_1
+##   @{
+## How to setup different integration methods for a basic 3-DOF orbit scenario.
 #
 # Specifying a Dynamics Integrator Module {#scenarioIntegrators}
 # ====
@@ -99,9 +85,9 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # The scenarios can be run with the followings setups parameters:
 # Setup | integratorCase
 # ----- | -------------------
-# 1     | 0 (RK4 - default)
-# 2     | 1 (Euler)
-# 3     | 2 (RK2)
+# 1     | "rk4" (RK4 - default)
+# 2     | "euler" (Euler)
+# 3     | "rk2" (RK2)
 #
 # To run the default scenario 1., call the python script through
 #
@@ -142,7 +128,8 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # The integrators must be created to function on a general state vector and be independent of the particular
 # dynamics being integrated.  Note that the default integrator is placed inside the `_GeneralModulesFiles`
 # folder within the `dynamics` folder.
-
+#
+##  @}
 def run(doUnitTests, show_plots, integratorCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -152,7 +139,6 @@ def run(doUnitTests, show_plots, integratorCase):
     #  From here on there scenario python code is found.  Above this line the code is to setup a
     #  unitTest environment.  The above code is not critical if learning how to code BSK.
     #
-
     # Create simulation variable names
     simTaskName = "simTask"
     simProcessName = "simProcess"
@@ -170,12 +156,9 @@ def run(doUnitTests, show_plots, integratorCase):
     simulationTimeStep = macros.sec2nano(120.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
     #
     #   setup the simulation tasks/objects
     #
-
-
     # initialize spacecraftPlus object and set properties
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
@@ -183,37 +166,40 @@ def run(doUnitTests, show_plots, integratorCase):
     scObject.hub.useRotation = False
 
     # default case, RK4 is automatically setup, no extra code is needed
-    if integratorCase == 1:
+    if integratorCase == "euler":
         integratorObject = svIntegrators.svIntegratorEuler(scObject)
         scObject.setIntegrator(integratorObject)
-    elif integratorCase == 2:
+    elif integratorCase == "rk2":
         integratorObject = svIntegrators.svIntegratorRK2(scObject)
         scObject.setIntegrator(integratorObject)
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
 
-    gravBody, ephemData = simIncludeGravity.addEarth()
-    gravBody.isCentralBody = True          # ensure this is the central gravitational body
-    mu = gravBody.mu
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
+
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True  # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([gravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     #
     #   setup orbit and simulation time
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    rLEO = 7000.*1000;      # meters
-    oe.a     = rLEO
-    oe.e     = 0.0001
-    oe.i     = 33.3*macros.D2R
+    rLEO = 7000.*1000  # meters
+    oe.a = rLEO
+    oe.e = 0.0001
+    oe.i = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
-    oe.f     = 85.3*macros.D2R
+    oe.f = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    oe = orbitalMotion.rv2elem(mu,rN,vN)
+    oe = orbitalMotion.rv2elem(mu, rN, vN)
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -230,20 +216,12 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     # create simulation messages
     #
-
-    # create the gravity ephemerise message
-    messageSize = ephemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName,
-                                          gravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(gravBody.bodyInMsgName, messageSize, 0,
-                                    ephemData)
-
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
 
     #
     #   initialize Spacecraft States within the state manager
@@ -255,7 +233,6 @@ def run(doUnitTests, show_plots, integratorCase):
     posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
     velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
 
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
@@ -265,14 +242,13 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   retrieve the logged data
     #
-    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-
-    np.set_printoptions(precision=16)
+    posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N', range(3))
+    velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N', range(3))
 
     #
     #   plot the results
     #
+    np.set_printoptions(precision=16)
     fileNameString = filename[len(path)+6:-3]
 
     # draw orbit in perifocal frame
@@ -284,28 +260,28 @@ def run(doUnitTests, show_plots, integratorCase):
     fig = plt.gcf()
     ax = fig.gca()
     planetColor= '#008800'
-    planetRadius = gravBody.radEquator/1000
+    planetRadius = simIncludeGravity.gravBodyList[-1].radEquator/1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
-    rData=[]
-    fData=[]
-    labelString = ('RK4', 'Euler', 'RK2')
-    for idx in range(0,len(posData)):
-        oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4])
+    rData = []
+    fData = []
+    labelStrings = ("rk4", "euler", "rk2")
+    for idx in range(0, len(posData)):
+        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
         rData.append(oeData.rmag)
         fData.append(oeData.f + oeData.omega - oe.omega)
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-             ,color=unitTestSupport.getLineColor(integratorCase+1,3)
-             ,label = labelString[integratorCase]
-             ,linewidth = 3.0
+             , color=unitTestSupport.getLineColor(labelStrings.index(integratorCase)+1, 3)
+             , label=integratorCase
+             , linewidth=3.0
              )
     # draw the full osculating orbit from the initial conditions
-    fData = np.linspace(0,2*np.pi,100)
+    fData = np.linspace(0, 2*np.pi, 100)
     rData = []
-    for idx in range(0,len(fData)):
+    for idx in range(0, len(fData)):
         rData.append(p/(1+oe.e*np.cos(fData[idx])))
     plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-             ,'--'
+             , '--'
              , color='#555555'
              )
     plt.xlabel('$i_e$ Cord. [km]')
@@ -323,7 +299,6 @@ def run(doUnitTests, show_plots, integratorCase):
     # # close the plots being saved off to avoid over-writing old and new figures
     # plt.close("all")
 
-
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
@@ -334,29 +309,29 @@ def run(doUnitTests, show_plots, integratorCase):
         dataPosRed = posData[::skipValue]
 
         # setup truth data for unit test
-        if integratorCase == 0 :
+        if integratorCase is "rk4":
             truePos = [
-                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
-                , [-6.379381729116369e6,-1.468856486079309e6,2.4807857911251383e6]
-                , [-2.2300944018379333e6,-6.41042000170595e6,-1.7146277123048403e6]
-                , [ 4.614900552629264e6,-3.602242207702853e6,-3.837022831137362e6]
-                , [ 5.879095266351474e6,3.5614954800955867e6,-1.3195822863096392e6]
+                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                , [-6.379381726549218e6, -1.4688565370540658e6, 2.4807857675497606e6]
+                , [-2.230094305694789e6, -6.410420020364709e6, -1.7146277675541767e6]
+                , [4.614900659014343e6, -3.60224207689023e6, -3.837022825958977e6]
+                , [5.879095186201691e6, 3.561495655367985e6, -1.3195821703218794e6]
             ]
-        if integratorCase == 1 :
+        if integratorCase is "euler":
             truePos = [
-                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
-                , [-7.061548520035791e6,-1.448879030405048e6,2.8235801868634606e6]
-                , [-4.831279739240132e6,-8.015202579031518e6,-1.1434850905675632e6]
-                , [ 719606.4841551293,-1.0537603267809e7,-4.966060182111749e6]
-                , [ 6.431096936243265e6,-9.795566279580947e6,-7.438012208149386e6]
+                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                , [-7.061548530211288e6, -1.4488790844105487e6, 2.823580168201031e6]
+                , [-4.831279689590867e6, -8.015202650472983e6, -1.1434851461593418e6]
+                , [719606.5825106134, -1.0537603309084207e7, -4.966060248346598e6]
+                , [6.431097055190775e6, -9.795566286964862e6, -7.438012269629238e6]
             ]
-        if integratorCase == 2 :
+        if integratorCase is "rk2":
             truePos = [
-                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
-                , [-6.425636529823203e6,-1.4666931633078551e6,2.5043832965058694e6]
-                , [-2.4666425868630186e6,-6.509473968241057e6,-1.6421621274477267e6]
-                , [ 4.342561229118839e6,-4.1593823787188856e6,-3.947594701390388e6]
-                , [ 6.279757209209925e6,2.8527384153736155e6,-1.8260960162261447e6]
+                  [-2.8168016010234915e6, 5.248174846916147e6, 3.677157264677297e6]
+                , [-6.425636528569288e6, -1.466693214251768e6, 2.50438327358707e6]
+                , [-2.466642497083674e6, -6.509473992136429e6, -1.6421621818735446e6]
+                , [4.342561337924192e6, -4.1593822658140697e6, -3.947594705237753e6]
+                , [6.279757158711852e6, 2.8527385905952943e6, -1.8260959147806289e6]
             ]
 
         # compare the results to the truth values
@@ -382,8 +357,6 @@ def run(doUnitTests, show_plots, integratorCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,        # show_plots
-         0            # integrator case(0 - RK4, 1 - Euler, 2 - RK2)
-       )
-
+    run(False,       # do unit tests
+        True,        # show_plots
+        'rk4')       # integrator case(0 - RK4, 1 - Euler, 2 - RK2)

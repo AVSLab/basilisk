@@ -37,12 +37,14 @@ public:
 	std::vector<FuelSloshParticle> fuelSloshParticles;
     std::vector<DynamicEffector*> dynEffectors;       //! [-] Vector of dynamic effectors attached to dyn
 	double radiusTank;
-	Eigen::Vector3d r_TB_B;
+	Eigen::Vector3d rTB_B;
+    Eigen::Matrix3d ITankPntT_B;
 	std::string nameOfMassState;
     double propMassInit;                              //! [kg] Initial propellant mass in tank
 
 private:
 	StateData *massState;
+	StateData *omegaState;
 
 public:
 	FuelTank();
@@ -55,6 +57,7 @@ public:
 		Eigen::Vector3d & vecRotcontr);
 	void computeDerivatives(double integTime);
 	void updateEffectorMassProps(double integTime);
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
     void addThrusterSet(DynamicEffector *NewdynEff) {dynEffectors.push_back(NewdynEff);}
 };
 

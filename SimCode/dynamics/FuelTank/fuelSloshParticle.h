@@ -32,7 +32,7 @@ class FuelSloshParticle :
 {
 public:
 	double massFSP;              //!< [kg] mass of fuel slosh particle
-	Eigen::Vector3d r_PB_B;      //!< [m] position vector from B point to slosh equilibrium, P, in body frame
+	Eigen::Vector3d rPB_B;       //!< [m] position vector from B point to slosh equilibrium, P, in body frame
 	Eigen::Vector3d pHat_B;      //!< [-] slosh direction unit vector, in body frame
 	double k;                    //!< [N/m] linear spring constant for fuel slosh
 	double c;                    //!< [N-s/m] linear damping term for fuel slosh
@@ -41,10 +41,10 @@ public:
 
 private:
 	//Cached values, used in multiple functions
-	Eigen::Vector3d rPrime_PcB_B;
-	Eigen::Matrix3d rPrimeTilde_PcB_B;
-	Eigen::Vector3d r_PcB_B;
-	Eigen::Matrix3d rTilde_PcB_B;
+	Eigen::Vector3d rPrimePcB_B;
+	Eigen::Matrix3d rPrimeTildePcB_B;
+	Eigen::Vector3d rPcB_B;
+	Eigen::Matrix3d rTildePcB_B;
 
 	double a_rho;
 	double rho;
@@ -67,6 +67,7 @@ public:
 		Eigen::Vector3d & vecRotcontr);
 	void computeDerivatives(double integTime);
 	void updateEffectorMassProps(double integTime);
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 };
 
 #endif

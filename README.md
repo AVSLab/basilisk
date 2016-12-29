@@ -2,7 +2,7 @@
 
 ### Basilisk ###
 
-* Quick summary
+* <a href="index.html">Summary</a>
 * Versions
 * [Basilisk Wiki](https://bitbucket.org/avslab/basilisk/wiki/Home)
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
@@ -25,7 +25,13 @@ Of the following requirements Python is the only one for which prebuilt librarie
 * Code review
 * [Basilisk Code Guidelines](https://bitbucket.org/avslab/basilisk/wiki/Basilisk%20Project%20Core%20Coding%20Guidelines)
 
+### Getting Started
+To get started with Basilisk, several tutorial python files are found in the SimScenario folder.  Within this web page documentation site, they are listed and discussed in the <a href="modules.html">Modules</a> tab.  To play with the tutorials, it is suggested the user makes a copy to learn, test and experiment.  
+
+
+
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+- <mailto:basilisk-info@colorado.edu>
+- <mailto:basilisk-suggestions@colorado.edu>
+- <mailto:basilisk-bug@colorado.edu>

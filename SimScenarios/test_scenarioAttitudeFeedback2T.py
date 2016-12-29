@@ -96,9 +96,10 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     assert testResults < 1, testMessage
 
 
-
-## This scenario demonstrates how to stabilize the tumble of a spacecraft orbiting the
-# Earth that is initially tumbling.
+## \defgroup Tutorials_2_1
+##   @{
+## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
+# Earth that is initially tumbling, but uses 2 separate threads.
 #
 # Attitude Detumbling Simulation in a Two Process Simulation Setup {#scenarioAttitudeFeedback2T}
 # ====
@@ -208,6 +209,7 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback2T111.svg "MRP history")
 # ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2T211.svg "Torque history")
 #
+##  @}
 def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -278,13 +280,16 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(dynTaskName, scObject)
 
+    # clear prior gravitational body and SPICE setup definitions
+    simIncludeGravity.clearSetup()
 
     # setup Earth Gravity Body
-    earthGravBody, earthEphemData = simIncludeGravity.addEarth()
-    earthGravBody.isCentralBody = True          # ensure this is the central gravitational body
+    simIncludeGravity.addEarth()
+    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
+    mu = simIncludeGravity.gravBodyList[-1].mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earthGravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
 
     # setup extForceTorque module
@@ -363,14 +368,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     # create dynamics simulation messages
     #
-
-    # create the gravity ephemerise message
-    messageSize = earthEphemData.getStructSize()
-    scSim.TotalSim.CreateNewMessage(dynProcessName,
-                                          earthGravBody.bodyInMsgName, messageSize, 2)
-    scSim.TotalSim.WriteMessageData(earthGravBody.bodyInMsgName, messageSize, 0,
-                                          earthEphemData)
-
+    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, dynProcessName)
 
     #
     # create FSW simulation messages
@@ -418,7 +416,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
-    rN, vN = orbitalMotion.elem2rv(earthGravBody.mu, oe)
+    rN, vN = orbitalMotion.elem2rv(mu, oe)
 
     posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
     velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - r_BN_N
