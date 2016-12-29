@@ -25,6 +25,7 @@ import numpy as np
 import RigidBodyKinematics as rbk
 import shutil
 import imp
+import collections
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
@@ -192,6 +193,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             totalVar = separator.join(self.varNameComponents[0:-1])
             dirVec = eval('sim.' + totalVar + '.inputThrDir_S')
             angle = np.random.normal(0, self.phiStd, 1)
+            dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
         return dispVec
 
@@ -220,7 +222,10 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
     def generate(self, sim=None):
         dispVec = []
         for i in range(3):
-            rnd = random.gauss(self.mean, self.stdDeviation)
+            if(isinstance(self.stdDeviation, collections.Sequence)):
+                rnd = random.gauss(self.mean[i], self.stdDeviation[i])
+            else:
+                rnd = random.gauss(self.mean, self.stdDeviation)
             if self.bounds is not None:
                 rnd = self.checkBounds(rnd, self.bounds)
             dispVec.append(rnd)
@@ -383,17 +388,21 @@ class MonteCarloBaseClass:
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
+                    execString = 'newSim.' + disp.varName + ' = '
                     for i in range(9):
-                        execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
-                        exec(execString)
-                        if fHandle is not None:
-                            fHandle.write('    ' + execString + '\n')
+                        execString += str(nextValue[i]) + ', '
+                    execString = execString[0:-1] + ']'
+                    exec(execString)
+                    if fHandle is not None:
+                        fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, VectorVariableDispersion):
+                    execString = 'newSim.' + disp.varName + ' = ['
                     for i in range(3):
-                        execString = 'newSim.' + disp.varName + '[' + str(i) + '] = ' + str(nextValue[i])
-                        exec(execString)
-                        if fHandle is not None:
-                            fHandle.write('    ' + execString + '\n')
+                        execString += str(nextValue[i]) +','
+                    execString = execString[0:-1] + ']'
+                    exec(execString)
+                    if fHandle is not None:
+                        fHandle.write('    ' + execString + '\n')
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
                     exec(execString)
