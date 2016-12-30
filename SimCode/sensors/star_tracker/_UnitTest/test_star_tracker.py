@@ -34,10 +34,10 @@ import logging
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('basilisk')
-sys.path.append(splitPath[0]+'/basilisk/modules')
-sys.path.append(splitPath[0]+'/basilisk/PythonModules')
-sys.path.append(splitPath[0]+'/basilisk/ADCSAlgorithms/sensorInterfaces/STSensorData')
+splitPath = path.split('Basilisk')
+sys.path.append(splitPath[0]+'/Basilisk/modules')
+sys.path.append(splitPath[0]+'/Basilisk/PythonModules')
+sys.path.append(splitPath[0]+'/Basilisk/ADCSAlgorithms/sensorInterfaces/STSensorData')
 
 import MessagingAccess
 import SimulationBaseClass
