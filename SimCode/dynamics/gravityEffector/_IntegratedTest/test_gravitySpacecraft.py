@@ -27,7 +27,6 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
-sys.path.append(splitPath[0] + '/Utilities/pyswice/')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
@@ -38,7 +37,6 @@ import spice_interface
 import sim_model
 import ctypes
 import pyswice
-import pyswice_ck_utilities
 import stateArchitecture
 import spacecraftPlus
 
@@ -127,7 +125,7 @@ def test_singleGravityBody(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.SpiceObject, None, 10)
     unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
 
-    stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+    stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
 
     unitTestSim.InitializeSimulation()
 
@@ -154,7 +152,7 @@ def test_singleGravityBody(show_plots):
     while(currentTime < totalTime):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
-        stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
         posArray.append(posCurr)
@@ -169,7 +167,7 @@ def test_singleGravityBody(show_plots):
         
         currentTime += dt
 
-    stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+    stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
 
@@ -272,7 +270,7 @@ def test_multiBodyGravity(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, unitTestSim.SpiceObject, None, 10)
     unitTestSim.AddModelToTask(unitTaskName, scObject, None, 9)
 
-    stateOut = pyswice_ck_utilities.spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
+    stateOut = pyswice.spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
 
     unitTestSim.InitializeSimulation()
 
@@ -301,7 +299,7 @@ def test_multiBodyGravity(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano(currentTime + dt))
         unitTestSim.ExecuteSimulation()
         timeString = pyswice.et2utc_c(unitTestSim.SpiceObject.J2000Current, 'C', 4, 1024, "Yo")
-        stateOut = pyswice_ck_utilities.spkRead('NEW HORIZONS', timeString, 'J2000', 'SUN')
+        stateOut = pyswice.spkRead('NEW HORIZONS', timeString, 'J2000', 'SUN')
         posCurr = posRef.getState()
         posCurr = [y for x in posCurr for y in x]
         posArray.append(posCurr)
@@ -319,7 +317,7 @@ def test_multiBodyGravity(show_plots):
         posPrevious = stateOut[0:3]*1000.0
         currentTime += dt
 
-    stateOut = pyswice_ck_utilities.spkRead('NEW HORIZONS', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'SUN')
+    stateOut = pyswice.spkRead('NEW HORIZONS', unitTestSim.SpiceObject.getCurrentTimeString(), 'J2000', 'SUN')
     posArray = numpy.array(posArray)
     posError = numpy.array(posError)
     posInc = numpy.array(posInc)

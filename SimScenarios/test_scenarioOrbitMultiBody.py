@@ -46,7 +46,6 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
-sys.path.append(splitPath[0] + '/Basilisk/Utilities/pyswice/_UnitTest')
 # @endcond
 
 # import general simulation support files
@@ -63,7 +62,6 @@ import gravityEffector
 import simIncludeGravity
 
 import pyswice
-import pyswice_ck_utilities
 
 
 
@@ -192,7 +190,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #
 # The initial spacecraft position and velocity vector is obtained via the SPICE function call:
 #~~~~~~~~~~~~~~~~~{.py}
-#       scInitialState = 1000*pyswice_ck_utilities.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
+#       scInitialState = 1000*pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
 #       rN = scInitialState[0:3]         # meters
 #       vN = scInitialState[3:6]         # m/s
 #~~~~~~~~~~~~~~~~~
@@ -352,7 +350,7 @@ def run(doUnitTests, show_plots, scCase):
     #
     #   Setup spacecraft initial states
     #
-    scInitialState = 1000*pyswice_ck_utilities.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
+    scInitialState = 1000*pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
     rN = scInitialState[0:3]         # meters
     vN = scInitialState[3:6]         # m/s
 
@@ -477,7 +475,7 @@ def run(doUnitTests, show_plots, scCase):
         for idx in range(0,numDataPoints):
             time += timedelta(seconds = sec, microseconds=usec)
             timeString = time.strftime(spiceTimeStringFormat)
-            scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+            scState = 1000.0*pyswice.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
             rN = scState[0:3]  # meters
             vN = scState[3:6]  # m/s
             oeData = orbitalMotion.rv2elem(mu, rN, vN)
@@ -499,7 +497,7 @@ def run(doUnitTests, show_plots, scCase):
                 fileNameString+"2"+scCase
                 , plt, path)
     else:
-        scState = 1000.0*pyswice_ck_utilities.spkRead(scSpiceName, simIncludeGravity.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
+        scState = 1000.0*pyswice.spkRead(scSpiceName, simIncludeGravity.spiceObject.getCurrentTimeString(), 'J2000', 'EARTH')
         rTrue = scState[0:3]
 
     # plot the differences between BSK and SPICE position data
@@ -514,7 +512,7 @@ def run(doUnitTests, show_plots, scCase):
         usec = (macros.NANO2SEC*posData[idx, 0] - sec) * 1000000
         time = timeInit +  timedelta(seconds=sec, microseconds=usec)
         timeString = time.strftime(spiceTimeStringFormat)
-        scState = 1000*pyswice_ck_utilities.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
+        scState = 1000*pyswice.spkRead(scSpiceName, timeString, 'J2000', 'EARTH')
         posError.append(posData[idx,1:4]-np.array(scState[0:3]))  # meters
     for idx in range(1,4):
         plt.plot(posData[:, 0]*macros.NANO2MIN, np.array(posError)[:,idx-1],

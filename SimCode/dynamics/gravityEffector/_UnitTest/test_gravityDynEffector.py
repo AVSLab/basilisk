@@ -27,7 +27,6 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
-sys.path.append(splitPath[0] + '/Utilities/pyswice/')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
@@ -38,7 +37,6 @@ import spice_interface
 import sim_model
 import ctypes
 import pyswice
-import pyswice_ck_utilities
 import stateArchitecture
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -161,13 +159,13 @@ def test_singleGravityBody(show_plots):
     earthGravBody.initBody(0)
     SpiceObject.UpdateState(0)
     for i in range(2*3600):
-        stateOut = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
+        stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
         etPrev =etCurr - 2.0
         stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
-        statePrev = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
+        statePrev = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringPrev, 'J2000', 'EARTH')
         etNext =etCurr + 2.0
         stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
-        stateNext = pyswice_ck_utilities.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
+        stateNext = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringNext, 'J2000', 'EARTH')
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         normVec.append(numpy.linalg.norm(stateOut[0:3]))
         
@@ -298,7 +296,7 @@ def test_multiBodyGravity(show_plots):
     dtVal = 1000.0
     gravErrVec = []
     for i in range(1300):
-        stateOut = pyswice_ck_utilities.spkRead('DAWN', stringCurrent, 'J2000', 'SUN')*1000.0
+        stateOut = pyswice.spkRead('DAWN', stringCurrent, 'J2000', 'SUN')*1000.0
         posState.setState(stateOut[0:3].reshape(3,1).tolist())
         TotalSim.newManager.setPropertyValue("systemTime", [[i*1000*1e9], [i*1000.0]])
         TotalSim.ConfigureStopTime(macros.sec2nano(i*1000.0)+10)
@@ -306,10 +304,10 @@ def test_multiBodyGravity(show_plots):
         allGrav.computeGravityField()
         etPrev =SpiceObject.J2000Current - 2.0
         stringPrev = pyswice.et2utc_c(etPrev, 'C', 4, 1024, "Yo")
-        statePrev = pyswice_ck_utilities.spkRead('DAWN', stringPrev, 'J2000', 'SUN')*1000.0
+        statePrev = pyswice.spkRead('DAWN', stringPrev, 'J2000', 'SUN')*1000.0
         etNext =SpiceObject.J2000Current + 2.0
         stringNext = pyswice.et2utc_c(etNext, 'C', 4, 1024, "Yo")
-        stateNext = pyswice_ck_utilities.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
+        stateNext = pyswice.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         gravErrVec.append(numpy.linalg.norm(gravVec.reshape(3,1) - numpy.array(TotalSim.newManager.getPropertyReference("g_N"))))
     
