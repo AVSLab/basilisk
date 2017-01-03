@@ -170,14 +170,9 @@ def velocityPointTestFunction(show_plots):
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               moduleOutputName, testFailCount, testMessages)
+
     #
     # check omega_RN_N
     #
@@ -193,14 +188,9 @@ def velocityPointTestFunction(show_plots):
 
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               moduleOutputName, testFailCount, testMessages)
+
     #
     # check domega_RN_N
     #
@@ -209,21 +199,15 @@ def velocityPointTestFunction(show_plots):
                                                   range(3))
     # set the filtered output truth states
     trueVector = [
-               [0.0, 0.0, 1.315647475046e-23],
-               [0.0, 0.0, 1.315647475046e-23],
-               [0.0, 0.0, 1.315647475046e-23]
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0],
+               [0.0, 0.0, 0.0]
                ]
     # compare the module results to the truth values
     accuracy = 1e-12
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i],trueVector[i],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
-    
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput, accuracy,
+                                                               moduleOutputName, testFailCount, testMessages)
+
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
     unitTestSim.ConfigureStopTime(macros.sec2nano(0.6))    # run an additional 0.6 seconds
