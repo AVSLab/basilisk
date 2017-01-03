@@ -112,7 +112,10 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
     double  temp;
     double  denom;
     
-    
+    /* zero the reference rate and acceleration vectors */
+    v3SetZero(omega_RN_R);
+    v3SetZero(domega_RN_R);
+
     /* Compute relative position and velocity of the spacecraft with respect to the main celestial body */
     v3Subtract(r_BN_N, celBdyPositonVector, r);
     v3Subtract(v_BN_N, celBdyVelocityVector, v);
