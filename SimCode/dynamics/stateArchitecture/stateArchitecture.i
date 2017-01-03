@@ -27,7 +27,7 @@
 %include "swig_common_model.i"
 
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "../_GeneralModuleFiles/StateData.h"
+%include "../_GeneralModuleFiles/stateData.h"
 %include "../../utilities/avsEigenSupport.h"
 
 %pythoncode %{

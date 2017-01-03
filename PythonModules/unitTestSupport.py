@@ -80,6 +80,7 @@ def isArrayEqual(result, truth, dim, accuracy):
 
     for i in range(0,dim):
         if math.fabs(result[i+1] - truth[i]) > accuracy:
+            print "Error:",  math.fabs(result[i+1] - truth[i])
             return 0    # return 0 to indicate the array's are not equal
     return 1            # return 1 to indicate the two array's are equal
 

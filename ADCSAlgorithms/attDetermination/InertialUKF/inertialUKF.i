@@ -19,7 +19,7 @@
 %module inertialUKF
 %{
    #include "inertialUKF.h"
-   #include "../_GeneralModuleFiles/UKFUtilities.h"
+   #include "../_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -32,7 +32,7 @@
 %constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
 %ignore Reset_inertialUKF;
 %include "inertialUKF.h"
-%include "../_GeneralModuleFiles/UKFUtilities.h"
+%include "../_GeneralModuleFiles/ukfUtilities.h"
 
 %pythoncode %{
 import sys

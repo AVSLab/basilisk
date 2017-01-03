@@ -19,7 +19,7 @@
 %module sunlineUKF
 %{
    #include "sunlineUKF.h"
-   #include "../_GeneralModuleFiles/UKFUtilities.h"
+   #include "../_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
@@ -35,7 +35,7 @@ STRUCTASLIST(SingleCSSConfig)
 GEN_SIZEOF(SunlineMeasOut);
 GEN_SIZEOF(SunlineUKFConfig);
 %include "sunlineUKF.h"
-%include "../_GeneralModuleFiles/UKFUtilities.h"
+%include "../_GeneralModuleFiles/ukfUtilities.h"
 
 %pythoncode %{
 import sys

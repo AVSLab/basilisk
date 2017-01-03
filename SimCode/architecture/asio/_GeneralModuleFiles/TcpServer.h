@@ -24,7 +24,7 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
-#include "basicIoDevice.h"
+#include "BasicIoDevice.h"
 
 class TcpServer
     : public BasicIoObject_t<boost::asio::ip::tcp::socket>

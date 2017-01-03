@@ -18,7 +18,7 @@
  */
 #include "sensors/star_tracker/star_tracker.h"
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/RigidBodyKinematics.h"
+#include "utilities/rigidBodyKinematics.h"
 #include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <iostream>
 
