@@ -32,8 +32,8 @@
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double BS[9];               /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
-    double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
+    double dcm_BS[9];             /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
+    double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
     double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
     uint32_t CurrentADCSState;  /*!< [-] Current ADCS state for subsystem */
 }vehicleConfigData;
@@ -50,7 +50,7 @@ typedef struct {
 }RWConstellation;
 
 typedef struct {
-    double rThrust_S[3];      /*!< [m] Location of the thruster in the spacecraft*/
+    double rThrust_S[3];        /*!< [m] Location of the thruster in the spacecraft*/
     double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
 	double maxThrust;			/*!< [N] Max thrust*/
 }ThrusterPointData;
@@ -62,8 +62,8 @@ typedef struct {
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double BS[9];               /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
-    double ISCPntB_S[9];                /*!< [kg m^2] Spacecraft Inertia */
+    double dcm_BS[9];             /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
+    double ISCPntB_S[9];          /*!< [kg m^2] Spacecraft Inertia */
     double CoM_S[3];              /*!< [m] Center of mass of spacecraft in body*/
     char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/

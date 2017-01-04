@@ -58,8 +58,8 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
                     sizeof(vehicleConfigData), (void*) &LocalConfigData, moduleID);
-        m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->platform2StrDCM,
-                   RECAST3X3 ConfigData->platform2BdyDCM);
+        m33MultM33(RECAST3X3 LocalConfigData.dcm_BS, RECAST3X3 ConfigData->dcm_SP,
+                   RECAST3X3 ConfigData->dcm_BP);
     }
     
 }
@@ -79,13 +79,13 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
                 sizeof(IMUOutputData), (void*) &LocalInput, moduleID);
     
-    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.DVFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DVFrameBody,
               ConfigData->LocalOutput.DVFrameBody);
-    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.AccelBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AccelBody,
               ConfigData->LocalOutput.AccelBody);
-    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.DRFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DRFrameBody,
               ConfigData->LocalOutput.DRFrameBody);
-    m33MultV3(RECAST3X3 ConfigData->platform2BdyDCM, LocalInput.AngVelBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AngVelBody,
               ConfigData->LocalOutput.AngVelBody);
     
     WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUOutputData),

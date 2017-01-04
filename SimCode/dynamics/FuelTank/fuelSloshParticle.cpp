@@ -97,20 +97,20 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+    Eigen::Matrix3d dcm_BN;                       /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcm_NB;                       /* direction cosine matrix from B to N */
 	Eigen::Vector3d omega_BN_B_local = this->omegaState->getState();
 	Eigen::Matrix3d omegaTilde_BN_B_local;
     Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
     Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
     gLocal_N = *this->g_N;
 
-    //! - Find dcmBN
+    //! - Find dcm_BN
     sigmaBNLocal = (Eigen::Vector3d ) this->sigmaState->getState();
-    dcmNB = sigmaBNLocal.toRotationMatrix();
-    dcmBN = dcmNB.transpose();
+    dcm_NB = sigmaBNLocal.toRotationMatrix();
+    dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
-    g_B = dcmBN*gLocal_N;
+    g_B = dcm_BN*gLocal_N;
 	omegaTilde_BN_B_local << tilde(omega_BN_B_local);
 
 	//Cached value, used in computeDerivatives as well
@@ -138,12 +138,12 @@ void FuelSloshParticle::computeDerivatives(double integTime)
 	
 	//Convert rDDot_BN_N to rDDot_BN_B
 	Eigen::MRPd sigmaBNLocal;
-	Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-	Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
 	sigmaBNLocal = (Eigen::Vector3d) this->sigmaState->getState();
-	dcmNB = sigmaBNLocal.toRotationMatrix();
-	dcmBN = dcmNB.transpose();
-	Eigen::Vector3d rDDot_BN_B_local = dcmBN*rDDot_BN_N_local;
+	dcm_NB = sigmaBNLocal.toRotationMatrix();
+	dcm_BN = dcm_NB.transpose();
+	Eigen::Vector3d rDDot_BN_B_local = dcm_BN*rDDot_BN_N_local;
 	
 	//Set the derivative of rho to rhoDot
 	this->rhoState->setDerivative(this->rhoDotState->getState());

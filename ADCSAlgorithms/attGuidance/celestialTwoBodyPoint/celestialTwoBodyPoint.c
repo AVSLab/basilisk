@@ -178,7 +178,7 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint6
     v3Add(temp3, temp3_3, a_n);
     
     /* Reference Frame computation */
-    double RN[3][3];        /* DCM that maps from Reference frame to the inertial */
+    double dcm_RN[3][3];    /* DCM that maps from Reference frame to the inertial */
     double r1_hat[3];       /* 1st row vector of RN */
     double r2_hat[3];       /* 2nd row vector of RN */
     double r3_hat[3];       /* 3rd row vector of RN */
@@ -186,10 +186,10 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint6
     v3Normalize(ConfigData->R_P1, r1_hat);
     v3Normalize(R_n, r3_hat);
     v3Cross(r3_hat, r1_hat, r2_hat);
-    v3Copy(r1_hat, RN[0]);
-    v3Copy(r2_hat, RN[1]);
-    v3Copy(r3_hat, RN[2]);
-    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
+    v3Copy(r1_hat, dcm_RN[0]);
+    v3Copy(r2_hat, dcm_RN[1]);
+    v3Copy(r3_hat, dcm_RN[2]);
+    C2MRP(dcm_RN, ConfigData->attRefOut.sigma_RN);
     
     /* Reference base-vectors first time-derivative */
     double dr1_hat[3];      /* r1_hat first time-derivative */
@@ -222,7 +222,7 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint6
     omega_RN_R[0] = v3Dot(r3_hat, dr2_hat);
     omega_RN_R[1]= v3Dot(r1_hat, dr3_hat);
     omega_RN_R[2] = v3Dot(r2_hat, dr1_hat);
-    m33tMultV3(RN, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
+    m33tMultV3(dcm_RN, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
     
     /* Reference base-vectors second time-derivative */
     double ddr1_hat[3];     /* r1_hat second time-derivative */
@@ -261,7 +261,7 @@ void computecelestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData, uint6
     domega_RN_R[0] = v3Dot(dr3_hat, dr2_hat) + v3Dot(r3_hat, ddr2_hat) - v3Dot(omega_RN_R, dr1_hat);
     domega_RN_R[1] = v3Dot(dr1_hat, dr3_hat) + v3Dot(r1_hat, ddr3_hat) - v3Dot(omega_RN_R, dr2_hat);
     domega_RN_R[2] = v3Dot(dr2_hat, dr1_hat) + v3Dot(r2_hat, ddr1_hat) - v3Dot(omega_RN_R, dr3_hat);
-    m33tMultV3(RN, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
+    m33tMultV3(dcm_RN, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
     
     return;
 }

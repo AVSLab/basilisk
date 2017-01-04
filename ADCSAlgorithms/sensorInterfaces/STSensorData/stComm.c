@@ -59,7 +59,7 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
                     sizeof(vehicleConfigData), (void*) &LocalConfigData, moduleID);
-        m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->T_StrPlatform,
+        m33MultM33(RECAST3X3 LocalConfigData.dcm_BS, RECAST3X3 ConfigData->T_StrPlatform,
                    RECAST3X3 ConfigData->T_BdyPlatform);
     }
     

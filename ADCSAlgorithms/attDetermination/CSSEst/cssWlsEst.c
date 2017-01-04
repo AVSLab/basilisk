@@ -60,7 +60,7 @@ void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
                 sizeof(vehicleConfigData), &localConfigData, moduleID);
     for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
     {
-        m33MultV3(RECAST3X3 localConfigData.BS, ConfigData->CSSData[i].nHatStr,
+        m33MultV3(RECAST3X3 localConfigData.dcm_BS, ConfigData->CSSData[i].nHatStr,
                   ConfigData->CSSData[i].nHatBdy);
     }
     

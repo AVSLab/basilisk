@@ -83,7 +83,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[2] = sin(tempPhi);
     
     //! Rotation from P frame to structure frame (S)
-    m33tMultV3(this->PS, sensorV3_P, this->nHatStr);
+    m33tMultV3(this->dcm_PS, sensorV3_P, this->nHatStr);
 }
 
 /*!
@@ -96,7 +96,7 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
 void CoarseSunSensor::setStructureToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->PS);
+    Euler3212C(q, this->dcm_PS);
 }
 
 //! There is nothing to do in the default destructor

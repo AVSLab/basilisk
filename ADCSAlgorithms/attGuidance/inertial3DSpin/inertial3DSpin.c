@@ -135,10 +135,10 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
     double domega_RN_N[3];
     
     /*! Compute angular rate */
-    double RN[3][3]; /* DCM from inertial frame N to generated ref frame R */
+    double dcm_RN[3][3];   /* DCM from inertial frame N to generated ref frame R */
     double omega_RR0_N[3]; /* angular rate of the generated ref R wrt the base ref R0 in inertial N components */
-    MRP2C(ConfigData->sigma_RN, RN);
-    m33tMultV3(RN, omega_RR0_R, omega_RR0_N);
+    MRP2C(ConfigData->sigma_RN, dcm_RN);
+    m33tMultV3(dcm_RN, omega_RR0_R, omega_RR0_N);
     v3Add(omega_R0N_N, omega_RR0_N, omega_RN_N);
     
     /*! Compute angular acceleration */
@@ -149,7 +149,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
     /*! Integrate Attitude */
     double B[3][3]; /* MRP rate matrix */
     double omega_RN_R[3]; /* inertial angular rate of ref R in R frame components */
-    m33MultV3(RN, omega_RN_N, omega_RN_R);
+    m33MultV3(dcm_RN, omega_RN_N, omega_RN_R);
     BmatMRP(ConfigData->sigma_RN, B);
     m33Scale(0.25 * dt, B, B);
     m33MultV3(B, omega_RN_R, v3Temp);
