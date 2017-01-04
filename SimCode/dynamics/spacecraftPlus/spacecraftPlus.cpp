@@ -39,6 +39,7 @@ SpacecraftPlus::SpacecraftPlus()
     this->dcm_BS.setIdentity();
     this->struct2BdyPropertyName = "dcm_BS";
     this->dvAccum_B.fill(0.0);
+    this->MRPSwitchCount = 0;
     return;
 }
 
@@ -250,6 +251,7 @@ void SpacecraftPlus::integrateState(double t)
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
         this->hubSigma->setState(sigmaBNLoc);
+        this->MRPSwitchCount++;
     }
     
     // = (Eigen::Vector3d) this->hubSigma->getState();
@@ -377,6 +379,7 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
+    stateOut.MRPSwitchCount = this->MRPSwitchCount;
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
