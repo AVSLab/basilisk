@@ -18,6 +18,7 @@
  */
 
 #include "dynamics/DynOutput/bore_ang_calc.h"
+#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/rigidBodyKinematics.h"
@@ -39,7 +40,7 @@ BoreAngCalc::BoreAngCalc()
     ReinitSelf = false;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
     memset(&localPlanet, 0x0, sizeof(SpicePlanetState));
-    memset(&localState, 0x0, sizeof(OutputStateData));
+    memset(&localState, 0x0, sizeof(SCPlusOutputStateData));
     return;
 }
 
@@ -70,7 +71,7 @@ void BoreAngCalc::SelfInit()
 void BoreAngCalc::CrossInit()
 {
     StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
-                            StateString, sizeof(OutputStateData), moduleID);
+                            StateString, sizeof(SCPlusOutputStateData), moduleID);
     celInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(celBodyString,
                             sizeof(SpicePlanetState), moduleID);
 }
@@ -102,7 +103,7 @@ void BoreAngCalc::ReadInputs()
     //! - Set the input pointer and size appropriately based on input type
     //! - Read the input message into the correct pointer
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &localHeader,
-        sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&localState), moduleID);
+        sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&localState), moduleID);
     inputsGood &= SystemMessaging::GetInstance()->ReadMessage(celInMsgID, &localHeader,
         sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
     

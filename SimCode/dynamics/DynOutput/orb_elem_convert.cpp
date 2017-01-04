@@ -16,7 +16,6 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "dynamics/deprecatedCode/SixDofEOM/six_dof_eom.h"
 #include "dynamics/DynOutput/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_planet_state.h"
@@ -57,7 +56,7 @@ void OrbElemConvert::SelfInit()
     //! Begin method steps
     //! - Determine what the size of the output should be and create the message
 	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetState) :
-		sizeof(OutputStateData);
+		sizeof(SCPlusOutputStateData);
 	std::string stateMsgType = useEphemFormat ? "SpicePlanetState" :
 		"OutputStateData";
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
@@ -96,7 +95,7 @@ void OrbElemConvert::CrossInit()
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     
-    OutputStateData LocalState;
+    SCPlusOutputStateData LocalState;
 	SpicePlanetState localPlanet;
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
 		reinterpret_cast<uint8_t *> (&LocalState);
@@ -113,7 +112,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 		}
 		else
 		{
-			memset(&LocalState, 0x0, sizeof(OutputStateData));
+			memset(&LocalState, 0x0, sizeof(SCPlusOutputStateData));
 			memcpy(LocalState.r_BN_N, r_N, 3 * sizeof(double));
 			memcpy(LocalState.v_BN_N, v_N, 3 * sizeof(double));
 		}
@@ -157,7 +156,7 @@ void OrbElemConvert::ReadInputs()
         return;
     }
     classicElements LocalElements;
-    OutputStateData LocalState;
+    SCPlusOutputStateData LocalState;
 	SpicePlanetState localPlanet;
     SingleMessageHeader LocalHeader;
 
