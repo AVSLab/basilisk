@@ -134,8 +134,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     # configure MassPropsData
     MassPropsData = spacecraftPlus.SCPlusMassPropsData()
     MassPropsData.massSC = -97.9
-    MassPropsData.c_B = [0.1,0,0]
-    MassPropsData.ISC_PntB_B = [-98.9] * 9
+    MassPropsData.c_B = [0,0,0]
+    MassPropsData.ISC_PntB_B = [[100.0, 0.0, 0.0], [0.0, 100.0, 0.0], [0.0, 0.0, 100.0]] 
 
     # configure module input message
     StateCurrent = spacecraftPlus.SCPlusOutputStateData()
@@ -310,8 +310,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
 
     # configure spacecraft_mass_props message
-    unitSim.TotalSim.CreateNewMessage("TestProcess", "mass_state_output", 8*13, 2)
-    unitSim.TotalSim.WriteMessageData("mass_state_output", 8*13, 0, MassPropsData)
+    unitSim.TotalSim.CreateNewMessage("TestProcess", ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 2)
+    unitSim.TotalSim.WriteMessageData(ImuSensor.InputMassMsg, MassPropsData.getStructSize(), 0, MassPropsData)
 
     # configure inertial_state_output message
     unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*11, 2)
@@ -421,5 +421,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         False, # show_plots
         False, # useFlag
-        'noise' # testCase
+        'CoM offset' # testCase
     )
