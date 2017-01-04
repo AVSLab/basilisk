@@ -24,7 +24,7 @@
 #ifndef TCP_CLIENT_H
 #define TCP_CLIENT_H
 
-#include "basicIoDevice.h"
+#include "BasicIoDevice.h"
 #include <stdint.h>
 
 class TcpClient
