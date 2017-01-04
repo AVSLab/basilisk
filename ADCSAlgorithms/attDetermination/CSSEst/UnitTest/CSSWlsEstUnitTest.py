@@ -142,9 +142,11 @@ i=0
 #Initializing a 2D double array is hard with SWIG.  That's why there is this 
 #layer between the above list and the actual C variables.
 for CSSHat in CSSOrientationList:
-   SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
-   cssWlsEst.CSSWlsConfigArray_setitem( CSSWlsEstFSWConfig.CSSData, i,
-      CSSConfigElement)
+   # SimulationBaseClass.SetCArray(CSSHat, 'double', CSSConfigElement.nHatBdy)
+   CSSConfigElement.nHatBdy = CSSHat
+   # cssWlsEst.CSSWlsConfigArray_setitem( CSSWlsEstFSWConfig.CSSData, i,
+   #    CSSConfigElement)
+   CSSWlsEstFSWConfig.CSSData[i] = CSSConfigElement
    i += 1
 
 #Create input message and size it because the regular creator of that message 
@@ -192,7 +194,7 @@ for testVec in TestVectors:
        i += 1
     #Write in the observation data to the input message
     TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-       cssDataMsg);
+       cssDataMsg)
     #Increment the stop time to new termination value
     TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
     #Execute simulation to current stop time
@@ -258,7 +260,7 @@ testFailCount += checkNumActiveAccuracy(cssDataMsg, numActiveUse,
 #Same test as above, but zero first element to get to a single coverage case
 sim_model.doubleArray_setitem(cssDataMsg, 0, 0.0)
 TotalSim.TotalSim.WriteMessageData(CSSWlsEstFSWConfig.InputDataName, 8*8, 0,
-   cssDataMsg);
+   cssDataMsg)
 TotalSim.ConfigureStopTime(int((stepCount+1)*1E9))
 TotalSim.ExecuteSimulation()
 stepCount += 1
