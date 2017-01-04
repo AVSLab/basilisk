@@ -32,8 +32,8 @@
 typedef struct {
     double Mass;                      //!< kg   Current spacecraft mass
     double CoM[3];                    //!< m    Center of mass of spacecraft (relative to struct)
-    double InertiaTensor[3*3];       //!< kgm2 Inertia tensor of spacecraft (relative to body)
-    double T_str2Bdy[3*3];           //!< -- Transformation from str to body
+    double InertiaTensor[3*3];        //!< kgm2 Inertia tensor of spacecraft (relative to body)
+    double dcm_BS[3*3];               //!< -- Transformation from str to body
 }MassPropsData;
 
 /*! This structure is used in the messaging system to communicate what the 

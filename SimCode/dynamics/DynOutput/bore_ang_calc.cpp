@@ -115,30 +115,30 @@ void BoreAngCalc::ReadInputs()
 */
 void BoreAngCalc::computeAxisPoint()
 {
-    double T_inrtl2Bdy[3][3];
-    double T_Inrtl2Point[3][3];
-    double T_Point2Bdy[3][3];
+    double dcm_BN[3][3];                /*!< dcm, inertial to body frame */
+    double dcm_PoN[3][3];               /*!< dcm, inertial to Point frame */
+    double dcm_BPo[3][3];               /*!< dcm, Point to body frame */
     double relPosVector[3];
     double relVelVector[3];
     double secPointVector[3];
     double primPointVector[3];
     
-    MRP2C(localState.sigma_BN, T_inrtl2Bdy);
+    MRP2C(localState.sigma_BN, dcm_BN);
     v3Subtract(localPlanet.PositionVector, localState.r_BN_N, relPosVector);
     v3Subtract(localPlanet.VelocityVector, localState.v_BN_N, relVelVector);
     v3Cross(relPosVector, relVelVector, secPointVector);
     v3Normalize(secPointVector, secPointVector);
     v3Normalize(relPosVector, primPointVector);
-    v3Copy(primPointVector, &(T_Inrtl2Point[0][0]));
-    v3Cross(primPointVector, secPointVector, &(T_Inrtl2Point[2][0]));
-    v3Normalize(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[2][0]));
-    v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
-            &(T_Inrtl2Point[1][0]));
-    m33MultM33t(T_inrtl2Bdy, T_Inrtl2Point, T_Point2Bdy);
+    v3Copy(primPointVector, &(dcm_PoN[0][0]));
+    v3Cross(primPointVector, secPointVector, &(dcm_PoN[2][0]));
+    v3Normalize(&(dcm_PoN[2][0]), &(dcm_PoN[2][0]));
+    v3Cross(&(dcm_PoN[2][0]), &(dcm_PoN[0][0]),
+            &(dcm_PoN[1][0]));
+    m33MultM33t(dcm_BN, dcm_PoN, dcm_BPo);
     Eigen::MatrixXd strVec = Eigen::Map<Eigen::MatrixXd>(strBoreVec, 3, 1);
     Eigen::MatrixXd dcm_BS = Eigen::Map<Eigen::MatrixXd>(&(localState.dcm_BS[0][0]), 3, 3);
     Eigen::MatrixXd bVec_B = dcm_BS*strVec;
-    m33tMultV3(T_Point2Bdy, bVec_B.data(), boreVecPoint);
+    m33tMultV3(dcm_BPo, bVec_B.data(), boreVecPoint);
     
 }
 /*! This method computes the output structure for messaging. The miss angle is 

@@ -253,9 +253,9 @@ void ImuSensor::computePlatformDR()
     double MRP_Bdy2Inrtl_Prev[3];
     double MRP_BdyPrev2BdyNow[3];
     double DRBodyFrame[3];
-    double T_Bdy2Platform[3][3];
+    double dcm_PB[3][3];            /*!< dcm, body to platform frame */
     
-    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, T_Bdy2Platform);
+    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, dcm_PB);
     v3Scale(-1.0, StatePrevious.sigma_BN, MRP_Bdy2Inrtl_Prev);
     if(StateCurrent.MRPSwitchCount != StatePrevious.MRPSwitchCount)
     {
@@ -268,8 +268,8 @@ void ImuSensor::computePlatformDR()
     }
     addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma_BN, MRP_BdyPrev2BdyNow);
     MRP2PRV(MRP_BdyPrev2BdyNow, DRBodyFrame);
-    m33MultV3(T_Bdy2Platform, DRBodyFrame, this->trueValues.DRFramePlatform);
-    m33MultV3(T_Bdy2Platform, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
+    m33MultV3(dcm_PB, DRBodyFrame, this->trueValues.DRFramePlatform);
+    m33MultV3(dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
 }
 
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
@@ -282,8 +282,8 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double RotForces[3];
     double InertialAccel[3];
     double dt;
-    double T_Bdy2Platform[3][3];
-    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, T_Bdy2Platform);
+    double dcm_PB[3][3];            /*!< dcm, body to platform frame */
+    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, dcm_PB);
     v3Subtract(SensorPosStr.data(), MassCurrent.CoM, CmRelPos);
     m33MultV3(StateCurrent.dcm_BS, CmRelPos, CmRelPos);
     dt = (CurrentTime - PreviousTime)*1.0E-9;
@@ -298,10 +298,10 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     v3Copy(InertialAccel, this->trueValues.DVFramePlatform);
     v3Scale(1.0/dt, InertialAccel, InertialAccel);
     v3Add(InertialAccel, RotForces, InertialAccel);
-    m33MultV3(T_Bdy2Platform, InertialAccel, this->trueValues.AccelPlatform);
+    m33MultV3(dcm_PB, InertialAccel, this->trueValues.AccelPlatform);
     v3Scale(dt, RotForces, RotForces);
     v3Add(this->trueValues.DVFramePlatform, RotForces, this->trueValues.DVFramePlatform);
-    m33MultV3(T_Bdy2Platform, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
+    m33MultV3(dcm_PB, this->trueValues.DVFramePlatform, this->trueValues.DVFramePlatform);
     
 }
 

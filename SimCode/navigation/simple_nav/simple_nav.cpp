@@ -184,9 +184,9 @@ void SimpleNav::applyErrors()
     v3Add(trueTransState.vehAccumDV, &(navErrors.data()[15]), estTransState.vehAccumDV);
     //! - Add errors to  sun-pointing
     if(inputSunID >= 0) {
-        double T_bdyT2bdyO[3][3];
-        MRP2C(&(navErrors.data()[12]), T_bdyT2bdyO);
-        m33MultV3(T_bdyT2bdyO, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
+        double dcm_OT[3][3];       /* dcm, body T to body O */
+        MRP2C(&(navErrors.data()[12]), dcm_OT);
+        m33MultV3(dcm_OT, trueAttState.vehSunPntBdy, estAttState.vehSunPntBdy);
     }
 }
 
@@ -208,11 +208,11 @@ void SimpleNav::computeTrueOutput(uint64_t Clock)
     //! - For the sun pointing output, compute the spacecraft to sun vector, normalize, and trans 2 body.
     if(inputSunID >= 0) {
         double sc2SunInrtl[3];
-        double T_inrtl2bdy[3][3];
+        double dcm_BN[3][3];        /* dcm, inertial to body */
         v3Subtract(sunState.PositionVector, inertialState.r_BN_N, sc2SunInrtl);
         v3Normalize(sc2SunInrtl, sc2SunInrtl);
-        MRP2C(inertialState.sigma_BN, T_inrtl2bdy);
-        m33MultV3(T_inrtl2bdy, sc2SunInrtl, trueAttState.vehSunPntBdy);
+        MRP2C(inertialState.sigma_BN, dcm_BN);
+        m33MultV3(dcm_BN, sc2SunInrtl, trueAttState.vehSunPntBdy);
     }
 }
 

@@ -257,13 +257,13 @@ void OpenGLIO::addPlanetMessageName(std::string planetName)
 void OpenGLIO::computeSunHeadingData()
 {
     double Sc2Sun_Inrtl[3];
-    double T_Irtl2Bdy[3][3];
+    double dcm_BN[3][3];
     
     v3Scale(-1.0, this->stateInMsgBuffer.r_BN_N, Sc2Sun_Inrtl);
     v3Add(Sc2Sun_Inrtl, this->sunEphmInMsgBuffer.PositionVector, Sc2Sun_Inrtl);
     v3Normalize(Sc2Sun_Inrtl, this->scSim->sHatN);
-    MRP2C(this->stateInMsgBuffer.sigma_BN, T_Irtl2Bdy);
-    m33MultV3(T_Irtl2Bdy, this->scSim->sHatN, this->scSim->sHatB);
+    MRP2C(this->stateInMsgBuffer.sigma_BN, dcm_BN);
+    m33MultV3(dcm_BN, this->scSim->sHatN, this->scSim->sHatB);
 }
 
 void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos) 
