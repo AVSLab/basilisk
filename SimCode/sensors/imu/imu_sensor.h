@@ -84,6 +84,7 @@ private:
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
     SCPlusOutputStateData StatePrevious;      /// -- Previous state to delta in IMU
     SCPlusOutputStateData StateCurrent;       /// -- Current SSBI-relative state
+    SCPlusMassPropsData MassCurrent;          /// -- Current mass props for the vehicle
 	GaussMarkov errorModelAccel;           //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;           //!< [-] Gauss-markov error states
 };

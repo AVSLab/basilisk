@@ -110,7 +110,7 @@ void ImuSensor::CrossInit()
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
         sizeof(SCPlusOutputStateData), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
-        sizeof(MassPropsData), moduleID);
+        sizeof(SCPlusMassPropsData), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
@@ -130,11 +130,11 @@ void ImuSensor::readInputMessages()
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
                                                     sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
-    memset(&this->MassCurrent, 0x0, sizeof(MassPropsData));
+    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsData));
     if(InputMassID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
+                                                    sizeof(SCPlusMassPropsData), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
     }
 }
 
@@ -284,7 +284,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double dt;
     double dcm_PB[3][3];            /*!< dcm, body to platform frame */
     m33MultM33t(Str2Platform, StateCurrent.dcm_BS, dcm_PB);
-    v3Subtract(SensorPosStr.data(), MassCurrent.CoM, CmRelPos);
+    v3Subtract(SensorPosStr.data(), MassCurrent.c_B, CmRelPos);
     m33MultV3(StateCurrent.dcm_BS, CmRelPos, CmRelPos);
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     v3Subtract(StateCurrent.omega_BN_B, StatePrevious.omega_BN_B, AlphaBodyRough);
