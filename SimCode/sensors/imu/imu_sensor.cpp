@@ -35,8 +35,8 @@ ImuSensor::ImuSensor()
     this->InputMassMsg = "spacecraft_mass_props";
     this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&this->StatePrevious, 0x0, sizeof(OutputStateData));
-    memset(&this->StateCurrent, 0x0, sizeof(OutputStateData));
+    memset(&this->StatePrevious, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
     this->PreviousTime = 0;
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
@@ -108,7 +108,7 @@ void ImuSensor::SelfInit()
 void ImuSensor::CrossInit()
 {
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(OutputStateData), moduleID);
+        sizeof(SCPlusOutputStateData), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
         sizeof(MassPropsData), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
@@ -124,11 +124,11 @@ void ImuSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
     
-    memset(&this->StateCurrent, 0x0, sizeof(OutputStateData));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
     memset(&this->MassCurrent, 0x0, sizeof(MassPropsData));
     if(InputMassID >= 0)
@@ -322,7 +322,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
-    memcpy(&StatePrevious, &StateCurrent, sizeof(OutputStateData));
+    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusOutputStateData));
     PreviousTime = CurrentSimNanos;
     NominalReady = true;
 }

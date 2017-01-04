@@ -24,7 +24,6 @@
 %include "swig_common_model.i"
 
 %include "sys_model.h"
-%include "dyn_effector.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/stateEffector.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"

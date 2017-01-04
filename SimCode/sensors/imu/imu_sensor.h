@@ -22,7 +22,7 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "_GeneralModuleFiles/dyn_effector.h"
+#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include <random>
 #include "utilities/gauss_markov.h"
 
@@ -82,9 +82,8 @@ private:
     int64_t InputMassID;                /// -- Message ID for the mass properties
     int64_t OutputDataID;               /// -- Connect to output CSS data
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
-    OutputStateData StatePrevious;      /// -- Previous state to delta in IMU
-    OutputStateData StateCurrent;       /// -- Current SSBI-relative state
-    MassPropsData MassCurrent;          /// -- Current mass props for the vehicle
+    SCPlusOutputStateData StatePrevious;      /// -- Previous state to delta in IMU
+    SCPlusOutputStateData StateCurrent;       /// -- Current SSBI-relative state
 	GaussMarkov errorModelAccel;           //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;           //!< [-] Gauss-markov error states
 };
