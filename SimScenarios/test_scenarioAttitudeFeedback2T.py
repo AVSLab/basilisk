@@ -260,6 +260,47 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
 
+    sNavObject = simple_nav.SimpleNav()
+    extFTObject = ExtForceTorque.ExtForceTorque()
+
+    # #
+    # #   setup the FSW algorithm tasks
+    # #
+    #
+    # # setup inertial3D guidance module
+    # inertial3DConfig = inertial3D.inertial3DConfig()
+    # inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
+    # inertial3DWrap.ModelTag = "inertial3D"
+    # scSim.AddModelToTask(fswTaskName, inertial3DWrap, inertial3DConfig)
+    # inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+    # inertial3DConfig.outputDataName = "guidanceInertial3D"
+    #
+    # # setup the attitude tracking error evaluation module
+    # attErrorConfig = attTrackingError.attTrackingErrorConfig()
+    # attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
+    # attErrorWrap.ModelTag = "attErrorInertial3D"
+    # scSim.AddModelToTask(fswTaskName, attErrorWrap, attErrorConfig)
+    # attErrorConfig.outputDataName = "attErrorInertial3DMsg"
+    # attErrorConfig.inputRefName = inertial3DConfig.outputDataName
+    # attErrorConfig.inputNavName = sNavObject.outputAttName
+    #
+    # # setup the MRP Feedback control module
+    # mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+    # mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
+    # mrpControlWrap.ModelTag = "MRP_Feedback"
+    # scSim.AddModelToTask(fswTaskName, mrpControlWrap, mrpControlConfig)
+    # mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
+    # mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+    # mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
+    # mrpControlConfig.K  =   3.5
+    # if useIntGain:
+    #     mrpControlConfig.Ki =   0.0002      # make value negative to turn off integral feedback
+    # else:
+    #     mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
+    # mrpControlConfig.P  = 30.0
+    # mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+
+
     #
     #   setup the simulation tasks/objects
     #
@@ -294,7 +335,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
     # setup extForceTorque module
     # the control torque is read in through the messaging system
-    extFTObject = ExtForceTorque.ExtForceTorque()
+    # extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     # use the input flag to determine which external torque should be applied
     # Note that all variables are initialized to zero.  Thus, not setting this
@@ -307,7 +348,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
-    sNavObject = simple_nav.SimpleNav()
+    # sNavObject = simple_nav.SimpleNav()
     sNavObject.ModelTag = "SimpleNavigation"
     scSim.AddModelToTask(dynTaskName, sNavObject)
 
@@ -439,6 +480,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
     dataSigmaBN = scSim.pullMessageLogData(sNavObject.outputAttName+".sigma_BN", range(3))
     np.set_printoptions(precision=16)
+    print dataLr
 
     #
     #   plot the results
