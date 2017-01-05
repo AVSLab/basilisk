@@ -32,6 +32,5 @@ To get started with Basilisk, several tutorial python files are found in the Sim
 
 ### Who do I talk to? ###
 
-- <mailto:basilisk-info@colorado.edu>
-- <mailto:basilisk-suggestions@colorado.edu>
-- <mailto:basilisk-bug@colorado.edu>
+- <mailto:basilisk-info@colorado.edu> - Use this email to request information about Basilisk, ask to be added as a test user, or provide suggestions
+- <mailto:basilisk-bug@colorado.edu> - Use this email to send us info on bugs or issues.
