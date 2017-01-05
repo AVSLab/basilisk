@@ -63,10 +63,10 @@ public:
 	double timePrevious;
     uint64_t simTimePrevious;            //!< [-] Previous simulation time
 	uint64_t numOutMsgBuffers;           //!< [-] Number of output message buffers for I/O
-    
     uint64_t MRPSwitchCount;          //!<        Count on times we've shadowed
     std::string sysTimePropertyName;     //!< [-] Name of the system time property
 	std::string scStateOutMsgName;       //!< [-] Name of the state output message
+	std::string scMassStateOutMsgName;   //!< [-] Name of the state output message
     std::string struct2BdyPropertyName;  //!< [-] Name of the structure to body dynamics property
     
 public:
@@ -90,6 +90,7 @@ private:
     Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
     Eigen::MatrixXd *inertialVelocityProperty;             //! [m] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 	int64_t scStateOutMsgId;                    //!< [-] Message ID for the outgoing spacecraft state
+	int64_t scMassStateOutMsgId;                //!< [-] Message ID for the outgoing spacecraft mass state
 };
 
 #endif /* SPACECRAFT_PLUS_H */

@@ -53,6 +53,8 @@ void SpacecraftPlus::SelfInit()
 {
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
                                                                              sizeof(SCPlusOutputStateData), this->numOutMsgBuffers, "SCPlusOutputStateData", this->moduleID);
+    this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
+                                                                             sizeof(SCPlusMassPropsData), this->numOutMsgBuffers, "SCPlusMassPropsData", this->moduleID);
     this->gravField.SelfInit();
     return;
 }
@@ -373,6 +375,9 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 {
 	SCPlusOutputStateData stateOut;
 
+    SCPlusMassPropsData massStateOut;
+
+    // - Populate state output message
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
@@ -383,5 +388,17 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
+
+    // - Populate mass state output message
+    massStateOut.massSC = (*this->m_SC)(0,0);
+    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
+    double tempMatrix[9];
+    eigenMatrixXd2CArray(*this->ISCPntB_B, tempMatrix);
+    Eigen::Matrix3d tempMatrix2;
+    tempMatrix2 = cArray2EigenMatrix3d(tempMatrix);
+    eigenMatrix3d2CArray(tempMatrix2, (double *)massStateOut.ISC_PntB_B);
+
+    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsData),
+                                                 reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
     return;
 }
