@@ -119,8 +119,23 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
 # orbit simulation.
 #
-# The spacecraftPlus() module is setup as before, except that it isn't added to the simulation task
-# list until all the gravitational bodies are added.  The first step is to clear any prior gravity body
+# The spacecraftPlus() module is setup as before, except that we need to specify a priority to this task.
+#~~~~~~~~~~~~~~~~~{.py}
+#     # initialize spacecraftPlus object and set properties
+#     scObject = spacecraftPlus.SpacecraftPlus()
+#     scObject.ModelTag = "spacecraftBody"
+#     scObject.hub.useTranslation = True
+#     scObject.hub.useRotation = False
+#
+#     # add spacecraftPlus object to the simulation process
+#     scSim.AddModelToTask(simTaskName, scObject, None, 1)
+#~~~~~~~~~~~~~~~~~
+# If BSK modules are added to the simulation task process, they are executed in the order that they are added
+# However, we the execution order needs to be control, a priority can be assigned.  The model with a higher priority
+# number is executed first.  For this scenario scripts, it is critical that the Spice object task is evaluated
+# before the spacecraftPlus() model.  Thus, below the Spice object is added with a higher priority task.
+#
+# The first step to adding multiple gravitational bodies is to clear any prior gravity body
 # settings using
 #~~~~~~~~~~~~~~~~~{.py}
 #   simIncludeGravity.clearSetup()
@@ -179,13 +194,10 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #           scSpiceName = 'HUBBLE SPACE TELESCOPE'
 #       pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
 #~~~~~~~~~~~~~~~~~
-# Finally, the SPICE object is added to the simulation task list through the typical call
+# Finally, the SPICE object is added to the simulation task list, but with a higher priority
+# than the scObject model execution added earlier.
 #~~~~~~~~~~~~~~~~~{.py}
-#       scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject)
-#~~~~~~~~~~~~~~~~~
-# At this point the spacecraftPlus() object can be added to the simulation task list.
-#~~~~~~~~~~~~~~~~~{.py}
-#       scSim.AddModelToTask(simTaskName, scObject)
+#       scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
 #~~~~~~~~~~~~~~~~~
 #
 # The initial spacecraft position and velocity vector is obtained via the SPICE function call:
@@ -297,7 +309,7 @@ def run(doUnitTests, show_plots, scCase):
     scObject.hub.useRotation = False
 
     # add spacecraftPlus object to the simulation process
-    # scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
@@ -344,11 +356,8 @@ def run(doUnitTests, show_plots, scCase):
     pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
 
     # add spice interface object to task list
-    scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject)
+    scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
 
-    # add spacecraftPlus object to the simulation process
-    # Note: this step must happen after the spiceObject is added to the task list
-    scSim.AddModelToTask(simTaskName, scObject)
 
     #
     #   Setup spacecraft initial states
