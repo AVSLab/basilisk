@@ -299,7 +299,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     
     if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
     {
-        double dt = (simTimeNanos - this->localHeader.WriteClockNanos)*NANO2SEC;
+        double dt = ((int64_t) simTimeNanos - (int64_t) this->localHeader.WriteClockNanos)*NANO2SEC;
         Eigen::Matrix3d dcm_PfixN = Eigen::Map<Eigen::Matrix3d>
             (&(this->localPlanet.J20002Pfix[0][0]), 3, 3);
         Eigen::Matrix3d dcm_PfixN_dot = Eigen::Map<Eigen::Matrix3d>

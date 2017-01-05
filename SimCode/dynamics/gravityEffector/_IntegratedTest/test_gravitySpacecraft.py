@@ -73,7 +73,7 @@ def test_singleGravityBody(show_plots):
 
     DynUnitTestProc = unitTestSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(5.0)))
+    DynUnitTestProc.addTask(unitTestSim.CreateNewTask(unitTaskName, macros.sec2nano(10.0)))
 
     # Initialize the modules that we are using.
     unitTestSim.SpiceObject = spice_interface.SpiceInterface()
@@ -82,13 +82,14 @@ def test_singleGravityBody(show_plots):
     unitTestSim.SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
     unitTestSim.SpiceObject.OutputBufferCount = 10000
     unitTestSim.SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun", "moon", "jupiter barycenter"])
+    unitTestSim.SpiceObject.zeroBase = 'Earth'
     
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt', unitTestSim.earthGravBody.spherHarm, 100)
+    gravityEffector.loadGravFromFile(path + '/../_UnitTest/GGM03S.txt', unitTestSim.earthGravBody.spherHarm, 40)
 
     unitTestSim.sunGravBody = gravityEffector.GravBodyData()
     unitTestSim.sunGravBody.bodyInMsgName = "sun_planet_data"
@@ -117,7 +118,8 @@ def test_singleGravityBody(show_plots):
     pyswice.furnsh_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.furnsh_c(path + '/../_UnitTest/hst_edited.bsp')
     
-    unitTestSim.SpiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
+    #unitTestSim.SpiceObject.UTCCalInit = "2012 MAY 1 00:28:30.0"
+    unitTestSim.SpiceObject.UTCCalInit = "2016 MAY 1 00:32:30.0"
     stringCurrent = unitTestSim.SpiceObject.UTCCalInit
     
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody, unitTestSim.sunGravBody, unitTestSim.moonGravBody, unitTestSim.jupiterGravBody])
@@ -144,7 +146,7 @@ def test_singleGravityBody(show_plots):
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 50.0
-    totalTime = 2000.0
+    totalTime = 20000.0
     currentTime = 0.0
     posArray = []
     velArray = []
@@ -177,10 +179,13 @@ def test_singleGravityBody(show_plots):
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/hst_edited.bsp')
 
+    print numpy.max(abs(posError[:,1:4]))
+
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
     plt.xlabel('Time (s)')
     plt.ylabel('Position Difference (m)')
+
 
     if testFailCount == 0:
         print "PASSED: " + " Single body with spherical harmonics"
@@ -289,7 +294,7 @@ def test_multiBodyGravity(show_plots):
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 50.0
-    totalTime = 2000.0
+    totalTime = 20000.0
     currentTime = 0.0
     posArray = []
     velArray = []
@@ -310,7 +315,7 @@ def test_multiBodyGravity(show_plots):
         posRow = [unitTestSim.TotalSim.CurrentNanos*1.0E-9]
         posRow.extend(posDiff.tolist())
         posError.append(posRow)
-        assert numpy.linalg.norm(posDiff) < 100.0
+        assert numpy.linalg.norm(posDiff) < 1000.0
         if currentTime > 0.0 + dt/2.0:
             posJump = stateOut[0:3]*1000.0 - numpy.array(posPrevious)
             posInc.append(posJump.tolist())
@@ -327,6 +332,8 @@ def test_multiBodyGravity(show_plots):
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')
+
+    print numpy.max(abs(posError[:,1:4]))
 
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
