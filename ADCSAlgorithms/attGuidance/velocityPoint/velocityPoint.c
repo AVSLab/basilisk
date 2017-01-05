@@ -95,7 +95,7 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
                                       double celBdyPositonVector[3],
                                       double celBdyVelocityVector[3])
 {
-    double  RN[3][3];                /*!< DCM from inertial to reference frame */
+    double  dcm_RN[3][3];            /*!< DCM from inertial to reference frame */
     
     double  r[3];                    /*!< relative position vector of the spacecraft with respect to the orbited planet */
     double  v[3];                    /*!< relative velocity vector of the spacecraft with respect to the orbited planet  */
@@ -121,13 +121,13 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
     v3Subtract(v_BN_N, celBdyVelocityVector, v);
     
     /* Compute RN */
-    v3Normalize(v, RN[1]);
+    v3Normalize(v, dcm_RN[1]);
     v3Cross(r, v, h);
-    v3Normalize(h, RN[2]);
-    v3Cross(RN[1], RN[2], RN[0]);
+    v3Normalize(h, dcm_RN[2]);
+    v3Cross(dcm_RN[1], dcm_RN[2], dcm_RN[0]);
     
     /* Compute R-frame orientation */
-    C2MRP(RN, ConfigData->attRefOut.sigma_RN);
+    C2MRP(dcm_RN, ConfigData->attRefOut.sigma_RN);
     
     /* Compute R-frame inertial rate and acceleration */
     rv2elem(ConfigData->mu, r, v, &ConfigData->oe);
@@ -145,7 +145,7 @@ void computeVelocityPointingReference(velocityPointConfig *ConfigData,
         dfdt   = 0.;
         ddfdt2 = 0.;
     }
-    m33Transpose(RN, temp33);
+    m33Transpose(dcm_RN, temp33);
     m33MultV3(temp33, omega_RN_R, ConfigData->attRefOut.omega_RN_N);
     m33MultV3(temp33, domega_RN_R, ConfigData->attRefOut.domega_RN_N);
 }

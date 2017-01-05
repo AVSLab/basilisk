@@ -414,11 +414,11 @@ void GravityEffector::computeGravityField()
     gravOut.fill(0.0);
     Eigen::Vector3d cLocal_N;
     Eigen::MRPd sigmaBNLoc;
-    Eigen::Matrix3d dcmNB;
+    Eigen::Matrix3d dcm_NB;
 
     sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
-    dcmNB = sigmaBNLoc.toRotationMatrix();
-    cLocal_N = dcmNB*(*this->c_B);
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*this->c_B);
     
     for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
     {

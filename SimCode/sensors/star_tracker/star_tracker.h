@@ -56,7 +56,7 @@ public:
     std::vector<double> walkBounds;   //!< [-] "3-sigma" errors to permit for states
     std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
-    double T_CaseStr[9];              //!< [-] Transformation matrix from case to structure
+    double dcm_CS[9];                 //!< [-] Transformation matrix from structure to case
     StarTrackerHWOutput trueValues;     //!< [-] total measurement without perturbations
     StarTrackerHWOutput sensedValues;   //!< [-] total measurement including perturbations
     double mrpErrors[3];                //!< [-] Errors to be applied to the input MRP set indicating whether

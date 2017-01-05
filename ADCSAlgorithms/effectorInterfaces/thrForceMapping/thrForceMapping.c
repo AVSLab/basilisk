@@ -118,10 +118,10 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
-        m33MultV3(RECAST3X3 ConfigData->sc.BS,
+        m33MultV3(RECAST3X3 ConfigData->sc.dcm_BS,
                   localThrusterData.thrusters[i].rThrust_S,
                   ConfigData->rThruster_B[i]);
-        m33MultV3(RECAST3X3 ConfigData->sc.BS,
+        m33MultV3(RECAST3X3 ConfigData->sc.dcm_BS,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
     }

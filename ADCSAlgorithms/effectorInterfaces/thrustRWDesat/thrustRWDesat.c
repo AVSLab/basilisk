@@ -85,20 +85,20 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     ConfigData->numRWAs = localRWData.numRW;
     for(i=0; i<ConfigData->numRWAs; i=i+1)
     {
-        m33MultV3(RECAST3X3 localConfigData.BS,
+        m33MultV3(RECAST3X3 localConfigData.dcm_BS,
                   localRWData.reactionWheels[i].gsHat_S, &ConfigData->rwAlignMap[i*3]);
     }
     
     ConfigData->numThrusters = localThrustData.numThrusters;
     for(i=0; i<ConfigData->numThrusters; i=i+1)
     {
-        m33MultV3(RECAST3X3 localConfigData.BS,
+        m33MultV3(RECAST3X3 localConfigData.dcm_BS,
                   localThrustData.thrusters[i].tHatThrust_S,
                   &ConfigData->thrAlignMap[i*3]);
-        m33MultV3(RECAST3X3 localConfigData.BS,
+        m33MultV3(RECAST3X3 localConfigData.dcm_BS,
                   localThrustData.thrusters[i].rThrust_S, thrustDat_B);
         v3Subtract(thrustDat_B, localConfigData.CoM_B, momentArm);
-        m33MultV3(RECAST3X3 localConfigData.BS,
+        m33MultV3(RECAST3X3 localConfigData.dcm_BS,
                   localThrustData.thrusters[i].tHatThrust_S, thrustDat_B);
         v3Cross(momentArm, thrustDat_B, &(ConfigData->thrTorqueMap[i*3]));
     }

@@ -51,14 +51,14 @@ public:
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
     Eigen::Matrix3d IPntS_S;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d rHB_B;          //!< [m] vector pointing from body frame origin to Hinge location
-    Eigen::Matrix3d dcmHB;          //!< [-] DCM from body frame to hinge frame
+    Eigen::Matrix3d dcm_HB;         //!< [-] DCM from body frame to hinge frame
     std::string nameOfThetaState;   //!< [-] Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
 
 private:
     Eigen::Matrix3d rTildeHB_B;     //!< [-] Tilde matrix of rHB_B
-    Eigen::Matrix3d dcmSH;          //!< [-] DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcmSB;          //!< [-] DCM from body to S frame
+    Eigen::Matrix3d dcm_SH;         //!< [-] DCM from hinge to hinged rigid body frame, S
+    Eigen::Matrix3d dcm_SB;         //!< [-] DCM from body to S frame
     Eigen::Vector3d omegaBN_S;      //!< [rad/s] omega_BN in S frame components
     Eigen::Vector3d sHat1_B;        //!< [-] unit direction vector for the first axis of the S frame
     Eigen::Vector3d sHat2_B;        //!< [-] unit direction vector for the second axis of the S frame

@@ -1047,7 +1047,7 @@ void SixDofEOM::equationsOfMotion(double t, double *X, double *dX)
         MassProps.Mass = this->compMass;
         memcpy(MassProps.CoM, this->compCoM, 3*sizeof(double));
         memcpy(MassProps.InertiaTensor, this->compI, 9*sizeof(double));
-        memcpy(MassProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(MassProps.dcm_BS, this->T_str2Bdy, 9*sizeof(double));
         
         //! - Loop over the vector of thrusters and compute body force/torque
         //! - Convert the B-frame body forces to inertial frame for inclusion in dynamics
@@ -2252,7 +2252,7 @@ void SixDofEOM::WriteOutputMessages(uint64_t CurrentClock)
         massProps.Mass = this->compMass;
         memcpy(massProps.CoM, this->compCoM, 3*sizeof(double));
         memcpy(&(massProps.InertiaTensor[0]), &(this->compI[0][0]), 9*sizeof(double));
-        memcpy(massProps.T_str2Bdy, this->T_str2Bdy, 9*sizeof(double));
+        memcpy(massProps.dcm_BS, this->T_str2Bdy, 9*sizeof(double));
         messageSys->WriteMessage(MassPropsMsgID, CurrentClock,
             sizeof(MassPropsData), reinterpret_cast<uint8_t*> (&massProps), moduleID);
     }

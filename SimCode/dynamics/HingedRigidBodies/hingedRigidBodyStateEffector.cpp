@@ -36,7 +36,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->c = 0.0;
     this->IPntS_S.Identity();
     this->rHB_B.setZero();
-    this->dcmHB.Identity();
+    this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
 
@@ -79,18 +79,18 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->theta = this->thetaState->getState()(0, 0);
     this->thetaDot = this->thetaDotState->getState()(0, 0);
     //! - Next find the sHat unit vectors
-    this->dcmSH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
-    this->dcmSB = this->dcmSH*this->dcmHB;
-    this->sHat1_B = this->dcmSB.row(0);
-    this->sHat2_B = this->dcmSB.row(1);
-    this->sHat3_B = this->dcmSB.row(2);
+    this->dcm_SH << cos(this->theta), 0, -sin(this->theta), 0, 1, 0, sin(this->theta), 0, cos(this->theta);
+    this->dcm_SB = this->dcm_SH*this->dcm_HB;
+    this->sHat1_B = this->dcm_SB.row(0);
+    this->sHat2_B = this->dcm_SB.row(1);
+    this->sHat3_B = this->dcm_SB.row(2);
     this->rSB_B = this->rHB_B - this->d*this->sHat1_B;
     this->effProps.rCB_B = this->rSB_B;
 
     //! - Find the inertia of the hinged rigid body about point B
     //! - Define rTildeSB_B
     this->rTildeSB_B << 0 , -this->rSB_B(2), this->rSB_B(1), this->rSB_B(2), 0, -this->rSB_B(0), -this->rSB_B(1), this->rSB_B(0), 0;
-    this->effProps.IEffPntB_B = this->dcmSB.transpose()*this->IPntS_S*this->dcmSB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
+    this->effProps.IEffPntB_B = this->dcm_SB.transpose()*this->IPntS_S*this->dcm_SB + this->mass*this->rTildeSB_B*this->rTildeSB_B.transpose();
 
     //! First, find the rPrimeSB_B
     this->rPrimeSB_B = this->d*this->thetaDot*this->sHat3_B;
@@ -110,23 +110,23 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+    Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
     Eigen::Vector3d gravityTorquePntH_B;          /* torque of gravity on HRB about Pnt H */
     Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
     Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
     gLocal_N = *this->g_N;
 
-    //! - Find dcmBN
+    //! - Find dcm_BN
     sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
-    dcmNB = sigmaBNLocal.toRotationMatrix();
-    dcmBN = dcmNB.transpose();
+    dcm_NB = sigmaBNLocal.toRotationMatrix();
+    dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
-    g_B = dcmBN*gLocal_N;
+    g_B = dcm_BN*gLocal_N;
 
     //! - Define omegaBN_S
     this->omegaBNLoc_B = this->hubOmega->getState();
-    this->omegaBN_S = this->dcmSB*this->omegaBNLoc_B;
+    this->omegaBN_S = this->dcm_SB*this->omegaBNLoc_B;
     //! - Define omegaTildeBNLoc_B
     this->omegaTildeBNLoc_B << 0 , -this->omegaBNLoc_B(2), this->omegaBNLoc_B(1), this->omegaBNLoc_B(2), 0, -this->omegaBNLoc_B(0), -this->omegaBNLoc_B(1), this->omegaBNLoc_B(0), 0;
     //! - Define a_theta
@@ -153,8 +153,8 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
 {
     //! - Define necessarry variables
     Eigen::MRPd sigmaBNLocal;
-    Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-    Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+    Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
     Eigen::MatrixXd thetaDDot(1,1);               /* thetaDDot variable to send to state manager */
     Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
     Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
@@ -164,9 +164,9 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
     rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
     sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
     omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
-    dcmNB = sigmaBNLocal.toRotationMatrix();
-    dcmBN = dcmNB.transpose();
-    rDDotBNLoc_B = dcmBN*rDDotBNLoc_N;
+    dcm_NB = sigmaBNLocal.toRotationMatrix();
+    dcm_BN = dcm_NB.transpose();
+    rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;
 
     //! - Compute Derivatives
     //! - First is trivial
@@ -194,7 +194,7 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
     // Find rotational angular momentum contribution from hub
     omegaSB_B = this->thetaDot*this->sHat2_B;
     omegaSN_B = omegaSB_B + omegaLocal_BN_B;
-    IPntS_B = this->dcmSB.transpose()*this->IPntS_S*this->dcmSB;
+    IPntS_B = this->dcm_SB.transpose()*this->IPntS_S*this->dcm_SB;
     rDotSB_B = this->rPrimeSB_B + omegaLocal_BN_B.cross(this->rSB_B);
     rotAngMomPntCContr_B = IPntS_B*omegaSN_B + this->mass*this->rSB_B.cross(rDotSB_B);
 

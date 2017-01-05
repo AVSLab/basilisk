@@ -120,7 +120,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
         CoM_S = [0,0,0.02]
     else:
         CoM_S = [0,0,0]
-    vehicleConfigOut.BS = BS
+    vehicleConfigOut.dcm_BS = BS
     vehicleConfigOut.CoM_B = CoM_S
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,

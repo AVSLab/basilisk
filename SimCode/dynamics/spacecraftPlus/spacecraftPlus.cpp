@@ -282,8 +282,8 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     Eigen::Vector3d cDotLocal_B;
     Eigen::MRPd sigmaLocal_BN;
     Eigen::Vector3d omegaLocal_BN_B;
-    Eigen::Matrix3d dcmNBLocal;
-    Eigen::Matrix3d dcmBNLocal;
+    Eigen::Matrix3d dcm_NBLocal;
+    Eigen::Matrix3d dcm_BNLocal;
     Eigen::Vector3d totOrbAngMomPntN_B;
     Eigen::Vector3d totRotAngMomPntC_B;
 
@@ -296,12 +296,12 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     omegaLocal_BN_B = hubOmega_BN_B->getState();
 
     // - Find DCM's
-    dcmNBLocal = sigmaLocal_BN.toRotationMatrix();
-    dcmBNLocal = dcmNBLocal.transpose();
+    dcm_NBLocal = sigmaLocal_BN.toRotationMatrix();
+    dcm_BNLocal = dcm_NBLocal.transpose();
 
     // - Convert from inertial frame to body frame
-    rBNLocal_B = dcmBNLocal*rBNLocal_N;
-    rDotBNLocal_B = dcmBNLocal*rDotBNLocal_N;
+    rBNLocal_B = dcm_BNLocal*rBNLocal_N;
+    rDotBNLocal_B = dcm_BNLocal*rDotBNLocal_N;
 
     // - zero necessarry variables
     this->totOrbKinEnergy = 0.0;
@@ -359,13 +359,13 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     // - Find orbital angular momentum for the spacecraft
     Eigen::Vector3d rCN_N;
     Eigen::Vector3d rDotCN_N;
-    rCN_N = rBNLocal_N + dcmNBLocal*cLocal_B;
-    rDotCN_N = rDotBNLocal_N + dcmNBLocal*cDotLocal_B;
+    rCN_N = rBNLocal_N + dcm_NBLocal*cLocal_B;
+    rDotCN_N = rDotBNLocal_N + dcm_NBLocal*cDotLocal_B;
     this->totOrbAngMomPntN_N = mSCLocal*(rCN_N.cross(rDotCN_N));
 
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -mSCLocal*cLocal_B.cross(cDotLocal_B);
-    this->totRotAngMomPntC_N = dcmNBLocal*totRotAngMomPntC_B;
+    this->totRotAngMomPntC_N = dcm_NBLocal*totRotAngMomPntC_B;
     return;
 }
 

@@ -1075,7 +1075,7 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
     
     def SetVehicleConfigData(self):
         BS = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        self.VehConfigData.BS = BS
+        self.VehConfigData.dcm_BS = BS
         Inertia = [700.0, 0.0, 0.0, 0.0, 700.0, 0.0, 0.0, 0.0, 800]  # kg * m^2
         self.VehConfigData.ISCPntB_S = Inertia
         CoM = [0.0, 0.0, 1.0]
@@ -1102,14 +1102,14 @@ class AVSSim(SimulationBaseClass.SimBaseClass):
         self.IMUCommData.InputPropsName = "adcs_config_data"
         self.IMUCommData.OutputDataName = "parsed_imu_data"
         platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        self.IMUCommData.platform2StrDCM = platform2str
+        self.IMUCommData.dcm_SP = platform2str
 
     def SetSTCommData(self):
         self.STCommData.InputDataName = "star_tracker_state"
         self.STCommData.InputPropsName = "adcs_config_data"
         self.STCommData.OutputDataName = "parsed_st_data"
         platform2str = [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]
-        self.STCommData.T_StrPlatform = platform2str
+        self.STCommData.dcm_SP = platform2str
 
     def SetCSSWlsEstFSWConfig(self):
         self.CSSWlsEstFSWConfig.InputDataName = "css_data_aggregate"

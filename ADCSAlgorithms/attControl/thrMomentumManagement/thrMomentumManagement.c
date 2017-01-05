@@ -93,7 +93,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
     for(i=0; i<ConfigData->numRW; i=i+1)
     {
         ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-        m33MultV3(RECAST3X3 sc.BS,
+        m33MultV3(RECAST3X3 sc.dcm_BS,
                   localRWData.reactionWheels[i].gsHat_S,
                   &ConfigData->GsMatrix[i*3]);
     }

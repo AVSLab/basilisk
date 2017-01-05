@@ -108,9 +108,9 @@ void ThrusterDynamics::CrossInit()
     std::vector<ThrusterConfigData>::iterator it;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
-        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrDir_S,
+        m33MultV3(RECAST3X3 localProps.dcm_BS, it->inputThrDir_S,
             it->thrDir_B);
-        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->inputThrLoc_S,
+        m33MultV3(RECAST3X3 localProps.dcm_BS, it->inputThrLoc_S,
             it->thrLoc_B);
     }
     

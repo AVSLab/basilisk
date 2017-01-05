@@ -43,15 +43,15 @@ void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleI
         "vehicleConfigData", moduleID);
  
     /*! - Convert the center of mass from structure to body*/
-    m33MultV3(RECAST3X3 ConfigData->BS, ConfigData->CoM_S,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BS, ConfigData->CoM_S,
         localConfigData.CoM_B);
     /*! - Copy over the structure to body transformation matrix to output*/
-    m33Copy(RECAST3X3 ConfigData->BS, RECAST3X3 localConfigData.BS);
+    m33Copy(RECAST3X3 ConfigData->dcm_BS, RECAST3X3 localConfigData.dcm_BS);
     
     /*! - Convert the inertia tensor to body using similarity transformation*/
-    m33MultM33(RECAST3X3 ConfigData->BS, RECAST3X3 ConfigData->ISCPntB_S,
+    m33MultM33(RECAST3X3 ConfigData->dcm_BS, RECAST3X3 ConfigData->ISCPntB_S,
         halfInertia);
-    m33MultM33t(halfInertia, RECAST3X3 ConfigData->BS,
+    m33MultM33t(halfInertia, RECAST3X3 ConfigData->dcm_BS,
         RECAST3X3 localConfigData.ISCPntB_B);
     /*! - Write output properties to the messaging system*/
     WriteMessage(ConfigData->outputPropsID, 0, sizeof(vehicleConfigData),

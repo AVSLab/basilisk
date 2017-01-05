@@ -66,7 +66,7 @@ void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    double T_Inrtl2Burn[3][3];
+    double dcm_BuN[3][3];           /*!< dcm, inertial to burn frame */
     double dvUnit[3];
     double burnY[3];
 	double burnTime;
@@ -81,21 +81,21 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
     
     ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
     v3Normalize(localBurnData.dvInrtlCmd, dvUnit);
-    v3Copy(dvUnit, T_Inrtl2Burn[0]);
+    v3Copy(dvUnit, dcm_BuN[0]);
     v3Cross(localBurnData.dvRotVecUnit, dvUnit, burnY);
-    v3Normalize(burnY, T_Inrtl2Burn[1]);
-    v3Cross(T_Inrtl2Burn[0], T_Inrtl2Burn[1], T_Inrtl2Burn[2]);
-    v3Normalize(T_Inrtl2Burn[2], T_Inrtl2Burn[2]);
+    v3Normalize(burnY, dcm_BuN[1]);
+    v3Cross(dcm_BuN[0], dcm_BuN[1], dcm_BuN[2]);
+    v3Normalize(dcm_BuN[2], dcm_BuN[2]);
 
 	burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
     v3SetZero(rotPRV);
     rotPRV[2] = 1.0;
     v3Scale(burnTime*localBurnData.dvRotVecMag, rotPRV, rotPRV);
     PRV2C(rotPRV, rotDCM);
-	m33MultM33(rotDCM, T_Inrtl2Burn, T_Inrtl2Burn);
+	m33MultM33(rotDCM, dcm_BuN, dcm_BuN);
 
-	C2MRP(RECAST3X3 &T_Inrtl2Burn[0][0], ConfigData->attCmd.sigma_RN);
-	v3Scale(localBurnData.dvRotVecMag, T_Inrtl2Burn[2], ConfigData->attCmd.omega_RN_N);
+	C2MRP(RECAST3X3 &dcm_BuN[0][0], ConfigData->attCmd.sigma_RN);
+	v3Scale(localBurnData.dvRotVecMag, dcm_BuN[2], ConfigData->attCmd.omega_RN_N);
     v3SetZero(ConfigData->attCmd.domega_RN_N);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),

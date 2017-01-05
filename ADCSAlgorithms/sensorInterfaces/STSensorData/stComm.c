@@ -59,8 +59,8 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
                     sizeof(vehicleConfigData), (void*) &LocalConfigData, moduleID);
-        m33MultM33(RECAST3X3 LocalConfigData.BS, RECAST3X3 ConfigData->T_StrPlatform,
-                   RECAST3X3 ConfigData->T_BdyPlatform);
+        m33MultM33(RECAST3X3 LocalConfigData.dcm_BS, RECAST3X3 ConfigData->dcm_SP,
+                   RECAST3X3 ConfigData->dcm_BP);
     }
     
 }
@@ -76,14 +76,14 @@ void Update_stProcessTelem(STConfigData *ConfigData, uint64_t callTime, uint64_t
     
     uint64_t UnusedClockTime;
     uint32_t ReadSize;
-    double T_CaseInrtl[3][3];
-    double T_BdyInrtl[3][3];
+    double dcm_CN[3][3];            /* dcm, inertial to case frame */
+    double dcm_BN[3][3];            /* dcm, inertial to body frame */
     StarTrackerHWOutput LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
                 sizeof(StarTrackerHWOutput), (void*) &LocalInput, moduleID);
-    EP2C(LocalInput.qInrtl2Case, T_CaseInrtl);
-    m33MultM33(RECAST3X3 ConfigData->T_BdyPlatform, T_CaseInrtl, T_BdyInrtl);
-    C2MRP(T_BdyInrtl, ConfigData->LocalOutput.MRP_BdyInrtl);
+    EP2C(LocalInput.qInrtl2Case, dcm_CN);
+    m33MultM33(RECAST3X3 ConfigData->dcm_BP, dcm_CN, dcm_BN);
+    C2MRP(dcm_BN, ConfigData->LocalOutput.MRP_BdyInrtl);
     ConfigData->LocalOutput.timeTag = LocalInput.timeTag;
     WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(STOutputData),
                  (void*) &(ConfigData->LocalOutput), moduleID);

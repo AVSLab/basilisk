@@ -153,19 +153,19 @@ void HubEffector::computeDerivatives(double integTime)
 
         if (this->useTranslation == true) {
             //! - Define values only needed for rotation and translation together
-            Eigen::Matrix3d dcmNB;
-            Eigen::Matrix3d dcmBN;
+            Eigen::Matrix3d dcm_NB;
+            Eigen::Matrix3d dcm_BN;
             Eigen::Vector3d sumForceExternalMappedToB;
 
             //! - Define dcm's
-            dcmNB = sigmaBNLocal.toRotationMatrix();
-            dcmBN = dcmNB.transpose();
+            dcm_NB = sigmaBNLocal.toRotationMatrix();
+            dcm_BN = dcm_NB.transpose();
 
             //! - Map external force_N to the body frame
-            sumForceExternalMappedToB = dcmBN*this->sumForceExternal_N;
+            sumForceExternalMappedToB = dcm_BN*this->sumForceExternal_N;
 
             //! - Edit both v_trans and v_rot with gravity and external force and torque
-            gravityForce_B = dcmBN*gravityForce_N;
+            gravityForce_B = dcm_BN*gravityForce_N;
             this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
             this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
@@ -176,8 +176,8 @@ void HubEffector::computeDerivatives(double integTime)
             omegaState->setDerivative(omegaBNDot_B);
             rBNDDotLocal_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
             //! - Map rBNDDotLocal_B to rBNDotLocal_N
-            dcmNB = sigmaBNLocal.toRotationMatrix();
-            rBNDDotLocal_N = dcmNB*rBNDDotLocal_B;
+            dcm_NB = sigmaBNLocal.toRotationMatrix();
+            rBNDDotLocal_N = dcm_NB*rBNDDotLocal_B;
             velocityState->setDerivative(rBNDDotLocal_N);
         } else {
             //! - Edit only v_rot with gravity

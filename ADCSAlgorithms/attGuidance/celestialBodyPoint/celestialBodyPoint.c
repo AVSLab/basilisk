@@ -92,8 +92,8 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
 	double primHatPointVector[3];
 	double relVelVector[3];
 	double relPosVector[3];
-    double T_Inrtl2Point[3][3];
-    double T_Inrtl2Bdy[3][3];
+    double dcm_PoN[3][3];                       /*!< dcm, inertial to point frame */
+    double dcm_BN[3][3];                        /*!< dcm, inertial to body frame */
     double omegVecComp1[3], omegVecComp2[3];
     double totalSecDeriv[3];
     double b3CrossProd[3];
@@ -151,7 +151,7 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     v3Scale(-dotProd/(vecMag*vecMag*vecMag), primPointVector, omegVecComp2);
     v3Add(omegVecComp1, omegVecComp2, &(cDotMatrix[0][0]));
     v3Normalize(primPointVector, primPointVector);
-    v3Copy(primPointVector, &(T_Inrtl2Point[0][0]));
+    v3Copy(primPointVector, &(dcm_PoN[0][0]));
     v3Cross(primPointVector, secPointVector, b3CrossProd);
     vecMag = v3Norm(b3CrossProd);
     v3Cross(&(cDotMatrix[0][0]), secPointVector, omegVecComp1);
@@ -163,22 +163,22 @@ void Update_celestialBodyPoint(celestialBodyPointConfig *ConfigData,
     v3Scale(vecMag, b3CrossProd, omegVecComp2);
     v3Add(omegVecComp1, omegVecComp2, &(cDotMatrix[2][0]));
     
-    v3Normalize(b3CrossProd, &(T_Inrtl2Point[2][0]));
-    v3Cross(&(T_Inrtl2Point[2][0]), &(T_Inrtl2Point[0][0]),
-            &(T_Inrtl2Point[1][0]));
-	v3Copy(&(T_Inrtl2Point[2][0]), ConfigData->prevConstraintAxis);
+    v3Normalize(b3CrossProd, &(dcm_PoN[2][0]));
+    v3Cross(&(dcm_PoN[2][0]), &(dcm_PoN[0][0]),
+            &(dcm_PoN[1][0]));
+	v3Copy(&(dcm_PoN[2][0]), ConfigData->prevConstraintAxis);
 	ConfigData->prevAvail = 1;
     v3Cross(&(cDotMatrix[2][0]), primPointVector, omegVecComp1);
-    v3Cross(&(T_Inrtl2Point[2][0]), &(cDotMatrix[0][0]), omegVecComp2);
+    v3Cross(&(dcm_PoN[2][0]), &(cDotMatrix[0][0]), omegVecComp2);
     
     v3Add(omegVecComp1, omegVecComp2, &(cDotMatrix[1][0]));
-    m33MultM33t(RECAST3X3 cDotMatrix, T_Inrtl2Point, omegVectrix);
+    m33MultM33t(RECAST3X3 cDotMatrix, dcm_PoN, omegVectrix);
     
     omegPointN_Point[0] = -(-omegVectrix[1][2] + omegVectrix[2][1])/2.0;
     omegPointN_Point[1] = -(omegVectrix[0][2] - omegVectrix[2][0])/2.0;
     omegPointN_Point[2] = -(-omegVectrix[0][1] + omegVectrix[1][0])/2.0;
-    m33MultM33(RECAST3X3 ConfigData->TPoint2Bdy, T_Inrtl2Point, T_Inrtl2Bdy);
-    C2MRP(RECAST3X3 &(T_Inrtl2Bdy[0][0]), ConfigData->attCmd.sigma_BR);
+    m33MultM33(RECAST3X3 ConfigData->TPoint2Bdy, dcm_PoN, dcm_BN);
+    C2MRP(RECAST3X3 &(dcm_BN[0][0]), ConfigData->attCmd.sigma_BR);
     m33MultV3(RECAST3X3 ConfigData->TPoint2Bdy, omegPointN_Point,
         ConfigData->attCmd.omega_BR);
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attCmdOut),

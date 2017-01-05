@@ -114,24 +114,24 @@ void ReactionWheelDynamics::CrossInit()
     for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
     {
         if (v3Norm(it->gsHat_S) > 0.01) {
-            m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gsHat_S,  it->gsHat_B);
+            m33MultV3(RECAST3X3 localProps.dcm_BS, it->gsHat_S,  it->gsHat_B);
         } else {
             std::cerr <<
                "Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
         }
         if (it->usingRWJitter) {
             if (v3Norm(it->gtHat0_S) > 0.01) {
-                m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->gtHat0_S, it->gtHat0_B);
+                m33MultV3(RECAST3X3 localProps.dcm_BS, it->gtHat0_S, it->gtHat0_B);
             } else {
                 std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
             }
             if (v3Norm(it->ggHat0_S) > 0.01) {
-                m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->ggHat0_S,  it->ggHat0_B);
+                m33MultV3(RECAST3X3 localProps.dcm_BS, it->ggHat0_S,  it->ggHat0_B);
             } else {
                 std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
             }
         }
-        m33MultV3(RECAST3X3 localProps.T_str2Bdy, it->r_S, it->r_B);
+        m33MultV3(RECAST3X3 localProps.dcm_BS, it->r_S, it->r_B);
     }
 }
 

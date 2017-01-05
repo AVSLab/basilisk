@@ -227,8 +227,8 @@ void ReactionWheelStateEffector::SelfInit()
 void ReactionWheelStateEffector::CrossInit()
 {
     //! massProps doesn't exist anymore, hardcode structure to body for now (NEEDS TO CHANGE)
-    Eigen::Matrix3d dcmBodyStru;
-    dcmBodyStru.setIdentity();
+    Eigen::Matrix3d dcm_BS;             /* structure to body frame DCM */
+    dcm_BS.setIdentity();
 
 	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
@@ -245,24 +245,24 @@ void ReactionWheelStateEffector::CrossInit()
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		if (it->gsHat_S.norm() > 0.01) {
-			it->gsHat_B = dcmBodyStru * it->gsHat_S;
+			it->gsHat_B = dcm_BS * it->gsHat_S;
 		} else {
 			std::cerr <<
 			"Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
 		}
 		if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
 			if (it->gtHat0_S.norm() > 0.01) {
-				it->gtHat0_B = dcmBodyStru * it->gtHat0_S;
+				it->gtHat0_B = dcm_BS * it->gtHat0_S;
 			} else {
 				std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
 			}
 			if (it->ggHat0_S.norm() > 0.01) {
-				it->ggHat0_B = dcmBodyStru * it->ggHat0_S;
+				it->ggHat0_B = dcm_BS * it->ggHat0_S;
 			} else {
 				std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
 			}
 		}
-		it->rWB_B = dcmBodyStru * it->rWB_S;
+		it->rWB_B = dcm_BS * it->rWB_S;
 	}
 }
 

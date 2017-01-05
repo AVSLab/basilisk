@@ -136,7 +136,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     MassPropsData.Mass = -97.9
     MassPropsData.CoM = [0,0,0]
     MassPropsData.InertiaTensor = [-98.9] * 9
-    MassPropsData.T_str2Bdy = [-99.9] * 9
+    MassPropsData.dcm_BS = [-99.9] * 9
 
     # configure module input message
     StateCurrent = six_dof_eom.OutputStateData()
