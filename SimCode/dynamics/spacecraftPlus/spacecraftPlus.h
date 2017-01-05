@@ -89,9 +89,6 @@ private:
     Eigen::MatrixXd *inertialPositionProperty;             //! [m] r_N inertial position relative to system spice zeroBase/refBase coordinate frame, property for output.
     Eigen::MatrixXd *inertialVelocityProperty;             //! [m] v_N inertial velocity relative to system spice zeroBase/refBase coordinate frame, property for output.
 	int64_t scStateOutMsgId;                    //!< [-] Message ID for the outgoing spacecraft state
-    int64_t centralBodyInMsgId;                 //! [-] Id for the incoming message containing the current central body spice data
-    SpicePlanetState centralBodySpiceData;
-    std::string centralBodyInMsgName;
 };
 
 #endif /* SPACECRAFT_PLUS_H */

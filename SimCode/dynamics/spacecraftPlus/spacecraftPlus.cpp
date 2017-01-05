@@ -35,8 +35,6 @@ SpacecraftPlus::SpacecraftPlus()
     this->simTimePrevious = 0;
 	this->scStateOutMsgName = "inertial_state_output";
     this->scStateOutMsgId = -1;
-    this->centralBodyInMsgName = "central_body_spice";
-    this->centralBodyInMsgId = -1;
 	this->numOutMsgBuffers = 2;
     this->dcm_BS.setIdentity();
     this->struct2BdyPropertyName = "dcm_BS";
