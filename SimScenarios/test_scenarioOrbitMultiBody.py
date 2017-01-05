@@ -296,6 +296,9 @@ def run(doUnitTests, show_plots, scCase):
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = False
 
+    # add spacecraftPlus object to the simulation process
+    # scSim.AddModelToTask(simTaskName, scObject)
+
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
 
@@ -344,7 +347,7 @@ def run(doUnitTests, show_plots, scCase):
     scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject)
 
     # add spacecraftPlus object to the simulation process
-    # Note: this step must happen after the spiceOjbect is added to the task list
+    # Note: this step must happen after the spiceObject is added to the task list
     scSim.AddModelToTask(simTaskName, scObject)
 
     #
