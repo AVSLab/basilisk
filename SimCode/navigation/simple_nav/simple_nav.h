@@ -22,8 +22,8 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "_GeneralModuleFiles/dyn_effector.h"
 #include "utilities/gauss_markov.h"
+#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "environment/spice/spice_interface.h"
 /*! \addtogroup SimModelGroup
@@ -64,7 +64,7 @@ public:
     NavAttOut estAttState;             //!< -- attitude nav state including errors
     NavTransOut trueTransState;        //!< -- translation nav state without errors
     NavTransOut estTransState;         //!< -- translation nav state including errors
-    OutputStateData inertialState;     //!< -- input inertial state from Star Tracker
+    SCPlusOutputStateData inertialState;     //!< -- input inertial state from Star Tracker
     SpicePlanetState sunState;         //!< -- input Sun state
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state

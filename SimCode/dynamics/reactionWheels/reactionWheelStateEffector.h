@@ -28,7 +28,6 @@
 #include <Eigen/Dense>
 #include "utilities/simMacros.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "_GeneralModuleFiles/dyn_effector.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 

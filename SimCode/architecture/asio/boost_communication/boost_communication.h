@@ -28,14 +28,15 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
 #include "architecture/messaging/system_messaging.h"
+#include "dynamics/spacecraftPlus/spacecraftPlus.h"
+#include "dynamics/reactionWheels/reactionWheelStateEffector.h"
+#include "dynamics/Thrusters/thrusterDynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "dynamics/deprecatedCode/SixDofEOM/six_dof_eom.h"
+#include "dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_planet_state.h"
 #include "environment/spice/spice_interface.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
-#include "dynamics/deprecatedCode/Thrusters/thruster_dynamics.h"
-#include "dynamics/deprecatedCode/ReactionWheels/reactionwheel_dynamics.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
 
@@ -92,7 +93,7 @@ private:
     std::string UTCCalInit;
     std::string stateInMsgName;
     uint64_t stateInMsgId;
-    OutputStateData stateInMsgBuffer;
+    SCPlusOutputStateData stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
     SpicePlanetState sunEphmInMsgBuffer;
@@ -107,8 +108,8 @@ private:
     std::string spiceTimeDataInMsgName;
     uint64_t spiceTimeDataInMsgId;
     SpiceTimeOutput spiceTimeDataInMsgBuffer;
-    std::vector<GravityBodyData> m_gravityBodies;
-    
+//    std::vector<GravBodyData> m_gravityBodies;
+
     std::vector<std::string> rwInMsgNames;
     std::vector<uint64_t> rwInMsgIds;
     std::vector<ReactionWheelConfigData> reactionWheels;

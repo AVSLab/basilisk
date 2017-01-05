@@ -23,6 +23,8 @@
 
 #include "boost_communication.h"
 #include "../External/cspice/include/SpiceUsr.h"
+#include "utilities/avsEigenSupport.h"
+#include <Eigen/Dense>
 
 extern "C" {
 #include "utilities/linearAlgebra.h"
@@ -63,7 +65,7 @@ void OpenGLIO::CrossInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(OutputStateData), moduleID);
+    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusOutputStateData), moduleID);
     this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetState), moduleID);
     this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetState), moduleID);
     this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeOutput), this->moduleID);
@@ -130,7 +132,7 @@ void OpenGLIO::readInputMessages()
     SingleMessageHeader localHeader;
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(OutputStateData), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
+    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
     messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
     messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
     messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
@@ -303,8 +305,8 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
     
     for (i = 0; i < this->thrusters.size(); i++)
     {
-        v3Copy(thrusters[i].thrusterLocation, this->scSim->thrusters[i].r_B);
-        v3Copy(thrusters[i].thrusterDirection, this->scSim->thrusters[i].gt_B);
+        eigenVector3d2CArray(thrusters[i].thrusterLocation, this->scSim->thrusters[i].r_B);
+        eigenVector3d2CArray(thrusters[i].thrusterDirection, this->scSim->thrusters[i].gt_B);
         scSim->thrusters[i].maxThrust = thrusters[i].maxThrust;
         scSim->thrusters[i].level = thrusters[i].thrustFactor;
     }
@@ -312,10 +314,10 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
     for (i = 0; i < this->reactionWheels.size(); i++)
     {
         this->scSim->rw[i].state = COMPONENT_ON;
-        v3Copy(reactionWheels[i].r_S, this->scSim->rw[i].r_B);
-        v3Copy(reactionWheels[i].gsHat_S, this->scSim->rw[i].gs);
-        v3Copy(reactionWheels[i].ggHat0_S, this->scSim->rw[i].gg0);
-        v3Copy(reactionWheels[i].gtHat0_S, this->scSim->rw[i].gt0);
+        eigenVector3d2CArray(reactionWheels[i].rWB_S, this->scSim->rw[i].r_B);
+        eigenVector3d2CArray(reactionWheels[i].gsHat_S, this->scSim->rw[i].gs);
+        eigenVector3d2CArray(reactionWheels[i].ggHat0_S, this->scSim->rw[i].gg0);
+        eigenVector3d2CArray(reactionWheels[i].gtHat0_S, this->scSim->rw[i].gt0);
         this->scSim->rw[i].u = reactionWheels[i].u_current;
         this->scSim->rw[i].maxTorque = reactionWheels[i].u_max;
         this->scSim->rw[i].minTorque = reactionWheels[i].u_min;
