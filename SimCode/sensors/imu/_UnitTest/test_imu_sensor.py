@@ -44,9 +44,9 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
 import imu_sensor
-import six_dof_eom
 import sim_model
 import RigidBodyKinematics as rbk
+import spacecraftPlus
 
 np.random.seed(2000000)
 
@@ -132,14 +132,13 @@ def unitSimIMU(show_plots, useFlag, testCase):
     setRandomWalk(ImuSensor)
 
     # configure MassPropsData
-    MassPropsData = six_dof_eom.MassPropsData()
-    MassPropsData.Mass = -97.9
-    MassPropsData.CoM = [0,0,0]
-    MassPropsData.InertiaTensor = [-98.9] * 9
-    MassPropsData.dcm_BS = [-99.9] * 9
+    MassPropsData = spacecraftPlus.SCPlusMassPropsData()
+    MassPropsData.massSC = -97.9
+    MassPropsData.c_B = [0.1,0,0]
+    MassPropsData.ISC_PntB_B = [-98.9] * 9
 
     # configure module input message
-    StateCurrent = six_dof_eom.OutputStateData()
+    StateCurrent = spacecraftPlus.SCPlusOutputStateData()
     StateCurrent.r_BN_N = [0,0,0]
     StateCurrent.v_BN_N = [0,0,0]
     StateCurrent.sigma_BN = np.array([0,0,0])
@@ -248,7 +247,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         SensorPosStr = myRand(3)
         ImuSensor.SensorPosStr = imu_sensor.DoubleVector(SensorPosStr)
         CoM = myRand(3)
-        MassPropsData.CoM = CoM
+        MassPropsData.c_B = CoM
         omega = myRand(3)*0.1
         StateCurrent.omega_BN_B = omega
         accel = myRand(3)
@@ -311,12 +310,12 @@ def unitSimIMU(show_plots, useFlag, testCase):
     unitSim.TotalSim.logThisMessage(ImuSensor.OutputDataMsg, unitProcRate)
 
     # configure spacecraft_mass_props message
-    unitSim.TotalSim.CreateNewMessage("TestProcess", "spacecraft_mass_props", 8*3*4, 2)
-    unitSim.TotalSim.WriteMessageData("spacecraft_mass_props", 8*3*4, 0, MassPropsData )
+    unitSim.TotalSim.CreateNewMessage("TestProcess", "mass_state_output", 8*13, 2)
+    unitSim.TotalSim.WriteMessageData("mass_state_output", 8*13, 0, MassPropsData)
 
     # configure inertial_state_output message
     unitSim.TotalSim.CreateNewMessage("TestProcess", "inertial_state_output", 8*3*11, 2)
-    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent )
+    unitSim.TotalSim.WriteMessageData("inertial_state_output", 8*3*11, 0, StateCurrent)
 
     unitSim.InitializeSimulation()
 
