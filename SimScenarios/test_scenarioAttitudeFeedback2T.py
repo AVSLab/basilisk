@@ -129,7 +129,9 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #
 # A key difference to the 1-process setup is that after the processes are created, the
 # dynamics and FSW messages system must be linked to connect messages with the same name.
-# This is done in the following two-step process:
+# Note that the interface references are added to the process that they are SUPPLYING data 
+# to.  Reversing that setting is hard to detect as the data will still show up, it will just 
+# have a single frame of latency.  This is done in the following two-step process:
 #~~~~~~~~~~~~~~{.py}
 #     dyn2FSWInterface = sim_model.SysInterface()
 #     fsw2DynInterface = sim_model.SysInterface()
@@ -137,8 +139,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #     dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
 #     fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
 #
-#     dynProcess.addInterfaceRef(dyn2FSWInterface)
-#     fswProcess.addInterfaceRef(fsw2DynInterface)
+#     dynProcess.addInterfaceRef(fsw2DynInterface)
+#     fswProcess.addInterfaceRef(dyn2FSWInterface)
 #~~~~~~~~~~~~~~
 # Next, after the simulation has been initialized and the modules messages are created
 # a discover process must be called that links messages that have the same name.
@@ -249,8 +251,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
     fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
 
-    dynProcess.addInterfaceRef(dyn2FSWInterface)
-    fswProcess.addInterfaceRef(fsw2DynInterface)
+    fswProcess.addInterfaceRef(dyn2FSWInterface)
+    dynProcess.addInterfaceRef(fsw2DynInterface)
 
 
     # create the dynamics task and specify the integration update time
