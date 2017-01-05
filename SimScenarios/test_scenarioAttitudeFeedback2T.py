@@ -129,7 +129,9 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #
 # A key difference to the 1-process setup is that after the processes are created, the
 # dynamics and FSW messages system must be linked to connect messages with the same name.
-# This is done in the following two-step process:
+# Note that the interface references are added to the process that they are SUPPLYING data 
+# to.  Reversing that setting is hard to detect as the data will still show up, it will just 
+# have a single frame of latency.  This is done in the following two-step process:
 #~~~~~~~~~~~~~~{.py}
 #     dyn2FSWInterface = sim_model.SysInterface()
 #     fsw2DynInterface = sim_model.SysInterface()
@@ -137,8 +139,8 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #     dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
 #     fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
 #
-#     dynProcess.addInterfaceRef(dyn2FSWInterface)
-#     fswProcess.addInterfaceRef(fsw2DynInterface)
+#     dynProcess.addInterfaceRef(fsw2DynInterface)
+#     fswProcess.addInterfaceRef(dyn2FSWInterface)
 #~~~~~~~~~~~~~~
 # Next, after the simulation has been initialized and the modules messages are created
 # a discover process must be called that links messages that have the same name.
@@ -249,8 +251,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     dyn2FSWInterface.addNewInterface(dynProcessName, fswProcessName)
     fsw2DynInterface.addNewInterface(fswProcessName, dynProcessName)
 
-    dynProcess.addInterfaceRef(dyn2FSWInterface)
-    fswProcess.addInterfaceRef(fsw2DynInterface)
+    fswProcess.addInterfaceRef(dyn2FSWInterface)
+    dynProcess.addInterfaceRef(fsw2DynInterface)
 
 
     # create the dynamics task and specify the integration update time
@@ -525,48 +527,48 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
         trueLr = trueSigmaBR = []
         if useUnmodeledTorque == True and useIntGain == True:
             trueLr = [
-                  [-0.0000000000000000e+00,-0.0000000000000000e+00,-0.0000000000000000e+00]
-                , [-2.4892377027721430e-01, 2.7007071362935875e-01,-1.2455586615476819e-01]
-                , [-2.4948148419074859e-01, 2.4266423610655152e-01,-9.0724080697132545e-02]
-                , [-2.4709751666573707e-01, 2.4971648992319734e-01,-9.9844866410803840e-02]
-                , [-2.4993438668027146e-01, 2.4918021098988458e-01,-9.9707495611305222e-02]
+                  [-3.8540000000000002e-01,-3.5200000000000009e-01, 4.2000000000000121e-02]
+                , [-2.4832413594005637e-01, 2.7423420741984977e-01,-1.2547995906140999e-01]
+                , [-2.4963855704325660e-01, 2.4180503459076927e-01,-9.0824655654560021e-02]
+                , [-2.4705814926163225e-01, 2.4984933912594240e-01,-9.9789581766606752e-02]
+                , [-2.4992663484004582e-01, 2.4915540593910049e-01,-9.9730854856601880e-02]
             ]
             trueSigmaBR = [
-                  [ 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00]
-                , [ 2.3644431439787103e-02,-8.7358892634732732e-02, 6.7461064071103832e-02]
-                , [ 1.9970339954486448e-02,-1.5117904386027238e-02, 1.6821825977465451e-02]
-                , [ 4.3062602140655935e-03,-8.2691329258470832e-03, 4.9242158392858145e-03]
-                , [ 1.7087578443510938e-03,-2.5155867263617552e-03, 2.1073512814346112e-03]
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [ 2.4124788077353267e-02,-8.8078468077718686e-02, 6.7556236560029792e-02]
+                , [ 2.0013848145133590e-02,-1.5036479216989354e-02, 1.6743292993630865e-02]
+                , [ 4.3556855886602566e-03,-8.2916392106937194e-03, 4.8022149157636237e-03]
+                , [ 1.7102077355609178e-03,-2.5229471654219780e-03, 2.0963057897404771e-03]
             ]
         if useUnmodeledTorque == True and useIntGain == False:
             trueLr = [
-                  [-0.0000000000000000e+00,-0.0000000000000000e+00,-0.0000000000000000e+00]
-                , [-2.7048252116784532e-01, 2.3420894071876219e-01,-9.7869034276692218e-02]
-                , [-2.4527391269230447e-01, 2.5632299647944368e-01,-9.9997257317616287e-02]
-                , [-2.5087193660129020e-01, 2.4916683645057938e-01,-9.9874856904476755e-02]
-                , [-2.4986168927326641e-01, 2.5007598529208708e-01,-1.0003845361180973e-01]
+                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
+                , [-2.6967258574434960e-01, 2.3852492578210521e-01,-9.9303066167128723e-02]
+                , [-2.4553483719840241e-01, 2.5582895110635612e-01,-9.9783874073020584e-02]
+                , [-2.5082575869743895e-01, 2.4917049711833658e-01,-9.9921820727609134e-02]
+                , [-2.4986476881781602e-01, 2.5008633794967206e-01,-1.0003104112824485e-01]
             ]
             trueSigmaBR = [
-                  [ 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00]
-                , [ 6.3924172727115203e-02,-8.6942497319127121e-02, 4.3767157675466670e-02]
-                , [ 7.1891547087706412e-02,-7.1187991999062561e-02, 2.7137257010884548e-02]
-                , [ 7.1454953842474911e-02,-7.1294076042318619e-02, 2.8739213985194037e-02]
-                , [ 7.1409615380055996e-02,-7.1458240041155432e-02, 2.8555054893675037e-02]
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [ 6.3945338706459742e-02,-8.7562909724589022e-02, 4.4198807712487694e-02]
+                , [ 7.1960157856111040e-02,-7.0992542477623266e-02, 2.7112368217686023e-02]
+                , [ 7.1431247623012131e-02,-7.1324233641929718e-02, 2.8746725391756406e-02]
+                , [ 7.1414708584927961e-02,-7.1455518150866384e-02, 2.8552586824521019e-02]
             ]
         if useUnmodeledTorque == False and useIntGain == False:
             trueLr = [
-                  [-0.0000000000000000e+00,-0.0000000000000000e+00,-0.0000000000000000e+00]
-                , [ 2.8145728071642062e-02,-4.4493983666986023e-03, 1.9899718539106000e-02]
-                , [-9.4715432578159221e-04, 2.0826149210831412e-03,-1.3480129941689915e-03]
-                , [-1.6110621936204161e-04,-2.8737186957356785e-04, 4.6408348429500232e-05]
-                , [ 4.6557322023934057e-05, 2.8313463938606023e-05,-7.7885686369882820e-07]
+                  [-3.8000000000000000e-01,-4.0000000000000008e-01, 1.5000000000000013e-01]
+                , [ 2.9018622651951317e-02,-2.3731740129077500e-03, 1.8500888075394767e-02]
+                , [-1.4212083106812448e-03, 1.7754834987403689e-03,-1.3760887721230200e-03]
+                , [-6.8638983386268455e-05,-2.6617199062440423e-04, 5.5312276312328556e-05]
+                , [ 3.3478249139870173e-05, 2.8598845181088252e-05, -1.3792582437169445e-06]
             ]
             trueSigmaBR = [
-                  [ 0.0000000000000000e+00, 0.0000000000000000e+00, 0.0000000000000000e+00]
-                , [-1.6517323525879250e-02,-1.1277869301670424e-02, 8.3749349848387961e-03]
-                , [ 1.7951805732487282e-03, 6.5110040458101078e-04,-6.9028191269068580e-05]
-                , [-1.6987415329544191e-04,-1.5088365774999048e-05,-7.3239305809835457e-06]
-                , [ 1.2989178503771199e-05,-2.4936275334020408e-06, 4.8933798362731636e-07]
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [-1.6310559825609434e-02,-1.1632615581332386e-02, 9.0311147891659286e-03]
+                , [ 1.8165879114118769e-03, 7.4688330133023404e-04,-1.2070602115782872e-04]
+                , [-1.8335140530225598e-04,-2.9214999036672645e-05,-5.7216976124152215e-06]
+                , [ 1.6181183222292735e-05,-1.0129144274203115e-06, 5.1639058023290004e-07]
             ]
         # compare the results to the truth values
         accuracy = 1e-6
@@ -587,7 +589,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
         if testFailCount == 0:
             print "PASSED "
         else:
-            print testFailCount
+            print "# Errors:", testFailCount
             print testMessages
 
     # each test method requires a single assert method to be called
