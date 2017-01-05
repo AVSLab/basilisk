@@ -34,6 +34,7 @@ SpacecraftPlus::SpacecraftPlus()
     this->sysTimePropertyName = "systemTime";
     this->simTimePrevious = 0;
 	this->scStateOutMsgName = "inertial_state_output";
+    this->scMassStateOutMsgName = "mass_state_output";
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
     this->dcm_BS.setIdentity();
@@ -392,11 +393,7 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     // - Populate mass state output message
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
-    double tempMatrix[9];
-    eigenMatrixXd2CArray(*this->ISCPntB_B, tempMatrix);
-    Eigen::Matrix3d tempMatrix2;
-    tempMatrix2 = cArray2EigenMatrix3d(tempMatrix);
-    eigenMatrix3d2CArray(tempMatrix2, (double *)massStateOut.ISC_PntB_B);
+    eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
 
     SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsData),
                                                  reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
