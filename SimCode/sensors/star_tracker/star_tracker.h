@@ -23,7 +23,7 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "_GeneralModuleFiles/dyn_effector.h"
+#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
 #include "environment/spice/spice_interface.h"
 
@@ -62,7 +62,7 @@ public:
     double mrpErrors[3];                //!< [-] Errors to be applied to the input MRP set indicating whether
     uint64_t envTimeClock;              //!< [ns] Clock associated with the environment time message
     SpiceTimeOutput timeState;        //!< [-] Module variable where the input Spice Time message is stored
-    OutputStateData scState;        //!< [-] Module variable where the input State Data message is stored
+    SCPlusOutputStateData scState;        //!< [-] Module variable where the input State Data message is stored
 
     
     

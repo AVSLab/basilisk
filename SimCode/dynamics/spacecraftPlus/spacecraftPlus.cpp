@@ -34,11 +34,13 @@ SpacecraftPlus::SpacecraftPlus()
     this->sysTimePropertyName = "systemTime";
     this->simTimePrevious = 0;
 	this->scStateOutMsgName = "inertial_state_output";
+    this->scMassStateOutMsgName = "mass_state_output";
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
     this->dcm_BS.setIdentity();
     this->struct2BdyPropertyName = "dcm_BS";
     this->dvAccum_B.fill(0.0);
+    this->MRPSwitchCount = 0;
     return;
 }
 
@@ -52,6 +54,8 @@ void SpacecraftPlus::SelfInit()
 {
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
                                                                              sizeof(SCPlusOutputStateData), this->numOutMsgBuffers, "SCPlusOutputStateData", this->moduleID);
+    this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
+                                                                             sizeof(SCPlusMassPropsData), this->numOutMsgBuffers, "SCPlusMassPropsData", this->moduleID);
     this->gravField.SelfInit();
     return;
 }
@@ -250,6 +254,7 @@ void SpacecraftPlus::integrateState(double t)
     if (sigmaBNLoc.norm() > 1) {
         sigmaBNLoc = -sigmaBNLoc/(sigmaBNLoc.dot(sigmaBNLoc));
         this->hubSigma->setState(sigmaBNLoc);
+        this->MRPSwitchCount++;
     }
     
     // = (Eigen::Vector3d) this->hubSigma->getState();
@@ -371,14 +376,26 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 {
 	SCPlusOutputStateData stateOut;
 
+    SCPlusMassPropsData massStateOut;
+
+    // - Populate state output message
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
+    stateOut.MRPSwitchCount = this->MRPSwitchCount;
 
 	SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
 		reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
+
+    // - Populate mass state output message
+    massStateOut.massSC = (*this->m_SC)(0,0);
+    eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
+    eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
+
+    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsData),
+                                                 reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
     return;
 }
