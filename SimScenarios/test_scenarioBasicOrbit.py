@@ -137,13 +137,13 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # is used
 #~~~~~~~~~~~~~~~~~{.py}
 #     simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-#     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
+#     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S-J2-only.txt'
 #                                              , simIncludeGravity.gravBodyList[-1].spherHarm
 #                                              ,3
 #                                              )
 #~~~~~~~~~~~~~~~~~
 # The value 3 indidates that the first three harmonics, including the 0th order harmonic,
-# is included.
+# is included.  This harmonics data file only includes a zeroth order and J2 term.
 #
 # Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
 # a fixed location with zero position and velocity coordinates, so this message is not updated.
@@ -313,7 +313,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
             simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-            gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
+            gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S-J2-only.txt'
                                              , simIncludeGravity.gravBodyList[-1].spherHarm
                                              ,3
                                              )
@@ -530,11 +530,11 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             ]
         if orbitCase is 'LEO' and useSphericalHarmonics == True and planetCase is 'Earth':
             truePos = [
-                  [-2.8168016010234905e+06, 5.2481748469161475e+06, 3.6771572646772973e+06]
-                , [ 5.7872847370997239e+06, 3.7546822535522678e+06,-1.1653523637507784e+06]
-                , [ 2.5907840000510132e+06,-5.3804054569751248e+06,-3.6402589543839172e+06]
-                , [-5.9057334395625489e+06,-3.5330935652573332e+06, 1.2748615301643584e+06]
-                , [-2.3737945302869496e+06, 5.5081619273500638e+06, 3.6087705254912134e+06]
+                  [-2.8168016010234915e6,5.248174846916147e6,3.677157264677297e6]
+                , [ 5.787240887314784e6,3.7547029876434486e6,-1.1653623184693705e6]
+                , [ 2.5908823579481775e6,-5.38042751586389e6,-3.6401355110844015e6]
+                , [-5.905673984221732e6,-3.5332208726054016e6,1.2748483822117285e6]
+                , [-2.3741237403798397e6,5.508156976353034e6,3.6085612280591857e6]
             ]
         if orbitCase is 'LEO' and useSphericalHarmonics == False and planetCase is 'Mars':
             truePos = [
