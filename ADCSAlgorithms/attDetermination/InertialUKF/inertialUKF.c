@@ -514,8 +514,8 @@ void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime)
           get the total shifted S matrix (called sBar in internal parameters*/
     for(i=0; i<ConfigData->numObs; i++)
     {
-        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
-        ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);
+        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, xHat);
+        ukfCholDownDate(ConfigData->sBar, xHat, -1.0, ConfigData->numStates, sBarT);
         mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
             ConfigData->sBar);
     }
