@@ -237,14 +237,27 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
 void SpacecraftPlus::integrateState(double t)
 {
-    Eigen::MRPd sigma_BN;
     Eigen::Matrix3d dcm_BN;
     Eigen::Vector3d g_N;
-    Eigen::Vector3d initV_N;
-    Eigen::Vector3d newV_N;
+    Eigen::Vector3d initV_BN_N;
+    Eigen::Vector3d initV_CN_N;
+    Eigen::Vector3d initC_N;    // prior center of mass offset in inertial frame
+    Eigen::MRPd initSigma_BN;
+    Eigen::Matrix3d initDcm_NB;
+    Eigen::Vector3d newV_BN_N;
+    Eigen::Vector3d newV_CN_N;
+    Eigen::Vector3d newC_N;    // current center of mass offset in inertial frame
+    Eigen::MRPd newSigma_BN;
+    Eigen::Matrix3d newDcm_NB;
     Eigen::Vector3d dV_N;
 	double localTimeStep = t - timePrevious;
-    initV_N = this->hubV_N->getState();
+    initV_BN_N = this->hubV_N->getState();
+    // - Get center mass
+    initC_N = *this->c_B;
+    initSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    initDcm_NB = initSigma_BN.toRotationMatrix();
+    initC_N = initDcm_NB*initC_N;
+    initV_CN_N = initV_BN_N + initC_N;
 	this->integrator->integrate(t, localTimeStep);
 	this->timePrevious = t;
     
@@ -258,12 +271,16 @@ void SpacecraftPlus::integrateState(double t)
     }
     
     // = (Eigen::Vector3d) this->hubSigma->getState();
-    sigma_BN = sigmaBNLoc;
-    dcm_BN = sigma_BN.toRotationMatrix();
-    dcm_BN.transposeInPlace();
+    newSigma_BN = sigmaBNLoc;
+    newDcm_NB = newSigma_BN.toRotationMatrix();
+    dcm_BN = newDcm_NB.transpose();
     g_N = *(this->hub.g_N);
-    newV_N = this->hubV_N->getState();
-    dV_N = newV_N - initV_N;
+    newV_BN_N = this->hubV_N->getState();
+    // - Get center of mass
+    newC_N = *this->c_B;
+    newC_N = newDcm_NB*newC_N;
+    newV_CN_N = newV_BN_N + newC_N;
+    dV_N = newV_CN_N - initV_CN_N;
     dV_N -= g_N*localTimeStep;
     this->dvAccum_B += dcm_BN*dV_N;
     
