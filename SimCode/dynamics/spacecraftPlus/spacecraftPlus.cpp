@@ -140,6 +140,7 @@ void SpacecraftPlus::initializeDynamics()
     {
         (*dynIt)->linkInStates(this->dynManager);
     }
+	equationsOfMotion(0.0);
     return;
 }
 
