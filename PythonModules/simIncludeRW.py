@@ -35,8 +35,14 @@ import SimulationBaseClass
 import macros
 import reactionWheelStateEffector
 
+
+# define RW model types
+BalancedWheels     = 0
+JitterSimple       = 1
+JitterFullyCoupled = 2
+
 class rwOptions:
-    RWModel = False
+    RWModel = BalancedWheels
     useRWfriction = False
     useMinTorque = False
     useMaxTorque = True

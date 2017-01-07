@@ -70,7 +70,7 @@ typedef struct {
 	double U_d;                //!< kg-m^2, dynamic imbalance
 	double mass;               //!< kg, reaction wheel rotor mass
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-	RWModels RWModel; // needs comment!
+	RWModels RWModel;          //!< [], flag to indicate what the RW model is (i.e. BalancedWheels, JitterSimple, etc.)
 }ReactionWheelConfigData;
 
 

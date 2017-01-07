@@ -31,14 +31,11 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import macros
 import spacecraftPlus
 import sim_model
 import macros
-import ctypes
 import gravityEffector
 import spice_interface
-import ExtForceTorque
 import simIncludeRW
 import reactionWheelStateEffector
 import vehicleConfigData
@@ -80,7 +77,6 @@ def test_reactionWheelIntegratedTest(show_plots):
     # add RW devices
     # The clearRWSetup() is critical if the script is to run multiple times
     simIncludeRW.clearSetup()
-    simIncludeRW.options.RWModel = 0 # HACK!!!
     simIncludeRW.options.maxMomentum = 100
     simIncludeRW.create(
             'Honeywell_HR16',
