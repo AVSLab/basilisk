@@ -78,16 +78,16 @@ def addToSpacecraft(rwConfigMsgName, simObject, processName):
         vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, item)
         i += 1
 
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT*(3+1+3)*8 + 4
+    messageSize = rwClass.getStructSize()
 
     rwClass.numRW = len(rwList)
 
     simObject.CreateNewMessage(processName,
                                rwConfigMsgName,
-                               inputMessageSize,
+                               messageSize,
                                2)
     simObject.WriteMessageData( rwConfigMsgName,
-                                inputMessageSize,
+                                messageSize,
                                 0,
                                 rwClass)
 
