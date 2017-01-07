@@ -34,6 +34,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 import SimulationBaseClass
 import macros
 import reactionWheelStateEffector
+import unitTestSupport
 
 
 # define RW model types
@@ -150,6 +151,28 @@ def addToSpacecraft(modelTag, rwStateEffector, scPlus):
 
     return
 
+#
+#   This function copies over the RW class Omega variable and sets it to the
+#   state engine to ensure these are in sync.
+#
+def setInitialStates(scObject):
+    global rwList
+
+    # get the references to the vector of RW rates
+    OmegasRef = scObject.dynManager.getStateObject("reactionWheelOmegas")
+
+    # gather all RW spin rates
+    Omegas = []
+    for rw in rwList:
+        Omegas.extend([rw.Omega])
+    OmegasRef.setState(unitTestSupport.np2EigenVectorXd(Omegas))
+
+    return
+
+#
+#   Call this function before setting up any RWs. This is important if the script is
+#   run multiple times, as in Monte Carlo runs or py.test scripts with multiple tests
+#
 def clearSetup():
     global rwList
     global options
