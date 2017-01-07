@@ -79,7 +79,7 @@ def addToSpacecraft(thrConfigMsgName, simObject, processName):
         vehicleConfigData.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
-    messageSize = vehicleConfigData.MAX_EFF_CNT*(3+3+1)*8 + 4
+    messageSize = thrClass.getStructSize()
 
     thrClass.numThrusters = len(thrList)
 
