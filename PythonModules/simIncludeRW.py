@@ -154,12 +154,13 @@ def addToSpacecraft(modelTag, rwStateEffector, scPlus):
 #
 #   This function copies over the RW class Omega variable and sets it to the
 #   state engine to ensure these are in sync.
+#   The RW spin rate vector state name is optional, and the C-code default name is used.
 #
-def setInitialStates(scObject):
+def setInitialStates(scObject, name = "reactionWheelOmegas"):
     global rwList
 
     # get the references to the vector of RW rates
-    OmegasRef = scObject.dynManager.getStateObject("reactionWheelOmegas")
+    OmegasRef = scObject.dynManager.getStateObject(name)
 
     # gather all RW spin rates
     Omegas = []
