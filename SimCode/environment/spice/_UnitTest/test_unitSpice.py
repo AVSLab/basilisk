@@ -41,6 +41,7 @@ import datetime
 import MessagingAccess
 import SimulationBaseClass
 import numpy
+import spice_interface
 import ctypes
 import macros
 import matplotlib.pyplot as plt
