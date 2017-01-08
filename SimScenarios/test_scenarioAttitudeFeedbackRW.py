@@ -172,7 +172,7 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 #     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 #
 #     # add RW object array to the simulation process
-#     scSim.AddModelToTask(simTaskName, rwStateEffector)
+#     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 # ~~~~~~~~~~~~~
 # The first task is to call the `clearRWSetup()` function.  the `simIncludeRW.py` macro file creates a local
 # array of RW devices as each is created.  This `clearRWSetup()` call clears this list.  It is a good
@@ -192,8 +192,12 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # friction models (all turned off by default) or the imbalance models used (default is a balanced wheel).
 #
 # The command `addToSpacecraft()` adds all the created RWs to the spacecraftPlus() module.  The final step
-# is as alwasy to add the vector of RW effectors (called `rwStateEffector` above) to the list of simulation
-# tasks.
+# is as always to add the vector of RW effectors (called `rwStateEffector` above) to the list of simulation
+# tasks.  However, note that the dynamic effector should be evaluated before the spacecraftPlus() module,
+# which is why it is being added with a higher priority than the `scObject` task.  Generally speaking
+# we should have the execution order:
+#
+#       effectors -> dynamics -> sensors
 #
 # As with spacecraftPlus(), the reactionWheelStateEffector() class is a sub-class of the StateEffector() class.
 # As such, the RW states that get integrated are setup in a state class, and must be specified after the
@@ -356,7 +360,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     scObject.hub.useRotation = True
 
     # add spacecraftPlus object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
+    scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
@@ -401,7 +405,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # add RW object array to the simulation process
-    scSim.AddModelToTask(simTaskName, rwStateEffector)
+    scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
@@ -641,35 +645,21 @@ def run(doUnitTests, show_plots, useJitterSimple):
                     , [-6.3286970190056376e+06, 5.4872170491069853e+06, 5.5015438477240102e+06]
                 ]
         trueUs = trueSigmaBR = []
-        if useJitterSimple == True:
-            trueUs = [
-                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
-                , [ 1.1231402312140565e-02,-5.1291709034434607e-01,-4.9996296037748973e-02]
-                , [-5.3576899204811054e-02, 7.3722479933297710e-02, 2.3880144351365463e-02]
-                , [ 2.4193559082756406e-02,-2.8516319358299399e-03, 2.6158801499764212e-06]
-                , [-4.5358804715397785e-03,-3.0828353818758048e-03,-3.2251584952585274e-03]
-            ]
-            trueSigmaBR = [
-                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.4061613716759677e-02,-1.5537401133724818e-01,-1.7736020110557204e-02]
-                , [-2.8072554033139220e-02, 1.1328152717859542e-02, 4.8023651815939054e-04]
-                , [ 6.2505180487499833e-03, 2.4908595924511279e-03, 3.7332111196198281e-03]
-                , [-1.2999627747525804e-06,-1.2575327981617813e-03,-1.4238011880860959e-03]
-            ]
+
         if useJitterSimple == False:
             trueUs = [
                   [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
-                , [ 1.1231402312140565e-02,-5.1291709034434607e-01,-4.9996296037748973e-02]
-                , [-5.3576899204811054e-02, 7.3722479933297710e-02, 2.3880144351365463e-02]
-                , [ 2.4193559082756406e-02,-2.8516319358299399e-03, 2.6158801499764212e-06]
-                , [-4.5358804715397785e-03,-3.0828353818758048e-03,-3.2251584952585274e-03]
+                , [ 1.0886536396638849e-02,-5.1081088867427316e-01,-4.9465001721576522e-02]
+                , [-5.3356020546124400e-02, 7.3280121862582176e-02, 2.3622678489553288e-02]
+                , [ 2.4053273555142078e-02,-2.7877284619006338e-03, 1.0490688667807481e-04]
+                , [-4.4666896866933491e-03,-3.0806563642653785e-03,-3.2335993502972866e-03]
             ]
             trueSigmaBR = [
                   [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [ 1.4061613716759677e-02,-1.5537401133724818e-01,-1.7736020110557204e-02]
-                , [-2.8072554033139220e-02, 1.1328152717859542e-02, 4.8023651815939054e-04]
-                , [ 6.2505180487499833e-03, 2.4908595924511279e-03, 3.7332111196198281e-03]
-                , [-1.2999627747525804e-06,-1.2575327981617813e-03,-1.4238011880860959e-03]
+                , [ 1.3881610052729310e-02,-1.5485878435765174e-01,-1.7589430807049264e-02]
+                , [-2.7923740563112063e-02, 1.1269976169106372e-02, 4.7871422910631181e-04]
+                , [ 6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03]
+                , [ 1.5260133637049377e-05,-1.2491549414001010e-03,-1.4158582039329860e-03]
             ]
         # compare the results to the truth values
         accuracy = 1e-6

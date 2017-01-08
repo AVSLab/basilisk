@@ -137,7 +137,10 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #~~~~~~~~~~~~~~~~~
 # If BSK modules are added to the simulation task process, they are executed in the order that they are added
 # However, we the execution order needs to be control, a priority can be assigned.  The model with a higher priority
-# number is executed first.  For this scenario scripts, it is critical that the Spice object task is evaluated
+# number is executed first.  Modules with unset priorities will be given a priority of -1 which
+# puts them at the
+# very end of the execution frame.  They will get executed in the order in which they were added.
+# For this scenario scripts, it is critical that the Spice object task is evaluated
 # before the spacecraftPlus() model.  Thus, below the Spice object is added with a higher priority task.
 #
 # The first step to adding multiple gravitational bodies is to clear any prior gravity body
