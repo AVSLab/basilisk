@@ -69,7 +69,7 @@ def create(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def addToSpacecraft(thrConfigMsgName, simObject, processName):
+def writeConfigMessage(thrConfigMsgName, simObject, processName):
     global thrList
 
     thrClass = vehicleConfigData.ThrusterCluster()
