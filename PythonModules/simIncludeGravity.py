@@ -213,7 +213,7 @@ def addSpiceInterface(path, timeString):
     # setup SPICE ephemerise support
     spiceObject = spice_interface.SpiceInterface()
     spiceObject.ModelTag = "SpiceInterfaceData"
-    spiceObject.SPICEDataPath = path + '/Basilisk/External/EphemerisData/'
+    spiceObject.SPICEDataPath = path + 'External/EphemerisData/'
     spiceObject.OutputBufferCount = 10000
     spiceObject.PlanetNames = spice_interface.StringVector(spicePlanetNames)
 
