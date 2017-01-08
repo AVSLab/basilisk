@@ -130,7 +130,7 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
 # information on how to setup orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
-# The control torque is simulated usign the ExtForceTorque() module.  This module can
+# The control torque is simulated using the ExtForceTorque() module.  This module can
 # accept a torque in body frame components either through an input message, or through
 # a module internal torque vector which can be set in python.  In this simulation, the
 # flight software is providing the attitude control torque message which is connected to
@@ -446,6 +446,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     #   plot the results
     #
     fileNameString = filename[len(path)+6:-3]
+    plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],

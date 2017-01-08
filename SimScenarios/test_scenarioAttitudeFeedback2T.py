@@ -451,6 +451,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #   plot the results
     #
     fileNameString = filename[len(path)+6:-3]
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(dataSigmaBR[:, 0]*macros.NANO2MIN, dataSigmaBR[:, idx],

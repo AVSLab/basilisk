@@ -410,6 +410,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     timeLineSet = dataSigmaBR[:, 0]*macros.NANO2MIN
     fileNameString = filename[len(path)+6:-3]
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()
