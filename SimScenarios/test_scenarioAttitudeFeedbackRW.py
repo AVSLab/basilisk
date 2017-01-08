@@ -87,6 +87,7 @@ import fswSetupRW
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useJitterSimple", [
       (False)
+    # , (True)
 ])
 
 # provide a unique test method name, starting with test_
@@ -102,58 +103,184 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 ## \defgroup Tutorials_2_3
 ##   @{
 ## Demonstrates how to use RWs to stabilize the tumble of a spacecraft orbiting the
-# Earth that is initially tumbling.
+# Earth.
 #
 # Attitude Detumbling Simulation using RW Effectors {#scenarioAttitudeFeedbackMRP}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The scenario is
-# setup to be run in four different setups:
+# This script sets up a 6-DOF spacecraft which is orbiting the Earth.  The goal is to
+# illustrate how Reaction Wheel (RW) state effector can be added to the rigid
+# spacecraftPlus() hub, and what flight algorithm module is used to control these RWs.
+#  The scenario is
+# setup to be run in multiple setups:
 # Setup | useJitterSimple
 # ----- | -------------------
 # 1     | False
 # 2     | True
 #
-# To run the default scenario 1., call the python script through
+# To run the default scenario 1., call the python script from a Terminal window through
 #
-#       python test_scenarioAttitudeFeedback.py
+#       python test_scenarioAttitudeFeedbackRW.py
 #
-# When the simulation completes 3 plots are shown for the MRP attitude history, the rate
-# tracking errors, as well as the control torque vector.
+# When the simulation completes several plots are shown for the MRP attitude history, the rate
+# tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
-# effector is attached.  Note that both the rotational and translational degrees of
-# freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more
-# information on how to setup orbit, see [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit)
 #
-# The control torque is simulated usign the ExtForceTorque() module.  This module can
-# accept a torque in body frame components either through an input message, or through
-# a module internal torque vector which can be set in python.  In this simulation, the
-# flight software is providing the attitude control torque message which is connected to
-# the torque input message of this module.  If an external torque is being simulated,
-# then the module internal torque vector is set to a constant value.
+# ### Setup Changes to Simulate RW Dynamic Effectors
 #
-# Lastly, the flight software algorithm module require a navigation message with the
-# spacecraft orientation and attitude rates.  This is setup using the simple_nav()
-# module. By just invoking a sensor module it is setup to run without any simulated
-# corruptions.  Thus in this simulation it will return truth measurements.
+# The fundamental simulation setup is the same as the one used in
+# [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback).
+# The dynamics simulation is setup using a SpacecraftPlus() module to which an Earth gravity
+# effector is attached.  The simple navigation module is still used to output the inertial attitude
+# , angular rate, as well as position and velocity message. The simulation is setup to run in a single
+# process again.  If the flight algorithms and simulation tasks are to run at different rates, then see
+# [test_scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T) on how to setup a 2 thread simulation.
 #
-# Next the flight software algorithms need to be setup.  The inertial pointing reference
-# frame definition is provided through the simple inertial3D() module.  The only input
-# it requires is the desired inertial heading.
+# For the spacecraft simulation side of this script, the new element is adding RW effectors to the
+# the rigid spacecraft hub.  The support macro `simIncludeRW.py` provides several convenient tools to facilitate
+# this RW setup process.  This script allows the user to readily create RWs from a database of
+# public RW specifications, customize them if needed, and add them to the spacecraftPlus() module.
+# The specific code required is:
+# ~~~~~~~~~~~~~{.py}
+#     # add RW devices
+#     # The clearRWSetup() is critical if the script is to run multiple times
+#     simIncludeRW.clearSetup()
+#     # the Honeywell HR16 comes in three momentum configuration, 100, 75 and 50 Nms
+#     simIncludeRW.options.maxMomentum = 50
+#     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
+#     simIncludeRW.create(
+#             'Honeywell_HR16',
+#             [1, 0, 0],              # gsHat_S
+#             100.0                     # RPM
+#             )
+#     simIncludeRW.create(
+#             'Honeywell_HR16',
+#             [0, 1, 0],              # gsHat_S
+#             200.0                     # RPM
+#             )
+#     simIncludeRW.create(
+#             'Honeywell_HR16',
+#             [0, 0, 1],              # gsHat_S
+#             300.0,                    # RPM
+#             [0.5,0.5,0.5]           # r_S (optional argument)
+#             )
+#     numRW = simIncludeRW.getNumOfDevices()
 #
-# The reference frame states and the navigation message (output of simple_nav()) are fed
-# into the attTrackingError() module.  It is setup to compute the attitude tracking error
-# between the body frame *B* and the reference frame *R*.  If a body fixed frame other than *B*
-# needs to be driven towards *R*, this could be configured as well in this module.
+#     # create RW object container and tie to spacecraft object
+#     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+#     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 #
-# Finally the tracking errors are fed to the classic MRP feedback control module.  The
-# algorithm of this is discussed in the text book *Analytical Mechanics of Space Systems*
-# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The control torque output vector message of this
-# module is connected back to the input message of the extForceTorque() module to close
-# the control loop.
+#     # add RW object array to the simulation process
+#     scSim.AddModelToTask(simTaskName, rwStateEffector)
+# ~~~~~~~~~~~~~
+# The first task is to call the `clearRWSetup()` function.  the `simIncludeRW.py` macro file creates a local
+# array of RW devices as each is created.  This `clearRWSetup()` call clears this list.  It is a good
+# practice to always call this function prior to setting up RWs.  In particular, if this script is
+# called several times through a Monte-Carlo setup, or a multi-objective `py.test` run, then this ensures
+# that each simulation run begins with a blank list of RW devices.
+#
+# The next step is to use create() to include a particular RW devices.  The `simIncludeRW.py` file contains several
+# public specifications of RW devices which can be accessed by specifying the wheel name, `Honeywell_HR16`
+# in this case.  The other 2 arguments provide the spin axis \f$\hat{\mathbf g}_s\f$ and initial RW spin \f$\Omega\f$
+# in RPMs.  The 3rd argument is optional, and specifies the body-relative location of the RW center of mass.
+# This information is only used if an off-balanced RW device is being modeled.
+#
+# Each RW device has several default options that can be customized if needed.  For example,
+# the `Honeywell_HR16` comes in three different momentum storage configurations.  Before calling the
+# `create()` command, the desired storage capacity must be specified.  Other options include specifying
+# friction models (all turned off by default) or the imbalance models used (default is a balanced wheel).
+#
+# The command `addToSpacecraft()` adds all the created RWs to the spacecraftPlus() module.  The final step
+# is as alwasy to add the vector of RW effectors (called `rwStateEffector` above) to the list of simulation
+# tasks.
+#
+# As with spacecraftPlus(), the reactionWheelStateEffector() class is a sub-class of the StateEffector() class.
+# As such, the RW states that get integrated are setup in a state class, and must be specified after the
+# simulation is initialized.  The `create()` macros above already stored what desired RW speeds
+# were to be simulated.  The macro call
+# ~~~~~~~~~~~~~~~~~{.py}
+#     # initialize the RW state effector states
+#     simIncludeRW.setInitialStates(scObject)
+# ~~~~~~~~~~~~~~~~~
+# loops through all the setup RW effectors and sets the initial wheel speeds to the desired values.
+#
+# To log the RW information, the following code is used:
+# ~~~~~~~~~~~~~~~~~{.py}
+#     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
+#     rwOutName = ["rw_bla0_data", "rw_bla1_data", "rw_bla2_data"]
+#     for item in rwOutName:
+#         scSim.TotalSim.logThisMessage(item, samplingTime)
+# ~~~~~~~~~~~~~~~~~
+# A message is created that stores an array of the \f$\Omega\f$ wheel speeds.  This is logged
+# here to be plotted later on.  However, RW specific messages are also being created which
+# contain a wealth of information.  Their default naming is automated and shown above.  This
+# allows us to log RW specific information such as the actual RW motor torque being applied.
+#
+#
+# ### Flight Algorithm Changes to Control RWs
+#
+# The general flight algorithm setup is the same as in the earlier simulation script. Here we
+# use again the inertial3D() guidance module, teh attTrackingError() module to evaluate the
+# tracking error states, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
+# control torque vector.  In this simulation we want the MRP attitude control module to take
+# advantage of the RW spin information.  This is achieved by adding the 2 extra lines:
+# ~~~~~~~~~~~~~~~{.py}
+#     mrpControlConfig.rwParamsInMsgName = "rwa_config_data_parsed"
+#     mrpControlConfig.inputRWSpeedsName = rwStateEffector.OutputDataString
+# ~~~~~~~~~~~~~~~
+# The first line specifies the RW configuration flight message name, and the second name
+# connects the RW speed output message as an input message to this control module.  This simulates
+# the RW speed information being sensed and returned to this algorithm.
+#
+# Instead of directly simulating this control torque vector, new
+# algorithm modules are required to first map \f${\mathbf L}_r\f$ on the set of RW motor torques
+# \f$u_s\f$.
+# ~~~~~~~~~~~~~~~{.py}
+#     # add module that maps the Lr control torque into the RW motor torques
+#     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
+#     rwMotorTorqueWrap = scSim.setModelDataWrap(rwMotorTorqueConfig)
+#     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
+#     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
+#     # Initialize the test module msg names
+#     rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
+#     rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
+#     rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+#     # Make the RW control all three body axes
+#     controlAxes_B = [
+#              1,0,0
+#             ,0,1,0
+#             ,0,0,1
+#         ]
+#     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+# ~~~~~~~~~~~~~~~
+# Note that the output vector of RW motoro torques \f$u_s\f$ is set to connect with
+# the RW state effector command input message.  Further, this module inputs the typical
+# vehicle configuration message, as well as a message containing the flight algorithm
+# information of the RW devices.  This torque mapping module can map the full 3D \f${\mathbf L}_r\f$
+# vector onto RW motor torques, or only a subset.  This is specified through the `controlAxes_B` variable
+# which specifies up to 3 orthogonal axes to be controlled.  In this simulation the full 3D vector is
+# mapped onto motor torques.
+#
+# The flight algorithm need to know how many RW devices are on the spacecraft and what their
+# spin axis \f$\hat{\mathbf g}_s\f$ are.  This is set through a flight software message that is read
+# in by flight algorithm modules that need this info.  To write the required flight RW configuration message
+# a separate support macros called `fswSetupRW.py`  is used.
+# ~~~~~~~~~~~~~~~~{.py}
+#     # FSW RW configuration message
+#     # use the same RW states in the FSW algorithm as in the simulation
+#     fswSetupRW.clearSetup()
+#     for rw in simIncludeRW.rwList:
+#         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js)
+#     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
+# ~~~~~~~~~~~~~~~~
+# Again a `clearSetup()` should be called first to clear out any pre-existing RW devices from an
+# earlier simulation run.  Next, the script above uses the same RW information as what the simulation
+# uses.  In this configuration we are simulation perfect RW device knowledge.  If imperfect RW knowledge
+# is to be simulated, then the user would input the desired flight states rather than the true
+# simulation states.  The support macro `writeConfigMessage()` creates the required RW flight configuration
+# message.
 #
 #
 # Setup 1
@@ -164,79 +291,19 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          False,       # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
+#          False        # useJitterSimple
 #        )
 # ~~~~~~~~~~~~~
-# The first 2 arguments can be left as is.  The last 3 arguments control the
+# The first 2 arguments can be left as is.  The last arguments control the
 # simulation scenario flags to turn on or off certain simulation conditions.  The
-# default scenario has both the unmodeled torque and integral feedback turned off.  The
-# resulting attitude and control torque histories are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1000.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2000.svg "Torque history")
-#
-# Setup 2
-# ------
-#
-# Here the python main function is changed to read:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  Note that, as expected,
-# the orientation error doesn't settle to zero, but rather converges to a non-zero offset
-# proportional to the unmodeled torque being simulated.  Also, the control torques settle on
-# non-zero steady-state values.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1100.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2100.svg "Torque history")
-#
-# Setup 3
-# ------
-#
-# The 3rd scenario turns on both the unmodeled external torque and the integral
-# feedback term:
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          False        # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero.  The integral term changes the control torque
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1110.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2110.svg "Torque history")
-#
-# Setup 4
-# ------
-#
-# The 4th scenario turns on the unmodeled external torque but keeps the integral
-# feedback term off.  Instead, the external disturbance is fed forward in the
-# attitude control solution.
-# ~~~~~~~~~~~~~{.py}
-# if __name__ == "__main__":
-#     run( False,       # do unit tests
-#          True,        # show_plots
-#          True,        # useUnmodeledTorque
-#          False,       # useIntGain
-#          True         # useKnownTorque
-#        )
-# ~~~~~~~~~~~~~
-# The resulting attitude and control torques are shown below.  In this case
-# the orientation error does settle to zero as the feedforward term compensates for
-# the external torque.  The control torque is now caused
-# to settle on a value that matches the unmodeled external torque.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedback1101.svg "MRP history")
-# ![Control Torque History](Images/Scenarios/scenarioAttitudeFeedback2101.svg "Torque history")
+# default scenario has the RW jitter turned off.  The
+# resulting simulation illustrations are shown below.
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW10.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW20.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW30.svg "RW Omega history")
+# Note that in the RW motor torque plot both the required control torque \f$\hat u_s\f$ and the true
+# motor torque \f$u_s\f$ are shown.  This illustrates that with this maneuver the RW devices are being
+# saturated, and the attitude still eventually stabilizes.
 #
 ##  @}
 def run(doUnitTests, show_plots, useJitterSimple):
@@ -318,6 +385,8 @@ def run(doUnitTests, show_plots, useJitterSimple):
             [0, 1, 0],              # gsHat_S
             200.0                     # RPM
             )
+    if useJitterSimple:
+        simIncludeRW.options.RWmodel = simIncludeRW.JitterSimple
     simIncludeRW.create(
             'Honeywell_HR16',
             [0, 0, 1],              # gsHat_S
@@ -491,6 +560,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     #
     fileNameString = filename[len(path)+6:-3]
     timeData = dataUsReq[:, 0] * macros.NANO2MIN
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     for idx in range(1,4):
         plt.plot(timeData, dataSigmaBR[:, idx],
@@ -572,18 +642,18 @@ def run(doUnitTests, show_plots, useJitterSimple):
         trueUs = trueSigmaBR = []
         if useJitterSimple == True:
             trueUs = [
-                  [-3.8540000000000002e-01,-3.5200000000000009e-01, 4.2000000000000121e-02]
-                , [-2.3849697806730846e-01, 2.9471283787682012e-01,-1.3566545702259455e-01]
-                , [-2.5271637424714444e-01, 2.3615511889142107e-01,-9.0488478286136861e-02]
-                , [-2.4614222882341519e-01, 2.5067425482476591e-01,-9.8977162057449455e-02]
-                , [-2.4977928591111503e-01, 2.4887615666172175e-01,-9.9881092081412159e-02]
+                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
+                , [ 1.1231402312140565e-02,-5.1291709034434607e-01,-4.9996296037748973e-02]
+                , [-5.3576899204811054e-02, 7.3722479933297710e-02, 2.3880144351365463e-02]
+                , [ 2.4193559082756406e-02,-2.8516319358299399e-03, 2.6158801499764212e-06]
+                , [-4.5358804715397785e-03,-3.0828353818758048e-03,-3.2251584952585274e-03]
             ]
             trueSigmaBR = [
-                  [1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
-                , [2.2480494577949272e-02,-9.5531096658816039e-02, 7.0195707303957244e-02]
-                , [2.2497104328479428e-02,-1.6693879988589459e-02, 2.1096813515555320e-02]
-                , [5.5130423153784084e-03,-9.6647966447711703e-03, 5.2740482749995665e-03]
-                , [1.9666952518230217e-03,-3.2953351361057178e-03, 2.7072233285654586e-03]
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [ 1.4061613716759677e-02,-1.5537401133724818e-01,-1.7736020110557204e-02]
+                , [-2.8072554033139220e-02, 1.1328152717859542e-02, 4.8023651815939054e-04]
+                , [ 6.2505180487499833e-03, 2.4908595924511279e-03, 3.7332111196198281e-03]
+                , [-1.2999627747525804e-06,-1.2575327981617813e-03,-1.4238011880860959e-03]
             ]
         if useJitterSimple == False:
             trueUs = [
