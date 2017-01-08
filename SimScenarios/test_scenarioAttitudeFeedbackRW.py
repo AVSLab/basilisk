@@ -118,7 +118,6 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # Setup | useJitterSimple
 # ----- | -------------------
 # 1     | False
-# 2     | True
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
@@ -232,7 +231,9 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # ~~~~~~~~~~~~~~~
 # The first line specifies the RW configuration flight message name, and the second name
 # connects the RW speed output message as an input message to this control module.  This simulates
-# the RW speed information being sensed and returned to this algorithm.
+# the RW speed information being sensed and returned to this algorithm.  This this message names
+# are not provided, then the BSK control modules automatically turn off any RW gyroscopic
+# compensation.
 #
 # Instead of directly simulating this control torque vector, new
 # algorithm modules are required to first map \f${\mathbf L}_r\f$ on the set of RW motor torques
