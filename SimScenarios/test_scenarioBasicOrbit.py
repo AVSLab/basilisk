@@ -39,9 +39,14 @@ import logging
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0] + '/Basilisk/modules')
-sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+bskName = 'Basilisk'
+splitPath = path.split(bskName)
+bskPath = splitPath[0] + '/' + bskName + '/'
+# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
+# following line and specify the absolute bath to the Basilisk folder
+#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
+sys.path.append(bskPath + 'modules')
+sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
@@ -101,9 +106,18 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # 4     | LEO                 | True                  | Earth
 # 5     | LEO                 | False                 | Mars
 #
-# To run the default scenario 1, call the python script through
+# To run the default scenario 1 from the Basilisk/SimScenarios folder, call the python script through
 #
 #       python test_scenarioBasicOrbit.py
+#
+# *However*, to play with any scenario scripts as tutorials, you should make a copy of this
+# `test_scenarioXXX.py` file into a custom folder outside of the Basilisk directory.  Next,
+# one line must be edited in the scenario script to provide the absolute path to the root Basilisk
+# directory.  For example, in `test_scenarioBasicOrbit.py` the line
+#~~~~~~~~~~~~~~{.py}
+# bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
+#~~~~~~~~~~~~~~
+# must be uncommented and edited for the particular user's Basilisk directory path.
 #
 # When the simulation completes 2 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot either shows a planar
@@ -137,10 +151,10 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # is used
 #~~~~~~~~~~~~~~~~~{.py}
 #     simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-#     gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S-J2-only.txt'
-#                                              , simIncludeGravity.gravBodyList[-1].spherHarm
-#                                              ,3
-#                                              )
+#     gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
+#                                      , simIncludeGravity.gravBodyList[-1].spherHarm
+#                                      ,3
+#                                      )
 #~~~~~~~~~~~~~~~~~
 # The value 3 indidates that the first three harmonics, including the 0th order harmonic,
 # is included.  This harmonics data file only includes a zeroth order and J2 term.
@@ -304,7 +318,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
             simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-            gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM2BData.txt'
+            gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM2BData.txt'
                                              , simIncludeGravity.gravBodyList[-1].spherHarm
                                              , 3
                                              )
@@ -313,7 +327,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
         if useSphericalHarmonics:
             simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-            gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S-J2-only.txt'
+            gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
                                              , simIncludeGravity.gravBodyList[-1].spherHarm
                                              ,3
                                              )

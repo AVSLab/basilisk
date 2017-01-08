@@ -43,9 +43,14 @@ from datetime import timedelta
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('Basilisk')
-sys.path.append(splitPath[0] + '/Basilisk/modules')
-sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
+bskName = 'Basilisk'
+splitPath = path.split(bskName)
+bskPath = splitPath[0] + '/' + bskName + '/'
+# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
+# following line and specify the absolute bath to the Basilisk folder
+#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
+sys.path.append(bskPath + 'modules')
+sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
@@ -173,7 +178,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # The following is a support macro that creates a `spiceObject` instance, and fills in typical
 # default parameters.
 #~~~~~~~~~~~~~~~~~{.py}
-#       simIncludeGravity.addSpiceInterface(splitPath[0], timeInitString)
+#       simIncludeGravity.addSpiceInterface(bskPath, timeInitString)
 #~~~~~~~~~~~~~~~~~
 # Next the SPICE module is costumized.  The first step is to specify the zeroBase.  This is the inertial
 # origin relative to which all spacecraft message states are taken.  The simulation defaults to all
@@ -318,7 +323,7 @@ def run(doUnitTests, show_plots, scCase):
     simIncludeGravity.addEarth()
     simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
     simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
+    gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S.txt'
                                      , simIncludeGravity.gravBodyList[-1].spherHarm
                                      ,100
                                      )
@@ -338,7 +343,7 @@ def run(doUnitTests, show_plots, scCase):
     timeInit = datetime.strptime(timeInitString,spiceTimeStringFormat)
 
     # setup SPICE interface
-    simIncludeGravity.addSpiceInterface(splitPath[0], timeInitString)
+    simIncludeGravity.addSpiceInterface(bskPath, timeInitString)
 
     # by default the SPICE object will use the solar system barycenter as the inertial origin
     # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
