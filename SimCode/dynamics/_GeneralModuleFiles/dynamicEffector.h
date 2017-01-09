@@ -24,15 +24,15 @@
 #include <Eigen/Dense>
 
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body that does not itself maintain a
-    state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.)
- */
+    state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.) */
 class DynamicEffector {
 public:
     DynamicEffector();
     virtual ~DynamicEffector();
-    virtual void linkInStates(DynParamManager& states) = 0;
-    virtual void computeBodyForceTorque(double integTime)=0;
-    virtual void computeStateContribution(double integTime);
+    virtual void computeStateContribution(double integTime); 
+    virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
+    virtual void computeBodyForceTorque(double integTime) = 0;  /*!< -- Compute the force and torque on the body from 
+                                                                 the dynamicEffector */
     
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
