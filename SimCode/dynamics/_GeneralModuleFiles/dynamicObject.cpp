@@ -17,25 +17,27 @@
 
  */
 
-
 #include "dynamicObject.h"
 
+//! This is the constructor, just setting the variables to zero
 DynamicObject::DynamicObject()
 {
     return;
 }
 
-
+//! This is the destructor, nothing to report here
 DynamicObject::~DynamicObject()
 {
     return;
 }
 
+//! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes
 void DynamicObject::computeEnergyMomentum(double t)
 {
     return;
 }
 
+//! This method initializes the stateEffectors and dynamicEffectors and links the necessarry components together
 void DynamicObject::initializeDynamics()
 {
     std::vector<StateEffector*>::iterator it;
@@ -59,6 +61,7 @@ void DynamicObject::initializeDynamics()
     return;
 }
 
+//! This method 
 void DynamicObject::addStateEffector(StateEffector *newStateEffector)
 {
 	this->states.push_back(newStateEffector);
@@ -73,10 +76,7 @@ void DynamicObject::addDynamicEffector(DynamicEffector *newDynamicEffector)
     return;
 }
 
-/*!
- * @brief This method changes the integrator in use (Default integrator: RK4)
- * @param Pointer to an integrator object.
- */
+//! This method changes the integrator in use (Default integrator: RK4) 
 void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 {
 

@@ -17,9 +17,9 @@
 
  */
 
-
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
+
 #include "dynParamManager.h"
 #include "stateEffector.h"
 #include "dynamicEffector.h"
@@ -29,8 +29,7 @@
 #include <stdint.h>
 
 /*! @brief Object that is to be used by an integrator. This holds the equations of motion, integrate state, energy and
-    momentum calculations. dynamicObject is what puts all of the pieces together for your system
- */
+    momentum calculations. dynamicObject is what puts all of the pieces together for your system */
 class DynamicObject : public SysModel {
 public:
     DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
@@ -41,17 +40,17 @@ public:
 public:
     DynamicObject();
     virtual ~DynamicObject();
-    virtual void UpdateState(uint64_t callTime) = 0;  //! [-] This hooks the dyn-object into Basilisk architecture
-    virtual void initializeDynamics();                //! [-] Method to cross-link all states and initialize variables
-    virtual void equationsOfMotion(double t) = 0;     //! [-] This is computing F = Xdot(X,t)
-    virtual void integrateState(double t) = 0;        /*! [-] This is where the integration call happens, steps the
-    state forward in time */
-    virtual void computeEnergyMomentum(double t);     //! [-] This is where energy and momentum can be calculated
-	virtual void setIntegator(StateVecIntegrator *newInt) { integrator = newInt; } //!< [-] Setter for integrator
-	void addStateEffector(StateEffector *newSateEffector);  //! [-] Method to add a hinged rigid body to the stateEffector list
-	void addDynamicEffector(DynamicEffector *newDynamicEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
-    void setIntegrator(StateVecIntegrator *newIntegrator);
-
+    virtual void initializeDynamics();                //!< -- Method to cross-link all states and initialize variables
+    virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
+    virtual void equationsOfMotion(double t) = 0;     //!< -- This is computing F = Xdot(X,t)
+    virtual void integrateState(double t) = 0;        /*!< -- This is where the integration call happens, steps the
+                                                       state forward in time */
+    virtual void setIntegrator(StateVecIntegrator *newIntegrator) = 0;  //!< [-] Setter for integrator
+    virtual void computeEnergyMomentum(double t);     //!< -- This is where energy and momentum can be calculated
+	virtual void addStateEffector(StateEffector *newSateEffector) = 0;  /*! -- Method to add a hinged rigid body to the
+                                                             stateEffector list */
+	virtual void addDynamicEffector(DynamicEffector *newDynamicEffector) = 0;  /*! -- Method to add a hinged rigid body 
+                                                                                to the stateEffector list */
 };
 
 #endif /* DYNAMICOBJECT_H */
