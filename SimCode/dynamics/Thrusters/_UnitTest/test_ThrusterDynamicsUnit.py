@@ -128,7 +128,8 @@ def unitThrusters(show_plots):
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
     ThrustMessage.OnTimeRequest = thrDurationTime
-    TotalSim.TotalSim.CreateNewMessage("TestProcess", "acs_thruster_cmds", 8, 2)
+    TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", 8, 2)
+    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage)
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
@@ -140,8 +141,7 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime*1E9))
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_1_data", 8, 0, ThrustMessage)
-    executeSimRun(TotalSim, thrusterSet, testRate, int(2.0*1E9))
+    #executeSimRun(TotalSim, thrusterSet, testRate, int(2.0*1E9))
 
     # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
@@ -178,6 +178,9 @@ def unitThrusters(show_plots):
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
 
+    print thrForce
+    print ThruthForce
+
     # Compare Force values
     for i in range(0, len(thrForce)):
         if not unitTestSupport.isArrayEqual(thrForce[i], ThruthForce[i], 1, ErrTolerance):
@@ -201,6 +204,9 @@ def unitThrusters(show_plots):
     # Modify expected values for comparison and define errorTolerance
     TruthTorque = np.transpose(expectedpointstor)
     ErrTolerance = 10E-9
+
+    print thrTorque
+    print TruthTorque
 
     # Compare Torque values
     for i in range(0, len(thrTorque)):
