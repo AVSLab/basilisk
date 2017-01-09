@@ -27,12 +27,11 @@
     state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.) */
 class DynamicEffector {
 public:
-    DynamicEffector();
-    virtual ~DynamicEffector();
+    DynamicEffector();                      //!< -- Constructor
+    virtual ~DynamicEffector();             //!< -- Destructor
     virtual void computeStateContribution(double integTime); 
     virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
-    virtual void computeBodyForceTorque(double integTime) = 0;  /*!< -- Compute the force and torque on the body from 
-                                                                 the dynamicEffector */
+    virtual void computeBodyForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
     
 public:
     Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector

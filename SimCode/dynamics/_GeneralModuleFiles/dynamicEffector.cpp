@@ -19,9 +19,10 @@
 
 #include "dynamicEffector.h"
 
-//! This is the constructor, just setting the variables to zero
+/*! This is the constructor, just setting the variables to zero */
 DynamicEffector::DynamicEffector()
 {
+    // Set forces and torques to zero
     this->forceExternal_N.setZero();
     this->forceExternal_B.setZero();
     this->torqueExternalPntB_B.setZero();
@@ -29,7 +30,7 @@ DynamicEffector::DynamicEffector()
     return;
 }
 
-//! This is the destructor, nothing to report here
+/*! This is the destructor, nothing to report here */
 DynamicEffector::~DynamicEffector()
 {
     return;
