@@ -120,7 +120,7 @@ def unitThrusters(show_plots):
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    thrStartTime=10.0
+    thrStartTime=2.0
     thrDurationTime=10.0
 
     #Configure a single thruster firing, create a message for it
@@ -129,7 +129,6 @@ def unitThrusters(show_plots):
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
     ThrustMessage.OnTimeRequest = thrDurationTime
     TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", 8, 2)
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage)
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
@@ -141,13 +140,13 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime*1E9))
-    #executeSimRun(TotalSim, thrusterSet, testRate, int(2.0*1E9))
+    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage)
+    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime*1E9+2.0))
 
     # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
     thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
-    # Plot if show_plots is true
     if show_plots==True:
         plt.figure(1)
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2])
@@ -178,6 +177,7 @@ def unitThrusters(show_plots):
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
 
+    print thrStartTime*1E9
     print thrForce
     print ThruthForce
 
@@ -190,7 +190,7 @@ def unitThrusters(show_plots):
 
 
         # Create expected Torque to test against thrTorque
-    expectedpointstor = np.zeros([3, np.shape(thrForce)[0]])
+    expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
     for i in range(np.shape(thrForce)[0]):
         if (i < thrStartTime * 1.0E9 / testRate + 2):  # Thrust fires 2 times steps after the pause of sim and restart
             expectedpointstor[0, i] = 0.0
@@ -205,6 +205,7 @@ def unitThrusters(show_plots):
     TruthTorque = np.transpose(expectedpointstor)
     ErrTolerance = 10E-9
 
+    print thrStartTime * 1E9
     print thrTorque
     print TruthTorque
 
