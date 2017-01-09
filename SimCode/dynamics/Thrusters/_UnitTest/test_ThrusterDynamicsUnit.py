@@ -140,7 +140,7 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime*1E9))
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage)
+    TotalSim.TotalSim.WriteMessageData("acs_thruster_1_data", 8, 0, ThrustMessage)
     executeSimRun(TotalSim, thrusterSet, testRate, int(2.0*1E9))
 
     # Gather the Force and Torque results
