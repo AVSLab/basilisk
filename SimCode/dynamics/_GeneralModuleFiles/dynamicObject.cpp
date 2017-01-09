@@ -31,12 +31,6 @@ DynamicObject::~DynamicObject()
     return;
 }
 
-//! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes
-void DynamicObject::computeEnergyMomentum(double t)
-{
-    return;
-}
-
 //! This method initializes the stateEffectors and dynamicEffectors and links the necessarry components together
 void DynamicObject::initializeDynamics()
 {
@@ -61,14 +55,21 @@ void DynamicObject::initializeDynamics()
     return;
 }
 
-//! This method 
+//! This method allows a dynamicObject to compute energy and momentum. Great for sim validation purposes
+void DynamicObject::computeEnergyMomentum(double t)
+{
+    return;
+}
+
+//! This method attaches a stateEffector to the dynamicObject
 void DynamicObject::addStateEffector(StateEffector *newStateEffector)
 {
-	this->states.push_back(newStateEffector);
+    this->states.push_back(newStateEffector);
 
     return;
 }
 
+//! This method attaches a dynamicEffector to the dynamicObject
 void DynamicObject::addDynamicEffector(DynamicEffector *newDynamicEffector)
 {
     this->dynEffectors.push_back(newDynamicEffector);
@@ -79,7 +80,6 @@ void DynamicObject::addDynamicEffector(DynamicEffector *newDynamicEffector)
 //! This method changes the integrator in use (Default integrator: RK4) 
 void DynamicObject::setIntegrator(StateVecIntegrator *newIntegrator)
 {
-
     if (newIntegrator != nullptr) {
         delete integrator;
         integrator = newIntegrator;

@@ -40,17 +40,15 @@ public:
 public:
     DynamicObject();
     virtual ~DynamicObject();
-    virtual void initializeDynamics();                //!< -- Method to cross-link all states and initialize variables
+    virtual void initializeDynamics();
+    virtual void computeEnergyMomentum(double t);
+    virtual void addStateEffector(StateEffector *newSateEffector) = 0;
+    virtual void addDynamicEffector(DynamicEffector *newDynamicEffector) = 0;
+    virtual void setIntegrator(StateVecIntegrator *newIntegrator) = 0;
     virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
     virtual void equationsOfMotion(double t) = 0;     //!< -- This is computing F = Xdot(X,t)
     virtual void integrateState(double t) = 0;        /*!< -- This is where the integration call happens, steps the
                                                        state forward in time */
-    virtual void setIntegrator(StateVecIntegrator *newIntegrator) = 0;  //!< [-] Setter for integrator
-    virtual void computeEnergyMomentum(double t);     //!< -- This is where energy and momentum can be calculated
-	virtual void addStateEffector(StateEffector *newSateEffector) = 0;  /*! -- Method to add a hinged rigid body to the
-                                                             stateEffector list */
-	virtual void addDynamicEffector(DynamicEffector *newDynamicEffector) = 0;  /*! -- Method to add a hinged rigid body 
-                                                                                to the stateEffector list */
 };
 
 #endif /* DYNAMICOBJECT_H */
