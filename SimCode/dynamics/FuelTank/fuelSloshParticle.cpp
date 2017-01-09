@@ -25,11 +25,11 @@
 FuelSloshParticle::FuelSloshParticle()
 {
 	//! - zero the contributions for mass props and mass rates
-	this->effProps.IEffPntB_B.fill(0.0);
-	this->effProps.rCB_B.fill(0.0);
-	this->effProps.rPrimeCB_B.fill(0.0);
 	this->effProps.mEff = 0.0;
-	this->effProps.IEffPrimePntB_B.fill(0.0);
+	this->effProps.IEffPntB_B.setZero();
+	this->effProps.rEff_CB_B.setZero();
+	this->effProps.rEffPrime_CB_B.setZero();
+	this->effProps.IEffPrimePntB_B.setZero();
 
 	//! - Initialize the variables to working values
 	this->massFSP = 0.0;
@@ -75,7 +75,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Update the effectors mass
 	this->effProps.mEff = this->massFSP;
 	//Update the position of CoM
-	this->effProps.rCB_B = this->rPcB_B;
+	this->effProps.rEff_CB_B = this->rPcB_B;
 	//Update the inertia about B
 	this->rTildePcB_B << tilde(this->rPcB_B);
 	this->effProps.IEffPntB_B = this->massFSP * this->rTildePcB_B * this->rTildePcB_B.transpose();
@@ -85,7 +85,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	this->rPrimePcB_B = this->rhoDot * this->pHat_B;
 
 	//Update derivative of CoM
-	this->effProps.rPrimeCB_B = this->rPrimePcB_B;
+	this->effProps.rEffPrime_CB_B = this->rPrimePcB_B;
 	//Update the body time derivative of inertia about B
 	this->rPrimeTildePcB_B << tilde(this->rPrimePcB_B);
 	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTildePcB_B*this->rTildePcB_B + this->rTildePcB_B*this->rPrimeTildePcB_B);

@@ -36,11 +36,11 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 	IncomingCmdBuffer = NULL;
 	prevCommandTime = 0xFFFFFFFFFFFFFFFF;
 
-    effProps.IEffPntB_B.fill(0.0);
-    effProps.rCB_B.fill(0.0);
     effProps.mEff = 0.0;
-	effProps.IEffPrimePntB_B.fill(0.0);
-	effProps.rPrimeCB_B.fill(0.0);
+    effProps.IEffPntB_B.setZero();
+    effProps.rEff_CB_B.setZero();
+	effProps.IEffPrimePntB_B.setZero();
+	effProps.rEffPrime_CB_B.setZero();
 
     this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
     this->nameOfReactionWheelThetasState = "reactionWheelThetas";

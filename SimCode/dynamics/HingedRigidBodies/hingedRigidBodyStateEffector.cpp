@@ -24,9 +24,9 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
 {
     //! - zero the mass props and mass prop rates contributions
     this->effProps.mEff = 0.0;
-    this->effProps.rCB_B.fill(0.0);
+    this->effProps.rEff_CB_B.fill(0.0);
     this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rPrimeCB_B.fill(0.0);
+    this->effProps.rEffPrime_CB_B.fill(0.0);
     this->effProps.IEffPrimePntB_B.fill(0.0);
 
     //! - Initialize the variables to working values
@@ -85,7 +85,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->sHat2_B = this->dcm_SB.row(1);
     this->sHat3_B = this->dcm_SB.row(2);
     this->rSB_B = this->rHB_B - this->d*this->sHat1_B;
-    this->effProps.rCB_B = this->rSB_B;
+    this->effProps.rEff_CB_B = this->rSB_B;
 
     //! - Find the inertia of the hinged rigid body about point B
     //! - Define rTildeSB_B
@@ -94,7 +94,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
 
     //! First, find the rPrimeSB_B
     this->rPrimeSB_B = this->d*this->thetaDot*this->sHat3_B;
-    this->effProps.rPrimeCB_B = this->rPrimeSB_B;
+    this->effProps.rEffPrime_CB_B = this->rPrimeSB_B;
 
     //! - Next find the body time derivative of the inertia about point B
     //! - Define tilde matrix of rPrimeSB_B

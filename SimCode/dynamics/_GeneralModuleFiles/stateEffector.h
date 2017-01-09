@@ -23,17 +23,15 @@
 
 #include "dynParamManager.h"
 #include <Eigen/Dense>
-/*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
-           that does not itself maintain a state or represent a changing component of
-           the body (for example: gravity, thrusters, solar radiation pressure, etc.)
- */
 
+/*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
+ needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
 typedef struct {
-    Eigen::Matrix3d IEffPntB_B;           //! [kgm2] Inertia of effector relative to effector CoM in B
-    Eigen::Vector3d rCB_B;                 //! [m] Center of component with respect to attachment in B
-    Eigen::Vector3d rPrimeCB_B;
-    Eigen::Matrix3d IEffPrimePntB_B;
-    double mEff;                           //! [kg] Mass of the effector
+    double mEff;                           //!< [kg] Mass of the effector
+    Eigen::Matrix3d IEffPntB_B;            //!< [kgm2] Inertia of effector relative to point B in body frame components
+    Eigen::Vector3d rEff_CB_B;             //!< [m] Center of mass of effector with respect to point B in B frame comp
+    Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Time derivative with respect to the body of rEff_CB_B
+    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kgm2/s] Time derivative with respect to the body of IEffPntB_B
 }EffectorMassProps;
 
 class StateEffector {

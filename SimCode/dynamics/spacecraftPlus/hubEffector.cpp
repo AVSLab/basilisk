@@ -24,17 +24,17 @@ HubEffector::HubEffector()
 {
     //! - zero mass contributions
     this->effProps.mEff = 0.0;
-    this->effProps.rCB_B.fill(0.0);
-    this->effProps.IEffPntB_B.fill(0.0);
-    this->effProps.rPrimeCB_B.fill(0.0);
-    this->effProps.IEffPrimePntB_B.fill(0.0);
-    this->sumForceExternal_N.fill(0.0);
-    this->sumForceExternal_B.fill(0.0);
-    this->sumTorquePntB_B.fill(0.0);
-    this->r_NInit.fill(0.0);
-    this->v_NInit.fill(0.0);
-    this->sigma_BNInit.fill(0.0);
-    this->omega_BN_BInit.fill(0.0);
+    this->effProps.rEff_CB_B.setZero();
+    this->effProps.IEffPntB_B.setZero();
+    this->effProps.rEffPrime_CB_B.setZero();
+    this->effProps.IEffPrimePntB_B.setZero();
+    this->sumForceExternal_N.setZero();
+    this->sumForceExternal_B.setZero();
+    this->sumTorquePntB_B.setZero();
+    this->r_NInit.setZero();
+    this->v_NInit.setZero();
+    this->sigma_BNInit.setZero();
+    this->omega_BN_BInit.setZero();
 
     //! - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";
@@ -97,10 +97,10 @@ void HubEffector::updateEffectorMassProps(double integTime)
     effProps.IEffPntB_B = this->IHubPntBc_B + this->mHub*intermediateMatrix*intermediateMatrix.transpose();
 
     //! Give position of center of mass of hub with respect to point B to mass props
-    effProps.rCB_B = this->rBcB_B;
+    effProps.rEff_CB_B = this->rBcB_B;
 
     //! Zero body derivatives for position and inertia;
-    effProps.rPrimeCB_B.setZero();
+    effProps.rEffPrime_CB_B.setZero();
     effProps.IEffPrimePntB_B.setZero();
 }
 

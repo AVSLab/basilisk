@@ -24,10 +24,10 @@ FuelTank::FuelTank()
 	:fuelSloshParticles()
 {
 	//! - zero the contributions for mass props and mass rates
-	this->effProps.IEffPntB_B.fill(0.0);
-	this->effProps.rCB_B.fill(0.0);
-	this->effProps.rPrimeCB_B.fill(0.0);
 	this->effProps.mEff = 0.0;
+	this->effProps.IEffPntB_B.fill(0.0);
+	this->effProps.rEff_CB_B.fill(0.0);
+	this->effProps.rEffPrime_CB_B.fill(0.0);
 	this->effProps.IEffPrimePntB_B.fill(0.0);
     this->propMassInit = 0.0;
 
@@ -71,15 +71,15 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	std::vector<FuelSloshParticle>::iterator intFSP;
 	this->effProps.mEff = 0.0;
 	this->effProps.IEffPntB_B = this->effProps.IEffPrimePntB_B = Eigen::Matrix3d::Zero();
-	this->effProps.rCB_B = effProps.rPrimeCB_B = Eigen::Vector3d::Zero();
+	this->effProps.rEff_CB_B = effProps.rEffPrime_CB_B = Eigen::Vector3d::Zero();
 	//Incorperate the effects of all of the particles
 	for (intFSP = this->fuelSloshParticles.begin(); intFSP < this->fuelSloshParticles.end(); intFSP++) {
 		intFSP->updateEffectorMassProps(integTime);
 		this->effProps.mEff += intFSP->effProps.mEff;
 		this->effProps.IEffPntB_B += intFSP->effProps.IEffPntB_B;
 		this->effProps.IEffPrimePntB_B += intFSP->effProps.IEffPrimePntB_B;
-		this->effProps.rCB_B += intFSP->effProps.mEff * intFSP->effProps.rCB_B;
-		this->effProps.rPrimeCB_B += intFSP->effProps.mEff * intFSP->effProps.rPrimeCB_B;
+		this->effProps.rEff_CB_B += intFSP->effProps.mEff * intFSP->effProps.rEff_CB_B;
+		this->effProps.rEffPrime_CB_B += intFSP->effProps.mEff * intFSP->effProps.rEffPrime_CB_B;
 	}
 
 	//Contributions of the mass of the tank
@@ -87,11 +87,11 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	this->effProps.mEff += massLocal;
     this->ITankPntT_B = (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity();
 	this->effProps.IEffPntB_B += this->ITankPntT_B + massLocal * (rTB_B.dot(rTB_B)*Eigen::Matrix3d::Identity() - rTB_B * rTB_B.transpose());
-	this->effProps.rCB_B += massLocal * rTB_B;
+	this->effProps.rEff_CB_B += massLocal * rTB_B;
 
     //! - Scale the center of mass location by 1/m_tot
-	this->effProps.rCB_B /= effProps.mEff;
-	this->effProps.rPrimeCB_B /= effProps.mEff;
+	this->effProps.rEff_CB_B /= effProps.mEff;
+	this->effProps.rEffPrime_CB_B /= effProps.mEff;
 
     return;
 }

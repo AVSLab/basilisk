@@ -173,7 +173,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     this->hub.updateEffectorMassProps(t);
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
-    (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
+    (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
 
     //! - Loop through state effectors to get mass props
     for(it = this->states.begin(); it != this->states.end(); it++)
@@ -182,9 +182,9 @@ void SpacecraftPlus::equationsOfMotion(double t)
         (*it)->updateEffectorMassProps(t);
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
-        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
+        (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
     }
 
     //! Divide c_B and cPrime_B by the total mass of the spaceCraft
@@ -341,7 +341,7 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
     mSCLocal += this->hub.effProps.mEff;
-    cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rCB_B;
+    cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -356,8 +356,8 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
         // - Add in effectors mass props into mass props of spacecraft
         (*it)->updateEffectorMassProps(t);
         mSCLocal += (*it)->effProps.mEff;
-        cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rCB_B;
-        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rPrimeCB_B;
+        cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
+        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
