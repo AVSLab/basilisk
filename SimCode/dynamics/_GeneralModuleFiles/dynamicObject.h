@@ -28,25 +28,27 @@
 #include <vector>
 #include <stdint.h>
 
-/*! @brief Object that is to be used by an integrator. It's basically an interface with only one method: the F function describing a dynamic model X_dot = F(X,t)
+/*! @brief Object that is to be used by an integrator. This holds the equations of motion, integrate state, energy and
+    momentum calculations. dynamicObject is what puts all of the pieces together for your system
  */
 class DynamicObject : public SysModel {
 public:
-    DynParamManager dynManager;                       //! [-] Dynamics parameter manager for all effectors
-    std::vector<StateEffector*> states;               //! [-] Vector of states for dyn-object to handle
-    std::vector<DynamicEffector*> dynEffectors;       //! [-] Vector of dynamic effectors attached to dyn
-	StateVecIntegrator *integrator;                   //! [-] Integrator used to propagate state forward
+    DynParamManager dynManager;                       //!< -- Dynamics parameter manager for all effectors
+	StateVecIntegrator *integrator;                   //!< -- Integrator used to propagate state forward
+    std::vector<StateEffector*> states;               //!< -- Vector of state effectors attached to dynObject
+    std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     
 public:
     DynamicObject();
     virtual ~DynamicObject();
-    virtual void UpdateState(uint64_t callTime) = 0;  //! [-] This hooks the dyn-object into Basilisk arch
-    virtual void initializeDynamics();                //! [-] Method to cross-link all states
-    virtual void equationsOfMotion(double t) = 0;     //! [-] Everyone will need to provide this EOM
-    virtual void integrateState(double t) = 0;        //! [-] Everyone will need to integrate the state
-    virtual void computeEnergyMomentum(double t);             //! [-] User can implement NRG/moment check
+    virtual void UpdateState(uint64_t callTime) = 0;  //! [-] This hooks the dyn-object into Basilisk architecture
+    virtual void initializeDynamics();                //! [-] Method to cross-link all states and initialize variables
+    virtual void equationsOfMotion(double t) = 0;     //! [-] This is computing F = Xdot(X,t)
+    virtual void integrateState(double t) = 0;        /*! [-] This is where the integration call happens, steps the
+    state forward in time */
+    virtual void computeEnergyMomentum(double t);     //! [-] This is where energy and momentum can be calculated
 	virtual void setIntegator(StateVecIntegrator *newInt) { integrator = newInt; } //!< [-] Setter for integrator
-	void addStateEffector(StateEffector *newSateEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
+	void addStateEffector(StateEffector *newSateEffector);  //! [-] Method to add a hinged rigid body to the stateEffector list
 	void addDynamicEffector(DynamicEffector *newDynamicEffector);   //! [-] Method to add a hinged rigid body to the stateEffector list
     void setIntegrator(StateVecIntegrator *newIntegrator);
 
