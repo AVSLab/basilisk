@@ -38,17 +38,16 @@ public:
     std::vector<DynamicEffector*> dynEffectors;       //!< -- Vector of dynamic effectors attached to dynObject
     
 public:
-    DynamicObject();
-    virtual ~DynamicObject();
-    virtual void initializeDynamics();
-    virtual void computeEnergyMomentum(double t);
-    virtual void addStateEffector(StateEffector *newSateEffector) = 0;
-    virtual void addDynamicEffector(DynamicEffector *newDynamicEffector) = 0;
-    virtual void setIntegrator(StateVecIntegrator *newIntegrator) = 0;
+    DynamicObject();                                  //!< -- Constructor
+    virtual ~DynamicObject();                         //!< -- Destructor
+    virtual void initializeDynamics();                //!< -- Initializes the dynamics and variables
+    virtual void computeEnergyMomentum(double t);     //!< -- Method to compute energy and momentum of the system
+    virtual void addStateEffector(StateEffector *newSateEffector) = 0;  //!< -- Attaches a stateEffector to the system
+    virtual void addDynamicEffector(DynamicEffector *newDynamicEffector) = 0;  //!< -- Attaches a dynamicEffector
+    virtual void setIntegrator(StateVecIntegrator *newIntegrator) = 0;  //!< -- Sets a new integrator
     virtual void UpdateState(uint64_t callTime) = 0;  //!< -- This hooks the dyn-object into Basilisk architecture
     virtual void equationsOfMotion(double t) = 0;     //!< -- This is computing F = Xdot(X,t)
-    virtual void integrateState(double t) = 0;        /*!< -- This is where the integration call happens, steps the
-                                                       state forward in time */
+    virtual void integrateState(double t) = 0;        //!< -- This method steps the state forward in time
 };
 
 #endif /* DYNAMICOBJECT_H */
