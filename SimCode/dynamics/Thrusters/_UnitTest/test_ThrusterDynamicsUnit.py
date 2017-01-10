@@ -30,9 +30,6 @@
 
 # @cond DOXYGEN_IGNORE
 import sys, os
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
 import numpy as np
 import ctypes
 import math
@@ -45,10 +42,11 @@ sys.path.append(splitPath[0] + '/PythonModules')
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation
+import unitTestSupport
+import matplotlib.pyplot as plt
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
-import unitTestSupport
 import thrusterDynamicEffector
 import stateArchitecture
 import spacecraftPlus
@@ -58,7 +56,7 @@ import macros
 def thrusterEffectorAllTests(show_plots):
    [testResults, testMessage] = test_unitThrusters(show_plots)
 
-# Create function to run the simulation who's results will be comprared to expected values
+# Create function to run the simulation who's results will be compared to expected values
 def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
     newStopTime = simContainer.TotalSim.CurrentNanos + totalTime
     while(simContainer.TotalSim.CurrentNanos < newStopTime):
@@ -120,15 +118,17 @@ def unitThrusters(show_plots):
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    thrStartTime=2.0
-    thrDurationTime=10.0
+    thrStartTime=2.0*macros.NANO2SEC
+    thrDurationTime=10.0*macros.NANO2SEC
 
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    ThrustMessage.OnTimeRequest = thrDurationTime
-    TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", 8, 2)
+    ThrustMessage.OnTimeRequest = 0.
+    thrMessageSize = ThrustMessage.getStructSize()
+    TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", thrMessageSize, 2)
+    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
@@ -139,9 +139,10 @@ def unitThrusters(show_plots):
     thrusterSet.linkInStates(TotalSim.newManager)
 
     # Run the simulation
-    executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime*1E9))
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage)
-    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime*1E9+2.0))
+    executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
+    ThrustMessage.OnTimeRequest = thrDurationTime
+    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+    #executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
 
     # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
@@ -166,7 +167,7 @@ def unitThrusters(show_plots):
     # Create expected Force to test against thrForce
     expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
     for i in range(np.shape(thrForce)[0]):
-        if (i<thrStartTime*1.0E9/testRate + 2): # Thrust fires 2 times steps after the pause of sim and restart
+        if (i<thrStartTime/testRate + 2): # Thrust fires 2 times steps after the pause of sim and restart
             expectedpoints[0,i] = 0.0
             expectedpoints[1,i] = 0.0
         else:
@@ -178,17 +179,12 @@ def unitThrusters(show_plots):
     ErrTolerance = 10E-9
 
     # Compare Force values
-    for i in range(0, len(thrForce)):
-        if not unitTestSupport.isArrayEqual(thrForce[i], ThruthForce[i], 1, ErrTolerance):
-            testFailCount += 1
-            testMessages.append("FAILED: Error in force at t=" + str(
-                thrForce[i, 0] * macros.NANO2SEC) + "sec\n")
+    testFailCount, testMessages = unitTestSupport.compareArray(ThruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
 
-
-        # Create expected Torque to test against thrTorque
+    # Create expected Torque to test against thrTorque
     expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
     for i in range(np.shape(thrForce)[0]):
-        if (i < thrStartTime * 1.0E9 / testRate + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+        if (i < thrStartTime/ testRate + 2):  # Thrust fires 2 times steps after the pause of sim and restart
             expectedpointstor[0, i] = 0.0
             expectedpointstor[1, i] = 0.0
             expectedpointstor[2, i] = 0.0
@@ -202,12 +198,8 @@ def unitThrusters(show_plots):
     ErrTolerance = 10E-9
 
     # Compare Torque values
-    for i in range(0, len(thrTorque)):
-        if not unitTestSupport.isArrayEqual(thrTorque[i], TruthTorque[i], 1, ErrTolerance):
-            testFailCount += 1
-            testMessages.append("FAILED: Error in torque at t=" + str(
-                thrTorque[i, 0] * macros.NANO2SEC) + "sec\n")
-
+    # Compare Force values
+    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
 
     if testFailCount == 0:
         print "PASSED: " + " No ramp force and torque"
