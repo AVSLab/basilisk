@@ -224,6 +224,22 @@ def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 
     return
 
+def writeTeXSnippet(snippetName, texSnippet, path):
+
+    texFileName = path+"/../_Documentation/AutoTeX/"+snippetName+".tex"
+
+    if not os.path.exists(os.path.dirname(texFileName)):
+        try:
+            os.makedirs(os.path.dirname(texFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    with open(texFileName, "w") as fileHandler:
+        fileHandler.write(texSnippet)
+        fileHandler.close()
+
+    return
+
 #
 #   save a python scenario result into the Doxygen image folder
 #

@@ -211,6 +211,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     # plot a sample variable.
+    plt.close("all")    # close all prior figures so we start with a clean slate
     plt.figure(1)
     plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
              label='Case param1 = ' + str(param1) + ' and param2 = ' + str(param2))
