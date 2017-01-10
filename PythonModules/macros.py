@@ -50,7 +50,7 @@ D2R = (math.pi/180.)
 #   variable to convert degrees to radians
 R2D = (180./math.pi)
 
-#   variable to convert degrees to radians
+#   variable to convert RPM to radians
 RPM = (2.*math.pi/60.)
 
 

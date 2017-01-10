@@ -64,7 +64,7 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
 {
     /*! - Get the other message IDs */
     ConfigData->rwConfInMsgID = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
-                                                  sizeof(RWConstellation), moduleID);
+                                                  sizeof(RWConfigParams), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
                                                      sizeof(RWSpeedData), moduleID);
     ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
@@ -78,25 +78,15 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    RWConstellation localRWData;
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
     uint64_t clockTime;
     uint32_t readSize;
-    int i;
 
     ReadMessage(ConfigData->vehicleConfigDataInMsgID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
-    ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
-    ConfigData->numRW = localRWData.numRW;
 
-    for(i=0; i<ConfigData->numRW; i=i+1)
-    {
-        ConfigData->JsList[i] = localRWData.reactionWheels[i].Js;
-        m33MultV3(RECAST3X3 sc.dcm_BS,
-                  localRWData.reactionWheels[i].gsHat_S,
-                  &ConfigData->GsMatrix[i*3]);
-    }
+    ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
+                sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
 
     ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
@@ -127,8 +117,8 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 
         /* compute net RW momentum magnitude */
         v3SetZero(hs_B);
-        for (i=0;i<ConfigData->numRW;i++) {
-            v3Scale(ConfigData->JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->GsMatrix[i*3],vec3);
+        for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
+            v3Scale(ConfigData->rwConfigParams.JsList[i]*rwSpeedMsg.wheelSpeeds[i],&ConfigData->rwConfigParams.GsMatrix_B[i*3],vec3);
             v3Add(hs_B, vec3, hs_B);
         }
         hs = v3Norm(hs_B);

@@ -69,7 +69,7 @@ def create(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def addToSpacecraft(thrConfigMsgName, simObject, processName):
+def writeConfigMessage(thrConfigMsgName, simObject, processName):
     global thrList
 
     thrClass = vehicleConfigData.ThrusterCluster()
@@ -79,7 +79,7 @@ def addToSpacecraft(thrConfigMsgName, simObject, processName):
         vehicleConfigData.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
-    messageSize = vehicleConfigData.MAX_EFF_CNT*(3+3+1)*8 + 4
+    messageSize = thrClass.getStructSize()
 
     thrClass.numThrusters = len(thrList)
 

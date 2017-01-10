@@ -249,7 +249,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
          0., 0., 600.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
     scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
-    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrixXd(I)
+    scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True
 
@@ -381,8 +381,8 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - r_BN_N
+    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - r_BN_N
     sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
     omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
 
@@ -410,6 +410,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     timeLineSet = dataSigmaBR[:, 0]*macros.NANO2MIN
     fileNameString = filename[len(path)+6:-3]
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()

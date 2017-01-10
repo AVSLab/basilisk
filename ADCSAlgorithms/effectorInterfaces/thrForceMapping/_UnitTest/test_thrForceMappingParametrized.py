@@ -242,9 +242,9 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.95)
-    fswSetupThrusters.addToSpacecraft(  moduleConfig.inputThrusterConfName,
-                                        unitTestSim.TotalSim,
-                                        unitProcessName)
+    fswSetupThrusters.writeConfigMessage(  moduleConfig.inputThrusterConfName,
+                                           unitTestSim.TotalSim,
+                                           unitProcessName)
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # Setup logging on the test module output message so that we get all the writes to it

@@ -252,15 +252,19 @@ def getLineColor(idx,maxNum):
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=colorMap)
     return scalarMap.to_rgba(values[idx])
 
-def np2EigenVector3d(vec):
-    return [[vec[0]],[vec[1]],[vec[2]]]
-
-def np2EigenMatrixXd(mat):
+def np2EigenMatrix3d(mat):
     return [
         [mat[0], mat[1], mat[2]]
         ,[mat[3], mat[4], mat[5]]
         ,[mat[6], mat[7], mat[8]]
     ]
+
+def np2EigenVectorXd(vec):
+    npVec = []
+    for item in vec:
+        npVec.extend([[item]])
+
+    return npVec
 
 def EigenVector3d2np(eig):
     return np.array([eig[0][0], eig[1][0], eig[2][0]])

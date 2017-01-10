@@ -71,8 +71,12 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
     if(strlen(ConfigData->rwParamsInMsgName) > 0) {
         ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                        sizeof(RWConfigParams), moduleID);
+        if (strlen(ConfigData->inputRWSpeedsName) > 0) {
         ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                          sizeof(RWSpeedData), moduleID);
+        } else {
+            printf("Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
+        }
         if(strlen(ConfigData->rwAvailInMsgName) > 0) {
             ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
                                                              sizeof(RWAvailabilityData), moduleID);

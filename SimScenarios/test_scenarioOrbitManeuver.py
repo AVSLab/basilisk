@@ -283,8 +283,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
+    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
 
     #
@@ -306,7 +306,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         vHat = np.cross(hHat,rHat)
         v0 = np.dot(vHat,vVt)
         vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
+        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
         T2 = macros.sec2nano(P*0.25)
     else:
         # Hohmann Transfer to GEO
@@ -318,7 +318,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         T2 = macros.sec2nano((np.pi)/n1)
         vHat = vVt/v0
         vVt = vVt + vHat*(v0p-v0)
-        velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
+        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime+T2)
@@ -337,7 +337,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         vHat = np.cross(hHat,rHat)
         v0 = np.dot(vHat,vVt)
         vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
+        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
         T3 = macros.sec2nano(P*0.25)
     else:
         # Hohmann Transfer to GEO
@@ -347,7 +347,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         T3 = macros.sec2nano(0.25*(np.pi)/n1)
         vHat = vVt/v1
         vVt = vVt + vHat*(v1p-v1)
-        velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
+        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 3rd chunk
     scSim.ConfigureStopTime(simulationTime+T2+T3)
@@ -367,6 +367,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     fileNameString = filename[len(path)+6:-3]
 
     # draw the inertial position vector components
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()

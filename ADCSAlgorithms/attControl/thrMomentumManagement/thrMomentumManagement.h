@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehControlOut.h"
 #include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
+#include "rwConfigData/rwConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -36,9 +37,7 @@ typedef struct {
     /* declare module private variables */
     int initRequest;                                /*!<        status flag of the momentum dumping management */
     double  Delta_H_B[3];                           /*!< [Nms]  net desired angular momentum change */
-    int     numRW;                                  /*!<        number of RW */
-    double  GsMatrix[3*MAX_EFF_CNT];                /*!< []     The spin axis matrix used for RWAs*/
-    double  JsList[MAX_EFF_CNT];                    /*!< [kgm2] The spin axis inertia for RWAs*/
+    RWConfigParams rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module public variables */
     double hs_min;                                  /*!< [Nms]  minimum RW cluster momentum for dumping */

@@ -140,9 +140,9 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 0.5)
-    fswSetupThrusters.addToSpacecraft(  moduleConfig.thrConfInMsgName,
-                                        unitTestSim.TotalSim,
-                                        unitProcessName)
+    fswSetupThrusters.writeConfigMessage(  moduleConfig.thrConfInMsgName,
+                                           unitTestSim.TotalSim,
+                                           unitProcessName)
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message

@@ -148,9 +148,9 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     fswSetupRW.create([0.0, 1.0, 0.0], Js)
     fswSetupRW.create([0.0, 0.0, 1.0], Js)
     fswSetupRW.create([0.5773502691896258, 0.5773502691896258, 0.5773502691896258], Js)
-    fswSetupRW.addToSpacecraft(moduleConfig.rwConfigDataInMsgName,
-                               unitTestSim.TotalSim,
-                               unitProcessName)
+    fswSetupRW.writeConfigMessage(moduleConfig.rwConfigDataInMsgName,
+                                  unitTestSim.TotalSim,
+                                  unitProcessName)
 
 
 

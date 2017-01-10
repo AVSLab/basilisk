@@ -22,8 +22,6 @@
 #
 
 import sys, os, inspect
-import math
-import numpy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -31,9 +29,8 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
+import rwConfigData
 import vehicleConfigData
-
 
 
 
@@ -68,28 +65,30 @@ def create(
 #   It creates the C-class container for the array of RW devices, and attaches
 #   this container to the spacecraft object
 #
-def addToSpacecraft(rwConfigMsgName, simObject, processName):
+def writeConfigMessage(rwConfigMsgName, simObject, processName):
     global rwList
 
-    rwClass = vehicleConfigData.RWConstellation()
+    GsMatrix_B = []
+    JsList = []
+    for rw in rwList:
+        GsMatrix_B.extend(rw.gsHat_S)
+        JsList.extend([rw.Js])
 
-    i = 0
-    for item in rwList:
-        vehicleConfigData.RWConfigArray_setitem(rwClass.reactionWheels, i, item)
-        i += 1
+    rwConfigParams = rwConfigData.RWConfigParams()
+    rwConfigParams.GsMatrix_B = GsMatrix_B
+    rwConfigParams.JsList = JsList
+    rwConfigParams.numRW = len(rwList)
 
-    inputMessageSize = vehicleConfigData.MAX_EFF_CNT*(3+1+3)*8 + 4
-
-    rwClass.numRW = len(rwList)
+    messageSize = rwConfigParams.getStructSize()
 
     simObject.CreateNewMessage(processName,
                                rwConfigMsgName,
-                               inputMessageSize,
+                               messageSize,
                                2)
     simObject.WriteMessageData( rwConfigMsgName,
-                                inputMessageSize,
+                                messageSize,
                                 0,
-                                rwClass)
+                                rwConfigParams)
 
     return
 

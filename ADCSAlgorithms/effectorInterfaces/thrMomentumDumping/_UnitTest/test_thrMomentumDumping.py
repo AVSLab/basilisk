@@ -136,9 +136,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     for i in range(len(rcsLocationData)):
         fswSetupThrusters.create(rcsLocationData[i], rcsDirectionData[i], 2.0)
-    fswSetupThrusters.addToSpacecraft(  moduleConfig.thrusterConfInMsgName,
-                                        unitTestSim.TotalSim,
-                                        unitProcessName)
+    fswSetupThrusters.writeConfigMessage(  moduleConfig.thrusterConfInMsgName,
+                                           unitTestSim.TotalSim,
+                                           unitProcessName)
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message

@@ -399,8 +399,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
+    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
@@ -422,6 +422,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     fileNameString = filename[len(path)+6:-3]
 
     # draw the inertial position vector components
+    plt.close("all")  # clears out plots from earlier test runs
     plt.figure(1)
     fig = plt.gcf()
     ax = fig.gca()

@@ -173,8 +173,6 @@ def rwMotorTorqueTest(show_plots, dropAxes):
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(rwConfigParams.numRW))
 
-    print '\n', moduleOutput[:, 1:]
-
     # set the output truth states
     if dropAxes:
         trueVector = [
