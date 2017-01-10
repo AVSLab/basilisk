@@ -177,10 +177,6 @@ def unitThrusters(show_plots):
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
 
-    print thrStartTime*1E9
-    print thrForce
-    print ThruthForce
-
     # Compare Force values
     for i in range(0, len(thrForce)):
         if not unitTestSupport.isArrayEqual(thrForce[i], ThruthForce[i], 1, ErrTolerance):
@@ -204,10 +200,6 @@ def unitThrusters(show_plots):
     # Modify expected values for comparison and define errorTolerance
     TruthTorque = np.transpose(expectedpointstor)
     ErrTolerance = 10E-9
-
-    print thrStartTime * 1E9
-    print thrTorque
-    print TruthTorque
 
     # Compare Torque values
     for i in range(0, len(thrTorque)):
