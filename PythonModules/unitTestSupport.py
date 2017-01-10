@@ -76,6 +76,14 @@ def isArrayEqual(result, truth, dim, accuracy):
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
         return 0
 
+    if len(result)==0:
+        print "Result array was empty"
+        return 0
+
+    if len(truth)==0:
+        print "Truth array was empty"
+        return 0
+
     if foundNAN(result): return 0
 
     for i in range(0,dim):
@@ -88,6 +96,14 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
     # the truth array is of dimesion dim, no time stamp
     if dim < 1:
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
+        return 0
+
+    if len(result)==0:
+        print "Result array was empty"
+        return 0
+
+    if len(truth)==0:
+        print "Truth array was empty"
         return 0
 
     if foundNAN(result): return 0
@@ -103,6 +119,10 @@ def isArrayZero(result, dim, accuracy):
     # the result array is of dimension dim+1, as the first entry is the time stamp
     if dim < 1:
         print "Incorrect array dimension " + dim + " sent to isArrayEqual"
+        return 0
+
+    if len(result)==0:
+        print "Result array was empty"
         return 0
 
     if foundNAN(result): return 0
@@ -135,6 +155,9 @@ def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessa
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
@@ -150,6 +173,9 @@ def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, t
     if (len(trueStates) != len(dataStates)):
         testFailCount += 1
         testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
     else:
         for i in range(0, len(trueStates)):
             # check a vector values
