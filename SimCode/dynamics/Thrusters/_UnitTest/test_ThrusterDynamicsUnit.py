@@ -87,6 +87,15 @@ def unitThrusters(show_plots):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
+    unitTaskName = "unitTask"               # arbitrary name (don't change)
+    unitProcessName = "TestProcess"         # arbitrary name (don't change)
+
+    # Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    # terminateSimulation() is needed if multiple unit test scripts are run
+    # that run a simulation for the test. This creates a fresh and
+    # consistent simulation environment for each test run.
+    unitTestSim.TotalSim.terminateSimulation()
 
     #  Create thrusters
     thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()
@@ -107,9 +116,9 @@ def unitThrusters(show_plots):
     testRate = int(1E8)
     TotalSim = SimulationBaseClass.SimBaseClass()
     #Create a new process for the unit test task and add the module to tasking
-    testProc = TotalSim.CreateNewProcess("TestProcess")
-    testProc.addTask(TotalSim.CreateNewTask("thrusterbasic", testRate))
-    TotalSim.AddModelToTask("thrusterbasic", thrusterSet)
+    testProc = TotalSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(TotalSim.CreateNewTask(unitTaskName, testRate))
+    TotalSim.AddModelToTask(unitTaskName, thrusterSet)
     TotalSim.scObject = spacecraftPlus.SpacecraftPlus()
     TotalSim.scObject.ModelTag = "spacecraftBody"
 
@@ -127,8 +136,7 @@ def unitThrusters(show_plots):
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
     ThrustMessage.OnTimeRequest = 0.
     thrMessageSize = ThrustMessage.getStructSize()
-    TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", thrMessageSize, 2)
-    #TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+    TotalSim.TotalSim.CreateNewMessage(unitProcessName,"acs_thruster_cmds", thrMessageSize, 2)
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
@@ -160,7 +168,7 @@ def unitThrusters(show_plots):
     if show_plots==True:
         plt.show()
 
-    plt.figure(1)
+    plt.figure(2)
     plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
     plt.ylim(-2.,2.)
     plt.xlabel('Time(s)')
@@ -182,9 +190,6 @@ def unitThrusters(show_plots):
     # Modify expected values for comparison and define errorTolerance
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
-
-    print ThruthForce
-    print thrForce
 
     # Compare Force values
     testFailCount, testMessages = unitTestSupport.compareArray(ThruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
