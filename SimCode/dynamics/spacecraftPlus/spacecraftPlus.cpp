@@ -17,7 +17,6 @@
 
  */
 
-
 #include "spacecraftPlus.h"
 #include "utilities/simMacros.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
@@ -25,45 +24,63 @@
 #include "utilities/avsEigenMRP.h"
 #include <iostream>
 
-
+/*! This is the constructor, setting variables to default values */
 SpacecraftPlus::SpacecraftPlus()
 {
+    // - Set default names
+    this->sysTimePropertyName = "systemTime";
+    this->scStateOutMsgName = "inertial_state_output";
+    this->scMassStateOutMsgName = "mass_state_output";
+    this->struct2BdyPropertyName = "dcm_BS";
+
+    // - Set values to either zero or default values
 	this->currTimeStep = 0.0;
 	this->timePrevious = 0.0;
-	this->integrator = new svIntegratorRK4(this);
-    this->sysTimePropertyName = "systemTime";
     this->simTimePrevious = 0;
-	this->scStateOutMsgName = "inertial_state_output";
-    this->scMassStateOutMsgName = "mass_state_output";
+    this->MRPSwitchCount = 0;
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
     this->dcm_BS.setIdentity();
-    this->struct2BdyPropertyName = "dcm_BS";
-    this->dvAccum_B.fill(0.0);
-    this->MRPSwitchCount = 0;
+    this->dvAccum_B.setZero();
+
+    // - Set integrator as RK4 by default
+    this->integrator = new svIntegratorRK4(this);
+
     return;
 }
 
-
+/*! This is the destructor, nothing to report here */
 SpacecraftPlus::~SpacecraftPlus()
 {
     return;
 }
 
+/*! This method creates the messages for s/c output data and initializes the gravity field*/
 void SpacecraftPlus::SelfInit()
 {
+    // - Create the message for the spacecraft state
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
-                                                                             sizeof(SCPlusOutputStateData), this->numOutMsgBuffers, "SCPlusOutputStateData", this->moduleID);
+                                                                             sizeof(SCPlusOutputStateData),
+                                                                             this->numOutMsgBuffers,
+                                                                             "SCPlusOutputStateData", this->moduleID);
+    // - Create the message for the spacecraft mass state
     this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
-                                                                             sizeof(SCPlusMassPropsData), this->numOutMsgBuffers, "SCPlusMassPropsData", this->moduleID);
+                                                                             sizeof(SCPlusMassPropsData),
+                                                                                 this->numOutMsgBuffers,
+                                                                                 "SCPlusMassPropsData", this->moduleID);
+    // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
     return;
 }
 
+/*! This method is used cross link the messages and to initialize the dynamics */
 void SpacecraftPlus::CrossInit()
 {
+    // - Call gravity field cross initialization
     this->gravField.CrossInit();
+    // - Call method for initializing the dynamics of spacecraftPlus
     this->initializeDynamics();
+
     return;
 }
 
@@ -75,6 +92,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     this->gravField.updateInertialPosAndVel();
     this->writeOutputMessages(CurrentSimNanos);
     this->simTimePrevious = CurrentSimNanos;
+
     return;
 }
 
@@ -86,6 +104,7 @@ void SpacecraftPlus::linkInStates(DynParamManager& statesIn)
 	this->hubOmega_BN_B = statesIn.getStateObject("hubOmega");
     this->inertialPositionProperty = statesIn.getPropertyReference("r_BN_N");
     this->inertialVelocityProperty = statesIn.getPropertyReference("v_BN_N");
+
     return;
 }
 
@@ -141,6 +160,7 @@ void SpacecraftPlus::initializeDynamics()
         (*dynIt)->linkInStates(this->dynManager);
     }
 	equationsOfMotion(0.0);
+    
     return;
 }
 
@@ -206,7 +226,8 @@ void SpacecraftPlus::equationsOfMotion(double t)
         this->vecRotContr.setZero();
 
         //! Add contributions to matrices
-        (*it)->updateContributions(t, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr, this->vecTransContr, this->vecRotContr);
+        (*it)->updateContributions(t, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
+                                   this->vecTransContr, this->vecRotContr);
         this->hub.matrixA += this->matrixAContr;
         this->hub.matrixB += this->matrixBContr;
         this->hub.matrixC += this->matrixCContr;
@@ -373,7 +394,8 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     cDotLocal_B = cPrimeLocal_B + omegaLocal_BN_B.cross(cLocal_B);
 
     // - Find orbital kinetic energy for the spacecraft
-    this->totOrbKinEnergy += 1.0/2.0*mSCLocal*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B) + cDotLocal_B.dot(cDotLocal_B));
+    this->totOrbKinEnergy += 1.0/2.0*mSCLocal*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
+                                               + cDotLocal_B.dot(cDotLocal_B));
 
     // - Find total rotational energy
     this->totRotEnergy += -1.0/2.0*mSCLocal*cDotLocal_B.dot(cDotLocal_B);
