@@ -125,10 +125,11 @@ def unitThrusters(show_plots):
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    ThrustMessage.OnTimeRequest = 0.
+    #ThrustMessage.OnTimeRequest = 0.
+    ThrustMessage.OnTimeRequest = thrDurationTime
     thrMessageSize = ThrustMessage.getStructSize()
     TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", thrMessageSize, 2)
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+    #TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
     TotalSim.InitializeSimulation()
 
     #Configure the hub and link states
@@ -140,29 +141,34 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-    ThrustMessage.OnTimeRequest = thrDurationTime
+    #ThrustMessage.OnTimeRequest = thrDurationTime
     TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
-    #executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
+    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
 
     # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
     thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
+    # Auto Generate LaTex Figures
+    format = "width=0.5\\textwidth"
+
+    plt.figure(1)
+    plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
+    plt.ylim(0,1)
+    plt.xlabel('Time(s)')
+    plt.ylabel('Thrust Factor (-)')
+    unitTestSupport.writeFigureLaTeX("ThrustForce", "Thrust Force as a function of time", plt, format, path)
     if show_plots==True:
-        plt.figure(1)
-        plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2])
-        plt.ylim(0,1)
-        plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Factor (-)')
         plt.show()
 
-        plt.figure(1)
-        plt.plot(thrForce[:,0]*1.0E-9, thrTorque[:,1])
-        plt.ylim(-2.,2.)
-        plt.xlabel('Time(s)')
-        plt.ylabel('Thrust Torque (-)')
+    plt.figure(1)
+    plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
+    plt.ylim(-2.,2.)
+    plt.xlabel('Time(s)')
+    plt.ylabel('Thrust Torque (-)')
+    unitTestSupport.writeFigureLaTeX("ThrustTorque", "Thrust Torque as a function of time", plt, format, path)
+    if show_plots==True:
         plt.show()
-
 
     # Create expected Force to test against thrForce
     expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
@@ -177,6 +183,9 @@ def unitThrusters(show_plots):
     # Modify expected values for comparison and define errorTolerance
     ThruthForce = np.transpose(expectedpoints)
     ErrTolerance = 10E-9
+
+    print ThruthForce
+    print thrForce
 
     # Compare Force values
     testFailCount, testMessages = unitTestSupport.compareArray(ThruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
