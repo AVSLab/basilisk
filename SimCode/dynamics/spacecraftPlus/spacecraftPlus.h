@@ -75,15 +75,15 @@ public:
 public:
     SpacecraftPlus();                    //!< -- Constructor
     ~SpacecraftPlus();                   //!< -- Destructor
+    void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
+    void computeEnergyMomentum(double t);  //!< -- This method computes the total energy and momentum of the s/c
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
+	void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
-	void writeOutputMessages(uint64_t clockTime); //! -- Method to write all of the class output messages
-    void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
     void equationsOfMotion(double t);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double t);       //!< -- This method steps the state forward one step in time
-    void computeEnergyMomentum(double t);  //!< -- This method computes the total energy and momentum of the s/c
 
 private:
 	StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
