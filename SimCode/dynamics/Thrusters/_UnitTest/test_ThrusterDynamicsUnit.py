@@ -118,15 +118,14 @@ def unitThrusters(show_plots):
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    thrStartTime=2.0*macros.NANO2SEC
-    thrDurationTime=10.0*macros.NANO2SEC
+    thrStartTime=2.0*1./macros.NANO2SEC
+    thrDurationTime=10.0*1./macros.NANO2SEC
 
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    #ThrustMessage.OnTimeRequest = 0.
-    ThrustMessage.OnTimeRequest = thrDurationTime
+    ThrustMessage.OnTimeRequest = 0.
     thrMessageSize = ThrustMessage.getStructSize()
     TotalSim.TotalSim.CreateNewMessage("TestProcess","acs_thruster_cmds", thrMessageSize, 2)
     #TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
@@ -141,7 +140,7 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-    #ThrustMessage.OnTimeRequest = thrDurationTime
+    ThrustMessage.OnTimeRequest = thrDurationTime
     TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
 
