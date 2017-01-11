@@ -35,7 +35,7 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->k = 1.0;
     this->c = 0.0;
     this->IPntS_S.Identity();
-    this->rHB_B.setZero();
+    this->r_HB_B.setZero();
     this->dcm_HB.Identity();
     this->nameOfThetaState = "hingedRigidBodyTheta";
     this->nameOfThetaDotState = "hingedRigidBodyThetaDot";
@@ -84,7 +84,7 @@ void HingedRigidBodyStateEffector::updateEffectorMassProps(double integTime)
     this->sHat1_B = this->dcm_SB.row(0);
     this->sHat2_B = this->dcm_SB.row(1);
     this->sHat3_B = this->dcm_SB.row(2);
-    this->rSB_B = this->rHB_B - this->d*this->sHat1_B;
+    this->rSB_B = this->r_HB_B - this->d*this->sHat1_B;
     this->effProps.rEff_CB_B = this->rSB_B;
 
     //! - Find the inertia of the hinged rigid body about point B
@@ -131,13 +131,13 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
     this->omegaTildeBNLoc_B << 0 , -this->omegaBNLoc_B(2), this->omegaBNLoc_B(1), this->omegaBNLoc_B(2), 0, -this->omegaBNLoc_B(0), -this->omegaBNLoc_B(1), this->omegaBNLoc_B(0), 0;
     //! - Define a_theta
     gravityTorquePntH_B = -this->d*this->sHat1_B.cross(this->mass*g_B);
-    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2)*this->omegaBN_S(0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->rHB_B;
+    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omegaBN_S(2)*this->omegaBN_S(0) - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeBNLoc_B*this->omegaTildeBNLoc_B*this->r_HB_B;
 
     //! - Start defining them good old contributions - start with translation
     //! - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
     matrixAcontr = -(this->mass*this->mass*this->d*this->d*this->sHat3_B*this->sHat3_B.transpose()/(this->IPntS_S(1,1) + this->mass*this->d*this->d));
     //! - need to define rTildeHB_B
-    this->rTildeHB_B << 0 , -this->rHB_B(2), this->rHB_B(1), this->rHB_B(2), 0, -this->rHB_B(0), -this->rHB_B(1), this->rHB_B(0), 0;
+    this->rTildeHB_B << 0 , -this->r_HB_B(2), this->r_HB_B(1), this->r_HB_B(2), 0, -this->r_HB_B(0), -this->r_HB_B(1), this->r_HB_B(0), 0;
     matrixBcontr = -(this->mass*this->d*sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)*this->sHat2_B.transpose() - this->mass*this->d*this->sHat3_B.transpose()*this->rTildeHB_B));
     vecTranscontr = -(this->mass*this->d*this->a_theta*this->sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d) + this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B);
 

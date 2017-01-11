@@ -80,7 +80,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.panel1.d = 1.5
     unitTestSim.panel1.k = 100.0
     unitTestSim.panel1.c = 0.0
-    unitTestSim.panel1.rHB_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
@@ -91,7 +91,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.panel2.d = 1.5
     unitTestSim.panel2.k = 100.0
     unitTestSim.panel2.c = 0.0
-    unitTestSim.panel2.rHB_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
