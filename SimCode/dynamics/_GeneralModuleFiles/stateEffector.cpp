@@ -58,7 +58,8 @@ void StateEffector::updateContributions(double integTime, Eigen::Matrix3d & matr
 /*! This method allows for an individual stateEffector to add its energy and momentum calculations to the dynamicObject.
  The analytical devlopement of these contributions can be seen in 
  Basilisk/SimCode/dynamics/_Documentation/Basilisk-EnergyAndMomentum-20161219.pdf*/
-void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void StateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                                 double & rotEnergyContr)
 {
     return;
 }
