@@ -70,6 +70,7 @@ void SpacecraftPlus::SelfInit()
                                                                                  "SCPlusMassPropsData", this->moduleID);
     // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
+
     return;
 }
 
@@ -206,10 +207,10 @@ void SpacecraftPlus::initializeDynamics()
     return;
 }
 
-/*! This method is essentially solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along
- with all of the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are
- controlled in this method. At the end of this method all of the states will have their corresponding state derivatives
- set in the dynParam Manager thus solving for Xdot*/
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
+ dynParam Manager thus solving for Xdot*/
 void SpacecraftPlus::equationsOfMotion(double t)
 {
     // - Update time to the current time
@@ -408,20 +409,19 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     Eigen::Vector3d cDotLocal_B;
     totOrbAngMomPntN_B.setZero();
     totRotAngMomPntC_B.setZero();
+    cLocal_B.setZero();
+    cPrimeLocal_B.setZero();
+    cDotLocal_B.setZero();
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
     this->rotAngMomPntCContr_B.setZero();
     this->totOrbKinEnergy = 0.0;
     this->totRotEnergy = 0.0;
     this->rotEnergyContr = 0.0;
-
-    cLocal_B.setZero();
-    cPrimeLocal_B.setZero();
-    cDotLocal_B.setZero();
+    double mSCLocal = 0.0;
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
-    double mSCLocal = 0.0;
     mSCLocal += this->hub.effProps.mEff;
     cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
@@ -471,5 +471,6 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     // - Find rotational angular momentum for the spacecraft
     totRotAngMomPntC_B += -mSCLocal*cLocal_B.cross(cDotLocal_B);
     this->totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
+    
     return;
 }
