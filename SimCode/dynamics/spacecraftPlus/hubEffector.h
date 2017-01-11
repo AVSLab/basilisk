@@ -25,8 +25,9 @@
 #include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
-/*! @brief Abstract class that is used to implement an effector impacting a HUB body that does not itself maintain a 
- state or represent a changing component of the body (for example: gravity, thrusters, solar radiation pressure, etc.)*/
+/*! @brief This class is an instantiation of the stateEffector abstract class and is for the hub of the s/c. The hub
+ has 4 states: r_BN_N, rDot_BN_N, sigma_BN and omega_BN_B. The hub utilizes the back-substitution method for calculating
+ its derivatives using contributions from stateEffectors and dynEffectors. */
 class HubEffector : public StateEffector {
 public:
     double mHub;                         //!< [kg] mass of the hub

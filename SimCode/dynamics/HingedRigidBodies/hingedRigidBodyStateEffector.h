@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
@@ -27,57 +26,59 @@
 #include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
-/*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
-           that does not itself maintain a state or represent a changing component of
-           the body (for example: gravity, thrusters, solar radiation pressure, etc.)
- */
-
+/*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
+ is a rigid body attached to the hub through a torsional spring and damper that approximates a flexible appendage. See
+ Allard, Schaub, and Piggott paper: "General Hinged Solar Panel Dynamics Approximating First-Order Spacecraft Flexing"
+ for a detailed description of this model. A hinged rigid body has 2 states: theta and thetaDot */
 class HingedRigidBodyStateEffector : public StateEffector, public SysModel {
 public:
-    HingedRigidBodyStateEffector();
-    ~HingedRigidBodyStateEffector();
-    void registerStates(DynParamManager& statesIn);
-    void linkInStates(DynParamManager& states);
-    void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);
-    void computeDerivatives(double integTime);
-    void updateEffectorMassProps(double integTime);
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
-
-public:
-    double mass;                    //!< [kg] mass of hinged rigid body
-    double d;                       //!< [m] distance from hinge point to hinged rigid body center of mass
-    double k;                       //!< [N-m/rad] torsional spring constant of hinge
-    double c;                       //!< [N-m-s/rad] rotational damping coefficient of hinge
-    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::Matrix3d IPntS_S;        //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
-    Eigen::Matrix3d dcm_HB;         //!< [-] DCM from body frame to hinge frame
-    std::string nameOfThetaState;   //!< [-] Identifier for the theta state data container
-    std::string nameOfThetaDotState; //!< [-] Identifier for the thetaDot state data container
+    double mass;                     //!< [kg] mass of hinged rigid body
+    double d;                        //!< [m] distance from hinge point to hinged rigid body center of mass
+    double k;                        //!< [N-m/rad] torsional spring constant of hinge
+    double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
+    std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
+    std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
+    Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
+    Eigen::Matrix3d IPntS_S;         //!< [kg-m^2] Inertia of hinged rigid body about point S in S frame components
     Eigen::Vector3d r_HB_B;          //!< [m] vector pointing from body frame origin to Hinge location
+    Eigen::Matrix3d dcm_HB;          //!< -- DCM from body frame to hinge frame
 
 private:
-    Eigen::Matrix3d rTildeHB_B;     //!< [-] Tilde matrix of rHB_B
-    Eigen::Matrix3d dcm_SH;         //!< [-] DCM from hinge to hinged rigid body frame, S
-    Eigen::Matrix3d dcm_SB;         //!< [-] DCM from body to S frame
-    Eigen::Vector3d omegaBN_S;      //!< [rad/s] omega_BN in S frame components
-    Eigen::Vector3d sHat1_B;        //!< [-] unit direction vector for the first axis of the S frame
-    Eigen::Vector3d sHat2_B;        //!< [-] unit direction vector for the second axis of the S frame
-    Eigen::Vector3d sHat3_B;        //!< [-] unit direction vector for the third axis of the S frame
-    Eigen::Vector3d rSB_B;          //!< [-] Vector pointing from body origin to CoM of hinged rigid body in B frame comp
-    Eigen::Matrix3d rTildeSB_B;     //!< [-] Tilde matrix of rSB_B
-    Eigen::Vector3d rPrimeSB_B;     //!< [m/s] Body time derivative of rSB_B
-    Eigen::Matrix3d rPrimeTildeSB_B;//!< [-] Tilde matrix of rPrime_SB_B
+    double theta;                    //!< [rad] hinged rigid body angle
+    double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
+    double a_theta;                  //!< -- term needed for back substitution
+    Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
+    Eigen::Matrix3d dcm_SH;          //!< -- DCM from hinge to hinged rigid body frame, S
+    Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
+    Eigen::Vector3d omega_BN_S;       //!< [rad/s] omega_BN in S frame components
+    Eigen::Vector3d sHat1_B;         //!< -- unit direction vector for the first axis of the S frame
+    Eigen::Vector3d sHat2_B;         //!< -- unit direction vector for the second axis of the S frame
+    Eigen::Vector3d sHat3_B;         //!< -- unit direction vector for the third axis of the S frame
+    Eigen::Vector3d r_SB_B;          //!< -- Vector pointing from B to CoM of hinged rigid body in B frame components
+    Eigen::Matrix3d rTilde_SB_B;     //!< -- Tilde matrix of rSB_B
+    Eigen::Vector3d rPrime_SB_B;     //!< [m/s] Body time derivative of rSB_B
+    Eigen::Matrix3d rPrimeTilde_SB_B;  //!< -- Tilde matrix of rPrime_SB_B
     Eigen::Matrix3d ISPrimePntS_B;  //!< [kg-m^2/s] time body derivative IPntS in body frame components
-    Eigen::Vector3d omegaBNLoc_B;   //!< [rad/s] local copy of omegaBN
-    Eigen::Matrix3d omegaTildeBNLoc_B; //!< [-] tilde matrix of omegaBN
-    double theta;                   //!< [rad] hinged rigid body angle
-    double thetaDot;                //!< [rad/s] hinged rigid body angle rate
-    double a_theta;                 //!< [-] term needed for back substitution
-    StateData *hubSigma;            //!< [-] state manager access to the hubs MRP state
-    StateData *hubOmega;            //!< [-] state manager access to the hubs omegaBN_B state
-    StateData *hubVelocity;         //!< [-] state manager access to the hubs rDotBN_N state
-    StateData *thetaState;          //!< [-] state manager of theta for hinged rigid body
-    StateData *thetaDotState;       //!< [-] state manager of thetaDot for hinged rigid body
+    Eigen::Vector3d omegaLoc_BN_B;  //!< [rad/s] local copy of omegaBN
+    Eigen::Matrix3d omegaTildeLoc_BN_B; //!< -- tilde matrix of omegaBN
+    StateData *hubSigma;             //!< -- state manager access to the hubs MRP state
+    StateData *hubOmega;             //!< -- state manager access to the hubs omegaBN_B state
+    StateData *hubVelocity;          //!< -- state manager access to the hubs rDotBN_N state
+    StateData *thetaState;           //!< -- state manager of theta for hinged rigid body
+    StateData *thetaDotState;        //!< -- state manager of thetaDot for hinged rigid body
+
+public:
+    HingedRigidBodyStateEffector();  //!< -- Contructor
+    ~HingedRigidBodyStateEffector();  //!< -- Destructor
+    void registerStates(DynParamManager& statesIn);  //!< -- Method for registering the HRB states
+    void linkInStates(DynParamManager& states);  //!< -- Method for getting access to other states
+    void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr,
+                             Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d
+                             & vecTranscontr, Eigen::Vector3d & vecRotcontr);  //!< -- Method for back-sub contributions
+    void computeDerivatives(double integTime);  //!< -- Method for HRB to compute its derivatives
+    void updateEffectorMassProps(double integTime);  //!< -- Method for giving the s/c the HRB mass props and prop rates
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                      double & rotEnergyContr); //!< -- Computing energy and momentum for HRBs
 };
 
 #endif /* STATE_EFFECTOR_H */

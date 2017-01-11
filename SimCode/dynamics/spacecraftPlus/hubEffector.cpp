@@ -43,8 +43,8 @@ HubEffector::HubEffector()
     this->nameOfHubSigma = "hubSigma";
     this->nameOfHubOmega = "hubOmega";
 
-    // - define a default mass of 1kg.
-    this->mHub = 1.0;                       /*!< [kg]   default mass value */
+    // - define a default mass of 1kg
+    this->mHub = 1.0;
     this->IHubPntBc_B.setIdentity();
     this->r_BcB_B.fill(0.0);
 
@@ -105,7 +105,7 @@ void HubEffector::updateEffectorMassProps(double integTime)
     // - Give position of center of mass of hub with respect to point B to mass props
     this->effProps.rEff_CB_B = this->r_BcB_B;
 
-    //! Zero body derivatives for position and inertia;
+    // - Zero body derivatives for position and inertia;
     this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
 
