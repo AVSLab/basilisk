@@ -17,7 +17,6 @@
 
  */
 
-
 #ifndef HUB_EFFECTOR_H
 #define HUB_EFFECTOR_H
 
@@ -26,22 +25,17 @@
 #include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
-/*! @brief Abstract class that is used to implement an effector impacting a HUB body
-           that does not itself maintain a state or represent a changing component of
-           the body (for example: gravity, thrusters, solar radiation pressure, etc.)
- */
+/*! @brief Abstract class that is used to implement an effector impacting a HUB body that does not itself maintain a 
+ state or represent a changing component of the body (for example: gravity, thrusters, solar radiation pressure, etc.)*/
 class HubEffector : public StateEffector {
 public:
-    HubEffector();
-    ~HubEffector();
-    void linkInStates(DynParamManager& statesIn);
-    void registerStates(DynParamManager& states);
-    void updateEffectorMassProps(double integTime);
-    void computeDerivatives(double integTime);
-    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B, double & rotEnergyContr);
-
-public:
     double mHub;                         //!< [kg] mass of the hub
+    bool useTranslation;                 //!< -- Whether the s/c has translational states
+    bool useRotation;                    //!< -- Whether the s/c has rotational states
+    std::string nameOfHubPosition;       //!< -- Identifier for hub position states
+    std::string nameOfHubVelocity;       //!< -- Identifier for hub velocity states
+    std::string nameOfHubSigma;          //!< -- Identifier for hub sigmaBN states
+    std::string nameOfHubOmega;          //!< -- Identifier for hub omegaBN_B states
     Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
@@ -50,30 +44,34 @@ public:
     Eigen::MatrixXd *cPrime_B;           //!< [m] Body time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [m] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *g_N;                //!< [m/s^2] Gravitational acceleration in N frame components
-    Eigen::Matrix3d matrixA;             //!< [-] Back-Substitution matrix A
-    Eigen::Matrix3d matrixB;             //!< [-] Back-Substitution matrix B
-    Eigen::Matrix3d matrixC;             //!< [-] Back-Substitution matrix C
-    Eigen::Matrix3d matrixD;             //!< [-] Back-Substitution matrix D
-    Eigen::Vector3d vecTrans;            //!< [-] Back-Substitution translation vector
-    Eigen::Vector3d vecRot;              //!< [-] Back-Substitution rotation vector
+    Eigen::Matrix3d matrixA;             //!< -- Back-Substitution matrix A
+    Eigen::Matrix3d matrixB;             //!< -- Back-Substitution matrix B
+    Eigen::Matrix3d matrixC;             //!< -- Back-Substitution matrix C
+    Eigen::Matrix3d matrixD;             //!< -- Back-Substitution matrix D
+    Eigen::Vector3d vecTrans;            //!< -- Back-Substitution translation vector
+    Eigen::Vector3d vecRot;              //!< -- Back-Substitution rotation vector
     Eigen::Vector3d sumForceExternal_N;  //!< [N] Sum of forces given in the inertial frame
     Eigen::Vector3d sumForceExternal_B;  //!< [N] Sum of forces given in the body frame
     Eigen::Vector3d sumTorquePntB_B;     //!< [N-m] Total torque about point B in B frame components
     Eigen::Vector3d r_NInit;             //!< [m] Initial position of the spacecraft wrt to base
     Eigen::Vector3d v_NInit;             //!< [m/s Initial velocity of the spacecraft wrt base
-    Eigen::Vector3d sigma_BNInit;        //!< [-] Initial attitude of the spacecraft wrt base
+    Eigen::Vector3d sigma_BNInit;        //!< -- Initial attitude of the spacecraft wrt base
     Eigen::Vector3d omega_BN_BInit;      //!< [r/s] Initial attitude rate of the spacecraf wrt base
-    bool useTranslation;                 //!< [-] Whether the s/c has translational states
-    bool useRotation;                    //!< [-] Whether the s/c has rotational states
-    std::string nameOfHubPosition;       //!< [-] Identifier for hub position states
-    std::string nameOfHubVelocity;       //!< [-] Identifier for hub velocity states
-    std::string nameOfHubSigma;          //!< [-] Identifier for hub sigmaBN states
-    std::string nameOfHubOmega;          //!< [-] Identifier for hub omegaBN_B states
+
+public:
+    HubEffector();                       //!< -- Contructor
+    ~HubEffector();                      //!< -- Destructor
+    void linkInStates(DynParamManager& statesIn);  //!< -- Method to give the hub access to states
+    void registerStates(DynParamManager& states);  //!< -- Method for the hub to register some states
+    void updateEffectorMassProps(double integTime);  //!< -- Method for the hub to update its mass props for the s/c
+    void computeDerivatives(double integTime);  //!< -- Method for the hub to compute it's derivatives
+    void updateEnergyMomContributions(double integTime, Eigen::Vector3d &rotAngMomPntCContr_B,
+                                      double & rotEnergyContr); //!< -- Add contributions to energy and momentum
 
 private:
 	StateData *posState;                 //!< [-] State data container for hub position
 	StateData *velocityState;            //!< [-] State data container for hub velocity
-    StateData *sigmaState;               //!< [-] State data container for hub sigmaBN
+    StateData *sigmaState;               //!< [-] State data container for hub sigma_BN
     StateData *omegaState;               //!< [-] State data container for hub omegaBN_B
 };
 

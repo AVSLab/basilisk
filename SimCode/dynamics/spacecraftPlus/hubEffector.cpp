@@ -17,12 +17,13 @@
 
  */
 
-
 #include "hubEffector.h"
+#include "utilities/avsEigenSupport.h"
 
+/*! This is the constructor, setting variables to default values */
 HubEffector::HubEffector()
 {
-    //! - zero mass contributions
+    // - zero certain variables
     this->effProps.mEff = 0.0;
     this->effProps.rEff_CB_B.setZero();
     this->effProps.IEffPntB_B.setZero();
@@ -36,44 +37,49 @@ HubEffector::HubEffector()
     this->sigma_BNInit.setZero();
     this->omega_BN_BInit.setZero();
 
-    //! - define default names for the hub states
+    // - define default names for the hub states
     this->nameOfHubPosition = "hubPosition";
     this->nameOfHubVelocity = "hubVelocity";
     this->nameOfHubSigma = "hubSigma";
     this->nameOfHubOmega = "hubOmega";
 
-    // define a default mass of 1kg.
+    // - define a default mass of 1kg.
     this->mHub = 1.0;                       /*!< [kg]   default mass value */
     this->IHubPntBc_B.setIdentity();
     this->r_BcB_B.fill(0.0);
 
-    //! - Default simulation to useTranslation and useRotation as true for now
+    // - Default simulation to useTranslation and useRotation as true for now
     this->useTranslation = true;
     this->useRotation = true;
+
     return;
 }
 
-
+/*! This is the destructor, nothing to report here */
 HubEffector::~HubEffector()
 {
     return;
 }
 
+/*! This method allows the hub access to gravity and also gets access to the properties in the dyn Manager because uses
+ these values in the computeDerivatives method call */
 void HubEffector::linkInStates(DynParamManager& statesIn)
 {
-    //! - Get reference to mass props
+    // - Get reference to mass props
     this->m_SC = statesIn.getPropertyReference("m_SC");
     this->c_B = statesIn.getPropertyReference("centerOfMassSC");
     this->ISCPntB_B = statesIn.getPropertyReference("inertiaSC");
     this->cPrime_B = statesIn.getPropertyReference("centerOfMassPrimeSC");
     this->ISCPntBPrime_B = statesIn.getPropertyReference("inertiaPrimeSC");
     this->g_N = statesIn.getPropertyReference("g_N");
+
     return;
 }
 
+/*! This method allows the hub to register its states: r_BN_N, v_BN_N, sigma_BN and omega_BN_B */
 void HubEffector::registerStates(DynParamManager& states)
 {
-    //! - Register the hub states
+    // - Register the hub states and set with initial values
     this->posState = states.registerState(3, 1, this->nameOfHubPosition);
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
@@ -86,139 +92,135 @@ void HubEffector::registerStates(DynParamManager& states)
     return;
 }
 
+/*! This method allows the hub to give its mass properties to the spacecraft */
 void HubEffector::updateEffectorMassProps(double integTime)
 {
-    //! Give the mass to mass props
-    effProps.mEff = this->mHub;
+    // - Give the mass to mass props
+    this->effProps.mEff = this->mHub;
 
-    //! Give inertia of hub about point B to mass props
-    Eigen::Matrix3d intermediateMatrix;
-    intermediateMatrix << 0 , -this->r_BcB_B(2), this->r_BcB_B(1), this->r_BcB_B(2), 0, -this->r_BcB_B(0), -this->r_BcB_B(1), this->r_BcB_B(0), 0;
-    effProps.IEffPntB_B = this->IHubPntBc_B + this->mHub*intermediateMatrix*intermediateMatrix.transpose();
+    // - Give inertia of hub about point B to mass props
+    this->effProps.IEffPntB_B = this->IHubPntBc_B
+                                           + this->mHub*eigenTilde(this->r_BcB_B)*eigenTilde(this->r_BcB_B).transpose();
 
-    //! Give position of center of mass of hub with respect to point B to mass props
-    effProps.rEff_CB_B = this->r_BcB_B;
+    // - Give position of center of mass of hub with respect to point B to mass props
+    this->effProps.rEff_CB_B = this->r_BcB_B;
 
     //! Zero body derivatives for position and inertia;
-    effProps.rEffPrime_CB_B.setZero();
-    effProps.IEffPrimePntB_B.setZero();
+    this->effProps.rEffPrime_CB_B.setZero();
+    this->effProps.IEffPrimePntB_B.setZero();
+
+    return;
 }
 
+/*! This method is for computing the derivatives of the hub: rDDot_BN_N and omegaDot_BN_B, along with the kinematic
+ derivatives */
 void HubEffector::computeDerivatives(double integTime)
 {
-    //! - Define variables needed for derivative calculations
-    Eigen::Vector3d omegaBNDot_B;
-    Eigen::Vector3d rBNDDotLocal_B;
-    Eigen::Vector3d rBNDDotLocal_N;
-    Eigen::Matrix3d intermediateMatrix;
-    Eigen::Vector3d intermediateVector;
-    Eigen::Vector3d omegaBNLocal;
-    Eigen::Vector3d cPrimeLocal_B;
+    // - Get variables from state manager
+    Eigen::Vector3d rDotLocal_BN_N;
+    Eigen::MRPd sigmaLocal_BN;
+    Eigen::Vector3d omegaLocal_BN_B;
     Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d gLocal_N;
-    Eigen::Vector3d rBNDotLocal_N;
-    Eigen::Matrix3d Bmat;
-    Eigen::MRPd sigmaBNLocal;
-    Eigen::Vector3d sigmaBNDotLocal;
-    Eigen::Vector3d gravityForce_N;
-    Eigen::Vector3d gravityForce_B;
-    sigmaBNLocal = (Eigen::Vector3d )sigmaState->getState();
-    omegaBNLocal = omegaState->getState();
-    rBNDotLocal_N = velocityState->getState();
-    cPrimeLocal_B = *cPrime_B;
+    rDotLocal_BN_N = velocityState->getState();
+    sigmaLocal_BN = (Eigen::Vector3d )sigmaState->getState();
+    omegaLocal_BN_B = omegaState->getState();
     cLocal_B = *this->c_B;
+    cPrimeLocal_B = *cPrime_B;
     gLocal_N = *this->g_N;
 
-    ////! Make additional contributions to the matrices from the hub
-    intermediateMatrix = intermediateMatrix.Identity();
-    this->matrixA += (*this->m_SC)(0,0)*intermediateMatrix;
-    //! make c_B skew symmetric matrix
-    intermediateMatrix <<  0 , -(*c_B)(2,0),
-    (*c_B)(1,0), (*c_B)(2,0), 0, -(*c_B)(0,0), -(*c_B)(1,0), (*c_B)(0,0), 0;
+    // -  Make additional contributions to the matrices from the hub
+    Eigen::Matrix3d intermediateMatrix;
+    Eigen::Vector3d intermediateVector;
+    this->matrixA += (*this->m_SC)(0,0)*intermediateMatrix.Identity();
+    intermediateMatrix = eigenTilde((*this->c_B));  // make c_B skew symmetric matrix
     this->matrixB += -(*this->m_SC)(0,0)*intermediateMatrix;
     this->matrixC += (*this->m_SC)(0,0)*intermediateMatrix;
     this->matrixD += *ISCPntB_B;
-    this->vecTrans += -2.0*(*this->m_SC)(0,0)*omegaBNLocal.cross(cPrimeLocal_B) - (*this->m_SC)(0,0)*omegaBNLocal.cross(omegaBNLocal.cross(cLocal_B));
-    intermediateVector = *ISCPntB_B*omegaBNLocal;
-    this->vecRot += -omegaBNLocal.cross(intermediateVector) - *ISCPntBPrime_B*omegaBNLocal;
+    this->vecTrans += -2.0*(*this->m_SC)(0,0)*omegaLocal_BN_B.cross(cPrimeLocal_B)
+                                            - (*this->m_SC)(0,0)*omegaLocal_BN_B.cross(omegaLocal_BN_B.cross(cLocal_B));
+    intermediateVector = *ISCPntB_B*omegaLocal_BN_B;
+    this->vecRot += -omegaLocal_BN_B.cross(intermediateVector) - *ISCPntBPrime_B*omegaLocal_BN_B;
 
-    //! - Need to find force of gravity on the spacecraft
+    // - Need to find force of gravity on the spacecraft
+    Eigen::Vector3d gravityForce_N;
     gravityForce_N = (*this->m_SC)(0,0)*gLocal_N;
 
     if (this->useRotation == true) {
-        //! Set kinematic derivative
-        Bmat = sigmaBNLocal.Bmat();
-        sigmaBNDotLocal = 1.0/4.0*Bmat*omegaBNLocal;
-        sigmaState->setDerivative(sigmaBNDotLocal);
+        // - Set kinematic derivative
+        sigmaState->setDerivative(1.0/4.0*sigmaLocal_BN.Bmat()*omegaLocal_BN_B);
 
         if (this->useTranslation == true) {
-            //! - Define values only needed for rotation and translation together
+            // - Define dcm's
             Eigen::Matrix3d dcm_NB;
             Eigen::Matrix3d dcm_BN;
-            Eigen::Vector3d sumForceExternalMappedToB;
-
-            //! - Define dcm's
-            dcm_NB = sigmaBNLocal.toRotationMatrix();
+            dcm_NB = sigmaLocal_BN.toRotationMatrix();
             dcm_BN = dcm_NB.transpose();
 
-            //! - Map external force_N to the body frame
+            // - Map external force_N to the body frame
+            Eigen::Vector3d sumForceExternalMappedToB;
             sumForceExternalMappedToB = dcm_BN*this->sumForceExternal_N;
 
-            //! - Edit both v_trans and v_rot with gravity and external force and torque
+            // - Edit both v_trans and v_rot with gravity and external force and torque
+            Eigen::Vector3d gravityForce_B;
             gravityForce_B = dcm_BN*gravityForce_N;
             this->vecTrans += gravityForce_B + sumForceExternalMappedToB + this->sumForceExternal_B;
             this->vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
 
-            //! - Complete the Back-Substitution Method
+            // - Solve for omegaDot_BN_B
+            Eigen::Vector3d omegaDot_BN_B;
             intermediateVector = this->vecRot - this->matrixC*this->matrixA.inverse()*this->vecTrans;
             intermediateMatrix = matrixD - matrixC*matrixA.inverse()*matrixB;
-            omegaBNDot_B = intermediateMatrix.inverse()*intermediateVector;
-            omegaState->setDerivative(omegaBNDot_B);
-            rBNDDotLocal_B = matrixA.inverse()*(vecTrans - matrixB*omegaBNDot_B);
-            //! - Map rBNDDotLocal_B to rBNDotLocal_N
-            dcm_NB = sigmaBNLocal.toRotationMatrix();
-            rBNDDotLocal_N = dcm_NB*rBNDDotLocal_B;
-            velocityState->setDerivative(rBNDDotLocal_N);
-        } else {
-            //! - Edit only v_rot with gravity
-            vecRot += cLocal_B.cross(gravityForce_B) + this->sumTorquePntB_B;
+            omegaDot_BN_B = intermediateMatrix.inverse()*intermediateVector;
+            omegaState->setDerivative(omegaDot_BN_B);
 
-            //! - Only compute rotational terms
-            omegaBNDot_B = matrixD.inverse()*vecRot;
-            omegaState->setDerivative(omegaBNDot_B);
+            // - Solve for rDDot_BN_N
+            velocityState->setDerivative(dcm_NB*matrixA.inverse()*(vecTrans - matrixB*omegaDot_BN_B));
+        } else {
+            // - Only add in sumTorques to vecRot;
+            vecRot += this->sumTorquePntB_B;
+
+            // - Solve for omegaDot_BN_B
+            omegaState->setDerivative(this->matrixD.inverse()*vecRot);
         }
     }
 
     if (this->useTranslation==true) {
-        //! - Set kinematic derivative
-        posState->setDerivative(rBNDotLocal_N);
+        // - Set kinematic derivative
+        posState->setDerivative(rDotLocal_BN_N);
+
         if (this->useRotation==false) {
-            //! - If it is just translating, only compute translational terms
-            //! - need to add in gravity
+            // - If it is just translating, only compute translational terms
+            // - Add in gravity
             vecTrans += gravityForce_N + this->sumForceExternal_N;
-            
-            rBNDDotLocal_N = matrixA.inverse()*(vecTrans);
-            velocityState->setDerivative(rBNDDotLocal_N);
+
+            // - Find rDDot_BN_N
+            velocityState->setDerivative(matrixA.inverse()*(vecTrans));
         }
 	}
+
+    return;
 }
 
-void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+/*! This method is for computing the energy and momentum contributions from the hub */
+void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
+                                               double & rotEnergyContr)
 {
-    // Get variables needed for energy momentum calcs
+    // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
 
-    // Call mass props to get current information on states
+    // - Call mass props to get current information on states
     this->updateEffectorMassProps(integTime);
 
-    // Find rotational angular momentum contribution from hub
-    Eigen::Vector3d rDotBcB_B;
-    rDotBcB_B = omegaLocal_BN_B.cross(r_BcB_B);
-    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*r_BcB_B.cross(rDotBcB_B);
+    //  - Find rotational angular momentum contribution from hub
+    Eigen::Vector3d rDot_BcB_B;
+    rDot_BcB_B = omegaLocal_BN_B.cross(r_BcB_B);
+    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*r_BcB_B.cross(rDot_BcB_B);
 
-    // Find rotational energy contribution from the hub
-    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDotBcB_B.dot(rDotBcB_B);
+    // - Find rotational energy contribution from the hub
+    rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDot_BcB_B.dot(rDot_BcB_B);
     
     return;
 }
