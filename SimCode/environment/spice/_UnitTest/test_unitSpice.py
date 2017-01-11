@@ -17,11 +17,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
-# Very simple simulation.  Just sets up and calls the SPICE interface.  Could
-# be the basis for a unit test of SPICE
 import pytest
 import sys, os, inspect
 
+#
+# Spice Unit Test
+#
+# Purpose:  Test the proper function of the Spice Ephemeris module.
+#           Proper function is tested by comparing Spice Ephermis to
+#           JPL Horizons Database for different planets and times of year
+# Author:   Thibaud Teil
+# Creation Date:  Dec. 20, 2016
+#
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -29,16 +36,18 @@ splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
-# Import all of the modules that we are going to call in this simulation
-import spice_interface
+# @cond DOXYGEN_IGNOREimport spice_interface
 import datetime
 import MessagingAccess
 import SimulationBaseClass
 import numpy
+import spice_interface
 import ctypes
 import macros
 import matplotlib.pyplot as plt
+# @endcond
 
+# Class in order to plot using data accross the different paramatrized scenarios
 class DataStore:
     def __init__(self):
         self.Date = [] # replace these with appropriate containers for the data to be stored for plotting
@@ -64,6 +73,7 @@ class DataStore:
         plt.ylabel('Position Error [m]')
         plt.show()
 
+# Py.test fixture in order to plot
 @pytest.fixture(scope="module")
 def testPlottingFixture(show_plots):
     dataStore = DataStore()
@@ -107,13 +117,13 @@ def testPlottingFixture(show_plots):
 ])
 
 
-
+# provide a unique test method name, starting with test_
 def test_unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos)
     assert testResults < 1, testMessage
 
-
+# Run unit test
 def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPos , EarthTruthPos, SunTruthPos):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
@@ -130,9 +140,8 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     # create the dynamics task and specify the integration update time
     DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
 
-    # Initialize the modules that we are using.
+    # Initialize the spice modules that we are using.
     SpiceObject = spice_interface.SpiceInterface()
-
     SpiceObject.ModelTag = "SpiceInterfaceData"
     SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
     SpiceObject.OutputBufferCount = 10000
@@ -140,16 +149,18 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     SpiceObject.UTCCalInit = DateSpice
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
 
+    # Configure simulation
     TotalSim.ConfigureStopTime(int(60.0 * 1E9))
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSSeconds')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.J2000Current')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.JulianDateCurrent')
     TotalSim.AddVariableForLogging('SpiceInterfaceData.GPSWeek')
 
-    # Just running these tests to make sure that I cover all of the code
-
+    # Execute simulation
     TotalSim.InitializeSimulation()
     TotalSim.ExecuteSimulation()
+
+    # Get the logged variables (GPS seconds, Julian Date)
     DataGPSSec = TotalSim.GetLogVariableData('SpiceInterfaceData.GPSSeconds')
     DataJD = TotalSim.GetLogVariableData('SpiceInterfaceData.JulianDateCurrent')
 
@@ -167,8 +178,9 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     #Get the Julian day
     JulianStartDate = date.toordinal()+1721424.5
 
-    ################################################
+    #
     # Begin testing module results to truth values
+    #
 
     # Truth values
     # For Time delta check
@@ -176,6 +188,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     InitDiff = GPSRow[1] - GPSRow[0] * 1.0E-9
     i = 1
 
+    # Compare the GPS seconds values
     AllowTolerance = 1E-6
     while (i < DataGPSSec.shape[0]):
         if date.isoweekday() == 7: # Skip test on Sundays, because it's the end of a GPS week (seconds go to zero)
@@ -221,25 +234,26 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
         testFailCount += 1
         testMessages.append("FAILED: Absolute Julian Date time check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": abs(JDEndSim - JDEndTime)})
-    print JDEndTime
 
     # Truth values
     # For Mars position check
     MarsPosEnd = numpy.array(MarsTruthPos)
     MarsPosEnd = MarsPosEnd * 1000.0
 
-    #Simulated values
+    # Get Simulated values
     FinalMarsMessage = spice_interface.SpicePlanetState()
     TotalSim.TotalSim.GetWriteData("mars barycenter_planet_data", 120, FinalMarsMessage, 0)
     MarsPosVec = FinalMarsMessage.PositionVector
 
-
+    # Compare Mars position values
     MarsPosArray = numpy.array([MarsPosVec[0], MarsPosVec[1], MarsPosVec[2]])
     MarsPosDiff = MarsPosArray - MarsPosEnd
     PosDiffNorm = numpy.linalg.norm(MarsPosDiff)
 
+    # Plot Mars postion values
     testPlottingFixture.MarsPosErr.append(PosDiffNorm)
 
+    # Test Mars position values
     PosErrTolerance = 250
     if (PosDiffNorm > PosErrTolerance):
         testFailCount += 1
@@ -249,18 +263,19 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     # Truth values
     # For Earth position check
     EarthPosEnd = numpy.array(EarthTruthPos)
-
     EarthPosEnd = EarthPosEnd * 1000.0
 
-    #Simulated values
+    #Simulated Earth position values
     FinalEarthMessage = spice_interface.SpicePlanetState()
     TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
     EarthPosVec = FinalEarthMessage.PositionVector
 
+    # Compare Earth position values
     EarthPosArray = numpy.array([EarthPosVec[0], EarthPosVec[1], EarthPosVec[2]])
     EarthPosDiff = EarthPosArray - EarthPosEnd
     PosDiffNorm = numpy.linalg.norm(EarthPosDiff)
 
+    # Plot Earth position values
     testPlottingFixture.EarthPosErr.append(PosDiffNorm)
 
     # TestResults['EarthPosCheck'] = True
@@ -269,20 +284,24 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
         testMessages.append("FAILED: Earth position check failed with difference of: %(DiffVal)f \n" % \
                             {"DiffVal": PosDiffNorm})
 
+    # Truth Sun position values
     SunPosEnd = numpy.array(SunTruthPos)
     SunPosEnd = SunPosEnd * 1000.0
 
-    #Simulated values
+    #Simulated Sun position values
     FinalSunMessage = spice_interface.SpicePlanetState()
     TotalSim.TotalSim.GetWriteData("sun_planet_data", 120, FinalSunMessage, 0)
     SunPosVec =FinalSunMessage.PositionVector
 
+    # Compare Sun position values
     SunPosArray = numpy.array([SunPosVec[0], SunPosVec[1], SunPosVec[2]])
     SunPosDiff = SunPosArray - SunPosEnd
     PosDiffNorm = numpy.linalg.norm(SunPosDiff)
 
+    # plot Sun position values
     testPlottingFixture.SunPosErr.append(PosDiffNorm)
 
+    # Test Sun position values
     if (PosDiffNorm > PosErrTolerance):
         testFailCount += 1
         testMessages.append("FAILED: Sun position check failed with difference of: %(DiffVal)f \n" % \

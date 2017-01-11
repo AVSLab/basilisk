@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cmath>
 
+/*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
     : stepsInRamp(30)
     , InputCmds("acs_thruster_cmds")
@@ -227,12 +228,19 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
     
 }
 
+/*! This method is used to link the states to the thrusters
+ @return void
+ @param states The states to link
+ */
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
     this->dcm_BS = states.getPropertyReference(inputBSName);
 }
 
-
+/*! This method computes the Forces on Torque on the Spacecraft Body.
+ @return void
+ @param integTime Integration time
+ */
 void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     
     std::vector<ThrusterConfigData>::iterator it;
