@@ -27,10 +27,10 @@
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */
 typedef struct {
     double mEff;                           //!< [kg] Mass of the effector
-    Eigen::Matrix3d IEffPntB_B;            //!< [kgm2] Inertia of effector relative to point B in body frame components
+    Eigen::Matrix3d IEffPntB_B;            //!< [kg m^2] Inertia of effector relative to point B in B frame components
     Eigen::Vector3d rEff_CB_B;             //!< [m] Center of mass of effector with respect to point B in B frame comp
     Eigen::Vector3d rEffPrime_CB_B;        //!< [m/s] Time derivative with respect to the body of rEff_CB_B
-    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kgm2/s] Time derivative with respect to the body of IEffPntB_B
+    Eigen::Matrix3d IEffPrimePntB_B;       //!< [kg m^2/s] Time derivative with respect to the body of IEffPntB_B
 }EffectorMassProps;
 
 class StateEffector {
