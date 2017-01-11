@@ -45,7 +45,7 @@ HubEffector::HubEffector()
     // define a default mass of 1kg.
     this->mHub = 1.0;                       /*!< [kg]   default mass value */
     this->IHubPntBc_B.setIdentity();
-    this->rBcB_B.fill(0.0);
+    this->r_BcB_B.fill(0.0);
 
     //! - Default simulation to useTranslation and useRotation as true for now
     this->useTranslation = true;
@@ -93,11 +93,11 @@ void HubEffector::updateEffectorMassProps(double integTime)
 
     //! Give inertia of hub about point B to mass props
     Eigen::Matrix3d intermediateMatrix;
-    intermediateMatrix << 0 , -this->rBcB_B(2), this->rBcB_B(1), this->rBcB_B(2), 0, -this->rBcB_B(0), -this->rBcB_B(1), this->rBcB_B(0), 0;
+    intermediateMatrix << 0 , -this->r_BcB_B(2), this->r_BcB_B(1), this->r_BcB_B(2), 0, -this->r_BcB_B(0), -this->r_BcB_B(1), this->r_BcB_B(0), 0;
     effProps.IEffPntB_B = this->IHubPntBc_B + this->mHub*intermediateMatrix*intermediateMatrix.transpose();
 
     //! Give position of center of mass of hub with respect to point B to mass props
-    effProps.rEff_CB_B = this->rBcB_B;
+    effProps.rEff_CB_B = this->r_BcB_B;
 
     //! Zero body derivatives for position and inertia;
     effProps.rEffPrime_CB_B.setZero();
@@ -214,8 +214,8 @@ void HubEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d
 
     // Find rotational angular momentum contribution from hub
     Eigen::Vector3d rDotBcB_B;
-    rDotBcB_B = omegaLocal_BN_B.cross(rBcB_B);
-    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*rBcB_B.cross(rDotBcB_B);
+    rDotBcB_B = omegaLocal_BN_B.cross(r_BcB_B);
+    rotAngMomPntCContr_B = IHubPntBc_B*omegaLocal_BN_B + mHub*r_BcB_B.cross(rDotBcB_B);
 
     // Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*omegaLocal_BN_B.dot(IHubPntBc_B*omegaLocal_BN_B) + 1.0/2.0*mHub*rDotBcB_B.dot(rDotBcB_B);

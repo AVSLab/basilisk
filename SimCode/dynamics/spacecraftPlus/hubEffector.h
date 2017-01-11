@@ -42,7 +42,7 @@ public:
 
 public:
     double mHub;                         //!< [kg] mass of the hub
-    Eigen::Vector3d rBcB_B;              //!< [m] vector from point B to CoM of hub in B frame components
+    Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components

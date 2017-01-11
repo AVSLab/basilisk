@@ -148,7 +148,7 @@ def test_thrusterIntegratedTest(show_plots):
     massTankRef.setState([[40.0]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0

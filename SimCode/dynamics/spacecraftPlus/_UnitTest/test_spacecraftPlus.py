@@ -121,7 +121,7 @@ def test_SCHubIntegratedSim(show_plots):
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
 
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
 
     stopTime = 10
@@ -284,7 +284,7 @@ def test_gravityIntegratedSim(show_plots):
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     stopTime = 60.0*10.0
@@ -387,7 +387,7 @@ def test_extForceBodyAndTorque(show_plots):
     omegaRef.setState([[0.001], [-0.01], [0.03]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
@@ -502,7 +502,7 @@ def test_extForceInertialAndTorque(show_plots):
     omegaRef.setState([[0.001], [-0.01], [0.03]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0

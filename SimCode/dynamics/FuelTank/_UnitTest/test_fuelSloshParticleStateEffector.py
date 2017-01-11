@@ -153,7 +153,7 @@ def test_hubPropagate(show_plots):
     massTank.setState([[30]])
 
     scObject.hub.mHub = 750
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 2.5
