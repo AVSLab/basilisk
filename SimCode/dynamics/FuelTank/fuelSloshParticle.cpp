@@ -19,8 +19,7 @@
 
 
 #include "fuelSloshParticle.h"
-
-#define tilde(vector) 0, -vector(2), vector(1), vector(2), 0, -vector(0), -vector(1), vector(0), 0
+#include "utilities/avsEigenSupport.h"
 
 FuelSloshParticle::FuelSloshParticle()
 {
@@ -77,7 +76,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Update the position of CoM
 	this->effProps.rEff_CB_B = this->rPcB_B;
 	//Update the inertia about B
-	this->rTildePcB_B << tilde(this->rPcB_B);
+	this->rTildePcB_B = eigenTilde(this->rPcB_B);
 	this->effProps.IEffPntB_B = this->massFSP * this->rTildePcB_B * this->rTildePcB_B.transpose();
 
 	//Cached values used in this function
@@ -87,7 +86,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Update derivative of CoM
 	this->effProps.rEffPrime_CB_B = this->rPrimePcB_B;
 	//Update the body time derivative of inertia about B
-	this->rPrimeTildePcB_B << tilde(this->rPrimePcB_B);
+	this->rPrimeTildePcB_B = eigenTilde(this->rPrimePcB_B);
 	this->effProps.IEffPrimePntB_B = -this->massFSP*(this->rPrimeTildePcB_B*this->rTildePcB_B + this->rTildePcB_B*this->rPrimeTildePcB_B);
 
     return;
@@ -111,22 +110,28 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
     dcm_BN = dcm_NB.transpose();
     //! - Map gravity to body frame
     g_B = dcm_BN*gLocal_N;
-	omegaTilde_BN_B_local << tilde(omega_BN_B_local);
+	omegaTilde_BN_B_local = eigenTilde(omega_BN_B_local);
 
-	//Cached value, used in computeDerivatives as well
-	a_rho = this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
+	// - Define aRho
+    this->aRho = -this->pHat_B;
+
+    // - Define bRho
+    this->bRho = -this->rTildePcB_B*this->pHat_B;
+
+    // - Define cRho
+	cRho = 1.0/(this->massFSP)*(this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
 		- 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrimePcB_B)
-		- this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->rPcB_B);
+		- this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->rPcB_B));
 
 	//Compute matrix/vector contributions
-	matrixAcontr = -this->massFSP*this->pHat_B*this->pHat_B.transpose();
-	matrixBcontr = this->massFSP*this->pHat_B*this->pHat_B.transpose()*this->rTildePcB_B;
-	matrixCcontr = -this->massFSP*this->rTildePcB_B*this->pHat_B*pHat_B.transpose();
-	matrixDcontr = this->massFSP*this->rTildePcB_B*this->pHat_B*this->pHat_B.transpose()*this->rTildePcB_B;
+	matrixAcontr = this->massFSP*this->pHat_B*this->aRho.transpose();
+    matrixBcontr = this->massFSP*this->pHat_B*this->bRho.transpose();
+    matrixCcontr = this->massFSP*this->rTildePcB_B*this->pHat_B*this->aRho.transpose();
+	matrixDcontr = this->massFSP*this->rTildePcB_B*this->pHat_B*this->bRho.transpose();
 
-	vecTranscontr = -this->pHat_B*this->a_rho;
+	vecTranscontr = -this->massFSP*this->cRho*this->pHat_B;
 	vecRotcontr = -this->massFSP*omegaTilde_BN_B_local * this->rTildePcB_B *this->rPrimePcB_B -
-		this->a_rho*this->rTildePcB_B * this->pHat_B;
+		this->massFSP*this->cRho*this->rTildePcB_B * this->pHat_B;
 
     return;
 }
@@ -150,9 +155,7 @@ void FuelSloshParticle::computeDerivatives(double integTime)
 
 	//Compute rhoDDot
 	Eigen::MatrixXd conv(1,1);
-	conv(0, 0) = 1 / this->massFSP*(-this->massFSP*this->pHat_B.dot(rDDot_BN_B_local) +
-		this->massFSP*this->pHat_B.dot(this->rTildePcB_B*omegaDot_BN_B_local) +
-		this->a_rho);
+    conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
 	this->rhoDotState->setDerivative(conv);
 
     return;

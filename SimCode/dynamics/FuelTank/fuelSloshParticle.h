@@ -45,8 +45,10 @@ private:
 	Eigen::Matrix3d rPrimeTildePcB_B;
 	Eigen::Vector3d rPcB_B;
 	Eigen::Matrix3d rTildePcB_B;
+    Eigen::Vector3d aRho;
+    Eigen::Vector3d bRho;
 
-	double a_rho;
+	double cRho;
 	double rho;
 	double rhoDot;
 
