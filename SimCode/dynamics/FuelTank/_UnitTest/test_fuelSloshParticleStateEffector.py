@@ -82,7 +82,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle1.massFSP = 10
     unitTestSim.particle1.k = 100.0
     unitTestSim.particle1.c = 0.0
-    unitTestSim.particle1.rPB_B = [[0.1], [0], [-0.1]]
+    unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
     unitTestSim.particle1.pHat_B = [[1], [0], [0]]
     unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
     unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
@@ -91,7 +91,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle2.massFSP = 20
     unitTestSim.particle2.k = 100.0
     unitTestSim.particle2.c = 0.0
-    unitTestSim.particle2.rPB_B = [[0], [0], [0.1]]
+    unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
     unitTestSim.particle2.pHat_B = [[0], [1], [0]]
     unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
     unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
@@ -100,7 +100,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle3.massFSP = 15
     unitTestSim.particle3.k = 100.0
     unitTestSim.particle3.c = 0.0
-    unitTestSim.particle3.rPB_B = [[-0.1], [0], [0.1]]
+    unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
     unitTestSim.particle3.pHat_B = [[0], [0], [1]]
     unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
     unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"

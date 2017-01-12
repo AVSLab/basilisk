@@ -32,7 +32,7 @@ FuelSloshParticle::FuelSloshParticle()
 
 	//! - Initialize the variables to working values
 	this->massFSP = 0.0;
-	this->rPB_B.setZero();
+	this->r_PB_B.setZero();
 	this->pHat_B.setIdentity();
 	this->k = 1.0;
 	this->c = 0.0;
@@ -69,7 +69,7 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 void FuelSloshParticle::updateEffectorMassProps(double integTime) {
 	//Cached values used in this function
 	this->rho = this->rhoState->getState()(0,0);
-	this->rPcB_B = this->rho * this->pHat_B + this->rPB_B;
+	this->rPcB_B = this->rho * this->pHat_B + this->r_PB_B;
 
 	//Update the effectors mass
 	this->effProps.mEff = this->massFSP;

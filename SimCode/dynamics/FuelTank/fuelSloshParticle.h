@@ -25,18 +25,18 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 
-/*! @brief Class that implements an effector representing a sloshing particle
-*/
+/*! @brief This class in an instantiation of the state effector class and implements an effector representing a sloshing
+ particle */
 class FuelSloshParticle :
 	public StateEffector, public SysModel
 {
 public:
-	double massFSP;              //!< [kg] mass of fuel slosh particle
-	Eigen::Vector3d rPB_B;       //!< [m] position vector from B point to slosh equilibrium, P, in body frame
-	Eigen::Vector3d pHat_B;      //!< [-] slosh direction unit vector, in body frame
-	double k;                    //!< [N/m] linear spring constant for fuel slosh
-	double c;                    //!< [N-s/m] linear damping term for fuel slosh
-	std::string nameOfRhoState;  //!< [-] Identifier for the rho state data container
+	double massFSP;                //!< [kg] mass of fuel slosh particle
+	Eigen::Vector3d r_PB_B;         //!< [m] position vector from B point to slosh equilibrium, P, in body frame
+	Eigen::Vector3d pHat_B;        //!< [-] slosh direction unit vector, in body frame
+	double k;                      //!< [N/m] linear spring constant for fuel slosh
+	double c;                      //!< [N-s/m] linear damping term for fuel slosh
+	std::string nameOfRhoState;    //!< [-] Identifier for the rho state data container
 	std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 
 private:
