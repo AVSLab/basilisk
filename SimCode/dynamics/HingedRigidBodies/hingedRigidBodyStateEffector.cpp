@@ -141,35 +141,39 @@ void HingedRigidBodyStateEffector::updateContributions(double integTime, Eigen::
     this->omega_BN_S = this->dcm_SB*this->omegaLoc_BN_B;
     // - Define omegaTildeLoc_BN_B
     this->omegaTildeLoc_BN_B = eigenTilde(this->omegaLoc_BN_B);
-    // - Define a_theta
+
+    // - Define aTheta
+    this->aTheta = -this->mass*this->d/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->sHat3_B;
+
+    // - Define bTheta
+    this->rTilde_HB_B = eigenTilde(this->r_HB_B);
+    this->bTheta = -1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)
+                      + this->mass*this->d*this->d)*this->sHat2_B + this->mass*this->d*this->rTilde_HB_B*this->sHat3_B);
+
+    // - Define cTheta
     Eigen::Vector3d gravityTorquePntH_B;
     gravityTorquePntH_B = -this->d*this->sHat1_B.cross(this->mass*g_B);
-    this->a_theta = -this->k*this->theta - this->c*this->thetaDot + this->sHat2_B.dot(gravityTorquePntH_B)
-        + (this->IPntS_S(2,2) - this->IPntS_S(0,0) + this->mass*this->d*this->d)*this->omega_BN_S(2)*this->omega_BN_S(0)
-          - this->mass*this->d*this->sHat3_B.transpose()*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*this->r_HB_B;
+    this->cTheta = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->k*this->theta - this->c*this->thetaDot
+                    + this->sHat2_B.dot(gravityTorquePntH_B) + (this->IPntS_S(2,2) - this->IPntS_S(0,0)
+                     + this->mass*this->d*this->d)*this->omega_BN_S(2)*this->omega_BN_S(0) - this->mass*this->d*
+                              this->sHat3_B.transpose()*this->omegaTildeLoc_BN_B*this->omegaTildeLoc_BN_B*this->r_HB_B);
 
     // - Start defining them good old contributions - start with translation
     // - For documentation on contributions see Allard, Diaz, Schaub flex/slosh paper
-    matrixAcontr = -(this->mass*this->mass*this->d*this->d*this->sHat3_B*
-                                           this->sHat3_B.transpose()/(this->IPntS_S(1,1) + this->mass*this->d*this->d));
-    // - need to define rTilde_HB_B
-    this->rTilde_HB_B = eigenTilde(this->r_HB_B);
-    matrixBcontr = -(this->mass*this->d*sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*
-                     ((this->IPntS_S(1,1)+this->mass*this->d*this->d)*this->sHat2_B.transpose()
-                                                     - this->mass*this->d*this->sHat3_B.transpose()*this->rTilde_HB_B));
-    vecTranscontr = -(this->mass*this->d*this->a_theta*this->sHat3_B/(this->IPntS_S(1,1) + this->mass*this->d*this->d)
-                                                      + this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B);
+    matrixAcontr = this->mass*this->d*this->sHat3_B*this->aTheta.transpose();
+    matrixBcontr = this->mass*this->d*this->sHat3_B*this->bTheta.transpose();
+    vecTranscontr = -(this->mass*this->d*this->thetaDot*this->thetaDot*this->sHat1_B
+                                                                       + this->mass*this->d*this->cTheta*this->sHat3_B);
 
     // - Define rotational matrice contributions
-    matrixCcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
-                        /(this->IPntS_S(1,1) + this->mass*this->d*this->d)*this->mass*this->d*this->sHat3_B.transpose();
-    matrixDcontr = -(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)/
-                      (this->IPntS_S(1,1) + this->mass*this->d*this->d)*((this->IPntS_S(1,1)+this->mass*this->d*this->d)
-                           *this->sHat2_B.transpose() - this->mass*this->d*this->sHat3_B.transpose()*this->rTilde_HB_B);
-    vecRotcontr = -(this->thetaDot*this->omegaTildeLoc_BN_B*(this->IPntS_S(1,1)*this->sHat2_B+this->mass*this->d*
-                     this->rTilde_SB_B*this->sHat3_B) + this->mass*this->d*this->thetaDot*this->thetaDot*
-                         this->rTilde_SB_B*this->sHat1_B + this->a_theta*(this->IPntS_S(1,1)*this->sHat2_B + this->mass
-                           *this->d*this->rTilde_SB_B*this->sHat3_B)/(this->IPntS_S(1,1) + this->mass*this->d*this->d));
+    matrixCcontr = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+                                                                                              *this->aTheta.transpose();
+    matrixDcontr = (this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+                                                                                              *this->bTheta.transpose();
+    Eigen::Matrix3d intermediateMatrix;
+    vecRotcontr = -((this->thetaDot*this->omegaTildeLoc_BN_B + this->cTheta*intermediateMatrix.Identity())
+                    *(this->IPntS_S(1,1)*this->sHat2_B + this->mass*this->d*this->rTilde_SB_B*this->sHat3_B)
+                                    + this->mass*this->d*this->thetaDot*this->thetaDot*this->rTilde_SB_B*this->sHat1_B);
 
     return;
 }
@@ -196,10 +200,7 @@ void HingedRigidBodyStateEffector::computeDerivatives(double integTime)
     this->thetaState->setDerivative(thetaDotState->getState());
     // - Second, a little more involved
     Eigen::MatrixXd thetaDDot(1,1);
-    thetaDDot(0,0) = 1.0/(this->IPntS_S(1,1) + this->mass*this->d*this->d)*(-this->mass*this->d*
-                       this->sHat3_B.dot(rDDotLoc_BN_B) - (this->IPntS_S(1,1) + this->mass*this->d*this->d)*
-                        this->sHat2_B.transpose()*omegaDotLoc_BN_B + this->mass*this->d*this->sHat3_B.transpose()*
-                                                                    this->rTilde_HB_B*omegaDotLoc_BN_B + this->a_theta);
+    thetaDDot(0,0) = this->aTheta.dot(rDDotLoc_BN_B) + this->bTheta.dot(omegaDotLoc_BN_B) + this->cTheta;
     this->thetaDotState->setDerivative(thetaDDot);
 
     return;

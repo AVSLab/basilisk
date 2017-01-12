@@ -46,7 +46,9 @@ public:
 private:
     double theta;                    //!< [rad] hinged rigid body angle
     double thetaDot;                 //!< [rad/s] hinged rigid body angle rate
-    double a_theta;                  //!< -- term needed for back substitution
+    double cTheta;                  //!< -- term needed for back substitution
+    Eigen::Vector3d aTheta;         //!< -- term needed for back substitution
+    Eigen::Vector3d bTheta;         //!< -- term needed for back substitution
     Eigen::Matrix3d rTilde_HB_B;     //!< -- Tilde matrix of rHB_B
     Eigen::Matrix3d dcm_SH;          //!< -- DCM from hinge to hinged rigid body frame, S
     Eigen::Matrix3d dcm_SB;          //!< -- DCM from body to S frame
