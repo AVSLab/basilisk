@@ -35,9 +35,9 @@ class FuelTank :
 public:
 	double radiusTank;                                 //!< [m] radius of the spherical tank
     double propMassInit;                               //!< [kg] Initial propellant mass in tank
-	Eigen::Vector3d r_TB_B;                             //!< [m] position vector from B to tank point in B frame comp.
-    Eigen::Matrix3d ITankPntT_B;                       //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
 	std::string nameOfMassState;                       //!< -- name of mass state
+	Eigen::Vector3d r_TB_B;                            //!< [m] position vector from B to tank point in B frame comp.
+    Eigen::Matrix3d ITankPntT_B;                       //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
     std::vector<FuelSloshParticle> fuelSloshParticles; //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector*> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
 
