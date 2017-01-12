@@ -108,7 +108,7 @@ def test_hubPropagate(show_plots):
     #define the fuel tank
     unitTestSim.tank1 = fuelTank.FuelTank()
     unitTestSim.tank1.radiusTank = 0.5
-    unitTestSim.tank1.rTB_B = [[0],[0],[0.1]]
+    unitTestSim.tank1.r_TB_B = [[0],[0],[0.1]]
     unitTestSim.tank1.nameOfMassState = "fuelTankMass1"
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle2)

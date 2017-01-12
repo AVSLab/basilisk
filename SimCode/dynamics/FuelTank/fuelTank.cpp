@@ -17,7 +17,6 @@
 
  */
 
-
 #include "fuelTank.h"
 
 FuelTank::FuelTank() 
@@ -32,7 +31,7 @@ FuelTank::FuelTank()
     this->propMassInit = 0.0;
 
 	//! - Initialize the variables to working values
-	this->rTB_B.setZero();
+	this->r_TB_B.setZero();
 	this->nameOfMassState = "fuelTankMass";
 
     return;
@@ -86,8 +85,8 @@ void FuelTank::updateEffectorMassProps(double integTime) {
 	double massLocal = this->massState->getState()(0, 0);
 	this->effProps.mEff += massLocal;
     this->ITankPntT_B = (2.0 / 5.0 * massLocal * radiusTank * radiusTank) * Eigen::Matrix3d::Identity();
-	this->effProps.IEffPntB_B += this->ITankPntT_B + massLocal * (rTB_B.dot(rTB_B)*Eigen::Matrix3d::Identity() - rTB_B * rTB_B.transpose());
-	this->effProps.rEff_CB_B += massLocal * rTB_B;
+	this->effProps.IEffPntB_B += this->ITankPntT_B + massLocal * (r_TB_B.dot(r_TB_B)*Eigen::Matrix3d::Identity() - r_TB_B * r_TB_B.transpose());
+	this->effProps.rEff_CB_B += massLocal * r_TB_B;
 
     //! - Scale the center of mass location by 1/m_tot
 	this->effProps.rEff_CB_B /= effProps.mEff;
@@ -163,8 +162,8 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
 
     // Find rotational angular momentum contribution from hub
     double massLocal = this->massState->getState()(0, 0);
-    rDotTB_B = omegaLocal_BN_B.cross(this->rTB_B);
-    rotAngMomPntCContr_B += this->ITankPntT_B*omegaLocal_BN_B + massLocal*this->rTB_B.cross(rDotTB_B);
+    rDotTB_B = omegaLocal_BN_B.cross(this->r_TB_B);
+    rotAngMomPntCContr_B += this->ITankPntT_B*omegaLocal_BN_B + massLocal*this->r_TB_B.cross(rDotTB_B);
 
     // Find rotational energy contribution from the hub
     rotEnergyContr += 1.0/2.0*omegaLocal_BN_B.dot(this->ITankPntT_B*omegaLocal_BN_B) + 1.0/2.0*massLocal*rDotTB_B.dot(rDotTB_B);
