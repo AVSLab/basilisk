@@ -22,7 +22,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <cstring>
 #include <iostream>

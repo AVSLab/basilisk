@@ -21,7 +21,7 @@
 #define _THRUST_RW_DESAT_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include <stdint.h>
 #include <stdlib.h>

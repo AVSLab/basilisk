@@ -21,7 +21,7 @@
 #define _RW_SPEED_DATA_H_
 
 #include <stdint.h>
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 
 
 /*! \addtogroup ADCSAlgGroup

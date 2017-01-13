@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
-#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include <stdint.h>
 #include <stdlib.h>
 

@@ -25,7 +25,7 @@
 #include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
 
 /* update this include to reflect the required module input messages */
-#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <stdio.h>

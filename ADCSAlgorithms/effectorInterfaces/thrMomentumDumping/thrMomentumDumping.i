@@ -34,7 +34,7 @@ GEN_SIZEOF(thrMomentumDumpingConfig);
 %include "thrMomentumDumping.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"
+%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

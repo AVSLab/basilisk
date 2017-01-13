@@ -28,7 +28,7 @@
 #include <Eigen/Dense>
 #include "utilities/simMacros.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 

@@ -33,7 +33,7 @@
 GEN_SIZEOF(thrFiringRemainderConfig);
 GEN_SIZEOF(vehEffectorOut);
 %include "thrFiringRemainder.h"
-%include "../../effectorInterfaces/errorConversion/vehEffectorOut.h"
+%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

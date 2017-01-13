@@ -25,7 +25,7 @@
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
-#include "effectorInterfaces/errorConversion/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "rwConfigData/rwConfigData.h"
 
 
