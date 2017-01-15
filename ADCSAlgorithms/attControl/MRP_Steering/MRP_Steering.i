@@ -31,9 +31,13 @@
 %constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Steering;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
 GEN_SIZEOF(vehControlOut);
+GEN_SIZEOF(RWAvailabilityData);
 %include "MRP_Steering.h"
+%include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../ADCSUtilities/ADCSDefinitions.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
