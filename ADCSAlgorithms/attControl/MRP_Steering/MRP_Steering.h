@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "rwConfigData/rwConfigData.h"
 #include <stdint.h>
 

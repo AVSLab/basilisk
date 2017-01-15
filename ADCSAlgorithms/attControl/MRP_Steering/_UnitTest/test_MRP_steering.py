@@ -36,7 +36,6 @@ import sunSafePoint  # import module(s) that creates the needed input message de
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import rwConfigData
 import rwNullSpace
-import rwMotorTorque
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -160,11 +159,11 @@ def mrp_steering_tracking(show_plots):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        rwAvailabilityMessage = MRP_Steering.RWAvailabilityData()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE, rwMotorTorque.AVAILABLE]
+        avail = [MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
