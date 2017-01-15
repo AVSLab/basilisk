@@ -37,7 +37,7 @@ typedef enum {
 
 /*! @brief Structure used to define the output definition for component availability */
  typedef enum {
-    AVAILABLE,
+    AVAILABLE = 0,      /* must be 0, so that if these states are set to zero, device is AVAILABLE be default */
     UNAVAILABLE
 }FSWdeviceAvailability;
 
