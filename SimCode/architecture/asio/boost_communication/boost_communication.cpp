@@ -316,8 +316,8 @@ void OpenGLIO::mapMessagesToScSim(uint64_t currentSimNanos)
         this->scSim->rw[i].state = COMPONENT_ON;
         eigenVector3d2CArray(reactionWheels[i].rWB_S, this->scSim->rw[i].r_B);
         eigenVector3d2CArray(reactionWheels[i].gsHat_S, this->scSim->rw[i].gs);
-        eigenVector3d2CArray(reactionWheels[i].ggHat0_S, this->scSim->rw[i].gg0);
-        eigenVector3d2CArray(reactionWheels[i].gtHat0_S, this->scSim->rw[i].gt0);
+        eigenVector3d2CArray(reactionWheels[i].w3Hat0_S, this->scSim->rw[i].gg0);
+        eigenVector3d2CArray(reactionWheels[i].w2Hat0_S, this->scSim->rw[i].gt0);
         this->scSim->rw[i].u = reactionWheels[i].u_current;
         this->scSim->rw[i].maxTorque = reactionWheels[i].u_max;
         this->scSim->rw[i].minTorque = reactionWheels[i].u_min;

@@ -307,12 +307,12 @@ void ReactionWheelStateEffector::CrossInit()
 		}
 		if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
 			if (it->w2Hat0_S.norm() > 0.01) {
-				it->w2Hat0_B = dcmBodyStru * it->w2Hat0_S;
+				it->w2Hat0_B = dcm_BS * it->w2Hat0_S;
 			} else {
 				std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
 			}
 			if (it->w3Hat0_S.norm() > 0.01) {
-				it->w3Hat0_B = dcmBodyStru * it->w3Hat0_S;
+				it->w3Hat0_B = dcm_BS * it->w3Hat0_S;
 			} else {
 				std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
 			}
@@ -324,7 +324,7 @@ void ReactionWheelStateEffector::CrossInit()
 			it->J13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
 		}
 
-		it->rWB_B = dcmBodyStru * it->rWB_S;
+		it->rWB_B = dcm_BS * it->rWB_S;
 	}
 }
 
