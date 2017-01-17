@@ -196,6 +196,24 @@ def isDoubleEqual(result, truth, accuracy):
 
     return 1        # return 1 to indicate the doubles are equal
 
+#
+#   Compare two arrays of doubles for size and values and check absolute accuracy
+#
+def compareDoubleArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+    else:
+        for i in range(0, len(trueStates)):
+            # check a vector values
+            if not isDoubleEqual(dataStates[i], trueStates[i], accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+    return testFailCount, testMessages
+
 
 def writeTableLaTeX(tableName, tableHeaders, caption, array, path):
 

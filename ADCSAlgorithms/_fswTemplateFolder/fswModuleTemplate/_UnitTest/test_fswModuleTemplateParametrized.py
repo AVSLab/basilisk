@@ -186,22 +186,14 @@ def fswModuleTestFunction(show_plots, param1, param2):
     # compare the module results to the truth values
     accuracy = 1e-12
     dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
-    for i in range(0,len(trueVector)):
-        # check a vector values
-        if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                moduleOutputName + " unit test at t=" +
-                                str(moduleOutput[i,0]*macros.NANO2SEC) +
-                                "sec\n")
 
-        # check a scalar double value
-        if not unitTestSupport.isDoubleEqual(variableState[i], dummyTrue[i], accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: " + moduleWrap.ModelTag + " Module failed " +
-                                variableName + " unit test at t=" +
-                                str(variableState[i,0]*macros.NANO2SEC) +
-                                "sec\n")
+    testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
+                                                               accuracy, "Output Vector",
+                                                               testFailCount, testMessages)
+
+    testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
+                                                               accuracy, "dummy parameter",
+                                                               testFailCount, testMessages)
 
     # Note that we can continue to step the simulation however we feel like.
     # Just because we stop and query data does not mean everything has to stop for good
