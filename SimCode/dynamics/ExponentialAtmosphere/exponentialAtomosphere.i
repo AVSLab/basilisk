@@ -18,24 +18,19 @@
  */
 
 
-%module nrlmsiseInterface
+%module exponentialAtmosphere
 %{
-   #include "nrlmsiseInterface.h"
+   #include "exponentialAtmosphere.h"
 %}
 
 %include "swig_common_model.i"
 
 // Instantiate templates used by example
-namespace std {
-    %template(ThrusterTimeVector) vector<ThrusterTimePair>;
-    %template(ThrusterConfigVector) vector<ThrusterConfigData>;
-}
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
-%include "nrlmsiseInterface.h"
-GEN_SIZEOF(ThrustCmdStruct)
+%include "exponentialAtmosphere.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
