@@ -31,6 +31,7 @@
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
+#include "../SimCode/utilities/avsEigenSupport.h"
 
 /*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
            that does not itself maintain a state or represent a changing component of
@@ -74,9 +75,16 @@ typedef struct {
 	double mass;               //!< [kg], reaction wheel rotor mass
 	double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
 	RWModels RWModel; //!< [-], Type of imbalance model to use
-	Eigen::Vector3d aOmega;
-	Eigen::Vector3d bOmega;
-	double cOmega;
+	Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
+	Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
+	double cOmega; //!< [-], parameter used in coupled jitter back substitution
+	Eigen::Matrix3d IRWPntWc_B;
+	Eigen::Matrix3d IPrimeRWPntWc_B;
+	Eigen::Vector3d rWcB_B;
+	Eigen::Matrix3d rTildeWcB_B;
+	Eigen::Vector3d rPrimeWcB_B;
+	Eigen::Vector3d w2Hat_B;
+	Eigen::Vector3d w3Hat_B;
 }ReactionWheelConfigData;
 
 

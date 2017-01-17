@@ -98,6 +98,45 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 {
+
+	std::vector<ReactionWheelConfigData>::iterator RWIt;
+	Eigen::Matrix3d rTildeWcB_B;
+
+
+	this->effProps.mEff = 0.;
+
+	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	{
+		if (RWIt->RWModel == JitterFullyCoupled) {
+			double thetaCurrent = this->thetasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+			RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+			RWIt->w2Hat_B = cos(thetaCurrent)*RWIt->w2Hat0_B + sin(thetaCurrent)*RWIt->w3Hat0_B; // current gtHat axis vector represented in body frame
+			RWIt->w3Hat_B = -sin(thetaCurrent)*RWIt->w2Hat0_B + cos(thetaCurrent)*RWIt->w3Hat0_B;
+
+			//! wheel inertia tensor about wheel center of mass represented in B frame
+			RWIt->IRWPntWc_B = RWIt->Js*RWIt->gsHat_B*RWIt->gsHat_B.transpose() + RWIt->J13*RWIt->gsHat_B*RWIt->w3Hat_B.transpose() \
+								+ RWIt->Jt*RWIt->w2Hat_B*RWIt->w2Hat_B.transpose() \
+								+ RWIt->J13*RWIt->w3Hat_B*RWIt->gsHat_B.transpose() + RWIt->Jg*RWIt->w3Hat_B*RWIt->w3Hat_B.transpose();
+
+			//! wheel inertia tensor body frame derivative about wheel center of mass represented in B frame
+			RWIt->IPrimeRWPntWc_B = RWIt->Omega*(-RWIt->J13*RWIt->gsHat_B*RWIt->w2Hat_B.transpose() \
+												 +RWIt->Jt*RWIt->w3Hat_B*RWIt->w2Hat_B.transpose() + RWIt->Jt*RWIt->w2Hat_B*RWIt->w3Hat_B.transpose() \
+												 -RWIt->J13*RWIt->w2Hat_B*RWIt->gsHat_B.transpose()-RWIt->Jg*RWIt->w2Hat_B*RWIt->w3Hat_B.transpose()-RWIt->Jg*RWIt->w3Hat_B*RWIt->w2Hat_B.transpose());
+
+			//! wheel center of mass location
+			RWIt->rWcB_B = RWIt->rWB_B + RWIt->d*RWIt->w2Hat_B;
+			RWIt->rTildeWcB_B = eigenTilde(RWIt->rWcB_B);
+			RWIt->rPrimeWcB_B = RWIt->d*RWIt->Omega*RWIt->w3Hat_B;
+
+			//! - Give the mass of the reaction wheel to the effProps mass
+			this->effProps.mEff += RWIt->mass;
+			this->effProps.rCB_B += RWIt->mass*RWIt->rWcB_B;
+			this->effProps.IEffPntB_B += RWIt->IRWPntWc_B + RWIt->mass*RWIt->rTildeWcB_B*RWIt->rTildeWcB_B.transpose();
+			this->effProps.rPrimeCB_B += RWIt->mass*RWIt->rPrimeWcB_B;
+			this->effProps.IEffPrimePntB_B += RWIt->IPrimeRWPntWc_B;
+		}
+	}
+
 	return;
 }
 
@@ -107,18 +146,11 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	Eigen::MatrixXd OmegasLoc;
 	int RWi = 0;
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
-	double thetaCurrent;
-	double omegaCurrent;
-	Eigen::Vector3d w2Hat_B;
-	Eigen::Vector3d w3Hat_B;
+
 	Eigen::Vector3d tempF;
 	double omegas;
 	double omegaw2;
 	double omegaw3;
-	Eigen::Matrix3d IWWc_B;
-	Eigen::Matrix3d IprimeWWc_B;
-	Eigen::Vector3d rWcB_B;
-	Eigen::Vector3d rprimeWcB_B;
 
 	omegaBNLoc_B = hubOmega->getState();
 	OmegasLoc = OmegasState->getState();
@@ -133,54 +165,38 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 
-		thetaCurrent = this->thetasState->getState()(RWIt - ReactionWheelData.begin(), 0);
-		omegaCurrent = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
-		w2Hat_B = cos(thetaCurrent)*RWIt->w2Hat0_B + sin(thetaCurrent)*RWIt->w3Hat0_B; // current gtHat axis vector represented in body frame
-		w3Hat_B = -sin(thetaCurrent)*RWIt->w2Hat0_B + cos(thetaCurrent)*RWIt->w3Hat0_B;
-
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			matrixDcontr -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
 			vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,0)*omegaBNLoc_B.cross(RWIt->gsHat_B);
 
-			// imbalance torque
+			//! imbalance torque (simplified external)
 			if (RWIt->RWModel == JitterSimple) {
 				/* Fs = Us * Omega^2 */ // static imbalance force
-				tempF = RWIt->U_s * pow(omegaCurrent,2) * w2Hat_B;
+				tempF = RWIt->U_s * pow(RWIt->Omega,2) * RWIt->w2Hat_B;
 				vecTranscontr += tempF;
 
-				// add in dynamic imbalance torque
+				//! add in dynamic imbalance torque
 				/* tau_s = cross(r_B,Fs) */ // static imbalance torque
 				/* tau_d = Ud * Omega^2 */ // dynamic imbalance torque
-				vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(omegaCurrent,2) * w2Hat_B );
+				vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(RWIt->Omega,2) * RWIt->w2Hat_B );
 			}
 
 		} else if (RWIt->RWModel == JitterFullyCoupled) {
 
-			IWWc_B = RWIt->Js*RWIt->gsHat_B*RWIt->gsHat_B.transpose() + RWIt->J13*RWIt->gsHat_B*w3Hat_B.transpose() \
-						+ RWIt->Jt*w2Hat_B*w2Hat_B.transpose() \
-						+ RWIt->J13*w3Hat_B*RWIt->gsHat_B.transpose() + RWIt->Jg*w3Hat_B*w3Hat_B.transpose();
-
-			IprimeWWc_B = omegaCurrent*(-RWIt->J13*RWIt->gsHat_B*w2Hat_B.transpose() \
-										+RWIt->Jt*w3Hat_B*w2Hat_B.transpose() + RWIt->Jt*w2Hat_B*w3Hat_B.transpose() \
-										-RWIt->J13*w2Hat_B*RWIt->gsHat_B.transpose()-RWIt->Jg*w2Hat_B*w3Hat_B.transpose()-RWIt->Jg*w3Hat_B*w2Hat_B.transpose());
-
-			rWcB_B = RWIt->rWB_B + RWIt->d*w2Hat_B;
-			rprimeWcB_B = RWIt->d*omegaCurrent*w3Hat_B;
-
 			omegas = RWIt->gsHat_B.transpose()*omegaBNLoc_B;
-			omegaw2 = w2Hat_B.transpose()*omegaBNLoc_B;
-			omegaw3 = w3Hat_B.transpose()*omegaBNLoc_B;
+			omegaw2 = RWIt->w2Hat_B.transpose()*omegaBNLoc_B;
+			omegaw3 = RWIt->w3Hat_B.transpose()*omegaBNLoc_B;
 
-			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*pow(RWIt->d,2)) * w3Hat_B;
-			RWIt->bOmega = -1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*((RWIt->Js+RWIt->mass*pow(RWIt->d,2))*RWIt->gsHat_B + RWIt->J13*w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(w3Hat_B));
-			RWIt->cOmega = 1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*(omegaw2*omegaw3*(RWIt->Jt-RWIt->Jg-RWIt->mass*pow(RWIt->d,2))-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*w3Hat_B.transpose()*omegaBNLoc_B.cross(omegaBNLoc_B.cross(RWIt->rWB_B))+RWIt->u_current);
+			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*pow(RWIt->d,2)) * RWIt->w3Hat_B;
+			RWIt->bOmega = -1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*((RWIt->Js+RWIt->mass*pow(RWIt->d,2))*RWIt->gsHat_B + RWIt->J13*RWIt->w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(RWIt->w3Hat_B));
+			RWIt->cOmega = 1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*(omegaw2*omegaw3*(RWIt->Jt-RWIt->Jg-RWIt->mass*pow(RWIt->d,2))-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaBNLoc_B.cross(omegaBNLoc_B.cross(RWIt->rWB_B))+RWIt->u_current);
 
-			matrixAcontr += RWIt->mass * RWIt->d * w3Hat_B * RWIt->aOmega.transpose();
-			matrixBcontr += RWIt->mass * RWIt->d * w3Hat_B * RWIt->bOmega.transpose();
-			matrixCcontr += (IWWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*rWcB_B.cross(w3Hat_B))*RWIt->aOmega.transpose();
-			matrixDcontr += (IWWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*rWcB_B.cross(w3Hat_B))*RWIt->bOmega.transpose();
-			vecTranscontr += RWIt->mass*RWIt->d*(pow(omegaCurrent,2)*w2Hat_B - RWIt->cOmega*w3Hat_B);
-			vecRotcontr += RWIt->mass*RWIt->d*pow(omegaCurrent,2)*rWcB_B.cross(w2Hat_B) - IprimeWWc_B*omegaCurrent*RWIt->gsHat_B - omegaBNLoc_B.cross(IWWc_B*omegaCurrent*RWIt->gsHat_B+RWIt->mass*rWcB_B.cross(rprimeWcB_B)) - (IWWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*rWcB_B.cross(w3Hat_B))*RWIt->cOmega;
+			matrixAcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
+			matrixBcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
+			matrixCcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->aOmega.transpose();
+			matrixDcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->bOmega.transpose();
+			vecTranscontr += RWIt->mass*RWIt->d*(pow(RWIt->Omega,2)*RWIt->w2Hat_B - RWIt->cOmega*RWIt->w3Hat_B);
+			vecRotcontr += RWIt->mass*RWIt->d*pow(RWIt->Omega,2)*RWIt->rWcB_B.cross(RWIt->w2Hat_B) - RWIt->IPrimeRWPntWc_B*RWIt->Omega*RWIt->gsHat_B - omegaBNLoc_B.cross(RWIt->IRWPntWc_B*RWIt->Omega*RWIt->gsHat_B+RWIt->mass*RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) - (RWIt->IRWPntWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->cOmega;
 		}
 		RWi++;
 	}
