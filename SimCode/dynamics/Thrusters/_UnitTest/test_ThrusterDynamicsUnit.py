@@ -72,6 +72,9 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
+
+
 # provide a unique test method name, starting with test_
 def test_unitThrusters(show_plots):
     # each test method requires a single assert method to be called
@@ -148,9 +151,9 @@ def unitThrusters(show_plots):
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-    ThrustMessage.OnTimeRequest = thrDurationTime
+    ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
     TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
-    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
+    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0*1./macros.NANO2SEC))
 
     # Gather the Force and Torque results
     thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
@@ -164,7 +167,7 @@ def unitThrusters(show_plots):
     plt.ylim(0,1)
     plt.xlabel('Time(s)')
     plt.ylabel('Thrust Factor (-)')
-    unitTestSupport.writeFigureLaTeX("ThrustForce", "Thrust Force as a function of time", plt, format, path)
+    unitTestSupport.writeFigureLaTeX("ThrustForce", "Thrust Force on Y", plt, format, path)
     if show_plots==True:
         plt.show()
 
@@ -173,7 +176,7 @@ def unitThrusters(show_plots):
     plt.ylim(-2.,2.)
     plt.xlabel('Time(s)')
     plt.ylabel('Thrust Torque (-)')
-    unitTestSupport.writeFigureLaTeX("ThrustTorque", "Thrust Torque as a function of time", plt, format, path)
+    unitTestSupport.writeFigureLaTeX("ThrustTorque", "Thrust Torque on X", plt, format, path)
     if show_plots==True:
         plt.show()
 
@@ -183,9 +186,13 @@ def unitThrusters(show_plots):
         if (i<thrStartTime/testRate + 2): # Thrust fires 2 times steps after the pause of sim and restart
             expectedpoints[0,i] = 0.0
             expectedpoints[1,i] = 0.0
-        else:
+        if (i > thrStartTime / testRate + 2 and i < (thrStartTime + thrDurationTime) / testRate + 2):
             expectedpoints[0,i] = math.cos(anglerad)
             expectedpoints[1,i] = math.sin(anglerad)
+        else:
+            expectedpoints[0, i] = 0.0
+            expectedpoints[1, i] = 0.0
+
 
     # Modify expected values for comparison and define errorTolerance
     ThruthForce = np.transpose(expectedpoints)
@@ -201,10 +208,14 @@ def unitThrusters(show_plots):
             expectedpointstor[0, i] = 0.0
             expectedpointstor[1, i] = 0.0
             expectedpointstor[2, i] = 0.0
+        if (i>thrStartTime/ testRate + 2 and i<(thrStartTime+thrDurationTime)/ testRate + 2):
+            expectedpointstor[0, i] = -thrForce[i,2]*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
+            expectedpointstor[1, i] = thrForce[i,1]*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
+            expectedpointstor[2, i] = thrForce[i,2]*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
         else:
-            expectedpointstor[0, i] = -thrForce[-1,2]*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
-            expectedpointstor[1, i] = thrForce[-1,1]*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
-            expectedpointstor[2, i] = thrForce[-1,2]*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
+            expectedpointstor[0, i] = 0.0
+            expectedpointstor[1, i] = 0.0
+            expectedpointstor[2, i] = 0.0
 
     # Modify expected values for comparison and define errorTolerance
     TruthTorque = np.transpose(expectedpointstor)
