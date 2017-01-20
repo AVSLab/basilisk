@@ -18,6 +18,7 @@
  */
 
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
+#include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
 #include "transDetermination/chebyPosEphem/chebyPosEphem.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "utilities/linearAlgebra.h"
@@ -139,7 +140,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
 
     elem2rv(ConfigData->muCentral, &orbEl, ConfigData->outputState.r_BdyZero_N,
             ConfigData->outputState.v_BdyZero_N);
-  
+
     WriteMessage(ConfigData->stateFitOutMsgID, callTime,
                  sizeof(EphemerisOutputData), &ConfigData->outputState, moduleID);
 

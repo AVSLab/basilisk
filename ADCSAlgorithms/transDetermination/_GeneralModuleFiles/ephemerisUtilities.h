@@ -17,35 +17,24 @@
 
  */
 
-#include "ephemerisInterfaceData.h"
+#ifndef _EPHEMERIS_UTILITIES_H_
+#define _EPHEMERIS_UTILITIES_H_
 
-double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
-                           double evalValue)
-{
-    double chebyPrev;
-    double chebyNow;
-    double chebyLocalPrev;
-    double valueMult;
-    double estValue;
-    int i;
-    
-    chebyPrev = 1.0;
-    chebyNow = evalValue;
-    valueMult = 2.0*evalValue;
-    
-    estValue = chebyCoeff[0]*chebyPrev;
-    if(nCoeff <= 1)
-    {
-        return(evalValue);
-    }
-    estValue += chebyCoeff[1]*chebyNow;
-    for(i=2; i<nCoeff; i=i+1)
-    {
-        chebyLocalPrev = chebyNow;
-        chebyNow = valueMult*chebyNow - chebyPrev;
-        chebyPrev = chebyLocalPrev;
-        estValue += chebyCoeff[i]*chebyNow;
-    }
-    
-    return(estValue);
+#include <stdint.h>
+
+/*! \addtogroup ADCSAlgGroup
+ * @{
+ */
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
+                               double evalValue);
+
+#ifdef __cplusplus
 }
+#endif
+
+#endif

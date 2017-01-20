@@ -41,15 +41,4 @@ typedef struct {
     double timeTag;                 /*!< [s] vehicle Time-tag for state*/
 }EphemerisOutputData;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-    double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
-                               double evalValue);
-
-#ifdef __cplusplus
-}
-#endif
-
 #endif
