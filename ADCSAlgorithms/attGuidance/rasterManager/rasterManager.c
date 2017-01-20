@@ -37,8 +37,6 @@
 
 /* Required module input messages */
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
-#include "SimCode/environment/spice/spice_planet_state.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
 
 

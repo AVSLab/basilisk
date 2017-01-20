@@ -16,24 +16,27 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module celestialBodyPoint
+%module oe_state_ephem
 %{
-   #include "celestialBodyPoint.h"
+   #include "oeStateEphem.h"
 %}
 
 %include "swig_conly_data.i"
-
-%constant void Update_celestialBodyPoint(void*, uint64_t, uint64_t);
-%ignore Update_celestialBodyPoint;
-%constant void SelfInit_celestialBodyPoint(void*, uint64_t);
-%ignore SelfInit_celestialBodyPoint;
-%constant void CrossInit_celestialBodyPoint(void*, uint64_t);
-%ignore CrossInit_celestialBodyPoint;
-%include "../_GeneralModuleFiles/attGuidOut.h"
-GEN_SIZEOF(celestialBodyPointConfig);
-%include "celestialBodyPoint.h"
-
+%constant void Update_oeStateEphem(void*, uint64_t, uint64_t);
+%ignore Update_oeStateEphem;
+%constant void SelfInit_oeStateEphem(void*, uint64_t);
+%ignore SelfInit_oeStateEphem;
+%constant void CrossInit_oeStateEphem(void*, uint64_t);
+%ignore CrossInit_oeStateEphem;
+%constant void Reset_oeStateEphem(void*, uint64_t, uint64_t);
+%ignore Reset_oeStateEphem;
+STRUCTASLIST(ChebyOERecord)
+GEN_SIZEOF(TDBVehicleClockCorrelation)
+GEN_SIZEOF(EphemerisOutputData)
+%include "oeStateEphem.h"
+%include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+

@@ -26,7 +26,7 @@
 
 /* Required module input messages */
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
-#include "SimCode/environment/spice/spice_planet_state.h"
+#include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
 #include "SimCode/utilities/orbitalMotion.h"
 /*! \addtogroup ADCSAlgGroup
  * @{

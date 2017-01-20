@@ -103,8 +103,8 @@ from ${FileBase} import *")
 endfunction(make_python_package_dir)
 
 # Start of main projection configuration
-find_package(PythonLibs 2.7 REQUIRED)
 find_package(PythonInterp 2.7 REQUIRED)
+find_package(PythonLibs 2.7 REQUIRED)
 
 # set(CMAKE_SWIG_OUTDIR ${CMAKE_SOURCE_DIR}/modules)
 

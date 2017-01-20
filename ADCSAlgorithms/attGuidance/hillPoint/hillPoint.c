@@ -46,7 +46,7 @@ void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
-                                                sizeof(SpicePlanetState), moduleID);
+                                                sizeof(EphemerisOutputData), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransOut), moduleID);
 }
@@ -63,10 +63,10 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     uint64_t            writeTime;
     uint32_t            writeSize;
     NavTransOut         navData;
-    SpicePlanetState    primPlanet;
+    EphemerisOutputData    primPlanet;
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
-                sizeof(SpicePlanetState), &primPlanet, moduleID);
+                sizeof(EphemerisOutputData), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
                 sizeof(NavTransOut), &navData, moduleID);
     
@@ -75,8 +75,8 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     computeHillPointingReference(ConfigData,
                                  navData.r_BN_N,
                                  navData.v_BN_N,
-                                 primPlanet.PositionVector,
-                                 primPlanet.VelocityVector);
+                                 primPlanet.r_BdyZero_N,
+                                 primPlanet.v_BdyZero_N);
     
     WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
