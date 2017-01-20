@@ -79,6 +79,7 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
     ("OFF", 1, 10.0, 30., [[1.125], [0.0], [2.0]], 1E7),
     ("OFF", 1 , 10.0 , 10. , [[1.125], [0.0], [2.0]], 1E8),
     ("OFF", 1 , 10.0 , 30. , [[1.], [0.0], [0.0]], 1E8),
+    ("OFF", 2 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8)
     ])
 
 
@@ -122,6 +123,15 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     thruster1.MinOnTime = 0.006
     thrusterSet.AddThruster(thruster1)
 
+    if ThrustNumber==2:
+        thruster2 = thrusterDynamicEffector.ThrusterConfigData()
+        thruster2.inputThrLoc_S =[[1.], [0.0], [0.0]]
+        thruster2.inputThrDir_S = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
+        thruster2.MaxThrust = 1.0
+        thruster2.steadyIsp = 226.7
+        thruster2.MinOnTime = 0.006
+        thrusterSet.AddThruster(thruster2)
+
     #  Create a Simulation
     testRate = int(Rate) # Parametrized rate of test
     TotalSim = SimulationBaseClass.SimBaseClass()
@@ -144,9 +154,15 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    ThrustMessage.OnTimeRequest = 0.
-    thrMessageSize = ThrustMessage.getStructSize()
+    if ThrustNumber==1:
+        ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+        ThrustMessage.OnTimeRequest = 0.
+        thrMessageSize = ThrustMessage.getStructSize()
+    if ThrustNumber==2:
+        ThrustMessage = sim_model.new_doubleArray(2) #Create a C double array
+        sim_model.doubleArray_setitem(ThrustMessage,1,0.)
+        sim_model.doubleArray_setitem(ThrustMessage,0,0.)
+        thrMessageSize = 8*ThrustNumber
     TotalSim.TotalSim.CreateNewMessage(unitProcessName,"acs_thruster_cmds", thrMessageSize, 2)
     TotalSim.InitializeSimulation()
 
@@ -159,7 +175,11 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
 
     # Run the simulation
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-    ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
+    if ThrustNumber==1:
+        ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
+    if ThrustNumber==2:
+        sim_model.doubleArray_setitem(ThrustMessage, 0, thrDurationTime * macros.NANO2SEC)
+        sim_model.doubleArray_setitem(ThrustMessage, 1, thrDurationTime * macros.NANO2SEC)
     TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
     executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime*1./macros.NANO2SEC))
 
@@ -201,8 +221,12 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
             expectedpoints[0,i] = 0.0
             expectedpoints[1,i] = 0.0
         if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
-            expectedpoints[0,i] = math.cos(anglerad)
-            expectedpoints[1,i] = math.sin(anglerad)
+            if ThrustNumber == 1:
+                expectedpoints[0,i] = math.cos(anglerad)
+                expectedpoints[1,i] = math.sin(anglerad)
+            else:
+                expectedpoints[0, i] = math.cos(anglerad)+math.cos(anglerad+math.pi / 4)
+                expectedpoints[1, i] = math.sin(anglerad)+math.sin(anglerad+math.pi / 4)
         else:
             expectedpoints[0, i] = 0.0
             expectedpoints[1, i] = 0.0
@@ -222,9 +246,17 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
             expectedpointstor[1, i] = 0.0
             expectedpointstor[2, i] = 0.0
         if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
-            expectedpointstor[0, i] = -thrForce[i,2]*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
-            expectedpointstor[1, i] = thrForce[i,1]*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
-            expectedpointstor[2, i] = thrForce[i,2]*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
+            if ThrustNumber == 1:
+                expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
+                expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
+                expectedpointstor[2, i] = math.sin(anglerad)*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
+            else:
+                expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.inputThrLoc_S[2][0]\
+                                          - math.sin(anglerad+math.pi/4)*thruster2.inputThrLoc_S[2][0]
+                expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) \
+                                          + math.cos(anglerad+math.pi / 4)*math.sqrt(thruster2.inputThrLoc_S[2][0]**2+thruster2.inputThrLoc_S[1][0]**2 +thruster2.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster2.inputThrLoc_S[2][0]/thruster2.inputThrLoc_S[0][0]))
+                expectedpointstor[2, i] = math.sin(anglerad)*thruster1.inputThrLoc_S[0][0] \
+                                          + math.sin(anglerad+math.pi/4) * thruster2.inputThrLoc_S[0][0]
         else:
             expectedpointstor[0, i] = 0.0
             expectedpointstor[1, i] = 0.0
