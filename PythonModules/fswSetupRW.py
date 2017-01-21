@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import rwConfigData
 import vehicleConfigData
-
+import numpy
 
 
 rwList = []
@@ -51,6 +51,12 @@ def create(
     # create the blank RW object
     RW = vehicleConfigData.RWConfigurationElement()
 
+    norm = numpy.linalg.norm(gsHat_S)
+    if norm > 1e-10:
+        gsHat_S = gsHat_S / norm
+    else:
+        print 'Error: RW gsHat input must be non-zero 3x1 vector'
+        exit(1)
 
     RW.gsHat_S = gsHat_S
     RW.Js = Js
