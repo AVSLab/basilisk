@@ -300,6 +300,20 @@ def foundNAN(array):
         return 1        # return 1 to indicate a NaN value was found
     return 0
 
+#
+#   macro to create and write a general message
+#
+def setMessage(simObject, processName, msgName, inputMessageData):
+    inputMessageSize = inputMessageData.getStructSize()
+    simObject.CreateNewMessage(processName,
+                               msgName,
+                               inputMessageSize,
+                               2)
+    simObject.WriteMessageData(msgName,
+                               inputMessageSize,
+                               0,
+                               inputMessageData)
+
 
 #
 #   pick a nicer color pattern to plot 3 vector components
