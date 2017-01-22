@@ -34,7 +34,9 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorVoltageConfig);
 GEN_SIZEOF(vehEffectorOut);
 GEN_SIZEOF(RWAvailabilityData);
+GEN_SIZEOF(RWSpeedData);
 %include "rwMotorVoltage.h"
+%include "../_GeneralModuleFiles/rwSpeedData.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../ADCSUtilities/ADCSDefinitions.h"
 %include "../_GeneralModuleFiles/vehEffectorOut.h"

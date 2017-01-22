@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "rwConfigData/rwConfigData.h"
 
 
