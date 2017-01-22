@@ -73,13 +73,16 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 
 
 @pytest.mark.parametrize("RAMP, ThrustNumber , Duration , Angle, Location, Rate", [
-    ("OFF", 1 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8),
-    ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8),
-    ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6),
-    ("OFF", 1, 10.0, 30., [[1.125], [0.0], [2.0]], 1E7),
-    ("OFF", 1 , 10.0 , 10. , [[1.125], [0.0], [2.0]], 1E8),
-    ("OFF", 1 , 10.0 , 30. , [[1.], [0.0], [0.0]], 1E8),
-    ("OFF", 2 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8)
+    ("OFF", 1 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8), #Test random thrust config
+    ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8), # Short fire test
+    ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6), # Short fire test with higher test rate
+    ("OFF", 1, 10.0, 30., [[1.125], [0.0], [2.0]], 1E7),# Rate test
+    ("OFF", 1 , 10.0 , 10. , [[1.125], [0.0], [2.0]], 1E8), # Angle test
+    ("OFF", 1 , 10.0 , 30. , [[1.], [0.0], [0.0]], 1E8),# Position test
+    ("OFF", 2 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8), # Number of thrusters test
+    ("ON", 1 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E8) , # Basic ramp test
+    ("ON", 1 , 0.01 , 30. , [[1.125], [0.0], [2.0]], 1E8) , # Short ramp test
+    ("ON", 1 , 10.0 , 30. , [[1.125], [0.0], [2.0]], 1E7) # Rate ramp test
     ])
 
 
