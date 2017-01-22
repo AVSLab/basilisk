@@ -491,14 +491,11 @@ def run(doUnitTests, show_plots, useJitterSimple):
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName, mrpControlConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)
-    # use the same inertia in the FSW algorithm as in the simulation
-    vehicleConfigOut.ISCPntB_B = I
-    scSim.TotalSim.WriteMessageData(mrpControlConfig.vehConfigInMsgName,
-                                    inputMessageSize,
-                                    0, vehicleConfigOut)
+    vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               mrpControlConfig.vehConfigInMsgName,
+                               vehicleConfigOut)
 
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation

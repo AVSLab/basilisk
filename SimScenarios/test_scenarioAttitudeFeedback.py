@@ -136,26 +136,92 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # flight software is providing the attitude control torque message which is connected to
 # the torque input message of this module.  If an external torque is being simulated,
 # then the module internal torque vector is set to a constant value.
+# ~~~~~~~~~~~~~~~~{.py}
+#     extFTObject = ExtForceTorque.ExtForceTorque()
+#     extFTObject.ModelTag = "externalDisturbance"
+#     # use the input flag to determine which external torque should be applied
+#     # Note that all variables are initialized to zero.  Thus, not setting this
+#     # vector would leave it's components all zero for the simulation.
+#     if useUnmodeledTorque:
+#         extFTObject.extTorquePntB_B = [[0.25],[-0.25],[0.1]]
+#     scObject.addDynamicEffector(extFTObject)
+#     scSim.AddModelToTask(simTaskName, extFTObject)
+# ~~~~~~~~~~~~~~~~
 #
 # Lastly, the flight software algorithm module require a navigation message with the
 # spacecraft orientation and attitude rates.  This is setup using the simple_nav()
 # module. By just invoking a sensor module it is setup to run without any simulated
 # corruptions.  Thus in this simulation it will return truth measurements.
+# ~~~~~~~~~~~~~~~~{.py}
+#     sNavObject = simple_nav.SimpleNav()
+#     sNavObject.ModelTag = "SimpleNavigation"
+#     scSim.AddModelToTask(simTaskName, sNavObject)
+# ~~~~~~~~~~~~~~~~
 #
 # Next the flight software algorithms need to be setup.  The inertial pointing reference
 # frame definition is provided through the simple inertial3D() module.  The only input
 # it requires is the desired inertial heading.
+# ~~~~~~~~~~~~~~~~{.py}
+#     inertial3DConfig = inertial3D.inertial3DConfig()
+#     inertial3DWrap = scSim.setModelDataWrap(inertial3DConfig)
+#     inertial3DWrap.ModelTag = "inertial3D"
+#     scSim.AddModelToTask(simTaskName, inertial3DWrap, inertial3DConfig)
+#     inertial3DConfig.sigma_R0N = [0., 0., 0.]       # set the desired inertial orientation
+#     inertial3DConfig.outputDataName = "guidanceInertial3D"
+# ~~~~~~~~~~~~~~~~
 #
 # The reference frame states and the navigation message (output of simple_nav()) are fed
 # into the attTrackingError() module.  It is setup to compute the attitude tracking error
 # between the body frame *B* and the reference frame *R*.  If a body fixed frame other than *B*
 # needs to be driven towards *R*, this could be configured as well in this module.
+# ~~~~~~~~~~~~~~~~{.py}
+#     attErrorConfig = attTrackingError.attTrackingErrorConfig()
+#     attErrorWrap = scSim.setModelDataWrap(attErrorConfig)
+#     attErrorWrap.ModelTag = "attErrorInertial3D"
+#     scSim.AddModelToTask(simTaskName, attErrorWrap, attErrorConfig)
+#     attErrorConfig.outputDataName = "attErrorInertial3DMsg"
+#     attErrorConfig.inputRefName = inertial3DConfig.outputDataName
+#     attErrorConfig.inputNavName = sNavObject.outputAttName
+# ~~~~~~~~~~~~~~~~
 #
 # Finally the tracking errors are fed to the classic MRP feedback control module.  The
 # algorithm of this is discussed in the text book *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The control torque output vector message of this
 # module is connected back to the input message of the extForceTorque() module to close
 # the control loop.
+# ~~~~~~~~~~~~~~~~{.py}
+#     mrpControlConfig = MRP_Feedback.MRP_FeedbackConfig()
+#     mrpControlWrap = scSim.setModelDataWrap(mrpControlConfig)
+#     mrpControlWrap.ModelTag = "MRP_Feedback"
+#     scSim.AddModelToTask(simTaskName, mrpControlWrap, mrpControlConfig)
+#     mrpControlConfig.inputGuidName  = attErrorConfig.outputDataName
+#     mrpControlConfig.vehConfigInMsgName  = "vehicleConfigName"
+#     mrpControlConfig.outputDataName = extFTObject.cmdTorqueInMsgName
+#     mrpControlConfig.K  =   3.5
+#     if useIntGain:
+#         mrpControlConfig.Ki =   0.0002      # make value negative to turn off integral feedback
+#     else:
+#         mrpControlConfig.Ki =   -1          # make value negative to turn off integral feedback
+#     mrpControlConfig.P  = 30.0
+#     mrpControlConfig.integralLimit = 2./mrpControlConfig.Ki * 0.1
+#     mrpControlConfig.domega0 = [0.0, 0.0, 0.0]
+#     if useKnownTorque:
+#         mrpControlConfig.knownTorquePntB_B = [0.25,-0.25,0.1]
+# ~~~~~~~~~~~~~~~~
+#
+# The MRP Feedback algorithm requires the vehicle confirguration structure. This defines various spacecraft
+# related states such as the inertia tensor and the position vector between the primary Body-fixed frame
+# B origin and the center of mass (defaulted to zero).  This message is set through
+# ~~~~~~~~~~~~~~~~{.py}
+#     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+#     vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
+#     unitTestSupport.setMessage(scSim.TotalSim,
+#                                simProcessName,
+#                                mrpControlConfig.vehConfigInMsgName,
+#                                vehicleConfigOut)
+# ~~~~~~~~~~~~~~~~
+# Here the container object is first created, then the inertia tensor is set.  Finally the macro
+# setMessage() can be used to conveniently create, size and write this message to a process.
 #
 #
 # Setup 1
@@ -385,15 +451,11 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = vehicleConfigData.vehicleConfigData()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    scSim.TotalSim.CreateNewMessage(simProcessName, mrpControlConfig.vehConfigInMsgName,
-                                          inputMessageSize, 2)
-    # use the same inertia in the FSW algorithm as in the simulation
-    vehicleConfigOut.ISCPntB_B = I
-    scSim.TotalSim.WriteMessageData(mrpControlConfig.vehConfigInMsgName,
-                                    inputMessageSize,
-                                    0, vehicleConfigOut)
-
+    vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
+    unitTestSupport.setMessage(scSim.TotalSim,
+                               simProcessName,
+                               mrpControlConfig.vehConfigInMsgName,
+                               vehicleConfigOut)
 
     #
     #   initialize Simulation
