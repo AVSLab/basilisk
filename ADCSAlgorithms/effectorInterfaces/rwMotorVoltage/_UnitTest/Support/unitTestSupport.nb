@@ -10,14 +10,146 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[       778,         34]
-NotebookOptionsPosition[       561,         21]
-NotebookOutlinePosition[       918,         37]
-CellTagsIndexPosition[       875,         34]
+NotebookDataLength[      5519,        187]
+NotebookOptionsPosition[      4707,        153]
+NotebookOutlinePosition[      5064,        169]
+CellTagsIndexPosition[      5021,        166]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+
+Cell[CellGroupData[{
+Cell["Setup", "Subsection",
+ CellChangeTimes->{{3.6940343118152514`*^9, 3.6940343122071657`*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"J2", " ", "=", " ", "0.1"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"uMax", " ", "=", " ", "0.2"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"VMin", " ", "=", " ", "1."}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"VMax", " ", "=", " ", "11."}], ";"}]}], "Input",
+ CellChangeTimes->{{3.694034271903857*^9, 3.694034327318305*^9}, {
+   3.694034486177853*^9, 3.694034486292485*^9}, 3.6940346594507*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Test 1 ", "Subsection",
+ CellChangeTimes->{{3.6940343047975903`*^9, 3.694034306847267*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"us", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"0.05", ",", "0.0", ",", 
+     RowBox[{"-", "0.15"}], ",", 
+     RowBox[{"-", "0.2"}]}], "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{3.694034661918263*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"V", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"VMax", " ", "-", " ", "VMin"}], ")"}], "/", "uMax"}], "*", 
+    "us"}]}], " ", ";"}], "\[IndentingNewLine]", 
+ RowBox[{"V", " ", "=", " ", 
+  RowBox[{"V", " ", "+", " ", 
+   RowBox[{"VMin", " ", "*", " ", 
+    RowBox[{"Sign", "[", "V", "]"}]}]}]}]}], "Input",
+ CellChangeTimes->{{3.694034318223661*^9, 3.6940343432513866`*^9}, {
+  3.694034383882944*^9, 3.694034454733018*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"3.5`", ",", "0.`", ",", 
+   RowBox[{"-", "8.5`"}], ",", 
+   RowBox[{"-", "11.`"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.694034338933107*^9, 3.6940343436277227`*^9}, 
+   3.6940344108482523`*^9, {3.6940344420660686`*^9, 3.694034455500494*^9}, 
+   3.6940344889962273`*^9}]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Test 2", "Subsection",
+ CellChangeTimes->{{3.6940343047975903`*^9, 3.694034306847267*^9}, {
+  3.694034668438015*^9, 3.694034669472781*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"us", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"0.5", ",", "0.0", ",", 
+     RowBox[{"-", "0.15"}], ",", 
+     RowBox[{"-", "0.5"}]}], "}"}]}], ";"}]], "Input",
+ CellChangeTimes->{{3.694034655528035*^9, 3.6940346573518343`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"V", " ", "=", " ", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"(", 
+      RowBox[{"VMax", " ", "-", " ", "VMin"}], ")"}], "/", "uMax"}], "*", 
+    "us"}]}], " ", ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"V", " ", "=", " ", 
+   RowBox[{"V", " ", "+", " ", 
+    RowBox[{"VMin", " ", "*", " ", 
+     RowBox[{"Sign", "[", "V", "]"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"Do", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"V", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], ">", " ", "VMax"}], ",", " ", 
+      RowBox[{
+       RowBox[{"V", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], " ", "=", " ", "VMax"}]}], "]"}], ";",
+     "\[IndentingNewLine]", 
+    RowBox[{"If", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"V", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], "<", " ", 
+       RowBox[{"-", "VMax"}]}], ",", " ", 
+      RowBox[{
+       RowBox[{"V", "[", 
+        RowBox[{"[", "i", "]"}], "]"}], " ", "=", " ", 
+       RowBox[{"-", "VMax"}]}]}], "]"}], ";"}], "\[IndentingNewLine]", ",", 
+   RowBox[{"{", 
+    RowBox[{"i", ",", 
+     RowBox[{"Length", "[", "V", "]"}]}], "}"}]}], 
+  "]"}], "\[IndentingNewLine]", "V"}], "Input",
+ CellChangeTimes->{{3.694034318223661*^9, 3.6940343432513866`*^9}, {
+  3.694034383882944*^9, 3.694034454733018*^9}, {3.6940347527396507`*^9, 
+  3.69403477077604*^9}, {3.694034806866456*^9, 3.6940348388790207`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"11.`", ",", "0.`", ",", 
+   RowBox[{"-", "8.5`"}], ",", 
+   RowBox[{"-", "11.`"}]}], "}"}]], "Output",
+ CellChangeTimes->{{3.694034747897984*^9, 3.6940347717060747`*^9}, {
+  3.69403481126698*^9, 3.694034839377974*^9}}]
+}, Open  ]]
+}, Open  ]],
+
+Cell["Test 3", "Subsection",
+ CellChangeTimes->{{3.694086425847087*^9, 3.694086429948234*^9}}]
 },
 WindowSize->{808, 656},
 WindowMargins->{{4, Automatic}, {Automatic, 4}},
@@ -36,9 +168,28 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 97, 1, 44, "Subsection"],
+Cell[680, 25, 466, 10, 96, "Input"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[1183, 40, 97, 1, 44, "Subsection"],
+Cell[1283, 43, 241, 7, 32, "Input"],
+Cell[CellGroupData[{
+Cell[1549, 54, 491, 13, 54, "Input"],
+Cell[2043, 69, 314, 7, 32, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2406, 82, 145, 2, 44, "Subsection"],
+Cell[2554, 86, 266, 7, 32, "Input"],
+Cell[CellGroupData[{
+Cell[2845, 97, 1476, 41, 159, "Input"],
+Cell[4324, 140, 258, 6, 32, "Output"]
+}, Open  ]]
+}, Open  ]],
+Cell[4609, 150, 94, 1, 44, "Subsection"]
 }
 ]
 *)
-
-(* End of internal cache information *)
 
