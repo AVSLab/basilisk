@@ -2,11 +2,11 @@
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
-\newcommand{\ModuleName}{subTemplateModule}
-\newcommand{\subject}{Short Descriptive Title (12 words or less)}
-\newcommand{\status}{status description}
-\newcommand{\preparer}{J. Doe}
-\newcommand{\summary}{Include a short summary of what this system engineering report is about.  Should be 300 words or less.     }
+\newcommand{\ModuleName}{rwMotorVoltage}
+\newcommand{\subject}{Mapping Reaction Wheel Motor Torques Commands to Servo Voltages}
+\newcommand{\status}{Initial document draft}
+\newcommand{\preparer}{H. Schub}
+\newcommand{\summary}{This FSW module takes a set of $N$ RW motor torques $\bm u_{s}$ and maps them into a set of RW servo voltages.  This modules has an open-loop mode that ensures the output voltage is between a minimum and maximum voltage magnitude using a linear mapping.  If the RW availability message is set, then then only the AVAILABLE RW voltages are computed.  The other are set to zero.  If the RW wheel speed message is available, then the torque control loop is engaged where a proportional control is used to track the desired torque value.  }
 
 
 \begin{document}
@@ -26,7 +26,7 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & XXXXXX & X. XXXX \\
+v1.0 & Initial Document & H. Schaub \\
 \hline
 
 \end{longtable}
@@ -39,111 +39,82 @@ Draft & XXXXXX & X. XXXX \\
 \tableofcontents
 ~\\ \hrule ~\\
 
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[]{Figures/Fig1}
-	}
-	\caption{Sample Figure Inclusion.}
-	\label{fig:Fig1}
-\end{figure}
 
 \section{Introduction}
-Provide a brief introduction to the material being discussed in this report.  For example, include what the motivation is, maybe provide a supportive figure such as Figure~\ref{fig:Fig1}, reference earlier work if needed in a literature review.
-
-
-\section{Document ID}
-The technical document ID is setup through the module name.  For example, if the module name is ``subModuleTemplate'', then the  {\tt \ModuleName} parameter is set to this name.  The document ID then becomes {\tt AVS-SIM-subModuleTemplate}.  
+There two types of RW control torque interfaces, analog and digital. This modules assumes the RW is controlled through a set of voltages sent to the RW motors.  This modules is developed in a general manner where a voltage deadband is assumed and the module can be run in a pure open-loop manner, or with a closed-loop torque tracking control mode.  Finally, if a RW availability message is present, then the RW is set to zero if the corresponding availability is set to {\tt UNAVAILABLE}. 
 
 
 
+\begin{figure}[htb]
+	\centerline{
+	\includegraphics[]{Figures/us2V}
+	}
+	\caption{Illustration of RW motor torque to voltage conversion}
+	\label{fig:us2V}
+\end{figure}
+\section{Open-loop voltage conversion}
+this module requires the RW configuration message to contain the maximum RW motor torque values $u_{\text{max}}$.  The user must specify the minimum and maximum output voltages as shown in Figure~\ref{fig:us2V}.  The minimum voltage is a voltage below which the motor doesn't apply a torque, i.e. a deadzone.  
 
-\section{Report Formatting and Styling}
-\subsection{Equations}
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (e.g., not eq.  1, (1), or Equation 1).
+Let the intermediate voltage value $V_{\text{int}}$ as
 \begin{equation}
-	\label{eq:ab}
-	a = b^{2}
+	\label{eq:rwMV:1}
+	V_{\text{int}} = \frac{V_{\text{max}} - V_{\text{min}}}{u_{\text{max}}} u_{s}
+\end{equation}
+The output voltage is thus determined through
+\begin{equation}
+	V = V_{\text{int}} + V_{\text{min}} *\text{sgn}(V_{\text{int}} )
 \end{equation}
 
-
-\subsection{Citation}
-The citation of bibliographical references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.  This is the default style included in this report \LaTeX\ class.
-
-References listed at the end of the paper are indicated in the text by a superscript Arabic number. If this causes confusion in mathematics or if a superscript is not appropriate for other reasons, this can be expressed as (Ref.~1).  
-
-\subsection{Figures}
-Illustrations are referred to by name in the text as Figure~1, Figure 2, etc., or, Figures 3 and 4 (e.g., not figure 1, Fig. 1, or \emph{Figure} 1). Captions are in title case (miniscule lettering with the first letter of major words majuscule); they are 10-point serif font and centered below the figure as shown in Figure~\ref{fig:Fig1}. Each illustration should have a caption unless it is a mere sketch. An explanatory caption of several sentences is permissible. Each included illustration must be called out (mentioned) in the text. Ideally, figures should appear within the text just before they are called out. 
-
-The figure files (PDF preferred) should be stored in a common ``Figure'' sub-folder.  If available, any drawing documents used to create this figure can be stored in a ``Support'' sub-folder.
+\section{RW Availability} 
+If the input message name {\tt rwAvailInMsgName} is defined, then the RW availability message is read in. The voltage mapping is only performed if the individual RW availability setting is {\tt AVAILABLE}.  If it is {\tt UNAVAILABLE} then the output voltage is set to zero.  
 
 
+\section{Closed-loop commanded torque tracking}
+The requested RW motor torque is given by $u_{s}$.  The RW wheel speed $\Omega$ is monitored to see if the actual torque being applied matches the commanded torque.  Let $J_{s}$ be the RW spin inertia about the RW spin axis $\hat{\bm g}_{s}$.   In the following development the motor torque equation is approximated as
+\begin{equation}
+	u_{s} = J_{s} \dot\Omega
+\end{equation}
+where the assumption is made that the spacecraft angular accelerations are small compared to the RW angular accelerations.  The $\dot\Omega$ term is digitally evaluated using a backwards difference method:
+\begin{equation}
+	\dot\Omega_{n} = \frac{\Omega_{n} - \Omega_{n-1}}{\Delta t}
+\end{equation}
+Care is taken that the old RW speed information $\Omega_{n-1}$ is not used unless a history of wheel speeds is available, in particularly after a module reset.  Thus, the actual RW torque is evaluated as
+\begin{equation}
+	u_{n} = J_{s} \dot\Omega_{n}
+\end{equation}
+Finally, the closed loop motor torque value is computed with a proportional feedback component as
+\begin{equation}
+	u_{s,CL} = u_{s} - K (u_{n} - u_{s})
+\end{equation}
+where $K>0$ is a positive feedback gain value.  Finally, this $u_{s,CL}$ is fed to the voltage conversion process in Eq.~\eqref{eq:rwMV:1}.  
 
-\subsection{Tables}
-Tables are referred to by name in the text as Table 1, or, Tables 2 and 3 (e.g., not table 1, Tbl. 1, or Table 1). The title is centered above the table, as shown in Table~\ref{tab:label}. The minimum number of lines needed for clarity is desired. The table font may be adjusted smaller than the body text as necessary.
 
-\begin{table}[htbp]
-    \caption{A Caption Goes Here}
-   \label{tab:label}
-        \centering \fontsize{10}{10}\selectfont
-   \begin{tabular}{c | r | r } % Column formatting, 
-      \hline 
-      Animal    & Description & Price (\$)\\
-      \hline 
-      Gnat      & per gram & 13.65 \\
-                & each     &  0.01 \\
-      Gnu       & stuffed  & 92.50 \\
-      Emu       & stuffed  & 33.33 \\
-      Armadillo & frozen   &  8.99 \\
-      \hline
-   \end{tabular}
-\end{table}
 
 
 \section{Unit Test Discussion}
-The results of the unit test should be included in the documentation.  The results can be discussed verbally, but also included as tables and figures.  
+A series of unit tests are performed to check the validity of this module's operation.
 
-\subsection{Unit Test Table Results}
-To automatically create a unit test table to include in the documentation, use the command:
-\begin{verbatim}
-unitTestSupport.writeTableLaTeX(
-        tableName,
-        tableHeaders,
-        caption,
-        dataMatrix,
-        path)
-\end{verbatim}
-Here {\tt tableName} is a unique table name that is used to specify the \TeX\ filename and the table reference label.  The array {\tt tableHeaders} contains the column header titles.  Note that these labels can include math variables as well.  The table data is given in the array {\tt dataMatrix}.   This function creates the \TeX\ code for each table, and stores the result inside the documentation folder's {\tt Tables} sub-folder.  For example, the tables \ref{tbl:test11}--\ref{tbl:test22} are auto-generated by the python unit test.  
+\subsection{Test 1}
+The first test uses an input vector of \input{AutoTex/usFalseFalseFalse.tex} Nm.  The RW spin inertia is set to $J_{s}$ = 0.1 kg m$^{s}$, while the maximum RW motor torque is set to $u_{\text{max}}$ = 0.2 Nm.  In this test case no RW availability or wheel speed messages are set.  The simulation is first run for 1.5 seconds with a 0.5 second control update period.  Next, the module is reset and run for another 1.5 sections.  With only the open-loop voltage conversion active and the RW motor torque
+The resulting actual values and differences with hand-computed values are shown in Table~\ref{tbl:testFalseFalseFalse}.  The reset of the module should have not impact on the voltage conversion, which is the case.
 
-\input{AutoTeX/test11.tex}
-\input{AutoTeX/test13.tex}
-\input{AutoTeX/test22.tex}
+\input{AutoTeX/testFalseFalseFalse.tex}
 
+\subsection{Test 2}
+This test repeats the values of test 1, except that the RW motor torque input vector is set to \input{AutoTex/usTrueFalseFalse.tex} Nm.  This should saturated the first and last RW voltage output, which is seen in Table~\ref{tbl:testTrueFalseFalse}. 
 
-\subsection{Unit Test Figure Results}
-If figures and plots are generated in the python unit tests, these can be also automatically included in the unit test documentation.  This is achieved with the command:
-\begin{verbatim}
-unitTestSupport.writeFigureLaTeX(
-        "testPlot",
-        "Illustration of Sample Plot",
-        plt,
-        "width=0.5\\textwidth",
-        path)
-\end{verbatim}
+\input{AutoTeX/testTrueFalseFalse.tex}
 
-An example of such an automatic inclusion is shown in Figure~\ref{fig:testPlot}.  The figure name is the file name to include, but also the label name to use to reference the figure.  Not that in this figure 3 simulation results are shown in one figure.  These can also be saved off to separate figures if needed.
+\subsection{Test 3}
+This test repeats the values of test 1, except that a RW availability message is created.  Here all RWs have a status of {\tt AVAILABLE} except for the 3rd RW which is {\tt UNAVAILALBE}.    The 3rd RW voltages should thus all be 0.0 in this case, which is seen in Table~\ref{tbl:testFalseTrueFalse}. 
 
-\input{AutoTeX/testPlot.tex}
+\input{AutoTeX/testFalseTrueFalse.tex}
 
+\subsection{Test 4}
 
+This test repeats the values of test 1, except that a RW wheel speed message is created.  The feedback gain is set to $K = 1.5$.  For the first 1.0 seconds the RW wheel speeds are set to \input{AutoTeX/Omega1.tex} rad/sec.  At 1.0 seconds the RW wheel speeds are set to  \input{AutoTeX/Omega2.tex} rad/sec.  Then the module is reset at 1.5 seconds and the simulation continued for another 1.5 second for a 3 second total simulation time.   The speed message remains the same after the reset.   Table~\ref{tbl:testFalseFalseTrue} shows the results of the actual values, and the differences with the hand-computed values.  
 
-\section{Acknowledgment}
-Any acknowledgment which the author or authors wish to make may appear here. 
-
-
-
-\section{Notation}
-If mathematical symbols require definition, a table of notation should appear here. A footnote near the beginning of the paper where mathematics is introduced should direct attention of the reader to this table.
-
+\input{AutoTeX/testFalseFalseTrue.tex}
 
 
 

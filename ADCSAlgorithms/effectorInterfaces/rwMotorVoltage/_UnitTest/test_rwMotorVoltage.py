@@ -121,7 +121,9 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
                                    unitProcessName,
                                    moduleConfig.inputRWSpeedsInMsgName,
                                    rwSpeedMessage)
-
+        unitTestSupport.writeTeXSnippet("Omega1", "$\\bm\Omega = " \
+                                        + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
+                                        , path)
 
     #
     #   create BSK messages
@@ -142,16 +144,16 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    inputMessageData = rwMotorVoltage.vehEffectorOut()
+    usMessageData = rwMotorVoltage.vehEffectorOut()
     if useLargeVoltage:
-        inputMessageData.effectorRequest = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
+        usMessageData.effectorRequest = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:
-        inputMessageData.effectorRequest = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
+        usMessageData.effectorRequest = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.torqueInMsgName,
-                               inputMessageData)
+                               usMessageData)
 
     # create RW availability message
     if useAvailability:
@@ -187,6 +189,9 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
                                               rwSpeedMessage.getStructSize(),
                                               0,
                                               rwSpeedMessage)
+        unitTestSupport.writeTeXSnippet("Omega2", "$\\bm\Omega = " \
+                                        + str(rwSpeedMessage.wheelSpeeds[0:4]) + "$"
+                                        , path)
     unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
 
@@ -274,6 +279,26 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag
 
+    # write TeX Tables for documentation
+    resultTable = moduleOutput
+    resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
+    diff = np.delete(moduleOutput, 0, 1) - trueVector
+    resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
+
+    tableName = "test" + str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
+    tableHeaders = ["time [s]", "$u_{s,1}$", "Error", "$u_{s,2}$", "Error", "$u_{s,3}$", "Error", "$u_{s,4}$", "Error"]
+    caption = 'RW voltage output for case {\\tt useLargeVoltage = ' + str(useLargeVoltage) \
+              + ', useAvailability = ' + str(useAvailability) \
+              + ', useTorqueLoop = ' + str(useTorqueLoop) + '}.'
+    unitTestSupport.writeTableLaTeX(
+        tableName,
+        tableHeaders,
+        caption,
+        resultTable,
+        path)
+    unitTestSupport.writeTeXSnippet("us"+ str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
+                                    , "$\\bm u_s = " + str(usMessageData.effectorRequest[0:numRW]) + "$"
+                                    , path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
