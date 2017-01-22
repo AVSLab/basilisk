@@ -23,15 +23,14 @@ import VisualizationDataDelegate
 import time
 
 class VisualizationServer:
-    def __init__(self, simulation):
+    def __init__(self, simulation, processName):
         # a reference to the simulation is passed the dataSource
         # a class member variable for both dataSource and dataDelegate
         # is here for clarity and potential manipulation from the simulation level
         host_ip, port = "127.0.0.1", 50000
         self.server = ThreadedTCPServer((host_ip, port), ThreadedTCPRequestHandler)
         self.server.request_queue_size = 5
-        # self.server.dataSource = VisualizationDataSource.DataSource(simulation)
-        self.server.dataDelegate = VisualizationDataDelegate.DataDelegate(simulation)
+        self.server.dataDelegate = VisualizationDataDelegate.DataDelegate(simulation, processName)
 
     def startServer(self):
         ip, port = self.server.server_address
@@ -96,7 +95,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         else:
             print 'requestType: ' + requestType + ' unknonwn'
 
-        sentStuff = self.request.sendall(str(len(encodedData))+encodedData)
+        sentStuff = self.request.sendall(str(len(encodedData)).zfill(8)+encodedData)
         # if encodedData != "[]":
         #     # t1 = time.clock()
         #     sentStuff = self.request.sendall(str(len(encodedData))+encodedData)

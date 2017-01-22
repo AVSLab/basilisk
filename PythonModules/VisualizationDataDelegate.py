@@ -27,11 +27,11 @@ import time
 
 
 class DataDelegate:
-    def __init__(self, simulation):
+    def __init__(self, simulation, processName):
         self.simulation = simulation
         self.isNewConnection = True
         self.encoder = VisJSONEncoder()
-        self.processName = 'DynamicsProcess'
+        self.processName = processName
         self.visMessages = []
         self.visSimModules = []
 
@@ -49,7 +49,7 @@ class DataDelegate:
                 tmpObjects.append(VisThruster(messageStruct[3]))
             elif messageStruct[2] == "ReactionWheelConfigData":
                 tmpObjects.append(VisReactionWheel(messageStruct[3]))
-            elif messageStruct[2] == "OutputStateData":
+            elif messageStruct[2] == "SCPlusOutputStateData":
                 tmpObjects.append(VisSpacecraft(messageStruct[3]))
             elif messageStruct[2] == "SpicePlanetState":
                 tmpObjects.append(VisPlanetState(messageStruct[3]))
@@ -113,10 +113,11 @@ class VisThruster(object):
 
 class VisSpacecraft(object):
     def __init__(self, outputStateDataBuffer):
-        self.r_N = outputStateDataBuffer.r_N
-        self.v_N = outputStateDataBuffer.v_N
-        self.omega = outputStateDataBuffer.omega
-        self.sigma = outputStateDataBuffer.sigma
+        self.r_BN_N = outputStateDataBuffer.r_BN_N
+        self.v_BN_N = outputStateDataBuffer.v_BN_N
+        self.omega_BN_B = outputStateDataBuffer.omega_BN_B
+        self.sigma_BN = outputStateDataBuffer.sigma_BN
+        self.totalAccumDV_B = outputStateDataBuffer.TotalAccumDVBdy
 
 
 class VisPlanetState(object):
