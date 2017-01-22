@@ -41,7 +41,7 @@ typedef struct {
                                                                 negative, this loop is turn off */
     double rwSpeedOld[MAX_EFF_CNT];                 /*!< [r/s]  the RW spin rates from the prior control step */
     uint64_t priorTime;                             /*!< [ns]   Last time the attitude control is called */
-    int    resetFlat;                               /*!< []     Flag indicating that a module reset occured */
+    int    resetFlag;                               /*!< []     Flag indicating that a module reset occured */
 
     /* declare module IO interfaces */
     char voltageOutMsgName[MAX_STAT_MSG_LENGTH];    /*!< The name of the voltage output message*/

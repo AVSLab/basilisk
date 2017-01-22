@@ -47,8 +47,9 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import rwMotorVoltage
-import macros
+import vehicleConfigData
 import fswSetupRW
+import macros
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -57,19 +58,21 @@ import fswSetupRW
 # Provide a unique test method name, starting with 'test_'.
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useLargeVoltage", [
-       (False)
-     , (True)
+@pytest.mark.parametrize("useLargeVoltage, useAvailability, useTorqueLoop", [
+       (False, False, False)
+     , (True, False, False)
+     , (False, True, False)
+     , (False, False, True)
 ])
 
 # update "module" in this function name to reflect the module name
-def test_module(show_plots, useLargeVoltage):
+def test_module(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = run(show_plots, useLargeVoltage)
+    [testResults, testMessage] = run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop)
     assert testResults < 1, testMessage
 
 
-def run(show_plots, useLargeVoltage):
+def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"               # arbitrary name (don't change)
@@ -109,9 +112,20 @@ def run(show_plots, useLargeVoltage):
     moduleConfig.VMin = 1.0     # Volts
     moduleConfig.VMax = 11.0    # Volts
 
+    if useTorqueLoop:
+        moduleConfig.K = 1.5
+        moduleConfig.inputRWSpeedsInMsgName = "rw_speeds"
+        rwSpeedMessage = rwMotorVoltage.RWSpeedData()
+        rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
+        unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                   unitProcessName,
+                                   moduleConfig.inputRWSpeedsInMsgName,
+                                   rwSpeedMessage)
 
 
-
+    #
+    #   create BSK messages
+    #
     # Create RW configuration parameter input message
     GsMatrix_B = [
         [1.0, 0.0, 0.0],
@@ -139,6 +153,19 @@ def run(show_plots, useLargeVoltage):
                                moduleConfig.torqueInMsgName,
                                inputMessageData)
 
+    # create RW availability message
+    if useAvailability:
+        moduleConfig.rwAvailInMsgName = "rw_availability"
+        rwAvailabilityMessage = rwMotorVoltage.RWAvailabilityData()
+        rwAvailArray = np.full((vehicleConfigData.MAX_EFF_CNT), rwMotorVoltage.AVAILABLE)
+        rwAvailArray[2] = rwMotorVoltage.UNAVAILABLE        # make 3rd RW unavailable
+        rwAvailabilityMessage.wheelAvailability = rwAvailArray
+        unitTestSupport.setMessage(unitTestSim.TotalSim,
+                                   unitProcessName,
+                                   moduleConfig.rwAvailInMsgName,
+                                   rwAvailabilityMessage)
+
+
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.voltageOutMsgName, testProcessRate)
 
@@ -153,37 +180,72 @@ def run(show_plots, useLargeVoltage):
 
     # Begin the simulation time run set above
     unitTestSim.ExecuteSimulation()
-    
+
+    if useTorqueLoop:
+        rwSpeedMessage.wheelSpeeds = [1.1, 2.1, 1.1, -4.1]  # rad/sec Omega's
+        unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRWSpeedsInMsgName,
+                                              rwSpeedMessage.getStructSize(),
+                                              0,
+                                              rwSpeedMessage)
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ExecuteSimulation()
+
     # reset the module to test this functionality
     moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
 
     # run the module again for an additional 1.0 seconds
-    unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(3.0))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
         
 
     # This pulls the actual data log from the simulation run.
-    # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
     moduleOutputName = "effectorRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
                                                   range(numRW))
 
+    print moduleOutput
 
     # set the filtered output truth states
     trueVector=[];
-    if useLargeVoltage==False:
+    if not useLargeVoltage and not useAvailability and not useTorqueLoop:
         trueVector = [
                    [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
                  , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
                    ]
-    if useLargeVoltage==True:
+    if useLargeVoltage and not useAvailability and not useTorqueLoop:
         trueVector = [
                    [11., 0., -8.5, -11.]
                  , [11., 0., -8.5, -11.]
                  , [11., 0., -8.5, -11.]
                  , [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
+                   ]
+    if not useLargeVoltage and useAvailability and not useTorqueLoop:
+        trueVector = [
+                   [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                 , [3.5, 0., 0., -11.]
+                   ]
+    if not useLargeVoltage and not useAvailability and useTorqueLoop:
+        trueVector = [
+                   [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [5.75, -2.5, -11., -9.5]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [7.25, 0., -11., -11.]
                    ]
 
     # compare the module results to the truth values
@@ -226,4 +288,6 @@ if __name__ == "__main__":
     test_module(              # update "module" in function name
                   False
                  ,False       # useLargeVoltage
+                 ,False       # useAvailability
+                 ,True       # useTorqueLoop
                )

@@ -25,8 +25,6 @@
 #include "effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
 
 /* update this include to reflect the required module input messages */
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
 
@@ -105,7 +103,7 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, u
 
     /* reset variables */
     memset(ConfigData->rwSpeedOld, 0, sizeof(double)*MAX_EFF_CNT);
-    ConfigData->resetFlat = BOOL_TRUE;
+    ConfigData->resetFlag = BOOL_TRUE;
 
     /* Reset the prior time flag state.
      If zero, control time step not evaluated on the first function call */
@@ -134,7 +132,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     /* - Read the input messages */
     ReadMessage(ConfigData->torqueInMsgID, &clockTime, &readSize,
                 sizeof(vehEffectorOut), (void*) torqueCmd, moduleID);
-    if (ConfigData->rwAvailInMsgID >= 0) {
+    if (ConfigData->inputRWSpeedsInMsgID >= 0) {
         ReadMessage(ConfigData->inputRWSpeedsInMsgID, &clockTime, &readSize,
                     sizeof(RWSpeedData), (void*) &(rwSpeed), moduleID);
     }
@@ -150,7 +148,24 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     /* compute the often used double array size of RW double values */
     rwArrayMemorySize = ConfigData->rwConfigParams.numRW*sizeof(double);
 
-    /* evaluate the feedforward term */
+    /* if the torque closed-loop is on, evaluate the feedback term */
+    if (ConfigData->inputRWSpeedsInMsgID >= 0) {
+        /* make sure the clock didn't just initialize, or the module was recently reset */
+        if (ConfigData->priorTime != 0) {
+            dt = (callTime - ConfigData->priorTime) * NANO2SEC;
+            for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
+                if (rwAvailability.wheelAvailability[i] == AVAILABLE && ConfigData->resetFlag == BOOL_FALSE) {
+                    Omega_dot[i] = (rwSpeed.wheelSpeeds[i] - ConfigData->rwSpeedOld[i])/dt;
+                    torqueCmd[i] -= ConfigData->K * (ConfigData->rwConfigParams.JsList[i] * Omega_dot[i] - torqueCmd[i]);
+                }
+                ConfigData->rwSpeedOld[i] = rwSpeed.wheelSpeeds[i];
+            }
+            ConfigData->resetFlag = BOOL_FALSE;
+        }
+        ConfigData->priorTime = callTime;
+    }
+
+    /* evaluate the feedforward mapping of torque into voltage */
     for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
             voltage[i] = (ConfigData->VMax - ConfigData->VMin)/ConfigData->rwConfigParams.uMax[i]
@@ -158,23 +173,6 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
             if (voltage[i]>0.0) voltage[i] += ConfigData->VMin;
             if (voltage[i]<0.0) voltage[i] -= ConfigData->VMin;
         }
-    }
-
-    /* if the torque closed-loop is on, evaluate the feedback term */
-    if (ConfigData->inputRWSpeedsInMsgID >= 0) {
-        /* make sure the clock didn't just initialize, or the module was recently reset */
-        if (ConfigData->priorTime != 0) {
-            dt = (callTime - ConfigData->priorTime) * NANO2SEC;
-            for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
-                if (rwAvailability.wheelAvailability[i] == AVAILABLE && ConfigData->resetFlat == BOOL_FALSE) {
-                    Omega_dot[i] = (rwSpeed.wheelSpeeds[i] - ConfigData->rwSpeedOld[i])/dt;
-                    voltage[i] -= ConfigData->K * (ConfigData->rwConfigParams.JsList[i] * Omega_dot[i] - torqueCmd[i]);
-                }
-                ConfigData->rwSpeedOld[i] = rwSpeed.wheelSpeeds[i];
-                ConfigData->resetFlat = BOOL_FALSE;
-            }
-        }
-        ConfigData->priorTime = callTime;
     }
 
     /* check for voltage saturation */
