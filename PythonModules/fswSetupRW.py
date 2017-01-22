@@ -44,7 +44,8 @@ rwList = []
 #
 def create(
         gsHat_S,
-        Js
+        Js,
+        uMax = numpy.NaN
     ):
     global rwList
 
@@ -59,6 +60,7 @@ def create(
         exit(1)
 
     RW.gsHat_S = gsHat_S
+    RW.uMax = uMax
     RW.Js = Js
 
     # add RW to the list of RW devices
@@ -76,13 +78,16 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
 
     GsMatrix_B = []
     JsList = []
+    uMaxList = []
     for rw in rwList:
         GsMatrix_B.extend(rw.gsHat_S)
         JsList.extend([rw.Js])
+        uMaxList.extend([rw.uMax])
 
     rwConfigParams = rwConfigData.RWConfigParams()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
+    rwConfigParams.uMax = uMaxList
     rwConfigParams.numRW = len(rwList)
 
     messageSize = rwConfigParams.getStructSize()
