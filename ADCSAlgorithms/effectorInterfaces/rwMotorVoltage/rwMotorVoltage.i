@@ -32,12 +32,11 @@
 %ignore Reset_rwMotorVoltage;
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorVoltageConfig);
+GEN_SIZEOF(vehEffectorOut);
 GEN_SIZEOF(RWAvailabilityData);
 %include "rwMotorVoltage.h"
-%include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+%include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../ADCSUtilities/ADCSDefinitions.h"
-
-// sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys

@@ -46,9 +46,9 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import fswModuleTemplate                # import the module that is to be tested
-import MRP_Steering                     # import module(s) that creates the needed input message declaration
+import rwMotorVoltage
 import macros
+import fswSetupRW
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -58,7 +58,8 @@ import macros
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useLargeVoltage", [
-     (True)
+       (False)
+     , (True)
 ])
 
 # update "module" in this function name to reflect the module name
@@ -88,41 +89,58 @@ def run(show_plots, useLargeVoltage):
 
 
     # Construct algorithm and associated C++ container
-    moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
+    moduleConfig = rwMotorVoltage.rwMotorVoltageConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        fswModuleTemplate.Update_fswModuleTemplate,     # update with current values
-                                        fswModuleTemplate.SelfInit_fswModuleTemplate,   # update with current values
-                                        fswModuleTemplate.CrossInit_fswModuleTemplate,  # update with current values
-                                        fswModuleTemplate.Reset_fswModuleTemplate)      # update with current values
-    moduleWrap.ModelTag = "fswModuleTemplate"                                        # update python name of test module
+                                        rwMotorVoltage.Update_rwMotorVoltage,
+                                        rwMotorVoltage.SelfInit_rwMotorVoltage,
+                                        rwMotorVoltage.CrossInit_rwMotorVoltage,
+                                        rwMotorVoltage.Reset_rwMotorVoltage)
+    moduleWrap.ModelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     # Initialize the test module configuration data
-    moduleConfig.dataInMsgName = "sampleInput"          # update with current values
-    moduleConfig.dataOutMsgName = "sampleOutput"        # update with current values
-    moduleConfig.dummy = 1                              # update module parameter with required values
-    moduleConfig.dumVector = [1., 2., 3.]
+    moduleConfig.torqueInMsgName = "rw_torque_Lr"
+    moduleConfig.rwParamsInMsgName = "rw_parameters"
+    moduleConfig.voltageOutMsgName = "rw_volt_cmd"
 
-    # Create input message and size it because the regular creator of that message
-    # is not part of the test.
-    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()                             # 3 doubles
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-    inputMessageData.torqueRequestBody = [1, 1, 0.7]       # Set up a list as a 3-vector
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    # set module parameters
+    moduleConfig.VMin = 1.0     # Volts
+    moduleConfig.VMax = 11.0    # Volts
+
+
+
+
+    # Create RW configuration parameter input message
+    GsMatrix_B = [
+        [1.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.0, 0.0, 1.0],
+        [1.0, 1.0, 1.0]         # the create routine below normalizes these vectors
+    ]
+    fswSetupRW.clearSetup()
+    for i in range(4):
+        fswSetupRW.create(GsMatrix_B[i],    #           spin axis
+                          0.1,              # kg*m^2    J2
+                          0.2)              # Nm        uMax
+    fswSetupRW.writeConfigMessage(moduleConfig.rwParamsInMsgName, unitTestSim.TotalSim, unitProcessName)
+    numRW = fswSetupRW.getNumOfDevices()
+
+    # Create RW motor torque input message
+    inputMessageData = rwMotorVoltage.vehEffectorOut()
+    if useLargeVoltage:
+        inputMessageData.effectorRequest = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
+    else:
+        inputMessageData.effectorRequest = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
+
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.torqueInMsgName,
+                               inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
-    unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)
-    variableName = "dummy"                              # name the module variable to be logged
-    unitTestSim.AddVariableForLogging(moduleWrap.ModelTag + "." + variableName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(moduleConfig.voltageOutMsgName, testProcessRate)
 
     # Need to call the self-init and cross-init methods
     unitTestSim.InitializeSimulation()
@@ -140,39 +158,41 @@ def run(show_plots, useLargeVoltage):
     moduleWrap.Reset(1)     # this module reset function needs a time input (in NanoSeconds) 
 
     # run the module again for an additional 1.0 seconds
-    unitTestSim.ConfigureStopTime(macros.sec2nano(2.0))        # seconds to stop simulation
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1.5))        # seconds to stop simulation
     unitTestSim.ExecuteSimulation()
         
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "outputVector"
-    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.dataOutMsgName + '.' + moduleOutputName,
-                                                  range(3))
-    variableState = unitTestSim.GetLogVariableData(moduleWrap.ModelTag + "." + variableName)
-    
+    moduleOutputName = "effectorRequest"
+    moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
+                                                  range(numRW))
+
+
     # set the filtered output truth states
     trueVector=[];
     if useLargeVoltage==False:
         trueVector = [
-                   [2.0, 1.0, 0.7],
-                   [3.0, 1.0, 0.7],
-                   [4.0, 1.0, 0.7],
-                   [2.0, 1.0, 0.7],
-                   [3.0, 1.0, 0.7]
+                   [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                 , [3.5, 0., -8.5, -11.]
+                   ]
+    if useLargeVoltage==True:
+        trueVector = [
+                   [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
+                 , [11., 0., -8.5, -11.]
                    ]
 
     # compare the module results to the truth values
     accuracy = 1e-10
-    dummyTrue = [1.0, 2.0, 3.0, 1.0, 2.0]
 
     testFailCount, testMessages = unitTestSupport.compareArray(trueVector, moduleOutput,
                                                                accuracy, "Output Vector",
                                                                testFailCount, testMessages)
 
-    testFailCount, testMessages = unitTestSupport.compareDoubleArray(dummyTrue, variableState,
-                                                               accuracy, "dummy parameter",
-                                                               testFailCount, testMessages)
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,
@@ -180,11 +200,11 @@ def run(show_plots, useLargeVoltage):
     # plot a sample variable.
     plt.close("all")    # close all prior figures so we start with a clean slate
     plt.figure(1)
-    plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
-             label='Case useLargeVoltage = ' + str(useLargeVoltage))
-    plt.legend(loc='upper left')
-    plt.xlabel('Time [s]')
-    plt.ylabel('Variable Description [unit]')
+    # plt.plot(variableState[:, 0]*macros.NANO2SEC, variableState[:, 1],
+    #          label='Case useLargeVoltage = ' + str(useLargeVoltage))
+    # plt.legend(loc='upper left')
+    # plt.xlabel('Time [s]')
+    # plt.ylabel('Variable Description [unit]')
     if show_plots:
         plt.show()
 

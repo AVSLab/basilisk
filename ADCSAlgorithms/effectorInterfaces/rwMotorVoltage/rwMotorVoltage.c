@@ -153,10 +153,10 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     /* evaluate the feedforward term */
     for (i=0;i<ConfigData->rwConfigParams.numRW;i++) {
         if (rwAvailability.wheelAvailability[i] == AVAILABLE) {
-            voltage[i] = (ConfigData->VMax - ConfigData->Vmin)/ConfigData->rwConfigParams.uMax[i]
+            voltage[i] = (ConfigData->VMax - ConfigData->VMin)/ConfigData->rwConfigParams.uMax[i]
                         * torqueCmd[i];
-            if (voltage[i]>0.0) voltage[i] += ConfigData->Vmin;
-            if (voltage[i]<0.0) voltage[i] -= ConfigData->Vmin;
+            if (voltage[i]>0.0) voltage[i] += ConfigData->VMin;
+            if (voltage[i]<0.0) voltage[i] -= ConfigData->VMin;
         }
     }
 
@@ -190,8 +190,8 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     /*
      store the output message 
      */
-    memcpy(voltage,
-           ConfigData->voltageOut.effectorRequest,
+    memcpy(ConfigData->voltageOut.effectorRequest,
+           voltage,
            rwArrayMemorySize);
 
     WriteMessage(ConfigData->voltageOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */

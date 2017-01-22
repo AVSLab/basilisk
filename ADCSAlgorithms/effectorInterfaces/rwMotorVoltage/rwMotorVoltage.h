@@ -34,7 +34,7 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    double Vmin;                                    /*!< [V]    minimum voltage below which the torque is zero */
+    double VMin;                                    /*!< [V]    minimum voltage below which the torque is zero */
     double VMax;                                    /*!< [V]    maximum output voltage */
     double K;                                       /*!< [V/Nm] torque tracking gain for closed loop control.  If 
                                                                 negative, this loop is turn off */
