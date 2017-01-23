@@ -31,6 +31,7 @@
 %constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
 %ignore Reset_ephemDifference;
 GEN_SIZEOF(EphemerisOutputData)
+STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
 %include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
 %include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
