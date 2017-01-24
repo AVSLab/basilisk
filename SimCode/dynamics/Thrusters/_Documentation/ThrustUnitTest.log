@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  24 JAN 2017 11:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2016.5.22)  24 JAN 2017 15:05
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1194,7 +1194,7 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 
 ABD: EveryShipout initializing macros
-<Figures/Basilisk-Logo.pdf, id=27, 369.38pt x 249.93375pt>
+<Figures/Basilisk-Logo.pdf, id=31, 369.38pt x 249.93375pt>
 File: Figures/Basilisk-Logo.pdf Graphic file (type pdf)
 
 <use Figures/Basilisk-Logo.pdf>
@@ -1278,128 +1278,280 @@ Underfull \hbox (badness 10000) in paragraph at lines 86--89
 
  []
 
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 93.
 
-Underfull \hbox (badness 10000) in paragraph at lines 90--93
+LaTeX Font Info:    No file OMScmss.fd. on input line 93.
 
- []
+LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbullet' on input line 93.
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.100 \item{
-            Short Instantaneous Firing: A "short" firing that still respects...
-[1]
+l.98 T
+      he scaling factor yielding the thrust. [1]
+Underfull \hbox (badness 10000) in paragraph at lines 105--108
 
-./ThrustUnitTest.tex:130: LaTeX Error: File `Figures/thrusterForceData' not fou
-nd.
+ []
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.130             }
-                   
-? 
+[2] (./AutoTex/Ramp_function.tex
+<AutoTeX/Ramp_function.pdf, id=130, 415.5525pt x 180.675pt>
+File: AutoTeX/Ramp_function.pdf Graphic file (type pdf)
 
-./ThrustUnitTest.tex:147: LaTeX Error: File `Figures/firstInstantFiring' not fo
-und.
+<use AutoTeX/Ramp_function.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_function.pdf used on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_5s_30deg_Loc2_Rate10.tex [3 <./AutoTeX/Ramp_functi
+on.pdf>]) (./AutoTex/Force_1Thrusters_5s_30deg_Loc2_Rate10.tex
+<AutoTeX/Force_1Thrusters_5s_30deg_Loc2_Rate10.pdf, id=181, 415.5525pt x 180.67
+5pt>
+File: AutoTeX/Force_1Thrusters_5s_30deg_Loc2_Rate10.pdf Graphic file (type pdf)
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.147             }
-                   
-? 
+ <use AutoTeX/Force_1Thrusters_5s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/Force_1Thrusters_5s_30deg_Loc2_Rate10.pdf used
+ on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Torque_1Thrusters_5s_30deg_Loc2_Rate10.tex
+<AutoTeX/Torque_1Thrusters_5s_30deg_Loc2_Rate10.pdf, id=182, 415.5525pt x 180.6
+75pt>
+File: AutoTeX/Torque_1Thrusters_5s_30deg_Loc2_Rate10.pdf Graphic file (type pdf
+)
+ <use AutoTeX/Torque_1Thrusters_5s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/Torque_1Thrusters_5s_30deg_Loc2_Rate10.pdf use
+d on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/1Thrusters_5s_30deg_Loc2_Rate10.tex
+<AutoTeX/1Thrusters_5s_30deg_Loc2_Rate10.pdf, id=183, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_5s_30deg_Loc2_Rate10.pdf Graphic file (type pdf)
 
-./ThrustUnitTest.tex:170: LaTeX Error: File `Figures/secondInstantFiring' not f
-ound.
+<use AutoTeX/1Thrusters_5s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_5s_30deg_Loc2_Rate10.pdf used on in
+put line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_0s_30deg_Loc2_Rate10.tex)
+(./AutoTex/Force_1Thrusters_0s_30deg_Loc2_Rate10.tex
+<AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate10.pdf, id=186, 415.5525pt x 180.67
+5pt>
+File: AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate10.pdf Graphic file (type pdf)
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.170             }
-                   
-? 
-[2]
+ <use AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate10.pdf used
+ on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/1Thrusters_0s_30deg_Loc2_Rate10.tex
+<AutoTeX/1Thrusters_0s_30deg_Loc2_Rate10.pdf, id=187, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_0s_30deg_Loc2_Rate10.pdf Graphic file (type pdf)
 
-./ThrustUnitTest.tex:186: LaTeX Error: File `Figures/firstRampFiring' not found
-.
+<use AutoTeX/1Thrusters_0s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_0s_30deg_Loc2_Rate10.pdf used on in
+put line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_0s_30deg_Loc2_Rate1000.tex [4 <./AutoTeX/Force_1Th
+rusters_5s_30deg_Loc2_Rate10.pdf> <./AutoTeX/Torque_1Thrusters_5s_30deg_Loc2_Ra
+te10.pdf
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.186             }
-                   
-? 
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/Torque_1Thrusters_
+5s_30deg_Loc2_Rate10.pdf): PDF inclusion: multiple pdfs with page group include
+d in a single page
+>] [5 <./AutoTeX/1Thrusters_5s_30deg_Loc2_Rate10.pdf> <./AutoTeX/Force_1Thruste
+rs_0s_30deg_Loc2_Rate10.pdf
 
-./ThrustUnitTest.tex:203: LaTeX Error: File `Figures/shortRampFiring' not found
-.
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/Force_1Thrusters_0
+s_30deg_Loc2_Rate10.pdf): PDF inclusion: multiple pdfs with page group included
+ in a single page
+> <./AutoTeX/1Thrusters_0s_30deg_Loc2_Rate10.pdf
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.203             }
-                   
-? 
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/1Thrusters_0s_30de
+g_Loc2_Rate10.pdf): PDF inclusion: multiple pdfs with page group included in a 
+single page
+>]) (./AutoTex/Force_1Thrusters_0s_30deg_Loc2_Rate1000.tex
+<AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate1000.pdf, id=365, 415.5525pt x 180.
+675pt>
+File: AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate1000.pdf Graphic file (type pd
+f)
+ <use AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate1000.pdf>
+Package pdftex.def Info: AutoTeX/Force_1Thrusters_0s_30deg_Loc2_Rate1000.pdf us
+ed on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/1Thrusters_0s_30deg_Loc2_Rate1000.tex
+<AutoTeX/1Thrusters_0s_30deg_Loc2_Rate1000.pdf, id=366, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_0s_30deg_Loc2_Rate1000.pdf Graphic file (type pdf)
+<use AutoTeX/1Thrusters_0s_30deg_Loc2_Rate1000.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_0s_30deg_Loc2_Rate1000.pdf used on 
+input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_5s_30deg_Loc2_Rate100.tex)
+(./AutoTex/1Thrusters_5s_30deg_Loc2_Rate100.tex
+<AutoTeX/1Thrusters_5s_30deg_Loc2_Rate100.pdf, id=368, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_5s_30deg_Loc2_Rate100.pdf Graphic file (type pdf)
 
-./ThrustUnitTest.tex:221: LaTeX Error: File `Figures/cutoffRampFiring' not foun
-d.
+<use AutoTeX/1Thrusters_5s_30deg_Loc2_Rate100.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_5s_30deg_Loc2_Rate100.pdf used on i
+nput line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_5s_10deg_Loc2_Rate10.tex [6 <./AutoTeX/Force_1Thru
+sters_0s_30deg_Loc2_Rate1000.pdf> <./AutoTeX/1Thrusters_0s_30deg_Loc2_Rate1000.
+pdf
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.221             }
-                   
-? 
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/1Thrusters_0s_30de
+g_Loc2_Rate1000.pdf): PDF inclusion: multiple pdfs with page group included in 
+a single page
+>]) (./AutoTex/1Thrusters_5s_10deg_Loc2_Rate10.tex
+<AutoTeX/1Thrusters_5s_10deg_Loc2_Rate10.pdf, id=447, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_5s_10deg_Loc2_Rate10.pdf Graphic file (type pdf)
 
-./ThrustUnitTest.tex:240: LaTeX Error: File `Figures/middleRampFiring' not foun
-d.
+<use AutoTeX/1Thrusters_5s_10deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_5s_10deg_Loc2_Rate10.pdf used on in
+put line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet1Thrusters_5s_30deg_Loc0_Rate10.tex)
+(./AutoTex/1Thrusters_5s_30deg_Loc0_Rate10.tex
+<AutoTeX/1Thrusters_5s_30deg_Loc0_Rate10.pdf, id=449, 415.5525pt x 180.675pt>
+File: AutoTeX/1Thrusters_5s_30deg_Loc0_Rate10.pdf Graphic file (type pdf)
 
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.240             }
-                   
-? 
-[3] 
+<use AutoTeX/1Thrusters_5s_30deg_Loc0_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/1Thrusters_5s_30deg_Loc0_Rate10.pdf used on in
+put line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/Snippet2Thrusters_5s_30deg_Loc2_Rate10.tex) [7 <./AutoTeX/1Thrusters
+_5s_30deg_Loc2_Rate100.pdf> <./AutoTeX/1Thrusters_5s_10deg_Loc2_Rate10.pdf
+
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/1Thrusters_5s_10de
+g_Loc2_Rate10.pdf): PDF inclusion: multiple pdfs with page group included in a 
+single page
+>] (./AutoTex/2Thrusters_5s_30deg_Loc2_Rate10.tex
+<AutoTeX/2Thrusters_5s_30deg_Loc2_Rate10.pdf, id=524, 415.5525pt x 180.675pt>
+File: AutoTeX/2Thrusters_5s_30deg_Loc2_Rate10.pdf Graphic file (type pdf)
+
+<use AutoTeX/2Thrusters_5s_30deg_Loc2_Rate10.pdf>
+Package pdftex.def Info: AutoTeX/2Thrusters_5s_30deg_Loc2_Rate10.pdf used on in
+put line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/SnippetRamp_10steps_5s_CutoffOFF_Rate10_CutoffOFF.tex)
+(./AutoTex/Ramp_10steps_CutoffOFF_5s_testRate10.tex
+<AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate10.pdf, id=526, 415.5525pt x 180.675
+pt>
+File: AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate10.pdf Graphic file (type pdf)
+ <use AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate10.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate10.pdf used 
+on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/SnippetRamp_10steps_0s_CutoffOFF_Rate10_CutoffOFF.tex) [8 <./AutoTeX
+/1Thrusters_5s_30deg_Loc0_Rate10.pdf> <./AutoTeX/2Thrusters_5s_30deg_Loc2_Rate1
+0.pdf
+
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/2Thrusters_5s_30de
+g_Loc2_Rate10.pdf): PDF inclusion: multiple pdfs with page group included in a 
+single page
+>] (./AutoTex/Ramp_10steps_CutoffOFF_0s_testRate10.tex
+<AutoTeX/Ramp_10steps_CutoffOFF_0s_testRate10.pdf, id=601, 415.5525pt x 180.675
+pt>
+File: AutoTeX/Ramp_10steps_CutoffOFF_0s_testRate10.pdf Graphic file (type pdf)
+ <use AutoTeX/Ramp_10steps_CutoffOFF_0s_testRate10.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_10steps_CutoffOFF_0s_testRate10.pdf used 
+on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/SnippetRamp_10steps_5s_CutoffOFF_Rate100_CutoffOFF.tex)
+(./AutoTex/Ramp_10steps_CutoffOFF_5s_testRate100.tex
+<AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate100.pdf, id=603, 415.5525pt x 180.67
+5pt>
+File: AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate100.pdf Graphic file (type pdf)
+
+ <use AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate100.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate100.pdf used
+ on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/SnippetRamp_10steps_CutoffON_Rate10_CutoffON.tex) [9 <./AutoTeX/Ramp
+_10steps_CutoffOFF_5s_testRate10.pdf> <./AutoTeX/Ramp_10steps_CutoffOFF_0s_test
+Rate10.pdf
+
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/Ramp_10steps_Cutof
+fOFF_0s_testRate10.pdf): PDF inclusion: multiple pdfs with page group included 
+in a single page
+>] (./AutoTex/Ramp_10steps_CutoffON_5s_testRate10.tex
+<AutoTeX/Ramp_10steps_CutoffON_5s_testRate10.pdf, id=677, 415.5525pt x 180.675p
+t>
+File: AutoTeX/Ramp_10steps_CutoffON_5s_testRate10.pdf Graphic file (type pdf)
+ <use AutoTeX/Ramp_10steps_CutoffON_5s_testRate10.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_10steps_CutoffON_5s_testRate10.pdf used o
+n input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+(./AutoTex/SnippetRamp_10steps_CutoffON_Rate10rampDownON.tex)
+(./AutoTex/Ramp_10steps_CutoffONrampDownON_testRate10.tex
+<AutoTeX/Ramp_10steps_CutoffONrampDownON_testRate10.pdf, id=679, 415.5525pt x 1
+80.675pt>
+File: AutoTeX/Ramp_10steps_CutoffONrampDownON_testRate10.pdf Graphic file (type
+ pdf)
+ <use AutoTeX/Ramp_10steps_CutoffONrampDownON_testRate10.pdf>
+Package pdftex.def Info: AutoTeX/Ramp_10steps_CutoffONrampDownON_testRate10.pdf
+ used on input line 3.
+(pdftex.def)             Requested size: 375.80542pt x 163.39996pt.
+)
+[10 <./AutoTeX/Ramp_10steps_CutoffOFF_5s_testRate100.pdf> <./AutoTeX/Ramp_10ste
+ps_CutoffON_5s_testRate10.pdf
+
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./AutoTeX/Ramp_10steps_Cutof
+fON_5s_testRate10.pdf): PDF inclusion: multiple pdfs with page group included i
+n a single page
+>] [11 <./AutoTeX/Ramp_10steps_CutoffONrampDownON_testRate10.pdf>]
+
 AED: lastpage setting LastPage
-[4]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 321.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 321.
+[12]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 379.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 379.
  (./ThrustUnitTest.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 321.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 321.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 379.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 379.
 Package rerunfilecheck Info: File `ThrustUnitTest.out' has not changed.
-(rerunfilecheck)             Checksum: 17E211A01119FA6A891919BEAF8AC3BC;234.
+(rerunfilecheck)             Checksum: 134A3E441B717B32279AD60C84858A9E;281.
 
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 321.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 379.
  ) 
 Here is how much of TeX's memory you used:
- 20170 strings out of 493014
- 365524 string characters out of 6133351
- 448862 words of memory out of 5000000
- 23233 multiletter control sequences out of 15000+600000
- 26346 words of font info for 94 fonts, out of 8000000 for 9000
+ 20367 strings out of 493014
+ 373893 string characters out of 6133351
+ 447993 words of memory out of 5000000
+ 23318 multiletter control sequences out of 15000+600000
+ 26682 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,12n,77p,496b,498s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
-></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb><
-/usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
-</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on ThrustUnitTest.pdf (5 pages, 437204 bytes).
+ 69i,13n,77p,496b,484s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><
+/usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><
+/usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></u
+sr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/
+local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/l
+ocal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/loc
+al/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/lo
+cal/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/loc
+al/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/loca
+l/texlive/2016/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr/lo
+cal/texlive/2016/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb>
+Output written on ThrustUnitTest.pdf (13 pages, 665390 bytes).
 PDF statistics:
- 174 PDF objects out of 1000 (max. 8388607)
- 143 compressed objects within 2 object streams
- 38 named destinations out of 1000 (max. 500000)
- 58 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 857 PDF objects out of 1000 (max. 8388607)
+ 348 compressed objects within 4 object streams
+ 77 named destinations out of 1000 (max. 500000)
+ 151 words of extra memory for PDF output out of 10000 (max. 10000000)
 
