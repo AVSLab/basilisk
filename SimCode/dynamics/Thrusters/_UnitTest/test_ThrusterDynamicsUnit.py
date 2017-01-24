@@ -588,6 +588,19 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
                 if (i > int(round((thrStartTime + (RDstart+RDrestart + RDlength+ ramplength) * 1.0 / macros.NANO2SEC) / testRate)) + 1):
                     RampFunction[i] = 0.
 
+            PlotName = "Ramp_function"
+            PlotTitle = "Example of ramp function"
+
+            plt.figure(11)
+            plt.plot(thrForce[:, 0] * macros.NANO2SEC, thrTorque[:, 1])
+            plt.xlabel('Time(s)')
+            plt.ylabel('Ramp(-)')
+            plt.ylim(-1.5, 2)
+            unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+            if show_plots == True:
+                plt.show()
+            plt.close()
+
             for i in range(np.shape(thrForce)[0]):
                 if (i < int(round(
                             thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
