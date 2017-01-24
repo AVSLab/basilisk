@@ -40,16 +40,22 @@ import simIncludeRW
 import reactionWheelStateEffector
 import vehicleConfigData
 
+
+@pytest.mark.parametrize("testCase", [
+    ('BalancedWheels'),
+    ('JitterFullyCoupled')
+])
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def reactionWheelIntegratedTest(show_plots):
-    [testResults, testMessage] = test_reactionWheelIntegratedTest(show_plots)
+def reactionWheelIntegratedTest(show_plots,testCase):
+    [testResults, testMessage] = test_reactionWheelIntegratedTest(show_plots,testCase)
     assert testResults < 1, testMessage
 
-def test_reactionWheelIntegratedTest(show_plots):
+def test_reactionWheelIntegratedTest(show_plots,testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -78,6 +84,10 @@ def test_reactionWheelIntegratedTest(show_plots):
     # The clearRWSetup() is critical if the script is to run multiple times
     simIncludeRW.clearSetup()
     simIncludeRW.options.maxMomentum = 100
+    if testCase == 'JitterFullyCoupled':
+        simIncludeRW.options.U_d = 0
+        simIncludeRW.options.U_s = 0
+        simIncludeRW.options.RWModel = 2
     simIncludeRW.create(
             'Honeywell_HR16',
             [1,0,0],                # gsHat_S
@@ -95,6 +105,7 @@ def test_reactionWheelIntegratedTest(show_plots):
             [0.5,0.5,0.5]           # r_S (optional)
             )
 
+
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
@@ -102,38 +113,38 @@ def test_reactionWheelIntegratedTest(show_plots):
     # set RW torque command
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 2)
     cmdArray = sim_model.new_doubleArray(vehicleConfigData.MAX_EFF_CNT)
-    sim_model.doubleArray_setitem(cmdArray, 0, 0.020) # RW-1 [Nm]
-    sim_model.doubleArray_setitem(cmdArray, 1, 0.010) # RW-2 [Nm]
-    sim_model.doubleArray_setitem(cmdArray, 2,-0.050) # RW-3 [Nm]
+    sim_model.doubleArray_setitem(cmdArray, 0, 0*0.020) # RW-1 [Nm]
+    sim_model.doubleArray_setitem(cmdArray, 1, 0*0.010) # RW-2 [Nm]
+    sim_model.doubleArray_setitem(cmdArray, 2,0*-0.050) # RW-3 [Nm]
     unitTestSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
+    # unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+    # unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+    # unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    # unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    # unitTestSim.earthGravBody.isCentralBody = True
+    # unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
+    # earthEphemData = spice_interface.SpicePlanetState()
+    # earthEphemData.J2000Current = 0.0
+    # earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    # earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    # earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    # earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    # earthEphemData.PlanetName = "earth"
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
-    msgSize = earthEphemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+    # msgSize = earthEphemData.getStructSize()
+    # unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+    #     unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+    # unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
 
@@ -166,13 +177,24 @@ def test_reactionWheelIntegratedTest(show_plots):
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
-    truePos = [
-                [-4033333.1061706794, 7481965.68525689, 5250896.597134046]
-                ]
 
-    trueSigma = [
-                [0.10278985463139288, 0.18785123312448332, -0.2813107133882423]
-                ]
+    if testCase == 'BalancedWheels':
+        truePos = [
+                    [-4033333.1061706794, 7481965.68525689, 5250896.597134046]
+                    ]
+
+        trueSigma = [
+                    [0.10278985463139288, 0.18785123312448332, -0.2813107133882423]
+                    ]
+    elif testCase == 'JitterFullyCoupled':
+        truePos = [
+                    [1,1,1]
+                    ]
+
+        trueSigma = [
+                    [1,1,1]
+                    ]
+
 
     initialOrbAngMom_N = [
                 [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
@@ -234,4 +256,5 @@ def test_reactionWheelIntegratedTest(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_reactionWheelIntegratedTest(False)
+    test_reactionWheelIntegratedTest(True,'JitterFullyCoupled')
+    # test_reactionWheelIntegratedTest(True,'BalancedWheels')

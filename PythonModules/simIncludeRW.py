@@ -49,6 +49,8 @@ class rwOptions:
     useMaxTorque = True
     maxMomentum = 0.0
     linearFrictionRatio = -1.0          # neg. value turns off this mode by default
+    U_s = 0
+    U_d = 0
 
 
 rwList = []
