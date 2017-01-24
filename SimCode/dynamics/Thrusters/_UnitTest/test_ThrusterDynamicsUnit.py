@@ -199,8 +199,16 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         # Auto Generate LaTex Figures
         format = "width=0.8\\textwidth"
 
-        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
-        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "
+        snippetName = "Snippet" + str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +\
+                      str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0])) + "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        texSnippet = "The thruster is set at " +str(int(angle))+"$^\circ$ off the x-axis, in the position $\\bm r = \left("+\
+                     str(location[0][0])+","+str(location[1][0])+"," +str(location[2][0])+ \
+                     "\\right)$. The test is launched using " + str(thrustNumber) + " thruster, for " + \
+                     str(duration)+ " seconds. The test rate is " + str(int(1./(testRate*macros.NANO2SEC))) + " steps per second"
+        unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(1)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
@@ -212,8 +220,8 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             plt.show()
         plt.close()
 
-        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
-        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(11)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
@@ -226,8 +234,8 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         plt.close()
 
 
-        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
-        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))+ "_Rate"+str(int(1./(testRate*macros.NANO2SEC)))
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(22)
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Force')
@@ -592,7 +600,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             PlotTitle = "Example of ramp function"
 
             plt.figure(11)
-            plt.plot(thrForce[:, 0] * macros.NANO2SEC, thrTorque[:, 1])
+            plt.plot(thrForce[:, 0] * macros.NANO2SEC, RampFunction)
             plt.xlabel('Time(s)')
             plt.ylabel('Ramp(-)')
             plt.ylim(-1.5, 2)
