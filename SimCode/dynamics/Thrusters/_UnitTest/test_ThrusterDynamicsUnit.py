@@ -29,10 +29,12 @@
 #
 
 # @cond DOXYGEN_IGNORE
-import sys, os
+import sys
+import os
 import numpy as np
 import ctypes
 import math
+import pytest
 import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -56,6 +58,7 @@ import macros
 def thrusterEffectorAllTests(show_plots):
    [testResults, testMessage] = test_unitThrusters(show_plots)
 
+
 # Create function to run the simulation who's results will be compared to expected values
 def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
     newStopTime = simContainer.TotalSim.CurrentNanos + totalTime
@@ -67,19 +70,35 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
         thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9/2.0)
         thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9)
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-#@pytest.mark.parametrize("UseFlag", [False])
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
+
+@pytest.mark.parametrize("ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown", [
+    ("OFF", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
+    ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
+    ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
+    ("OFF", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"),# rate test
+    ("OFF", 1 , 5.0 , 10. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # angle test
+    ("OFF", 1 , 5.0 , 30. , [[1.], [0.0], [0.0]], 1E8, "OFF", "OFF"),# Position test
+    ("OFF", 2 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
+    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
+    ("ON", 1 , 0.5 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
+    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
+    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
+    ("ON", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E8, "ON", "ON")  # Rampdown test
+    ])
+
+
 # provide a unique test method name, starting with test_
-def test_unitThrusters(show_plots):
+def test_unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(show_plots)
+    [testResults, testMessage] = unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage
 
+
 # Run the test
-def unitThrusters(show_plots):
+def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -102,18 +121,27 @@ def unitThrusters(show_plots):
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
-    angledeg = 30.0
+    angledeg = angle # Parametrized angle of thrust
     anglerad = angledeg*math.pi/180.0
     thruster1 = thrusterDynamicEffector.ThrusterConfigData()
-    thruster1.inputThrLoc_S =[[1.125], [0.0], [2.0]]
+    thruster1.inputThrLoc_S =location # Parametrized location for thruster
     thruster1.inputThrDir_S = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
     thruster1.MaxThrust = 1.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
     thrusterSet.AddThruster(thruster1)
 
+    if thrustNumber==2:
+        thruster2 = thrusterDynamicEffector.ThrusterConfigData()
+        thruster2.inputThrLoc_S =[[1.], [0.0], [0.0]]
+        thruster2.inputThrDir_S = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
+        thruster2.MaxThrust = 1.0
+        thruster2.steadyIsp = 226.7
+        thruster2.MinOnTime = 0.006
+        thrusterSet.AddThruster(thruster2)
+
     #  Create a Simulation
-    testRate = int(1E8)
+    testRate = int(rate) # Parametrized rate of test
     TotalSim = SimulationBaseClass.SimBaseClass()
     #Create a new process for the unit test task and add the module to tasking
     testProc = TotalSim.CreateNewProcess(unitProcessName)
@@ -127,15 +155,22 @@ def unitThrusters(show_plots):
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    thrStartTime=2.0*1./macros.NANO2SEC
-    thrDurationTime=10.0*1./macros.NANO2SEC
+    sparetime = 2.*1./macros.NANO2SEC
+    thrStartTime=sparetime
+    thrDurationTime=duration*1./macros.NANO2SEC # Parametrized thrust duration
 
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
-    ThrustMessage.OnTimeRequest = 0.
-    thrMessageSize = ThrustMessage.getStructSize()
+    if thrustNumber==1:
+        ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+        ThrustMessage.OnTimeRequest = 0.
+        thrMessageSize = ThrustMessage.getStructSize()
+    if thrustNumber==2:
+        ThrustMessage = sim_model.new_doubleArray(2) #Create a C double array
+        sim_model.doubleArray_setitem(ThrustMessage,1,0.)
+        sim_model.doubleArray_setitem(ThrustMessage,0,0.)
+        thrMessageSize = 8*thrustNumber
     TotalSim.TotalSim.CreateNewMessage(unitProcessName,"acs_thruster_cmds", thrMessageSize, 2)
     TotalSim.InitializeSimulation()
 
@@ -146,73 +181,465 @@ def unitThrusters(show_plots):
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
     thrusterSet.linkInStates(TotalSim.newManager)
 
-    # Run the simulation
-    executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-    ThrustMessage.OnTimeRequest = thrDurationTime
-    TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
-    executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+2.0))
+    if ramp == "OFF":
+        # Run the simulation
+        executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
+        if thrustNumber==1:
+            ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
+        if thrustNumber==2:
+            sim_model.doubleArray_setitem(ThrustMessage, 0, thrDurationTime * macros.NANO2SEC)
+            sim_model.doubleArray_setitem(ThrustMessage, 1, thrDurationTime * macros.NANO2SEC)
+        TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+        executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
-    # Gather the Force and Torque results
-    thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
-    thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+        # Gather the Force and Torque results
+        thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
+        thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
-    # Auto Generate LaTex Figures
-    format = "width=0.5\\textwidth"
+        # Auto Generate LaTex Figures
+        format = "width=0.5\\textwidth"
 
-    plt.figure(1)
-    plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
-    plt.ylim(0,1)
-    plt.xlabel('Time(s)')
-    plt.ylabel('Thrust Factor (-)')
-    unitTestSupport.writeFigureLaTeX("ThrustForce", "Thrust Force as a function of time", plt, format, path)
-    if show_plots==True:
-        plt.show()
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
-    plt.figure(2)
-    plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
-    plt.ylim(-2.,2.)
-    plt.xlabel('Time(s)')
-    plt.ylabel('Thrust Torque (-)')
-    unitTestSupport.writeFigureLaTeX("ThrustTorque", "Thrust Torque as a function of time", plt, format, path)
-    if show_plots==True:
-        plt.show()
+        plt.figure(1)
+        plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
+        plt.xlabel('Time(s)')
+        plt.ylabel('Thrust Factor (-)')
+        plt.ylim(-0.2,1)
+        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        if show_plots==True:
+            plt.show()
+        plt.close()
 
-    # Create expected Force to test against thrForce
-    expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
-    for i in range(np.shape(thrForce)[0]):
-        if (i<thrStartTime/testRate + 2): # Thrust fires 2 times steps after the pause of sim and restart
-            expectedpoints[0,i] = 0.0
-            expectedpoints[1,i] = 0.0
-        else:
-            expectedpoints[0,i] = math.cos(anglerad)
-            expectedpoints[1,i] = math.sin(anglerad)
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
-    # Modify expected values for comparison and define errorTolerance
-    ThruthForce = np.transpose(expectedpoints)
-    ErrTolerance = 10E-9
+        plt.figure(11)
+        plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
+        plt.xlabel('Time(s)')
+        plt.ylabel('Thrust Torque (-)')
+        plt.ylim(-1.5, 2)
+        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        if show_plots==True:
+            plt.show()
+        plt.close()
 
-    # Compare Force values
-    testFailCount, testMessages = unitTestSupport.compareArray(ThruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
-    # Create expected Torque to test against thrTorque
-    expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
-    for i in range(np.shape(thrForce)[0]):
-        if (i < thrStartTime/ testRate + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-            expectedpointstor[0, i] = 0.0
-            expectedpointstor[1, i] = 0.0
-            expectedpointstor[2, i] = 0.0
-        else:
-            expectedpointstor[0, i] = -thrForce[-1,2]*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
-            expectedpointstor[1, i] = thrForce[-1,1]*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
-            expectedpointstor[2, i] = thrForce[-1,2]*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
+        plt.figure(22)
+        plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Force')
+        plt.plot(thrTorque[:,0]*1.0E-9, thrTorque[:,1], 'b--', label='x Torque')
+        plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2], 'g', label='y Force')
+        plt.plot(thrTorque[:,0]*1.0E-9, thrTorque[:,2], 'g--', label='y Torque')
+        plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,3], 'r', label = 'z Force')
+        plt.plot(thrTorque[:,0]*1.0E-9, thrTorque[:,3], 'r--', label='z Torque')
+        plt.legend()
+        plt.xlabel('Time(s)')
+        plt.ylim(-1.5, 2)
+        unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+        if show_plots==True:
+            plt.show()
+        plt.close()
 
-    # Modify expected values for comparison and define errorTolerance
-    TruthTorque = np.transpose(expectedpointstor)
-    ErrTolerance = 10E-9
+        #Create expected Force to test against thrForce
+        expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
+        for i in range(np.shape(thrForce)[0]):
+            if (i<int(round(thrStartTime/testRate)) + 2): # Thrust fires 2 times steps after the pause of sim and restart
+                expectedpoints[0,i] = 0.0
+                expectedpoints[1,i] = 0.0
+            if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
+                if thrustNumber == 1:
+                    expectedpoints[0,i] = math.cos(anglerad)
+                    expectedpoints[1,i] = math.sin(anglerad)
+                else:
+                    expectedpoints[0, i] = math.cos(anglerad)+math.cos(anglerad+math.pi / 4)
+                    expectedpoints[1, i] = math.sin(anglerad)+math.sin(anglerad+math.pi / 4)
+            else:
+                expectedpoints[0, i] = 0.0
+                expectedpoints[1, i] = 0.0
 
-    # Compare Torque values
-    # Compare Force values
-    testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
+        # Modify expected values for comparison and define errorTolerance
+        TruthForce = np.transpose(expectedpoints)
+        ErrTolerance = 10E-9
+
+        # Compare Force values
+        testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
+
+        #Create expected Torque to test against thrTorque
+        expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
+        for i in range(np.shape(thrForce)[0]):
+            if (i < int(round(thrStartTime/ testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                expectedpointstor[0, i] = 0.0
+                expectedpointstor[1, i] = 0.0
+                expectedpointstor[2, i] = 0.0
+            if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
+                if thrustNumber == 1:
+                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
+                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
+                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
+                else:
+                    expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.inputThrLoc_S[2][0]\
+                                           - math.sin(anglerad+math.pi/4)*thruster2.inputThrLoc_S[2][0]
+                    expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) \
+                                          + math.cos(anglerad+math.pi / 4)*math.sqrt(thruster2.inputThrLoc_S[2][0]**2+thruster2.inputThrLoc_S[1][0]**2 +thruster2.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster2.inputThrLoc_S[2][0]/thruster2.inputThrLoc_S[0][0]))
+                    expectedpointstor[2, i] = math.sin(anglerad)*thruster1.inputThrLoc_S[0][0] \
+                                          + math.sin(anglerad+math.pi/4) * thruster2.inputThrLoc_S[0][0]
+            else:
+                expectedpointstor[0, i] = 0.0
+                expectedpointstor[1, i] = 0.0
+                expectedpointstor[2, i] = 0.0
+
+
+        # Define errorTolerance
+        TruthTorque = np.transpose(expectedpointstor)
+        ErrTolerance = 10E-9
+
+        # Compare Torque values
+        # Compare Force values
+        testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
+
+    if ramp == "ON":
+        format = "width=0.5\\textwidth"
+        rampsteps = 10
+        sparetime = 2.*1/macros.NANO2SEC
+        thrStartTime = sparetime - 1.*1/macros.NANO2SEC
+
+        # Setup thruster ramp on and ramp off configuration
+        rampOnList = []
+        rampOffList = []
+        # Note that this ramp is totally linear and ramps up 30 ms using 30 steps
+        for i in range(rampsteps):
+            newElement = thrusterDynamicEffector.ThrusterTimePair()
+            newElement.TimeDelta = (i + 1.) * 0.1
+            newElement.ThrustFactor = (i + 1.0) / 10.0
+            newElement.IspFactor = (i + 1.0) / 10.0
+            rampOnList.append(newElement)
+            newElement = thrusterDynamicEffector.ThrusterTimePair()
+            newElement.TimeDelta = (i + 1) * 0.1
+            newElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0
+            newElement.IspFactor = newElement.ThrustFactor
+            rampOffList.append(newElement)
+
+        # Set up the ramps
+        thrusterSet.ThrusterData[0].ThrusterOnRamp = \
+            thrusterDynamicEffector.ThrusterTimeVector(rampOnList)
+        thrusterSet.ThrusterData[0].ThrusterOffRamp = \
+            thrusterDynamicEffector.ThrusterTimeVector(rampOffList)
+
+        if rampDown == "OFF":
+            if cutoff == "OFF":
+
+                ##Execute a new firing that will use the thruster ramps
+                executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
+                ThrustMessage.OnTimeRequest =  thrDurationTime*macros.NANO2SEC;
+                TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+                executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
+
+                #Extract log variables and plot the results
+                thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
+                thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+
+
+                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff
+                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff
+
+                plt.figure(22)
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 2], 'g--', label='y Torque')
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 3], 'r', label='z Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 3], 'r--', label='z Torque')
+                plt.legend()
+                plt.xlabel('Time(s)')
+                plt.ylim(-1.5, 2)
+                unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+                if show_plots == True:
+                    plt.show()
+                plt.close()
+
+                # Create expected Force to test against thrForce
+                expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
+                RampFunction= np.zeros([np.shape(thrForce)[0]])
+                ramplength = 1.
+                if ramplength < thrDurationTime*macros.NANO2SEC:
+                    for i in range(np.shape(thrForce)[0]):
+                        if i<int(round(thrStartTime / testRate)) + 2:
+                            RampFunction[i] = 0.0
+                        if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC)/ testRate)) + 2) : #ramp up
+                            RampFunction[i] = (i-int(round(thrStartTime / testRate)) - 2 + 1.0) * (macros.NANO2SEC*testRate)
+                        if (i > int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC)/ testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime) / testRate)) + 2):
+                            RampFunction[i]=1.0
+                        if (i > int(round((thrStartTime + thrDurationTime) / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                            RampFunction[i] = 1.0 - (i - int(round((thrStartTime + thrDurationTime) / testRate))-2 + 1.0) *(macros.NANO2SEC*testRate)
+                        if (i > int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 1):
+                            RampFunction[i] = 0.
+                else:
+                    for i in range(np.shape(thrForce)[0]):
+                        if i<int(round(thrStartTime / testRate)) + 2:
+                            RampFunction[i] = 0.0
+                        if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime)/ testRate)) + 2) : #ramp up
+                            RampFunction[i] = (i-int(round(thrStartTime / testRate)) - 2 + 1.0) * (macros.NANO2SEC*testRate)
+                        if (i > int(round((thrStartTime + thrDurationTime) / testRate)) + 1 and i < int(round((thrStartTime + 2*thrDurationTime) / testRate)) + 2):
+                            RampFunction[i] = RampFunction[int(round((thrStartTime + thrDurationTime) / testRate)) + 1] - (i - int(round((thrStartTime + thrDurationTime) / testRate))-2 + 1.0) *(macros.NANO2SEC*testRate)
+                        if (i > int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 1):
+                            RampFunction[i] = 0.
+
+
+                for i in range(np.shape(thrForce)[0]):
+                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                        expectedpoints[0, i] = 0.0
+                        expectedpoints[1, i] = 0.0
+                    if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
+                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
+                    else:
+                        expectedpoints[0, i] = 0.0
+                        expectedpoints[1, i] = 0.0
+
+                # Modify expected values for comparison and define errorTolerance
+                TruthForce = np.transpose(expectedpoints)
+                ErrTolerance = 10E-9
+
+                # Compare Force values
+                testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force",
+                                                                           testFailCount, testMessages)
+
+                # Create expected Torque to test against thrTorque
+                expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
+                for i in range(np.shape(thrForce)[0]):
+                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                        expectedpointstor[0, i] = 0.0
+                        expectedpointstor[1, i] = 0.0
+                        expectedpointstor[2, i] = 0.0
+                    if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.inputThrLoc_S[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
+                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
+                                thruster1.inputThrLoc_S[2][0] ** 2 + thruster1.inputThrLoc_S[1][0] ** 2 +
+                                thruster1.inputThrLoc_S[0][0] ** 2) * math.sin(math.atan(
+                                thruster1.inputThrLoc_S[2][0] / thruster1.inputThrLoc_S[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
+                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.inputThrLoc_S[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
+                    else:
+                        expectedpointstor[0, i] = 0.0
+                        expectedpointstor[1, i] = 0.0
+                        expectedpointstor[2, i] = 0.0
+
+                # Define errorTolerance
+                TruthTorque = np.transpose(expectedpointstor)
+                ErrTolerance = 10E-9
+
+                # Compare Torque values
+                # Compare Force values
+                testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
+                                                                           "Torque", testFailCount, testMessages)
+            if cutoff == "ON":
+                COtime = 0.2
+                COrestart = 0.3
+
+                executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
+                ThrustMessage.OnTimeRequest = COtime * 10.
+                TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+                executeSimRun(TotalSim, thrusterSet, testRate, int(COtime * 1.0 / macros.NANO2SEC))
+                ThrustMessage.OnTimeRequest = COrestart
+                TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 1,
+                                                   ThrustMessage)  # Need to change 0 to 1 to chain the message
+                executeSimRun(TotalSim, thrusterSet, testRate, int(COrestart * 1.0 / macros.NANO2SEC + sparetime))
+
+                # Extract log variables and plot the results
+                thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
+                thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+
+                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff
+                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff
+
+                plt.figure(55)
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 2], 'g--', label='y Torque')
+                plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 3], 'r', label='z Force')
+                plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 3], 'r--', label='z Torque')
+                plt.legend()
+                plt.xlabel('Time(s)')
+                plt.ylim(-1.5, 2)
+                unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+                if show_plots == True:
+                    plt.show()
+                plt.close()
+
+                # Create expected Force to test against thrForce
+                expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
+                RampFunction= np.zeros([np.shape(thrForce)[0]])
+                ramplength = 0.5
+
+                for i in range(np.shape(thrForce)[0]):
+                    if i<int(round(thrStartTime / testRate)) + 2:
+                        RampFunction[i] = 0.0
+                    if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC)/ testRate)) + 2) : #ramp up
+                        RampFunction[i] = (i-int(round(thrStartTime / testRate)) - 2 + 1.0) * (macros.NANO2SEC*testRate)
+                    if (i > int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC) / testRate)) + 1 and i < int(round((thrStartTime + 2*ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                        RampFunction[i] = RampFunction[int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC) / testRate)) + 1] - (i - int(round((thrStartTime + ramplength*1.0/macros.NANO2SEC) / testRate))-2 + 1.0) *(macros.NANO2SEC*testRate)
+                    if (i > int(round((thrStartTime + 2*ramplength*1.0/macros.NANO2SEC) / testRate)) + 1):
+                        RampFunction[i] = 0.
+
+                for i in range(np.shape(thrForce)[0]):
+                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                        expectedpoints[0, i] = 0.0
+                        expectedpoints[1, i] = 0.0
+                    if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                        expectedpoints[0, i] = math.cos(anglerad)*RampFunction[i]
+                        expectedpoints[1, i] = math.sin(anglerad)*RampFunction[i]
+                    else:
+                        expectedpoints[0, i] = 0.0
+                        expectedpoints[1, i] = 0.0
+
+                # Modify expected values for comparison and define errorTolerance
+                TruthForce = np.transpose(expectedpoints)
+                ErrTolerance = 10E-9
+
+                # Compare Force values
+                testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force",
+                                                                           testFailCount, testMessages)
+
+                # Create expected Torque to test against thrTorque
+                expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
+                for i in range(np.shape(thrForce)[0]):
+                    if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                        expectedpointstor[0, i] = 0.0
+                        expectedpointstor[1, i] = 0.0
+                        expectedpointstor[2, i] = 0.0
+                    if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime+ ramplength*1.0/macros.NANO2SEC) / testRate)) + 2):
+                            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.inputThrLoc_S[2][0]*RampFunction[i]  # Torque about x is arm along z by the force projected upon y
+                            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
+                                thruster1.inputThrLoc_S[2][0] ** 2 + thruster1.inputThrLoc_S[1][0] ** 2 +
+                                thruster1.inputThrLoc_S[0][0] ** 2) * math.sin(math.atan(
+                                thruster1.inputThrLoc_S[2][0] / thruster1.inputThrLoc_S[0][0]))*RampFunction[i]  # Torque about x is arm along z by the force projected upon x
+                            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.inputThrLoc_S[0][0]*RampFunction[i]  # Torque about z is arm along x by the force projected upon y
+                    else:
+                        expectedpointstor[0, i] = 0.0
+                        expectedpointstor[1, i] = 0.0
+                        expectedpointstor[2, i] = 0.0
+
+                # Define errorTolerance
+                TruthTorque = np.transpose(expectedpointstor)
+                ErrTolerance = 10E-9
+
+                # Compare Torque values
+                # Compare Force values
+                testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
+                                                                           "Torque", testFailCount, testMessages)
+
+        if rampDown == "ON":
+            RDrestart = 0.2
+            RDstart = 0.6
+            RDlength = 1.5
+
+            executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
+            ThrustMessage.OnTimeRequest = RDstart
+            TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
+            executeSimRun(TotalSim, thrusterSet, testRate, int((RDstart+ RDrestart) * 1.0 / macros.NANO2SEC))
+            ThrustMessage.OnTimeRequest = RDlength
+            TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 1,
+                                               ThrustMessage)  # Need to change 0 to 1 to chain the message
+            executeSimRun(TotalSim, thrusterSet, testRate, int(RDlength * 1.0 / macros.NANO2SEC + sparetime))
+
+            # Extract log variables and plot the results
+            thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
+            thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+
+            PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown
+            PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff + "rampDown" + rampDown
+
+            plt.figure(55)
+            plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
+            plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
+            plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
+            plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 2], 'g--', label='y Torque')
+            plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 3], 'r', label='z Force')
+            plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 3], 'r--', label='z Torque')
+            plt.legend()
+            plt.xlabel('Time(s)')
+            plt.ylim(-1.5, 2)
+            unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+            if show_plots == True:
+                plt.show()
+            plt.close()
+
+            # Create expected Force to test against thrForce
+            expectedpoints = np.zeros([3, np.shape(thrForce)[0]])
+            RampFunction = np.zeros([np.shape(thrForce)[0]])
+            ramplength = 1.
+            for i in range(np.shape(thrForce)[0]):
+                if i < int(round(thrStartTime / testRate)) + 2:
+                    RampFunction[i] = 0.0
+                if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + RDstart * 1.0 / macros.NANO2SEC) / testRate)) + 2):  # ramp up
+                    RampFunction[i] = (i - int(round(thrStartTime / testRate)) - 2 + 1.0) * (macros.NANO2SEC * testRate)
+                if (i > int(round((thrStartTime + RDstart * 1.0 / macros.NANO2SEC) / testRate)) + 1 and i < int(round((thrStartTime + (RDstart+RDrestart) * 1.0 / macros.NANO2SEC) / testRate)) + 2):
+                    RampFunction[i] = RampFunction[int(round((thrStartTime + RDstart * 1.0 / macros.NANO2SEC) / testRate)) + 1] - (i - int(round((thrStartTime + (RDstart) * 1.0 / macros.NANO2SEC) / testRate)) - 2 + 1.0) * (macros.NANO2SEC * testRate)
+                if (i > int(round((thrStartTime + (RDstart+RDrestart) * 1.0 / macros.NANO2SEC) / testRate)) + 1 and i < int(round((thrStartTime + (RDstart+RDrestart+(1. -RDstart+RDrestart)) * 1.0 / macros.NANO2SEC) / testRate)) + 2):  # ramp up
+                    RampFunction[i] = RampFunction[int(round((thrStartTime + (RDstart+RDrestart) * 1.0 / macros.NANO2SEC) / testRate)) + 1]+ (i - int(round((thrStartTime+ (RDstart+RDrestart)* 1.0 / macros.NANO2SEC) / testRate)) - 2 + 1.0) * (macros.NANO2SEC * testRate)
+                if (i > int(round((thrStartTime +  (RDstart+RDrestart+(1. -RDstart+RDrestart)) * 1.0 / macros.NANO2SEC) / testRate)) + 1 and i < int(round((thrStartTime + (RDstart+RDrestart + RDlength) * 1.0 / macros.NANO2SEC) / testRate)) + 2):
+                    RampFunction[i] = 1.0
+                if (i > int(round((thrStartTime + (RDstart+RDrestart + RDlength) * 1.0 / macros.NANO2SEC) / testRate)) + 1 and i < int(round((thrStartTime + (RDstart+RDrestart + RDlength+1) * 1.0 / macros.NANO2SEC) / testRate)) + 2):
+                    RampFunction[i] = 1.0 - (i - int(round((thrStartTime + (RDstart+RDrestart + RDlength) * 1.0 / macros.NANO2SEC) / testRate)) - 2 + 1.0) * (macros.NANO2SEC * testRate)
+                if (i > int(round((thrStartTime + (RDstart+RDrestart + RDlength+ ramplength) * 1.0 / macros.NANO2SEC) / testRate)) + 1):
+                    RampFunction[i] = 0.
+
+            for i in range(np.shape(thrForce)[0]):
+                if (i < int(round(
+                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                    expectedpoints[0, i] = 0.0
+                    expectedpoints[1, i] = 0.0
+                if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
+                        round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
+                    expectedpoints[0, i] = math.cos(anglerad) * RampFunction[i]
+                    expectedpoints[1, i] = math.sin(anglerad) * RampFunction[i]
+                else:
+                    expectedpoints[0, i] = 0.0
+                    expectedpoints[1, i] = 0.0
+
+            # Modify expected values for comparison and define errorTolerance
+            TruthForce = np.transpose(expectedpoints)
+            ErrTolerance = 10E-9
+
+            # Compare Force values
+            testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force",
+                                                                       testFailCount, testMessages)
+
+            # Create expected Torque to test against thrTorque
+            expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
+            for i in range(np.shape(thrForce)[0]):
+                if (i < int(round(
+                            thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
+                    expectedpointstor[0, i] = 0.0
+                    expectedpointstor[1, i] = 0.0
+                    expectedpointstor[2, i] = 0.0
+                if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
+                        round((thrStartTime + thrDurationTime + ramplength * 1.0 / macros.NANO2SEC) / testRate)) + 2):
+                    expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.inputThrLoc_S[2][0] * RampFunction[
+                        i]  # Torque about x is arm along z by the force projected upon y
+                    expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(
+                        thruster1.inputThrLoc_S[2][0] ** 2 + thruster1.inputThrLoc_S[1][0] ** 2 +
+                        thruster1.inputThrLoc_S[0][0] ** 2) * math.sin(math.atan(
+                        thruster1.inputThrLoc_S[2][0] / thruster1.inputThrLoc_S[0][0])) * RampFunction[
+                                                  i]  # Torque about x is arm along z by the force projected upon x
+                    expectedpointstor[2, i] = math.sin(anglerad) * thruster1.inputThrLoc_S[0][0] * RampFunction[
+                        i]  # Torque about z is arm along x by the force projected upon y
+                else:
+                    expectedpointstor[0, i] = 0.0
+                    expectedpointstor[1, i] = 0.0
+                    expectedpointstor[2, i] = 0.0
+
+            # Define errorTolerance
+            TruthTorque = np.transpose(expectedpointstor)
+            ErrTolerance = 10E-9
+
+            # Compare Torque values
+            # Compare Force values
+            testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
+                                                                       "Torque", testFailCount, testMessages)
 
     if testFailCount == 0:
         print "PASSED: " + " No ramp force and torque"
@@ -221,204 +648,5 @@ def unitThrusters(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(False)
+    unitThrusters(False, "ON", 1 , 5. , 30., [[1.125], [0.0], [2.0]], 10E6, "ON", "ON")
 
-#def executeSimulationRun(stopTime, stepTime, TotalSim, ACSThrusterDynObject, 
-#    massPropsData, outputState):
-#    newStop = TotalSim.TotalSim.CurrentNanos
-#    while(TotalSim.TotalSim.CurrentNanos < stopTime):
-#        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
-#            newStop*1.0E-9 - stepTime*1.0E-9)
-#        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
-#            newStop*1.0E-9 - stepTime/2*1.0E-9)
-#        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
-#            newStop*1.0E-9 - stepTime/2*1.0E-9)
-#        ACSThrusterDynObject.ComputeDynamics(massPropsData, outputState,
-#            newStop*1.0E-9)
-#        newStop += var1
-#        TotalSim.TotalSim.SingleStepProcesses()
-#        TotalSim.RecordLogVars()
-#
-#
-##Instantiate a new set of thrusters using the thruster_dynamics module
-#ACSThrusterDynObject = thruster_dynamics.ThrusterDynamics()
-#
-##Configure a single thruster inside this thruster module
-#ACSThrusterDynObject.ModelTag = "ACSThrusterDynamics"
-#Thruster1 = thruster_dynamics.ThrusterConfigData()
-#Thruster1.ThrusterLocation = thruster_dynamics.DoubleVector([1.125, 0.0, 2.0])
-#Thruster1.ThrusterDirection = thruster_dynamics.DoubleVector([
-#    math.cos(30.0*math.pi/180.0), math.sin(30.0*math.pi/180.0), 0.0])
-#Thruster1.MaxThrust = 1.0
-#Thruster1.steadyIsp = 226.7
-#Thruster1.MinOnTime = 0.006
-#ACSThrusterDynObject.AddThruster(Thruster1)
-#
-#ACSpropCM = [0.0, 0.0, 1.0]
-#ACSpropMass = 1.0 #Made up!!!!
-#ACSpropRadius = 46.0/2.0/3.2808399/12.0
-#sphereInerita = 2.0/5.0*ACSpropMass*ACSpropRadius*ACSpropRadius
-#ACSInertia = [sphereInerita, 0, 0, 0, sphereInerita, 0, 0, 0, sphereInerita]
-#ACSThrusterDynObject.objProps.Mass = ACSpropMass
-#SimulationBaseClass.SetCArray(ACSpropCM, 'double', 
-#    ACSThrusterDynObject.objProps.CoM)
-#SimulationBaseClass.SetCArray(ACSInertia, 'double', 
-#    ACSThrusterDynObject.objProps.InertiaTensor)
-#
-#earthGrav = 9.80665
-#mDotExpect = Thruster1.MaxThrust/(Thruster1.steadyIsp*earthGrav)
-#print mDotExpect
-#
-##Set the test step (var1) and the various stop times (var2-var4)
-#var1 = int(1E7) # call the thread at 1000 Hz, let the thread do stuff at 10 Hz
-#var2 = int(60*1E9) # stop after 60 seconds
-#var3  = int(80*1E9) # next stop
-#var4  = int(100*1E9) # next stop
-#var5 = int(((110)*1E9)) #next stop
-#var6 = int((110 + 0.02)*1E9) #next stop
-#var7 = int(((120)*1E9)) #next stop
-#var8 = int(((120+0.04)*1E9)) #next stop
-#var9 = int(((130)*1E9)) #next stop
-#var10 = int(((140)*1E9)) #next stop
-#
-##Create a sim module as an empty container
-#TotalSim = SimulationBaseClass.SimBaseClass()
-##Create a new process for the unit test task and add the module to tasking
-#testProc = TotalSim.CreateNewProcess("TestProcess")
-#testProc.addTask(TotalSim.CreateNewTask("thrusterbasic", var1))
-#TotalSim.AddModelToTask("thrusterbasic", ACSThrusterDynObject)
-#
-##Configure the vehicle mass properties to use in the simulation
-#massPropsData = six_dof_eom.MassPropsData()
-#CoMLoc = [1.0, 0.0, 0.0]
-#SimulationBaseClass.SetCArray(CoMLoc, 'double', massPropsData.CoM)
-#T_str2Bdy = [-1.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 1.0]
-#SimulationBaseClass.SetCArray(T_str2Bdy, 'double', massPropsData.T_str2Bdy)
-#outputState = six_dof_eom.OutputStateData()
-#
-##Setup variables for logging
-#TotalSim.AddVectorForLogging('ACSThrusterDynamics.StrForce', 'double', 0, 2, int(1E2))
-#TotalSim.AddVectorForLogging('ACSThrusterDynamics.BodyForce', 'double', 0, 2, int(1E2))
-#TotalSim.AddVariableForLogging('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor', int(1E2))
-#TotalSim.AddVariableForLogging('ACSThrusterDynamics.objProps.Mass', int(1E2))
-#TotalSim.AddVariableForLogging('ACSThrusterDynamics.mDotTotal', int(1E2))
-#
-##Configure a single thruster firing, create a message for it
-#ThrustMessage = thruster_dynamics.ThrustCmdStruct()
-#ThrustMessage.OnTimeRequest = 10.0;
-#TotalSim.TotalSim.CreateNewMessage("TestProcess", "acs_thruster_cmds", 8, 2)
-#
-##Step the simulation for a bit to get clear of any init funnies
-#TotalSim.InitializeSimulation()
-#TotalSim.ConfigureStopTime(int(10*1E9-var1))
-#TotalSim.ExecuteSimulation()
-#
-##Write firing command message and step the simulation
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 0, ThrustMessage);
-#executeSimulationRun(var2, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#   
-##Configure a shorter firing command, execute it, and step simulation 
-#ThrustMessage.OnTimeRequest = 0.1;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, int(30E9), ThrustMessage);
-#executeSimulationRun(var3, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#  
-##Setup thruster ramp on and ramp off configuration
-#rampOnList = []
-#rampOffList = []
-##Note that this ramp is totally linear and ramps up 30 ms using 30 steps
-#for i in range(30):
-#    newElement = thruster_dynamics.ThrusterTimePair()
-#    newElement.TimeDelta = (i+1)*0.001
-#    newElement.ThrustFactor = (i+1.0)/30.0
-#    newElement.IspFactor = (i+1.0)/30.0
-#    rampOnList.append(newElement)
-#    newElement = thruster_dynamics.ThrusterTimePair()
-#    newElement.TimeDelta = (i+1)*0.001
-#    newElement.ThrustFactor = 1.0-(i+1.0)/30.0
-#    newElement.IspFactor = newElement.ThrustFactor
-#    rampOffList.append(newElement)
-#
-##Set up the ramps 
-#ACSThrusterDynObject.ThrusterData[0].ThrusterOnRamp = \
-#    thruster_dynamics.ThrusterTimeVector(rampOnList)
-#ACSThrusterDynObject.ThrusterData[0].ThrusterOffRamp = \
-#    thruster_dynamics.ThrusterTimeVector(rampOffList)
-#
-##Execute a new firing that will use the thruster ramps
-#ThrustMessage.OnTimeRequest = 0.5;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 1, ThrustMessage);
-#executeSimulationRun(var4, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.015;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 2, ThrustMessage);
-#executeSimulationRun(var5, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.5;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 3, ThrustMessage);
-#executeSimulationRun(var6, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.005;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 4, ThrustMessage);
-#executeSimulationRun(var7, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.025;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 5, ThrustMessage);
-#executeSimulationRun(var8, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.2;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 6, ThrustMessage);
-#executeSimulationRun(var9, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-#ThrustMessage.OnTimeRequest = 0.001;
-#TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", 8, 7, ThrustMessage);
-#executeSimulationRun(var10, var1, TotalSim, ACSThrusterDynObject,
-#    massPropsData, outputState)
-#
-##Extract log variables and plot the results
-#thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.StrForce')
-#thrBodForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.BodyForce')
-#thrFactor = TotalSim.GetLogVariableData('ACSThrusterDynamics.ThrusterData[0].ThrustOps.ThrustFactor')
-#thrMass = TotalSim.GetLogVariableData('ACSThrusterDynamics.objProps.Mass')
-#thrMDot = TotalSim.GetLogVariableData('ACSThrusterDynamics.mDotTotal')
-#plt.figure(1)
-#plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Str')
-#plt.plot(thrBodForce[:,0]*1.0E-9, thrBodForce[:,1], 'b--', label='x Body')
-#plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2], 'g', label='y Str')  
-#plt.plot(thrBodForce[:,0]*1.0E-9, thrBodForce[:,2], 'g--', label='y Body')
-#plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,3], 'r', label = 'z Str')
-#plt.plot(thrBodForce[:,0]*1.0E-9, thrBodForce[:,3], 'r--', label='z Body')
-#plt.legend()
-#plt.xlabel('Time (s)')
-#plt.ylabel('Thruster Force (N)')
-#
-#plt.figure(2)
-#plt.plot(thrFactor[:,0]*1.0E-9, thrFactor[:,1])
-#plt.xlabel('Time(s)')
-#plt.ylabel('Thrust Factor (-)')
-#
-#plt.figure(3)
-#plt.plot(thrMass[:,0]*1.0E-9, thrMass[:,1])
-#plt.xlabel('Time (s)')
-#plt.ylabel('Propellant Mass (kg)')
-#
-#plt.figure(4)
-#plt.plot(thrMDot[:,0]*1.0E-9, thrMDot[:,1])
-#plt.xlabel('Time (s)')
-#plt.ylabel('Propellant Mass-Rate (kg/s)')
-#
-#ACSThrusterDynObject.InputCmds = "dummy_fire_not_work"
-#TotalSim.InitializeSimulation()
-#TotalSim.ConfigureStopTime(int(2E6))
-#TotalSim.ExecuteSimulation()
-#
-#if(len(sys.argv) > 1):
-#   if(sys.argv[1] == 'True'):
-#      plt.show()
