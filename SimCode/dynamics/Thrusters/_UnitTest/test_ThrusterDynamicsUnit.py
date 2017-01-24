@@ -181,7 +181,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    sparetime = 2.5*1./macros.NANO2SEC
+    sparetime = 2.*1./macros.NANO2SEC
     thrStartTime=sparetime
     thrDurationTime=Duration*1./macros.NANO2SEC # Parametrized thrust duration
 
