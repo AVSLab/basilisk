@@ -94,6 +94,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
         this->thetasState->setState(thetasForZeroing);
     }
 
+    return;
 }
 
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
@@ -101,14 +102,15 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
 	Eigen::Matrix3d rTildeWcB_B;
-
+    int thetaCount;
 
 	this->effProps.mEff = 0.;
 
+    thetaCount = 0;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		if (RWIt->RWModel == JitterFullyCoupled) {
-			double thetaCurrent = this->thetasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+			double thetaCurrent = this->thetasState->getState()(thetaCount, 0);
 			RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
 			RWIt->w2Hat_B = cos(thetaCurrent)*RWIt->w2Hat0_B + sin(thetaCurrent)*RWIt->w3Hat0_B; // current gtHat axis vector represented in body frame
 			RWIt->w3Hat_B = -sin(thetaCurrent)*RWIt->w2Hat0_B + cos(thetaCurrent)*RWIt->w3Hat0_B;
@@ -135,8 +137,15 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 			this->effProps.IEffPntB_B += RWIt->IRWPntWc_B + RWIt->mass*RWIt->rTildeWcB_B*RWIt->rTildeWcB_B.transpose();
 			this->effProps.rPrimeCB_B += RWIt->mass*RWIt->rPrimeWcB_B;
 			this->effProps.IEffPrimePntB_B += RWIt->IPrimeRWPntWc_B + RWIt->mass*rPrimeTildeWcB_B*RWIt->rTildeWcB_B.transpose() + RWIt->mass*RWIt->rTildeWcB_B*rPrimeTildeWcB_B.transpose();
+            thetaCount++;
 		}
 	}
+
+    // - Need to divide out the total mass of the reaction wheels from rCB_B and rPrimeCB_B
+    if (this->effProps.mEff > 0) {
+        this->effProps.rCB_B /= this->effProps.mEff;
+        this->effProps.rPrimeCB_B /= this->effProps.mEff;
+    }
 
 	return;
 }
@@ -196,7 +205,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 			matrixBcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
 			matrixCcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->aOmega.transpose();
 			matrixDcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->bOmega.transpose();
-			vecTranscontr += RWIt->mass*RWIt->d*(pow(RWIt->Omega,2)*RWIt->w2Hat_B - RWIt->cOmega*RWIt->w3Hat_B);
+			vecTranscontr += RWIt->mass*RWIt->d*(pow(RWIt->Omega,2)*RWIt->w2Hat_B - RWIt->mass*RWIt->d*RWIt->cOmega*RWIt->w3Hat_B);
 			vecRotcontr += RWIt->mass*RWIt->d*pow(RWIt->Omega,2)*RWIt->rWcB_B.cross(RWIt->w2Hat_B) - RWIt->IPrimeRWPntWc_B*RWIt->Omega*RWIt->gsHat_B - omegaLoc_BN_B.cross(RWIt->IRWPntWc_B*RWIt->Omega*RWIt->gsHat_B+RWIt->mass*RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) - (RWIt->IRWPntWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->cOmega;
 		}
 		RWi++;
@@ -207,6 +216,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 void ReactionWheelStateEffector::computeDerivatives(double integTime)
 {
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
+    Eigen::MatrixXd thetasDot(this->numRWJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
@@ -214,8 +224,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
 	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
 	int RWi = 0;
+    int thetaCount = 0;
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
-
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -228,6 +238,11 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	//! - Compute Derivatives
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
+        if(RWIt->RWModel == JitterFullyCoupled || RWIt->RWModel == JitterSimple) {
+            // - Set trivial kinemetic derivative
+            thetasDot(thetaCount,0) = RWIt->Omega;
+            thetaCount++;
+        }
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			OmegasDot(RWi,0) = RWIt->u_current/RWIt->Js - RWIt->gsHat_B.transpose()*omegaDotBNLoc_B;
 		} else if(RWIt->RWModel == JitterFullyCoupled) {
@@ -237,6 +252,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	}
 
 	OmegasState->setDerivative(OmegasDot);
+    if (this->numRWJitter > 0) {
+        thetasState->setDerivative(thetasDot);
+    }
 }
 
 void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
@@ -252,6 +270,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 	dcmBN = dcmNB.transpose();
 
     //! - Compute energy and momentum contribution of each wheel
+    rotAngMomPntCContr_B.setZero();
     std::vector<ReactionWheelConfigData>::iterator RWIt;
     for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
     {
@@ -264,9 +283,8 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 			Eigen::Vector3d r_WcB_B = RWIt->rWcB_B;
 			Eigen::Vector3d rDot_WcB_B = RWIt->d*RWIt->Omega*RWIt->w3Hat_B + omegaLoc_BN_B.cross(RWIt->rWcB_B);
 
-			rotEnergyContr = 0.5*omega_WN_B.transpose()*RWIt->IRWPntWc_B*omega_WN_B + 0.5*RWIt->mass*rDot_WcB_B.dot(rDot_WcB_B);
+			rotEnergyContr += 0.5*omega_WN_B.transpose()*RWIt->IRWPntWc_B*omega_WN_B + 0.5*RWIt->mass*rDot_WcB_B.dot(rDot_WcB_B);
 			rotAngMomPntCContr_B += RWIt->IRWPntWc_B*omega_WN_B + RWIt->mass*r_WcB_B.cross(rDot_WcB_B);
-			rotAngMomPntCContr_B.setZero();
 		}
     }
 
