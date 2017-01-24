@@ -155,7 +155,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     #TotalSim.AddModelToTask("thrusterbasic", scObject)
 
     #  Define the start of the thrust and it's duration
-    sparetime = 2.*1./macros.NANO2SEC
+    sparetime = 3.*1./macros.NANO2SEC
     thrStartTime=sparetime
     thrDurationTime=duration*1./macros.NANO2SEC # Parametrized thrust duration
 
@@ -197,10 +197,10 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
         # Auto Generate LaTex Figures
-        format = "width=0.5\\textwidth"
+        format = "width=0.8\\textwidth"
 
-        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
-        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" +str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "
 
         plt.figure(1)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
@@ -212,8 +212,8 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             plt.show()
         plt.close()
 
-        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
-        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "
 
         plt.figure(11)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
@@ -225,8 +225,9 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             plt.show()
         plt.close()
 
-        PlotName =  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
-        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
+
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(int(duration))+ "s_" + str(int(angle))+"deg_"+ "Loc"+str(int(location[2][0]))
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "
 
         plt.figure(22)
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Force')
@@ -301,9 +302,9 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
 
     if ramp == "ON":
-        format = "width=0.5\\textwidth"
+        format = "width=0.8\\textwidth"
         rampsteps = 10
-        sparetime = 2.*1/macros.NANO2SEC
+        sparetime = 3.*1/macros.NANO2SEC
         thrStartTime = sparetime - 1.*1/macros.NANO2SEC
 
         # Setup thruster ramp on and ramp off configuration
