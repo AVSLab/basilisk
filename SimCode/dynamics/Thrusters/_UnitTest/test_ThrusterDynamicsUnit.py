@@ -29,7 +29,8 @@
 #
 
 # @cond DOXYGEN_IGNORE
-import sys, os
+import sys
+import os
 import numpy as np
 import ctypes
 import math
@@ -57,34 +58,6 @@ import macros
 def thrusterEffectorAllTests(show_plots):
    [testResults, testMessage] = test_unitThrusters(show_plots)
 
-# Create function to create truth points for 1 thruster
-def expected1(Shape, thrDurationTime, thrStartTime, testRate, anglerad, thruster1):
-    expectedpoints = np.zeros([3, Shape])
-    for i in range(Shape):
-        if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-            expectedpoints[0, i] = 0.0
-            expectedpoints[1, i] = 0.0
-        if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime) / testRate)) + 2):
-            expectedpoints[0, i] = math.cos(anglerad)
-            expectedpoints[1, i] = math.sin(anglerad)
-        else:
-            expectedpoints[0, i] = 0.0
-            expectedpoints[1, i] = 0.0
-    expectedpointstor = np.zeros([3, Shape])
-    for i in range(Shape):
-        if (i < int(round(thrStartTime / testRate)) + 2):  # Thrust fires 2 times steps after the pause of sim and restart
-            expectedpointstor[0, i] = 0.0
-            expectedpointstor[1, i] = 0.0
-            expectedpointstor[2, i] = 0.0
-        if (i > int(round(thrStartTime / testRate)) + 1 and i < int(round((thrStartTime + thrDurationTime) / testRate)) + 2):
-            expectedpointstor[0, i] = -math.sin(anglerad) * thruster1.inputThrLoc_S[2][0]  # Torque about x is arm along z by the force projected upon y
-            expectedpointstor[1, i] = math.cos(anglerad) * math.sqrt(thruster1.inputThrLoc_S[2][0] ** 2 + thruster1.inputThrLoc_S[1][0] ** 2 + thruster1.inputThrLoc_S[0][0] ** 2) * math.sin(math.atan(thruster1.inputThrLoc_S[2][0] / thruster1.inputThrLoc_S[0][0]))  # Torque about x is arm along z by the force projected upon x
-            expectedpointstor[2, i] = math.sin(anglerad) * thruster1.inputThrLoc_S[0][0]  # Torque about z is arm along x by the force projected upon y
-        else:
-            expectedpointstor[0, i] = 0.0
-            expectedpointstor[1, i] = 0.0
-            expectedpointstor[2, i] = 0.0
-        return np.transpose(expectedpoints), np.transpose(expectedpointstor)
 
 # Create function to run the simulation who's results will be compared to expected values
 def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
@@ -101,30 +74,31 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("RAMP, ThrustNumber , Duration , Angle, Location, Rate, Cutoff, RampDown", [
+@pytest.mark.parametrize("ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown", [
     ("OFF", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), #Test random thrust config
     ("OFF", 1 , 0.1, 30., [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Short fire test
     ("OFF", 1, 0.1, 30., [[1.125], [0.0], [2.0]], 1E6, "OFF", "OFF"), # Short fire test with higher test rate
-    ("OFF", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"),# Rate test
-    ("OFF", 1 , 5.0 , 10. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Angle test
+    ("OFF", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"),# rate test
+    ("OFF", 1 , 5.0 , 10. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # angle test
     ("OFF", 1 , 5.0 , 30. , [[1.], [0.0], [0.0]], 1E8, "OFF", "OFF"),# Position test
     ("OFF", 2 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF"), # Number of thrusters test
     ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Basic ramp test
     ("ON", 1 , 0.5 , 30. , [[1.125], [0.0], [2.0]], 1E8, "OFF", "OFF") , # Short ramp test
-    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"), # Rate ramp test
+    ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E7, "OFF", "OFF"), # rate ramp test
     ("ON", 1 , 5.0 , 30. , [[1.125], [0.0], [2.0]], 1E8, "ON", "OFF"), # Cuttoff test
     ("ON", 1, 5.0, 30., [[1.125], [0.0], [2.0]], 1E8, "ON", "ON")  # Rampdown test
     ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle , Location, Rate, Cutoff, RampDown):
+def test_unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle , Location, Rate, Cutoff, RampDown)
+    [testResults, testMessage] = unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage
 
+
 # Run the test
-def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, Rate, Cutoff, RampDown):
+def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -147,17 +121,17 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     thrusterSet.ModelTag = "ACSThrusterDynamics"
 
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
-    angledeg = Angle # Parametrized angle of thrust
+    angledeg = angle # Parametrized angle of thrust
     anglerad = angledeg*math.pi/180.0
     thruster1 = thrusterDynamicEffector.ThrusterConfigData()
-    thruster1.inputThrLoc_S =Location # Parametrized location for thruster
+    thruster1.inputThrLoc_S =location # Parametrized location for thruster
     thruster1.inputThrDir_S = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
     thruster1.MaxThrust = 1.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
     thrusterSet.AddThruster(thruster1)
 
-    if ThrustNumber==2:
+    if thrustNumber==2:
         thruster2 = thrusterDynamicEffector.ThrusterConfigData()
         thruster2.inputThrLoc_S =[[1.], [0.0], [0.0]]
         thruster2.inputThrDir_S = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
@@ -167,7 +141,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
         thrusterSet.AddThruster(thruster2)
 
     #  Create a Simulation
-    testRate = int(Rate) # Parametrized rate of test
+    testRate = int(rate) # Parametrized rate of test
     TotalSim = SimulationBaseClass.SimBaseClass()
     #Create a new process for the unit test task and add the module to tasking
     testProc = TotalSim.CreateNewProcess(unitProcessName)
@@ -183,20 +157,20 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     #  Define the start of the thrust and it's duration
     sparetime = 2.*1./macros.NANO2SEC
     thrStartTime=sparetime
-    thrDurationTime=Duration*1./macros.NANO2SEC # Parametrized thrust duration
+    thrDurationTime=duration*1./macros.NANO2SEC # Parametrized thrust duration
 
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
-    if ThrustNumber==1:
+    if thrustNumber==1:
         ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
         ThrustMessage.OnTimeRequest = 0.
         thrMessageSize = ThrustMessage.getStructSize()
-    if ThrustNumber==2:
+    if thrustNumber==2:
         ThrustMessage = sim_model.new_doubleArray(2) #Create a C double array
         sim_model.doubleArray_setitem(ThrustMessage,1,0.)
         sim_model.doubleArray_setitem(ThrustMessage,0,0.)
-        thrMessageSize = 8*ThrustNumber
+        thrMessageSize = 8*thrustNumber
     TotalSim.TotalSim.CreateNewMessage(unitProcessName,"acs_thruster_cmds", thrMessageSize, 2)
     TotalSim.InitializeSimulation()
 
@@ -207,12 +181,12 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
     TotalSim.scObject.hub.registerStates(TotalSim.newManager)
     thrusterSet.linkInStates(TotalSim.newManager)
 
-    if RAMP == "OFF":
+    if ramp == "OFF":
         # Run the simulation
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-        if ThrustNumber==1:
+        if thrustNumber==1:
             ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
-        if ThrustNumber==2:
+        if thrustNumber==2:
             sim_model.doubleArray_setitem(ThrustMessage, 0, thrDurationTime * macros.NANO2SEC)
             sim_model.doubleArray_setitem(ThrustMessage, 1, thrDurationTime * macros.NANO2SEC)
         TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
@@ -225,8 +199,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
         # Auto Generate LaTex Figures
         format = "width=0.5\\textwidth"
 
-        PlotName = "Force_" +  str(ThrustNumber) + "Thrusters_" +  str(Duration)+ "s_" + str(Angle)+"deg_"+ "Loc"+str(Location[0])
-        PlotTitle = "Force on Y with " + str(ThrustNumber) + " thrusters, for "  +  str(Duration)+ " sec at " + str(Angle)+" deg "
+        PlotName = "Force_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
         plt.figure(1)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
@@ -238,8 +212,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
             plt.show()
         plt.close()
 
-        PlotName = "Torque_" +  str(ThrustNumber) + "Thrusters_" +  str(Duration)+ "s_" + str(Angle)+"deg_"+ "Loc"+str(Location[0])
-        PlotTitle = "Torque on X with " + str(ThrustNumber) + " thrusters, for "  +  str(Duration)+ " sec at " + str(Angle)+" deg "
+        PlotName = "Torque_" +  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
         plt.figure(11)
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
@@ -251,8 +225,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
             plt.show()
         plt.close()
 
-        PlotName =  str(ThrustNumber) + "Thrusters_" +  str(Duration)+ "s_" + str(Angle)+"deg_"+ "Loc"+str(Location[0])
-        PlotTitle = "All Forces and Torques " + str(ThrustNumber) + " thrusters, for "  +  str(Duration)+ " sec at " + str(Angle)+" deg "
+        PlotName =  str(thrustNumber) + "Thrusters_" +  str(duration)+ "s_" + str(angle)+"deg_"+ "Loc"+str(location[0])
+        PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(duration)+ " sec at " + str(angle)+" deg "
 
         plt.figure(22)
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Force')
@@ -276,7 +250,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 expectedpoints[0,i] = 0.0
                 expectedpoints[1,i] = 0.0
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
-                if ThrustNumber == 1:
+                if thrustNumber == 1:
                     expectedpoints[0,i] = math.cos(anglerad)
                     expectedpoints[1,i] = math.sin(anglerad)
                 else:
@@ -301,7 +275,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 expectedpointstor[1, i] = 0.0
                 expectedpointstor[2, i] = 0.0
             if (i>int(round(thrStartTime/ testRate)) + 1 and i<int(round((thrStartTime+thrDurationTime)/ testRate)) + 2):
-                if ThrustNumber == 1:
+                if thrustNumber == 1:
                     expectedpointstor[0, i] = -math.sin(anglerad)*thruster1.inputThrLoc_S[2][0] #Torque about x is arm along z by the force projected upon y
                     expectedpointstor[1, i] = math.cos(anglerad)*math.sqrt(thruster1.inputThrLoc_S[2][0]**2+thruster1.inputThrLoc_S[1][0]**2 +thruster1.inputThrLoc_S[0][0]**2)*math.sin(math.atan(thruster1.inputThrLoc_S[2][0]/thruster1.inputThrLoc_S[0][0])) #Torque about x is arm along z by the force projected upon x
                     expectedpointstor[2, i] = math.sin(anglerad)*thruster1.inputThrLoc_S[0][0] #Torque about z is arm along x by the force projected upon y
@@ -326,7 +300,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
         # Compare Force values
         testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
 
-    if RAMP == "ON":
+    if ramp == "ON":
         format = "width=0.5\\textwidth"
         rampsteps = 10
         sparetime = 2.*1/macros.NANO2SEC
@@ -354,8 +328,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
         thrusterSet.ThrusterData[0].ThrusterOffRamp = \
             thrusterDynamicEffector.ThrusterTimeVector(rampOffList)
 
-        if RampDown == "OFF":
-            if Cutoff == "OFF":
+        if rampDown == "OFF":
+            if cutoff == "OFF":
 
                 ##Execute a new firing that will use the thruster ramps
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
@@ -368,8 +342,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
 
-                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + Cutoff
-                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + Cutoff
+                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff
+                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff
 
                 plt.figure(22)
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
@@ -460,7 +434,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 # Compare Force values
                 testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
                                                                            "Torque", testFailCount, testMessages)
-            if Cutoff == "ON":
+            if cutoff == "ON":
                 COtime = 0.2
                 COrestart = 0.3
 
@@ -477,8 +451,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
                 thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
-                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + Cutoff
-                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + Cutoff
+                PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff
+                PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff
 
                 plt.figure(55)
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
@@ -557,7 +531,7 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
                 testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
                                                                            "Torque", testFailCount, testMessages)
 
-        if RampDown == "ON":
+        if rampDown == "ON":
             RDrestart = 0.2
             RDstart = 0.6
             RDlength = 1.5
@@ -575,8 +549,8 @@ def unitThrusters(show_plots, RAMP, ThrustNumber , Duration , Angle, Location, R
             thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
             thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
 
-            PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + Cutoff + "RampDown" + RampDown
-            PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + Cutoff + "RampDown" + RampDown
+            PlotName = "Ramp_" + str(rampsteps) + "steps_Cutoff" + cutoff + "rampDown" + rampDown
+            PlotTitle = "All Forces and Torques, Ramp" + "steps_Cutoff" + cutoff + "rampDown" + rampDown
 
             plt.figure(55)
             plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
