@@ -134,7 +134,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     }
     else
     {
-        orbAnom = M2H(meanAnom, orbEl.e);
+        orbAnom = N2H(meanAnom, orbEl.e);
         orbEl.f = H2f(orbAnom, orbEl.e);
     }
     

@@ -76,9 +76,9 @@ extern "C" {
     double  f2E(double f, double e);
     double  f2H(double f, double e);
     double  H2f(double H, double e);
-    double  H2M(double H, double e);
+    double  H2N(double H, double e);
     double  M2E(double M, double e);
-    double  M2H(double N, double e);
+    double  N2H(double N, double e);
     void    elem2rv(double mu, classicElements *elements, double *rVec, double *vVec);
     void    rv2elem(double mu, double *rVec, double *vVec, classicElements *elements);
     
