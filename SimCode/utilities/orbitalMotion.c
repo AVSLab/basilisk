@@ -164,7 +164,7 @@ double H2f(double H, double e)
  * Outputs:
  *   N = mean hyperbolic anomaly (rad)
  */
-double H2N(double H, double e)
+double H2M(double H, double e)
 {
     double N;
 
@@ -172,7 +172,7 @@ double H2N(double H, double e)
         N = e * sinh(H) - H;
     } else {
         N = NAN;
-        printf("ERROR: H2N() received e = %g. ", e);
+        printf("ERROR: H2M() received e = %g. ", e);
         printf("The value of e should be 1 < e.\n");
     }
 
@@ -217,7 +217,7 @@ double M2E(double M, double e)
 }
 
 /*
- * Function: N2H
+ * Function: M2H
  * Purpose: Maps the mean hyperbolic anomaly angle N into the corresponding
  *   hyperbolic anomaly angle H.
  * Inputs:
@@ -226,26 +226,30 @@ double M2E(double M, double e)
  * Outputs:
  *   H = hyperbolic anomaly (rad)
  */
-double N2H(double N, double e)
+double M2H(double N, double e)
 {
     double small = 1e-13;
     double dH = 10 * small;
     double H1 = N;
     int    max = 200;
     int    count = 0;
+    if(fabs(H1) > 3.0)
+    {
+        H1 = N/fabs(N)*3.0;
+    }
 
     if(e > 1) {
         while(fabs(dH) > small) {
             dH = (e * sinh(H1) - H1 - N) / (e * cosh(H1) - 1);
             H1 -= dH;
             if(++count > max) {
-                printf("iteration error in N2H(%f,%f)\n", N, e);
+                printf("iteration error in M2H(%f,%f)\n", N, e);
                 dH = 0.;
             }
         }
     } else {
         H1 = NAN;
-        printf("ERROR: N2H() received e = %g. ", e);
+        printf("ERROR: M2H() received e = %g. ", e);
         printf("The value of e should be e > 1\n");
     }
 

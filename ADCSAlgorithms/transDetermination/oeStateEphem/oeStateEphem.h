@@ -25,7 +25,7 @@
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 
 #define MAX_OE_RECORDS 10
-#define MAX_OE_COEFF 10
+#define MAX_OE_COEFF 20
 
 /*! @brief Structure that defines the layout of an Ephemeris "record."  This is 
            basically the set of coefficients for the body x/y/z positions and 

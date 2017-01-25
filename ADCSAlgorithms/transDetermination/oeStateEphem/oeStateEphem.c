@@ -134,9 +134,14 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     }
     else
     {
-        orbEl.f = 0.0;
+        orbAnom = M2H(meanAnom, orbEl.e);
+        orbEl.f = H2f(orbAnom, orbEl.e);
     }
     
+    while(orbEl.Omega < 0.0)
+    {
+        orbEl.Omega += 2.0*M_PI;
+    }
 
     elem2rv(ConfigData->muCentral, &orbEl, ConfigData->outputState.r_BdyZero_N,
             ConfigData->outputState.v_BdyZero_N);
