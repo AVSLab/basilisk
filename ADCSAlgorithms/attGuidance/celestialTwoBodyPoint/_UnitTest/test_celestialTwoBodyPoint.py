@@ -49,7 +49,7 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import celestialTwoBodyPoint  # module that is to be tested
 import simple_nav  # module that creates needed input
-import spice_interface  # module that creates needed input
+import cheby_pos_ephem  # module that creates needed input
 import macros
 import astroFunctions as af
 
@@ -167,15 +167,15 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Spice Input Message of Primary Body
 
-    CelBodyData = spice_interface.SpicePlanetState()
+    CelBodyData = cheby_pos_ephem.EphemerisOutputData()
     inputSpiceMessageSize = CelBodyData.getStructSize() # Size of SpicePlanetState
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputCelMessName,
                                           inputSpiceMessageSize, 2)
 
-    CelBodyData.PositionVector = celPositionVec
-    CelBodyData.VelocityVector = celVelocityVec
+    CelBodyData.r_BdyZero_N = celPositionVec
+    CelBodyData.v_BdyZero_N = celVelocityVec
 
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
                                           inputSpiceMessageSize,

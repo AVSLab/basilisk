@@ -233,6 +233,10 @@ double N2H(double N, double e)
     double H1 = N;
     int    max = 200;
     int    count = 0;
+    if(fabs(H1) > 7.0)
+    {
+        H1 = N/fabs(N)*7.0;
+    }
 
     if(e > 1) {
         while(fabs(dH) > small) {

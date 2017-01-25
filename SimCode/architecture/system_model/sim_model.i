@@ -22,6 +22,7 @@
    #include "_GeneralModuleFiles/sys_interface.h"
    #include "utilities/linearAlgebra.h"
    #include "utilities/rigidBodyKinematics.h"
+   #include "utilities/orbitalMotion.h"
 %}
 
 %include "std_vector.i"
@@ -81,4 +82,5 @@ namespace std {
 %include "../messaging/system_messaging.h"
 %include "../utilities/linearAlgebra.h"
 %include "../utilities/rigidBodyKinematics.h"
+%include "../utilities/orbitalMotion.h"
 %include "sim_model.h"

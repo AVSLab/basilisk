@@ -20,7 +20,7 @@
 #include "attGuidance/celestialTwoBodyPoint/celestialTwoBodyPoint.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "SimCode/environment/spice/spice_planet_state.h"
+#include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
@@ -56,14 +56,14 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     uint64_t moduleID)
 {
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
-                                                sizeof(SpicePlanetState), moduleID);
+                                                sizeof(EphemerisOutputData), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransOut), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
         ConfigData->inputSecID = subscribeToMessage(ConfigData->inputSecMessName,
-                                                    sizeof(SpicePlanetState), moduleID);
+                                                    sizeof(EphemerisOutputData), moduleID);
     }
     return;
     
@@ -83,8 +83,8 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     uint64_t writeTime;
     uint32_t writeSize;
     NavTransOut navData;
-    SpicePlanetState primPlanet;
-    SpicePlanetState secPlanet;
+    EphemerisOutputData primPlanet;
+    EphemerisOutputData secPlanet;
     
     double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
     double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
@@ -93,20 +93,20 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     double dotProduct;              /* Temporary scalar variable */
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransOut), &navData, moduleID);
-    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(SpicePlanetState), &primPlanet, moduleID);
+    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(EphemerisOutputData), &primPlanet, moduleID);
     
-    v3Subtract(primPlanet.PositionVector, navData.r_BN_N, ConfigData->R_P1);
-    v3Subtract(primPlanet.VelocityVector, navData.v_BN_N, ConfigData->v_P1);
+    v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P1);
+    v3Subtract(primPlanet.v_BdyZero_N, navData.v_BN_N, ConfigData->v_P1);
     
     v3SetZero(ConfigData->a_P1);
     v3SetZero(ConfigData->a_P2);
     
     if(ConfigData->inputSecID >= 0)
     {
-        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(SpicePlanetState), &secPlanet, moduleID);
+        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(EphemerisOutputData), &secPlanet, moduleID);
         
-        v3Subtract(secPlanet.PositionVector, navData.r_BN_N, ConfigData->R_P2);
-        v3Subtract(secPlanet.VelocityVector, navData.v_BN_N, ConfigData->v_P2);
+        v3Subtract(secPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P2);
+        v3Subtract(secPlanet.v_BdyZero_N, navData.v_BN_N, ConfigData->v_P2);
         v3Normalize(ConfigData->R_P1, R_P1_hat);
         v3Normalize(ConfigData->R_P2, R_P2_hat);
         dotProduct = v3Dot(R_P2_hat, R_P1_hat);

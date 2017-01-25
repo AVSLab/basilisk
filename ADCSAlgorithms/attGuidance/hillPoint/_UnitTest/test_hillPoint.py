@@ -41,7 +41,7 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import hillPoint                        # import the module that is to be tested
 import simple_nav                       # import module(s) that creates the needed input message declaration
-import spice_interface
+import cheby_pos_ephem
 import macros
 import numpy as np
 import astroFunctions as af
@@ -125,14 +125,14 @@ def hillPointTestFunction(show_plots):
     #   Spice Input Message
     #
 
-    CelBodyData = spice_interface.SpicePlanetState()
+    CelBodyData = cheby_pos_ephem.EphemerisOutputData()
     inputCelMessageSize = CelBodyData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputCelMessName,
                                           inputCelMessageSize,
                                           2)
-    CelBodyData.PositionVector = planetPos
-    CelBodyData.VelocityVector = planetVel
+    CelBodyData.r_BdyZero_N = planetPos
+    CelBodyData.v_BdyZero_N = planetVel
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputCelMessName,
                                           inputCelMessageSize,
                                           0,

@@ -16,24 +16,27 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module celestialBodyPoint
+%module ephem_difference
 %{
-   #include "celestialBodyPoint.h"
+   #include "ephemDifference.h"
 %}
 
 %include "swig_conly_data.i"
-
-%constant void Update_celestialBodyPoint(void*, uint64_t, uint64_t);
-%ignore Update_celestialBodyPoint;
-%constant void SelfInit_celestialBodyPoint(void*, uint64_t);
-%ignore SelfInit_celestialBodyPoint;
-%constant void CrossInit_celestialBodyPoint(void*, uint64_t);
-%ignore CrossInit_celestialBodyPoint;
-%include "../_GeneralModuleFiles/attGuidOut.h"
-GEN_SIZEOF(celestialBodyPointConfig);
-%include "celestialBodyPoint.h"
-
+%constant void Update_ephemDifference(void*, uint64_t, uint64_t);
+%ignore Update_ephemDifference;
+%constant void SelfInit_ephemDifference(void*, uint64_t);
+%ignore SelfInit_ephemDifference;
+%constant void CrossInit_ephemDifference(void*, uint64_t);
+%ignore CrossInit_ephemDifference;
+%constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
+%ignore Reset_ephemDifference;
+GEN_SIZEOF(EphemerisOutputData)
+STRUCTASLIST(EphemChangeConfig)
+%include "ephemDifference.h"
+%include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
+%include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
