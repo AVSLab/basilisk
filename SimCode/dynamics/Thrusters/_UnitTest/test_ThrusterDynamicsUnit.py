@@ -32,7 +32,6 @@
 import sys
 import os
 import numpy as np
-import ctypes
 import math
 import pytest
 import inspect
@@ -65,10 +64,10 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
     while(simContainer.TotalSim.CurrentNanos < newStopTime):
         simContainer.ConfigureStopTime(simContainer.TotalSim.CurrentNanos + simRate)
         simContainer.ExecuteSimulation()
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9/2.0)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9/2.0)
-        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*1.0E-9 + simRate*1.0E-9)
+        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC)
+        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0)
+        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC/2.0)
+        thrusterSet.computeBodyForceTorque(simContainer.TotalSim.CurrentNanos*macros.NANO2SEC + simRate*macros.NANO2SEC)
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
@@ -152,7 +151,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
 
     #  Create a task manager
     TotalSim.newManager = stateArchitecture.DynParamManager()
-    #TotalSim.AddModelToTask("thrusterbasic", scObject)
+    #TotalSim.AddModelToTask(unitTaskName, TotalSim.scObject)
 
     #  Define the start of the thrust and it's duration
     sparetime = 3.*1./macros.NANO2SEC
@@ -308,6 +307,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         # Compare Torque values
         # Compare Force values
         testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance, "Torque", testFailCount, testMessages)
+
 
     if ramp == "ON":
         format = "width=0.8\\textwidth"
