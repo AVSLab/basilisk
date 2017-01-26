@@ -127,7 +127,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     meanAnom = calculateChebyValue(currRec->meanAnomCoeff, currRec->nChebCoeff,
                                    currentScaledValue);
     
-    if(orbEl.e < 1.0)
+    if(orbEl.a > 0.0)
     {
         orbAnom = M2E(meanAnom, orbEl.e);
         orbEl.f = E2f(orbAnom, orbEl.e);
