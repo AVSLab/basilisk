@@ -249,6 +249,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
     double tmpThrustMag = 0;
+    double dt = 0.0;
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
@@ -258,6 +259,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     this->forceExternal_N.setZero();
     this->torqueExternalPntB_B.setZero();
     mDotTotal = 0.0;
+    dt = integTime - prevFireTime;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for(it=ThrusterData.begin(); it != ThrusterData.end(); it++)
@@ -266,7 +268,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         it->thrDir_B = (*this->dcm_BS) * it->inputThrDir_S;
         it->thrLoc_B = (*this->dcm_BS) * it->inputThrLoc_S;
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
-        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= 0.0 &&
+        if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= -dt*10E-10 &&
            ops->ThrustOnCmd > 0.0)
         {
             ComputeThrusterFire(&(*it), integTime);
