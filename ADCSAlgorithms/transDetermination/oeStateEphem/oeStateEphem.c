@@ -23,6 +23,7 @@
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
+#include "utilities/astroConstants.h"
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
