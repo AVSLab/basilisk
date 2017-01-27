@@ -159,7 +159,8 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     if useAvailability:
         moduleConfig.rwAvailInMsgName = "rw_availability"
         rwAvailabilityMessage = rwMotorVoltage.RWAvailabilityData()
-        rwAvailArray = np.full((vehicleConfigData.MAX_EFF_CNT), rwMotorVoltage.AVAILABLE)
+        rwAvailArray = np.zeros(vehicleConfigData.MAX_EFF_CNT)
+        rwAvailArray.fill(rwMotorVoltage.AVAILABLE)
         rwAvailArray[2] = rwMotorVoltage.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray
         unitTestSupport.setMessage(unitTestSim.TotalSim,
