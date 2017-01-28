@@ -58,14 +58,14 @@ typedef struct {
  dynEffectorForce and dynEffectorTorque arrays that are provided by the DynEffector base class.
  There is technically double inheritance here, but both the DynEffector and
  SysModel classes are abstract base classes so there is no risk of diamond.*/
-class exponentialAtmosphere: public SysModel, public DynamicEffector {
+class ExponentialAtmosphere: public SysModel {
 public:
-    exponentialAtmosphere();
-    ~exponentialAtmosphere();
+    ExponentialAtmosphere();
+    ~ExponentialAtmosphere();
     void SelfInit();
     void CrossInit();
-    void linkInStates(DynParamManager& states);
     void UpdateState(uint64_t CurrentSimNanos);
+    //void computeStateContribution(double integTime);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ComputeLocalAtmo(double currentTime);
@@ -76,15 +76,22 @@ public:
     double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
-    std::string OutputDataString;
-    int64_t OutputBufferCount;
-    int64_t StateOutMsgID;
-    StateData *hubPos;
+    std::string planetName;
+    std::string atmoDensOutMsgName;
+    std::string scStateInMsgName;
+    std::string planetPosInMsgName;
+    uint64_t atmoDensOutMsgId;
+    uint64_t scStateInMsgId;
+    uint64_t planetPosInMsgId;
+    SCPlusOutputStateData scState;
+    SpicePlanetState bodyState;
+
 
 private:
     exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
-    Eigen::Vector3d currentPosition; //!< [-] Container for local position
+    Eigen::Vector3d relativePos; //!< [-] Container for local position
     double tmpPosMag;
+
 };
 
 #endif /* EXPONENTIAL_ATMOSPHERE_H */
