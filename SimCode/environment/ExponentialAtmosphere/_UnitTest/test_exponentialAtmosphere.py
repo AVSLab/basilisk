@@ -389,7 +389,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     print samplingTime
     print numDataPoints
-    scSim.AddVariableForLogging('ExpAtmo.localAtmoTemp', samplingTime, StartIndex=0, StopIndex=0)
+    scSim.AddVariableForLogging('ExpAtmo.localAtmoDens', samplingTime, StartIndex=0, StopIndex=0)
     # create simulation messages
     #
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
@@ -421,7 +421,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     print "Vel data length:", len(velData)
-    densData = scSim.GetLogVariableData('ExpAtmo.localAtmoTemp')
+    densData = scSim.GetLogVariableData('ExpAtmo.localAtmoDens')
     np.set_printoptions(precision=16)
 
     #
@@ -509,16 +509,16 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
                 fileNameString+"2"+orbitCase+str(int(useSphericalHarmonics))
                 +planetCase
                 , plt, path)
-        plt.figure()
+    plt.figure()
 
-        fig = plt.gcf()
-        ax = fig.gca()
-        plt.plot(densData)
-        plt.title('Density Data vs. Time')
-        plt.xlabel('Time')
-        plt.ylabel('Density in kg/m^3')
-    if show_plots:
-        plt.show()
+    fig = plt.gcf()
+    ax = fig.gca()
+    plt.plot(densData)
+    plt.title('Density Data vs. Time')
+    plt.xlabel('Time')
+    plt.ylabel('Density in kg/m^3')
+
+    plt.show()
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")

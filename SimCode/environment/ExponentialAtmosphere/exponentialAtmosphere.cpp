@@ -24,30 +24,33 @@
 #include "utilities/astroConstants.h"
 #include "../ADCSAlgorithms/effectorInterfaces/errorConversion/vehEffectorOut.h"
 #include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "environment/spice/spice_interface.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
+#include "../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
 
-exponentialAtmosphere::exponentialAtmosphere()
+ExponentialAtmosphere::ExponentialAtmosphere()
 {
-    OutputDataString = "atmosphere_output_states";
-    OutputBufferCount = 2;
-    StateOutMsgID = -1;
+    this->planetName = "Earth"
+    this->atmoDensOutMsgName = "base_atmo_props"
+    this->scStateInMsgName = "inertial_state_output";
+    this->planetPosInMsgName = "spice_planet_output_data";
     //! Set the default atmospheric properties to those of Earth
     this->atmosphereProps.baseDensity = 1.207;
     this->atmosphereProps.scaleHeight = 8500.0;
-
+    this->atmosphereProps.planetRadius = 6.371 * 1000000.0;
     this->localAtmoDens = this->atmosphereProps.baseDensity;
     this->localAtmoTemp = 293.0; // Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
 
-    this->currentPosition.fill(0.0);
+    this->relativePos.fill(0.0);
     this->tmpAtmo.neutralDensity = this->localAtmoDens;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
     return;
 }
 
 /*! The destructor.*/
-exponentialAtmosphere::~exponentialAtmosphere()
+ExponentialAtmosphere::~ExponentialAtmosphere()
 {
     return;
 }
@@ -56,18 +59,10 @@ exponentialAtmosphere::~exponentialAtmosphere()
  that the overall model is ready for firing
  @return void
  */
-void exponentialAtmosphere::SelfInit()
+void ExponentialAtmosphere::SelfInit()
 {
     //! Begin method steps
-    SystemMessaging *messageSys = SystemMessaging::GetInstance(); // Gets a pointer to the messaging system
-
-  	// Reserve a message ID for each reaction wheel config output message
-  	uint64_t tmpAtmoMsgId;
-  	std::string tmpAtmoMsgName;
-
-  	tmpAtmoMsgName = "std_atmosphere_data";
-  	tmpAtmoMsgId = messageSys->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), OutputBufferCount, "AtmosphereProperties", moduleID);
-
+    this->atmoOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->atmoOutMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, this->atmoOutMsgName, moduleID);
     return;
 }
 
@@ -76,8 +71,14 @@ void exponentialAtmosphere::SelfInit()
  message is not successfully linked, it will warn the user.
  @return void
  */
-void exponentialAtmosphere::CrossInit()
+void ExponentialAtmosphere::CrossInit()
 {
+  this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
+      this->planetPosInMsgName, sizeof(SpicePlanetState), moduleID);
+  this->scStateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
+      this->scStateInMsgName, sizeof(SCPlusOutputStateData), moduleID);
+
+  return;
 }
 
 
@@ -88,19 +89,22 @@ void exponentialAtmosphere::CrossInit()
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
-void exponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
+void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
 {
-    int idx = 0;
-
     AtmoOutputData tmpAtmo;
     tmpAtmo.neutralDensity = this->localAtmoDens;
     tmpAtmo.localTemp = this->localAtmoTemp;
-
-    SystemMessaging::GetInstance()->WriteMessage(this->StateOutMsgID,
+    //std::cout<<this->atmoOutMsgIds.at(0)<<std::endl;
+    SystemMessaging::GetInstance()->WriteMessage(this->atmoOutMsgId.at(0),
                                                 CurrentClock,
                                                 sizeof(AtmoOutputData),
                                                 reinterpret_cast<uint8_t*>(&tmpAtmo),
                                                 moduleID);
+    /*SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
+                                                CurrentClock,
+                                                sizeof(ThrusterOutputData),
+                                                reinterpret_cast<uint8_t*>(&tmpThruster),
+                                                moduleID);*/
 }
 
 
@@ -108,17 +112,24 @@ void exponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
  associated command structure for operating the thrusters.
  @return void
  */
-bool exponentialAtmosphere::ReadInputs()
+bool ExponentialAtmosphere::ReadInputs()
 {
-  this->currentPosition = this->hubPos->getState();
+  //! Begin method steps
+  SingleMessageHeader localHeader;
+  memset(&this->sunState, 0x0, sizeof(SpicePlanetState));
+  memset(&this->inertialState, 0x0, sizeof(SCPlusOutputStateData));
+  if(inputStateID >= 0)
+  {
+      SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
+                                                  sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*>(&this->scState), modueleID);
+  }
+  if(inputSunID >= 0)
+  {
+      SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
+                                                  sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&this->bodyState), moduleID);
+  }
   return(true);
 
-}
-
-
-void exponentialAtmosphere::linkInStates(DynParamManager& states)
-{
-    this->hubPos = states.getStateObject("hubPosition");
 }
 
 /*! This method is used to get the current force for a thruster firing.  It uses
@@ -128,12 +139,22 @@ void exponentialAtmosphere::linkInStates(DynParamManager& states)
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param CurrentTime The current simulation clock time converted to a double
  */
-void exponentialAtmosphere::ComputeLocalAtmo(double currentTime)
+void ExponentialAtmosphere::ComputeLocalAtmo(double currentTime)
 {
+    this->ComputeRelativePos( this->scState.r_BN_N, this->bodyState.PositionVector);
     tmpPosMag = this->currentPosition.norm();
     this->currentAlt = tmpPosMag - this->atmosphereProps.planetRadius;
-    this->localAtmoDens = this->atmosphereProps.baseDensity *
-    exp(this->currentAlt / this->atmosphereProps.scaleHeight);
+    this->localAtmoDens = this->atmosphereProps.baseDensity * exp(this->currentAlt / this->atmosphereProps.scaleHeight);
+    return;
+}
+
+void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState planetState, SCPlusOutputStateData scState)
+{
+    uint64_t iter = 0;
+    for(iterator <= 3; iterator++)
+    {
+      this->relativePos[iterator] = scState.r_BN_N[iterator] - planetState.PositionVector[iterator];
+    }
     return;
 }
 
@@ -145,11 +166,11 @@ void exponentialAtmosphere::ComputeLocalAtmo(double currentTime)
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void exponentialAtmosphere::UpdateState(uint64_t CurrentSimNanos)
+void ExponentialAtmosphere::UpdateState(uint64_t CurrentSimNanos)
 {
     //! Begin method steps
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
-    if(ReadInputs())
+    if(this->ReadInputs())
     {
         ComputeLocalAtmo(CurrentSimNanos*1.0E-9);
     }
