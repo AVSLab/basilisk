@@ -5,7 +5,7 @@
 \newcommand{\ModuleName}{rwMotorVoltage}
 \newcommand{\subject}{Mapping Reaction Wheel Motor Torques Commands to Servo Voltages}
 \newcommand{\status}{Initial document draft}
-\newcommand{\preparer}{H. Schub}
+\newcommand{\preparer}{H. Schaub}
 \newcommand{\summary}{This FSW module takes a set of $N$ RW motor torques $\bm u_{s}$ and maps them into a set of RW servo voltages.  This modules has an open-loop mode that ensures the output voltage is between a minimum and maximum voltage magnitude using a linear mapping.  If the RW availability message is set, then then only the AVAILABLE RW voltages are computed.  The other are set to zero.  If the RW wheel speed message is available, then the torque control loop is engaged where a proportional control is used to track the desired torque value.  }
 
 
