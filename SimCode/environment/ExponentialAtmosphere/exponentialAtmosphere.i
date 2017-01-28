@@ -25,13 +25,12 @@
 
 %include "swig_common_model.i"
 
+// Instantiate templates used by example
 %include "sys_model.h"
+%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
 %include "exponentialAtmosphere.h"
-%include "../spice/spice_planet_state.h"
-%include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-
-GEN_SIZEOF(AtmoOutputData)
-
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
