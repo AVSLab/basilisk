@@ -68,18 +68,11 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
     ConfigData->inputRWSpeedsInMsgID = -1;
     ConfigData->rwAvailInMsgID = -1;
 
-    if(strlen(ConfigData->rwParamsInMsgName) > 0) {
-        ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                         sizeof(RWConfigParams), moduleID);
-    } else {
-        printf("Error: the rwParamsInMsgName wasn't set.\n");
-    }
+    ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
+                                                     sizeof(RWConfigParams), moduleID);
     if (strlen(ConfigData->inputRWSpeedsInMsgName) > 0) {
         ConfigData->inputRWSpeedsInMsgID = subscribeToMessage(ConfigData->inputRWSpeedsInMsgName,
                                                          sizeof(RWSpeedData), moduleID);
-        if (ConfigData->K < 0.0) {
-            printf("Error: the closed loop gain must be set to a non-negative value to use the RW torque control loop.\n");
-        }
     }
     if(strlen(ConfigData->rwAvailInMsgName) > 0) {
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
