@@ -132,17 +132,11 @@ def fswModuleTestFunction(plotFixture, show_plots):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
     inputMessageData.torqueRequestBody = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.dataInMsgName,
+                               inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)
