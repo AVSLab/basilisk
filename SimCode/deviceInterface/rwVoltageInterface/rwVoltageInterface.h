@@ -22,14 +22,11 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "utilities/simMacros.h"
+#include "deviceInterface/_GeneralModuleFiles/deviceMacros.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
 
-typedef struct {
-    double Voltage; //!< V, voltage input for RW
-}RWVoltageStruct;
 
 //!@brief Interface module to convert RW input voltage to a motor torque output
 class RWVoltageInterface: public SysModel {
@@ -53,7 +50,7 @@ public:
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
     int64_t rwMotorTorqueOutMsgID;      //!< -- Message ID associated with RW motor torque output state
-    RWVoltageStruct *IncomingVoltageBuffer;//!< -- One-time allocation for time savings
+    deviceScalarIOStruct inputVoltage;  //!< -- One-time allocation for time savings
     uint64_t prevTime;                  //!< -- Previous simulation time observed
 };
 

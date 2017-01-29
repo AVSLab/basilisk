@@ -17,16 +17,15 @@
 
  */
 #include "deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
-#include "../../dynamics/reactionWheels/reactionWheelStateEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
-#include <cstring>
 
 /*! This is the constructor for the RW voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
 RWVoltageInterface::RWVoltageInterface()
 {
     this->rwVoltageInMsgName = "rw_voltage_input";
+    this->rwMotorTorqueOutMsgName = "reactionwheel_cmds";
     this->outputBufferCount = 2;
     this->rwVoltageInMsgID = -1;
     this->rwMotorTorqueOutMsgID = -1;
@@ -48,9 +47,9 @@ void RWVoltageInterface::SelfInit()
 {
     this->rwMotorTorqueOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->rwMotorTorqueOutMsgName,
-                         sizeof(RWCmdStruct)*SIM_MAX_EFF_CNT,
+                         sizeof(deviceScalarIOStruct),
                          outputBufferCount,
-                         "reactionwheel_cmds",
+                         "deviceScalarIOStruct",
                          moduleID);
     return;
 }
@@ -65,7 +64,7 @@ void RWVoltageInterface::CrossInit()
     //! - Obtain the ID associated with the input state name and alert if not found.
     this->rwVoltageInMsgID = SystemMessaging::GetInstance()->
         subscribeToMessage(this->rwVoltageInMsgName,
-                           sizeof(RWVoltageStruct)*SIM_MAX_EFF_CNT,
+                           sizeof(deviceScalarIOStruct),
                            moduleID);
     if(this->rwVoltageInMsgID < 0)
     {
@@ -87,10 +86,10 @@ void RWVoltageInterface::readInputMessages()
 
     //! - Zero the input buffer and read the incoming array of voltages
     SingleMessageHeader LocalHeader;
-    memset(this->IncomingVoltageBuffer, 0x0, SIM_MAX_EFF_CNT*sizeof(RWVoltageStruct));
+    memset(&(this->inputVoltage), 0x0, sizeof(deviceScalarIOStruct));
     SystemMessaging::GetInstance()->ReadMessage(this->rwVoltageInMsgID, &LocalHeader,
-                                                SIM_MAX_EFF_CNT*sizeof(RWVoltageStruct),
-                                                reinterpret_cast<uint8_t*> (this->IncomingVoltageBuffer),
+                                                sizeof(deviceScalarIOStruct),
+                                                reinterpret_cast<uint8_t*> (&(this->inputVoltage)),
                                                 moduleID);
 
     return;
@@ -102,9 +101,9 @@ void RWVoltageInterface::readInputMessages()
 void RWVoltageInterface::computeRWMotorTorque()
 {
     int i;
-
+    memset(&(this->rwTorque), 0x0, sizeof(deviceScalarIOStruct));
     for (i=0;i<SIM_MAX_EFF_CNT;i++) {
-        this->rwTorque[i] = this->IncomingVoltageBuffer[i].Voltage * this->voltage2TorqueGain;
+        this->rwTorque[i] = this->inputVoltage.value[i] * this->voltage2TorqueGain;
     }
 
     return;
@@ -118,10 +117,9 @@ void RWVoltageInterface::computeRWMotorTorque()
 void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     SystemMessaging::GetInstance()->WriteMessage(this->rwMotorTorqueOutMsgID, CurrentClock,
-                                                 SIM_MAX_EFF_CNT * sizeof(RWCmdStruct),
+                                                 sizeof(deviceScalarIOStruct),
                                                  reinterpret_cast<uint8_t*> (&this->rwTorque),
                                                  moduleID);
-
     return;
 }
 

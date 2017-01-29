@@ -25,7 +25,8 @@
 
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
-GEN_SIZEOF(RWVoltageStruct);
+%include "../_GeneralModuleFiles/deviceMacros.h"
+GEN_SIZEOF(deviceScalarIOStruct);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
