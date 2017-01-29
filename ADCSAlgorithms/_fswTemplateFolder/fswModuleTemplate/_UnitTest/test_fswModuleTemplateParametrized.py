@@ -90,11 +90,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # Construct algorithm and associated C++ container
     moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        fswModuleTemplate.Update_fswModuleTemplate,     # update with current values
-                                        fswModuleTemplate.SelfInit_fswModuleTemplate,   # update with current values
-                                        fswModuleTemplate.CrossInit_fswModuleTemplate,  # update with current values
-                                        fswModuleTemplate.Reset_fswModuleTemplate)      # update with current values
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "fswModuleTemplate"                                        # update python name of test module
 
     # Add test module to runtime call list
