@@ -92,7 +92,7 @@ def run(show_plots, voltage):
     testModule.ModelTag = "rwVoltageInterface"
 
     # set module parameters(s)
-    testModule.voltage2TorqueGain = 1.32
+    testModule.voltage2TorqueGain = 1.32        # [Nm/V] conversion gain
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, testModule)
@@ -156,6 +156,23 @@ def run(show_plots, voltage):
     # plt.ylabel('Variable Description [unit]')
     # if show_plots:
     #     plt.show()
+
+
+    resultTable = moduleOutput
+    resultTable[:, 0] = macros.NANO2SEC * resultTable[:, 0]
+    diff = np.delete(moduleOutput, 0, 1) - trueVector
+    resultTable = np.insert(resultTable, range(2, 2 + len(diff.transpose())), diff, axis=1)
+
+    tableName = "baseVoltage" + str(voltage)
+    tableHeaders = ["time [s]", "$u_{s,1}$ (Nm)", "Error", "$u_{s,2}$ (Nm)", "Error", "$u_{u,3}$ (Nm)", "Error"]
+    caption = 'RW motoor torque output for Base Voltaget = ' + str(voltage) + 'V.'
+    unitTestSupport.writeTableLaTeX(
+        tableName,
+        tableHeaders,
+        caption,
+        resultTable,
+        path)
+
 
     #   print out success message if no error were found
     if testFailCount == 0:
