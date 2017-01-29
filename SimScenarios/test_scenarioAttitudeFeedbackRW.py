@@ -65,6 +65,7 @@ import simIncludeGravity
 import simIncludeRW
 import simple_nav
 import reactionWheelStateEffector
+import rwVoltageInterface
 
 # import FSW Algorithm related support
 import MRP_Feedback
@@ -73,6 +74,7 @@ import attTrackingError
 import rwMotorTorque
 import vehicleConfigData
 import fswSetupRW
+import rwMotorVoltage
 
 
 
@@ -85,17 +87,17 @@ import fswSetupRW
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useJitterSimple", [
-      (False)
-    # , (True)
+@pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
+      (False, False)
+    , (False, True)
 ])
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
+def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
-            show_plots, useJitterSimple)
+            show_plots, useJitterSimple, useRWVoltageIO)
     assert testResults < 1, testMessage
 
 
@@ -115,9 +117,14 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # spacecraftPlus() hub, and what flight algorithm module is used to control these RWs.
 #  The scenario is
 # setup to be run in multiple setups:
-# Setup | useJitterSimple
-# ----- | -------------------
-# 1     | False
+# Setup | useJitterSimple    | useRWVoltageIO
+# ----- | -------------------|----------------
+# 1     | False              | False
+# 2     | False              | True
+#
+# The first setup runs the RW control to produce a desired set of RW motor torques
+# which are then connected directly to the RW device input states.  The second setup illustrates
+# how to setup voltage based I/O modules to the RW devices, both on the FSW and SIM side.
 #
 # To run the default scenario 1., call the python script from a Terminal window through
 #
@@ -295,23 +302,91 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple):
 # ~~~~~~~~~~~~~{.py}
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
-#          True,        # show_plots
-#          False        # useJitterSimple
+#        , True,        # show_plots
+#        , False        # useJitterSimple
+#        , False        # useRWVoltageIO
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The last arguments control the
 # simulation scenario flags to turn on or off certain simulation conditions.  The
 # default scenario has the RW jitter turned off.  The
 # resulting simulation illustrations are shown below.
-# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW10.svg "MRP history")
-# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW20.svg "RW motor torque history")
-# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW30.svg "RW Omega history")
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW100.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
 # Note that in the RW motor torque plot both the required control torque \f$\hat u_s\f$ and the true
 # motor torque \f$u_s\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
 #
+#
+# Setup 2
+# -----
+# The second scenario illustrates how to setup RW analog I/O modules.  On the simulation side, the
+# voltage interface is setup by adding
+# ~~~~~~~~~~~~~~{.py}
+#     rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+#     rwVoltageIO.ModelTag = "rwVoltageInterface"
+#
+#     # set module parameters(s)
+#     rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+#
+#     # Add test module to runtime call list
+#     scSim.AddModelToTask(simTaskName, rwVoltageIO)
+# ~~~~~~~~~~~~~~
+# The default interface voltage output name will connect with the default RW
+# input message name.  Naturally, these can be customized if needed.  The one parameter
+# that must be set is the voltage to torque conversion gain of the electric motor being modeled.
+#
+# On the FSW side, the commanded motor torques must be directed towards a new module that converts
+# the required torque to a commanded voltage.  The first step is to re-direct the
+# rWMotorTorque() output to not directly be the input to the RW SIM devices, but rather the
+# input to the RW voltage command module:
+# ~~~~~~~~~~~~~~{.py}
+# rwMotorTorqueConfig.outputDataName = "rw_torque_Lr"
+# ~~~~~~~~~~~~~~
+# Next, the rwMotorVoltage() module is setup using:
+# ~~~~~~~~~~~~~~{.py}
+#       fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
+#       fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
+#       fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+#
+#       # Add test module to runtime call list
+#       scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+#
+#       # Initialize the test module configuration data
+#       fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
+#       fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+#       fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
+#
+#       # set module parameters
+#       fswRWVoltageConfig.VMin = 0.0  # Volts
+#       fswRWVoltageConfig.VMax = 10.0  # Volts
+# ~~~~~~~~~~~~~~
+# Note that the rwMotorTorque() output is connect here as the input, and the
+# SIM RW voltage input name is used as the output name of this FSW module to connect
+# the FSW voltage command the the SIM RW voltage motor module.
+#
+# To run this scenario, modify the bottom of the script to read:
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#        , True,        # show_plots
+#        , False        # useJitterSimple
+#        , True        # useRWVoltageIO
+#        )
+# ~~~~~~~~~~~~~
+# The resulting simulation illustrations are shown below.
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW101.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW201.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
+# ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
+# Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
+# [rwMotorVoltage documentation](../ADCSAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
+# for more info.  By connecting the RW availability message it is possible turn
+# off the voltage command for particular wheels.  Also, by specifying the RW speed message input
+# name it is possible to turn on a torque tracking feedback loop in this module.
 ##  @}
-def run(doUnitTests, show_plots, useJitterSimple):
+def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
@@ -407,6 +482,16 @@ def run(doUnitTests, show_plots, useJitterSimple):
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 
+    if useRWVoltageIO:
+        rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
+        rwVoltageIO.ModelTag = "rwVoltageInterface"
+
+        # set module parameters(s)
+        rwVoltageIO.voltage2TorqueGain = 0.2/10.  # [Nm/V] conversion gain
+
+        # Add test module to runtime call list
+        scSim.AddModelToTask(simTaskName, rwVoltageIO)
+
 
     # add the simple Navigation sensor module.  This sets the SC attitude, rate, position
     # velocity navigation message
@@ -459,7 +544,10 @@ def run(doUnitTests, show_plots, useJitterSimple):
     rwMotorTorqueWrap.ModelTag = "rwMotorTorque"
     scSim.AddModelToTask(simTaskName, rwMotorTorqueWrap, rwMotorTorqueConfig)
     # Initialize the test module msg names
-    rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
+    if useRWVoltageIO:
+        rwMotorTorqueConfig.outputDataName = "rw_torque_Lr"
+    else:
+        rwMotorTorqueConfig.outputDataName = rwStateEffector.InputCmds
     rwMotorTorqueConfig.inputVehControlName = mrpControlConfig.outputDataName
     rwMotorTorqueConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
     # Make the RW control all three body axes
@@ -469,6 +557,23 @@ def run(doUnitTests, show_plots, useJitterSimple):
             ,0,0,1
         ]
     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
+
+    if useRWVoltageIO:
+        fswRWVoltageConfig = rwMotorVoltage.rwMotorVoltageConfig()
+        fswRWVoltageWrap = scSim.setModelDataWrap(fswRWVoltageConfig)
+        fswRWVoltageWrap.ModelTag = "rwMotorVoltage"
+
+        # Add test module to runtime call list
+        scSim.AddModelToTask(simTaskName, fswRWVoltageWrap, fswRWVoltageConfig)
+
+        # Initialize the test module configuration data
+        fswRWVoltageConfig.torqueInMsgName = rwMotorTorqueConfig.outputDataName
+        fswRWVoltageConfig.rwParamsInMsgName = mrpControlConfig.rwParamsInMsgName
+        fswRWVoltageConfig.voltageOutMsgName = rwVoltageIO.rwVoltageInMsgName
+
+        # set module parameters
+        fswRWVoltageConfig.VMin = 0.0  # Volts
+        fswRWVoltageConfig.VMax = 10.0  # Volts
 
 
     #
@@ -483,6 +588,8 @@ def run(doUnitTests, show_plots, useJitterSimple):
     rwOutName = ["rw_bla0_data", "rw_bla1_data", "rw_bla2_data"]
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
+    if useRWVoltageIO:
+        scSim.TotalSim.logThisMessage(fswRWVoltageConfig.voltageOutMsgName, samplingTime)
 
     #
     # create simulation messages
@@ -501,7 +608,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for rw in simIncludeRW.rwList:
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js)
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
 
@@ -555,6 +662,8 @@ def run(doUnitTests, show_plots, useJitterSimple):
     dataRW = []
     for i in range(0,numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
+    if useRWVoltageIO:
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".effectorRequest", range(numRW))
     np.set_printoptions(precision=16)
 
     #
@@ -573,7 +682,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     plt.ylabel('Attitude Error $\sigma_{B/R}$')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"1"+str(int(useJitterSimple))
+            fileNameString+"1"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
             , plt, path)
 
     plt.figure(2)
@@ -590,7 +699,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
     plt.ylabel('RW Motor Torque (Nm)')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"2"+str(int(useJitterSimple))
+            fileNameString+"2"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
             , plt, path)
 
     plt.figure(3)
@@ -612,9 +721,22 @@ def run(doUnitTests, show_plots, useJitterSimple):
     plt.ylabel('RW Speed (RPM) ')
     if doUnitTests:     # only save off the figure if doing a unit test run
         unitTestSupport.saveScenarioFigure(
-            fileNameString+"3"+str(int(useJitterSimple))
+            fileNameString+"3"+str(int(useJitterSimple))+str(int(useRWVoltageIO))
             , plt, path)
 
+    if useRWVoltageIO:
+        plt.figure(5)
+        for idx in range(1, numRW + 1):
+            plt.plot(timeData, dataVolt[:, idx] ,
+                     color=unitTestSupport.getLineColor(idx, numRW),
+                     label='$V_{' + str(idx) + '}$')
+        plt.legend(loc='lower right')
+        plt.xlabel('Time [min]')
+        plt.ylabel('RW Volgate (V) ')
+        if doUnitTests:  # only save off the figure if doing a unit test run
+            unitTestSupport.saveScenarioFigure(
+                fileNameString + "4" + str(int(useJitterSimple)) + str(int(useRWVoltageIO))
+                , plt, path)
     if show_plots:
         plt.show()
 
@@ -633,6 +755,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
         dataSigmaBRRed = dataSigmaBR[::skipValue]
         dataPosRed = dataPos[::skipValue]
 
+
         # setup truth data for unit test
         truePos = [
                       [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
@@ -643,7 +766,7 @@ def run(doUnitTests, show_plots, useJitterSimple):
                 ]
         trueUs = trueSigmaBR = []
 
-        if useJitterSimple == False:
+        if useJitterSimple == False and useRWVoltageIO == False:
             trueUs = [
                   [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
                 , [ 1.0886536396638849e-02,-5.1081088867427316e-01,-4.9465001721576522e-02]
@@ -658,6 +781,23 @@ def run(doUnitTests, show_plots, useJitterSimple):
                 , [ 6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03]
                 , [ 1.5260133637049377e-05,-1.2491549414001010e-03,-1.4158582039329860e-03]
             ]
+
+        if useJitterSimple == False and useRWVoltageIO == True:
+            trueUs = [
+                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
+                , [ 1.1231402312140600e-02,-5.1291709034434607e-01,-4.9996296037748973e-02]
+                , [-5.3576899204811061e-02, 7.3722479933297697e-02, 2.3880144351365474e-02]
+                , [ 2.4193559082756406e-02,-2.8516319358299399e-03, 2.6158801499764212e-06]
+                , [-4.5358804715397794e-03,-3.0828353818758043e-03,-3.2251584952585279e-03]
+            ]
+            trueSigmaBR = [
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [ 1.4061613716759683e-02,-1.5537401133724818e-01,-1.7736020110557197e-02]
+                , [-2.8072554033139227e-02, 1.1328152717859538e-02, 4.8023651815938773e-04]
+                , [ 6.2505180487499833e-03, 2.4908595924511283e-03, 3.7332111196198281e-03]
+                , [-1.2999627747526236e-06,-1.2575327981617813e-03,-1.4238011880860959e-03]
+            ]
+
         # compare the results to the truth values
         accuracy = 1e-6
 
@@ -689,8 +829,9 @@ def run(doUnitTests, show_plots, useJitterSimple):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run( False,       # do unit tests
-         True,        # show_plots
-         False        # useJitterSimple
+    run(  False        # do unit tests
+        , True         # show_plots
+        , False        # useJitterSimple
+        , False        # useRWVoltageIO
        )
 
