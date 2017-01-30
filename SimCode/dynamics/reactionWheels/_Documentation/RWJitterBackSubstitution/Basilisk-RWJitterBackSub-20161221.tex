@@ -1,0 +1,235 @@
+\documentclass[]{BasiliskReportMemo}
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+\newcommand{\ModuleName}{RWJitterBackSub}
+\newcommand{\subject}{Derivation of Reaction Wheel Jitter Back-Substitution}
+\newcommand{\status}{Draft}
+\newcommand{\preparer}{J. Alcorn, C. Allard}
+\newcommand{\summary}{This document derives the back substitution method for reaction wheel jitter to conform with Basilisk's dynamics architecture.}
+
+
+\begin{document}
+
+
+\makeCover
+
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{1.1}
+\noindent
+\begin{longtable}{|p{0.5in}|p{4.0in}|p{1.64in}|}
+\hline
+{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+\hline
+Draft & Initial draft. & J. Alcorn, C. Allard \\
+\hline
+
+\end{longtable}
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents
+~\\ \hrule ~\\
+
+\section{Introduction}
+The goal is to manipulate the reaction wheel equations of motion to conform to the following form
+\begin{equation}
+\begin{bmatrix}
+[A] & [B]\\
+[C] & [D]
+\end{bmatrix} \begin{bmatrix}
+\ddot{\bm r}_{B/N}\\
+\dot{\bm\omega}_{\cal B/N}
+\end{bmatrix} = \begin{bmatrix}
+\bm v_{\text{trans}}\\
+\bm v_{\text{rot}}
+\end{bmatrix}
+\end{equation}
+Solving the system-of-equations by
+\begin{equation}
+\dot{\bm\omega}_{\cal B/N} = \Big([D] - [C]][A]^{-1}[B]\Big)^{-1}(\bm v_{\text{rot}} - [C][A]^{-1}\bm v_{\text{trans}})
+\end{equation}
+\begin{equation}
+\ddot{\bm r}_{B/N} = [A]^{-1} (\bm v_{\text{trans}} - [B]\dot{\bm\omega}_{\cal B/N})
+\end{equation}
+
+
+\section{Balanced Reaction Wheel Back-Substitution}
+
+\subsection{Equations of Motion}
+The translational equation of motion is not coupled with $\dot{\Omega}$ as seen in the equation below.
+\begin{equation}
+m_{\text{sc}} [I_{3 \times 3}]\ddot{\bm r}_{B/N}
+-m_{\text{sc}} [\tilde{\bm{c}}] \dot{\bm\omega}_{\cal B/N} 
+= \bm F_{\text{ext}}- 2 m_{\text{sc}} [\tilde{\bm\omega}_{\cal B/N}] \bm c'
+-m_{\text{sc}} [\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c}
+\label{eq:Rbddot35}
+\end{equation}
+The rotational equation of motion includes $\dot{\Omega}$ terms, and is thus coupled with wheel motion as seen below.
+\begin{multline}
+m_{\text{sc}}[\tilde{\bm{c}}] \ddot{\bm r}_{B/N}
++[I_{\text{sc},B}] \dot{\bm\omega}_{\cal B/N}
++\sum_{i=1}^{N}J_{\text{s}_i} \hat{\bm g}_{\text{s}_i}\dot{\Omega}_i
+= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - \sum_{i=1}^{N}(\bm\omega_{\cal B/N}\times J_{\text{s}_i}\Omega_i\hat{\bm g}_{\text{s}_i})
++ \bm{L}_B
+\label{eq:Final7}
+\end{multline}
+The motor torque equation can be seen below.
+\begin{equation}
+\dot{\Omega}_i = \frac{u_{\text{s}_i}}{J_{\text{s}_i}}-\hat{\bm g}_{\text{s}_i}^T \dot{\bm{\omega}}_{\cal B/N}
+\label{eq:mtorque}
+\end{equation}
+
+\subsection{Back-Substitution Derivation}
+Plugging Eq.~\eqref{eq:mtorque} into Eq.~\eqref{eq:Final7}
+\begin{multline}
+m_{\text{sc}}[\tilde{\bm{c}}] \ddot{\bm r}_{B/N}
++([I_{\text{sc},B}]-\sum_{i=1}^{N}J_{\text{s}_i} \hat{\bm g}_{\text{s}_i} \hat{\bm g}_{\text{s}_i}^T) \dot{\bm\omega}_{\cal B/N}
+= -[\bm{\tilde{\omega}}_{\cal B/N}] [I_{\text{sc},B}] \bm\omega_{\cal B/N} - \sum_{i=1}^{N}(\hat{\bm g}_{\text{s}_i} u_{\text{s}_i} + \bm\omega_{\cal B/N}\times J_{\text{s}_i}\Omega_i\hat{\bm g}_{\text{s}_i})
+\\- [I'_{\text{sc},B}] \bm\omega_{\cal B/N}
++ \bm{L}_B
+\label{eq:Final72}
+\end{multline}
+
+
+\subsection{Back-Substitution Contribution Matrices}
+The following can be defined:
+\begin{equation}
+[A_\text{contr}] = [0_{3 \times 3}]
+\end{equation}
+
+\begin{equation}
+[B_\text{contr}] = [0_{3 \times 3}]
+\end{equation}
+
+\begin{equation}
+[C_\text{contr}] = [0_{3 \times 3}]
+\end{equation}
+
+\begin{equation}
+[D_\text{contr}] = -\sum_{i=1}^{N}J_{\text{s}_i} \hat{\bm g}_{\text{s}_i} \hat{\bm g}_{\text{s}_i}^T
+\end{equation}
+
+\begin{equation}
+\bm v_{\text{trans,contr}} = \bm 0
+\end{equation}
+
+\begin{equation}
+\bm v_{\text{rot,contr}} =  - \sum_{i=1}^{N}(\hat{\bm g}_{\text{s}_i} u_{\text{s}_i} + \bm\omega_{\cal B/N}\times J_{\text{s}_i}\Omega_i\hat{\bm g}_{\text{s}_i})
+\end{equation}
+
+\section{Imbalanced Reaction Wheel Back-Substitution}
+\subsection{Equations of Motion}
+The translational equation of motion is
+\begin{equation}
+	\ddot{\bm r}_{B/N} -[\tilde{\bm{c}}]\dot{\bm\omega}_{\cal B/N} +\frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\dot{\Omega}_i = \ddot{\bm r}_{C/N}   - 2[\tilde{\bm\omega}_{\cal B/N}]\bm{c}'-[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c} + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\Omega_i^2\hat{\bm{w}}_{2_i}
+	\label{eq:rBddot}
+\end{equation}
+The rotational equation of motion is
+\begin{equation}
+	\begin{split}
+		m_{\text{sc}}[\tilde{\bm c}]\ddot{\bm r}_{B/N} +& [I_{\text{sc},B}]\dot{\bm\omega}_{\cal B/N} +\sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\dot{\Omega}_i
+		\\=& 
+		\sum\limits_{i=1}^{N}\Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big)\Big]
+		\\&  -[\tilde{\bm\omega}_{\cal B/N}][I_{\text{sc},B}]\bm\omega_{\cal B/N}-  [I_{\text{sc},B}]'\bm\omega_{\cal B/N} + \bm{L}_B
+	\end{split}
+	\label{eq:rotationalEOM}
+\end{equation}
+The motor torque equation is (note that $J_{12_i} = J_{23_i} = 0$)
+\begin{multline}
+	\big[m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T\big]\ddot{\bm{r}}_{B/N} + \big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}^T  + J_{13_i}\hat{\bm w}_{3_i}^T -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm r}_{W_i/B}]\big]\dot{\bm\omega}_{\cal B/N} + \big[J_{11_i} + m_{\text{rw}_i} d_i^2\big]\dot{\Omega}_i
+	\\=   - J_{13_i} \omega_{w_{2_i}}\omega_{s_i}  
+	+ \omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
+	) 
+	 -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i}
+	\label{eq:motorTorqueFinal}
+\end{multline}
+
+
+\subsection{Derivation of Back-Substitution}
+
+Solve motor torque equation for $\dot{\Omega}_i$ in terms of $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_{\cal B/N}$
+\begin{multline}
+\dot{\Omega}_i
+= \frac{-m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T }{J_{11_i} + m_{\text{rw}_i} d_i^2}\ddot{\bm{r}}_{B/N} + \frac{-\big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}^T  + J_{13_i}\hat{\bm w}_{3_i}^T -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm r}_{W_i/B}]\big]}{J_{11_i} + m_{\text{rw}_i} d_i^2}\dot{\bm\omega}_{\cal B/N} 
+\\
++\frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}\left[\omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
+)-J_{13_i} \omega_{w_{2_i}}\omega_{s_i} -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} \right]
+\label{eq:motorTorqueFinal2}
+\end{multline}
+
+\begin{equation}
+\bm{a}_{\Omega_i} = -\frac{m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i} }{J_{11_i} + m_{\text{rw}_i} d_i^2}
+\end{equation}
+
+\begin{equation}
+\bm{b}_{\Omega_i} = -\frac{(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}  + J_{13_i}\hat{\bm w}_{3_i} +m_{\text{rw}_i} d_i  [\tilde{\bm r}_{W_i/B}]\hat{\bm{w}}_{3_i}}{J_{11_i} + m_{\text{rw}_i} d_i^2}
+\end{equation}
+
+\begin{equation}
+c_{\Omega_i} = \frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}\left[\omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
+) - J_{13_i} \omega_{w_{2_i}}\omega_{s_i} -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} \right]
+\end{equation}
+
+
+
+\begin{equation}
+\dot{\Omega}_i = \bm{a}_{\Omega_i}^T\ddot{\bm r}_{B/N} + \bm{b}_{\Omega_i}^T\dot{\bm\omega}_{\cal B/N} + c_{\Omega_i}
+\end{equation}
+Plugging the equation above into Eq.~\eqref{eq:rBddot} and multiplying both sides by $m_\text{sc}$, (plug $\dot{\Omega}_i$ into translation)
+\begin{multline}
+\left[ [I_{3\times3}] +\frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{a}_{\Omega_i}^T \right] \ddot{\bm r}_{B/N} +\left[ -[\tilde{\bm{c}}] + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N} 
+\\= \ddot{\bm r}_{C/N}   - 2[\tilde{\bm\omega}_{\cal B/N}]\bm{c}'-[\tilde{\bm\omega}_{\cal B/N}][\tilde{\bm\omega}_{\cal B/N}]\bm{c} + \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\left(\Omega_i^2\hat{\bm{w}}_{2_i}-c_{\Omega_i}\hat{\bm{w}}_{3_i}\right)
+\end{multline}
+Moving on to rotation, (plug $\dot{\Omega}_i$ into rotation)
+\begin{multline}
+\left[ m_{\text{sc}}[\tilde{\bm c}]+ \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{a}_{\Omega_i}^T \right] \ddot{\bm r}_{B/N}
+\\ 
++ \left[ [I_{\text{sc},B}] + \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{b}_{\Omega_i}^T \right] \dot{\bm\omega}_{\cal B/N} 
+\\= 
+\sum\limits_{i=1}^{N}\Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\ 
+-\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)c_{\Omega_i}\Big]
+\\  -[\tilde{\bm\omega}_{\cal B/N}][I_{\text{sc},B}]\bm\omega_{\cal B/N}-  [I_{\text{sc},B}]'\bm\omega_{\cal B/N} + \bm{L}_B
+\end{multline}
+Now we have two equations containing $\ddot{\bm{r}}_{B/N}$ and $\dot{\bm\omega}_{\cal B/N}$
+
+\subsection{Back-Substitution Contribution Matrices}
+
+\begin{equation}
+[A_\text{contr}] = \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{a}_{\Omega_i}^T
+\end{equation}
+
+\begin{equation}
+[B_\text{contr}] = \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\hat{\bm{w}}_{3_i}\bm{b}_{\Omega_i}^T
+\end{equation}
+
+\begin{equation}
+[C_\text{contr}] = \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{a}_{\Omega_i}^T
+\end{equation}
+
+\begin{equation}
+[D_\text{contr}] = \sum\limits_{i=1}^{N}\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)\bm{b}_{\Omega_i}^T
+\end{equation}
+
+\begin{equation}
+\bm{v}_\text{trans,contr} = \frac{1}{m_{\text{sc}}}\sum\limits_{i=1}^{N}m_{\text{rw}_i}d_i\left(\Omega_i^2\hat{\bm{w}}_{2_i}-c_{\Omega_i}\hat{\bm{w}}_{3_i}\right)
+\end{equation}
+
+\begin{multline}
+\bm{v}_\text{rot,contr} = \sum\limits_{i=1}^{N} \Big[ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]d_i \Omega_i^2\hat{\bm{w}}_{2_i}-[I_{\text{rw}_i,W_{c_i}}]'\Omega_i \hat{\bm{g}}_{s_i} -[\tilde{\bm\omega}_{\cal B/N}]\Big([I_{\text{rw}_i,W_{c_i}}]\Omega_i \hat{\bm{g}}_{s_i}+ m_{\text{rw}_i}[\tilde{\bm{r}}_{W_{c_i}/B}]\bm{r}'_{W_{c_i}/B}\Big) \\ 
+-\Big([I_{\text{rw}_i,W_{c_i}}]\hat{\bm{g}}_{s_i} + m_{\text{rw}_i}d_i[\tilde{\bm{r}}_{W_{c_i}/B}]\hat{\bm{w}}_{3_i}\Big)c_{\Omega_i} \Big]
+\end{multline}
+
+
+
+
+
+\end{document}

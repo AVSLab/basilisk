@@ -110,20 +110,32 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		if (RWIt->RWModel == JitterFullyCoupled) {
-			double thetaCurrent = this->thetasState->getState()(thetaCount, 0);
+			RWIt->theta = this->thetasState->getState()(thetaCount, 0);
 			RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
-			RWIt->w2Hat_B = cos(thetaCurrent)*RWIt->w2Hat0_B + sin(thetaCurrent)*RWIt->w3Hat0_B; // current gtHat axis vector represented in body frame
-			RWIt->w3Hat_B = -sin(thetaCurrent)*RWIt->w2Hat0_B + cos(thetaCurrent)*RWIt->w3Hat0_B;
+			Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
+			Eigen::Matrix3d dcm_BW0;
+			dcm_BW0.col(0) = RWIt->gsHat_B;
+			dcm_BW0.col(1) = RWIt->w2Hat0_B;
+			dcm_BW0.col(2) = RWIt->w3Hat0_B;
+			Eigen::Matrix3d dcm_BW = dcm_BW0 * dcm_WW0.transpose();
+			RWIt->w2Hat_B = dcm_BW.col(1);
+			RWIt->w3Hat_B = dcm_BW.col(2);
 
 			//! wheel inertia tensor about wheel center of mass represented in B frame
-			RWIt->IRWPntWc_B = RWIt->Js*RWIt->gsHat_B*RWIt->gsHat_B.transpose() + RWIt->J13*RWIt->gsHat_B*RWIt->w3Hat_B.transpose() \
-								+ RWIt->Jt*RWIt->w2Hat_B*RWIt->w2Hat_B.transpose() \
-								+ RWIt->J13*RWIt->w3Hat_B*RWIt->gsHat_B.transpose() + RWIt->Jg*RWIt->w3Hat_B*RWIt->w3Hat_B.transpose();
+			Eigen::Matrix3d IRWPntWc_W;
+			IRWPntWc_W << RWIt->Js, 0., RWIt->J13, \
+								0., RWIt->Jt, 0., \
+								RWIt->J13, 0., RWIt->Jg;
+			RWIt->IRWPntWc_B = dcm_BW * IRWPntWc_W * dcm_BW.transpose();
 
 			//! wheel inertia tensor body frame derivative about wheel center of mass represented in B frame
-			RWIt->IPrimeRWPntWc_B = RWIt->Omega*(-RWIt->J13*RWIt->gsHat_B*RWIt->w2Hat_B.transpose() \
-												 +RWIt->Jt*RWIt->w3Hat_B*RWIt->w2Hat_B.transpose() + RWIt->Jt*RWIt->w2Hat_B*RWIt->w3Hat_B.transpose() \
-												 -RWIt->J13*RWIt->w2Hat_B*RWIt->gsHat_B.transpose()-RWIt->Jg*RWIt->w2Hat_B*RWIt->w3Hat_B.transpose()-RWIt->Jg*RWIt->w3Hat_B*RWIt->w2Hat_B.transpose());
+			Eigen::Matrix3d IPrimeRWPntWc_W;
+			IPrimeRWPntWc_W << 0., -RWIt->J13, 0., \
+								-RWIt->J13, 0., 0., \
+								0., 0., 0.;
+			IPrimeRWPntWc_W *= RWIt->Omega;
+			RWIt->IPrimeRWPntWc_B = dcm_BW * IPrimeRWPntWc_W * dcm_BW.transpose();
+
 
 			//! wheel center of mass location
 			RWIt->rWcB_B = RWIt->rWB_B + RWIt->d*RWIt->w2Hat_B;
@@ -153,17 +165,16 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
-	Eigen::MatrixXd OmegasLoc;
 	int RWi = 0;
 	std::vector<ReactionWheelConfigData>::iterator RWIt;
-
 	Eigen::Vector3d tempF;
 	double omegas;
 	double omegaw2;
 	double omegaw3;
+	double dSquared;
+	double OmegaSquared;
 
 	omegaLoc_BN_B = hubOmega->getState();
-	OmegasLoc = OmegasState->getState();
 
 	matrixAcontr.setZero();
 	matrixBcontr.setZero();
@@ -174,21 +185,22 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
+		OmegaSquared = RWIt->Omega * RWIt->Omega;
 
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			matrixDcontr -= RWIt->Js * RWIt->gsHat_B * RWIt->gsHat_B.transpose();
-			vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*OmegasLoc(RWi,0)*omegaLoc_BN_B.cross(RWIt->gsHat_B);
+			vecRotcontr -= RWIt->gsHat_B * RWIt->u_current + RWIt->Js*RWIt->Omega*omegaLoc_BN_B.cross(RWIt->gsHat_B);
 
 			//! imbalance torque (simplified external)
 			if (RWIt->RWModel == JitterSimple) {
 				/* Fs = Us * Omega^2 */ // static imbalance force
-				tempF = RWIt->U_s * pow(RWIt->Omega,2) * RWIt->w2Hat_B;
+				tempF = RWIt->U_s * OmegaSquared * RWIt->w2Hat_B;
 				vecTranscontr += tempF;
 
 				//! add in dynamic imbalance torque
 				/* tau_s = cross(r_B,Fs) */ // static imbalance torque
 				/* tau_d = Ud * Omega^2 */ // dynamic imbalance torque
-				vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*pow(RWIt->Omega,2) * RWIt->w2Hat_B );
+				vecRotcontr += ( RWIt->rWB_B.cross(tempF) ) + ( RWIt->U_d*OmegaSquared * RWIt->w2Hat_B );
 			}
 
 		} else if (RWIt->RWModel == JitterFullyCoupled) {
@@ -197,16 +209,18 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 			omegaw2 = RWIt->w2Hat_B.transpose()*omegaLoc_BN_B;
 			omegaw3 = RWIt->w3Hat_B.transpose()*omegaLoc_BN_B;
 
-			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*pow(RWIt->d,2)) * RWIt->w3Hat_B;
-			RWIt->bOmega = -1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*((RWIt->Js+RWIt->mass*pow(RWIt->d,2))*RWIt->gsHat_B + RWIt->J13*RWIt->w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(RWIt->w3Hat_B));
-			RWIt->cOmega = 1/(RWIt->Js + RWIt->mass*pow(RWIt->d,2))*(omegaw2*omegaw3*(RWIt->Jt-RWIt->Jg-RWIt->mass*pow(RWIt->d,2))-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+RWIt->u_current);
+			dSquared = RWIt->d * RWIt->d;
+
+			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*dSquared) * RWIt->w3Hat_B;
+			RWIt->bOmega = -1/(RWIt->Js + RWIt->mass*dSquared)*((RWIt->Js+RWIt->mass*dSquared)*RWIt->gsHat_B + RWIt->J13*RWIt->w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(RWIt->w3Hat_B));
+			RWIt->cOmega = 1/(RWIt->Js + RWIt->mass*dSquared)*(omegaw2*omegaw3*(-RWIt->mass*dSquared)-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+RWIt->u_current);
 
 			matrixAcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
 			matrixBcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();
 			matrixCcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->aOmega.transpose();
 			matrixDcontr += (RWIt->IRWPntWc_B*RWIt->gsHat_B + RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->bOmega.transpose();
-			vecTranscontr += RWIt->mass*RWIt->d*(pow(RWIt->Omega,2)*RWIt->w2Hat_B - RWIt->mass*RWIt->d*RWIt->cOmega*RWIt->w3Hat_B);
-			vecRotcontr += RWIt->mass*RWIt->d*pow(RWIt->Omega,2)*RWIt->rWcB_B.cross(RWIt->w2Hat_B) - RWIt->IPrimeRWPntWc_B*RWIt->Omega*RWIt->gsHat_B - omegaLoc_BN_B.cross(RWIt->IRWPntWc_B*RWIt->Omega*RWIt->gsHat_B+RWIt->mass*RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) - (RWIt->IRWPntWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->cOmega;
+			vecTranscontr += RWIt->mass*RWIt->d*(OmegaSquared*RWIt->w2Hat_B - RWIt->cOmega*RWIt->w3Hat_B);
+			vecRotcontr += RWIt->mass*RWIt->d*OmegaSquared*RWIt->rWcB_B.cross(RWIt->w2Hat_B) - RWIt->IPrimeRWPntWc_B*RWIt->Omega*RWIt->gsHat_B - omegaLoc_BN_B.cross(RWIt->IRWPntWc_B*RWIt->Omega*RWIt->gsHat_B+RWIt->mass*RWIt->rWcB_B.cross(RWIt->rPrimeWcB_B)) - (RWIt->IRWPntWc_B*RWIt->gsHat_B+RWIt->mass*RWIt->d*RWIt->rWcB_B.cross(RWIt->w3Hat_B))*RWIt->cOmega;
 		}
 		RWi++;
 	}
@@ -219,8 +233,8 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
-	Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-	Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
 	Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
 	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
 	int RWi = 0;
@@ -231,9 +245,9 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
 	rDDotBNLoc_N = this->hubVelocity->getStateDeriv();
 	sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
-	dcmNB = sigmaBNLocal.toRotationMatrix();
-	dcmBN = dcmNB.transpose();
-	rDDotBNLoc_B = dcmBN*rDDotBNLoc_N;
+	dcm_NB = sigmaBNLocal.toRotationMatrix();
+	dcm_BN = dcm_NB.transpose();
+	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;
 
 	//! - Compute Derivatives
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
@@ -261,13 +275,13 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 {
 
 	Eigen::MRPd sigmaBNLocal;
-	Eigen::Matrix3d dcmBN;                        /* direction cosine matrix from N to B */
-	Eigen::Matrix3d dcmNB;                        /* direction cosine matrix from B to N */
+	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
 	Eigen::Vector3d omegaLoc_BN_B = hubOmega->getState();
 
 	sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
-	dcmNB = sigmaBNLocal.toRotationMatrix();
-	dcmBN = dcmNB.transpose();
+	dcm_NB = sigmaBNLocal.toRotationMatrix();
+	dcm_BN = dcm_NB.transpose();
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
