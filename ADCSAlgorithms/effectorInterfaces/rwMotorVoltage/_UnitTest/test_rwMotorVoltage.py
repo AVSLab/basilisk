@@ -93,11 +93,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
 
     # Construct algorithm and associated C++ container
     moduleConfig = rwMotorVoltage.rwMotorVoltageConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        rwMotorVoltage.Update_rwMotorVoltage,
-                                        rwMotorVoltage.SelfInit_rwMotorVoltage,
-                                        rwMotorVoltage.CrossInit_rwMotorVoltage,
-                                        rwMotorVoltage.Reset_rwMotorVoltage)
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "rwMotorVoltage"
 
     # Add test module to runtime call list
