@@ -81,6 +81,7 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->rwConfigParamsOut.numRW; i=i+1)
     {
         ConfigData->rwConfigParamsOut.JsList[i] = ConfigData->rwConstellation.reactionWheels[i].Js;
+        ConfigData->rwConfigParamsOut.uMax[i] = ConfigData->rwConstellation.reactionWheels[i].uMax;
         m33MultV3(RECAST3X3 sc.dcm_BS,
                   ConfigData->rwConstellation.reactionWheels[i].gsHat_S,
                   &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);

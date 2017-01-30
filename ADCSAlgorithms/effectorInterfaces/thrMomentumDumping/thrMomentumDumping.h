@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "../_GeneralModuleFiles/vehEffectorOut.h"
 
 
 /*! \addtogroup ADCSAlgGroup

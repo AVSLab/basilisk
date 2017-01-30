@@ -142,8 +142,8 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    messageSize = vehicleConfigData.MAX_EFF_CNT * 8
     inputMessageData = thrMomentumDumping.vehEffectorOut()
+    messageSize = inputMessageData.getStructSize()
     inputMessageData.effectorRequest = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrusterImpulseInMsgName,

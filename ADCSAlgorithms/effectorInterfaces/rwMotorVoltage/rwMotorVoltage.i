@@ -16,26 +16,30 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module thrMomentumDumping
+%module rwMotorVoltage
 %{
-   #include "thrMomentumDumping.h"
+   #include "rwMotorVoltage.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_thrMomentumDumping(void*, uint64_t, uint64_t);
-%ignore Update_thrMomentumDumping;
-%constant void SelfInit_thrMomentumDumping(void*, uint64_t);
-%ignore SelfInit_thrMomentumDumping;
-%constant void CrossInit_thrMomentumDumping(void*, uint64_t);
-%ignore CrossInit_thrMomentumDumping;
-%constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
-%ignore Reset_thrMomentumDumping;
-GEN_SIZEOF(thrMomentumDumpingConfig);
+%constant void Update_rwMotorVoltage(void*, uint64_t, uint64_t);
+%ignore Update_rwMotorVoltage;
+%constant void SelfInit_rwMotorVoltage(void*, uint64_t);
+%ignore SelfInit_rwMotorVoltage;
+%constant void CrossInit_rwMotorVoltage(void*, uint64_t);
+%ignore CrossInit_rwMotorVoltage;
+%constant void Reset_rwMotorVoltage(void*, uint64_t, uint64_t);
+%ignore Reset_rwMotorVoltage;
+ARRAYASLIST(FSWdeviceAvailability)
+GEN_SIZEOF(rwMotorVoltageConfig);
 GEN_SIZEOF(vehEffectorOut);
-%include "thrMomentumDumping.h"
-
-// sample Module supportfile to be included in this sub-module
-%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+GEN_SIZEOF(RWAvailabilityData);
+GEN_SIZEOF(RWSpeedData);
+%include "rwMotorVoltage.h"
+%include "../_GeneralModuleFiles/rwSpeedData.h"
+%include "../_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../ADCSUtilities/ADCSDefinitions.h"
+%include "../_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
