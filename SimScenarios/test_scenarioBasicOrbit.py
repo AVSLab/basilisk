@@ -320,7 +320,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
             gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM2BData.txt'
                                              , simIncludeGravity.gravBodyList[-1].spherHarm
-                                             , 3
+                                             , 2
                                              )
     else:                   # Earth
         simIncludeGravity.addEarth()
@@ -329,7 +329,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
             simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
             gravityEffector.loadGravFromFile(bskPath+'External/LocalGravData/GGM03S-J2-only.txt'
                                              , simIncludeGravity.gravBodyList[-1].spherHarm
-                                             ,3
+                                             ,2
                                              )
     mu = simIncludeGravity.gravBodyList[-1].mu
 

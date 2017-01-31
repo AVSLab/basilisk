@@ -36,7 +36,7 @@ double calculateChebyValue(double *chebyCoeff, uint32_t nCoeff,
     estValue = chebyCoeff[0]*chebyPrev;
     if(nCoeff <= 1)
     {
-        return(evalValue);
+        return(estValue);
     }
     estValue += chebyCoeff[1]*chebyNow;
     for(i=2; i<nCoeff; i=i+1)

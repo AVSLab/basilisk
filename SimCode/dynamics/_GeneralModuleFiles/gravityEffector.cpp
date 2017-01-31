@@ -52,7 +52,7 @@ bool SphericalHarmonics::initializeParameters()
         return paramsDone;
     }
     
-    for(unsigned int i = 0; i < maxDeg + 1; i++)
+    for(unsigned int i = 0; i <= maxDeg + 1; i++)
     {
         std::vector<double> aRow, n1Row, n2Row;
         aRow.resize(i+1, 0.0);
@@ -81,7 +81,7 @@ bool SphericalHarmonics::initializeParameters()
         aBar.push_back(aRow);
     }
     
-    for (unsigned int l = 0; l < maxDeg; l++) // up to _maxDegree-1
+    for (unsigned int l = 0; l <= maxDeg; l++) // up to _maxDegree-1
     {
         std::vector<double> nq1Row, nq2Row;
         nq1Row.resize(l+1, 0.0);
@@ -137,7 +137,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     
     order = degree;
     
-    for (unsigned int l = 1; l <= degree; l++)
+    for (unsigned int l = 1; l <= degree+1; l++)
     {
         //Diagonal terms are computed in initialize()
         // Low diagonal terms
@@ -145,9 +145,9 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     }
     
     // Lower terms of A_bar
-    for (unsigned int m = 0; m <= order; m++)
+    for (unsigned int m = 0; m <= order+1; m++)
     {
-        for(unsigned int l = m + 2; l <= degree; l++)
+        for(unsigned int l = m + 2; l <= degree+1; l++)
         {
             aBar[l][m] = u * n1[l][m] * aBar[l-1][m] - n2[l][m] * aBar[l-2][m];
 
@@ -169,7 +169,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
     }
     
     rho = radEquator/r;
-    rhol.resize(degree+1, 0.0);
+    rhol.resize(degree+2, 0.0);
     rhol[0] = muBody/r;
     rhol[1] = rhol[0]*rho;
 
@@ -188,7 +188,7 @@ Eigen::Vector3d SphericalHarmonics::computeField(const Eigen::Vector3d pos_Pfix,
         a4 = -rhol[1]/radEquator; // * this->_Nquot_2[0][0] * this->_A_bar[1][1]; //This is 1, so it's not included!
     }
     
-    for (unsigned int l = 1; l < degree; l++) // does not include l = maxDegree
+    for (unsigned int l = 1; l <= degree; l++) // does not include l = maxDegree
     {
         rhol[l+1] =  rho * rhol[l]; // rho_l computed
 

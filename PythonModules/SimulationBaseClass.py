@@ -677,3 +677,50 @@ def getCArray(varType, arrayPointer, arraySize):
         exec (CmdString)
         currIndex += 1
     return outputList
+
+def synchronizeTimeHistories(arrayList):
+    returnArrayList = arrayList
+    timeCounter = 0
+    for i in range(len(returnArrayList)):
+        while returnArrayList[i][0,0] > returnArrayList[0][timeCounter,0]:
+            timeCounter += 1
+    for i in range(len(returnArrayList)):
+        while(returnArrayList[i][1,0] < returnArrayList[0][timeCounter,0]):
+            returnArrayList[i] = np.delete(returnArrayList[i], 0, 0)
+        
+    timeCounter = -1
+    for i in range(len(returnArrayList)):
+        while returnArrayList[i][-1,0] < returnArrayList[0][timeCounter,0]:
+                timeCounter -= 1
+    for i in range(len(returnArrayList)):
+        while(returnArrayList[i][-2,0] > returnArrayList[0][timeCounter,0]):
+            returnArrayList[i] = np.delete(returnArrayList[i], -1, 0)
+
+    timeNow = returnArrayList[0][0,0] #Desirement is to have synched arrays match primary time
+    outputArrayList = []
+    indexPrev = [0]*len(returnArrayList)
+    outputArrayList = [[]]*len(returnArrayList)
+    timeNow = returnArrayList[0][0,0]
+
+    outputArrayList[0] = returnArrayList[0][0:-1, :]
+    for i in range(1, returnArrayList[0].shape[0]-1):
+        for j in range(1, len(returnArrayList)):
+            while(returnArrayList[j][indexPrev[j]+1,0] < returnArrayList[0][i,0]):
+                indexPrev[j] += 1
+        
+            dataProp = returnArrayList[j][indexPrev[j]+1,1:] - returnArrayList[j][indexPrev[j],1:]
+            dataProp *= (timeNow - returnArrayList[j][indexPrev[j],0])/(returnArrayList[j][indexPrev[j]+1,0] - returnArrayList[j][indexPrev[j],0])
+            dataProp += returnArrayList[j][indexPrev[j],1:]
+            dataRow = [timeNow]
+            dataRow.extend(dataProp.tolist())
+            outputArrayList[j].append(dataRow)
+        timePrevious = timeNow
+        timeNow = returnArrayList[0][i,0]
+    for j in range(1, len(returnArrayList)):
+        outputArrayList[j] = np.array(outputArrayList[j])
+
+    return outputArrayList
+
+
+
+
