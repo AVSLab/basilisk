@@ -104,8 +104,6 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 	Eigen::Matrix3d rTildeWcB_B;
     int thetaCount;
 
-	this->effProps.mEff = 0.;
-
     thetaCount = 0;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
