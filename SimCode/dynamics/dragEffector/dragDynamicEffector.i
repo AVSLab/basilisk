@@ -18,23 +18,20 @@
  */
 
 
-%module exponentialAtmosphere
+%module dragDynamicEffector
 %{
-   #include "exponentialAtmosphere.h"
+   #include "dragDynamicEffector.h"
 %}
 
 %include "swig_common_model.i"
 
-
-%include "swig_common_model.i"
+// Instantiate templates used by example
 
 %include "sys_model.h"
-%include "exponentialAtmosphere.h"
-%include "../../_GeneralModuleFiles/sys_model.h"
-%include "../spice/spice_planet_state.h"
-%include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-
-GEN_SIZEOF(AtmoOutputData)
+%include "../_GeneralModuleFiles/stateData.h"
+%include "../_GeneralModuleFiles/dynamicEffector.h"
+%include "../_GeneralModuleFiles/dynParamManager.h"
+%include "dragDynamicEffector.h"
 
 %pythoncode %{
 import sys
