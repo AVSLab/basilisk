@@ -16,19 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwVoltageInterface
-%{
-   #include "rwVoltageInterface.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef SIM_FSW_MACROS_H
+#define SIM_FSW_MACROS_H
 
-%include "sys_model.h"
-%include "rwVoltageInterface.h"
-%include "../../../SimFswInterface/rwVoltageMessage.h"
-%include "../../../SimFswInterface/rwTorqueMessage.h"
-GEN_SIZEOF(rwVoltageInputMessage);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#define MAX_EFF_CNT 36
+
+
+
+
+
+
+#endif

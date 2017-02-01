@@ -22,7 +22,9 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "deviceInterface/_GeneralModuleFiles/deviceMacros.h"
+#include "../../SimFswInterface/rwVoltageMessage.h"
+#include "../../SimFswInterface/rwTorqueMessage.h"
+#include "../../SimFswInterface/simFSWMacros.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -46,11 +48,12 @@ public:
     std::string rwVoltageInMsgName;     //!< --     Message that contains RW voltage input states
     std::string rwMotorTorqueOutMsgName;//!< --     Output Message for RW motor torques
     double voltage2TorqueGain;          //!< Nm/V   gain to convert voltage to motor torque
-    double rwTorque[SIM_MAX_EFF_CNT];   //!< Nm     RW motor torque array
+    double rwTorque[MAX_EFF_CNT];       //!< Nm     RW motor torque array
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
     int64_t rwMotorTorqueOutMsgID;      //!< -- Message ID associated with RW motor torque output state
-    deviceScalarIOStruct inputVoltage;  //!< -- One-time allocation for time savings
+    rwVoltageInputMessage inputVoltageBuffer;//!< [V] One-time allocation for time savings
+    fswRWTorque outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
     uint64_t prevTime;                  //!< -- Previous simulation time observed
 };
 

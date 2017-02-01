@@ -16,19 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwVoltageInterface
-%{
-   #include "rwVoltageInterface.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef FSW_RW_TORQUE_H
+#define FSW_RW_TORQUE_H
 
-%include "sys_model.h"
-%include "rwVoltageInterface.h"
-%include "../../../SimFswInterface/rwVoltageMessage.h"
-%include "../../../SimFswInterface/rwTorqueMessage.h"
-GEN_SIZEOF(rwVoltageInputMessage);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#include "../../SimFSWInterface/simFSWMacros.h"
+
+/*! @brief Structure used to define the output definition for vehicle effectors*/
+typedef struct {
+    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
+}fswRWTorque;
+
+
+
+
+
+
+#endif

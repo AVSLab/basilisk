@@ -32,9 +32,6 @@
 #define RECAST2x2       (double (*)[2])
 
 
-/*
- Declare Simulation Hardware macros
- */
-#define SIM_MAX_EFF_CNT 36
+
 
 #endif

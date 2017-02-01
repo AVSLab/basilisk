@@ -17,14 +17,15 @@
 
  */
 
-#ifndef DEVICE_MACROS_H
-#define DEVICE_MACROS_H
+#ifndef SIM_RW_VOLTAGE_INPUT_H
+#define SIM_RW_VOLTAGE_INPUT_H
 
-#include "../../utilities/simMacros.h"
+#include "../../SimFSWInterface/simFSWMacros.h"
 
+/*! @brief Structure used to define the message format of the RW voltage input  */
 typedef struct {
-    double value[SIM_MAX_EFF_CNT]; //!< RW values for the input and output
-}deviceScalarIOStruct;
+    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
+} rwVoltageInputMessage;
 
 
 

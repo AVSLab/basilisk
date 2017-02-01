@@ -100,8 +100,8 @@ def run(show_plots, voltage):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    voltageData = rwVoltageInterface.deviceScalarIOStruct()
-    voltageData.value = [voltage, voltage+1.0, voltage+1.5]
+    voltageData = rwVoltageInterface.rwVoltageInputMessage()
+    voltageData.voltage = [voltage, voltage+1.0, voltage+1.5]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                testModule.rwVoltageInMsgName,
@@ -125,7 +125,7 @@ def run(show_plots, voltage):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "value"
+    moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(testModule.rwMotorTorqueOutMsgName + '.' + moduleOutputName,
                                                   range(3))
 
