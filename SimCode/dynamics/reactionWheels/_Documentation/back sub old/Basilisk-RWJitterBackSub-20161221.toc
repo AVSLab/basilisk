@@ -6,4 +6,4 @@
 \contentsline {section}{\numberline {3}Imbalanced Reaction Wheel Back-Substitution}{2}{section.3}
 \contentsline {subsection}{\numberline {3.1}Equations of Motion}{2}{subsection.3.1}
 \contentsline {subsection}{\numberline {3.2}Derivation of Back-Substitution}{3}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}Back-Substitution Contribution Matrices}{3}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.3}Back-Substitution Contribution Matrices}{4}{subsection.3.3}

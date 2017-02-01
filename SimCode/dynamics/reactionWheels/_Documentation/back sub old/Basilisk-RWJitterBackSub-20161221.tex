@@ -149,7 +149,7 @@ The motor torque equation is
 	\\=   - J_{13_i} \omega_{w_{2_i}}\omega_{s_i}  
 	+ \omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
 	) 
-	 -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i}
+	 -m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} + \hat{\bm g}_{\text{s}_i}^T\bm{\tau}_{ext,i}
 	\label{eq:motorTorqueFinal}
 \end{multline}
 
@@ -175,12 +175,13 @@ The motor torque equation is
 \bm{b}_{\Omega_i} = - \frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}\big[(J_{11_i} + m_{\text{rw}_i} d_i^2)\hat{\bm g}_{\text{s}_i}  + J_{13_i}\hat{\bm w}_{3_i} +m_{\text{rw}_i} d_i [\tilde{\bm r}_{W_i/B}]\hat{\bm{w}}_{3_i}\big]
 \end{equation}
 
-\begin{equation}
+\begin{multline}
 c_{\Omega_i} = \frac{1}{J_{11_i} + m_{\text{rw}_i} d_i^2}  \Big( 
 \omega_{w_{2_i}} \omega_{w_{3_i}} (J_{22_i} - J_{33_i} - m_{\text{rw}_i} d_i^2
 ) - J_{13_i} \omega_{w_{2_i}}\omega_{s_i}  
--m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} \Big)
-\end{equation}
+\\
+-m_{\text{rw}_i} d_i \hat{\bm{w}}_{3_i}^T [\tilde{\bm\omega}_{\cal B/N}] [\tilde{\bm\omega}_{\cal B/N}] \bm r_{W_i/B} + u_{s_i} + \hat{\bm g}_{\text{s}_i}^T\bm{\tau}_{ext,i}\Big)
+\end{multline}
 
 \begin{equation}
 \dot{\Omega}_i = \bm{a}_{\Omega_i}^T\ddot{\bm r}_{B/N} + \bm{b}_{\Omega_i}^T\dot{\bm\omega}_{\cal B/N} + c_{\Omega_i}
