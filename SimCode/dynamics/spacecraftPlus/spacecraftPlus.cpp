@@ -316,17 +316,15 @@ void SpacecraftPlus::integrateState(double time)
 	double localTimeStep = time - timePrevious;
 
     // - Find v_CN_N before integration for accumulated DV
-    Eigen::Vector3d oldV_BN_N;  // - V_BN_N before integration
+    Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
     Eigen::Vector3d oldV_CN_N;  // - V_CN_N before integration
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
-    Eigen::Matrix3d oldDcm_NB;  // - dcm_NB before integration
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
-    oldV_BN_N = this->hubV_N->getState();
     oldC_B = *this->c_B;
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
-    oldDcm_NB = oldSigma_BN.toRotationMatrix();
+    Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*((Eigen::Vector3d) this->hubOmega_BN_B->getState()).cross(oldC_B);
 
     // - Integrate the state forward in time
@@ -343,16 +341,14 @@ void SpacecraftPlus::integrateState(double time)
     }
 
     // - Find v_CN_N after the integration for accumulated DV
-    Eigen::Vector3d newV_BN_N;  // - V_BN_N after integration
+    Eigen::Vector3d newV_BN_N = this->hubV_N->getState(); // - V_BN_N after integration
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
     Eigen::Vector3d newC_B;     // - Center of mass offset after integration
     Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
-    Eigen::Matrix3d newDcm_NB;  // - dcm_NB after integration
     // - Get center of mass, v_BN_N and dcm_NB
     newC_B = *this->c_B;
-    newV_BN_N = this->hubV_N->getState();
     newSigma_BN = sigmaBNLoc;
-    newDcm_NB = newSigma_BN.toRotationMatrix();
+    Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
     newV_CN_N = newV_BN_N + newDcm_NB*((Eigen::Vector3d) this->hubOmega_BN_B->getState()).cross(newC_B);
 
     // - Find change in velocity
@@ -380,20 +376,15 @@ void SpacecraftPlus::integrateState(double time)
 void SpacecraftPlus::computeEnergyMomentum(double time)
 {
     // - Grab values from state Manager
-    Eigen::Vector3d rLocal_BN_N;
-    Eigen::Vector3d rDotLocal_BN_N;
+    Eigen::Vector3d rLocal_BN_N = hubR_N->getState();
+    Eigen::Vector3d rDotLocal_BN_N = hubV_N->getState();
     Eigen::MRPd sigmaLocal_BN;
-    Eigen::Vector3d omegaLocal_BN_B;
-    rLocal_BN_N = hubR_N->getState();
-    rDotLocal_BN_N = hubV_N->getState();
+    Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getState();
     sigmaLocal_BN = (Eigen::Vector3d ) hubSigma->getState();
-    omegaLocal_BN_B = hubOmega_BN_B->getState();
 
     // - Find DCM's
-    Eigen::Matrix3d dcmLocal_NB;
-    Eigen::Matrix3d dcmLocal_BN;
-    dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
-    dcmLocal_BN = dcmLocal_NB.transpose();
+    Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
+    Eigen::Matrix3d dcmLocal_BN = dcmLocal_NB.transpose();
 
     // - Convert from inertial frame to body frame
     Eigen::Vector3d rBNLocal_B;
