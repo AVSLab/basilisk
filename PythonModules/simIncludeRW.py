@@ -216,8 +216,8 @@ def Honeywell_HR16(RW):
     small = 50
     if options.maxMomentum == large:
         RW.mass = 12.0
-        RW.U_s = 0.#4.8E-6
-        RW.U_d = 0.#15.4E-7
+        RW.U_s = 4.8E-6
+        RW.U_d = 15.4E-7
     elif options.maxMomentum == medium:
         RW.mass = 10.4
         RW.U_s = 3.8E-6
