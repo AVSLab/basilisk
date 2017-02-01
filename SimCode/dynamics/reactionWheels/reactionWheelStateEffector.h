@@ -108,6 +108,7 @@ public:
     
 public:
 	std::vector<ReactionWheelConfigData> ReactionWheelData;     //!< -- RW information
+    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output

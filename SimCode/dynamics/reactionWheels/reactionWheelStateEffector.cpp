@@ -60,6 +60,7 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
 	this->hubSigma = statesIn.getStateObject("hubSigma");
 	this->hubOmega = statesIn.getStateObject("hubOmega");
 	this->hubVelocity = statesIn.getStateObject("hubVelocity");
+    this->g_N = statesIn.getPropertyReference("g_N");
 
 	return;
 }
@@ -171,6 +172,20 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	double omegaw3;
 	double dSquared;
 	double OmegaSquared;
+    Eigen::MRPd sigmaBNLocal;
+    Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
+    Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
+    Eigen::Vector3d gravityTorquePntW_B;          /* torque of gravity on HRB about Pnt H */
+    Eigen::Vector3d gLocal_N;                          /* gravitational acceleration in N frame */
+    Eigen::Vector3d g_B;                          /* gravitational acceleration in B frame */
+    gLocal_N = *this->g_N;
+
+    //! - Find dcm_BN
+    sigmaBNLocal = (Eigen::Vector3d )this->hubSigma->getState();
+    dcm_NB = sigmaBNLocal.toRotationMatrix();
+    dcm_BN = dcm_NB.transpose();
+    //! - Map gravity to body frame
+    g_B = dcm_BN*gLocal_N;
 
 	omegaLoc_BN_B = this->hubOmega->getState();
 
@@ -200,11 +215,13 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 			omegaw2 = RWIt->w2Hat_B.transpose()*omegaLoc_BN_B;
 			omegaw3 = RWIt->w3Hat_B.transpose()*omegaLoc_BN_B;
 
+            gravityTorquePntW_B = RWIt->d*RWIt->w2Hat_B.cross(RWIt->mass*g_B);
+
 			dSquared = RWIt->d * RWIt->d;
 
 			RWIt->aOmega = -RWIt->mass*RWIt->d/(RWIt->Js + RWIt->mass*dSquared) * RWIt->w3Hat_B;
 			RWIt->bOmega = -1.0/(RWIt->Js + RWIt->mass*dSquared)*((RWIt->Js+RWIt->mass*dSquared)*RWIt->gsHat_B + RWIt->J13*RWIt->w3Hat_B + RWIt->mass*RWIt->d*RWIt->rWB_B.cross(RWIt->w3Hat_B));
-			RWIt->cOmega = 1.0/(RWIt->Js + RWIt->mass*dSquared)*(omegaw2*omegaw3*(-RWIt->mass*dSquared)-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+RWIt->u_current);
+			RWIt->cOmega = 1.0/(RWIt->Js + RWIt->mass*dSquared)*(omegaw2*omegaw3*(-RWIt->mass*dSquared)-RWIt->J13*omegaw2*omegas-RWIt->mass*RWIt->d*RWIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(RWIt->rWB_B))+RWIt->u_current + RWIt->gsHat_B.dot(gravityTorquePntW_B));
 
 			matrixAcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->aOmega.transpose();
 			matrixBcontr += RWIt->mass * RWIt->d * RWIt->w3Hat_B * RWIt->bOmega.transpose();

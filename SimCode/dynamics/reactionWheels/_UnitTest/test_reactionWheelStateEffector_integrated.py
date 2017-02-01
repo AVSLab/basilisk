@@ -123,29 +123,30 @@ def test_reactionWheelIntegratedTest(show_plots,testCase):
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
     
-    # unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    # unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    # unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    # unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    # unitTestSim.earthGravBody.isCentralBody = True
-    # unitTestSim.earthGravBody.useSphericalHarmParams = False
+    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.isCentralBody = True
+    unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    # earthEphemData = spice_interface.SpicePlanetState()
-    # earthEphemData.J2000Current = 0.0
-    # earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    # earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    # earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    # earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    # earthEphemData.PlanetName = "earth"
+    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData.J2000Current = 0.0
+    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    earthEphemData.PlanetName = "earth"
 
-    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
+    # log data
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
-    # msgSize = earthEphemData.getStructSize()
-    # unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-    #     unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    # unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+    msgSize = earthEphemData.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     unitTestSim.InitializeSimulation()
 
