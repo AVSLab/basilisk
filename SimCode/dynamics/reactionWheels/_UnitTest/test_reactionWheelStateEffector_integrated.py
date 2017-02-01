@@ -151,7 +151,7 @@ def test_reactionWheelIntegratedTest(show_plots):
     omegaRef.setState([[0.001], [-0.01], [0.03]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 2.5

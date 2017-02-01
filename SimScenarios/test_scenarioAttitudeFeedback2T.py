@@ -279,7 +279,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
          0., 800., 0.,
          0., 0., 600.]
     scObject.hub.mHub = 750.0                   # kg - spacecraft mass
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]] # m - position vector of body-fixed point B relative to CM
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = True

@@ -20,26 +20,24 @@
 #ifndef DYNAMIC_EFFECTOR_H
 #define DYNAMIC_EFFECTOR_H
 
-#include "dynParamManager.h"
 #include <Eigen/Dense>
+#include "dynParamManager.h"
 
-/*! @brief Abstract class that is used to implement an effector impacting a dynamic body 
-           that does not itself maintain a state or represent a changing component of
-           the body (for example: gravity, thrusters, solar radiation pressure, etc.)
- */
+/*! @brief Abstract class that is used to implement an effector impacting a dynamic body that does not itself maintain a
+    state or represent a changing component of the body (for example: gravity, thrusters, SRP, etc.) */
 class DynamicEffector {
 public:
-    DynamicEffector();
-    virtual ~DynamicEffector();
-    virtual void linkInStates(DynParamManager& states) = 0;
-    virtual void computeBodyForceTorque(double integTime)=0;
-    virtual void computeStateContribution(double integTime);
+    DynamicEffector();                      //!< -- Constructor
+    virtual ~DynamicEffector();             //!< -- Destructor
+    virtual void computeStateContribution(double integTime); 
+    virtual void linkInStates(DynParamManager& states) = 0;  //!< -- Method to get access to other states/stateEffectors
+    virtual void computeBodyForceTorque(double integTime) = 0;  //!< -- Method to computeForce and torque on the body
     
 public:
-    Eigen::VectorXd stateDerivContribution; //! [-] DynamicEffectors contribution to a stateEffector
-    Eigen::Vector3d forceExternal_N;      //! [-] External force applied by this effector in inertial frame components
-    Eigen::Vector3d forceExternal_B;      //! [-] External force applied by this effector in body frame components
-    Eigen::Vector3d torqueExternalPntB_B; //! [-] External torque applied by this effector
+    Eigen::VectorXd stateDerivContribution; //!< -- DynamicEffectors contribution to a stateEffector
+    Eigen::Vector3d forceExternal_N;        //!< [N] External force applied by this effector in inertial components
+    Eigen::Vector3d forceExternal_B;        //!< [N] External force applied by this effector in body frame components
+    Eigen::Vector3d torqueExternalPntB_B;   //!< [Nm] External torque applied by this effector
 };
 
 #endif /* DYNAMIC_EFFECTOR_H */

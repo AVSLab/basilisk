@@ -142,7 +142,7 @@ def test_singleGravityBody(show_plots):
     velRef.setState((velStart.reshape(3,1)).tolist())
     
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 50.0
@@ -290,7 +290,7 @@ def test_multiBodyGravity(show_plots):
     velRef.setState((velStart.reshape(3,1)).tolist())
     
     scObject.hub.mHub = 100
-    scObject.hub.rBcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 50.0
