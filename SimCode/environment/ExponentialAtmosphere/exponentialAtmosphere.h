@@ -21,9 +21,9 @@
 #ifndef EXPONENTIAL_ATMOSPHERE_H
 #define EXPONENTIAL_ATMOSPHERE_H
 
-#include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../_GeneralModuleFiles/stateData.h"
-#include "_GeneralModuleFiles/sys_model.h"
+#include "../../_GeneralModuleFiles/sys_model.h"
+#include "../spice/spice_planet_state.h"
+#include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -69,6 +69,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ComputeLocalAtmo(double currentTime);
+    void ComputeRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
 
 
 public:
@@ -85,12 +86,13 @@ public:
     uint64_t planetPosInMsgId;
     SCPlusOutputStateData scState;
     SpicePlanetState bodyState;
-
+    Eigen::Vector3d relativePos; //!< [-] Container for local position
 
 private:
     exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
-    Eigen::Vector3d relativePos; //!< [-] Container for local position
     double tmpPosMag;
+    uint64_t OutputBufferCount;
+    std::vector<AtmoOutputData> atmoOutBuffer; //!< -- Message buffer for thruster data
 
 };
 
