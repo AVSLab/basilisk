@@ -20,12 +20,12 @@
 #ifndef FUEL_TANK_H
 #define FUEL_TANK_H
 
+#include <vector>
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
 #include "fuelSloshParticle.h"
-#include <vector>
 
 /*! @brief This class is an instantiation of the stateEffector abstract class and implements an effector representing a 
  fuel tank. This fuel tank has one state associated with it and is the mass of the fuel inside the tank */

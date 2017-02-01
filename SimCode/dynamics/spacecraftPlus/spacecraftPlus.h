@@ -19,17 +19,18 @@
 
 #ifndef SPACECRAFT_PLUS_H
 #define SPACECRAFT_PLUS_H
+
+#include <vector>
+#include <stdint.h>
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "hubEffector.h"
 #include "../_GeneralModuleFiles/gravityEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include <vector>
-#include <stdint.h>
 #include "spacecraftPlusMsg.h"
+#include "hubEffector.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and
  dynamicEffectors attached to it. The spacecraftPlus allows for just translation, just rotation, or both translation and

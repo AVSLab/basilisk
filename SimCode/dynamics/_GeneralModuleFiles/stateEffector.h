@@ -20,8 +20,8 @@
 #ifndef STATE_EFFECTOR_H
 #define STATE_EFFECTOR_H
 
-#include "dynParamManager.h"
 #include <Eigen/Dense>
+#include "dynParamManager.h"
 
 /*! @brief Abstract class that is used to implement an effector attached to the dynamicObject that has a state that
  needs to be integrated. For example: reaction wheels, flexing solar panels, fuel slosh etc */

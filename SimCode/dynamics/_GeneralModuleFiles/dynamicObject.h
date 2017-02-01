@@ -20,13 +20,13 @@
 #ifndef DYNAMICOBJECT_H
 #define DYNAMICOBJECT_H
 
+#include <vector>
+#include <stdint.h>
 #include "dynParamManager.h"
 #include "stateEffector.h"
 #include "dynamicEffector.h"
 #include "stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include <vector>
-#include <stdint.h>
 
 /*! @brief Object that is to be used by an integrator. This holds the equations of motion, integrate state, energy and
     momentum calculations. dynamicObject is what puts all of the pieces together for your system */

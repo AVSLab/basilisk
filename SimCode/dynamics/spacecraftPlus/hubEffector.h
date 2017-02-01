@@ -20,9 +20,9 @@
 #ifndef HUB_EFFECTOR_H
 #define HUB_EFFECTOR_H
 
+#include <Eigen/Dense>
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
-#include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief This class is an instantiation of the stateEffector abstract class and is for the hub of the s/c. The hub

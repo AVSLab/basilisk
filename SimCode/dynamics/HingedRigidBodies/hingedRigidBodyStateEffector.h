@@ -20,10 +20,10 @@
 #ifndef HINGED_RIGID_BODY_STATE_EFFECTOR_H
 #define HINGED_RIGID_BODY_STATE_EFFECTOR_H
 
+#include <Eigen/Dense>
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include <Eigen/Dense>
 #include "../SimCode/utilities/avsEigenMRP.h"
 
 /*! @brief This class is an instantiation of the stateEffector class and is a hinged rigid body effector. This effector
