@@ -177,10 +177,10 @@ void SpacecraftPlus::initializeDynamics()
     this->hub.registerStates(this->dynManager);
     
     // - Loop through stateEffectors to register their states
-    std::vector<StateEffector*>::iterator it;
-    for(it = this->states.begin(); it != this->states.end(); it++)
+    std::vector<StateEffector*>::iterator stateIt;
+    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
     {
-        (*it)->registerStates(this->dynManager);
+        (*stateIt)->registerStates(this->dynManager);
     }
     
     // - Link in states for the spaceCraftPlus, gravity and the hub
@@ -189,9 +189,9 @@ void SpacecraftPlus::initializeDynamics()
     this->hub.linkInStates(this->dynManager);
     
     // - Loop through the stateEffectros to link in the states needed
-    for(it = this->states.begin(); it != this->states.end(); it++)
+    for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
     {
-        (*it)->linkInStates(this->dynManager);
+        (*stateIt)->linkInStates(this->dynManager);
     }
     
     // - Loop through the dynamicEffectors to link in the states needed
