@@ -28,10 +28,14 @@ z
    </g>
    <g id="line2d_1">
 <<<<<<< develop
+<<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 56.192516 
 =======
     <path clip-path="url(#p31f2affef1)" d="M 67.811094 56.192516 
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 56.192516 
+>>>>>>> [BSK-535] Draft implementation of dragEffector
 L 70.908243 61.236763 
 L 74.005391 65.950845 
 L 77.10254 70.35127 
@@ -134,10 +138,14 @@ L 371.33168 74.393201
    </g>
    <g id="line2d_2">
 <<<<<<< develop
+<<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 18.082022 
 =======
     <path clip-path="url(#p31f2affef1)" d="M 67.811094 18.082022 
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 18.082022 
+>>>>>>> [BSK-535] Draft implementation of dragEffector
 L 70.908243 18.090496 
 L 74.005391 18.506104 
 L 77.10254 19.226585 
@@ -240,10 +248,14 @@ L 371.33168 112.54411
    </g>
    <g id="line2d_3">
 <<<<<<< develop
+<<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 41.782437 
 =======
     <path clip-path="url(#p31f2affef1)" d="M 67.811094 41.782437 
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 41.782437 
+>>>>>>> [BSK-535] Draft implementation of dragEffector
 L 70.908243 41.782437 
 L 74.005391 41.782437 
 L 77.10254 41.782437 
@@ -371,6 +383,7 @@ L 67.811094 17.315156
        <path d="M 0 0 
 L 0 -4 
 <<<<<<< develop
+<<<<<<< develop
 " id="m2efe8cbd87" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
@@ -381,12 +394,19 @@ L 0 -4
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+" id="m2efe8cbd87" style="stroke:#000000;stroke-width:0.5;"/>
+      </defs>
+      <g>
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_5">
       <defs>
        <path d="M 0 0 
 L 0 4 
+<<<<<<< develop
 <<<<<<< develop
 " id="me995062c12" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
@@ -398,6 +418,12 @@ L 0 4
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+" id="me995062c12" style="stroke:#000000;stroke-width:0.5;"/>
+      </defs>
+      <g>
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_1">
@@ -440,19 +466,27 @@ z
      <g id="line2d_6">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_7">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_2">
@@ -483,19 +517,27 @@ z
      <g id="line2d_8">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_9">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_3">
@@ -536,19 +578,27 @@ Q 31.109375 20.453125 19.1875 8.296875
      <g id="line2d_10">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_11">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_4">
@@ -597,19 +647,27 @@ Q 46.96875 40.921875 40.578125 39.3125
      <g id="line2d_12">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_13">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_5">
@@ -644,19 +702,27 @@ z
      <g id="line2d_14">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_15">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_6">
@@ -698,19 +764,27 @@ z
      <g id="line2d_16">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_17">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_7">
@@ -756,19 +830,27 @@ Q 48.484375 72.75 52.59375 71.296875
      <g id="line2d_18">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_19">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_8">
@@ -795,19 +877,27 @@ z
      <g id="line2d_20">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_21">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#me995062c12" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m9d551a8983" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_9">
@@ -1088,6 +1178,7 @@ z
        <path d="M 0 0 
 L 4 0 
 <<<<<<< develop
+<<<<<<< develop
 " id="m53ed107d6b" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
@@ -1098,12 +1189,19 @@ L 4 0
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+" id="m53ed107d6b" style="stroke:#000000;stroke-width:0.5;"/>
+      </defs>
+      <g>
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_23">
       <defs>
        <path d="M 0 0 
 L -4 0 
+<<<<<<< develop
 <<<<<<< develop
 " id="m90e81a416a" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
@@ -1115,6 +1213,12 @@ L -4 0
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+" id="m90e81a416a" style="stroke:#000000;stroke-width:0.5;"/>
+      </defs>
+      <g>
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="139.6515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_11">
@@ -1141,19 +1245,27 @@ z
      <g id="line2d_24">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="115.18428125"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="115.18428125"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="115.18428125"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_25">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="115.18428125"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="115.18428125"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="115.18428125"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_12">
@@ -1172,19 +1284,27 @@ z
      <g id="line2d_26">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="90.717"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="90.717"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="90.717"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_27">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="90.717"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="90.717"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="90.717"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_13">
@@ -1203,19 +1323,27 @@ z
      <g id="line2d_28">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="66.24971875"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="66.24971875"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="66.24971875"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_29">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="66.24971875"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="66.24971875"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="66.24971875"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_14">
@@ -1234,19 +1362,27 @@ z
      <g id="line2d_30">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="41.7824375"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="41.7824375"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="41.7824375"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_31">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="41.7824375"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="41.7824375"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="41.7824375"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_15">
@@ -1260,19 +1396,27 @@ z
      <g id="line2d_32">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="line2d_33">
       <g>
 <<<<<<< develop
+<<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="17.31515625"/>
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#md1a01080e0" y="17.31515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="17.31515625"/>
+>>>>>>> [BSK-535] Draft implementation of dragEffector
       </g>
      </g>
      <g id="text_16">
@@ -1744,10 +1888,14 @@ z
  </g>
  <defs>
 <<<<<<< develop
+<<<<<<< develop
   <clipPath id="p801eb26173">
 =======
   <clipPath id="p31f2affef1">
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
+=======
+  <clipPath id="p801eb26173">
+>>>>>>> [BSK-535] Draft implementation of dragEffector
    <rect height="122.33640625" width="326.0725" x="67.81109375" y="17.31515625"/>
   </clipPath>
  </defs>
