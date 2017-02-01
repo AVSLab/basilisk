@@ -49,6 +49,9 @@ import macros
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
 del(T.LATEX_ESCAPE_RULES[u'\\'])
+del(T.LATEX_ESCAPE_RULES[u'_'])
+del(T.LATEX_ESCAPE_RULES[u'{'])
+del(T.LATEX_ESCAPE_RULES[u'}'])
 from tabulate import *
 
 

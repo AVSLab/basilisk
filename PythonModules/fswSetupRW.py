@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import rwConfigData
 import vehicleConfigData
-
+import numpy
 
 
 rwList = []
@@ -44,15 +44,23 @@ rwList = []
 #
 def create(
         gsHat_S,
-        Js
+        Js,
+        uMax = numpy.NaN
     ):
     global rwList
 
     # create the blank RW object
     RW = vehicleConfigData.RWConfigurationElement()
 
+    norm = numpy.linalg.norm(gsHat_S)
+    if norm > 1e-10:
+        gsHat_S = gsHat_S / norm
+    else:
+        print 'Error: RW gsHat input must be non-zero 3x1 vector'
+        exit(1)
 
     RW.gsHat_S = gsHat_S
+    RW.uMax = uMax
     RW.Js = Js
 
     # add RW to the list of RW devices
@@ -70,13 +78,16 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
 
     GsMatrix_B = []
     JsList = []
+    uMaxList = []
     for rw in rwList:
         GsMatrix_B.extend(rw.gsHat_S)
         JsList.extend([rw.Js])
+        uMaxList.extend([rw.uMax])
 
     rwConfigParams = rwConfigData.RWConfigParams()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
+    rwConfigParams.uMax = uMaxList
     rwConfigParams.numRW = len(rwList)
 
     messageSize = rwConfigParams.getStructSize()
