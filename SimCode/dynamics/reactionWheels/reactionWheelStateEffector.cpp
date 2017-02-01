@@ -99,12 +99,15 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
 
 void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 {
-
-	std::vector<ReactionWheelConfigData>::iterator RWIt;
-	Eigen::Matrix3d rTildeWcB_B;
-    int thetaCount;
-
-    thetaCount = 0;
+    // - Zero the mass props information because these will be accumulated during this call
+    this->effProps.mEff = 0.;
+    this->effProps.rCB_B.setZero();
+    this->effProps.IEffPntB_B.setZero();
+    this->effProps.rPrimeCB_B.setZero();
+    this->effProps.IEffPrimePntB_B.setZero();
+    
+    int thetaCount = 0;
+    std::vector<ReactionWheelConfigData>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		if (RWIt->RWModel == JitterFullyCoupled) {

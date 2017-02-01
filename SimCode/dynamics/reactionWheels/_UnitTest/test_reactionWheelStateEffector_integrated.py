@@ -91,20 +91,21 @@ def test_reactionWheelIntegratedTest(show_plots,testCase):
     simIncludeRW.create(
             'Honeywell_HR16',
             [1,0,0],                # gsHat_S
-            0.0                     # RPM
+            30.,                     # RPM
+            [0.1,0.,0.]
             )
     simIncludeRW.create(
             'Honeywell_HR16',
             [0,1,0],                # gsHat_S
-            0.0                     # RPM
+            20.,                     # RPM
+            [0.,0.1,0.]
             )
     simIncludeRW.create(
             'Honeywell_HR16',
             [0,0,1],                # gsHat_S
-            0.0,                    # RPM
-            [0.5,0.5,0.5]           # r_S (optional)
+            15.,                    # RPM
+            [0.,0.,0.1]
             )
-
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
@@ -159,18 +160,27 @@ def test_reactionWheelIntegratedTest(show_plots,testCase):
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
+    omegaRef.setState([[0.000], [-0.0], [0.0]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.rBcB_B = [[0.0], [0.0], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = 2.5
+    stopTime = 0.25
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+
+    wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
+    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
+    velData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
+    sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
+
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
