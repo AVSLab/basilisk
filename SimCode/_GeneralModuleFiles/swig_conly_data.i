@@ -37,7 +37,7 @@
         if (PyNumber_Check(o)) {
             temp[i] = (type) PyFloat_AsDouble(o);
         } else {
-            resOut = SWIG_ConvertPtr(o, &blankPtr,SWIGTYPE_p_ ## type, 0 |  0 );
+            resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
             if (!SWIG_IsOK(resOut)) {
                 SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failure.  Good luck.\n");
                 return NULL;
@@ -60,7 +60,7 @@
     $result = PyList_New(0);
     PyObject *locOutObj = 0;
     for (i = 0; i < $1_dim0; i++) {
-        locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
+        locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
         
         if(PyNumber_Check(locOutObj)){
             PyObject *outObject = PyFloat_FromDouble((double) $1[i]);
@@ -160,7 +160,7 @@ ARRAY2ASLIST(unsigned int)
     memset(temp, 0x0, $1_dim0*sizeof(type));
     for (i = 0; i < PySequence_Length($input); i++) {
         PyObject *o = PySequence_GetItem($input,i);
-        resOut = SWIG_ConvertPtr(o, &blankPtr,SWIGTYPE_p_ ## type, 0 |  0 );
+        resOut = SWIG_ConvertPtr(o, &blankPtr,$1_descriptor, 0 |  0 );
         if (!SWIG_IsOK(resOut)) {
             SWIG_exception_fail(SWIG_ArgError(resOut), "Could not convert that type into a pointer for some reason.  This is an ugly SWIG failur Good luck.\n");
             return NULL;
@@ -182,7 +182,7 @@ ARRAY2ASLIST(unsigned int)
     int i;
     $result = PyList_New($1_dim0);
     for (i = 0; i < $1_dim0; i++) {
-        PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), SWIGTYPE_p_ ## type, 0 |  0 );
+        PyObject *locOutObj = SWIG_NewPointerObj(SWIG_as_voidptr(&($1[i])), $1_descriptor, 0 |  0 );
         PyList_SetItem($result, i, locOutObj);
     }
 }
