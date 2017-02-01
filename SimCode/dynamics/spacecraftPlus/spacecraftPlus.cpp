@@ -310,10 +310,10 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
 /*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
  calculate the accumulated deltaV */
-void SpacecraftPlus::integrateState(double t)
+void SpacecraftPlus::integrateState(double time)
 {
     // - Find the time step
-	double localTimeStep = t - timePrevious;
+	double localTimeStep = time - timePrevious;
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N;  // - V_BN_N before integration
@@ -330,8 +330,8 @@ void SpacecraftPlus::integrateState(double t)
     oldV_CN_N = oldV_BN_N + oldDcm_NB*((Eigen::Vector3d) this->hubOmega_BN_B->getState()).cross(oldC_B);
 
     // - Integrate the state forward in time
-	this->integrator->integrate(t, localTimeStep);
-	this->timePrevious = t;     // - copy the current time into previous time for next integrate state call
+	this->integrator->integrate(time, localTimeStep);
+	this->timePrevious = time;     // - copy the current time into previous time for next integrate state call
     
     // Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
@@ -369,7 +369,7 @@ void SpacecraftPlus::integrateState(double t)
     this->dvAccum_B += dcm_BN*dV_N;
 
     // - Compute Energy and Momentum
-    this->computeEnergyMomentum(t);
+    this->computeEnergyMomentum(time);
 
     return;
 }
@@ -377,7 +377,7 @@ void SpacecraftPlus::integrateState(double t)
 /*! This method is used to find the total energy and momentum of the spacecraft. It finds the total orbital energy,
  total orbital angular momentum, total rotational energy and total rotational angular momentum. These values are used 
  for validation purposes. */
-void SpacecraftPlus::computeEnergyMomentum(double t)
+void SpacecraftPlus::computeEnergyMomentum(double time)
 {
     // - Grab values from state Manager
     Eigen::Vector3d rLocal_BN_N;
@@ -421,7 +421,7 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
     double mSCLocal = 0.0;
 
     // - Get the hubs contribution
-    this->hub.updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
+    this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
     mSCLocal += this->hub.effProps.mEff;
     cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
@@ -436,13 +436,13 @@ void SpacecraftPlus::computeEnergyMomentum(double t)
         this->rotEnergyContr = 0.0;
 
         // - Add in effectors mass props into mass props of spacecraft
-        (*it)->updateEffectorMassProps(t);
+        (*it)->updateEffectorMassProps(time);
         mSCLocal += (*it)->effProps.mEff;
         cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
 
         // - Call energy and momentum calulations for stateEffectors
-        (*it)->updateEnergyMomContributions(t, this->rotAngMomPntCContr_B, this->rotEnergyContr);
+        (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
         totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
         this->totRotEnergy += this->rotEnergyContr;
     }
