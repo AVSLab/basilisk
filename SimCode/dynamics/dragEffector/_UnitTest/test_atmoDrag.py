@@ -60,7 +60,6 @@ import spacecraftPlus
 import gravityEffector
 import simIncludeGravity
 import exponentialAtmosphere
-import dragDynamicEffector
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -103,26 +102,11 @@ def run():
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
-    #   Set drag parameters
-    dragCoeff = 20
-    projArea = 100
-
-    #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     newAtmo.ModelTag = "ExpAtmo"
     atmoTaskName = "atmosphere"
-    dragEffector = dragDynamicEffector.DragDynamicEffector()
-    dragEffector.ModelTag = "DragEff"
-    dragEffectorTaskName = "drag"
-    dragEffector.SetArea(projArea)
-    dragEffector.SetDragCoeff(dragCoeff)
-
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
-    scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
-
     #
     #   setup the simulation tasks/objects
     #
@@ -173,14 +157,14 @@ def run():
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(10.0*P)
+    simulationTime = macros.sec2nano(2.0*P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
 
 
-    numDataPoints = 1000
+    numDataPoints = 600
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
@@ -276,7 +260,7 @@ def run():
     plt.ylabel('$i_p$ Cord. [km]')
     plt.grid()
 
-    plt.figure()
+    plt.figure(2)
     fig = plt.gcf()
     ax = fig.gca()
     ax.ticklabel_format(useOffset=False, style='plain')
