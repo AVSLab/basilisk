@@ -62,8 +62,6 @@ import gravityEffector
 import simIncludeGravity
 import exponentialAtmosphere
 import dragDynamicEffector
-import unitTestSupport
-#print dir(exponentialAtmosphere)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -130,21 +128,26 @@ def run(show_plots, orbitCase, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
+
+    #   Set drag parameters
+    dragCoeff = 20
+    projArea = 100
+
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
+    atmoTaskName = "atmosphere"
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    #dragEffector.ModelTag = "DragEff"
-    #dragEffectorTaskName = "drag"
-    #dragEffector.SetArea(projArea)
-    #dragEffector.SetDragCoeff(dragCoeff)
+    dragEffector.ModelTag = "DragEff"
+    dragEffectorTaskName = "drag"
+    dragEffector.SetArea(projArea)
+    dragEffector.SetDragCoeff(dragCoeff)
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    #dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
+    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
-    #scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
-
+    scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
 
     #
     #   setup the simulation tasks/objects
@@ -221,14 +224,14 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(0.5*P)
+    simulationTime = macros.sec2nano(10.0*P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
 
 
-    numDataPoints = 10
+    numDataPoints = 1000
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
@@ -339,19 +342,19 @@ def run(show_plots, orbitCase, planetCase):
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
 
-        plt.figure()
-        fig = plt.gcf()
-        ax = fig.gca()
-        ax.ticklabel_format(useOffset=False, style='plain')
-        smaData = []
-        for idx in range(0, len(posData)):
-            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
-            smaData.append(oeData.a/1000.)
-        plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
-                 ,color='#aa0000',
-                 )
-        plt.xlabel('Time [orbits]')
-        plt.ylabel('SMA [km]')
+    plt.figure()
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    smaData = []
+    for idx in range(0, len(posData)):
+        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+        smaData.append(oeData.a/1000.)
+    plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
+             ,color='#aa0000',
+             )
+    plt.xlabel('Time [orbits]')
+    plt.ylabel('SMA [km]')
 
         plt.figure()
         fig = plt.gcf()

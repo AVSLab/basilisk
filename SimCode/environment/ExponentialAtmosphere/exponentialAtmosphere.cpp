@@ -35,7 +35,7 @@
 #include <iostream>
 #include <cmath>
 
-ExponentialAtmosphere::ExponentialAtmosphere()
+ExponentialAtmosphere::ExponentialAtmosphere(uint64_t numInstances)
 {
     this->planetName = "Earth";
     this->planetPosInMsgName = "spice_planet_output_data";
