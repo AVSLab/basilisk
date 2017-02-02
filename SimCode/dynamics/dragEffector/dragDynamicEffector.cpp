@@ -122,6 +122,16 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
     this->hubVelocity = states.getStateObject("hubVelocity");
 }
 
+void DragDynamicEffector::SetArea(double newArea){
+  this->coreParams.projectedArea = newArea;
+  return;
+}
+
+void DragDynamicEffector::SetDragCoeff(double newCoeff){
+  this->coreParams.projectedArea = newCoeff;
+  return;
+}
+
 void DragDynamicEffector::ComputeDragDir(){
   this->locInertialVel = this->hubVelocity->getState();
   this->dragDirection = -(this->locInertialVel / this->locInertialVel.norm());

@@ -84,6 +84,8 @@ public:
     void CannonballDrag();
     void PlateDrag();
     void ComputeDragDir();
+    void SetArea(double newArea);
+    void SetDragCoeff(double newCoeff);
 
 public:
     DragBaseData coreParams;

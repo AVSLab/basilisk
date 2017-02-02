@@ -35,20 +35,20 @@
 #include <iostream>
 #include <cmath>
 
-ExponentialAtmosphere::ExponentialAtmosphere()
+ExponentialAtmosphere::ExponentialAtmosphere(uint64_t numInstances)
 {
     this->planetName = "Earth";
     this->atmoDensOutMsgName = "base_atmo_props";
     this->scStateInMsgName = "inertial_state_output";
     this->planetPosInMsgName = "spice_planet_output_data";
-    this->OutputBufferCount = 1;
+    this->OutputBufferCount = 2;
     //! Set the default atmospheric properties to those of Earth
     this->atmosphereProps.baseDensity = 1.207;
     this->atmosphereProps.scaleHeight = 8500.0;
     this->atmosphereProps.planetRadius = 6.371 * 1000000.0;
     this->localAtmoDens = this->atmosphereProps.baseDensity;
     this->localAtmoTemp = 293.0; // Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
-
+    this->numModels = numInstances;
     this->relativePos.fill(0.0);
     this->tmpAtmo.neutralDensity = this->localAtmoDens;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
@@ -161,16 +161,16 @@ void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState& planetState, SC
     {
       for(iter = 0; iter < 3; iter++)
       {
-        std::cout<<"Planet State: "<<planetState.PositionVector[iter]<<std::endl;
-        std::cout<<"SC State:"<<scState.r_BN_N[iter]<<std::endl;
+        //std::cout<<"Planet State: "<<planetState.PositionVector[iter]<<std::endl;
+        //td::cout<<"SC State:"<<scState.r_BN_N[iter]<<std::endl;
         this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
-        std::cout<<relativePos[iter,0]<<std::endl;
+        //std::cout<<relativePos[iter,0]<<std::endl;
       }
     }
     else{
       this->relativePos[iter,0] = scState.r_BN_N[iter];
     }
-    std::cout<<"Relative Pos: "<<this->relativePos <<std::endl;
+    //std::cout<<"Relative Pos: "<<this->relativePos <<std::endl;
     return;
 }
 
