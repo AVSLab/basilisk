@@ -36,8 +36,6 @@ mpl.rc('figure', autolayout=True)
 
 if platform.system() == 'Darwin':
     mpl.use('MacOSX')
-else:
-    mpl.use('TkAgg')
 
 
 

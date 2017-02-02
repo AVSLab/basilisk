@@ -83,13 +83,13 @@ ARRAYASLIST(unsigned int)
 %define ARRAY2ASLIST(type)
 
 %typemap(in) type [ANY][ANY] (type temp[$1_dim0][$1_dim1]) {
-
+    int i;
     if(!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a list of lists!  Does not appear to be that.");
         return NULL;
     }
     int rowLength = 0;
-    for(int i=0; i<PySequence_Length($input); i++){
+    for(i=0; i<PySequence_Length($input); i++){
         PyObject *obj = PySequence_GetItem($input, i);
         if(!PySequence_Check($input)) {
             printf("Row bad in matrix: %d\n", i);
@@ -104,7 +104,8 @@ ARRAYASLIST(unsigned int)
             printf("Row bad in matrix: %d\n", i);
             PyErr_SetString(PyExc_ValueError,"All rows must be the same length!");
         }
-        for(int j=0; j<rowLength; j++)
+        int j;
+        for(j=0; j<rowLength; j++)
         {
             temp[i][j] = PyFloat_AsDouble(PySequence_GetItem(obj, j));
         }

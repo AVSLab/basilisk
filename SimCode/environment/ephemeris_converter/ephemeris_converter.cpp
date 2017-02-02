@@ -19,6 +19,7 @@
 #include "environment/ephemeris_converter/ephemeris_converter.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
+#include <string.h>
 
 EphemerisConverter::EphemerisConverter()
 {
