@@ -16,20 +16,13 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-//
-//  simMacros.h
-//  Defines commonly used macros in the simulation code
-////
 
-#ifndef simMacros_H
-#define simMacros_H
+#ifndef SIM_FSW_MACROS_H
+#define SIM_FSW_MACROS_H
 
-/*
- Declare common ADCS macros
- */
-#define NANO2SEC        1.0E-9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
+#define MAX_EFF_CNT 36
+
+
 
 
 

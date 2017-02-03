@@ -18,6 +18,7 @@ project("${DIR_NAME_STRING}")
 file(GLOB_RECURSE swig_modules RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.i")
 get_property(LIBRARY_BUILD_LIST GLOBAL PROPERTY BUILT_LIB_LIST)
 get_property(ALG_LIST GLOBAL PROPERTY ALG_LIB_LIST)
+get_property(INTER_FILES GLOBAL PROPERTY SYS_INTER_FILES)
 
 foreach(module ${swig_modules})
     get_filename_component(FileBase ${module} NAME_WE)
@@ -51,7 +52,7 @@ foreach(module ${swig_modules})
 	
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${FileDir})
 	set_property(SOURCE ${module} PROPERTY SWIG_FLAGS "-I${CMAKE_SOURCE_DIR}/SimCode/_GeneralModuleFiles" "-I${CMAKE_CURRENT_SOURCE_DIR}/${FileDir}/")
-	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files})
+	set(SWIG_MODULE_${FileBase}_EXTRA_DEPS ${impl_files} ${gen_files} ${INTER_FILES})
     SWIG_ADD_MODULE(${FileBase} python ${module} ${impl_files} ${gen_files})
     SWIG_LINK_LIBRARIES(${FileBase} ${PYTHON_LIBRARIES})
     
