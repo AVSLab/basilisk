@@ -702,7 +702,7 @@ def synchronizeTimeHistories(arrayList):
     outputArrayList = [[]]*len(returnArrayList)
     timeNow = returnArrayList[0][0,0]
 
-    outputArrayList[0] = returnArrayList[0][0:-1, :]
+    outputArrayList[0] = returnArrayList[0][0:-2, :]
     for i in range(1, returnArrayList[0].shape[0]-1):
         for j in range(1, len(returnArrayList)):
             while(returnArrayList[j][indexPrev[j]+1,0] < returnArrayList[0][i,0]):
