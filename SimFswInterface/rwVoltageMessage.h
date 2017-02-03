@@ -16,20 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-//
-//  simMacros.h
-//  Defines commonly used macros in the simulation code
-////
 
-#ifndef simMacros_H
-#define simMacros_H
+#ifndef SIM_RW_VOLTAGE_INPUT_H
+#define SIM_RW_VOLTAGE_INPUT_H
 
-/*
- Declare common ADCS macros
- */
-#define NANO2SEC        1.0E-9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
+#include "../../SimFSWInterface/simFSWMacros.h"
+
+/*! @brief Structure used to define the message format of the RW voltage input  */
+typedef struct {
+    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
+} rwVoltageInputMessage;
+
+
 
 
 

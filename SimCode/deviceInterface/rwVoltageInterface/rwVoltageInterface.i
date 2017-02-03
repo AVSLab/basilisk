@@ -16,22 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-//
-//  simMacros.h
-//  Defines commonly used macros in the simulation code
-////
+%module rwVoltageInterface
+%{
+   #include "rwVoltageInterface.h"
+%}
 
-#ifndef simMacros_H
-#define simMacros_H
+%include "swig_common_model.i"
 
-/*
- Declare common ADCS macros
- */
-#define NANO2SEC        1.0E-9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-
-
-
-
-#endif
+%include "sys_model.h"
+%include "rwVoltageInterface.h"
+%include "../../../SimFswInterface/rwVoltageMessage.h"
+%include "../../../SimFswInterface/rwTorqueMessage.h"
+GEN_SIZEOF(rwVoltageInputMessage);
+%pythoncode %{
+import sys
+protectAllClasses(sys.modules[__name__])
+%}

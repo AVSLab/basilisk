@@ -30,9 +30,14 @@ import sys, os, inspect
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('ADCSAlgorithms')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
+bskName = 'Basilisk'
+splitPath = path.split(bskName)
+bskPath = splitPath[0] + '/' + bskName + '/'
+# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
+# following line and specify the absolute bath to the Basilisk folder
+#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
+sys.path.append(bskPath + 'modules')
+sys.path.append(bskPath + 'PythonModules')
 
 # Import all of the modules that we are going to be called in this simulation
 import SimulationBaseClass
@@ -108,11 +113,7 @@ def fswModuleTestFunction(plotFixture, show_plots):
 
     # Construct algorithm and associated C++ container
     moduleConfig = fswModuleTemplate.fswModuleTemplateConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        fswModuleTemplate.Update_fswModuleTemplate,     # update with current values
-                                        fswModuleTemplate.SelfInit_fswModuleTemplate,   # update with current values
-                                        fswModuleTemplate.CrossInit_fswModuleTemplate, # update with current values
-                                        fswModuleTemplate.Reset_fswModuleTemplate)  # update with current values
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "fswModuleTemplate"           # update python name of test module
 
     # Add test module to runtime call list
@@ -127,17 +128,11 @@ def fswModuleTestFunction(plotFixture, show_plots):
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
     inputMessageData = MRP_Steering.vehControlOut()     # Create a structure for the input message
-    inputMessageSize = inputMessageData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          2)            # number of buffers (leave at 2 as default, don't make zero)
-
     inputMessageData.torqueRequestBody = [1.0, -0.5, 0.7]       # Set up a list as a 3-vector
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.dataInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          inputMessageData)             # write data into the simulator
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               moduleConfig.dataInMsgName,
+                               inputMessageData)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.dataOutMsgName, testProcessRate)

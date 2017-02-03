@@ -16,20 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-//
-//  simMacros.h
-//  Defines commonly used macros in the simulation code
-////
 
-#ifndef simMacros_H
-#define simMacros_H
+#ifndef FSW_RW_TORQUE_H
+#define FSW_RW_TORQUE_H
 
-/*
- Declare common ADCS macros
- */
-#define NANO2SEC        1.0E-9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
+#include "../../SimFSWInterface/simFSWMacros.h"
+
+/*! @brief Structure used to define the output definition for vehicle effectors*/
+typedef struct {
+    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
+}fswRWTorque;
+
+
 
 
 
