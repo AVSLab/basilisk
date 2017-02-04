@@ -41,7 +41,6 @@ import math
 #Import all of the modules that we are going to call in this simulation
 import simple_nav
 import spice_interface
-import spacecraftPlus
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
@@ -135,7 +134,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
     spiceMessage = spice_interface.SpicePlanetState()
-    stateMessage = spacecraftPlus.SCPlusOutputStateData()
+    stateMessage = simple_nav.SCPlusStatesMessage()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 

@@ -22,9 +22,9 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "environment/spice/spice_interface.h"
 #include <random>
+#include "simMessages/scPlusStatesMessage.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -100,7 +100,7 @@ private:
     int64_t InputStateID;            //!< [-] Connect to input time message
     int64_t OutputDataID;            //!< [-] Connect to output CSS data
     SpicePlanetState SunData;        //!< [-] Unused for now, but including it for future
-    SCPlusOutputStateData StateCurrent;    //!< [-] Current SSBI-relative state
+    SCPlusStatesMessage StateCurrent;//!< [-] Current SSBI-relative state
     std::default_random_engine rgen; //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;  //! [-] Random number distribution
 };

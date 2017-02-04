@@ -22,9 +22,10 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include <random>
 #include "utilities/gauss_markov.h"
+#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusMassPropsMessage.h"
 
 typedef struct{
     double DVFramePlatform[3];      //!< m/s Accumulated DVs in platform
@@ -82,11 +83,11 @@ private:
     int64_t InputMassID;                /// -- Message ID for the mass properties
     int64_t OutputDataID;               /// -- Connect to output CSS data
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
-    SCPlusOutputStateData StatePrevious;      /// -- Previous state to delta in IMU
-    SCPlusOutputStateData StateCurrent;       /// -- Current SSBI-relative state
-    SCPlusMassPropsData MassCurrent;          /// -- Current mass props for the vehicle
-	GaussMarkov errorModelAccel;           //!< [-] Gauss-markov error states
-	GaussMarkov errorModelGyro;           //!< [-] Gauss-markov error states
+    SCPlusStatesMessage StatePrevious;  /// -- Previous state to delta in IMU
+    SCPlusStatesMessage StateCurrent;   /// -- Current SSBI-relative state
+    SCPlusMassPropsMessage MassCurrent; /// -- Current mass props for the vehicle
+	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
+	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
 };
 
 #endif

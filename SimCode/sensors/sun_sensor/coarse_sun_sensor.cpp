@@ -147,7 +147,7 @@ bool CoarseSunSensor::LinkMessages()
     InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
         sizeof(SpicePlanetState), moduleID);
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusOutputStateData), moduleID);
+        sizeof(SCPlusStatesMessage), moduleID);
     
     //! - If both messages are valid, return true, otherwise warnd and return false
     if(InputSunID >= 0 && InputStateID >= 0)
@@ -171,7 +171,7 @@ void CoarseSunSensor::readInputMessages()
     
     //! - Zero ephemeris information
     memset(&SunData, 0x0, sizeof(SpicePlanetState));
-    memset(&StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&StateCurrent, 0x0, sizeof(SCPlusStatesMessage));
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(InputSunID >= 0)
     {
@@ -182,7 +182,7 @@ void CoarseSunSensor::readInputMessages()
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
 }
 

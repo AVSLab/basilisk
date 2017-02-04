@@ -28,17 +28,17 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
 #include "architecture/messaging/system_messaging.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "simMessages/rwConfigMessage.h"
 #include "dynamics/Thrusters/thrusterDynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_planet_state.h"
 #include "environment/spice/spice_interface.h"
-#include "../SimFswInterface/rwSpeedMessage.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
+#include "simMessages/rwConfigMessage.h"
+#include "simMessages/scPlusStatesMessage.h"
+#include "../SimFswInterface/rwSpeedMessage.h"
 
 #define IP_BASE_PORT         50000
 #define MAX_CONNECT_ATTEMPTS 5
@@ -93,7 +93,7 @@ private:
     std::string UTCCalInit;
     std::string stateInMsgName;
     uint64_t stateInMsgId;
-    SCPlusOutputStateData stateInMsgBuffer;
+    SCPlusStatesMessage stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
     SpicePlanetState sunEphmInMsgBuffer;

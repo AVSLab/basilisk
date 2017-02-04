@@ -17,37 +17,16 @@
 
  */
 
-#ifndef _SPACECRAFT_PLUS_MSG_HH_
-#define _SPACECRAFT_PLUS_MSG_HH_
+#ifndef SC_PLUS_MASS_PROPS_MESSAGE_H
+#define SC_PLUS_MASS_PROPS_MESSAGE_H
 
-#include <string>
-#include <cstring>
-#include <stdint.h>
-#include <Eigen/Dense>
-/*! \addtogroup Sim Utility Group
- * @{
- */
-
-/*! This structure is used in the messaging system to communicate what the mass 
-    properties of the vehicle are currently.*/
+/*! @brief This structure is used in the messaging system to communicate what the mass
+ properties of the vehicle are currently.*/
 typedef struct {
     double massSC;                   //!< kg   Current spacecraft mass
     double c_B[3];                   //!< m    Center of mass of spacecraft with respect to point B
     double ISC_PntB_B[3][3];         //!< kgm2 Inertia tensor of spacecraft (relative to body)
-}SCPlusMassPropsData;
+}SCPlusMassPropsMessage;
 
-/*! This structure is used in the messaging system to communicate what the 
-    state of the vehicle is currently.*/
-typedef struct {
-	double r_BN_N[3];                 //!< m  Current position vector (inertial)
-	double v_BN_N[3];                 //!< m/s Current velocity vector (inertial)
-    double sigma_BN[3];               //!< -- Current MRPs (inertial)
-	double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
-	double dcm_BS[3][3];              //!< -- Transformation from str to body
-	double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
-    uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
-}SCPlusOutputStateData;
 
-/*! @} */
-
-#endif /* _SPACECRAFT_PLUS_MSG_HH_ */
+#endif

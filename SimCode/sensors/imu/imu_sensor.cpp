@@ -35,8 +35,8 @@ ImuSensor::ImuSensor()
     this->InputMassMsg = "spacecraft_mass_props";
     this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&this->StatePrevious, 0x0, sizeof(SCPlusOutputStateData));
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesMessage));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesMessage));
     this->PreviousTime = 0;
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
@@ -110,9 +110,9 @@ void ImuSensor::SelfInit()
 void ImuSensor::CrossInit()
 {
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusOutputStateData), moduleID);
+        sizeof(SCPlusStatesMessage), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
-        sizeof(SCPlusMassPropsData), moduleID);
+        sizeof(SCPlusMassPropsMessage), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
@@ -126,17 +126,17 @@ void ImuSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
     
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesMessage));
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
-    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsData));
+    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsMessage));
     if(InputMassID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(SCPlusMassPropsData), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
+                                                    sizeof(SCPlusMassPropsMessage), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
     }
 }
 
@@ -324,7 +324,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
-    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusOutputStateData));
+    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusStatesMessage));
     PreviousTime = CurrentSimNanos;
     NominalReady = true;
 }

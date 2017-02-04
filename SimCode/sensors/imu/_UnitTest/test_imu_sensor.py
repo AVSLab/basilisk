@@ -46,7 +46,6 @@ import macros
 import imu_sensor
 import sim_model
 import RigidBodyKinematics as rbk
-import spacecraftPlus
 
 np.random.seed(2000000)
 
@@ -132,13 +131,13 @@ def unitSimIMU(show_plots, useFlag, testCase):
     setRandomWalk(ImuSensor)
 
     # configure MassPropsData
-    MassPropsData = spacecraftPlus.SCPlusMassPropsData()
+    MassPropsData = imu_sensor.SCPlusMassPropsMessage()
     MassPropsData.massSC = -97.9
     MassPropsData.c_B = [0,0,0]
     MassPropsData.ISC_PntB_B = [[100.0, 0.0, 0.0], [0.0, 100.0, 0.0], [0.0, 0.0, 100.0]] 
 
     # configure module input message
-    StateCurrent = spacecraftPlus.SCPlusOutputStateData()
+    StateCurrent = imu_sensor.SCPlusStatesMessage()
     StateCurrent.r_BN_N = [0,0,0]
     StateCurrent.v_BN_N = [0,0,0]
     StateCurrent.sigma_BN = np.array([0,0,0])

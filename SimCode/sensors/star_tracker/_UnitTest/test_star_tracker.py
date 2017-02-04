@@ -45,7 +45,6 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
 import star_tracker
-import spacecraftPlus
 import sim_model
 import RigidBodyKinematics as rbk
 import spice_interface
@@ -105,7 +104,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = spacecraftPlus.SCPlusOutputStateData()
+    OutputStateData = star_tracker.SCPlusStatesMessage()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = np.array([0,0,0])

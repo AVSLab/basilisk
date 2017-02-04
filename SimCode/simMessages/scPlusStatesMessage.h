@@ -16,21 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module simple_nav
-%{
-   #include "simple_nav.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef SC_PLUS_STATE_MESSAGE_H
+#define SC_PLUS_STATE_MESSAGE_H
 
-%include "sys_model.h"
-%include "simple_nav.h"
-%include "../../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
-%include "simMessages/scPlusStatesMessage.h"
-GEN_SIZEOF(SCPlusStatesMessage);
-GEN_SIZEOF(NavAttOut);
-GEN_SIZEOF(NavTransOut);
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief This structure is used in the messaging system to communicate what the
+ state of the vehicle is currently.*/
+typedef struct {
+    double r_BN_N[3];                 //!< m  Current position vector (inertial)
+    double v_BN_N[3];                 //!< m/s Current velocity vector (inertial)
+    double sigma_BN[3];               //!< -- Current MRPs (inertial)
+    double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
+    double dcm_BS[3][3];              //!< -- Transformation from str to body
+    double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
+    uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
+}SCPlusStatesMessage;
+
+
+
+
+#endif
