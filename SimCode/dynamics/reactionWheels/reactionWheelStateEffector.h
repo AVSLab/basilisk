@@ -38,9 +38,6 @@
            the body (for example: gravity, thrusters, solar radiation pressure, etc.)
  */
 
-typedef struct {
-	double wheelPositions[MAX_EFF_CNT];
-}RWConfigOutputData;
 
 typedef struct {
 	double u_cmd; //!< [N-m], torque command for RW
