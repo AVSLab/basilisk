@@ -62,7 +62,7 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                      sizeof(RWConfigParams), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
-        sizeof(RWSpeedData), moduleID);
+        sizeof(RWSpeedMessage), moduleID);
     
     
 }
@@ -181,10 +181,10 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     }
     
     ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
-        sizeof(RWSpeedData), &(ConfigData->rwSpeeds), moduleID);
+        sizeof(RWSpeedMessage), &(ConfigData->rwSpeeds), moduleID);
     if(ConfigData->firstPassComplete == 0)
     {
-        memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedData));
+        memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedMessage));
         ConfigData->firstPassComplete = 1;
     }
     
@@ -222,7 +222,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(InertialMeasOut),
                  &inertialDataOutBuffer, moduleID);
     
-    memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedData));
+    memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedMessage));
     
     return;
 }

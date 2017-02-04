@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/navStateOut.h"
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "rwConfigData/rwConfigData.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "SimFswInterface/rwSpeedMessage.h"
 #include <stdint.h>
 
 #define AKF_N_STATES 6
@@ -93,9 +93,9 @@ typedef struct {
 	NavAttOut outputInertial;   /*!< -- Output inertial estimate data */
     STOutputData stSensorIn; /*!< [-] ST sensor data read in from message bus*/
     RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
-    RWSpeedData rwSpeeds;         /*! [-] Local reaction wheel speeds */
-    RWSpeedData rwSpeedPrev;         /*! [-] Local reaction wheel speeds */
-    vehicleConfigData localConfigData; /*! [-] Vehicle configuration data*/
+    RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */
+    RWSpeedMessage rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
+    vehicleConfigData localConfigData;   /*! [-] Vehicle configuration data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

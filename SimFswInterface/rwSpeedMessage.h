@@ -17,17 +17,15 @@
 
  */
 
-#ifndef FSW_RW_TORQUE_H
-#define FSW_RW_TORQUE_H
+#ifndef RW_SPEED_MESSAGE_STRUCT_H
+#define RW_SPEED_MESSAGE_STRUCT_H
 
-#include "../../SimFswInterface/simFSWMacros.h"
+#include "simFSWMacros.h"
 
-/*! @brief Structure used to define the output definition for vehicle effectors*/
+/*! @brief Structure used to define the output definition for reaction wheel speeds*/
 typedef struct {
-    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
-}fswRWTorque;
-
-
+    double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the RW wheel
+}RWSpeedMessage;
 
 
 

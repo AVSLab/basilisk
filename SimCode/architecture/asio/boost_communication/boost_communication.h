@@ -29,14 +29,14 @@
 #include <boost/thread.hpp>
 #include "architecture/messaging/system_messaging.h"
 #include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "dynamics/reactionWheels/reactionWheelStateEffector.h"
+#include "simMessages/rwConfigMessage.h"
 #include "dynamics/Thrusters/thrusterDynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include "environment/spice/spice_planet_state.h"
 #include "environment/spice/spice_interface.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "../SimFswInterface/rwSpeedMessage.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
 
@@ -112,7 +112,7 @@ private:
 
     std::vector<std::string> rwInMsgNames;
     std::vector<uint64_t> rwInMsgIds;
-    std::vector<ReactionWheelConfigData> reactionWheels;
+    std::vector<ReactionWheelConfigMessage> reactionWheels;
     
     std::vector<std::string> thrusterInMsgNames;
     std::vector<uint64_t> thrusterInMsgIds;

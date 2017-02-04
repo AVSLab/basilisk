@@ -55,14 +55,14 @@ def listStack(vec,simStopTime,unitProcRate):
 
 def writeNewRWCmds(self,u_cmd,numRW):
     NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
-    cmds = reactionWheelStateEffector.RWCmdStruct()
+    cmds = reactionWheelStateEffector.RWCmdMessage()
     for i in range(0,numRW):
         cmds.u_cmd = u_cmd[i]
         NewRWCmdsVec[i] = cmds # set the data
         self.NewRWCmds = NewRWCmdsVec # set in module
 
 def defaultReactionWheel():
-    RW = reactionWheelStateEffector.ReactionWheelConfigData()
+    RW = reactionWheelStateEffector.ReactionWheelConfigMessage()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]

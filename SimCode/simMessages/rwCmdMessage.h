@@ -17,17 +17,14 @@
 
  */
 
-#ifndef SIM_RW_VOLTAGE_INPUT_H
-#define SIM_RW_VOLTAGE_INPUT_H
+#ifndef SIM_RW_CMD_H
+#define SIM_RW_CMD_H
 
-#include "../../SimFswInterface/simFSWMacros.h"
 
-/*! @brief Structure used to define the message format of the RW voltage input  */
+/*! @brief Structure used to define the individual RW motor torque command message*/
 typedef struct {
-    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
-} rwVoltageInputMessage;
-
-
+    double u_cmd; //!< N-m, torque command for individual RW
+}RWCmdMessage;
 
 
 

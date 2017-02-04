@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include <stdint.h>
 #include <stdlib.h>

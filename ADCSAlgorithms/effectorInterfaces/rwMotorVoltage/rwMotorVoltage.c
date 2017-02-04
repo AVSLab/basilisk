@@ -72,7 +72,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
                                                      sizeof(RWConfigParams), moduleID);
     if (strlen(ConfigData->inputRWSpeedsInMsgName) > 0) {
         ConfigData->inputRWSpeedsInMsgID = subscribeToMessage(ConfigData->inputRWSpeedsInMsgName,
-                                                         sizeof(RWSpeedData), moduleID);
+                                                         sizeof(RWSpeedMessage), moduleID);
     }
     if(strlen(ConfigData->rwAvailInMsgName) > 0) {
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
@@ -115,7 +115,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     uint32_t            readSize;
     uint32_t            rwArrayMemorySize;
     double              voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
-    RWSpeedData         rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
+    RWSpeedMessage      rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
     RWAvailabilityData  rwAvailability;             /*!< []    Reaction wheel availability */
     double              dt;                         /*!< [s]   control update period */
     double              Omega_dot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
@@ -127,7 +127,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
                 sizeof(vehEffectorOut), (void*) torqueCmd, moduleID);
     if (ConfigData->inputRWSpeedsInMsgID >= 0) {
         ReadMessage(ConfigData->inputRWSpeedsInMsgID, &clockTime, &readSize,
-                    sizeof(RWSpeedData), (void*) &(rwSpeed), moduleID);
+                    sizeof(RWSpeedMessage), (void*) &(rwSpeed), moduleID);
     }
     memset(rwAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if (ConfigData->rwAvailInMsgID >= 0){

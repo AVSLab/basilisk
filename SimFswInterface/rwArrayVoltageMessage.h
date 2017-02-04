@@ -16,26 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwNullSpace
-%{
-   #include "rwNullSpace.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_rwNullSpace(void*, uint64_t, uint64_t);
-%ignore Update_rwNullSpace;
-%constant void SelfInit_rwNullSpace(void*, uint64_t);
-%ignore SelfInit_rwNullSpace;
-%constant void CrossInit_rwNullSpace(void*, uint64_t);
-%ignore CrossInit_rwNullSpace;
-%constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
-%ignore Reset_rwNullSpace;
-GEN_SIZEOF(rwNullSpaceConfig);
-GEN_SIZEOF(RWSpeedMessage);
-%include "rwNullSpace.h"
-%include "../../../SimFswInterface/rwSpeedMessage.h"
-%include "../_GeneralModuleFiles/rwDeviceStates.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef SIM_RW_VOLTAGE_INPUT_H
+#define SIM_RW_VOLTAGE_INPUT_H
+
+#include "../../SimFswInterface/simFSWMacros.h"
+
+/*! @brief Structure used to define the message format of the RW voltage input  */
+typedef struct {
+    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
+} RWArrayVoltageMessage;
+
+
+
+
+
+
+#endif

@@ -17,22 +17,19 @@
 
  */
 
-#ifndef _RW_SPEED_DATA_H_
-#define _RW_SPEED_DATA_H_
+#ifndef FSW_RW_TORQUE_H
+#define FSW_RW_TORQUE_H
 
-#include <stdint.h>
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "../../SimFswInterface/simFSWMacros.h"
 
-
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
-
-/*! @brief Structure used to define the output definition for reaction wheel speeds*/
+/*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-	double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocity of the wheel
-}RWSpeedData;
+    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
+}RWArrayTorqueMessage;
 
-/*! @} */
+
+
+
+
 
 #endif

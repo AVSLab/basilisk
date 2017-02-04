@@ -26,7 +26,7 @@
 
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 
@@ -66,7 +66,7 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
     ConfigData->rwConfInMsgID = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
                                                   sizeof(RWConfigParams), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
-                                                     sizeof(RWSpeedData), moduleID);
+                                                     sizeof(RWSpeedMessage), moduleID);
     ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
                                                               sizeof(vehicleConfigData), moduleID);
 }
@@ -102,7 +102,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    RWSpeedData         rwSpeedMsg;         /*!< Reaction wheel speed estimates */
+    RWSpeedMessage      rwSpeedMsg;         /*!< Reaction wheel speed estimates */
     double              hs;                 /*!< net RW cluster angularl momentum magnitude */
     double              hs_B[3];            /*!< RW angular momentum */
     double              vec3[3];            /*!< temp vector */
@@ -113,7 +113,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 
         /*! - Read the input messages */
         ReadMessage(ConfigData->rwSpeedsInMsgID, &clockTime, &readSize,
-                    sizeof(RWSpeedData), (void*) &(rwSpeedMsg), moduleID);
+                    sizeof(RWSpeedMessage), (void*) &(rwSpeedMsg), moduleID);
 
         /* compute net RW momentum magnitude */
         v3SetZero(hs_B);

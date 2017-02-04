@@ -30,7 +30,7 @@
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "SimFswInterface/rwSpeedMessage.h"
 #include <string.h>
 #include <math.h>
 

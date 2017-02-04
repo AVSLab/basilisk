@@ -78,7 +78,7 @@ def create(
     global options
 
     # create the blank RW object
-    RW = reactionWheelStateEffector.ReactionWheelConfigData()
+    RW = reactionWheelStateEffector.ReactionWheelConfigMessage()
 
     # populate the RW object with the type specific parameters
     try:

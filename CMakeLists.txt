@@ -265,6 +265,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 add_subdirectory("SimFswInterface")
 add_subdirectory("SimCode/utilities")
+add_subdirectory("SimCode/simMessages")
 add_subdirectory("SimCode")
 add_subdirectory("ADCSAlgorithms/messaging")
 add_subdirectory("ADCSAlgorithms")

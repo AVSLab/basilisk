@@ -34,7 +34,7 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorTorqueConfig);
 GEN_SIZEOF(RWAvailabilityData);
 %include "rwMotorTorque.h"
-%include "../_GeneralModuleFiles/rwSpeedData.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../ADCSUtilities/ADCSDefinitions.h"
 

@@ -30,16 +30,20 @@
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
-%include "../../../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
+%include "../../simMessages/rwCmdMessage.h"
+%include "../../simMessages/rwConfigMessage.h"
+%include "../../../SimFswInterface/simFSWMacros.h"
+%include "../../../SimFswInterface/rwArrayTorqueMessage.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
 
 namespace std {
-    %template(RWConfigVector) vector<ReactionWheelConfigData>;
-	%template(RWCmdVector) vector<RWCmdStruct>;
+    %template(RWConfigVector) vector<ReactionWheelConfigMessage>;
+	%template(RWCmdVector) vector<RWCmdMessage>;
 }
-
+GEN_SIZEOF(RWArrayTorqueMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

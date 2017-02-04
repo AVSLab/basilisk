@@ -29,7 +29,7 @@
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "SimFswInterface/rwSpeedMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 
 #include <string.h>
@@ -73,7 +73,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
                                                        sizeof(RWConfigParams), moduleID);
         if (strlen(ConfigData->inputRWSpeedsName) > 0) {
         ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
-                                                         sizeof(RWSpeedData), moduleID);
+                                                         sizeof(RWSpeedMessage), moduleID);
         } else {
             printf("Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
@@ -128,7 +128,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     attGuidOut          guidCmd;            /*!< Guidance Message */
-    RWSpeedData         wheelSpeeds;        /*!< Reaction wheel speed estimates */
+    RWSpeedMessage      wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityData  wheelsAvailability; /*!< Reaction wheel availability */
 
     uint64_t            clockTime;
@@ -154,7 +154,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if(ConfigData->rwConfigParams.numRW > 0) {
         ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                    sizeof(RWSpeedData), (void*) &(wheelSpeeds), moduleID);
+                    sizeof(RWSpeedMessage), (void*) &(wheelSpeeds), moduleID);
         if (ConfigData->rwAvailInMsgID >= 0){
             ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
                         sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);

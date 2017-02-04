@@ -147,7 +147,7 @@ def subModuleTestFunction(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = rwNullSpace.RWSpeedData()
+    rwSpeedMessage = rwNullSpace.RWSpeedMessage()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,

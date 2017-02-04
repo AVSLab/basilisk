@@ -73,7 +73,7 @@ void OpenGLIO::CrossInit()
     int i;
     for (i = 0; i < this->rwInMsgNames.size(); i++)
     {
-        this->rwInMsgIds.push_back(messageSys->subscribeToMessage(this->rwInMsgNames.at(i), sizeof(ReactionWheelConfigData), moduleID));
+        this->rwInMsgIds.push_back(messageSys->subscribeToMessage(this->rwInMsgNames.at(i), sizeof(ReactionWheelConfigMessage), moduleID));
     }
     this->reactionWheels.resize(i);
     
@@ -137,10 +137,10 @@ void OpenGLIO::readInputMessages()
     messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
     messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
     
-    ReactionWheelConfigData tmpWheelData;
+    ReactionWheelConfigMessage tmpWheelData;
     for (int i = 0; i < this->reactionWheels.size(); i++)
     {
-        messageSys->ReadMessage(this->rwInMsgIds.at(i), &localHeader, sizeof(ReactionWheelConfigData), reinterpret_cast<uint8_t*> (&tmpWheelData));
+        messageSys->ReadMessage(this->rwInMsgIds.at(i), &localHeader, sizeof(ReactionWheelConfigMessage), reinterpret_cast<uint8_t*> (&tmpWheelData));
         this->reactionWheels.at(i) = tmpWheelData;
     }
     
