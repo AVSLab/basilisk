@@ -120,8 +120,8 @@ void CoarseSunSensor::SelfInit()
     if(OutputDataMsg != "")
     {
         OutputDataID = SystemMessaging::GetInstance()->
-            CreateNewMessage(OutputDataMsg, sizeof(CSSRawOutputData),
-            OutputBufferCount, "CSSRawOutputData", moduleID);
+            CreateNewMessage(OutputDataMsg, sizeof(CSSRawDataMessage),
+            OutputBufferCount, "CSSRawDataMessage", moduleID);
     }
 }
 
@@ -251,14 +251,14 @@ void CoarseSunSensor::scaleSensorValues()
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     //! Begin Method Steps
-    CSSRawOutputData LocalMessage;
+    CSSRawDataMessage LocalMessage;
     //! - Zero the output message
-    memset(&LocalMessage, 0x0, sizeof(CSSRawOutputData));
+    memset(&LocalMessage, 0x0, sizeof(CSSRawDataMessage));
     //! - Set the outgoing data to the scaled computation
     LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
-                                                 sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
+                                                 sizeof(CSSRawDataMessage), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 /*! This method is called at a specified rate by the architecture.  It makes the 
     calls to compute the current sun information and write the output message for 
@@ -308,13 +308,13 @@ void CSSConstellation::SelfInit()
     {
         it->SelfInit();
     }
-    outputBuffer = new CSSRawOutputData[MAX_NUM_CSS_SENSORS];
-    memset(outputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData));
+    outputBuffer = new CSSRawDataMessage[MAX_NUM_CSS_SENSORS];
+    memset(outputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSRawDataMessage));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSRawOutputData)*maxNumCSSSensors, outputBufferCount,
-        "CSSRawOutputData", moduleID);
+        sizeof(CSSRawDataMessage)*maxNumCSSSensors, outputBufferCount,
+        "CSSRawDataMessage", moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
@@ -345,5 +345,5 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         outputBuffer[it - sensorList.begin()].OutputData = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
+                                                 MAX_NUM_CSS_SENSORS*sizeof(CSSRawDataMessage), reinterpret_cast<uint8_t *>(outputBuffer));
 }

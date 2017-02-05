@@ -16,22 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module coarse_sun_sensor
-%{
-   #include "coarse_sun_sensor.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef SIM_CSS_RAW_DATA_MESSAGE_H
+#define SIM_CSS_RAW_DATA_MESSAGE_H
 
-namespace std {
-    %template(CSSVector) vector<CoarseSunSensor>;
-}
 
-%feature("copyctor");
-%include "sys_model.h"
-%include "coarse_sun_sensor.h"
-%include "../../simMessages/cssRawDataMessage.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+//!@brief CSS raw data output message definition.
+typedef struct {
+    double OutputData;       /*!< CSS measurement output */
+}CSSRawDataMessage;
+
+
+
+
+#endif
