@@ -22,15 +22,10 @@
 
 #include <map>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../ADCSAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
 #include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/idEphemerisOutputMessage.h"
+#include "../SimFswInterface/ephemerisMessage.h"
 
-typedef struct{
-    int64_t inputID;                        //!< [-] Message ID associated with ephemeris output
-    uint64_t clockTime;                     //!< [-] Clock time associated with msg write
-    SpicePlanetStateMessage messageData;    //!< [-] Data container for message data
-    EphemerisOutputData outputData;         //!< [-] Data container for output ephemeris estimate
-} IDEphemerisOutputContainer;
 
 /*!@brief This class is used to take ephemeris data from the environmental models
         and convert it over to a FSW representation so that the ephemeris from 
@@ -55,7 +50,7 @@ public:
     std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names
     uint64_t numOutputBuffers;  //!< [-] Number of output buffers created for messages
 private:
-    std::map<int64_t, IDEphemerisOutputContainer> messageIDMap; //!< [-] Map between input/output message IDs
+    std::map<int64_t, IDEphemerisOutputMessage> messageIDMap; //!< [-] Map between input/output message IDs
 };
 
 #endif

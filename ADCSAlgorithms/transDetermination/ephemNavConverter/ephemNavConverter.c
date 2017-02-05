@@ -43,7 +43,7 @@ void CrossInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t mod
 {
 
     ConfigData->ephInMsgID = subscribeToMessage(
-        ConfigData->ephInMsgName, sizeof(EphemerisOutputData), moduleID);
+        ConfigData->ephInMsgName, sizeof(EphemerisMessage), moduleID);
 
 }
 
@@ -73,10 +73,10 @@ void Update_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTi
     
     uint64_t writeTime;
     uint32_t writeSize;
-    EphemerisOutputData localEph;
+    EphemerisMessage localEph;
     
     ReadMessage(ConfigData->ephInMsgID, &writeTime, &writeSize,
-                sizeof(EphemerisOutputData), &localEph, moduleID);
+                sizeof(EphemerisMessage), &localEph, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(NavTransOut));
 

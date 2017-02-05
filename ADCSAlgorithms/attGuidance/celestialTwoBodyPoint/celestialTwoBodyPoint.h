@@ -23,6 +23,8 @@
 #include "messaging/static_messaging.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include <stdint.h>
+#include "../SimFswInterface/ephemerisMessage.h"
+
 
 /*! \addtogroup ADCSAlgGroup
  * @{

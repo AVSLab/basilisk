@@ -36,7 +36,7 @@ void SelfInit_ephemDifference(EphemDifferenceData *ConfigData, uint64_t moduleID
     {
         ConfigData->changeBodies[i].ephOutMsgID = CreateNewMessage(
             ConfigData->changeBodies[i].ephOutMsgName,
-            sizeof(EphemerisOutputData), "EphemerisOutputData", moduleID);
+            sizeof(EphemerisMessage), "EphemerisMessage", moduleID);
     }
 }
 
@@ -52,11 +52,11 @@ void CrossInit_ephemDifference(EphemDifferenceData *ConfigData, uint64_t moduleI
     {
         ConfigData->changeBodies[i].ephInMsgID = subscribeToMessage(
                             ConfigData->changeBodies[i].ephInMsgName,
-                            sizeof(EphemerisOutputData), moduleID);
+                            sizeof(EphemerisMessage), moduleID);
     }
 
     ConfigData->ephBaseInMsgID = subscribeToMessage(
-        ConfigData->ephBaseInMsgName, sizeof(EphemerisOutputData), moduleID);
+        ConfigData->ephBaseInMsgName, sizeof(EphemerisMessage), moduleID);
 
 }
 
@@ -94,21 +94,21 @@ void Update_ephemDifference(EphemDifferenceData *ConfigData, uint64_t callTime, 
     double velBase[3];
     
     ReadMessage(ConfigData->ephBaseInMsgID, &writeTime, &writeSize,
-                sizeof(EphemerisOutputData), &ConfigData->baseEphem, moduleID);
+                sizeof(EphemerisMessage), &ConfigData->baseEphem, moduleID);
     v3Scale(ConfigData->baseScale, ConfigData->baseEphem.r_BdyZero_N, posBase);
     v3Scale(ConfigData->baseScale, ConfigData->baseEphem.v_BdyZero_N, velBase);
     
     for(i=0; i<ConfigData->ephBdyCount; i++)
     {
         ReadMessage(ConfigData->changeBodies[i].ephInMsgID, &writeTime,
-            &writeSize, sizeof(EphemerisOutputData),
+            &writeSize, sizeof(EphemerisMessage),
             &ConfigData->changeBodies[i].ephStore, moduleID);
         v3Subtract(ConfigData->changeBodies[i].ephStore.r_BdyZero_N,
                    posBase, ConfigData->changeBodies[i].ephStore.r_BdyZero_N);
         v3Subtract(ConfigData->changeBodies[i].ephStore.v_BdyZero_N,
                    velBase, ConfigData->changeBodies[i].ephStore.v_BdyZero_N);
         WriteMessage(ConfigData->changeBodies[i].ephOutMsgID, callTime,
-            sizeof(EphemerisOutputData), &ConfigData->changeBodies[i].ephStore,
+            sizeof(EphemerisMessage), &ConfigData->changeBodies[i].ephStore,
             moduleID);
     }
 

@@ -30,8 +30,10 @@
 %ignore CrossInit_velocityPoint;
 %constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
 %ignore Reset_velocityPoint;
-GEN_SIZEOF(velocityPointConfig);
 %include "velocityPoint.h"
+%include "../../SimFswInterface/ephemerisMessage.h"
+GEN_SIZEOF(velocityPointConfig);
+GEN_SIZEOF(EphemerisMessage);
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/attGuidOut.h"

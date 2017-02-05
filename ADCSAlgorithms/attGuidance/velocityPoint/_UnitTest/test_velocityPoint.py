@@ -125,7 +125,7 @@ def velocityPointTestFunction(show_plots):
     #
     #   Spice Input Message
     #
-    CelBodyData = cheby_pos_ephem.EphemerisOutputData()
+    CelBodyData = cheby_pos_ephem.EphemerisMessage()
     inputCelMessageSize = CelBodyData.getStructSize()
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,

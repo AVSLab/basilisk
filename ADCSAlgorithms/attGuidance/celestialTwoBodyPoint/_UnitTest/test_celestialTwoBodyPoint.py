@@ -167,7 +167,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Spice Input Message of Primary Body
 
-    CelBodyData = cheby_pos_ephem.EphemerisOutputData()
+    CelBodyData = cheby_pos_ephem.EphemerisMessage()
     inputSpiceMessageSize = CelBodyData.getStructSize() # Size of SpicePlanetState
 
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,

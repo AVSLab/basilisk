@@ -16,27 +16,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module ephem_difference
-%{
-   #include "ephemDifference.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Update_ephemDifference;
-%constant void SelfInit_ephemDifference(void*, uint64_t);
-%ignore SelfInit_ephemDifference;
-%constant void CrossInit_ephemDifference(void*, uint64_t);
-%ignore CrossInit_ephemDifference;
-%constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Reset_ephemDifference;
-GEN_SIZEOF(EphemerisMessage)
-STRUCTASLIST(EphemChangeConfig)
-%include "ephemDifference.h"
-%include "../../SimFswInterface/ephemerisMessage.h"
-%include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef EPHEMERIS_OUTPUT_H
+#define EPHEMERIS_OUTPUT_H
 
+
+/*! @brief Message structure used to write ephemeris states out to other modules*/
+typedef struct {
+    double r_BdyZero_N[3];          /*!< [m] Position of orbital body*/
+    double v_BdyZero_N[3];          /*!< [m/s] Velocity of orbital body*/
+    double timeTag;                 /*!< [s] vehicle Time-tag for state*/
+}EphemerisMessage;
+
+#endif

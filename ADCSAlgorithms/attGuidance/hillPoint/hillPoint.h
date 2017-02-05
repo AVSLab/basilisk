@@ -26,7 +26,7 @@
 
 /* Required module input messages */
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
+#include "../SimFswInterface/ephemerisMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

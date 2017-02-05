@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
+#include "../SimFswInterface/ephemerisMessage.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4
@@ -52,7 +53,7 @@ typedef struct {
     int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
     
-    EphemerisOutputData outputState; /*!< [-] The local storage of the outgoing message data*/
+    EphemerisMessage outputState; /*!< [-] The local storage of the outgoing message data*/
 }ChebyPosEphemData;
 
 #ifdef __cplusplus

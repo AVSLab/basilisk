@@ -34,11 +34,5 @@ typedef struct {
     double vehicleClockTime;             /*!< [s] Vehicle time code converted over to seconds */
 }TDBVehicleClockCorrelation;
 
-/*! @brief Structure used to write ephemeris states out to other modules*/
-typedef struct {
-    double r_BdyZero_N[3];          /*!< [m] Position of orbital body*/
-    double v_BdyZero_N[3];          /*!< [m/s] Velocity of orbital body*/
-    double timeTag;                 /*!< [s] vehicle Time-tag for state*/
-}EphemerisOutputData;
 
 #endif

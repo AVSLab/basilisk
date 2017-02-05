@@ -30,9 +30,9 @@
 %ignore CrossInit_ephemNavConverter;
 %constant void Reset_ephemNavConverter(void*, uint64_t, uint64_t);
 %ignore Reset_ephemNavConverter;
-GEN_SIZEOF(EphemerisOutputData)
+GEN_SIZEOF(EphemerisMessage)
 %include "ephemNavConverter.h"
-%include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
+%include "../../SimFswInterface/ephemerisMessage.h"
 %include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
 %pythoncode %{
 import sys

@@ -23,7 +23,7 @@
 #define MAX_NUM_CHANGE_BODIES 10
 
 #include "messaging/static_messaging.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
+#include "./SimFswInterface/ephemerisMessage.h"
 #include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
 typedef struct{
@@ -31,7 +31,7 @@ typedef struct{
     int32_t ephInMsgID;                      /*!< [-] Input message ID for ephemeris*/
     char ephOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the clock correlation message*/
     int32_t ephOutMsgID;                     /*!< [-] Ephemeris output message*/
-    EphemerisOutputData ephStore;            /*!< [-] Storage buffer for output information*/
+    EphemerisMessage ephStore;               /*!< [-] Storage buffer for output information*/
 }EphemChangeConfig;
 
 /*! @brief Top level structure for the converter that takes an 
@@ -45,7 +45,7 @@ typedef struct {
     uint32_t ephBdyCount;    /*!< [-] The number of ephemeris bodies we are changing*/
 
     int32_t ephBaseInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
-    EphemerisOutputData baseEphem;            /*!< [-] Storage buffer for output information*/
+    EphemerisMessage baseEphem;               /*!< [-] Storage buffer for output information*/
     
 }EphemDifferenceData;
 

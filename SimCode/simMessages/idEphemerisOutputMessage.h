@@ -16,27 +16,21 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module ephem_difference
-%{
-   #include "ephemDifference.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Update_ephemDifference;
-%constant void SelfInit_ephemDifference(void*, uint64_t);
-%ignore SelfInit_ephemDifference;
-%constant void CrossInit_ephemDifference(void*, uint64_t);
-%ignore CrossInit_ephemDifference;
-%constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
-%ignore Reset_ephemDifference;
-GEN_SIZEOF(EphemerisMessage)
-STRUCTASLIST(EphemChangeConfig)
-%include "ephemDifference.h"
-%include "../../SimFswInterface/ephemerisMessage.h"
-%include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef ID_EPHEMERIS_OUTPUT_MESSAGE_H
+#define ID_EPHEMERIS_OUTPUT_MESSAGE_H
 
+#include "../../SimFswInterface/ephemerisMessage.h"
+
+/*! @brief Message to store the converted Spice ephemeris data */
+typedef struct{
+    int64_t inputID;                        //!< [-] Message ID associated with ephemeris output
+    uint64_t clockTime;                     //!< [-] Clock time associated with msg write
+    SpicePlanetStateMessage messageData;    //!< [-] Data container for message data
+    EphemerisMessage outputData;         //!< [-] Data container for output ephemeris estimate
+} IDEphemerisOutputMessage;
+
+
+
+
+#endif

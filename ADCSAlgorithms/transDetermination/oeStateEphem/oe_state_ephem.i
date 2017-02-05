@@ -32,9 +32,10 @@
 %ignore Reset_oeStateEphem;
 STRUCTASLIST(ChebyOERecord)
 GEN_SIZEOF(TDBVehicleClockCorrelation)
-GEN_SIZEOF(EphemerisOutputData)
+GEN_SIZEOF(EphemerisMessage)
 %include "oeStateEphem.h"
 %include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
+%include "../../SimFswInterface/ephemerisMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

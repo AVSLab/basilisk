@@ -31,10 +31,12 @@
 %constant void Reset_chebyPosEphem(void*, uint64_t, uint64_t);
 %ignore Reset_chebyPosEphem;
 STRUCTASLIST(ChebyEphemRecord)
-GEN_SIZEOF(TDBVehicleClockCorrelation)
-GEN_SIZEOF(EphemerisOutputData)
 %include "chebyPosEphem.h"
+%include "../../SimFswInterface/ephemerisMessage.h"
 %include "../_GeneralModuleFiles/ephemerisInterfaceData.h"
+GEN_SIZEOF(TDBVehicleClockCorrelation)
+GEN_SIZEOF(EphemerisMessage)
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
