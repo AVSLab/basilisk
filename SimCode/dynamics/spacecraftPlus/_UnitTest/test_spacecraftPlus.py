@@ -88,7 +88,7 @@ def test_SCHubIntegratedSim(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateMessage()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
@@ -255,7 +255,7 @@ def test_gravityIntegratedSim(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateMessage()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
@@ -351,7 +351,7 @@ def test_extForceBodyAndTorque(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateMessage()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
@@ -468,7 +468,7 @@ def test_extForceInertialAndTorque(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateMessage()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]

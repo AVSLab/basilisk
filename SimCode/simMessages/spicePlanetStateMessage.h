@@ -26,7 +26,7 @@
 
 #define MAX_BODY_NAME_LENGTH 64
 
-//! The SPICE planet statate structure is the struct used to ouput planetary body states to the messaging system
+//! @brief The SPICE planet statate structure is the struct used to ouput planetary body states to the messaging system
 typedef struct {
     double J2000Current;            //!< s Time of validity for the planet state
     double PositionVector[3];       //!< m True position of the planet for the time
@@ -35,6 +35,6 @@ typedef struct {
     double J20002Pfix_dot[3][3];    //!< (-) Derivative of the orientation matrix of planet-fixed relative to inertial
     int computeOrient;              //!< (-) Flag indicating whether the reference should be computed
     char PlanetName[MAX_BODY_NAME_LENGTH];        //!< -- Name of the planet for the state
-}SpicePlanetState;
+}SpicePlanetStateMessage;
 
 #endif

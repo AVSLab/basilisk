@@ -241,7 +241,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     MarsPosEnd = MarsPosEnd * 1000.0
 
     # Get Simulated values
-    FinalMarsMessage = spice_interface.SpicePlanetState()
+    FinalMarsMessage = spice_interface.SpicePlanetStateMessage()
     TotalSim.TotalSim.GetWriteData("mars barycenter_planet_data", 120, FinalMarsMessage, 0)
     MarsPosVec = FinalMarsMessage.PositionVector
 
@@ -266,7 +266,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     EarthPosEnd = EarthPosEnd * 1000.0
 
     #Simulated Earth position values
-    FinalEarthMessage = spice_interface.SpicePlanetState()
+    FinalEarthMessage = spice_interface.SpicePlanetStateMessage()
     TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
     EarthPosVec = FinalEarthMessage.PositionVector
 
@@ -289,7 +289,7 @@ def unitSpice(testPlottingFixture, show_plots, DateSpice, DatePlot , MarsTruthPo
     SunPosEnd = SunPosEnd * 1000.0
 
     #Simulated Sun position values
-    FinalSunMessage = spice_interface.SpicePlanetState()
+    FinalSunMessage = spice_interface.SpicePlanetStateMessage()
     TotalSim.TotalSim.GetWriteData("sun_planet_data", 120, FinalSunMessage, 0)
     SunPosVec =FinalSunMessage.PositionVector
 

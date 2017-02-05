@@ -32,7 +32,6 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_planet_state.h"
 #include "environment/spice/spice_interface.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
@@ -40,6 +39,7 @@
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterface/rwSpeedMessage.h"
+#include "simMessages/spicePlanetStateMessage.h"
 
 #define IP_BASE_PORT         50000
 #define MAX_CONNECT_ATTEMPTS 5
@@ -97,15 +97,15 @@ private:
     SCPlusStatesMessage stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
-    SpicePlanetState sunEphmInMsgBuffer;
+    SpicePlanetStateMessage sunEphmInMsgBuffer;
     
     std::vector<std::string> planetInMsgNames;
     std::vector<uint64_t> planetInMsgIds;
-    std::vector<SpicePlanetState> planets;
+    std::vector<SpicePlanetStateMessage> planets;
     
     std::string centralBodyInMsgName;
     uint64_t centralBodyInMsgId;
-    SpicePlanetState centralBodyInMsgBuffer;
+    SpicePlanetStateMessage centralBodyInMsgBuffer;
     std::string spiceTimeDataInMsgName;
     uint64_t spiceTimeDataInMsgId;
     SpiceTimeOutput spiceTimeDataInMsgBuffer;

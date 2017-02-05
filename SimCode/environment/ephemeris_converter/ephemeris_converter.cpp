@@ -43,7 +43,7 @@ bool EphemerisConverter::LinkMessages()
     for(it=messageNameMap.begin(); it!= messageNameMap.end(); it++)
     {
         sourceID = SystemMessaging::GetInstance()->subscribeToMessage(it->first,
-            sizeof(SpicePlanetState), moduleID);
+            sizeof(SpicePlanetStateMessage), moduleID);
         destID = SystemMessaging::GetInstance()->FindMessageID(it->second);
         messagesFound &= (sourceID >= 0 && destID >= 0);
         mapIt = messageIDMap.find(destID);
@@ -106,7 +106,7 @@ void EphemerisConverter::readInputMessages()
     for(it=messageIDMap.begin(); it!=messageIDMap.end(); it++)
     {
         SystemMessaging::GetInstance()->ReadMessage(it->second.inputID,
-            &localHeader, sizeof(SpicePlanetState),
+            &localHeader, sizeof(SpicePlanetStateMessage),
             (uint8_t *) (&(it->second.messageData)));
         it->second.clockTime = localHeader.WriteClockNanos;
     }

@@ -161,7 +161,7 @@ void SpiceInterface::ComputeGPSData()
  */
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
-    std::map<uint32_t, SpicePlanetState>::iterator planit;
+    std::map<uint32_t, SpicePlanetStateMessage>::iterator planit;
     SpiceTimeOutput OutputData;
     //! Begin method steps
     //! - Set the members of the time output message structure and write
@@ -177,7 +177,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     for(planit = PlanetData.begin(); planit != PlanetData.end(); planit++)
     {
         SystemMessaging::GetInstance()->WriteMessage(planit->first, CurrentClock,
-                                                     sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&planit->second), moduleID);
+                                                     sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*>(&planit->second), moduleID);
     }
     
 }
@@ -213,7 +213,7 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
 void SpiceInterface::ComputePlanetData()
 {
     std::vector<std::string>::iterator it;
-    std::map<uint32_t, SpicePlanetState>::iterator planit;
+    std::map<uint32_t, SpicePlanetStateMessage>::iterator planit;
     
     //! Begin method steps
     
@@ -229,7 +229,7 @@ void SpiceInterface::ComputePlanetData()
         for(it=PlanetNames.begin(); it != PlanetNames.end(); it++)
         {
             //! <pre>       Hard limit on the maximum name length </pre>
-            SpicePlanetState NewPlanet;
+            SpicePlanetStateMessage NewPlanet;
             if(it->size() >= MAX_BODY_NAME_LENGTH)
             {
                 std::cerr << "Warning, your planet name is too long for me. ";
@@ -238,16 +238,16 @@ void SpiceInterface::ComputePlanetData()
             }
             //! <pre>       Set the new planet name and zero the other struct elements </pre>
             std::string PlanetMsgName = *it + "_planet_data";
-            memset(&NewPlanet, 0x0, sizeof(SpicePlanetState));
+            memset(&NewPlanet, 0x0, sizeof(SpicePlanetStateMessage));
             strcpy(NewPlanet.PlanetName, it->c_str());
             //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
             uint32_t MsgID = (uint32_t)SystemMessaging::GetInstance()->
-                CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
-                OutputBufferCount, "SpicePlanetState", moduleID);
+                CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetStateMessage),
+                OutputBufferCount, "SpicePlanetStateMessage", moduleID);
             std::string planetFrame = *it;
             cnmfrm_c(planetFrame.c_str(), CharBufferSize, &frmCode, name, &frmFound);
             NewPlanet.computeOrient = frmFound;
-            PlanetData.insert(std::pair<uint32_t, SpicePlanetState>
+            PlanetData.insert(std::pair<uint32_t, SpicePlanetStateMessage>
                               (MsgID, NewPlanet));
         }
         delete [] name;

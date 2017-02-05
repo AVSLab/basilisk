@@ -23,13 +23,13 @@
 #include <map>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../ADCSAlgorithms/transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
-#include "environment/spice/spice_planet_state.h"
+#include "simMessages/spicePlanetStateMessage.h"
 
 typedef struct{
-    int64_t inputID;               //!< [-] Message ID associated with ephemeris output
-    uint64_t clockTime;              //!< [-] Clock time associated with msg write
-    SpicePlanetState messageData;    //!< [-] Data container for message data
-    EphemerisOutputData outputData; //!< [-] Data container for output ephemeris estimate
+    int64_t inputID;                        //!< [-] Message ID associated with ephemeris output
+    uint64_t clockTime;                     //!< [-] Clock time associated with msg write
+    SpicePlanetStateMessage messageData;    //!< [-] Data container for message data
+    EphemerisOutputData outputData;         //!< [-] Data container for output ephemeris estimate
 } IDEphemerisOutputContainer;
 
 /*!@brief This class is used to take ephemeris data from the environmental models

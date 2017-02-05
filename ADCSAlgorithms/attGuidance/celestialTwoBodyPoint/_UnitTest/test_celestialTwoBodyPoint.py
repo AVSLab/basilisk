@@ -185,7 +185,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
     # unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
     #                                       moduleConfig.inputSecMessName,
     #                                       inputSpiceMessageSize, 2)
-    # SecBodyData = spice_interface.SpicePlanetState()
+    # SecBodyData = spice_interface.SpicePlanetStateMessage()
     # secPositionVec = [500., 500., 500.]
     # SecBodyData.PositionVector = secPositionVec
     # secVelocityVec = [0., 0., 0.]

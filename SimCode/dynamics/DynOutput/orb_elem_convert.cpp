@@ -18,9 +18,9 @@
  */
 #include "dynamics/DynOutput/orb_elem_convert.h"
 #include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_planet_state.h"
 #include <cstring>
 #include <iostream>
+#include "simMessages/spicePlanetStateMessage.h"
 
 //! The constructor.  Note that you may want to overwrite the message names.
 OrbElemConvert::OrbElemConvert()
@@ -55,9 +55,9 @@ void OrbElemConvert::SelfInit()
     
     //! Begin method steps
     //! - Determine what the size of the output should be and create the message
-	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetState) :
+	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetStateMessage) :
 		sizeof(SCPlusStatesMessage);
-	std::string stateMsgType = useEphemFormat ? "SpicePlanetState" :
+	std::string stateMsgType = useEphemFormat ? "SpicePlanetStateMessage" :
 		"OutputStateData";
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
     sizeof(classicElements);
@@ -96,7 +96,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     
     SCPlusStatesMessage LocalState;
-	SpicePlanetState localPlanet;
+	SpicePlanetStateMessage localPlanet;
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
 		reinterpret_cast<uint8_t *> (&LocalState);
     //! Begin method steps
@@ -106,7 +106,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
     {
 		if (useEphemFormat)
 		{
-			memset(&localPlanet, 0x0, sizeof(SpicePlanetState));
+			memset(&localPlanet, 0x0, sizeof(SpicePlanetStateMessage));
 			memcpy(localPlanet.PositionVector, r_N, 3 * sizeof(double));
 			memcpy(localPlanet.VelocityVector, v_N, 3 * sizeof(double));
 		}
@@ -157,7 +157,7 @@ void OrbElemConvert::ReadInputs()
     }
     classicElements LocalElements;
     SCPlusStatesMessage LocalState;
-	SpicePlanetState localPlanet;
+	SpicePlanetStateMessage localPlanet;
     SingleMessageHeader LocalHeader;
 
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :

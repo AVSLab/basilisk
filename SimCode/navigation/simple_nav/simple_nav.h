@@ -24,8 +24,8 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
-#include "environment/spice/spice_interface.h"
 #include "simMessages/scPlusStatesMessage.h"
+#include "simMEssages/spicePlanetStateMessage.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -57,7 +57,7 @@ public:
     std::vector<double> navErrors;     //!< -- Current navigation errors applied to truth
     std::string inputStateName;        //!< -- Message that contains s/c state
     std::string outputAttName;         //!< -- Message that we output state to
-    std::string outputTransName;         //!< -- Message that we output state to
+    std::string outputTransName;       //!< -- Message that we output state to
     std::string inputSunName;          //!< -- Message name for the sun state
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
@@ -65,8 +65,8 @@ public:
     NavAttOut estAttState;             //!< -- attitude nav state including errors
     NavTransOut trueTransState;        //!< -- translation nav state without errors
     NavTransOut estTransState;         //!< -- translation nav state including errors
-    SCPlusStatesMessage inertialState;     //!< -- input inertial state from Star Tracker
-    SpicePlanetState sunState;         //!< -- input Sun state
+    SCPlusStatesMessage inertialState; //!< -- input inertial state from Star Tracker
+    SpicePlanetStateMessage sunState;  //!< -- input Sun state
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

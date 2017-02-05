@@ -283,7 +283,7 @@ void GravBodyData::initBody(uint64_t moduleID)
     bool spherFound;
     spherFound = this->spherHarm.initializeParameters();
     this->bodyMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
-                    this->bodyInMsgName, sizeof(SpicePlanetState), moduleID);
+                    this->bodyInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
     this->mu = spherFound ? this->spherHarm.muBody : this->mu;
     this->radEquator = spherFound ? this->spherHarm.radEquator : this->radEquator;
     
@@ -319,7 +319,7 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
 void GravBodyData::loadEphemeris(uint64_t moduleID)
 {
     SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
-        sizeof(SpicePlanetState), reinterpret_cast<uint8_t *>(&this->localPlanet));
+        sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t *>(&this->localPlanet));
 }
 
 GravityEffector::GravityEffector()
@@ -344,7 +344,7 @@ GravityEffector::~GravityEffector()
 void GravityEffector::SelfInit()
 {
     if (this->centralBody) {
-        this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetState), 2, "SpicePlanetState", this->moduleID);
+        this->centralBodyOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->centralBodyOutMsgName, sizeof(SpicePlanetStateMessage), 2, "SpicePlanetStateMessage", this->moduleID);
     }
 }
 
@@ -380,7 +380,7 @@ void GravityEffector::UpdateState(uint64_t CurrentSimNanos)
 void GravityEffector::writeOutputMessages(uint64_t currentSimNanos)
 {
     if (this->centralBodyOutMsgId > 0) {
-        SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
+        SystemMessaging::GetInstance()->WriteMessage(this->centralBodyOutMsgId, currentSimNanos, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->centralBody->localPlanet), this->moduleID);
     }
 }
 

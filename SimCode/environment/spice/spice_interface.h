@@ -22,9 +22,9 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "environment/spice/spice_planet_state.h"
 #include "utilities/linearAlgebra.h"
 #include <map>
+#include "simMessages/spicePlanetStateMessage.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment
@@ -84,7 +84,7 @@ private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
     int64_t TimeOutMsgID;       //!< -- Output time message ID
-    std::map<uint32_t, SpicePlanetState> PlanetData; //!< -- Internal vector of planets
+    std::map<uint32_t, SpicePlanetStateMessage> PlanetData; //!< -- Internal vector of planets
     
 };
 
