@@ -59,8 +59,8 @@ void BoreAngCalc::SelfInit()
     //! - Determine what the size of the output should be and create the message
     
     AngOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataString, sizeof(AngOffValues), OutputBufferCount,
-        "AngOffValues", moduleID);
+        CreateNewMessage( OutputDataString, sizeof(AngOffValuesMessage), OutputBufferCount,
+        "AngOffValuesMessage", moduleID);
     
 }
 
@@ -85,7 +85,7 @@ void BoreAngCalc::WriteOutputMessages(uint64_t CurrentClock)
     //! Begin method steps
     
     SystemMessaging::GetInstance()->WriteMessage(AngOutMsgID, CurrentClock,
-        sizeof(AngOffValues), reinterpret_cast<uint8_t*> (&boresightAng),
+        sizeof(AngOffValuesMessage), reinterpret_cast<uint8_t*> (&boresightAng),
         moduleID);
     
 }

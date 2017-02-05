@@ -24,15 +24,12 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/boreAngleMessage.h"
 
 /*! \addtogroup SimModelGroup
  * @{
  */
 
-typedef struct {
-   double azimuth;      //<! (r) the location angle to put the miss in a quadrant
-   double missAngle;    //<! (r) the angular distance between the boresight and body
-}AngOffValues;
 
 //! An orbital element/cartesian position and velocity converter
 class BoreAngCalc: public SysModel {
@@ -56,7 +53,7 @@ public:
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double strBoreVec[3];             //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
-    AngOffValues boresightAng;        //!< (-) Boresigt angles relative to target
+    AngOffValuesMessage boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     
 private:

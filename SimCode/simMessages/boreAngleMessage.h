@@ -16,21 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module bore_ang_calc
-%{
-   #include "bore_ang_calc.h"
-%}
 
-%include "cmalloc.i"
-%include "swig_common_model.i"
-%include "simMessages/boreAngleMessage.h"
-%include "sys_model.h"
-GEN_SIZEOF(BoreAngCalc);
-GEN_SIZEOF(AngOffValuesMessage);
-%include "bore_ang_calc.h"
+#ifndef SIM_BORE_ANGLE_H
+#define SIM_BORE_ANGLE_H
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
 
+/*! @brief Structure used to compute a angle between boresight and body */
+typedef struct {
+    double azimuth;      //<! (r) the location angle to put the miss in a quadrant
+    double missAngle;    //<! (r) the angular distance between the boresight and body
+}AngOffValuesMessage;
+
+
+
+
+#endif
