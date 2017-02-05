@@ -62,8 +62,8 @@ void ImuSensor::SelfInit()
 {
 
     OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataMsg, sizeof(ImuSensorOutput),
-        OutputBufferCount, "ImuSensorOutput", moduleID);
+        CreateNewMessage( OutputDataMsg, sizeof(IMUSensorMessage),
+        OutputBufferCount, "IMUSensorMessage", moduleID);
 
 	uint64_t numStates = 3;
 
@@ -142,13 +142,13 @@ void ImuSensor::readInputMessages()
 
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
-    ImuSensorOutput LocalOutput;
+    IMUSensorMessage LocalOutput;
     memcpy(LocalOutput.DVFramePlatform, this->sensedValues.DVFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AccelPlatform, this->sensedValues.AccelPlatform, 3*sizeof(double));
     memcpy(LocalOutput.DRFramePlatform, this->sensedValues.DRFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AngVelPlatform, this->sensedValues.AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
-                                                 sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
+                                                 sizeof(IMUSensorMessage), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)

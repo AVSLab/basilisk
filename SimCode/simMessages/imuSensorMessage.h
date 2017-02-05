@@ -16,23 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module imu_sensor
-%{
-   #include "imu_sensor.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef SYNC_CLOCK_MESSAGE_H
+#define SYNC_CLOCK_MESSAGE_H
 
-%include "sys_model.h"
-%include "imu_sensor.h"
-%include "simMessages/scPlusStatesMessage.h"
-%include "simMessages/scPlusMassPropsMessage.h"
-%include "simMessages/imuSensorMessage.h"
-GEN_SIZEOF(SCPlusStatesMessage)
-GEN_SIZEOF(SCPlusMassPropsMessage)
-GEN_SIZEOF(IMUSensorMessage)
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+//! @brief Simulated IMU Sensor output message definition.
+typedef struct{
+    double DVFramePlatform[3];      //!< m/s Accumulated DVs in platform
+    double AccelPlatform[3];        //!< m/s2 Apparent acceleration of the platform
+    double DRFramePlatform[3];      //!< r  Accumulated DRs in platform
+    double AngVelPlatform[3];       //!< r/s Angular velocity in platform frame
+}IMUSensorMessage;
+
+
+
+#endif
