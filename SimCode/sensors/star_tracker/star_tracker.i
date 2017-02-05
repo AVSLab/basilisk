@@ -25,9 +25,11 @@
 
 %include "sys_model.h"
 %include "star_tracker.h"
-%include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
+%include "../../../SimFswInterface/stHwInterface.h"
 %include "simMessages/scPlusStatesMessage.h"
 GEN_SIZEOF(SCPlusStatesMessage)
+GEN_SIZEOF(SCPlusStatesMessage)
+GEN_SIZEOF(StarTrackerHWMessage)
 
 %pythoncode %{
 import sys

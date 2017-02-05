@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
+#include "../../../SimFswInterface/stHwInterface.h"
 
 /*! @brief Output structure for ST structure in vehicle body frame*/
 typedef struct {

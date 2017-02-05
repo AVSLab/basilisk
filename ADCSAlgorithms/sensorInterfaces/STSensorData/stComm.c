@@ -52,7 +52,7 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
     ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
-        sizeof(StarTrackerHWOutput), moduleID);
+        sizeof(StarTrackerHWMessage), moduleID);
     ConfigData->PropsMsgID = subscribeToMessage(ConfigData->InputPropsName,
         sizeof(vehicleConfigData), moduleID);
     if(ConfigData->PropsMsgID >= 0)
@@ -78,9 +78,9 @@ void Update_stProcessTelem(STConfigData *ConfigData, uint64_t callTime, uint64_t
     uint32_t ReadSize;
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
-    StarTrackerHWOutput LocalInput;
+    StarTrackerHWMessage LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
-                sizeof(StarTrackerHWOutput), (void*) &LocalInput, moduleID);
+                sizeof(StarTrackerHWMessage), (void*) &LocalInput, moduleID);
     EP2C(LocalInput.qInrtl2Case, dcm_CN);
     m33MultM33(RECAST3X3 ConfigData->dcm_BP, dcm_CN, dcm_BN);
     C2MRP(dcm_BN, ConfigData->LocalOutput.MRP_BdyInrtl);
