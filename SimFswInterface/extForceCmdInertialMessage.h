@@ -16,25 +16,16 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module ExtForceTorque
-%{
-   #include "ExtForceTorque.h"
-%}
 
-%include "swig_common_model.i"
-
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "ExtForceTorque.h"
-%include "../../SimFswInterface/extForceCmdBodyMessage.h"
-%include "../../SimFswInterface/extForceCmdInertialMessage.h"
-%include "../../SimFswInterface/extTorqueCmdBodyMessage.h"
-GEN_SIZEOF(extForceCmdBodyMessage);
-GEN_SIZEOF(extForceCmdInertialMessage);
-GEN_SIZEOF(extTorqueCmdBodyMessage);
+#ifndef EXT_FORCE_CMD_INERTIAL_H
+#define EXT_FORCE_CMD_INERTIAL_H
 
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+//! @brief Message definition for an external command force.  The vector is decomposed into inertial frame components.
+typedef struct {
+    double cmd[3];                      //!< [N], external force command in inertial frame components
+}extForceCmdInertialMessage;
+
+
+
+#endif

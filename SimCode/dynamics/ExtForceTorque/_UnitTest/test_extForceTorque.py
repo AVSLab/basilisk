@@ -106,34 +106,25 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
         msgName = "extTorquePntB_B_cmds"
-        scSim.TotalSim.CreateNewMessage(unitProcessName, msgName, 8*3, 2)
-        cmdArray = sim_model.new_doubleArray(3)
-        sim_model.doubleArray_setitem(cmdArray, 0,-1.0)
-        sim_model.doubleArray_setitem(cmdArray, 1, 1.0)
-        sim_model.doubleArray_setitem(cmdArray, 2,-1.0)
-        scSim.TotalSim.WriteMessageData(msgName, 8*3, 1, cmdArray )
+        msgData = ExtForceTorque.extTorqueCmdBodyMessage()
+        msgData.cmd = [-1.0, 1.0, -1.0]
+        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     if forceNInput==1 or forceNInput==3:
         extFTObject.extForce_N = [[-10.], [-5.], [5.]]
     if forceNInput==2 or forceNInput==3:
         msgName = "extForce_N_cmds"
-        scSim.TotalSim.CreateNewMessage(unitProcessName, msgName, 8*3, 2)
-        cmdArray = sim_model.new_doubleArray(3)
-        sim_model.doubleArray_setitem(cmdArray, 0,-10.)
-        sim_model.doubleArray_setitem(cmdArray, 1, -5.)
-        sim_model.doubleArray_setitem(cmdArray, 2,  5.)
-        scSim.TotalSim.WriteMessageData(msgName, 8*3, 1, cmdArray)
+        msgData = ExtForceTorque.extForceCmdInertialMessage()
+        msgData.cmd = [-10.0, -5.0, 5.0]
+        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     if forceBInput==1 or forceBInput==3:
         extFTObject.extForce_B = [[10.], [20.], [30.]]
     if forceBInput==2 or forceBInput==3:
         msgName = "extForce_B_cmds"
-        scSim.TotalSim.CreateNewMessage(unitProcessName, msgName, 8*3, 2)
-        cmdArray = sim_model.new_doubleArray(3)
-        sim_model.doubleArray_setitem(cmdArray, 0, 10.)
-        sim_model.doubleArray_setitem(cmdArray, 1, 20.)
-        sim_model.doubleArray_setitem(cmdArray, 2, 30.)
-        scSim.TotalSim.WriteMessageData(msgName, 8*3, 1, cmdArray)
+        msgData = ExtForceTorque.extForceCmdBodyMessage()
+        msgData.cmd = [10.0, 20.0, 30.0]
+        unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     scSim.AddModelToTask(unitTaskName, extFTObject)
 
