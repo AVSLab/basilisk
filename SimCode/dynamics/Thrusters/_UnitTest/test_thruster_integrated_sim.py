@@ -99,7 +99,7 @@ def test_thrusterIntegratedTest(show_plots):
                                        scObject, unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+    ThrustMessage = thrusterDynamicEffector.THRCmdMessage()
     msgSize = ThrustMessage.getStructSize()
     ThrustMessage.OnTimeRequest = 10.0
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)

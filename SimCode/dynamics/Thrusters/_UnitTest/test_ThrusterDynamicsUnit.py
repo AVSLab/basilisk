@@ -122,7 +122,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
     angledeg = angle # Parametrized angle of thrust
     anglerad = angledeg*math.pi/180.0
-    thruster1 = thrusterDynamicEffector.ThrusterConfigData()
+    thruster1 = thrusterDynamicEffector.THRConfigMessage()
     thruster1.inputThrLoc_S =location # Parametrized location for thruster
     thruster1.inputThrDir_S = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
     thruster1.MaxThrust = 1.0
@@ -131,7 +131,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     thrusterSet.AddThruster(thruster1)
 
     if thrustNumber==2:
-        thruster2 = thrusterDynamicEffector.ThrusterConfigData()
+        thruster2 = thrusterDynamicEffector.THRConfigMessage()
         thruster2.inputThrLoc_S =[[1.], [0.0], [0.0]]
         thruster2.inputThrDir_S = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
         thruster2.MaxThrust = 1.0
@@ -162,7 +162,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
     if thrustNumber==1:
-        ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+        ThrustMessage = thrusterDynamicEffector.THRCmdMessage()
         ThrustMessage.OnTimeRequest = 0.
         thrMessageSize = ThrustMessage.getStructSize()
     if thrustNumber==2:
@@ -320,12 +320,12 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         rampOffList = []
         # Note that this ramp is totally linear and ramps up 30 ms using 30 steps
         for i in range(rampsteps):
-            newElement = thrusterDynamicEffector.ThrusterTimePair()
+            newElement = thrusterDynamicEffector.THRTimePairMessage()
             newElement.TimeDelta = (i + 1.) * 0.1
             newElement.ThrustFactor = (i + 1.0) / 10.0
             newElement.IspFactor = (i + 1.0) / 10.0
             rampOnList.append(newElement)
-            newElement = thrusterDynamicEffector.ThrusterTimePair()
+            newElement = thrusterDynamicEffector.THRTimePairMessage()
             newElement.TimeDelta = (i + 1) * 0.1
             newElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0
             newElement.IspFactor = newElement.ThrustFactor

@@ -38,6 +38,7 @@
 #include "SpacecraftSimDefinitions.h"
 #include "simMessages/rwConfigMessage.h"
 #include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterface/rwSpeedMessage.h"
 
 #define IP_BASE_PORT         50000
@@ -116,7 +117,7 @@ private:
     
     std::vector<std::string> thrusterInMsgNames;
     std::vector<uint64_t> thrusterInMsgIds;
-    std::vector<ThrusterOutputData> thrusters;
+    std::vector<THROutputMessage> thrusters;
 };
 
 

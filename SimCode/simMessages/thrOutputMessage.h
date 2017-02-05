@@ -17,32 +17,18 @@
 
  */
 
+#ifndef SIM_THRUSTER_OUTPUT_H
+#define SIM_THRUSTER_OUTPUT_H
 
-%module thrusterDynamicEffector
-%{
-   #include "thrusterDynamicEffector.h"
-%}
 
-%include "swig_common_model.i"
+/*! This structure is used in the messaging system to communicate what the
+ state of the vehicle is currently.*/
+typedef struct {
+    Eigen::Vector3d thrusterLocation;               //!< m  Current position vector (inertial)
+    Eigen::Vector3d thrusterDirection;              //!< -- Unit vector of thruster pointing
+    double maxThrust;                               //!< N  Steady state thrust of thruster
+    double thrustFactor;                            //!< -- Current Thrust Percentage
+}THROutputMessage;
 
-// Instantiate templates used by example
-namespace std {
-    %template(ThrusterTimeVector) vector<THRTimePairMessage>;
-    %template(ThrusterConfigVector) vector<THRConfigMessage>;
-}
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "thrusterDynamicEffector.h"
-%include "simMessages/thrTimePairMessage.h"
-%include "simMessages/thrConfigMessage.h"
-%include "simMessages/thrCmdMessage.h"
-GEN_SIZEOF(THRCmdMessage)
-GEN_SIZEOF(THRTimePairMessage)
-GEN_SIZEOF(THRConfigMessage)
-GEN_SIZEOF(THRCmdMessage)
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

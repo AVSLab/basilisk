@@ -17,32 +17,17 @@
 
  */
 
+#ifndef SIM_THRUSTER_CMD_H
+#define SIM_THRUSTER_CMD_H
 
-%module thrusterDynamicEffector
-%{
-   #include "thrusterDynamicEffector.h"
-%}
 
-%include "swig_common_model.i"
+//! @brief Input container for thruster firing requests.
+/*! This structure is used for the array of thruster commands.  It is pretty
+ sparse, but it is included as a structure for growth and for clear I/O
+ definitions.*/
+typedef struct {
+    double OnTimeRequest;                //!< s Requested on-time for thruster
+}THRCmdMessage;
 
-// Instantiate templates used by example
-namespace std {
-    %template(ThrusterTimeVector) vector<THRTimePairMessage>;
-    %template(ThrusterConfigVector) vector<THRConfigMessage>;
-}
-%include "sys_model.h"
-%include "../_GeneralModuleFiles/stateData.h"
-%include "../_GeneralModuleFiles/dynamicEffector.h"
-%include "../_GeneralModuleFiles/dynParamManager.h"
-%include "thrusterDynamicEffector.h"
-%include "simMessages/thrTimePairMessage.h"
-%include "simMessages/thrConfigMessage.h"
-%include "simMessages/thrCmdMessage.h"
-GEN_SIZEOF(THRCmdMessage)
-GEN_SIZEOF(THRTimePairMessage)
-GEN_SIZEOF(THRConfigMessage)
-GEN_SIZEOF(THRCmdMessage)
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif
