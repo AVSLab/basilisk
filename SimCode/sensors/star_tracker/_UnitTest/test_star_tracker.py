@@ -113,7 +113,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     OutputStateData.TotalAccumDVBdy = [0,0,0]
     OutputStateData.MRPSwitchCount = 0
 
-    SpiceTimeOutput = spice_interface.SpiceTimeOutput()
+    SpiceTimeOutput = spice_interface.SpiceTimeMessage()
     SpiceTimeOutput.J2000Current = 0        # s Current J2000 elapsed time double
     SpiceTimeOutput.JulianDateCurrent = 0   # s Current JulianDate double
     SpiceTimeOutput.GPSSeconds = 0          # s Current GPS seconds double

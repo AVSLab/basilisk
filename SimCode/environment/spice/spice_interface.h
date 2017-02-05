@@ -25,6 +25,7 @@
 #include "utilities/linearAlgebra.h"
 #include <map>
 #include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spiceTimeMessage.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment
@@ -33,14 +34,6 @@
  * @{
  */
 
-//! The SPICE time output structure outputs time information to the rest of the system
-typedef struct {
-    double J2000Current;        //!< s Current J2000 elapsed time
-    double JulianDateCurrent;   //!< s Current JulianDate
-    double GPSSeconds;          //!< s Current GPS seconds
-    uint16_t GPSWeek;           //!< -- Current GPS week value
-    uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
-}SpiceTimeOutput;
 
 //! The SPICE interface class gets time and planetary body information from the JPL ephemeris library
 class SpiceInterface: public SysModel {

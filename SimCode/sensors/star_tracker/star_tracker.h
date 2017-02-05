@@ -26,6 +26,7 @@
 #include "../ADCSAlgorithms/sensorInterfaces/STSensorData/stHwInterface.h"
 #include "environment/spice/spice_interface.h"
 #include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/spiceTimeMessage.h"
 
 class StarTracker: public SysModel {
 public:
@@ -60,7 +61,7 @@ public:
     StarTrackerHWOutput sensedValues; //!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
     uint64_t envTimeClock;            //!< [ns] Clock associated with the environment time message
-    SpiceTimeOutput timeState;        //!< [-] Module variable where the input Spice Time message is stored
+    SpiceTimeMessage timeState;        //!< [-] Module variable where the input Spice Time message is stored
     SCPlusStatesMessage scState;      //!< [-] Module variable where the input State Data message is stored
 
     

@@ -68,7 +68,7 @@ void OpenGLIO::CrossInit()
     this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesMessage), moduleID);
     this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
     this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
-    this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeOutput), this->moduleID);
+    this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeMessage), this->moduleID);
     
     int i;
     for (i = 0; i < this->rwInMsgNames.size(); i++)
@@ -135,7 +135,7 @@ void OpenGLIO::readInputMessages()
     messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
     messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
     messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
-    messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
+    messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeMessage), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
     
     ReactionWheelConfigMessage tmpWheelData;
     for (int i = 0; i < this->reactionWheels.size(); i++)

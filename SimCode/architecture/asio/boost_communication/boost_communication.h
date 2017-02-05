@@ -40,6 +40,7 @@
 #include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterface/rwSpeedMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spiceTimeMessage.h"
 
 #define IP_BASE_PORT         50000
 #define MAX_CONNECT_ATTEMPTS 5
@@ -108,7 +109,7 @@ private:
     SpicePlanetStateMessage centralBodyInMsgBuffer;
     std::string spiceTimeDataInMsgName;
     uint64_t spiceTimeDataInMsgId;
-    SpiceTimeOutput spiceTimeDataInMsgBuffer;
+    SpiceTimeMessage spiceTimeDataInMsgBuffer;
 //    std::vector<GravBodyData> m_gravityBodies;
 
     std::vector<std::string> rwInMsgNames;

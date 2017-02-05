@@ -16,21 +16,21 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module spice_interface
-%{
-   #include "spice_interface.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef SPICE_TIME_MESSAGE_H
+#define SPICE_TIME_MESSAGE_H
 
-%include "sys_model.h"
-%include "simMessages/spicePlanetStateMessage.h"
-%include "simMessages/spiceTimeMessage.h"
-%include "spice_interface.h"
-GEN_SIZEOF(SpicePlanetStateMessage);
-GEN_SIZEOF(SpiceTimeMessage);
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+//! The SPICE time output structure outputs time information to the rest of the system
+typedef struct {
+    double J2000Current;        //!< s Current J2000 elapsed time
+    double JulianDateCurrent;   //!< s Current JulianDate
+    double GPSSeconds;          //!< s Current GPS seconds
+    uint16_t GPSWeek;           //!< -- Current GPS week value
+    uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
+}SpiceTimeMessage;
+
+
+
+
+#endif

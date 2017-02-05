@@ -126,8 +126,8 @@ void SpiceInterface::InitTimeData()
     
     //! - Create the output time message for SPICE
     TimeOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(OutputTimePort, sizeof(SpiceTimeOutput),
-        OutputBufferCount, "SpiceTimeOutput", moduleID);
+        CreateNewMessage(OutputTimePort, sizeof(SpiceTimeMessage),
+        OutputBufferCount, "SpiceTimeMessage", moduleID);
     
 }
 
@@ -162,7 +162,7 @@ void SpiceInterface::ComputeGPSData()
 void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
 {
     std::map<uint32_t, SpicePlanetStateMessage>::iterator planit;
-    SpiceTimeOutput OutputData;
+    SpiceTimeMessage OutputData;
     //! Begin method steps
     //! - Set the members of the time output message structure and write
     OutputData.J2000Current = J2000Current;
@@ -171,7 +171,7 @@ void SpiceInterface::writeOutputMessages(uint64_t CurrentClock)
     OutputData.GPSWeek = GPSWeek;
     OutputData.GPSRollovers = GPSRollovers;
     SystemMessaging::GetInstance()->WriteMessage(TimeOutMsgID, CurrentClock,
-                                                 sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&OutputData), moduleID);
+                                                 sizeof(SpiceTimeMessage), reinterpret_cast<uint8_t*> (&OutputData), moduleID);
     
     //! - Iterate through all of the planets that are on and write their outputs
     for(planit = PlanetData.begin(); planit != PlanetData.end(); planit++)
