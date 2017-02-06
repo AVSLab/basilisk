@@ -22,13 +22,12 @@
 
 #include <stdint.h>
 #include "../ADCSAlgorithms/messaging/static_messaging.h"
+#include "../SimFswInterface/simFSWMacros.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
-#define MAX_EFF_CNT 36
-#define MAX_NUM_CSS_SENSORS 32
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {

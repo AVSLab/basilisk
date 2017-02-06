@@ -21,6 +21,7 @@
 #define SIM_FSW_MACROS_H
 
 #define MAX_EFF_CNT 36
+#define MAX_NUM_CSS_SENSORS 32
 
 
 
