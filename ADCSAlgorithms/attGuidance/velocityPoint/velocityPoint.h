@@ -22,7 +22,6 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/attGuidOut.h"
 
 /* Required module input messages */
 #include "SimCode/utilities/orbitalMotion.h"

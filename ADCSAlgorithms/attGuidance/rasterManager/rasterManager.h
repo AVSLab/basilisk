@@ -32,6 +32,7 @@
 
 /*! @brief Top level structure for the sub-module routines. */
 
+#define MAX_RASTER_SET 36
 
 
 typedef struct {

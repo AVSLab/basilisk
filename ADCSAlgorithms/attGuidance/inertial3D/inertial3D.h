@@ -22,7 +22,6 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/attGuidOut.h"
 #include "fswMessages/attRefMessage.h"
 
 /*! \addtogroup ADCSAlgGroup

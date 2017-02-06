@@ -22,7 +22,6 @@
 
 #include <stdint.h>
 
-#define MAX_RASTER_SET 36
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
