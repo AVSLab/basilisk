@@ -23,9 +23,10 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMEssages/spicePlanetStateMessage.h"
+#include "../SimFswInterface/navAttMessage.h"
+#include "../SimFswInterface/navTransMessage.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -61,10 +62,10 @@ public:
     std::string inputSunName;          //!< -- Message name for the sun state
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
-    NavAttOut trueAttState;            //!< -- attitude nav state without errors
-    NavAttOut estAttState;             //!< -- attitude nav state including errors
-    NavTransOut trueTransState;        //!< -- translation nav state without errors
-    NavTransOut estTransState;         //!< -- translation nav state including errors
+    NavAttMessage trueAttState;        //!< -- attitude nav state without errors
+    NavAttMessage estAttState;         //!< -- attitude nav state including errors
+    NavTransMessage trueTransState;    //!< -- translation nav state without errors
+    NavTransMessage estTransState;     //!< -- translation nav state including errors
     SCPlusStatesMessage inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMessage sunState;  //!< -- input Sun state
 private:

@@ -40,7 +40,7 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
-		sizeof(NavAttOut), "NavAttOut", moduleID);
+		sizeof(NavAttMessage), "NavAttMessage", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
         sizeof(SunlineMeasOut), "SunlineMeasOut", moduleID);
@@ -90,7 +90,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     /*! - Zero the local configuration data structures and outputs */
     memset(&massPropsInBuffer, 0x0 ,sizeof(vehicleConfigData));
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
-    memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttOut));
+    memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttMessage));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
@@ -202,7 +202,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
-	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttOut),
+	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttMessage),
 		&(ConfigData->outputSunline), moduleID);
     
     /*! - Populate the filter states output buffer and write the output message*/

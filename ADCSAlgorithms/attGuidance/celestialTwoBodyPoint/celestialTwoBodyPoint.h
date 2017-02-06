@@ -24,6 +24,7 @@
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include <stdint.h>
 #include "../SimFswInterface/ephemerisMessage.h"
+#include "../SimFswInterface/navTransMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

@@ -21,20 +21,21 @@
 #define _NAV_AGGREGATE_H_
 
 #include "messaging/static_messaging.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "SimFswInterface/navAttMessage.h"
+#include "SimFswInterface/navTransMessage.h"
 
 #define MAX_AGG_NAV_MSG 10
 
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavAttOut msgStorage; /*! [-] Local buffer to store nav message*/
+    NavAttMessage msgStorage; /*! [-] Local buffer to store nav message*/
 }AggregateAttInput;
 
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavTransOut msgStorage; /*! [-] Local buffer to store nav message*/
+    NavTransMessage msgStorage; /*! [-] Local buffer to store nav message*/
 }AggregateTransInput;
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -44,8 +45,8 @@ typedef struct {
     AggregateTransInput transMsgs[MAX_AGG_NAV_MSG]; /*!< [-] The incoming nav message buffer */
     char outputAttName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     char outputTransName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
-    uint32_t attTimeIdx;       /*!< [-] The index of the message to use for time */
-    uint32_t transTimeIdx;       /*!< [-] The index of the message to use for time */
+    uint32_t attTimeIdx;        /*!< [-] The index of the message to use for time */
+    uint32_t transTimeIdx;      /*!< [-] The index of the message to use for time */
     uint32_t attIdx;        /*!< [-] The index of the message to use for inertial MRP*/
     uint32_t rateIdx;       /*!< [-] The index of the message to use for attitude rate*/
     uint32_t posIdx;        /*!< [-] The index of the message to use for inertial position*/
@@ -55,11 +56,11 @@ typedef struct {
     uint32_t attMsgCount;   /*!< [-] The total number of messages available as inputs */
     uint32_t transMsgCount; /*!< [-] The total number of messages available as inputs */
     
-    int32_t outputTransMsgID;    /*!< [-] The ID associated with the outgoing message*/
-    int32_t outputAttMsgID;    /*!< [-] The ID associated with the outgoing message*/
+    int32_t outputTransMsgID;   /*!< [-] The ID associated with the outgoing message*/
+    int32_t outputAttMsgID;     /*!< [-] The ID associated with the outgoing message*/
     
-    NavAttOut outAttData; /*!< [-] The local storage of the outgoing message data*/
-    NavTransOut outTransData; /*!< [-] The local storage of the outgoing message data*/
+    NavAttMessage outAttData;   /*!< [-] The local storage of the outgoing message data*/
+    NavTransMessage outTransData; /*!< [-] The local storage of the outgoing message data*/
 }NavAggregateData;
 
 #ifdef __cplusplus

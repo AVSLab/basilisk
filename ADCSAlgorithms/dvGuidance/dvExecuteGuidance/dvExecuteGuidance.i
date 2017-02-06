@@ -30,7 +30,9 @@
 %ignore CrossInit_dvExecuteGuidance;
 GEN_SIZEOF(dvExecutionData);
 GEN_SIZEOF(dvExecuteGuidanceConfig);
+GEN_SIZEOF(NavTransMessage);
 %include "dvExecuteGuidance.h"
+%include "../../SimFswInterface/navTransMessage.h"
 
 %pythoncode %{
 import sys

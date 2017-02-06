@@ -206,17 +206,17 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     unitTestSim.ExecuteSimulation()
 
     posNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'simple_nav',
-        'NavTransOut', 60*144*10, unitTestSim.TotalSim, 'r_BN_N', 'double', 0, 2, sim_model.logBuffer)
+        'NavTransMessage', 60*144*10, unitTestSim.TotalSim, 'r_BN_N', 'double', 0, 2, sim_model.logBuffer)
     velNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'simple_nav',
-        'NavTransOut', 60*144*10, unitTestSim.TotalSim, 'v_BN_N', 'double', 0, 2, sim_model.logBuffer)
+        'NavTransMessage', 60*144*10, unitTestSim.TotalSim, 'v_BN_N', 'double', 0, 2, sim_model.logBuffer)
     attNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'simple_nav',
-        'NavAttOut', 60*144*10, unitTestSim.TotalSim, 'sigma_BN', 'double', 0, 2, sim_model.logBuffer)
+        'NavAttMessage', 60*144*10, unitTestSim.TotalSim, 'sigma_BN', 'double', 0, 2, sim_model.logBuffer)
     rateNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'simple_nav',
-        'NavAttOut', 60*144*10, unitTestSim.TotalSim, 'omega_BN_B', 'double', 0, 2, sim_model.logBuffer)
+        'NavAttMessage', 60*144*10, unitTestSim.TotalSim, 'omega_BN_B', 'double', 0, 2, sim_model.logBuffer)
     dvNav = MessagingAccess.obtainMessageVector("simple_trans_nav_output", 'simple_nav',
-        'NavTransOut', 60*144*10, unitTestSim.TotalSim, 'vehAccumDV', 'double', 0, 2, sim_model.logBuffer)
+        'NavTransMessage', 60*144*10, unitTestSim.TotalSim, 'vehAccumDV', 'double', 0, 2, sim_model.logBuffer)
     sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'simple_nav',
-        'NavAttOut', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
+        'NavAttMessage', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 
 
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)

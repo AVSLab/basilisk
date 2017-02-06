@@ -16,31 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module hillPoint
-%{
-   #include "hillPoint.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_hillPoint(void*, uint64_t, uint64_t);
-%ignore Update_hillPoint;
-%constant void SelfInit_hillPoint(void*, uint64_t);
-%ignore SelfInit_hillPoint;
-%constant void CrossInit_hillPoint(void*, uint64_t);
-%ignore CrossInit_hillPoint;
-%constant void Reset_hillPoint(void*, uint64_t, uint64_t);
-%ignore Reset_hillPoint;
-%include "hillPoint.h"
-%include "../../SimFswInterface/ephemerisMessage.h"
-%include "../../SimFswInterface/navTransMessage.h"
-GEN_SIZEOF(EphemerisMessage);
-GEN_SIZEOF(hillPointConfig);
-GEN_SIZEOF(NavTransMessage);
+#ifndef NAV_ATT_MESSAGE_H
+#define NAV_ATT_MESSAGE_H
 
-// sample Module supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/attGuidOut.h"
+/*! @brief Structure used to define the output definition for attitude guidance*/
+typedef struct {
+    double timeTag;          /*!< [s]   Current vehicle time-tag associated with measurements*/
+    double sigma_BN[3];      /*!<       Current spacecraft attitude (MRPs) of body relative to inertial */
+    double omega_BN_B[3];    /*!< [r/s] Current spacecraft angular velocity vector of body
+                              frame B relative to inertial frame N, in B frame components */
+    double vehSunPntBdy[3];  /*!<       Current sun pointing vector in body frame*/
+}NavAttMessage;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

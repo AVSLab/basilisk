@@ -21,7 +21,7 @@
 #define _DV_ACCUMULATION_H_
 
 #include "messaging/static_messaging.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "../SimFswInterface/navTransMessage.h"
 
 #define MAX_ACC_BUF_PKT 25
 
@@ -47,7 +47,7 @@ typedef struct {
     int32_t outputNavMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t accPktInMsgID;     /*!< [-] The ID associated with the incoming accelerometer buffer*/
     
-    NavTransOut outputData; /*!< [-] The local storage of the outgoing message data*/
+    NavTransMessage outputData; /*!< [-] The local storage of the outgoing message data*/
 }DVAccumulationData;
 
 #ifdef __cplusplus

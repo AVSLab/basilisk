@@ -31,7 +31,7 @@
 void SelfInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
 {
     ConfigData->outputNavMsgID = CreateNewMessage(ConfigData->outputNavName,
-        sizeof(NavTransOut), "NavTransOut", moduleID);
+        sizeof(NavTransMessage), "NavTransMessage", moduleID);
 }
 
 /*! This method performs the second stage of initialization for the nav aggregration 
@@ -119,7 +119,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
         }
     }
     
-    WriteMessage(ConfigData->outputNavMsgID, callTime, sizeof(NavTransOut),
+    WriteMessage(ConfigData->outputNavMsgID, callTime, sizeof(NavTransMessage),
                  &ConfigData->outputData, moduleID);
     
     //for(int k=0; k<XXX; k=k+measTime){ // the XXX indicates that I'm not sure of what the maximum end limit for the loop. When does the measurement stop? ... Also here, I'm assuming measTime is the time of each frame interval (of accel when DVs being off-pulsed)
@@ -142,7 +142,7 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
 //    for(int i=0; i<ConfigData->msgCount; i=i+1)
 //    {
 //        ReadMessage(ConfigData->outputNavMsgID, &writeTime, &ConfigData->msgCount,
-//                    sizeof(NavTransOut), &(ConfigData->outputData), moduleID);
+//                    sizeof(NavTransMessage), &(ConfigData->outputData), moduleID);
 //    }
     
     return;

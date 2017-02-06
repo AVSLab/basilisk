@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "../SimFswInterface/navAttMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

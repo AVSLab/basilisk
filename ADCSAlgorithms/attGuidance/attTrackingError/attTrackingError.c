@@ -27,8 +27,6 @@
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
-/* update this include to reflect the required module input messages */
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
 
 
@@ -68,7 +66,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
                                                 sizeof(attRefOut),
                                                 moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
-                                                sizeof(NavAttOut),
+                                                sizeof(NavAttMessage),
                                                 moduleID);
 
 }
@@ -93,16 +91,16 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
     uint64_t    clockTime;
     uint32_t    readSize;
     attRefOut   ref;                        /*!< reference guidance message */
-    NavAttOut nav;                        /*!< navigation message */
+    NavAttMessage nav;                      /*!< navigation message */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
     memset(&ref, 0x0, sizeof(attRefOut));
-    memset(&nav, 0x0, sizeof(NavAttOut));
+    memset(&nav, 0x0, sizeof(NavAttMessage));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
                 sizeof(attRefOut), (void*) &(ref), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavAttOut), (void*) &(nav), moduleID);
+                sizeof(NavAttMessage), (void*) &(nav), moduleID);
 
 
     computeAttitudeError(nav.sigma_BN,

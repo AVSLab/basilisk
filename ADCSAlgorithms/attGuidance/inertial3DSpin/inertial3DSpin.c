@@ -30,8 +30,6 @@
 #include "ADCSUtilities/ADCSDefinitions.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 
-/* update this include to reflect the required module input messages */
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
 
 

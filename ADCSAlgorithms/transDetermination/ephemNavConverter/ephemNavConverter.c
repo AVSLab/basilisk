@@ -32,7 +32,7 @@
 void SelfInit_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t moduleID)
 {
     ConfigData->stateOutMsgID = CreateNewMessage(ConfigData->stateOutMsgName,
-        sizeof(NavTransOut), "NavTransOut", moduleID);
+        sizeof(NavTransMessage), "NavTransMessage", moduleID);
 }
 
 /*! This method initializes the input time correlation factor structure
@@ -78,14 +78,14 @@ void Update_ephemNavConverter(EphemNavConverterData *ConfigData, uint64_t callTi
     ReadMessage(ConfigData->ephInMsgID, &writeTime, &writeSize,
                 sizeof(EphemerisMessage), &localEph, moduleID);
     
-    memset(&ConfigData->outputState, 0x0, sizeof(NavTransOut));
+    memset(&ConfigData->outputState, 0x0, sizeof(NavTransMessage));
 
 	ConfigData->outputState.timeTag = localEph.timeTag;
 	v3Copy(localEph.r_BdyZero_N, ConfigData->outputState.r_BN_N);
 	v3Copy(localEph.v_BdyZero_N, ConfigData->outputState.v_BN_N);
   
     WriteMessage(ConfigData->stateOutMsgID, callTime,
-                 sizeof(NavTransOut), &ConfigData->outputState, moduleID);
+                 sizeof(NavTransMessage), &ConfigData->outputState, moduleID);
 
     return;
 

@@ -40,7 +40,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import attTrackingError                  # import the module that is to be tested
-import simple_nav                         # import module(s) that creates the needed input message declaration
 import inertial3DSpin                     # import module(s) that creates the needed input message declaration
 import macros
 
@@ -99,7 +98,7 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    NavStateOutData = simple_nav.NavAttOut()  # Create a structure for the input message
+    NavStateOutData = attTrackingError.NavAttMessage()  # Create a structure for the input message
     inputMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,

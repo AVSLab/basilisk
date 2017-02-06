@@ -53,7 +53,7 @@ void CrossInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Find the input IDs for each input message*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavStateName,
-        sizeof(NavAttOut), moduleID);
+        sizeof(NavAttMessage), moduleID);
     ConfigData->inputCmdID = subscribeToMessage(ConfigData->inputAttCmdName,
         sizeof(attCmdOut), moduleID);
     return;
@@ -82,7 +82,7 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     attCmdOut localCmd;
-    NavAttOut localState;
+    NavAttMessage localState;
     uint64_t clockTime;
     uint32_t readSize;
 	double prvUse_BcBf[3];
@@ -93,12 +93,12 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
 
     
     memset(&localCmd, 0x0, sizeof(attCmdOut));
-    memset(&localState, 0x0, sizeof(NavAttOut));
+    memset(&localState, 0x0, sizeof(NavAttMessage));
 	memset(&(ConfigData->attOut), 0x0, sizeof(attGuidOut));
     memset(&localRef, 0x0, sizeof(attRefOut));
     
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavAttOut), (void*) &(localState), moduleID);
+                sizeof(NavAttMessage), (void*) &(localState), moduleID);
     ReadMessage(ConfigData->inputCmdID, &clockTime, &readSize,
                 sizeof(attCmdOut), (void*) &(localCmd), moduleID);
     

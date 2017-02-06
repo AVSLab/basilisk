@@ -21,7 +21,6 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "ADCSUtilities/ADCSAlgorithmMacros.h"
 #include <string.h>
 #include <math.h>
@@ -57,7 +56,7 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(EphemerisMessage), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-                                                sizeof(NavTransOut), moduleID);
+                                                sizeof(NavTransMessage), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
@@ -81,7 +80,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
 {
     uint64_t writeTime;
     uint32_t writeSize;
-    NavTransOut navData;
+    NavTransMessage navData;
     EphemerisMessage primPlanet;
     EphemerisMessage secPlanet;
     
@@ -91,7 +90,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
     
-    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransOut), &navData, moduleID);
+    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransMessage), &navData, moduleID);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(EphemerisMessage), &primPlanet, moduleID);
     
     v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P1);

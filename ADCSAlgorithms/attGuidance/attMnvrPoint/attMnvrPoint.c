@@ -51,7 +51,7 @@ void CrossInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Find the input IDs for each input message*/
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavStateName,
-        sizeof(NavAttOut), moduleID);
+        sizeof(NavAttMessage), moduleID);
     ConfigData->inputCmdID = subscribeToMessage(ConfigData->inputAttCmdName,
         sizeof(attCmdOut), moduleID);
     return;
@@ -68,7 +68,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     attCmdOut localCmd;
-    NavAttOut localState;
+    NavAttMessage localState;
     uint64_t clockTime;
     uint32_t readSize;
     double angSegment;
@@ -79,10 +79,10 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
 
     
     memset(&localCmd, 0x0, sizeof(attCmdOut));
-    memset(&localState, 0x0, sizeof(NavAttOut));
+    memset(&localState, 0x0, sizeof(NavAttMessage));
     
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
-                sizeof(NavAttOut), (void*) &(localState), moduleID);
+                sizeof(NavAttMessage), (void*) &(localState), moduleID);
     ReadMessage(ConfigData->inputCmdID, &clockTime, &readSize,
                 sizeof(attCmdOut), (void*) &(localCmd), moduleID);
     
@@ -153,7 +153,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     @param currState The current state of the spacecraft output from nav
 */
 void computeNewAttMnvr(attMnvrPointConfig *ConfigData, attCmdOut *endState,
-                       NavAttOut *currState)
+                       NavAttMessage *currState)
 {
     double sigmaBcurr2BCmd[3];
     double MRPMnvr[3];

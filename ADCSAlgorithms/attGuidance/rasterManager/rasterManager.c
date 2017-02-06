@@ -35,8 +35,6 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 
-/* Required module input messages */
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 
 
 

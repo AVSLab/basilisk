@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
+#include "../SimFswInterface/navAttMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -62,7 +62,7 @@ extern "C" {
     void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
     void computeNewAttMnvr(attMnvrPointConfig *ConfigData, attCmdOut *endState,
-        NavAttOut *currState);
+        NavAttMessage *currState);
     
 #ifdef __cplusplus
 }

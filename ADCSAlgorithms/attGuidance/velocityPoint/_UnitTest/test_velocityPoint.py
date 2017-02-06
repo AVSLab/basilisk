@@ -40,7 +40,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import velocityPoint                        # import the module that is to be tested
-import simple_nav                       # import module(s) that creates the needed input message declaration
 import cheby_pos_ephem
 import macros
 import numpy as np
@@ -110,7 +109,7 @@ def velocityPointTestFunction(show_plots):
     #
     #   Navigation Input Message
     #
-    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
+    NavStateOutData = velocityPoint.NavTransMessage()  # Create a structure for the input message
     inputNavMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavDataName,

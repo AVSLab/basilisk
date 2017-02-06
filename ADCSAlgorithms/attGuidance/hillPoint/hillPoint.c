@@ -48,7 +48,7 @@ void CrossInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(EphemerisMessage), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-                                                sizeof(NavTransOut), moduleID);
+                                                sizeof(NavTransMessage), moduleID);
 }
 
 void Reset_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
@@ -62,13 +62,13 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
     /*! - Read input message */
     uint64_t            writeTime;
     uint32_t            writeSize;
-    NavTransOut         navData;
+    NavTransMessage         navData;
     EphemerisMessage    primPlanet;
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
                 sizeof(EphemerisMessage), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
-                sizeof(NavTransOut), &navData, moduleID);
+                sizeof(NavTransMessage), &navData, moduleID);
     
     
     /*! - Compute and store output message */

@@ -33,7 +33,6 @@
 GEN_SIZEOF(EphemerisMessage)
 %include "ephemNavConverter.h"
 %include "../../SimFswInterface/ephemerisMessage.h"
-%include "../../attDetermination/_GeneralModuleFiles/navStateOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

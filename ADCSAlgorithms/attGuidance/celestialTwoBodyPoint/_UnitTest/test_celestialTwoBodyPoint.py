@@ -48,7 +48,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import celestialTwoBodyPoint  # module that is to be tested
-import simple_nav  # module that creates needed input
 import cheby_pos_ephem  # module that creates needed input
 import macros
 import astroFunctions as af
@@ -153,7 +152,7 @@ def celestialTwoBodyPointTestFunction(show_plots):
 
     #   Navigation Input Message
 
-    NavStateOutData = simple_nav.NavTransOut()  # Create a structure for the input message
+    NavStateOutData = celestialTwoBodyPoint.NavTransMessage()  # Create a structure for the input message
     inputNavMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavDataName,

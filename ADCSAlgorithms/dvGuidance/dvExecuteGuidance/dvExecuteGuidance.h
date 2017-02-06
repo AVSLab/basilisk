@@ -22,8 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "dvGuidance/dvAttGuidance/dvGuidance.h"
+#include "../SimFswInterface/navTransMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

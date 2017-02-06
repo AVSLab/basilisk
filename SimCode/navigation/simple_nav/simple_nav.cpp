@@ -40,10 +40,10 @@ SimpleNav::SimpleNav()
     this->AMatrix.clear();
     this->PMatrix.clear();
     this->prevTime = 0;
-    memset(&estAttState, 0x0, sizeof(NavAttOut));
-    memset(&trueAttState, 0x0, sizeof(NavAttOut));
-    memset(&estTransState, 0x0, sizeof(NavTransOut));
-    memset(&trueTransState, 0x0, sizeof(NavTransOut));
+    memset(&estAttState, 0x0, sizeof(NavAttMessage));
+    memset(&trueAttState, 0x0, sizeof(NavAttMessage));
+    memset(&estTransState, 0x0, sizeof(NavTransMessage));
+    memset(&trueTransState, 0x0, sizeof(NavTransMessage));
     return;
 }
 
@@ -72,11 +72,11 @@ void SimpleNav::SelfInit()
     std::vector<double>::iterator it;
     //! - Create a new message for the output simple nav state data
     outputAttID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputAttName, sizeof(NavAttOut), outputBufferCount,
-        "NavAttOut", moduleID);
+        CreateNewMessage(outputAttName, sizeof(NavAttMessage), outputBufferCount,
+        "NavAttMessage", moduleID);
     outputTransID = SystemMessaging::GetInstance()->
-    CreateNewMessage(outputTransName, sizeof(NavTransOut), outputBufferCount,
-                     "NavTransOut", moduleID);
+    CreateNewMessage(outputTransName, sizeof(NavTransMessage), outputBufferCount,
+                     "NavTransMessage", moduleID);
 
     //! - Initialize the propagation matrix to default values for use in update
     AMatrix.clear();
@@ -167,10 +167,10 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     //! Begin method steps
     SystemMessaging::GetInstance()->
-    WriteMessage(outputAttID, Clock, sizeof(NavAttOut),
+    WriteMessage(outputAttID, Clock, sizeof(NavAttMessage),
                  reinterpret_cast<uint8_t*> (&estAttState), moduleID);
     SystemMessaging::GetInstance()->
-    WriteMessage(outputTransID, Clock, sizeof(NavTransOut),
+    WriteMessage(outputTransID, Clock, sizeof(NavTransMessage),
                  reinterpret_cast<uint8_t*> (&estTransState), moduleID);
 }
 

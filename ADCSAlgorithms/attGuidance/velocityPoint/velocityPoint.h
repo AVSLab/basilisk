@@ -25,9 +25,9 @@
 #include "../_GeneralModuleFiles/attGuidOut.h"
 
 /* Required module input messages */
-#include "attDetermination/_GeneralModuleFiles/navStateOut.h"
 #include "SimCode/utilities/orbitalMotion.h"
 #include "../SimFswInterface/ephemerisMessage.h"
+#include "../SimFswInterface/navTransMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

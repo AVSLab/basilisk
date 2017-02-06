@@ -32,8 +32,10 @@
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
 %include "../../SimFswInterface/ephemerisMessage.h"
+%include "../../SimFswInterface/navTransMessage.h"
 GEN_SIZEOF(velocityPointConfig);
 GEN_SIZEOF(EphemerisMessage);
+GEN_SIZEOF(NavTransMessage);
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/attGuidOut.h"

@@ -25,11 +25,12 @@
 
 %include "sys_model.h"
 %include "simple_nav.h"
-%include "../../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
 %include "simMessages/scPlusStatesMessage.h"
+%include "../../SimFswInterface/navAttMessage.h"
+%include "../../SimFswInterface/navTransMessage.h"
 GEN_SIZEOF(SCPlusStatesMessage);
-GEN_SIZEOF(NavAttOut);
-GEN_SIZEOF(NavTransOut);
+GEN_SIZEOF(NavAttMessage);
+GEN_SIZEOF(NavTransMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

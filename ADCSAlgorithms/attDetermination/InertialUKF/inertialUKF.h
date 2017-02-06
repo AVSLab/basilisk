@@ -21,10 +21,10 @@
 #define _INERTIAL_UKF_H_
 
 #include "messaging/static_messaging.h"
-#include "../_GeneralModuleFiles/navStateOut.h"
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "rwConfigData/rwConfigData.h"
 #include "SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/navAttMessage.h"
 #include <stdint.h>
 
 #define AKF_N_STATES 6
@@ -90,8 +90,8 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     uint32_t firstPassComplete;
-	NavAttOut outputInertial;   /*!< -- Output inertial estimate data */
-    STOutputData stSensorIn; /*!< [-] ST sensor data read in from message bus*/
+	NavAttMessage outputInertial;        /*!< -- Output inertial estimate data */
+    STOutputData stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
     RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedMessage rwSpeedPrev;          /*! [-] Local reaction wheel speeds */

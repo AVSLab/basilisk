@@ -33,8 +33,10 @@
 %ignore Reset_celestialTwoBodyPoint;
 %include "../_GeneralModuleFiles/attGuidOut.h"
 %include "../SimFswInterface/ephemerisMessage.h"
+%include "../SimFswInterface/navTransMessage.h"
 GEN_SIZEOF(celestialTwoBodyPointConfig);
 GEN_SIZEOF(EphemerisMessage);
+GEN_SIZEOF(NavTransMessage);
 %include "celestialTwoBodyPoint.h"
 
 %pythoncode %{

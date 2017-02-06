@@ -30,9 +30,11 @@
 %ignore CrossInit_attTrackingError;
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
+%include "attTrackingError.h"
+%include "../../../SimFswInterface/navAttMessage.h"
+GEN_SIZEOF(NavAttMessage);
 GEN_SIZEOF(attTrackingErrorConfig);
 GEN_SIZEOF(attRefOut)
-%include "attTrackingError.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/attGuidOut.h"
