@@ -16,28 +16,14 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module attRefGen
-%{
-   #include "attRefGen.h"
-%}
 
-%include "swig_conly_data.i"
+#ifndef SUN_HEADING_EST_MESSAGE_H
+#define SUN_HEADING_EST_MESSAGE_H
 
-%constant void Update_attRefGen(void*, uint64_t, uint64_t);
-%ignore Update_attRefGen;
-%constant void SelfInit_attRefGen(void*, uint64_t);
-%ignore SelfInit_attRefGen;
-%constant void CrossInit_attRefGen(void*, uint64_t);
-%ignore CrossInit_attRefGen;
-%constant void Reset_attRefGen(void*, uint64_t, uint64_t);
-%ignore Reset_attRefGen;
-%array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "../../attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
-%include "../_GeneralModuleFiles/attGuidOut.h"
-GEN_SIZEOF(attRefGenConfig);
-%include "attRefGen.h"
+/*! @brief Structure used to define the sun heading estimator output */
+typedef struct {
+    double sHatBdy[3];      /*!< -- unit vector to the sun in ADCS body frame */
+}SunHeadingEstMessage;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+
+#endif

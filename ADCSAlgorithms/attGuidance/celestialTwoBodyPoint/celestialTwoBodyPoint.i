@@ -31,7 +31,6 @@
 %ignore CrossInit_celestialTwoBodyPoint;
 %constant void Reset_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
 %ignore Reset_celestialTwoBodyPoint;
-%include "../_GeneralModuleFiles/attGuidOut.h"
 %include "../SimFswInterface/ephemerisMessage.h"
 %include "../SimFswInterface/navTransMessage.h"
 %include "../../fswMessages/attRefMessage.h"

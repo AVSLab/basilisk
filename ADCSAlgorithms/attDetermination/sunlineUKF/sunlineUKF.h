@@ -24,6 +24,7 @@
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include <stdint.h>
 #include "../SimFswInterface/navAttMessage.h"
+#include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
 
 #define SKF_N_STATES 6
 #define MAX_N_CSS_MEAS 8

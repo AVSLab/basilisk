@@ -21,7 +21,6 @@
 #define _CELESTIAL_BODY_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include <stdint.h>
 #include "../SimFswInterface/ephemerisMessage.h"
 #include "../SimFswInterface/navTransMessage.h"

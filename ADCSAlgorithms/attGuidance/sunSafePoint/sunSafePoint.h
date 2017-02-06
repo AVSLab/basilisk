@@ -21,9 +21,9 @@
 #define _SUN_SAFE_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "attDetermination/CSSEst/cssWlsEst.h"
-#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "fswMessages/attGuidMessage.h"
+#include "fswMessages/sunHeadingEstMessage.h"
+#include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

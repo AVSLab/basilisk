@@ -29,10 +29,12 @@
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
 STRUCTASLIST(SingleCSSConfig)
-GEN_SIZEOF(CSSWlsEstOut);
+GEN_SIZEOF(SunHeadingEstMessage);
 GEN_SIZEOF(SingleCSSConfig);
 GEN_SIZEOF(CSSWLSConfig);
 %include "cssWlsEst.h"
+%include "../../fswMessages/sunHeadingEstMessage.h"
+%include "../_GeneralModuleFiles/singleCSSConfig.h"
 
 %pythoncode %{
 import sys

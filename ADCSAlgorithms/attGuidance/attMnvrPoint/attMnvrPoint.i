@@ -30,6 +30,7 @@
 %ignore CrossInit_attMnvrPoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../../fswMessages/attGuidMessage.h"
+%include "../../attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
 %include "../../../SimFswInterface/navAttMessage.h"
 GEN_SIZEOF(attMnvrPointConfig);
 GEN_SIZEOF(NavAttMessage);

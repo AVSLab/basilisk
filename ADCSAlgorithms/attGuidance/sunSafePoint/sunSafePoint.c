@@ -52,7 +52,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputSunVecName,
-        sizeof(CSSWlsEstOut), moduleID);
+        sizeof(SunHeadingEstMessage), moduleID);
     ConfigData->imuMsgID = subscribeToMessage(ConfigData->inputIMUDataName,
         sizeof(IMUOutputData), moduleID);
     
@@ -67,7 +67,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
 void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    CSSWlsEstOut sunVecEst;
+    SunHeadingEstMessage sunVecEst;
     uint64_t clockTime;
     uint32_t readSize;
     double ctSNormalized;
@@ -77,7 +77,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(CSSWlsEstOut), (void*) &(sunVecEst), moduleID);
+                sizeof(SunHeadingEstMessage), (void*) &(sunVecEst), moduleID);
     ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
                 sizeof(IMUOutputData), (void*) &(LocalIMUData), moduleID);
     

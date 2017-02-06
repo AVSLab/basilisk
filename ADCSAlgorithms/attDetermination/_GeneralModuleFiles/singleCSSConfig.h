@@ -16,28 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module attRefGen
-%{
-   #include "attRefGen.h"
-%}
 
-%include "swig_conly_data.i"
+#ifndef _SINGLE_CSS_CONFIG_H
+#define _SINGLE_CSS_CONFIG_H
 
-%constant void Update_attRefGen(void*, uint64_t, uint64_t);
-%ignore Update_attRefGen;
-%constant void SelfInit_attRefGen(void*, uint64_t);
-%ignore SelfInit_attRefGen;
-%constant void CrossInit_attRefGen(void*, uint64_t);
-%ignore CrossInit_attRefGen;
-%constant void Reset_attRefGen(void*, uint64_t, uint64_t);
-%ignore Reset_attRefGen;
-%array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "../../attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
-%include "../_GeneralModuleFiles/attGuidOut.h"
-GEN_SIZEOF(attRefGenConfig);
-%include "attRefGen.h"
+/*! @brief Structure used to contain the configuration information for
+ each sun sensor*/
+typedef struct {
+    double nHatBdy[3];      /*!< -- Normal unit vector for sensor in body frame*/
+    double nHatStr[3];      /*!< [-] Normal unit vector for sensor in structural frame*/
+    double CBias;           /*!< W  Calibration coefficient bias for CSS */
+    double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
+}SingleCSSConfig;
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

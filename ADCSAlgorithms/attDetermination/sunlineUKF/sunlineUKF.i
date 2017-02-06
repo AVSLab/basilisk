@@ -36,6 +36,7 @@ GEN_SIZEOF(SunlineMeasOut);
 GEN_SIZEOF(SunlineUKFConfig);
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "../_GeneralModuleFiles/singleCSSConfig.h"
 
 %pythoncode %{
 import sys
