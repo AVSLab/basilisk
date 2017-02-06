@@ -23,7 +23,6 @@ import BSKModuleParse as dataParser
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 sys.path.append(path + '/../PythonModules/')
-import AVSSim
 import alg_contain
 import sim_model
 import numpy as np
@@ -169,6 +168,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     def createModuleHeaderName(module, headersList):
         moduleName = module[:len(module) / 2] + '.h'
         headerPath = findFilePath(moduleName)
+        if(headerPath == None):
+           return
         header = '#include "' + headerPath + '"\n'
         if not(header in headersList):
             headersList.append(header)

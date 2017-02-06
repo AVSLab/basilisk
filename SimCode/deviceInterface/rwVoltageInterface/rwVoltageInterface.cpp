@@ -19,6 +19,7 @@
 #include "deviceInterface/rwVoltageInterface/rwVoltageInterface.h"
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
+#include <cstring>
 
 /*! This is the constructor for the RW voltgage interface.  It sets default variable
     values and initializes the various parts of the model */
