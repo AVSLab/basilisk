@@ -39,8 +39,8 @@ void SelfInit_inertial3D(inertial3DConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attRefOut),
-                                               "attRefOut",
+                                               sizeof(AttRefMessage),
+                                               "AttRefMessage",
                                                moduleID);
 }
 
@@ -60,7 +60,7 @@ void Update_inertial3D(inertial3DConfig *ConfigData, uint64_t callTime, uint64_t
     /*! - Compute and store output message */
     computeInertialPointingReference(ConfigData);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
 
     return;

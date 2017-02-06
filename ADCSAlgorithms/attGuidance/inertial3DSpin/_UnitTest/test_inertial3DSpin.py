@@ -95,7 +95,7 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = inertial3DSpin.attRefOut()  # Create a structure for the input message
+    RefStateOutData = inertial3DSpin.AttRefMessage()  # Create a structure for the input message
     inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,

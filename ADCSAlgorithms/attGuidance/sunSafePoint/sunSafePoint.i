@@ -31,8 +31,9 @@
 %ignore CrossInit_sunSafePoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
 %include "../_GeneralModuleFiles/attGuidOut.h"
+%include "../../fswMessages/attGuidMessage.h"
 GEN_SIZEOF(sunSafePointConfig);
-GEN_SIZEOF(attGuidOut);
+GEN_SIZEOF(AttGuidMessage);
 %include "sunSafePoint.h"
 
 %pythoncode %{

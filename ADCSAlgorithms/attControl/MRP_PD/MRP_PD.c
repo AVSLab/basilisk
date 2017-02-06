@@ -59,7 +59,7 @@ void CrossInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message IDs*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
-                                                 sizeof(attGuidOut), moduleID);
+                                                 sizeof(AttGuidMessage), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
                                                               sizeof(vehicleConfigData), moduleID);
 }
@@ -83,7 +83,7 @@ void Reset_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime, uint64_t moduleID
 void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    attGuidOut          guidCmd;            /*!< Guidance Message */
+    AttGuidMessage      guidCmd;            /*!< Guidance Message */
     vehicleConfigData   sc;                 /*!< spacecraft configuration message */
     uint64_t            clockTime;
     uint32_t            readSize;
@@ -97,7 +97,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
+                sizeof(AttGuidMessage), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(vehicleConfigData), (void*) &(sc), moduleID);
     

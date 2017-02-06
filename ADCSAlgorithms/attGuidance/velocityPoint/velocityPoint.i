@@ -33,12 +33,12 @@
 %include "velocityPoint.h"
 %include "../../SimFswInterface/ephemerisMessage.h"
 %include "../../SimFswInterface/navTransMessage.h"
+%include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(velocityPointConfig);
 GEN_SIZEOF(EphemerisMessage);
 GEN_SIZEOF(NavTransMessage);
+GEN_SIZEOF(AttRefMessage);
 
-// sample Module supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/attGuidOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

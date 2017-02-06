@@ -35,9 +35,11 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
 GEN_SIZEOF(vehControlOut);
 GEN_SIZEOF(RWAvailabilityData);
+GEN_SIZEOF(AttGuidMessage);
 %include "MRP_Steering.h"
 %include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../ADCSUtilities/ADCSDefinitions.h"
+%include "../../fswMessages/attGuidMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

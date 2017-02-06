@@ -49,8 +49,8 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t modu
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut),
-                                               "attGuidOut",
+                                               sizeof(AttGuidMessage),
+                                               "AttGuidMessage",
                                                moduleID);
 }
 
@@ -63,7 +63,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
 {
     /*! - Get the control data message ID*/
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
-                                                sizeof(attRefOut),
+                                                sizeof(AttRefMessage),
                                                 moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
                                                 sizeof(NavAttMessage),
@@ -90,15 +90,15 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
 {
     uint64_t    clockTime;
     uint32_t    readSize;
-    attRefOut   ref;                        /*!< reference guidance message */
+    AttRefMessage ref;                      /*!< reference guidance message */
     NavAttMessage nav;                      /*!< navigation message */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    memset(&ref, 0x0, sizeof(attRefOut));
+    memset(&ref, 0x0, sizeof(AttRefMessage));
     memset(&nav, 0x0, sizeof(NavAttMessage));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
-                sizeof(attRefOut), (void*) &(ref), moduleID);
+                sizeof(AttRefMessage), (void*) &(ref), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavAttMessage), (void*) &(nav), moduleID);
 
@@ -115,7 +115,7 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
                          ConfigData->attGuidOut.domega_RN_B);
 
 
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidMessage),   /* update module name */
                  (void*) &(ConfigData->attGuidOut), moduleID);
 
     return;

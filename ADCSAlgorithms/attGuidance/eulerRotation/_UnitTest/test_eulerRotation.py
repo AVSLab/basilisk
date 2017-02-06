@@ -104,7 +104,7 @@ def eulerRotationTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = eulerRotation.attRefOut()  # Create a structure for the input message
+    RefStateOutData = eulerRotation.AttRefMessage()  # Create a structure for the input message
     inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,

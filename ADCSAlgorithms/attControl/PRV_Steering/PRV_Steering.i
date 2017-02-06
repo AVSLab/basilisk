@@ -30,9 +30,11 @@
 %ignore CrossInit_PRV_Steering;
 %constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_PRV_Steering;
-%include "../_GeneralModuleFiles/vehControlOut.h"
-GEN_SIZEOF(PRV_SteeringConfig);
 %include "PRV_Steering.h"
+%include "../_GeneralModuleFiles/vehControlOut.h"
+%include "../../fswMessages/attGuidMessage.h"
+GEN_SIZEOF(PRV_SteeringConfig);
+GEN_SIZEOF(AttGuidMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

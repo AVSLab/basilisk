@@ -90,7 +90,7 @@ def mrp_PD_tracking(show_plots):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    guidCmdData = MRP_PD.AttGuidMessage()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputGuidName,

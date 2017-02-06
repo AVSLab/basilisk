@@ -36,7 +36,7 @@ void SelfInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(attGuidOut), "attGuidOut", moduleID);
+        sizeof(AttGuidMessage), "AttGuidMessage", moduleID);
     memset(ConfigData->attOut.omega_RN_B, 0x0, 3*sizeof(double));
     memset(ConfigData->attOut.domega_RN_B, 0x0, 3*sizeof(double));
     
@@ -96,7 +96,7 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
         MRPswitch(ConfigData->attOut.sigma_BR, 1.0, ConfigData->attOut.sigma_BR);
     }
     v3Copy(LocalIMUData.AngVelBody, ConfigData->attOut.omega_BR_B);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidMessage),
                  (void*) &(ConfigData->attOut), moduleID);
     
     return;

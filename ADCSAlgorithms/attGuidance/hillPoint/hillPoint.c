@@ -37,8 +37,8 @@ void SelfInit_hillPoint(hillPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attRefOut),
-                                               "attRefOut",
+                                               sizeof(AttRefMessage),
+                                               "AttRefMessage",
                                                moduleID);
 }
 
@@ -78,7 +78,7 @@ void Update_hillPoint(hillPointConfig *ConfigData, uint64_t callTime, uint64_t m
                                  primPlanet.r_BdyZero_N,
                                  primPlanet.v_BdyZero_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
     
     return;

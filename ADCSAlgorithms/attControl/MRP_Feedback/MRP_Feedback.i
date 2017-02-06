@@ -32,7 +32,9 @@
 %ignore Reset_MRP_Feedback;
 %include "../_GeneralModuleFiles/vehControlOut.h"
 GEN_SIZEOF(MRP_FeedbackConfig);
+GEN_SIZEOF(AttGuidMessage);
 %include "MRP_Feedback.h"
+%include "../../fswMessages/attGuidMessage.h"
 
 %pythoncode %{
 import sys

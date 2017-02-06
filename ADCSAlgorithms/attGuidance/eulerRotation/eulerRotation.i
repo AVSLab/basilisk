@@ -32,11 +32,11 @@
 %constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
 %ignore Reset_eulerRotation;
 GEN_SIZEOF(eulerRotationConfig);
-GEN_SIZEOF(attRefOut);
+GEN_SIZEOF(AttRefMessage);
 %include "eulerRotation.h"
 
 // supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/attGuidOut.h"
+%include "../../fswMessages/attRefMessage.h"
 
 %pythoncode %{
 import sys

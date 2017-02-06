@@ -29,10 +29,11 @@
 %constant void CrossInit_attMnvrPoint(void*, uint64_t);
 %ignore CrossInit_attMnvrPoint;
 %array_functions(SingleCSSConfig, CSSWlsConfigArray);
-%include "../_GeneralModuleFiles/attGuidOut.h"
+%include "../../fswMessages/attGuidMessage.h"
 %include "../../../SimFswInterface/navAttMessage.h"
 GEN_SIZEOF(attMnvrPointConfig);
 GEN_SIZEOF(NavAttMessage);
+GEN_SIZEOF(AttGuidMessage);
 %include "attMnvrPoint.h"
 
 %pythoncode %{

@@ -16,27 +16,20 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3D
-%{
-   #include "inertial3D.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_inertial3D(void*, uint64_t, uint64_t);
-%ignore Update_inertial3D;
-%constant void SelfInit_inertial3D(void*, uint64_t);
-%ignore SelfInit_inertial3D;
-%constant void CrossInit_inertial3D(void*, uint64_t);
-%ignore CrossInit_inertial3D;
-%constant void Reset_inertial3D(void*, uint64_t, uint64_t);
-%ignore Reset_inertial3D;
-GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefMessage);
-%include "inertial3D.h"
-%include "../../fswMessages/attRefMessage.h"
+#ifndef ATT_GUID_MESSAGE_H
+#define ATT_GUID_MESSAGE_H
+
+/*! @brief Structure used to define the output definition for attitude guidance*/
+typedef struct {
+    double sigma_BR[3];         /*!<        Current attitude error estimate (MRPs) of B relative to R*/
+    double omega_BR_B[3];       /*!< [r/s]  Current body error estimate of B relateive to R
+                                 in B frame compoonents */
+    double omega_RN_B[3];       /*!< [r/s]  Reference frame rate vector of the of R relative to N
+                                 in B frame components */
+    double domega_RN_B[3];      /*!< [r/s2] Reference frame inertial body acceleration of R relative
+                                 to N in B frame components */
+}AttGuidMessage;
 
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

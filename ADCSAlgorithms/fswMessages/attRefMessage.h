@@ -16,27 +16,18 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module inertial3D
-%{
-   #include "inertial3D.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_inertial3D(void*, uint64_t, uint64_t);
-%ignore Update_inertial3D;
-%constant void SelfInit_inertial3D(void*, uint64_t);
-%ignore SelfInit_inertial3D;
-%constant void CrossInit_inertial3D(void*, uint64_t);
-%ignore CrossInit_inertial3D;
-%constant void Reset_inertial3D(void*, uint64_t, uint64_t);
-%ignore Reset_inertial3D;
-GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefMessage);
-%include "inertial3D.h"
-%include "../../fswMessages/attRefMessage.h"
+#ifndef ATT_REF_MESSAGE_H
+#define ATT_REF_MESSAGE_H
+
+/*! @brief Structure used to define the output definition for attitude reference generation */
+typedef struct {
+    double sigma_RN[3];         /*!<        Current attitude error estimate (MRPs) of B relative to R*/
+    double omega_RN_N[3];       /*!< [r/s]  Reference frame rate vector of the of R relative to N 
+                                            in N frame components */
+    double domega_RN_N[3];      /*!< [r/s2] Reference frame inertial acceleration of  R relative
+                                            to N in N frame components */
+}AttRefMessage;
 
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#endif

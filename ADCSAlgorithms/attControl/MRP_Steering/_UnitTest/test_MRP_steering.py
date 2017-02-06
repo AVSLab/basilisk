@@ -32,7 +32,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import MRP_Steering  # import the module that is to be tested
-import sunSafePoint  # import module(s) that creates the needed input message declaration
 import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import rwConfigData
 import rwNullSpace
@@ -95,7 +94,7 @@ def mrp_steering_tracking(show_plots):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    guidCmdData = MRP_Steering.AttGuidMessage()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)

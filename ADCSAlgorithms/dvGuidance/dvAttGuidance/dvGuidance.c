@@ -37,7 +37,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputDataName, sizeof(attRefOut), "attCmdOut", moduleID);
+        ConfigData->outputDataName, sizeof(AttRefMessage), "AttRefMessage", moduleID);
     return;
     
 }
@@ -98,7 +98,7 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	v3Scale(localBurnData.dvRotVecMag, dcm_BuN[2], ConfigData->attCmd.omega_RN_N);
     v3SetZero(ConfigData->attCmd.domega_RN_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attRefOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),
         &ConfigData->attCmd, moduleID);
     
     return;

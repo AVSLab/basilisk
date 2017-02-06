@@ -40,7 +40,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import attTrackingError                  # import the module that is to be tested
-import inertial3DSpin                     # import module(s) that creates the needed input message declaration
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -116,7 +115,7 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = inertial3DSpin.attRefOut()  # Create a structure for the input message
+    RefStateOutData = attTrackingError.AttRefMessage()  # Create a structure for the input message
     inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,
@@ -156,6 +155,7 @@ def subModuleTestFunction(show_plots):
     moduleOutputName = "sigma_BR"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(3))
+    print moduleOutput
 
     # set the filtered output truth states
     trueVector = [

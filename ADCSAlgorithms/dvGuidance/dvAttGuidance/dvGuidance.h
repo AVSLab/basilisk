@@ -22,6 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
+#include "fswMessages/attRefMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -43,7 +44,7 @@ typedef struct {
     double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
     int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
-    attRefOut attCmd;       /*!< (-) Output attitude command data to send*/
+    AttRefMessage attCmd;    /*!< (-) Output attitude command data to send*/
 }dvGuidanceConfig;
 
 #ifdef __cplusplus

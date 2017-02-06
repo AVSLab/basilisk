@@ -34,9 +34,11 @@
 %include "../_GeneralModuleFiles/attGuidOut.h"
 %include "../SimFswInterface/ephemerisMessage.h"
 %include "../SimFswInterface/navTransMessage.h"
+%include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(celestialTwoBodyPointConfig);
 GEN_SIZEOF(EphemerisMessage);
 GEN_SIZEOF(NavTransMessage);
+GEN_SIZEOF(AttRefMessage);
 %include "celestialTwoBodyPoint.h"
 
 %pythoncode %{

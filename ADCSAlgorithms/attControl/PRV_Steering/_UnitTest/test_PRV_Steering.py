@@ -48,7 +48,6 @@ import matplotlib.pyplot as plt
 # import the module that is to be tested
 import PRV_Steering
 # import module(s) that creates the needed input message declaration
-import sunSafePoint
 import vehicleConfigData
 import rwNullSpace
 import rwMotorTorque
@@ -116,7 +115,7 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    guidCmdData = PRV_Steering.AttGuidMessage()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize,

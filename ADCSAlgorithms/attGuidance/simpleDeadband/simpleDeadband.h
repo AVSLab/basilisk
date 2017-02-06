@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/attGuidOut.h"
+#include "fswMessages/attGuidMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -46,7 +47,7 @@ typedef struct {
     int32_t outputGuidID;                            /*!< ID for the outgoing message */
     int32_t inputGuidID;                             /*!< ID for the incoming guidance reference message */
 
-    attGuidOut attGuidOut;                           /*!< copy of the output message */
+    AttGuidMessage attGuidOut;                       /*!< copy of the output message */
 
 }simpleDeadbandConfig;
 

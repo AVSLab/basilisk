@@ -36,7 +36,7 @@ void SelfInit_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(attGuidOut), "attGuidOut", moduleID);
+        sizeof(AttGuidMessage), "AttGuidMessage", moduleID);
     return;
     
 }
@@ -139,7 +139,7 @@ void Update_attMnvrPoint(attMnvrPointConfig *ConfigData, uint64_t callTime,
     v3Subtract(localState.omega_BN_B, ConfigData->bodyRateCmd,
     ConfigData->attOut.omega_BR_B);
 
-	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
+	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidMessage),
 		(void*)&(ConfigData->attOut), moduleID);
     
     return;

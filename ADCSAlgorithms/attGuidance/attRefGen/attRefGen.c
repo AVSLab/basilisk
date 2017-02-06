@@ -36,9 +36,9 @@ void SelfInit_attRefGen(attRefGenConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputRefID = CreateNewMessage(ConfigData->outputRefName,
-                                               sizeof(attRefOut), "attRefOut", moduleID);
+                                               sizeof(AttRefMessage), "AttRefMessage", moduleID);
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut), "attGuidOut", moduleID);
+                                               sizeof(AttGuidMessage), "AttGuidMessage", moduleID);
     return;
     
 }
@@ -89,13 +89,13 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     double MRP_BcBf[3];
     double BN[3][3];
 	double propDT;
-    attRefOut localRef;
+    AttRefMessage localRef;
 
     
     memset(&localCmd, 0x0, sizeof(attCmdOut));
     memset(&localState, 0x0, sizeof(NavAttMessage));
-	memset(&(ConfigData->attOut), 0x0, sizeof(attGuidOut));
-    memset(&localRef, 0x0, sizeof(attRefOut));
+	memset(&(ConfigData->attOut), 0x0, sizeof(AttGuidMessage));
+    memset(&localRef, 0x0, sizeof(AttRefMessage));
     
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavAttMessage), (void*) &(localState), moduleID);
@@ -136,9 +136,9 @@ void Update_attRefGen(attRefGenConfig *ConfigData, uint64_t callTime,
     MRP2C(localState.sigma_BN, BN);
     m33tMultV3(BN, ConfigData->omegaCmd_BR_B, localRef.omega_RN_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(attGuidOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidMessage),
         (void*)&(ConfigData->attOut), moduleID);
-    WriteMessage(ConfigData->outputRefID, callTime, sizeof(attRefOut),
+    WriteMessage(ConfigData->outputRefID, callTime, sizeof(AttRefMessage),
         (void*) &localRef, moduleID);
     
     return;

@@ -49,7 +49,6 @@ import matplotlib.pyplot as plt
 # import the module that is to be tested
 import MRP_Feedback
 # import module(s) that creates the needed input message declaration
-import sunSafePoint
 import vehicleConfigData
 import rwNullSpace
 import rwMotorTorque
@@ -114,7 +113,7 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    guidCmdData = sunSafePoint.attGuidOut()  # Create a structure for the input message
+    guidCmdData = MRP_Feedback.AttGuidMessage()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)

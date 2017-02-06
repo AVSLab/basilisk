@@ -28,6 +28,7 @@
 #include "SimCode/utilities/orbitalMotion.h"
 #include "../SimFswInterface/ephemerisMessage.h"
 #include "../SimFswInterface/navTransMessage.h"
+#include "fswMessages/attRefMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -51,7 +52,7 @@ typedef struct {
     int32_t inputCelID;                             /*!< (-)    ID for the planet input message */
     
     /*  copy of the output message */
-    attRefOut attRefOut;
+    AttRefMessage attRefOut;
 
 }velocityPointConfig;
 

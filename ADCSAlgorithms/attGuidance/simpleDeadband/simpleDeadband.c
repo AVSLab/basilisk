@@ -51,8 +51,8 @@ void SelfInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleID
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputGuidID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(attGuidOut),
-                                               "attGuidOut",
+                                               sizeof(AttGuidMessage),
+                                               "AttGuidMessage",
                                                moduleID);
     ConfigData->wasControlOff = 1;
 }
@@ -66,7 +66,7 @@ void CrossInit_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t moduleI
 {
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
-                                                sizeof(attGuidOut),
+                                                sizeof(AttGuidMessage),
                                                 moduleID);
 }
 
@@ -92,7 +92,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, 
     uint64_t    clockTime;
     uint32_t    readSize;
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(attGuidOut), (void*) &(ConfigData->attGuidOut), moduleID);
+                sizeof(AttGuidMessage), (void*) &(ConfigData->attGuidOut), moduleID);
     
     /*! - Evaluate average simple in attitude and rates */
     ConfigData->attError = 4.0 * atan(v3Norm(ConfigData->attGuidOut.sigma_BR));
@@ -102,7 +102,7 @@ void Update_simpleDeadband(simpleDeadbandConfig *ConfigData, uint64_t callTime, 
     applyDBLogic_simpleDeadband(ConfigData);
     
     /*! - Write output guidance message and update module knowledge of control status*/
-    WriteMessage(ConfigData->outputGuidID, callTime, sizeof(attGuidOut),
+    WriteMessage(ConfigData->outputGuidID, callTime, sizeof(AttGuidMessage),
                  (void*) &(ConfigData->attGuidOut), moduleID);
     return;
 }

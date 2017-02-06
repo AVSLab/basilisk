@@ -32,12 +32,13 @@
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"
 %include "../../../SimFswInterface/navAttMessage.h"
+%include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(NavAttMessage);
 GEN_SIZEOF(attTrackingErrorConfig);
-GEN_SIZEOF(attRefOut)
+GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(AttRefMessage);
 
-// sample Module supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/attGuidOut.h"
 
 %pythoncode %{
     import sys

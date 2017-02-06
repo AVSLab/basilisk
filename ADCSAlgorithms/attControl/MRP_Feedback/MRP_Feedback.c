@@ -59,7 +59,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
-                                                 sizeof(attGuidOut), moduleID);
+                                                 sizeof(AttGuidMessage), moduleID);
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
                                                  sizeof(vehicleConfigData), moduleID);
     
@@ -126,7 +126,7 @@ void Reset_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime, uint6
 void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    attGuidOut          guidCmd;            /*!< Guidance Message */
+    AttGuidMessage      guidCmd;            /*!< Guidance Message */
     RWSpeedMessage      wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityData  wheelsAvailability; /*!< Reaction wheel availability */
 
@@ -147,7 +147,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(attGuidOut), (void*) &(guidCmd), moduleID);
+                sizeof(AttGuidMessage), (void*) &(guidCmd), moduleID);
     
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default

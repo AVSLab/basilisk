@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
+#include "fswMessages/attGuidMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -41,8 +42,8 @@ typedef struct {
     double sHatBdyCmd[3];    /*!< -- Desired body vector to point at the sun*/
     int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t inputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
-    int32_t imuMsgID;      /*!< -- ID for the incoming CSS sensor message*/
-    attGuidOut attOut;       /*!< -- The output data that we compute*/
+    int32_t imuMsgID;        /*!< -- ID for the incoming CSS sensor message*/
+    AttGuidMessage attOut;   /*!< -- The output data that we compute*/
 }sunSafePointConfig;
 
 #ifdef __cplusplus

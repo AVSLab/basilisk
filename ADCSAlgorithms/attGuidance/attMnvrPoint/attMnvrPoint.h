@@ -24,6 +24,7 @@
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "../SimFswInterface/navAttMessage.h"
+#include "fswMessages/attGuidMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -50,7 +51,7 @@ typedef struct {
     int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t inputNavID;      /*!< -- ID for the incoming nav state message*/
     int32_t inputCmdID;      /*!< -- ID for the incoming attitude command message*/
-    attGuidOut attOut;       /*!< -- The output data that we compute*/
+    AttGuidMessage attOut;   /*!< -- The output data that we compute*/
 }attMnvrPointConfig;
 
 #ifdef __cplusplus

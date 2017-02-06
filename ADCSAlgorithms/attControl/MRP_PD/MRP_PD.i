@@ -31,7 +31,9 @@
 %constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_PD;
 %include "../_GeneralModuleFiles/vehControlOut.h"
+%include "../../fswMessages/attGuidMessage.h"
 GEN_SIZEOF(MRP_PDConfig);
+GEN_SIZEOF(AttGuidMessage);
 %include "MRP_PD.h"
 %pythoncode %{
 import sys
