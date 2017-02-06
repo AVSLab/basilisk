@@ -42,12 +42,12 @@ void SelfInit_rasterManager(rasterManagerConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputEulerSetID = CreateNewMessage(ConfigData->outputEulerSetName,
-                                                 sizeof(eulerOut),
-                                                 "eulerOut",
+                                                 sizeof(EulerAngleMessage),
+                                                 "EulerAngleMessage",
                                                  moduleID);
     ConfigData->outputEulerRatesID = CreateNewMessage(ConfigData->outputEulerRatesName,
-                                                    sizeof(eulerOut),
-                                                    "eulerOut",
+                                                    sizeof(EulerAngleMessage),
+                                                    "EulerAngleMessage",
                                                     moduleID);
     ConfigData->mnvrActive = 0;
     ConfigData->scanSelector = 0;
@@ -93,9 +93,9 @@ void Update_rasterManager(rasterManagerConfig *ConfigData, uint64_t callTime, ui
     }
     
     
-    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(eulerOut),
+    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(EulerAngleMessage),
                  (void*) &(ConfigData->outputAngleSet), moduleID);
-    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(eulerOut),
+    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(EulerAngleMessage),
                  (void*) &(ConfigData->outputAngleRates), moduleID);
     return;
 }

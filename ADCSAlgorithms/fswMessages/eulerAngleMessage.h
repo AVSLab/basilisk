@@ -17,23 +17,14 @@
 
  */
 
-#ifndef _ATT_GUID_OUT_H_
-#define _ATT_GUID_OUT_H_
+#ifndef EULER_ANGLE_MESSAGE_H
+#define EULER_ANGLE_MESSAGE_H
 
-#include <stdint.h>
-
-#define MAX_RASTER_SET 36
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
-
-/*! @brief Structure used to define the format of an attitude maneuver command */
+/*! @brief Structure used to define the output euler set for attitude reference generation */
 typedef struct {
-   double sigma_BR[3];      /*!< -- Commanded body wrt reference that we are tracking*/
-   double omega_BR[3];      /*!< r/s Body rate of that commanded attitude vector*/
-}attCmdOut;
+    double set[3];          /*!< [rad] or [rad/sec]  Euler angle set values */
+}EulerAngleMessage;
 
 
-/*! @} */
 
 #endif
