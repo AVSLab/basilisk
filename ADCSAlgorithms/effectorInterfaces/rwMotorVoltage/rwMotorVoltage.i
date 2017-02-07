@@ -37,6 +37,7 @@ GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(RWSpeedMessage);
 %include "rwMotorVoltage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
+%include "../../../SimFswInterface/simFSWMacros.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../ADCSUtilities/ADCSDefinitions.h"
 %include "../_GeneralModuleFiles/vehEffectorOut.h"

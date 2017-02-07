@@ -22,9 +22,9 @@
 
 #include "messaging/static_messaging.h"
 #include "../_GeneralModuleFiles/singleCSSConfig.h"
-#include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include "fswMessages/sunHeadingEstMessage.h"
 #include <stdint.h>
+#include "../simFswInterface/cssArraySensorMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

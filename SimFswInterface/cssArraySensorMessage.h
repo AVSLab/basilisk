@@ -16,24 +16,21 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module cssComm
-%{
-   #include "cssComm.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_cssProcessTelem(void*, uint64_t, uint64_t);
-%ignore Update_cssProcessTelem;
-%constant void SelfInit_cssProcessTelem(void*, uint64_t);
-%ignore SelfInit_cssProcessTelem;
-%constant void CrossInit_cssProcessTelem(void*, uint64_t);
-%ignore CrossInit_cssProcessTelem;
-STRUCTASLIST(CSSArraySensorMessage)
-GEN_SIZEOF(CSSArraySensorMessage);
-GEN_SIZEOF(CSSConfigData);
-%include "cssComm.h"
-%include "../../SimFswInterface/cssArraySensorMessage.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef CSS_ARRAY_SENSOR_MESSAGE_H
+#define CSS_ARRAY_SENSOR_MESSAGE_H
+
+#include "simFSWMacros.h"
+
+/*! @brief Output structure for CSS array or constellation interface.  Each element contains the raw measurement which should be a cosine value nominally */
+typedef struct {
+    double CosValue[MAX_NUM_CSS_SENSORS];   /*!< Current measured CSS value (ideally a cosine value) 
+                                                 for the constellation of CSS sensors*/
+}CSSArraySensorMessage;
+
+
+
+
+
+
+#endif

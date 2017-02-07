@@ -37,7 +37,7 @@ void SelfInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
     }
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(CSSOutputData), "CSSOutputData", moduleID);
+        sizeof(CSSArraySensorMessage), "CSSArraySensorMessage", moduleID);
     
 }
 
@@ -58,7 +58,7 @@ void CrossInit_cssProcessTelem(CSSConfigData *ConfigData, uint64_t moduleID)
     }
     
     ConfigData->SensorMsgID = subscribeToMessage(
-        ConfigData->SensorListName, sizeof(CSSOutputData), moduleID);
+        ConfigData->SensorListName, sizeof(CSSArraySensorMessage), moduleID);
 }
 
 /*! This method takes the raw sensor data from the coarse sun sensors and
@@ -75,7 +75,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     uint32_t ReadSize;
     double InputValues[MAX_NUM_CSS_SENSORS];
     double ChebyDiffFactor, ChebyPrev, ChebyNow, ChebyLocalPrev, ValueMult;
-    CSSOutputData OutputBuffer;
+    CSSArraySensorMessage OutputBuffer;
     
     /*! Begin method steps*/
     /*! - Check for correct values in NumSensors and MaxSensorValue */
@@ -84,8 +84,8 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     {
         return; /* Throw ugly FSW error/crash here */
     }
-    memset(&OutputBuffer, 0x0, sizeof(CSSOutputData));
-    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize, sizeof(CSSOutputData),
+    memset(&OutputBuffer, 0x0, sizeof(CSSArraySensorMessage));
+    ReadMessage(ConfigData->SensorMsgID, &ClockTime, &ReadSize, sizeof(CSSArraySensorMessage),
                 (void*) (InputValues), moduleID);
     /*! - Loop over the sensors and compute data
      -# Check appropriate range on sensor and calibrate
@@ -128,7 +128,7 @@ void Update_cssProcessTelem(CSSConfigData *ConfigData, uint64_t callTime,
     }
     /*! - Write aggregate output into output message */
     WriteMessage(ConfigData->OutputMsgID, callTime,
-                 sizeof(CSSOutputData), (void*) &OutputBuffer,
+                 sizeof(CSSArraySensorMessage), (void*) &OutputBuffer,
                  moduleID);
     
     return;

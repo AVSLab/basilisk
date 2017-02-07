@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "ADCSUtilities/ADCSDefinitions.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

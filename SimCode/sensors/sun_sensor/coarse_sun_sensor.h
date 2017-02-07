@@ -26,6 +26,7 @@
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
 #include "simMessages/cssRawDataMessage.h"
+#include "../SimFswInterface/cssArraySensorMessage.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -121,9 +122,8 @@ class CSSConstellation: public SysModel {
     std::string outputConstellationMessage;      //!< [-] Message name for the outgoing message
     int64_t outputConstID;                       //!< [-] output ID for the outgoing message
     std::vector<CoarseSunSensor> sensorList;     //!< [-] List of coarse sun sensors in constellation
-    uint64_t maxNumCSSSensors;                   //!< [-] Maximum size for the outgoing message buffer
  private:
-    CSSRawDataMessage *outputBuffer;             //!< [-] buffer used to write output message
+    CSSArraySensorMessage outputBuffer;             //!< [-] buffer used to write output message
 };
 
 /*! @} */

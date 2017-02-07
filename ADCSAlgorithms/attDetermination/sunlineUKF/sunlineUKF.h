@@ -24,6 +24,7 @@
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include <stdint.h>
 #include "../SimFswInterface/navAttMessage.h"
+#include "../SimFswInterface/cssArraySensorMessage.h"
 #include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
 
 #define SKF_N_STATES 6
@@ -88,7 +89,7 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttMessage outputSunline;   /*!< -- Output sunline estimate data */
-    CSSOutputData cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+    CSSArraySensorMessage cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

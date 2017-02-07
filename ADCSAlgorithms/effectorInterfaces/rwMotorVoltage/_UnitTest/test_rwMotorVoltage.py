@@ -47,7 +47,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import rwMotorVoltage
-import vehicleConfigData
 import fswSetupRW
 import macros
 
@@ -155,7 +154,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     if useAvailability:
         moduleConfig.rwAvailInMsgName = "rw_availability"
         rwAvailabilityMessage = rwMotorVoltage.RWAvailabilityData()
-        rwAvailArray = np.zeros(vehicleConfigData.MAX_EFF_CNT)
+        rwAvailArray = np.zeros(rwMotorVoltage.MAX_EFF_CNT)
         rwAvailArray.fill(rwMotorVoltage.AVAILABLE)
         rwAvailArray[2] = rwMotorVoltage.UNAVAILABLE        # make 3rd RW unavailable
         rwAvailabilityMessage.wheelAvailability = rwAvailArray
