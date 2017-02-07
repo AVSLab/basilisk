@@ -29,9 +29,9 @@
 %ignore SelfInit_sunSafePoint;
 %constant void CrossInit_sunSafePoint(void*, uint64_t);
 %ignore CrossInit_sunSafePoint;
-%array_functions(SingleCSSConfig, CSSWlsConfigArray);
+%array_functions(CSSConfigMessage, CSSWlsConfigArray);
 %include "../../fswMessages/sunHeadingEstMessage.h"
-%include "../../attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
+%include "../../fswMessages/CSSConfigMessage.h"
 GEN_SIZEOF(sunSafePointConfig);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(SunHeadingEstMessage);

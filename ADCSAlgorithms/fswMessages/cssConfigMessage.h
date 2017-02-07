@@ -16,22 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-//
-//  simMacros.h
-//  Defines commonly used macros in the simulation code
-////
 
-#ifndef simMacros_H
-#define simMacros_H
+#ifndef CSS_CONFIG_MESSAGE_H
+#define CSS_CONFIG_MESSAGE_H
 
-/*
- Declare common ADCS macros
- */
-#define NANO2SEC        1.0E-9
-#define RECAST3X3       (double (*)[3])
-#define RECAST2x2       (double (*)[2])
-
-
-
+/*! @brief Structure used to contain the configuration information for
+ each sun sensor*/
+typedef struct {
+    double nHatBdy[3];      /*!< -- Normal unit vector for sensor in body frame*/
+    double nHatStr[3];      /*!< [-] Normal unit vector for sensor in structural frame*/
+    double CBias;           /*!< W  Calibration coefficient bias for CSS */
+    double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
+}CSSConfigMessage;
 
 #endif

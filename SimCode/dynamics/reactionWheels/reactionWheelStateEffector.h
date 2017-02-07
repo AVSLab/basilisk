@@ -26,7 +26,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "utilities/simMacros.h"
+#include "../SimFswInterface/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"

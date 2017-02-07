@@ -31,14 +31,16 @@
 %ignore CrossInit_sunlineUKF;
 %constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineUKF;
-STRUCTASLIST(SingleCSSConfig)
-GEN_SIZEOF(SunlineMeasOut);
+STRUCTASLIST(CSSConfigMessage)
+GEN_SIZEOF(CSSConfigMessage)
+GEN_SIZEOF(SunlineFilterMessage);
 GEN_SIZEOF(SunlineUKFConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../_GeneralModuleFiles/singleCSSConfig.h"
+%include "../../fswMessages/CSSConfigMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/sunlineFilterMessage.h"
 
 %pythoncode %{
 import sys

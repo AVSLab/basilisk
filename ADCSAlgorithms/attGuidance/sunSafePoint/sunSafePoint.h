@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/sunHeadingEstMessage.h"
-#include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
+#include "fswMessages/CSSConfigMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

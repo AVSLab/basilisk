@@ -21,28 +21,18 @@
 #define _SUNLINE_UKF_H_
 
 #include "messaging/static_messaging.h"
-#include "sensorInterfaces/CSSSensorData/cssComm.h"
 #include <stdint.h>
 #include "../SimFswInterface/navAttMessage.h"
 #include "../SimFswInterface/cssArraySensorMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
+#include "fswMessages/CSSConfigMessage.h"
+#include "fswMessages/sunlineFilterMessage.h"
 
-#define SKF_N_STATES 6
-#define MAX_N_CSS_MEAS 8
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
-/*! @brief structure for filter-states output for the unscented kalman filter 
-        implementation of the sunline state estimator*/
-typedef struct {
-    double timeTag;                             /*!< [s] Current time of validity for output */
-    double covar[SKF_N_STATES*SKF_N_STATES];    /*!< [-] Current covariance of the filter */
-    double state[SKF_N_STATES];                 /*!< [-] Current estimated state of the filter */
-    int numObs;                                 /*!< [-] Valid observation count for this frame*/
-}SunlineMeasOut;
 
 /*! @brief Top level structure for the CSS unscented kalman filter estimator.
  Used to estimate the sun state in the vehicle body frame*/
@@ -52,7 +42,7 @@ typedef struct {
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
-
+    
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */

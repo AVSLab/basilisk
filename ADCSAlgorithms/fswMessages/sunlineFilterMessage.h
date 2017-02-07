@@ -17,16 +17,21 @@
 
  */
 
-#ifndef _SINGLE_CSS_CONFIG_H
-#define _SINGLE_CSS_CONFIG_H
+#ifndef SUNLINE_FILTER_MESSAGE_H
+#define SUNLINE_FILTER_MESSAGE_H
 
-/*! @brief Structure used to contain the configuration information for
- each sun sensor*/
+#define SKF_N_STATES 6
+#define MAX_N_CSS_MEAS 8
+
+/*! @brief structure for filter-states output for the unscented kalman filter
+ implementation of the sunline state estimator*/
 typedef struct {
-    double nHatBdy[3];      /*!< -- Normal unit vector for sensor in body frame*/
-    double nHatStr[3];      /*!< [-] Normal unit vector for sensor in structural frame*/
-    double CBias;           /*!< W  Calibration coefficient bias for CSS */
-    double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
-}SingleCSSConfig;
+    double timeTag;                             /*!< [s] Current time of validity for output */
+    double covar[SKF_N_STATES*SKF_N_STATES];    /*!< [-] Current covariance of the filter */
+    double state[SKF_N_STATES];                 /*!< [-] Current estimated state of the filter */
+    int numObs;                                 /*!< [-] Valid observation count for this frame*/
+}SunlineFilterMessage;
+
+
 
 #endif

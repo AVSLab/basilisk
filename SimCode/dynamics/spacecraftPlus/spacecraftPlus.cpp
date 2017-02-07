@@ -18,7 +18,7 @@
  */
 
 #include "spacecraftPlus.h"
-#include "utilities/simMacros.h"
+#include "../SimFswInterface/macroDefinitions.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"

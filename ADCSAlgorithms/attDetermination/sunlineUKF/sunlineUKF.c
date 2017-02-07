@@ -43,7 +43,7 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
 		sizeof(NavAttMessage), "NavAttMessage", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
-        sizeof(SunlineMeasOut), "SunlineMeasOut", moduleID);
+        sizeof(SunlineFilterMessage), "SunlineFilterMessage", moduleID);
     
 }
 
@@ -170,7 +170,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     double newTimeTag;
     uint64_t ClockTime;
     uint32_t ReadSize;
-    SunlineMeasOut sunlineDataOutBuffer;
+    SunlineFilterMessage sunlineDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
@@ -211,7 +211,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
     memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineMeasOut),
+    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterMessage),
                  &sunlineDataOutBuffer, moduleID);
     
     return;
