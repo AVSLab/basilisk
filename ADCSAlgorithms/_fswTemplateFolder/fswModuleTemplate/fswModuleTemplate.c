@@ -35,7 +35,6 @@
 #include "SimCode/utilities/linearAlgebra.h"
 //#include "SimCode/utilities/rigidBodyKinematics.h"
 //#include "SimCode/utilities/astroConstants.h"
-//#include "vehicleConfigData/ADCSAlgorithmMacros.h"
 
 
 /*! This method initializes the ConfigData for this module.

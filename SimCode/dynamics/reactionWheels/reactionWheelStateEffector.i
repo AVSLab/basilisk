@@ -33,7 +33,7 @@
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../../simMessages/rwCmdMessage.h"
 %include "../../simMessages/rwConfigMessage.h"
-%include "../../../SimFswInterface/simFSWMacros.h"
+%include "../../../SimFswInterface/macroDefinitions.h"
 %include "../../../SimFswInterface/rwArrayTorqueMessage.h"
 
 //%include "spacecraftPlus.h"

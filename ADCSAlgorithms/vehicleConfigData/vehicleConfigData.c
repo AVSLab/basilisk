@@ -17,7 +17,7 @@
 
  */
 
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include <string.h>

@@ -38,7 +38,7 @@ GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(AttGuidMessage);
 %include "MRP_Steering.h"
 %include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
-%include "../../ADCSUtilities/ADCSDefinitions.h"
+%include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidMessage.h"
 %pythoncode %{
 import sys

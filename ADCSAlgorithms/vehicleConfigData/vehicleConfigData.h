@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "../ADCSAlgorithms/messaging/static_messaging.h"
-#include "../SimFswInterface/simFSWMacros.h"
+#include "../SimFswInterface/macroDefinitions.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

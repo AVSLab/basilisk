@@ -23,8 +23,8 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "ADCSUtilities/ADCSDefinitions.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "fswUtilities/fswDefinitions.h"
+#include "SimFswInterface/macroDefinitions.h"
 
 
 /*! \addtogroup ADCSAlgGroup

@@ -27,7 +27,7 @@
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
 

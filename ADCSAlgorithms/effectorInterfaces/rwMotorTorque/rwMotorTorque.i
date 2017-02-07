@@ -36,7 +36,7 @@ GEN_SIZEOF(RWAvailabilityData);
 %include "rwMotorTorque.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
-%include "../../ADCSUtilities/ADCSDefinitions.h"
+%include "../../fswUtilities/fswDefinitions.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"

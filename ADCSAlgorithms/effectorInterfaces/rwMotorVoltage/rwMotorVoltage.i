@@ -37,9 +37,9 @@ GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(RWSpeedMessage);
 %include "rwMotorVoltage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
-%include "../../../SimFswInterface/simFSWMacros.h"
+%include "../../../SimFswInterface/macroDefinitions.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
-%include "../../ADCSUtilities/ADCSDefinitions.h"
+%include "../../fswUtilities/fswDefinitions.h"
 %include "../_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys

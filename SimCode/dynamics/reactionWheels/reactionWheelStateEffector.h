@@ -33,7 +33,7 @@
 #include "../../simMessages/rwCmdMessage.h"
 #include "../../simMessages/rwConfigMessage.h"
 #include "../../SimFswInterface/rwArrayTorqueMessage.h"
-#include "../../SimFswInterface/simFSWMacros.h"
+#include "../../SimFswInterface/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 

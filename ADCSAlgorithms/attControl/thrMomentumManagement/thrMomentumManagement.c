@@ -27,7 +27,7 @@
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
 

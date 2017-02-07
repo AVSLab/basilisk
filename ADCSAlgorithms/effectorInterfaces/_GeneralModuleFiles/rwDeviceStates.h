@@ -21,7 +21,7 @@
 #define _RW_DEVICE_STATES_H_
 
 #include <stdint.h>
-#include "ADCSUtilities/ADCSDefinitions.h"
+#include "fswUtilities/fswDefinitions.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 
 /*! \addtogroup ADCSAlgGroup

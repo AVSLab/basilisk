@@ -19,7 +19,7 @@
 
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theIMU sensor interface.

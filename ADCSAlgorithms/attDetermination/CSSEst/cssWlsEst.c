@@ -19,7 +19,7 @@
 
 #include "attDetermination/CSSEst/cssWlsEst.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 

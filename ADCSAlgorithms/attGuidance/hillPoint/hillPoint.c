@@ -24,8 +24,8 @@
 
 #include "attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
-#include "ADCSUtilities/ADCSDefinitions.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "fswUtilities/fswDefinitions.h"
+#include "SimFswInterface/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"

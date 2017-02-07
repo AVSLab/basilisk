@@ -23,6 +23,9 @@
 #define MAX_EFF_CNT 36
 #define MAX_NUM_CSS_SENSORS 32
 
+#define NANO2SEC        1e-9
+#define RECAST3X3       (double (*)[3])
+#define RECAST2x2       (double (*)[2])
 
 
 

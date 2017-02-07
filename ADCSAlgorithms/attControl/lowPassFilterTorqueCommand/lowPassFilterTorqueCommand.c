@@ -24,8 +24,8 @@
 /* modify the path to reflect the new module names */
 #include "attControl/lowPassFilterTorqueCommand/lowPassFilterTorqueCommand.h"
 #include "SimCode/utilities/linearAlgebra.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
-#include "ADCSUtilities/ADCSDefinitions.h"
+#include "SimFswInterface/macroDefinitions.h"
+#include "fswUtilities/fswDefinitions.h"
 #include "math.h"
 
 

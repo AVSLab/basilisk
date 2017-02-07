@@ -19,7 +19,7 @@
 
 #include "transDetermination/chebyPosEphem/chebyPosEphem.h"
 #include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>

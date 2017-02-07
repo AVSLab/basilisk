@@ -20,7 +20,7 @@
 #ifndef CSS_ARRAY_SENSOR_MESSAGE_H
 #define CSS_ARRAY_SENSOR_MESSAGE_H
 
-#include "simFSWMacros.h"
+#include "macroDefinitions.h"
 
 /*! @brief Output structure for CSS array or constellation interface.  Each element contains the raw measurement which should be a cosine value nominally */
 typedef struct {

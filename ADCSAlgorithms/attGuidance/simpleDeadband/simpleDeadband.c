@@ -25,8 +25,8 @@
 #include "attGuidance/simpleDeadband/simpleDeadband.h"
 #include <string.h>
 #include <math.h>
-#include "ADCSUtilities/ADCSDefinitions.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "fswUtilities/fswDefinitions.h"
+#include "SimFswInterface/macroDefinitions.h"
 
 /* update this include to reflect the required module input messages */
 #include "attGuidance/attTrackingError/attTrackingError.h"

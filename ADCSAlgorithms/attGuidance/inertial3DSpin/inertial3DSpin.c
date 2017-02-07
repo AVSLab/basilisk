@@ -27,8 +27,8 @@
 /* modify the path to reflect the new module names */
 #include "attGuidance/inertial3DSpin/inertial3DSpin.h"
 #include <string.h>
-#include "ADCSUtilities/ADCSDefinitions.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "fswUtilities/fswDefinitions.h"
+#include "SimFswInterface/macroDefinitions.h"
 
 
 

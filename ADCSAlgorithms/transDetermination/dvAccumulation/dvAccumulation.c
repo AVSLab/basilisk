@@ -18,7 +18,7 @@
  */
 
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
-#include "ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "SimFswInterface/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdlib.h>
