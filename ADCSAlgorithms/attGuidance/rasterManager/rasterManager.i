@@ -34,8 +34,6 @@
 GEN_SIZEOF(rasterManagerConfig);
 %include "rasterManager.h"
 
-// supportfile to be included in this sub-module
-%include "../_GeneralModuleFiles/attGuidOut.h"
 
 %pythoncode %{
 import sys

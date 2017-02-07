@@ -21,7 +21,6 @@
 #define _DV_GUIDANCE_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "fswMessages/attRefMessage.h"
 #include <stdint.h>
 

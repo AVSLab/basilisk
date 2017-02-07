@@ -21,7 +21,6 @@
 #define _DV_EXECUTE_GUIDANCE_H_
 
 #include "messaging/static_messaging.h"
-#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "dvGuidance/dvAttGuidance/dvGuidance.h"
 #include "../SimFswInterface/navTransMessage.h"
 #include <stdint.h>

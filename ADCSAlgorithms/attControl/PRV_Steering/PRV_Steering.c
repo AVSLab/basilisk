@@ -22,7 +22,6 @@
  */
 
 #include "attControl/PRV_Steering/PRV_Steering.h"
-#include "attGuidance/_GeneralModuleFiles/attGuidOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"

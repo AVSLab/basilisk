@@ -25,8 +25,8 @@
 * Unpublished Copyright (c) 2012-2015 University of Colorado, All Rights Reserved
 */
 
-#ifndef _ADCS_DEFINITIONS_H
-#define _ADCS_DEFINITIONS_H
+#ifndef _FSW_DEFINITIONS_H
+#define _FSW_DEFINITIONS_H
 
 
 /* Boolean Definition */
