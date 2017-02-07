@@ -33,8 +33,14 @@
 %include "../_GeneralModuleFiles/vehControlOut.h"
 GEN_SIZEOF(MRP_FeedbackConfig);
 GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWSpeedMessage);
 %include "MRP_Feedback.h"
 %include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/rwConfigMessage.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
 
 %pythoncode %{
 import sys

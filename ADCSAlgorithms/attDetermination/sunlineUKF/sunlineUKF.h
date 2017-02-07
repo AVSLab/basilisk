@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include "../SimFswInterface/navAttMessage.h"
 #include "../SimFswInterface/cssArraySensorMessage.h"
+#include "fswMessages/vehicleConfigMessage.h"
 #include "attDetermination/_GeneralModuleFiles/singleCSSConfig.h"
 
 #define SKF_N_STATES 6

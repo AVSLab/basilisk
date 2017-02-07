@@ -31,16 +31,16 @@ void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleI
 {
 
     double halfInertia[3][3];
-    vehicleConfigData localConfigData;
+    VehicleConfigMessage localConfigData;
     /*! Begin function steps*/
     
     /*! - Zero the output message data */
-    memset(&localConfigData, 0x0, sizeof(vehicleConfigData));
+    memset(&localConfigData, 0x0, sizeof(VehicleConfigMessage));
 
     /*! - Create the output message for the mass properties of the spacecraft*/
     ConfigData->outputPropsID = CreateNewMessage(
-        ConfigData->outputPropsName, sizeof(vehicleConfigData),
-        "vehicleConfigData", moduleID);
+        ConfigData->outputPropsName, sizeof(VehicleConfigMessage),
+        "VehicleConfigMessage", moduleID);
  
     /*! - Convert the center of mass from structure to body*/
     m33MultV3(RECAST3X3 ConfigData->dcm_BS, ConfigData->CoM_S,
@@ -54,7 +54,7 @@ void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleI
     m33MultM33t(halfInertia, RECAST3X3 ConfigData->dcm_BS,
         RECAST3X3 localConfigData.ISCPntB_B);
     /*! - Write output properties to the messaging system*/
-    WriteMessage(ConfigData->outputPropsID, 0, sizeof(vehicleConfigData),
+    WriteMessage(ConfigData->outputPropsID, 0, sizeof(VehicleConfigMessage),
         &localConfigData, moduleID);
     
 

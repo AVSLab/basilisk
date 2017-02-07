@@ -36,10 +36,16 @@ GEN_SIZEOF(MRP_SteeringConfig);
 GEN_SIZEOF(vehControlOut);
 GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWSpeedMessage);
 %include "MRP_Steering.h"
 %include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/rwConfigMessage.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

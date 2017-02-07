@@ -24,6 +24,7 @@
 #include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswMessages/attGuidMessage.h"
+#include "fswMessages/vehicleConfigMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

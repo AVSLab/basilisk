@@ -33,6 +33,15 @@
 %ignore Reset_inertialUKF;
 %include "inertialUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
+%include "../../fswMessages/inertialFilterMessage.h"
+%include "../../fswMessages/stAttMessage.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/rwConfigMessage.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
+GEN_SIZEOF(STAttMessage);
+GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWSpeedMessage);
+GEN_SIZEOF(VehicleConfigMessage);
 
 %pythoncode %{
 import sys

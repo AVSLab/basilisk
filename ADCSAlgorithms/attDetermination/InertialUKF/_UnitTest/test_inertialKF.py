@@ -33,8 +33,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import inertialUKF  # import the module that is to be tested
-import stComm
-import vehicleConfigData
 import macros
 import sim_model
 import ctypes
@@ -116,7 +114,7 @@ def testStateUpdateInertialAttitude(show_plots):
     
     setupFilterData(moduleConfig)
 
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
@@ -136,7 +134,7 @@ def testStateUpdateInertialAttitude(show_plots):
                                                 0,
                                                 vehicleConfigOut)
                                                 
-    stMessage = stComm.STOutputData()
+    stMessage = inertialUKF.STAttMessage()
     stMessage.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
     inputMessageSize = stMessage.getStructSize()
@@ -247,7 +245,7 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
@@ -329,7 +327,7 @@ def test_StatePropRateInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,

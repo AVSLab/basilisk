@@ -44,7 +44,7 @@ void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->rwParamsOutMsgID = CreateNewMessage(ConfigData->rwParamsOutMsgName,
-                                                    sizeof(RWConfigParams), "RWConfigParams", moduleID);
+                                                    sizeof(RWConfigMessage), "RWConfigMessage", moduleID);
     
 }
 
@@ -59,14 +59,14 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
      When Reset call takes place in all the modules, this RW message should already be available.*/
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
-                                                              sizeof(vehicleConfigData), moduleID);
+                                                              sizeof(VehicleConfigMessage), moduleID);
     int i;
     uint64_t clockTime;
     uint32_t readSize;
-    vehicleConfigData   sc;                 /*!< spacecraft configuration message */
+    VehicleConfigMessage   sc;                 /*!< spacecraft configuration message */
     
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
     
     if(strlen(ConfigData->rwConstellationInMsgName) > 0)
     {
@@ -87,7 +87,7 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
                   &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);
     }
     /*! - Write output RW config data to the messaging system*/
-    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWConfigParams),
+    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWConfigMessage),
                  &(ConfigData->rwConfigParamsOut), moduleID);
 
 }

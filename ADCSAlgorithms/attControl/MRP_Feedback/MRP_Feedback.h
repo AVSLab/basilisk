@@ -23,8 +23,10 @@
 #include "messaging/static_messaging.h"
 #include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "rwConfigData/rwConfigData.h"
 #include "fswMessages/attGuidMessage.h"
+#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/rwConfigMessage.h"
+#include "SimFswInterface/rwSpeedMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -45,11 +47,11 @@ typedef struct {
     double knownTorquePntB_B[3];        /*!< [N*m]     known external torque in body frame vector components */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
-    RWConfigParams rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWConfigMessage rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module IO interfaces */
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams input message*/
-    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigParams ingoing message */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigMessage input message*/
+    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigMessage ingoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
     int32_t vehConfigInMsgID;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the RWs availability message*/

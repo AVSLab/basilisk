@@ -69,7 +69,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
     ConfigData->rwAvailInMsgID = -1;
 
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                     sizeof(RWConfigParams), moduleID);
+                                                     sizeof(RWConfigMessage), moduleID);
     if (strlen(ConfigData->inputRWSpeedsInMsgName) > 0) {
         ConfigData->inputRWSpeedsInMsgID = subscribeToMessage(ConfigData->inputRWSpeedsInMsgName,
                                                          sizeof(RWSpeedMessage), moduleID);
@@ -92,7 +92,7 @@ void Reset_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, u
 
     /*! - Read static RW config data message and store it in module variables*/
     ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
 
     /* reset variables */
     memset(ConfigData->rwSpeedOld, 0, sizeof(double)*MAX_EFF_CNT);

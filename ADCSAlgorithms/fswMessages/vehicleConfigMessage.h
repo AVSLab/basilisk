@@ -16,28 +16,19 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_PD
-%{
-   #include "MRP_PD.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Update_MRP_PD;
-%constant void SelfInit_MRP_PD(void*, uint64_t);
-%ignore SelfInit_MRP_PD;
-%constant void CrossInit_MRP_PD(void*, uint64_t);
-%ignore CrossInit_MRP_PD;
-%constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_PD;
-%include "../_GeneralModuleFiles/vehControlOut.h"
-%include "../../fswMessages/attGuidMessage.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
-GEN_SIZEOF(MRP_PDConfig);
-GEN_SIZEOF(AttGuidMessage);
-GEN_SIZEOF(VehicleConfigMessage);
-%include "MRP_PD.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef VEHICLE_CONFIG_MESSAGE_H
+#define VEHICLE_CONFIG_MESSAGE_H
+
+
+/*! @brief Structure used to define a common structure for top level vehicle information*/
+typedef struct {
+    double dcm_BS[9];             /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
+    double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
+    double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
+    uint32_t CurrentADCSState;  /*!< [-] Current ADCS state for subsystem */
+}VehicleConfigMessage;
+
+
+
+#endif

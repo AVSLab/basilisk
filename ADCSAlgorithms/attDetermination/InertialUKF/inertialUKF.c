@@ -22,7 +22,6 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "SimFswInterface/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include <string.h>
 #include <math.h>
 
@@ -41,7 +40,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
 		sizeof(NavAttMessage), "NavAttMessage", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
-        sizeof(InertialMeasOut), "InertialMeasOut", moduleID);
+        sizeof(InertialFilterMessage), "InertialFilterMessage", moduleID);
     
 }
 
@@ -55,12 +54,12 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
-    ConfigData->stDataInMsgId = subscribeToMessage(ConfigData->stDataInMsgName, sizeof(STOutputData), moduleID);
+    ConfigData->stDataInMsgId = subscribeToMessage(ConfigData->stDataInMsgName, sizeof(STAttMessage), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
     ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
-        sizeof(vehicleConfigData), moduleID);
+        sizeof(VehicleConfigMessage), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                     sizeof(RWConfigParams), moduleID);
+                                                     sizeof(RWConfigMessage), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
         sizeof(RWSpeedMessage), moduleID);
     
@@ -78,24 +77,24 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    vehicleConfigData massPropsInBuffer;
+    VehicleConfigMessage massPropsInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
     double tempMatrix[AKF_N_STATES*AKF_N_STATES];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(vehicleConfigData));
+    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigMessage));
     memset(&(ConfigData->outputInertial), 0x0, sizeof(NavAttMessage));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(vehicleConfigData), &massPropsInBuffer, moduleID);
+                sizeof(VehicleConfigMessage), &massPropsInBuffer, moduleID);
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &writeTime, &writeSize,
-                sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-        sizeof(vehicleConfigData), &(ConfigData->localConfigData), moduleID);
+        sizeof(VehicleConfigMessage), &(ConfigData->localConfigData), moduleID);
     
     /*! - Initialize filter parameters to max values */
     ConfigData->timeTag = callTime*NANO2SEC;
@@ -162,15 +161,15 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t otherSize;
-    InertialMeasOut inertialDataOutBuffer;
+    InertialFilterMessage inertialDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(ConfigData->stSensorIn), 0x0, sizeof(STOutputData));
+    memset(&(ConfigData->stSensorIn), 0x0, sizeof(STAttMessage));
     ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(STOutputData), (void*) (&(ConfigData->stSensorIn)), moduleID);
+        sizeof(STAttMessage), (void*) (&(ConfigData->stSensorIn)), moduleID);
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
     newTimeTag = ClockTime * NANO2SEC;
@@ -189,7 +188,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     }
     
     ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
-                sizeof(vehicleConfigData), &(ConfigData->localConfigData), moduleID);
+                sizeof(VehicleConfigMessage), &(ConfigData->localConfigData), moduleID);
     m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
     
     if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
@@ -219,7 +218,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     memmove(inertialDataOutBuffer.covar, ConfigData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, ConfigData->state, AKF_N_STATES*sizeof(double));
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(InertialMeasOut),
+    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(InertialFilterMessage),
                  &inertialDataOutBuffer, moduleID);
     
     memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedMessage));

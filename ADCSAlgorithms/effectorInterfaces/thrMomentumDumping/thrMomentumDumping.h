@@ -23,6 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehEffectorOut.h"
+#include "vehicleConfigData/vehicleConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup

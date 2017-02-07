@@ -23,6 +23,8 @@
 #include "messaging/static_messaging.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
+#include "fswMessages/vehicleConfigMessage.h"
+#include "vehicleConfigData/vehicleConfigData.h"
 #include <stdint.h>
 #include <stdlib.h>
 

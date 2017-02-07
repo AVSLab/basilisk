@@ -26,7 +26,6 @@
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
@@ -70,7 +69,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                              sizeof(vehicleConfigData), moduleID);
+                                                              sizeof(VehicleConfigMessage), moduleID);
 
 }
 
@@ -111,7 +110,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
                 sizeof(ThrusterCluster), &localThrusterData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
+                sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 
     /* read in the thruster position and thruster force heading information */
     /* Note: we will still need to correct for the S to B transformation */
@@ -158,7 +157,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(ConfigData->sc), moduleID);
+                sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 
 
     /* compute thruster locations relative to COM */

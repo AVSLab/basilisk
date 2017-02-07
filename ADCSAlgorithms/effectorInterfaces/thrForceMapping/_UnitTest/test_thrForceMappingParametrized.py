@@ -107,7 +107,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
     moduleConfig.inputVehicleConfigDataName = "vehicleConfigName"
 
     # write vehicle configuration message
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = thrForceMapping.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehicleConfigDataName,

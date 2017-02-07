@@ -61,7 +61,7 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
         sizeof(CSSArraySensorMessage), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
     ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
-        sizeof(vehicleConfigData), moduleID);
+        sizeof(VehicleConfigMessage), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
                                                    sizeof(CSSConstConfig), moduleID);
@@ -80,7 +80,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
 {
     
     int32_t i;
-    vehicleConfigData massPropsInBuffer;
+    VehicleConfigMessage massPropsInBuffer;
     CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
@@ -88,13 +88,13 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
-    memset(&massPropsInBuffer, 0x0 ,sizeof(vehicleConfigData));
+    memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigMessage));
     memset(&cssConfigInBuffer, 0x0, sizeof(CSSConstConfig));
     memset(&(ConfigData->outputSunline), 0x0, sizeof(NavAttMessage));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
-                sizeof(vehicleConfigData), &massPropsInBuffer, moduleID);
+                sizeof(VehicleConfigMessage), &massPropsInBuffer, moduleID);
     ReadMessage(ConfigData->cssConfInMsgId, &writeTime, &writeSize,
                 sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
     

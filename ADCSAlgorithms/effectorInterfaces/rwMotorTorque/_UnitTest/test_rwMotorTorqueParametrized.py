@@ -41,9 +41,6 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import rwMotorTorque
 import macros
-import MRP_Steering
-import rwConfigData
-import vehicleConfigData
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
 # @pytest.mark.skipif(conditionstring)
@@ -112,7 +109,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
 
     # attControl message
-    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
+    inputMessageData = rwMotorTorque.vehControlOut()  # Create a structure for the input message
     inputMessageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputVehControlName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)
@@ -122,7 +119,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
                                           0, inputMessageData) # write data into the simulator
 
     # wheelConfigData message
-    rwConfigParams = rwConfigData.RWConfigParams()
+    rwConfigParams = rwMotorTorque.RWConfigMessage()
     inputMessageSize = rwConfigParams.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)

@@ -16,28 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_PD
-%{
-   #include "MRP_PD.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Update_MRP_PD;
-%constant void SelfInit_MRP_PD(void*, uint64_t);
-%ignore SelfInit_MRP_PD;
-%constant void CrossInit_MRP_PD(void*, uint64_t);
-%ignore CrossInit_MRP_PD;
-%constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_PD;
-%include "../_GeneralModuleFiles/vehControlOut.h"
-%include "../../fswMessages/attGuidMessage.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
-GEN_SIZEOF(MRP_PDConfig);
-GEN_SIZEOF(AttGuidMessage);
-GEN_SIZEOF(VehicleConfigMessage);
-%include "MRP_PD.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef RW_CONFIG_MESSAGE_H
+#define RW_CONFIG_MESSAGE_H
+
+
+typedef struct{
+    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-]    The RW spin axis matrix in body frame components */
+    double JsList[MAX_EFF_CNT];         /*!< [kgm2] The spin axis inertia for RWs*/
+    uint32_t numRW;                     /*!< [-]    The number of reaction wheels available on vehicle */
+    double uMax[MAX_EFF_CNT];           /*!< [Nm]   The maximum RW motor torque */
+}RWConfigMessage;
+
+
+#endif

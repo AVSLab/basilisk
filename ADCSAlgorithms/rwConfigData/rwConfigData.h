@@ -22,6 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
+#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/rwConfigMessage.h"
 #include <stdint.h>
 
 
@@ -29,23 +31,18 @@
  * @{
  */
 
-typedef struct{
-    double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-]    The RW spin axis matrix in body frame components */
-    double JsList[MAX_EFF_CNT];         /*!< [kgm2] The spin axis inertia for RWs*/
-    uint32_t numRW;                     /*!< [-]    The number of reaction wheels available on vehicle */
-    double uMax[MAX_EFF_CNT];           /*!< [Nm]   The maximum RW motor torque */
-}RWConfigParams;
+
 
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
     RWConstellation rwConstellation; /* struct to populate input RW config parameters in structural S frame */
-    RWConfigParams  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
+    RWConfigMessage  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
     char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellation input message*/
     int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellation incoming message */
-    char rwParamsOutMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams output message*/
-    int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWConfigParams outgoing message */
+    char rwParamsOutMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigMessage output message*/
+    int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWConfigMessage outgoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
     int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
 

@@ -26,7 +26,7 @@
 #include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "rwConfigData/rwConfigData.h"
+#include "fswMessages/rwConfigMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -39,7 +39,7 @@ typedef struct {
     double   controlAxes_B[3*3];         /*!< [-] array of the control unit axes */
     uint32_t numControlAxes;             /*!< [-] counter indicating how many orthogonal axes are controlled */
     uint32_t numAvailRW;
-    RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWConfigMessage rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-] The RW spin axis matrix in body frame components */
     double CGs[3][MAX_EFF_CNT];
 
@@ -49,8 +49,8 @@ typedef struct {
     char inputVehControlName[MAX_STAT_MSG_LENGTH];  /*!< The name of the vehicle control (Lr) Input message*/
     int32_t  inputVehControlID;                     /*!< ID for the incoming Lr control message */
     
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigParams input message*/
-    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigParams ingoing message */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigMessage input message*/
+    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigMessage ingoing message */
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];         /*!< The name of the RWs availability message*/
     int32_t rwAvailInMsgID;                             /*!< [-] ID for the incoming  RWs availability data */
     

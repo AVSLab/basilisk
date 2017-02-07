@@ -28,7 +28,6 @@
 #include "SimFswInterface/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "SimFswInterface/rwSpeedMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include <string.h>
 #include <math.h>
@@ -61,14 +60,14 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(AttGuidMessage), moduleID);
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
-                                                 sizeof(vehicleConfigData), moduleID);
+                                                 sizeof(VehicleConfigMessage), moduleID);
     ConfigData->rwParamsInMsgID = -1;
     ConfigData->inputRWSpeedsID = -1;
     ConfigData->rwAvailInMsgID = -1;
     
     if(strlen(ConfigData->rwParamsInMsgName) > 0) {
         ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                         sizeof(RWConfigParams), moduleID);
+                                                         sizeof(RWConfigMessage), moduleID);
         if (strlen(ConfigData->inputRWSpeedsName) > 0) {
             ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                              sizeof(RWSpeedMessage), moduleID);
@@ -94,9 +93,9 @@ void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint6
     uint32_t readSize;
     int i;    
 
-    vehicleConfigData sc;
+    VehicleConfigMessage sc;
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(vehicleConfigData), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };
@@ -105,7 +104,7 @@ void Reset_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime, uint6
     if (ConfigData->rwParamsInMsgID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                    sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+                    sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
     }
     
     /* Reset the integral measure of the rate tracking error */

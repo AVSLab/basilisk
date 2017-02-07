@@ -34,9 +34,11 @@
 STRUCTASLIST(SingleCSSConfig)
 GEN_SIZEOF(SunlineMeasOut);
 GEN_SIZEOF(SunlineUKFConfig);
+GEN_SIZEOF(VehicleConfigMessage);
 %include "sunlineUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../_GeneralModuleFiles/singleCSSConfig.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
 
 %pythoncode %{
 import sys

@@ -32,8 +32,10 @@ STRUCTASLIST(SingleCSSConfig)
 GEN_SIZEOF(SunHeadingEstMessage);
 GEN_SIZEOF(SingleCSSConfig);
 GEN_SIZEOF(CSSWLSConfig);
+GEN_SIZEOF(VehicleConfigMessage);
 %include "cssWlsEst.h"
 %include "../../fswMessages/sunHeadingEstMessage.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
 %include "../_GeneralModuleFiles/singleCSSConfig.h"
 
 %pythoncode %{

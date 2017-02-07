@@ -48,10 +48,7 @@ import matplotlib.pyplot as plt
 # import the module that is to be tested
 import PRV_Steering
 # import module(s) that creates the needed input message declaration
-import vehicleConfigData
-import rwNullSpace
 import rwMotorTorque
-import rwConfigData
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -132,7 +129,7 @@ def subModuleTestFunction(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = PRV_Steering.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,
@@ -146,7 +143,7 @@ def subModuleTestFunction(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = rwNullSpace.RWSpeedMessage()
+    rwSpeedMessage = PRV_Steering.RWSpeedMessage()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
@@ -161,7 +158,7 @@ def subModuleTestFunction(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams = PRV_Steering.RWConfigMessage()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2)  # number of buffers (leave at 2 as default)

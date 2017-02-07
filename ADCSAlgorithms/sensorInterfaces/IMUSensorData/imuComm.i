@@ -30,7 +30,9 @@
 %ignore CrossInit_imuProcessTelem;
 GEN_SIZEOF(IMUConfigData);
 GEN_SIZEOF(IMUOutputData);
+GEN_SIZEOF(VehicleConfigMessage);
 %include "imuComm.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

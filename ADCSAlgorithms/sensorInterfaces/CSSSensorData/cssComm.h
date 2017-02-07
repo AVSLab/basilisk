@@ -24,7 +24,6 @@
 #define MAX_NUM_CHEBY_POLYS 32
 
 #include "messaging/static_messaging.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include "../SimFswInterface/cssArraySensorMessage.h"
 
 

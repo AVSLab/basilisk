@@ -402,7 +402,7 @@ def testStateUpdateSunLine(show_plots):
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
 
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = sunlineUKF.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,

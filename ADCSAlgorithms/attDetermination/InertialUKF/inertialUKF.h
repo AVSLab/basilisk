@@ -21,27 +21,20 @@
 #define _INERTIAL_UKF_H_
 
 #include "messaging/static_messaging.h"
-#include "sensorInterfaces/STSensorData/stComm.h"
-#include "rwConfigData/rwConfigData.h"
 #include "SimFswInterface/rwSpeedMessage.h"
 #include "SimFswInterface/navAttMessage.h"
+#include "fswMessages/inertialFilterMessage.h"
+#include "fswMessages/stAttMessage.h"
+#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/rwConfigMessage.h"
 #include <stdint.h>
 
-#define AKF_N_STATES 6
-#define MAX_N_ATT_STATES 4
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
-/*! @brief structure for filter-states output for the unscented kalman filter 
-        implementation of the inertial state estimator*/
-typedef struct {
-    double timeTag;                             /*!< [s] Current time of validity for output */
-    double covar[AKF_N_STATES*AKF_N_STATES];    /*!< [-] Current covariance of the filter */
-    double state[AKF_N_STATES];                 /*!< [-] Current estimated state of the filter */
-    int numObs;                                 /*!< [-] Valid observation count for this frame*/
-}InertialMeasOut;
+
 
 /*! @brief Top level structure for the CSS unscented kalman filter estimator.
  Used to estimate the sun state in the vehicle body frame*/
@@ -91,16 +84,16 @@ typedef struct {
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     uint32_t firstPassComplete;
 	NavAttMessage outputInertial;        /*!< -- Output inertial estimate data */
-    STOutputData stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
-    RWConfigParams rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
+    STAttMessage stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
+    RWConfigMessage rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedMessage rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
-    vehicleConfigData localConfigData;   /*! [-] Vehicle configuration data*/
+    VehicleConfigMessage localConfigData;   /*! [-] Vehicle configuration data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
-    int32_t rwParamsInMsgID;     /*!< [-] ID for the RWConfigParams ingoing message */
+    int32_t rwParamsInMsgID;     /*!< [-] ID for the RWConfigMessage ingoing message */
     int32_t rwSpeedsInMsgID;      /*!< [-] ID for the incoming RW speeds*/
 }InertialUKFConfig;
 

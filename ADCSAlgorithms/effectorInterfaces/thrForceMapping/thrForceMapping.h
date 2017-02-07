@@ -24,6 +24,8 @@
 #include <stdint.h>
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "fswMessages/vehicleConfigMessage.h"
+#include "vehicleConfigData/vehicleConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -51,7 +53,7 @@ typedef struct {
     int32_t  inputThrusterConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
-    vehicleConfigData   sc;                         /*!< spacecraft configuration message */
+    VehicleConfigMessage   sc;                      /*!< spacecraft configuration message */
     double   epsilon;
 
     vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */

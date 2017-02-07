@@ -23,19 +23,14 @@
 #include <stdint.h>
 #include "../ADCSAlgorithms/messaging/static_messaging.h"
 #include "../SimFswInterface/macroDefinitions.h"
+#include "fswMessages/vehicleConfigMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
 
-/*! @brief Structure used to define a common structure for top level vehicle information*/
-typedef struct {
-    double dcm_BS[9];             /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
-    double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
-    double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
-    uint32_t CurrentADCSState;  /*!< [-] Current ADCS state for subsystem */
-}vehicleConfigData;
+
 
 
 typedef struct {

@@ -31,10 +31,12 @@
 %constant void Reset_thrForceMapping(void*, uint64_t, uint64_t);
 %ignore Reset_thrForceMapping;
 GEN_SIZEOF(thrForceMappingConfig);
+GEN_SIZEOF(VehicleConfigMessage);
 %include "thrForceMapping.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

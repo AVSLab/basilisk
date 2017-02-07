@@ -49,10 +49,7 @@ import matplotlib.pyplot as plt
 # import the module that is to be tested
 import MRP_Feedback
 # import module(s) that creates the needed input message declaration
-import vehicleConfigData
-import rwNullSpace
 import rwMotorTorque
-import rwConfigData
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -129,7 +126,7 @@ def subModuleTestFunction(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = MRP_Feedback.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
@@ -142,7 +139,7 @@ def subModuleTestFunction(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = rwNullSpace.RWSpeedMessage()
+    rwSpeedMessage = MRP_Feedback.RWSpeedMessage()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
@@ -158,7 +155,7 @@ def subModuleTestFunction(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams = MRP_Feedback.RWConfigMessage()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)

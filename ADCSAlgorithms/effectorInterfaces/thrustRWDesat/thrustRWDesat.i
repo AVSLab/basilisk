@@ -31,7 +31,9 @@
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
 %include "../_GeneralModuleFiles/vehEffectorOut.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(thrustRWDesatConfig);
+GEN_SIZEOF(VehicleConfigMessage);
 %include "thrustRWDesat.h"
 
 %pythoncode %{

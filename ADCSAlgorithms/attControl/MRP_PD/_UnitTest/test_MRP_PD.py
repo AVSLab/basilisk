@@ -32,8 +32,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import MRP_PD  # import the module that is to be tested
-import sunSafePoint  # import module(s) that creates the needed input message declaration
-import vehicleConfigData  # import module(s) that creates the needed input message declaration
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -111,7 +109,7 @@ def mrp_PD_tracking(show_plots):
                                           guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = MRP_PD.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehicleConfigDataName,

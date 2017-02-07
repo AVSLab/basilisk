@@ -16,28 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_PD
-%{
-   #include "MRP_PD.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Update_MRP_PD;
-%constant void SelfInit_MRP_PD(void*, uint64_t);
-%ignore SelfInit_MRP_PD;
-%constant void CrossInit_MRP_PD(void*, uint64_t);
-%ignore CrossInit_MRP_PD;
-%constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_PD;
-%include "../_GeneralModuleFiles/vehControlOut.h"
-%include "../../fswMessages/attGuidMessage.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
-GEN_SIZEOF(MRP_PDConfig);
-GEN_SIZEOF(AttGuidMessage);
-GEN_SIZEOF(VehicleConfigMessage);
-%include "MRP_PD.h"
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#ifndef ST_ATTITUDE_MESSAGE_H
+#define ST_ATTITUDE_MESSAGE_H
+
+
+/*! @brief Output structure for ST attitude measurement in vehicle body frame*/
+typedef struct {
+    double timeTag;              /*!< [s] Vehicle time code associated with measurement*/
+    double MRP_BdyInrtl[3];      /*!< [-] MRP estimate of inertial to body transformation*/
+}STAttMessage;
+
+
+
+#endif

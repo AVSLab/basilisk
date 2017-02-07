@@ -21,7 +21,7 @@
 #define _IMU_COMM_H_
 
 #include "messaging/static_messaging.h"
-#include "vehicleConfigData/vehicleConfigData.h"
+#include "fswMessages/vehicleConfigMessage.h"
 
 /*! @brief Output structure for IMU structure in vehicle body frame*/
 typedef struct {

@@ -382,7 +382,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = MRP_Feedback.VehicleConfigMessage()
     vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                fswProcessName,

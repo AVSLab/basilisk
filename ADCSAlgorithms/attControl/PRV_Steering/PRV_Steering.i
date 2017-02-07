@@ -33,8 +33,14 @@
 %include "PRV_Steering.h"
 %include "../_GeneralModuleFiles/vehControlOut.h"
 %include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/rwConfigMessage.h"
+%include "../../../SimFswInterface/rwSpeedMessage.h"
 GEN_SIZEOF(PRV_SteeringConfig);
 GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWSpeedMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

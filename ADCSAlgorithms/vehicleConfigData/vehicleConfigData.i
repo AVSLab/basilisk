@@ -31,7 +31,7 @@ STRUCTASLIST(CSSConfigurationElement)
 %ignore SelfInit_vehicleConfigData;
 %constant void CrossInit_vehicleConfigData(void*, uint64_t);
 %ignore CrossInit_vehicleConfigData;
-GEN_SIZEOF(vehicleConfigData);
+GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigurationElement);
 GEN_SIZEOF(RWConstellation);
 GEN_SIZEOF(ThrusterPointData);
@@ -41,6 +41,7 @@ GEN_SIZEOF(CSSConfigurationElement);
 GEN_SIZEOF(CSSConstConfig);
 
 %include "vehicleConfigData.h"
+%include "../fswMessages/vehicleConfigMessage.h"
 
 %pythoncode %{
 import sys

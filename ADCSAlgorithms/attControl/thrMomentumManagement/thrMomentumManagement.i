@@ -31,8 +31,12 @@
 %constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumManagement;
 GEN_SIZEOF(thrMomentumManagementConfig);
+GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(RWConfigMessage);
 %include "thrMomentumManagement.h"
 %include "../_GeneralModuleFiles/vehControlOut.h"
+%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/rwConfigMessage.h"
 
 %pythoncode %{
 import sys

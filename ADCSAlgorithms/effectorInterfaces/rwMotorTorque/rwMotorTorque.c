@@ -26,7 +26,6 @@
 
 /* update this include to reflect the required module input messages */
 #include "attControl/_GeneralModuleFiles/vehControlOut.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
@@ -64,7 +63,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
                                                        sizeof(vehControlOut), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                     sizeof(RWConfigParams), moduleID);
+                                                     sizeof(RWConfigMessage), moduleID);
     ConfigData->rwAvailInMsgID = -1;
     if (strlen(ConfigData->rwAvailInMsgName) > 0){
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
@@ -100,7 +99,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     int i;
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                sizeof(RWConfigParams), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
     
     if (ConfigData->rwAvailInMsgID < 0){
         /* If no info is provided about RW availability we'll assume that all are available */

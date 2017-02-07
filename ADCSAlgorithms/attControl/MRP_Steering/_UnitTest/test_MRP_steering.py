@@ -32,9 +32,6 @@ import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import MRP_Steering  # import the module that is to be tested
-import vehicleConfigData  # import module(s) that creates the needed input message declaration
-import rwConfigData
-import rwNullSpace
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -111,7 +108,7 @@ def mrp_steering_tracking(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = MRP_Steering.VehicleConfigMessage()
     inputMessageSize = vehicleConfigOut.getStructSize()                           # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
@@ -124,7 +121,7 @@ def mrp_steering_tracking(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = rwNullSpace.RWSpeedMessage()
+    rwSpeedMessage = MRP_Steering.RWSpeedMessage()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
@@ -139,7 +136,7 @@ def mrp_steering_tracking(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = rwConfigData.RWConfigParams()
+        rwConfigParams = MRP_Steering.RWConfigMessage()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
