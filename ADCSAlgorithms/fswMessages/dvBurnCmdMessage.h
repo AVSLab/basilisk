@@ -16,28 +16,17 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module dvExecuteGuidance
-%{
-   #include "dvExecuteGuidance.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_dvExecuteGuidance(void*, uint64_t, uint64_t);
-%ignore Update_dvExecuteGuidance;
-%constant void SelfInit_dvExecuteGuidance(void*, uint64_t);
-%ignore SelfInit_dvExecuteGuidance;
-%constant void CrossInit_dvExecuteGuidance(void*, uint64_t);
-%ignore CrossInit_dvExecuteGuidance;
-GEN_SIZEOF(dvExecutionData);
-GEN_SIZEOF(dvExecuteGuidanceConfig);
-GEN_SIZEOF(NavTransMessage);
-GEN_SIZEOF(DvBurnCmdMessage);
-%include "dvExecuteGuidance.h"
-%include "../../SimFswInterface/navTransMessage.h"
-%include "../../fswMessages/dvBurnCmdMessage.h"
+#ifndef DV_BURN_CMD_MESSAGE_H
+#define DV_BURN_CMD_MESSAGE_H
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Input burn command structure used to configure the burn*/
+typedef struct {
+    double dvInrtlCmd[3];    /*!< [m/s] The commanded DV we need in inertial */
+    double dvRotVecUnit[3];  /*!< [-] The commanded vector we need to rotate about */
+    double dvRotVecMag;      /*!< [r/s] The commanded rotation rate for the vector*/
+    uint64_t burnStartTime;  /*!< [ns]  The commanded time to start the burn */
+}DvBurnCmdMessage;
 
+
+#endif

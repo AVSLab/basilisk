@@ -20,7 +20,6 @@
 #include "dvGuidance/dvAttGuidance/dvGuidance.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
@@ -51,7 +50,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
     ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
-                                                    sizeof(DvBurnCmdData), moduleID);
+                                                    sizeof(DvBurnCmdMessage), moduleID);
     return;
     
 }
@@ -74,10 +73,10 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	double rotDCM[3][3];
     uint64_t writeTime;
     uint32_t writeSize;
-    DvBurnCmdData localBurnData;
+    DvBurnCmdMessage localBurnData;
     
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
-                sizeof(DvBurnCmdData), &localBurnData, moduleID);
+                sizeof(DvBurnCmdMessage), &localBurnData, moduleID);
     
     ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
     v3Normalize(localBurnData.dvInrtlCmd, dvUnit);

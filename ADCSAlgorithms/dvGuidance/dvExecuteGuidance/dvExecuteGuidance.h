@@ -21,8 +21,8 @@
 #define _DV_EXECUTE_GUIDANCE_H_
 
 #include "messaging/static_messaging.h"
-#include "dvGuidance/dvAttGuidance/dvGuidance.h"
 #include "../SimFswInterface/navTransMessage.h"
+#include "fswMessages/dvBurnCmdMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

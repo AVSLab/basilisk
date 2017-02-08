@@ -22,19 +22,13 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/attRefMessage.h"
+#include "fswMessages/dvBurnCmdMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
 
-/*! @brief Input burn command structure used to configure the burn*/
-typedef struct {
-    double dvInrtlCmd[3];    /*!< [m/s] The commanded DV we need in inertial */
-    double dvRotVecUnit[3];  /*!< [-] The commanded vector we need to rotate about */
-    double dvRotVecMag;      /*!< [r/s] The commanded rotation rate for the vector*/
-    uint64_t burnStartTime;  /*!< [ns]  The commanded time to start the burn */
-}DvBurnCmdData;
 
 /*! @brief Top level structure for the nominal delta-V guidance*/
 typedef struct {
