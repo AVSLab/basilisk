@@ -20,9 +20,8 @@
 #include "dvGuidance/dvExecuteGuidance/dvExecuteGuidance.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
 #include "SimFswInterface/macroDefinitions.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "SimFswInterface/thrCmdMessage.h"
 #include <string.h>
 #include <math.h>
 
@@ -39,8 +38,8 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t mo
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
         ConfigData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);
-    ConfigData->outputThrID = CreateNewMessage(ConfigData->outputThrName, sizeof(vehEffectorOut),
-                                               "vehEffectorOut", moduleID);
+    ConfigData->outputThrID = CreateNewMessage(ConfigData->outputThrName, sizeof(THRCmdMessage),
+                                               "THRCmdMessage", moduleID);
     return;
     
 }
@@ -81,7 +80,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     NavTransMessage navData;
     DvBurnCmdMessage localBurnData;
     dvExecutionData localExeData;
-    vehEffectorOut effCmd;
+    THRCmdMessage effCmd;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
         sizeof(NavTransMessage), &navData, moduleID);
@@ -112,9 +111,9 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     
     if(ConfigData->burnComplete)
     {
-        memset(&effCmd, 0x0, sizeof(vehEffectorOut));
+        memset(&effCmd, 0x0, sizeof(THRCmdMessage));
         WriteMessage(ConfigData->outputThrID, callTime,
-            sizeof(vehEffectorOut), &effCmd, moduleID);
+            sizeof(THRCmdMessage), &effCmd, moduleID);
     }
     
     localExeData.burnComplete = ConfigData->burnComplete;
