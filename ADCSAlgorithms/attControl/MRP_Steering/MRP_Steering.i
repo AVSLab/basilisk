@@ -30,10 +30,8 @@
 %ignore CrossInit_MRP_Steering;
 %constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Steering;
-%include "../_GeneralModuleFiles/vehControlOut.h"
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
-GEN_SIZEOF(vehControlOut);
 GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
@@ -46,6 +44,9 @@ GEN_SIZEOF(RWSpeedMessage);
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwConfigMessage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

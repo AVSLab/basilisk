@@ -39,7 +39,6 @@ import gravityEffector
 import spice_interface
 import simIncludeThruster
 import thrusterDynamicEffector
-import vehicleConfigData
 import fuelTank
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed

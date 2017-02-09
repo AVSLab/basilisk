@@ -106,24 +106,24 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
         msgName = "extTorquePntB_B_cmds"
-        msgData = ExtForceTorque.extTorqueCmdBodyMessage()
-        msgData.cmd = [-1.0, 1.0, -1.0]
+        msgData = ExtForceTorque.CmdTorqueBodyMessage()
+        msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     if forceNInput==1 or forceNInput==3:
         extFTObject.extForce_N = [[-10.], [-5.], [5.]]
     if forceNInput==2 or forceNInput==3:
         msgName = "extForce_N_cmds"
-        msgData = ExtForceTorque.extForceCmdInertialMessage()
-        msgData.cmd = [-10.0, -5.0, 5.0]
+        msgData = ExtForceTorque.CmdForceInertialMessage()
+        msgData.forceRequestInertial = [-10.0, -5.0, 5.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     if forceBInput==1 or forceBInput==3:
         extFTObject.extForce_B = [[10.], [20.], [30.]]
     if forceBInput==2 or forceBInput==3:
         msgName = "extForce_B_cmds"
-        msgData = ExtForceTorque.extForceCmdBodyMessage()
-        msgData.cmd = [10.0, 20.0, 30.0]
+        msgData = ExtForceTorque.CmdForceBodyMessage()
+        msgData.forceRequestBody = [10.0, 20.0, 30.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 
     scSim.AddModelToTask(unitTaskName, extFTObject)

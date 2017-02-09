@@ -43,8 +43,6 @@ import matplotlib.pyplot as plt
 import thrMomentumManagement            # import the module that is to be tested
 import macros
 import fswSetupRW
-import vehicleConfigData
-import rwNullSpace
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -112,7 +110,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     moduleConfig.deltaHOutMsgName = "outputName"
 
     # wheelSpeeds Message
-    rwSpeedMessage = rwNullSpace.RWSpeedMessage()
+    rwSpeedMessage = thrMomentumManagement.RWSpeedMessage()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.rwSpeedsInMsgName,
@@ -179,7 +177,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "torqueRequestBody"
+    moduleOutputName = "delta_H_B"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
                                                   range(3))
 

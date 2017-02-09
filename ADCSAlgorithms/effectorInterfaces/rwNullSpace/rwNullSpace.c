@@ -18,7 +18,6 @@
  */
 
 #include "effectorInterfaces/rwNullSpace/rwNullSpace.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"

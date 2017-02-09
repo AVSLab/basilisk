@@ -30,12 +30,14 @@
 %ignore CrossInit_MRP_PD;
 %constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_PD;
-%include "../_GeneralModuleFiles/vehControlOut.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(MRP_PDConfig);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
+
 %include "MRP_PD.h"
 %pythoncode %{
 import sys

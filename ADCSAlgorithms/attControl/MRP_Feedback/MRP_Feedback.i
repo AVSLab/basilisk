@@ -30,7 +30,6 @@
 %ignore CrossInit_MRP_Feedback;
 %constant void Reset_MRP_Feedback(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Feedback;
-%include "../_GeneralModuleFiles/vehControlOut.h"
 GEN_SIZEOF(MRP_FeedbackConfig);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
@@ -41,6 +40,8 @@ GEN_SIZEOF(RWSpeedMessage);
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwConfigMessage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
 
 %pythoncode %{
 import sys

@@ -109,7 +109,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
 
     # attControl message
-    inputMessageData = rwMotorTorque.vehControlOut()  # Create a structure for the input message
+    inputMessageData = rwMotorTorque.CmdTorqueBodyMessage()  # Create a structure for the input message
     inputMessageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputVehControlName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)

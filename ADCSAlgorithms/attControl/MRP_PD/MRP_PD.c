@@ -44,7 +44,7 @@ void SelfInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(vehControlOut), "vehControlOut", moduleID);
+        sizeof(CmdTorqueBodyMessage), "CmdTorqueBodyMessage", moduleID);
 
 
 }
@@ -127,7 +127,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
 
     /*! - Store and write the output message */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyMessage),
                  (void*) &(ConfigData->controlOut), moduleID);
     
     return;

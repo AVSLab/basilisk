@@ -46,7 +46,6 @@ import alg_contain
 import unitTestSupport                  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import fswModuleTemplate                # import the module that is to be tested
-import MRP_Steering                     # import module(s) that creates the needed input message declaration
 import macros
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -104,8 +103,8 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
-    inputMessageData.torqueRequestBody = [param1, param2, 0.7]       # Set up a list as a 3-vector
+    inputMessageData = fswModuleTemplate.FswModuleTemplateOut()  # Create a structure for the input message
+    inputMessageData.outputVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                moduleConfig.dataInMsgName,

@@ -22,10 +22,11 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/vehControlOut.h"
 #include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConfigMessage.h"
+#include "fswMessages/cmdDelHMessage.h"
+#include "../../../SimFswInterface/rwSpeedMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -35,12 +36,12 @@
 /*! @brief Top level structure for the sub-module routines. */
 typedef struct {
     /* declare module private variables */
-    int initRequest;                                /*!<        status flag of the momentum dumping management */
-    double  Delta_H_B[3];                           /*!< [Nms]  net desired angular momentum change */
-    RWConfigMessage rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
+    int initRequest;                                    /*!<        status flag of the momentum dumping management */
+    double  Delta_H_B[3];                               /*!< [Nms]  net desired angular momentum change */
+    RWConfigMessage rwConfigParams;                     /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module public variables */
-    double hs_min;                                  /*!< [Nms]  minimum RW cluster momentum for dumping */
+    double hs_min;                                      /*!< [Nms]  minimum RW cluster momentum for dumping */
     
     /* declare module IO interfaces */
     char deltaHOutMsgName[MAX_STAT_MSG_LENGTH];         /*!< The name of the output message*/
@@ -53,7 +54,7 @@ typedef struct {
     int32_t rwConfInMsgID;                              /*!< [-] ID for the incoming RWA configuration data*/
 
 
-    vehControlOut controlOut;                           /*!< [] Control output requests */
+    CmdDelHMessage controlOut;                          /*!< [] Control output requests */
 
 }thrMomentumManagementConfig;
 

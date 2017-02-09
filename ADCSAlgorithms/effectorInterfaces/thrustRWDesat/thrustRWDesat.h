@@ -24,6 +24,7 @@
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/thrArrayMessage.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <stdint.h>
 #include <stdlib.h>

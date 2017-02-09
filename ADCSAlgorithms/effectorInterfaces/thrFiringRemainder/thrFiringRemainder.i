@@ -31,9 +31,11 @@
 %constant void Reset_thrFiringRemainder(void*, uint64_t, uint64_t);
 %ignore Reset_thrFiringRemainder;
 GEN_SIZEOF(thrFiringRemainderConfig);
-GEN_SIZEOF(vehEffectorOut);
 %include "thrFiringRemainder.h"
+%include "../../fswMessages/thrArrayMessage.h"
+GEN_SIZEOF(THRArrayMessage);
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+GEN_SIZEOF(vehEffectorOut);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

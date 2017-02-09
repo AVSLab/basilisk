@@ -24,8 +24,8 @@
 #include <stdint.h>
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswUtilities/fswDefinitions.h"
+#include "fswMessages/thrArrayMessage.h"
 #include "SimFswInterface/macroDefinitions.h"
-#include "vehicleConfigData/vehicleConfigData.h"
 
 
 /*! \addtogroup ADCSAlgGroup

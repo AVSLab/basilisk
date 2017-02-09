@@ -24,6 +24,7 @@
 #include <stdint.h>
 #include "../_GeneralModuleFiles/vehEffectorOut.h"
 #include "vehicleConfigData/vehicleConfigData.h"
+#include "fswMessages/thrArrayMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

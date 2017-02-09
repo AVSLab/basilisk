@@ -21,12 +21,12 @@
 #define _MRP_FEEDBACK_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConfigMessage.h"
 #include "SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -54,16 +54,16 @@ typedef struct {
     int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigMessage ingoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
     int32_t vehConfigInMsgID;
-    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the RWs availability message*/
-    int32_t rwAvailInMsgID;                                /*!< [-] ID for the incoming  RWs availability data*/
+    char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];         /*!< [-] The name of the RWs availability message*/
+    int32_t rwAvailInMsgID;                             /*!< [-] ID for the incoming  RWs availability data*/
     
-    char outputDataName[MAX_STAT_MSG_LENGTH];                   /*!< [-] The name of the output message*/
-    char inputGuidName[MAX_STAT_MSG_LENGTH];                    /*!< [-] The name of the Input message*/
-    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];                /*!< [-] The name for the reaction wheel speeds message */
-    int32_t inputRWSpeedsID;                                    /*!< [-] ID for the reaction wheel speeds message*/
-    int32_t outputMsgID;                                        /*!< [-] ID for the outgoing body accel requests*/
-    int32_t inputGuidID;                                        /*!< [-] ID for the incoming guidance errors*/
-    vehControlOut controlOut;                                   /*!< -- Control output requests */
+    char outputDataName[MAX_STAT_MSG_LENGTH];           /*!< [-] The name of the output message*/
+    char inputGuidName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the Input message*/
+    char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];        /*!< [-] The name for the reaction wheel speeds message */
+    int32_t inputRWSpeedsID;                            /*!< [-] ID for the reaction wheel speeds message*/
+    int32_t outputMsgID;                                /*!< [-] ID for the outgoing body accel requests*/
+    int32_t inputGuidID;                                /*!< [-] ID for the incoming guidance errors*/
+    CmdTorqueBodyMessage controlOut;                    /*!< -- Control output requests */
 }MRP_FeedbackConfig;
 
 #ifdef __cplusplus

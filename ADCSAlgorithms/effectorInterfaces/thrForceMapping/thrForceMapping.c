@@ -25,7 +25,6 @@
 #include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
 
 /* update this include to reflect the required module input messages */
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
@@ -47,8 +46,8 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t module
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(vehEffectorOut),
-                                               "vehEffectorOut",          /* add the output structure name */
+                                               sizeof(THRCmdMessage),
+                                               "THRCmdMessage",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -61,11 +60,11 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
-                                                sizeof(vehControlOut),
+                                                sizeof(CmdTorqueBodyMessage),
                                                 moduleID);
 
     ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
-                                                       sizeof(ThrusterCluster),
+                                                       sizeof(THRArrayMessage),
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
@@ -82,7 +81,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 {
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
-    ThrusterCluster     localThrusterData;     /*!< local copy of the thruster data message */
+    THRArrayMessage   localThrusterData;     /*!< local copy of the thruster data message */
     uint64_t            clockTime;
     uint32_t            readSize;
 
@@ -108,7 +107,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 
     /* read in the support messages */
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
-                sizeof(ThrusterCluster), &localThrusterData, moduleID);
+                sizeof(THRArrayMessage), &localThrusterData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 
@@ -125,7 +124,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
                   ConfigData->gtThruster_B[i]);
         ConfigData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
     }
-    memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(vehEffectorOut));
+    memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(THRCmdMessage));
 
 }
 
@@ -155,7 +154,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
+                sizeof(CmdTorqueBodyMessage), (void*) &(Lr_B), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 
@@ -216,8 +215,8 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     /*
      store the output message 
      */
-    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.effectorRequest);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.thrusterCmd);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(THRCmdMessage),   /* update module name */
                  (void*) &(ConfigData->thrusterForceOut), moduleID);
 
     return;

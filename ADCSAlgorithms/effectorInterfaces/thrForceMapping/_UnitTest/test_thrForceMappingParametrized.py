@@ -41,8 +41,6 @@ import unitTestSupport                  # general support file with common unit 
 import matplotlib.pyplot as plt
 import thrForceMapping
 import macros
-import MRP_Steering
-import vehicleConfigData
 import fswSetupThrusters
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -129,7 +127,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = MRP_Steering.vehControlOut()  # Create a structure for the input message
+    inputMessageData = thrForceMapping.CmdTorqueBodyMessage()  # Create a structure for the input message
     inputMessageSize = inputMessageData.getStructSize()                           # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehControlName,
@@ -264,7 +262,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "thrusterCmd"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(numThrusters))
     print moduleOutput

@@ -21,7 +21,6 @@
 #define _RW_NULL_SPACE_H_
 
 #include "messaging/static_messaging.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"

@@ -21,12 +21,12 @@
 #define _PRV_STEERING_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConfigMessage.h"
 #include "SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -65,7 +65,7 @@ typedef struct {
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];            /*!< The name for the input reaction wheel speeds message */
     int32_t inputRWSpeedsID;                                /*!< [-] ID for the input reaction wheel speeds message*/
 
-    vehControlOut controlOut;                               /*!< -- Control output requests*/
+    CmdTorqueBodyMessage controlOut;                        /*!< -- Control output requests*/
 }PRV_SteeringConfig;
 
 #ifdef __cplusplus

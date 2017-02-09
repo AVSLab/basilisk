@@ -34,9 +34,12 @@ GEN_SIZEOF(thrMomentumManagementConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigMessage);
 %include "thrMomentumManagement.h"
-%include "../_GeneralModuleFiles/vehControlOut.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwConfigMessage.h"
+%include "../../fswMessages/cmdDelHMessage.h"
+GEN_SIZEOF(CmdDelHMessage);
+%include "../../../SimFswInterface/rwSpeedMessage.h"
+GEN_SIZEOF(RWSpeedMessage);
 
 %pythoncode %{
 import sys

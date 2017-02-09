@@ -35,8 +35,12 @@ GEN_SIZEOF(VehicleConfigMessage);
 %include "thrForceMapping.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/thrArrayMessage.h"
+GEN_SIZEOF(THRArrayMessage);
+%include "../../../SimFswInterface/thrCmdMessage.h"
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

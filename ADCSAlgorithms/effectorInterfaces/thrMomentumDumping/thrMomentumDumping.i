@@ -33,6 +33,8 @@
 GEN_SIZEOF(thrMomentumDumpingConfig);
 GEN_SIZEOF(vehEffectorOut);
 %include "thrMomentumDumping.h"
+%include "../../fswMessages/thrArrayMessage.h"
+GEN_SIZEOF(THRArrayMessage);
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"

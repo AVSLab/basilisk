@@ -26,12 +26,12 @@
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "ExtForceTorque.h"
-%include "../../SimFswInterface/extForceCmdBodyMessage.h"
-%include "../../SimFswInterface/extForceCmdInertialMessage.h"
-%include "../../SimFswInterface/extTorqueCmdBodyMessage.h"
-GEN_SIZEOF(extForceCmdBodyMessage);
-GEN_SIZEOF(extForceCmdInertialMessage);
-GEN_SIZEOF(extTorqueCmdBodyMessage);
+%include "../../SimFswInterface/cmdTorqueBodyMessage.h"
+%include "../../SimFswInterface/cmdForceBodyMessage.h"
+%include "../../SimFswInterface/cmdForceInertialMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
+GEN_SIZEOF(CmdForceBodyMessage);
+GEN_SIZEOF(CmdForceInertialMessage);
 
 
 %pythoncode %{

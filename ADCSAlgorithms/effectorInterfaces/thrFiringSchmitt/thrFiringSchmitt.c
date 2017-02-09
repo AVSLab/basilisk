@@ -66,7 +66,7 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t mod
 														 sizeof(vehEffectorOut),
 														 moduleID);
 	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
-												sizeof(ThrusterCluster),
+												sizeof(THRArrayMessage),
 												moduleID);
 }
 
@@ -77,7 +77,7 @@ void CrossInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t mod
  */
 void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-	ThrusterCluster     localThrusterData;     /*!< local copy of the thruster data message */
+	THRArrayMessage   localThrusterData;     /*!< local copy of the thruster data message */
 	uint64_t            clockTime;
 	uint32_t            readSize;
 	int 				i;
@@ -86,7 +86,7 @@ void Reset_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTim
 
 	/* read in the support messages */
 	ReadMessage(ConfigData->thrConfInMsgID, &clockTime, &readSize,
-				sizeof(ThrusterCluster), &localThrusterData, moduleID);
+				sizeof(THRArrayMessage), &localThrusterData, moduleID);
 
 	ConfigData->numThrusters = localThrusterData.numThrusters;
 

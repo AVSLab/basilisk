@@ -31,7 +31,6 @@
 %constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_PRV_Steering;
 %include "PRV_Steering.h"
-%include "../_GeneralModuleFiles/vehControlOut.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwConfigMessage.h"
@@ -41,6 +40,9 @@ GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigMessage);
 GEN_SIZEOF(RWSpeedMessage);
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

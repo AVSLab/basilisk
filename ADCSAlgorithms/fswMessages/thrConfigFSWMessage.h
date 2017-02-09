@@ -17,15 +17,15 @@
 
  */
 
-#ifndef EXT_TORQUE_CMD_BODY_H
-#define EXT_TORQUE_CMD_BODY_H
+#ifndef FSW_THR_CONFIG_MESSAGE_H
+#define FSW_THR_CONFIG_MESSAGE_H
 
-
-//! @brief Message definition for an external command torque.  The vector is decomposed into body frame components.
+/*! @brief Single Thruster configuration message */
 typedef struct {
-    double cmd[3];                      //!< [Nm], external torque command in body frame components
-}extTorqueCmdBodyMessage;
-
+    double rThrust_S[3];        /*!< [m] Location of the thruster in the spacecraft*/
+    double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
+    double maxThrust;			/*!< [N] Max thrust*/
+}THRConfigFSWMessage;
 
 
 #endif

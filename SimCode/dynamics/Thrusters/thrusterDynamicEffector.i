@@ -38,7 +38,6 @@ namespace std {
 %include "simMessages/thrTimePairMessage.h"
 %include "simMessages/thrConfigMessage.h"
 %include "simMessages/thrCmdMessage.h"
-GEN_SIZEOF(THRCmdMessage)
 GEN_SIZEOF(THRTimePairMessage)
 GEN_SIZEOF(THRConfigMessage)
 GEN_SIZEOF(THRCmdMessage)

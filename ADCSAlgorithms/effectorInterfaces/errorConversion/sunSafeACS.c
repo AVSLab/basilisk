@@ -18,7 +18,6 @@
  */
 
 #include "effectorInterfaces/errorConversion/sunSafeACS.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
@@ -52,7 +51,7 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
-        sizeof(vehControlOut), moduleID);
+        sizeof(CmdTorqueBodyMessage), moduleID);
     
 }
 
@@ -68,12 +67,12 @@ void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
     
     uint64_t ClockTime;
     uint32_t ReadSize;
-    vehControlOut cntrRequest;
+    CmdTorqueBodyMessage cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(vehControlOut), (void*) &(cntrRequest), moduleID);
+                sizeof(CmdTorqueBodyMessage), (void*) &(cntrRequest), moduleID);
     computeSingleThrustBlock(&(ConfigData->thrData), callTime,
                              &cntrRequest, moduleID);
     

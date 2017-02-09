@@ -33,6 +33,8 @@
 GEN_SIZEOF(thrFiringSchmittConfig);
 GEN_SIZEOF(vehEffectorOut);
 %include "thrFiringSchmitt.h"
+%include "../../fswMessages/thrArrayMessage.h"
+GEN_SIZEOF(THRArrayMessage);
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys

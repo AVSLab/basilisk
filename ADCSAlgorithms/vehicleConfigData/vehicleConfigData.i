@@ -23,7 +23,7 @@
 
 %include "swig_conly_data.i"
 %array_functions(RWConfigurationElement, RWConfigArray);
-%array_functions(ThrusterPointData, ThrustConfigArray);
+%array_functions(THRConfigFSWMessage, ThrustConfigArray);
 STRUCTASLIST(CSSConfigurationElement)
 %constant void Update_vehicleConfigData(void*, uint64_t, uint64_t);
 %ignore Update_vehicleConfigData;
@@ -34,14 +34,17 @@ STRUCTASLIST(CSSConfigurationElement)
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigurationElement);
 GEN_SIZEOF(RWConstellation);
-GEN_SIZEOF(ThrusterPointData);
-GEN_SIZEOF(ThrusterCluster);
+GEN_SIZEOF(THRConfigFSWMessage);
+GEN_SIZEOF(THRArrayMessage);
 GEN_SIZEOF(VehConfigInputData);
 GEN_SIZEOF(CSSConfigurationElement);
 GEN_SIZEOF(CSSConstConfig);
 
 %include "vehicleConfigData.h"
 %include "../fswMessages/vehicleConfigMessage.h"
+%include "../fswMessages/thrArrayMessage.h"
+%include "../fswMessages/thrConfigFSWMessage.h"
+GEN_SIZEOF(THRArrayMessage);
 
 %pythoncode %{
 import sys

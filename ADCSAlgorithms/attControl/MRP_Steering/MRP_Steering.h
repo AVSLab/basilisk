@@ -21,13 +21,13 @@
 #define _MRP_STEERING_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConfigMessage.h"
 #include "SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -67,7 +67,7 @@ typedef struct {
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
     int32_t inputRWSpeedsID;                    /*!< [] The ID for the reaction wheel speeds message*/
     
-    vehControlOut controlOut;                   /*!< [] Control output requests */
+    CmdTorqueBodyMessage controlOut;            /*!< [] Control output requests */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

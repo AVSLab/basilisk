@@ -21,9 +21,11 @@
 #define _VEHICLE_CONFIG_DATA_H_
 
 #include <stdint.h>
-#include "../ADCSAlgorithms/messaging/static_messaging.h"
+#include "messaging/static_messaging.h"
 #include "../SimFswInterface/macroDefinitions.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/thrArrayMessage.h"
+#include "fswMessages/thrConfigFSWMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -44,16 +46,8 @@ typedef struct {
     RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
 }RWConstellation;
 
-typedef struct {
-    double rThrust_S[3];        /*!< [m] Location of the thruster in the spacecraft*/
-    double tHatThrust_S[3];     /*!< [-] Unit vector of the thrust direction*/
-	double maxThrust;			/*!< [N] Max thrust*/
-}ThrusterPointData;
 
-typedef struct {
-    int numThrusters;
-    ThrusterPointData thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
-}ThrusterCluster;
+
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {

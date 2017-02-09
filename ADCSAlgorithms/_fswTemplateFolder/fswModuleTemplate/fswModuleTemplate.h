@@ -25,6 +25,7 @@
 #include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
 
 
+
 /*! \addtogroup ADCSAlgGroup
  * @{
  */
@@ -43,7 +44,7 @@ typedef struct {
 
     double  inputVector[3];                         /*!< [units]  vector description */
 
-    fswModuleTemplateOut fswModuleOut;              /*!< -- copy of the output message */
+    FswModuleTemplateOut fswModuleOut;              /*!< -- copy of the output message */
 
 }fswModuleTemplateConfig;
 

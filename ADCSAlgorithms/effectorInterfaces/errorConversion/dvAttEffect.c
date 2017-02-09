@@ -18,7 +18,6 @@
  */
 
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
@@ -56,7 +55,7 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
-        sizeof(vehControlOut), moduleID);
+        sizeof(CmdTorqueBodyMessage), moduleID);
     
 }
 void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
@@ -91,12 +90,12 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t i;
-    vehControlOut cntrRequest;
+    CmdTorqueBodyMessage cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(vehControlOut), (void*) &(cntrRequest), moduleID);
+                sizeof(CmdTorqueBodyMessage), (void*) &(cntrRequest), moduleID);
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
@@ -108,7 +107,7 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
 }
 
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-vehControlOut *contrReq, uint64_t moduleID)
+CmdTorqueBodyMessage *contrReq, uint64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];

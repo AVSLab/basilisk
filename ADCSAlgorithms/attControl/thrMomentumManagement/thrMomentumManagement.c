@@ -26,7 +26,6 @@
 
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
-#include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
@@ -49,8 +48,8 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->deltaHOutMsgID = CreateNewMessage(ConfigData->deltaHOutMsgName,
-                                               sizeof(vehControlOut),
-                                               "vehControlOut",          /* add the output structure name */
+                                               sizeof(CmdDelHMessage),
+                                               "CmdDelHMessage",          /* add the output structure name */
                                                moduleID);
 
 }
@@ -90,7 +89,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
 
     ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
-    memset(&(ConfigData->controlOut), 0x0, sizeof(vehControlOut));
+    memset(&(ConfigData->controlOut), 0x0, sizeof(CmdDelHMessage));
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -135,9 +134,9 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
         /*
          store the output message 
          */
-        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
+        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.delta_H_B);
 
-        WriteMessage(ConfigData->deltaHOutMsgID, callTime, sizeof(vehControlOut),
+        WriteMessage(ConfigData->deltaHOutMsgID, callTime, sizeof(CmdDelHMessage),
                      (void*) &(ConfigData->controlOut), moduleID);
 
     }

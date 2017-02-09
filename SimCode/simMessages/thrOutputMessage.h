@@ -20,6 +20,8 @@
 #ifndef SIM_THRUSTER_OUTPUT_H
 #define SIM_THRUSTER_OUTPUT_H
 
+#include <Eigen/Dense>
+
 
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/

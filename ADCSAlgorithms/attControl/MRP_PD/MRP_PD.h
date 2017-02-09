@@ -21,10 +21,10 @@
 #define _MRP_PD_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "../_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -46,7 +46,7 @@ typedef struct {
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;                       /*!< [] ID for the incoming static vehicle data */
     
-    vehControlOut controlOut;                               /*!< [] Control output requests */
+    CmdTorqueBodyMessage controlOut;                        /*!< [] Control output requests */
 }MRP_PDConfig;
 
 #ifdef __cplusplus

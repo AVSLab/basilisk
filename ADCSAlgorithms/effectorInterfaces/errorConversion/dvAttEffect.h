@@ -21,8 +21,8 @@
 #define _DV_ATT_EFFECT_H_
 
 #include "messaging/static_messaging.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -74,7 +74,7 @@ extern "C" {
                            uint64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-                                  vehControlOut *contrReq, uint64_t moduleID);
+                                  CmdTorqueBodyMessage *contrReq, uint64_t moduleID);
     
 #ifdef __cplusplus
 }

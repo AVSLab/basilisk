@@ -43,7 +43,6 @@ import matplotlib.pyplot as plt
 import thrFiringRemainder            # import the module that is to be tested
 import macros
 import fswSetupThrusters
-import vehicleConfigData
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.

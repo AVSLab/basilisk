@@ -19,7 +19,6 @@
 
 #include "effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
@@ -56,7 +55,7 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 {
     RWConstellation localRWData;
-    ThrusterCluster localThrustData;
+    THRArrayMessage localThrustData;
     VehicleConfigMessage localConfigData;
     int i;
     uint64_t ClockTime;
@@ -72,14 +71,14 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputMassPropID = subscribeToMessage(
         ConfigData->inputMassPropsName, sizeof(VehicleConfigMessage), moduleID);
     ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
-                                                   sizeof(ThrusterCluster), moduleID);
+                                                   sizeof(THRArrayMessage), moduleID);
     /*! - Read input messages */
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellation), &localRWData, moduleID);
     ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
                 sizeof(VehicleConfigMessage), &localConfigData, moduleID);
     ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
-                sizeof(ThrusterCluster), &localThrustData, moduleID);
+                sizeof(THRArrayMessage), &localThrustData, moduleID);
     
     /*! - Transform from structure S to body B frame */
     ConfigData->numRWAs = localRWData.numRW;

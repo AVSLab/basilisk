@@ -25,7 +25,6 @@
 #include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 
 /* update this include to reflect the required module input messages */
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <string.h>
 
@@ -61,7 +60,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
-                                                       sizeof(vehControlOut), moduleID);
+                                                       sizeof(CmdTorqueBodyMessage), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                      sizeof(RWConfigMessage), moduleID);
     ConfigData->rwAvailInMsgID = -1;
@@ -130,7 +129,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     uint32_t readSize;
     double Lr_B[3]; /*!< [Nm]    commanded ADCS control torque */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
-                sizeof(vehControlOut), (void*) &(Lr_B), moduleID);
+                sizeof(CmdTorqueBodyMessage), (void*) &(Lr_B), moduleID);
     if (ConfigData->rwAvailInMsgID >= 0)
     {
         ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,

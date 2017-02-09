@@ -44,7 +44,7 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(vehControlOut), "vehControlOut", moduleID);
+        sizeof(CmdTorqueBodyMessage), "CmdTorqueBodyMessage", moduleID);
 
 
 }
@@ -228,7 +228,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 
     /* Store the output message and pass it to the message bus */
     v3Copy(Lr, ConfigData->controlOut.torqueRequestBody);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehControlOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyMessage),
                  (void*) &(ConfigData->controlOut), moduleID);
     
     return;

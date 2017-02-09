@@ -31,6 +31,8 @@
 %include "dvAttEffect.h"
 GEN_SIZEOF(sunSafeACSConfig);
 %include "sunSafeACS.h"
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

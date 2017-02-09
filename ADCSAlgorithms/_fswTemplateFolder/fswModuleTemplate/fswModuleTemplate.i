@@ -35,6 +35,8 @@ GEN_SIZEOF(fswModuleTemplateConfig);
 
 // sample Module supportfile to be included in this sub-module
 %include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
+GEN_SIZEOF(FswModuleTemplateOut);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

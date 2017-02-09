@@ -22,11 +22,11 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "attControl/_GeneralModuleFiles/vehControlOut.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/thrArrayMessage.h"
+#include "SimFswInterface/thrCmdMessage.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-
+#include "SimFswInterface/cmdTorqueBodyMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -56,7 +56,7 @@ typedef struct {
     VehicleConfigMessage   sc;                      /*!< spacecraft configuration message */
     double   epsilon;
 
-    vehEffectorOut thrusterForceOut;                /*!< -- copy of the output message */
+    THRCmdMessage thrusterForceOut;                 /*!< -- copy of the output message */
 
 }thrForceMappingConfig;
 
