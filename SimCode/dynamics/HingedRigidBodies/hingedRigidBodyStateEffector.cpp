@@ -67,7 +67,13 @@ void HingedRigidBodyStateEffector::registerStates(DynParamManager& states)
 {
     // - Register the states associated with hinged rigid bodies - theta and thetaDot
     this->thetaState = states.registerState(1, 1, this->nameOfThetaState);
+    Eigen::MatrixXd thetaInitMatrix(1,1);
+    thetaInitMatrix(0,0) = this->thetaInit;
+    this->thetaState->setState(thetaInitMatrix);
     this->thetaDotState = states.registerState(1, 1, this->nameOfThetaDotState);
+    Eigen::MatrixXd thetaDotInitMatrix(1,1);
+    thetaDotInitMatrix(0,0) = this->thetaDotInit;
+    this->thetaDotState->setState(thetaDotInitMatrix);
 
     return;
 }
