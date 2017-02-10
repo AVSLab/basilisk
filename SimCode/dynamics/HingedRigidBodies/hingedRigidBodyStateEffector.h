@@ -36,6 +36,8 @@ public:
     double d;                        //!< [m] distance from hinge point to hinged rigid body center of mass
     double k;                        //!< [N-m/rad] torsional spring constant of hinge
     double c;                        //!< [N-m-s/rad] rotational damping coefficient of hinge
+    double thetaInit;                //!< [rad] Initial hinged rigid body angle
+    double thetaDotInit;             //!< [rad/s] Initial hinged rigid body angle rate
     std::string nameOfThetaState;    //!< -- Identifier for the theta state data container
     std::string nameOfThetaDotState; //!< -- Identifier for the thetaDot state data container
     Eigen::MatrixXd *g_N;            //!< [m/s^2] Gravitational acceleration in N frame components
