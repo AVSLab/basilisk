@@ -37,10 +37,10 @@ namespace std {
 %include "thrusterDynamicEffector.h"
 %include "simMessages/thrTimePairMessage.h"
 %include "simMessages/thrConfigMessage.h"
-%include "simMessages/thrCmdMessage.h"
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 GEN_SIZEOF(THRTimePairMessage)
 GEN_SIZEOF(THRConfigMessage)
-GEN_SIZEOF(THRCmdMessage)
+GEN_SIZEOF(THRArrayOnTimeCmdMessage)
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

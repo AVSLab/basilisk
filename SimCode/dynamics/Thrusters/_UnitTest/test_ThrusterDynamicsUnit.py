@@ -161,15 +161,12 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
+    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdMessage()
+    thrMessageSize = ThrustMessage.getStructSize()
     if thrustNumber==1:
-        ThrustMessage = thrusterDynamicEffector.THRCmdMessage()
-        ThrustMessage.OnTimeRequest = 0.
-        thrMessageSize = ThrustMessage.getStructSize()
+        ThrustMessage.OnTimeRequest = [0.]
     if thrustNumber==2:
-        ThrustMessage = sim_model.new_doubleArray(2) #Create a C double array
-        sim_model.doubleArray_setitem(ThrustMessage,1,0.)
-        sim_model.doubleArray_setitem(ThrustMessage,0,0.)
-        thrMessageSize = 8*thrustNumber
+        ThrustMessage.OnTimeRequest = [0., 0.]
     TotalSim.TotalSim.CreateNewMessage(unitProcessName,"acs_thruster_cmds", thrMessageSize, 2)
     TotalSim.InitializeSimulation()
 
@@ -184,10 +181,9 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         # Run the simulation
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
         if thrustNumber==1:
-            ThrustMessage.OnTimeRequest = thrDurationTime*macros.NANO2SEC
+            ThrustMessage.OnTimeRequest = [thrDurationTime*macros.NANO2SEC]
         if thrustNumber==2:
-            sim_model.doubleArray_setitem(ThrustMessage, 0, thrDurationTime * macros.NANO2SEC)
-            sim_model.doubleArray_setitem(ThrustMessage, 1, thrDurationTime * macros.NANO2SEC)
+            ThrustMessage.OnTimeRequest = [thrDurationTime * macros.NANO2SEC, thrDurationTime * macros.NANO2SEC]
         TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
         executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
@@ -342,7 +338,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
 
                 ##Execute a new firing that will use the thruster ramps
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-                ThrustMessage.OnTimeRequest =  thrDurationTime*macros.NANO2SEC;
+                ThrustMessage.OnTimeRequest =  [thrDurationTime*macros.NANO2SEC]
                 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrDurationTime+sparetime))
 
@@ -459,10 +455,10 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
                 COrestart = 0.3
 
                 executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-                ThrustMessage.OnTimeRequest = COtime * 10.
+                ThrustMessage.OnTimeRequest = [COtime * 10.]
                 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COtime * 1.0 / macros.NANO2SEC))
-                ThrustMessage.OnTimeRequest = COrestart
+                ThrustMessage.OnTimeRequest = [COrestart]
                 TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 1,
                                                    ThrustMessage)  # Need to change 0 to 1 to chain the message
                 executeSimRun(TotalSim, thrusterSet, testRate, int(COrestart * 1.0 / macros.NANO2SEC + sparetime))
@@ -569,10 +565,10 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             RDlength = 1.5
 
             executeSimRun(TotalSim, thrusterSet, testRate, int(thrStartTime))
-            ThrustMessage.OnTimeRequest = RDstart
+            ThrustMessage.OnTimeRequest = [RDstart]
             TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 0, ThrustMessage)
             executeSimRun(TotalSim, thrusterSet, testRate, int((RDstart+ RDrestart) * 1.0 / macros.NANO2SEC))
-            ThrustMessage.OnTimeRequest = RDlength
+            ThrustMessage.OnTimeRequest = [RDlength]
             TotalSim.TotalSim.WriteMessageData("acs_thruster_cmds", thrMessageSize, 1,
                                                ThrustMessage)  # Need to change 0 to 1 to chain the message
             executeSimRun(TotalSim, thrusterSet, testRate, int(RDlength * 1.0 / macros.NANO2SEC + sparetime))

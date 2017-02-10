@@ -177,7 +177,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "delta_H_B"
+    moduleOutputName = "torqueRequestBody"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.deltaHOutMsgName + '.' + moduleOutputName,
                                                   range(3))
 

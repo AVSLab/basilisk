@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/thrArrayMessage.h"
-#include "SimFswInterface/thrCmdMessage.h"
+#include "fswMessages/THRArrayCmdForceMessage.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "SimFswInterface/cmdTorqueBodyMessage.h"
 
@@ -56,7 +56,7 @@ typedef struct {
     VehicleConfigMessage   sc;                      /*!< spacecraft configuration message */
     double   epsilon;
 
-    THRCmdMessage thrusterForceOut;                 /*!< -- copy of the output message */
+    THRArrayCmdForceMessage thrusterForceOut;       /*!< -- copy of the output message */
 
 }thrForceMappingConfig;
 

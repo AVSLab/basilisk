@@ -46,8 +46,8 @@ void SelfInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t module
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(THRCmdMessage),
-                                               "THRCmdMessage",          /* add the output structure name */
+                                               sizeof(THRArrayCmdForceMessage),
+                                               "THRArrayCmdForceMessage",
                                                moduleID);
 }
 
@@ -124,7 +124,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
                   ConfigData->gtThruster_B[i]);
         ConfigData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
     }
-    memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(THRCmdMessage));
+    memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(THRArrayCmdForceMessage));
 
 }
 
@@ -215,8 +215,8 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     /*
      store the output message 
      */
-    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.thrusterCmd);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(THRCmdMessage),   /* update module name */
+    mCopy(F, ConfigData->numThrusters, 1, ConfigData->thrusterForceOut.thrForce);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(THRArrayCmdForceMessage),   /* update module name */
                  (void*) &(ConfigData->thrusterForceOut), moduleID);
 
     return;

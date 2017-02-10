@@ -22,7 +22,6 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../SimFswInterface/macroDefinitions.h"
 #include <cstring>
 #include <iostream>
@@ -36,7 +35,6 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     , thrusterOutMsgNameBufferCount(2)
     , prevFireTime(0.0)
     , CmdsInMsgID(-1)
-    , IncomingCmdBuffer(NULL)
     , prevCommandTime(0xFFFFFFFFFFFFFFFF)
 {
     CallCounts = 0;
@@ -64,13 +62,7 @@ void ThrusterDynamicEffector::SelfInit()
     //! - Clear out any currently firing thrusters and re-init cmd array
     NewThrustCmds.clear();
     NewThrustCmds.insert(NewThrustCmds.begin(), ThrusterData.size(), 0.0);
-    //! - Clear out the incoming command buffer and resize to max thrusters
-    if(IncomingCmdBuffer != NULL)
-    {
-        delete [] IncomingCmdBuffer;
-    }
-    IncomingCmdBuffer = new THRCmdMessage[ThrusterData.size()];
-    
+
     std::vector<THRConfigMessage>::iterator it;
     uint64_t tmpThrustMsgId;
     std::string tmpThrustMsgName;
@@ -105,7 +97,7 @@ void ThrusterDynamicEffector::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     MAX_EFF_CNT*sizeof(THRCmdMessage), moduleID);
+                                                                     sizeof(THRArrayOnTimeCmdMessage), moduleID);
     
 }
 
@@ -163,11 +155,11 @@ bool ThrusterDynamicEffector::ReadInputs()
     
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader LocalHeader;
-    memset(IncomingCmdBuffer, 0x0, ThrusterData.size()*sizeof(THRCmdMessage));
+    memset(&IncomingCmdBuffer, 0x0, sizeof(THRArrayOnTimeCmdMessage));
     memset(&LocalHeader, 0x0, sizeof(LocalHeader));
     dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-                                                           ThrusterData.size()*sizeof(THRCmdMessage),
-                                                           reinterpret_cast<uint8_t*> (IncomingCmdBuffer), moduleID);
+                                                           sizeof(THRArrayOnTimeCmdMessage),
+                                                           reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
     
     //! - Check if message has already been read, if stale return
     if(prevCommandTime==LocalHeader.WriteClockNanos || !dataGood) {
@@ -180,7 +172,7 @@ bool ThrusterDynamicEffector::ReadInputs()
     for(i=0, CmdPtr = NewThrustCmds.data(); i<ThrusterData.size();
         CmdPtr++, i++)
     {
-        *CmdPtr = IncomingCmdBuffer[i].OnTimeRequest;
+        *CmdPtr = IncomingCmdBuffer.OnTimeRequest[i];
     }
     return(true);
     

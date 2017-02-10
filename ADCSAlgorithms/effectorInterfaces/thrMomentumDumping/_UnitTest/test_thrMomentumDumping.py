@@ -142,9 +142,9 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrMomentumDumping.vehEffectorOut()
+    inputMessageData = thrMomentumDumping.THRArrayCmdForceMessage()
     messageSize = inputMessageData.getStructSize()
-    inputMessageData.effectorRequest = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
+    inputMessageData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrusterImpulseInMsgName,
                                           messageSize,
@@ -184,7 +184,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.thrusterOnTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
 

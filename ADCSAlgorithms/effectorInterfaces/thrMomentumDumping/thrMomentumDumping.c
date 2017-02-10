@@ -48,8 +48,8 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t 
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrusterOnTimeOutMsgID = CreateNewMessage(ConfigData->thrusterOnTimeOutMsgName,
-                                               sizeof(vehEffectorOut),
-                                               "vehEffectorOut",          /* add the output structure name */
+                                               sizeof(THRArrayOnTimeCmdMessage),
+                                               "THRArrayOnTimeCmdMessage",          /* add the output structure name */
                                                moduleID);
 
 }
@@ -63,7 +63,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
 {
     /*! - Get the control data message ID*/
     ConfigData->thrusterImpulseInMsgID = subscribeToMessage(ConfigData->thrusterImpulseInMsgName,
-                                                sizeof(vehEffectorOut),
+                                                sizeof(THRArrayCmdForceMessage),
                                                 moduleID);
     ConfigData->thrusterConfInMsgID = subscribeToMessage(ConfigData->thrusterConfInMsgName,
                                                          sizeof(THRArrayMessage),
@@ -101,7 +101,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     /* zero out some vectors */
     memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
     memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
-    memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(vehEffectorOut));
+    memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdMessage));
 
     if (ConfigData->maxCounterValue < 1) {
         printf("WARNING: the maxCounterValue flag must be set to a positive value.\n");
@@ -135,7 +135,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
         /*! - Read the input messages */
         ReadMessage(ConfigData->thrusterImpulseInMsgID, &clockTime, &readSize,
-                    sizeof(vehEffectorOut), (void*) Delta_P_input, moduleID);
+                    sizeof(THRArrayCmdForceMessage), (void*) Delta_P_input, moduleID);
 
         if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
             /* idential net thruster impulse request case, continue with existing RW momentum dumping */
@@ -189,9 +189,9 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
     /*
      store the output message
      */
-    memmove(ConfigData->thrOnTimeOut.effectorRequest, tOnOut, ConfigData->numThrusters*sizeof(double));
+    memmove(ConfigData->thrOnTimeOut.OnTimeRequest, tOnOut, sizeof(THRArrayOnTimeCmdMessage));
 
-    WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+    WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage), 
                  (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
     return;

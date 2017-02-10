@@ -22,11 +22,11 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
+#include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConfigMessage.h"
-#include "fswMessages/cmdDelHMessage.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
+#include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -54,7 +54,7 @@ typedef struct {
     int32_t rwConfInMsgID;                              /*!< [-] ID for the incoming RWA configuration data*/
 
 
-    CmdDelHMessage controlOut;                          /*!< [] Control output requests */
+    CmdTorqueBodyMessage controlOut;                    /*!< [] Control output requests */
 
 }thrMomentumManagementConfig;
 

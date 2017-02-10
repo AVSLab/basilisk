@@ -48,8 +48,8 @@ void SelfInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uin
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->deltaHOutMsgID = CreateNewMessage(ConfigData->deltaHOutMsgName,
-                                               sizeof(CmdDelHMessage),
-                                               "CmdDelHMessage",          /* add the output structure name */
+                                               sizeof(CmdTorqueBodyMessage),
+                                               "CmdTorqueBodyMessage",          /* add the output structure name */
                                                moduleID);
 
 }
@@ -89,7 +89,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
 
     ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
-    memset(&(ConfigData->controlOut), 0x0, sizeof(CmdDelHMessage));
+    memset(&(ConfigData->controlOut), 0x0, sizeof(CmdTorqueBodyMessage));
 }
 
 /*! Add a description of what this main Update() routine does for this module
@@ -134,9 +134,9 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
         /*
          store the output message 
          */
-        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.delta_H_B);
+        v3Copy(ConfigData->Delta_H_B, ConfigData->controlOut.torqueRequestBody);
 
-        WriteMessage(ConfigData->deltaHOutMsgID, callTime, sizeof(CmdDelHMessage),
+        WriteMessage(ConfigData->deltaHOutMsgID, callTime, sizeof(CmdTorqueBodyMessage),
                      (void*) &(ConfigData->controlOut), moduleID);
 
     }

@@ -17,17 +17,15 @@
 
  */
 
-#ifndef SIM_THRUSTER_CMD_H
-#define SIM_THRUSTER_CMD_H
+#ifndef _THR_ARRAY_CMD_FORCE_MESSAGE_H_
+#define _THR_ARRAY_CMD_FORCE_MESSAGE_H_
 
+#include "SimFswInterface/macroDefinitions.h"
 
-//! @brief Input container for thruster firing requests.
-/*! This structure is used for the array of thruster commands.  It is pretty
- sparse, but it is included as a structure for growth and for clear I/O
- definitions.*/
+/*! @brief Message used to define a vector of thruster force commands */
 typedef struct {
-    double OnTimeRequest;                //!< s Requested on-time for thruster
-}THRCmdMessage;
+    double thrForce[MAX_EFF_CNT];     /*!< [N] array of thruster force values */
+}THRArrayCmdForceMessage;
 
 
 #endif

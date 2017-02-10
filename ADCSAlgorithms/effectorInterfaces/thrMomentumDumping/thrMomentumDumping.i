@@ -31,13 +31,13 @@
 %constant void Reset_thrMomentumDumping(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumDumping;
 GEN_SIZEOF(thrMomentumDumpingConfig);
-GEN_SIZEOF(vehEffectorOut);
 %include "thrMomentumDumping.h"
 %include "../../fswMessages/thrArrayMessage.h"
+%include "../../fswMessages/thrArrayCmdForceMessage.h"
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 GEN_SIZEOF(THRArrayMessage);
+GEN_SIZEOF(THRArrayCmdForceMessage);
 
-// sample Module supportfile to be included in this sub-module
-%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

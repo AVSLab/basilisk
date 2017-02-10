@@ -17,15 +17,15 @@
 
  */
 
-#ifndef _FSW_MODULE_TEMPLATE_H_
-#define _FSW_MODULE_TEMPLATE_H_
+#ifndef _THR_MOMENTUM_DUMPING_H_
+#define _THR_MOMENTUM_DUMPING_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/vehEffectorOut.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/thrArrayMessage.h"
-
+#include "fswMessages/thrArrayCmdForceMessage.h"
+#include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -57,7 +57,7 @@ typedef struct {
     int32_t  thrusterConfInMsgID;                   /*!< [-] ID for the incoming Thruster configuration data*/
 
 
-    vehEffectorOut thrOnTimeOut;                    /*!< -- copy of the output message */
+    THRArrayOnTimeCmdMessage thrOnTimeOut;          /*!< -- copy of the output message */
 
 }thrMomentumDumpingConfig;
 

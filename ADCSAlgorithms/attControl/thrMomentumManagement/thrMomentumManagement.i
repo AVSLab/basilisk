@@ -30,14 +30,14 @@
 %ignore CrossInit_thrMomentumManagement;
 %constant void Reset_thrMomentumManagement(void*, uint64_t, uint64_t);
 %ignore Reset_thrMomentumManagement;
-GEN_SIZEOF(thrMomentumManagementConfig);
-GEN_SIZEOF(VehicleConfigMessage);
-GEN_SIZEOF(RWConfigMessage);
 %include "thrMomentumManagement.h"
+GEN_SIZEOF(thrMomentumManagementConfig);
 %include "../../fswMessages/vehicleConfigMessage.h"
+GEN_SIZEOF(VehicleConfigMessage);
 %include "../../fswMessages/rwConfigMessage.h"
-%include "../../fswMessages/cmdDelHMessage.h"
-GEN_SIZEOF(CmdDelHMessage);
+GEN_SIZEOF(RWConfigMessage);
+%include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 GEN_SIZEOF(RWSpeedMessage);
 

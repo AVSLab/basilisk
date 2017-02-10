@@ -17,13 +17,20 @@
 
  */
 
-#ifndef _CMD_DELTA_H_MESSAGE_H_
-#define _CMD_DELTA_H_MESSAGE_H_
+#ifndef THR_CMD_MESSAGE_H
+#define THR_CMD_MESSAGE_H
 
-/*! @brief Message used to define a change in angular momentum Delta_H in the RW states */
+#include "../../SimFswInterface/macroDefinitions.h"
+
+/*! \addtogroup ADCSAlgGroup
+ * @{
+ */
+
+/*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double delta_H_B[3];     /*!< [Nms] RW angular momentum change */
-}CmdDelHMessage;
+    double OnTimeRequest[MAX_EFF_CNT];     /*!< - Control request fraction array*/
+}THRArrayOnTimeCmdMessage;
 
+/*! @} */
 
 #endif

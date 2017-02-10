@@ -28,7 +28,7 @@
 #include "simMessages/thrOperationMessage.h"
 #include "simMessages/thrConfigMessage.h"
 #include "simMessages/thrOutputMessage.h"
-#include "simMessages/thrCmdMessage.h"
+#include "../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 #include <Eigen/Dense>
 #include <vector>
 
@@ -94,7 +94,7 @@ private:
     std::vector<THROutputMessage> thrusterOutBuffer;//!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
     //int64_t propsInID;                            //!< [-] The ID associated with the mss props msg
-    THRCmdMessage *IncomingCmdBuffer;               //!< -- One-time allocation for savings
+    THRArrayOnTimeCmdMessage IncomingCmdBuffer;     //!< -- One-time allocation for savings
     uint64_t prevCommandTime;                       //!< -- Time for previous valid thruster firing
 
 };
