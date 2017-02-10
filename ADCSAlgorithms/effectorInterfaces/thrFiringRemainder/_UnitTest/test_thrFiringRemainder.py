@@ -87,11 +87,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # Construct algorithm and associated C++ container
     moduleConfig = thrFiringRemainder.thrFiringRemainderConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrFiringRemainder.Update_thrFiringRemainder,     # update with current values
-                                        thrFiringRemainder.SelfInit_thrFiringRemainder,   # update with current values
-                                        thrFiringRemainder.CrossInit_thrFiringRemainder,  # update with current values
-                                        thrFiringRemainder.Reset_thrFiringRemainder)      # update with current values
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "thrFiringRemainder"                                        # update python name of test module
 
     # Add test module to runtime call list
@@ -142,7 +138,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringRemainder.vehEffectorOut()
+    inputMessageData = thrFiringRemainder.THRArrayCmdForceMessage()
     messageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,
@@ -164,10 +160,10 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
 
     if dvOn:
-        # inputMessageData.effectorRequest = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]
-        inputMessageData.effectorRequest = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
+        # inputMessageData.thrForce = [0.0, -0.1, -0.2, -0.3, -0.349, -0.351, -0.451, -0.5]
+        inputMessageData.thrForce = [-0.5, 0.0, -0.1, -0.2, -0.3, -0.34, -0.39, -0.44]
     else:
-        inputMessageData.effectorRequest = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
+        inputMessageData.thrForce = [0.5, 0.05, 0.1, 0.15, 0.19, 0.0, 0.2, 0.49]
 
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
@@ -196,7 +192,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
     # print moduleOutput

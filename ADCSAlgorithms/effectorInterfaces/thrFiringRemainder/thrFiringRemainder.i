@@ -34,8 +34,9 @@ GEN_SIZEOF(thrFiringRemainderConfig);
 %include "thrFiringRemainder.h"
 %include "../../fswMessages/thrArrayMessage.h"
 GEN_SIZEOF(THRArrayMessage);
-%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-GEN_SIZEOF(vehEffectorOut);
+%include "../../fswMessages/thrArrayCmdForceMessage.h"
+GEN_SIZEOF(THRArrayCmdForceMessage);
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

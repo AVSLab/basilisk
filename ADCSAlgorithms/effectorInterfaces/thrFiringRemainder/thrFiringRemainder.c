@@ -47,8 +47,8 @@ void SelfInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t 
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->onTimeOutMsgID = CreateNewMessage(ConfigData->onTimeOutMsgName,
-                                               sizeof(vehEffectorOut),
-                                               "vehEffectorOut",          /* add the output structure name */
+                                               sizeof(THRArrayOnTimeCmdMessage),
+                                               "THRArrayOnTimeCmdMessage",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -61,7 +61,7 @@ void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t
 {
 	/*! - Get the input message ID's */
 	ConfigData->thrForceInMsgID = subscribeToMessage(ConfigData->thrForceInMsgName,
-														 sizeof(vehEffectorOut),
+														 sizeof(THRArrayCmdForceMessage),
 														 moduleID);
 	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
 												sizeof(THRArrayMessage),
@@ -91,7 +91,7 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 	for(i=0; i<ConfigData->numThrusters; i++) {
 		ConfigData->maxThrust[i] = localThrusterData.thrusters[i].maxThrust;
 		ConfigData->pulseRemainder[i] = 0.0;
-		ConfigData->thrOnTimeOut.effectorRequest[i] = 0.0;
+		ConfigData->thrOnTimeOut.OnTimeRequest[i] = 0.0;
 	}
 
 }
@@ -113,10 +113,10 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 		ConfigData->prevCallTime = callTime;
 
 		for(i = 0; i < ConfigData->numThrusters; i++) {
-			ConfigData->thrOnTimeOut.effectorRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
+			ConfigData->thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),   /* update module name */
 					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
@@ -127,23 +127,23 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	/*! Begin method steps */
 	/*! - Read the input messages */
 	ReadMessage(ConfigData->thrForceInMsgID, &clockTime, &readSize,
-				sizeof(vehEffectorOut), (void*) &(ConfigData->thrForceIn), moduleID);
+				sizeof(THRArrayCmdForceMessage), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {
 
 		/*! Correct for off-pulsing if necessary */
 		if (ConfigData->baseThrustState == 1) {
-			ConfigData->thrForceIn.effectorRequest[i] += ConfigData->maxThrust[i];
+			ConfigData->thrForceIn.thrForce[i] += ConfigData->maxThrust[i];
 		}
 
 		/*! Do not allow thrust requests less than zero */
-		if (ConfigData->thrForceIn.effectorRequest[i] < 0.0) {
-			ConfigData->thrForceIn.effectorRequest[i] = 0.0;
+		if (ConfigData->thrForceIn.thrForce[i] < 0.0) {
+			ConfigData->thrForceIn.thrForce[i] = 0.0;
 		}
 
 		/*! Compute T_on from thrust request, max thrust, and control period */
-		onTime[i] = ConfigData->thrForceIn.effectorRequest[i]/ConfigData->maxThrust[i]*controlPeriod;
+		onTime[i] = ConfigData->thrForceIn.thrForce[i]/ConfigData->maxThrust[i]*controlPeriod;
 		/*! Add in remainder */
 		onTime[i] += ConfigData->pulseRemainder[i]*ConfigData->thrMinFireTime;
 		/*! Set pulse remainder to zero. Remainder now stored in onTime */
@@ -160,11 +160,11 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 		}
 
 		/*! Set the output data */
-		ConfigData->thrOnTimeOut.effectorRequest[i] = onTime[i];
+		ConfigData->thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 		
 	}
 
-	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),   /* update module name */
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	return;
