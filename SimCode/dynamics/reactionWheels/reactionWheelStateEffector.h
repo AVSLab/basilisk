@@ -28,7 +28,6 @@
 #include <Eigen/Dense>
 #include "../SimFswInterface/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "../../simMessages/rwCmdMessage.h"
 #include "../../simMessages/rwConfigMessage.h"
