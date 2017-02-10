@@ -33,6 +33,9 @@ GEN_SIZEOF(sunSafeACSConfig);
 %include "sunSafeACS.h"
 %include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
+GEN_SIZEOF(THRArrayOnTimeCmdMessage);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

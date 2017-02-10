@@ -21,11 +21,11 @@
 #define _SUN_SAFE_ACS_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "SimFswInterface/cmdTorqueBodyMessage.h"
+#include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

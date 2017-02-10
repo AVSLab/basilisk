@@ -139,14 +139,13 @@ CmdTorqueBodyMessage *contrReq, uint64_t moduleID)
         unSortPairs[i].thrustIndex = i;
     }
     effectorVSort(unSortPairs, sortPairs, thrData->numEffectors);
-    memset(thrData->cmdRequests.effectorRequest, 0x0,
-           MAX_EFF_CNT*sizeof(double));
+    memset(thrData->cmdRequests.OnTimeRequest, 0x0,sizeof(THRArrayOnTimeCmdMessage));
     for(i=0; i<thrData->maxNumCmds; i=i+1)
     {
-        thrData->cmdRequests.effectorRequest[sortPairs[i].thrustIndex] =
+        thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] =
         sortPairs[i].onTime;
     }
-    WriteMessage(thrData->outputMsgID, callTime, sizeof(vehEffectorOut),
+    WriteMessage(thrData->outputMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),
                  (void*) &(thrData->cmdRequests), moduleID);
 }
 
