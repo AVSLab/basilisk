@@ -22,10 +22,11 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "fswMessages/thrArrayMessage.h"
+#include "fswMessages/thrArrayCmdForceMessage.h"
 #include "SimFswInterface/macroDefinitions.h"
+#include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -54,8 +55,8 @@ typedef struct {
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			/*!< The name of the thruster cluster Input message */
 	int32_t  			thrConfInMsgID;                   				/*!< ID for the incoming Thruster configuration data */
 
-	vehEffectorOut thrForceIn;								/*!< -- copy of the input message */
-	vehEffectorOut thrOnTimeOut;								/*!< -- copy of the output message */
+	THRArrayCmdForceMessage thrForceIn;								    /*!< -- copy of the input message */
+	THRArrayOnTimeCmdMessage thrOnTimeOut;								/*!< -- copy of the output message */
 
 }thrFiringSchmittConfig;
 

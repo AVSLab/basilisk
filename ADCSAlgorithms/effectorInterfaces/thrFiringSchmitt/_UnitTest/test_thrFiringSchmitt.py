@@ -43,7 +43,6 @@ import matplotlib.pyplot as plt
 import thrFiringSchmitt            # import the module that is to be tested
 import macros
 import fswSetupThrusters
-import vehicleConfigData
 
 
 # Uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed.
@@ -88,11 +87,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     # Construct algorithm and associated C++ container
     moduleConfig = thrFiringSchmitt.thrFiringSchmittConfig()                          # update with current values
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        thrFiringSchmitt.Update_thrFiringSchmitt,     # update with current values
-                                        thrFiringSchmitt.SelfInit_thrFiringSchmitt,   # update with current values
-                                        thrFiringSchmitt.CrossInit_thrFiringSchmitt,  # update with current values
-                                        thrFiringSchmitt.Reset_thrFiringSchmitt)      # update with current values
+    moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
     moduleWrap.ModelTag = "thrFiringSchmitt"                                        # update python name of test module
 
     # Add test module to runtime call list
@@ -146,7 +141,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringSchmitt.vehEffectorOut()
+    inputMessageData = thrFiringSchmitt.THRArrayCmdForceMessage()
     messageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,
@@ -180,7 +175,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
         effReq4 = [0.5, 0.05, 0.09, 0.11, 0.16, 0.18, 0.2, 0.11]
 
 
-    inputMessageData.effectorRequest = effReq1
+    inputMessageData.thrForce = effReq1
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -189,7 +184,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = effReq2
+    inputMessageData.thrForce = effReq2
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -198,7 +193,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = effReq3
+    inputMessageData.thrForce = effReq3
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -207,7 +202,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     unitTestSim.ExecuteSimulation()
 
 
-    inputMessageData.effectorRequest = effReq4
+    inputMessageData.thrForce = effReq4
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.thrForceInMsgName,
                                           messageSize,
                                           0,
@@ -226,7 +221,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "OnTimeRequest"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.onTimeOutMsgName + '.' + moduleOutputName,
                                                   range(numThrusters))
     # print moduleOutput
