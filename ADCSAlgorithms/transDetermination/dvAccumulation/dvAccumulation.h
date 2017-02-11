@@ -26,8 +26,9 @@
 #define MAX_ACC_BUF_PKT 25
 
 typedef struct {
-    uint64_t measTime;                /*! [Tick] Measurement time for accel */
-    double accel_Pltf[3];             /*! [m/s2] Acceleration in platform frame */
+    uint64_t measTime;                /*!< [Tick] Measurement time for accel */
+    double gyro_Pltf[3];              /*!< [r/s] Angular rate measurement from gyro*/
+    double accel_Pltf[3];             /*!< [m/s2] Acceleration in platform frame */
 }AccPktData;
 
 typedef struct {
