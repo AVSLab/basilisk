@@ -41,8 +41,8 @@ ImuSensor::ImuSensor()
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
-    memset(&this->sensedValues, 0x0, sizeof(ImuSensorOutput));
-    memset(&this->trueValues, 0x0, sizeof(ImuSensorOutput));
+    memset(&this->sensedValues, 0x0, sizeof(IMUSensorMessage));
+    memset(&this->trueValues, 0x0, sizeof(IMUSensorMessage));
 
     return;
 }
