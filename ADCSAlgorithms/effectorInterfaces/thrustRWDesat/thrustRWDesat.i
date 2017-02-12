@@ -30,13 +30,13 @@
 %ignore CrossInit_thrustRWDesat;
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
-%include "../_GeneralModuleFiles/vehEffectorOut.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(thrustRWDesatConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "thrustRWDesat.h"
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 
 %pythoncode %{
 import sys

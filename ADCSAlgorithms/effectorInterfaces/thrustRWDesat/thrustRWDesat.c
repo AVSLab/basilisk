@@ -39,8 +39,8 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     /*! - Loop over number of thruster blocks and create output messages */
   
     ConfigData->outputThrID = CreateNewMessage(
-        ConfigData->outputThrName, sizeof(vehEffectorOut),
-        "vehEffectorOut", moduleID);
+        ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdMessage),
+        "THRArrayOnTimeCmdMessage", moduleID);
   
     
 }
@@ -124,7 +124,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	double bestMatch;             /* The current best thruster/wheel matching*/
 	double currentMatch;          /* Assessment of the current match */
     double fireValue;             /* Amount of time to fire the jet for */
-	vehEffectorOut outputData;    /* Local output firings */
+	THRArrayOnTimeCmdMessage outputData;    /* Local output firings */
   
     /*! Begin method steps*/
     /*! - If we haven't met the cooldown threshold, do nothing */
@@ -185,7 +185,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
           Only apply thruster firing if the best match is non-zero.  Find the thruster 
 		  that best matches the current specified direction.
     */
-	memset(&outputData, 0x0, sizeof(vehEffectorOut));
+	memset(&outputData, 0x0, sizeof(THRArrayOnTimeCmdMessage));
 	selectedThruster = -1;
 	bestMatch = 0.0;
 	for (i = 0; i < ConfigData->numThrusters; i++)
@@ -208,21 +208,21 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
           - Set the previous call time value for cooldown check */
 	if (bestMatch > 0.0)
 	{
-		outputData.effectorRequest[selectedThruster] = v3Dot(ConfigData->currDMDir,
+		outputData.OnTimeRequest[selectedThruster] = v3Dot(ConfigData->currDMDir,
 			&(ConfigData->thrTorqueMap[selectedThruster * 3]));
-		outputData.effectorRequest[selectedThruster] =
-			outputData.effectorRequest[selectedThruster] > ConfigData->maxFiring ?
-			ConfigData->maxFiring : outputData.effectorRequest[selectedThruster];
+		outputData.OnTimeRequest[selectedThruster] =
+			outputData.OnTimeRequest[selectedThruster] > ConfigData->maxFiring ?
+			ConfigData->maxFiring : outputData.OnTimeRequest[selectedThruster];
 		ConfigData->previousFiring = callTime;
-		ConfigData->totalAccumFiring += outputData.effectorRequest[selectedThruster];
-        v3Scale(outputData.effectorRequest[selectedThruster],
+		ConfigData->totalAccumFiring += outputData.OnTimeRequest[selectedThruster];
+        v3Scale(outputData.OnTimeRequest[selectedThruster],
                 &(ConfigData->thrAlignMap[selectedThruster * 3]), singleSpeedVec);
         v3Add(ConfigData->accumulatedImp, singleSpeedVec,
             ConfigData->accumulatedImp);
 	}
    
     /*! - Write the output message to the thruster system */
-	WriteMessage(ConfigData->outputThrID, callTime, sizeof(vehEffectorOut),
+	WriteMessage(ConfigData->outputThrID, callTime, sizeof(THRArrayOnTimeCmdMessage),
 		&(outputData), moduleID);
 
     return;

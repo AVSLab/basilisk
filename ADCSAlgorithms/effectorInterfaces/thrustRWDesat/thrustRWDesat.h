@@ -21,11 +21,11 @@
 #define _THRUST_RW_DESAT_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/rwConstellationMessage.h"
+#include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <stdint.h>
 #include <stdlib.h>
