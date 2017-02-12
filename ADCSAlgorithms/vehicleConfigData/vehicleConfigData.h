@@ -25,7 +25,7 @@
 #include "../SimFswInterface/macroDefinitions.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConstellationMessage.h"
-#include "fswMessages/thrArrayMessage.h"
+#include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrConfigFSWMessage.h"
 
 /*! \addtogroup ADCSAlgGroup

@@ -50,7 +50,7 @@ def create(
     global rwList
 
     # create the blank RW object
-    RW = vehicleConfigData.RWConfigurationElement()
+    RW = vehicleConfigData.RWConfigElementMessage()
 
     norm = numpy.linalg.norm(gsHat_S)
     if norm > 1e-10:

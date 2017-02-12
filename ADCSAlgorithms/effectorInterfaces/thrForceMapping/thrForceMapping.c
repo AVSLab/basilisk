@@ -64,7 +64,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
                                                 moduleID);
 
     ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
-                                                       sizeof(THRArrayMessage),
+                                                       sizeof(THRArrayConfigFSWMessage),
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
@@ -81,7 +81,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 {
     double             *pAxis;                 /*!< pointer to the current control axis */
     int                 i;
-    THRArrayMessage   localThrusterData;     /*!< local copy of the thruster data message */
+    THRArrayConfigFSWMessage   localThrusterData;     /*!< local copy of the thruster data message */
     uint64_t            clockTime;
     uint32_t            readSize;
 
@@ -107,7 +107,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
 
     /* read in the support messages */
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
-                sizeof(THRArrayMessage), &localThrusterData, moduleID);
+                sizeof(THRArrayConfigFSWMessage), &localThrusterData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 

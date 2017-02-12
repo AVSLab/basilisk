@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "fswMessages/thrArrayMessage.h"
+#include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrArrayCmdForceMessage.h"
 #include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
 

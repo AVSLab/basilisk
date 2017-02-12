@@ -63,7 +63,7 @@ void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t
 														 sizeof(THRArrayCmdForceMessage),
 														 moduleID);
 	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
-												sizeof(THRArrayMessage),
+												sizeof(THRArrayConfigFSWMessage),
 												moduleID);
 }
 
@@ -74,7 +74,7 @@ void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t
  */
 void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-	THRArrayMessage   localThrusterData;     /*!< local copy of the thruster data message */
+	THRArrayConfigFSWMessage   localThrusterData;     /*!< local copy of the thruster data message */
 	uint64_t            clockTime;
 	uint32_t            readSize;
 	int 				i;
@@ -83,7 +83,7 @@ void Reset_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t cal
 
 	/* read in the support messages */
 	ReadMessage(ConfigData->thrConfInMsgID, &clockTime, &readSize,
-				sizeof(THRArrayMessage), &localThrusterData, moduleID);
+				sizeof(THRArrayConfigFSWMessage), &localThrusterData, moduleID);
 
 	ConfigData->numThrusters = localThrusterData.numThrusters;
 

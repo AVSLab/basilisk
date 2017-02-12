@@ -35,8 +35,8 @@
 GEN_SIZEOF(thrForceMappingConfig);
 %include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(VehicleConfigMessage);
-%include "../../fswMessages/thrArrayMessage.h"
-GEN_SIZEOF(THRArrayMessage);
+%include "../../fswMessages/thrArrayConfigFSWMessage.h"
+GEN_SIZEOF(THRArrayConfigFSWMessage);
 %include "../../fswMessages/THRArrayCmdForceMessage.h"
 %include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);

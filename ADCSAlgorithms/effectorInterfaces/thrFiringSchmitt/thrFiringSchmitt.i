@@ -32,8 +32,8 @@
 %ignore Reset_thrFiringSchmitt;
 GEN_SIZEOF(thrFiringSchmittConfig);
 %include "thrFiringSchmitt.h"
-%include "../../fswMessages/thrArrayMessage.h"
-GEN_SIZEOF(THRArrayMessage);
+%include "../../fswMessages/thrArrayConfigFSWMessage.h"
+GEN_SIZEOF(THRArrayConfigFSWMessage);
 %include "../../fswMessages/thrArrayCmdForceMessage.h"
 GEN_SIZEOF(THRArrayCmdForceMessage);
 %include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"

@@ -17,17 +17,17 @@
 
  */
 
-#ifndef THR_ARRAY_MESSAGE_H
-#define THR_ARRAY_MESSAGE_H
+#ifndef _RW_CONFIG_ELEMENT_MESSAGE_H
+#define _RW_CONFIG_ELEMENT_MESSAGE_H
 
-#include "../SimFswInterface/macroDefinitions.h"
-#include "fswMessages/thrConfigFSWMessage.h"
 
-/*! @brief FSW message definition containing the thruster cluster information */
+/*! @brief Structure used to define a single FSW RW configuration with vector in Structure S frame */
 typedef struct {
-    int numThrusters;
-    THRConfigFSWMessage thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
-}THRArrayMessage;
+    double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
+    double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
+    double uMax;                /*!< [Nm]   maximum RW motor torque */
+}RWConfigElementMessage;
+
 
 
 #endif

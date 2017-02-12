@@ -17,17 +17,17 @@
 
  */
 
-#ifndef _RW_CONSTELLATION_MESSAGE_H
-#define _RW_CONSTELLATION_MESSAGE_H
+#ifndef THR_ARRAY_MESSAGE_H
+#define THR_ARRAY_MESSAGE_H
 
-#include "SimFswInterface/macroDefinitions.h"
-#include "rwConfigElementMessage.h"
+#include "../SimFswInterface/macroDefinitions.h"
+#include "fswMessages/thrConfigFSWMessage.h"
 
-
-/*! @brief Structure used to define an array of RW FSW configurations with vectors in Structure S frame */
+/*! @brief FSW message definition containing the thruster cluster information */
 typedef struct {
-    int numRW;
-    RWConfigElementMessage reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
-}RWConstellationMessage;
+    int numThrusters;
+    THRConfigFSWMessage thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
+}THRArrayConfigFSWMessage;
+
 
 #endif
