@@ -24,8 +24,6 @@
 /* modify the path to reflect the new module names */
 #include "_fswTemplateFolder/fswModuleTemplate/fswModuleTemplate.h"
 
-/* update this include to reflect the required module input messages */
-#include "attControl/MRP_Steering/MRP_Steering.h"
 
 
 

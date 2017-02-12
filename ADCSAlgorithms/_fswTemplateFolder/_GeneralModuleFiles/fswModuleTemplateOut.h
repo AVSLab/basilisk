@@ -22,9 +22,18 @@
 
 #include <stdint.h>
 
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
+
+/*
+ NOTE: FSW message definitions should be stored either in
+    
+    ADCSAlgorithms/fswMessages/
+ 
+    or 
+ 
+    SimFswInterface/
+
+*/
+
 
 /*! @brief Structure used to define the output of the sub-module.  This is the same
     output message that is used by all sub-modules in the module folder. */
