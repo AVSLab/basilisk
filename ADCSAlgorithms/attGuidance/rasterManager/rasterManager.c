@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"

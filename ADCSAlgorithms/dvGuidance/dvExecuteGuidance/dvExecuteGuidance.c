@@ -20,7 +20,7 @@
 #include "dvGuidance/dvExecuteGuidance/dvExecuteGuidance.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include <string.h>
 #include <math.h>
 

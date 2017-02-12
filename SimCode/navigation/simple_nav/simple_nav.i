@@ -26,8 +26,8 @@
 %include "sys_model.h"
 %include "simple_nav.h"
 %include "simMessages/scPlusStatesMessage.h"
-%include "../../SimFswInterface/navAttMessage.h"
-%include "../../SimFswInterface/navTransMessage.h"
+%include "../../SimFswMessages/navAttMessage.h"
+%include "../../SimFswMessages/navTransMessage.h"
 GEN_SIZEOF(SCPlusStatesMessage);
 GEN_SIZEOF(NavAttMessage);
 GEN_SIZEOF(NavTransMessage);

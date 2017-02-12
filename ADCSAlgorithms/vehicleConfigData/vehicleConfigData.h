@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "messaging/static_messaging.h"
-#include "../SimFswInterface/macroDefinitions.h"
+#include "../SimFswMessages/macroDefinitions.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwConstellationMessage.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"

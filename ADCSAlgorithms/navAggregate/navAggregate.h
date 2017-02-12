@@ -21,8 +21,8 @@
 #define _NAV_AGGREGATE_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswInterface/navAttMessage.h"
-#include "SimFswInterface/navTransMessage.h"
+#include "SimFswMessages/navAttMessage.h"
+#include "SimFswMessages/navTransMessage.h"
 
 #define MAX_AGG_NAV_MSG 10
 

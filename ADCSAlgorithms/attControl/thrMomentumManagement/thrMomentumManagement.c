@@ -26,7 +26,7 @@
 
 /* update this include to reflect the required module input messages */
 #include "attControl/MRP_Steering/MRP_Steering.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include <string.h>
 
 

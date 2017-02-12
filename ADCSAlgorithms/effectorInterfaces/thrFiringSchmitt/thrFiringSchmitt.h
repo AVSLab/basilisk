@@ -25,8 +25,8 @@
 #include "fswUtilities/fswDefinitions.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrArrayCmdForceMessage.h"
-#include "SimFswInterface/macroDefinitions.h"
-#include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
+#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswMessages/thrArrayOnTimeCmdMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

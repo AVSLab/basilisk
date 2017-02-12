@@ -20,7 +20,7 @@
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "transDetermination/_GeneralModuleFiles/ephemerisUtilities.h"
 #include "transDetermination/chebyPosEphem/chebyPosEphem.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/orbitalMotion.h"
 #include "utilities/astroConstants.h"

@@ -18,7 +18,7 @@
  */
 
 #include "transDetermination/ephemDifference/ephemDifference.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>

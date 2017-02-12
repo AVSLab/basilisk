@@ -25,7 +25,7 @@
 #include "attGuidance/inertial3D/inertial3D.h"
 #include <string.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 
 
 

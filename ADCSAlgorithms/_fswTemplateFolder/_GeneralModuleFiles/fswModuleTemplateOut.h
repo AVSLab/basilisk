@@ -30,7 +30,7 @@
  
     or 
  
-    SimFswInterface/
+    SimFswMessages/
 
 */
 

@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "../../../SimFswInterface/stHwInterface.h"
+#include "../../../SimFswMessages/stHwInterface.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 

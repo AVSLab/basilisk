@@ -32,7 +32,7 @@ STRUCTASLIST(CSSArraySensorMessage)
 GEN_SIZEOF(CSSArraySensorMessage);
 GEN_SIZEOF(CSSConfigData);
 %include "cssComm.h"
-%include "../../SimFswInterface/cssArraySensorMessage.h"
+%include "../../SimFswMessages/cssArraySensorMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

@@ -25,7 +25,7 @@
 #include "effectorInterfaces/rwMotorVoltage/rwMotorVoltage.h"
 
 /* update this include to reflect the required module input messages */
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 
 
 

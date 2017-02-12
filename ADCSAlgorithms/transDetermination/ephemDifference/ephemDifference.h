@@ -23,7 +23,7 @@
 #define MAX_NUM_CHANGE_BODIES 10
 
 #include "messaging/static_messaging.h"
-#include "./SimFswInterface/ephemerisMessage.h"
+#include "./SimFswMessages/ephemerisMessage.h"
 
 typedef struct{
     char ephInMsgName[MAX_STAT_MSG_LENGTH];  /*!< [-] Input name for the ephemeris message*/

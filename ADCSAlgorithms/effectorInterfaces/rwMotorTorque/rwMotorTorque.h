@@ -22,11 +22,11 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../../../SimFswInterface/rwSpeedMessage.h"
-#include "../../../SimFswInterface/rwArrayTorqueMessage.h"
+#include "../../../SimFswMessages/rwSpeedMessage.h"
+#include "../../../SimFswMessages/rwArrayTorqueMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "fswMessages/rwArrayConfigMessage.h"
-#include "SimFswInterface/cmdTorqueBodyMessage.h"
+#include "SimFswMessages/cmdTorqueBodyMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

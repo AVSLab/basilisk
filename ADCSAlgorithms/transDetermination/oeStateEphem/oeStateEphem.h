@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/ephemerisInterfaceMessage.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "../SimFswInterface/ephemerisMessage.h"
+#include "../SimFswMessages/ephemerisMessage.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20

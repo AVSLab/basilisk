@@ -21,7 +21,7 @@
 #define _DV_ACCUMULATION_H_
 
 #include "messaging/static_messaging.h"
-#include "../SimFswInterface/navTransMessage.h"
+#include "../SimFswMessages/navTransMessage.h"
 #include "fswMessages/AccPktDataMessage.h"
 #include "fswMessages/AccDataMessage.h"
 

@@ -26,7 +26,7 @@
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
 #include "simMessages/cssRawDataMessage.h"
-#include "../SimFswInterface/cssArraySensorMessage.h"
+#include "../SimFswMessages/cssArraySensorMessage.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time

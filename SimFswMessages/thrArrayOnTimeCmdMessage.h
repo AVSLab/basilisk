@@ -20,7 +20,7 @@
 #ifndef THR_CMD_MESSAGE_H
 #define THR_CMD_MESSAGE_H
 
-#include "../../SimFswInterface/macroDefinitions.h"
+#include "../../SimFswMessages/macroDefinitions.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

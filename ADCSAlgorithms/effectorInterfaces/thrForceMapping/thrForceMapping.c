@@ -25,7 +25,7 @@
 #include "effectorInterfaces/thrForceMapping/thrForceMapping.h"
 
 /* update this include to reflect the required module input messages */
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include <string.h>
 
 

@@ -36,7 +36,7 @@ GEN_SIZEOF(VehicleConfigMessage);
 %include "thrustRWDesat.h"
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
-%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
+%include "../../../SimFswMessages/thrArrayOnTimeCmdMessage.h"
 
 %pythoncode %{
 import sys

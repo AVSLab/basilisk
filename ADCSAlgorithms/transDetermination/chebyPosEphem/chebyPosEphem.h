@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/ephemerisInterfaceMessage.h"
-#include "../SimFswInterface/ephemerisMessage.h"
+#include "../SimFswMessages/ephemerisMessage.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4

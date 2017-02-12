@@ -33,7 +33,7 @@
 GEN_SIZEOF(EphemerisMessage)
 STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
-%include "../../SimFswInterface/ephemerisMessage.h"
+%include "../../SimFswMessages/ephemerisMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

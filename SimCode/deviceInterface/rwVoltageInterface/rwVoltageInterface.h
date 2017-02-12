@@ -22,9 +22,9 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../SimFswInterface/rwArrayVoltageMessage.h"
-#include "../../SimFswInterface/rwArrayTorqueMessage.h"
-#include "../../SimFswInterface/macroDefinitions.h"
+#include "../../SimFswMessages/rwArrayVoltageMessage.h"
+#include "../../SimFswMessages/rwArrayTorqueMessage.h"
+#include "../../SimFswMessages/macroDefinitions.h"
 /*! \addtogroup SimModelGroup
  * @{
  */

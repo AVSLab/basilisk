@@ -20,7 +20,7 @@
 #ifndef _THR_ARRAY_CMD_FORCE_MESSAGE_H_
 #define _THR_ARRAY_CMD_FORCE_MESSAGE_H_
 
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 
 /*! @brief Message used to define a vector of thruster force commands */
 typedef struct {

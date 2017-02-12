@@ -26,7 +26,7 @@
 
 /* update this include to reflect the required module input messages */
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include <stdio.h>
 
 

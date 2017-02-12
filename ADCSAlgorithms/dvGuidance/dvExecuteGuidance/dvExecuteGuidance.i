@@ -33,7 +33,7 @@ GEN_SIZEOF(dvExecuteGuidanceConfig);
 GEN_SIZEOF(NavTransMessage);
 GEN_SIZEOF(DvBurnCmdMessage);
 %include "dvExecuteGuidance.h"
-%include "../../SimFswInterface/navTransMessage.h"
+%include "../../SimFswMessages/navTransMessage.h"
 %include "../../fswMessages/dvBurnCmdMessage.h"
 
 %pythoncode %{

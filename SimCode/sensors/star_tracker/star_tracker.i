@@ -25,7 +25,7 @@
 
 %include "sys_model.h"
 %include "star_tracker.h"
-%include "../../../SimFswInterface/stHwInterface.h"
+%include "../../../SimFswMessages/stHwInterface.h"
 %include "simMessages/scPlusStatesMessage.h"
 GEN_SIZEOF(SCPlusStatesMessage)
 GEN_SIZEOF(SCPlusStatesMessage)

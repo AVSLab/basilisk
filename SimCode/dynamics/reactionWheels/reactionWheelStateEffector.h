@@ -26,13 +26,14 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "../SimFswInterface/macroDefinitions.h"
+#include "../SimFswMessages/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../../SimFswInterface/rwSpeedMessage.h"
+#include "../../../SimFswMessages/rwSpeedMessage.h"
 #include "../../simMessages/rwCmdMessage.h"
 #include "../../simMessages/rwConfigMessage.h"
-#include "../../SimFswInterface/rwArrayTorqueMessage.h"
-#include "../../SimFswInterface/macroDefinitions.h"
+#include "../../SimFswMessages/rwArrayTorqueMessage.h"
+#include "../../SimFswMessages/macroDefinitions.h"
+
 #include "utilities/avsEigenMRP.h"
 #include "utilities/avsEigenSupport.h"
 

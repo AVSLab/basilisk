@@ -17,7 +17,7 @@
 
  */
 
-#include "SimFswInterface/macroDefinitions.h"
+#include "SimFswMessages/macroDefinitions.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include <string.h>

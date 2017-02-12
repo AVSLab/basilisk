@@ -22,8 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../SimFswInterface/ephemerisMessage.h"
-#include "../SimFswInterface/navTransMessage.h"
+#include "../SimFswMessages/ephemerisMessage.h"
+#include "../SimFswMessages/navTransMessage.h"
 #include "fswMessages/attRefMessage.h"
 
 /*! \addtogroup ADCSAlgGroup

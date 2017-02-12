@@ -26,9 +26,9 @@
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "ExtForceTorque.h"
-%include "../../SimFswInterface/cmdTorqueBodyMessage.h"
-%include "../../SimFswInterface/cmdForceBodyMessage.h"
-%include "../../SimFswInterface/cmdForceInertialMessage.h"
+%include "../../SimFswMessages/cmdTorqueBodyMessage.h"
+%include "../../SimFswMessages/cmdForceBodyMessage.h"
+%include "../../SimFswMessages/cmdForceInertialMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);
 GEN_SIZEOF(CmdForceBodyMessage);
 GEN_SIZEOF(CmdForceInertialMessage);

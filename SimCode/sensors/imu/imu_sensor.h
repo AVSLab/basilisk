@@ -26,7 +26,7 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/scPlusMassPropsMessage.h"
-#include "../SimFswInterface/imuSensorMessage.h"
+#include "../SimFswMessages/imuSensorMessage.h"
 
 
 class ImuSensor: public SysModel {

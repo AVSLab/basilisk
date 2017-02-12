@@ -32,7 +32,7 @@
 %ignore Reset_chebyPosEphem;
 STRUCTASLIST(ChebyEphemRecord)
 %include "chebyPosEphem.h"
-%include "../../SimFswInterface/ephemerisMessage.h"
+%include "../../SimFswMessages/ephemerisMessage.h"
 %include "../../fswMessages/ephemerisInterfaceMessage.h"
 GEN_SIZEOF(TDBVehicleClockCorrelationMessage)
 GEN_SIZEOF(EphemerisMessage)

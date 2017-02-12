@@ -34,7 +34,7 @@ GEN_SIZEOF(thrMomentumDumpingConfig);
 %include "thrMomentumDumping.h"
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
 %include "../../fswMessages/thrArrayCmdForceMessage.h"
-%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
+%include "../../../SimFswMessages/thrArrayOnTimeCmdMessage.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
 GEN_SIZEOF(THRArrayCmdForceMessage);
 

@@ -22,8 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../SimFswInterface/navAttMessage.h"
-#include "../SimFswInterface/cssArraySensorMessage.h"
+#include "../SimFswMessages/navAttMessage.h"
+#include "../SimFswMessages/cssArraySensorMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/CSSConfigMessage.h"
 #include "fswMessages/sunlineFilterMessage.h"

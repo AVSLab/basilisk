@@ -25,7 +25,7 @@
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/cssConfigMessage.h"
 #include <stdint.h>
-#include "../simFswInterface/cssArraySensorMessage.h"
+#include "../SimFswMessages/cssArraySensorMessage.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
