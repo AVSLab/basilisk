@@ -22,18 +22,9 @@
 
 #include "messaging/static_messaging.h"
 #include "../SimFswInterface/navTransMessage.h"
+#include "fswMessages/AccPktDataMessage.h"
+#include "fswMessages/AccDataMessage.h"
 
-#define MAX_ACC_BUF_PKT 25
-
-typedef struct {
-    uint64_t measTime;                /*!< [Tick] Measurement time for accel */
-    double gyro_Pltf[3];              /*!< [r/s] Angular rate measurement from gyro*/
-    double accel_Pltf[3];             /*!< [m/s2] Acceleration in platform frame */
-}AccPktData;
-
-typedef struct {
-    AccPktData accPkts[MAX_ACC_BUF_PKT]; /*! [-] Accelerometer buffer read in*/
-}AccMsgData;
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
