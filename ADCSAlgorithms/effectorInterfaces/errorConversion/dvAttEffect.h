@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "SimFswMessages/cmdTorqueBodyMessage.h"
 #include "SimFswMessages/thrArrayOnTimeCmdMessage.h"
-#include "_GeneralModuleFiles/thrustGroupData.h"
+#include "../_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
 #include <stdlib.h>
 
