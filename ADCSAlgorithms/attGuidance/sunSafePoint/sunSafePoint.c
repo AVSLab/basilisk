@@ -54,7 +54,7 @@ void CrossInit_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputSunVecName,
         sizeof(SunHeadingEstMessage), moduleID);
     ConfigData->imuMsgID = subscribeToMessage(ConfigData->inputIMUDataName,
-        sizeof(IMUOutputData), moduleID);
+        sizeof(IMUSensorBodyMessage), moduleID);
     
 }
 
@@ -73,13 +73,13 @@ void Update_sunSafePoint(sunSafePointConfig *ConfigData, uint64_t callTime,
     double ctSNormalized;
     double e_hat[3];
     double sigma_BR[3];
-    IMUOutputData LocalIMUData;
+    IMUSensorBodyMessage LocalIMUData;
     /*! Begin method steps*/
     /*! - Read the current sun body vector estimate*/
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
                 sizeof(SunHeadingEstMessage), (void*) &(sunVecEst), moduleID);
     ReadMessage(ConfigData->imuMsgID, &clockTime, &readSize,
-                sizeof(IMUOutputData), (void*) &(LocalIMUData), moduleID);
+                sizeof(IMUSensorBodyMessage), (void*) &(LocalIMUData), moduleID);
     
     /*! - Compute the current error vector if it is valid*/
     if(v3Norm(sunVecEst.sHatBdy) > ConfigData->minUnitMag)

@@ -17,8 +17,8 @@
 
  */
 
-#ifndef SYNC_CLOCK_MESSAGE_H
-#define SYNC_CLOCK_MESSAGE_H
+#ifndef _IMU_SENSOR_MESSAG_H
+#define _IMU_SENSOR_MESSAG_H
 
 
 //! @brief Simulated IMU Sensor output message definition.

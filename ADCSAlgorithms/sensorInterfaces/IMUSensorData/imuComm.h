@@ -22,14 +22,10 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/imuSensorBodyMessage.h"
+#include "SimFswInterface/imuSensorMessage.h"
 
-/*! @brief Output structure for IMU structure in vehicle body frame*/
-typedef struct {
-    double DVFrameBody[3];      /*!< m/s Accumulated DVs in body*/
-    double AccelBody[3];        /*!< m/s2 Apparent acceleration of the body*/
-    double DRFrameBody[3];      /*!< r  Accumulated DRs in body*/
-    double AngVelBody[3];       /*!< r/s Angular velocity in platform body*/
-}IMUOutputData;
+
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
@@ -42,7 +38,7 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
-    IMUOutputData LocalOutput; /*!< Output data structure*/
+    IMUSensorBodyMessage LocalOutput; /*!< Output data structure*/
 }IMUConfigData;
 
 #ifdef __cplusplus

@@ -33,7 +33,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(IMUOutputData), "IMUOutputData", moduleID);
+        sizeof(IMUSensorBodyMessage), "IMUSensorBodyMessage", moduleID);
     
 }
 
@@ -51,7 +51,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
     ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
-        sizeof(IMUOutputData), moduleID);
+        sizeof(IMUSensorMessage), moduleID);
     ConfigData->PropsMsgID = subscribeToMessage(ConfigData->InputPropsName,
         sizeof(VehicleConfigMessage), moduleID);
     if(ConfigData->PropsMsgID >= 0)
@@ -75,20 +75,20 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     
     uint64_t UnusedClockTime;
     uint32_t ReadSize;
-    IMUOutputData LocalInput;
+    IMUSensorMessage LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
-                sizeof(IMUOutputData), (void*) &LocalInput, moduleID);
+                sizeof(IMUSensorMessage), (void*) &LocalInput, moduleID);
     
-    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DVFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DVFramePlatform,
               ConfigData->LocalOutput.DVFrameBody);
-    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AccelBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AccelPlatform,
               ConfigData->LocalOutput.AccelBody);
-    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DRFrameBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DRFramePlatform,
               ConfigData->LocalOutput.DRFrameBody);
-    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AngVelBody,
+    m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AngVelPlatform,
               ConfigData->LocalOutput.AngVelBody);
     
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUOutputData),
+    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUSensorBodyMessage),
                  (void*) &(ConfigData->LocalOutput), moduleID);
     
     return;
