@@ -34,16 +34,16 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorTorqueConfig);
 GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWArrayTorqueMessage);
 GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "rwMotorTorque.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
+%include "../../../SimFswInterface/rwArrayTorqueMessage.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"
 
-// sample Module supportfile to be included in this sub-module
-%include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

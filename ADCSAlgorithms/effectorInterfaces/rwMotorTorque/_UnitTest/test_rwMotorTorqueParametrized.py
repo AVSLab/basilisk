@@ -166,7 +166,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
     # This pulls the actual data log from the simulation run.
     # Note that range(3) will provide [0, 1, 2]  Those are the elements you get from the vector (all of them)
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "motorTorque"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.outputDataName + '.' + moduleOutputName,
                                                   range(rwConfigParams.numRW))
 

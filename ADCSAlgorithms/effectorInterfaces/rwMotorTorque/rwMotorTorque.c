@@ -46,8 +46,8 @@ void SelfInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(vehEffectorOut),
-                                               "vehEffectorOut",          /* add the output structure name */
+                                               sizeof(RWArrayTorqueMessage),
+                                               "RWArrayTorqueMessage",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -224,8 +224,8 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     }
 
     /* store the output message */
-    mCopy(us, ConfigData->rwConfigParams.numRW, 1, ConfigData->rwMotorTorques.effectorRequest);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
+    mCopy(us, ConfigData->rwConfigParams.numRW, 1, ConfigData->rwMotorTorques.motorTorque);
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RWArrayTorqueMessage),
                  (void*) &(ConfigData->rwMotorTorques), moduleID);
 
     return;
