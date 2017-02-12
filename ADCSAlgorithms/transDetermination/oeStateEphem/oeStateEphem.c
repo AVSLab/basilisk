@@ -47,7 +47,7 @@ void CrossInit_oeStateEphem(OEStateEphemData *ConfigData, uint64_t moduleID)
 {
 
     ConfigData->clockCorrInMsgID = subscribeToMessage(
-        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelation), moduleID);
+        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationMessage), moduleID);
 
 }
 
@@ -82,11 +82,11 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     double orbAnom;
     ChebyOERecord *currRec;
     int i;
-    TDBVehicleClockCorrelation localCorr;
+    TDBVehicleClockCorrelationMessage localCorr;
     classicElements orbEl;
     
     ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
-                sizeof(TDBVehicleClockCorrelation), &localCorr, moduleID);
+                sizeof(TDBVehicleClockCorrelationMessage), &localCorr, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(EphemerisMessage));
     

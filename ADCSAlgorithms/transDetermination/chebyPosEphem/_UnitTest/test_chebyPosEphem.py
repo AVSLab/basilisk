@@ -110,13 +110,13 @@ def test_sineCosine(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = pyswice.doubleArray_getitem(et, 0)
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationDays/2.0*86400.0
 
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelation()
+    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationMessage()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
     
     TotalSim.TotalSim.CreateNewMessage(unitProcessName, chebyFitModel.clockCorrInMsgName,
-        clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelation")
+        clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
     TotalSim.TotalSim.WriteMessageData(chebyFitModel.clockCorrInMsgName,
         clockCorrData.getStructSize(), 0, clockCorrData)
 
@@ -221,13 +221,13 @@ def test_earthOrbitFit(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
     
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelation()
+    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationMessage()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
 
     TotalSim.TotalSim.CreateNewMessage(unitProcessName, chebyFitModel.clockCorrInMsgName,
-                                       clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelation")
+                                       clockCorrData.getStructSize(), 2, "TDBVehicleClockCorrelationMessage")
     TotalSim.TotalSim.WriteMessageData(chebyFitModel.clockCorrInMsgName,
                                    clockCorrData.getStructSize(), 0, clockCorrData)
 

@@ -21,7 +21,7 @@
 #define _OE_STATE_EPHEM_H_
 
 #include "messaging/static_messaging.h"
-#include "transDetermination/_GeneralModuleFiles/ephemerisInterfaceData.h"
+#include "fswMessages/ephemerisInterfaceMessage.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "../SimFswInterface/ephemerisMessage.h"
 
