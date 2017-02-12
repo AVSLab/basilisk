@@ -31,10 +31,12 @@
 %constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
-%include "../_GeneralModuleFiles/vehEffectorOut.h"
+%include "../../../SimFswInterface/thrArrayOnTimeCmdMessage.h"
 GEN_SIZEOF(effPairs);
 GEN_SIZEOF(ThrustGroupData);
 GEN_SIZEOF(dvAttEffectConfig);
+GEN_SIZEOF(THRArrayOnTimeCmdMessage);
+
 %include "dvAttEffect.h"
 %pythoncode %{
 import sys

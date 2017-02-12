@@ -38,8 +38,8 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
-            ConfigData->thrGroups[i].outputDataName, sizeof(vehEffectorOut),
-            "vehEffectorOut", moduleID);
+            ConfigData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdMessage),
+            "THRArrayOnTimeCmdMessage", moduleID);
     }
  
     
@@ -62,16 +62,16 @@ void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
                         uint64_t moduleID)
 {
     uint32_t i;
-    vehEffectorOut nullEffect;
+    THRArrayOnTimeCmdMessage nullEffect;
     
-    memset(&(nullEffect), 0x0, sizeof(vehEffectorOut));
+    memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdMessage));
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         memcpy(&(ConfigData->thrGroups[i].cmdRequests), &nullEffect,
-            sizeof(vehEffectorOut));
+            sizeof(THRArrayOnTimeCmdMessage));
         WriteMessage(ConfigData->thrGroups[i].outputMsgID, callTime,
-            sizeof(vehEffectorOut), (void*)
+            sizeof(THRArrayOnTimeCmdMessage), (void*)
             &(ConfigData->thrGroups[i].cmdRequests), moduleID);
     }
 

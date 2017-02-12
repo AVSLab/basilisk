@@ -25,7 +25,6 @@
 #include "effectorInterfaces/thrFiringRemainder/thrFiringRemainder.h"
 
 /* update this include to reflect the required module input messages */
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "SimFswInterface/macroDefinitions.h"
 #include <stdio.h>

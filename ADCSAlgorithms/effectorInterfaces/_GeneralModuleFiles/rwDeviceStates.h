@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "SimFswInterface/macroDefinitions.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

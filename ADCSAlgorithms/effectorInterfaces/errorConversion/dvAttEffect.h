@@ -21,9 +21,9 @@
 #define _DV_ATT_EFFECT_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
 #include "SimFswInterface/cmdTorqueBodyMessage.h"
 #include "SimFswInterface/thrArrayOnTimeCmdMessage.h"
+#include "_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -38,20 +38,6 @@ typedef struct {
     uint32_t thrustIndex;       /*!< -  The actual thruster index associated with on-time*/
 }effPairs;
 
-/*! @brief Sub structure that contains all of the configuration data and output 
-    information for a single thruster group.  There can be several thruster 
-    groups available in a single control scheme.
-*/
-typedef struct {
-    double nomThrustOn;          /*!< s The nominal thruster on-time for effectors*/
-    uint32_t maxNumCmds;         /*!< - The maximum number of commands to output*/
-    uint32_t numEffectors;       /*!< - The number of effectors we have access to*/
-    double minThrustRequest;     /*!< - The minimum allowable on-time for a thruster*/
-    double thrOnMap[3*MAX_EFF_CNT]; /*!< - Mapping between on-times and torque requests*/
-    char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the output message*/
-    int32_t outputMsgID;            /*!< - ID for the outgoing command messages*/
-    THRArrayOnTimeCmdMessage cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
-}ThrustGroupData;
 
 /*! @brief Top level structure for the DV attitude effector management algorithm.  
    This algorithm is used to control both the RCS and DV thrusters when 
