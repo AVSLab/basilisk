@@ -654,7 +654,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".effectorRequest", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".motorTorque", range(numRW))
     dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
     dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
@@ -663,7 +663,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     for i in range(0,numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".effectorRequest", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".voltage", range(numRW))
     np.set_printoptions(precision=16)
 
     #

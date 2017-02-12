@@ -22,9 +22,10 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
+#include "../../../SimFswInterface/rwArrayTorqueMessage.h"
+#include "../../../SimFswInterface/rwArrayVoltageMessage.h"
 #include "fswMessages/rwArrayConfigMessage.h"
 
 
@@ -57,7 +58,7 @@ typedef struct {
     int32_t rwAvailInMsgID;                          /*!< [-] ID for the incoming  RWs availability data*/
 
     RWConfigMessage rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
-    vehEffectorOut voltageOut;                       /*!< -- copy of the output message */
+    RWArrayVoltageMessage voltageOut;                /*!< -- copy of the output message */
 
 }rwMotorVoltageConfig;
 

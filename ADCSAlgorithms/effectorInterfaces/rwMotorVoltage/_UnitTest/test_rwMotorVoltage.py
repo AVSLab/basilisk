@@ -139,11 +139,11 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     numRW = fswSetupRW.getNumOfDevices()
 
     # Create RW motor torque input message
-    usMessageData = rwMotorVoltage.vehEffectorOut()
+    usMessageData = rwMotorVoltage.RWArrayTorqueMessage()
     if useLargeVoltage:
-        usMessageData.effectorRequest = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
+        usMessageData.motorTorque = [0.5, 0.0, -0.15, -0.5]           # [Nm] RW motor torque cmds
     else:
-        usMessageData.effectorRequest = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
+        usMessageData.motorTorque = [0.05, 0.0, -0.15, -0.2]  # [Nm] RW motor torque cmds
 
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -200,7 +200,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
         
 
     # This pulls the actual data log from the simulation run.
-    moduleOutputName = "effectorRequest"
+    moduleOutputName = "voltage"
     moduleOutput = unitTestSim.pullMessageLogData(moduleConfig.voltageOutMsgName + '.' + moduleOutputName,
                                                   range(numRW))
 
@@ -293,7 +293,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
         resultTable,
         path)
     unitTestSupport.writeTeXSnippet("us"+ str(useLargeVoltage) + str(useAvailability) + str(useTorqueLoop)
-                                    , "$\\bm u_s = " + str(usMessageData.effectorRequest[0:numRW]) + "$"
+                                    , "$\\bm u_s = " + str(usMessageData.motorTorque[0:numRW]) + "$"
                                     , path)
 
     # each test method requires a single assert method to be called

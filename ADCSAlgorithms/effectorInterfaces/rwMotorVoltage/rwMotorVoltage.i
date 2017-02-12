@@ -32,16 +32,17 @@
 %ignore Reset_rwMotorVoltage;
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorVoltageConfig);
-GEN_SIZEOF(vehEffectorOut);
+GEN_SIZEOF(RWArrayTorqueMessage);
 GEN_SIZEOF(RWAvailabilityData);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWConfigMessage);
 %include "rwMotorVoltage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../../../SimFswInterface/macroDefinitions.h"
+%include "../../../SimFswInterface/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterface/rwArrayVoltageMessage.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../_GeneralModuleFiles/vehEffectorOut.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"
 %pythoncode %{
 import sys

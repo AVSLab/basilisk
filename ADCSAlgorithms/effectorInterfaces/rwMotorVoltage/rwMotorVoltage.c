@@ -48,8 +48,8 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleID
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->voltageOutMsgID = CreateNewMessage(ConfigData->voltageOutMsgName,
-                                               sizeof(vehEffectorOut),
-                                               "vehEffectorOut",          /* add the output structure name */
+                                               sizeof(RWArrayVoltageMessage),
+                                               "RWArrayVoltageMessage",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -62,7 +62,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
 {
     /*! - Get the control data message ID*/
     ConfigData->torqueInMsgID = subscribeToMessage(ConfigData->torqueInMsgName,
-                                                sizeof(vehEffectorOut),
+                                                sizeof(RWArrayTorqueMessage),
                                                 moduleID);
     ConfigData->rwParamsInMsgID = -1;
     ConfigData->inputRWSpeedsInMsgID = -1;
@@ -124,7 +124,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
 
     /* - Read the input messages */
     ReadMessage(ConfigData->torqueInMsgID, &clockTime, &readSize,
-                sizeof(vehEffectorOut), (void*) torqueCmd, moduleID);
+                sizeof(RWArrayTorqueMessage), (void*) torqueCmd, moduleID);
     if (ConfigData->inputRWSpeedsInMsgID >= 0) {
         ReadMessage(ConfigData->inputRWSpeedsInMsgID, &clockTime, &readSize,
                     sizeof(RWSpeedMessage), (void*) &(rwSpeed), moduleID);
@@ -181,11 +181,11 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     /*
      store the output message 
      */
-    memcpy(ConfigData->voltageOut.effectorRequest,
+    memcpy(ConfigData->voltageOut.voltage,
            voltage,
            rwArrayMemorySize);
 
-    WriteMessage(ConfigData->voltageOutMsgID, callTime, sizeof(vehEffectorOut),   /* update module name */
+    WriteMessage(ConfigData->voltageOutMsgID, callTime, sizeof(RWArrayVoltageMessage),
                  (void*) &(ConfigData->voltageOut), moduleID);
 
     return;
