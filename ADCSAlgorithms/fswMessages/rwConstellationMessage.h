@@ -16,28 +16,23 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module rwConfigData
-%{
-   #include "rwConfigData.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_rwConfigData(void*, uint64_t, uint64_t);
-%ignore Update_rwConfigData;
-%constant void SelfInit_rwConfigData(void*, uint64_t);
-%ignore SelfInit_rwConfigData;
-%constant void CrossInit_rwConfigData(void*, uint64_t);
-%ignore CrossInit_rwConfigData;
-%constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
-%ignore Reset_rwConfigData;
-GEN_SIZEOF(RWConfigMessage);
-GEN_SIZEOF(rwConfigData);
-GEN_SIZEOF(VehicleConfigMessage);
-%include "rwConfigData.h"
-%include "../fswMessages/vehicleConfigMessage.h"
-%include "../fswMessages/rwArrayConfigMessage.h"
+#ifndef _RW_CONSTELLATION_MESSAGE_H
+#define _RW_CONSTELLATION_MESSAGE_H
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+#include "SimFswInterface/macroDefinitions.h"
+
+/*! @brief Structure used to define a single FSW RW configuration with vector in Structure S frame */
+typedef struct {
+    double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
+    double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
+    double uMax;                /*!< [Nm]   maximum RW motor torque */
+}RWConfigurationElement;
+
+/*! @brief Structure used to define an array of RW FSW configurations with vectors in Structure S frame */
+typedef struct {
+    int numRW;
+    RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
+}RWConstellationMessage;
+
+#endif

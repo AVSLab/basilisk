@@ -22,9 +22,10 @@
 
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "../../../SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/rwSpeedMessage.h"
+#include "SimFswInterface/rwArrayTorqueMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+#include "fswMessages/rwConstellationMessage.h"
 #include <stdint.h>
 #include <stdlib.h>
 

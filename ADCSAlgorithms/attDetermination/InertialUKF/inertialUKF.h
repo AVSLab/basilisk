@@ -26,7 +26,7 @@
 #include "fswMessages/inertialFilterMessage.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwConfigMessage.h"
+#include "fswMessages/rwArrayConfigMessage.h"
 #include <stdint.h>
 
 

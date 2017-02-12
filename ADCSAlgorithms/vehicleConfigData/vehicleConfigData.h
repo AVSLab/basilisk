@@ -24,6 +24,7 @@
 #include "messaging/static_messaging.h"
 #include "../SimFswInterface/macroDefinitions.h"
 #include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/rwConstellationMessage.h"
 #include "fswMessages/thrArrayMessage.h"
 #include "fswMessages/thrConfigFSWMessage.h"
 
@@ -34,17 +35,6 @@
 
 
 
-
-typedef struct {
-    double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
-    double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
-    double uMax;                /*!< [Nm]   maximum RW motor torque */
-}RWConfigurationElement;
-
-typedef struct {
-    int numRW;
-    RWConfigurationElement reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
-}RWConstellation;
 
 
 

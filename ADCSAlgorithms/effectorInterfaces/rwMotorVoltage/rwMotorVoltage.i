@@ -42,7 +42,7 @@ GEN_SIZEOF(RWConfigMessage);
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../_GeneralModuleFiles/vehEffectorOut.h"
-%include "../../fswMessages/rwConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

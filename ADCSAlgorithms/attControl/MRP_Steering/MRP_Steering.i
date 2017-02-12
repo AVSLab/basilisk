@@ -42,7 +42,7 @@ GEN_SIZEOF(RWSpeedMessage);
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
-%include "../../fswMessages/rwConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigMessage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 %include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);

@@ -25,7 +25,7 @@
 #include "../../../SimFswInterface/rwSpeedMessage.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "fswMessages/rwConfigMessage.h"
+#include "fswMessages/rwArrayConfigMessage.h"
 #include "SimFswInterface/cmdTorqueBodyMessage.h"
 
 

@@ -35,8 +35,8 @@ void SelfInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
-        ConfigData->outputControlName, sizeof(vehEffectorOut),
-        "vehEffectorOut", moduleID);
+        ConfigData->outputControlName, sizeof(RWArrayTorqueMessage),
+        "RWArrayTorqueMessage", moduleID);
 	
 }
 
@@ -54,22 +54,22 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];
     double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];
     double GsMatrix[3*MAX_EFF_CNT];
-    RWConstellation localRWData;
+    RWConstellationMessage localRWData;
     int i, j;
     uint64_t ClockTime;
     uint32_t ReadSize;
 
     /*! - Get the control data message ID*/
     ConfigData->inputRWCmdsID = subscribeToMessage(ConfigData->inputRWCommands,
-        sizeof(vehEffectorOut), moduleID);
+        sizeof(RWArrayTorqueMessage), moduleID);
 	/*! - Get the RW speeds ID*/
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
 		sizeof(RWSpeedMessage), moduleID);
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
-        sizeof(RWConstellation), moduleID);
+        sizeof(RWConstellationMessage), moduleID);
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                sizeof(RWConstellation), &localRWData, moduleID);
+                sizeof(RWConstellationMessage), &localRWData, moduleID);
     
     ConfigData->numWheels = localRWData.numRW;
     for(i=0; i<ConfigData->numWheels; i=i+1)
@@ -105,11 +105,11 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 void Reset_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
                         uint64_t moduleID)
 {
-    vehEffectorOut finalControl;
+    RWArrayTorqueMessage finalControl;
     
-    memset(&finalControl, 0x0, sizeof(vehEffectorOut));
+    memset(&finalControl, 0x0, sizeof(RWArrayTorqueMessage));
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RWArrayTorqueMessage),
                  &finalControl, moduleID);
 }
 
@@ -127,27 +127,27 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     
     uint64_t ClockTime;
     uint32_t ReadSize;
-    vehEffectorOut cntrRequest;
+    RWArrayTorqueMessage cntrRequest;
 	RWSpeedMessage rwSpeeds;
-	vehEffectorOut finalControl;
+	RWArrayTorqueMessage finalControl;
 	double dVector[MAX_EFF_CNT];
     
     /*! Begin method steps*/
     /*! - Read the input RW commands to get the raw RW requests*/
     ReadMessage(ConfigData->inputRWCmdsID, &ClockTime, &ReadSize,
-                sizeof(vehEffectorOut), (void*) &(cntrRequest), moduleID);
+                sizeof(RWArrayTorqueMessage), (void*) &(cntrRequest), moduleID);
 	ReadMessage(ConfigData->inputSpeedsID, &ClockTime, &ReadSize,
 		sizeof(RWSpeedMessage), (void*)&(rwSpeeds), moduleID);
     
-	memset(&finalControl, 0x0, sizeof(vehEffectorOut));
+	memset(&finalControl, 0x0, sizeof(RWArrayTorqueMessage));
 	vScale(-ConfigData->OmegaGain, rwSpeeds.wheelSpeeds,
 		ConfigData->numWheels, dVector);
 	mMultV(ConfigData->GsInverse, ConfigData->numWheels, ConfigData->numWheels,
-		dVector, finalControl.effectorRequest);
-	vAdd(finalControl.effectorRequest, ConfigData->numWheels,
-		cntrRequest.effectorRequest, finalControl.effectorRequest);
+		dVector, finalControl.motorTorque);
+	vAdd(finalControl.motorTorque, ConfigData->numWheels,
+		cntrRequest.motorTorque, finalControl.motorTorque);
 
-	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(vehEffectorOut),
+	WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RWArrayTorqueMessage),
 		&finalControl, moduleID);
 
     return;

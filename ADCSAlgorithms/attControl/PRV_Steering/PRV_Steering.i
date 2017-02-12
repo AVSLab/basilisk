@@ -33,7 +33,7 @@
 %include "PRV_Steering.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
-%include "../../fswMessages/rwConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigMessage.h"
 %include "../../../SimFswInterface/rwSpeedMessage.h"
 GEN_SIZEOF(PRV_SteeringConfig);
 GEN_SIZEOF(AttGuidMessage);

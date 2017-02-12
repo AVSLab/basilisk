@@ -25,7 +25,7 @@
 #include "../_GeneralModuleFiles/vehEffectorOut.h"
 #include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "../../../SimFswInterface/rwSpeedMessage.h"
-#include "fswMessages/rwConfigMessage.h"
+#include "fswMessages/rwArrayConfigMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

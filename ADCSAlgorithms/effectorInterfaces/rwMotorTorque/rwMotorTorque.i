@@ -40,7 +40,7 @@ GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "../../../SimFswInterface/cmdTorqueBodyMessage.h"
 %include "../_GeneralModuleFiles/rwDeviceStates.h"
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/rwConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigMessage.h"
 
 // sample Module supportfile to be included in this sub-module
 %include "../../effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
