@@ -24,7 +24,10 @@
 %include "swig_common_model.i"
 
 %include "sys_model.h"
-%include "spice_planet_state.h"
+%include "eclipse_data.h"
+%include "eclipse.h"
+
+GEN_SIZEOF(EclipseData);
 
 %pythoncode %{
 import sys

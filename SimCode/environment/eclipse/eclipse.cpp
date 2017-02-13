@@ -16,132 +16,83 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-#include "environment/spice/eclipse.h"
-#include "../External/cspice/include/SpiceUsr.h"
-#include "architecture/messaging/system_messaging.h"
+#include "eclipse.h"
 #include <iostream>
 #include <boost/lexical_cast.hpp>
+#include "architecture/messaging/system_messaging.h"
+
 
 /*! This constructor initializes the variables that spice uses.  Most of them are
  not intended to be changed, but a couple are user configurable.
  */
-
-Eclipse::Eclipse()
+Eclipse::Eclipse() :
+    outputBufferCount(2)
 {
-    SPICEDataPath = "";
-    SPICELoaded = false;
-    CharBufferSize = 512;
-    CallCounts = 0;
-    J2000ETInit = 0;
-    J2000Current = 0.0;
-    JulianDateCurrent = 0.0;
-    GPSSeconds = 0.0;
-    GPSWeek = 0;
-    GPSRollovers = 0;
-    SpiceBuffer = new uint8_t[CharBufferSize];
-    TimeDataInit = false;
-    JDGPSEpoch = 0.0;
-    GPSEpochTime = "1980 January 6, 00:00:00.0";
-    OutputTimePort = "spice_time_output_data";
-    OutputBufferCount = 2;
-    referenceBase = "j2000";
-    zeroBase = "SSB";
-	timeOutPicture = "MON DD,YYYY  HR:MN:SC.#### (UTC) ::UTC";
-    return;
+    this->CallCounts = 0;
+        return;
 }
 
 /*! The only needed activity in the destructor is to delete the spice I/O buffer
  that was allocated in the constructor*/
 Eclipse::~Eclipse()
 {
-    delete [] SpiceBuffer;
     return;
 }
 
-/*! This method initializes the object.  It creates the output messages,
- initializes the SPICE kernels, and initializes the planet/time data that
- gets used at run.
+/*! This method initializes the object.  It creates the module's output 
+ messages.
  @return void*/
 void Eclipse::SelfInit()
 {
-    //! Begin method steps
-    //! - Bail if the SPICEDataPath is not present
-    if(SPICEDataPath == "")
+    std::vector<std::string>::iterator it;
+    for(it = this->positionMsgNames.begin(); it != this->positionMsgNames.end(); it++)
     {
-        std::cerr << "Warning, SPICE data path was not set.  No SPICE."<<
-        std::endl;
-        return;
+        std::string eclipseMsgName = *it + "_eclipse_data";
+        uint64_t msgID = SystemMessaging::GetInstance()->
+        subscribeToMessage(eclipseMsgName, sizeof(EclipseData), this->moduleID);
+        this->eclipseOutMsgId.push_back(msgID);
+        this->eclipseOutMsgName.push_back(eclipseMsgName);
     }
-    //!- Load the SPICE kernels if they haven't already been loaded
-    if(!SPICELoaded)
-    {
-        if(loadSpiceKernel((char *)"naif0011.tls", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "naif0010.tls");
-        }
-        if(loadSpiceKernel((char *)"pck00010.tpc", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "pck00010.tpc");
-        }
-        if(loadSpiceKernel((char *)"de-403-masses.tpc", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de-403-masses.tpc");
-        }
-        if(loadSpiceKernel((char *)"de430.bsp", SPICEDataPath.c_str())) {
-            printf("Unable to load %s", "de430.bsp");
-        }
-        SPICELoaded = true;
-    }
-    //! Set the zero time values that will be used to compute the system time
-    InitTimeData();
-    J2000Current = J2000ETInit;
-    //! Compute planetary data so that it is present at time zero
-    PlanetData.clear();
-    ComputePlanetData();
-    TimeDataInit = true;
 }
 
-/*! This method is used to initialize the zero-time that will be used to
- calculate all system time values in the Update method.  It also creates the
- output message for time data
- @return void
- */
-void Eclipse::InitTimeData()
+/*! This method .
+ @return void*/
+void Eclipse::CrossInit()
 {
-    double EpochDelteET;
-    //! Begin method steps
-    //! -Get the time value associated with the GPS epoch
-    str2et_c(GPSEpochTime.c_str(), &JDGPSEpoch);
-    //! - Get the time value associate with the requested UTC date
-    str2et_c(UTCCalInit.c_str(), &J2000ETInit);
+    std::vector<std::string>::iterator it;
+    for(it = this->planetNames.begin(); it != this->planetNames.end(); it++)
+    {
+        std::string planetMsgName = *it + "_planet_data";
+        uint64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage(planetMsgName, sizeof(SpicePlanetState), this->moduleID);
+        this->planetInMsgIdAndName[msgID] = planetMsgName;
+    }
     
-    //! - Take the JD epoch and get the elapsed time for it
-    deltet_c(JDGPSEpoch, "ET", &EpochDelteET);
-    
-    //! - Create the output time message for SPICE
-    TimeOutMsgID = SystemMessaging::GetInstance()->
-        CreateNewMessage(OutputTimePort, sizeof(SpiceTimeOutput),
-        OutputBufferCount, "SpiceTimeOutput", moduleID);
-    
+    std::vector<std::string>::iterator posIt;
+    for(posIt = this->positionMsgNames.begin(); posIt != this->positionMsgNames.end(); posIt++)
+    {
+        uint64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*posIt), sizeof(SCPlusOutputStateData), this->moduleID);
+        this->positionInMsgIdAndState[msgID] = SCPlusOutputStateData();
+    }
 }
 
-/*! This method computes the GPS time data for the current elapsed time.  It uses
- the total elapsed times at both the GPS epoch time and the current time to
- compute the GPS time (week, seconds, rollovers)
+/*! This method takes the values computed in the model and outputs them.
+ It packages up the internal variables into the output structure definitions
+ and puts them out on the messaging system
  @return void
+ @param CurrentClock The current simulation time (used for time stamping)
  */
-void Eclipse::ComputeGPSData()
+void Eclipse::readInputMessages()
 {
-    double JDDifference;
+    SingleMessageHeader *tmpHeader;
+    SystemMessaging *messageSys = SystemMessaging::GetInstance();
+    memset(&tmpHeader, 0x0, sizeof(tmpHeader));
     
-    //! Begin method steps
-    //! - The difference between the epochs in julian date terms is the total
-    JDDifference = J2000Current - JDGPSEpoch;
-    //! - Scale the elapsed by a week's worth of seconds to get week
-    GPSWeek = JDDifference/(7*86400);
-    //! - Subtract out the GPS week scaled up to seconds to get time in week
-    GPSSeconds = JDDifference - GPSWeek*7*86400;
-    
-    //! - Maximum GPS week is 1024 so get rollovers and subtract out those weeks
-    GPSRollovers = GPSWeek/1024;
-    GPSWeek -= GPSRollovers*1024;
+    //! - Iterate through all of the position Msgs
+    std::map<uint64_t, SCPlusOutputStateData>::iterator it;
+    for(it = this->positionInMsgIdAndState.begin(); it != this->positionInMsgIdAndState.end(); it++)
+    {
+        messageSys->ReadMessage(it->first, tmpHeader, sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*>(&it->second), this->moduleID);
+    }
 }
 
 /*! This method takes the values computed in the model and outputs them.
@@ -152,24 +103,12 @@ void Eclipse::ComputeGPSData()
  */
 void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
-    std::map<uint32_t, SpicePlanetState>::iterator planit;
-    SpiceTimeOutput OutputData;
-    //! Begin method steps
-    //! - Set the members of the time output message structure and write
-    OutputData.J2000Current = J2000Current;
-    OutputData.JulianDateCurrent = JulianDateCurrent;
-    OutputData.GPSSeconds = GPSSeconds;
-    OutputData.GPSWeek = GPSWeek;
-    OutputData.GPSRollovers = GPSRollovers;
-    SystemMessaging::GetInstance()->WriteMessage(TimeOutMsgID, CurrentClock,
-                                                 sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&OutputData), moduleID);
-    
     //! - Iterate through all of the planets that are on and write their outputs
-    for(planit = PlanetData.begin(); planit != PlanetData.end(); planit++)
-    {
-        SystemMessaging::GetInstance()->WriteMessage(planit->first, CurrentClock,
-                                                     sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&planit->second), moduleID);
-    }
+//    for(planit = PlanetData.begin(); planit != PlanetData.end(); planit++)
+//    {
+//        SystemMessaging::GetInstance()->WriteMessage(planit->first, CurrentClock,
+//                                                     sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&planit->second), moduleID);
+//    }
     
 }
 
@@ -181,190 +120,26 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
  */
 void Eclipse::UpdateState(uint64_t CurrentSimNanos)
 {
-    //! Begin method steps
-    //! - Increment the J2000 elapsed time based on init value and Current sim
-    J2000Current = J2000ETInit + CurrentSimNanos*1.0E-9;
+    this->readInputMessages();
     
-    //! - Compute the current Julian Date string and cast it over to the double
-    et2utc_c(J2000Current, "J", 14, CharBufferSize - 1, reinterpret_cast<SpiceChar*>
-             (SpiceBuffer));
-    std::string LocalString = reinterpret_cast<char*> (&SpiceBuffer[3]);
-    JulianDateCurrent = boost::lexical_cast<double>(LocalString);
-    
-    //! Get GPS and Planet data and then write the message outputs
-    ComputeGPSData();
-    ComputePlanetData();
     this->writeOutputMessages(CurrentSimNanos);
 }
 
-/*! This method gets the state of each planet that has been added to the model
- and saves the information off into the planet array.
- @return void
+/*! This method adds spacecraft state data message names to a vector, creates
+ a new unique output message name for the eclipse data message and returns
+ this to the user so that they may assign the eclipse message name to other 
+ modules requiring eclipse data.
+ methods.
+ @return std::string newEclipseMsgName The unique eclipse data msg name 
+ associated with the given input state message name.
+ @param std::string msgName The message name for the spacecraft state data
+ for which to compute the eclipse data.
  */
-void Eclipse::ComputePlanetData()
+std::string Eclipse::addPositionMsgName(std::string msgName)
 {
-    std::vector<std::string>::iterator it;
-    std::map<uint32_t, SpicePlanetState>::iterator planit;
+    this->positionMsgNames.push_back(msgName);
     
-    //! Begin method steps
-    
-    //! - Check to see if our planet vectors don't match (new planet requested)
-    if(PlanetData.size() != PlanetNames.size())
-    {
-        SpiceChar *name = new SpiceChar[CharBufferSize];
-        SpiceBoolean frmFound;
-        SpiceInt frmCode;
-        //! - If we have a new planet, clear the old output vector and reset
-        PlanetData.clear();
-        //! - Loop over the planet names and create new data
-        for(it=PlanetNames.begin(); it != PlanetNames.end(); it++)
-        {
-            //! <pre>       Hard limit on the maximum name length </pre>
-            SpicePlanetState NewPlanet;
-            if(it->size() >= MAX_BODY_NAME_LENGTH)
-            {
-                std::cerr << "Warning, your planet name is too long for me. ";
-                std::cerr << "Ignoring: " << *it <<std::endl;
-                continue;
-            }
-            //! <pre>       Set the new planet name and zero the other struct elements </pre>
-            std::string PlanetMsgName = *it + "_planet_data";
-            memset(&NewPlanet, 0x0, sizeof(SpicePlanetState));
-            strcpy(NewPlanet.PlanetName, it->c_str());
-            //! <pre>       Create the new planet's ID and insert the planet into the vector </pre>
-            uint32_t MsgID = (uint32_t)SystemMessaging::GetInstance()->
-                CreateNewMessage(PlanetMsgName, sizeof(SpicePlanetState),
-                OutputBufferCount, "SpicePlanetState", moduleID);
-            std::string planetFrame = *it;
-            cnmfrm_c(planetFrame.c_str(), CharBufferSize, &frmCode, name, &frmFound);
-            NewPlanet.computeOrient = frmFound;
-            PlanetData.insert(std::pair<uint32_t, SpicePlanetState>
-                              (MsgID, NewPlanet));
-        }
-        delete [] name;
-    }
-    
-    /*! - Loop over the PlanetData vector and compute values.
-     
-     -# Call the Ephemeris file (spkezr)
-     -# Copy out the position and velocity values (default in km)
-     -# Convert the pos/vel over to meters.
-     -# Time stamp the message appropriately
-     */
-    for(planit=PlanetData.begin(); planit != PlanetData.end(); planit++)
-    {
-        double lighttime;
-        double LocalState[6];
-        spkezr_c(planit->second.PlanetName, J2000Current, referenceBase.c_str(),
-            "NONE", zeroBase.c_str(), LocalState, &lighttime);
-        memcpy(planit->second.PositionVector, &LocalState[0], 3*sizeof(double));
-        memcpy(planit->second.VelocityVector, &LocalState[3], 3*sizeof(double));
-        for(uint32_t i=0; i<3; i++)
-        {
-            planit->second.PositionVector[i]*=1000.0;
-            planit->second.VelocityVector[i]*=1000.0;
-        }
-        planit->second.J2000Current = J2000Current;
-        std::string planetFrame = "IAU_";
-        planetFrame += planit->second.PlanetName;
-        if(planit->second.computeOrient)
-        {
-            //pxform_c ( referenceBase.c_str(), planetFrame.c_str(), J2000Current,
-            //    planit->second.J20002Pfix);
-            
-            double aux[6][6];
-            
-            sxform_c(referenceBase.c_str(), planetFrame.c_str(), J2000Current, aux);
-            
-            m66Get33Matrix(0, 0, aux, planit->second.J20002Pfix);
-            
-            m66Get33Matrix(1, 0, aux, planit->second.J20002Pfix_dot);
-        }
-    }
-    
-}
-
-/*! This method loads a requested SPICE kernel into the system memory.  It is
- its own method because we have to load several SPICE kernels in for our
- application.  Note that they are stored in the SPICE library and are not
- held locally in this object.
- @return int Zero for success one for failure
- @param kernelName The name of the kernel we are loading
- @param dataPath The path to the data area on the filesystem
- */
-int Eclipse::loadSpiceKernel(char *kernelName, const char *dataPath)
-{
-    char *fileName = new char[CharBufferSize];
-    SpiceChar *name = new SpiceChar[CharBufferSize];
-    
-    //! Begin method steps
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", CharBufferSize, name);
-    strcpy(fileName, dataPath);
-    strcat(fileName, kernelName);
-    furnsh_c(fileName);
-    
-    //! - Check to see if we had trouble loading a kernel and alert user if so
-    strcpy(name, "DEFAULT");
-    erract_c("SET", CharBufferSize, name);
-    delete[] fileName;
-    delete[] name;
-    if(failed_c()) {
-        return 1;
-    }
-    return 0;
-}
-
-/*! This method unloads a requested SPICE kernel into the system memory.  It is
- its own method because we have to load several SPICE kernels in for our
- application.  Note that they are stored in the SPICE library and are not
- held locally in this object.
- @return int Zero for success one for failure
- @param kernelName The name of the kernel we are unloading
- @param dataPath The path to the data area on the filesystem
- */
-int Eclipse::unloadSpiceKernel(char *kernelName, const char *dataPath)
-{
-    char *fileName = new char[CharBufferSize];
-    SpiceChar *name = new SpiceChar[CharBufferSize];
-    
-    //! Begin method steps
-    //! - The required calls come from the SPICE documentation.
-    //! - The most critical call is furnsh_c
-    strcpy(name, "REPORT");
-    erract_c("SET", CharBufferSize, name);
-    strcpy(fileName, dataPath);
-    strcat(fileName, kernelName);
-    unload_c(fileName);
-    if(failed_c()) {
-        return 1;
-    }
-    return 0;
-
-}
-
-std::string Eclipse::getCurrentTimeString()
-{
-	char *spiceOutputBuffer;
-	int64_t allowedOutputLength;
-
-	allowedOutputLength = (int64_t)timeOutPicture.size() - 5;
-
-	if (allowedOutputLength < 0)
-	{
-		std::cerr << "The output format string is not long enough.  ";
-		std::cerr << "It should be much larger than 5 characters.  It is currently: ";
-		std::cerr << std::endl << timeOutPicture << std::endl;
-		return("");
-	}
-
-	spiceOutputBuffer = new char[allowedOutputLength];
-	timout_c(J2000Current, timeOutPicture.c_str(), (SpiceInt) allowedOutputLength,
-		spiceOutputBuffer);
-	std::string returnTimeString = spiceOutputBuffer;
-	delete[] spiceOutputBuffer;
-	return(returnTimeString);
-
+    std::string newEclipseMsgName = "eclipse_data_" + std::to_string(this->eclipseOutMsgName.size()-1);
+    this->eclipseOutMsgName.push_back(newEclipseMsgName);
+    return newEclipseMsgName;
 }
