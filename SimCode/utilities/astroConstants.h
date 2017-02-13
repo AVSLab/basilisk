@@ -31,6 +31,13 @@
 #ifndef AU2KM
 #define AU2KM           149597870.693 /* convert astronomical unit to kilometers */
 #endif
+#ifndef SPEED_LIGHT
+#define SPEED_LIGHT     299792458 /* [m/s] convert astronomical unit to kilometers */
+#endif
+#ifndef SOLAR_FLUX_EARTH
+#define SOLAR_FLUX_EARTH    1372.5398 /* [W/m^2] solar flux at earth */
+#endif
+
 
 /* common conversions */
 #ifndef M_PI
