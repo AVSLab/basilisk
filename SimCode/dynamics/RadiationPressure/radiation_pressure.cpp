@@ -1,12 +1,26 @@
+/*
+ ISC License
+ 
+ Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+ 
+ Permission to use, copy, modify, and/or distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+ 
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+ */
+
+#include <iostream>
 #include "dynamics/RadiationPressure/radiation_pressure.h"
 #include "architecture/messaging/system_messaging.h"
-#include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include <cstring>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <cmath>
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -15,12 +29,11 @@ RadiationPressure::RadiationPressure()
     ,coefficientReflection(1.2)
     ,sunEphmInMsgName("sun_planet_data")
     ,stateInMsgName("inertial_state_output")
-    ,inertialPosPropName("r_BN_N")
     ,useCannonballModel(true)
     ,sunEphmInMsgId(-1)
     ,stateInMsgId(-1)
+    ,stateRead(false)
 {
-    stateRead = false;
     CallCounts = 0;
     return;
 }
@@ -38,7 +51,7 @@ void RadiationPressure::SelfInit()
 {
 }
 
-/*! This method is used to connect the input command message to this module.
+/*! This method is used to subscribe to systems message from this module.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
  @return void
@@ -47,7 +60,7 @@ void RadiationPressure::CrossInit()
 {
     //! - Find the message ID associated with the ephmInMsgID string.
     //! - Warn the user if the message is not successfully linked.
-    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName,sizeof(SpicePlanetState), this->moduleID);
+    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetState), this->moduleID);
  
     if(sunEphmInMsgId < 0)
     {
@@ -55,7 +68,7 @@ void RadiationPressure::CrossInit()
         std::cerr << this->sunEphmInMsgName << "  :" << __FILE__ << std::endl;
     }
     
-    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName,sizeof(SCPlusOutputStateData), this->moduleID);
+    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusOutputStateData), this->moduleID);
     
     if(this->stateInMsgId < 0)
     {
@@ -64,27 +77,18 @@ void RadiationPressure::CrossInit()
     }
 }
 
+/*! This method retrieves pointers to parameters/data stored
+ in the dynamic parameter manager
+ @return void
+ @param statesIn Dynamic parameter manager
+ */
 void RadiationPressure::linkInStates(DynParamManager& statesIn)
 {
-//    this->hubPosition = statesIn.getStateObject("hubPosition");
-//    this->hubSigma = statesIn.getStateObject("hubSigma");
-//    this->inertialPosProp = statesIn.getPropertyReference("r_BN_N");
 }
 
-/*! This method is here to write the output message structure into the specified
- message.  It is currently blank but we will certainly have an output message
- soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.
- @param CurrentClock The current time used for time-stamping the message
- @return void
- */
-void RadiationPressure::writeOutputMessages(uint64_t currentClock)
-{
-    
-}
-
-/*! This method is used to read the incoming ephmeris message and set the
- associated buffer structure.
+/*! This method is used to read the incoming ephmeris and 
+ spacecraft state messages. The data is stored in the associated
+ buffer structure.
  @return void
  */
 void RadiationPressure::readInputMessages()
@@ -98,22 +102,21 @@ void RadiationPressure::readInputMessages()
     if(this->sunEphmInMsgId >= 0)
     {
         memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetState));
-        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader,sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
+        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
     
     memset(&localHeader, 0x0, sizeof(localHeader));
-    
+    this->stateRead = false;
     if(this->stateInMsgId >= 0)
     {
         memset(&this->stateInBuffer, 0x0, sizeof(SCPlusOutputStateData));
-        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader,sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
-        stateRead = succesfulRead ? true : false;
+        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
     }
 }
 
-/*! This method is used to compute all the dynamic effect due to solar raidation pressure.
- It is an inherited method from the DynamicEffector class and is designed to be called
- by the dynamics plant for the simulation.
+/*! This method computes the dynamic effect due to solar raidation pressure.
+ It is an inherited method from the DynamicEffector class and 
+ is designed to be called by the simulation dynamics engine.
  @return void
  @param integTime Current simulation integration time
  */
@@ -126,9 +129,8 @@ void RadiationPressure::computeBodyForceTorque(double integTime)
     Eigen::MRPd sigmaLocal_BN(this->stateInBuffer.sigma_BN);
     
     // - Find DCM's
-    //Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
+    // Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
-    //    sigmaLocal_BN = (Eigen::Vector3d)hubSigma->getState();
     
     s_B = dcmLocal_BN*(r_N - sun_r_N);
     if (this->useCannonballModel) {
@@ -138,6 +140,10 @@ void RadiationPressure::computeBodyForceTorque(double integTime)
     }
 }
 
+/*! Update model state by reading in new message data
+ @return void
+ @param CurrentSimNanos current simulation time in nanoseconds
+ */
 void RadiationPressure::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
@@ -155,7 +161,7 @@ void RadiationPressure::setUseCannonballModel(bool use)
 /*! Computes the solar radiation force vector
  *   based on cross-sectional Area and mass of the spacecraft
  *   and the position vector of the spacecraft to the sun.
- *   Note: The solar radiation pressure decreases
+ *   The solar radiation pressure decreases
  *   quadratically with distance from sun (in AU)
  *
  *   Solar Radiation Equations obtained from
@@ -178,7 +184,7 @@ void RadiationPressure::computeCannonballModel(Eigen::Vector3d s_B)
 /*! Computes the solar radiation force vector
  *   using a lookup table given the current spacecraft attitude
  *   and the position vector of the spacecraft to the sun.
- *   Note: It is assumed that the lookup table has been generated
+ *   It is assumed that the lookup table has been generated
  *   with a solar flux at 1AU. Force and torque values are scaled.
  *
  @return void
@@ -193,7 +199,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     Eigen::Vector3d sHat_B = s_B/sunDist;
     Eigen::Vector3d tmpLookupSHat_B(0,0,0);
     
-    if (!stateRead) {
+    if (!this->stateRead) {
         this->forceExternal_B = {0,0,0};
         this->torqueExternalPntB_B = {0,0,0};
         return;
@@ -204,7 +210,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     // Therefore, we must scale the force by its distance from the sun squared.
     // @TODO: this lookup search should be optimized, possibly by saving the
     // index for later use to start the search closer to the new attitutde
-    for(int i = 0; i < lookupSHat_B.size(); i++) {
+    for(int i = 0; i < this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
         if (tmpDotProduct > currentDotProduct)
@@ -213,20 +219,35 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
             currentDotProduct = tmpDotProduct;
         }
     }
-    this->forceExternal_B = lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
-    this->torqueExternalPntB_B = lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
+    this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
+    this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
 }
 
+/*! Add force vector in the body frame to lookup table.
+ *
+ @return void
+ @param vec (N) Force vector for particular attitude in lookup table
+ */
 void RadiationPressure::addForceLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupForce_B.push_back(vec);
 }
 
+/*! Add torque vector to lookup table.
+ *
+ @return void
+ @param vec (Nm) Torque vector for particular attitude in lookup table
+ */
 void RadiationPressure::addTorqueLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupTorque_B.push_back(vec);
 }
 
+/*! Add sun unit direction vector in body frame to lookup table.
+ *
+ @return void
+ @param vec sun unit direction vector in body frame
+ */
 void RadiationPressure::addSHatLookupBEntry(Eigen::Vector3d vec)
 {
     this->lookupSHat_B.push_back(vec);

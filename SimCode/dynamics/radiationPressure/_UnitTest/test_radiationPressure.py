@@ -32,7 +32,6 @@
 import sys
 import os
 import numpy as np
-import math
 import pytest
 import inspect
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -43,24 +42,17 @@ sys.path.append(splitPath[0] + '/PythonModules')
 # @endcond
 
 #Import all of the modules that we are going to call in this simulation
-import unitTestSupport
-import matplotlib.pyplot as plt
-import MessagingAccess
 import SimulationBaseClass
-import sim_model
-import stateArchitecture
+import unitTestSupport
 import spacecraftPlus
 import radiation_pressure
 import macros
-import simIncludeGravity
-import orbitalMotion
 import spice_interface
-import astroFunctions
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("modelType", ["cannonball"])
+@pytest.mark.parametrize("modelType", ["cannonball", "lookup"])
 def test_unitRadiationPressure(show_plots, modelType):
     [testResults, testMessage] = unitRadiationPressure(show_plots, modelType)
     assert testResults < 1, testMessage
@@ -99,7 +91,7 @@ def unitRadiationPressure(show_plots, modelType):
     elif modelType == "lookup":
         srpDynEffector.setUseCannonballModel(False)
         handler = radiation_pressure.SRPLookupTableHandler()
-        handler.parseAndLoadXML(__file__ + "cube.xml")
+        handler.parseAndLoadXML(os.path.dirname(__file__) + "/cube_lookup.xml")
         for i in xrange(0, len(handler.forceBLookup)):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
@@ -120,67 +112,14 @@ def unitRadiationPressure(show_plots, modelType):
     sunSpiceMsg.PositionVector = sun_r_N
     unitTestSim.TotalSim.WriteMessageData(sunSpiceMsgName, sunSpiceMsg.getStructSize(), 1, sunSpiceMsg)
 
-    # dynParamManager = stateArchitecture.DynParamManager()
-    # dynParamManager.createProperty("hubSigma", sigma_BN)
-
-    # Call linkInStates on srp module manually because it won't be called
-    # by the dynamics engine because we are not connecting it to the engine
-    # srpDynEffector.linkInStates(dynParamManager)
-
-    # clear prior gravitational body and SPICE setup definitions
-    # simIncludeGravity.clearSetup()
-    # simIncludeGravity.addEarth()
-    # earthGravBody = simIncludeGravity.gravBodyList[-1]
-    # earthGravBody.isCentralBody = True
-    # simIncludeGravity.addSun()
-    # sunGravBody = simIncludeGravity.gravBodyList[-1]
-
-    # attach gravity model to spaceCraftPlus
-    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
-    #
-    # # setup SPICE interface
-    # simIncludeGravity.addSpiceInterface(splitPath[0], "2015 June 15, 00:00:00.0")
-    # spiceInterface = simIncludeGravity.spiceObject
-
-    # by default the SPICE object will use the solar system barycenter as the inertial origin
-    # If the spacecraftPlus() output is desired relative to another celestial object, the zeroBase string
-    # name of the SPICE object needs to be changed.
-    # simIncludeGravity.spiceObject.zeroBase = 'Earth'
-
-    # attach gravity model to spaceCraftPlus
-    # scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
-    # unitTestSim.AddModelToTask(testTaskName, simIncludeGravity.spiceObject, None, 2)
-
-
-
-    # set the simulation time
-    # n = np.sqrt(earthGravBody.mu / oe.a / oe.a / oe.a)
-    # period = 2. * np.pi / n
-
-    # numDataPoints = 1
-    # samplingTime = simulationTime / (numDataPoints - 1)
-    samplingTime = simulationTime
-
-    # unitTestSim.TotalSim.logThisMessage("sun_planet_data", samplingTime)
-    # unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".forceExternal_B",
-                                      samplingTime, 0, 2, 'double')
+                                      simulationTime, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".forceExternal_N",
-                                      samplingTime, 0, 2, 'double')
+                                      simulationTime, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".torqueExternalPntB_B",
-                                      samplingTime, 0, 2, 'double')
+                                      simulationTime, 0, 2, 'double')
 
     unitTestSim.InitializeSimulation()
-
-    # posRef = scObject.dynManager.getStateObject("hubPosition")
-    # velRef = scObject.dynManager.getStateObject("hubVelocity")
-    # posRef.setState(unitTestSupport.np2EigenVectorXd(r_N))  # [m - r_BN_N
-    # velRef.setState(unitTestSupport.np2EigenVectorXd(v_N))  # m - v_BN_N
-
-    # sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    # omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    # sigmaRef.setState([[0.1], [0.2], [-0.3]])  # sigma_BN_B
-    # omegaRef.setState([[0.001], [-0.001], [0.003]])  # rad/s omega_BN_B
 
     # Configure a simulation stop time time and execute the simulation run
     unitTestSim.ConfigureStopTime(simulationTime)
@@ -189,18 +128,11 @@ def unitRadiationPressure(show_plots, modelType):
     unitTestSim.TotalSim.SingleStepProcesses()
     unitTestSim.RecordLogVars()
 
-    # Retrieve the logged data
-    # sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN', range(3))
-    # posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N', range(3))
-    # rSunData_N = unitTestSim.pullMessageLogData("sun_planet_data" + '.PositionVector', range(3))
-
     srpDataForce_B = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_B")
     srpDataForce_N = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_N")
     srpTorqueData = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".torqueExternalPntB_B")
 
-    #
-    #
-    errTol = 10E-9
+    errTol = 1E-10
     if modelType == "cannonball":
         truthForceExternal_B = [-1.85556867482797E-05, 8.82911772465848E-06, -5.64107588371567E-06]
         truthForceExternal_N = [0, 0, 0]
@@ -211,9 +143,40 @@ def unitRadiationPressure(show_plots, modelType):
                                                                     "Force_B",
                                                                     testFailCount,
                                                                     testMessages)
-
-
-    # if modelType == "lookup":
+        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
+                                                                srpDataForce_N[2, 1:],
+                                                                errTol,
+                                                                "Force_N",
+                                                                testFailCount,
+                                                                testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
+                                                                srpTorqueData[2, 1:],
+                                                                errTol,
+                                                                "Torque",
+                                                                testFailCount,
+                                                                testMessages)
+    if modelType == "lookup":
+        truthForceExternal_B = [-0.2810618553849396E-04, 0.098630763536649663E-04, -0.047723069190757716E-04]
+        truthForceExternal_N = [0, 0, 0]
+        truthTorqueExternalPntB_B = [0.0063203213341804725E-10, -0.0030680418381937733E-10, -0.012324529634463608E-10]
+        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
+                                                                    srpDataForce_B[2, 1:],
+                                                                    errTol,
+                                                                    "Force_B",
+                                                                    testFailCount,
+                                                                    testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
+                                                                    srpDataForce_N[2, 1:],
+                                                                    errTol,
+                                                                    "Force_N",
+                                                                    testFailCount,
+                                                                    testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
+                                                                    srpTorqueData[2, 1:],
+                                                                    errTol,
+                                                                    "Torque",
+                                                                    testFailCount,
+                                                                    testMessages)
 
     if testFailCount == 0:
         print "PASSED: " + modelType
@@ -222,4 +185,4 @@ def unitRadiationPressure(show_plots, modelType):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitRadiationPressure(False, "cannoball")
+    unitRadiationPressure(False, "cannonball")
