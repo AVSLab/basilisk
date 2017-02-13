@@ -38,27 +38,28 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         # simulationTime = mc.min2nano(10.)
 
         # Create simulation process names
-        DynamicsProcessName = "DynamicsProcess"
-        FSWProcessName = "FSWProcess"
+        self.DynamicsProcessName = "DynamicsProcess"
+        self.FSWProcessName = "FSWProcess"
         # Create processes
-        self.dynProc = self.CreateNewProcess(DynamicsProcessName)
-        self.fswProc = self.CreateNewProcess(FSWProcessName)
+        self.dynProc = self.CreateNewProcess(self.DynamicsProcessName)
+        self.fswProc = self.CreateNewProcess(self.FSWProcessName)
         # Process message interfaces.
         self.dyn2FSWInterface = sim_model.SysInterface()
         self.fsw2DynInterface = sim_model.SysInterface()
-        self.dyn2FSWInterface.addNewInterface(DynamicsProcessName, FSWProcessName)
-        self.fsw2DynInterface.addNewInterface(FSWProcessName, DynamicsProcessName)
+        self.dyn2FSWInterface.addNewInterface(self.DynamicsProcessName, self.FSWProcessName)
+        self.fsw2DynInterface.addNewInterface(self.FSWProcessName, self.DynamicsProcessName)
         self.dynProc.addInterfaceRef(self.dyn2FSWInterface)
         self.fswProc.addInterfaceRef(self.fsw2DynInterface)
 
         # Create simulation task names
         DynamicsTaskName = "DynamicsTask"
-        FSWTaskName = "FSWTask"
         # Add the tasks to the corresponding processes and specify the integration update time
         dynTimeStep = mc.sec2nano(0.1)
         self.dynProc.addTask(self.CreateNewTask(DynamicsTaskName, dynTimeStep))
         fswTimeStep = mc.sec2nano(0.5)
-        self.fswProc.addTask(self.CreateNewTask(FSWTaskName, fswTimeStep))
+        self.fswProc.addTask(self.CreateNewTask("hillPointTask", fswTimeStep), 20)
+        self.fswProc.addTask(self.CreateNewTask("mrpFeedbackTask", fswTimeStep), 10)
+
 
 
         # -------------------------------------------DKE SIM MODULES------------------------------------------------ #
@@ -72,19 +73,6 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.AddModelToTask(DynamicsTaskName, self.extForceTorqueObject)
         self.AddModelToTask(DynamicsTaskName, self.simpleNavObject)
 
-        # DYN MESSAGES
-        # SPICE sim message
-        ephemerisMessageName = self.earthGravBody.bodyInMsgName
-        self.ephemerisSPICEObject = spice_interface.SpicePlanetState()
-        self.ephemerisSPICEObject.J2000Current = 0.0
-        self.ephemerisSPICEObject.PositionVector = [0.0, 0.0, 0.0]
-        self.ephemerisSPICEObject.VelocityVector = [0.0, 0.0, 0.0]
-        self.ephemerisSPICEObject.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-        self.ephemerisSPICEObject.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-        self.ephemerisSPICEObject.PlanetName = ephemerisMessageName
-        ephemerisMessageSize =  self.ephemerisSPICEObject.getStructSize()
-        self.TotalSim.CreateNewMessage(DynamicsProcessName, ephemerisMessageName, ephemerisMessageSize, 2)
-        self.TotalSim.WriteMessageData(ephemerisMessageName, ephemerisMessageSize, 0, self.ephemerisSPICEObject)
 
 
         # -------------------------------------------FSW MODULES------------------------------------------------ #
@@ -107,21 +95,28 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
 
         self.InitAllFSWObjects()
 
-        self.AddModelToTask(FSWTaskName, self.hillPointWrap, self.hillPointData)
-        self.AddModelToTask(FSWTaskName, self.trackingErrorWrap, self.trackingErrorData)
-        self.AddModelToTask(FSWTaskName, self.mrpFeedbackWrap, self.mrpFeedbackData)
+        self.AddModelToTask("hillPointTask", self.hillPointWrap, self.hillPointData, 20)
+        self.AddModelToTask("hillPointTask", self.trackingErrorWrap, self.trackingErrorData, 19)
+        self.AddModelToTask("mrpFeedbackTask", self.mrpFeedbackWrap, self.mrpFeedbackData, 10)
 
-        # FSW MESSAGES
-        # Vehicle config FSW message
-        self.vehicleData = vehicleConfigData.vehicleConfigData()
-        self.vehicleData.ISCPntB_B = [
-            900., 0., 0.,
-            0., 800., 0.,
-            0., 0., 600.
-        ] # Make sure you use the same inertia as in the simulation side
-        vehicleMessageSize = self.vehicleData.getStructSize()
-        self.TotalSim.CreateNewMessage(FSWProcessName, "vehicleData", vehicleMessageSize, 2)
-        self.TotalSim.WriteMessageData("vehicleData", vehicleMessageSize, 0, self.vehicleData)
+        # Disable all tasks in the FSW process
+        self.fswProc.disableAllTasks()
+
+        # ----------------------------------------------- GN&C EVENTS ----------------------------------------------- #
+        # Define Events:
+        # Function: createNewEvent("initiateEvent", int(taskRate), bool(eventActivity), modeRequest, taskList)
+        # Parameters:
+        #   # "initiateEvent": Give a name for the event (up to you. This name won't be used for anything)
+        #   # taskRate: Period at which all the tasks in the event will run [nanoseconds]. Use taskRate = 1E9 as default.
+        #   # eventActivity: Set the activity status of the event: True (active), False (inactive). Use True as default.
+        #   # modeRequest: IMPORTANT. This is the name you'll use in the integrated scenario to call an event
+        #   # taskList: IMPORTANT. List of tasks that will run orderly at each time-step of the event
+
+        # -- Sun safe-capture event.
+        self.createNewEvent("initiateHillPoint", fswTimeStep, True, ["self.modeRequest == 'hillPoint'"],
+                            ["self.fswProc.disableAllTasks()",
+                             "self.enableTask('hillPointTask')",
+                             "self.enableTask('mrpFeedbackTask')"])
 
 
     # -------------------------------------------DKE INITIALIZATION------------------------------------------------ #
@@ -166,6 +161,21 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
     def SetSimpleNavObject(self):
         self.simpleNavObject.ModelTag = "SimpleNavigation"
         return
+    
+    def SetSpiceData(self):
+        # SPICE sim message
+        ephemerisMessageName = self.earthGravBody.bodyInMsgName
+        self.ephemerisSPICEObject = spice_interface.SpicePlanetState()
+        self.ephemerisSPICEObject.J2000Current = 0.0
+        self.ephemerisSPICEObject.PositionVector = [0.0, 0.0, 0.0]
+        self.ephemerisSPICEObject.VelocityVector = [0.0, 0.0, 0.0]
+        self.ephemerisSPICEObject.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        self.ephemerisSPICEObject.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        self.ephemerisSPICEObject.PlanetName = ephemerisMessageName
+        ephemerisMessageSize =  self.ephemerisSPICEObject.getStructSize()
+        self.TotalSim.CreateNewMessage(self.DynamicsProcessName, ephemerisMessageName, ephemerisMessageSize, 2)
+        self.TotalSim.WriteMessageData(ephemerisMessageName, ephemerisMessageSize, 0, self.ephemerisSPICEObject)
+        return
 
     # -------------------------------------------FSW INITIALIZATION------------------------------------------------ #
 
@@ -191,17 +201,33 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.mrpFeedbackData.integralLimit = 2. / self.mrpFeedbackData.Ki * 0.1
         return
 
+    def SetVehicleData(self):
+        # Vehicle config FSW message
+        self.vehicleData = vehicleConfigData.vehicleConfigData()
+        self.vehicleData.ISCPntB_B = [
+            900., 0., 0.,
+            0., 800., 0.,
+            0., 0., 600.
+        ] # Make sure you use the same inertia as in the simulation side
+        vehicleMessageSize = self.vehicleData.getStructSize()
+        self.TotalSim.CreateNewMessage(self.FSWProcessName, "vehicleData", vehicleMessageSize, 2)
+        self.TotalSim.WriteMessageData("vehicleData", vehicleMessageSize, 0, self.vehicleData)
+        return
+    
+
     # -------------------------------------------GLOBAL INIT CALLS------------------------------------------------ #
     def InitAllDynObjects(self):
         self.SetSpacecraftObject()
         self.SetGravityBodies()
         self.SetExternalForceTorqueObject()
         self.SetSimpleNavObject()
+        self.SetSpiceData()
 
     def InitAllFSWObjects(self):
         self.SetHillPointGuidance()
         self.SetAttitudeTrackingError()
         self.SetMRPFeedback()
+        self.SetVehicleData()
 
 
 
@@ -251,6 +277,8 @@ def SimScenario():
     omegaRef.setState([[0.001], [-0.01], [0.03]])  # omega_BN_B [rad/s]
 
     # Configure a simulation stop time time and execute the simulation run
+
+    TheBSKSim.modeRequest = 'hillPoint'
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
 
@@ -280,7 +308,6 @@ def plotResults(dataLr, dataSigmaBR, dataOmegaBR, dataPos, dataVel, dataSigmaBN)
     plt.xlabel('Time [min]')
     plt.ylabel('Attitude Error Norm $|\sigma_{B/R}|$')
     ax.set_yscale('log')
-
 
     plt.figure(2)
     for idx in range(1,4):
