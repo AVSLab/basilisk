@@ -71,7 +71,7 @@ void ExtForceTorque::CrossInit()
     this->cmdForceInertialInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceInertialInMsgName,
                                                                                        sizeof(CmdForceInertialMessage), moduleID);
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
-                                                                                   sizeof(CmdForceBodyMessage), moduleID);
+                                                                                   sizeof(CmdForceBodyIntMsg), moduleID);
     /* zero the input message vectors */
     memset(&(this->incomingCmdTorqueBuffer.torqueRequestBody), 0x0, 3*sizeof(double));
     memset(&(this->incomingCmdForceInertialBuffer.forceRequestInertial), 0x0, 3*sizeof(double));
@@ -131,10 +131,10 @@ void ExtForceTorque::readInputMessages()
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdForceBodyInMsgID >= 0)
     {
-        memset(&(this->incomingCmdForceBodyBuffer), 0x0, sizeof(CmdForceBodyMessage));
+        memset(&(this->incomingCmdForceBodyBuffer), 0x0, sizeof(CmdForceBodyIntMsg));
         this->goodForceBCmdMsg =
             SystemMessaging::GetInstance()->ReadMessage(this->cmdForceBodyInMsgID, &LocalHeader,
-                                                     sizeof(CmdForceBodyMessage),
+                                                     sizeof(CmdForceBodyIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdForceBodyBuffer)), moduleID);
     }
     
