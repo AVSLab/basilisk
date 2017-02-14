@@ -28,10 +28,10 @@
 %include "ExtForceTorque.h"
 %include "../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 %include "../../SimFswInterfaceMessages/cmdForceBodyIntMsg.h"
-%include "../../SimFswInterfaceMessages/cmdForceInertialMessage.h"
+%include "../../SimFswInterfaceMessages/cmdForceInertialIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);
 GEN_SIZEOF(CmdForceBodyIntMsg);
-GEN_SIZEOF(CmdForceInertialMessage);
+GEN_SIZEOF(CmdForceInertialIntMsg);
 
 
 %pythoncode %{

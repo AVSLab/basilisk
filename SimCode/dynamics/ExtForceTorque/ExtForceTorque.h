@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 #include "../../SimFswInterfaceMessages/cmdForceBodyIntMsg.h"
-#include "../../SimFswInterfaceMessages/cmdForceInertialMessage.h"
+#include "../../SimFswInterfaceMessages/cmdForceInertialIntMsg.h"
 
 
 
@@ -52,7 +52,7 @@ private:
     int64_t cmdForceInertialInMsgID;    //!< -- Message ID for incoming data
     int64_t cmdForceBodyInMsgID;        //!< -- Message ID for incoming data
     CmdTorqueBodyMessage incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
-    CmdForceInertialMessage incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
+    CmdForceInertialIntMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
     CmdForceBodyIntMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
     bool goodTorqueCmdMsg;              //!< -- flag indicating if a torque command message was read
     bool goodForceBCmdMsg;              //!< -- flag indicating if a inertial force command message was read
