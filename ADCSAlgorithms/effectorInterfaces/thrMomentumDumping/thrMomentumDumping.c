@@ -33,7 +33,7 @@
 /*
  Pull in support files from other modules.  Be sure to use the absolute path relative to Basilisk directory.
  */
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 
 
 

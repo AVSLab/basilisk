@@ -37,10 +37,10 @@ GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWConfigMessage);
 %include "rwMotorVoltage.h"
-%include "../../../SimFswMessages/rwSpeedMessage.h"
-%include "../../../SimFswMessages/macroDefinitions.h"
-%include "../../../SimFswMessages/rwArrayTorqueMessage.h"
-%include "../../../SimFswMessages/rwArrayVoltageMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/macroDefinitions.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"

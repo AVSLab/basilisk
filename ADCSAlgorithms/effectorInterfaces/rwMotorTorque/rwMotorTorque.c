@@ -25,7 +25,7 @@
 #include "effectorInterfaces/rwMotorTorque/rwMotorTorque.h"
 
 /* update this include to reflect the required module input messages */
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 
 

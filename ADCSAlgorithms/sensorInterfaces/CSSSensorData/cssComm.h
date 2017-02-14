@@ -24,7 +24,7 @@
 #define MAX_NUM_CHEBY_POLYS 32
 
 #include "messaging/static_messaging.h"
-#include "../SimFswMessages/cssArraySensorMessage.h"
+#include "../SimFswInterfaceMessages/cssArraySensorMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

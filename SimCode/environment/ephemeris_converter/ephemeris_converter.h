@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/spicePlanetStateMessage.h"
 #include "simMessages/idEphemerisOutputMessage.h"
-#include "../SimFswMessages/ephemerisMessage.h"
+#include "../SimFswInterfaceMessages/ephemerisMessage.h"
 
 
 /*!@brief This class is used to take ephemeris data from the environmental models

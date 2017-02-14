@@ -21,8 +21,8 @@
 #define _DV_EXECUTE_GUIDANCE_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswMessages/navTransMessage.h"
-#include "SimFswMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/navTransMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
 #include "fswMessages/dvBurnCmdMessage.h"
 #include <stdint.h>
 

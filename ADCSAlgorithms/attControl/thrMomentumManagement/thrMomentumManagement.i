@@ -36,9 +36,9 @@ GEN_SIZEOF(thrMomentumManagementConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "../../fswMessages/rwArrayConfigMessage.h"
 GEN_SIZEOF(RWConfigMessage);
-%include "../../../SimFswMessages/cmdTorqueBodyMessage.h"
+%include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);
-%include "../../../SimFswMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 GEN_SIZEOF(RWSpeedMessage);
 
 %pythoncode %{

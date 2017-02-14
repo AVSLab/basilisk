@@ -20,7 +20,7 @@
 #ifndef RW_CONFIG_MESSAGE_H
 #define RW_CONFIG_MESSAGE_H
 
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 
 typedef struct{
     double GsMatrix_B[3*MAX_EFF_CNT];   /*!< [-]    The RW spin axis matrix in body frame components */

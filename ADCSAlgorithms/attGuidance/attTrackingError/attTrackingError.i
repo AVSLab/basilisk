@@ -31,7 +31,7 @@
 %constant void Reset_attTrackingError(void*, uint64_t, uint64_t);
 %ignore Reset_attTrackingError;
 %include "attTrackingError.h"
-%include "../../../SimFswMessages/navAttMessage.h"
+%include "../../../SimFswInterfaceMessages/navAttMessage.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(NavAttMessage);

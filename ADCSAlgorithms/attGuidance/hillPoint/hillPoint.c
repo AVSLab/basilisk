@@ -25,7 +25,7 @@
 #include "attGuidance/hillPoint/hillPoint.h"
 #include <string.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 
 /* Support files.  Be sure to use the absolute path relative to Basilisk directory. */
 #include "SimCode/utilities/linearAlgebra.h"

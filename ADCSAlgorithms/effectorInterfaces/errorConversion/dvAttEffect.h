@@ -21,8 +21,8 @@
 #define _DV_ATT_EFFECT_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswMessages/cmdTorqueBodyMessage.h"
-#include "SimFswMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
 #include <stdlib.h>

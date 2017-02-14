@@ -18,7 +18,7 @@
  */
 
 #include "transDetermination/ephemNavConverter/ephemNavConverter.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <math.h>
 #include <string.h>

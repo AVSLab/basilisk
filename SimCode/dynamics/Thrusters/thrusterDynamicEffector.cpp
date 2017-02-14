@@ -22,7 +22,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include "../SimFswMessages/macroDefinitions.h"
+#include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>

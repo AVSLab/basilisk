@@ -31,8 +31,8 @@
 %constant void Reset_hillPoint(void*, uint64_t, uint64_t);
 %ignore Reset_hillPoint;
 %include "hillPoint.h"
-%include "../../SimFswMessages/ephemerisMessage.h"
-%include "../../SimFswMessages/navTransMessage.h"
+%include "../../SimFswInterfaceMessages/ephemerisMessage.h"
+%include "../../SimFswInterfaceMessages/navTransMessage.h"
 %include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(EphemerisMessage);
 GEN_SIZEOF(hillPointConfig);

@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "SimFswMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 
 
 /*! \addtogroup ADCSAlgGroup

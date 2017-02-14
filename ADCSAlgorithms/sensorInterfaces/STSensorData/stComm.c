@@ -20,7 +20,7 @@
 #include "sensorInterfaces/STSensorData/stComm.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for theST sensor interface.

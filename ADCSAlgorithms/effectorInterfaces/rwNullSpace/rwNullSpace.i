@@ -34,9 +34,9 @@ GEN_SIZEOF(rwNullSpaceConfig);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWArrayTorqueMessage);
 %include "rwNullSpace.h"
-%include "../../../SimFswMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
-%include "../../../SimFswMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

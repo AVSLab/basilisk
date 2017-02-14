@@ -34,13 +34,13 @@
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"
-%include "../../../SimFswMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 GEN_SIZEOF(PRV_SteeringConfig);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigMessage);
 GEN_SIZEOF(RWSpeedMessage);
-%include "../../../SimFswMessages/cmdTorqueBodyMessage.h"
+%include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 GEN_SIZEOF(CmdTorqueBodyMessage);
 
 %pythoncode %{

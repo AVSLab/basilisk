@@ -20,7 +20,7 @@
 #ifndef THR_ARRAY_MESSAGE_H
 #define THR_ARRAY_MESSAGE_H
 
-#include "../SimFswMessages/macroDefinitions.h"
+#include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/thrConfigFSWMessage.h"
 
 /*! @brief FSW message definition containing the thruster cluster information */

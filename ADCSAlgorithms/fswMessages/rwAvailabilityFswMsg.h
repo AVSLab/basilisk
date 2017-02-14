@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

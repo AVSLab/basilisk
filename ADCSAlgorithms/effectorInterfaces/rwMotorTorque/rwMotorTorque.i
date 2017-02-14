@@ -37,9 +37,9 @@ GEN_SIZEOF(RWConfigMessage);
 GEN_SIZEOF(RWArrayTorqueMessage);
 GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "rwMotorTorque.h"
-%include "../../../SimFswMessages/rwSpeedMessage.h"
-%include "../../../SimFswMessages/cmdTorqueBodyMessage.h"
-%include "../../../SimFswMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"

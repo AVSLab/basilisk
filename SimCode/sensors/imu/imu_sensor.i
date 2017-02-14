@@ -27,7 +27,7 @@
 %include "imu_sensor.h"
 %include "simMessages/scPlusStatesMessage.h"
 %include "simMessages/scPlusMassPropsMessage.h"
-%include "../SimFswMessages/imuSensorMessage.h"
+%include "../SimFswInterfaceMessages/imuSensorMessage.h"
 GEN_SIZEOF(SCPlusStatesMessage)
 GEN_SIZEOF(SCPlusMassPropsMessage)
 GEN_SIZEOF(IMUSensorMessage)

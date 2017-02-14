@@ -25,10 +25,10 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "SimFswMessages/rwSpeedMessage.h"
+#include "SimFswInterfaceMessages/rwSpeedMessage.h"
 #include <string.h>
 #include <math.h>
 

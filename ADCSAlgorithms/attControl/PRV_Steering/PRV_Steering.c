@@ -25,7 +25,7 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include <string.h>

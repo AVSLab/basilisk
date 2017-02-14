@@ -19,7 +19,7 @@
 
 
 #include "gravityEffector.h"
-#include "../SimFswMessages/macroDefinitions.h"
+#include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
 
 SphericalHarmonics::SphericalHarmonics()

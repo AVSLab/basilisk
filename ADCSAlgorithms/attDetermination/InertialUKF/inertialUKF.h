@@ -21,8 +21,8 @@
 #define _INERTIAL_UKF_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswMessages/rwSpeedMessage.h"
-#include "SimFswMessages/navAttMessage.h"
+#include "SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "SimFswInterfaceMessages/navAttMessage.h"
 #include "fswMessages/inertialFilterMessage.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"

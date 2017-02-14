@@ -25,8 +25,8 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMEssages/spicePlanetStateMessage.h"
-#include "../SimFswMessages/navAttMessage.h"
-#include "../SimFswMessages/navTransMessage.h"
+#include "../SimFswInterfaceMessages/navAttMessage.h"
+#include "../SimFswInterfaceMessages/navTransMessage.h"
 
 /*! \addtogroup SimModelGroup
  * @{

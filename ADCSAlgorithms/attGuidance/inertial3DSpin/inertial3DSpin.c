@@ -28,7 +28,7 @@
 #include "attGuidance/inertial3DSpin/inertial3DSpin.h"
 #include <string.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswMessages/macroDefinitions.h"
+#include "SimFswInterfaceMessages/macroDefinitions.h"
 
 
 
