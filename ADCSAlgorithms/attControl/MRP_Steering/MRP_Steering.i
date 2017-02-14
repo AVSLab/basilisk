@@ -32,13 +32,13 @@
 %ignore Reset_MRP_Steering;
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
-GEN_SIZEOF(RWAvailabilityData);
+GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigMessage);
 GEN_SIZEOF(RWSpeedMessage);
 %include "MRP_Steering.h"
-%include "../../effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"

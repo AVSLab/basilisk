@@ -35,7 +35,7 @@ GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWArrayTorqueMessage);
 %include "rwNullSpace.h"
 %include "../../../SimFswMessages/rwSpeedMessage.h"
-%include "../_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../../SimFswMessages/rwArrayTorqueMessage.h"
 %pythoncode %{
 import sys

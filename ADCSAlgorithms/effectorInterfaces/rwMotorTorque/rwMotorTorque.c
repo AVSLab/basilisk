@@ -66,7 +66,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     ConfigData->rwAvailInMsgID = -1;
     if (strlen(ConfigData->rwAvailInMsgName) > 0){
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
-                                                         sizeof(RWAvailabilityData), moduleID);
+                                                         sizeof(RWAvailabilityFswMsg), moduleID);
     }
     
     /* configure the number of axes that are controlled */
@@ -120,7 +120,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     int i,j,k;
     
     double us[MAX_EFF_CNT];
-    RWAvailabilityData wheelsAvailability;
+    RWAvailabilityFswMsg wheelsAvailability;
     memset(us, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     
@@ -133,7 +133,7 @@ void Update_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, ui
     if (ConfigData->rwAvailInMsgID >= 0)
     {
         ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
-                    sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
+                    sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         int numAvailRW = 0;
         for (i = 0; i < ConfigData->rwConfigParams.numRW; i++) {
             if (wheelsAvailability.wheelAvailability[i] == AVAILABLE)

@@ -21,10 +21,10 @@
 #define _MRP_STEERING_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwAvailabilityFswMsg.h"
 #include "SimFswMessages/rwSpeedMessage.h"
 #include "SimFswMessages/cmdTorqueBodyMessage.h"
 #include <stdint.h>

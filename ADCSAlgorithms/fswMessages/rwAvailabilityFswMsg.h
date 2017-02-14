@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _RW_DEVICE_STATES_H_
-#define _RW_DEVICE_STATES_H_
+#ifndef _RW_AVAILABILITY_FSW_MSG_H
+#define _RW_AVAILABILITY_FSW_MSG_H
 
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
@@ -31,7 +31,7 @@
 /*! @brief Array with availability of RW */
 typedef struct {
     FSWdeviceAvailability wheelAvailability[MAX_EFF_CNT];                //!< The current state of the wheel
-}RWAvailabilityData;
+}RWAvailabilityFswMsg;
 
 /*! @} */
 

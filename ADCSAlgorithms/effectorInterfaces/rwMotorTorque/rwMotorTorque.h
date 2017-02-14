@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "../../../SimFswMessages/rwSpeedMessage.h"
 #include "../../../SimFswMessages/rwArrayTorqueMessage.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+#include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwArrayConfigMessage.h"
 #include "SimFswMessages/cmdTorqueBodyMessage.h"
 

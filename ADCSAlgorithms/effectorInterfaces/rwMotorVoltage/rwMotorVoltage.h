@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+#include "fswMessages/rwAvailabilityFswMsg.h"
 #include "../../../SimFswMessages/rwSpeedMessage.h"
 #include "../../../SimFswMessages/rwArrayTorqueMessage.h"
 #include "../../../SimFswMessages/rwArrayVoltageMessage.h"

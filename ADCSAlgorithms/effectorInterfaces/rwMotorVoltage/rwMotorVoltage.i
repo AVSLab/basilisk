@@ -33,7 +33,7 @@
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorVoltageConfig);
 GEN_SIZEOF(RWArrayTorqueMessage);
-GEN_SIZEOF(RWAvailabilityData);
+GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWConfigMessage);
 %include "rwMotorVoltage.h"
@@ -41,7 +41,7 @@ GEN_SIZEOF(RWConfigMessage);
 %include "../../../SimFswMessages/macroDefinitions.h"
 %include "../../../SimFswMessages/rwArrayTorqueMessage.h"
 %include "../../../SimFswMessages/rwArrayVoltageMessage.h"
-%include "../_GeneralModuleFiles/rwDeviceStates.h"
+%include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigMessage.h"
 %pythoncode %{

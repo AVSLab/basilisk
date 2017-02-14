@@ -76,7 +76,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
     }
     if(strlen(ConfigData->rwAvailInMsgName) > 0) {
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
-                                                        sizeof(RWAvailabilityData), moduleID);
+                                                        sizeof(RWAvailabilityFswMsg), moduleID);
     }
 }
 
@@ -116,7 +116,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     uint32_t            rwArrayMemorySize;
     double              voltage[MAX_EFF_CNT];       /*!< [V]   RW voltage output commands */
     RWSpeedMessage      rwSpeed;                    /*!< [r/s] Reaction wheel speed estimates */
-    RWAvailabilityData  rwAvailability;             /*!< []    Reaction wheel availability */
+    RWAvailabilityFswMsg  rwAvailability;             /*!< []    Reaction wheel availability */
     double              dt;                         /*!< [s]   control update period */
     double              Omega_dot[MAX_EFF_CNT];     /*!< [r/s^2] RW angular acceleration */
     double              torqueCmd[MAX_EFF_CNT];     /*!< [Nm]   copy of RW motor torque input vector */
@@ -132,7 +132,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
     memset(rwAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if (ConfigData->rwAvailInMsgID >= 0){
         ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
-                    sizeof(RWAvailabilityData), &rwAvailability, moduleID);
+                    sizeof(RWAvailabilityFswMsg), &rwAvailability, moduleID);
     }
 
     /* zero the output voltage vector */

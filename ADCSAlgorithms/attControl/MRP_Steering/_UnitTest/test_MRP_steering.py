@@ -155,7 +155,7 @@ def mrp_steering_tracking(show_plots):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = MRP_Steering.RWAvailabilityData()
+        rwAvailabilityMessage = MRP_Steering.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)

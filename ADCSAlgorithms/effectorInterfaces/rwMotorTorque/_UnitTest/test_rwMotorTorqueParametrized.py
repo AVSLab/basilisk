@@ -136,7 +136,7 @@ def rwMotorTorqueTest(show_plots, dropAxes):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityData()
+        rwAvailabilityMessage = rwMotorTorque.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)

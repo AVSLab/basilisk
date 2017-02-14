@@ -28,7 +28,7 @@
 #include "SimFswMessages/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "effectorInterfaces/_GeneralModuleFiles/rwDeviceStates.h"
+#include "fswMessages/rwAvailabilityFswMsg.h"
 #include <string.h>
 #include <math.h>
 
@@ -76,7 +76,7 @@ void CrossInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
         }
         if(strlen(ConfigData->rwAvailInMsgName) > 0) {
             ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
-                                                            sizeof(RWAvailabilityData), moduleID);
+                                                            sizeof(RWAvailabilityFswMsg), moduleID);
         }
     }
 }
@@ -126,7 +126,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
 {
     AttGuidMessage      guidCmd;            /*!< Guidance Message */
     RWSpeedMessage      wheelSpeeds;        /*!< Reaction wheel speed estimates */
-    RWAvailabilityData  wheelsAvailability; /*!< Reaction wheel availability */
+    RWAvailabilityFswMsg wheelsAvailability; /*!< Reaction wheel availability */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -165,7 +165,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
                     sizeof(RWSpeedMessage), (void*) &(wheelSpeeds), moduleID);
         if (ConfigData->rwAvailInMsgID >= 0){
             ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
-                        sizeof(RWAvailabilityData), &wheelsAvailability, moduleID);
+                        sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);
         }
     }
     
