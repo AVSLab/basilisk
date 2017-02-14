@@ -30,10 +30,10 @@
 %ignore CrossInit_ephemDifference;
 %constant void Reset_ephemDifference(void*, uint64_t, uint64_t);
 %ignore Reset_ephemDifference;
-GEN_SIZEOF(EphemerisMessage)
+GEN_SIZEOF(EphemerisIntMsg)
 STRUCTASLIST(EphemChangeConfig)
 %include "ephemDifference.h"
-%include "../../SimFswInterfaceMessages/ephemerisMessage.h"
+%include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

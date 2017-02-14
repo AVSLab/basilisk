@@ -36,7 +36,7 @@
 void SelfInit_oeStateEphem(OEStateEphemData *ConfigData, uint64_t moduleID)
 {
     ConfigData->stateFitOutMsgID = CreateNewMessage(ConfigData->stateFitOutMsgName,
-        sizeof(EphemerisMessage), "EphemerisMessage", moduleID);
+        sizeof(EphemerisIntMsg), "EphemerisIntMsg", moduleID);
 }
 
 /*! This method initializes the input time correlation factor structure
@@ -88,7 +88,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
     ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
                 sizeof(TDBVehicleClockCorrelationMessage), &localCorr, moduleID);
     
-    memset(&ConfigData->outputState, 0x0, sizeof(EphemerisMessage));
+    memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));
     
     currentEphTime = callTime*NANO2SEC;
     currentEphTime += localCorr.ephemerisTime - localCorr.vehicleClockTime;
@@ -148,7 +148,7 @@ void Update_oeStateEphem(OEStateEphemData *ConfigData, uint64_t callTime, uint64
             ConfigData->outputState.v_BdyZero_N);
 
     WriteMessage(ConfigData->stateFitOutMsgID, callTime,
-                 sizeof(EphemerisMessage), &ConfigData->outputState, moduleID);
+                 sizeof(EphemerisIntMsg), &ConfigData->outputState, moduleID);
 
     return;
 

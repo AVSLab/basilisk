@@ -24,7 +24,7 @@
 #include <stdint.h>
 
 /* Required module input messages */
-#include "../SimFswInterfaceMessages/ephemerisMessage.h"
+#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransMessage.h"
 #include "fswMessages/attRefMessage.h"
 

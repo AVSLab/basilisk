@@ -26,6 +26,6 @@ typedef struct {
     double r_BdyZero_N[3];          /*!< [m] Position of orbital body*/
     double v_BdyZero_N[3];          /*!< [m/s] Velocity of orbital body*/
     double timeTag;                 /*!< [s] vehicle Time-tag for state*/
-}EphemerisMessage;
+}EphemerisIntMsg;
 
 #endif

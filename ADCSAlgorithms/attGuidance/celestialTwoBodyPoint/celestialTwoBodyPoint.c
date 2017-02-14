@@ -54,14 +54,14 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     uint64_t moduleID)
 {
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
-                                                sizeof(EphemerisMessage), moduleID);
+                                                sizeof(EphemerisIntMsg), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransMessage), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
         ConfigData->inputSecID = subscribeToMessage(ConfigData->inputSecMessName,
-                                                    sizeof(EphemerisMessage), moduleID);
+                                                    sizeof(EphemerisIntMsg), moduleID);
     }
     return;
     
@@ -81,8 +81,8 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     uint64_t writeTime;
     uint32_t writeSize;
     NavTransMessage navData;
-    EphemerisMessage primPlanet;
-    EphemerisMessage secPlanet;
+    EphemerisIntMsg primPlanet;
+    EphemerisIntMsg secPlanet;
     
     double R_P1_hat[3];             /* Unit vector in the direction of r_P1 */
     double R_P2_hat[3];             /* Unit vector in the direction of r_P2 */
@@ -91,7 +91,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     double dotProduct;              /* Temporary scalar variable */
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransMessage), &navData, moduleID);
-    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(EphemerisMessage), &primPlanet, moduleID);
+    ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     
     v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P1);
     v3Subtract(primPlanet.v_BdyZero_N, navData.v_BN_N, ConfigData->v_P1);
@@ -101,7 +101,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     
     if(ConfigData->inputSecID >= 0)
     {
-        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(EphemerisMessage), &secPlanet, moduleID);
+        ReadMessage(ConfigData->inputSecID, &writeTime, &writeSize, sizeof(EphemerisIntMsg), &secPlanet, moduleID);
         
         v3Subtract(secPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P2);
         v3Subtract(secPlanet.v_BdyZero_N, navData.v_BN_N, ConfigData->v_P2);

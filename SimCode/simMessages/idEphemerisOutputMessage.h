@@ -20,14 +20,14 @@
 #ifndef ID_EPHEMERIS_OUTPUT_MESSAGE_H
 #define ID_EPHEMERIS_OUTPUT_MESSAGE_H
 
-#include "../../SimFswInterfaceMessages/ephemerisMessage.h"
+#include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
 
 /*! @brief Message to store the converted Spice ephemeris data */
 typedef struct{
     int64_t inputID;                        //!< [-] Message ID associated with ephemeris output
     uint64_t clockTime;                     //!< [-] Clock time associated with msg write
     SpicePlanetStateMessage messageData;    //!< [-] Data container for message data
-    EphemerisMessage outputData;         //!< [-] Data container for output ephemeris estimate
+    EphemerisIntMsg outputData;         //!< [-] Data container for output ephemeris estimate
 } IDEphemerisOutputMessage;
 
 

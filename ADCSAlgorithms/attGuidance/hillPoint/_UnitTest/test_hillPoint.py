@@ -124,7 +124,7 @@ def hillPointTestFunction(show_plots):
     #   Spice Input Message
     #
 
-    CelBodyData = cheby_pos_ephem.EphemerisMessage()
+    CelBodyData = cheby_pos_ephem.EphemerisIntMsg()
     inputCelMessageSize = CelBodyData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputCelMessName,

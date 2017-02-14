@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/ephemerisInterfaceMessage.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "../SimFswInterfaceMessages/ephemerisMessage.h"
+#include "SimFswInterfaceMessages/ephemerisIntMsg.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20
@@ -59,7 +59,7 @@ typedef struct {
     int32_t clockCorrInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     uint32_t coeffSelector;    /*!< [-] Index in the ephArray that we are currently using*/
     
-    EphemerisMessage outputState; /*!< [-] The local storage of the outgoing message data*/
+    EphemerisIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
 }OEStateEphemData;
 
 #ifdef __cplusplus

@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../SimFswInterfaceMessages/ephemerisMessage.h"
+#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransMessage.h"
 #include "fswMessages/attRefMessage.h"
 

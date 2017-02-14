@@ -65,7 +65,7 @@ void EphemerisConverter::SelfInit()
     for(it=messageNameMap.begin(); it!= messageNameMap.end(); it++)
     {
         destID = SystemMessaging::GetInstance()->CreateNewMessage(it->second,
-            sizeof(EphemerisMessage), numOutputBuffers, "EphemerisMessage",
+            sizeof(EphemerisIntMsg), numOutputBuffers, "EphemerisIntMsg",
             moduleID);
         messageIDMap.insert(std::pair<int64_t, IDEphemerisOutputMessage>
             (destID, ephemContainer));
@@ -120,7 +120,7 @@ void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
     for(it=messageIDMap.begin(); it!=messageIDMap.end(); it++)
     {
         SystemMessaging::GetInstance()->WriteMessage(it->first,
-            CurrentSimNanos, sizeof(EphemerisMessage),
+            CurrentSimNanos, sizeof(EphemerisIntMsg),
             reinterpret_cast<uint8_t *>(&it->second.outputData));
     }
     

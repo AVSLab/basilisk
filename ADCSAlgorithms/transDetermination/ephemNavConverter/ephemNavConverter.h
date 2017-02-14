@@ -21,7 +21,7 @@
 #define _EPHEM_NAV_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
-#include "../SimFswInterfaceMessages/ephemerisMessage.h"
+#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransMessage.h"
 
 /*! @brief Top level structure for the converter that takes an 

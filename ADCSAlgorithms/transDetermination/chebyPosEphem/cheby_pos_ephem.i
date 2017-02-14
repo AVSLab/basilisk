@@ -32,10 +32,10 @@
 %ignore Reset_chebyPosEphem;
 STRUCTASLIST(ChebyEphemRecord)
 %include "chebyPosEphem.h"
-%include "../../SimFswInterfaceMessages/ephemerisMessage.h"
+%include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
 %include "../../fswMessages/ephemerisInterfaceMessage.h"
 GEN_SIZEOF(TDBVehicleClockCorrelationMessage)
-GEN_SIZEOF(EphemerisMessage)
+GEN_SIZEOF(EphemerisIntMsg)
 
 %pythoncode %{
 import sys

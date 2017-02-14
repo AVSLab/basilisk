@@ -50,7 +50,7 @@ void CrossInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
-                                                sizeof(EphemerisMessage), moduleID);
+                                                sizeof(EphemerisIntMsg), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
                                                 sizeof(NavTransMessage), moduleID);
 }
@@ -67,10 +67,10 @@ void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, ui
     uint64_t            writeTime;
     uint32_t            writeSize;
     NavTransMessage         navData;
-    EphemerisMessage    primPlanet;
+    EphemerisIntMsg    primPlanet;
     
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize,
-                sizeof(EphemerisMessage), &primPlanet, moduleID);
+                sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
                 sizeof(NavTransMessage), &navData, moduleID);
     
