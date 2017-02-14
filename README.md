@@ -19,6 +19,8 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 [Setup a OS X Development Environment](https://bitbucket.org/avslab/basilisk/wiki/Mac%20Development%20Environment%20Setup)
 
+[Setup a Linux Development Environment](https://bitbucket.org/avslab/basilisk/wiki/Linux%20Development%20Environment%20Setup)
+
 ### Contribution guidelines ###
 
 * Writing tests
