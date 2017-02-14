@@ -59,7 +59,7 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
         sizeof(VehicleConfigMessage), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                     sizeof(RWConfigMessage), moduleID);
+                                                     sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
         sizeof(RWSpeedMessage), moduleID);
     
@@ -92,7 +92,7 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
                 sizeof(VehicleConfigMessage), &massPropsInBuffer, moduleID);
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &writeTime, &writeSize,
-                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
         sizeof(VehicleConfigMessage), &(ConfigData->localConfigData), moduleID);
     

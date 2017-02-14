@@ -155,7 +155,7 @@ def subModuleTestFunction(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = MRP_Feedback.RWConfigMessage()
+        rwConfigParams = MRP_Feedback.RWArrayConfigFswMsg()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)

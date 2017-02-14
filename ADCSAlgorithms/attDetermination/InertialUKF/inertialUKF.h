@@ -26,7 +26,7 @@
 #include "fswMessages/inertialFilterMessage.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwArrayConfigFswMsg.h"
 #include <stdint.h>
 
 
@@ -85,7 +85,7 @@ typedef struct {
     uint32_t firstPassComplete;
 	NavAttMessage outputInertial;        /*!< -- Output inertial estimate data */
     STAttMessage stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
-    RWConfigMessage rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedMessage rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
     VehicleConfigMessage localConfigData;   /*! [-] Vehicle configuration data*/
@@ -93,7 +93,7 @@ typedef struct {
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
-    int32_t rwParamsInMsgID;     /*!< [-] ID for the RWConfigMessage ingoing message */
+    int32_t rwParamsInMsgID;     /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     int32_t rwSpeedsInMsgID;      /*!< [-] ID for the incoming RW speeds*/
 }InertialUKFConfig;
 

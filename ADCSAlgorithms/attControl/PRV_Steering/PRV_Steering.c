@@ -67,7 +67,7 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     
     if(strlen(ConfigData->rwParamsInMsgName) > 0) {
         ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                         sizeof(RWConfigMessage), moduleID);
+                                                         sizeof(RWArrayConfigFswMsg), moduleID);
         if (strlen(ConfigData->inputRWSpeedsName) > 0) {
             ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
                                                              sizeof(RWSpeedMessage), moduleID);
@@ -104,7 +104,7 @@ void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint6
     if (ConfigData->rwParamsInMsgID >= 0) {
         /*! - Read static RW config data message and store it in module variables*/
         ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                    sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
+                    sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     }
     
     /* Reset the integral measure of the rate tracking error */

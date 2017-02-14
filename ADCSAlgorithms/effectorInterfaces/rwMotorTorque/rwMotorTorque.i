@@ -33,7 +33,7 @@
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorTorqueConfig);
 GEN_SIZEOF(RWAvailabilityFswMsg);
-GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWArrayTorqueMessage);
 GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "rwMotorTorque.h"
@@ -42,7 +42,7 @@ GEN_SIZEOF(CmdTorqueBodyMessage);
 %include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/rwArrayConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigFswMsg.h"
 
 %pythoncode %{
 import sys

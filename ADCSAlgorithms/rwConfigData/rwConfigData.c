@@ -44,7 +44,7 @@ void SelfInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->rwParamsOutMsgID = CreateNewMessage(ConfigData->rwParamsOutMsgName,
-                                                    sizeof(RWConfigMessage), "RWConfigMessage", moduleID);
+                                                    sizeof(RWArrayConfigFswMsg), "RWArrayConfigFswMsg", moduleID);
     
 }
 
@@ -87,7 +87,7 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
                   &ConfigData->rwConfigParamsOut.GsMatrix_B[i*3]);
     }
     /*! - Write output RW config data to the messaging system*/
-    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWConfigMessage),
+    WriteMessage(ConfigData->rwParamsOutMsgID, 0, sizeof(RWArrayConfigFswMsg),
                  &(ConfigData->rwConfigParamsOut), moduleID);
 
 }

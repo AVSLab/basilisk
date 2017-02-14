@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwArrayConfigFswMsg.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 #include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
 
@@ -38,7 +38,7 @@ typedef struct {
     /* declare module private variables */
     int initRequest;                                    /*!<        status flag of the momentum dumping management */
     double  Delta_H_B[3];                               /*!< [Nms]  net desired angular momentum change */
-    RWConfigMessage rwConfigParams;                     /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWArrayConfigFswMsg rwConfigParams;                     /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module public variables */
     double hs_min;                                      /*!< [Nms]  minimum RW cluster momentum for dumping */

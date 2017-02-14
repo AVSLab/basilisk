@@ -27,7 +27,7 @@ typedef struct{
     double JsList[MAX_EFF_CNT];         /*!< [kgm2] The spin axis inertia for RWs*/
     uint32_t numRW;                     /*!< [-]    The number of reaction wheels available on vehicle */
     double uMax[MAX_EFF_CNT];           /*!< [Nm]   The maximum RW motor torque */
-}RWConfigMessage;
+}RWArrayConfigFswMsg;
 
 
 #endif

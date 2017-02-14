@@ -62,7 +62,7 @@ void CrossInit_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
                                                        sizeof(CmdTorqueBodyMessage), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
-                                                     sizeof(RWConfigMessage), moduleID);
+                                                     sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwAvailInMsgID = -1;
     if (strlen(ConfigData->rwAvailInMsgName) > 0){
         ConfigData->rwAvailInMsgID = subscribeToMessage(ConfigData->rwAvailInMsgName,
@@ -98,7 +98,7 @@ void Reset_rwMotorTorque(rwMotorTorqueConfig *ConfigData, uint64_t callTime, uin
     int i;
     /*! - Read static RW config data message and store it in module variables */
     ReadMessage(ConfigData->rwParamsInMsgID, &clockTime, &readSize,
-                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
     
     if (ConfigData->rwAvailInMsgID < 0){
         /* If no info is provided about RW availability we'll assume that all are available */

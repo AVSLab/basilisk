@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwArrayConfigFswMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "SimFswInterfaceMessages/rwSpeedMessage.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
@@ -49,11 +49,11 @@ typedef struct {
     uint32_t ignoreOuterLoopFeedforward;/*!< []      Boolean flag indicating if outer feedforward term should be included */
     
     double ISCPntB_B[9];                /*!< [kg m^2] Spacecraft Inertia */
-    RWConfigMessage rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWArrayConfigFswMsg rwConfigParams;      /*!< [-] struct to store message containing RW config parameters in body B frame */
 
     /* declare module IO interfaces */
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigMessage input message*/
-    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWConfigMessage ingoing message */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWArrayConfigFswMsg input message*/
+    int32_t rwParamsInMsgID;                            /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];
     int32_t vehConfigInMsgID;
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];            /*!< [-] The name of the RWs availability message*/

@@ -26,7 +26,7 @@
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 #include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
 #include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
-#include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwArrayConfigFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -50,14 +50,14 @@ typedef struct {
     
     char torqueInMsgName[MAX_STAT_MSG_LENGTH];      /*!< The name of the Input torque message*/
     int32_t torqueInMsgID;                          /*!< ID for the incoming torque message */
-    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWConfigMessage input message*/
-    int32_t rwParamsInMsgID;                         /*!< [-] ID for the RWConfigMessage ingoing message */
+    char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWArrayConfigFswMsg input message*/
+    int32_t rwParamsInMsgID;                         /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     char inputRWSpeedsInMsgName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
     int32_t inputRWSpeedsInMsgID;                    /*!< [] The ID for the reaction wheel speeds message*/
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];      /*!< [-] The name of the RWs availability message*/
     int32_t rwAvailInMsgID;                          /*!< [-] ID for the incoming  RWs availability data*/
 
-    RWConfigMessage rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
+    RWArrayConfigFswMsg rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWArrayVoltageMessage voltageOut;                /*!< -- copy of the output message */
 
 }rwMotorVoltageConfig;

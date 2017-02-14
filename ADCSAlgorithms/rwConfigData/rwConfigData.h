@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwArrayConfigMessage.h"
+#include "fswMessages/rwArrayConfigFswMsg.h"
 #include "fswMessages/rwConstellationMessage.h"
 #include <stdint.h>
 
@@ -38,12 +38,12 @@
 typedef struct {
     /* declare module private variables */
     RWConstellationMessage rwConstellation; /* struct to populate input RW config parameters in structural S frame */
-    RWConfigMessage  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
+    RWArrayConfigFswMsg  rwConfigParamsOut; /* struct to populate ouput RW config parameters in body B frame */
     /* declare module IO interfaces */
     char rwConstellationInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConstellationMessage input message*/
     int32_t rwConstellationInMsgID;                      /*!< [-] ID for the RWConstellationMessage incoming message */
-    char rwParamsOutMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWConfigMessage output message*/
-    int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWConfigMessage outgoing message */
+    char rwParamsOutMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the RWArrayConfigFswMsg output message*/
+    int32_t rwParamsOutMsgID;                            /*!< [-] ID for the RWArrayConfigFswMsg outgoing message */
     char vehConfigInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the vehicle config data input message*/
     int32_t vehConfigInMsgID;                            /*!< [-] ID for the vehicle config data incoming message */
 

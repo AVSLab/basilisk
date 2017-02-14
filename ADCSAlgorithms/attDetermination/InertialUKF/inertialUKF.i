@@ -36,10 +36,10 @@
 %include "../../fswMessages/inertialFilterMessage.h"
 %include "../../fswMessages/stAttMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
-%include "../../fswMessages/rwArrayConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 GEN_SIZEOF(STAttMessage);
-GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(VehicleConfigMessage);
 

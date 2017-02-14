@@ -136,7 +136,7 @@ def mrp_steering_tracking(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = MRP_Steering.RWConfigMessage()
+        rwConfigParams = MRP_Steering.RWArrayConfigFswMsg()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)

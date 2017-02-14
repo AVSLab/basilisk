@@ -84,7 +84,7 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
         JsList.extend([rw.Js])
         uMaxList.extend([rw.uMax])
 
-    rwConfigParams = rwConfigData.RWConfigMessage()
+    rwConfigParams = rwConfigData.RWArrayConfigFswMsg()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
     rwConfigParams.uMax = uMaxList

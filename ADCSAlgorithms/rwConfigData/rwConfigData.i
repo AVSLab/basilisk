@@ -30,12 +30,12 @@
 %ignore CrossInit_rwConfigData;
 %constant void Reset_rwConfigData(void*, uint64_t, uint64_t);
 %ignore Reset_rwConfigData;
-GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(rwConfigData);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "rwConfigData.h"
 %include "../fswMessages/vehicleConfigMessage.h"
-%include "../fswMessages/rwArrayConfigMessage.h"
+%include "../fswMessages/rwArrayConfigFswMsg.h"
 
 %pythoncode %{
 import sys

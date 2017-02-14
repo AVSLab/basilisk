@@ -158,7 +158,7 @@ def subModuleTestFunction(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = PRV_Steering.RWConfigMessage()
+        rwConfigParams = PRV_Steering.RWArrayConfigFswMsg()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2)  # number of buffers (leave at 2 as default)

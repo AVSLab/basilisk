@@ -35,7 +35,7 @@ GEN_SIZEOF(rwMotorVoltageConfig);
 GEN_SIZEOF(RWArrayTorqueMessage);
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(RWSpeedMessage);
-GEN_SIZEOF(RWConfigMessage);
+GEN_SIZEOF(RWArrayConfigFswMsg);
 %include "rwMotorVoltage.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
@@ -43,7 +43,7 @@ GEN_SIZEOF(RWConfigMessage);
 %include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
-%include "../../fswMessages/rwArrayConfigMessage.h"
+%include "../../fswMessages/rwArrayConfigFswMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

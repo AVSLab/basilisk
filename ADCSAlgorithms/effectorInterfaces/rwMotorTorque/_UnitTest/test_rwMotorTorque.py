@@ -109,7 +109,7 @@ def rwMotorTorqueTest(show_plots):
                                           0, inputMessageData) # write data into the simulator
 
     # wheelConfigData message
-    rwConfigParams = rwMotorTorque.RWConfigMessage()
+    rwConfigParams = rwMotorTorque.RWArrayConfigFswMsg()
     inputMessageSize = rwConfigParams.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                           inputMessageSize, 2) # number of buffers (leave at 2 as default)

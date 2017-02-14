@@ -63,7 +63,7 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
 {
     /*! - Get the other message IDs */
     ConfigData->rwConfInMsgID = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
-                                                  sizeof(RWConfigMessage), moduleID);
+                                                  sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
                                                      sizeof(RWSpeedMessage), moduleID);
     ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
@@ -85,7 +85,7 @@ void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64
                 sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
 
     ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
-                sizeof(RWConfigMessage), &(ConfigData->rwConfigParams), moduleID);
+                sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);
 
     ConfigData->initRequest = 1;
     v3SetZero(ConfigData->Delta_H_B);
