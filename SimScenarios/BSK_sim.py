@@ -1,6 +1,4 @@
 import sys, os, inspect
-import numpy as np
-import matplotlib.pyplot as plt
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -12,7 +10,6 @@ sys.path.append(bskPath + 'PythonModules')
 
 import SimulationBaseClass
 import sim_model
-import RigidBodyKinematics as rbk
 import macros as mc
 import unitTestSupport as sp
 
@@ -21,12 +18,13 @@ import gravityEffector
 import ExtForceTorque
 import simple_nav
 import spice_interface
-import orbitalMotion
 
 import vehicleConfigData
 import hillPoint
 import attTrackingError
 import MRP_Feedback
+
+import BSK_FSW
 
 class BSKSim(SimulationBaseClass.SimBaseClass):
     def __init__(self):
@@ -183,6 +181,8 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.hillPointData.inputNavDataName = self.simpleNavObject.outputTransName
         self.hillPointData.inputCelMessName = self.earthGravBody.outputMsgName
         self.hillPointData.outputDataName = "referenceOut"
+        #print self.simpleNavObject.outputTransName
+        #print self.earthGravBody.outputMsgName
         return
 
     def SetAttitudeTrackingError(self):
@@ -199,6 +199,7 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.mrpFeedbackData.Ki = -1  # make value negative to turn off integral feedback
         self.mrpFeedbackData.P = 30.0
         self.mrpFeedbackData.integralLimit = 2. / self.mrpFeedbackData.Ki * 0.1
+        #print self.extForceTorqueObject.cmdTorqueInMsgName
         return
 
     def SetVehicleData(self):
@@ -230,3 +231,5 @@ class BSKSim(SimulationBaseClass.SimBaseClass):
         self.SetVehicleData()
 
 
+#TheBSKSim = BSKSim()
+#TheFSW = BSK_FSW.FSWSim(TheBSKSim)
