@@ -24,7 +24,7 @@
 #define MAX_NUM_CHEBY_POLYS 32
 
 #include "messaging/static_messaging.h"
-#include "../SimFswInterfaceMessages/cssArraySensorMessage.h"
+#include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -41,7 +41,7 @@ typedef struct {
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     int32_t SensorMsgID; /*!< Sensor ID tied to the sensor data name*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
-    CSSArraySensorMessage InputValues; /*!< Input values we took off the messaging system*/
+    CSSArraySensorIntMsg InputValues; /*!< Input values we took off the messaging system*/
     double MaxSensorValue; /*!< Scale factor to go from sensor values to cosine*/
     uint32_t ChebyCount; /*!< -- Count on the number of chebyshev polynominals we have*/
     double KellyCheby[MAX_NUM_CHEBY_POLYS]; /*!< -- Chebyshev polynominals to fit output to cosine*/

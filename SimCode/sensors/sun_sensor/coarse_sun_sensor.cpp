@@ -306,11 +306,11 @@ void CSSConstellation::SelfInit()
         it->SelfInit();
     }
 
-    memset(&outputBuffer, 0x0, sizeof(CSSArraySensorMessage));
+    memset(&outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSArraySensorMessage), outputBufferCount,
+        sizeof(CSSArraySensorIntMsg), outputBufferCount,
         "CSSRawDataMessage", moduleID);
 }
 
@@ -342,5 +342,5 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         outputBuffer.CosValue[it - sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 sizeof(CSSArraySensorMessage), reinterpret_cast<uint8_t *>(&outputBuffer));
+                                                 sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t *>(&outputBuffer));
 }

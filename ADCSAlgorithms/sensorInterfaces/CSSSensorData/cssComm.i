@@ -28,11 +28,11 @@
 %ignore SelfInit_cssProcessTelem;
 %constant void CrossInit_cssProcessTelem(void*, uint64_t);
 %ignore CrossInit_cssProcessTelem;
-STRUCTASLIST(CSSArraySensorMessage)
-GEN_SIZEOF(CSSArraySensorMessage);
+STRUCTASLIST(CSSArraySensorIntMsg)
+GEN_SIZEOF(CSSArraySensorIntMsg);
 GEN_SIZEOF(CSSConfigData);
 %include "cssComm.h"
-%include "../../SimFswInterfaceMessages/cssArraySensorMessage.h"
+%include "../../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

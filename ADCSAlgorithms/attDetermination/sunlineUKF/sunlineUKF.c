@@ -58,7 +58,7 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
-        sizeof(CSSArraySensorMessage), moduleID);
+        sizeof(CSSArraySensorIntMsg), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
     ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
         sizeof(VehicleConfigMessage), moduleID);
@@ -176,9 +176,9 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     /*! - Read the input parsed CSS sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
-    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorMessage));
+    memset(&(ConfigData->cssSensorInBuffer), 0x0, sizeof(CSSArraySensorIntMsg));
     ReadMessage(ConfigData->cssDataInMsgId, &ClockTime, &ReadSize,
-        sizeof(CSSArraySensorMessage), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
+        sizeof(CSSArraySensorIntMsg), (void*) (&(ConfigData->cssSensorInBuffer)), moduleID);
     
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/

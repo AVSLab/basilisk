@@ -26,7 +26,7 @@
 typedef struct {
     double CosValue[MAX_NUM_CSS_SENSORS];   /*!< Current measured CSS value (ideally a cosine value) 
                                                  for the constellation of CSS sensors*/
-}CSSArraySensorMessage;
+}CSSArraySensorIntMsg;
 
 
 

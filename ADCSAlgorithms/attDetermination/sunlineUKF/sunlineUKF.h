@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../SimFswInterfaceMessages/navAttMessage.h"
-#include "../SimFswInterfaceMessages/cssArraySensorMessage.h"
+#include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/CSSConfigMessage.h"
 #include "fswMessages/sunlineFilterMessage.h"
@@ -80,7 +80,7 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
 	NavAttMessage outputSunline;   /*!< -- Output sunline estimate data */
-    CSSArraySensorMessage cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
+    CSSArraySensorIntMsg cssSensorInBuffer; /*!< [-] CSS sensor data read in from message bus*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

@@ -422,7 +422,7 @@ def testStateUpdateSunLine(show_plots):
                                                 vehicleConfigOut)
 
     testVector = numpy.array([-0.7, 0.7, 0.0])
-    inputData = cssComm.CSSArraySensorMessage()
+    inputData = cssComm.CSSArraySensorIntMsg()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
@@ -464,7 +464,7 @@ def testStateUpdateSunLine(show_plots):
             testMessages.append("State update failure")
 
     testVector = numpy.array([-0.8, -0.9, 0.0])
-    inputData = cssComm.CSSArraySensorMessage()
+    inputData = cssComm.CSSArraySensorIntMsg()
     dotList = []
     for element in CSSOrientationList:
         dotProd = numpy.dot(numpy.array(element), testVector)
