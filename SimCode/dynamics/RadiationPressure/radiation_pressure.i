@@ -10,6 +10,11 @@
 %include "sys_model.h"
 %include "radiation_pressure.h"
 
+%include "../../simMessages/spicePlanetStateMessage.h"
+%include "../../simMessages/scPlusStatesMessage.h"
+GEN_SIZEOF(SpicePlanetStateMessage);
+GEN_SIZEOF(SCPlusStatesMessage);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

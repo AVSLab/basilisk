@@ -25,8 +25,8 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
-#include "environment/spice/spice_planet_state.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
+#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/scPlusStatesMessage.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -66,10 +66,10 @@ public:
 private:
     bool    useCannonballModel; //!< -- Use cannnonball or lookup table model
     int64_t sunEphmInMsgId; //!< -- Message ID for incoming sun ephemeris data
-    SpicePlanetState sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data
+    SpicePlanetStateMessage sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data
     int64_t stateInMsgId; //!< -- Message ID for incoming SC state data
     bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
-    SCPlusOutputStateData stateInBuffer; //!< -- Buffer for incoming state message data
+    SCPlusStatesMessage stateInBuffer; //!< -- Buffer for incoming state message data
 };
 
 /*! @} */
