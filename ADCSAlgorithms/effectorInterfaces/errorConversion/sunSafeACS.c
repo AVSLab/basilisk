@@ -51,7 +51,7 @@ void CrossInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
-        sizeof(CmdTorqueBodyMessage), moduleID);
+        sizeof(CmdTorqueBodyIntMsg), moduleID);
     
 }
 
@@ -67,12 +67,12 @@ void Update_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t callTime,
     
     uint64_t ClockTime;
     uint32_t ReadSize;
-    CmdTorqueBodyMessage cntrRequest;
+    CmdTorqueBodyIntMsg cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(CmdTorqueBodyMessage), (void*) &(cntrRequest), moduleID);
+                sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
     computeSingleThrustBlock(&(ConfigData->thrData), callTime,
                              &cntrRequest, moduleID);
     

@@ -127,7 +127,7 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = thrForceMapping.CmdTorqueBodyMessage()  # Create a structure for the input message
+    inputMessageData = thrForceMapping.CmdTorqueBodyIntMsg()  # Create a structure for the input message
     inputMessageSize = inputMessageData.getStructSize()                           # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputVehControlName,

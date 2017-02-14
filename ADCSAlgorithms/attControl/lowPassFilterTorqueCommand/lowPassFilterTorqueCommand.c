@@ -42,8 +42,8 @@ void SelfInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Confi
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(CmdTorqueBodyMessage),
-                                                "CmdTorqueBodyMessage",
+                                               sizeof(CmdTorqueBodyIntMsg),
+                                                "CmdTorqueBodyIntMsg",
                                                 moduleID);
 
 }
@@ -57,7 +57,7 @@ void CrossInit_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *Conf
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputDataName,
-                                                sizeof(CmdTorqueBodyMessage),
+                                                sizeof(CmdTorqueBodyIntMsg),
                                                 moduleID);
 
 }
@@ -96,7 +96,7 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputMsgID, &clockTime, &readSize,
-                sizeof(CmdTorqueBodyMessage), (void*) &(ConfigData->Lr[0]), moduleID);
+                sizeof(CmdTorqueBodyIntMsg), (void*) &(ConfigData->Lr[0]), moduleID);
 
     /*
         check if the filter states must be reset
@@ -153,7 +153,7 @@ void Update_lowPassFilterTorqueCommand(lowPassFilterTorqueCommandConfig *ConfigD
      */
     v3Copy(ConfigData->LrF[0], ConfigData->controlOut.torqueRequestBody);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyMessage),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(CmdTorqueBodyIntMsg),
                  (void*) &(ConfigData->controlOut), moduleID);
 
     return;

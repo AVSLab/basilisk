@@ -26,7 +26,7 @@
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "SimFswInterfaceMessages/rwSpeedMessage.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -66,7 +66,7 @@ typedef struct {
     char inputRWSpeedsName[MAX_STAT_MSG_LENGTH];/*!< [] The name for the reaction wheel speeds message */
     int32_t inputRWSpeedsID;                    /*!< [] The ID for the reaction wheel speeds message*/
     
-    CmdTorqueBodyMessage controlOut;            /*!< [] Control output requests */
+    CmdTorqueBodyIntMsg controlOut;            /*!< [] Control output requests */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus

@@ -106,7 +106,7 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
         extFTObject.extTorquePntB_B = [[-1], [1],[ -1]]
     if torqueInput==2 or torqueInput==3:
         msgName = "extTorquePntB_B_cmds"
-        msgData = ExtForceTorque.CmdTorqueBodyMessage()
+        msgData = ExtForceTorque.CmdTorqueBodyIntMsg()
         msgData.torqueRequestBody = [-1.0, 1.0, -1.0]
         unitTestSupport.setMessage(scSim.TotalSim, unitProcessName, msgName, msgData)
 

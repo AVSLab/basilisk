@@ -60,7 +60,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
 {
     /*! - Get the input message ID's */
     ConfigData->inputVehControlID = subscribeToMessage(ConfigData->inputVehControlName,
-                                                sizeof(CmdTorqueBodyMessage),
+                                                sizeof(CmdTorqueBodyIntMsg),
                                                 moduleID);
 
     ConfigData->inputThrusterConfID = subscribeToMessage(ConfigData->inputThrusterConfName,
@@ -154,7 +154,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     /*! Begin method steps*/
     /*! - Read the input messages */
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
-                sizeof(CmdTorqueBodyMessage), (void*) &(Lr_B), moduleID);
+                sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
                 sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
 

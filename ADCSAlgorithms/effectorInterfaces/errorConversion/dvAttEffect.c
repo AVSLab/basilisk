@@ -55,7 +55,7 @@ void CrossInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputMsgID = subscribeToMessage(ConfigData->inputControlName,
-        sizeof(CmdTorqueBodyMessage), moduleID);
+        sizeof(CmdTorqueBodyIntMsg), moduleID);
     
 }
 void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
@@ -90,12 +90,12 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t i;
-    CmdTorqueBodyMessage cntrRequest;
+    CmdTorqueBodyIntMsg cntrRequest;
     
     /*! Begin method steps*/
     /*! - Read the input requested torque from the feedback controller*/
     ReadMessage(ConfigData->inputMsgID, &ClockTime, &ReadSize,
-                sizeof(CmdTorqueBodyMessage), (void*) &(cntrRequest), moduleID);
+                sizeof(CmdTorqueBodyIntMsg), (void*) &(cntrRequest), moduleID);
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
@@ -107,7 +107,7 @@ void Update_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
 }
 
 void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-CmdTorqueBodyMessage *contrReq, uint64_t moduleID)
+CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID)
 {
     double unSortOnTime[MAX_EFF_CNT];
     effPairs unSortPairs[MAX_EFF_CNT];

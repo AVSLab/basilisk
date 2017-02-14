@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -45,7 +45,7 @@ typedef struct {
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;                       /*!< [] ID for the incoming static vehicle data */
     
-    CmdTorqueBodyMessage controlOut;                        /*!< [] Control output requests */
+    CmdTorqueBodyIntMsg controlOut;                        /*!< [] Control output requests */
 }MRP_PDConfig;
 
 #ifdef __cplusplus

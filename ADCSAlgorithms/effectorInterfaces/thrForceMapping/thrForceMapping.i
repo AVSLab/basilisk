@@ -38,8 +38,8 @@ GEN_SIZEOF(VehicleConfigMessage);
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
 %include "../../fswMessages/THRArrayCmdForceMessage.h"
-%include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
-GEN_SIZEOF(CmdTorqueBodyMessage);
+%include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+GEN_SIZEOF(CmdTorqueBodyIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

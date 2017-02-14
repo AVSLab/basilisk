@@ -26,7 +26,7 @@
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/THRArrayCmdForceMessage.h"
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

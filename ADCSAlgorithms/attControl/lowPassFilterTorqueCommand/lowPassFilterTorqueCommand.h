@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -50,7 +50,7 @@ typedef struct {
     int32_t outputMsgID;                            /*!< [] ID for the outgoing filtered torque message */
     int32_t inputMsgID;                             /*!< [] ID for the commanded torque message */
 
-    CmdTorqueBodyMessage controlOut;                /*!< -- Control output message */
+    CmdTorqueBodyIntMsg controlOut;                /*!< -- Control output message */
 
 }lowPassFilterTorqueCommandConfig;
 

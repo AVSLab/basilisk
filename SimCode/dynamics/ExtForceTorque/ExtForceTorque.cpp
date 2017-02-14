@@ -67,7 +67,7 @@ void ExtForceTorque::CrossInit()
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     this->cmdTorqueInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdTorqueInMsgName,
-                                                                                sizeof(CmdTorqueBodyMessage), moduleID);
+                                                                                sizeof(CmdTorqueBodyIntMsg), moduleID);
     this->cmdForceInertialInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceInertialInMsgName,
                                                                                        sizeof(CmdForceInertialIntMsg), moduleID);
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
@@ -111,10 +111,10 @@ void ExtForceTorque::readInputMessages()
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdTorqueInMsgID >= 0)
     {
-        memset(&(this->incomingCmdTorqueBuffer), 0x0, sizeof(CmdTorqueBodyMessage));
+        memset(&(this->incomingCmdTorqueBuffer), 0x0, sizeof(CmdTorqueBodyIntMsg));
         this->goodTorqueCmdMsg =
             SystemMessaging::GetInstance()->ReadMessage(this->cmdTorqueInMsgID, &LocalHeader,
-                                                     sizeof(CmdTorqueBodyMessage),
+                                                     sizeof(CmdTorqueBodyIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdTorqueBuffer)), moduleID);
     }
 

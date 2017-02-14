@@ -95,7 +95,7 @@ def subModuleTestFunction(show_plots):
 
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
-    inputMessageData = lowPassFilterTorqueCommand.CmdTorqueBodyMessage()
+    inputMessageData = lowPassFilterTorqueCommand.CmdTorqueBodyIntMsg()
     inputMessageSize = inputMessageData.getStructSize()                          # 3 doubles
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputDataName,

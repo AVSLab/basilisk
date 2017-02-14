@@ -26,7 +26,7 @@
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
-#include "../../../SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -54,7 +54,7 @@ typedef struct {
     int32_t rwConfInMsgID;                              /*!< [-] ID for the incoming RWA configuration data*/
 
 
-    CmdTorqueBodyMessage controlOut;                    /*!< [] Control output requests */
+    CmdTorqueBodyIntMsg controlOut;                    /*!< [] Control output requests */
 
 }thrMomentumManagementConfig;
 

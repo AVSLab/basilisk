@@ -21,7 +21,7 @@
 #define _DV_ATT_EFFECT_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyMessage.h"
+#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
 #include <stdint.h>
@@ -61,7 +61,7 @@ extern "C" {
                            uint64_t moduleID);
     void effectorVSort(effPairs *Input, effPairs *Output, size_t dim);
     void computeSingleThrustBlock(ThrustGroupData *thrData, uint64_t callTime,
-                                  CmdTorqueBodyMessage *contrReq, uint64_t moduleID);
+                                  CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID);
     
 #ifdef __cplusplus
 }
