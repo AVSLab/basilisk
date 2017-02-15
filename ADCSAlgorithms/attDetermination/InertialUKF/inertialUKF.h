@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "SimFswInterfaceMessages/rwSpeedMessage.h"
-#include "SimFswInterfaceMessages/navAttMessage.h"
+#include "SimFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/inertialFilterMessage.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
@@ -83,7 +83,7 @@ typedef struct {
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     uint32_t firstPassComplete;
-	NavAttMessage outputInertial;        /*!< -- Output inertial estimate data */
+	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttMessage stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */

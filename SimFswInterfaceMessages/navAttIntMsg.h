@@ -27,6 +27,6 @@ typedef struct {
     double omega_BN_B[3];    /*!< [r/s] Current spacecraft angular velocity vector of body
                               frame B relative to inertial frame N, in B frame components */
     double vehSunPntBdy[3];  /*!<       Current sun pointing vector in body frame*/
-}NavAttMessage;
+}NavAttIntMsg;
 
 #endif

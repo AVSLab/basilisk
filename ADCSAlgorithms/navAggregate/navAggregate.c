@@ -29,7 +29,7 @@
 void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
 {
     ConfigData->outputAttMsgID = CreateNewMessage(ConfigData->outputAttName,
-        sizeof(NavAttMessage), "NavAttMessage", moduleID);
+        sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     ConfigData->outputTransMsgID = CreateNewMessage(ConfigData->outputTransName,
                                                   sizeof(NavTransMessage), "NavTransMessage", moduleID);
 }
@@ -46,7 +46,7 @@ void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->attMsgCount; i=i+1)
     {
         ConfigData->attMsgs[i].inputNavID = subscribeToMessage(
-            ConfigData->attMsgs[i].inputNavName, sizeof(NavAttMessage), moduleID);
+            ConfigData->attMsgs[i].inputNavName, sizeof(NavAttIntMsg), moduleID);
     }
     for(i=0; i<ConfigData->transMsgCount; i=i+1)
     {
@@ -72,7 +72,7 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     for(i=0; i<ConfigData->attMsgCount; i=i+1)
     {
         ReadMessage(ConfigData->attMsgs[i].inputNavID, &writeTime, &writeSize,
-                    sizeof(NavAttMessage), &(ConfigData->attMsgs[i].msgStorage), moduleID);
+                    sizeof(NavAttIntMsg), &(ConfigData->attMsgs[i].msgStorage), moduleID);
     }
     for(i=0; i<ConfigData->transMsgCount; i=i+1)
     {
@@ -98,7 +98,7 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     memcpy(ConfigData->outAttData.vehSunPntBdy,
            ConfigData->attMsgs[ConfigData->sunIdx].msgStorage.vehSunPntBdy, 3*sizeof(double));
     /*! - Write the total message out for everyone else to pick up */
-    WriteMessage(ConfigData->outputAttMsgID, callTime, sizeof(NavAttMessage),
+    WriteMessage(ConfigData->outputAttMsgID, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->outAttData), moduleID);
     WriteMessage(ConfigData->outputTransMsgID, callTime, sizeof(NavTransMessage),
                  &(ConfigData->outTransData), moduleID);

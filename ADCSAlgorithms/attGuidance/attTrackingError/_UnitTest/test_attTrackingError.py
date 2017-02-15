@@ -97,7 +97,7 @@ def subModuleTestFunction(show_plots):
     #
     # Navigation Message
     #
-    NavStateOutData = attTrackingError.NavAttMessage()  # Create a structure for the input message
+    NavStateOutData = attTrackingError.NavAttIntMsg()  # Create a structure for the input message
     inputMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavName,

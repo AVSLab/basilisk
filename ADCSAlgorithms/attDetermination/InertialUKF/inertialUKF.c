@@ -37,7 +37,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
 	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
-		sizeof(NavAttMessage), "NavAttMessage", moduleID);
+		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
         sizeof(InertialFilterMessage), "InertialFilterMessage", moduleID);
@@ -85,7 +85,7 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
     memset(&massPropsInBuffer, 0x0 ,sizeof(VehicleConfigMessage));
-    memset(&(ConfigData->outputInertial), 0x0, sizeof(NavAttMessage));
+    memset(&(ConfigData->outputInertial), 0x0, sizeof(NavAttIntMsg));
     
     /*! - Read in mass properties and coarse sun sensor configuration information.*/
     ReadMessage(ConfigData->massPropsInMsgId, &writeTime, &writeSize,
@@ -209,7 +209,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 	v3Copy(ConfigData->state, ConfigData->outputInertial.sigma_BN);
     v3Copy(&(ConfigData->state[3]), ConfigData->outputInertial.omega_BN_B);
     ConfigData->outputInertial.timeTag = ConfigData->timeTag;
-	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttMessage),
+	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(ConfigData->outputInertial), moduleID);
     
     /*! - Populate the filter states output buffer and write the output message*/

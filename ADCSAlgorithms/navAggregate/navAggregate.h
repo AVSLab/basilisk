@@ -21,7 +21,7 @@
 #define _NAV_AGGREGATE_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswInterfaceMessages/navAttMessage.h"
+#include "SimFswInterfaceMessages/navAttIntMsg.h"
 #include "SimFswInterfaceMessages/navTransMessage.h"
 
 #define MAX_AGG_NAV_MSG 10
@@ -29,7 +29,7 @@
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavAttMessage msgStorage; /*! [-] Local buffer to store nav message*/
+    NavAttIntMsg msgStorage; /*! [-] Local buffer to store nav message*/
 }AggregateAttInput;
 
 typedef struct {
@@ -59,7 +59,7 @@ typedef struct {
     int32_t outputTransMsgID;   /*!< [-] The ID associated with the outgoing message*/
     int32_t outputAttMsgID;     /*!< [-] The ID associated with the outgoing message*/
     
-    NavAttMessage outAttData;   /*!< [-] The local storage of the outgoing message data*/
+    NavAttIntMsg outAttData;   /*!< [-] The local storage of the outgoing message data*/
     NavTransMessage outTransData; /*!< [-] The local storage of the outgoing message data*/
 }NavAggregateData;
 
