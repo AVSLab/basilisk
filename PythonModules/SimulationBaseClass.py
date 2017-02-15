@@ -300,7 +300,7 @@ class SimBaseClass:
         Subname = Subname.join(SplitName[1:])
         NoDotName = ''
         NoDotName = NoDotName.join(SplitName)
-        NoDotName = NoDotName.translate(None, '[]')
+        NoDotName = NoDotName.translate(None, "[]'()")
         inv_map = {v: k for k, v in self.NameReplace.items()}
         if SplitName[0] in inv_map:
             LogName = inv_map[SplitName[0]] + '.' + Subname
