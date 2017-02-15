@@ -30,10 +30,10 @@
 %ignore CrossInit_dvExecuteGuidance;
 GEN_SIZEOF(dvExecutionData);
 GEN_SIZEOF(dvExecuteGuidanceConfig);
-GEN_SIZEOF(NavTransMessage);
+GEN_SIZEOF(NavTransIntMsg);
 GEN_SIZEOF(DvBurnCmdMessage);
 %include "dvExecuteGuidance.h"
-%include "../../SimFswInterfaceMessages/navTransMessage.h"
+%include "../../SimFswInterfaceMessages/navTransIntMsg.h"
 %include "../../fswMessages/dvBurnCmdMessage.h"
 
 %pythoncode %{

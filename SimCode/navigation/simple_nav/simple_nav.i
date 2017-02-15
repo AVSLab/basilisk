@@ -27,10 +27,10 @@
 %include "simple_nav.h"
 %include "simMessages/scPlusStatesMessage.h"
 %include "../../SimFswInterfaceMessages/navAttIntMsg.h"
-%include "../../SimFswInterfaceMessages/navTransMessage.h"
+%include "../../SimFswInterfaceMessages/navTransIntMsg.h"
 GEN_SIZEOF(SCPlusStatesMessage);
 GEN_SIZEOF(NavAttIntMsg);
-GEN_SIZEOF(NavTransMessage);
+GEN_SIZEOF(NavTransIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

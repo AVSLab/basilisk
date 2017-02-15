@@ -108,7 +108,7 @@ def hillPointTestFunction(show_plots):
     #
     #   Navigation Input Message
     #
-    NavStateOutData = hillPoint.NavTransMessage()  # Create a structure for the input message
+    NavStateOutData = hillPoint.NavTransIntMsg()  # Create a structure for the input message
     inputNavMessageSize = NavStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputNavDataName,

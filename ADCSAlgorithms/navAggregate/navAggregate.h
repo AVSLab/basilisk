@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "SimFswInterfaceMessages/navAttIntMsg.h"
-#include "SimFswInterfaceMessages/navTransMessage.h"
+#include "SimFswInterfaceMessages/navTransIntMsg.h"
 
 #define MAX_AGG_NAV_MSG 10
 
@@ -35,7 +35,7 @@ typedef struct {
 typedef struct {
     char inputNavName[MAX_STAT_MSG_LENGTH]; /*!< The name of the input message*/
     int32_t inputNavID; /*!< Sensor IDs tied to the input name*/
-    NavTransMessage msgStorage; /*! [-] Local buffer to store nav message*/
+    NavTransIntMsg msgStorage; /*! [-] Local buffer to store nav message*/
 }AggregateTransInput;
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -60,7 +60,7 @@ typedef struct {
     int32_t outputAttMsgID;     /*!< [-] The ID associated with the outgoing message*/
     
     NavAttIntMsg outAttData;   /*!< [-] The local storage of the outgoing message data*/
-    NavTransMessage outTransData; /*!< [-] The local storage of the outgoing message data*/
+    NavTransIntMsg outTransData; /*!< [-] The local storage of the outgoing message data*/
 }NavAggregateData;
 
 #ifdef __cplusplus

@@ -26,7 +26,7 @@
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMEssages/spicePlanetStateMessage.h"
 #include "../SimFswInterfaceMessages/navAttIntMsg.h"
-#include "../SimFswInterfaceMessages/navTransMessage.h"
+#include "../SimFswInterfaceMessages/navTransIntMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -64,8 +64,8 @@ public:
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
     NavAttIntMsg trueAttState;        //!< -- attitude nav state without errors
     NavAttIntMsg estAttState;         //!< -- attitude nav state including errors
-    NavTransMessage trueTransState;    //!< -- translation nav state without errors
-    NavTransMessage estTransState;     //!< -- translation nav state including errors
+    NavTransIntMsg trueTransState;    //!< -- translation nav state without errors
+    NavTransIntMsg estTransState;     //!< -- translation nav state including errors
     SCPlusStatesMessage inertialState; //!< -- input inertial state from Star Tracker
     SpicePlanetStateMessage sunState;  //!< -- input Sun state
 private:

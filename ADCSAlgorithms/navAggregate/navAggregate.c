@@ -31,7 +31,7 @@ void SelfInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
     ConfigData->outputAttMsgID = CreateNewMessage(ConfigData->outputAttName,
         sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     ConfigData->outputTransMsgID = CreateNewMessage(ConfigData->outputTransName,
-                                                  sizeof(NavTransMessage), "NavTransMessage", moduleID);
+                                                  sizeof(NavTransIntMsg), "NavTransIntMsg", moduleID);
 }
 
 /*! This method performs the second stage of initialization for the nav aggregration 
@@ -51,7 +51,7 @@ void CrossInit_aggregateNav(NavAggregateData *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->transMsgCount; i=i+1)
     {
         ConfigData->transMsgs[i].inputNavID = subscribeToMessage(
-            ConfigData->transMsgs[i].inputNavName, sizeof(NavTransMessage), moduleID);
+            ConfigData->transMsgs[i].inputNavName, sizeof(NavTransIntMsg), moduleID);
     }
 }
 
@@ -77,7 +77,7 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     for(i=0; i<ConfigData->transMsgCount; i=i+1)
     {
         ReadMessage(ConfigData->transMsgs[i].inputNavID, &writeTime, &writeSize,
-                    sizeof(NavTransMessage), &(ConfigData->transMsgs[i].msgStorage), moduleID);
+                    sizeof(NavTransIntMsg), &(ConfigData->transMsgs[i].msgStorage), moduleID);
     }
     
     /*! - Copy out each part of the source message into the target output message*/
@@ -100,7 +100,7 @@ void Update_aggregateNav(NavAggregateData *ConfigData, uint64_t callTime, uint64
     /*! - Write the total message out for everyone else to pick up */
     WriteMessage(ConfigData->outputAttMsgID, callTime, sizeof(NavAttIntMsg),
                  &(ConfigData->outAttData), moduleID);
-    WriteMessage(ConfigData->outputTransMsgID, callTime, sizeof(NavTransMessage),
+    WriteMessage(ConfigData->outputTransMsgID, callTime, sizeof(NavTransIntMsg),
                  &(ConfigData->outTransData), moduleID);
     
     return;

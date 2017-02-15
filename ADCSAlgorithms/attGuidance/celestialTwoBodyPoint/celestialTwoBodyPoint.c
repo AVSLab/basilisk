@@ -56,7 +56,7 @@ void CrossInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     ConfigData->inputCelID = subscribeToMessage(ConfigData->inputCelMessName,
                                                 sizeof(EphemerisIntMsg), moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
-                                                sizeof(NavTransMessage), moduleID);
+                                                sizeof(NavTransIntMsg), moduleID);
     ConfigData->inputSecID = -1;
     if(strlen(ConfigData->inputSecMessName) > 0)
     {
@@ -80,7 +80,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
 {
     uint64_t writeTime;
     uint32_t writeSize;
-    NavTransMessage navData;
+    NavTransIntMsg navData;
     EphemerisIntMsg primPlanet;
     EphemerisIntMsg secPlanet;
     
@@ -90,7 +90,7 @@ void parseInputMessages(celestialTwoBodyPointConfig *ConfigData, uint64_t module
     double platAngDiff;             /* Angle between r_P1 and r_P2 */
     double dotProduct;              /* Temporary scalar variable */
     
-    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransMessage), &navData, moduleID);
+    ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize, sizeof(NavTransIntMsg), &navData, moduleID);
     ReadMessage(ConfigData->inputCelID, &writeTime, &writeSize, sizeof(EphemerisIntMsg), &primPlanet, moduleID);
     
     v3Subtract(primPlanet.r_BdyZero_N, navData.r_BN_N, ConfigData->R_P1);

@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
-#include "../SimFswInterfaceMessages/navTransMessage.h"
+#include "../SimFswInterfaceMessages/navTransIntMsg.h"
 
 /*! @brief Top level structure for the converter that takes an 
     ephemeris output message and converts it over to a translational 
@@ -35,7 +35,7 @@ typedef struct {
     int32_t stateOutMsgID;    /*!< [-] The ID associated with the outgoing message*/
     int32_t ephInMsgID;  /*!< [-] The ID associated with the incoming clock correlation*/
     
-    NavTransMessage outputState; /*!< [-] The local storage of the outgoing message data*/
+    NavTransIntMsg outputState; /*!< [-] The local storage of the outgoing message data*/
 }EphemNavConverterData;
 
 #ifdef __cplusplus

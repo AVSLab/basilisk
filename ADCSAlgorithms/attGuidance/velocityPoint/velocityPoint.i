@@ -32,11 +32,11 @@
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
 %include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
-%include "../../SimFswInterfaceMessages/navTransMessage.h"
+%include "../../SimFswInterfaceMessages/navTransIntMsg.h"
 %include "../../fswMessages/attRefMessage.h"
 GEN_SIZEOF(velocityPointConfig);
 GEN_SIZEOF(EphemerisIntMsg);
-GEN_SIZEOF(NavTransMessage);
+GEN_SIZEOF(NavTransIntMsg);
 GEN_SIZEOF(AttRefMessage);
 
 %pythoncode %{
