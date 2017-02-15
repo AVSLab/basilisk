@@ -70,7 +70,7 @@ void CrossInit_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t moduleID)
                                                        sizeof(RWArrayConfigFswMsg), moduleID);
         if (strlen(ConfigData->inputRWSpeedsName) > 0) {
         ConfigData->inputRWSpeedsID = subscribeToMessage(ConfigData->inputRWSpeedsName,
-                                                         sizeof(RWSpeedMessage), moduleID);
+                                                         sizeof(RWSpeedIntMsg), moduleID);
         } else {
             printf("Error: the inputRWSpeedsName wasn't set while rwParamsInMsgName was set.\n");
         }
@@ -125,7 +125,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidMessage      guidCmd;            /*!< Guidance Message */
-    RWSpeedMessage      wheelSpeeds;        /*!< Reaction wheel speed estimates */
+    RWSpeedIntMsg      wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityFswMsg  wheelsAvailability; /*!< Reaction wheel availability */
 
     uint64_t            clockTime;
@@ -151,7 +151,7 @@ void Update_MRP_Feedback(MRP_FeedbackConfig *ConfigData, uint64_t callTime,
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default
     if(ConfigData->rwConfigParams.numRW > 0) {
         ReadMessage(ConfigData->inputRWSpeedsID, &clockTime, &readSize,
-                    sizeof(RWSpeedMessage), (void*) &(wheelSpeeds), moduleID);
+                    sizeof(RWSpeedIntMsg), (void*) &(wheelSpeeds), moduleID);
         if (ConfigData->rwAvailInMsgID >= 0){
             ReadMessage(ConfigData->rwAvailInMsgID, &clockTime, &readSize,
                         sizeof(RWAvailabilityFswMsg), &wheelsAvailability, moduleID);

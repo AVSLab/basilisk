@@ -110,7 +110,7 @@ def run(show_plots, useLargeVoltage, useAvailability, useTorqueLoop):
     if useTorqueLoop:
         moduleConfig.K = 1.5
         moduleConfig.inputRWSpeedsInMsgName = "rw_speeds"
-        rwSpeedMessage = rwMotorVoltage.RWSpeedMessage()
+        rwSpeedMessage = rwMotorVoltage.RWSpeedIntMsg()
         rwSpeedMessage.wheelSpeeds = [1.0, 2.0, 1.5, -3.0]      # rad/sec Omega's
         unitTestSupport.setMessage(unitTestSim.TotalSim,
                                    unitProcessName,

@@ -28,7 +28,7 @@
 #include <Eigen/Dense>
 #include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../simMessages/rwCmdMessage.h"
 #include "../../simMessages/rwConfigMessage.h"
 #include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
@@ -69,7 +69,7 @@ public:
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<RWCmdMessage> NewRWCmds;                        //!< -- Incoming attitude commands
-	RWSpeedMessage outputStates;                                //!< (-) Output data from the reaction wheels
+	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
     std::string nameOfReactionWheelOmegasState;
     std::string nameOfReactionWheelThetasState;
 	int numRW;

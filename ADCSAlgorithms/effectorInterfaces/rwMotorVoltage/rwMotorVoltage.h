@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/rwAvailabilityFswMsg.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../../SimFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"

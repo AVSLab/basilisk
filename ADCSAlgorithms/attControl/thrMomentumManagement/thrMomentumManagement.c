@@ -65,7 +65,7 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
     ConfigData->rwConfInMsgID = subscribeToMessage(ConfigData->rwConfigDataInMsgName,
                                                   sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
-                                                     sizeof(RWSpeedMessage), moduleID);
+                                                     sizeof(RWSpeedIntMsg), moduleID);
     ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
                                                               sizeof(VehicleConfigMessage), moduleID);
 }
@@ -101,7 +101,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 {
     uint64_t            clockTime;
     uint32_t            readSize;
-    RWSpeedMessage      rwSpeedMsg;         /*!< Reaction wheel speed estimates */
+    RWSpeedIntMsg      rwSpeedMsg;         /*!< Reaction wheel speed estimates */
     double              hs;                 /*!< net RW cluster angularl momentum magnitude */
     double              hs_B[3];            /*!< RW angular momentum */
     double              vec3[3];            /*!< temp vector */
@@ -112,7 +112,7 @@ void Update_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint6
 
         /*! - Read the input messages */
         ReadMessage(ConfigData->rwSpeedsInMsgID, &clockTime, &readSize,
-                    sizeof(RWSpeedMessage), (void*) &(rwSpeedMsg), moduleID);
+                    sizeof(RWSpeedIntMsg), (void*) &(rwSpeedMsg), moduleID);
 
         /* compute net RW momentum magnitude */
         v3SetZero(hs_B);

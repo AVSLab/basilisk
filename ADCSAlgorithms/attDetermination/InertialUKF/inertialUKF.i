@@ -37,10 +37,10 @@
 %include "../../fswMessages/stAttMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 GEN_SIZEOF(STAttMessage);
 GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedMessage);
+GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(VehicleConfigMessage);
 
 %pythoncode %{

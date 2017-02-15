@@ -34,12 +34,12 @@ GEN_SIZEOF(MRP_FeedbackConfig);
 GEN_SIZEOF(AttGuidMessage);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedMessage);
+GEN_SIZEOF(RWSpeedIntMsg);
 %include "MRP_Feedback.h"
 %include "../../fswMessages/attGuidMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 

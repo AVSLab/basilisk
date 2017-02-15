@@ -25,7 +25,7 @@
 #include "fswMessages/attGuidMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
-#include "SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 

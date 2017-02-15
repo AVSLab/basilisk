@@ -30,7 +30,7 @@
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../simMessages/rwCmdMessage.h"
 %include "../../simMessages/rwConfigMessage.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"

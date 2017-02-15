@@ -28,7 +28,7 @@
 #include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "fswUtilities/fswDefinitions.h"
 #include "SimCode/utilities/astroConstants.h"
-#include "SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include <string.h>
 #include <math.h>
 

@@ -38,8 +38,8 @@ GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
-%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
-GEN_SIZEOF(RWSpeedMessage);
+%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+GEN_SIZEOF(RWSpeedIntMsg);
 
 %pythoncode %{
 import sys

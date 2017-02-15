@@ -25,7 +25,7 @@
 /*! @brief Structure used to define the output definition for reaction wheel speeds*/
 typedef struct {
     double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the RW wheel
-}RWSpeedMessage;
+}RWSpeedIntMsg;
 
 
 

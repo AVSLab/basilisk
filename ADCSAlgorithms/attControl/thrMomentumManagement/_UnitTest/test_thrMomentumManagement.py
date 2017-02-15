@@ -110,7 +110,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
     moduleConfig.deltaHOutMsgName = "outputName"
 
     # wheelSpeeds Message
-    rwSpeedMessage = thrMomentumManagement.RWSpeedMessage()
+    rwSpeedMessage = thrMomentumManagement.RWSpeedIntMsg()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.rwSpeedsInMsgName,

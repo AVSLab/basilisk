@@ -38,7 +38,7 @@
 #include "simMessages/rwConfigMessage.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/thrOutputMessage.h"
-#include "../SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simMessages/spicePlanetStateMessage.h"
 #include "simMessages/spiceTimeMessage.h"
 

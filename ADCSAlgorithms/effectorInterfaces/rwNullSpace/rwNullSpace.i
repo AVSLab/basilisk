@@ -31,10 +31,10 @@
 %constant void Reset_rwNullSpace(void*, uint64_t, uint64_t);
 %ignore Reset_rwNullSpace;
 GEN_SIZEOF(rwNullSpaceConfig);
-GEN_SIZEOF(RWSpeedMessage);
+GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(RWArrayTorqueIntMsg);
 %include "rwNullSpace.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 %pythoncode %{

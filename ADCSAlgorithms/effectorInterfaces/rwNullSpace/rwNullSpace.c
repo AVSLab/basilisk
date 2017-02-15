@@ -64,7 +64,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
         sizeof(RWArrayTorqueIntMsg), moduleID);
 	/*! - Get the RW speeds ID*/
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
-		sizeof(RWSpeedMessage), moduleID);
+		sizeof(RWSpeedIntMsg), moduleID);
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
         sizeof(RWConstellationMessage), moduleID);
     
@@ -128,7 +128,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     RWArrayTorqueIntMsg cntrRequest;
-	RWSpeedMessage rwSpeeds;
+	RWSpeedIntMsg rwSpeeds;
 	RWArrayTorqueIntMsg finalControl;
 	double dVector[MAX_EFF_CNT];
     
@@ -137,7 +137,7 @@ void Update_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->inputRWCmdsID, &ClockTime, &ReadSize,
                 sizeof(RWArrayTorqueIntMsg), (void*) &(cntrRequest), moduleID);
 	ReadMessage(ConfigData->inputSpeedsID, &ClockTime, &ReadSize,
-		sizeof(RWSpeedMessage), (void*)&(rwSpeeds), moduleID);
+		sizeof(RWSpeedIntMsg), (void*)&(rwSpeeds), moduleID);
     
 	memset(&finalControl, 0x0, sizeof(RWArrayTorqueIntMsg));
 	vScale(-ConfigData->OmegaGain, rwSpeeds.wheelSpeeds,

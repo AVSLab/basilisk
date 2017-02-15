@@ -18,7 +18,7 @@
  */
 
 #include "effectorInterfaces/thrustRWDesat/thrustRWDesat.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "sensorInterfaces/IMUSensorData/imuComm.h"
@@ -65,7 +65,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     
     /*! - Get the control data message ID*/
     ConfigData->inputSpeedID = subscribeToMessage(ConfigData->inputSpeedName,
-        sizeof(RWSpeedMessage), moduleID);
+        sizeof(RWSpeedIntMsg), moduleID);
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellationMessage), moduleID);
     ConfigData->inputMassPropID = subscribeToMessage(
@@ -118,7 +118,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
     uint32_t ReadSize;
     uint32_t i;
 	int32_t selectedThruster;     /* Thruster index to fire */
-    RWSpeedMessage rwSpeeds;      /* Local reaction wheel speeds */
+    RWSpeedIntMsg rwSpeeds;      /* Local reaction wheel speeds */
 	double observedSpeedVec[3];   /* The total summed speed of RWAs*/
 	double singleSpeedVec[3];     /* The speed vector for a single wheel*/
 	double bestMatch;             /* The current best thruster/wheel matching*/
@@ -136,7 +136,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 
     /*! - Read the input rwheel speeds from the reaction wheels*/
     ReadMessage(ConfigData->inputSpeedID, &ClockTime, &ReadSize,
-                sizeof(RWSpeedMessage), (void*) &(rwSpeeds), moduleID);
+                sizeof(RWSpeedIntMsg), (void*) &(rwSpeeds), moduleID);
     
     /*! - Accumulate the total momentum vector we want to apply (subtract speed vectors)*/
 	v3SetZero(observedSpeedVec);

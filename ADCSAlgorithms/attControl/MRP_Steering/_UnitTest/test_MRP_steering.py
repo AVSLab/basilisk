@@ -121,7 +121,7 @@ def mrp_steering_tracking(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = MRP_Steering.RWSpeedMessage()
+    rwSpeedMessage = MRP_Steering.RWSpeedIntMsg()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,

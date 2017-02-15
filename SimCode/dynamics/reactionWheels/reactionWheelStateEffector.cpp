@@ -342,8 +342,8 @@ void ReactionWheelStateEffector::SelfInit()
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
 	}
 
-	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedMessage),
-												 OutputBufferCount, "RWSpeedMessage", moduleID);
+	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedIntMsg),
+												 OutputBufferCount, "RWSpeedIntMsg", moduleID);
 
     return;
 }
@@ -450,7 +450,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 	// Write this message once for all reaction wheels
 	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-							 sizeof(RWSpeedMessage), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+							 sizeof(RWSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the

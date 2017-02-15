@@ -21,7 +21,7 @@
 #define _INERTIAL_UKF_H_
 
 #include "messaging/static_messaging.h"
-#include "SimFswInterfaceMessages/rwSpeedMessage.h"
+#include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/inertialFilterMessage.h"
 #include "fswMessages/stAttMessage.h"
@@ -86,8 +86,8 @@ typedef struct {
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttMessage stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
-    RWSpeedMessage rwSpeeds;             /*! [-] Local reaction wheel speeds */
-    RWSpeedMessage rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
+    RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
+    RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
     VehicleConfigMessage localConfigData;   /*! [-] Vehicle configuration data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
