@@ -48,8 +48,8 @@ void SelfInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleID
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->voltageOutMsgID = CreateNewMessage(ConfigData->voltageOutMsgName,
-                                               sizeof(RWArrayVoltageMessage),
-                                               "RWArrayVoltageMessage",          /* add the output structure name */
+                                               sizeof(RWArrayVoltageIntMsg),
+                                               "RWArrayVoltageIntMsg",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -185,7 +185,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
            voltage,
            rwArrayMemorySize);
 
-    WriteMessage(ConfigData->voltageOutMsgID, callTime, sizeof(RWArrayVoltageMessage),
+    WriteMessage(ConfigData->voltageOutMsgID, callTime, sizeof(RWArrayVoltageIntMsg),
                  (void*) &(ConfigData->voltageOut), moduleID);
 
     return;

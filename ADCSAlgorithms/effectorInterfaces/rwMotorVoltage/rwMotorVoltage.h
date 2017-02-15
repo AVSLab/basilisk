@@ -25,7 +25,7 @@
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 #include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
-#include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
+#include "../../../SimFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 
 
@@ -58,7 +58,7 @@ typedef struct {
     int32_t rwAvailInMsgID;                          /*!< [-] ID for the incoming  RWs availability data*/
 
     RWArrayConfigFswMsg rwConfigParams;                  /*!< [-] struct to store message containing RW config parameters in body B frame */
-    RWArrayVoltageMessage voltageOut;                /*!< -- copy of the output message */
+    RWArrayVoltageIntMsg voltageOut;                /*!< -- copy of the output message */
 
 }rwMotorVoltageConfig;
 

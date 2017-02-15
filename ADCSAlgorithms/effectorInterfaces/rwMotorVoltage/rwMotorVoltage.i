@@ -40,7 +40,7 @@ GEN_SIZEOF(RWArrayConfigFswMsg);
 %include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
 %include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
-%include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayVoltageIntMsg.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"

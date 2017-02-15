@@ -65,7 +65,7 @@ void RWVoltageInterface::CrossInit()
     //! - Obtain the ID associated with the input state name and alert if not found.
     this->rwVoltageInMsgID = SystemMessaging::GetInstance()->
         subscribeToMessage(this->rwVoltageInMsgName,
-                           sizeof(RWArrayVoltageMessage),
+                           sizeof(RWArrayVoltageIntMsg),
                            moduleID);
     if(this->rwVoltageInMsgID < 0)
     {
@@ -87,9 +87,9 @@ void RWVoltageInterface::readInputMessages()
 
     //! - Zero the input buffer and read the incoming array of voltages
     SingleMessageHeader LocalHeader;
-    memset(&(this->inputVoltageBuffer), 0x0, sizeof(RWArrayVoltageMessage));
+    memset(&(this->inputVoltageBuffer), 0x0, sizeof(RWArrayVoltageIntMsg));
     SystemMessaging::GetInstance()->ReadMessage(this->rwVoltageInMsgID, &LocalHeader,
-                                                sizeof(RWArrayVoltageMessage),
+                                                sizeof(RWArrayVoltageIntMsg),
                                                 reinterpret_cast<uint8_t*> (&(this->inputVoltageBuffer)),
                                                 moduleID);
 
