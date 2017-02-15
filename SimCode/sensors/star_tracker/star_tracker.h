@@ -25,7 +25,7 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spiceTimeMessage.h"
-#include "../SimFswInterfaceMessages/stHwInterface.h"
+#include "../SimFswInterfaceMessages/stSensorIntMsg.h"
 
 class StarTracker: public SysModel {
 public:
@@ -42,7 +42,7 @@ public:
     void applySensorErrors();
     void computeTrueOutput();
     void computeSensorTimeTag(uint64_t CurrentSimNanos);
-    void computeQuaternion(double *sigma, StarTrackerHWMessage *sensorValue);
+    void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
     
 public:
     
@@ -56,8 +56,8 @@ public:
     std::vector<double> navErrors;    //!< [-] Current navigation errors applied to truth
     uint64_t OutputBufferCount;       //!< [-] Count on the number of output message buffers
     double dcm_CS[9];                 //!< [-] Transformation matrix from structure to case
-    StarTrackerHWMessage trueValues;  //!< [-] total measurement without perturbations
-    StarTrackerHWMessage sensedValues;//!< [-] total measurement including perturbations
+    STSensorIntMsg trueValues;  //!< [-] total measurement without perturbations
+    STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
     uint64_t envTimeClock;            //!< [ns] Clock associated with the environment time message
     SpiceTimeMessage timeState;       //!< [-] Module variable where the input Spice Time message is stored

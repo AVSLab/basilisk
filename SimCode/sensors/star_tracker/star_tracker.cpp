@@ -58,8 +58,8 @@ void StarTracker::SelfInit()
     //! Begin method steps
     uint64_t numStates = 3;
     outputStateID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputStateMessage, sizeof(StarTrackerHWMessage),
-        OutputBufferCount, "StarTrackerHWMessage", moduleID);
+        CreateNewMessage(outputStateMessage, sizeof(STSensorIntMsg),
+        OutputBufferCount, "STSensorIntMsg", moduleID);
     
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
@@ -126,7 +126,7 @@ void StarTracker::applySensorErrors()
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
-void StarTracker::computeQuaternion(double *sigma, StarTrackerHWMessage *sensorValues)
+void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
 {
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
     double dcm_SN[3][3];            /* dcm, inertial to structure frame */
@@ -153,7 +153,7 @@ void StarTracker::computeTrueOutput()
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-                                                 sizeof(StarTrackerHWMessage), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
+                                                 sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
 }
 
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)

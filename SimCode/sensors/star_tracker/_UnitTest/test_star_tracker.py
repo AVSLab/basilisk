@@ -121,7 +121,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     SpiceTimeOutput.GPSRollovers = 0      # -- Count on the number of GPS rollovers uint64_t
 
     # get module output fields and lengths
-    StarTrackerOutput = star_tracker.StarTrackerHWMessage()
+    StarTrackerOutput = star_tracker.STSensorIntMsg()
     fieldNames = list()
     fieldLengths = list()
     for fieldName in dir(StarTrackerOutput):

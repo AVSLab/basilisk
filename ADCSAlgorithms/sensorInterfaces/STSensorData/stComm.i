@@ -28,12 +28,12 @@
 %ignore SelfInit_stProcessTelem;
 %constant void CrossInit_stProcessTelem(void*, uint64_t);
 %ignore CrossInit_stProcessTelem;
-%include "../../../SimFswInterfaceMessages/stHwInterface.h"
+%include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
 %include "../../fswMessages/stAttMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(STAttMessage);
 GEN_SIZEOF(STConfigData);
-GEN_SIZEOF(StarTrackerHWMessage);
+GEN_SIZEOF(STSensorIntMsg);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "stComm.h"
 %pythoncode %{
