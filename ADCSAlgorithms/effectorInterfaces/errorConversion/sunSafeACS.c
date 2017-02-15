@@ -36,8 +36,8 @@ void SelfInit_sunSafeACS(sunSafeACSConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrData.outputMsgID = CreateNewMessage(
-        ConfigData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdMessage),
-        "THRArrayOnTimeCmdMessage", moduleID);
+        ConfigData->thrData.outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
+        "THRArrayOnTimeCmdIntMsg", moduleID);
     
 }
 

@@ -39,8 +39,8 @@ void SelfInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     /*! - Loop over number of thruster blocks and create output messages */
   
     ConfigData->outputThrID = CreateNewMessage(
-        ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdMessage),
-        "THRArrayOnTimeCmdMessage", moduleID);
+        ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
+        "THRArrayOnTimeCmdIntMsg", moduleID);
   
     
 }
@@ -124,7 +124,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	double bestMatch;             /* The current best thruster/wheel matching*/
 	double currentMatch;          /* Assessment of the current match */
     double fireValue;             /* Amount of time to fire the jet for */
-	THRArrayOnTimeCmdMessage outputData;    /* Local output firings */
+	THRArrayOnTimeCmdIntMsg outputData;    /* Local output firings */
   
     /*! Begin method steps*/
     /*! - If we haven't met the cooldown threshold, do nothing */
@@ -185,7 +185,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
           Only apply thruster firing if the best match is non-zero.  Find the thruster 
 		  that best matches the current specified direction.
     */
-	memset(&outputData, 0x0, sizeof(THRArrayOnTimeCmdMessage));
+	memset(&outputData, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
 	selectedThruster = -1;
 	bestMatch = 0.0;
 	for (i = 0; i < ConfigData->numThrusters; i++)
@@ -222,7 +222,7 @@ void Update_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t callTime,
 	}
    
     /*! - Write the output message to the thruster system */
-	WriteMessage(ConfigData->outputThrID, callTime, sizeof(THRArrayOnTimeCmdMessage),
+	WriteMessage(ConfigData->outputThrID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
 		&(outputData), moduleID);
 
     return;

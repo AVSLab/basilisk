@@ -37,8 +37,8 @@ void SelfInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t mo
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(
         ConfigData->outputDataName, sizeof(dvExecutionData), "dvExecutionData", moduleID);
-    ConfigData->outputThrID = CreateNewMessage(ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdMessage),
-                                               "THRArrayOnTimeCmdMessage", moduleID);
+    ConfigData->outputThrID = CreateNewMessage(ConfigData->outputThrName, sizeof(THRArrayOnTimeCmdIntMsg),
+                                               "THRArrayOnTimeCmdIntMsg", moduleID);
     return;
     
 }
@@ -79,7 +79,7 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     NavTransIntMsg navData;
     DvBurnCmdMessage localBurnData;
     dvExecutionData localExeData;
-    THRArrayOnTimeCmdMessage effCmd;
+    THRArrayOnTimeCmdIntMsg effCmd;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
         sizeof(NavTransIntMsg), &navData, moduleID);
@@ -110,9 +110,9 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     
     if(ConfigData->burnComplete)
     {
-        memset(&effCmd, 0x0, sizeof(THRArrayOnTimeCmdMessage));
+        memset(&effCmd, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
         WriteMessage(ConfigData->outputThrID, callTime,
-            sizeof(THRArrayOnTimeCmdMessage), &effCmd, moduleID);
+            sizeof(THRArrayOnTimeCmdIntMsg), &effCmd, moduleID);
     }
     
     localExeData.burnComplete = ConfigData->burnComplete;

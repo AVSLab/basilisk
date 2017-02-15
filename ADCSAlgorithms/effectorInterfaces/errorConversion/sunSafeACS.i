@@ -33,8 +33,8 @@ GEN_SIZEOF(sunSafeACSConfig);
 %include "sunSafeACS.h"
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
-GEN_SIZEOF(THRArrayOnTimeCmdMessage);
+%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
 
 %pythoncode %{
 import sys

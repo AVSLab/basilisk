@@ -26,7 +26,7 @@
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrArrayCmdForceMessage.h"
 #include "SimFswInterfaceMessages/macroDefinitions.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -56,7 +56,7 @@ typedef struct {
 	int32_t  			thrConfInMsgID;                   				/*!< ID for the incoming Thruster configuration data */
 
 	THRArrayCmdForceMessage thrForceIn;								    /*!< -- copy of the input message */
-	THRArrayOnTimeCmdMessage thrOnTimeOut;								/*!< -- copy of the output message */
+	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								/*!< -- copy of the output message */
 
 }thrFiringSchmittConfig;
 

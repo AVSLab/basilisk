@@ -161,7 +161,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
-    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdMessage()
+    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     thrMessageSize = ThrustMessage.getStructSize()
     if thrustNumber==1:
         ThrustMessage.OnTimeRequest = [0.]

@@ -48,8 +48,8 @@ void SelfInit_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t modu
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->onTimeOutMsgID = CreateNewMessage(ConfigData->onTimeOutMsgName,
-                                               sizeof(THRArrayOnTimeCmdMessage),
-                                               "THRArrayOnTimeCmdMessage",          /* add the output structure name */
+                                               sizeof(THRArrayOnTimeCmdIntMsg),
+                                               "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
                                                moduleID);
 }
 
@@ -118,7 +118,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 			ConfigData->thrOnTimeOut.OnTimeRequest[i] = (double)(ConfigData->baseThrustState) * 2.0;
 		}
 
-		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),   /* update module name */
+		WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
 					 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 		return;
 	}
@@ -173,7 +173,7 @@ void Update_thrFiringSchmitt(thrFiringSchmittConfig *ConfigData, uint64_t callTi
 		ConfigData->thrOnTimeOut.OnTimeRequest[i] = onTime[i];
 	}
 
-	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),   /* update module name */
+	WriteMessage(ConfigData->onTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),   /* update module name */
 				 (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
 	return;

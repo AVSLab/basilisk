@@ -31,11 +31,11 @@
 %constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(effPairs);
 GEN_SIZEOF(ThrustGroupData);
 GEN_SIZEOF(dvAttEffectConfig);
-GEN_SIZEOF(THRArrayOnTimeCmdMessage);
+GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
 
 %include "dvAttEffect.h"
 %pythoncode %{

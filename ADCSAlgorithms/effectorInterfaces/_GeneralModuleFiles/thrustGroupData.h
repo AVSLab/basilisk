@@ -21,7 +21,7 @@
 #define _THRUST_GROUP_DATA_
 
 #include "SimFswInterfaceMessages/macroDefinitions.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster 
@@ -35,7 +35,7 @@ typedef struct {
     double thrOnMap[3*MAX_EFF_CNT]; /*!< - Mapping between on-times and torque requests*/
     char outputDataName[MAX_STAT_MSG_LENGTH]; /*!< - The name of the output message*/
     int32_t outputMsgID;            /*!< - ID for the outgoing command messages*/
-    THRArrayOnTimeCmdMessage cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
+    THRArrayOnTimeCmdIntMsg cmdRequests; /*!< - The array of on-time command requests sent to thrusters*/
 }ThrustGroupData;
 
 /*! @} */

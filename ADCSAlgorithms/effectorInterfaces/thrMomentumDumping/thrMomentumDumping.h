@@ -25,7 +25,7 @@
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrArrayCmdForceMessage.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -57,7 +57,7 @@ typedef struct {
     int32_t  thrusterConfInMsgID;                   /*!< [-] ID for the incoming Thruster configuration data*/
 
 
-    THRArrayOnTimeCmdMessage thrOnTimeOut;          /*!< -- copy of the output message */
+    THRArrayOnTimeCmdIntMsg thrOnTimeOut;          /*!< -- copy of the output message */
 
 }thrMomentumDumpingConfig;
 

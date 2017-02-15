@@ -48,8 +48,8 @@ void SelfInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t 
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->thrusterOnTimeOutMsgID = CreateNewMessage(ConfigData->thrusterOnTimeOutMsgName,
-                                               sizeof(THRArrayOnTimeCmdMessage),
-                                               "THRArrayOnTimeCmdMessage",          /* add the output structure name */
+                                               sizeof(THRArrayOnTimeCmdIntMsg),
+                                               "THRArrayOnTimeCmdIntMsg",          /* add the output structure name */
                                                moduleID);
 
 }
@@ -101,7 +101,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
     /* zero out some vectors */
     memset(ConfigData->thrOnTimeRemaining, 0x0, MAX_EFF_CNT*sizeof(double));
     memset(ConfigData->Delta_p, 0x0, MAX_EFF_CNT*sizeof(double));
-    memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdMessage));
+    memset(&(ConfigData->thrOnTimeOut), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
 
     if (ConfigData->maxCounterValue < 1) {
         printf("WARNING: the maxCounterValue flag must be set to a positive value.\n");
@@ -189,9 +189,9 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
     /*
      store the output message
      */
-    memmove(ConfigData->thrOnTimeOut.OnTimeRequest, tOnOut, sizeof(THRArrayOnTimeCmdMessage));
+    memmove(ConfigData->thrOnTimeOut.OnTimeRequest, tOnOut, sizeof(THRArrayOnTimeCmdIntMsg));
 
-    WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage), 
+    WriteMessage(ConfigData->thrusterOnTimeOutMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg), 
                  (void*) &(ConfigData->thrOnTimeOut), moduleID);
 
     return;

@@ -36,7 +36,7 @@ GEN_SIZEOF(thrFiringRemainderConfig);
 GEN_SIZEOF(THRArrayConfigFSWMessage);
 %include "../../fswMessages/thrArrayCmdForceMessage.h"
 GEN_SIZEOF(THRArrayCmdForceMessage);
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

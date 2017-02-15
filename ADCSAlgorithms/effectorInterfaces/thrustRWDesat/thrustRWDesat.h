@@ -25,7 +25,7 @@
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/rwConstellationMessage.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include <stdint.h>
 #include <stdlib.h>

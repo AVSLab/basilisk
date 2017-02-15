@@ -97,7 +97,7 @@ void ThrusterDynamicEffector::CrossInit()
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
     CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(THRArrayOnTimeCmdMessage), moduleID);
+                                                                     sizeof(THRArrayOnTimeCmdIntMsg), moduleID);
     
 }
 
@@ -155,10 +155,10 @@ bool ThrusterDynamicEffector::ReadInputs()
     
     //! - Zero the command buffer and read the incoming command array
     SingleMessageHeader LocalHeader;
-    memset(&IncomingCmdBuffer, 0x0, sizeof(THRArrayOnTimeCmdMessage));
+    memset(&IncomingCmdBuffer, 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
     memset(&LocalHeader, 0x0, sizeof(LocalHeader));
     dataGood = SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-                                                           sizeof(THRArrayOnTimeCmdMessage),
+                                                           sizeof(THRArrayOnTimeCmdIntMsg),
                                                            reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
     
     //! - Check if message has already been read, if stale return

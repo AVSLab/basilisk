@@ -26,7 +26,7 @@
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "../_GeneralModuleFiles/thrustGroupData.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdMessage.h"
+#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

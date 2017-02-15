@@ -38,8 +38,8 @@ void SelfInit_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t moduleID)
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         ConfigData->thrGroups[i].outputMsgID = CreateNewMessage(
-            ConfigData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdMessage),
-            "THRArrayOnTimeCmdMessage", moduleID);
+            ConfigData->thrGroups[i].outputDataName, sizeof(THRArrayOnTimeCmdIntMsg),
+            "THRArrayOnTimeCmdIntMsg", moduleID);
     }
  
     
@@ -62,16 +62,16 @@ void Reset_dvAttEffect(dvAttEffectConfig *ConfigData, uint64_t callTime,
                         uint64_t moduleID)
 {
     uint32_t i;
-    THRArrayOnTimeCmdMessage nullEffect;
+    THRArrayOnTimeCmdIntMsg nullEffect;
     
-    memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdMessage));
+    memset(&(nullEffect), 0x0, sizeof(THRArrayOnTimeCmdIntMsg));
     
     for(i=0; i<ConfigData->numThrGroups; i=i+1)
     {
         memcpy(&(ConfigData->thrGroups[i].cmdRequests), &nullEffect,
-            sizeof(THRArrayOnTimeCmdMessage));
+            sizeof(THRArrayOnTimeCmdIntMsg));
         WriteMessage(ConfigData->thrGroups[i].outputMsgID, callTime,
-            sizeof(THRArrayOnTimeCmdMessage), (void*)
+            sizeof(THRArrayOnTimeCmdIntMsg), (void*)
             &(ConfigData->thrGroups[i].cmdRequests), moduleID);
     }
 
@@ -139,13 +139,13 @@ CmdTorqueBodyIntMsg *contrReq, uint64_t moduleID)
         unSortPairs[i].thrustIndex = i;
     }
     effectorVSort(unSortPairs, sortPairs, thrData->numEffectors);
-    memset(thrData->cmdRequests.OnTimeRequest, 0x0,sizeof(THRArrayOnTimeCmdMessage));
+    memset(thrData->cmdRequests.OnTimeRequest, 0x0,sizeof(THRArrayOnTimeCmdIntMsg));
     for(i=0; i<thrData->maxNumCmds; i=i+1)
     {
         thrData->cmdRequests.OnTimeRequest[sortPairs[i].thrustIndex] =
         sortPairs[i].onTime;
     }
-    WriteMessage(thrData->outputMsgID, callTime, sizeof(THRArrayOnTimeCmdMessage),
+    WriteMessage(thrData->outputMsgID, callTime, sizeof(THRArrayOnTimeCmdIntMsg),
                  (void*) &(thrData->cmdRequests), moduleID);
 }
 
