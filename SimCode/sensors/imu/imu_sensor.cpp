@@ -41,8 +41,8 @@ ImuSensor::ImuSensor()
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
-    memset(&this->sensedValues, 0x0, sizeof(IMUSensorMessage));
-    memset(&this->trueValues, 0x0, sizeof(IMUSensorMessage));
+    memset(&this->sensedValues, 0x0, sizeof(IMUSensorIntMsg));
+    memset(&this->trueValues, 0x0, sizeof(IMUSensorIntMsg));
 
     return;
 }
@@ -62,8 +62,8 @@ void ImuSensor::SelfInit()
 {
 
     OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataMsg, sizeof(IMUSensorMessage),
-        OutputBufferCount, "IMUSensorMessage", moduleID);
+        CreateNewMessage( OutputDataMsg, sizeof(IMUSensorIntMsg),
+        OutputBufferCount, "IMUSensorIntMsg", moduleID);
 
 	uint64_t numStates = 3;
 
@@ -142,13 +142,13 @@ void ImuSensor::readInputMessages()
 
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
-    IMUSensorMessage LocalOutput;
+    IMUSensorIntMsg LocalOutput;
     memcpy(LocalOutput.DVFramePlatform, this->sensedValues.DVFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AccelPlatform, this->sensedValues.AccelPlatform, 3*sizeof(double));
     memcpy(LocalOutput.DRFramePlatform, this->sensedValues.DRFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AngVelPlatform, this->sensedValues.AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
-                                                 sizeof(IMUSensorMessage), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
+                                                 sizeof(IMUSensorIntMsg), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)

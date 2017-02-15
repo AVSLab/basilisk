@@ -51,7 +51,7 @@ void CrossInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
     ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
-        sizeof(IMUSensorMessage), moduleID);
+        sizeof(IMUSensorIntMsg), moduleID);
     ConfigData->PropsMsgID = subscribeToMessage(ConfigData->InputPropsName,
         sizeof(VehicleConfigMessage), moduleID);
     if(ConfigData->PropsMsgID >= 0)
@@ -75,9 +75,9 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     
     uint64_t UnusedClockTime;
     uint32_t ReadSize;
-    IMUSensorMessage LocalInput;
+    IMUSensorIntMsg LocalInput;
     ReadMessage(ConfigData->SensorMsgID, &UnusedClockTime, &ReadSize,
-                sizeof(IMUSensorMessage), (void*) &LocalInput, moduleID);
+                sizeof(IMUSensorIntMsg), (void*) &LocalInput, moduleID);
     
     m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.DVFramePlatform,
               ConfigData->LocalOutput.DVFrameBody);

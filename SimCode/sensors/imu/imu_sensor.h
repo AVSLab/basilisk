@@ -26,7 +26,7 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/scPlusMassPropsMessage.h"
-#include "../SimFswInterfaceMessages/imuSensorMessage.h"
+#include "../SimFswInterfaceMessages/imuSensorIntMsg.h"
 
 
 class ImuSensor: public SysModel {
@@ -68,8 +68,8 @@ public:
 	std::vector<double> walkBoundsGyro; //!< [-] "3-sigma" errors to permit for states
 	std::vector<double> navErrorsGyro;  //!< [-] Current navigation errors applied to truth
 
-    IMUSensorMessage trueValues;        //!< [-] total measurement without perturbations
-    IMUSensorMessage sensedValues;      //!< [-] total measurement including perturbations
+    IMUSensorIntMsg trueValues;        //!< [-] total measurement without perturbations
+    IMUSensorIntMsg sensedValues;      //!< [-] total measurement including perturbations
     
     double accelLSB;                    //! (-) Discretization value (least significant bit) for accel data
     double gyroLSB;                     //! (-) Discretization value for gyro data

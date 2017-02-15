@@ -147,7 +147,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     StateCurrent.MRPSwitchCount = 0
 
     # get module output fields
-    ImuSensorOutput = imu_sensor.IMUSensorMessage()
+    ImuSensorOutput = imu_sensor.IMUSensorIntMsg()
     fieldNames = list()
     for fieldName in dir(ImuSensorOutput):
         if fieldName.find('__') < 0 and fieldName.find('this') < 0:
