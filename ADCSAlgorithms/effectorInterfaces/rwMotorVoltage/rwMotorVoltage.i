@@ -32,14 +32,14 @@
 %ignore Reset_rwMotorVoltage;
 ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorVoltageConfig);
-GEN_SIZEOF(RWArrayTorqueMessage);
+GEN_SIZEOF(RWArrayTorqueIntMsg);
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(RWSpeedMessage);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 %include "rwMotorVoltage.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
-%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 %include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"

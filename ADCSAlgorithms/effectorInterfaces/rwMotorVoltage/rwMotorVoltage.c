@@ -62,7 +62,7 @@ void CrossInit_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t moduleI
 {
     /*! - Get the control data message ID*/
     ConfigData->torqueInMsgID = subscribeToMessage(ConfigData->torqueInMsgName,
-                                                sizeof(RWArrayTorqueMessage),
+                                                sizeof(RWArrayTorqueIntMsg),
                                                 moduleID);
     ConfigData->rwParamsInMsgID = -1;
     ConfigData->inputRWSpeedsInMsgID = -1;
@@ -124,7 +124,7 @@ void Update_rwMotorVoltage(rwMotorVoltageConfig *ConfigData, uint64_t callTime, 
 
     /* - Read the input messages */
     ReadMessage(ConfigData->torqueInMsgID, &clockTime, &readSize,
-                sizeof(RWArrayTorqueMessage), (void*) torqueCmd, moduleID);
+                sizeof(RWArrayTorqueIntMsg), (void*) torqueCmd, moduleID);
     if (ConfigData->inputRWSpeedsInMsgID >= 0) {
         ReadMessage(ConfigData->inputRWSpeedsInMsgID, &clockTime, &readSize,
                     sizeof(RWSpeedMessage), (void*) &(rwSpeed), moduleID);

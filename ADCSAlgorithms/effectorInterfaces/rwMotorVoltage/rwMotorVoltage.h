@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
-#include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+#include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../../SimFswInterfaceMessages/rwArrayVoltageMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 

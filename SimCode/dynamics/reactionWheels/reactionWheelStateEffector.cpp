@@ -363,7 +363,7 @@ void ReactionWheelStateEffector::CrossInit()
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
 	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(RWArrayTorqueMessage),
+                                                                     sizeof(RWArrayTorqueIntMsg),
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
@@ -471,9 +471,9 @@ void ReactionWheelStateEffector::ReadInputs()
 
 	//! - Zero the command buffer and read the incoming command array
 	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(RWArrayTorqueMessage));
+	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(RWArrayTorqueIntMsg));
 	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-												sizeof(RWArrayTorqueMessage),
+												sizeof(RWArrayTorqueIntMsg),
 												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
 
 	//! - Check if message has already been read, if stale return

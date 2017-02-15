@@ -48,9 +48,9 @@ void RWVoltageInterface::SelfInit()
 {
     this->rwMotorTorqueOutMsgID = SystemMessaging::GetInstance()->
         CreateNewMessage(this->rwMotorTorqueOutMsgName,
-                         sizeof(RWArrayTorqueMessage),
+                         sizeof(RWArrayTorqueIntMsg),
                          outputBufferCount,
-                         "RWArrayTorqueMessage",
+                         "RWArrayTorqueIntMsg",
                          moduleID);
     return;
 }
@@ -102,7 +102,7 @@ void RWVoltageInterface::readInputMessages()
 void RWVoltageInterface::computeRWMotorTorque()
 {
     int i;
-    memset(&(this->rwTorque), 0x0, sizeof(RWArrayTorqueMessage));
+    memset(&(this->rwTorque), 0x0, sizeof(RWArrayTorqueIntMsg));
     for (i=0;i<MAX_EFF_CNT;i++) {
         this->rwTorque[i] = this->inputVoltageBuffer.voltage[i] * this->voltage2TorqueGain;
     }
@@ -123,7 +123,7 @@ void RWVoltageInterface::writeOutputMessages(uint64_t CurrentClock)
         this->outputRWTorqueBuffer.motorTorque[i] = this->rwTorque[i];
     }
     SystemMessaging::GetInstance()->WriteMessage(this->rwMotorTorqueOutMsgID, CurrentClock,
-                                                 sizeof(RWArrayTorqueMessage),
+                                                 sizeof(RWArrayTorqueIntMsg),
                                                  reinterpret_cast<uint8_t*> (&this->outputRWTorqueBuffer),
                                                  moduleID);
     return;

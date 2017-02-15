@@ -34,7 +34,7 @@
 %include "../../simMessages/rwCmdMessage.h"
 %include "../../simMessages/rwConfigMessage.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
-%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
@@ -43,7 +43,7 @@ namespace std {
     %template(RWConfigVector) vector<ReactionWheelConfigMessage>;
 	%template(RWCmdVector) vector<RWCmdMessage>;
 }
-GEN_SIZEOF(RWArrayTorqueMessage);
+GEN_SIZEOF(RWArrayTorqueIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

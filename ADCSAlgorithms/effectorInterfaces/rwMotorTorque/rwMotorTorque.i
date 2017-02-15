@@ -34,12 +34,12 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(rwMotorTorqueConfig);
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWArrayTorqueMessage);
+GEN_SIZEOF(RWArrayTorqueIntMsg);
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 %include "rwMotorTorque.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-%include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+%include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"

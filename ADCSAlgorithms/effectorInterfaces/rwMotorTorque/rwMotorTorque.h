@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../../../SimFswInterfaceMessages/rwSpeedMessage.h"
-#include "../../../SimFswInterfaceMessages/rwArrayTorqueMessage.h"
+#include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
@@ -54,7 +54,7 @@ typedef struct {
     char rwAvailInMsgName[MAX_STAT_MSG_LENGTH];     /*!< The name of the RWs availability message*/
     int32_t rwAvailInMsgID;                         /*!< [-] ID for the incoming  RWs availability data */
     
-    RWArrayTorqueMessage rwMotorTorques;            /*!< [-] struct to store the output message */
+    RWArrayTorqueIntMsg rwMotorTorques;            /*!< [-] struct to store the output message */
 
 }rwMotorTorqueConfig;
 

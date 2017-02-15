@@ -118,7 +118,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = reactionWheelStateEffector.RWArrayTorqueMessage()
+    cmdArray = reactionWheelStateEffector.RWArrayTorqueIntMsg()
     cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
