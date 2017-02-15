@@ -35,6 +35,8 @@ HingedRigidBodyStateEffector::HingedRigidBodyStateEffector()
     this->d = 1.0;
     this->k = 1.0;
     this->c = 0.0;
+    this->thetaInit = 0.0;
+    this->thetaDotInit = 0.0;
     this->IPntS_S.Identity();
     this->r_HB_B.setZero();
     this->dcm_HB.Identity();
