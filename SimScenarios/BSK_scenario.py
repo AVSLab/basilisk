@@ -8,7 +8,7 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
-import BSK_sim as BSKSim
+import BSK_main
 import BSK_plotting as BSKPlt
 import orbitalMotion
 import macros as mc
@@ -16,16 +16,17 @@ import unitTestSupport as sp
 
 
 if __name__ == "__main__":
-    TheBSKSim = BSKSim.BSKSim()
+    TheBSKSim = BSK_main.BSKSim()
 
-    # DATA LOGGING
+    # Log data for post-processing and plotting
     simulationTime = mc.min2nano(10.)
     numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints-1)
-    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.mrpFeedbackData.outputDataName, samplingTime)
-    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.trackingErrorData.outputDataName, samplingTime)
-    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.simpleNavObject.outputTransName, samplingTime)
-    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.simpleNavObject.outputAttName, samplingTime)
+    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.FSWClass.mrpFeedbackData.outputDataName, samplingTime)
+    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.FSWClass.trackingErrorData.outputDataName, samplingTime)
+    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.DynClass.simpleNavObject.outputTransName, samplingTime)
+    TheBSKSim.TotalSim.logThisMessage(TheBSKSim.DynClass.simpleNavObject.outputAttName, samplingTime)
+
 
     # Initialize Simulation
     TheBSKSim.InitializeSimulation()
@@ -36,16 +37,18 @@ if __name__ == "__main__":
     TheBSKSim.dyn2FSWInterface.discoverAllMessages()
     TheBSKSim.fsw2DynInterface.discoverAllMessages()
 
+
     # Initialize Spacecraft States within the state manager.
     # This must occur after the initialization
-    posRef = TheBSKSim.scObject.dynManager.getStateObject("hubPosition")
-    velRef = TheBSKSim.scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = TheBSKSim.scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = TheBSKSim.scObject.dynManager.getStateObject("hubOmega")
+    posRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubPosition")
+    velRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubVelocity")
+    sigmaRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubSigma")
+    omegaRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubOmega")
 
-    # setup the orbit using classical orbit elements
+
+    # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    mu = TheBSKSim.earthGravBody.mu
+    mu = TheBSKSim.DynClass.earthGravBody.mu
     oe.a = 10000000.0  # meters
     oe.e = 0.01
     oe.i = 33.3 * mc.D2R
@@ -59,19 +62,21 @@ if __name__ == "__main__":
     sigmaRef.setState([[0.1], [0.2], [-0.3]])  # sigma_BN_B
     omegaRef.setState([[0.001], [-0.01], [0.03]])  # omega_BN_B [rad/s]
 
-    # Configure a simulation stop time time and execute the simulation run
 
+    # Configure a simulation stop time time and execute the simulation run
     TheBSKSim.modeRequest = 'hillPoint'
     TheBSKSim.ConfigureStopTime(simulationTime)
     TheBSKSim.ExecuteSimulation()
 
+
     # Retrieve the logged data
-    dataLr = TheBSKSim.pullMessageLogData(TheBSKSim.mrpFeedbackData.outputDataName + ".torqueRequestBody", range(3))
-    dataSigmaBR = TheBSKSim.pullMessageLogData(TheBSKSim.trackingErrorData.outputDataName + ".sigma_BR", range(3))
-    dataOmegaBR = TheBSKSim.pullMessageLogData(TheBSKSim.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
-    dataPos = TheBSKSim.pullMessageLogData(TheBSKSim.simpleNavObject.outputTransName + ".r_BN_N", range(3))
-    dataVel = TheBSKSim.pullMessageLogData(TheBSKSim.simpleNavObject.outputTransName + ".v_BN_N", range(3))
-    dataSigmaBN = TheBSKSim.pullMessageLogData(TheBSKSim.simpleNavObject.outputAttName + ".sigma_BN", range(3))
+    dataLr = TheBSKSim.pullMessageLogData(TheBSKSim.FSWClass.mrpFeedbackData.outputDataName + ".torqueRequestBody", range(3))
+    dataSigmaBR = TheBSKSim.pullMessageLogData(TheBSKSim.FSWClass.trackingErrorData.outputDataName + ".sigma_BR", range(3))
+    dataOmegaBR = TheBSKSim.pullMessageLogData(TheBSKSim.FSWClass.trackingErrorData.outputDataName + ".omega_BR_B", range(3))
+    dataPos = TheBSKSim.pullMessageLogData(TheBSKSim.DynClass.simpleNavObject.outputTransName + ".r_BN_N", range(3))
+    dataVel = TheBSKSim.pullMessageLogData(TheBSKSim.DynClass.simpleNavObject.outputTransName + ".v_BN_N", range(3))
+    dataSigmaBN = TheBSKSim.pullMessageLogData(TheBSKSim.DynClass.simpleNavObject.outputAttName + ".sigma_BN", range(3))
+
 
     BSKPlt.plotResults(dataLr, dataSigmaBR, dataOmegaBR, dataPos, dataVel, dataSigmaBN)
 
