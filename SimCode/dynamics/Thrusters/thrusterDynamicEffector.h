@@ -26,7 +26,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/thrTimePairMessage.h"
 #include "simMessages/thrOperationMessage.h"
-#include "simMessages/thrConfigMessage.h"
+#include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include <Eigen/Dense>
@@ -61,20 +61,20 @@ public:
     void SelfInit();
     void CrossInit();
     //! Add a new thruster to the thruster set
-    void AddThruster(THRConfigMessage *NewThruster) {ThrusterData.push_back(*NewThruster);}
+    void AddThruster(THRConfigSimMsg *NewThruster) {ThrusterData.push_back(*NewThruster);}
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
-    void ComputeThrusterFire(THRConfigMessage *CurrentThruster,
+    void ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
                              double currentTime);
-    void ComputeThrusterShut(THRConfigMessage *CurrentThruster,
+    void ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
                              double currentTime);
     
 
 public:
     int stepsInRamp;
-    std::vector<THRConfigMessage> ThrusterData;  //!< -- Thruster information
+    std::vector<THRConfigSimMsg> ThrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
     std::string inputBSName;                       //!< [-] Structure to body dynamic property
@@ -83,7 +83,7 @@ public:
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
-    double thrFactorToTime(THRConfigMessage *thrData,
+    double thrFactorToTime(THRConfigSimMsg *thrData,
                            std::vector<THRTimePairMessage> *thrRamp);
     StateData *hubSigma;
     

@@ -63,7 +63,7 @@ void ThrusterDynamicEffector::SelfInit()
     NewThrustCmds.clear();
     NewThrustCmds.insert(NewThrustCmds.begin(), ThrusterData.size(), 0.0);
 
-    std::vector<THRConfigMessage>::iterator it;
+    std::vector<THRConfigSimMsg>::iterator it;
     uint64_t tmpThrustMsgId;
     std::string tmpThrustMsgName;
     int thrustIdx = 0;
@@ -112,7 +112,7 @@ void ThrusterDynamicEffector::CrossInit()
 void ThrusterDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     int idx = 0;
-    std::vector<THRConfigMessage>::iterator it;
+    std::vector<THRConfigSimMsg>::iterator it;
     //    std::vector<THROutputMessage>acsThrusters;
     THROutputMessage tmpThruster;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
@@ -189,7 +189,7 @@ bool ThrusterDynamicEffector::ReadInputs()
 void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 {
     //! Begin method steps
-    std::vector<THRConfigMessage>::iterator it;
+    std::vector<THRConfigSimMsg>::iterator it;
     std::vector<double>::iterator CmdIt;
     std::vector<THRTimePairMessage>::iterator PairIt;
     //! - Iterate through the list of thruster commands that we read in.
@@ -235,7 +235,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
  */
 void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     
-    std::vector<THRConfigMessage>::iterator it;
+    std::vector<THRConfigSimMsg>::iterator it;
     THROperationMessage *ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
@@ -289,7 +289,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
 
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
 
-    std::vector<THRConfigMessage>::iterator it;
+    std::vector<THRConfigSimMsg>::iterator it;
     THROperationMessage *ops;
     double mDotSingle;
     this->mDotTotal = 0.0;
@@ -319,7 +319,7 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param CurrentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigMessage *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
                                            double currentTime)
 {
     //! Begin method steps
@@ -378,7 +378,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigMessage *CurrentThrus
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param CurrentTime The current simulation clock time converted to a double
  */
-void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigMessage *CurrentThruster,
+void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThruster,
                                            double currentTime)
 {
     //! Begin method steps
@@ -431,7 +431,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigMessage *CurrentThrus
  @param thrData The data for the thruster that we are currently firing
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
-double ThrusterDynamicEffector::thrFactorToTime(THRConfigMessage *thrData,
+double ThrusterDynamicEffector::thrFactorToTime(THRConfigSimMsg *thrData,
                                          std::vector<THRTimePairMessage> *thrRamp)
 {
     //! Begin method steps

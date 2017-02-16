@@ -122,7 +122,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     #  Create thruster characteristic parameters (position, angle thrust, ISP, time of thrust)
     angledeg = angle # Parametrized angle of thrust
     anglerad = angledeg*math.pi/180.0
-    thruster1 = thrusterDynamicEffector.THRConfigMessage()
+    thruster1 = thrusterDynamicEffector.THRConfigSimMsg()
     thruster1.inputThrLoc_S =location # Parametrized location for thruster
     thruster1.inputThrDir_S = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]
     thruster1.MaxThrust = 1.0
@@ -131,7 +131,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     thrusterSet.AddThruster(thruster1)
 
     if thrustNumber==2:
-        thruster2 = thrusterDynamicEffector.THRConfigMessage()
+        thruster2 = thrusterDynamicEffector.THRConfigSimMsg()
         thruster2.inputThrLoc_S =[[1.], [0.0], [0.0]]
         thruster2.inputThrDir_S = [[math.cos(anglerad+math.pi/4)], [math.sin(anglerad+math.pi/4)], [0.0]]
         thruster2.MaxThrust = 1.0

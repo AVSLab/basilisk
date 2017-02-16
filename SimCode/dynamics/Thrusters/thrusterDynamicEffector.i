@@ -28,7 +28,7 @@
 // Instantiate templates used by example
 namespace std {
     %template(ThrusterTimeVector) vector<THRTimePairMessage>;
-    %template(ThrusterConfigVector) vector<THRConfigMessage>;
+    %template(ThrusterConfigVector) vector<THRConfigSimMsg>;
 }
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
@@ -36,10 +36,10 @@ namespace std {
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "thrusterDynamicEffector.h"
 %include "simMessages/thrTimePairMessage.h"
-%include "simMessages/thrConfigMessage.h"
+%include "simMessages/thrConfigSimMsg.h"
 %include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRTimePairMessage)
-GEN_SIZEOF(THRConfigMessage)
+GEN_SIZEOF(THRConfigSimMsg)
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 %pythoncode %{
 import sys

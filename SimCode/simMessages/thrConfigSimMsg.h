@@ -40,7 +40,7 @@ typedef struct {
     THROperationMessage ThrustOps;                  //!< -- Thruster operating data
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
-}THRConfigMessage;
+}THRConfigSimMsg;
 
 
 
