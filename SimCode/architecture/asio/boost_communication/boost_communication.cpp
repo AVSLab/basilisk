@@ -65,7 +65,7 @@ void OpenGLIO::CrossInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesMessage), moduleID);
+    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), moduleID);
     this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
     this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
     this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeMessage), this->moduleID);
@@ -132,7 +132,7 @@ void OpenGLIO::readInputMessages()
     SingleMessageHeader localHeader;
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
+    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
     messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
     messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
     messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeMessage), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));

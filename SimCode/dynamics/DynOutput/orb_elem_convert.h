@@ -22,7 +22,7 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "utilities/orbitalMotion.h"
 
 /*! \addtogroup SimModelGroup

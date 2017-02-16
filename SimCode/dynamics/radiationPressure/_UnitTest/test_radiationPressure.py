@@ -99,7 +99,7 @@ def unitRadiationPressure(show_plots, modelType):
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
 
-    scPlusStateMsg = spacecraftPlus.SCPlusStatesMessage()
+    scPlusStateMsg = spacecraftPlus.SCPlusStatesSimMsg()
     scPlusStateMsgName = "inertial_state_output"
     unitTestSim.TotalSim.CreateNewMessage(testProcessName, scPlusStateMsgName, scPlusStateMsg.getStructSize(), 2)
     scPlusStateMsg.r_BN_N = r_N

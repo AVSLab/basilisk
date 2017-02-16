@@ -22,7 +22,7 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateMessage.h"
 #include "simMessages/boreAngleSimMsg.h"
 
@@ -58,7 +58,7 @@ public:
     
 private:
     SpicePlanetStateMessage localPlanet;//!< (-) planet that we are pointing at
-    SCPlusStatesMessage localState;   //!< (-) observed state of the spacecraft
+    SCPlusStatesSimMsg localState;   //!< (-) observed state of the spacecraft
     int64_t StateInMsgID;             // (-) MEssage ID for incoming data
     int64_t celInMsgID;               // (-) MEssage ID for incoming data
     int64_t AngOutMsgID;              // (-) Message ID for outgoing data

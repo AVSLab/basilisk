@@ -23,7 +23,7 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spiceTimeMessage.h"
 #include "../SimFswInterfaceMessages/stSensorIntMsg.h"
 
@@ -61,7 +61,7 @@ public:
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
     uint64_t envTimeClock;            //!< [ns] Clock associated with the environment time message
     SpiceTimeMessage timeState;       //!< [-] Module variable where the input Spice Time message is stored
-    SCPlusStatesMessage scState;      //!< [-] Module variable where the input State Data message is stored
+    SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
 
     
     

@@ -56,7 +56,7 @@ void OrbElemConvert::SelfInit()
     //! Begin method steps
     //! - Determine what the size of the output should be and create the message
 	stateMsgSize = useEphemFormat ? sizeof(SpicePlanetStateMessage) :
-		sizeof(SCPlusStatesMessage);
+		sizeof(SCPlusStatesSimMsg);
 	std::string stateMsgType = useEphemFormat ? "SpicePlanetStateMessage" :
 		"OutputStateData";
     uint64_t OutputSize = Elements2Cart ? stateMsgSize :
@@ -95,7 +95,7 @@ void OrbElemConvert::CrossInit()
 void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 {
     
-    SCPlusStatesMessage LocalState;
+    SCPlusStatesSimMsg LocalState;
 	SpicePlanetStateMessage localPlanet;
 	uint8_t *msgPtr = useEphemFormat ? reinterpret_cast<uint8_t *> (&localPlanet) :
 		reinterpret_cast<uint8_t *> (&LocalState);
@@ -112,7 +112,7 @@ void OrbElemConvert::WriteOutputMessages(uint64_t CurrentClock)
 		}
 		else
 		{
-			memset(&LocalState, 0x0, sizeof(SCPlusStatesMessage));
+			memset(&LocalState, 0x0, sizeof(SCPlusStatesSimMsg));
 			memcpy(LocalState.r_BN_N, r_N, 3 * sizeof(double));
 			memcpy(LocalState.v_BN_N, v_N, 3 * sizeof(double));
 		}
@@ -156,7 +156,7 @@ void OrbElemConvert::ReadInputs()
         return;
     }
     classicElements LocalElements;
-    SCPlusStatesMessage LocalState;
+    SCPlusStatesSimMsg LocalState;
 	SpicePlanetStateMessage localPlanet;
     SingleMessageHeader LocalHeader;
 

@@ -39,7 +39,7 @@ BoreAngCalc::BoreAngCalc()
     ReinitSelf = false;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
     memset(&localPlanet, 0x0, sizeof(SpicePlanetStateMessage));
-    memset(&localState, 0x0, sizeof(SCPlusStatesMessage));
+    memset(&localState, 0x0, sizeof(SCPlusStatesSimMsg));
     return;
 }
 
@@ -70,7 +70,7 @@ void BoreAngCalc::SelfInit()
 void BoreAngCalc::CrossInit()
 {
     StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
-                            StateString, sizeof(SCPlusStatesMessage), moduleID);
+                            StateString, sizeof(SCPlusStatesSimMsg), moduleID);
     celInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(celBodyString,
                             sizeof(SpicePlanetStateMessage), moduleID);
 }
@@ -102,7 +102,7 @@ void BoreAngCalc::ReadInputs()
     //! - Set the input pointer and size appropriately based on input type
     //! - Read the input message into the correct pointer
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &localHeader,
-        sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&localState), moduleID);
+        sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&localState), moduleID);
     inputsGood &= SystemMessaging::GetInstance()->ReadMessage(celInMsgID, &localHeader,
         sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
     

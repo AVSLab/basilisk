@@ -70,7 +70,7 @@ void RadiationPressure::CrossInit()
         std::cerr << this->sunEphmInMsgName << "  :" << __FILE__ << std::endl;
     }
     
-    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesMessage), this->moduleID);
+    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     
     if(this->stateInMsgId < 0)
     {
@@ -111,8 +111,8 @@ void RadiationPressure::readInputMessages()
     this->stateRead = false;
     if(this->stateInMsgId >= 0)
     {
-        memset(&this->stateInBuffer, 0x0, sizeof(SCPlusStatesMessage));
-        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
+        memset(&this->stateInBuffer, 0x0, sizeof(SCPlusStatesSimMsg));
+        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
     }
 }
 

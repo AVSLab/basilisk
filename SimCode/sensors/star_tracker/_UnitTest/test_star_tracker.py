@@ -104,7 +104,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = star_tracker.SCPlusStatesMessage()
+    OutputStateData = star_tracker.SCPlusStatesSimMsg()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = np.array([0,0,0])

@@ -134,7 +134,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     unitTestSim.AddModelToTask(unitTaskName, sNavObject)
 
     spiceMessage = spice_interface.SpicePlanetStateMessage()
-    stateMessage = simple_nav.SCPlusStatesMessage()
+    stateMessage = simple_nav.SCPlusStatesSimMsg()
     vehPosition = [10000.0, 0.0, 0.0]
     sunPosition = [10000.0, 1000.0, 0.0]
 

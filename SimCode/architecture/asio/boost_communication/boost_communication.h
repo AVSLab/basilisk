@@ -36,7 +36,7 @@
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
 #include "simMessages/rwConfigSimMsg.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simMessages/spicePlanetStateMessage.h"
@@ -95,7 +95,7 @@ private:
     std::string UTCCalInit;
     std::string stateInMsgName;
     uint64_t stateInMsgId;
-    SCPlusStatesMessage stateInMsgBuffer;
+    SCPlusStatesSimMsg stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
     SpicePlanetStateMessage sunEphmInMsgBuffer;

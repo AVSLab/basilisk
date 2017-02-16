@@ -26,9 +26,9 @@
 %include "sys_model.h"
 %include "star_tracker.h"
 %include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
-%include "simMessages/scPlusStatesMessage.h"
-GEN_SIZEOF(SCPlusStatesMessage)
-GEN_SIZEOF(SCPlusStatesMessage)
+%include "simMessages/scPlusStatesSimMsg.h"
+GEN_SIZEOF(SCPlusStatesSimMsg)
+GEN_SIZEOF(SCPlusStatesSimMsg)
 GEN_SIZEOF(STSensorIntMsg)
 
 %pythoncode %{

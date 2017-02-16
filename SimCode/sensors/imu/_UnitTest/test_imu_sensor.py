@@ -137,7 +137,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     MassPropsData.ISC_PntB_B = [[100.0, 0.0, 0.0], [0.0, 100.0, 0.0], [0.0, 0.0, 100.0]] 
 
     # configure module input message
-    StateCurrent = imu_sensor.SCPlusStatesMessage()
+    StateCurrent = imu_sensor.SCPlusStatesSimMsg()
     StateCurrent.r_BN_N = [0,0,0]
     StateCurrent.v_BN_N = [0,0,0]
     StateCurrent.sigma_BN = np.array([0,0,0])

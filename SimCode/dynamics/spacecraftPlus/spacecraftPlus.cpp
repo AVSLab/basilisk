@@ -60,9 +60,9 @@ void SpacecraftPlus::SelfInit()
 {
     // - Create the message for the spacecraft state
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
-                                                                             sizeof(SCPlusStatesMessage),
+                                                                             sizeof(SCPlusStatesSimMsg),
                                                                              this->numOutMsgBuffers,
-                                                                             "SCPlusStatesMessage", this->moduleID);
+                                                                             "SCPlusStatesSimMsg", this->moduleID);
     // - Create the message for the spacecraft mass state
     this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
                                                                              sizeof(SCPlusMassPropsSimMsg),
@@ -89,7 +89,7 @@ void SpacecraftPlus::CrossInit()
 void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 {
     // - Populate state output message
-    SCPlusStatesMessage stateOut;
+    SCPlusStatesSimMsg stateOut;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
@@ -97,7 +97,7 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->MRPSwitchCount;
-    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesMessage),
+    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
                                                  reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
 
     // - Populate mass state output message

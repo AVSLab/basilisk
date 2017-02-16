@@ -25,10 +25,10 @@
 
 %include "sys_model.h"
 %include "simple_nav.h"
-%include "simMessages/scPlusStatesMessage.h"
+%include "simMessages/scPlusStatesSimMsg.h"
 %include "../../SimFswInterfaceMessages/navAttIntMsg.h"
 %include "../../SimFswInterfaceMessages/navTransIntMsg.h"
-GEN_SIZEOF(SCPlusStatesMessage);
+GEN_SIZEOF(SCPlusStatesSimMsg);
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(NavTransIntMsg);
 %pythoncode %{

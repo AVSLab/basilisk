@@ -30,7 +30,7 @@ typedef struct {
     double dcm_BS[3][3];              //!< -- Transformation from str to body
     double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
-}SCPlusStatesMessage;
+}SCPlusStatesSimMsg;
 
 
 

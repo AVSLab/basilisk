@@ -47,7 +47,7 @@ bool StarTracker::LinkMessages()
     inputTimeID = SystemMessaging::GetInstance()->subscribeToMessage(
         inputTimeMessage, sizeof(SpiceTimeMessage), moduleID);
     inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputStateMessage, sizeof(SCPlusStatesMessage), moduleID);
+        inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
     
     
     return(inputTimeID >=0 && inputStateID >= 0);
@@ -96,11 +96,11 @@ void StarTracker::readInputMessages()
     }
     
     memset(&this->timeState, 0x0, sizeof(SpiceTimeMessage));
-    memset(&this->scState, 0x0, sizeof(SCPlusStatesMessage));
+    memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*>(&scState), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), moduleID);
     }
     if(inputTimeID >= 0)
     {

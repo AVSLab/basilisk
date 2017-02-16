@@ -35,8 +35,8 @@ ImuSensor::ImuSensor()
     this->InputMassMsg = "spacecraft_mass_props";
     this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesMessage));
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesMessage));
+    memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     this->PreviousTime = 0;
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
@@ -110,7 +110,7 @@ void ImuSensor::SelfInit()
 void ImuSensor::CrossInit()
 {
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusStatesMessage), moduleID);
+        sizeof(SCPlusStatesSimMsg), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
         sizeof(SCPlusMassPropsSimMsg), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
@@ -126,11 +126,11 @@ void ImuSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
     
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesMessage));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
     memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsSimMsg));
     if(InputMassID >= 0)
@@ -324,7 +324,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
-    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusStatesMessage));
+    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusStatesSimMsg));
     PreviousTime = CurrentSimNanos;
     NominalReady = true;
 }

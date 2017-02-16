@@ -26,7 +26,7 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "simMessages/spicePlanetStateMessage.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -69,7 +69,7 @@ private:
     SpicePlanetStateMessage sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data
     int64_t stateInMsgId; //!< -- Message ID for incoming SC state data
     bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
-    SCPlusStatesMessage stateInBuffer; //!< -- Buffer for incoming state message data
+    SCPlusStatesSimMsg stateInBuffer; //!< -- Buffer for incoming state message data
 };
 
 /*! @} */

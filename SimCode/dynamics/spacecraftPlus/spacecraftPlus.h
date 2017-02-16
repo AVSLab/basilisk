@@ -29,7 +29,7 @@
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/scPlusStatesMessage.h"
+#include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
 
