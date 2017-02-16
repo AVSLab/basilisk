@@ -23,7 +23,7 @@
 #include <map>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/spicePlanetStateMessage.h"
-#include "simMessages/idEphemerisOutputMessage.h"
+#include "simMessages/idEphemerisSimMsg.h"
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 
 
@@ -50,7 +50,7 @@ public:
     std::map<std::string, std::string> messageNameMap;   //!< [-] Map between input/output message names
     uint64_t numOutputBuffers;  //!< [-] Number of output buffers created for messages
 private:
-    std::map<int64_t, IDEphemerisOutputMessage> messageIDMap; //!< [-] Map between input/output message IDs
+    std::map<int64_t, IDEphemerisSimMsg> messageIDMap; //!< [-] Map between input/output message IDs
 };
 
 #endif

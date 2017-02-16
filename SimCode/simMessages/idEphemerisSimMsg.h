@@ -28,7 +28,7 @@ typedef struct{
     uint64_t clockTime;                     //!< [-] Clock time associated with msg write
     SpicePlanetStateMessage messageData;    //!< [-] Data container for message data
     EphemerisIntMsg outputData;         //!< [-] Data container for output ephemeris estimate
-} IDEphemerisOutputMessage;
+} IDEphemerisSimMsg;
 
 
 

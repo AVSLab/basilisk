@@ -39,7 +39,7 @@ bool EphemerisConverter::LinkMessages()
     int64_t destID;
     bool messagesFound = true;
     std::map<std::string, std::string>::iterator it;
-    std::map<int64_t, IDEphemerisOutputMessage>::iterator mapIt;
+    std::map<int64_t, IDEphemerisSimMsg>::iterator mapIt;
     for(it=messageNameMap.begin(); it!= messageNameMap.end(); it++)
     {
         sourceID = SystemMessaging::GetInstance()->subscribeToMessage(it->first,
@@ -55,11 +55,11 @@ bool EphemerisConverter::LinkMessages()
 
 void EphemerisConverter::SelfInit()
 {
-    IDEphemerisOutputMessage ephemContainer;
+    IDEphemerisSimMsg ephemContainer;
     std::map<std::string, std::string>::iterator it;
     int64_t destID;
  
-    memset(&ephemContainer, 0x0, sizeof(IDEphemerisOutputMessage));
+    memset(&ephemContainer, 0x0, sizeof(IDEphemerisSimMsg));
     messageIDMap.clear();
     
     for(it=messageNameMap.begin(); it!= messageNameMap.end(); it++)
@@ -67,7 +67,7 @@ void EphemerisConverter::SelfInit()
         destID = SystemMessaging::GetInstance()->CreateNewMessage(it->second,
             sizeof(EphemerisIntMsg), numOutputBuffers, "EphemerisIntMsg",
             moduleID);
-        messageIDMap.insert(std::pair<int64_t, IDEphemerisOutputMessage>
+        messageIDMap.insert(std::pair<int64_t, IDEphemerisSimMsg>
             (destID, ephemContainer));
         
     }
@@ -80,7 +80,7 @@ void EphemerisConverter::CrossInit()
 
 void EphemerisConverter::convertEphemData(uint64_t clockNow)
 {
-    std::map<int64_t, IDEphemerisOutputMessage>::iterator it;
+    std::map<int64_t, IDEphemerisSimMsg>::iterator it;
     for(it=messageIDMap.begin(); it!=messageIDMap.end(); it++)
     {
         v3Copy(it->second.messageData.PositionVector,
@@ -96,7 +96,7 @@ void EphemerisConverter::convertEphemData(uint64_t clockNow)
 void EphemerisConverter::readInputMessages()
 {
     SingleMessageHeader localHeader;
-    std::map<int64_t, IDEphemerisOutputMessage>::iterator it;
+    std::map<int64_t, IDEphemerisSimMsg>::iterator it;
     
     if(!this->messagesLinked)
     {
@@ -116,7 +116,7 @@ void EphemerisConverter::readInputMessages()
 void EphemerisConverter::writeOutputMessages(uint64_t CurrentSimNanos)
 {
 
-    std::map<int64_t, IDEphemerisOutputMessage>::iterator it;
+    std::map<int64_t, IDEphemerisSimMsg>::iterator it;
     for(it=messageIDMap.begin(); it!=messageIDMap.end(); it++)
     {
         SystemMessaging::GetInstance()->WriteMessage(it->first,
