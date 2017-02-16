@@ -37,7 +37,7 @@ typedef struct {
     double MaxThrust;                               //!< N  Steady state thrust of thruster
     double steadyIsp;                               //!< s  Steady state specific impulse of thruster
     double MinOnTime;                               //!< s  Minimum allowable on-time
-    THROperationMessage ThrustOps;                  //!< -- Thruster operating data
+    THROperationSimMsg ThrustOps;                   //!< -- Thruster operating data
     double thrusterMagDisp;                         //!< -- Percentage of magnitude dispersion
     std::vector<double> thrusterDirectionDisp;      //!< -- Unit vector of dispersed thruster pointing
 }THRConfigSimMsg;

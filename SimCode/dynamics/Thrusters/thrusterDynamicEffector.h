@@ -25,7 +25,7 @@
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/thrTimePairMessage.h"
-#include "simMessages/thrOperationMessage.h"
+#include "simMessages/thrOperationSimMsg.h"
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"

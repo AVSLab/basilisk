@@ -236,7 +236,7 @@ void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
 void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     
     std::vector<THRConfigSimMsg>::iterator it;
-    THROperationMessage *ops;
+    THROperationSimMsg *ops;
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
@@ -290,7 +290,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
 void ThrusterDynamicEffector::computeStateContribution(double integTime){
 
     std::vector<THRConfigSimMsg>::iterator it;
-    THROperationMessage *ops;
+    THROperationSimMsg *ops;
     double mDotSingle;
     this->mDotTotal = 0.0;
 
@@ -324,7 +324,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
 {
     //! Begin method steps
     std::vector<THRTimePairMessage>::iterator it;
-    THROperationMessage *ops = &(CurrentThruster->ThrustOps);
+    THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if(ops->ThrustOnRampTime == 0.0 &&
        CurrentThruster->ThrusterOnRamp.size() > 0)
@@ -383,7 +383,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
 {
     //! Begin method steps
     std::vector<THRTimePairMessage>::iterator it;
-    THROperationMessage *ops = &(CurrentThruster->ThrustOps);
+    THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
     if(ops->ThrustOffRampTime == 0.0 &&
