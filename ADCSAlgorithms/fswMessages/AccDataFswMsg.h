@@ -17,15 +17,19 @@
 
  */
 
-#ifndef _ACC_DATA_MESSAGE_H
-#define _ACC_DATA_MESSAGE_H
+#ifndef _ACC_PKT_DATA_MESSAGE_H
+#define _ACC_PKT_DATA_MESSAGE_H
+
+#define MAX_ACC_BUF_PKT 25
+
+#import "fswMessages/AccPktDataMessage.h"
+
 
 /*! @brief Structure used to define accelerometer package data */
 typedef struct {
-    uint64_t measTime;                /*! [Tick] Measurement time for accel */
-    double gyro_Pltf[3];              /*!< [r/s] Angular rate measurement from gyro*/
-    double accel_Pltf[3];             /*! [m/s2] Acceleration in platform frame */
-}AccPktDataMessage;
+    AccPktDataMessage accPkts[MAX_ACC_BUF_PKT]; /*! [-] Accelerometer buffer read in*/
+}AccDataFswMsg;
+
 
 
 #endif

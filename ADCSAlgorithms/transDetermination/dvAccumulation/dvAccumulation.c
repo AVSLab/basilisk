@@ -43,7 +43,7 @@ void SelfInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
 void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
 {
         ConfigData->accPktInMsgID= subscribeToMessage(
-            ConfigData->accPktInMsgName, sizeof(AccDataMessage), moduleID);
+            ConfigData->accPktInMsgName, sizeof(AccDataFswMsg), moduleID);
 }
 
 /*////////////////////////////////////////////////////Experimenting QuickSort START////////////////*/
@@ -96,11 +96,11 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     double frameDVPlt[3];
     double frameDVBdy[3];
     double frameDVStr[3];
-    AccDataMessage inputAccData;
+    AccDataFswMsg inputAccData;
     int i;
     
     ReadMessage(ConfigData->accPktInMsgID, &writeTime, &writeSize,
-                sizeof(AccDataMessage), &inputAccData, moduleID);
+                sizeof(AccDataFswMsg), &inputAccData, moduleID);
    
     /* stacks data in time order*/
     QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
