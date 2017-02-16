@@ -25,7 +25,7 @@
 #include <random>
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
-#include "simMessages/cssRawDataMessage.h"
+#include "simMessages/cssRawDataSimMsg.h"
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 typedef enum {

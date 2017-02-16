@@ -30,7 +30,7 @@ namespace std {
 %feature("copyctor");
 %include "sys_model.h"
 %include "coarse_sun_sensor.h"
-%include "../../simMessages/cssRawDataMessage.h"
+%include "../../simMessages/cssRawDataSimMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

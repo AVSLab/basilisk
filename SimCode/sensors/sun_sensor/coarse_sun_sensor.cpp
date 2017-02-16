@@ -119,8 +119,8 @@ void CoarseSunSensor::SelfInit()
     if(OutputDataMsg != "")
     {
         OutputDataID = SystemMessaging::GetInstance()->
-            CreateNewMessage(OutputDataMsg, sizeof(CSSRawDataMessage),
-            OutputBufferCount, "CSSRawDataMessage", moduleID);
+            CreateNewMessage(OutputDataMsg, sizeof(CSSRawDataSimMsg),
+            OutputBufferCount, "CSSRawDataSimMsg", moduleID);
     }
 }
 
@@ -250,14 +250,14 @@ void CoarseSunSensor::scaleSensorValues()
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     //! Begin Method Steps
-    CSSRawDataMessage LocalMessage;
+    CSSRawDataSimMsg LocalMessage;
     //! - Zero the output message
-    memset(&LocalMessage, 0x0, sizeof(CSSRawDataMessage));
+    memset(&LocalMessage, 0x0, sizeof(CSSRawDataSimMsg));
     //! - Set the outgoing data to the scaled computation
     LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
-                                                 sizeof(CSSRawDataMessage), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
+                                                 sizeof(CSSRawDataSimMsg), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 /*! This method is called at a specified rate by the architecture.  It makes the 
     calls to compute the current sun information and write the output message for 
@@ -311,7 +311,7 @@ void CSSConstellation::SelfInit()
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
         sizeof(CSSArraySensorIntMsg), outputBufferCount,
-        "CSSRawDataMessage", moduleID);
+        "CSSRawDataSimMsg", moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
