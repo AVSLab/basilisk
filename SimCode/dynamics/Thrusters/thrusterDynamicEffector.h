@@ -24,7 +24,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/thrTimePairMessage.h"
+#include "simMessages/thrTimePairSimMsg.h"
 #include "simMessages/thrOperationSimMsg.h"
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
@@ -84,7 +84,7 @@ public:
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
     double thrFactorToTime(THRConfigSimMsg *thrData,
-                           std::vector<THRTimePairMessage> *thrRamp);
+                           std::vector<THRTimePairSimMsg> *thrRamp);
     StateData *hubSigma;
     
 private:

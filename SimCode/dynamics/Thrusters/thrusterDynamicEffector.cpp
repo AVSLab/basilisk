@@ -191,7 +191,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
     //! Begin method steps
     std::vector<THRConfigSimMsg>::iterator it;
     std::vector<double>::iterator CmdIt;
-    std::vector<THRTimePairMessage>::iterator PairIt;
+    std::vector<THRTimePairSimMsg>::iterator PairIt;
     //! - Iterate through the list of thruster commands that we read in.
     for(CmdIt=NewThrustCmds.begin(), it=ThrusterData.begin();
         it != ThrusterData.end(); it++, CmdIt++)
@@ -323,7 +323,7 @@ void ThrusterDynamicEffector::ComputeThrusterFire(THRConfigSimMsg *CurrentThrust
                                            double currentTime)
 {
     //! Begin method steps
-    std::vector<THRTimePairMessage>::iterator it;
+    std::vector<THRTimePairSimMsg>::iterator it;
     THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
     //! - Set the current ramp time for the thruster firing
     if(ops->ThrustOnRampTime == 0.0 &&
@@ -382,7 +382,7 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
                                            double currentTime)
 {
     //! Begin method steps
-    std::vector<THRTimePairMessage>::iterator it;
+    std::vector<THRTimePairSimMsg>::iterator it;
     THROperationSimMsg *ops = &(CurrentThruster->ThrustOps);
     
     //! - Set the current off-ramp time based on the previous clock time and now
@@ -432,10 +432,10 @@ void ThrusterDynamicEffector::ComputeThrusterShut(THRConfigSimMsg *CurrentThrust
  @param thrRamp This just allows us to avoid switching to figure out which ramp
  */
 double ThrusterDynamicEffector::thrFactorToTime(THRConfigSimMsg *thrData,
-                                         std::vector<THRTimePairMessage> *thrRamp)
+                                         std::vector<THRTimePairSimMsg> *thrRamp)
 {
     //! Begin method steps
-    std::vector<THRTimePairMessage>::iterator it;
+    std::vector<THRTimePairSimMsg>::iterator it;
     //! - Grab the last element in the ramp and determine if it goes up or down
     it = thrRamp->end();
     it--;

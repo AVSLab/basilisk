@@ -29,7 +29,7 @@ typedef struct {
     double ThrustFactor;                 //!< -- Percentage of max thrust
     double IspFactor;                    //!< s  fraction specific impulse
     double TimeDelta;                    //!< s  Time delta from start of event
-}THRTimePairMessage;
+}THRTimePairSimMsg;
 
 
 

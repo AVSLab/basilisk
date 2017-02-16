@@ -316,12 +316,12 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         rampOffList = []
         # Note that this ramp is totally linear and ramps up 30 ms using 30 steps
         for i in range(rampsteps):
-            newElement = thrusterDynamicEffector.THRTimePairMessage()
+            newElement = thrusterDynamicEffector.THRTimePairSimMsg()
             newElement.TimeDelta = (i + 1.) * 0.1
             newElement.ThrustFactor = (i + 1.0) / 10.0
             newElement.IspFactor = (i + 1.0) / 10.0
             rampOnList.append(newElement)
-            newElement = thrusterDynamicEffector.THRTimePairMessage()
+            newElement = thrusterDynamicEffector.THRTimePairSimMsg()
             newElement.TimeDelta = (i + 1) * 0.1
             newElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0
             newElement.IspFactor = newElement.ThrustFactor
