@@ -25,12 +25,8 @@
 
 %include "swig_common_model.i"
 
-
-%include "swig_common_model.i"
-
 %include "sys_model.h"
 %include "exponentialAtmosphere.h"
-%include "../../_GeneralModuleFiles/sys_model.h"
 %include "../spice/spice_planet_state.h"
 %include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
 

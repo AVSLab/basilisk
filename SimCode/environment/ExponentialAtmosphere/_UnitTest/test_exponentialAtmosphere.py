@@ -63,6 +63,8 @@ import simIncludeGravity
 import exponentialAtmosphere
 import dragDynamicEffector
 
+#print dir(exponentialAtmosphere)
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -137,7 +139,6 @@ def run(show_plots, orbitCase, planetCase):
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
-    atmoTaskName = "atmosphere"
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
     dragEffectorTaskName = "drag"

@@ -35,7 +35,7 @@
 #include <iostream>
 #include <cmath>
 
-ExponentialAtmosphere::ExponentialAtmosphere(uint64_t numInstances)
+ExponentialAtmosphere::ExponentialAtmosphere()
 {
     this->planetName = "Earth";
     this->planetPosInMsgName = "spice_planet_output_data";
@@ -47,7 +47,7 @@ ExponentialAtmosphere::ExponentialAtmosphere(uint64_t numInstances)
     this->localAtmoTemp = 293.0; // Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
-    this->tmpAtmo.neutralDensity = this->atmosphereProps.baseDensity;
+    this->tmpAtmo.neutralDensity = this->localAtmoDens;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
     return;
 }
@@ -63,11 +63,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  @return void
  */
 void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
-  std::string tmpAtmoMsgName;
   this->scStateInMsgNames.push_back(tmpScMsgName);
-  tmpAtmoMsgName = "atmo_dens"+ std::to_string(this->scStateInMsgNames.size()-1)+"_data";
-  this->atmoDensOutMsgNames.push_back(tmpAtmoMsgName);
-  std::cout<<"AddSpacecraftToModel: "<<tmpScMsgName<<std::endl;
   return;
 }
 
@@ -77,15 +73,11 @@ void ExponentialAtmosphere::SelfInit()
     uint64_t tmpAtmoMsgId;
     //! Begin method steps
     std::vector<std::string>::iterator it;
-    std::vector<std::string>::iterator nameIt;
-
     for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
       tmpAtmoMsgName = "atmo_dens" + std::to_string(it - this->scStateInMsgNames.begin()) + "_data";
-
-      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, "AtmoOutputData", moduleID);
-
+      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, tmpAtmoMsgName, moduleID);
+      this->atmoDensOutMsgNames.push_back(tmpAtmoMsgName);
       this->atmoDensOutMsgIds.push_back(tmpAtmoMsgId);
-      std::cout<<"Self Init Message Name:"<<this->atmoDensOutMsgNames[0]<<std::endl;
     }
 
     return;
@@ -139,7 +131,6 @@ void ExponentialAtmosphere::CrossInit()
 
   std::vector<std::string>::iterator it;
   for(it = scStateInMsgNames.begin(); it!=scStateInMsgNames.end(); it++){
-    std::cout<<"CrossInit: "<<*it<<std::endl;
     this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusOutputStateData), moduleID));
   }
   return;
@@ -161,7 +152,6 @@ void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
     atmoIt = atmoOutBuffer.begin();
     for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
       tmpAtmo = *atmoIt;
-      //std::cout<<"WriteMsg: "<<tmpAtmo.neutralDensity<<std::endl;
       SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
                                                   sizeof(AtmoOutputData),
@@ -250,7 +240,7 @@ void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState& planetState, SC
         //std::cout<<"SC State:"<<scState.r_BN_N[iter]<<std::endl;
         this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
 
-        //std::cout<<relativePos[iter,0]<<std::endl;
+        std::cout<<relativePos[iter,0]<<std::endl;
       }
     }
     else{
