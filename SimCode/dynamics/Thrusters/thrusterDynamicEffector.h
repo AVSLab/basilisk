@@ -27,7 +27,7 @@
 #include "simMessages/thrTimePairMessage.h"
 #include "simMessages/thrOperationSimMsg.h"
 #include "simMessages/thrConfigSimMsg.h"
-#include "simMessages/thrOutputMessage.h"
+#include "simMessages/thrOutputSimMsg.h"
 #include "../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include <Eigen/Dense>
 #include <vector>
@@ -91,7 +91,7 @@ private:
     //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready
     Eigen::MatrixXd *dcm_BS;                        //!< [kg] spacecrafts total mass
     std::vector<uint64_t> thrusterOutMsgIds;        //!< -- Message ID of each thruster
-    std::vector<THROutputMessage> thrusterOutBuffer;//!< -- Message buffer for thruster data
+    std::vector<THROutputSimMsg> thrusterOutBuffer;//!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data
     //int64_t propsInID;                            //!< [-] The ID associated with the mss props msg
     THRArrayOnTimeCmdIntMsg IncomingCmdBuffer;     //!< -- One-time allocation for savings

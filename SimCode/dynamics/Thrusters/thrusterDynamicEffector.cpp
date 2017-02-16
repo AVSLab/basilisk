@@ -75,7 +75,7 @@ void ThrusterDynamicEffector::SelfInit()
         {
             tmpThrustMsgName = "acs_thruster_" + std::to_string(thrustIdx) + "_data";
             tmpThrustMsgId = SystemMessaging::GetInstance()->
-            CreateNewMessage(tmpThrustMsgName, sizeof(THROutputMessage), this->thrusterOutMsgNameBufferCount, "THROutputMessage", moduleID);
+            CreateNewMessage(tmpThrustMsgName, sizeof(THROutputSimMsg), this->thrusterOutMsgNameBufferCount, "THROutputSimMsg", moduleID);
             
             this->thrusterOutMsgNames.push_back(tmpThrustMsgName);
             this->thrusterOutMsgIds.push_back(tmpThrustMsgId);
@@ -105,7 +105,7 @@ void ThrusterDynamicEffector::CrossInit()
 /*! This method is here to write the output message structure into the specified
  message.  It is currently blank but we will certainly have an output message
  soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.sizeof(THROutputMessage)
+ comment.sizeof(THROutputSimMsg)
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
@@ -113,8 +113,8 @@ void ThrusterDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
     int idx = 0;
     std::vector<THRConfigSimMsg>::iterator it;
-    //    std::vector<THROutputMessage>acsThrusters;
-    THROutputMessage tmpThruster;
+    //    std::vector<THROutputSimMsg>acsThrusters;
+    THROutputSimMsg tmpThruster;
     for (it = ThrusterData.begin(); it != ThrusterData.end(); it++)
     {
         /* # TODO: The string comparison is a provisional way to get only the ACS thruster data into the Message System.
@@ -132,7 +132,7 @@ void ThrusterDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
             
             SystemMessaging::GetInstance()->WriteMessage(this->thrusterOutMsgIds.at(idx),
                                                          CurrentClock,
-                                                         sizeof(THROutputMessage),
+                                                         sizeof(THROutputSimMsg),
                                                          reinterpret_cast<uint8_t*>(&tmpThruster),
                                                          moduleID);
             idx ++;

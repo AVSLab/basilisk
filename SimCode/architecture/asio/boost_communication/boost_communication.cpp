@@ -79,7 +79,7 @@ void OpenGLIO::CrossInit()
     
     for (i = 0; i < this->thrusterInMsgNames.size(); i++)
     {
-        this->thrusterInMsgIds.push_back(messageSys->subscribeToMessage(this->thrusterInMsgNames.at(i), sizeof(THROutputMessage), moduleID));
+        this->thrusterInMsgIds.push_back(messageSys->subscribeToMessage(this->thrusterInMsgNames.at(i), sizeof(THROutputSimMsg), moduleID));
     }
     this->thrusters.resize(i);
     
@@ -144,10 +144,10 @@ void OpenGLIO::readInputMessages()
         this->reactionWheels.at(i) = tmpWheelData;
     }
     
-    THROutputMessage tmpThrusterData;
+    THROutputSimMsg tmpThrusterData;
     for (int i = 0; i < this->thrusters.size(); i++)
     {
-        messageSys->ReadMessage(this->thrusterInMsgIds.at(i), &localHeader, sizeof(THROutputMessage), reinterpret_cast<uint8_t*> (&tmpThrusterData));
+        messageSys->ReadMessage(this->thrusterInMsgIds.at(i), &localHeader, sizeof(THROutputSimMsg), reinterpret_cast<uint8_t*> (&tmpThrusterData));
         this->thrusters.at(i) = tmpThrusterData;
     }
 

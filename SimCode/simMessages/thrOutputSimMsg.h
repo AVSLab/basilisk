@@ -30,7 +30,7 @@ typedef struct {
     Eigen::Vector3d thrusterDirection;              //!< -- Unit vector of thruster pointing
     double maxThrust;                               //!< N  Steady state thrust of thruster
     double thrustFactor;                            //!< -- Current Thrust Percentage
-}THROutputMessage;
+}THROutputSimMsg;
 
 
 #endif

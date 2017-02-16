@@ -37,7 +37,7 @@
 #include "SpacecraftSimDefinitions.h"
 #include "simMessages/rwConfigSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/thrOutputMessage.h"
+#include "simMessages/thrOutputSimMsg.h"
 #include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
@@ -118,7 +118,7 @@ private:
     
     std::vector<std::string> thrusterInMsgNames;
     std::vector<uint64_t> thrusterInMsgIds;
-    std::vector<THROutputMessage> thrusters;
+    std::vector<THROutputSimMsg> thrusters;
 };
 
 
