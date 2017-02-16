@@ -70,6 +70,7 @@ public:
     bool ReadInputs();
     void ComputeLocalAtmo(double currentTime);
     void ComputeRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
+    void AddSpacecraftToModel(std::string tmpScMsgName);
 
 
 public:
@@ -78,13 +79,13 @@ public:
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
     std::string planetName;
-    std::string atmoDensOutMsgName;
-    std::string scStateInMsgName;
+    std::vector<std::string> atmoDensOutMsgNames;
+    std::vector<std::string> scStateInMsgNames;
     std::string planetPosInMsgName;
-    uint64_t atmoDensOutMsgId;
-    uint64_t scStateInMsgId;
+    std::vector<uint64_t> atmoDensOutMsgIds;
+    std::vector<uint64_t> scStateInMsgIds;
     uint64_t planetPosInMsgId;
-    SCPlusOutputStateData scState;
+    std::vector<SCPlusOutputStateData> scStates;
     SpicePlanetState bodyState;
     Eigen::Vector3d relativePos; //!< [-] Container for local position
 
