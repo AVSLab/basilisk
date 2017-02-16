@@ -130,7 +130,7 @@ void SimpleNav::CrossInit()
     }
     //! - Obtain the ID associated with the input Sun name and alert if not found.
     inputSunID =SystemMessaging::GetInstance()->
-    subscribeToMessage(inputSunName, sizeof(SpicePlanetStateMessage), moduleID);
+    subscribeToMessage(inputSunName, sizeof(SpicePlanetStateSimMsg), moduleID);
     if(inputSunID < 0)
     {
         std::cerr << "Warning: input Sun message name: " << inputSunName;
@@ -145,7 +145,7 @@ void SimpleNav::readInputMessages()
 {
     //! Begin method steps
     SingleMessageHeader localHeader;
-    memset(&this->sunState, 0x0, sizeof(SpicePlanetStateMessage));
+    memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
@@ -155,7 +155,7 @@ void SimpleNav::readInputMessages()
     if(inputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-                                                    sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
+                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
     }
 }
 

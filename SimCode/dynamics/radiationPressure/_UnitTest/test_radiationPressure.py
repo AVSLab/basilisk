@@ -106,7 +106,7 @@ def unitRadiationPressure(show_plots, modelType):
     scPlusStateMsg.sigma_BN = sigma_BN
     unitTestSim.TotalSim.WriteMessageData(scPlusStateMsgName, scPlusStateMsg.getStructSize(), 1, scPlusStateMsg)
 
-    sunSpiceMsg = spice_interface.SpicePlanetStateMessage()
+    sunSpiceMsg = spice_interface.SpicePlanetStateSimMsg()
     sunSpiceMsgName = "sun_planet_data"
     unitTestSim.TotalSim.CreateNewMessage(testProcessName, sunSpiceMsgName, sunSpiceMsg.getStructSize(), 2)
     sunSpiceMsg.PositionVector = sun_r_N

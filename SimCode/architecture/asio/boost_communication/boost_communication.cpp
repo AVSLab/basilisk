@@ -66,8 +66,8 @@ void OpenGLIO::CrossInit()
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
     this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), moduleID);
-    this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
-    this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetStateMessage), moduleID);
+    this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
+    this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
     this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeMessage), this->moduleID);
     
     int i;
@@ -85,7 +85,7 @@ void OpenGLIO::CrossInit()
     
     for(i = 0; i < this->planetInMsgNames.size(); i++)
     {
-        this->planetInMsgIds.push_back(messageSys->subscribeToMessage(this->planetInMsgNames.at(i), sizeof(SpicePlanetStateMessage), moduleID));
+        this->planetInMsgIds.push_back(messageSys->subscribeToMessage(this->planetInMsgNames.at(i), sizeof(SpicePlanetStateSimMsg), moduleID));
     }
     this->planets.resize(i);
     
@@ -133,8 +133,8 @@ void OpenGLIO::readInputMessages()
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
     messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
-    messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
-    messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
+    messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
+    messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
     messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeMessage), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
     
     RWConfigSimMsg tmpWheelData;
@@ -151,10 +151,10 @@ void OpenGLIO::readInputMessages()
         this->thrusters.at(i) = tmpThrusterData;
     }
 
-    SpicePlanetStateMessage tmpPlanetData;
+    SpicePlanetStateSimMsg tmpPlanetData;
     for (int i = 0; i < this->planets.size(); i++)
     {
-        messageSys->ReadMessage(this->planetInMsgIds.at(i), &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&tmpPlanetData));
+        messageSys->ReadMessage(this->planetInMsgIds.at(i), &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&tmpPlanetData));
         this->planets.at(i) = tmpPlanetData;
     }
 }

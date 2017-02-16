@@ -38,7 +38,7 @@ BoreAngCalc::BoreAngCalc()
     AngOutMsgID = -1;
     ReinitSelf = false;
     boreVecPoint[0] = boreVecPoint[1] = boreVecPoint[2]  = 0.0;
-    memset(&localPlanet, 0x0, sizeof(SpicePlanetStateMessage));
+    memset(&localPlanet, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&localState, 0x0, sizeof(SCPlusStatesSimMsg));
     return;
 }
@@ -72,7 +72,7 @@ void BoreAngCalc::CrossInit()
     StateInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(
                             StateString, sizeof(SCPlusStatesSimMsg), moduleID);
     celInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(celBodyString,
-                            sizeof(SpicePlanetStateMessage), moduleID);
+                            sizeof(SpicePlanetStateSimMsg), moduleID);
 }
 
 /*! This method writes the output data out into the messaging system.
@@ -104,7 +104,7 @@ void BoreAngCalc::ReadInputs()
     inputsGood = SystemMessaging::GetInstance()->ReadMessage(StateInMsgID, &localHeader,
         sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&localState), moduleID);
     inputsGood &= SystemMessaging::GetInstance()->ReadMessage(celInMsgID, &localHeader,
-        sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
+        sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&localPlanet), moduleID);
     
 }
 

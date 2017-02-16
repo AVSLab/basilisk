@@ -24,10 +24,10 @@
 %include "swig_common_model.i"
 
 %include "sys_model.h"
-%include "simMessages/spicePlanetStateMessage.h"
+%include "simMessages/spicePlanetStateSimMsg.h"
 %include "simMessages/spiceTimeMessage.h"
 %include "spice_interface.h"
-GEN_SIZEOF(SpicePlanetStateMessage);
+GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SpiceTimeMessage);
 
 %pythoncode %{

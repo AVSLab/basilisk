@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/linearAlgebra.h"
 #include <map>
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeMessage.h"
 
 /*! \addtogroup SimModelGroup
@@ -77,7 +77,7 @@ private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
     int64_t TimeOutMsgID;       //!< -- Output time message ID
-    std::map<uint32_t, SpicePlanetStateMessage> PlanetData; //!< -- Internal vector of planets
+    std::map<uint32_t, SpicePlanetStateSimMsg> PlanetData; //!< -- Internal vector of planets
     
 };
 

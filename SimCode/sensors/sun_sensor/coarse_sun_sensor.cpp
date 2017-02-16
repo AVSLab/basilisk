@@ -144,7 +144,7 @@ bool CoarseSunSensor::LinkMessages()
     //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
     InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
-        sizeof(SpicePlanetStateMessage), moduleID);
+        sizeof(SpicePlanetStateSimMsg), moduleID);
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
         sizeof(SCPlusStatesSimMsg), moduleID);
     
@@ -169,13 +169,13 @@ void CoarseSunSensor::readInputMessages()
     //! Begin Method Steps
     
     //! - Zero ephemeris information
-    memset(&SunData, 0x0, sizeof(SpicePlanetStateMessage));
+    memset(&SunData, 0x0, sizeof(SpicePlanetStateSimMsg));
     memset(&StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(InputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
-                                                    sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
+                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
     if(InputStateID >= 0)

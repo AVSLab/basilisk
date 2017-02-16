@@ -22,7 +22,7 @@
 
 #include <map>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/idEphemerisSimMsg.h"
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 

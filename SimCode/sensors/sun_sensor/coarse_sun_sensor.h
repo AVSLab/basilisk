@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include <random>
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 
@@ -97,7 +97,7 @@ private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
     int64_t OutputDataID;                       //!< [-] Connect to output CSS data
-    SpicePlanetStateMessage SunData;            //!< [-] Unused for now, but including it for future
+    SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
     std::default_random_engine rgen;            //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;      //! [-] Random number distribution

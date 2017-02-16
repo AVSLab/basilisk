@@ -62,7 +62,7 @@ void RadiationPressure::CrossInit()
 {
     //! - Find the message ID associated with the ephmInMsgID string.
     //! - Warn the user if the message is not successfully linked.
-    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateMessage), this->moduleID);
+    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
  
     if(sunEphmInMsgId < 0)
     {
@@ -103,8 +103,8 @@ void RadiationPressure::readInputMessages()
     
     if(this->sunEphmInMsgId >= 0)
     {
-        memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateMessage));
-        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateMessage), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
+        memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
+        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
     
     memset(&localHeader, 0x0, sizeof(localHeader));

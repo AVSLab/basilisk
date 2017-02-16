@@ -111,7 +111,7 @@ MarsPosEnd = [-5.837178848407724E+07, -1.956015572423997E+08, -8.816253265780403
 MarsPosEnd = numpy.array(MarsPosEnd)
 MarsPosEnd = MarsPosEnd*1000.0
 
-FinalMarsMessage = spice_interface.SpicePlanetStateMessage()
+FinalMarsMessage = spice_interface.SpicePlanetStateSimMsg()
 TotalSim.TotalSim.GetWriteData("mars_planet_data", 120, FinalMarsMessage, 0)
 MarsPosVec = FinalMarsMessage.PositionVector
 
@@ -127,7 +127,7 @@ if(PosDiffNorm > PosErrTolerance):
 EarthPosEnd = numpy.array([-1.252088742656509E+07, -1.385541731163796E+08, -6.009129302923465E+07])
 EarthPosEnd = EarthPosEnd*1000.0
 
-FinalEarthMessage = spice_interface.SpicePlanetStateMessage()
+FinalEarthMessage = spice_interface.SpicePlanetStateSimMsg()
 TotalSim.TotalSim.GetWriteData("earth_planet_data", 120, FinalEarthMessage, 0)
 EarthPosVec = FinalEarthMessage.PositionVector
 
@@ -143,7 +143,7 @@ if(PosDiffNorm > PosErrTolerance):
 SunPosEnd = numpy.array([5.590530479848895E+05,  3.620962731831532E+05,  1.304501641512279E+05])
 SunPosEnd = SunPosEnd*1000.0
 
-FinalSunMessage = spice_interface.SpicePlanetStateMessage()
+FinalSunMessage = spice_interface.SpicePlanetStateSimMsg()
 TotalSim.TotalSim.GetWriteData("sun_planet_data", 120, FinalSunMessage, 0)
 SunPosVec = FinalSunMessage.PositionVector
 

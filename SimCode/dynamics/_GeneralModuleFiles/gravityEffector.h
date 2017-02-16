@@ -26,7 +26,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <vector>
 #include <Eigen/Dense>
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 
 class SphericalHarmonics
 {
@@ -80,7 +80,7 @@ public:
     double ephemTime;               //!< [s]      Ephemeris time for the body in question
     double ephIntTime;              //!< [s]      Integration time associated with the ephem data
     double radEquator;              //!< [m]      Equatorial radius for the body
-    SpicePlanetStateMessage localPlanet;//!< [-]      Class storage of ephemeris info from scheduled portion
+    SpicePlanetStateSimMsg localPlanet;//!< [-]      Class storage of ephemeris info from scheduled portion
     SingleMessageHeader localHeader;//!  [-]      Header information for ephemeris storage
     std::string bodyInMsgName;      //!<          Gravitational body name
     std::string outputMsgName;      //!<          Ephemeris information relative to display frame

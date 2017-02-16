@@ -23,7 +23,7 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/boreAngleSimMsg.h"
 
 /*! \addtogroup SimModelGroup
@@ -57,7 +57,7 @@ public:
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     
 private:
-    SpicePlanetStateMessage localPlanet;//!< (-) planet that we are pointing at
+    SpicePlanetStateSimMsg localPlanet;//!< (-) planet that we are pointing at
     SCPlusStatesSimMsg localState;   //!< (-) observed state of the spacecraft
     int64_t StateInMsgID;             // (-) MEssage ID for incoming data
     int64_t celInMsgID;               // (-) MEssage ID for incoming data

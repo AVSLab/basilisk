@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMEssages/spicePlanetStateMessage.h"
+#include "simMEssages/spicePlanetStateSimMsg.h"
 #include "../SimFswInterfaceMessages/navAttIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransIntMsg.h"
 
@@ -67,7 +67,7 @@ public:
     NavTransIntMsg trueTransState;    //!< -- translation nav state without errors
     NavTransIntMsg estTransState;     //!< -- translation nav state including errors
     SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
-    SpicePlanetStateMessage sunState;  //!< -- input Sun state
+    SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

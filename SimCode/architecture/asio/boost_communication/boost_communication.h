@@ -39,7 +39,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "simMessages/spicePlanetStateMessage.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/spiceTimeMessage.h"
 
 #define IP_BASE_PORT         50000
@@ -98,15 +98,15 @@ private:
     SCPlusStatesSimMsg stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
-    SpicePlanetStateMessage sunEphmInMsgBuffer;
+    SpicePlanetStateSimMsg sunEphmInMsgBuffer;
     
     std::vector<std::string> planetInMsgNames;
     std::vector<uint64_t> planetInMsgIds;
-    std::vector<SpicePlanetStateMessage> planets;
+    std::vector<SpicePlanetStateSimMsg> planets;
     
     std::string centralBodyInMsgName;
     uint64_t centralBodyInMsgId;
-    SpicePlanetStateMessage centralBodyInMsgBuffer;
+    SpicePlanetStateSimMsg centralBodyInMsgBuffer;
     std::string spiceTimeDataInMsgName;
     uint64_t spiceTimeDataInMsgId;
     SpiceTimeMessage spiceTimeDataInMsgBuffer;

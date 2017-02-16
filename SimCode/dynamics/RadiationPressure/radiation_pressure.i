@@ -10,9 +10,9 @@
 %include "sys_model.h"
 %include "radiation_pressure.h"
 
-%include "../../simMessages/spicePlanetStateMessage.h"
+%include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
-GEN_SIZEOF(SpicePlanetStateMessage);
+GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SCPlusStatesSimMsg);
 
 %pythoncode %{
