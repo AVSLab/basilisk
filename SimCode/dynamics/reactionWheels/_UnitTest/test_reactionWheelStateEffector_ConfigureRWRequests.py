@@ -62,7 +62,7 @@ def writeNewRWCmds(self,u_cmd,numRW):
         self.NewRWCmds = NewRWCmdsVec # set in module
 
 def defaultReactionWheel():
-    RW = reactionWheelStateEffector.ReactionWheelConfigMessage()
+    RW = reactionWheelStateEffector.RWConfigSimMsg()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]

@@ -62,7 +62,7 @@ typedef struct {
     Eigen::Vector3d rPrimeWcB_B;
     Eigen::Vector3d w2Hat_B;
     Eigen::Vector3d w3Hat_B;
-}ReactionWheelConfigMessage;
+}RWConfigSimMsg;
 
 
 

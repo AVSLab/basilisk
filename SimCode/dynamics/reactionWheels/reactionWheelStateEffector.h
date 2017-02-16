@@ -30,7 +30,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../simMessages/rwCmdSimMsg.h"
-#include "../../simMessages/rwConfigMessage.h"
+#include "../../simMessages/rwConfigSimMsg.h"
 #include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../SimFswInterfaceMessages/macroDefinitions.h"
 
@@ -56,14 +56,14 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 	void SelfInit();
 	void CrossInit();
-	void AddReactionWheel(ReactionWheelConfigMessage *NewRW) {ReactionWheelData.push_back(*NewRW);}
+	void AddReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureRWRequests(double CurrentTime);
     
 public:
-	std::vector<ReactionWheelConfigMessage> ReactionWheelData;  //!< -- RW information2
+	std::vector<RWConfigSimMsg> ReactionWheelData;  //!< -- RW information2
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data

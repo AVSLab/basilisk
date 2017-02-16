@@ -35,7 +35,7 @@
 #include "environment/spice/spice_interface.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
-#include "simMessages/rwConfigMessage.h"
+#include "simMessages/rwConfigSimMsg.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/thrOutputMessage.h"
 #include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
@@ -114,7 +114,7 @@ private:
 
     std::vector<std::string> rwInMsgNames;
     std::vector<uint64_t> rwInMsgIds;
-    std::vector<ReactionWheelConfigMessage> reactionWheels;
+    std::vector<RWConfigSimMsg> reactionWheels;
     
     std::vector<std::string> thrusterInMsgNames;
     std::vector<uint64_t> thrusterInMsgIds;

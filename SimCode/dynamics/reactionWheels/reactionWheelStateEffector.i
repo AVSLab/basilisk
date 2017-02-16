@@ -32,7 +32,7 @@
 %include "reactionWheelStateEffector.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../simMessages/rwCmdSimMsg.h"
-%include "../../simMessages/rwConfigMessage.h"
+%include "../../simMessages/rwConfigSimMsg.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
 %include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 
@@ -40,7 +40,7 @@
 //%include "hubEffector.h"
 
 namespace std {
-    %template(RWConfigVector) vector<ReactionWheelConfigMessage>;
+    %template(RWConfigVector) vector<RWConfigSimMsg>;
 	%template(RWCmdVector) vector<RWCmdSimMsg>;
 }
 GEN_SIZEOF(RWArrayTorqueIntMsg);

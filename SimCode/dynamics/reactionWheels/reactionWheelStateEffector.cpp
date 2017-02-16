@@ -68,7 +68,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
     this->numRW = 0;
-    std::vector<ReactionWheelConfigMessage>::iterator RWIt;
+    std::vector<RWConfigSimMsg>::iterator RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
 
@@ -106,7 +106,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     this->effProps.IEffPrimePntB_B.setZero();
     
     int thetaCount = 0;
-    std::vector<ReactionWheelConfigMessage>::iterator RWIt;
+    std::vector<RWConfigSimMsg>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
@@ -198,7 +198,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 
 	omegaLoc_BN_B = this->hubOmega->getState();
 
-    std::vector<ReactionWheelConfigMessage>::iterator RWIt;
+    std::vector<RWConfigSimMsg>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
@@ -255,7 +255,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
 	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
 	int RWi = 0;
     int thetaCount = 0;
-	std::vector<ReactionWheelConfigMessage>::iterator RWIt;
+	std::vector<RWConfigSimMsg>::iterator RWIt;
 
 	//! Grab necessarry values from manager
 	omegaDotBNLoc_B = this->hubOmega->getStateDeriv();
@@ -296,7 +296,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
-    std::vector<ReactionWheelConfigMessage>::iterator RWIt;
+    std::vector<RWConfigSimMsg>::iterator RWIt;
     for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
     {
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
@@ -333,11 +333,11 @@ void ReactionWheelStateEffector::SelfInit()
 	// Reserve a message ID for each reaction wheel config output message
 	uint64_t tmpWheeltMsgId;
 	std::string tmpWheelMsgName;
-	std::vector<ReactionWheelConfigMessage>::iterator it;
+	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		tmpWheelMsgName = "rw_bla" + std::to_string(it - ReactionWheelData.begin()) + "_data";
-		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(ReactionWheelConfigMessage), OutputBufferCount, "ReactionWheelConfigMessage", moduleID);
+		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigSimMsg), OutputBufferCount, "RWConfigSimMsg", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
 	}
@@ -371,7 +371,7 @@ void ReactionWheelStateEffector::CrossInit()
 		std::cerr << InputCmds << "  :" << std::endl<< __FILE__ << std::endl;
 	}
 
-	std::vector<ReactionWheelConfigMessage>::iterator it;
+	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		if (it->gsHat_S.norm() > 0.01) {
@@ -413,8 +413,8 @@ void ReactionWheelStateEffector::CrossInit()
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	ReactionWheelConfigMessage tmpRW;
-	std::vector<ReactionWheelConfigMessage>::iterator it;
+	RWConfigSimMsg tmpRW;
+	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
         if (numRWJitter > 0) {
@@ -443,7 +443,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		// Write out config data for eachreaction wheel
 		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
 								 CurrentClock,
-								 sizeof(ReactionWheelConfigMessage),
+								 sizeof(RWConfigSimMsg),
 								 reinterpret_cast<uint8_t*> (&tmpRW),
 								 moduleID);
 	}
