@@ -116,11 +116,6 @@ void SimModel::InitSimulation()
     {
         (*it)->resetProcess(0);
     }
-    //! - If a message has been added to logger, link the message IDs
-    if(!messageLogs.messagesLinked())
-    {
-        messageLogs.linkMessages();
-    }
     if(SystemMessaging::GetInstance()->getFailureCount() > 0)
     {
         throw std::range_error("Message creation failed.  Please examine output.\n");
@@ -135,7 +130,6 @@ void SimModel::InitSimulation()
 */
 void SimModel::SingleStepProcesses()
 {
-//      std::cout << "SingleStepProcesses()" << std::endl;
     uint64_t nextCallTime = ~0;
     std::vector<SysProcess *>::iterator it = processList.begin();
     CurrentNanos = NextTaskTime;
@@ -160,6 +154,11 @@ void SimModel::SingleStepProcesses()
         throw std::range_error("Message reads or writes failed.  Please examine output.\n");
     }
     NextTaskTime = nextCallTime != ~0 ? nextCallTime : CurrentNanos;
+    //! - If a message has been added to logger, link the message IDs
+    if(!messageLogs.messagesLinked())
+    {
+        messageLogs.linkMessages();
+    }
     messageLogs.logAllMessages();
 }
 
