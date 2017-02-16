@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesMessage.h"
 #include "simMessages/spicePlanetStateMessage.h"
-#include "simMessages/boreAngleMessage.h"
+#include "simMessages/boreAngleSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -53,7 +53,7 @@ public:
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double strBoreVec[3];             //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
-    AngOffValuesMessage boresightAng; //!< (-) Boresigt angles relative to target
+    AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     
 private:

@@ -25,7 +25,7 @@
 typedef struct {
     double azimuth;      //<! (r) the location angle to put the miss in a quadrant
     double missAngle;    //<! (r) the angular distance between the boresight and body
-}AngOffValuesMessage;
+}AngOffValuesSimMsg;
 
 
 
