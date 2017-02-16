@@ -26,7 +26,6 @@
 # Creation Date:  Jan 18, 2017
 #
 
-import pytest
 import sys, os, inspect
 import matplotlib
 import numpy as np
@@ -61,6 +60,8 @@ import gravityEffector
 import simIncludeGravity
 import exponentialAtmosphere
 import dragDynamicEffector
+
+#print dir(exponentialAtmosphere)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -110,8 +111,8 @@ def run():
 
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    newAtmo.ModelTag = "ExpAtmo"
     atmoTaskName = "atmosphere"
+    newAtmo.ModelTag = "ExpAtmo"
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
     dragEffectorTaskName = "drag"
@@ -139,8 +140,8 @@ def run():
 
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
-
-
+    print scObject.scStateOutMsgName
+    newAtmo.AddSpacecraftToModel(scObject.scStateOutMsgName)
     simIncludeGravity.addEarth()
     simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
 
