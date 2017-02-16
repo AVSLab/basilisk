@@ -30,7 +30,7 @@
 #include "../_GeneralModuleFiles/stateVecIntegrator.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "simMessages/scPlusStatesMessage.h"
-#include "simMessages/scPlusMassPropsMessage.h"
+#include "simMessages/scPlusMassPropsSimMsg.h"
 #include "hubEffector.h"
 
 /*! @brief This is an instantiation of the dynamicObject abstract class that is a spacecraft with stateEffectors and

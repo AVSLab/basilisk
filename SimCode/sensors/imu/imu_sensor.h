@@ -25,7 +25,7 @@
 #include <random>
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesMessage.h"
-#include "simMessages/scPlusMassPropsMessage.h"
+#include "simMessages/scPlusMassPropsSimMsg.h"
 #include "../SimFswInterfaceMessages/imuSensorIntMsg.h"
 
 
@@ -80,7 +80,7 @@ private:
     uint64_t PreviousTime;              /// -- Timestamp from previous frame
     SCPlusStatesMessage StatePrevious;  /// -- Previous state to delta in IMU
     SCPlusStatesMessage StateCurrent;   /// -- Current SSBI-relative state
-    SCPlusMassPropsMessage MassCurrent; /// -- Current mass props for the vehicle
+    SCPlusMassPropsSimMsg MassCurrent; /// -- Current mass props for the vehicle
 	GaussMarkov errorModelAccel;        //!< [-] Gauss-markov error states
 	GaussMarkov errorModelGyro;         //!< [-] Gauss-markov error states
 };

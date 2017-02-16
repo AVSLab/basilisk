@@ -131,7 +131,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     setRandomWalk(ImuSensor)
 
     # configure MassPropsData
-    MassPropsData = imu_sensor.SCPlusMassPropsMessage()
+    MassPropsData = imu_sensor.SCPlusMassPropsSimMsg()
     MassPropsData.massSC = -97.9
     MassPropsData.c_B = [0,0,0]
     MassPropsData.ISC_PntB_B = [[100.0, 0.0, 0.0], [0.0, 100.0, 0.0], [0.0, 0.0, 100.0]] 

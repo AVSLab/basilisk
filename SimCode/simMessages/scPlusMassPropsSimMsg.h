@@ -26,7 +26,7 @@ typedef struct {
     double massSC;                   //!< kg   Current spacecraft mass
     double c_B[3];                   //!< m    Center of mass of spacecraft with respect to point B
     double ISC_PntB_B[3][3];         //!< kgm2 Inertia tensor of spacecraft (relative to body)
-}SCPlusMassPropsMessage;
+}SCPlusMassPropsSimMsg;
 
 
 #endif

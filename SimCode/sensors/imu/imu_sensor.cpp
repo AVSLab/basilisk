@@ -112,7 +112,7 @@ void ImuSensor::CrossInit()
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
         sizeof(SCPlusStatesMessage), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
-        sizeof(SCPlusMassPropsMessage), moduleID);
+        sizeof(SCPlusMassPropsSimMsg), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
@@ -132,11 +132,11 @@ void ImuSensor::readInputMessages()
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesMessage), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
-    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsMessage));
+    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsSimMsg));
     if(InputMassID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(SCPlusMassPropsMessage), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
+                                                    sizeof(SCPlusMassPropsSimMsg), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
     }
 }
 
