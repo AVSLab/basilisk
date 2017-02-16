@@ -45,7 +45,7 @@ StarTracker::~StarTracker()
 bool StarTracker::LinkMessages()
 {
     inputTimeID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputTimeMessage, sizeof(SpiceTimeMessage), moduleID);
+        inputTimeMessage, sizeof(SpiceTimeSimMsg), moduleID);
     inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
         inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
     
@@ -95,7 +95,7 @@ void StarTracker::readInputMessages()
         this->messagesLinked = LinkMessages();
     }
     
-    memset(&this->timeState, 0x0, sizeof(SpiceTimeMessage));
+    memset(&this->timeState, 0x0, sizeof(SpiceTimeSimMsg));
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
@@ -105,7 +105,7 @@ void StarTracker::readInputMessages()
     if(inputTimeID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
-                                                    sizeof(SpiceTimeMessage), reinterpret_cast<uint8_t*>(&timeState), moduleID);
+                                                    sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*>(&timeState), moduleID);
         this->envTimeClock = localHeader.WriteClockNanos;
     }
 }

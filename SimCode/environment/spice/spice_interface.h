@@ -25,7 +25,7 @@
 #include "utilities/linearAlgebra.h"
 #include <map>
 #include "simMessages/spicePlanetStateSimMsg.h"
-#include "simMessages/spiceTimeMessage.h"
+#include "simMessages/spiceTimeSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment

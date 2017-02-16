@@ -28,7 +28,7 @@ typedef struct {
     double GPSSeconds;          //!< s Current GPS seconds
     uint16_t GPSWeek;           //!< -- Current GPS week value
     uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
-}SpiceTimeMessage;
+}SpiceTimeSimMsg;
 
 
 
