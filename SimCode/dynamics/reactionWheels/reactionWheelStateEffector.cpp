@@ -322,7 +322,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
 void ReactionWheelStateEffector::SelfInit()
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	RWCmdMessage RWCmdInitializer;
+	RWCmdSimMsg RWCmdInitializer;
 	RWCmdInitializer.u_cmd = 0.0;
 
 	//! Begin method steps
@@ -483,7 +483,7 @@ void ReactionWheelStateEffector::ReadInputs()
 	prevCommandTime = LocalHeader.WriteClockNanos;
 
 	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
-	RWCmdMessage *CmdPtr;
+	RWCmdSimMsg *CmdPtr;
 	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
 		CmdPtr++, i++)
 	{
@@ -501,7 +501,7 @@ void ReactionWheelStateEffector::ReadInputs()
 void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
 {
 	//! Begin method steps
-	std::vector<RWCmdMessage>::iterator CmdIt;
+	std::vector<RWCmdSimMsg>::iterator CmdIt;
 	int RWIter = 0;
 	double u_s;
 	double omegaCritical;

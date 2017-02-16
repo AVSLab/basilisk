@@ -29,7 +29,7 @@
 #include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "../../simMessages/rwCmdMessage.h"
+#include "../../simMessages/rwCmdSimMsg.h"
 #include "../../simMessages/rwConfigMessage.h"
 #include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../SimFswInterfaceMessages/macroDefinitions.h"
@@ -68,7 +68,7 @@ public:
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
-	std::vector<RWCmdMessage> NewRWCmds;                        //!< -- Incoming attitude commands
+	std::vector<RWCmdSimMsg> NewRWCmds;                        //!< -- Incoming attitude commands
 	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
     std::string nameOfReactionWheelOmegasState;
     std::string nameOfReactionWheelThetasState;

@@ -24,7 +24,7 @@
 /*! @brief Structure used to define the individual RW motor torque command message*/
 typedef struct {
     double u_cmd; //!< N-m, torque command for individual RW
-}RWCmdMessage;
+}RWCmdSimMsg;
 
 
 
