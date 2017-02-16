@@ -52,8 +52,8 @@ void ClockSynch::SelfInit()
     //! Begin method steps
     //! - Initialize the output message
     clockOutputID = SystemMessaging::GetInstance()->
-    CreateNewMessage(clockOutputName, sizeof(SynchClockMessage), outputBufferCount,
-                     "SynchClockMessage", moduleID);
+    CreateNewMessage(clockOutputName, sizeof(SynchClockSimMsg), outputBufferCount,
+                     "SynchClockSimMsg", moduleID);
     //! - Set the overrun counter to zero
     outputData.overrunCounter = 0;
 
@@ -132,7 +132,7 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
     
     //! - Write the composite information into the output synch message.
     SystemMessaging::GetInstance()->
-    WriteMessage(clockOutputID, CurrentSimNanos, sizeof(SynchClockMessage),
+    WriteMessage(clockOutputID, CurrentSimNanos, sizeof(SynchClockSimMsg),
                  reinterpret_cast<uint8_t*> (&outputData), moduleID);
 
 	if (displayTime)

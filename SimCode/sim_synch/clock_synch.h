@@ -24,7 +24,7 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include <chrono>
-#include "simMessages/syncClockMessage.h"
+#include "simMessages/syncClockSimMsg.h"
 
 /*! \addtogroup SimArchGroup
  * @{
@@ -47,7 +47,7 @@ public:
 public:
     bool timeInitialized;        //!< (-) Number of output state buffers in msg
 	double accelFactor;          //!< (-) Factor used to accelerate sim-time relative to clock
-    SynchClockMessage outputData; //!< (-) Output data for the synch module
+    SynchClockSimMsg outputData; //!< (-) Output data for the synch module
     std::string clockOutputName; //!< (-) Name of the output message that we are using
     uint64_t outputBufferCount;  //!< (-) Count on the number of output buffers that we have
     int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer
