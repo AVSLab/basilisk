@@ -21,7 +21,7 @@
 #define _OE_STATE_EPHEM_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/ephemerisInterfaceMessage.h"
+#include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
 #include "SimFswInterfaceMessages/ephemerisIntMsg.h"
 

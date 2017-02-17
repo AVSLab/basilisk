@@ -33,8 +33,8 @@
 STRUCTASLIST(ChebyEphemRecord)
 %include "chebyPosEphem.h"
 %include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
-%include "../../fswMessages/ephemerisInterfaceMessage.h"
-GEN_SIZEOF(TDBVehicleClockCorrelationMessage)
+%include "../../fswMessages/TDBVehicleClockCorrelationFswMsg.h"
+GEN_SIZEOF(TDBVehicleClockCorrelationFswMsg)
 GEN_SIZEOF(EphemerisIntMsg)
 
 %pythoncode %{

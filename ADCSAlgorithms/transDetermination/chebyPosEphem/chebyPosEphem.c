@@ -44,7 +44,7 @@ void CrossInit_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t moduleID)
 {
 
     ConfigData->clockCorrInMsgID = subscribeToMessage(
-        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationMessage), moduleID);
+        ConfigData->clockCorrInMsgName, sizeof(TDBVehicleClockCorrelationFswMsg), moduleID);
 
 }
 
@@ -104,10 +104,10 @@ void Update_chebyPosEphem(ChebyPosEphemData *ConfigData, uint64_t callTime, uint
     double currentScaledValue;
     ChebyEphemRecord *currRec;
     int i;
-    TDBVehicleClockCorrelationMessage localCorr;
+    TDBVehicleClockCorrelationFswMsg localCorr;
     
     ReadMessage(ConfigData->clockCorrInMsgID, &writeTime, &writeSize,
-                sizeof(TDBVehicleClockCorrelationMessage), &localCorr, moduleID);
+                sizeof(TDBVehicleClockCorrelationFswMsg), &localCorr, moduleID);
     
     memset(&ConfigData->outputState, 0x0, sizeof(EphemerisIntMsg));
     

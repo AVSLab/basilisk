@@ -156,7 +156,7 @@ def test_earthOrbitFit(show_plots):
     oeStateModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     oeStateModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
     
-    clockCorrData = oe_state_ephem.TDBVehicleClockCorrelationMessage()
+    clockCorrData = oe_state_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = oeStateModel.ephArray[0].ephemTimeMid  - \
         oeStateModel.ephArray[0].ephemTimeRad

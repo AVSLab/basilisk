@@ -110,7 +110,7 @@ def test_sineCosine(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = pyswice.doubleArray_getitem(et, 0)
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationDays/2.0*86400.0
 
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationMessage()
+    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad
@@ -221,7 +221,7 @@ def test_earthOrbitFit(show_plots):
     chebyFitModel.ephArray[0].ephemTimeMid = etStart + curveDurationSeconds/2.0
     chebyFitModel.ephArray[0].ephemTimeRad = curveDurationSeconds/2.0
     
-    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationMessage()
+    clockCorrData = cheby_pos_ephem.TDBVehicleClockCorrelationFswMsg()
     clockCorrData.vehicleClockTime = 0.0
     clockCorrData.ephemerisTime = chebyFitModel.ephArray[0].ephemTimeMid  - \
         chebyFitModel.ephArray[0].ephemTimeRad

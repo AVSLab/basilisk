@@ -27,7 +27,7 @@
 typedef struct {
     double ephemerisTime;                /*!< [s] Ephemeris time associated with the vehicle time*/
     double vehicleClockTime;             /*!< [s] Vehicle time code converted over to seconds */
-}TDBVehicleClockCorrelationMessage;
+}TDBVehicleClockCorrelationFswMsg;
 
 
 #endif

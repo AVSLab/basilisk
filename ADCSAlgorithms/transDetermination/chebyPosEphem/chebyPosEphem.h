@@ -21,7 +21,7 @@
 #define _CHEBY_POS_EPHEM_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/ephemerisInterfaceMessage.h"
+#include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 
 #define MAX_CHEB_COEFF 40
