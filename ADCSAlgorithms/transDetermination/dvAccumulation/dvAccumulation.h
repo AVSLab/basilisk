@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "../SimFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/AccDataFswMsg.h"
-#include "fswMessages/AccPktDataMessage.h"
+#include "fswMessages/AccPktDataFswMsg.h"
 
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the

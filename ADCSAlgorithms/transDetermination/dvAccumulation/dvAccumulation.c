@@ -47,13 +47,13 @@ void CrossInit_dvAccumulation(DVAccumulationData *ConfigData, uint64_t moduleID)
 }
 
 /*////////////////////////////////////////////////////Experimenting QuickSort START////////////////*/
-void swap(AccPktDataMessage *p, AccPktDataMessage *q){
-    AccPktDataMessage t;
+void swap(AccPktDataFswMsg *p, AccPktDataFswMsg *q){
+    AccPktDataFswMsg t;
     t=*p;
     *p=*q;
     *q=t;
 }
-int partition(AccPktDataMessage *A, int start, int end){
+int partition(AccPktDataFswMsg *A, int start, int end){
     int i;
     uint64_t pivot=A[end].measTime;
     int partitionIndex=start;
@@ -66,7 +66,7 @@ int partition(AccPktDataMessage *A, int start, int end){
     swap(&(A[partitionIndex]), &(A[end]));
     return partitionIndex;
 }
-void QuickSort(AccPktDataMessage *A, int start, int end){
+void QuickSort(AccPktDataFswMsg *A, int start, int end){
     if(start<end){
         int partitionIndex=partition(A, start, end);
         QuickSort(A, start, partitionIndex-1);

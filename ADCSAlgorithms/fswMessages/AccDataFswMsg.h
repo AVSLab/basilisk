@@ -22,12 +22,12 @@
 
 #define MAX_ACC_BUF_PKT 25
 
-#import "fswMessages/AccPktDataMessage.h"
+#import "fswMessages/AccPktDataFswMsg.h"
 
 
 /*! @brief Structure used to define accelerometer package data */
 typedef struct {
-    AccPktDataMessage accPkts[MAX_ACC_BUF_PKT]; /*! [-] Accelerometer buffer read in*/
+    AccPktDataFswMsg accPkts[MAX_ACC_BUF_PKT]; /*! [-] Accelerometer buffer read in*/
 }AccDataFswMsg;
 
 
