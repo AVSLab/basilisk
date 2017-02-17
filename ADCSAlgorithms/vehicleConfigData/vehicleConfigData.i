@@ -35,14 +35,14 @@ GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigElementFswMsg);
 GEN_SIZEOF(RWConstellationFswMsg);
 GEN_SIZEOF(THRConfigFSWMessage);
-GEN_SIZEOF(THRArrayConfigFSWMessage);
+GEN_SIZEOF(THRArrayConfigFswMsg);
 GEN_SIZEOF(VehConfigInputData);
 GEN_SIZEOF(CSSConfigurationElement);
 GEN_SIZEOF(CSSConstConfig);
 
 %include "vehicleConfigData.h"
 %include "../fswMessages/vehicleConfigMessage.h"
-%include "../fswMessages/thrArrayConfigFSWMessage.h"
+%include "../fswMessages/thrArrayConfigFswMsg.h"
 %include "../fswMessages/thrConfigFSWMessage.h"
 %include "../fswMessages/rwConstellationFswMsg.h"
 %include "../fswMessages/rwConfigElementFswMsg.h"

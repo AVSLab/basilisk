@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "fswMessages/thrArrayConfigFSWMessage.h"
+#include "fswMessages/thrArrayConfigFswMsg.h"
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"

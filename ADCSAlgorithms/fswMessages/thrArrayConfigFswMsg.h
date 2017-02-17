@@ -27,7 +27,7 @@
 typedef struct {
     int numThrusters;
     THRConfigFSWMessage thrusters[MAX_EFF_CNT];  /*! [-] array of thruster configuration information*/
-}THRArrayConfigFSWMessage;
+}THRArrayConfigFswMsg;
 
 
 #endif

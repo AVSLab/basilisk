@@ -66,7 +66,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
                                                 sizeof(THRArrayCmdForceFswMsg),
                                                 moduleID);
     ConfigData->thrusterConfInMsgID = subscribeToMessage(ConfigData->thrusterConfInMsgName,
-                                                         sizeof(THRArrayConfigFSWMessage),
+                                                         sizeof(THRArrayConfigFswMsg),
                                                          moduleID);
 
 }
@@ -78,7 +78,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
  */
 void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    THRArrayConfigFSWMessage   localThrusterData;     /*!< local copy of the thruster data message */
+    THRArrayConfigFswMsg   localThrusterData;     /*!< local copy of the thruster data message */
     uint64_t            clockTime;
     uint32_t            readSize;
     int                 i;
@@ -90,7 +90,7 @@ void Reset_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t cal
 
     /* read in number of thrusters installed */
     ReadMessage(ConfigData->thrusterConfInMsgID, &clockTime, &readSize,
-                sizeof(THRArrayConfigFSWMessage), &localThrusterData, moduleID);
+                sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
     ConfigData->numThrusters = localThrusterData.numThrusters;
     for (i=0;i<ConfigData->numThrusters;i++) {
         ConfigData->thrMaxForce[i] = localThrusterData.thrusters[i].maxThrust;

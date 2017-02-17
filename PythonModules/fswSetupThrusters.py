@@ -71,7 +71,7 @@ def create(
 def writeConfigMessage(thrConfigMsgName, simObject, processName):
     global thrList
 
-    thrClass = vehicleConfigData.THRArrayConfigFSWMessage()
+    thrClass = vehicleConfigData.THRArrayConfigFswMsg()
 
     i = 0
     for item in thrList:

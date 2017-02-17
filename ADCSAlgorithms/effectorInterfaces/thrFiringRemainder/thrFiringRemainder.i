@@ -32,8 +32,8 @@
 %ignore Reset_thrFiringRemainder;
 GEN_SIZEOF(thrFiringRemainderConfig);
 %include "thrFiringRemainder.h"
-%include "../../fswMessages/thrArrayConfigFSWMessage.h"
-GEN_SIZEOF(THRArrayConfigFSWMessage);
+%include "../../fswMessages/thrArrayConfigFswMsg.h"
+GEN_SIZEOF(THRArrayConfigFswMsg);
 %include "../../fswMessages/thrArrayCmdForceFswMsg.h"
 GEN_SIZEOF(THRArrayCmdForceFswMsg);
 %include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"

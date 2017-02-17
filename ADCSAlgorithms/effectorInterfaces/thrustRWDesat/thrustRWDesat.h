@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "effectorInterfaces/errorConversion/dvAttEffect.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/thrArrayConfigFSWMessage.h"
+#include "fswMessages/thrArrayConfigFswMsg.h"
 #include "fswMessages/rwConstellationFswMsg.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include "vehicleConfigData/vehicleConfigData.h"
