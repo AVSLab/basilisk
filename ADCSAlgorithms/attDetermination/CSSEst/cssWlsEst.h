@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/sunHeadingEstMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/cssConfigMessage.h"
+#include "fswMessages/cssConfigFswMsg.h"
 #include <stdint.h>
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 
@@ -38,7 +38,7 @@
 /*! @brief Top level structure for the CSS weighted least squares estimator.
  Used to estimate the sun state in the vehicle body frame*/
 typedef struct {
-    CSSConfigMessage CSSData[MAX_NUM_CSS_SENSORS]; /*!< -- The config data for the estimator*/
+    CSSConfigFswMsg CSSData[MAX_NUM_CSS_SENSORS]; /*!< -- The config data for the estimator*/
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char InputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/

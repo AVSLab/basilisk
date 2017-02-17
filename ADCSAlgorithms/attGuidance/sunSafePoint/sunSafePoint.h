@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/sunHeadingEstMessage.h"
-#include "fswMessages/CSSConfigMessage.h"
+#include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyMessage.h"
 #include <stdint.h>
 

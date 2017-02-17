@@ -27,6 +27,6 @@ typedef struct {
     double nHatStr[3];      /*!< [-] Normal unit vector for sensor in structural frame*/
     double CBias;           /*!< W  Calibration coefficient bias for CSS */
     double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
-}CSSConfigMessage;
+}CSSConfigFswMsg;
 
 #endif

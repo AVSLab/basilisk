@@ -28,15 +28,15 @@
 %ignore SelfInit_cssWlsEst;
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
-STRUCTASLIST(CSSConfigMessage)
+STRUCTASLIST(CSSConfigFswMsg)
 GEN_SIZEOF(SunHeadingEstMessage);
-GEN_SIZEOF(CSSConfigMessage);
+GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(CSSWLSConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "cssWlsEst.h"
 %include "../../fswMessages/sunHeadingEstMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
-%include "../../fswMessages/CSSConfigMessage.h"
+%include "../../fswMessages/cssConfigFswMsg.h"
 
 %pythoncode %{
 import sys

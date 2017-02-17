@@ -25,7 +25,7 @@
 #include "../SimFswInterfaceMessages/navAttIntMsg.h"
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/CSSConfigMessage.h"
+#include "fswMessages/cssConfigFswMsg.h"
 #include "fswMessages/sunlineFilterMessage.h"
 
 
