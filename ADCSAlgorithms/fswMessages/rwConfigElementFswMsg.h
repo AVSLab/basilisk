@@ -26,7 +26,7 @@ typedef struct {
     double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
     double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
     double uMax;                /*!< [Nm]   maximum RW motor torque */
-}RWConfigElementMessage;
+}RWConfigElementFswMsg;
 
 
 

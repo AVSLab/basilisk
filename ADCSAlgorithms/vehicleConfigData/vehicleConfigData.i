@@ -22,7 +22,7 @@
 %}
 
 %include "swig_conly_data.i"
-%array_functions(RWConfigElementMessage, RWConfigArray);
+%array_functions(RWConfigElementFswMsg, RWConfigArray);
 %array_functions(THRConfigFSWMessage, ThrustConfigArray);
 STRUCTASLIST(CSSConfigurationElement)
 %constant void Update_vehicleConfigData(void*, uint64_t, uint64_t);
@@ -32,7 +32,7 @@ STRUCTASLIST(CSSConfigurationElement)
 %constant void CrossInit_vehicleConfigData(void*, uint64_t);
 %ignore CrossInit_vehicleConfigData;
 GEN_SIZEOF(VehicleConfigMessage);
-GEN_SIZEOF(RWConfigElementMessage);
+GEN_SIZEOF(RWConfigElementFswMsg);
 GEN_SIZEOF(RWConstellationMessage);
 GEN_SIZEOF(THRConfigFSWMessage);
 GEN_SIZEOF(THRArrayConfigFSWMessage);
@@ -45,7 +45,7 @@ GEN_SIZEOF(CSSConstConfig);
 %include "../fswMessages/thrArrayConfigFSWMessage.h"
 %include "../fswMessages/thrConfigFSWMessage.h"
 %include "../fswMessages/rwConstellationMessage.h"
-%include "../fswMessages/rwConfigElementMessage.h"
+%include "../fswMessages/rwConfigElementFswMsg.h"
 
 %pythoncode %{
 import sys
