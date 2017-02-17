@@ -20,12 +20,12 @@
 #ifndef SIM_RW_VOLTAGE_INPUT_H
 #define SIM_RW_VOLTAGE_INPUT_H
 
-#include "../../SimFswInterface/simFSWMacros.h"
+#include "../../SimFswInterfaceMessages/macroDefinitions.h"
 
 /*! @brief Structure used to define the message format of the RW voltage input  */
 typedef struct {
     double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
-} RWArrayVoltageMessage;
+}RWArrayVoltageIntMsg;
 
 
 
