@@ -30,7 +30,7 @@ typedef struct {
     double covar[SKF_N_STATES*SKF_N_STATES];    /*!< [-] Current covariance of the filter */
     double state[SKF_N_STATES];                 /*!< [-] Current estimated state of the filter */
     int numObs;                                 /*!< [-] Valid observation count for this frame*/
-}SunlineFilterMessage;
+}SunlineFilterFswMsg;
 
 
 

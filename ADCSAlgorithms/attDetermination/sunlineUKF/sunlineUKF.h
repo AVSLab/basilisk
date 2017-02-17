@@ -26,7 +26,7 @@
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/cssConfigFswMsg.h"
-#include "fswMessages/sunlineFilterMessage.h"
+#include "fswMessages/sunlineFilterFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
