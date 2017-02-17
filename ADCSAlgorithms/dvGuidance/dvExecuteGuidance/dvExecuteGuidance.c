@@ -55,7 +55,7 @@ void CrossInit_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t m
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavDataName,
         sizeof(NavTransIntMsg), moduleID);
     ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
-                                                    sizeof(DvBurnCmdMessage), moduleID);
+                                                    sizeof(DvBurnCmdFswMsg), moduleID);
     return;
     
 }
@@ -77,14 +77,14 @@ void Update_dvExecuteGuidance(dvExecuteGuidanceConfig *ConfigData, uint64_t call
     uint64_t writeTime;
     uint32_t writeSize;
     NavTransIntMsg navData;
-    DvBurnCmdMessage localBurnData;
+    DvBurnCmdFswMsg localBurnData;
     dvExecutionData localExeData;
     THRArrayOnTimeCmdIntMsg effCmd;
     
     ReadMessage(ConfigData->inputNavID, &writeTime, &writeSize,
         sizeof(NavTransIntMsg), &navData, moduleID);
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
-                sizeof(DvBurnCmdMessage), &localBurnData, moduleID);
+                sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
     burnTime = ((int64_t) callTime - (int64_t) localBurnData.burnStartTime)*1.0E-9;
     v3SetZero(burnAccum);

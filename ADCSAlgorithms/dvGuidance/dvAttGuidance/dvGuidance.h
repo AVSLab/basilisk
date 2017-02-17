@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/attRefFswMsg.h"
-#include "fswMessages/dvBurnCmdMessage.h"
+#include "fswMessages/dvBurnCmdFswMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

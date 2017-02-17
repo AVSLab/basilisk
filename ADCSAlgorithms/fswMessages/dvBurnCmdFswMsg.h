@@ -26,7 +26,7 @@ typedef struct {
     double dvRotVecUnit[3];  /*!< [-] The commanded vector we need to rotate about */
     double dvRotVecMag;      /*!< [r/s] The commanded rotation rate for the vector*/
     uint64_t burnStartTime;  /*!< [ns]  The commanded time to start the burn */
-}DvBurnCmdMessage;
+}DvBurnCmdFswMsg;
 
 
 #endif

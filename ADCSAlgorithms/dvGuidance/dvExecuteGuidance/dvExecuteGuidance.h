@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "SimFswInterfaceMessages/navTransIntMsg.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
-#include "fswMessages/dvBurnCmdMessage.h"
+#include "fswMessages/dvBurnCmdFswMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

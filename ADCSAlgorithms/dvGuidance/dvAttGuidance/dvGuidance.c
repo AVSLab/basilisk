@@ -50,7 +50,7 @@ void SelfInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 void CrossInit_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t moduleID)
 {
     ConfigData->inputBurnCmdID = subscribeToMessage(ConfigData->inputBurnDataName,
-                                                    sizeof(DvBurnCmdMessage), moduleID);
+                                                    sizeof(DvBurnCmdFswMsg), moduleID);
     return;
     
 }
@@ -73,10 +73,10 @@ void Update_dvGuidance(dvGuidanceConfig *ConfigData, uint64_t callTime,
 	double rotDCM[3][3];
     uint64_t writeTime;
     uint32_t writeSize;
-    DvBurnCmdMessage localBurnData;
+    DvBurnCmdFswMsg localBurnData;
     
     ReadMessage(ConfigData->inputBurnCmdID, &writeTime, &writeSize,
-                sizeof(DvBurnCmdMessage), &localBurnData, moduleID);
+                sizeof(DvBurnCmdFswMsg), &localBurnData, moduleID);
     
     ConfigData->dvMag = v3Norm(localBurnData.dvInrtlCmd);
     v3Normalize(localBurnData.dvInrtlCmd, dvUnit);

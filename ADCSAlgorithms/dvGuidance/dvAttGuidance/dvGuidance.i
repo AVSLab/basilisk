@@ -28,10 +28,10 @@
 %ignore SelfInit_dvGuidance;
 %constant void CrossInit_dvGuidance(void*, uint64_t);
 %ignore CrossInit_dvGuidance;
-GEN_SIZEOF(DvBurnCmdMessage);
+GEN_SIZEOF(DvBurnCmdFswMsg);
 GEN_SIZEOF(dvGuidanceConfig);
 %include "dvGuidance.h"
-%include "../../fswMessages/dvBurnCmdMessage.h"
+%include "../../fswMessages/dvBurnCmdFswMsg.h"
 
 %pythoncode %{
 import sys
