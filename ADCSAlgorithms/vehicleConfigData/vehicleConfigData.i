@@ -33,7 +33,7 @@ STRUCTASLIST(CSSConfigurationElement)
 %ignore CrossInit_vehicleConfigData;
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWConfigElementFswMsg);
-GEN_SIZEOF(RWConstellationMessage);
+GEN_SIZEOF(RWConstellationFswMsg);
 GEN_SIZEOF(THRConfigFSWMessage);
 GEN_SIZEOF(THRArrayConfigFSWMessage);
 GEN_SIZEOF(VehConfigInputData);
@@ -44,7 +44,7 @@ GEN_SIZEOF(CSSConstConfig);
 %include "../fswMessages/vehicleConfigMessage.h"
 %include "../fswMessages/thrArrayConfigFSWMessage.h"
 %include "../fswMessages/thrConfigFSWMessage.h"
-%include "../fswMessages/rwConstellationMessage.h"
+%include "../fswMessages/rwConstellationFswMsg.h"
 %include "../fswMessages/rwConfigElementFswMsg.h"
 
 %pythoncode %{

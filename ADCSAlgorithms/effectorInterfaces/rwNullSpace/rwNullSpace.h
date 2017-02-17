@@ -25,7 +25,7 @@
 #include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
-#include "fswMessages/rwConstellationMessage.h"
+#include "fswMessages/rwConstellationFswMsg.h"
 #include <stdint.h>
 #include <stdlib.h>
 

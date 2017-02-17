@@ -54,7 +54,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     double identMatrix[MAX_EFF_CNT*MAX_EFF_CNT];
     double GsTemp[MAX_EFF_CNT*MAX_EFF_CNT];
     double GsMatrix[3*MAX_EFF_CNT];
-    RWConstellationMessage localRWData;
+    RWConstellationFswMsg localRWData;
     int i, j;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -66,10 +66,10 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
 	ConfigData->inputSpeedsID = subscribeToMessage(ConfigData->inputRWSpeeds,
 		sizeof(RWSpeedIntMsg), moduleID);
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
-        sizeof(RWConstellationMessage), moduleID);
+        sizeof(RWConstellationFswMsg), moduleID);
     
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
-                sizeof(RWConstellationMessage), &localRWData, moduleID);
+                sizeof(RWConstellationFswMsg), &localRWData, moduleID);
     
     ConfigData->numWheels = localRWData.numRW;
     for(i=0; i<ConfigData->numWheels; i=i+1)

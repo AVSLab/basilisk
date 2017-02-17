@@ -28,6 +28,6 @@
 typedef struct {
     int numRW;
     RWConfigElementFswMsg reactionWheels[MAX_EFF_CNT];  /*!< [-] array of the reaction wheels */
-}RWConstellationMessage;
+}RWConstellationFswMsg;
 
 #endif

@@ -71,8 +71,8 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     if(strlen(ConfigData->rwConstellationInMsgName) > 0)
     {
         ConfigData->rwConstellationInMsgID = subscribeToMessage(ConfigData->rwConstellationInMsgName,
-                                                          sizeof(RWConstellationMessage), moduleID);
-        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellationMessage),
+                                                          sizeof(RWConstellationFswMsg), moduleID);
+        ReadMessage(ConfigData->rwConstellationInMsgID, &clockTime, &readSize, sizeof(RWConstellationFswMsg),
             &ConfigData->rwConstellation, moduleID);
     }
     

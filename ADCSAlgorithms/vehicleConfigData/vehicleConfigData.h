@@ -24,7 +24,7 @@
 #include "messaging/static_messaging.h"
 #include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/rwConstellationMessage.h"
+#include "fswMessages/rwConstellationFswMsg.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
 #include "fswMessages/thrConfigFSWMessage.h"
 
