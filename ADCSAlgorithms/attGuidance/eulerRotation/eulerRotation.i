@@ -32,12 +32,12 @@
 %constant void Reset_eulerRotation(void*, uint64_t, uint64_t);
 %ignore Reset_eulerRotation;
 GEN_SIZEOF(eulerRotationConfig);
-GEN_SIZEOF(AttRefMessage);
+GEN_SIZEOF(AttRefFswMsg);
 GEN_SIZEOF(EulerAngleMessage);
 %include "eulerRotation.h"
 
 // supportfile to be included in this sub-module
-%include "../../fswMessages/attRefMessage.h"
+%include "../../fswMessages/attRefFswMsg.h"
 %include "../../fswMessages/eulerAngleMessage.h"
 
 %pythoncode %{

@@ -41,8 +41,8 @@ void SelfInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(AttRefMessage),
-                                               "AttRefMessage",
+                                               sizeof(AttRefFswMsg),
+                                               "AttRefFswMsg",
                                                moduleID);
     ConfigData->outputEulerSetID = CreateNewMessage(ConfigData->outputEulerSetName,
                                                sizeof(EulerAngleMessage),
@@ -61,7 +61,7 @@ void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
-                                                sizeof(AttRefMessage),
+                                                sizeof(AttRefFswMsg),
                                                 moduleID);
     
     ConfigData->inputEulerSetID = ConfigData->inputEulerRatesID = -1;
@@ -87,13 +87,13 @@ void Reset_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uin
 void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input messages */
-    AttRefMessage inputRef;
+    AttRefFswMsg inputRef;
     EulerAngleMessage angles;
     EulerAngleMessage rates;
     uint64_t writeTime;
     uint32_t writeSize;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
-                sizeof(AttRefMessage), (void*) &(inputRef), moduleID);
+                sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
     if (ConfigData->inputEulerSetID > 0 && ConfigData->inputEulerRatesID > 0)
     {
         /*! - Read Raster Manager messages */
@@ -134,7 +134,7 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
 void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Guidance reference output */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(ConfigData->attRefOut), moduleID);
     
     /*! - Euler angle set and rates outputed for testing purposes */
@@ -225,7 +225,7 @@ void computeEuler321_Binv_derivative(double angleSet[3], double angleRates[3], d
  *      ConfigData = module configuration data
  *      inputRef = input base reference
  * Output:
- *      ConfigData: AttRefMessage is computed
+ *      ConfigData: AttRefFswMsg is computed
  */
 void computeEulerRotationReference(eulerRotationConfig *ConfigData,
                                    double sigma_R0N[3],

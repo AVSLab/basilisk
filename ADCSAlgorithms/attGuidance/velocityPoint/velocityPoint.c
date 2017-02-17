@@ -40,8 +40,8 @@ void SelfInit_velocityPoint(velocityPointConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(AttRefMessage),
-                                               "AttRefMessage",
+                                               sizeof(AttRefFswMsg),
+                                               "AttRefFswMsg",
                                                moduleID);
     /*! - Initialize variables for module */
 }
@@ -82,7 +82,7 @@ void Update_velocityPoint(velocityPointConfig *ConfigData, uint64_t callTime, ui
                                      primPlanet.r_BdyZero_N,
                                      primPlanet.v_BdyZero_N);
     
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),   /* update module name */
                  (void*) &(ConfigData->attRefOut), moduleID);
     
     return;

@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "fswMessages/eulerAngleMessage.h"
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -41,7 +41,7 @@ typedef struct {
     double priorCmdRates[3];
     uint64_t priorTime;                              /*!< [ns] last time the guidance module is called */
     double dt;                                       /*!< [s] integration time-step */
-    //AttRefMessage inputRef;
+    //AttRefFswMsg inputRef;
     
     /* Declare module IO interfaces */
     char        outputDataName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message containing the Reference */
@@ -60,7 +60,7 @@ typedef struct {
     
     
     /* Output attitude reference data to send */
-    AttRefMessage attRefOut;                                /*!< [-] structure for the Reference output data */
+    AttRefFswMsg attRefOut;                                /*!< [-] structure for the Reference output data */
     EulerAngleMessage      eulerSetOut;                     /*!< [-] structure for the Euler Set output data */
     EulerAngleMessage      eulerRatesOut;                   /*!< [-] structure for the Euler Set output data */
 }eulerRotationConfig;

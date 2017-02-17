@@ -52,8 +52,8 @@ void SelfInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleID
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(AttRefMessage),
-                                               "AttRefMessage",
+                                               sizeof(AttRefFswMsg),
+                                               "AttRefFswMsg",
                                                moduleID);
     ConfigData->priorTime = -1;
 }
@@ -67,7 +67,7 @@ void CrossInit_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t moduleI
 {
     /*! - Get the control data message ID*/
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
-                                                sizeof(AttRefMessage),
+                                                sizeof(AttRefFswMsg),
                                                 moduleID);
 }
 
@@ -92,11 +92,11 @@ void Reset_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, u
 void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
     /*! - Read input message */
-    AttRefMessage inputRef;
+    AttRefFswMsg inputRef;
     uint64_t writeTime;
     uint32_t writeSize;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
-                sizeof(AttRefMessage), (void*) &(inputRef), moduleID);
+                sizeof(AttRefFswMsg), (void*) &(inputRef), moduleID);
     
     /*! - Get input reference and compute integration time step to use downstream */
     double dt; /* integration time step [s] */
@@ -116,7 +116,7 @@ void Update_inertial3DSpin(inertial3DSpinConfig *ConfigData, uint64_t callTime, 
                                     dt);
     
     /*! - Write output message */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(ConfigData->attRefOut), moduleID);
     
     /*! Update prior time to current for next evaluation */
@@ -154,7 +154,7 @@ void computeReference_inertial3DSpin(inertial3DSpinConfig *ConfigData,
     v3Add(ConfigData->sigma_RN, v3Temp, ConfigData->sigma_RN);
     MRPswitch(ConfigData->sigma_RN, 1.0, ConfigData->sigma_RN);
     
-    /*! Copy output in AttRefMessage struct */
+    /*! Copy output in AttRefFswMsg struct */
     v3Copy(ConfigData->sigma_RN, ConfigData->attRefOut.sigma_RN);
     v3Copy(omega_RN_N, ConfigData->attRefOut.omega_RN_N);
     v3Copy(domega_RN_N, ConfigData->attRefOut.domega_RN_N);

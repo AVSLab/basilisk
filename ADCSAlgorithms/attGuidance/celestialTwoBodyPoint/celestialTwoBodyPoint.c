@@ -37,8 +37,8 @@ void SelfInit_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(AttRefMessage),
-                                               "AttRefMessage",
+                                               sizeof(AttRefFswMsg),
+                                               "AttRefFswMsg",
                                                moduleID);
     return;
     
@@ -137,7 +137,7 @@ void Update_celestialTwoBodyPoint(celestialTwoBodyPointConfig *ConfigData,
 {
     parseInputMessages(ConfigData, moduleID);
     computecelestialTwoBodyPoint(ConfigData, callTime);
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefMessage),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttRefFswMsg),
                  (void*) &(ConfigData->attRefOut), moduleID);
 }
 

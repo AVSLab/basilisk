@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -37,7 +37,7 @@ typedef struct {
     int32_t outputMsgID;                            /*!< (-)    ID for the outgoing message */
     
     /* copy of the output message */
-    AttRefMessage attRefOut;
+    AttRefFswMsg attRefOut;
 
 }inertial3DConfig;
 

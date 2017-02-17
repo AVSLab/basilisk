@@ -27,7 +27,7 @@ typedef struct {
                                             in N frame components */
     double domega_RN_N[3];      /*!< [r/s2] Reference frame inertial acceleration of  R relative
                                             to N in N frame components */
-}AttRefMessage;
+}AttRefFswMsg;
 
 
 #endif

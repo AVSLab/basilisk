@@ -33,11 +33,11 @@
 %include "attTrackingError.h"
 %include "../../../SimFswInterfaceMessages/navAttIntMsg.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/attRefMessage.h"
+%include "../../fswMessages/attRefFswMsg.h"
 GEN_SIZEOF(NavAttIntMsg);
 GEN_SIZEOF(attTrackingErrorConfig);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(AttRefMessage);
+GEN_SIZEOF(AttRefFswMsg);
 
 
 %pythoncode %{

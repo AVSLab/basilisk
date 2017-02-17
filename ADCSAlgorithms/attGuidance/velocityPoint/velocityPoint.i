@@ -33,11 +33,11 @@
 %include "velocityPoint.h"
 %include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
 %include "../../SimFswInterfaceMessages/navTransIntMsg.h"
-%include "../../fswMessages/attRefMessage.h"
+%include "../../fswMessages/attRefFswMsg.h"
 GEN_SIZEOF(velocityPointConfig);
 GEN_SIZEOF(EphemerisIntMsg);
 GEN_SIZEOF(NavTransIntMsg);
-GEN_SIZEOF(AttRefMessage);
+GEN_SIZEOF(AttRefFswMsg);
 
 %pythoncode %{
 import sys

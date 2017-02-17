@@ -115,7 +115,7 @@ def subModuleTestFunction(show_plots):
     #
     # Reference Frame Message
     #
-    RefStateOutData = attTrackingError.AttRefMessage()  # Create a structure for the input message
+    RefStateOutData = attTrackingError.AttRefFswMsg()  # Create a structure for the input message
     inputMessageSize = RefStateOutData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRefName,

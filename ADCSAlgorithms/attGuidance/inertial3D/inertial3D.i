@@ -31,9 +31,9 @@
 %constant void Reset_inertial3D(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3D;
 GEN_SIZEOF(inertial3DConfig);
-GEN_SIZEOF(AttRefMessage);
+GEN_SIZEOF(AttRefFswMsg);
 %include "inertial3D.h"
-%include "../../fswMessages/attRefMessage.h"
+%include "../../fswMessages/attRefFswMsg.h"
 
 
 %pythoncode %{

@@ -31,11 +31,11 @@
 %constant void Reset_inertial3DSpin(void*, uint64_t, uint64_t);
 %ignore Reset_inertial3DSpin;
 GEN_SIZEOF(inertial3DSpinConfig);
-GEN_SIZEOF(AttRefMessage);
+GEN_SIZEOF(AttRefFswMsg);
 %include "inertial3DSpin.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../../fswMessages/attRefMessage.h"
+%include "../../fswMessages/attRefFswMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

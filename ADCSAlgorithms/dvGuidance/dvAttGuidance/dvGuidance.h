@@ -21,7 +21,7 @@
 #define _DV_GUIDANCE_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 #include "fswMessages/dvBurnCmdMessage.h"
 #include <stdint.h>
 
@@ -37,7 +37,7 @@ typedef struct {
     double dvMag;            /*!< (m/s) Magnitude of the requested deltaV*/
     int32_t outputMsgID;     /*!< (-) ID for the outgoing body estimate message*/
     int32_t inputBurnCmdID;  /*!< [-] ID for the incoming burn command data*/
-    AttRefMessage attCmd;    /*!< (-) Output attitude command data to send*/
+    AttRefFswMsg attCmd;    /*!< (-) Output attitude command data to send*/
 }dvGuidanceConfig;
 
 #ifdef __cplusplus

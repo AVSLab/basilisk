@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "../../SimFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup

@@ -63,7 +63,7 @@ void CrossInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t mod
 {
     /*! - Get the control data message ID*/
     ConfigData->inputRefID = subscribeToMessage(ConfigData->inputRefName,
-                                                sizeof(AttRefMessage),
+                                                sizeof(AttRefFswMsg),
                                                 moduleID);
     ConfigData->inputNavID = subscribeToMessage(ConfigData->inputNavName,
                                                 sizeof(NavAttIntMsg),
@@ -90,15 +90,15 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
 {
     uint64_t    clockTime;
     uint32_t    readSize;
-    AttRefMessage ref;                      /*!< reference guidance message */
+    AttRefFswMsg ref;                      /*!< reference guidance message */
     NavAttIntMsg nav;                      /*!< navigation message */
 
     /*! Begin method steps*/
     /*! - Read the input messages */
-    memset(&ref, 0x0, sizeof(AttRefMessage));
+    memset(&ref, 0x0, sizeof(AttRefFswMsg));
     memset(&nav, 0x0, sizeof(NavAttIntMsg));
     ReadMessage(ConfigData->inputRefID, &clockTime, &readSize,
-                sizeof(AttRefMessage), (void*) &(ref), moduleID);
+                sizeof(AttRefFswMsg), (void*) &(ref), moduleID);
     ReadMessage(ConfigData->inputNavID, &clockTime, &readSize,
                 sizeof(NavAttIntMsg), (void*) &(nav), moduleID);
 

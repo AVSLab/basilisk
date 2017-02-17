@@ -26,7 +26,7 @@
 /* Required module input messages */
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -47,7 +47,7 @@ typedef struct {
     int32_t inputCelID;                             /*!< (-)    ID for the planet input message */
     
     /*  copy of the output message */
-    AttRefMessage attRefOut;
+    AttRefFswMsg attRefOut;
 
 }hillPointConfig;
 

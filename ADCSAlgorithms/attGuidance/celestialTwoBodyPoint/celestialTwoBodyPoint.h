@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransIntMsg.h"
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -53,7 +53,7 @@ typedef struct {
     int32_t inputSecID;                             /*!< (-) ID for the secondary constraint message*/
     
     /* Output attitude reference data to send */
-    AttRefMessage attRefOut;
+    AttRefFswMsg attRefOut;
 }celestialTwoBodyPointConfig;
 
 #ifdef __cplusplus

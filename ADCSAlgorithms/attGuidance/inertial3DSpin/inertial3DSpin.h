@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/attRefMessage.h"
+#include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{
@@ -39,7 +39,7 @@ typedef struct {
     int32_t outputMsgID;                             /*!< [-] ID for the outgoing guidance reference message */
     char inputRefName[MAX_STAT_MSG_LENGTH];          /*!< The name of the input guidance reference message */
     int32_t inputRefID;                              /*!< [-] ID for the incoming guidance reference message */
-    AttRefMessage attRefOut;                             /*!< [-] structure for the output data */
+    AttRefFswMsg attRefOut;                             /*!< [-] structure for the output data */
 }inertial3DSpinConfig;
 
 #ifdef __cplusplus
