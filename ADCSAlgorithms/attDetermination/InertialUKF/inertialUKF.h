@@ -24,7 +24,7 @@
 #include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/inertialFilterFswMsg.h"
-#include "fswMessages/stAttMessage.h"
+#include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include <stdint.h>
@@ -84,7 +84,7 @@ typedef struct {
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
     uint32_t firstPassComplete;
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
-    STAttMessage stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
+    STAttFswMsg stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */

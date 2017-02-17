@@ -134,7 +134,7 @@ def testStateUpdateInertialAttitude(show_plots):
                                                 0,
                                                 vehicleConfigOut)
                                                 
-    stMessage = inertialUKF.STAttMessage()
+    stMessage = inertialUKF.STAttFswMsg()
     stMessage.MRP_BdyInrtl = [0.3, 0.4, 0.5]
 
     inputMessageSize = stMessage.getStructSize()

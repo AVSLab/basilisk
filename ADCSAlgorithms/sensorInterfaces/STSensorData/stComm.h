@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
-#include "fswMessages/stAttMessage.h"
+#include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
@@ -36,7 +36,7 @@ typedef struct {
     int32_t SensorMsgID; /*!< Sensor IDs tied to the input name*/
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
-    STAttMessage LocalOutput; /*!< Output data structure*/
+    STAttFswMsg LocalOutput; /*!< Output data structure*/
     double dcm_BP[9];                /*!< Row major platform 2 body DCM*/
 }STConfigData;
 

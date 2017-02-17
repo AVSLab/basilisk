@@ -25,7 +25,7 @@
 typedef struct {
     double timeTag;              /*!< [s] Vehicle time code associated with measurement*/
     double MRP_BdyInrtl[3];      /*!< [-] MRP estimate of inertial to body transformation*/
-}STAttMessage;
+}STAttFswMsg;
 
 
 

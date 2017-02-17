@@ -34,7 +34,7 @@ void SelfInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
     
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(STAttMessage), "STAttMessage", moduleID);
+        sizeof(STAttFswMsg), "STAttFswMsg", moduleID);
     
 }
 
@@ -85,7 +85,7 @@ void Update_stProcessTelem(STConfigData *ConfigData, uint64_t callTime, uint64_t
     m33MultM33(RECAST3X3 ConfigData->dcm_BP, dcm_CN, dcm_BN);
     C2MRP(dcm_BN, ConfigData->LocalOutput.MRP_BdyInrtl);
     ConfigData->LocalOutput.timeTag = LocalInput.timeTag;
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(STAttMessage),
+    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(STAttFswMsg),
                  (void*) &(ConfigData->LocalOutput), moduleID);
     
     return;
