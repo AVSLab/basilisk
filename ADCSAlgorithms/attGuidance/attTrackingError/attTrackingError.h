@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "../../SimFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/attGuidMessage.h"
+#include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/attRefMessage.h"
 
 
@@ -46,7 +46,7 @@ typedef struct {
     int32_t inputNavID;                             /*!< ID for the incoming navigation message */
 
 
-    AttGuidMessage attGuidOut;                      /*!< copy of the output message */
+    AttGuidFswMsg attGuidOut;                      /*!< copy of the output message */
 
 }attTrackingErrorConfig;
 

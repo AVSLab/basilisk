@@ -30,10 +30,10 @@
 %ignore CrossInit_MRP_PD;
 %constant void Reset_MRP_PD(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_PD;
-%include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/attGuidFswMsg.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 GEN_SIZEOF(MRP_PDConfig);
-GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);

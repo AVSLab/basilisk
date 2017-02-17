@@ -57,7 +57,7 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
 {
     /*! - Get the control data message ID*/
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
-                                                 sizeof(AttGuidMessage), moduleID);
+                                                 sizeof(AttGuidFswMsg), moduleID);
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
                                                       sizeof(VehicleConfigMessage), moduleID);
     
@@ -123,7 +123,7 @@ void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint6
 void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
-    AttGuidMessage      guidCmd;            /*!< Guidance Message */
+    AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
     RWSpeedIntMsg      wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityFswMsg  wheelsAvailability; /*!< Reaction wheel availability */
     uint64_t            clockTime;
@@ -155,7 +155,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     
     /*! - Read the dynamic input messages */
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
-                sizeof(AttGuidMessage), (void*) &(guidCmd), moduleID);
+                sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));
     memset(wheelsAvailability.wheelAvailability, 0x0, MAX_EFF_CNT * sizeof(int)); // wheelAvailability set to 0 (AVAILABLE) by default

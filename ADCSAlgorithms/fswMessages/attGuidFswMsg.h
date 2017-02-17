@@ -29,7 +29,7 @@ typedef struct {
                                  in B frame components */
     double domega_RN_B[3];      /*!< [r/s2] Reference frame inertial body acceleration of R relative
                                  to N in B frame components */
-}AttGuidMessage;
+}AttGuidFswMsg;
 
 
 #endif

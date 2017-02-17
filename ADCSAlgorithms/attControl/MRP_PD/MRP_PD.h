@@ -21,7 +21,7 @@
 #define _MRP_PD_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attGuidMessage.h"
+#include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>

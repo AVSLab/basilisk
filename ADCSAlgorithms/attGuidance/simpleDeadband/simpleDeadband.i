@@ -31,11 +31,11 @@
 %constant void Reset_simpleDeadband(void*, uint64_t, uint64_t);
 %ignore Reset_simpleDeadband;
 GEN_SIZEOF(simpleDeadbandConfig);
-GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(AttGuidFswMsg);
 %include "simpleDeadband.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/attGuidFswMsg.h"
 
 %pythoncode %{
     import sys

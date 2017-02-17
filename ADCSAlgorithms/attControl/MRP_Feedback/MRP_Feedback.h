@@ -21,8 +21,7 @@
 #define _MRP_FEEDBACK_CONTROL_H_
 
 #include "messaging/static_messaging.h"
-#include "effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "fswMessages/attGuidMessage.h"
+#include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "SimFswInterfaceMessages/rwSpeedIntMsg.h"

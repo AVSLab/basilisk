@@ -112,7 +112,7 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    guidCmdData = PRV_Steering.AttGuidMessage()  # Create a structure for the input message
+    guidCmdData = PRV_Steering.AttGuidFswMsg()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize,

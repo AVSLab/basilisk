@@ -49,8 +49,8 @@ void SelfInit_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t modu
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-                                               sizeof(AttGuidMessage),
-                                               "AttGuidMessage",
+                                               sizeof(AttGuidFswMsg),
+                                               "AttGuidFswMsg",
                                                moduleID);
 }
 
@@ -115,7 +115,7 @@ void Update_attTrackingError(attTrackingErrorConfig *ConfigData, uint64_t callTi
                          ConfigData->attGuidOut.domega_RN_B);
 
 
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidMessage),   /* update module name */
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(AttGuidFswMsg),   /* update module name */
                  (void*) &(ConfigData->attGuidOut), moduleID);
 
     return;

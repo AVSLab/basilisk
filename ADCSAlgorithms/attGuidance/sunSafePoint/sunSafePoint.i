@@ -34,7 +34,7 @@
 %include "../../fswMessages/CSSConfigMessage.h"
 %include "../../fswMessages/imuSensorBodyMessage.h"
 GEN_SIZEOF(sunSafePointConfig);
-GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(SunHeadingEstMessage);
 GEN_SIZEOF(IMUSensorBodyMessage);
 %include "sunSafePoint.h"

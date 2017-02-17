@@ -31,12 +31,12 @@
 %constant void Reset_PRV_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_PRV_Steering;
 %include "PRV_Steering.h"
-%include "../../fswMessages/attGuidMessage.h"
+%include "../../fswMessages/attGuidFswMsg.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 GEN_SIZEOF(PRV_SteeringConfig);
-GEN_SIZEOF(AttGuidMessage);
+GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigMessage);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);

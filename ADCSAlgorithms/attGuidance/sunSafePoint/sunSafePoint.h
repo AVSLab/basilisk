@@ -21,7 +21,7 @@
 #define _SUN_SAFE_POINT_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/attGuidMessage.h"
+#include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/sunHeadingEstMessage.h"
 #include "fswMessages/CSSConfigMessage.h"
 #include "fswMessages/imuSensorBodyMessage.h"
@@ -44,7 +44,7 @@ typedef struct {
     int32_t outputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t inputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t imuMsgID;        /*!< -- ID for the incoming CSS sensor message*/
-    AttGuidMessage attOut;   /*!< -- The output data that we compute*/
+    AttGuidFswMsg attOut;   /*!< -- The output data that we compute*/
 }sunSafePointConfig;
 
 #ifdef __cplusplus

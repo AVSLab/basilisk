@@ -110,7 +110,7 @@ def subModuleTestFunction(show_plots):
     #   is not part of the test.
 
     #   attGuidOut Message:
-    guidCmdData = MRP_Feedback.AttGuidMessage()  # Create a structure for the input message
+    guidCmdData = MRP_Feedback.AttGuidFswMsg()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
