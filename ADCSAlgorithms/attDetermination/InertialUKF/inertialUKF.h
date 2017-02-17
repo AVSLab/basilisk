@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SimFswInterfaceMessages/navAttIntMsg.h"
-#include "fswMessages/inertialFilterMessage.h"
+#include "fswMessages/inertialFilterFswMsg.h"
 #include "fswMessages/stAttMessage.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"

@@ -33,7 +33,7 @@
 %ignore Reset_inertialUKF;
 %include "inertialUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
-%include "../../fswMessages/inertialFilterMessage.h"
+%include "../../fswMessages/inertialFilterFswMsg.h"
 %include "../../fswMessages/stAttMessage.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"

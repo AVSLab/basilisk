@@ -30,7 +30,7 @@ typedef struct {
     double covar[AKF_N_STATES*AKF_N_STATES];    /*!< [-] Current covariance of the filter */
     double state[AKF_N_STATES];                 /*!< [-] Current estimated state of the filter */
     int numObs;                                 /*!< [-] Valid observation count for this frame*/
-}InertialFilterMessage;
+}InertialFilterFswMsg;
 
 
 

@@ -40,7 +40,7 @@ void SelfInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
 		sizeof(NavAttIntMsg), "NavAttIntMsg", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
     ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
-        sizeof(InertialFilterMessage), "InertialFilterMessage", moduleID);
+        sizeof(InertialFilterFswMsg), "InertialFilterFswMsg", moduleID);
     
 }
 
@@ -161,7 +161,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t otherSize;
-    InertialFilterMessage inertialDataOutBuffer;
+    InertialFilterFswMsg inertialDataOutBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
@@ -218,7 +218,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     memmove(inertialDataOutBuffer.covar, ConfigData->covar,
             AKF_N_STATES*AKF_N_STATES*sizeof(double));
     memmove(inertialDataOutBuffer.state, ConfigData->state, AKF_N_STATES*sizeof(double));
-    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(InertialFilterMessage),
+    WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(InertialFilterFswMsg),
                  &inertialDataOutBuffer, moduleID);
     
     memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
