@@ -52,7 +52,7 @@ def create(
     global thrList
 
     # create the blank Thruster object
-    thrPointer = vehicleConfigData.THRConfigFSWMessage()
+    thrPointer = vehicleConfigData.THRConfigFswMsg()
 
     thrPointer.rThrust_S = rThrust_S
     thrPointer.tHatThrust_S = tHatThrust_S
