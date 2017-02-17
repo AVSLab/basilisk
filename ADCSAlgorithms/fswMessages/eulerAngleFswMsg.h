@@ -23,7 +23,7 @@
 /*! @brief Structure used to define the output euler set for attitude reference generation */
 typedef struct {
     double set[3];          /*!< [rad] or [rad/sec]  Euler angle set values */
-}EulerAngleMessage;
+}EulerAngleFswMsg;
 
 
 

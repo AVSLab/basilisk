@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/eulerAngleMessage.h"
+#include "fswMessages/eulerAngleFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
 
@@ -61,8 +61,8 @@ typedef struct {
     
     /* Output attitude reference data to send */
     AttRefFswMsg attRefOut;                                /*!< [-] structure for the Reference output data */
-    EulerAngleMessage      eulerSetOut;                     /*!< [-] structure for the Euler Set output data */
-    EulerAngleMessage      eulerRatesOut;                   /*!< [-] structure for the Euler Set output data */
+    EulerAngleFswMsg      eulerSetOut;                     /*!< [-] structure for the Euler Set output data */
+    EulerAngleFswMsg      eulerRatesOut;                   /*!< [-] structure for the Euler Set output data */
 }eulerRotationConfig;
 
 #ifdef __cplusplus

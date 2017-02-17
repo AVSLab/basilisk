@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/eulerAngleMessage.h"
+#include "fswMessages/eulerAngleFswMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
@@ -51,8 +51,8 @@ typedef struct {
     char        outputEulerRatesName[MAX_STAT_MSG_LENGTH];        /*!< The name of the output message containing the Reference */
     int32_t     outputEulerRatesID;                         /*!< [-] ID for the outgoing Euler Angle rates message */
     /* Output attitude reference data to send */
-    EulerAngleMessage outputAngleSet;
-    EulerAngleMessage outputAngleRates;
+    EulerAngleFswMsg outputAngleSet;
+    EulerAngleFswMsg outputAngleRates;
 }rasterManagerConfig;
 
 #ifdef __cplusplus

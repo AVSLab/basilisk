@@ -45,12 +45,12 @@ void SelfInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
                                                "AttRefFswMsg",
                                                moduleID);
     ConfigData->outputEulerSetID = CreateNewMessage(ConfigData->outputEulerSetName,
-                                               sizeof(EulerAngleMessage),
-                                               "EulerAngleMessage",
+                                               sizeof(EulerAngleFswMsg),
+                                               "EulerAngleFswMsg",
                                                     moduleID);
     ConfigData->outputEulerRatesID = CreateNewMessage(ConfigData->outputEulerRatesName,
-                                                    sizeof(EulerAngleMessage),
-                                                    "EulerAngleMessage",
+                                                    sizeof(EulerAngleFswMsg),
+                                                    "EulerAngleFswMsg",
                                                     moduleID);
     ConfigData->priorTime = -1;
     v3SetZero(ConfigData->priorCmdSet);
@@ -68,10 +68,10 @@ void CrossInit_eulerRotation(eulerRotationConfig *ConfigData, uint64_t moduleID)
     if(strlen(ConfigData->inputEulerSetName) > 0 && strlen(ConfigData->inputEulerRatesName) > 0)
     {
         ConfigData->inputEulerSetID = subscribeToMessage(ConfigData->inputEulerSetName,
-                                                         sizeof(EulerAngleMessage),
+                                                         sizeof(EulerAngleFswMsg),
                                                          moduleID);
         ConfigData->inputEulerRatesID = subscribeToMessage(ConfigData->inputEulerRatesName,
-                                                           sizeof(EulerAngleMessage),
+                                                           sizeof(EulerAngleFswMsg),
                                                            moduleID);
     }
 }
@@ -88,8 +88,8 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
 {
     /*! - Read input messages */
     AttRefFswMsg inputRef;
-    EulerAngleMessage angles;
-    EulerAngleMessage rates;
+    EulerAngleFswMsg angles;
+    EulerAngleFswMsg rates;
     uint64_t writeTime;
     uint32_t writeSize;
     ReadMessage(ConfigData->inputRefID, &writeTime, &writeSize,
@@ -98,9 +98,9 @@ void Update_eulerRotation(eulerRotationConfig *ConfigData, uint64_t callTime, ui
     {
         /*! - Read Raster Manager messages */
         ReadMessage(ConfigData->inputEulerSetID, &writeTime, &writeSize,
-                    sizeof(EulerAngleMessage), (void*) &(angles), moduleID);
+                    sizeof(EulerAngleFswMsg), (void*) &(angles), moduleID);
         ReadMessage(ConfigData->inputEulerRatesID, &writeTime, &writeSize,
-                    sizeof(EulerAngleMessage), (void*) &(rates), moduleID);
+                    sizeof(EulerAngleFswMsg), (void*) &(rates), moduleID);
         /*! - Save commanded 321 Euler set and rates */
         v3Copy(angles.set, ConfigData->cmdSet);
         v3Copy(rates.set, ConfigData->cmdRates);
@@ -139,10 +139,10 @@ void writeOutputMessages(eulerRotationConfig *ConfigData, uint64_t callTime, uin
     
     /*! - Euler angle set and rates outputed for testing purposes */
     v3Copy(ConfigData->angleSet, ConfigData->eulerSetOut.set);
-    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(EulerAngleMessage),
+    WriteMessage(ConfigData->outputEulerSetID, callTime, sizeof(EulerAngleFswMsg),
                  (void*) &(ConfigData->eulerSetOut), moduleID);
     v3Copy(ConfigData->angleRates, ConfigData->eulerRatesOut.set);
-    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(EulerAngleMessage),
+    WriteMessage(ConfigData->outputEulerRatesID, callTime, sizeof(EulerAngleFswMsg),
                  (void*) &(ConfigData->eulerRatesOut), moduleID);
 }
 
