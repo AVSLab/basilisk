@@ -33,8 +33,8 @@
 
 %include "thrForceMapping.h"
 GEN_SIZEOF(thrForceMappingConfig);
-%include "../../fswMessages/vehicleConfigMessage.h"
-GEN_SIZEOF(VehicleConfigMessage);
+%include "../../fswMessages/vehicleConfigFswMsg.h"
+GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../../fswMessages/thrArrayConfigFswMsg.h"
 GEN_SIZEOF(THRArrayConfigFswMsg);
 %include "../../fswMessages/thrArrayCmdForceFswMsg.h"

@@ -108,7 +108,7 @@ def mrp_steering_tracking(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = MRP_Steering.VehicleConfigMessage()
+    vehicleConfigOut = MRP_Steering.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()                           # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)

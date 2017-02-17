@@ -59,7 +59,7 @@ void CrossInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
-                                                      sizeof(VehicleConfigMessage), moduleID);
+                                                      sizeof(VehicleConfigFswMsg), moduleID);
     
     ConfigData->rwParamsInMsgID = -1;
     ConfigData->inputRWSpeedsID = -1;
@@ -93,9 +93,9 @@ void Reset_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime, uint6
     uint32_t readSize;
     int i;    
 
-    VehicleConfigMessage sc;
+    VehicleConfigFswMsg sc;
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     for (i=0; i < 9; i++){
         ConfigData->ISCPntB_B[i] = sc.ISCPntB_B[i];
     };

@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include <stdint.h>
 #include "vehicleConfigData/vehicleConfigData.h"
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"

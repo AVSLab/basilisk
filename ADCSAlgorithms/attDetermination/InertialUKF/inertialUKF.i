@@ -35,13 +35,13 @@
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/inertialFilterFswMsg.h"
 %include "../../fswMessages/stAttFswMsg.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 
 %pythoncode %{
 import sys

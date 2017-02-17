@@ -32,9 +32,9 @@
 %ignore Reset_rwConfigData;
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(rwConfigData);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 %include "rwConfigData.h"
-%include "../fswMessages/vehicleConfigMessage.h"
+%include "../fswMessages/vehicleConfigFswMsg.h"
 %include "../fswMessages/rwArrayConfigFswMsg.h"
 
 %pythoncode %{

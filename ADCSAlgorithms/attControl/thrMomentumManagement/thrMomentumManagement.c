@@ -67,7 +67,7 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
                                                      sizeof(RWSpeedIntMsg), moduleID);
     ConfigData->vehicleConfigDataInMsgID = subscribeToMessage(ConfigData->vehicleConfigDataInMsgName,
-                                                              sizeof(VehicleConfigMessage), moduleID);
+                                                              sizeof(VehicleConfigFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -77,12 +77,12 @@ void CrossInit_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, ui
  */
 void Reset_thrMomentumManagement(thrMomentumManagementConfig *ConfigData, uint64_t callTime, uint64_t moduleID)
 {
-    VehicleConfigMessage   sc;                 /*!< spacecraft configuration message */
+    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
     uint64_t clockTime;
     uint32_t readSize;
 
     ReadMessage(ConfigData->vehicleConfigDataInMsgID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
 
     ReadMessage(ConfigData->rwConfInMsgID, &clockTime, &readSize,
                 sizeof(RWArrayConfigFswMsg), &(ConfigData->rwConfigParams), moduleID);

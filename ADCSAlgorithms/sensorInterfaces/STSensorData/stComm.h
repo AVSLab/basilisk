@@ -24,7 +24,7 @@
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
 #include "fswMessages/stAttFswMsg.h"
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/

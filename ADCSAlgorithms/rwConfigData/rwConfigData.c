@@ -59,14 +59,14 @@ void CrossInit_rwConfigData(rwConfigData *ConfigData, uint64_t moduleID)
     /*! - NOTE: it is important that this initialization takes place in CrossInit and not Reset.
      When Reset call takes place in all the modules, this RW message should already be available.*/
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
-                                                              sizeof(VehicleConfigMessage), moduleID);
+                                                              sizeof(VehicleConfigFswMsg), moduleID);
     int i;
     uint64_t clockTime;
     uint32_t readSize;
-    VehicleConfigMessage   sc;                 /*!< spacecraft configuration message */
+    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
     
     ReadMessage(ConfigData->vehConfigInMsgID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     
     if(strlen(ConfigData->rwConstellationInMsgName) > 0)
     {

@@ -48,17 +48,17 @@ void CrossInit_stProcessTelem(STConfigData *ConfigData, uint64_t moduleID)
 {
     uint64_t UnusedClockTime;
     uint32_t ReadSize;
-    VehicleConfigMessage LocalConfigData;
+    VehicleConfigFswMsg LocalConfigData;
     /*! Begin method steps */
     /*! - Link the message ID for the incoming sensor data message to here */
     ConfigData->SensorMsgID = subscribeToMessage(ConfigData->InputDataName,
         sizeof(STSensorIntMsg), moduleID);
     ConfigData->PropsMsgID = subscribeToMessage(ConfigData->InputPropsName,
-        sizeof(VehicleConfigMessage), moduleID);
+        sizeof(VehicleConfigFswMsg), moduleID);
     if(ConfigData->PropsMsgID >= 0)
     {
         ReadMessage(ConfigData->PropsMsgID, &UnusedClockTime, &ReadSize,
-                    sizeof(VehicleConfigMessage), (void*) &LocalConfigData, moduleID);
+                    sizeof(VehicleConfigFswMsg), (void*) &LocalConfigData, moduleID);
         m33MultM33(RECAST3X3 LocalConfigData.dcm_BS, RECAST3X3 ConfigData->dcm_SP,
                    RECAST3X3 ConfigData->dcm_BP);
     }

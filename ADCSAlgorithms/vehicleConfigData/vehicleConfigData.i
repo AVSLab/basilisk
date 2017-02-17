@@ -31,7 +31,7 @@ STRUCTASLIST(CSSConfigurationElement)
 %ignore SelfInit_vehicleConfigData;
 %constant void CrossInit_vehicleConfigData(void*, uint64_t);
 %ignore CrossInit_vehicleConfigData;
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(RWConfigElementFswMsg);
 GEN_SIZEOF(RWConstellationFswMsg);
 GEN_SIZEOF(THRConfigFswMsg);
@@ -41,7 +41,7 @@ GEN_SIZEOF(CSSConfigurationElement);
 GEN_SIZEOF(CSSConstConfig);
 
 %include "vehicleConfigData.h"
-%include "../fswMessages/vehicleConfigMessage.h"
+%include "../fswMessages/vehicleConfigFswMsg.h"
 %include "../fswMessages/thrArrayConfigFswMsg.h"
 %include "../fswMessages/thrConfigFswMsg.h"
 %include "../fswMessages/rwConstellationFswMsg.h"

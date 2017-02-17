@@ -126,7 +126,7 @@ def subModuleTestFunction(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = MRP_Feedback.VehicleConfigMessage()
+    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)

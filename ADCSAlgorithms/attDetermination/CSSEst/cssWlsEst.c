@@ -48,16 +48,16 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 void CrossInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
 {
     int32_t i;
-    VehicleConfigMessage localConfigData;
+    VehicleConfigFswMsg localConfigData;
     uint64_t writeTime;
     uint32_t writeSize;
     /*! - Loop over the number of sensors and find IDs for each one */
     ConfigData->InputMsgID = subscribeToMessage(ConfigData->InputDataName,
         sizeof(CSSArraySensorIntMsg), moduleID);
     ConfigData->InputPropsID = subscribeToMessage(ConfigData->InputPropsName,
-        sizeof(VehicleConfigMessage), moduleID);
+        sizeof(VehicleConfigFswMsg), moduleID);
     ReadMessage(ConfigData->InputPropsID, &writeTime, &writeSize,
-                sizeof(VehicleConfigMessage), &localConfigData, moduleID);
+                sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
     for(i=0; i<MAX_NUM_CSS_SENSORS; i = i+1)
     {
         m33MultV3(RECAST3X3 localConfigData.dcm_BS, ConfigData->CSSData[i].nHatStr,

@@ -34,14 +34,14 @@ ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
 GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 %include "MRP_Steering.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"

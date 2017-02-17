@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/thrArrayConfigFswMsg.h"
 #include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "vehicleConfigData/vehicleConfigData.h"
@@ -53,7 +53,7 @@ typedef struct {
     int32_t  inputThrusterConfID;                   /*!< [-] ID for the incoming Thruster configuration data*/
     char inputVehicleConfigDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     int32_t inputVehicleConfigDataID;               /*!< [] ID for the incoming static vehicle data */
-    VehicleConfigMessage   sc;                      /*!< spacecraft configuration message */
+    VehicleConfigFswMsg   sc;                      /*!< spacecraft configuration message */
     double   epsilon;
 
     THRArrayCmdForceFswMsg thrusterForceOut;       /*!< -- copy of the output message */

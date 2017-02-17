@@ -25,7 +25,7 @@
 #include "SimFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/inertialFilterFswMsg.h"
 #include "fswMessages/stAttFswMsg.h"
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include <stdint.h>
 
@@ -88,7 +88,7 @@ typedef struct {
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
-    VehicleConfigMessage localConfigData;   /*! [-] Vehicle configuration data*/
+    VehicleConfigFswMsg localConfigData;   /*! [-] Vehicle configuration data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/

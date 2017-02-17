@@ -129,7 +129,7 @@ def subModuleTestFunction(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = PRV_Steering.VehicleConfigMessage()
+    vehicleConfigOut = PRV_Steering.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize,

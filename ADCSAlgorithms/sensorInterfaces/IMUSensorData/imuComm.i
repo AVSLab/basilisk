@@ -30,9 +30,9 @@
 %ignore CrossInit_imuProcessTelem;
 GEN_SIZEOF(IMUConfigData);
 GEN_SIZEOF(IMUSensorIntMsg);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 %include "imuComm.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/imuSensorBodyFswMsg.h"
 %include "../../../SimFswInterfaceMessages/imuSensorIntMsg.h"
 %pythoncode %{

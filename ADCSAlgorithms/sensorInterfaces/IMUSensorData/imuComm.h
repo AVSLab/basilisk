@@ -21,7 +21,7 @@
 #define _IMU_COMM_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
 #include "SimFswInterfaceMessages/imuSensorIntMsg.h"
 

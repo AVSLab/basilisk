@@ -56,7 +56,7 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
 {
     RWConstellationFswMsg localRWData;
     THRArrayConfigFswMsg localThrustData;
-    VehicleConfigMessage localConfigData;
+    VehicleConfigFswMsg localConfigData;
     int i;
     uint64_t ClockTime;
     uint32_t ReadSize;
@@ -69,14 +69,14 @@ void CrossInit_thrustRWDesat(thrustRWDesatConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputRWConfID = subscribeToMessage(ConfigData->inputRWConfigData,
                                                    sizeof(RWConstellationFswMsg), moduleID);
     ConfigData->inputMassPropID = subscribeToMessage(
-        ConfigData->inputMassPropsName, sizeof(VehicleConfigMessage), moduleID);
+        ConfigData->inputMassPropsName, sizeof(VehicleConfigFswMsg), moduleID);
     ConfigData->inputThrConID = subscribeToMessage(ConfigData->inputThrConfigName,
                                                    sizeof(THRArrayConfigFswMsg), moduleID);
     /*! - Read input messages */
     ReadMessage(ConfigData->inputRWConfID, &ClockTime, &ReadSize,
                 sizeof(RWConstellationFswMsg), &localRWData, moduleID);
     ReadMessage(ConfigData->inputMassPropID, &ClockTime, &ReadSize,
-                sizeof(VehicleConfigMessage), &localConfigData, moduleID);
+                sizeof(VehicleConfigFswMsg), &localConfigData, moduleID);
     ReadMessage(ConfigData->inputThrConID, &ClockTime, &ReadSize,
                 sizeof(THRArrayConfigFswMsg), &localThrustData, moduleID);
     

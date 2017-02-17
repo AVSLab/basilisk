@@ -60,7 +60,7 @@ void CrossInit_MRP_PD(MRP_PDConfig *ConfigData, uint64_t moduleID)
     ConfigData->inputGuidID = subscribeToMessage(ConfigData->inputGuidName,
                                                  sizeof(AttGuidFswMsg), moduleID);
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                              sizeof(VehicleConfigMessage), moduleID);
+                                                              sizeof(VehicleConfigFswMsg), moduleID);
 }
 
 /*! This method performs a complete reset of the module.  Local module variables that retain
@@ -83,7 +83,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     AttGuidFswMsg      guidCmd;            /*!< Guidance Message */
-    VehicleConfigMessage   sc;                 /*!< spacecraft configuration message */
+    VehicleConfigFswMsg   sc;                 /*!< spacecraft configuration message */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              Lr[3];              /*!< required control torque vector [Nm] */
@@ -98,7 +98,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(sc), moduleID);
     
     /*! - Compute body rate */
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);

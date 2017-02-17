@@ -30,9 +30,9 @@
 %ignore CrossInit_thrustRWDesat;
 %constant void Reset_thrustRWDesat(void*, uint64_t, uint64_t);
 %ignore Reset_thrustRWDesat;
-%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 GEN_SIZEOF(thrustRWDesatConfig);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 %include "thrustRWDesat.h"
 %include "../../fswMessages/thrArrayConfigFswMsg.h"
 GEN_SIZEOF(THRArrayConfigFswMsg);

@@ -124,7 +124,7 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
                                           rwSpeedMessage)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = thrMomentumManagement.VehicleConfigMessage()
+    vehicleConfigOut = thrMomentumManagement.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.vehicleConfigDataInMsgName,

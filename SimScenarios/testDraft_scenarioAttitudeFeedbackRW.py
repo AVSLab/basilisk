@@ -597,7 +597,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = MRP_Feedback.VehicleConfigMessage()
+    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,

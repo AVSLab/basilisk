@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/sunHeadingEstFswMsg.h"
-#include "fswMessages/vehicleConfigMessage.h"
+#include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include <stdint.h>
 #include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"

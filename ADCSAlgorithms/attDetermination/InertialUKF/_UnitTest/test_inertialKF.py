@@ -114,7 +114,7 @@ def testStateUpdateInertialAttitude(show_plots):
     
     setupFilterData(moduleConfig)
 
-    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
+    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
@@ -245,7 +245,7 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
+    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
@@ -327,7 +327,7 @@ def test_StatePropRateInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    vehicleConfigOut = inertialUKF.VehicleConfigMessage()
+    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,

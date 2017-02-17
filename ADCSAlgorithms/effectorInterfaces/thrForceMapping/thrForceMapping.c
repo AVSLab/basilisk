@@ -68,7 +68,7 @@ void CrossInit_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t modul
                                                        moduleID);
 
     ConfigData->inputVehicleConfigDataID = subscribeToMessage(ConfigData->inputVehicleConfigDataName,
-                                                              sizeof(VehicleConfigMessage), moduleID);
+                                                              sizeof(VehicleConfigFswMsg), moduleID);
 
 }
 
@@ -109,7 +109,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
     ReadMessage(ConfigData->inputThrusterConfID, &clockTime, &readSize,
                 sizeof(THRArrayConfigFswMsg), &localThrusterData, moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
     /* read in the thruster position and thruster force heading information */
     /* Note: we will still need to correct for the S to B transformation */
@@ -156,7 +156,7 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     ReadMessage(ConfigData->inputVehControlID, &clockTime, &readSize,
                 sizeof(CmdTorqueBodyIntMsg), (void*) &(Lr_B), moduleID);
     ReadMessage(ConfigData->inputVehicleConfigDataID, &clockTime, &readSize,
-                sizeof(VehicleConfigMessage), (void*) &(ConfigData->sc), moduleID);
+                sizeof(VehicleConfigFswMsg), (void*) &(ConfigData->sc), moduleID);
 
 
     /* compute thruster locations relative to COM */

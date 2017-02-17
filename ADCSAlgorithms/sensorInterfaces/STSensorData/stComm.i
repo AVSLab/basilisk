@@ -30,11 +30,11 @@
 %ignore CrossInit_stProcessTelem;
 %include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
 %include "../../fswMessages/stAttFswMsg.h"
-%include "../../fswMessages/vehicleConfigMessage.h"
+%include "../../fswMessages/vehicleConfigFswMsg.h"
 GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(STConfigData);
 GEN_SIZEOF(STSensorIntMsg);
-GEN_SIZEOF(VehicleConfigMessage);
+GEN_SIZEOF(VehicleConfigFswMsg);
 %include "stComm.h"
 %pythoncode %{
 import sys
