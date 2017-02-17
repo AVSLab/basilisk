@@ -339,11 +339,11 @@ class MonteCarloBaseClass:
                 previousSimulation.terminateSimulation()
         
             newSim = self.simulationObject()
-            if self.configureModule is not None:
-                self.configureModule(newSim)
             updateModule = imp.load_source("disperseVariables",
                 self.archiveDir + "/Run" +str(caseNumber) + ".py")
             updateModule.disperseVariables(newSim)
+            if self.configureModule is not None:
+                self.configureModule(newSim)
             self.executionModule(newSim)
             if self.retainSimulationData:
                 self.simList.append(newSim)
@@ -368,9 +368,6 @@ class MonteCarloBaseClass:
                 fHandle = open(self.archiveDir + '/Run' + str(simRunCounter) + '.py', 'w')
             newSim = self.simulationObject()
             
-            if self.configureModule is not None:
-                self.configureModule(newSim)
-
             execString = "def disperseVariables(newSim): \n"
             if fHandle is not None:
                 fHandle.write(execString + '\n')
@@ -429,6 +426,9 @@ class MonteCarloBaseClass:
                     i+=1
             if fHandle is not None:
                fHandle.close()
+
+            if self.configureModule is not None:
+                self.configureModule(newSim)
 
             self.executionModule(newSim)
 
