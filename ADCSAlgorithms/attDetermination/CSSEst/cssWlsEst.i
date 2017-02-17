@@ -29,12 +29,12 @@
 %constant void CrossInit_cssWlsEst(void*, uint64_t);
 %ignore CrossInit_cssWlsEst;
 STRUCTASLIST(CSSConfigFswMsg)
-GEN_SIZEOF(SunHeadingEstMessage);
+GEN_SIZEOF(SunHeadingEstFswMsg);
 GEN_SIZEOF(CSSConfigFswMsg);
 GEN_SIZEOF(CSSWLSConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "cssWlsEst.h"
-%include "../../fswMessages/sunHeadingEstMessage.h"
+%include "../../fswMessages/sunHeadingEstFswMsg.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 

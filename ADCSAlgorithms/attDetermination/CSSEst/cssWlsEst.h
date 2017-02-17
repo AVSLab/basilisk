@@ -21,7 +21,7 @@
 #define _CSS_WLS_EST_H_
 
 #include "messaging/static_messaging.h"
-#include "fswMessages/sunHeadingEstMessage.h"
+#include "fswMessages/sunHeadingEstFswMsg.h"
 #include "fswMessages/vehicleConfigMessage.h"
 #include "fswMessages/cssConfigFswMsg.h"
 #include <stdint.h>
@@ -45,7 +45,7 @@ typedef struct {
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t UseWeights;     /*!< -- Flag indicating whether or not to use weights for least squares*/
     double SensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
-    SunHeadingEstMessage OutputData; /*!< -- Unit vector to the Sun in the spacecraft body frame*/
+    SunHeadingEstFswMsg OutputData; /*!< -- Unit vector to the Sun in the spacecraft body frame*/
     int32_t OutputMsgID;     /*!< -- ID for the outgoing body estimate message*/
     int32_t InputMsgID;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t InputPropsID;    /*!< [-] ID for the incoming mass properties message*/

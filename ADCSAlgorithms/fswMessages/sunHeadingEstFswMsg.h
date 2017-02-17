@@ -23,7 +23,7 @@
 /*! @brief Structure used to define the sun heading estimator output */
 typedef struct {
     double sHatBdy[3];      /*!< -- unit vector to the sun in ADCS body frame */
-}SunHeadingEstMessage;
+}SunHeadingEstFswMsg;
 
 
 #endif

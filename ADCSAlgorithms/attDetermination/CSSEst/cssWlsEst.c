@@ -35,7 +35,7 @@ void SelfInit_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(SunHeadingEstMessage), "SunHeadingEstMessage", moduleID);
+        sizeof(SunHeadingEstFswMsg), "SunHeadingEstFswMsg", moduleID);
     
 }
 
@@ -185,7 +185,7 @@ void Update_cssWlsEst(CSSWLSConfig *ConfigData, uint64_t callTime,
     status = computeWlsmn(ConfigData->numActiveCss, H, W, y,
                           ConfigData->OutputData.sHatBdy);
     v3Normalize(ConfigData->OutputData.sHatBdy, ConfigData->OutputData.sHatBdy);
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(SunHeadingEstMessage),
+    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(SunHeadingEstFswMsg),
                  &(ConfigData->OutputData), moduleID);
     return;
 }
