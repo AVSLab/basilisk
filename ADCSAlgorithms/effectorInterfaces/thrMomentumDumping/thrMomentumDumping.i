@@ -33,10 +33,10 @@
 GEN_SIZEOF(thrMomentumDumpingConfig);
 %include "thrMomentumDumping.h"
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
-%include "../../fswMessages/thrArrayCmdForceMessage.h"
+%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
 %include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
-GEN_SIZEOF(THRArrayCmdForceMessage);
+GEN_SIZEOF(THRArrayCmdForceFswMsg);
 
 %pythoncode %{
 import sys

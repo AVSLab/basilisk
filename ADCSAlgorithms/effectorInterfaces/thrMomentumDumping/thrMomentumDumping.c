@@ -63,7 +63,7 @@ void CrossInit_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t
 {
     /*! - Get the control data message ID*/
     ConfigData->thrusterImpulseInMsgID = subscribeToMessage(ConfigData->thrusterImpulseInMsgName,
-                                                sizeof(THRArrayCmdForceMessage),
+                                                sizeof(THRArrayCmdForceFswMsg),
                                                 moduleID);
     ConfigData->thrusterConfInMsgID = subscribeToMessage(ConfigData->thrusterConfInMsgName,
                                                          sizeof(THRArrayConfigFSWMessage),
@@ -135,7 +135,7 @@ void Update_thrMomentumDumping(thrMomentumDumpingConfig *ConfigData, uint64_t ca
 
         /*! - Read the input messages */
         ReadMessage(ConfigData->thrusterImpulseInMsgID, &clockTime, &readSize,
-                    sizeof(THRArrayCmdForceMessage), (void*) Delta_P_input, moduleID);
+                    sizeof(THRArrayCmdForceFswMsg), (void*) Delta_P_input, moduleID);
 
         if (memcmp(Delta_P_input, ConfigData->Delta_p, ConfigData->numThrusters*sizeof(double)) == 0) {
             /* idential net thruster impulse request case, continue with existing RW momentum dumping */

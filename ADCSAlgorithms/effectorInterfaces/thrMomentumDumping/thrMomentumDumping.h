@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
-#include "fswMessages/thrArrayCmdForceMessage.h"
+#include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup

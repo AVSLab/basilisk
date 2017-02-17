@@ -60,7 +60,7 @@ void CrossInit_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t
 {
 	/*! - Get the input message ID's */
 	ConfigData->thrForceInMsgID = subscribeToMessage(ConfigData->thrForceInMsgName,
-														 sizeof(THRArrayCmdForceMessage),
+														 sizeof(THRArrayCmdForceFswMsg),
 														 moduleID);
 	ConfigData->thrConfInMsgID = subscribeToMessage(ConfigData->thrConfInMsgName,
 												sizeof(THRArrayConfigFSWMessage),
@@ -126,7 +126,7 @@ void Update_thrFiringRemainder(thrFiringRemainderConfig *ConfigData, uint64_t ca
 	/*! Begin method steps */
 	/*! - Read the input messages */
 	ReadMessage(ConfigData->thrForceInMsgID, &clockTime, &readSize,
-				sizeof(THRArrayCmdForceMessage), (void*) &(ConfigData->thrForceIn), moduleID);
+				sizeof(THRArrayCmdForceFswMsg), (void*) &(ConfigData->thrForceIn), moduleID);
 
 	/*! Loop through thrusters */
 	for(i = 0; i < ConfigData->numThrusters; i++) {

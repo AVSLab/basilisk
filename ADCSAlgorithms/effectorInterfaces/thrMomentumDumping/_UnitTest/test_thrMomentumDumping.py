@@ -142,7 +142,7 @@ def thrMomentumDumpingTestFunction(show_plots, resetCheck, largeMinFireTime):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrMomentumDumping.THRArrayCmdForceMessage()
+    inputMessageData = thrMomentumDumping.THRArrayCmdForceFswMsg()
     messageSize = inputMessageData.getStructSize()
     inputMessageData.thrForce = [1.2, 0.2, 0.0, 1.6, 1.2, 0.2, 1.6, 0.0]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,

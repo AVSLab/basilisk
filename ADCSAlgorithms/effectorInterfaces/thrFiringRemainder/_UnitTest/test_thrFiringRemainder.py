@@ -138,7 +138,7 @@ def thrFiringRemainderTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringRemainder.THRArrayCmdForceMessage()
+    inputMessageData = thrFiringRemainder.THRArrayCmdForceFswMsg()
     messageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,

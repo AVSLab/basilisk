@@ -141,7 +141,7 @@ def thrFiringSchmittTestFunction(show_plots, resetCheck, dvOn):
     numThrusters = fswSetupThrusters.getNumOfDevices()
 
     # setup thruster impulse request message
-    inputMessageData = thrFiringSchmitt.THRArrayCmdForceMessage()
+    inputMessageData = thrFiringSchmitt.THRArrayCmdForceFswMsg()
     messageSize = inputMessageData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.thrForceInMsgName,

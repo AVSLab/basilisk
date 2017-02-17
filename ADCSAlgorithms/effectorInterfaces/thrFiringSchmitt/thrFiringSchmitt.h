@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "fswUtilities/fswDefinitions.h"
 #include "fswMessages/thrArrayConfigFSWMessage.h"
-#include "fswMessages/thrArrayCmdForceMessage.h"
+#include "fswMessages/thrArrayCmdForceFswMsg.h"
 #include "SimFswInterfaceMessages/macroDefinitions.h"
 #include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
@@ -55,7 +55,7 @@ typedef struct {
 	char 				thrConfInMsgName[MAX_STAT_MSG_LENGTH];			/*!< The name of the thruster cluster Input message */
 	int32_t  			thrConfInMsgID;                   				/*!< ID for the incoming Thruster configuration data */
 
-	THRArrayCmdForceMessage thrForceIn;								    /*!< -- copy of the input message */
+	THRArrayCmdForceFswMsg thrForceIn;								    /*!< -- copy of the input message */
 	THRArrayOnTimeCmdIntMsg thrOnTimeOut;								/*!< -- copy of the output message */
 
 }thrFiringSchmittConfig;

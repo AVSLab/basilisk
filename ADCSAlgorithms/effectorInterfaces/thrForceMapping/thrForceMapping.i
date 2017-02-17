@@ -37,7 +37,7 @@ GEN_SIZEOF(thrForceMappingConfig);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "../../fswMessages/thrArrayConfigFSWMessage.h"
 GEN_SIZEOF(THRArrayConfigFSWMessage);
-%include "../../fswMessages/THRArrayCmdForceMessage.h"
+%include "../../fswMessages/thrArrayCmdForceFswMsg.h"
 %include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 %pythoncode %{
