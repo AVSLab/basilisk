@@ -24,7 +24,7 @@
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/sunHeadingEstMessage.h"
 #include "fswMessages/cssConfigFswMsg.h"
-#include "fswMessages/imuSensorBodyMessage.h"
+#include "fswMessages/imuSensorBodyFswMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

@@ -33,7 +33,7 @@ void SelfInit_imuProcessTelem(IMUConfigData *ConfigData, uint64_t moduleID)
     
     /*! - Create output message for module */
     ConfigData->OutputMsgID = CreateNewMessage(ConfigData->OutputDataName,
-        sizeof(IMUSensorBodyMessage), "IMUSensorBodyMessage", moduleID);
+        sizeof(IMUSensorBodyFswMsg), "IMUSensorBodyFswMsg", moduleID);
     
 }
 
@@ -88,7 +88,7 @@ void Update_imuProcessTelem(IMUConfigData *ConfigData, uint64_t callTime, uint64
     m33MultV3(RECAST3X3 ConfigData->dcm_BP, LocalInput.AngVelPlatform,
               ConfigData->LocalOutput.AngVelBody);
     
-    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUSensorBodyMessage),
+    WriteMessage(ConfigData->OutputMsgID, callTime, sizeof(IMUSensorBodyFswMsg),
                  (void*) &(ConfigData->LocalOutput), moduleID);
     
     return;

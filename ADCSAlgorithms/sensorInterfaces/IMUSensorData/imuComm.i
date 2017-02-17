@@ -33,7 +33,7 @@ GEN_SIZEOF(IMUSensorIntMsg);
 GEN_SIZEOF(VehicleConfigMessage);
 %include "imuComm.h"
 %include "../../fswMessages/vehicleConfigMessage.h"
-%include "../../fswMessages/imuSensorBodyMessage.h"
+%include "../../fswMessages/imuSensorBodyFswMsg.h"
 %include "../../../SimFswInterfaceMessages/imuSensorIntMsg.h"
 %pythoncode %{
 import sys

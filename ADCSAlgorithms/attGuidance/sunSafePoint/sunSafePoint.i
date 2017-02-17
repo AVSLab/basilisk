@@ -32,11 +32,11 @@
 %array_functions(CSSConfigFswMsg, CSSWlsConfigArray);
 %include "../../fswMessages/sunHeadingEstMessage.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
-%include "../../fswMessages/imuSensorBodyMessage.h"
+%include "../../fswMessages/imuSensorBodyFswMsg.h"
 GEN_SIZEOF(sunSafePointConfig);
 GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(SunHeadingEstMessage);
-GEN_SIZEOF(IMUSensorBodyMessage);
+GEN_SIZEOF(IMUSensorBodyFswMsg);
 %include "sunSafePoint.h"
 
 %pythoncode %{

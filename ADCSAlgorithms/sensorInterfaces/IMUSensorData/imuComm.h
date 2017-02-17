@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/vehicleConfigMessage.h"
-#include "fswMessages/imuSensorBodyMessage.h"
+#include "fswMessages/imuSensorBodyFswMsg.h"
 #include "SimFswInterfaceMessages/imuSensorIntMsg.h"
 
 
@@ -38,7 +38,7 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     double dcm_BP[9];    /*!< Row major platform 2 bdy DCM*/
-    IMUSensorBodyMessage LocalOutput; /*!< Output data structure*/
+    IMUSensorBodyFswMsg LocalOutput; /*!< Output data structure*/
 }IMUConfigData;
 
 #ifdef __cplusplus
