@@ -44,6 +44,7 @@ public:
 private:
 	StateData *massState;                              //!< -- state data for mass state
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
+	double fuelConsumption;							   //!< [kg/s] rate of fuel being consumed 
 
 public:
 	FuelTank();                                        //!< -- Contructor

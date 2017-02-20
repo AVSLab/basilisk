@@ -60,6 +60,7 @@ public:
     Eigen::Vector3d vecTransContr;       //!< -- The contribution of each stateEffetor to vecTrans
     Eigen::Vector3d vecRotContr;         //!< -- The contribution of each stateEffetor to vecRot
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
+	Eigen::MatrixXd *mDot_SC;            //!< [kg/s] Time derivative of spacecrafts total mass
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B

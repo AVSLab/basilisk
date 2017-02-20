@@ -40,6 +40,7 @@ public:
     Eigen::Vector3d r_BcB_B;             //!< [m] vector from point B to CoM of hub in B frame components
     Eigen::Matrix3d IHubPntBc_B;         //!< [kg m^2] Inertia of hub about point Bc in B frame components
     Eigen::MatrixXd *m_SC;               //!< [kg] spacecrafts total mass
+	Eigen::MatrixXd *mDot_SC;            //!< [kg] Time derivative of spacecrafts total mass
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m] Body time derivative of c_B

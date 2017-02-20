@@ -130,6 +130,16 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
     matrixAcontr = matrixBcontr = matrixCcontr = matrixDcontr = Eigen::Matrix3d::Zero();
     vecTranscontr = vecRotcontr = Eigen::Vector3d::Zero();
 
+	//! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
+	fuelConsumption = 0.0;
+	std::vector<DynamicEffector*>::iterator dynIt;
+	for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
+	{
+		(*dynIt)->computeStateContribution(integTime);
+		fuelConsumption += (*dynIt)->stateDerivContribution(3);
+		vecTranscontr += (*dynIt)->stateDerivContribution.block<3,1>(0, 0);
+	}
+
     // - Get the contributions from the fuel slosh particles
     std::vector<FuelSloshParticle>::iterator intFSP;
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
@@ -149,15 +159,6 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 void FuelTank::computeDerivatives(double integTime)
 {
 	std::vector<FuelSloshParticle>::iterator intFSP;
-
-	//! - Mass depletion (call thrusters attached to this tank to get their mDot)
-	double fuelConsumption = 0.0;
-	std::vector<DynamicEffector*>::iterator dynIt;
-    for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
-    {
-        (*dynIt)->computeStateContribution(integTime);
-        fuelConsumption += (*dynIt)->stateDerivContribution(0);
-    }
 
 	//! - Mass depletion (finding total mass in tank)
 	double totalMass = this->massState->getState()(0,0);

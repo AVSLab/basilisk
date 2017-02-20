@@ -41,7 +41,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);
-    this->stateDerivContribution.resize(1);
+    this->stateDerivContribution.resize(4); //This is a bit hacky, used for a 1x3 vector AND a scalar
     this->stateDerivContribution.setZero();
     return;
 }
@@ -212,6 +212,7 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
  */
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
+	this->hubOmega = states.getStateObject("hubOmega");
     this->dcm_BS = states.getPropertyReference(inputBSName);
 }
 
@@ -283,7 +284,11 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     THROperationSimMsg *ops;
     double mDotSingle;
     this->mDotTotal = 0.0;
-    
+	Eigen::Vector3d vecTransContr, omegaLocal_BN_B;
+	omegaLocal_BN_B = hubOmega->getState();
+	vecTransContr.setZero();
+	this->stateDerivContribution.setZero();
+
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for(it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
     {
@@ -294,10 +299,11 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
             mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
                                                           it->steadyIsp * ops->IspFactor);
         }
+		vecTransContr += 2 * mDotSingle*omegaLocal_BN_B.cross(it->thrLoc_B);
         this->mDotTotal += mDotSingle;
     }
-    this->stateDerivContribution(0) = this->mDotTotal;
-    
+    this->stateDerivContribution << vecTransContr, this->mDotTotal;
+
     return;
 }
 

@@ -155,6 +155,7 @@ void SpacecraftPlus::initializeDynamics()
 {
     // - SpacecraftPlus initiates all of the spaceCraft mass properties
     Eigen::MatrixXd initM_SC(1,1);
+	Eigen::MatrixXd initMDot_SC(1,1);
     Eigen::MatrixXd initC_B(3,1);
     Eigen::MatrixXd initISCPntB_B(3,3);
     Eigen::MatrixXd initCPrime_B(3,1);
@@ -163,6 +164,7 @@ void SpacecraftPlus::initializeDynamics()
     systemTime.setZero();
     // - Create the properties
     this->m_SC = this->dynManager.createProperty("m_SC", initM_SC);
+	this->mDot_SC = this->dynManager.createProperty("mDot_SC", initMDot_SC);
     this->c_B = this->dynManager.createProperty("centerOfMassSC", initC_B);
     this->ISCPntB_B = this->dynManager.createProperty("inertiaSC", initISCPntB_B);
     this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
@@ -249,15 +251,16 @@ void SpacecraftPlus::equationsOfMotion(double t)
         (*it)->updateEffectorMassProps(t);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
+		(*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
     (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
-    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0);
+    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0) - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
@@ -410,6 +413,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     this->totRotEnergy = 0.0;
     this->rotEnergyContr = 0.0;
     double mSCLocal = 0.0;
+	double mDotSCLocal = 0.0;
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
@@ -430,7 +434,8 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         (*it)->updateEffectorMassProps(time);
         mSCLocal += (*it)->effProps.mEff;
         cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
-        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B;
+        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+		mDotSCLocal += (*it)->effProps.mEffDot;
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
@@ -440,7 +445,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
 
     // - correct c_B and cPrime_B by 1/mSC
     cLocal_B = cLocal_B/mSCLocal;
-    cPrimeLocal_B = cPrimeLocal_B/mSCLocal;
+    cPrimeLocal_B = cPrimeLocal_B/mSCLocal; - mDotSCLocal*cLocal_B/(mSCLocal * mSCLocal);
 
     // - Find cDot_B
     cDotLocal_B = cPrimeLocal_B + omegaLocal_BN_B.cross(cLocal_B);
