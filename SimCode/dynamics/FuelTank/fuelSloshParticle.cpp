@@ -38,6 +38,7 @@ FuelSloshParticle::FuelSloshParticle()
 	this->c = 0.0;
 	this->nameOfRhoState = "fuelSloshParticleRho";
 	this->nameOfRhoDotState = "fuelSloshParticleRhoDot";
+	this->nameOfMassState = "fuelSloshParticleMass";
 
 	return;
 }
@@ -69,7 +70,10 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
 	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
 
-    return;
+	// - Register m
+	this->massState = states.registerState(1, 1, nameOfMassState);
+
+	return;
 }
 
 /*! This is the method for the FSP to add its contributions to the mass props and mass prop rates of the vehicle */
@@ -78,6 +82,7 @@ void FuelSloshParticle::updateEffectorMassProps(double integTime)
 	// - Grab rho from state manager and define r_PcB_B
 	this->rho = this->rhoState->getState()(0,0);
 	this->r_PcB_B = this->rho * this->pHat_B + this->r_PB_B;
+	this->massFSP = this->massState->getState()(0, 0);
 
 	// - Update the effectors mass
 	this->effProps.mEff = this->massFSP;

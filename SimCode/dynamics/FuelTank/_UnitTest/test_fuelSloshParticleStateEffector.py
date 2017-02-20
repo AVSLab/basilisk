@@ -79,31 +79,31 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle3 = fuelSloshParticle.FuelSloshParticle()
 
     # Define Variables for particle 1
-    unitTestSim.particle1.massFSP = 10
     unitTestSim.particle1.k = 100.0
     unitTestSim.particle1.c = 0.0
     unitTestSim.particle1.r_PB_B = [[0.1], [0], [-0.1]]
     unitTestSim.particle1.pHat_B = [[1], [0], [0]]
     unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
     unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
+    unitTestSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
 
     # Define Variables for particle 2
-    unitTestSim.particle2.massFSP = 20
     unitTestSim.particle2.k = 100.0
     unitTestSim.particle2.c = 0.0
     unitTestSim.particle2.r_PB_B = [[0], [0], [0.1]]
     unitTestSim.particle2.pHat_B = [[0], [1], [0]]
     unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
     unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
+    unitTestSim.particle2.nameOfMassState = "fuelSloshParticleMass2"
 
     # Define Variables for particle 3
-    unitTestSim.particle3.massFSP = 15
     unitTestSim.particle3.k = 100.0
     unitTestSim.particle3.c = 0.0
     unitTestSim.particle3.r_PB_B = [[-0.1], [0], [0.1]]
     unitTestSim.particle3.pHat_B = [[0], [0], [1]]
     unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
     unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
+    unitTestSim.particle3.nameOfMassState = "fuelSloshParticleMass3"
 
     #define the fuel tank
     unitTestSim.tank1 = fuelTank.FuelTank()
@@ -134,10 +134,13 @@ def test_hubPropagate(show_plots):
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
     rho1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho1")
     rhoDot1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot1")
+    mass1Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass1")
     rho2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho2")
     rhoDot2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot2")
+    mass2Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass2")
     rho3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho3")
     rhoDot3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot3")
+    mass3Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass3")
     massTank = scObject.dynManager.getStateObject(unitTestSim.tank1.nameOfMassState)
 
     posRef.setState([[0.0], [0.0], [0.0]])
@@ -146,10 +149,13 @@ def test_hubPropagate(show_plots):
     omegaRef.setState([[0.1], [-0.1], [0.1]])
     rho1Ref.setState([[0.05]])
     rhoDot1Ref.setState([[0.0]])
+    mass1Ref.setState([[10.0]])
     rho2Ref.setState([[-0.025]])
     rhoDot2Ref.setState([[0.0]])
+    mass2Ref.setState([[20.0]])
     rho3Ref.setState([[-0.015]])
     rhoDot3Ref.setState([[0.0]])
+    mass3Ref.setState([[15.0]])
     massTank.setState([[30]])
 
     scObject.hub.mHub = 750

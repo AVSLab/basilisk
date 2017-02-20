@@ -148,10 +148,7 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 /*! This method allows the fuel tank to compute its derivative and also calls computeDeravites for the fuel slosh */
 void FuelTank::computeDerivatives(double integTime)
 {
-    // - Call compute derivatives for all fuel slosh particles
 	std::vector<FuelSloshParticle>::iterator intFSP;
-	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
-		intFSP->computeDerivatives(integTime);
 
 	//! - Mass depletion (call thrusters attached to this tank to get their mDot)
 	double fuelConsumption = 0.0;
@@ -161,10 +158,26 @@ void FuelTank::computeDerivatives(double integTime)
         (*dynIt)->computeStateContribution(integTime);
         fuelConsumption += (*dynIt)->stateDerivContribution(0);
     }
-	Eigen::MatrixXd conv(1, 1);
-	conv(0, 0) = -fuelConsumption;
-	this->massState->setDerivative(conv);
 
+	//! - Mass depletion (finding total mass in tank)
+	double totalMass = this->massState->getState()(0,0);
+	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
+		totalMass += intFSP->massState->getState()(0, 0);
+	}
+
+	// - Call compute derivatives for all fuel slosh particles, and set mDot
+	double tankFuelConsumption = fuelConsumption;
+	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
+		intFSP->computeDerivatives(integTime);
+		double mDot = intFSP->massState->getState()(0, 0) / totalMass * fuelConsumption;
+		Eigen::MatrixXd conv(1, 1);
+		conv(0, 0) = -mDot;
+		intFSP->massState->setDerivative(conv);
+		tankFuelConsumption -= mDot;
+	}
+	Eigen::MatrixXd conv(1, 1);
+	conv(0, 0) = -tankFuelConsumption;
+	this->massState->setDerivative(conv);
     return;
 }
 
