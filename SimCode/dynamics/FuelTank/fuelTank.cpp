@@ -126,9 +126,17 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr,
 	Eigen::Vector3d & vecRotcontr) {
 
+	Eigen::Vector3d rPrime_TB_B, rPPrime_TB_B;
+	rPrime_TB_B.setZero();
+	rPPrime_TB_B.setZero(); //To be used for more complex tank models
+
     // - Zero some matrices
     matrixAcontr = matrixBcontr = matrixCcontr = matrixDcontr = Eigen::Matrix3d::Zero();
     vecTranscontr = vecRotcontr = Eigen::Vector3d::Zero();
+
+	vecRotcontr = -massState->getState()(0, 0) * r_TB_B.cross(rPPrime_TB_B) 
+					- massState->getState()(0,0)*omegaState->getState().cross(r_TB_B.cross(rPrime_TB_B))
+					- massState->getStateDeriv()(0,0)*r_TB_B.cross(rPrime_TB_B);
 
 	//! - Mass depletion (call thrusters attached to this tank to get their mDot, and contributions)
 	fuelConsumption = 0.0;
@@ -136,8 +144,9 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
 	{
 		(*dynIt)->computeStateContribution(integTime);
-		fuelConsumption += (*dynIt)->stateDerivContribution(3);
+		fuelConsumption += (*dynIt)->stateDerivContribution(6);
 		vecTranscontr += (*dynIt)->stateDerivContribution.block<3,1>(0, 0);
+		vecRotcontr += (*dynIt)->stateDerivContribution.block<3, 1>(3, 0);
 	}
 
     // - Get the contributions from the fuel slosh particles

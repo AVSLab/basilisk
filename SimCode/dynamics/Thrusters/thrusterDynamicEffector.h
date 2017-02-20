@@ -41,6 +41,7 @@
 
 
 
+
 //! @brief Thruster dynamics class used to provide thruster effects on body
 /*! This class is used to hold and operate a set of thrusters that are located
  on the spacecraft.  It contains all of the configuration data for the thruster

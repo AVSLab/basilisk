@@ -26,6 +26,12 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
+#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
+#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "utilities/avsEigenSupport.h"
+#include <cstring>
+#include <iostream>
+#include <cmath>
 
 /*! The Constructor.*/
 ThrusterDynamicEffector::ThrusterDynamicEffector()
@@ -41,7 +47,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);
-    this->stateDerivContribution.resize(4); //This is a bit hacky, used for a 1x3 vector AND a scalar
+    this->stateDerivContribution.resize(7); //This is a bit hacky, used for a 1x3 vector AND a scalar
     this->stateDerivContribution.setZero();
     return;
 }
@@ -284,9 +290,10 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     THROperationSimMsg *ops;
     double mDotSingle;
     this->mDotTotal = 0.0;
-	Eigen::Vector3d vecTransContr, omegaLocal_BN_B;
+	Eigen::Vector3d vecTransContr, vecRotContr, omegaLocal_BN_B;
 	omegaLocal_BN_B = hubOmega->getState();
 	vecTransContr.setZero();
+	vecRotContr.setZero();
 	this->stateDerivContribution.setZero();
 
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
@@ -301,8 +308,20 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
         }
 		vecTransContr += 2 * mDotSingle*omegaLocal_BN_B.cross(it->thrLoc_B);
         this->mDotTotal += mDotSingle;
+
+		Eigen::Matrix3d BMj, intermediate;
+		Eigen::Vector3d BM1, BM2, BM3;
+		intermediate << 2, 0, 0, 0, 1, 0, 0, 0, 1;
+		BM1 = it->thrDir_B;
+		BM2 << -BM1(1), BM1(0), BM1(2);
+		BM3 = BM1.cross(BM2);
+		BMj.col(0) = BM1;
+		BMj.col(1) = BM2;
+		BMj.col(2) = BM3;
+		vecRotContr -= mDotSingle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose() 
+			+ it->areaNozzle / (4 * M_PI) * BMj*intermediate*BMj.transpose());
     }
-    this->stateDerivContribution << vecTransContr, this->mDotTotal;
+    this->stateDerivContribution << vecTransContr, vecRotContr, this->mDotTotal;
 
     return;
 }
