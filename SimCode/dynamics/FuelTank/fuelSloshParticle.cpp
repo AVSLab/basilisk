@@ -183,8 +183,6 @@ void FuelSloshParticle::updateEnergyMomContributions(double integTime, Eigen::Ve
     omegaLocal_BN_B = omegaState->getState();
     Eigen::Vector3d rDotPcB_B;
 
-    // - Fuel slosh particles already have updated mass props due to fuel tank call
-
     // - Find rotational angular momentum contribution from hub
     rDotPcB_B = this->rPrime_PcB_B + omegaLocal_BN_B.cross(this->r_PcB_B);
     rotAngMomPntCContr_B = this->massFSP*this->r_PcB_B.cross(rDotPcB_B);

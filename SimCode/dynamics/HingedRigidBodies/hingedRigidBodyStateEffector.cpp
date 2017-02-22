@@ -222,9 +222,6 @@ void HingedRigidBodyStateEffector::updateEnergyMomContributions(double integTime
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = hubOmega->getState();
 
-    // - Call mass props to get current information on states
-    this->updateEffectorMassProps(integTime);
-
     // - Find rotational angular momentum contribution from hub
     Eigen::Vector3d omega_SB_B;
     Eigen::Vector3d omega_SN_B;

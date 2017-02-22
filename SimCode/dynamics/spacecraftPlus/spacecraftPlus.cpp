@@ -209,28 +209,9 @@ void SpacecraftPlus::initializeDynamics()
     return;
 }
 
-/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
- the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
- in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
- dynParam Manager thus solving for Xdot*/
-void SpacecraftPlus::equationsOfMotion(double t)
+/*! This method is used to update the mass properties of the entire spacecraft using contributions from stateEffectors */
+void SpacecraftPlus::updateSCMassProps(double time)
 {
-    // - Update time to the current time
-    uint64_t CurrentSimNanos;
-    CurrentSimNanos = this->simTimePrevious + (t-this->timePrevious)/NANO2SEC;
-    (*this->sysTime) << CurrentSimNanos, t;
-
-    // - Zero all Matrices and vectors for back-sub and the dynamics
-    this->hub.matrixA.setZero();
-    this->hub.matrixB.setZero();
-    this->hub.matrixC.setZero();
-    this->hub.matrixD.setZero();
-    this->hub.vecTrans.setZero();
-    this->hub.vecRot.setZero();
-    this->hub.sumForceExternal_B.setZero();
-    this->hub.sumForceExternal_N.setZero();
-    this->hub.sumTorquePntB_B.setZero();
-
     // - Zero the properties which will get populated in this method
     (*this->m_SC).setZero();
     (*this->mDot_SC).setZero();
@@ -240,7 +221,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->ISCPntBPrime_B).setZero();
 
     // Add in hubs mass props to the spacecraft mass props
-    this->hub.updateEffectorMassProps(t);
+    this->hub.updateEffectorMassProps(time);
     (*this->m_SC)(0,0) += this->hub.effProps.mEff;
     (*this->ISCPntB_B) += this->hub.effProps.IEffPntB_B;
     (*this->c_B) += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
@@ -249,7 +230,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
     std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
-        (*it)->updateEffectorMassProps(t);
+        (*it)->updateEffectorMassProps(time);
         // - Add in effectors mass props into mass props of spacecraft
         (*this->m_SC)(0,0) += (*it)->effProps.mEff;
 		(*this->mDot_SC)(0,0) += (*it)->effProps.mEffDot;
@@ -265,10 +246,39 @@ void SpacecraftPlus::equationsOfMotion(double t)
     (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0)
                                              - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
 
+    return;
+}
+
+/*! This method is solving Xdot = F(X,t) for the system. The hub needs to calculate its derivatives, along with all of 
+ the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
+ in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
+ dynParam Manager thus solving for Xdot*/
+void SpacecraftPlus::equationsOfMotion(double time)
+{
+    // - Update time to the current time
+    uint64_t CurrentSimNanos;
+    CurrentSimNanos = this->simTimePrevious + (time-this->timePrevious)/NANO2SEC;
+    (*this->sysTime) << CurrentSimNanos, time;
+
+    // - Zero all Matrices and vectors for back-sub and the dynamics
+    this->hub.matrixA.setZero();
+    this->hub.matrixB.setZero();
+    this->hub.matrixC.setZero();
+    this->hub.matrixD.setZero();
+    this->hub.vecTrans.setZero();
+    this->hub.vecRot.setZero();
+    this->hub.sumForceExternal_B.setZero();
+    this->hub.sumForceExternal_N.setZero();
+    this->hub.sumTorquePntB_B.setZero();
+
+    // - Update the mass properties of the spacecraft
+    this->updateSCMassProps(time);
+
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
 
     // - Loop through state effectors to get contributions for back-substitution
+    std::vector<StateEffector*>::iterator it;
     for(it = this->states.begin(); it != this->states.end(); it++)
     {
         /* - Set the contribution matrices to zero (just in case a stateEffector += on the matrix or the stateEffector
@@ -281,7 +291,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
         this->vecRotContr.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(t, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
+        (*it)->updateContributions(time, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
                                    this->vecTransContr, this->vecRotContr);
         this->hub.matrixA += this->matrixAContr;
         this->hub.matrixB += this->matrixBContr;
@@ -296,19 +306,19 @@ void SpacecraftPlus::equationsOfMotion(double t)
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeBodyForceTorque(t);
+        (*dynIt)->computeBodyForceTorque(time);
         this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    this->hub.computeDerivatives(t);
+    this->hub.computeDerivatives(time);
 
     // - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
-        (*it)->computeDerivatives(t);
+        (*it)->computeDerivatives(time);
     }
 
     return;
@@ -345,6 +355,9 @@ void SpacecraftPlus::integrateState(double time)
         this->hubSigma->setState(sigmaBNLoc);
         this->MRPSwitchCount++;
     }
+
+    // - Call mass properties to get current info on the mass props of the spacecraft
+    this->updateSCMassProps(time);
 
     // - Find v_CN_N after the integration for accumulated DV
     Eigen::Vector3d newV_BN_N = this->hubV_N->getState(); // - V_BN_N after integration
@@ -401,13 +414,9 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - zero necessarry variables
     Eigen::Vector3d totOrbAngMomPntN_B;
     Eigen::Vector3d totRotAngMomPntC_B;
-    Eigen::Vector3d cLocal_B;
-    Eigen::Vector3d cPrimeLocal_B;
     Eigen::Vector3d cDotLocal_B;
     totOrbAngMomPntN_B.setZero();
     totRotAngMomPntC_B.setZero();
-    cLocal_B.setZero();
-    cPrimeLocal_B.setZero();
     cDotLocal_B.setZero();
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
@@ -415,13 +424,9 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     this->totOrbKinEnergy = 0.0;
     this->totRotEnergy = 0.0;
     this->rotEnergyContr = 0.0;
-    double mSCLocal = 0.0;
-	double mDotSCLocal = 0.0;
 
     // - Get the hubs contribution
     this->hub.updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
-    mSCLocal += this->hub.effProps.mEff;
-    cLocal_B += this->hub.effProps.mEff*this->hub.effProps.rEff_CB_B;
     totRotAngMomPntC_B += this->rotAngMomPntCContr_B;
     this->totRotEnergy += this->rotEnergyContr;
 
@@ -432,14 +437,6 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         // - Set the matrices to zero
         this->rotAngMomPntCContr_B.setZero();
         this->rotEnergyContr = 0.0;
-        
-        // - Add in effectors mass props into mass props of spacecraft
-        (*it)->updateEffectorMassProps(time);
-        mSCLocal += (*it)->effProps.mEff;
-        cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
-        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
-                                                                    + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
-		mDotSCLocal += (*it)->effProps.mEffDot;
 
         // - Call energy and momentum calulations for stateEffectors
         (*it)->updateEnergyMomContributions(time, this->rotAngMomPntCContr_B, this->rotEnergyContr);
@@ -447,29 +444,29 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         this->totRotEnergy += this->rotEnergyContr;
     }
 
-    // - correct c_B and cPrime_B by 1/mSC
-    cLocal_B = cLocal_B/mSCLocal;
-    cPrimeLocal_B = cPrimeLocal_B/mSCLocal; - mDotSCLocal*cLocal_B/(mSCLocal * mSCLocal);
-
     // - Find cDot_B
+    Eigen::Vector3d cLocal_B;
+    Eigen::Vector3d cPrimeLocal_B;
+    cLocal_B = (*this->c_B);
+    cPrimeLocal_B = (*this->cPrime_B);
     cDotLocal_B = cPrimeLocal_B + omegaLocal_BN_B.cross(cLocal_B);
 
     // - Find orbital kinetic energy for the spacecraft
-    this->totOrbKinEnergy += 1.0/2.0*mSCLocal*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
+    this->totOrbKinEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
                                                + cDotLocal_B.dot(cDotLocal_B));
 
     // - Find total rotational energy
-    this->totRotEnergy += -1.0/2.0*mSCLocal*cDotLocal_B.dot(cDotLocal_B);
+    this->totRotEnergy += -1.0/2.0*(*this->m_SC)(0,0)*cDotLocal_B.dot(cDotLocal_B);
 
     // - Find orbital angular momentum for the spacecraft
     Eigen::Vector3d rCN_N;
     Eigen::Vector3d rDotCN_N;
     rCN_N = rLocal_BN_N + dcmLocal_NB*cLocal_B;
     rDotCN_N = rDotLocal_BN_N + dcmLocal_NB*cDotLocal_B;
-    this->totOrbAngMomPntN_N = mSCLocal*(rCN_N.cross(rDotCN_N));
+    this->totOrbAngMomPntN_N = (*this->m_SC)(0,0)*(rCN_N.cross(rDotCN_N));
 
     // - Find rotational angular momentum for the spacecraft
-    totRotAngMomPntC_B += -mSCLocal*cLocal_B.cross(cDotLocal_B);
+    totRotAngMomPntC_B += -(*this->m_SC)(0,0)*cLocal_B.cross(cDotLocal_B);
     this->totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
     
     return;

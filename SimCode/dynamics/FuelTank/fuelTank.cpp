@@ -221,9 +221,6 @@ void FuelTank::computeDerivatives(double integTime)
 void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B,
                                             double & rotEnergyContr)
 {
-    // - call updateMassProps to get current mass props info
-    this->updateEffectorMassProps(integTime);
-
     // - Get all of the fuel slosh particles contributions to energy and momentum
     std::vector<FuelSloshParticle>::iterator intFSP;
     for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++)
