@@ -55,7 +55,16 @@ SpiceInterface::SpiceInterface()
 SpiceInterface::~SpiceInterface()
 {
     delete [] SpiceBuffer;
+    if(SPICELoaded)
+    {
+        clearKeeper();
+    }
     return;
+}
+
+void SpiceInterface::clearKeeper()
+{
+    kclear_c();
 }
 
 /*! This method initializes the object.  It creates the output messages,
