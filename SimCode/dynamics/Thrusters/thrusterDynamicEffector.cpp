@@ -298,7 +298,7 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
 		BMj.col(0) = BM1;
 		BMj.col(1) = BM2;
 		BMj.col(2) = BM3;
-		this->torqueExternalPntB_B -= mDotNozzle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose()
+		this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose()
 			+ it->areaNozzle / (4 * M_PI) * BMj*axesWeightMatrix*BMj.transpose())*omegaLocal_BN_B;
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation

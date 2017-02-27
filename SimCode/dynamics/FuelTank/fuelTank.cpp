@@ -169,7 +169,7 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	vecRotcontr = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
 		- massState->getState()(0, 0)*omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
 		- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);
-
+	vecRotcontr -= fuelTankModel->IPrimeTankPntT_B * omega_BN_BLocal;
     // - Get the contributions from the fuel slosh particles
     std::vector<FuelSloshParticle>::iterator intFSP;
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
