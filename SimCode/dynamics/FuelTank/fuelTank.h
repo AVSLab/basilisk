@@ -27,28 +27,170 @@
 #include "../SimCode/utilities/avsEigenMRP.h"
 #include "fuelSloshParticle.h"
 
+//Fuel tank models
+/*! @brief This class is an abstract class that has the minimum interfaces for a tank model */
+struct FuelTankModel {
+	double propMassInit;                               //!< [kg] Initial propellant mass in tank
+	Eigen::Vector3d r_TB_BInit;                        //!< [m] Initial position vector from B to tank point in B frame comp.
+	Eigen::Matrix3d ITankPntT_B;					   //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
+	Eigen::Matrix3d IPrimeTankPntT_B;				   //!< [kg m^2/s] Derivative of inertia of tank about pnt T in B frame comp.
+	Eigen::Vector3d r_TB_B;                            //!< [m] position vector from B to tank point in B frame comp.
+	Eigen::Vector3d rPrime_TB_B;                       //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
+	Eigen::Vector3d rPPrime_TB_B;                      //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
+	virtual void computeTankProps(double mFuel, double mDotFuel) = 0;
+	FuelTankModel() {
+		propMassInit = 0.0;
+		r_TB_BInit.setZero();
+	}
+};
+
+struct FuelTankModelConstantVolume_t :
+	public FuelTankModel
+{
+	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
+
+	void computeTankProps(double mFuel, double mDotFuel) {
+		r_TB_B = r_TB_BInit;
+		ITankPntT_B = 2.0 / 5.0 * mFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
+		IPrimeTankPntT_B = 2.0 / 5.0 * mDotFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
+		rPrime_TB_B.setZero();
+		rPPrime_TB_B.setZero();		
+	}
+};
+
+struct FuelTankModelConstantDensity_t :
+	public FuelTankModel
+{
+	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
+
+	void computeTankProps(double mFuel, double mDotFuel) {
+		double radiusTank = std::pow(mFuel / propMassInit, 1.0 / 3.0)*radiusTankInit;
+		r_TB_B = r_TB_BInit;
+		ITankPntT_B = 2.0 / 5.0 * mFuel*radiusTank*radiusTank*Eigen::Matrix3d::Identity();
+		IPrimeTankPntT_B = 2.0 / 3.0 * mDotFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
+		rPrime_TB_B.setZero();
+		rPPrime_TB_B.setZero();
+	}
+};
+
+struct FuelTankModelEmptying_t :
+	public FuelTankModel
+{
+	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
+	Eigen::Vector3d k3;							       //!< [m] Axis of fuel depletion in B frame
+
+	void computeTankProps(double mFuel, double mDotFuel) {
+		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit);
+		double thetaStar = 0.0; //TODO, need to figure out computing numerically
+		double thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
+		double thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar)/std::sin(thetaStar);
+		double volume = 2.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
+		double deltaRadiusK3 = M_PI*std::pow(radiusTankInit, 4) / (4.0*volume)*(2.0*std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1);
+		r_TB_B = r_TB_BInit + deltaRadiusK3*k3;
+		ITankPntT_B.setZero();
+		IPrimeTankPntT_B.setZero();
+		ITankPntT_B(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
+			(2.0 / 5.0 + 1.0 / 4.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4) - 1 / 12.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)));
+		ITankPntT_B(0, 0) = ITankPntT_B(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
+			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) + 
+				5.0 / 4.0*cos(thetaStar) + 1 / 8.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4));
+		
+		IPrimeTankPntT_B(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) * thetaDotStar *
+			(std::pow(std::cos(thetaStar), 2)*std::pow(std::sin(thetaStar), 3) - 1.0 / 4.0*std::pow(std::sin(thetaStar), 5)+ 
+				1 / 4.0*std::sin(3 * thetaStar) - 3.0 / 4.0*std::sin(thetaStar));
+		IPrimeTankPntT_B(0, 0) = IPrimeTankPntT_B(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) * thetaDotStar *
+			(5.0 / 4.0*std::sin(thetaStar)*std::cos(thetaStar) - 5.0 / 4.0*std::sin(thetaStar) - 1 / 8.0*std::sin(3 * thetaStar) +
+				3.0 / 8.0*sin(thetaStar) + 1 / 2.0*std::pow(std::cos(thetaStar), 2)*std::pow(std::sin(thetaStar), 3) - 1 / 8.0*std::pow(std::sin(thetaStar), 5));
+
+		rPrime_TB_B = -M_PI*std::pow(radiusTankInit,4)*rhoFuel/(4*mFuel*mFuel)*(4*mFuel*thetaDotStar*std::pow(std::sin(thetaStar),3)*std::cos(thetaStar)+
+			mDotFuel*(2*std::pow(std::cos(thetaStar),2)-std::pow(std::cos(thetaStar),4)-1))*k3;
+		rPPrime_TB_B = -M_PI*std::pow(radiusTankInit, 4)*rhoFuel / (2 * mFuel*mFuel*mFuel)*(4 * mFuel*std::pow(std::sin(thetaStar),3)*std::cos(thetaStar)*
+			(thetaDDotStar*mFuel-2*thetaDotStar*mDotFuel) -4*mFuel*mFuel*thetaDotStar*thetaDotStar*std::pow(std::sin(thetaStar),2)*
+			(3*std::pow(std::cos(thetaStar),2)-std::pow(std::sin(thetaStar),2))+(2*std::pow(std::cos(thetaStar),2)-std::pow(std::cos(thetaStar),4)-1)*
+			(-2*mDotFuel*mDotFuel))*k3;
+	}
+};
+
+struct FuelTankModelUniformBurn_t :
+	public FuelTankModel
+{
+	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
+	double lengthTank;								   //!< [m] Length of the tank
+	
+	void computeTankProps(double mFuel, double mDotFuel) {
+		r_TB_B = r_TB_BInit;
+		ITankPntT_B.setZero();
+		IPrimeTankPntT_B.setZero();
+		ITankPntT_B(0, 0) = ITankPntT_B(1, 1) = mFuel * (radiusTankInit*radiusTankInit / 4.0 + lengthTank*lengthTank / 12.0);
+		ITankPntT_B(2, 2) = mFuel*radiusTankInit*radiusTankInit/2;
+		IPrimeTankPntT_B(0, 0) = IPrimeTankPntT_B(1, 1) = mDotFuel * (radiusTankInit*radiusTankInit / 4.0 + lengthTank*lengthTank / 12.0);
+		IPrimeTankPntT_B(2, 2) = mDotFuel*radiusTankInit*radiusTankInit / 2;
+		rPrime_TB_B.setZero();
+		rPPrime_TB_B.setZero();
+	}
+};
+
+struct FuelTankModelCentrifugalBurn_t :
+	public FuelTankModel
+{
+	double radiusTankInit;                             //!< [m] Initial radius of the cylindrical tank
+	double lengthTank;								   //!< [m] Length of the tank
+	
+	void computeTankProps(double mFuel, double mDotFuel) {
+		double rhoFuel = propMassInit / (M_PI*radiusTankInit*radiusTankInit*lengthTank);
+		double radiusInner = std::sqrt(radiusTankInit*radiusTankInit - mFuel / (M_PI*lengthTank*rhoFuel));
+		r_TB_B = r_TB_BInit;
+		ITankPntT_B.setZero();
+		IPrimeTankPntT_B.setZero();
+		ITankPntT_B(0, 0) = ITankPntT_B(1, 1) = mFuel * ((radiusTankInit*radiusTankInit+radiusInner*radiusInner) / 4.0 + lengthTank*lengthTank / 12.0);
+		ITankPntT_B(2, 2) = mFuel*(radiusTankInit*radiusTankInit +radiusInner*radiusInner)/ 2;
+		IPrimeTankPntT_B(0, 0) = IPrimeTankPntT_B(1, 1) = mDotFuel * (radiusInner*radiusInner / 2.0 + lengthTank*lengthTank / 12.0);
+		IPrimeTankPntT_B(2, 2) = mDotFuel*radiusInner*radiusInner;
+		rPrime_TB_B.setZero();
+		rPPrime_TB_B.setZero();
+	}
+};
+
+enum FuelTankModelTypes {
+	TANK_MODEL_FIRST_MODEL,
+	TANK_MODEL_CONSTANT_VOLUME = TANK_MODEL_FIRST_MODEL,
+	TANK_MODEL_CONSTANT_DENSITY,
+	TANK_MODEL_EMPTYING,
+	TANK_MODEL_UNIFORM_BURN,
+	TANK_MODEL_CENTRIFUGAL_BURN,
+	TANK_MODEL_LAST_MODEL,
+};
+
+extern FuelTankModelConstantVolume_t FuelTankModelConstantVolume;
+extern FuelTankModelConstantDensity_t FuelTankModelConstantDensity;
+extern FuelTankModelEmptying_t FuelTankModelEmptying;
+extern FuelTankModelUniformBurn_t FuelTankModelUniformBurn;
+extern FuelTankModelCentrifugalBurn_t FuelTankModelCentrifugalBurn;
+
+extern FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL];
+
+
+
 /*! @brief This class is an instantiation of the stateEffector abstract class and implements an effector representing a 
  fuel tank. This fuel tank has one state associated with it and is the mass of the fuel inside the tank */
 class FuelTank :
 	public StateEffector, public SysModel
 {
 public:
-	double radiusTank;                                 //!< [m] radius of the spherical tank
-    double propMassInit;                               //!< [kg] Initial propellant mass in tank
 	std::string nameOfMassState;                       //!< -- name of mass state
-	Eigen::Vector3d r_TB_B;                            //!< [m] position vector from B to tank point in B frame comp.
-    Eigen::Matrix3d ITankPntT_B;                       //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
     std::vector<FuelSloshParticle> fuelSloshParticles; //!< -- vector of fuel slosh particles
     std::vector<DynamicEffector*> dynEffectors;        //!< -- Vector of dynamic effectors for thrusters
 
 private:
-	StateData *massState;                              //!< -- state data for mass state
 	StateData *omegaState;                             //!< -- state data for omega_BN of the hub
+	StateData *massState;                              //!< -- state data for mass state
 	double fuelConsumption;							   //!< [kg/s] rate of fuel being consumed 
+	FuelTankModel* fuelTankModel;
 
 public:
 	FuelTank();                                        //!< -- Contructor
 	~FuelTank();                                       //!< -- Destructor
+	void setTankModel(FuelTankModelTypes model);
 	void pushFuelSloshParticle(FuelSloshParticle particle);  //!< -- Method to attach fuel slosh particle
 	void registerStates(DynParamManager& states);  //!< -- Method to register mass state with state manager
 	void linkInStates(DynParamManager& states);  //!< -- Method to give the tank access to other states
