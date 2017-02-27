@@ -47,7 +47,7 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_B.fill(0.0);
     torqueExternalPntB_B.fill(0.0);
     forceExternal_N.fill(0.0);
-    this->stateDerivContribution.resize(7); //This is a bit hacky, used for a 1x3 vector AND a scalar
+    this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
     return;
 }
@@ -233,8 +233,13 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     Eigen::Vector3d SingleThrusterForce;
     Eigen::Vector3d SingleThrusterTorque;
     Eigen::Vector3d CoMRelPos;
+	Eigen::Vector3d omegaLocal_BN_B;
+	Eigen::Matrix3d BMj;
+	Eigen::Matrix3d	axesWeightMatrix;
+	Eigen::Vector3d BM1, BM2, BM3;
     double tmpThrustMag = 0;
     double dt = 0.0;
+	double mDotNozzle;
     
     //! Begin method steps
     //! - Zero out the structure force/torque for the thruster set
@@ -245,6 +250,9 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     this->torqueExternalPntB_B.setZero();
     mDotTotal = 0.0;
     dt = integTime - prevFireTime;
+
+	omegaLocal_BN_B = hubOmega->getState();
+	axesWeightMatrix << 2, 0, 0, 0, 1, 0, 0, 0, 1;
     
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for(it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
@@ -273,6 +281,25 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
+
+		//! - Add the mass depletion force contribution
+		mDotNozzle = 0.0;
+		if (it->steadyIsp * ops->IspFactor > 0.0)
+		{
+			mDotNozzle = it->MaxThrust*ops->ThrustFactor / (EARTH_GRAV *
+				it->steadyIsp * ops->IspFactor);
+		}
+		this->forceExternal_B += 2 * mDotNozzle*omegaLocal_BN_B.cross(it->thrLoc_B);
+
+		//! - Add the mass depletion torque contribution
+		BM1 = it->thrDir_B;
+		BM2 << -BM1(1), BM1(0), BM1(2);
+		BM3 = BM1.cross(BM2);
+		BMj.col(0) = BM1;
+		BMj.col(1) = BM2;
+		BMj.col(2) = BM3;
+		this->torqueExternalPntB_B -= mDotNozzle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose()
+			+ it->areaNozzle / (4 * M_PI) * BMj*axesWeightMatrix*BMj.transpose())*omegaLocal_BN_B;
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;
@@ -290,10 +317,6 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     THROperationSimMsg *ops;
     double mDotSingle;
     this->mDotTotal = 0.0;
-	Eigen::Vector3d vecTransContr, vecRotContr, omegaLocal_BN_B;
-	omegaLocal_BN_B = hubOmega->getState();
-	vecTransContr.setZero();
-	vecRotContr.setZero();
 	this->stateDerivContribution.setZero();
 
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
@@ -306,22 +329,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
             mDotSingle = it->MaxThrust*ops->ThrustFactor/(EARTH_GRAV *
                                                           it->steadyIsp * ops->IspFactor);
         }
-		vecTransContr += 2 * mDotSingle*omegaLocal_BN_B.cross(it->thrLoc_B);
         this->mDotTotal += mDotSingle;
-
-		Eigen::Matrix3d BMj, intermediate;
-		Eigen::Vector3d BM1, BM2, BM3;
-		intermediate << 2, 0, 0, 0, 1, 0, 0, 0, 1;
-		BM1 = it->thrDir_B;
-		BM2 << -BM1(1), BM1(0), BM1(2);
-		BM3 = BM1.cross(BM2);
-		BMj.col(0) = BM1;
-		BMj.col(1) = BM2;
-		BMj.col(2) = BM3;
-		vecRotContr -= mDotSingle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose() 
-			+ it->areaNozzle / (4 * M_PI) * BMj*intermediate*BMj.transpose());
     }
-    this->stateDerivContribution << vecTransContr, vecRotContr, this->mDotTotal;
+    this->stateDerivContribution(0) = this->mDotTotal;
 
     return;
 }

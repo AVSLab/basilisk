@@ -144,9 +144,7 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	for (dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
 	{
 		(*dynIt)->computeStateContribution(integTime);
-		fuelConsumption += (*dynIt)->stateDerivContribution(6);
-		vecTranscontr += (*dynIt)->stateDerivContribution.block<3,1>(0, 0);
-		vecRotcontr += (*dynIt)->stateDerivContribution.block<3, 1>(3, 0);
+		fuelConsumption += (*dynIt)->stateDerivContribution(0);
 	}
 
     // - Get the contributions from the fuel slosh particles
