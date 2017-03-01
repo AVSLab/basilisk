@@ -157,7 +157,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
     # This function looks for the path of the required header files
     def findFilePath(file):
-        ADCSPath = path + '/../ADCSAlgorithms/'
+        ADCSPath = path + '/../FswAlgorithms/'
         for dirpath, subdirs, files in os.walk(ADCSPath):
             for x in files:
                 if x == file:

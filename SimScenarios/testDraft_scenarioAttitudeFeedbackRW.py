@@ -381,7 +381,7 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple, useRWVoltageIO):
 # ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
 # ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
 # Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
-# [rwMotorVoltage documentation](../ADCSAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
+# [rwMotorVoltage documentation](../FswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
 # for more info.  By connecting the RW availability message it is possible turn
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
