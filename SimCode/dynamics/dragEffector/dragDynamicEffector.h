@@ -86,6 +86,7 @@ public:
     void ComputeDragDir();
     void SetArea(double newArea);
     void SetDragCoeff(double newCoeff);
+    void SetDensityMessage(std::string newDensMessage);
 
 public:
     DragBaseData coreParams;
@@ -100,7 +101,7 @@ public:
 private:
     //    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
     Eigen::MatrixXd *dcm_BS;               //!< [kg] spacecrafts total mass
-    int64_t DensInMsgId;                            //!< -- Message ID for incoming data
+    uint64_t DensInMsgId;                            //!< -- Message ID for incoming data
     AtmoOutputData atmoInData;
     Eigen::Vector3d dragDirection;
 };
