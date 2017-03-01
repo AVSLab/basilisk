@@ -62,7 +62,7 @@ import gravityEffector
 import simIncludeGravity
 import exponentialAtmosphere
 import dragDynamicEffector
-
+import unitTestSupport
 #print dir(exponentialAtmosphere)
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -130,25 +130,21 @@ def run(show_plots, orbitCase, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-
-    #   Set drag parameters
-    dragCoeff = 20
-    projArea = 100
-
     #   Initialize new atmosphere and drag model, add them to task
     newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    dragEffector.ModelTag = "DragEff"
-    dragEffectorTaskName = "drag"
-    dragEffector.SetArea(projArea)
-    dragEffector.SetDragCoeff(dragCoeff)
+    #dragEffector.ModelTag = "DragEff"
+    #dragEffectorTaskName = "drag"
+    #dragEffector.SetArea(projArea)
+    #dragEffector.SetDragCoeff(dragCoeff)
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
+    #dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
-    scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
+    #scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
+
 
     #
     #   setup the simulation tasks/objects
@@ -189,9 +185,11 @@ def run(show_plots, orbitCase, planetCase):
         refBaseDens = 1.217
         refScaleHeight = 8500.0
         if orbitCase == "LPO":
+            print "worked"
             orbAltMin = 300.0*1000.0
             orbAltMax = orbAltMin
         elif orbitCase == "LTO":
+            print "worked"
             orbAltMin = 300*1000.0
             orbAltMax = 800.0 * 1000.0
     elif planetCase == "Mars":
@@ -207,6 +205,7 @@ def run(show_plots, orbitCase, planetCase):
     else:
         return 1, "Test failed- did not initialize planets."
 
+    print planetCase
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax
     oe.a = (rMin+rMax)/2.0
@@ -225,14 +224,14 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(10.0*P)
+    simulationTime = macros.sec2nano(0.5*P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
 
 
-    numDataPoints = 1000
+    numDataPoints = 10
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
@@ -269,14 +268,14 @@ def run(show_plots, orbitCase, planetCase):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     densData = scSim.pullMessageLogData('atmo_dens0_data.neutralDensity')
     relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
+    print densData.shape
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
 
     refAtmoDensData = []
 
-    accuracy = 1e-16
-
+    accuracy = 1e-12
     for relPos in relPosData:
         dist = np.linalg.norm(relPos[1:])
         alt = dist - r_eq
@@ -286,7 +285,7 @@ def run(show_plots, orbitCase, planetCase):
         if not unitTestSupport.isDoubleEqual(densData[ind,:], refAtmoDensData[ind],accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))
+                "FAILED:  ExpAtmo failed torque unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec\n")
 
     #
     #   plot the results
@@ -343,19 +342,19 @@ def run(show_plots, orbitCase, planetCase):
         plt.ylabel('$i_p$ Cord. [km]')
         plt.grid()
 
-    plt.figure()
-    fig = plt.gcf()
-    ax = fig.gca()
-    ax.ticklabel_format(useOffset=False, style='plain')
-    smaData = []
-    for idx in range(0, len(posData)):
-        oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
-        smaData.append(oeData.a/1000.)
-    plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
-             ,color='#aa0000',
-             )
-    plt.xlabel('Time [orbits]')
-    plt.ylabel('SMA [km]')
+        plt.figure()
+        fig = plt.gcf()
+        ax = fig.gca()
+        ax.ticklabel_format(useOffset=False, style='plain')
+        smaData = []
+        for idx in range(0, len(posData)):
+            oeData = orbitalMotion.rv2elem(mu, posData[idx, 1:4], velData[idx, 1:4])
+            smaData.append(oeData.a/1000.)
+        plt.plot(posData[:, 0]*macros.NANO2SEC/P, smaData
+                 ,color='#aa0000',
+                 )
+        plt.xlabel('Time [orbits]')
+        plt.ylabel('SMA [km]')
 
         plt.figure()
         fig = plt.gcf()

@@ -140,10 +140,10 @@ void DragDynamicEffector::SetDragCoeff(double newCoeff){
 
 void DragDynamicEffector::ComputeDragDir(){
   this->locInertialVel = this->hubVelocity->getState();
-  //std::cout<<"Velocity direction:"<<this->locInertialVel<<std::endl;
+  std::cout<<"Velocity direction:"<<this->locInertialVel<<std::endl;
   this->dragDirection = -(this->locInertialVel / this->locInertialVel.norm());
   this->coreParams.velocityMag = this->locInertialVel.norm();
-  //std::cout<<"Drag Direction: "<<this->dragDirection<<std::endl;
+  std::cout<<"Drag Direction: "<<this->dragDirection<<std::endl;
   return;
 }
 
@@ -157,18 +157,18 @@ void DragDynamicEffector::CannonballDrag(){
   this->forceExternal_B.setZero();
   this->forceExternal_N.setZero();
   this->torqueExternalPntB_B.setZero();
-  //std::cout<<"Velocity Magnitutde:"<<this->coreParams.velocityMag<<std::endl;
-  //std::cout<<"Velocity magnitude squared: "<< pow(this->coreParams.velocityMag, 2.0) <<std::endl;
-  //std::cout<<"Current neutral density value:"<<this->atmoInData.neutralDensity<<std::endl;
-  //std::cout<<"Current Drag Coefficient: "<<this->coreParams.dragCoeff<<std::endl;
-  //std::cout<<"Projected area:"<<this->coreParams.projectedArea<<std::endl;
+  std::cout<<"Velocity Magnitutde:"<<this->coreParams.velocityMag<<std::endl;
+  std::cout<<"Velocity magnitude squared: "<< pow(this->coreParams.velocityMag, 2.0) <<std::endl;
+  std::cout<<"Current neutral density value:"<<this->atmoInData.neutralDensity<<std::endl;
+  std::cout<<"Current Drag Coefficient: "<<this->coreParams.dragCoeff<<std::endl;
+  std::cout<<"Projected area:"<<this->coreParams.projectedArea<<std::endl;
   SingleDragForce = 0.5 * this->coreParams.dragCoeff * pow(this->coreParams.velocityMag, 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * this->dragDirection;
   this->forceExternal_N = SingleDragForce;
   //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
   SingleDragTorque = this->coreParams.comOffset.cross(SingleDragForce);
   this->torqueExternalPntB_B = SingleDragTorque;
-  //std::cout<<"Drag force: "<<this->forceExternal_B<<std::endl;
-  //std::cout<<"Drag Torque: "<<this->torqueExternalPntB_B<<std::endl;
+  std::cout<<"Drag force: "<<this->forceExternal_B<<std::endl;
+  std::cout<<"Drag Torque: "<<this->torqueExternalPntB_B<<std::endl;
   return;
 }
 
