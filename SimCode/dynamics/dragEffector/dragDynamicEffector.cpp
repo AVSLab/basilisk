@@ -33,7 +33,7 @@ DragDynamicEffector::DragDynamicEffector()
   this->coreParams.velocityMag = 0.0;
   this->coreParams.dragCoeff = 0.0;
 
-  this->atmoDensInMsgName = "base_atmo_props";
+  this->atmoDensInMsgName = "atmo_dens0_data";
   this->modelType = "cannonball";
   forceExternal_B.fill(0.0);
   torqueExternalPntB_B.fill(0.0);
@@ -72,10 +72,15 @@ void DragDynamicEffector::CrossInit()
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     //! - Warn the user if the message is not successfully linked.
-    DensInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(atmoDensInMsgName,
+    this->DensInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(atmoDensInMsgName,
                                                                      sizeof(AtmoOutputData), moduleID);
 }
 
+void DragDynamicEffector::SetDensityMessage(std::string newDensMessage)
+{
+  this->atmoDensInMsgName = newDensMessage;
+  return;
+}
 
 /*! This method is here to write the output message structure into the specified
  message.  It is currently blank but we will certainly have an output message
@@ -101,10 +106,11 @@ bool DragDynamicEffector::ReadInputs()
     SingleMessageHeader LocalHeader;
     memset(&densityBuffer, 0x0, sizeof(AtmoOutputData));
     memset(&LocalHeader, 0x0, sizeof(LocalHeader));
-    dataGood = SystemMessaging::GetInstance()->ReadMessage(DensInMsgId, &LocalHeader,
+    dataGood = SystemMessaging::GetInstance()->ReadMessage(this->DensInMsgId, &LocalHeader,
                                                           sizeof(AtmoOutputData),
                                                            reinterpret_cast<uint8_t*> (&densityBuffer), moduleID);
-    return(true);
+    this->atmoInData = densityBuffer;
+    return(dataGood);
 
 }
 
@@ -128,14 +134,16 @@ void DragDynamicEffector::SetArea(double newArea){
 }
 
 void DragDynamicEffector::SetDragCoeff(double newCoeff){
-  this->coreParams.projectedArea = newCoeff;
+  this->coreParams.dragCoeff = newCoeff;
   return;
 }
 
 void DragDynamicEffector::ComputeDragDir(){
   this->locInertialVel = this->hubVelocity->getState();
+  std::cout<<"Velocity direction:"<<this->locInertialVel<<std::endl;
   this->dragDirection = -(this->locInertialVel / this->locInertialVel.norm());
   this->coreParams.velocityMag = this->locInertialVel.norm();
+  std::cout<<"Drag Direction: "<<this->dragDirection<<std::endl;
   return;
 }
 
@@ -149,12 +157,18 @@ void DragDynamicEffector::CannonballDrag(){
   this->forceExternal_B.setZero();
   this->forceExternal_N.setZero();
   this->torqueExternalPntB_B.setZero();
-
+  std::cout<<"Velocity Magnitutde:"<<this->coreParams.velocityMag<<std::endl;
+  std::cout<<"Velocity magnitude squared: "<< pow(this->coreParams.velocityMag, 2.0) <<std::endl;
+  std::cout<<"Current neutral density value:"<<this->atmoInData.neutralDensity<<std::endl;
+  std::cout<<"Current Drag Coefficient: "<<this->coreParams.dragCoeff<<std::endl;
+  std::cout<<"Projected area:"<<this->coreParams.projectedArea<<std::endl;
   SingleDragForce = 0.5 * this->coreParams.dragCoeff * pow(this->coreParams.velocityMag, 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * this->dragDirection;
   this->forceExternal_B = SingleDragForce;
   //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
   SingleDragTorque = this->coreParams.comOffset.cross(SingleDragForce);
   this->torqueExternalPntB_B = SingleDragTorque;
+  std::cout<<"Drag force: "<<this->forceExternal_B<<std::endl;
+  std::cout<<"Drag Torque: "<<this->torqueExternalPntB_B<<std::endl;
   return;
 }
 
@@ -167,14 +181,12 @@ void DragDynamicEffector::PlateDrag(){
 
 void DragDynamicEffector::computeBodyForceTorque(double integTime){
   ComputeDragDir();
-
   if(this->modelType == "cannonball"){
       CannonballDrag();
   }
   else if(this->modelType == "plate"){
       PlateDrag();
   }
-
   return;
 }
 

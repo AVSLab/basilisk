@@ -41,14 +41,13 @@ ExponentialAtmosphere::ExponentialAtmosphere()
     this->planetPosInMsgName = "spice_planet_output_data";
     this->OutputBufferCount = 2;
     //! Set the default atmospheric properties to those of Earth
-    this->atmosphereProps.baseDensity = 1.207;
-    this->atmosphereProps.scaleHeight = 8500.0;
-    this->atmosphereProps.planetRadius = 6.371 * 1000000.0;
-    this->localAtmoDens = this->atmosphereProps.baseDensity;
+    this->atmosphereProps.baseDensity = 1.217;
+    this->atmosphereProps.scaleHeight = 8500.0; //  Meters
+    this->atmosphereProps.planetRadius = 6371.008 * 1000.0;
     this->localAtmoTemp = 293.0; // Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
-    this->tmpAtmo.neutralDensity = this->localAtmoDens;
+    this->tmpAtmo.neutralDensity = this->atmosphereProps.baseDensity;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
     return;
 }
@@ -64,7 +63,11 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
  @return void
  */
 void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
+  std::string tmpAtmoMsgName;
   this->scStateInMsgNames.push_back(tmpScMsgName);
+  tmpAtmoMsgName = "atmo_dens"+ std::to_string(this->scStateInMsgNames.size()-1)+"_data";
+  this->atmoDensOutMsgNames.push_back(tmpAtmoMsgName);
+  std::cout<<"AddSpacecraftToModel: "<<tmpScMsgName<<std::endl;
   return;
 }
 
@@ -74,16 +77,54 @@ void ExponentialAtmosphere::SelfInit()
     uint64_t tmpAtmoMsgId;
     //! Begin method steps
     std::vector<std::string>::iterator it;
+    std::vector<std::string>::iterator nameIt;
+
     for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
       tmpAtmoMsgName = "atmo_dens" + std::to_string(it - this->scStateInMsgNames.begin()) + "_data";
-      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, tmpAtmoMsgName, moduleID);
-      this->atmoDensOutMsgNames.push_back(tmpAtmoMsgName);
+
+      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, "AtmoOutputData", moduleID);
+
       this->atmoDensOutMsgIds.push_back(tmpAtmoMsgId);
+      std::cout<<"Self Init Message Name:"<<this->atmoDensOutMsgNames[0]<<std::endl;
     }
 
     return;
 }
 
+void ExponentialAtmosphere::SetBaseDensity(double newBaseDens){
+  this->atmosphereProps.baseDensity = newBaseDens;
+  return;
+}
+
+void ExponentialAtmosphere::SetScaleHeight(double newScaleHeight){
+  this->atmosphereProps.scaleHeight = newScaleHeight;
+}
+
+void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
+  this->planetName = newPlanetName;
+  double newBaseDens = 0; // In kg/m^3
+  double newScaleHeight = 0; // In meters
+
+  if(newPlanetName.compare("Earth") == 0){
+    newBaseDens = 1.217;
+    newScaleHeight = 8500.0;
+    SetBaseDensity(newBaseDens);
+    SetScaleHeight(newScaleHeight);
+  } else if(newPlanetName.compare("Mars")==0){
+    newBaseDens = 0.020;
+    newScaleHeight = 11000.0;
+    SetBaseDensity(newBaseDens);
+    SetScaleHeight(newScaleHeight);
+  } else if (newPlanetName.compare("Venus")==0){
+    newBaseDens = 65.0;
+    newScaleHeight = 15900.0;
+    SetBaseDensity(newBaseDens);
+    SetScaleHeight(newScaleHeight);
+  } else{
+    std::cout<<"Error: Planet not found. Either undefined or non-atmospheric."<<std::endl;
+  }
+  return;
+}
 /*! This method is used to connect the input command message to the thrusters.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
@@ -96,6 +137,7 @@ void ExponentialAtmosphere::CrossInit()
 
   std::vector<std::string>::iterator it;
   for(it = scStateInMsgNames.begin(); it!=scStateInMsgNames.end(); it++){
+    std::cout<<"CrossInit: "<<*it<<std::endl;
     this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusOutputStateData), moduleID));
   }
   return;
@@ -117,6 +159,7 @@ void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
     atmoIt = atmoOutBuffer.begin();
     for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
       tmpAtmo = *atmoIt;
+      //std::cout<<"WriteMsg: "<<tmpAtmo.neutralDensity<<std::endl;
       SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
                                                   sizeof(AtmoOutputData),
@@ -205,7 +248,7 @@ void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState& planetState, SC
         //std::cout<<"SC State:"<<scState.r_BN_N[iter]<<std::endl;
         this->relativePos(iter,0) = scState.r_BN_N[iter] - planetState.PositionVector[iter];
 
-        std::cout<<relativePos[iter,0]<<std::endl;
+        //std::cout<<relativePos[iter,0]<<std::endl;
       }
     }
     else{

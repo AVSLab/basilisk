@@ -71,6 +71,9 @@ public:
     void ComputeLocalAtmo(double currentTime);
     void ComputeRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
     void AddSpacecraftToModel(std::string tmpScMsgName);
+    void SetBaseDensity(double newBaseDens);
+    void SetScaleHeight(double newScaleHeight);
+    void SetPlanet(std::string newPlanetName);
 
 
 public:
