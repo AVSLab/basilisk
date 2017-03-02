@@ -185,11 +185,9 @@ def run(show_plots, orbitCase, planetCase):
         refBaseDens = 1.217
         refScaleHeight = 8500.0
         if orbitCase == "LPO":
-            print "worked"
             orbAltMin = 300.0*1000.0
             orbAltMax = orbAltMin
         elif orbitCase == "LTO":
-            print "worked"
             orbAltMin = 300*1000.0
             orbAltMax = 800.0 * 1000.0
     elif planetCase == "Mars":
@@ -205,7 +203,6 @@ def run(show_plots, orbitCase, planetCase):
     else:
         return 1, "Test failed- did not initialize planets."
 
-    print planetCase
     rMin = r_eq + orbAltMin
     rMax = r_eq + orbAltMax
     oe.a = (rMin+rMax)/2.0
@@ -268,14 +265,14 @@ def run(show_plots, orbitCase, planetCase):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     densData = scSim.pullMessageLogData('atmo_dens0_data.neutralDensity')
     relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
-    print densData.shape
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
 
     refAtmoDensData = []
 
-    accuracy = 1e-12
+    accuracy = 1e-16
+
     for relPos in relPosData:
         dist = np.linalg.norm(relPos[1:])
         alt = dist - r_eq
@@ -285,7 +282,7 @@ def run(show_plots, orbitCase, planetCase):
         if not unitTestSupport.isDoubleEqual(densData[ind,:], refAtmoDensData[ind],accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  ExpAtmo failed torque unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec\n")
+                "FAILED:  ExpAtmo failed density unit test at t=" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))
 
     #
     #   plot the results
