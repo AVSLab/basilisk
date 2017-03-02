@@ -40,6 +40,7 @@ typedef struct {
     uint32_t numThrusters;                          /*!< []      The number of thrusters available on vehicle */
     int32_t  thrForceSign;                          /*!< []      Flag indicating if pos (+1) or negative (-1) thruster
                                                                  solutions are found */
+    double thrForcMag[MAX_EFF_CNT];
 
     /* declare module IO interfaces */
     char     outputDataName[MAX_STAT_MSG_LENGTH];   /*!< The name of the output message*/

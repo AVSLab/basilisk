@@ -124,6 +124,7 @@ void Reset_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime,
         m33MultV3(RECAST3X3 ConfigData->sc.dcm_BS,
                   localThrusterData.thrusters[i].tHatThrust_S,
                   ConfigData->gtThruster_B[i]);
+        ConfigData->thrForcMag[i] = localThrusterData.thrusters[i].maxThrust;
     }
     memset(&(ConfigData->thrusterForceOut), 0x0, sizeof(vehEffectorOut));
 
@@ -146,6 +147,8 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
     double      Dbar[MAX_EFF_CNT][3];         /*!< [m]     reduced mapping matrix
                                                            Note, the vectors are stored as row vectors, not column vectors */
     double      Lr_B[3];                      /*!< [Nm]    commanded ADCS control torque */
+    double      Lr_offset[3];
+    double      LrLocal[3];
     int         thrusterUsed[MAX_EFF_CNT];    /*!< []      Array of flags indicating if this thruster is used for the Lr_j */
     double      rThrusterRelCOM_B[MAX_EFF_CNT][3];/*!< [m]     local copy of the thruster locations relative to COM */
     uint32_t    numOfAvailableThrusters;      /*!< []      number of available thrusters */
@@ -172,11 +175,17 @@ void Update_thrForceMapping(thrForceMappingConfig *ConfigData, uint64_t callTime
 
 
     /* compute general mapping matrix */
+    memset(Lr_offset, 0x0, 3*sizeof(double));
     for(i=0; i<numOfAvailableThrusters; i=i+1)
     {
         v3Cross(rThrusterRelCOM_B[i], ConfigData->gtThruster_B[i], D[i]);
+        if(ConfigData->thrForceSign < 0)
+        {
+            v3Scale(ConfigData->thrForcMag[i], D[i], LrLocal);
+            v3Subtract(Lr_offset, LrLocal, Lr_offset);
+        }
     }
-
+    v3Add(Lr_offset, Lr_B, Lr_B);
     findMinimumNormForce(ConfigData, D, Lr_B, numOfAvailableThrusters, F);
     if (ConfigData->thrForceSign>0) substractMin(F, numOfAvailableThrusters);
 
