@@ -36,4 +36,7 @@ def spkRead(target, time, ref, observer):
     lightTime = pyswice.doubleArray_getitem(lt, 0)
     for i in range(6):
         stateArray[i] = pyswice.doubleArray_getitem(state, i)
+    pyswice.delete_doubleArray(state)
+    pyswice.delete_doubleArray(lt)
+    pyswice.delete_doubleArray(et)
     return stateArray
