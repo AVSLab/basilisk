@@ -67,7 +67,7 @@ struct FuelTankModelConstantDensity_t :
 		double radiusTank = std::pow(mFuel / propMassInit, 1.0 / 3.0)*radiusTankInit;
 		r_TB_B = r_TB_BInit;
 		ITankPntT_B = 2.0 / 5.0 * mFuel*radiusTank*radiusTank*Eigen::Matrix3d::Identity();
-		IPrimeTankPntT_B = 2.0 / 3.0 * mDotFuel*radiusTankInit*radiusTankInit*Eigen::Matrix3d::Identity();
+		IPrimeTankPntT_B = 2.0 / 3.0 * mDotFuel*radiusTank*radiusTank*Eigen::Matrix3d::Identity();
 		rPrime_TB_B.setZero();
 		rPPrime_TB_B.setZero();
 	}
