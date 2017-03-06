@@ -106,7 +106,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     v3Add(guidCmd.omega_BR_B, guidCmd.omega_RN_B, omega_BN_B);
         
     /*! - Evaluate required attitude control torque:
-     Lr =  K*sigma_BR + P*delta_omega  - omega x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
+     Lr =  K*sigma_BR + P*delta_omega  - omega_r x [I]omega - [I](d(omega_r)/dt - omega x omega_r) + L
      */
     v3Scale(ConfigData->K, guidCmd.sigma_BR, v3_temp1); /* + K * sigma_BR */
     v3Scale(ConfigData->P, guidCmd.omega_BR_B, v3_temp2); /* + P * delta_omega */
@@ -114,7 +114,7 @@ void Update_MRP_PD(MRP_PDConfig *ConfigData, uint64_t callTime,
     
     /* - omega x [I]omega */
     m33MultV3(RECAST3X3 sc.ISCPntB_B, omega_BN_B, v3_temp1);
-    v3Cross(omega_BN_B, v3_temp1, v3_temp1);
+    v3Cross(guidCmd.omega_RN_B, v3_temp1, v3_temp1); /* omega_r x [I]omega */
     v3Subtract(Lr, v3_temp1, Lr);
     
     /* - [I](d(omega_r)/dt - omega x omega_r) */

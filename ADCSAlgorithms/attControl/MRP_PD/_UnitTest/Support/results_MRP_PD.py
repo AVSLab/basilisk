@@ -46,7 +46,8 @@ L = np.array([0., 0., 0.])
 omega_BN_B = omega_BR_B + omega_RN_B
 temp1 = np.dot(I, omega_BN_B)
 temp2 = domega_RN_B - np.cross(omega_BN_B, omega_RN_B)
-Lr = K * sigma_BR + P * omega_BR_B - np.cross(omega_BN_B, temp1) - np.dot(I, temp2)
+Lr = K * sigma_BR + P * omega_BR_B - np.cross(omega_RN_B, temp1) - np.dot(I, temp2)
+Lr *= -1.0
 
 # Print Results
 print 'Lr = ', Lr

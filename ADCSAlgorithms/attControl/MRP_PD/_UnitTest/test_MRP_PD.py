@@ -145,9 +145,9 @@ def mrp_PD_tracking(show_plots):
     print '\n Lr = ', moduleOutput[:, 1:]
     # set the filtered output truth states
     trueVector = [
-        [-1.395, 3.555, -1.935],
-        [-1.395, 3.555, -1.935],
-        [-1.395, 3.555, -1.935]
+        [-1.435, 3.865, -1.495],
+        [-1.435, 3.865, -1.495],
+        [-1.435, 3.865, -1.495]
     ]
 
     # compare the module results to the truth values
