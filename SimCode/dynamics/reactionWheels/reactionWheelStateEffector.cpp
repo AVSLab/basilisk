@@ -111,9 +111,9 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
     std::vector<ReactionWheelConfigData>::iterator RWIt;
 	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
 	{
+		RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
 		if (RWIt->RWModel == JitterFullyCoupled) {
 			RWIt->theta = this->thetasState->getState()(thetaCount, 0);
-			RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
 			Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
 			Eigen::Matrix3d dcm_BW0;
 			dcm_BW0.col(0) = RWIt->gsHat_B;
