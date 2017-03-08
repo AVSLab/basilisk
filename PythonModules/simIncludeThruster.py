@@ -253,3 +253,15 @@ def MOOG_Monarc_445(TH):
 
     return
 
+def TEST_Thruster(TH):
+    global options
+    # maximum thrust [N]
+    TH.MaxThrust = 0.9
+    # minimum thruster on time [s]
+    TH.MinOnTime = 0.020
+    # Isp value [s]
+    TH.steadyIsp = 227.5
+    # nozzle area [m^2]
+    TH.areaNozzle = 0.07
+
+    return

@@ -18,6 +18,7 @@
  */
 
 #include "fuelTank.h"
+#include <iostream>
 
 /*Able to be accesses from python, used to set up fuel tank model*/
 FuelTankModelConstantVolume_t FuelTankModelConstantVolume;
@@ -33,7 +34,6 @@ FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL] = 
 	&FuelTankModelUniformBurn,
 	&FuelTankModelCentrifugalBurn,
 };
-
 
 /*! This is the constructor, setting variables to default values */
 FuelTank::FuelTank() 
@@ -160,7 +160,6 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 		(*dynIt)->computeStateContribution(integTime);
 		fuelConsumption += (*dynIt)->stateDerivContribution(0);
 	}
-
 	fuelTankModel->computeTankProps(massState->getState()(0, 0), -fuelConsumption);
 	r_TB_BLocal = fuelTankModel->r_TB_B;
 	rPrime_TB_BLocal = fuelTankModel->rPrime_TB_B;

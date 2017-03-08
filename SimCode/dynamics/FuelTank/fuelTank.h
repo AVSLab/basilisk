@@ -79,9 +79,20 @@ struct FuelTankModelEmptying_t :
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
 	Eigen::Vector3d k3;							       //!< [m] Axis of fuel depletion in B frame
 
+	double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime) {
+		double currentEstimate = initialEstimate;
+		while (abs(f(currentEstimate)) > accuracy) { //Could loop forever here
+			currentEstimate = currentEstimate - f(currentEstimate) / fPrime(currentEstimate);
+		}
+		return currentEstimate;
+	}
+
 	void computeTankProps(double mFuel, double mDotFuel) {
 		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit);
-		double thetaStar = 0.0; //TODO, need to figure out computing numerically
+		double rtank = radiusTankInit;
+		std::function<double(double)> f = [rhoFuel, rtank](double thetaStar)-> double {return 2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(1 + 3.0 / 2.0*cos(thetaStar) - 1.0 / 2.0*pow(cos(thetaStar), 3)); };
+		std::function<double(double)> fPrime = [rhoFuel, rtank](double thetaStar)-> double {return  2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(-3.0 / 2.0*sin(thetaStar) + 3.0 / 2.0*pow(cos(thetaStar), 2)*sin(thetaStar)); };
+		double thetaStar = newtonRaphsonSolve(0.0, 1E-10, f, fPrime);
 		double thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
 		double thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar)/std::sin(thetaStar);
 		double volume = 2.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
@@ -138,7 +149,7 @@ struct FuelTankModelCentrifugalBurn_t :
 	
 	void computeTankProps(double mFuel, double mDotFuel) {
 		double rhoFuel = propMassInit / (M_PI*radiusTankInit*radiusTankInit*lengthTank);
-		double radiusInner = std::sqrt(radiusTankInit*radiusTankInit - mFuel / (M_PI*lengthTank*rhoFuel));
+		double radiusInner = std::sqrt(std::max(radiusTankInit*radiusTankInit - mFuel / (M_PI*lengthTank*rhoFuel),0.0));
 		r_TB_B = r_TB_BInit;
 		ITankPntT_B.setZero();
 		IPrimeTankPntT_B.setZero();

@@ -43,32 +43,6 @@ import vehicleConfigData
 import fuelTank
 import fuelSloshParticle
 
-def isArrayEqualRelative(result, truth, dim, accuracy):
-    # the result array is of dimension dim+1, as the first entry is the time stamp
-    # the truth array is of dimesion dim, no time stamp
-    if dim < 1:
-        print "Incorrect array dimension " + dim + " sent to isArrayEqual"
-        return 0
-
-    if len(result)==0:
-        print "Result array was empty"
-        return 0
-
-    if len(truth)==0:
-        print "Truth array was empty"
-        return 0
-
-    if unitTestSupport.foundNAN(result): return 0
-
-    for i in range(0,dim):
-        if truth[i] == 0:
-            return 1 if result[i+1] == 0 else 0
-        if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
-            return 0    # return 0 to indicate the array's are not equal
-    return 1            # return 1 to indicate the two array's are equal
-
-unitTestSupport.isArrayEqualRelative = isArrayEqualRelative
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -78,90 +52,7 @@ def massDepletionTest(show_plots):
     [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
     assert testResults < 1, testMessage
 
-def test_tankModelConstantVolume(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-    
-    model = fuelTank.cvar.FuelTankModelConstantVolume
-    model.propMassInit = 10;
-    model.r_TB_BInit = [[1],[1],[1]]
-    model.radiusTankInit = 5
-    
-    trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [100,0,0,0,100,0,0,0,100],
-                                [50,0,0,0,50,0,0,0,50]
-                            ]
-    true_IPrimeTankPntT_B = [
-                                [0,0,0,0,0,0,0,0,0],
-                                [-10,0,0,0,-10,0,0,0,-10],
-                                [-10,0,0,0,-10,0,0,0,-10]
-                            ]
-    true_r_TB_B =           [
-                                [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
-                            ]
-    true_rPrime_TB_B =      [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    true_rPPrime_TB_B =     [
-                                [0,0,0],
-                                [0,0,0],
-                                [0,0,0]
-                            ]
-    
-    accuracy = 1e-8
-    for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
-        dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_B test")
-
-        dataIPrimeTank = model.IPrimeTankPntT_B
-        dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_B test")
-
-        dataR = model.r_TB_B
-        dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TB_B test")
-
-        dataRPrime = model.rPrime_TB_B
-        dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TB_B test")
-
-        dataRPPrime = model.rPPrime_TB_B
-        dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
-            testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TB_B test")
-
-    if testFailCount == 0:
-        print "PASSED: " + " Fuel Tank constant volume unit test"
-
-    assert testFailCount < 1, testMessages
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
-def tes_massDepletionTest(show_plots):
+def test_massDepletionTest(show_plots=True):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -190,7 +81,7 @@ def tes_massDepletionTest(show_plots):
     # The clearThrusterSetup() is critical if the script is to run multiple times
     simIncludeThruster.clearSetup()
     simIncludeThruster.create(
-        'MOOG_Monarc_1',
+        'TEST_Thruster',
         [1,0,0],                # location in S frame
         [0,1,0]                 # direction in S frame
     )
@@ -199,8 +90,11 @@ def tes_massDepletionTest(show_plots):
     thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
 
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
-    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
-    unitTestSim.fuelTankStateEffector.radiusTank = 46.0 / 2.0 / 3.2808399 / 12.0
+    unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
+    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+    tankModel.propMassInit = 40.0;
+    tankModel.r_TB_BInit = [[0.0],[0.0],[0.0]]
+    tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     # Add tank and thruster
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
@@ -245,17 +139,19 @@ def tes_massDepletionTest(show_plots):
 
     unitTestSim.InitializeSimulation()
 
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    massTankRef = scObject.dynManager.getStateObject("fuelTankMass")
 
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     sigmaRef.setState([[0.1], [0.2], [-0.3]])
     omegaRef.setState([[0.001], [-0.01], [0.03]])
-    massTankRef.setState([[40.0]])
 
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -264,6 +160,22 @@ def tes_massDepletionTest(show_plots):
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+
+
+    plt.figure(1)
+    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.title("Change in Orbital Angular Momentum")
+    plt.figure(2)
+    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    plt.title("Change in Rotational Angular Momentum")
+    plt.figure(3)
+    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.title("Change in Rotational Energy")
+    if show_plots == True:
+        plt.show()
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
