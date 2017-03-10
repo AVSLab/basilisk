@@ -35,9 +35,9 @@ DragDynamicEffector::DragDynamicEffector()
 
   this->atmoDensInMsgName = "atmo_dens0_data";
   this->modelType = "cannonball";
-  forceExternal_B.fill(0.0);
-  torqueExternalPntB_B.fill(0.0);
-  forceExternal_N.fill(0.0);
+  this->forceExternal_B.fill(0.0);
+  this->torqueExternalPntB_B.fill(0.0);
+  this->forceExternal_N.fill(0.0);
   this->dragHist.PreviousIterTime = 0;
   this->dragHist.PreviousDragForce = 0;
   this->locInertialVel.fill(0.0);
@@ -163,7 +163,7 @@ void DragDynamicEffector::CannonballDrag(){
   //std::cout<<"Current Drag Coefficient: "<<this->coreParams.dragCoeff<<std::endl;
   //std::cout<<"Projected area:"<<this->coreParams.projectedArea<<std::endl;
   SingleDragForce = 0.5 * this->coreParams.dragCoeff * pow(this->coreParams.velocityMag, 2.0) * this->coreParams.projectedArea * this->atmoInData.neutralDensity * this->dragDirection;
-  this->forceExternal_B = SingleDragForce;
+  this->forceExternal_N = SingleDragForce;
   //! - Compute the center-of-mass relative torque and aggregate into the composite body torque
   SingleDragTorque = this->coreParams.comOffset.cross(SingleDragForce);
   this->torqueExternalPntB_B = SingleDragTorque;
