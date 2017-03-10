@@ -425,7 +425,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         // - Set the matrices to zero
         this->rotAngMomPntCContr_B.setZero();
         this->rotEnergyContr = 0.0;
-
+        
         // - Add in effectors mass props into mass props of spacecraft
         (*it)->updateEffectorMassProps(time);
         mSCLocal += (*it)->effProps.mEff;

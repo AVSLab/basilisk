@@ -66,12 +66,12 @@ def defaultReactionWheel():
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]
-    RW.gtHat0_S = [[0.],[1.],[0.]]
-    RW.ggHat0_S = [[0.],[0.],[1.]]
+    RW.w2Hat0_S = [[0.],[1.],[0.]]
+    RW.w3Hat0_S = [[0.],[0.],[1.]]
     RW.rWB_B = [[0.],[0.],[0.]]
     RW.gsHat_B = [[1.],[0.],[0.]]
-    RW.gtHat0_B = [[0.],[1.],[0.]]
-    RW.ggHat0_B = [[0.],[0.],[1.]]
+    RW.w2Hat0_B = [[0.],[1.],[0.]]
+    RW.w3Hat0_B = [[0.],[0.],[1.]]
     RW.theta = 0.
     RW.u_current = 0.
     RW.u_max = 0.

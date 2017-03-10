@@ -103,15 +103,15 @@ def create(
     RW.gsHat_S = [[gsHat_S[0]],[gsHat_S[1]],[gsHat_S[2]]]
 
     # set RW t and g unit axes
-    gtHat0_S = numpy.cross(gsHat_S,[1,0,0])
-    norm = numpy.linalg.norm(gtHat0_S)
+    w2Hat0_S = numpy.cross(gsHat_S,[1,0,0])
+    norm = numpy.linalg.norm(w2Hat0_S)
     if norm < 0.01:
-        gtHat0_S = numpy.cross(gsHat_S,[0,1,0])
-        norm = numpy.linalg.norm(gtHat0_S)
-    gtHat0_S = gtHat0_S / norm
-    ggHat0_S = numpy.cross(gsHat_S,gtHat0_S)
-    RW.gtHat0_S = [[gtHat0_S[0]],[gtHat0_S[1]],[gtHat0_S[2]]]
-    RW.ggHat0_S = [[ggHat0_S[0]],[ggHat0_S[1]],[ggHat0_S[2]]]
+        w2Hat0_S = numpy.cross(gsHat_S,[0,1,0])
+        norm = numpy.linalg.norm(w2Hat0_S)
+    w2Hat0_S = w2Hat0_S / norm
+    w3Hat0_S = numpy.cross(gsHat_S,w2Hat0_S)
+    RW.w2Hat0_S = [[w2Hat0_S[0]],[w2Hat0_S[1]],[w2Hat0_S[2]]]
+    RW.w3Hat0_S = [[w3Hat0_S[0]],[w3Hat0_S[1]],[w3Hat0_S[2]]]
 
     # set RW position vector
     RW.rWB_S = [[rWB_S[0]],[rWB_S[1]],[rWB_S[2]]]
