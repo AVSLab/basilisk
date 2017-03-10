@@ -113,9 +113,11 @@ void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
   } else if(newPlanetName.compare("Mars")==0){
     newBaseDens = 0.020;
     newScaleHeight = 11000.0;
+    this->atmosphereProps.planetRadius = 3389.5 * 1000.0;
     SetBaseDensity(newBaseDens);
     SetScaleHeight(newScaleHeight);
   } else if (newPlanetName.compare("Venus")==0){
+    this->atmosphereProps.planetRadius = 6051.8 * 1000.0;
     newBaseDens = 65.0;
     newScaleHeight = 15900.0;
     SetBaseDensity(newBaseDens);

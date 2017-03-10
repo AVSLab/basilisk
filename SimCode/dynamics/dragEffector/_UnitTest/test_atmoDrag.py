@@ -104,8 +104,15 @@ def test_scenarioAtmosphereOrbit():
 
 def expAtmoComp(alt, baseDens, scaleHeight):
     dens = baseDens * math.exp(-alt/scaleHeight)
-
     return dens
+
+def cannonballDragComp(dragCoeff, dens, area, vel):
+    dragDir = -vel / np.linalg.norm(vel)
+
+    dragForce = 0.5 * dragCoeff * dens * area * np.linalg.norm(vel)**2.0 * dragDir
+    return dragForce
+
+
 def run(show_plots, orbitCase, planetCase):
     '''Call this routine directly to run the tutorial scenario.'''
     testFailCount = 0                       # zero unit test result counter
@@ -148,7 +155,6 @@ def run(show_plots, orbitCase, planetCase):
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
-    scSim.AddModelToTask(dragEffectorTaskName, dragEffector)
 
 
     #
@@ -227,14 +233,14 @@ def run(show_plots, orbitCase, planetCase):
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
 
-    simulationTime = macros.sec2nano(  100*P)
+    simulationTime = macros.sec2nano(  10*P)
 
     #
     #   Setup data logging before the simulation is initialized
     #
 
 
-    numDataPoints = 1000
+    numDataPoints = 100
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage('atmo_dens0_data', samplingTime)
@@ -270,26 +276,36 @@ def run(show_plots, orbitCase, planetCase):
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
+    dragForce = scSim.GetLogVariableData('DragEff.forceExternal_N')
     densData = scSim.pullMessageLogData('atmo_dens0_data.neutralDensity')
     relPosData = scSim.GetLogVariableData('ExpAtmo.relativePos')
     np.set_printoptions(precision=16)
 
     #   Compare to expected values
 
-    refAtmoDensData = []
+    endInd = dragForce.shape[0]
 
+    refDragForce = np.zeros([endInd,3])
+    refDensData = np.zeros([endInd,1])
     accuracy = 1e-16
-
-    for relPos in relPosData:
-        dist = np.linalg.norm(relPos[1:])
-        alt = dist - r_eq
-        refAtmoDensData.append(expAtmoComp(alt,refBaseDens,refScaleHeight))
+    print planetCase
+    print orbitCase
+    for ind in range(0, endInd-1):
+        print "Position data:", posData[ind,1:]
+        print "Velocity data:", velData[ind,1:]
+        print "Density data:", densData[ind,1]
+        alt = np.linalg.norm(relPosData[ind,1:])-r_eq
+        refDensData[ind,:] = expAtmoComp(alt, refBaseDens,refScaleHeight)
+        print "Ref Altitude:", alt
+        print "Ref Density Calc:", refDensData[ind,:]
+        refDragForce[ind,:] = cannonballDragComp(dragCoeff,densData[ind,1],projArea,velData[ind,1:])
+        print "Reference drag data:", refDragForce[ind,:]
         # check a vector values
-    for ind in range(0,len(densData)):
-        if not unitTestSupport.isDoubleEqual(densData[ind,:], refAtmoDensData[ind],accuracy):
+    for ind in range(0,endInd-1):
+        if not unitTestSupport.isArrayEqual(dragForce[ind,:], refDragForce[ind,:],3,accuracy):
             testFailCount += 1
             testMessages.append(
-                "FAILED:  DragEffector failed force unit test at =" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(densData[ind,1]-refAtmoDensData[ind]))
+                "FAILED:  DragEffector failed force unit test at =" + str(densData[ind, 0] * macros.NANO2SEC) + "sec with a value difference of "+str(dragForce[ind,1:]-refDragForce[ind,:]))
 
     #
     #   plot the results
