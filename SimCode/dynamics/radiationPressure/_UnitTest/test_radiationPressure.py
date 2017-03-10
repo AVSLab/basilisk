@@ -132,9 +132,9 @@ def unitRadiationPressure(show_plots, modelType):
     srpDataForce_N = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_N")
     srpTorqueData = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".torqueExternalPntB_B")
 
-    errTol = 1E-10
+    errTol = 1E-12
     if modelType == "cannonball":
-        truthForceExternal_B = [-1.85556867482797E-05, 8.82911772465848E-06, -5.64107588371567E-06]
+        truthForceExternal_B = [1.85556867482797E-05, -8.82911772465848E-06, 5.64107588371567E-06]
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [0, 0, 0]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
@@ -156,9 +156,9 @@ def unitRadiationPressure(show_plots, modelType):
                                                                 testFailCount,
                                                                 testMessages)
     if modelType == "lookup":
-        truthForceExternal_B = [-0.2810618553849396E-04, 0.098630763536649663E-04, -0.047723069190757716E-04]
+        truthForceExternal_B = [0.26720220706099184E-04, - 0.13596079145805012E-04, 0.93948649829282319E-05]
         truthForceExternal_N = [0, 0, 0]
-        truthTorqueExternalPntB_B = [0.0063203213341804725E-10, -0.0030680418381937733E-10, -0.012324529634463608E-10]
+        truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[2, 1:],
                                                                     errTol,
