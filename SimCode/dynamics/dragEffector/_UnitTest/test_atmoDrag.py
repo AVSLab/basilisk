@@ -262,8 +262,8 @@ def run(show_plots, orbitCase, planetCase):
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
 
-    posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
+    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
+    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
