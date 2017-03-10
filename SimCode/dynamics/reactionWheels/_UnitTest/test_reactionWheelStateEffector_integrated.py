@@ -18,7 +18,7 @@
 
 '''
 import sys, os, inspect
-import numpy
+import numpy as np
 import pytest
 import math
 
@@ -30,6 +30,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import spacecraftPlus
 import sim_model
@@ -40,6 +41,7 @@ import simIncludeRW
 import reactionWheelStateEffector
 import vehicleConfigData
 
+mpl.rc("figure", figsize=(5.75,4))
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
@@ -64,18 +66,18 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
-    
+
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
-    
+
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     rwCommandName = "reactionwheel_cmds"
-    
+
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
-    
+
     # Create test thread
     testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
@@ -123,11 +125,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     sim_model.doubleArray_setitem(cmdArray, 1, .1) # RW-2 [Nm]
     sim_model.doubleArray_setitem(cmdArray, 2,-.5) # RW-3 [Nm]
     unitTestSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
-    
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
-    
+
     unitTestSim.earthGravBody = gravityEffector.GravBodyData()
     unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
     unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
@@ -147,6 +149,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     # log data
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+    unitTestSim.TotalSim.logThisMessage(rwStateEffector.OutputDataString, testProcessRate)
 
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
@@ -169,7 +172,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     omegaRef.setState([[0.08], [0.01], [0.0]])
 
     scObject.hub.mHub = 750.0
-    scObject.hub.rBcB_B = [[-0.0002], [0.0001], [0.1]]
+    scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 0.1
@@ -180,13 +183,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
 
     wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
-    posData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    velData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
     omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
 
-    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
+    # rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    # orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
@@ -205,11 +206,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     elif testCase == 'JitterSimple':
         truePos = [
-                    [-4020858.660072413, 7490223.058718171, 5248403.358783543]
+                    [-4020858.6600723644, 7490223.058718144, 5248403.358783543]
                     ]
 
         trueSigma = [
-                    [0.0019997597306700616, 0.000249530148702714, 2.000437833943989e-07]
+                    [0.001999758435418932, 0.00024952781365212277, 1.984173476548283e-07]
                     ]
 
     elif testCase == 'JitterFullyCoupled':
@@ -238,12 +239,59 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
                 [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
-    plt.figure(1)
-    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
-    plt.title("Change in Orbital Angular Momentum")
-    plt.figure(2)
-    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
-    plt.title("Change in Rotational Angular Momentum")
+
+    # plt.figure(1)
+    # plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    # plt.title("Change in Orbital Angular Momentum")
+    #
+    # plt.figure(2)
+    # plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    # plt.title("Change in Rotational Angular Momentum")
+    #
+    # plt.figure(3)
+    # for i in range(1,4):
+    #     plt.subplot(4,1,i)
+    #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
+    #
+    # plt.figure(4)
+    # for i in range(1,4):
+    #     plt.subplot(4,1,i)
+    #     plt.plot(sigmaData[:,0]*1.0E-9, sigmaData[:,i], label='MRP' + str(i))
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel(r'MRP b' + str(i))
+
+    thetaData = np.empty([len(sigmaData[:,0]),2])
+    thetaData[:,0] = sigmaData[:,0]
+    for i in range(0,len(sigmaData[:,0])):
+        thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaData[i,1:]))
+    thetaFit = np.empty([len(sigmaData[:,0]),2])
+    thetaFit[:,0] = thetaData[:,0]
+    fitOrd = 2
+    p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
+    thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
+
+    plt.figure(5)
+    plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
+    plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
+    plt.title("Principle Angle")
+    plt.xlabel('Time (s)')
+    plt.ylabel(r'$\theta$ (deg)')
+
+    plt.figure(6)
+    plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
+    plt.title("Principle Angle Fit")
+    plt.xlabel('Time (s)')
+    plt.ylabel(r'$\theta$ (deg)')
+
+    # plt.figure(7)
+    # for i in range(1,4):
+    #     plt.subplot(4,1,i)
+    #     plt.plot(omegaData[:,0]*1.0E-9, omegaData[:,i] * 180/math.pi, label='omega' + str(i))
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel(r'b' + str(i) + r' $\omega$ (d/s)')
+
     if show_plots == True:
         plt.show()
 
@@ -284,4 +332,4 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    reactionWheelIntegratedTest(True,False,'JitterSimple')
+    reactionWheelIntegratedTest(True,False,'BalancedWheels')

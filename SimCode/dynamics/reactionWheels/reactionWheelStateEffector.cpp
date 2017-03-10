@@ -102,9 +102,9 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 {
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
-    this->effProps.rCB_B.setZero();
+    this->effProps.rEff_CB_B.setZero();
     this->effProps.IEffPntB_B.setZero();
-    this->effProps.rPrimeCB_B.setZero();
+    this->effProps.rEffPrime_CB_B.setZero();
     this->effProps.IEffPrimePntB_B.setZero();
     
     int thetaCount = 0;
@@ -146,18 +146,29 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 
 			//! - Give the mass of the reaction wheel to the effProps mass
 			this->effProps.mEff += RWIt->mass;
-			this->effProps.rCB_B += RWIt->mass*RWIt->rWcB_B;
+			this->effProps.rEff_CB_B += RWIt->mass*RWIt->rWcB_B;
 			this->effProps.IEffPntB_B += RWIt->IRWPntWc_B + RWIt->mass*RWIt->rTildeWcB_B*RWIt->rTildeWcB_B.transpose();
-			this->effProps.rPrimeCB_B += RWIt->mass*RWIt->rPrimeWcB_B;
+			this->effProps.rEffPrime_CB_B += RWIt->mass*RWIt->rPrimeWcB_B;
 			this->effProps.IEffPrimePntB_B += RWIt->IPrimeRWPntWc_B + RWIt->mass*rPrimeTildeWcB_B*RWIt->rTildeWcB_B.transpose() + RWIt->mass*RWIt->rTildeWcB_B*rPrimeTildeWcB_B.transpose();
             thetaCount++;
+		} else if (RWIt->RWModel == JitterSimple) {
+			RWIt->theta = this->thetasState->getState()(thetaCount, 0);
+			Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
+			Eigen::Matrix3d dcm_BW0;
+			dcm_BW0.col(0) = RWIt->gsHat_B;
+			dcm_BW0.col(1) = RWIt->w2Hat0_B;
+			dcm_BW0.col(2) = RWIt->w3Hat0_B;
+			Eigen::Matrix3d dcm_BW = dcm_BW0 * dcm_WW0.transpose();
+			RWIt->w2Hat_B = dcm_BW.col(1);
+			RWIt->w3Hat_B = dcm_BW.col(2);
+			thetaCount++;
 		}
 	}
 
     // - Need to divide out the total mass of the reaction wheels from rCB_B and rPrimeCB_B
     if (this->effProps.mEff > 0) {
-        this->effProps.rCB_B /= this->effProps.mEff;
-        this->effProps.rPrimeCB_B /= this->effProps.mEff;
+        this->effProps.rEff_CB_B /= this->effProps.mEff;
+        this->effProps.rEffPrime_CB_B /= this->effProps.mEff;
     }
 
 	return;
