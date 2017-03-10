@@ -65,6 +65,7 @@ public:
      
 public:
     bool runAsServer;
+    bool blockConnection;     //! [-] Flag indicating whether connection should block
     uint32_t defaultPort;     //! [-] Portnumber to start with on server and the connect to with client
     std::string hostName;     //! [-] Name of the host that we are connecting to
     

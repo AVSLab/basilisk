@@ -65,6 +65,7 @@ public:
 
     virtual bool receiveData(std::vector<char> &data) { return 1; }
     virtual bool sendData(std::vector<char> &data) { return 1; }
+    virtual uint64_t bytesWaiting() {return m_stream->available();}
 
     std::string getInputBuffer() { return m_inboundBuffer; }
     virtual void clearBuffers(void) {}

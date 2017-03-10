@@ -28,6 +28,7 @@ MessageRouter::MessageRouter(BasicIoObject_t<boost::asio::ip::tcp::socket> *inCo
     processLinked = false;
     hostName = "localhost";
     defaultPort = 20000;
+    this->blockConnection = true;
     return;
 }
 
@@ -258,10 +259,11 @@ void MessageRouter::UpdateState(uint64_t CurrentSimNanos)
 
 void MessageRouter::routeMessages()
 {
-    if(!theConnection->isOpen())
+    if(!theConnection->isOpen() || (!blockConnection && theConnection->bytesWaiting() == 0 ))
     {
         return;
     }
+
     std::vector<char> inSize(4, 0x00);
     theConnection->receiveData(inSize);
     uint32_t stringLength;

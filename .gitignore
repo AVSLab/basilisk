@@ -8,3 +8,4 @@ xml/*
 lastfailed
 .idea
 **/AutoTex/
+cmake-build*/*
