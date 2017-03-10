@@ -132,7 +132,7 @@ void RadiationPressure::computeBodyForceTorque(double integTime)
     // Eigen::Matrix3d dcmLocal_NB = sigmaLocal_BN.toRotationMatrix();
     Eigen::Matrix3d dcmLocal_BN = sigmaLocal_BN.toRotationMatrix().transpose();
     
-    s_B = dcmLocal_BN*(r_N - sun_r_N);
+    s_B = dcmLocal_BN*(sun_r_N - r_N);
     if (this->useCannonballModel) {
         this->computeCannonballModel(s_B);
     } else {
@@ -209,7 +209,8 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
     // Look up force is expected to be evaluated at 1AU.
     // Therefore, we must scale the force by its distance from the sun squared.
     // @TODO: this lookup search should be optimized, possibly by saving the
-    // index for later use to start the search closer to the new attitutde
+    // index for later use and generate lookup table as azimuth and elevation
+    // because then we can use a simple gradient decent search to find the nearest next attitude
     for(int i = 0; i < this->lookupSHat_B.size(); i++) {
         tmpLookupSHat_B = this->lookupSHat_B[i];
         tmpDotProduct = tmpLookupSHat_B.dot(sHat_B);
@@ -219,6 +220,7 @@ void RadiationPressure::computeLookupModel(Eigen::Vector3d s_B)
             currentDotProduct = tmpDotProduct;
         }
     }
+    
     this->forceExternal_B = this->lookupForce_B[currentIdx]*pow(AU*1000/sunDist, 2);
     this->torqueExternalPntB_B = this->lookupTorque_B[currentIdx]*pow(AU*1000/sunDist, 2);
 }
