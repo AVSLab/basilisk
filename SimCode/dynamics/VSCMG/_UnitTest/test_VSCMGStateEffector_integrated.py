@@ -157,8 +157,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.addStateEffector(rwStateEffector)
 
     # set RW torque command
-    cmdArray = VSCMGStateEffector.RWArrayTorqueIntMsg()
-    cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
+    cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
+    cmdArray.wheelTorque = [0.20, 0.10, -0.50] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,

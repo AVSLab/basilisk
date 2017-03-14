@@ -342,8 +342,8 @@ void VSCMGStateEffector::SelfInit()
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
 	}
 
-	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(RWSpeedIntMsg),
-												 OutputBufferCount, "RWSpeedIntMsg", moduleID);
+	StateOutMsgID = messageSys->CreateNewMessage(OutputDataString, sizeof(VSCMGSpeedIntMsg),
+												 OutputBufferCount, "VSCMGSpeedIntMsg", moduleID);
 
     return;
 }
@@ -363,7 +363,7 @@ void VSCMGStateEffector::CrossInit()
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
 	CmdsInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(InputCmds,
-                                                                     sizeof(RWArrayTorqueIntMsg),
+                                                                     sizeof(VSCMGArrayTorqueIntMsg),
 																	 moduleID);
 	if(CmdsInMsgID < 0)
 	{
@@ -450,7 +450,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 
 	// Write this message once for all reaction wheels
 	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
-							 sizeof(RWSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
+							 sizeof(VSCMGSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
 
 /*! This method is used to read the incoming command message and set the
@@ -471,9 +471,9 @@ void VSCMGStateEffector::ReadInputs()
 
 	//! - Zero the command buffer and read the incoming command array
 	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.motorTorque, 0x0, sizeof(RWArrayTorqueIntMsg));
+	memset(IncomingCmdBuffer.wheelTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg));
 	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
-												sizeof(RWArrayTorqueIntMsg),
+												sizeof(VSCMGArrayTorqueIntMsg),
 												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
 
 	//! - Check if message has already been read, if stale return
@@ -487,7 +487,7 @@ void VSCMGStateEffector::ReadInputs()
 	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
 		CmdPtr++, i++)
 	{
-		CmdPtr->u_s_cmd = IncomingCmdBuffer.motorTorque[i];
+		CmdPtr->u_s_cmd = IncomingCmdBuffer.wheelTorque[i];
 	}
 
 }

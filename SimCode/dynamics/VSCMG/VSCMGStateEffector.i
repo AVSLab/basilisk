@@ -30,11 +30,11 @@
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "VSCMGStateEffector.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+%include "../../../SimFswInterfaceMessages/vscmgSpeedIntMsg.h"
 %include "../../simMessages/vscmgCmdSimMsg.h"
 %include "../../simMessages/vscmgConfigSimMsg.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
-%include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+%include "../../../SimFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
 
 //%include "spacecraftPlus.h"
 //%include "hubEffector.h"
@@ -43,7 +43,7 @@ namespace std {
     %template(VSCMGConfigVector) vector<VSCMGConfigSimMsg>;
 	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
 }
-GEN_SIZEOF(RWArrayTorqueIntMsg);
+GEN_SIZEOF(VSCMGArrayTorqueIntMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

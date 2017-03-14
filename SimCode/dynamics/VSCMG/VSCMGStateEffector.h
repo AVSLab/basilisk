@@ -28,10 +28,10 @@
 #include <Eigen/Dense>
 #include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "../../../SimFswInterfaceMessages/vscmgSpeedIntMsg.h"
 #include "../../simMessages/vscmgCmdSimMsg.h"
 #include "../../simMessages/vscmgConfigSimMsg.h"
-#include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "../../SimFswInterfaceMessages/vscmgArrayTorqueIntMsg.h"
 #include "../../SimFswInterfaceMessages/macroDefinitions.h"
 
 #include "utilities/avsEigenMRP.h"
@@ -69,7 +69,7 @@ public:
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<VSCMGCmdSimMsg> NewRWCmds;                        //!< -- Incoming attitude commands
-	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
+	VSCMGSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
     std::string nameOfVSCMGOmegasState;
     std::string nameOfVSCMGThetasState;
 	int numRW;
@@ -80,7 +80,7 @@ private:
 	std::vector<uint64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
 	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
 	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
-	RWArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
+	VSCMGArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
 	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
 
 	StateData *hubSigma;
