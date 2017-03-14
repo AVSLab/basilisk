@@ -103,7 +103,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     unitTaskName = "unitTask"  # arbitrary name (don't change)
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
-    rwCommandName = "reactionwheel_cmds"
+    rwCommandName = "vscmg_cmds"
 
     #   Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()

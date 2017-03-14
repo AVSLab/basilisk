@@ -27,8 +27,8 @@
 VSCMGStateEffector::VSCMGStateEffector()
 {
 	CallCounts = 0;
-	InputCmds = "reactionwheel_cmds";
-	OutputDataString = "reactionwheel_output_states";
+	InputCmds = "vscmg_cmds";
+	OutputDataString = "vscmg_output_states";
 	OutputBufferCount = 2;
 	CmdsInMsgID = -1;
 	StateOutMsgID = -1;
@@ -40,8 +40,8 @@ VSCMGStateEffector::VSCMGStateEffector()
 	effProps.IEffPrimePntB_B.setZero();
 	effProps.rEffPrime_CB_B.setZero();
 
-    this->nameOfReactionWheelOmegasState = "reactionWheelOmegas";
-    this->nameOfReactionWheelThetasState = "reactionWheelThetas";
+    this->nameOfVSCMGOmegasState = "VSCMGOmegas";
+    this->nameOfVSCMGThetasState = "VSCMGThetas";
     
     return;
 }
@@ -80,10 +80,10 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
         this->numRW++;
     }
     
-	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfReactionWheelOmegasState);
+	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfVSCMGOmegasState);
 
 	if (numRWJitter > 0) {
-		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfReactionWheelThetasState);
+		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfVSCMGThetasState);
 	}
 
     this->OmegasState->setState(omegasForInit);

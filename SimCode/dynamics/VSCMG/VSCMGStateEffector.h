@@ -70,8 +70,8 @@ public:
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
 	std::vector<VSCMGCmdSimMsg> NewRWCmds;                        //!< -- Incoming attitude commands
 	RWSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
-    std::string nameOfReactionWheelOmegasState;
-    std::string nameOfReactionWheelThetasState;
+    std::string nameOfVSCMGOmegasState;
+    std::string nameOfVSCMGThetasState;
 	int numRW;
 	int numRWJitter;
 
