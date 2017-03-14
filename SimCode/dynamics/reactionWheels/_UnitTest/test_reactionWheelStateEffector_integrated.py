@@ -39,7 +39,6 @@ import gravityEffector
 import spice_interface
 import simIncludeRW
 import reactionWheelStateEffector
-import vehicleConfigData
 
 mpl.rc("figure", figsize=(5.75,4))
 
@@ -119,12 +118,12 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 2)
-    cmdArray = sim_model.new_doubleArray(vehicleConfigData.MAX_EFF_CNT)
-    sim_model.doubleArray_setitem(cmdArray, 0, .2) # RW-1 [Nm]
-    sim_model.doubleArray_setitem(cmdArray, 1, .1) # RW-2 [Nm]
-    sim_model.doubleArray_setitem(cmdArray, 2,-.5) # RW-3 [Nm]
-    unitTestSim.TotalSim.WriteMessageData(rwCommandName, 8*vehicleConfigData.MAX_EFF_CNT, 1, cmdArray )
+    cmdArray = reactionWheelStateEffector.RWArrayTorqueIntMsg()
+    cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               unitProcessName,
+                               rwCommandName,
+                               cmdArray)
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
@@ -137,7 +136,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]

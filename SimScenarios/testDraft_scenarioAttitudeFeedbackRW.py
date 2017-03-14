@@ -381,7 +381,7 @@ def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple, useRWVoltageIO):
 # ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW301.svg "RW Omega history")
 # ![RW Voltage History](Images/Scenarios/scenarioAttitudeFeedbackRW401.svg "RW Voltage history")
 # Note that the rwMotorVoltage() module is run here in a simple open-loop manner.  See the
-# [rwMotorVoltage documentation](../ADCSAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
+# [rwMotorVoltage documentation](../FswAlgorithms/effectorInterfaces/rwMotorVoltage/_Documentation/Basilisk-rwMotorVoltage-20170113.pdf "PDF Doc")
 # for more info.  By connecting the RW availability message it is possible turn
 # off the voltage command for particular wheels.  Also, by specifying the RW speed message input
 # name it is possible to turn on a torque tracking feedback loop in this module.
@@ -597,7 +597,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = vehicleConfigData.vehicleConfigData()
+    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
@@ -654,7 +654,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   retrieve the logged data
     #
-    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".effectorRequest", range(numRW))
+    dataUsReq = scSim.pullMessageLogData(rwMotorTorqueConfig.outputDataName+".motorTorque", range(numRW))
     dataSigmaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".sigma_BR", range(3))
     dataOmegaBR = scSim.pullMessageLogData(attErrorConfig.outputDataName+".omega_BR_B", range(3))
     dataPos = scSim.pullMessageLogData(sNavObject.outputTransName+".r_BN_N", range(3))
@@ -663,7 +663,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     for i in range(0,numRW):
         dataRW.append(scSim.pullMessageLogData(rwOutName[i]+".u_current", range(1)))
     if useRWVoltageIO:
-        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".effectorRequest", range(numRW))
+        dataVolt = scSim.pullMessageLogData(fswRWVoltageConfig.voltageOutMsgName+".voltage", range(numRW))
     np.set_printoptions(precision=16)
 
     #

@@ -22,17 +22,14 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "environment/spice/spice_planet_state.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/boreAngleSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
  */
 
-typedef struct {
-   double azimuth;      //<! (r) the location angle to put the miss in a quadrant
-   double missAngle;    //<! (r) the angular distance between the boresight and body
-}AngOffValues;
 
 //! An orbital element/cartesian position and velocity converter
 class BoreAngCalc: public SysModel {
@@ -56,12 +53,12 @@ public:
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
     double strBoreVec[3];             //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
-    AngOffValues boresightAng;        //!< (-) Boresigt angles relative to target
+    AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly
     
 private:
-    SpicePlanetState localPlanet;     //!< (-) planet that we are pointing at
-    SCPlusOutputStateData localState; //!< (-) observed state of the spacecraft
+    SpicePlanetStateSimMsg localPlanet;//!< (-) planet that we are pointing at
+    SCPlusStatesSimMsg localState;   //!< (-) observed state of the spacecraft
     int64_t StateInMsgID;             // (-) MEssage ID for incoming data
     int64_t celInMsgID;               // (-) MEssage ID for incoming data
     int64_t AngOutMsgID;              // (-) Message ID for outgoing data

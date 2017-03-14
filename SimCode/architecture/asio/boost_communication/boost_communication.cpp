@@ -65,27 +65,27 @@ void OpenGLIO::CrossInit()
 {
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusOutputStateData), moduleID);
-    this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetState), moduleID);
-    this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetState), moduleID);
-    this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeOutput), this->moduleID);
+    this->stateInMsgId = messageSys->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), moduleID);
+    this->sunEphmInMsgId = messageSys->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
+    this->centralBodyInMsgId = messageSys->subscribeToMessage(this->centralBodyInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
+    this->spiceTimeDataInMsgId = messageSys->subscribeToMessage(this->spiceTimeDataInMsgName, sizeof(SpiceTimeSimMsg), this->moduleID);
     
     int i;
     for (i = 0; i < this->rwInMsgNames.size(); i++)
     {
-        this->rwInMsgIds.push_back(messageSys->subscribeToMessage(this->rwInMsgNames.at(i), sizeof(ReactionWheelConfigData), moduleID));
+        this->rwInMsgIds.push_back(messageSys->subscribeToMessage(this->rwInMsgNames.at(i), sizeof(RWConfigSimMsg), moduleID));
     }
     this->reactionWheels.resize(i);
     
     for (i = 0; i < this->thrusterInMsgNames.size(); i++)
     {
-        this->thrusterInMsgIds.push_back(messageSys->subscribeToMessage(this->thrusterInMsgNames.at(i), sizeof(ThrusterOutputData), moduleID));
+        this->thrusterInMsgIds.push_back(messageSys->subscribeToMessage(this->thrusterInMsgNames.at(i), sizeof(THROutputSimMsg), moduleID));
     }
     this->thrusters.resize(i);
     
     for(i = 0; i < this->planetInMsgNames.size(); i++)
     {
-        this->planetInMsgIds.push_back(messageSys->subscribeToMessage(this->planetInMsgNames.at(i), sizeof(SpicePlanetState), moduleID));
+        this->planetInMsgIds.push_back(messageSys->subscribeToMessage(this->planetInMsgNames.at(i), sizeof(SpicePlanetStateSimMsg), moduleID));
     }
     this->planets.resize(i);
     
@@ -132,29 +132,29 @@ void OpenGLIO::readInputMessages()
     SingleMessageHeader localHeader;
     SystemMessaging *messageSys = SystemMessaging::GetInstance();
     
-    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
-    messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
-    messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
-    messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
+    messageSys->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInMsgBuffer));
+    messageSys->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInMsgBuffer));
+    messageSys->ReadMessage(this->centralBodyInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->centralBodyInMsgBuffer));
+    messageSys->ReadMessage(this->spiceTimeDataInMsgId, &localHeader, sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*> (&this->spiceTimeDataInMsgBuffer));
     
-    ReactionWheelConfigData tmpWheelData;
+    RWConfigSimMsg tmpWheelData;
     for (int i = 0; i < this->reactionWheels.size(); i++)
     {
-        messageSys->ReadMessage(this->rwInMsgIds.at(i), &localHeader, sizeof(ReactionWheelConfigData), reinterpret_cast<uint8_t*> (&tmpWheelData));
+        messageSys->ReadMessage(this->rwInMsgIds.at(i), &localHeader, sizeof(RWConfigSimMsg), reinterpret_cast<uint8_t*> (&tmpWheelData));
         this->reactionWheels.at(i) = tmpWheelData;
     }
     
-    ThrusterOutputData tmpThrusterData;
+    THROutputSimMsg tmpThrusterData;
     for (int i = 0; i < this->thrusters.size(); i++)
     {
-        messageSys->ReadMessage(this->thrusterInMsgIds.at(i), &localHeader, sizeof(ThrusterOutputData), reinterpret_cast<uint8_t*> (&tmpThrusterData));
+        messageSys->ReadMessage(this->thrusterInMsgIds.at(i), &localHeader, sizeof(THROutputSimMsg), reinterpret_cast<uint8_t*> (&tmpThrusterData));
         this->thrusters.at(i) = tmpThrusterData;
     }
 
-    SpicePlanetState tmpPlanetData;
+    SpicePlanetStateSimMsg tmpPlanetData;
     for (int i = 0; i < this->planets.size(); i++)
     {
-        messageSys->ReadMessage(this->planetInMsgIds.at(i), &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&tmpPlanetData));
+        messageSys->ReadMessage(this->planetInMsgIds.at(i), &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&tmpPlanetData));
         this->planets.at(i) = tmpPlanetData;
     }
 }

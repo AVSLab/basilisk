@@ -19,7 +19,8 @@
 #include "sensors/star_tracker/star_tracker.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
-#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
+#include "utilities/linearAlgebra.h"
+#include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
 
 StarTracker::StarTracker()
@@ -44,9 +45,9 @@ StarTracker::~StarTracker()
 bool StarTracker::LinkMessages()
 {
     inputTimeID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputTimeMessage, sizeof(SpiceTimeOutput), moduleID);
+        inputTimeMessage, sizeof(SpiceTimeSimMsg), moduleID);
     inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputStateMessage, sizeof(SCPlusOutputStateData), moduleID);
+        inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
     
     
     return(inputTimeID >=0 && inputStateID >= 0);
@@ -57,8 +58,8 @@ void StarTracker::SelfInit()
     //! Begin method steps
     uint64_t numStates = 3;
     outputStateID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputStateMessage, sizeof(StarTrackerHWOutput),
-        OutputBufferCount, "StarTrackerHWOutput", moduleID);
+        CreateNewMessage(outputStateMessage, sizeof(STSensorIntMsg),
+        OutputBufferCount, "STSensorIntMsg", moduleID);
     
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
@@ -94,17 +95,17 @@ void StarTracker::readInputMessages()
         this->messagesLinked = LinkMessages();
     }
     
-    memset(&this->timeState, 0x0, sizeof(SpiceTimeOutput));
-    memset(&this->scState, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->timeState, 0x0, sizeof(SpiceTimeSimMsg));
+    memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*>(&scState), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), moduleID);
     }
     if(inputTimeID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
-                                                    sizeof(SpiceTimeOutput), reinterpret_cast<uint8_t*>(&timeState), moduleID);
+                                                    sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*>(&timeState), moduleID);
         this->envTimeClock = localHeader.WriteClockNanos;
     }
 }
@@ -125,7 +126,7 @@ void StarTracker::applySensorErrors()
     this->sensedValues.timeTag = this->sensorTimeTag;
 }
 
-void StarTracker::computeQuaternion(double *sigma, StarTrackerHWOutput *sensorValues)
+void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
 {
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
     double dcm_SN[3][3];            /* dcm, inertial to structure frame */
@@ -152,7 +153,7 @@ void StarTracker::computeTrueOutput()
 void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 {
     SystemMessaging::GetInstance()->WriteMessage(outputStateID, CurrentSimNanos,
-                                                 sizeof(StarTrackerHWOutput), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
+                                                 sizeof(STSensorIntMsg), reinterpret_cast<uint8_t *>(&this->sensedValues), moduleID);
 }
 
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)

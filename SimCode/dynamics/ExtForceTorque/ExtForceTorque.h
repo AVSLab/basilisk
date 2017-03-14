@@ -22,13 +22,10 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
+#include "../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "../../SimFswInterfaceMessages/cmdForceBodyIntMsg.h"
+#include "../../SimFswInterfaceMessages/cmdForceInertialIntMsg.h"
 
-
-//! @brief Input container for external force and torque command requests.
-/*! This structure is .*/
-typedef struct {
-    double cmd[3];                      //!< [N or NM], force or torque command
-}extForceTorqueCmdStruct;
 
 
 /*! \addtogroup SimModelGroup
@@ -54,9 +51,9 @@ private:
     int64_t cmdTorqueInMsgID;           //!< -- Message ID for incoming data
     int64_t cmdForceInertialInMsgID;    //!< -- Message ID for incoming data
     int64_t cmdForceBodyInMsgID;        //!< -- Message ID for incoming data
-    extForceTorqueCmdStruct incomingCmdTorqueBuffer;        //!< -- One-time allocation for savings
-    extForceTorqueCmdStruct incomingCmdForceInertialBuffer; //!< -- One-time allocation for savings
-    extForceTorqueCmdStruct incomingCmdForceBodyBuffer;     //!< -- One-time allocation for savings
+    CmdTorqueBodyIntMsg incomingCmdTorqueBuffer;            //!< -- One-time allocation for savings
+    CmdForceInertialIntMsg incomingCmdForceInertialBuffer;  //!< -- One-time allocation for savings
+    CmdForceBodyIntMsg incomingCmdForceBodyBuffer;          //!< -- One-time allocation for savings
     bool goodTorqueCmdMsg;              //!< -- flag indicating if a torque command message was read
     bool goodForceBCmdMsg;              //!< -- flag indicating if a inertial force command message was read
     bool goodForceNCmdMsg;              //!< -- flag indicating if a body-relative force command message was read

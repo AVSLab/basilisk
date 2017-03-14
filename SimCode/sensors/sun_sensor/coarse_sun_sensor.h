@@ -22,9 +22,11 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "environment/spice/spice_interface.h"
 #include <random>
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/cssRawDataSimMsg.h"
+#include "../SimFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 typedef enum {
     CSSFAULT_OFF,           /*!< CSS measurement is set to 0 for all future time
@@ -41,10 +43,6 @@ typedef enum {
  * @{
  */
 
-//!@brief CSS output structure data
-typedef struct {
-    double OutputData;       /*!< CSS measurement output */
-}CSSRawOutputData;
 
 //!@brief Coarse sun sensor model
 /*! This class is designed to model the state of a single coarse sun sensor 
@@ -96,13 +94,13 @@ public:
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
 private:
-    int64_t InputSunID;              //!< [-] Connect to input time message
-    int64_t InputStateID;            //!< [-] Connect to input time message
-    int64_t OutputDataID;            //!< [-] Connect to output CSS data
-    SpicePlanetState SunData;        //!< [-] Unused for now, but including it for future
-    SCPlusOutputStateData StateCurrent;    //!< [-] Current SSBI-relative state
-    std::default_random_engine rgen; //!< [-] Random number generator for disp
-    std::normal_distribution<double> rnum;  //! [-] Random number distribution
+    int64_t InputSunID;                         //!< [-] Connect to input time message
+    int64_t InputStateID;                       //!< [-] Connect to input time message
+    int64_t OutputDataID;                       //!< [-] Connect to output CSS data
+    SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
+    SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
+    std::default_random_engine rgen;            //!< [-] Random number generator for disp
+    std::normal_distribution<double> rnum;      //! [-] Random number distribution
 };
 
 //!@brief Constellation of coarse sun sensors for aggregating output information
@@ -111,10 +109,10 @@ It is used to aggregate the output messages of the coarse sun-sensors into a
 a single output for use by downstream models.*/
 class CSSConstellation: public SysModel {
  public:
-    CSSConstellation();              //!< @brief [-] Default constructor
-    ~CSSConstellation();             //!< @brief [-] Default Destructor
-    void CrossInit();                //!< @brief [-] Method for initializing cross dependencies
-    void SelfInit();                 //!< @brief [-] Method for initializing own messages
+    CSSConstellation();                         //!< @brief [-] Default constructor
+    ~CSSConstellation();                        //!< @brief [-] Default Destructor
+    void CrossInit();                           //!< @brief [-] Method for initializing cross dependencies
+    void SelfInit();                            //!< @brief [-] Method for initializing own messages
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief [-] Main update method for CSS constellation
     void appendCSS(CoarseSunSensor newSensor) {sensorList.push_back(newSensor);}
     //!< @brief [-] Method for adding sensor to list
@@ -124,9 +122,8 @@ class CSSConstellation: public SysModel {
     std::string outputConstellationMessage;      //!< [-] Message name for the outgoing message
     int64_t outputConstID;                       //!< [-] output ID for the outgoing message
     std::vector<CoarseSunSensor> sensorList;     //!< [-] List of coarse sun sensors in constellation
-    uint64_t maxNumCSSSensors;                   //!< [-] Maximum size for the outgoing message buffer
  private:
-    CSSRawOutputData *outputBuffer;              //!< [-] buffer used to write output message
+    CSSArraySensorIntMsg outputBuffer;             //!< [-] buffer used to write output message
 };
 
 /*! @} */

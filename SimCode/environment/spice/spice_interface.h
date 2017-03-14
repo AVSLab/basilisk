@@ -22,9 +22,10 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "environment/spice/spice_planet_state.h"
 #include "utilities/linearAlgebra.h"
 #include <map>
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/spiceTimeSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  *  This group is used to model parts of the vehicle and the surrounding environment
@@ -33,14 +34,6 @@
  * @{
  */
 
-//! The SPICE time output structure outputs time information to the rest of the system
-typedef struct {
-    double J2000Current;        //!< s Current J2000 elapsed time
-    double JulianDateCurrent;   //!< s Current JulianDate
-    double GPSSeconds;          //!< s Current GPS seconds
-    uint16_t GPSWeek;           //!< -- Current GPS week value
-    uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
-}SpiceTimeOutput;
 
 //! The SPICE interface class gets time and planetary body information from the JPL ephemeris library
 class SpiceInterface: public SysModel {
@@ -84,7 +77,7 @@ private:
     std::string GPSEpochTime;   //!< -- String for the GPS epoch
     double JDGPSEpoch;          //!< s Epoch for GPS time.  Saved for efficiency
     int64_t TimeOutMsgID;       //!< -- Output time message ID
-    std::map<uint32_t, SpicePlanetState> PlanetData; //!< -- Internal vector of planets
+    std::map<uint32_t, SpicePlanetStateSimMsg> PlanetData; //!< -- Internal vector of planets
     
 };
 

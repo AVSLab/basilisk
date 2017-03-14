@@ -185,7 +185,7 @@ def addNeptune():
 
 
 def defaultEphemData(name):
-    ephemData = spice_interface.SpicePlanetState()
+    ephemData = spice_interface.SpicePlanetStateSimMsg()
     ephemData.J2000Current = 0.0
     ephemData.PositionVector = [0.0, 0.0, 0.0]
     ephemData.VelocityVector = [0.0, 0.0, 0.0]

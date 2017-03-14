@@ -23,9 +23,11 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "../ADCSAlgorithms/attDetermination/_GeneralModuleFiles/navStateOut.h"
-#include "environment/spice/spice_interface.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMEssages/spicePlanetStateSimMsg.h"
+#include "../SimFswInterfaceMessages/navAttIntMsg.h"
+#include "../SimFswInterfaceMessages/navTransIntMsg.h"
+
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -56,16 +58,16 @@ public:
     std::vector<double> navErrors;     //!< -- Current navigation errors applied to truth
     std::string inputStateName;        //!< -- Message that contains s/c state
     std::string outputAttName;         //!< -- Message that we output state to
-    std::string outputTransName;         //!< -- Message that we output state to
+    std::string outputTransName;       //!< -- Message that we output state to
     std::string inputSunName;          //!< -- Message name for the sun state
     bool crossTrans;                   //!< -- Have position error depend on velocity
     bool crossAtt;                     //!< -- Have attitude depend on attitude rate
-    NavAttOut trueAttState;            //!< -- attitude nav state without errors
-    NavAttOut estAttState;             //!< -- attitude nav state including errors
-    NavTransOut trueTransState;        //!< -- translation nav state without errors
-    NavTransOut estTransState;         //!< -- translation nav state including errors
-    SCPlusOutputStateData inertialState;     //!< -- input inertial state from Star Tracker
-    SpicePlanetState sunState;         //!< -- input Sun state
+    NavAttIntMsg trueAttState;        //!< -- attitude nav state without errors
+    NavAttIntMsg estAttState;         //!< -- attitude nav state including errors
+    NavTransIntMsg trueTransState;    //!< -- translation nav state without errors
+    NavTransIntMsg estTransState;     //!< -- translation nav state including errors
+    SCPlusStatesSimMsg inertialState; //!< -- input inertial state from Star Tracker
+    SpicePlanetStateSimMsg sunState;  //!< -- input Sun state
 private:
     int64_t inputStateID;              //!< -- Message ID associated with s/c state
     int64_t outputAttID;               //!< -- Message ID associated with att-nav state

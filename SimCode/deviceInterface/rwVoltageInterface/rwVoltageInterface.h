@@ -22,9 +22,9 @@
 
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../SimFswInterface/rwVoltageMessage.h"
-#include "../../SimFswInterface/rwTorqueMessage.h"
-#include "../../SimFswInterface/simFSWMacros.h"
+#include "../../SimFswInterfaceMessages/rwArrayVoltageIntMsg.h"
+#include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "../../SimFswInterfaceMessages/macroDefinitions.h"
 /*! \addtogroup SimModelGroup
  * @{
  */
@@ -52,8 +52,8 @@ public:
 private:
     int64_t rwVoltageInMsgID;           //!< -- Message ID associated with RW voltage input state
     int64_t rwMotorTorqueOutMsgID;      //!< -- Message ID associated with RW motor torque output state
-    rwVoltageInputMessage inputVoltageBuffer;//!< [V] One-time allocation for time savings
-    fswRWTorque outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
+    RWArrayVoltageIntMsg inputVoltageBuffer;//!< [V] One-time allocation for time savings
+    RWArrayTorqueIntMsg outputRWTorqueBuffer;//!< [Nm] copy of module output buffer
     uint64_t prevTime;                  //!< -- Previous simulation time observed
 };
 

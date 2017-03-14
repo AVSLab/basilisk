@@ -35,14 +35,14 @@ ImuSensor::ImuSensor()
     this->InputMassMsg = "spacecraft_mass_props";
     this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
-    memset(&this->StatePrevious, 0x0, sizeof(SCPlusOutputStateData));
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     this->PreviousTime = 0;
     this->NominalReady = false;
     memset(&this->senRotBias[0], 0x0, 3*sizeof(double));
     memset(&this->senTransBias[0], 0x0, 3*sizeof(double));
-    memset(&this->sensedValues, 0x0, sizeof(ImuSensorOutput));
-    memset(&this->trueValues, 0x0, sizeof(ImuSensorOutput));
+    memset(&this->sensedValues, 0x0, sizeof(IMUSensorIntMsg));
+    memset(&this->trueValues, 0x0, sizeof(IMUSensorIntMsg));
 
     return;
 }
@@ -62,8 +62,8 @@ void ImuSensor::SelfInit()
 {
 
     OutputDataID = SystemMessaging::GetInstance()->
-        CreateNewMessage( OutputDataMsg, sizeof(ImuSensorOutput),
-        OutputBufferCount, "ImuSensorOutput", moduleID);
+        CreateNewMessage( OutputDataMsg, sizeof(IMUSensorIntMsg),
+        OutputBufferCount, "IMUSensorIntMsg", moduleID);
 
 	uint64_t numStates = 3;
 
@@ -110,9 +110,9 @@ void ImuSensor::SelfInit()
 void ImuSensor::CrossInit()
 {
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusOutputStateData), moduleID);
+        sizeof(SCPlusStatesSimMsg), moduleID);
     InputMassID = SystemMessaging::GetInstance()->subscribeToMessage(InputMassMsg,
-        sizeof(SCPlusMassPropsData), moduleID);
+        sizeof(SCPlusMassPropsSimMsg), moduleID);
     if(InputStateID < 0 || InputMassID < 0)
     {
         std::cerr << "WARNING: Failed to link an imu input message: ";
@@ -126,29 +126,29 @@ void ImuSensor::readInputMessages()
 {
     SingleMessageHeader LocalHeader;
     
-    memset(&this->StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
-    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsData));
+    memset(&this->MassCurrent, 0x0, sizeof(SCPlusMassPropsSimMsg));
     if(InputMassID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputMassID, &LocalHeader,
-                                                    sizeof(SCPlusMassPropsData), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
+                                                    sizeof(SCPlusMassPropsSimMsg), reinterpret_cast<uint8_t*> (&this->MassCurrent), moduleID);
     }
 }
 
 void ImuSensor::writeOutputMessages(uint64_t Clock)
 {
-    ImuSensorOutput LocalOutput;
+    IMUSensorIntMsg LocalOutput;
     memcpy(LocalOutput.DVFramePlatform, this->sensedValues.DVFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AccelPlatform, this->sensedValues.AccelPlatform, 3*sizeof(double));
     memcpy(LocalOutput.DRFramePlatform, this->sensedValues.DRFramePlatform, 3*sizeof(double));
     memcpy(LocalOutput.AngVelPlatform, this->sensedValues.AngVelPlatform, 3*sizeof(double));
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock,
-                                                 sizeof(ImuSensorOutput), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
+                                                 sizeof(IMUSensorIntMsg), reinterpret_cast<uint8_t*> (&LocalOutput), moduleID);
 }
 
 void ImuSensor::applySensorDiscretization(uint64_t CurrentTime)
@@ -324,7 +324,7 @@ void ImuSensor::UpdateState(uint64_t CurrentSimNanos)
         /* Output sensed data */
         writeOutputMessages(CurrentSimNanos);
     }
-    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusOutputStateData));
+    memcpy(&StatePrevious, &StateCurrent, sizeof(SCPlusStatesSimMsg));
     PreviousTime = CurrentSimNanos;
     NominalReady = true;
 }

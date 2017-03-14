@@ -67,15 +67,15 @@ void ExtForceTorque::CrossInit()
     //! Begin method steps
     //! - Find the message ID associated with the InputCmds string.
     this->cmdTorqueInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdTorqueInMsgName,
-                                                                                sizeof(extForceTorqueCmdStruct), moduleID);
+                                                                                sizeof(CmdTorqueBodyIntMsg), moduleID);
     this->cmdForceInertialInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceInertialInMsgName,
-                                                                                       sizeof(extForceTorqueCmdStruct), moduleID);
+                                                                                       sizeof(CmdForceInertialIntMsg), moduleID);
     this->cmdForceBodyInMsgID = SystemMessaging::GetInstance()->subscribeToMessage(this->cmdForceBodyInMsgName,
-                                                                                   sizeof(extForceTorqueCmdStruct), moduleID);
+                                                                                   sizeof(CmdForceBodyIntMsg), moduleID);
     /* zero the input message vectors */
-    memset(&(this->incomingCmdTorqueBuffer.cmd), 0x0, 3*sizeof(double));
-    memset(&(this->incomingCmdForceInertialBuffer.cmd), 0x0, 3*sizeof(double));
-    memset(&(this->incomingCmdForceBodyBuffer.cmd), 0x0, 3*sizeof(double));
+    memset(&(this->incomingCmdTorqueBuffer.torqueRequestBody), 0x0, 3*sizeof(double));
+    memset(&(this->incomingCmdForceInertialBuffer.forceRequestInertial), 0x0, 3*sizeof(double));
+    memset(&(this->incomingCmdForceBodyBuffer.forceRequestBody), 0x0, 3*sizeof(double));
 
     return;
 }
@@ -111,30 +111,30 @@ void ExtForceTorque::readInputMessages()
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdTorqueInMsgID >= 0)
     {
-        memset(&(this->incomingCmdTorqueBuffer), 0x0, sizeof(extForceTorqueCmdStruct));
+        memset(&(this->incomingCmdTorqueBuffer), 0x0, sizeof(CmdTorqueBodyIntMsg));
         this->goodTorqueCmdMsg =
             SystemMessaging::GetInstance()->ReadMessage(this->cmdTorqueInMsgID, &LocalHeader,
-                                                     sizeof(extForceTorqueCmdStruct),
+                                                     sizeof(CmdTorqueBodyIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdTorqueBuffer)), moduleID);
     }
 
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdForceInertialInMsgID >= 0)
     {
-        memset(&(this->incomingCmdForceInertialBuffer), 0x0, sizeof(extForceTorqueCmdStruct));
+        memset(&(this->incomingCmdForceInertialBuffer), 0x0, sizeof(CmdForceInertialIntMsg));
         this->goodForceNCmdMsg =
             SystemMessaging::GetInstance()->ReadMessage(this->cmdForceInertialInMsgID, &LocalHeader,
-                                                     sizeof(extForceTorqueCmdStruct),
+                                                     sizeof(CmdForceInertialIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdForceInertialBuffer)), moduleID);
     }
 
     //! - If the input message ID is invalid, return without touching states
     if(this->cmdForceBodyInMsgID >= 0)
     {
-        memset(&(this->incomingCmdForceBodyBuffer), 0x0, sizeof(extForceTorqueCmdStruct));
+        memset(&(this->incomingCmdForceBodyBuffer), 0x0, sizeof(CmdForceBodyIntMsg));
         this->goodForceBCmdMsg =
             SystemMessaging::GetInstance()->ReadMessage(this->cmdForceBodyInMsgID, &LocalHeader,
-                                                     sizeof(extForceTorqueCmdStruct),
+                                                     sizeof(CmdForceBodyIntMsg),
                                                      reinterpret_cast<uint8_t*> (&(this->incomingCmdForceBodyBuffer)), moduleID);
     }
     
@@ -156,7 +156,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->forceExternal_N = this->extForce_N;
     /* add the cmd force in inertial frame components set via FSW communication */
     if (this->goodForceNCmdMsg) {
-		cmdVec = cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.cmd);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdForceInertialBuffer.forceRequestInertial);
 		this->forceExternal_N += cmdVec;
     }
 
@@ -164,7 +164,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->forceExternal_B = this->extForce_B;
     /* add the cmd force in body frame components set via FSW communication */
     if (this->goodForceBCmdMsg) {
-		cmdVec = cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.cmd);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdForceBodyBuffer.forceRequestBody);
         this->forceExternal_B +=cmdVec;
     }
 
@@ -172,7 +172,7 @@ void ExtForceTorque::computeBodyForceTorque(double integTime)
     this->torqueExternalPntB_B = this->extTorquePntB_B;
     /* add the cmd torque about Point B in body frame components set via FSW communication */
     if (this->goodTorqueCmdMsg) {
-		cmdVec = cArray2EigenVector3d(this->incomingCmdTorqueBuffer.cmd);
+		cmdVec = cArray2EigenVector3d(this->incomingCmdTorqueBuffer.torqueRequestBody);
         this->torqueExternalPntB_B += cmdVec;
     }
 

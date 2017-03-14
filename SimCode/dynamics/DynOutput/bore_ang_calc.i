@@ -23,10 +23,10 @@
 
 %include "cmalloc.i"
 %include "swig_common_model.i"
-
+%include "simMessages/boreAngleSimMsg.h"
 %include "sys_model.h"
 GEN_SIZEOF(BoreAngCalc);
-GEN_SIZEOF(AngOffValues);
+GEN_SIZEOF(AngOffValuesSimMsg);
 %include "bore_ang_calc.h"
 
 %pythoncode %{

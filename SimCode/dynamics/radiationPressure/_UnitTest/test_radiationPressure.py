@@ -99,14 +99,14 @@ def unitRadiationPressure(show_plots, modelType):
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
 
-    scPlusStateMsg = spacecraftPlus.SCPlusOutputStateData()
+    scPlusStateMsg = spacecraftPlus.SCPlusStatesSimMsg()
     scPlusStateMsgName = "inertial_state_output"
     unitTestSim.TotalSim.CreateNewMessage(testProcessName, scPlusStateMsgName, scPlusStateMsg.getStructSize(), 2)
     scPlusStateMsg.r_BN_N = r_N
     scPlusStateMsg.sigma_BN = sigma_BN
     unitTestSim.TotalSim.WriteMessageData(scPlusStateMsgName, scPlusStateMsg.getStructSize(), 1, scPlusStateMsg)
 
-    sunSpiceMsg = spice_interface.SpicePlanetState()
+    sunSpiceMsg = spice_interface.SpicePlanetStateSimMsg()
     sunSpiceMsgName = "sun_planet_data"
     unitTestSim.TotalSim.CreateNewMessage(testProcessName, sunSpiceMsgName, sunSpiceMsg.getStructSize(), 2)
     sunSpiceMsg.PositionVector = sun_r_N

@@ -18,7 +18,7 @@
  */
 
 #include "spacecraftPlus.h"
-#include "utilities/simMacros.h"
+#include "../SimFswInterfaceMessages/macroDefinitions.h"
 #include "../_GeneralModuleFiles/svIntegratorRK4.h"
 #include "utilities/avsEigenSupport.h"
 #include "utilities/avsEigenMRP.h"
@@ -60,14 +60,14 @@ void SpacecraftPlus::SelfInit()
 {
     // - Create the message for the spacecraft state
     this->scStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scStateOutMsgName,
-                                                                             sizeof(SCPlusOutputStateData),
+                                                                             sizeof(SCPlusStatesSimMsg),
                                                                              this->numOutMsgBuffers,
-                                                                             "SCPlusOutputStateData", this->moduleID);
+                                                                             "SCPlusStatesSimMsg", this->moduleID);
     // - Create the message for the spacecraft mass state
     this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
-                                                                             sizeof(SCPlusMassPropsData),
+                                                                             sizeof(SCPlusMassPropsSimMsg),
                                                                                  this->numOutMsgBuffers,
-                                                                                 "SCPlusMassPropsData", this->moduleID);
+                                                                                 "SCPlusMassPropsSimMsg", this->moduleID);
     // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
 
@@ -89,7 +89,7 @@ void SpacecraftPlus::CrossInit()
 void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
 {
     // - Populate state output message
-    SCPlusOutputStateData stateOut;
+    SCPlusStatesSimMsg stateOut;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
@@ -97,15 +97,15 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->MRPSwitchCount;
-    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusOutputStateData),
+    SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
                                                  reinterpret_cast<uint8_t*> (&stateOut), this->moduleID);
 
     // - Populate mass state output message
-    SCPlusMassPropsData massStateOut;
+    SCPlusMassPropsSimMsg massStateOut;
     massStateOut.massSC = (*this->m_SC)(0,0);
     eigenMatrixXd2CArray(*this->c_B, massStateOut.c_B);
     eigenMatrixXd2CArray(*this->ISCPntB_B, (double *)massStateOut.ISC_PntB_B);
-    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsData),
+    SystemMessaging::GetInstance()->WriteMessage(this->scMassStateOutMsgId, clockTime, sizeof(SCPlusMassPropsSimMsg),
                                                  reinterpret_cast<uint8_t*> (&massStateOut), this->moduleID);
 
     return;

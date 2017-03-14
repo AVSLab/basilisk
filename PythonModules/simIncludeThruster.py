@@ -62,7 +62,7 @@ def create(
     global options
 
     # create the blank thruster object
-    TH = thrusterDynamicEffector.ThrusterConfigData()
+    TH = thrusterDynamicEffector.THRConfigSimMsg()
 
     # populate the thruster object with the type specific parameters
     try:

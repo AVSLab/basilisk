@@ -21,6 +21,8 @@
 #include "dynamics/RadiationPressure/radiation_pressure.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/astroConstants.h"
+#include "utilities/avsEigenSupport.h"
+#include "utilities/avsEigenMRP.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
@@ -60,7 +62,7 @@ void RadiationPressure::CrossInit()
 {
     //! - Find the message ID associated with the ephmInMsgID string.
     //! - Warn the user if the message is not successfully linked.
-    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetState), this->moduleID);
+    this->sunEphmInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEphmInMsgName, sizeof(SpicePlanetStateSimMsg), this->moduleID);
  
     if(sunEphmInMsgId < 0)
     {
@@ -68,7 +70,7 @@ void RadiationPressure::CrossInit()
         std::cerr << this->sunEphmInMsgName << "  :" << __FILE__ << std::endl;
     }
     
-    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusOutputStateData), this->moduleID);
+    this->stateInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->stateInMsgName, sizeof(SCPlusStatesSimMsg), this->moduleID);
     
     if(this->stateInMsgId < 0)
     {
@@ -101,16 +103,16 @@ void RadiationPressure::readInputMessages()
     
     if(this->sunEphmInMsgId >= 0)
     {
-        memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetState));
-        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
+        memset(&this->sunEphmInBuffer, 0x0, sizeof(SpicePlanetStateSimMsg));
+        succesfulRead = SystemMessaging::GetInstance()->ReadMessage(this->sunEphmInMsgId, &localHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->sunEphmInBuffer));
     }
     
     memset(&localHeader, 0x0, sizeof(localHeader));
     this->stateRead = false;
     if(this->stateInMsgId >= 0)
     {
-        memset(&this->stateInBuffer, 0x0, sizeof(SCPlusOutputStateData));
-        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
+        memset(&this->stateInBuffer, 0x0, sizeof(SCPlusStatesSimMsg));
+        this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
     }
 }
 

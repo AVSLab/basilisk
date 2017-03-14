@@ -25,6 +25,12 @@
 
 %include "sys_model.h"
 %include "imu_sensor.h"
+%include "simMessages/scPlusStatesSimMsg.h"
+%include "simMessages/scPlusMassPropsSimMsg.h"
+%include "../SimFswInterfaceMessages/imuSensorIntMsg.h"
+GEN_SIZEOF(SCPlusStatesSimMsg)
+GEN_SIZEOF(SCPlusMassPropsSimMsg)
+GEN_SIZEOF(IMUSensorIntMsg)
 
 %pythoncode %{
 import sys

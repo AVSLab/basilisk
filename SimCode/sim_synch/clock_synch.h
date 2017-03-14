@@ -24,16 +24,13 @@
 #include <vector>
 #include "_GeneralModuleFiles/sys_model.h"
 #include <chrono>
+#include "simMessages/syncClockSimMsg.h"
+
 /*! \addtogroup SimArchGroup
  * @{
  */
 
-//! @brief Output diagnostic structure used for analyzing how the synch is performing.
-typedef struct {
-    double initTimeDelta;       //!< s Time remaining in synch frame on arrival
-    double finalTimeDelta;      //!< s Time remaining in synch frame on departure
-    uint64_t overrunCounter;    //!< (-) Indicator of how many times we've missed the synch frame
-}SynchClockOutput;
+
 
 //!@brief The clock synchronization module is used to slave the simulation to realtime.
 /*!  The module is controlled by specifying an acceleration factor which can be adjusted 
@@ -50,7 +47,7 @@ public:
 public:
     bool timeInitialized;        //!< (-) Number of output state buffers in msg
 	double accelFactor;          //!< (-) Factor used to accelerate sim-time relative to clock
-    SynchClockOutput outputData; //!< (-) Output data for the synch module
+    SynchClockSimMsg outputData; //!< (-) Output data for the synch module
     std::string clockOutputName; //!< (-) Name of the output message that we are using
     uint64_t outputBufferCount;  //!< (-) Count on the number of output buffers that we have
     int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer

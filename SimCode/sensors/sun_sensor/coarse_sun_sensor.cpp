@@ -20,7 +20,6 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
-#include "../ADCSAlgorithms/sensorInterfaces/CSSSensorData/cssComm.h"
 #include <math.h>
 #include <iostream>
 #include <cstring>
@@ -120,8 +119,8 @@ void CoarseSunSensor::SelfInit()
     if(OutputDataMsg != "")
     {
         OutputDataID = SystemMessaging::GetInstance()->
-            CreateNewMessage(OutputDataMsg, sizeof(CSSRawOutputData),
-            OutputBufferCount, "CSSRawOutputData", moduleID);
+            CreateNewMessage(OutputDataMsg, sizeof(CSSRawDataSimMsg),
+            OutputBufferCount, "CSSRawDataSimMsg", moduleID);
     }
 }
 
@@ -145,9 +144,9 @@ bool CoarseSunSensor::LinkMessages()
     //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
     InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
-        sizeof(SpicePlanetState), moduleID);
+        sizeof(SpicePlanetStateSimMsg), moduleID);
     InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusOutputStateData), moduleID);
+        sizeof(SCPlusStatesSimMsg), moduleID);
     
     //! - If both messages are valid, return true, otherwise warnd and return false
     if(InputSunID >= 0 && InputStateID >= 0)
@@ -170,19 +169,19 @@ void CoarseSunSensor::readInputMessages()
     //! Begin Method Steps
     
     //! - Zero ephemeris information
-    memset(&SunData, 0x0, sizeof(SpicePlanetState));
-    memset(&StateCurrent, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&SunData, 0x0, sizeof(SpicePlanetStateSimMsg));
+    memset(&StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(InputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
-                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
+                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
     if(InputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
 }
 
@@ -251,14 +250,14 @@ void CoarseSunSensor::scaleSensorValues()
 void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
 {
     //! Begin Method Steps
-    CSSRawOutputData LocalMessage;
+    CSSRawDataSimMsg LocalMessage;
     //! - Zero the output message
-    memset(&LocalMessage, 0x0, sizeof(CSSRawOutputData));
+    memset(&LocalMessage, 0x0, sizeof(CSSRawDataSimMsg));
     //! - Set the outgoing data to the scaled computation
     LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
     SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
-                                                 sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
+                                                 sizeof(CSSRawDataSimMsg), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 /*! This method is called at a specified rate by the architecture.  It makes the 
     calls to compute the current sun information and write the output message for 
@@ -285,10 +284,8 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     sensor list.*/
 CSSConstellation::CSSConstellation()
 {
-    outputBuffer = NULL;
     sensorList.clear();
     outputBufferCount = 2;
-    maxNumCSSSensors = MAX_NUM_CSS_SENSORS;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
@@ -308,13 +305,13 @@ void CSSConstellation::SelfInit()
     {
         it->SelfInit();
     }
-    outputBuffer = new CSSRawOutputData[MAX_NUM_CSS_SENSORS];
-    memset(outputBuffer, 0x0, MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData));
+
+    memset(&outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSRawOutputData)*maxNumCSSSensors, outputBufferCount,
-        "CSSRawOutputData", moduleID);
+        sizeof(CSSArraySensorIntMsg), outputBufferCount,
+        "CSSRawDataSimMsg", moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
@@ -342,8 +339,8 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
         it->computeTrueOutput();
         it->applySensorErrors();
         it->scaleSensorValues();
-        outputBuffer[it - sensorList.begin()].OutputData = it->sensedValue;
+        outputBuffer.CosValue[it - sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
-                                                 MAX_NUM_CSS_SENSORS*sizeof(CSSRawOutputData), reinterpret_cast<uint8_t *>(outputBuffer));
+                                                 sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t *>(&outputBuffer));
 }

@@ -72,7 +72,7 @@ TotalSim.AddModelToTask("sNavTestTask", sNavObject)
 TotalSim.TotalSim.CreateNewMessage("inertial_state_output", 25*8, 2)
 TotalSim.TotalSim.CreateNewMessage("sun_planet_data", 7*8+64, 2)
 
-SpiceMessage = spice_interface.SpicePlanetState()
+SpiceMessage = spice_interface.SpicePlanetStateSimMsg()
 StateMessage = six_dof_eom.OutputStateData()
 
 vehPosition = [10000.0, 0.0, 0.0]

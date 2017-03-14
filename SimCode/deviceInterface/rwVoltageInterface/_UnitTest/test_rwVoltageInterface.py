@@ -100,7 +100,7 @@ def run(show_plots, voltage):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    voltageData = rwVoltageInterface.rwVoltageInputMessage()
+    voltageData = rwVoltageInterface.RWArrayVoltageIntMsg()
     voltageData.voltage = [voltage, voltage+1.0, voltage+1.5]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,

@@ -45,7 +45,6 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
 import star_tracker
-import spacecraftPlus
 import sim_model
 import RigidBodyKinematics as rbk
 import spice_interface
@@ -105,7 +104,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     setRandomWalk(StarTracker)
 
     # configure module input message
-    OutputStateData = spacecraftPlus.SCPlusOutputStateData()
+    OutputStateData = star_tracker.SCPlusStatesSimMsg()
     OutputStateData.r_BN_N = [0,0,0]
     OutputStateData.v_BN_N = [0,0,0]
     OutputStateData.sigma_BN = np.array([0,0,0])
@@ -114,7 +113,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     OutputStateData.TotalAccumDVBdy = [0,0,0]
     OutputStateData.MRPSwitchCount = 0
 
-    SpiceTimeOutput = spice_interface.SpiceTimeOutput()
+    SpiceTimeOutput = spice_interface.SpiceTimeSimMsg()
     SpiceTimeOutput.J2000Current = 0        # s Current J2000 elapsed time double
     SpiceTimeOutput.JulianDateCurrent = 0   # s Current JulianDate double
     SpiceTimeOutput.GPSSeconds = 0          # s Current GPS seconds double
@@ -122,7 +121,7 @@ def unitSimStarTracker(show_plots, useFlag, testCase):
     SpiceTimeOutput.GPSRollovers = 0      # -- Count on the number of GPS rollovers uint64_t
 
     # get module output fields and lengths
-    StarTrackerOutput = star_tracker.StarTrackerHWOutput()
+    StarTrackerOutput = star_tracker.STSensorIntMsg()
     fieldNames = list()
     fieldLengths = list()
     for fieldName in dir(StarTrackerOutput):

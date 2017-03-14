@@ -28,17 +28,19 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
 #include "architecture/messaging/system_messaging.h"
-#include "dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "dynamics/reactionWheels/reactionWheelStateEffector.h"
 #include "dynamics/Thrusters/thrusterDynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "dynamics/_GeneralModuleFiles/gravityEffector.h"
 #include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_planet_state.h"
 #include "environment/spice/spice_interface.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
 #include "architecture/asio/boost_communication/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
+#include "simMessages/rwConfigSimMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/thrOutputSimMsg.h"
+#include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/spiceTimeSimMsg.h"
 
 #define IP_BASE_PORT         50000
 #define MAX_CONNECT_ATTEMPTS 5
@@ -93,30 +95,30 @@ private:
     std::string UTCCalInit;
     std::string stateInMsgName;
     uint64_t stateInMsgId;
-    SCPlusOutputStateData stateInMsgBuffer;
+    SCPlusStatesSimMsg stateInMsgBuffer;
     std::string sunEphmInMsgName;
     uint64_t sunEphmInMsgId;
-    SpicePlanetState sunEphmInMsgBuffer;
+    SpicePlanetStateSimMsg sunEphmInMsgBuffer;
     
     std::vector<std::string> planetInMsgNames;
     std::vector<uint64_t> planetInMsgIds;
-    std::vector<SpicePlanetState> planets;
+    std::vector<SpicePlanetStateSimMsg> planets;
     
     std::string centralBodyInMsgName;
     uint64_t centralBodyInMsgId;
-    SpicePlanetState centralBodyInMsgBuffer;
+    SpicePlanetStateSimMsg centralBodyInMsgBuffer;
     std::string spiceTimeDataInMsgName;
     uint64_t spiceTimeDataInMsgId;
-    SpiceTimeOutput spiceTimeDataInMsgBuffer;
+    SpiceTimeSimMsg spiceTimeDataInMsgBuffer;
 //    std::vector<GravBodyData> m_gravityBodies;
 
     std::vector<std::string> rwInMsgNames;
     std::vector<uint64_t> rwInMsgIds;
-    std::vector<ReactionWheelConfigData> reactionWheels;
+    std::vector<RWConfigSimMsg> reactionWheels;
     
     std::vector<std::string> thrusterInMsgNames;
     std::vector<uint64_t> thrusterInMsgIds;
-    std::vector<ThrusterOutputData> thrusters;
+    std::vector<THROutputSimMsg> thrusters;
 };
 
 

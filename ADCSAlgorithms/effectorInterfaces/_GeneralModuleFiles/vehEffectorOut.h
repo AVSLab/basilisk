@@ -21,7 +21,7 @@
 #define _VEH_EFFECTOR_OUT_H_
 
 #include <stdint.h>
-#include "../ADCSAlgorithms/vehicleConfigData/vehicleConfigData.h"
+#include "../../SimFswInterface/macroDefinitions.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

@@ -37,10 +37,11 @@ namespace std {
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "../_GeneralModuleFiles/gravityEffector.h"
 %include "spacecraftPlus.h"
-%include "spacecraftPlusMsg.h"
+%include "simMessages/scPlusStatesSimMsg.h"
+%include "simMessages/scPlusMassPropsSimMsg.h"
 %include "hubEffector.h"
-GEN_SIZEOF(SCPlusOutputStateData)
-GEN_SIZEOF(SCPlusMassPropsData)
+GEN_SIZEOF(SCPlusStatesSimMsg)
+GEN_SIZEOF(SCPlusMassPropsSimMsg)
 
 %pythoncode %{
 import sys

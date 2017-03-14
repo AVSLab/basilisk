@@ -50,7 +50,7 @@ def create(
     global rwList
 
     # create the blank RW object
-    RW = vehicleConfigData.RWConfigurationElement()
+    RW = vehicleConfigData.RWConfigElementFswMsg()
 
     norm = numpy.linalg.norm(gsHat_S)
     if norm > 1e-10:
@@ -84,7 +84,7 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
         JsList.extend([rw.Js])
         uMaxList.extend([rw.uMax])
 
-    rwConfigParams = rwConfigData.RWConfigParams()
+    rwConfigParams = rwConfigData.RWArrayConfigFswMsg()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
     rwConfigParams.uMax = uMaxList

@@ -40,10 +40,10 @@ SimpleNav::SimpleNav()
     this->AMatrix.clear();
     this->PMatrix.clear();
     this->prevTime = 0;
-    memset(&estAttState, 0x0, sizeof(NavAttOut));
-    memset(&trueAttState, 0x0, sizeof(NavAttOut));
-    memset(&estTransState, 0x0, sizeof(NavTransOut));
-    memset(&trueTransState, 0x0, sizeof(NavTransOut));
+    memset(&estAttState, 0x0, sizeof(NavAttIntMsg));
+    memset(&trueAttState, 0x0, sizeof(NavAttIntMsg));
+    memset(&estTransState, 0x0, sizeof(NavTransIntMsg));
+    memset(&trueTransState, 0x0, sizeof(NavTransIntMsg));
     return;
 }
 
@@ -72,11 +72,11 @@ void SimpleNav::SelfInit()
     std::vector<double>::iterator it;
     //! - Create a new message for the output simple nav state data
     outputAttID = SystemMessaging::GetInstance()->
-        CreateNewMessage(outputAttName, sizeof(NavAttOut), outputBufferCount,
-        "NavAttOut", moduleID);
+        CreateNewMessage(outputAttName, sizeof(NavAttIntMsg), outputBufferCount,
+        "NavAttIntMsg", moduleID);
     outputTransID = SystemMessaging::GetInstance()->
-    CreateNewMessage(outputTransName, sizeof(NavTransOut), outputBufferCount,
-                     "NavTransOut", moduleID);
+    CreateNewMessage(outputTransName, sizeof(NavTransIntMsg), outputBufferCount,
+                     "NavTransIntMsg", moduleID);
 
     //! - Initialize the propagation matrix to default values for use in update
     AMatrix.clear();
@@ -122,7 +122,7 @@ void SimpleNav::CrossInit()
     //! - Obtain the ID associated with the input state name and alert if not found.
     inputStateID = SystemMessaging::GetInstance()->
     SystemMessaging::GetInstance()->
-       subscribeToMessage(inputStateName, sizeof(SCPlusOutputStateData), moduleID);
+       subscribeToMessage(inputStateName, sizeof(SCPlusStatesSimMsg), moduleID);
     if(inputStateID < 0)
     {
         std::cerr << "Warning: input state message name: " << inputStateName;
@@ -130,7 +130,7 @@ void SimpleNav::CrossInit()
     }
     //! - Obtain the ID associated with the input Sun name and alert if not found.
     inputSunID =SystemMessaging::GetInstance()->
-    subscribeToMessage(inputSunName, sizeof(SpicePlanetState), moduleID);
+    subscribeToMessage(inputSunName, sizeof(SpicePlanetStateSimMsg), moduleID);
     if(inputSunID < 0)
     {
         std::cerr << "Warning: input Sun message name: " << inputSunName;
@@ -145,17 +145,17 @@ void SimpleNav::readInputMessages()
 {
     //! Begin method steps
     SingleMessageHeader localHeader;
-    memset(&this->sunState, 0x0, sizeof(SpicePlanetState));
-    memset(&this->inertialState, 0x0, sizeof(SCPlusOutputStateData));
+    memset(&this->sunState, 0x0, sizeof(SpicePlanetStateSimMsg));
+    memset(&this->inertialState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
-                                                    sizeof(SCPlusOutputStateData), reinterpret_cast<uint8_t*>(&this->inertialState), moduleID);
+                                                    sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&this->inertialState), moduleID);
     }
     if(inputSunID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputSunID, &localHeader,
-                                                    sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
+                                                    sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->sunState), moduleID);
     }
 }
 
@@ -167,10 +167,10 @@ void SimpleNav::writeOutputMessages(uint64_t Clock)
 {
     //! Begin method steps
     SystemMessaging::GetInstance()->
-    WriteMessage(outputAttID, Clock, sizeof(NavAttOut),
+    WriteMessage(outputAttID, Clock, sizeof(NavAttIntMsg),
                  reinterpret_cast<uint8_t*> (&estAttState), moduleID);
     SystemMessaging::GetInstance()->
-    WriteMessage(outputTransID, Clock, sizeof(NavTransOut),
+    WriteMessage(outputTransID, Clock, sizeof(NavTransIntMsg),
                  reinterpret_cast<uint8_t*> (&estTransState), moduleID);
 }
 
