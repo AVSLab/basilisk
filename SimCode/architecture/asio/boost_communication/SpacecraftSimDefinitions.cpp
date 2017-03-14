@@ -125,11 +125,11 @@ template<> const enumMap<CommandedState_t> enumStrings<CommandedState_t>::data =
 RWSim::RWSim()
 {
     this->state = COMPONENT_OFF;
-    this->u = 0.0;
-    this->maxU = 0.0;
+    this->u_current = 0.0;
+    this->u_max = 0.0;
     this->Omega = 0.0;
     this->Js = 0.0;
-    v3SetZero(this->gs);
+    v3SetZero(this->gsHat_B);
     this->motorTemp1 = 0.0;
     this->motorTemp2 = 0.0;
     this->power = 0.0;

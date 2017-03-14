@@ -121,14 +121,15 @@ void VisMessageInterface::subscribeToMessages()
     // We also need to initialize the spacecraftSim object
     // to accept the number of wheels and thrusters etc.
     this->scSim->reactionWheels.resize(this->rwMsgMap.size());
-    this->scSim->thrusters.resize(this->thursterMsgMap.size());
+    this->scSim->acsThrusters.resize(this->thursterMsgMap.size());
 }
 
 void VisMessageInterface::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
     this->mapMessagesToScSim(CurrentSimNanos);
-    this->openglIo->send(*this->scSim);
+    this->openglIo->setOutputSpacecraft(*this->scSim);
+    this->openglIo->send();
 }
 
 //int OpenGLIO::loadSpiceKernel(char *kernelName, const char *dataPath)
@@ -247,10 +248,10 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     int i;
     for (i = 0; i < this->thrusters.size(); i++)
     {
-        eigenVector3d2CArray(this->thrusters[i].thrusterLocation, this->scSim->thrusters[i].r_B);
-        eigenVector3d2CArray(this->thrusters[i].thrusterDirection, this->scSim->thrusters[i].gt_B);
-        this->scSim->thrusters[i].maxThrust = this->thrusters[i].maxThrust;
-        this->scSim->thrusters[i].level = this->thrusters[i].thrustFactor;
+        eigenVector3d2CArray(this->thrusters[i].thrusterLocation, this->scSim->acsThrusters[i].r_B);
+        eigenVector3d2CArray(this->thrusters[i].thrusterDirection, this->scSim->acsThrusters[i].gt_B);
+        this->scSim->acsThrusters[i].maxThrust = this->thrusters[i].maxThrust;
+        this->scSim->acsThrusters[i].level = this->thrusters[i].thrustFactor;
     }
     
     
@@ -299,15 +300,42 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     {
 //        this->scSim->reactionWheels[i].state = COMPONENT_ON;
         ReactionWheelConfigData rwData = this->reactionWheels.at(i);
-        eigenVector3d2CArray(rwData.rWB_S, this->scSim->reactionWheels[i].rWB_B);
-        eigenVector3d2CArray(rwData.gsHat_S, this->scSim->reactionWheels[i].gsHat_S);
-        eigenVector3d2CArray(rwData.ggHat0_S, this->scSim->reactionWheels[i].ggHat0_S);
-        eigenVector3d2CArray(rwData.gtHat0_S, this->scSim->reactionWheels[i].gtHat0_S);
-        this->scSim->reactionWheels[i].u_current = rwData.u_current;
-        this->scSim->reactionWheels[i].u_max = rwData.u_max;
-        this->scSim->reactionWheels[i].u_min = rwData.u_min;
-        this->scSim->reactionWheels[i].theta = rwData.theta;
+//        eigenVector3d2CArray(rwData.rWB_S, this->scSim->reactionWheels[i].rWB_B);
+//        eigenVector3d2CArray(rwData.gsHat_S, this->scSim->reactionWheels[i].gsHat_S);
+//        eigenVector3d2CArray(rwData.ggHat0_S, this->scSim->reactionWheels[i].ggHat0_S);
+//        eigenVector3d2CArray(rwData.gtHat0_S, this->scSim->reactionWheels[i].gtHat0_S);
+//        this->scSim->reactionWheels[i].u_current = rwData.u_current;
+//        this->scSim->reactionWheels[i].u_max = rwData.u_max;
+//        this->scSim->reactionWheels[i].u_min = rwData.u_min;
+//        this->scSim->reactionWheels[i].theta = rwData.theta;
         this->scSim->reactionWheels[i].Omega = rwData.Omega;
-        this->scSim->reactionWheels[i].Omega_max = 2000.0 * 2 * M_PI / 60;
+//        this->scSim->reactionWheels[i].Omega_max = 2000.0 * 2 * M_PI / 60;
     }
 }
+
+//int OpenGLIO::loadSpiceKernel(char *kernelName, const char *dataPath)
+//{
+    //    uint32_t CharBufferSize = 512;
+    //
+    //    char *fileName = new char[CharBufferSize];
+    //    SpiceChar *name = new SpiceChar[CharBufferSize];
+    //
+    //    //! Begin method steps
+    //    //! - The required calls come from the SPICE documentation.
+    //    //! - The most critical call is furnsh_c
+    //    strcpy(name, "REPORT");
+    //    erract_c("SET", CharBufferSize, name);
+    //    strcpy(fileName, dataPath);
+    //    strcat(fileName, kernelName);
+    //    furnsh_c(fileName);
+    //
+    //    //! - Check to see if we had trouble loading a kernel and alert user if so
+    //    strcpy(name, "DEFAULT");
+    //    erract_c("SET", CharBufferSize, name);
+    //    delete[] fileName;
+    //    delete[] name;
+    //    if(failed_c()) {
+    //        return 1;
+    //    }
+    //    return 0;
+//}
