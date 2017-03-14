@@ -31,8 +31,8 @@
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "VSCMGStateEffector.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "../../simMessages/rwCmdSimMsg.h"
-%include "../../simMessages/rwConfigSimMsg.h"
+%include "../../simMessages/vscmgCmdSimMsg.h"
+%include "../../simMessages/vscmgConfigSimMsg.h"
 %include "../../../SimFswInterfaceMessages/macroDefinitions.h"
 %include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 
@@ -40,8 +40,8 @@
 //%include "hubEffector.h"
 
 namespace std {
-    %template(RWConfigVector) vector<RWConfigSimMsg>;
-	%template(RWCmdVector) vector<RWCmdSimMsg>;
+    %template(VSCMGConfigVector) vector<VSCMGConfigSimMsg>;
+	%template(VSCMGCmdVector) vector<VSCMGCmdSimMsg>;
 }
 GEN_SIZEOF(RWArrayTorqueIntMsg);
 %pythoncode %{

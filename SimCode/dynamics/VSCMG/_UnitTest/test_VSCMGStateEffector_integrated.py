@@ -37,10 +37,42 @@ import sim_model
 import macros
 import gravityEffector
 import spice_interface
-import simIncludeRW
 import VSCMGStateEffector
 
 mpl.rc("figure", figsize=(5.75,4))
+
+rpm2rad = 2.*math.pi/60.
+
+def defaultVSCMG():
+    VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
+    VSCMG.typeName = 'Honeywell_HR16'
+    VSCMG.rWB_S = [[0.],[0.],[0.]]
+    VSCMG.gsHat_S = [[0.],[0.],[0.]]
+    VSCMG.w2Hat0_S = [[0.], [0.], [0.]]
+    VSCMG.w3Hat0_S = [[0.], [0.], [0.]]
+    VSCMG.rWB_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat_B = [[0.],[0.],[0.]]
+    VSCMG.w2Hat0_B = [[0.],[0.],[0.]]
+    VSCMG.w3Hat0_B = [[0.],[0.],[0.]]
+    VSCMG.w2Hat_B = [[0.],[0.],[0.]]
+    VSCMG.w3Hat_B = [[0.],[0.],[0.]]
+    VSCMG.theta = 0.
+    VSCMG.u_current = 0.
+    VSCMG.u_max = 0.2
+    VSCMG.u_min = 0.
+    VSCMG.u_f = 0.
+    VSCMG.Omega = 0.
+    VSCMG.Omega_max = 6000. * rpm2rad
+    VSCMG.Js = 100./VSCMG.Omega_max # 0.159154943092
+    VSCMG.Jt = 0.5*VSCMG.Js # 0.0795774715459
+    VSCMG.Jg = 0.5*VSCMG.Js # 0.0795774715459
+    VSCMG.U_s = 4.8e-06 * 1e4
+    VSCMG.U_d = 1.54e-06 * 1e4
+    VSCMG.mass = 12.
+    VSCMG.linearFrictionRatio = -1
+    VSCMG.RWModel = 0
+    return VSCMG
+
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
@@ -83,39 +115,46 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # add RW devices
-    # The clearRWSetup() is critical if the script is to run multiple times
-    simIncludeRW.clearSetup()
-    simIncludeRW.options.maxMomentum = 100
+
+    VSCMGs = []
+
+    VSCMGs.append(defaultVSCMG())
+    VSCMGs[0].gsHat_S = [[1.0], [0.0], [0.0]]
+    VSCMGs[0].w2Hat0_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[0].w3Hat0_S = [[0.0], [-1.0], [0.0]]
+    VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
+    VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
+
+    VSCMGs.append(defaultVSCMG())
+    VSCMGs[1].gsHat_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[1].w2Hat0_S = [[0.0], [0.0], [-1.0]]
+    VSCMGs[1].w3Hat0_S = [[-1.0], [0.0], [0.0]]
+    VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
+    VSCMGs[1].rWB_S = [[0.0], [0.1], [0.0]]
+
+    VSCMGs.append(defaultVSCMG())
+    VSCMGs[2].gsHat_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[2].w2Hat0_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[2].w3Hat0_S = [[-1.0], [0.0], [0.0]]
+    VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
+    VSCMGs[2].rWB_S = [[0.0], [0.0], [0.1]]
 
     if testCase == 'BalancedWheels':
-        simIncludeRW.options.RWModel = 0
+        VSCMGModel = 0
     elif testCase == 'JitterSimple':
-        simIncludeRW.options.RWModel = 1
+        VSCMGModel = 1
     elif testCase == 'JitterFullyCoupled':
-        simIncludeRW.options.RWModel = 2
+        VSCMGModel = 2
 
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [1,0,0],                # gsHat_S
-            500.,                     # RPM
-            [0.1,0.,0.]
-            )
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [0,1,0],                # gsHat_S
-            200.,                     # RPM
-            [0.,0.1,0.]
-            )
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [0,0,1],                # gsHat_S
-            -150.,                    # RPM
-            [0.,0.,0.1]
-            )
+    for VSCMG in VSCMGs:
+        VSCMG.RWModel = VSCMGModel
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
-    simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwStateEffector.ModelTag = "VSCMGs"
+    for item in VSCMGs:
+        rwStateEffector.AddReactionWheel(item)
+    scObject.addStateEffector(rwStateEffector)
 
     # set RW torque command
     cmdArray = VSCMGStateEffector.RWArrayTorqueIntMsg()
@@ -174,7 +213,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = 0.1
+    stopTime = 5.
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -196,30 +235,31 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-                    [-4020858.6600723616, 7490223.058718186, 5248403.358783435]
-                    ]
+            [-4046317.446006109, 7473345.937334083, 5253480.873774451]
+        ]
 
         trueSigma = [
-                    [0.0019997597306700616, 0.000249530148702714, 2.000437833943989e-07]
-                    ]
+            [0.09973672149864025, 0.011213339971279653, 0.0003115172941344355]
+        ]
 
     elif testCase == 'JitterSimple':
         truePos = [
-                    [-4020858.6600723644, 7490223.058718144, 5248403.358783543]
-                    ]
+            [-4046317.4472558703, 7473345.920433197, 5253480.873665418]
+        ]
 
         trueSigma = [
-                    [0.001999758435418932, 0.00024952781365212277, 1.984173476548283e-07]
-                    ]
+            [0.09925443342446622, 0.010153635701299952, -6.716226879431521e-05]
+        ]
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-                    [-4020858.6600725227, 7490223.058718106, 5248403.358783446]
-                    ]
+            [-4046317.4472384057, 7473345.921374322, 5253480.873495584]
+        ]
 
         trueSigma = [
-                    [0.001999758465936839, 0.00024952947836825925, 1.983624117403241e-07]
-                    ]
+            [0.09926551360276777, 0.010153926978972804, -6.141297232067025e-05]
+        ]
+
 
 
     initialOrbAngMom_N = [
@@ -271,12 +311,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
     thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
 
-    plt.figure(5)
-    plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
-    plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
-    plt.title("Principle Angle")
-    plt.xlabel('Time (s)')
-    plt.ylabel(r'$\theta$ (deg)')
+    # plt.figure(5)
+    # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
+    # plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
+    # plt.title("Principle Angle")
+    # plt.xlabel('Time (s)')
+    # plt.ylabel(r'$\theta$ (deg)')
 
     plt.figure(6)
     plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])

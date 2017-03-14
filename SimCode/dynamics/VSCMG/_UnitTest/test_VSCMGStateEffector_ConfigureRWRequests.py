@@ -53,16 +53,16 @@ def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def writeNewRWCmds(self,u_cmd,numRW):
-    NewRWCmdsVec = VSCMGStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
-    cmds = VSCMGStateEffector.RWCmdSimMsg()
+def writeNewRWCmds(self,u_s_cmd,numRW):
+    NewRWCmdsVec = VSCMGStateEffector.VSCMGCmdVector(numRW) # create standard vector from SWIG template (see .i file)
+    cmds = VSCMGStateEffector.VSCMGCmdSimMsg()
     for i in range(0,numRW):
-        cmds.u_cmd = u_cmd[i]
+        cmds.u_s_cmd = u_s_cmd[i]
         NewRWCmdsVec[i] = cmds # set the data
         self.NewRWCmds = NewRWCmdsVec # set in module
 
 def defaultReactionWheel():
-    RW = VSCMGStateEffector.RWConfigSimMsg()
+    RW = VSCMGStateEffector.VSCMGConfigSimMsg()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]
@@ -139,16 +139,16 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     elif testCase is 'saturation':
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
-        u_cmd = [-1.2,1.5]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_s_cmd = [-1.2,1.5]
+        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [-1.,1.5]
 
     elif testCase is 'minimum':
         RWs[0].u_min = .1
         RWs[1].u_min = .0
-        u_cmd = [-.09,0.0001]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_s_cmd = [-.09,0.0001]
+        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [0.,0.0001]
 
@@ -162,10 +162,10 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
             RWs[i].Omega = Omega[i]
             RWs[i].Omega_max = Omega_max[i]
             RWs[i].linearFrictionRatio = linearFrictionRatio[i]
-        u_cmd = [-1.,0.]
-        writeNewRWCmds(ReactionWheel,u_cmd,len(RWs))
+        u_s_cmd = [-1.,0.]
+        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
 
-        expOut['u_current'] = np.asarray(u_cmd) + np.asarray(u_f)
+        expOut['u_current'] = np.asarray(u_s_cmd) + np.asarray(u_f)
 
     else:
         raise Exception('invalid test case')
