@@ -18,13 +18,13 @@
  */
 
 
-#include "reactionWheelStateEffector.h"
+#include "VSCMGStateEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
 
-ReactionWheelStateEffector::ReactionWheelStateEffector()
+VSCMGStateEffector::VSCMGStateEffector()
 {
 	CallCounts = 0;
 	InputCmds = "reactionwheel_cmds";
@@ -47,12 +47,12 @@ ReactionWheelStateEffector::ReactionWheelStateEffector()
 }
 
 
-ReactionWheelStateEffector::~ReactionWheelStateEffector()
+VSCMGStateEffector::~VSCMGStateEffector()
 {
     return;
 }
 
-void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
+void VSCMGStateEffector::linkInStates(DynParamManager& statesIn)
 {
 	//! - Get access to the hubs sigma, omegaBN_B and velocity needed for dynamic coupling
 	this->hubSigma = statesIn.getStateObject("hubSigma");
@@ -63,7 +63,7 @@ void ReactionWheelStateEffector::linkInStates(DynParamManager& statesIn)
 	return;
 }
 
-void ReactionWheelStateEffector::registerStates(DynParamManager& states)
+void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
     //! - Find number of RWs and number of RWs with jitter
     this->numRWJitter = 0;
@@ -96,7 +96,7 @@ void ReactionWheelStateEffector::registerStates(DynParamManager& states)
     return;
 }
 
-void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
+void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 {
     // - Zero the mass props information because these will be accumulated during this call
     this->effProps.mEff = 0.;
@@ -172,7 +172,7 @@ void ReactionWheelStateEffector::updateEffectorMassProps(double integTime)
 	return;
 }
 
-void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
+void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr)
 {
 	Eigen::Vector3d omegaLoc_BN_B;
 	Eigen::Vector3d tempF;
@@ -243,7 +243,7 @@ void ReactionWheelStateEffector::updateContributions(double integTime, Eigen::Ma
 	return;
 }
 
-void ReactionWheelStateEffector::computeDerivatives(double integTime)
+void VSCMGStateEffector::computeDerivatives(double integTime)
 {
 	Eigen::MatrixXd OmegasDot(this->numRW,1);
     Eigen::MatrixXd thetasDot(this->numRWJitter,1);
@@ -287,7 +287,7 @@ void ReactionWheelStateEffector::computeDerivatives(double integTime)
     }
 }
 
-void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
+void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr)
 {
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
@@ -319,7 +319,7 @@ void ReactionWheelStateEffector::updateEnergyMomContributions(double integTime, 
  that the overall model is ready
  @return void
  */
-void ReactionWheelStateEffector::SelfInit()
+void VSCMGStateEffector::SelfInit()
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
 	RWCmdSimMsg RWCmdInitializer;
@@ -353,7 +353,7 @@ void ReactionWheelStateEffector::SelfInit()
  message is not successfully linked, it will warn the user.
  @return void
  */
-void ReactionWheelStateEffector::CrossInit()
+void VSCMGStateEffector::CrossInit()
 {
     //! massProps doesn't exist anymore, hardcode structure to body for now (NEEDS TO CHANGE)
     Eigen::Matrix3d dcm_BS;             /* structure to body frame DCM */
@@ -410,7 +410,7 @@ void ReactionWheelStateEffector::CrossInit()
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
-void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
+void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
 	RWConfigSimMsg tmpRW;
@@ -457,7 +457,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
  associated command structure for operating the RWs.
  @return void
  */
-void ReactionWheelStateEffector::ReadInputs()
+void VSCMGStateEffector::ReadInputs()
 {
 //
 	std::vector<double>::iterator CmdIt;
@@ -498,7 +498,7 @@ void ReactionWheelStateEffector::ReadInputs()
 // @return void
 // @param CurrentTime The current simulation time converted to a double
 // */
-void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
+void VSCMGStateEffector::ConfigureRWRequests(double CurrentTime)
 {
 	//! Begin method steps
 	std::vector<RWCmdSimMsg>::iterator CmdIt;
@@ -556,7 +556,7 @@ void ReactionWheelStateEffector::ConfigureRWRequests(double CurrentTime)
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
-void ReactionWheelStateEffector::UpdateState(uint64_t CurrentSimNanos)
+void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	//! Begin method steps
 	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics

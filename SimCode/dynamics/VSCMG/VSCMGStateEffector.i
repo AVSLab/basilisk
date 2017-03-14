@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module reactionWheelStateEffector
+%module VSCMGStateEffector
 %{
-   #include "reactionWheelStateEffector.h"
+   #include "VSCMGStateEffector.h"
 %}
 
 %include "swig_common_model.i"
@@ -29,7 +29,7 @@
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
 %include "../_GeneralModuleFiles/dynamicObject.h"
-%include "reactionWheelStateEffector.h"
+%include "VSCMGStateEffector.h"
 %include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "../../simMessages/rwCmdSimMsg.h"
 %include "../../simMessages/rwConfigSimMsg.h"

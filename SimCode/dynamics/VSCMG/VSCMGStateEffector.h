@@ -18,8 +18,8 @@
  */
 
 
-#ifndef REACTIONWHEELSTATEEFFECTOR_H
-#define REACTIONWHEELSTATEEFFECTOR_H
+#ifndef VSCMGSTATEEFFECTOR_H
+#define VSCMGSTATEEFFECTOR_H
 
 #include "../_GeneralModuleFiles/stateEffector.h"
 #include "../_GeneralModuleFiles/dynParamManager.h"
@@ -44,10 +44,10 @@
 
 
 
-class ReactionWheelStateEffector:  public SysModel, public StateEffector {
+class VSCMGStateEffector:  public SysModel, public StateEffector {
 public:
-    ReactionWheelStateEffector();
-	~ReactionWheelStateEffector();
+    VSCMGStateEffector();
+	~VSCMGStateEffector();
 	void registerStates(DynParamManager& states);
 	void linkInStates(DynParamManager& states);
 	void updateContributions(double integTime, Eigen::Matrix3d & matrixAcontr, Eigen::Matrix3d & matrixBcontr, Eigen::Matrix3d & matrixCcontr, Eigen::Matrix3d & matrixDcontr, Eigen::Vector3d & vecTranscontr, Eigen::Vector3d & vecRotcontr);

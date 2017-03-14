@@ -38,7 +38,7 @@ import macros
 import gravityEffector
 import spice_interface
 import simIncludeRW
-import reactionWheelStateEffector
+import VSCMGStateEffector
 
 mpl.rc("figure", figsize=(5.75,4))
 
@@ -53,11 +53,11 @@ mpl.rc("figure", figsize=(5.75,4))
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_reactionWheelIntegratedTest(show_plots,useFlag,testCase):
-    [testResults, testMessage] = reactionWheelIntegratedTest(show_plots,useFlag,testCase)
+def test_VSCMGIntegratedTest(show_plots,useFlag,testCase):
+    [testResults, testMessage] = VSCMGIntegratedTest(show_plots,useFlag,testCase)
     assert testResults < 1, testMessage
 
-def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
+def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -114,11 +114,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
             )
 
     # create RW object container and tie to spacecraft object
-    rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
+    rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # set RW torque command
-    cmdArray = reactionWheelStateEffector.RWArrayTorqueIntMsg()
+    cmdArray = VSCMGStateEffector.RWArrayTorqueIntMsg()
     cmdArray.motorTorque = [0.20, 0.10, -0.50] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
@@ -331,4 +331,4 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    reactionWheelIntegratedTest(True,False,'BalancedWheels')
+    VSCMGIntegratedTest(True,False,'BalancedWheels')

@@ -43,7 +43,7 @@ import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import macros
-import reactionWheelStateEffector
+import VSCMGStateEffector
 import sim_model
 import RigidBodyKinematics as rbk
 import spacecraftPlus
@@ -54,15 +54,15 @@ def listStack(vec,simStopTime,unitProcRate):
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
 def writeNewRWCmds(self,u_cmd,numRW):
-    NewRWCmdsVec = reactionWheelStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
-    cmds = reactionWheelStateEffector.RWCmdSimMsg()
+    NewRWCmdsVec = VSCMGStateEffector.RWCmdVector(numRW) # create standard vector from SWIG template (see .i file)
+    cmds = VSCMGStateEffector.RWCmdSimMsg()
     for i in range(0,numRW):
         cmds.u_cmd = u_cmd[i]
         NewRWCmdsVec[i] = cmds # set the data
         self.NewRWCmds = NewRWCmdsVec # set in module
 
 def defaultReactionWheel():
-    RW = reactionWheelStateEffector.RWConfigSimMsg()
+    RW = VSCMGStateEffector.RWConfigSimMsg()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]
@@ -108,19 +108,19 @@ def asEigen(v):
 ])
 
 # provide a unique test method name, starting with test_
-def test_unitSimReactionWheel(show_plots, useFlag, testCase):
+def test_unitSimVSCMG(show_plots, useFlag, testCase):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimReactionWheel(show_plots, useFlag, testCase)
+    [testResults, testMessage] = unitSimVSCMG(show_plots, useFlag, testCase)
     assert testResults < 1, testMessage
 
 
-def unitSimReactionWheel(show_plots, useFlag, testCase):
+def unitSimVSCMG(show_plots, useFlag, testCase):
     testFail = False
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
 
     # configure module
-    ReactionWheel = reactionWheelStateEffector.ReactionWheelStateEffector()
+    ReactionWheel = VSCMGStateEffector.VSCMGStateEffector()
     ReactionWheel.ModelTag = "ReactionWheel"
 
     numRW = 2
@@ -211,7 +211,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
 # This statement below ensures that the unit test script can be run as a
 # stand-along python script
 if __name__ == "__main__":
-    test_unitSimReactionWheel(
+    test_unitSimVSCMG(
         False, # show_plots
         False, # useFlag
         'friction' # testCase
