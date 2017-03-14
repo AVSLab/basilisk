@@ -113,6 +113,11 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
             [0.,0.,0.1]
             )
 
+    # increase HR16 imbalance for test
+    for rw in simIncludeRW.rwList:
+        rw.U_d *= 1e4
+        rw.U_s *= 1e4
+
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
@@ -174,7 +179,7 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = 0.1
+    stopTime = 5.
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -196,29 +201,29 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-                    [-4020858.6600723616, 7490223.058718186, 5248403.358783435]
+                    [-4046317.446006109, 7473345.937334083, 5253480.873774451]
                     ]
 
         trueSigma = [
-                    [0.0019997597306700616, 0.000249530148702714, 2.000437833943989e-07]
+                    [0.09973672149864025, 0.011213339971279653, 0.0003115172941344355]
                     ]
 
     elif testCase == 'JitterSimple':
         truePos = [
-                    [-4020858.6600723644, 7490223.058718144, 5248403.358783543]
+                    [-4046317.4472558703, 7473345.920433197, 5253480.873665418]
                     ]
 
         trueSigma = [
-                    [0.001999758435418932, 0.00024952781365212277, 1.984173476548283e-07]
+                    [0.09925443342446622, 0.010153635701299952, -6.716226879431521e-05]
                     ]
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-                    [-4020858.6600725227, 7490223.058718106, 5248403.358783446]
+                    [-4046317.4472384057, 7473345.921374322, 5253480.873495584]
                     ]
 
         trueSigma = [
-                    [0.001999758465936839, 0.00024952947836825925, 1.983624117403241e-07]
+                    [0.09926551360276777, 0.010153926978972804, -6.141297232067025e-05]
                     ]
 
 
@@ -271,12 +276,12 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
     p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
     thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
 
-    plt.figure(5)
-    plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
-    plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
-    plt.title("Principle Angle")
-    plt.xlabel('Time (s)')
-    plt.ylabel(r'$\theta$ (deg)')
+    # plt.figure(5)
+    # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
+    # plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
+    # plt.title("Principle Angle")
+    # plt.xlabel('Time (s)')
+    # plt.ylabel(r'$\theta$ (deg)')
 
     plt.figure(6)
     plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])

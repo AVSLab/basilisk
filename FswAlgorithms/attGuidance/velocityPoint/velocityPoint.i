@@ -31,8 +31,8 @@
 %constant void Reset_velocityPoint(void*, uint64_t, uint64_t);
 %ignore Reset_velocityPoint;
 %include "velocityPoint.h"
-%include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
-%include "../../SimFswInterfaceMessages/navTransIntMsg.h"
+%include "simFswInterfaceMessages/ephemerisIntMsg.h"
+%include "simFswInterfaceMessages/navTransIntMsg.h"
 %include "../../fswMessages/attRefFswMsg.h"
 GEN_SIZEOF(velocityPointConfig);
 GEN_SIZEOF(EphemerisIntMsg);

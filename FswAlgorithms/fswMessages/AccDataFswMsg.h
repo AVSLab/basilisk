@@ -22,7 +22,7 @@
 
 #define MAX_ACC_BUF_PKT 25
 
-#import "fswMessages/AccPktDataFswMsg.h"
+#include "fswMessages/AccPktDataFswMsg.h"
 
 
 /*! @brief Structure used to define accelerometer package data */

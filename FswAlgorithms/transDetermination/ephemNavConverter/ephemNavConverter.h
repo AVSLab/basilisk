@@ -21,8 +21,8 @@
 #define _EPHEM_NAV_CONVERTER_H_
 
 #include "messaging/static_messaging.h"
-#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
-#include "../SimFswInterfaceMessages/navTransIntMsg.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/navTransIntMsg.h"
 
 /*! @brief Top level structure for the converter that takes an 
     ephemeris output message and converts it over to a translational 

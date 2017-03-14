@@ -24,8 +24,8 @@
 #include <stdint.h>
 
 /* Required module input messages */
-#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
-#include "../SimFswInterfaceMessages/navTransIntMsg.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup

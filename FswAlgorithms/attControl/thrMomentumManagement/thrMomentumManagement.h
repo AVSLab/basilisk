@@ -25,8 +25,8 @@
 #include "vehicleConfigData/vehicleConfigData.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 /*! \addtogroup ADCSAlgGroup
  * @{

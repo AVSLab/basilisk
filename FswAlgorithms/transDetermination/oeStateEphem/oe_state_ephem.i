@@ -35,7 +35,7 @@ GEN_SIZEOF(TDBVehicleClockCorrelationFswMsg)
 GEN_SIZEOF(EphemerisIntMsg)
 %include "oeStateEphem.h"
 %include "../../fswMessages/TDBVehicleClockCorrelationFswMsg.h"
-%include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
+%include "simFswInterfaceMessages/ephemerisIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

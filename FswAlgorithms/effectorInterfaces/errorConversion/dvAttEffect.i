@@ -31,7 +31,7 @@
 %constant void Reset_dvAttEffect(void*, uint64_t, uint64_t);
 %ignore Reset_dvAttEffect;
 STRUCTASLIST(ThrustGroupData)
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(effPairs);
 GEN_SIZEOF(ThrustGroupData);
 GEN_SIZEOF(dvAttEffectConfig);

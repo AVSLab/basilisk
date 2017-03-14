@@ -25,9 +25,9 @@
 
 %include "sys_model.h"
 %include "rwVoltageInterface.h"
-%include "../../../SimFswInterfaceMessages/rwArrayVoltageIntMsg.h"
-%include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
-%include "../../../SimFswInterfaceMessages/macroDefinitions.h"
+%include "simFswInterfaceMessages/rwArrayVoltageIntMsg.h"
+%include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+%include "simFswInterfaceMessages/macroDefinitions.h"
 
 GEN_SIZEOF(RWArrayVoltageIntMsg);
 %pythoncode %{
