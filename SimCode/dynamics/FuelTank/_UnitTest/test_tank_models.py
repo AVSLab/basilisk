@@ -477,4 +477,5 @@ def test_tankModelCentrifugalBurn(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_tankModelTest(show_plots)
+    raw_input("Waiting for debugger attach...")
+    test_tankModelEmptying(False)

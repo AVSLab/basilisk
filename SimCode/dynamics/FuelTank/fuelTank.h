@@ -83,13 +83,32 @@ struct FuelTankModelEmptying_t :
 	void computeTankProps(double mFuel, double mDotFuel) {
 		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit);
 		double rtank = radiusTankInit;
-		std::function<double(double)> f = [rhoFuel, rtank](double thetaStar)-> double {return 2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(1 + 3.0 / 2.0*cos(thetaStar) - 1.0 / 2.0*pow(cos(thetaStar), 3)); };
-		std::function<double(double)> fPrime = [rhoFuel, rtank](double thetaStar)-> double {return  2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(-3.0 / 2.0*sin(thetaStar) + 3.0 / 2.0*pow(cos(thetaStar), 2)*sin(thetaStar)); };
-		double thetaStar = newtonRaphsonSolve(0.0, 1E-10, f, fPrime);
-		double thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
-		double thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar)/std::sin(thetaStar);
-		double volume = 2.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
-		double deltaRadiusK3 = M_PI*std::pow(radiusTankInit, 4) / (4.0*volume)*(2.0*std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1);
+		double thetaStar, thetaDotStar, thetaDDotStar;
+		double volume;
+		double deltaRadiusK3;
+
+		if (mFuel != propMassInit) {
+			std::function<double(double)> f = [rhoFuel, rtank](double thetaStar)-> double {
+				return 2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(1 + 3.0 / 2.0*cos(thetaStar) - 1.0 / 2.0*pow(cos(thetaStar), 3));
+			};
+			std::function<double(double)> fPrime = [rhoFuel, rtank](double thetaStar)-> double {
+				return  2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(-3.0 / 2.0*sin(thetaStar) + 3.0 / 2.0*pow(cos(thetaStar), 2)*sin(thetaStar));
+			};
+
+			thetaStar = newtonRaphsonSolve(M_PI/2.0, 1E-14, f, fPrime);
+			thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
+			thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar) / std::sin(thetaStar);
+
+		}
+		else {
+			thetaStar = 0.0;
+			thetaDotStar = 0.0;
+			thetaDDotStar = 0.0;
+		}
+		printf("t %f, td %f, tdd %f", thetaStar, thetaDotStar, thetaDDotStar);
+		volume = 2.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
+		deltaRadiusK3 = M_PI*std::pow(radiusTankInit, 4) / (4.0*volume)*(2.0*std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1);
+
 		r_TB_B = r_TB_BInit + deltaRadiusK3*k3;
 		ITankPntT_B.setZero();
 		IPrimeTankPntT_B.setZero();

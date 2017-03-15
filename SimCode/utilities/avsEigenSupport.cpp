@@ -200,7 +200,9 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
 double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime) {
 	double currentEstimate = initialEstimate;
 	for (int i = 0; i < 100 && abs(f(currentEstimate)) > accuracy; i++) { //Could loop forever here
-		currentEstimate = currentEstimate - f(currentEstimate) / fPrime(currentEstimate);
+		double functionVal = f(currentEstimate);
+		double functionDeriv = fPrime(currentEstimate);
+		currentEstimate = currentEstimate - functionVal/functionDeriv;
 	}
 	return currentEstimate;
 }

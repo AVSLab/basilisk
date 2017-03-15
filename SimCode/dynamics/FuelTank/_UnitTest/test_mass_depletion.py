@@ -52,7 +52,7 @@ def massDepletionTest(show_plots):
     [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
     assert testResults < 1, testMessage
 
-def test_massDepletionTest(show_plots=True):
+def test_massDepletionTest(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -220,5 +220,136 @@ def test_massDepletionTest(show_plots=True):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def axisChangeHelper(r_BcB_B):
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+    
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+    thrusterCommandName = "acs_thruster_cmds"
+    
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+    
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # add thruster devices
+    # The clearThrusterSetup() is critical if the script is to run multiple times
+    simIncludeThruster.clearSetup()
+    simIncludeThruster.create(
+        'TEST_Thruster',
+        [1,0,0] + [i[0] for i in r_BcB_B],                # location in S frame
+        [0,1,0]                 # direction in S frame
+    )
+
+    # create thruster object container and tie to spacecraft object
+    thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
+
+    unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
+    unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
+    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+    tankModel.propMassInit = 40.0
+    tankModel.r_TB_BInit = r_BcB_B
+    tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
+
+    # Add tank and thruster
+    scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
+    simIncludeThruster.addToSpacecraft(  "Thrusters",
+                                       thrustersDynamicEffector,
+                                       scObject, unitTestSim.fuelTankStateEffector)
+
+    # set thruster commands
+    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+    msgSize = ThrustMessage.getStructSize()
+    ThrustMessage.OnTimeRequest = 10.0
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
+    unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, thrustersDynamicEffector)
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+    
+    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+    unitTestSim.earthGravBody.isCentralBody = True
+    unitTestSim.earthGravBody.useSphericalHarmParams = False
+
+    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData.J2000Current = 0.0
+    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    earthEphemData.PlanetName = "earth"
+
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    msgSize = earthEphemData.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+
+    unitTestSim.InitializeSimulation()
+
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+
+    posRef = scObject.dynManager.getStateObject("hubPosition")
+    velRef = scObject.dynManager.getStateObject("hubVelocity")
+    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
+    omegaRef = scObject.dynManager.getStateObject("hubOmega")
+
+    posRef.setState([[-4020338.690396649-r_BcB_B[0][0]],	[7490566.741852513-r_BcB_B[1][0]],	[5248299.211589362-r_BcB_B[2][0]]])
+    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
+    sigmaRef.setState([[0.1], [0.2], [-0.3]])
+    omegaRef.setState([[0.001], [-0.01], [0.03]])
+
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = r_BcB_B
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    stopTime = 60.0*10.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+
+    dataPos = posRef.getState()
+    dataSigma = sigmaRef.getState()
+    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
+    return (dataPos, dataSigma)
+    
+
+def test_axisChange(showPlots=False):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+    
+    dataPos1, dataSigma1 = axisChangeHelper([[0.0], [0.0], [0.0]])
+    dataPos2, dataSigma2 = axisChangeHelper([[0.5], [0.0], [0.0]])
+
+    print dataPos1
+    print dataPos2
+    print (dataPos1[0][1] - dataPos2[0][1])**2 + (dataPos1[0][2] - dataPos2[0][2])**2 + (dataPos1[0][3] - dataPos2[0][3])**2
+    print dataSigma1
+    print dataSigma2
+    print (dataSigma1[0][1] - dataSigma2[0][1])**2 + (dataSigma1[0][2] - dataSigma2[0][2])**2 + (dataSigma1[0][3] - dataSigma2[0][3])**2
+    
+
 if __name__ == "__main__":
-    test_thrusterIntegratedTest(False)
+    test_axisChange()
