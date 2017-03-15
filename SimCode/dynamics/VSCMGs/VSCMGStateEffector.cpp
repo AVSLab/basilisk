@@ -451,15 +451,20 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.gsHat_S = it->gsHat_S;
 		tmpVSCMG.w2Hat0_S = it->w2Hat0_S;
 		tmpVSCMG.w3Hat0_S = it->w3Hat0_S;
-		tmpVSCMG.theta = it->theta;
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;
 		tmpVSCMG.u_s_min = it->u_s_min;
 		tmpVSCMG.u_s_f = it->u_s_f;
+		tmpVSCMG.u_g_current = it->u_g_current;
+		tmpVSCMG.u_g_max = it->u_g_max;
+		tmpVSCMG.u_g_min = it->u_g_min;
+		tmpVSCMG.u_g_f = it->u_g_f;
+		tmpVSCMG.theta = it->theta;
 		tmpVSCMG.Omega = it->Omega;
 		tmpVSCMG.Omega_max = it->Omega_max;
 		tmpVSCMG.gamma = it->gamma;
 		tmpVSCMG.gammaDot = it->gammaDot;
+		tmpVSCMG.gammaDot_max = it->gammaDot_max;
 		tmpVSCMG.Js = it->Js;
 		tmpVSCMG.U_s = it->U_s;
 		tmpVSCMG.U_d = it->U_d;
@@ -495,7 +500,8 @@ void VSCMGStateEffector::ReadInputs()
 
 	//! - Zero the command buffer and read the incoming command array
 	SingleMessageHeader LocalHeader;
-	memset(IncomingCmdBuffer.wheelTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg));
+	memset(IncomingCmdBuffer.wheelTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg)/2);
+	memset(IncomingCmdBuffer.gimbalTorque, 0x0, sizeof(VSCMGArrayTorqueIntMsg)/2);
 	SystemMessaging::GetInstance()->ReadMessage(CmdsInMsgID, &LocalHeader,
 												sizeof(VSCMGArrayTorqueIntMsg),
 												reinterpret_cast<uint8_t*> (&IncomingCmdBuffer), moduleID);
@@ -536,7 +542,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	// loop through commands
 	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
-		// wheel torque saturation
+		//! wheel torque saturation
+		//! set u_s_max to less than zero to disable saturation
 		if (this->VSCMGData[vscmgIt].u_s_max > 0.0) {
 			if(CmdIt->u_s_cmd > this->VSCMGData[vscmgIt].u_s_max) {
 				CmdIt->u_s_cmd = this->VSCMGData[vscmgIt].u_s_max;
@@ -545,7 +552,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 			}
 		}
 
-		// gimbal torque saturation
+		//! gimbal torque saturation
+		//! set u_g_max to less than zero to disable saturation
 		if (this->VSCMGData[vscmgIt].u_g_max > 0.0) {
 			if(CmdIt->u_g_cmd > this->VSCMGData[vscmgIt].u_g_max) {
 				CmdIt->u_g_cmd = this->VSCMGData[vscmgIt].u_g_max;
@@ -554,17 +562,21 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 			}
 		}
 
-		// minimum wheel torque
+		//! minimum wheel torque
+		//! set u_s_min to less than zero to disable minimum torque
 		if( std::abs(CmdIt->u_s_cmd) < this->VSCMGData[vscmgIt].u_s_min) {
 			CmdIt->u_s_cmd = 0.0;
 		}
 
-		// minimum gimbal torque
+		//! minimum gimbal torque
+		//! set u_g_min to less than zero to disable minimum torque
 		if( std::abs(CmdIt->u_g_cmd) < this->VSCMGData[vscmgIt].u_g_min) {
 			CmdIt->u_g_cmd = 0.0;
 		}
 
-		// wheel Coulomb friction
+		//! wheel Coulomb friction
+		//! set wheelLinearFrictionRatio to less than zero to disable linear friction
+		//! set u_s_f to zero to disable all friction
 		if (this->VSCMGData[vscmgIt].wheelLinearFrictionRatio > 0.0) {
 			omegaCritical = this->VSCMGData[vscmgIt].Omega_max * this->VSCMGData[vscmgIt].wheelLinearFrictionRatio;
 		} else {
@@ -582,7 +594,9 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 			}
 		}
 
-		// gimbal Coulomb friction
+		//! gimbal Coulomb friction
+		//! set gimbalLinearFrictionRatio to less than zero to disable linear friction
+		//! set u_g_f to zero to disable friction
 		if (this->VSCMGData[vscmgIt].gimbalLinearFrictionRatio > 0.0) {
 			gammaDotCritical = this->VSCMGData[vscmgIt].gammaDot_max * this->VSCMGData[vscmgIt].wheelLinearFrictionRatio;
 		} else {
