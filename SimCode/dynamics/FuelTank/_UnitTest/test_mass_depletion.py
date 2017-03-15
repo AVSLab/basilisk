@@ -93,7 +93,8 @@ def test_massDepletionTest(show_plots=False):
     unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
     tankModel = fuelTank.cvar.FuelTankModelConstantVolume
     tankModel.propMassInit = 40.0;
-    tankModel.r_TB_BInit = [[0.0],[0.0],[0.0]]
+    tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
+    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     # Add tank and thruster
@@ -253,7 +254,8 @@ def axisChangeHelper(r_BcB_B):
     unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
     tankModel = fuelTank.cvar.FuelTankModelConstantVolume
     tankModel.propMassInit = 40.0
-    tankModel.r_TB_BInit = r_BcB_B
+    tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
+    unitTestSim.fuelTankStateEffector.r_TB_B = r_BcB_B
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     # Add tank and thruster

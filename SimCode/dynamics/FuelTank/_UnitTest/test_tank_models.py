@@ -63,31 +63,31 @@ def test_tankModelConstantVolume(show_plots):
     
     model = fuelTank.cvar.FuelTankModelConstantVolume
     model.propMassInit = 10;
-    model.r_TB_BInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
+    true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
                                 [100,0,0,0,100,0,0,0,100],
                                 [50,0,0,0,50,0,0,0,50]
                             ]
-    true_IPrimeTankPntT_B = [
+    true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
                                 [-10,0,0,0,-10,0,0,0,-10],
                                 [-10,0,0,0,-10,0,0,0,-10]
                             ]
-    true_r_TB_B =           [
+    true_r_TcT_T =           [
                                 [1,1,1],
                                 [1,1,1],
                                 [1,1,1]
                             ]
-    true_rPrime_TB_B =      [
+    true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    true_rPPrime_TB_B =     [
+    true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
@@ -96,35 +96,35 @@ def test_tankModelConstantVolume(show_plots):
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
+        dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
 
-        dataIPrimeTank = model.IPrimeTankPntT_B
+        dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
 
-        dataR = model.r_TB_B
+        dataR = model.r_TcT_T
         dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
 
-        dataRPrime = model.rPrime_TB_B
+        dataRPrime = model.rPrime_TcT_T
         dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
 
-        dataRPPrime = model.rPPrime_TB_B
+        dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
@@ -146,31 +146,31 @@ def test_tankModelConstantDensity(show_plots):
     
     model = fuelTank.cvar.FuelTankModelConstantDensity
     model.propMassInit = 10;
-    model.r_TB_BInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
+    true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
                                 [100,0,0,0,100,0,0,0,100],
                                 [31.498026247371826,0,0,0,31.498026247371826,0,0,0,31.498026247371826]
                             ]
-    true_IPrimeTankPntT_B = [
+    true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
                                 [-16.666666666666668,0,0,0,-16.666666666666668,0,0,0,-16.666666666666668],
                                 [-10.499342082457275,0,0,0,-10.499342082457275,0,0,0,-10.499342082457275]
                             ]
-    true_r_TB_B =           [
+    true_r_TcT_T =           [
                                 [1,1,1],
                                 [1,1,1],
                                 [1,1,1]
                             ]
-    true_rPrime_TB_B =      [
+    true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    true_rPPrime_TB_B =     [
+    true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
@@ -179,36 +179,36 @@ def test_tankModelConstantDensity(show_plots):
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
+        dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed ITankPntT_T test")
 
-        dataIPrimeTank = model.IPrimeTankPntT_B
+        dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             print dataIPrimeTank, idx
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed IPrimeTankPntT_T test")
 
-        dataR = model.r_TB_B
+        dataR = model.r_TcT_T
         dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed r_TcT_T test")
 
-        dataRPrime = model.rPrime_TB_B
+        dataRPrime = model.rPrime_TcT_T
         dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPrime_TcT_T test")
 
-        dataRPPrime = model.rPPrime_TB_B
+        dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank constant volume unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
@@ -231,32 +231,32 @@ def test_tankModelEmptying(show_plots):
     
     model = fuelTank.cvar.FuelTankModelEmptying
     model.propMassInit = 10
-    model.r_TB_BInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     model.k3 = [[0],[0],[1]]
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
+    true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
                                 [100,0,0,0,100,0,0,0,100],
                                 [31.498026247371826,0,0,0,31.498026247371826,0,0,0,31.498026247371826]
                             ]
-    true_IPrimeTankPntT_B = [
+    true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
                                 [-16.666666666666668,0,0,0,-16.666666666666668,0,0,0,-16.666666666666668],
                                 [-10.499342082457275,0,0,0,-10.499342082457275,0,0,0,-10.499342082457275]
                             ]
-    true_r_TB_B =           [
+    true_r_TcT_T =           [
                                 [1,1,1],
                                 [1,1,1],
                                 [1,1,1]
                             ]
-    true_rPrime_TB_B =      [
+    true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    true_rPPrime_TB_B =     [
+    true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
@@ -265,36 +265,36 @@ def test_tankModelEmptying(show_plots):
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
+        dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_T test")
 
-        dataIPrimeTank = model.IPrimeTankPntT_B
+        dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             print dataIPrimeTank, idx
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed IPrimeTankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank emptying unit test failed IPrimeTankPntT_T test")
 
-        dataR = model.r_TB_B
+        dataR = model.r_TcT_T
         dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed r_TB_B test")
+            testMessages.append("FAILED: Fuel Tank emptying unit test failed r_TcT_T test")
 
-        dataRPrime = model.rPrime_TB_B
+        dataRPrime = model.rPrime_TcT_T
         dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPrime_TcT_T test")
 
-        dataRPPrime = model.rPPrime_TB_B
+        dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank emptying unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
@@ -316,32 +316,32 @@ def test_tankModelUniformBurn(show_plots):
     
     model = fuelTank.cvar.FuelTankModelUniformBurn
     model.propMassInit = 10
-    model.r_TB_BInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     model.lengthTank = 5;
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
+    true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
                                 [83.33333333333334,0,0,0,83.33333333333334,0,0,0,125],
                                 [41.66666666666667,0,0,0,41.66666666666667,0,0,0,62.5]
                             ]
-    true_IPrimeTankPntT_B = [
+    true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
                                 [-8.3333333333334,0,0,0,-8.3333333333334,0,0,0,-12.5],
                                 [-8.3333333333334,0,0,0,-8.3333333333334,0,0,0,-12.5]
                             ]
-    true_r_TB_B =           [
+    true_r_TcT_T =           [
                                 [1,1,1],
                                 [1,1,1],
                                 [1,1,1]
                             ]
-    true_rPrime_TB_B =      [
+    true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    true_rPPrime_TB_B =     [
+    true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
@@ -350,36 +350,36 @@ def test_tankModelUniformBurn(show_plots):
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
+        dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed ITankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed ITankPntT_T test")
 
-        dataIPrimeTank = model.IPrimeTankPntT_B
+        dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             print dataIPrimeTank, idx
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed IPrimeTankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed IPrimeTankPntT_T test")
 
-        dataR = model.r_TB_B
+        dataR = model.r_TcT_T
         dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed r_TB_B test")
+            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed r_TcT_T test")
 
-        dataRPrime = model.rPrime_TB_B
+        dataRPrime = model.rPrime_TcT_T
         dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPrime_TcT_T test")
 
-        dataRPPrime = model.rPPrime_TB_B
+        dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
@@ -402,32 +402,32 @@ def test_tankModelCentrifugalBurn(show_plots):
     
     model = fuelTank.cvar.FuelTankModelCentrifugalBurn
     model.propMassInit = 10
-    model.r_TB_BInit = [[1],[1],[1]]
+    model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
     model.lengthTank = 5
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
-    true_ITankPntT_B =      [
+    true_ITankPntT_T =      [
                                 [0,0,0,0,0,0,0,0,0],
                                 [83.33333333333334,0,0,0,83.33333333333334,0,0,0,125],
                                 [57.291666666666671,0,0,0,57.291666666666671,0,0,0,93.75]
                             ]
-    true_IPrimeTankPntT_B = [
+    true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
                                 [-2.0833333333333335,0,0,0,-2.0833333333333335,0,0,0,0.0],
                                 [-8.3333333333333339,0,0,0,-8.3333333333333339,0,0,0,-12.500000000000002]
                             ]
-    true_r_TB_B =           [
+    true_r_TcT_T =           [
                                 [1,1,1],
                                 [1,1,1],
                                 [1,1,1]
                             ]
-    true_rPrime_TB_B =      [
+    true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
                             ]
-    true_rPPrime_TB_B =     [
+    true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
                                 [0,0,0]
@@ -436,36 +436,36 @@ def test_tankModelCentrifugalBurn(show_plots):
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
         model.computeTankProps(*trial)
-        dataITank = model.ITankPntT_B
+        dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed ITankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed ITankPntT_T test")
 
-        dataIPrimeTank = model.IPrimeTankPntT_B
+        dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_B[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
             print dataIPrimeTank, idx
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed IPrimeTankPntT_B test")
+            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed IPrimeTankPntT_T test")
 
-        dataR = model.r_TB_B
+        dataR = model.r_TcT_T
         dataR = [0] + [dataR[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataR, true_r_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed r_TB_B test")
+            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed r_TcT_T test")
 
-        dataRPrime = model.rPrime_TB_B
+        dataRPrime = model.rPrime_TcT_T
         dataRPrime = [0] + [dataRPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPrime, true_rPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPrime_TcT_T test")
 
-        dataRPPrime = model.rPPrime_TB_B
+        dataRPPrime = model.rPPrime_TcT_T
         dataRPPrime = [0] + [dataRPPrime[i][0] for i in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TB_B[idx],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(dataRPPrime, true_rPPrime_TcT_T[idx],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPPrime_TB_B test")
+            testMessages.append("FAILED: Fuel Tank uniform burn unit test failed rPPrime_TcT_T test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Tank constant volume unit test"
