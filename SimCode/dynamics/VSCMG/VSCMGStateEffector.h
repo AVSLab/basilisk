@@ -68,7 +68,7 @@ public:
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
     uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
-	std::vector<VSCMGCmdSimMsg> NewRWCmds;                        //!< -- Incoming attitude commands
+	std::vector<VSCMGCmdSimMsg> NewVSCMGCmds;                        //!< -- Incoming attitude commands
 	VSCMGSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
     std::string nameOfVSCMGOmegasState;
     std::string nameOfVSCMGThetasState;

@@ -327,8 +327,8 @@ void VSCMGStateEffector::SelfInit()
 
 	//! Begin method steps
 	//! - Clear out any currently firing RWs and re-init cmd array
-	NewRWCmds.clear();
-	NewRWCmds.insert(NewRWCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
+	NewVSCMGCmds.clear();
+	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
 
 	// Reserve a message ID for each reaction wheel config output message
 	uint64_t tmpWheeltMsgId;
@@ -482,9 +482,9 @@ void VSCMGStateEffector::ReadInputs()
 	//    }
 	prevCommandTime = LocalHeader.WriteClockNanos;
 
-	//! - Set the NewRWCmds vector.  Using the data() method for raw speed
+	//! - Set the NewVSCMGCmds vector.  Using the data() method for raw speed
 	VSCMGCmdSimMsg *CmdPtr;
-	for(i=0, CmdPtr = NewRWCmds.data(); i<ReactionWheelData.size();
+	for(i=0, CmdPtr = NewVSCMGCmds.data(); i<ReactionWheelData.size();
 		CmdPtr++, i++)
 	{
 		CmdPtr->u_s_cmd = IncomingCmdBuffer.wheelTorque[i];
@@ -507,7 +507,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	double omegaCritical;
 
 	// loop through commands
-	for(CmdIt=NewRWCmds.begin(); CmdIt!=NewRWCmds.end(); CmdIt++)
+	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
 		// saturation
 		if (this->ReactionWheelData[RWIter].u_max > 0) {

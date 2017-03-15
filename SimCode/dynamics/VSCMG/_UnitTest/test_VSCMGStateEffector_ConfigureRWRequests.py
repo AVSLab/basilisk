@@ -53,13 +53,13 @@ def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def writeNewRWCmds(self,u_s_cmd,numRW):
-    NewRWCmdsVec = VSCMGStateEffector.VSCMGCmdVector(numRW) # create standard vector from SWIG template (see .i file)
+def writeNewVSCMGCmds(self,u_s_cmd,numVSCMG):
+    NewVSCMGCmdsVec = VSCMGStateEffector.VSCMGCmdVector(numVSCMG) # create standard vector from SWIG template (see .i file)
     cmds = VSCMGStateEffector.VSCMGCmdSimMsg()
-    for i in range(0,numRW):
+    for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
-        NewRWCmdsVec[i] = cmds # set the data
-        self.NewRWCmds = NewRWCmdsVec # set in module
+        NewVSCMGCmdsVec[i] = cmds # set the data
+        self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module
 
 def defaultVSCMG():
     RW = VSCMGStateEffector.VSCMGConfigSimMsg()
@@ -123,10 +123,10 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     VSCMG = VSCMGStateEffector.VSCMGStateEffector()
     VSCMG.ModelTag = "VSCMG"
 
-    numRW = 2
+    numVSCMG = 2
 
     RWs = []
-    for i in range(0,numRW):
+    for i in range(0,numVSCMG):
         RWs.append(defaultVSCMG())
 
 
@@ -140,7 +140,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
         u_s_cmd = [-1.2,1.5]
-        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [-1.,1.5]
 
@@ -148,7 +148,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         RWs[0].u_min = .1
         RWs[1].u_min = .0
         u_s_cmd = [-.09,0.0001]
-        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [0.,0.0001]
 
@@ -157,13 +157,13 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         Omega = [-20.,0.]
         Omega_max = [100.,0.]
         linearFrictionRatio = [0.1,0.]
-        for i in range(0,numRW):
+        for i in range(0,numVSCMG):
             RWs[i].u_f = u_f[i]
             RWs[i].Omega = Omega[i]
             RWs[i].Omega_max = Omega_max[i]
             RWs[i].linearFrictionRatio = linearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
-        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = np.asarray(u_s_cmd) + np.asarray(u_f)
 
@@ -181,7 +181,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         accuracy = 1e-10
 
     for outputName in expOut.keys():
-        for i in range(0,numRW):
+        for i in range(0,numVSCMG):
             if expOut[outputName][i] != getattr(VSCMG.ReactionWheelData[i],outputName):
                 print "expected: " + str(expOut[outputName][i])
                 print "got :" + str(getattr(VSCMG.ReactionWheelData[i],outputName))
