@@ -52,7 +52,13 @@ typedef struct {
     double u_s_min;              //!< [N-m], Min torque
     double u_s_f;                //!< [N-m], Coulomb friction torque magnitude
     double Omega_max;          //!< [rad/s], max wheel speed
-    double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
+	double wheelLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
+	double u_g_current;          //!< [N-m], current motor torque
+	double u_g_max;              //!< [N-m], Max torque
+	double u_g_min;              //!< [N-m], Min torque
+	double u_g_f;                //!< [N-m], Coulomb friction torque magnitude
+	double gammaDot_max;          //!< [rad/s], max wheel speed
+	double gimbalLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
     VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
     Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution

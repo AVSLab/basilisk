@@ -150,7 +150,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			vscmgIt->rPrimeWcB_B = vscmgIt->d*vscmgIt->Omega*vscmgIt->w3Hat_B;
 			Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(vscmgIt->rPrimeWcB_B);
 
-			//! - Give the mass of the reaction wheel to the effProps mass
+			//! - Give the mass of the VSCMG to the effProps mass
 			this->effProps.mEff += vscmgIt->mass;
 			this->effProps.rEff_CB_B += vscmgIt->mass*vscmgIt->rWcB_B;
 			this->effProps.IEffPntB_B += vscmgIt->IRWPntWc_B + vscmgIt->mass*vscmgIt->rTildeWcB_B*vscmgIt->rTildeWcB_B.transpose();
@@ -171,7 +171,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 		}
 	}
 
-    // - Need to divide out the total mass of the reaction wheels from rCB_B and rPrimeCB_B
+    // - Need to divide out the total mass of the VSCMGs from rCB_B and rPrimeCB_B
     if (this->effProps.mEff > 0) {
         this->effProps.rEff_CB_B /= this->effProps.mEff;
         this->effProps.rEffPrime_CB_B /= this->effProps.mEff;
@@ -346,7 +346,7 @@ void VSCMGStateEffector::SelfInit()
 	NewVSCMGCmds.clear();
 	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), VSCMGCmdInitializer );
 
-	// Reserve a message ID for each reaction wheel config output message
+	// Reserve a message ID for each VSCMG config output message
 	uint64_t tmpWheeltMsgId;
 	std::string tmpWheelMsgName;
 	std::vector<VSCMGConfigSimMsg>::iterator it;
@@ -464,7 +464,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.U_s = it->U_s;
 		tmpVSCMG.U_d = it->U_d;
 		tmpVSCMG.VSCMGModel = it->VSCMGModel;
-		// Write out config data for eachreaction wheel
+		// Write out config data for each VSCMG
 		messageSys->WriteMessage(this->vscmgOutMsgIds.at(it - VSCMGData.begin()),
 								 CurrentClock,
 								 sizeof(VSCMGConfigSimMsg),
@@ -472,7 +472,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 								 moduleID);
 	}
 
-	// Write this message once for all reaction wheels
+	// Write this message once for all VSCMGs
 	messageSys->WriteMessage(StateOutMsgID, CurrentClock,
 							 sizeof(VSCMGSpeedIntMsg), reinterpret_cast<uint8_t*> (&outputStates), moduleID);
 }
@@ -528,13 +528,15 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
 	int vscmgIt = 0;
 	double u_s;
+	double u_g;
 	double omegaCritical;
+	double gammaDotCritical;
 
 	// loop through commands
 	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
-		// saturation
-		if (this->VSCMGData[vscmgIt].u_s_max > 0) {
+		// wheel torque saturation
+		if (this->VSCMGData[vscmgIt].u_s_max > 0.0) {
 			if(CmdIt->u_s_cmd > this->VSCMGData[vscmgIt].u_s_max) {
 				CmdIt->u_s_cmd = this->VSCMGData[vscmgIt].u_s_max;
 			} else if(CmdIt->u_s_cmd < -this->VSCMGData[vscmgIt].u_s_max) {
@@ -542,14 +544,28 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 			}
 		}
 
-		// minimum torque
+		// gimbal torque saturation
+		if (this->VSCMGData[vscmgIt].u_g_max > 0.0) {
+			if(CmdIt->u_g_cmd > this->VSCMGData[vscmgIt].u_g_max) {
+				CmdIt->u_g_cmd = this->VSCMGData[vscmgIt].u_g_max;
+			} else if(CmdIt->u_g_cmd < -this->VSCMGData[vscmgIt].u_g_max) {
+				CmdIt->u_g_cmd = -this->VSCMGData[vscmgIt].u_g_max;
+			}
+		}
+
+		// minimum wheel torque
 		if( std::abs(CmdIt->u_s_cmd) < this->VSCMGData[vscmgIt].u_s_min) {
 			CmdIt->u_s_cmd = 0.0;
 		}
 
-		// Coulomb friction
-		if (this->VSCMGData[vscmgIt].linearFrictionRatio > 0.0) {
-			omegaCritical = this->VSCMGData[vscmgIt].Omega_max * this->VSCMGData[vscmgIt].linearFrictionRatio;
+		// minimum gimbal torque
+		if( std::abs(CmdIt->u_g_cmd) < this->VSCMGData[vscmgIt].u_g_min) {
+			CmdIt->u_g_cmd = 0.0;
+		}
+
+		// wheel Coulomb friction
+		if (this->VSCMGData[vscmgIt].wheelLinearFrictionRatio > 0.0) {
+			omegaCritical = this->VSCMGData[vscmgIt].Omega_max * this->VSCMGData[vscmgIt].wheelLinearFrictionRatio;
 		} else {
 			omegaCritical = 0.0;
 		}
@@ -558,14 +574,33 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 		} else if(this->VSCMGData[vscmgIt].Omega < -omegaCritical) {
 			u_s = CmdIt->u_s_cmd + this->VSCMGData[vscmgIt].u_s_f;
 		} else {
-			if (this->VSCMGData[vscmgIt].linearFrictionRatio > 0) {
+			if (this->VSCMGData[vscmgIt].wheelLinearFrictionRatio > 0) {
 				u_s = CmdIt->u_s_cmd - this->VSCMGData[vscmgIt].u_s_f*this->VSCMGData[vscmgIt].Omega/omegaCritical;
 			} else {
 				u_s = CmdIt->u_s_cmd;
 			}
 		}
 
-		this->VSCMGData[vscmgIt].u_s_current = u_s; // save actual torque for reaction wheel motor
+		// gimbal Coulomb friction
+		if (this->VSCMGData[vscmgIt].gimbalLinearFrictionRatio > 0.0) {
+			gammaDotCritical = this->VSCMGData[vscmgIt].gammaDot_max * this->VSCMGData[vscmgIt].wheelLinearFrictionRatio;
+		} else {
+			gammaDotCritical = 0.0;
+		}
+		if(this->VSCMGData[vscmgIt].gammaDot > gammaDotCritical) {
+			u_g = CmdIt->u_g_cmd - this->VSCMGData[vscmgIt].u_g_f;
+		} else if(this->VSCMGData[vscmgIt].gammaDot < -gammaDotCritical) {
+			u_g = CmdIt->u_g_cmd + this->VSCMGData[vscmgIt].u_g_f;
+		} else {
+			if (this->VSCMGData[vscmgIt].gimbalLinearFrictionRatio > 0) {
+				u_g = CmdIt->u_g_cmd - this->VSCMGData[vscmgIt].u_g_f*this->VSCMGData[vscmgIt].gammaDot/gammaDotCritical;
+			} else {
+				u_g = CmdIt->u_g_cmd;
+			}
+		}
+
+		this->VSCMGData[vscmgIt].u_s_current = u_s; // save actual torque for wheel motor
+		this->VSCMGData[vscmgIt].u_g_current = u_g; // save actual torque for wheel motor
 
 		vscmgIt++;
 

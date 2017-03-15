@@ -85,7 +85,7 @@ def defaultVSCMG():
     VSCMG.U_s = 0.
     VSCMG.U_d = 0.
     VSCMG.mass = 0.
-    VSCMG.linearFrictionRatio = 0.
+    VSCMG.wheelLinearFrictionRatio = 0.
     VSCMG.VSCMGModel = 0
     return VSCMG
 
@@ -156,12 +156,12 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         u_s_f = [0.1,0.]
         Omega = [-20.,0.]
         Omega_max = [100.,0.]
-        linearFrictionRatio = [0.1,0.]
+        wheelLinearFrictionRatio = [0.1,0.]
         for i in range(0,numVSCMG):
             VSCMGs[i].u_s_f = u_s_f[i]
             VSCMGs[i].Omega = Omega[i]
             VSCMGs[i].Omega_max = Omega_max[i]
-            VSCMGs[i].linearFrictionRatio = linearFrictionRatio[i]
+            VSCMGs[i].wheelLinearFrictionRatio = wheelLinearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
         writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 

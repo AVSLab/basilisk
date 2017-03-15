@@ -71,7 +71,7 @@ def defaultVSCMG():
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.mass = 12.
-    VSCMG.linearFrictionRatio = -1
+    VSCMG.wheelLinearFrictionRatio = -1
     VSCMG.VSCMGModel = 0
     return VSCMG
 
