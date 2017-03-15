@@ -24,8 +24,9 @@
 
 /*! @brief Structure used to define the output definition for VSCMG speeds*/
 typedef struct {
-    double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the VSCMG wheel
-	double gimbalAngles[MAX_EFF_CNT];
+    double wheelSpeeds[MAX_EFF_CNT];	//!< r/s The current angular velocities of the VSCMG wheel
+	double gimbalAngles[MAX_EFF_CNT];	//!< r The current angles of the VSCMG gimbal
+	double gimbalRates[MAX_EFF_CNT];	//!< r/s The current angular velocities of the VSCMG gimbal
 }VSCMGSpeedIntMsg;
 
 

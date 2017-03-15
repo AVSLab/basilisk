@@ -38,7 +38,8 @@ typedef struct {
     double mass;               //!< [kg], wheel rotor mass
     double theta;              //!< [rad], wheel angle
     double Omega;              //!< [rad/s], wheel speed
-	double gamma;              //!< [rad/s], gimbal angle
+	double gamma;              //!< [s], gimbal angle
+	double gammaDot;              //!< [rad/s], gimbal rate
     double Js;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
     double Jt;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
     double Jg;                 //!< [kg-m^2], ggHat axis rotor moment of inertia

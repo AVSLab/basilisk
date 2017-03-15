@@ -91,6 +91,7 @@ private:
 	StateData *OmegasState;
 	StateData *thetasState;
 	StateData *gammasState;
+	StateData *gammaDotsState;
 
 };
 
