@@ -73,10 +73,10 @@ def defaultVSCMG():
     VSCMG.w2Hat0_B = [[0.],[1.],[0.]]
     VSCMG.w3Hat0_B = [[0.],[0.],[1.]]
     VSCMG.theta = 0.
-    VSCMG.u_current = 0.
-    VSCMG.u_max = 0.
-    VSCMG.u_min = 0.
-    VSCMG.u_f = 0.
+    VSCMG.u_s_current = 0.
+    VSCMG.u_s_max = 0.
+    VSCMG.u_s_min = 0.
+    VSCMG.u_s_f = 0.
     VSCMG.Omega = 0.
     VSCMG.Omega_max = 0.
     VSCMG.Js = 0.
@@ -137,35 +137,35 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         pass
 
     elif testCase is 'saturation':
-        VSCMGs[0].u_max = 1.
-        VSCMGs[1].u_max = 2.
+        VSCMGs[0].u_s_max = 1.
+        VSCMGs[1].u_s_max = 2.
         u_s_cmd = [-1.2,1.5]
         writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
-        expOut['u_current'] = [-1.,1.5]
+        expOut['u_s_current'] = [-1.,1.5]
 
     elif testCase is 'minimum':
-        VSCMGs[0].u_min = .1
-        VSCMGs[1].u_min = .0
+        VSCMGs[0].u_s_min = .1
+        VSCMGs[1].u_s_min = .0
         u_s_cmd = [-.09,0.0001]
         writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
-        expOut['u_current'] = [0.,0.0001]
+        expOut['u_s_current'] = [0.,0.0001]
 
     elif testCase is 'friction':
-        u_f = [0.1,0.]
+        u_s_f = [0.1,0.]
         Omega = [-20.,0.]
         Omega_max = [100.,0.]
         linearFrictionRatio = [0.1,0.]
         for i in range(0,numVSCMG):
-            VSCMGs[i].u_f = u_f[i]
+            VSCMGs[i].u_s_f = u_s_f[i]
             VSCMGs[i].Omega = Omega[i]
             VSCMGs[i].Omega_max = Omega_max[i]
             VSCMGs[i].linearFrictionRatio = linearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
         writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
-        expOut['u_current'] = np.asarray(u_s_cmd) + np.asarray(u_f)
+        expOut['u_s_current'] = np.asarray(u_s_cmd) + np.asarray(u_s_f)
 
     else:
         raise Exception('invalid test case')

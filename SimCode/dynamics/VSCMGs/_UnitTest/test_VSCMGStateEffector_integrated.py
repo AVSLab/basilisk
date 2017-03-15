@@ -56,10 +56,10 @@ def defaultVSCMG():
     VSCMG.w3Hat0_B = [[0.],[0.],[0.]]
     VSCMG.w2Hat_B = [[0.],[0.],[0.]]
     VSCMG.w3Hat_B = [[0.],[0.],[0.]]
-    VSCMG.u_current = 0.
-    VSCMG.u_max = 0.2
-    VSCMG.u_min = 0.
-    VSCMG.u_f = 0.
+    VSCMG.u_s_current = 0.
+    VSCMG.u_s_max = 0.2
+    VSCMG.u_s_min = 0.
+    VSCMG.u_s_f = 0.
     VSCMG.theta = 0.
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
@@ -307,14 +307,14 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.figure()
     for i in range(1,4):
         plt.subplot(4,1,i)
-        plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label='RWA' + str(i))
+        plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
         plt.xlabel('Time (s)')
         plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
 
     plt.figure()
     for i in range(1,4):
         plt.subplot(4,1,i)
-        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i], label='RWA' + str(i))
+        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i], label=str(i))
         plt.xlabel('Time (s)')
         plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (rad)')
 

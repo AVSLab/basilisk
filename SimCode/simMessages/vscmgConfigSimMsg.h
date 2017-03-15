@@ -47,10 +47,10 @@ typedef struct {
     double U_d;                //!< [kg-m^2], dynamic imbalance
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
     double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
-    double u_current;          //!< [N-m], current motor torque
-    double u_max;              //!< [N-m], Max torque
-    double u_min;              //!< [N-m], Min torque
-    double u_f;                //!< [N-m], Coulomb friction torque magnitude
+    double u_s_current;          //!< [N-m], current motor torque
+    double u_s_max;              //!< [N-m], Max torque
+    double u_s_min;              //!< [N-m], Min torque
+    double u_s_f;                //!< [N-m], Coulomb friction torque magnitude
     double Omega_max;          //!< [rad/s], max wheel speed
     double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
     VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
