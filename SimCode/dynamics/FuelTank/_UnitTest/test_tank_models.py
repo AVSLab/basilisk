@@ -43,32 +43,6 @@ import vehicleConfigData
 import fuelTank
 import fuelSloshParticle
 
-def isArrayEqualRelative(result, truth, dim, accuracy):
-    # the result array is of dimension dim+1, as the first entry is the time stamp
-    # the truth array is of dimesion dim, no time stamp
-    if dim < 1:
-        print "Incorrect array dimension " + dim + " sent to isArrayEqual"
-        return 0
-
-    if len(result)==0:
-        print "Result array was empty"
-        return 0
-
-    if len(truth)==0:
-        print "Truth array was empty"
-        return 0
-
-    if unitTestSupport.foundNAN(result): return 0
-
-    for i in range(0,dim):
-        if truth[i] == 0:
-            return 1 if result[i+1] == 0 else 0
-        if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
-            return 0    # return 0 to indicate the array's are not equal
-    return 1            # return 1 to indicate the two array's are equal
-
-unitTestSupport.isArrayEqualRelative = isArrayEqualRelative
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
