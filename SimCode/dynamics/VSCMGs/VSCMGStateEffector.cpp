@@ -512,6 +512,7 @@ void VSCMGStateEffector::ReadInputs()
 		CmdPtr++, i++)
 	{
 		CmdPtr->u_s_cmd = IncomingCmdBuffer.wheelTorque[i];
+		CmdPtr->u_g_cmd = IncomingCmdBuffer.gimbalTorque[i];
 	}
 
 }

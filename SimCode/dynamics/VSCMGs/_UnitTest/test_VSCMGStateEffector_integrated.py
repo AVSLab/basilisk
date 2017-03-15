@@ -173,6 +173,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     # set RW torque command
     cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
     cmdArray.wheelTorque = [0.20, 0.10, -0.50] # [Nm]
+    cmdArray.gimbalTorque = [0.99, 0.99, -0.0099] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
