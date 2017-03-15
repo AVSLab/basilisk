@@ -19,7 +19,7 @@
 '''
 #
 #   Integrated Unit Test Script
-#   Purpose:  Run a test of the reaction wheel sim module
+#   Purpose:  Run a test of the VSCMG sim module
 #   Author:  John Alcorn
 #   Creation Date:  November 14, 2016
 #
@@ -62,32 +62,32 @@ def writeNewVSCMGCmds(self,u_s_cmd,numVSCMG):
         self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module
 
 def defaultVSCMG():
-    RW = VSCMGStateEffector.VSCMGConfigSimMsg()
-    RW.typeName = ''
-    RW.rWB_S = [[0.],[0.],[0.]]
-    RW.gsHat_S = [[1.],[0.],[0.]]
-    RW.w2Hat0_S = [[0.],[1.],[0.]]
-    RW.w3Hat0_S = [[0.],[0.],[1.]]
-    RW.rWB_B = [[0.],[0.],[0.]]
-    RW.gsHat_B = [[1.],[0.],[0.]]
-    RW.w2Hat0_B = [[0.],[1.],[0.]]
-    RW.w3Hat0_B = [[0.],[0.],[1.]]
-    RW.theta = 0.
-    RW.u_current = 0.
-    RW.u_max = 0.
-    RW.u_min = 0.
-    RW.u_f = 0.
-    RW.Omega = 0.
-    RW.Omega_max = 0.
-    RW.Js = 0.
-    RW.Jt = 0.
-    RW.Jg = 0.
-    RW.U_s = 0.
-    RW.U_d = 0.
-    RW.mass = 0.
-    RW.linearFrictionRatio = 0.
-    RW.VSCMGModel = 0
-    return RW
+    VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
+    VSCMG.typeName = ''
+    VSCMG.rWB_S = [[0.],[0.],[0.]]
+    VSCMG.gsHat_S = [[1.],[0.],[0.]]
+    VSCMG.w2Hat0_S = [[0.],[1.],[0.]]
+    VSCMG.w3Hat0_S = [[0.],[0.],[1.]]
+    VSCMG.rWB_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat_B = [[1.],[0.],[0.]]
+    VSCMG.w2Hat0_B = [[0.],[1.],[0.]]
+    VSCMG.w3Hat0_B = [[0.],[0.],[1.]]
+    VSCMG.theta = 0.
+    VSCMG.u_current = 0.
+    VSCMG.u_max = 0.
+    VSCMG.u_min = 0.
+    VSCMG.u_f = 0.
+    VSCMG.Omega = 0.
+    VSCMG.Omega_max = 0.
+    VSCMG.Js = 0.
+    VSCMG.Jt = 0.
+    VSCMG.Jg = 0.
+    VSCMG.U_s = 0.
+    VSCMG.U_d = 0.
+    VSCMG.mass = 0.
+    VSCMG.linearFrictionRatio = 0.
+    VSCMG.VSCMGModel = 0
+    return VSCMG
 
 def asEigen(v):
     out = []
@@ -125,9 +125,9 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     numVSCMG = 2
 
-    RWs = []
+    VSCMGs = []
     for i in range(0,numVSCMG):
-        RWs.append(defaultVSCMG())
+        VSCMGs.append(defaultVSCMG())
 
 
     expOut = dict() # expected output
@@ -137,18 +137,18 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         pass
 
     elif testCase is 'saturation':
-        RWs[0].u_max = 1.
-        RWs[1].u_max = 2.
+        VSCMGs[0].u_max = 1.
+        VSCMGs[1].u_max = 2.
         u_s_cmd = [-1.2,1.5]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
         expOut['u_current'] = [-1.,1.5]
 
     elif testCase is 'minimum':
-        RWs[0].u_min = .1
-        RWs[1].u_min = .0
+        VSCMGs[0].u_min = .1
+        VSCMGs[1].u_min = .0
         u_s_cmd = [-.09,0.0001]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
         expOut['u_current'] = [0.,0.0001]
 
@@ -158,20 +158,20 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         Omega_max = [100.,0.]
         linearFrictionRatio = [0.1,0.]
         for i in range(0,numVSCMG):
-            RWs[i].u_f = u_f[i]
-            RWs[i].Omega = Omega[i]
-            RWs[i].Omega_max = Omega_max[i]
-            RWs[i].linearFrictionRatio = linearFrictionRatio[i]
+            VSCMGs[i].u_f = u_f[i]
+            VSCMGs[i].Omega = Omega[i]
+            VSCMGs[i].Omega_max = Omega_max[i]
+            VSCMGs[i].linearFrictionRatio = linearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(RWs))
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
 
         expOut['u_current'] = np.asarray(u_s_cmd) + np.asarray(u_f)
 
     else:
         raise Exception('invalid test case')
 
-    for i in range(0,len(RWs)):
-        VSCMG.AddVSCMG(RWs[i])
+    for i in range(0,len(VSCMGs)):
+        VSCMG.AddVSCMG(VSCMGs[i])
 
     VSCMG.ConfigureVSCMGRequests(0.)
 
