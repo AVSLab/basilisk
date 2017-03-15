@@ -182,9 +182,9 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     for outputName in expOut.keys():
         for i in range(0,numVSCMG):
-            if expOut[outputName][i] != getattr(VSCMG.ReactionWheelData[i],outputName):
+            if expOut[outputName][i] != getattr(VSCMG.VSCMGData[i],outputName):
                 print "expected: " + str(expOut[outputName][i])
-                print "got :" + str(getattr(VSCMG.ReactionWheelData[i],outputName))
+                print "got :" + str(getattr(VSCMG.VSCMGData[i],outputName))
                 testFail = 1
                 break
         if testFail:

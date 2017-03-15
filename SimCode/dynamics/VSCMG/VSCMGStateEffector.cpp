@@ -70,13 +70,13 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
     this->numRW = 0;
     std::vector<VSCMGConfigSimMsg>::iterator RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
-    Eigen::MatrixXd omegasForInit(this->ReactionWheelData.size(),1);
+    Eigen::MatrixXd omegasForInit(this->VSCMGData.size(),1);
 
-    for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++) {
+    for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++) {
         if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
             this->numRWJitter++;
         }
-        omegasForInit(RWIt - this->ReactionWheelData.begin(), 0) = RWIt->Omega;
+        omegasForInit(RWIt - this->VSCMGData.begin(), 0) = RWIt->Omega;
         this->numRW++;
     }
     
@@ -107,9 +107,9 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
     
     int thetaCount = 0;
     std::vector<VSCMGConfigSimMsg>::iterator RWIt;
-	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++)
 	{
-		RWIt->Omega = this->OmegasState->getState()(RWIt - ReactionWheelData.begin(), 0);
+		RWIt->Omega = this->OmegasState->getState()(RWIt - VSCMGData.begin(), 0);
 		if (RWIt->RWModel == JitterFullyCoupled) {
 			RWIt->theta = this->thetasState->getState()(thetaCount, 0);
 			Eigen::Matrix3d dcm_WW0 = eigenM1(RWIt->theta);
@@ -199,7 +199,7 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 	omegaLoc_BN_B = this->hubOmega->getState();
 
     std::vector<VSCMGConfigSimMsg>::iterator RWIt;
-	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++)
 	{
 		OmegaSquared = RWIt->Omega * RWIt->Omega;
 
@@ -266,7 +266,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 	rDDotBNLoc_B = dcm_BN*rDDotBNLoc_N;
 
 	//! - Compute Derivatives
-	for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+	for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++)
 	{
         if(RWIt->RWModel == JitterFullyCoupled || RWIt->RWModel == JitterSimple) {
             // - Set trivial kinemetic derivative
@@ -297,7 +297,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
     //! - Compute energy and momentum contribution of each wheel
     rotAngMomPntCContr_B.setZero();
     std::vector<VSCMGConfigSimMsg>::iterator RWIt;
-    for(RWIt=ReactionWheelData.begin(); RWIt!=ReactionWheelData.end(); RWIt++)
+    for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++)
     {
 		if (RWIt->RWModel == BalancedWheels || RWIt->RWModel == JitterSimple) {
 			rotAngMomPntCContr_B += RWIt->Js*RWIt->gsHat_B*RWIt->Omega;
@@ -328,15 +328,15 @@ void VSCMGStateEffector::SelfInit()
 	//! Begin method steps
 	//! - Clear out any currently firing RWs and re-init cmd array
 	NewVSCMGCmds.clear();
-	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), ReactionWheelData.size(), RWCmdInitializer );
+	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), RWCmdInitializer );
 
 	// Reserve a message ID for each reaction wheel config output message
 	uint64_t tmpWheeltMsgId;
 	std::string tmpWheelMsgName;
 	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-		tmpWheelMsgName = "rw_bla" + std::to_string(it - ReactionWheelData.begin()) + "_data";
+		tmpWheelMsgName = "rw_bla" + std::to_string(it - VSCMGData.begin()) + "_data";
 		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(VSCMGConfigSimMsg), OutputBufferCount, "VSCMGConfigSimMsg", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
@@ -372,7 +372,7 @@ void VSCMGStateEffector::CrossInit()
 	}
 
 	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
 		if (it->gsHat_S.norm() > 0.01) {
 			it->gsHat_B = dcm_BS * it->gsHat_S;
@@ -415,15 +415,15 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
 	VSCMGConfigSimMsg tmpRW;
 	std::vector<VSCMGConfigSimMsg>::iterator it;
-	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
+	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
         if (numRWJitter > 0) {
-            double thetaCurrent = this->thetasState->getState()(it - ReactionWheelData.begin(), 0);
+            double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
             it->theta = thetaCurrent;
         }
-        double omegaCurrent = this->OmegasState->getState()(it - ReactionWheelData.begin(), 0);
+        double omegaCurrent = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
         it->Omega = omegaCurrent;
-		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
+		outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
 
 		tmpRW.rWB_S = it->rWB_S;
 		tmpRW.gsHat_S = it->gsHat_S;
@@ -441,7 +441,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpRW.U_d = it->U_d;
 		tmpRW.RWModel = it->RWModel;
 		// Write out config data for eachreaction wheel
-		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
+		messageSys->WriteMessage(this->rwOutMsgIds.at(it - VSCMGData.begin()),
 								 CurrentClock,
 								 sizeof(VSCMGConfigSimMsg),
 								 reinterpret_cast<uint8_t*> (&tmpRW),
@@ -484,7 +484,7 @@ void VSCMGStateEffector::ReadInputs()
 
 	//! - Set the NewVSCMGCmds vector.  Using the data() method for raw speed
 	VSCMGCmdSimMsg *CmdPtr;
-	for(i=0, CmdPtr = NewVSCMGCmds.data(); i<ReactionWheelData.size();
+	for(i=0, CmdPtr = NewVSCMGCmds.data(); i<VSCMGData.size();
 		CmdPtr++, i++)
 	{
 		CmdPtr->u_s_cmd = IncomingCmdBuffer.wheelTorque[i];
@@ -510,38 +510,38 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
 		// saturation
-		if (this->ReactionWheelData[RWIter].u_max > 0) {
-			if(CmdIt->u_s_cmd > this->ReactionWheelData[RWIter].u_max) {
-				CmdIt->u_s_cmd = this->ReactionWheelData[RWIter].u_max;
-			} else if(CmdIt->u_s_cmd < -this->ReactionWheelData[RWIter].u_max) {
-				CmdIt->u_s_cmd = -this->ReactionWheelData[RWIter].u_max;
+		if (this->VSCMGData[RWIter].u_max > 0) {
+			if(CmdIt->u_s_cmd > this->VSCMGData[RWIter].u_max) {
+				CmdIt->u_s_cmd = this->VSCMGData[RWIter].u_max;
+			} else if(CmdIt->u_s_cmd < -this->VSCMGData[RWIter].u_max) {
+				CmdIt->u_s_cmd = -this->VSCMGData[RWIter].u_max;
 			}
 		}
 
 		// minimum torque
-		if( std::abs(CmdIt->u_s_cmd) < this->ReactionWheelData[RWIter].u_min) {
+		if( std::abs(CmdIt->u_s_cmd) < this->VSCMGData[RWIter].u_min) {
 			CmdIt->u_s_cmd = 0.0;
 		}
 
 		// Coulomb friction
-		if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0.0) {
-			omegaCritical = this->ReactionWheelData[RWIter].Omega_max * this->ReactionWheelData[RWIter].linearFrictionRatio;
+		if (this->VSCMGData[RWIter].linearFrictionRatio > 0.0) {
+			omegaCritical = this->VSCMGData[RWIter].Omega_max * this->VSCMGData[RWIter].linearFrictionRatio;
 		} else {
 			omegaCritical = 0.0;
 		}
-		if(this->ReactionWheelData[RWIter].Omega > omegaCritical) {
-			u_s = CmdIt->u_s_cmd - this->ReactionWheelData[RWIter].u_f;
-		} else if(this->ReactionWheelData[RWIter].Omega < -omegaCritical) {
-			u_s = CmdIt->u_s_cmd + this->ReactionWheelData[RWIter].u_f;
+		if(this->VSCMGData[RWIter].Omega > omegaCritical) {
+			u_s = CmdIt->u_s_cmd - this->VSCMGData[RWIter].u_f;
+		} else if(this->VSCMGData[RWIter].Omega < -omegaCritical) {
+			u_s = CmdIt->u_s_cmd + this->VSCMGData[RWIter].u_f;
 		} else {
-			if (this->ReactionWheelData[RWIter].linearFrictionRatio > 0) {
-				u_s = CmdIt->u_s_cmd - this->ReactionWheelData[RWIter].u_f*this->ReactionWheelData[RWIter].Omega/omegaCritical;
+			if (this->VSCMGData[RWIter].linearFrictionRatio > 0) {
+				u_s = CmdIt->u_s_cmd - this->VSCMGData[RWIter].u_f*this->VSCMGData[RWIter].Omega/omegaCritical;
 			} else {
 				u_s = CmdIt->u_s_cmd;
 			}
 		}
 
-		this->ReactionWheelData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
+		this->VSCMGData[RWIter].u_current = u_s; // save actual torque for reaction wheel motor
 
 		RWIter++;
 

@@ -56,14 +56,14 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 	void SelfInit();
 	void CrossInit();
-	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {ReactionWheelData.push_back(*NewVSCMG);}
+	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {VSCMGData.push_back(*NewVSCMG);}
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
 	void ConfigureVSCMGRequests(double CurrentTime);
     
 public:
-	std::vector<VSCMGConfigSimMsg> ReactionWheelData;  //!< -- RW information2
+	std::vector<VSCMGConfigSimMsg> VSCMGData;  //!< -- RW information2
     Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
 	std::string InputCmds;                                      //!< -- message used to read command inputs
 	std::string OutputDataString;                               //!< -- port to use for output data
