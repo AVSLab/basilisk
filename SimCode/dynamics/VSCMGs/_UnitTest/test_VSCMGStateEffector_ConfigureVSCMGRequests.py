@@ -53,13 +53,14 @@ def listStack(vec,simStopTime,unitProcRate):
     # returns a list duplicated the number of times needed to be consistent with module output
     return [vec] * int(simStopTime/(float(unitProcRate)/float(macros.sec2nano(1))))
 
-def writeNewVSCMGCmds(self,u_s_cmd,numVSCMG):
+def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
     NewVSCMGCmdsVec = VSCMGStateEffector.VSCMGCmdVector(numVSCMG) # create standard vector from SWIG template (see .i file)
     cmds = VSCMGStateEffector.VSCMGCmdSimMsg()
     for i in range(0,numVSCMG):
         cmds.u_s_cmd = u_s_cmd[i]
+        cmds.u_g_cmd = u_g_cmd[i]
         NewVSCMGCmdsVec[i] = cmds # set the data
-        self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module
+        self.NewVSCMGCmds = NewVSCMGCmdsVec # set in module (should this be indented?)
 
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
@@ -77,8 +78,15 @@ def defaultVSCMG():
     VSCMG.u_s_max = 0.
     VSCMG.u_s_min = 0.
     VSCMG.u_s_f = 0.
+    VSCMG.u_g_current = 0.
+    VSCMG.u_g_max = 0.
+    VSCMG.u_g_min = 0.
+    VSCMG.u_g_f = 0.
     VSCMG.Omega = 0.
+    VSCMG.gamma = 0.
+    VSCMG.gammaDot = 0.
     VSCMG.Omega_max = 0.
+    VSCMG.gammaDot_max = -1
     VSCMG.Js = 0.
     VSCMG.Jt = 0.
     VSCMG.Jg = 0.
@@ -139,31 +147,46 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     elif testCase is 'saturation':
         VSCMGs[0].u_s_max = 1.
         VSCMGs[1].u_s_max = 2.
+        VSCMGs[0].u_g_max = 1.
+        VSCMGs[1].u_g_max = 2.
         u_s_cmd = [-1.2,1.5]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
+        u_g_cmd = [-1.2,1.5]
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,u_g_cmd,len(VSCMGs))
 
         expOut['u_s_current'] = [-1.,1.5]
 
     elif testCase is 'minimum':
         VSCMGs[0].u_s_min = .1
         VSCMGs[1].u_s_min = .0
+        VSCMGs[0].u_g_min = .1
+        VSCMGs[1].u_g_min = .0
         u_s_cmd = [-.09,0.0001]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
+        u_g_cmd = [-.09,0.0001]
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,u_g_cmd,len(VSCMGs))
 
         expOut['u_s_current'] = [0.,0.0001]
 
     elif testCase is 'friction':
         u_s_f = [0.1,0.]
+        u_g_f = [0.1,0.]
         Omega = [-20.,0.]
         Omega_max = [100.,0.]
+        gammaDot = [-20.,0.]
+        gammaDot_max = [100.,0.]
         wheelLinearFrictionRatio = [0.1,0.]
+        gimbalLinearFrictionRatio = [0.1,0.]
         for i in range(0,numVSCMG):
             VSCMGs[i].u_s_f = u_s_f[i]
             VSCMGs[i].Omega = Omega[i]
             VSCMGs[i].Omega_max = Omega_max[i]
             VSCMGs[i].wheelLinearFrictionRatio = wheelLinearFrictionRatio[i]
+            VSCMGs[i].u_g_f = u_g_f[i]
+            VSCMGs[i].gammaDot = gammaDot[i]
+            VSCMGs[i].gammaDot_max = gammaDot_max[i]
+            VSCMGs[i].gimbalLinearFrictionRatio = gimbalLinearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
-        writeNewVSCMGCmds(VSCMG,u_s_cmd,len(VSCMGs))
+        u_g_cmd = [-1.,0.]
+        writeNewVSCMGCmds(VSCMG,u_s_cmd,u_g_cmd,len(VSCMGs))
 
         expOut['u_s_current'] = np.asarray(u_s_cmd) + np.asarray(u_s_f)
 

@@ -60,18 +60,24 @@ def defaultVSCMG():
     VSCMG.u_s_max = 0.2
     VSCMG.u_s_min = 0.
     VSCMG.u_s_f = 0.
+    VSCMG.wheelLinearFrictionRatio = -1
+    VSCMG.u_g_current = 0.
+    VSCMG.u_g_max = -1
+    VSCMG.u_g_min = -1
+    VSCMG.u_g_f = 0.
+    VSCMG.gimbalLinearFrictionRatio = -1
     VSCMG.theta = 0.
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
     VSCMG.gammaDot = 0.
     VSCMG.Omega_max = 6000. * rpm2rad
+    VSCMG.gammaDot_max = -1
     VSCMG.Js = 100./VSCMG.Omega_max # 0.159154943092
     VSCMG.Jt = 0.5*VSCMG.Js # 0.0795774715459
     VSCMG.Jg = 0.5*VSCMG.Js # 0.0795774715459
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.mass = 12.
-    VSCMG.wheelLinearFrictionRatio = -1
     VSCMG.VSCMGModel = 0
     return VSCMG
 
