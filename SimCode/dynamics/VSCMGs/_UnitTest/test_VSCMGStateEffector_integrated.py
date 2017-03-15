@@ -395,4 +395,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'BalancedWheels')
+    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
