@@ -20,18 +20,18 @@
 #ifndef SIM_VSCMG_CONFIG_MESSAGE_H
 #define SIM_VSCMG_CONFIG_MESSAGE_H
 
-/*! @brief enumeration definiting the types of RW modes */ 
-enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+/*! @brief enumeration definiting the types of VSCMG modes */ 
+enum VSCMGModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 
 
-/*! @brief Structure used to define the individual RW configuration data message*/
+/*! @brief Structure used to define the individual VSCMG configuration data message*/
 typedef struct {
-    std::string typeName;      //!< [-], string containing the RW type name
-    Eigen::Vector3d rWB_S;		//!< [m], position vector of the RW relative to the spacecraft structural frame
+    std::string typeName;      //!< [-], string containing the VSCMG type name
+    Eigen::Vector3d rWB_S;		//!< [m], position vector of the VSCMG relative to the spacecraft structural frame
     Eigen::Vector3d gsHat_S;	//!< [-] spin axis unit vector in structural frame
     Eigen::Vector3d w2Hat0_S;	//!< [-] initial torque axis unit vector in structural
     Eigen::Vector3d w3Hat0_S;	//!< [-] initial gimbal axis unit vector in structural frame
-    Eigen::Vector3d rWB_B;		//!< [m], position vector of the RW relative to the spacecraft body frame
+    Eigen::Vector3d rWB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
     Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
     Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
     Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
@@ -51,7 +51,7 @@ typedef struct {
     double u_f;                //!< [N-m], Coulomb friction torque magnitude
     double Omega_max;          //!< [rad/s], max wheel speed
     double linearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-    RWModels RWModel; //!< [-], Type of imbalance model to use
+    VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
     Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
     Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
     double cOmega; //!< [-], parameter used in coupled jitter back substitution

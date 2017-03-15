@@ -76,8 +76,8 @@ public:
 	int numVSCMGJitter;
 
 private:
-	std::vector<std::string> rwOutMsgNames;		//!< -- vector with the message names of each RW
-	std::vector<uint64_t> rwOutMsgIds;          //!< -- vector with the ID of each RW
+	std::vector<std::string> vscmgOutMsgNames;		//!< -- vector with the message names of each VSCMG
+	std::vector<uint64_t> vscmgOutMsgIds;          //!< -- vector with the ID of each VSCMG
 	int64_t CmdsInMsgID;                      	//!< -- Message ID for incoming data
 	int64_t StateOutMsgID;                    	//!< -- Message ID for outgoing data
 	VSCMGArrayTorqueIntMsg IncomingCmdBuffer; 	//!< -- One-time allocation for savings

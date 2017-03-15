@@ -86,7 +86,7 @@ def defaultVSCMG():
     RW.U_d = 0.
     RW.mass = 0.
     RW.linearFrictionRatio = 0.
-    RW.RWModel = 0
+    RW.VSCMGModel = 0
     return RW
 
 def asEigen(v):

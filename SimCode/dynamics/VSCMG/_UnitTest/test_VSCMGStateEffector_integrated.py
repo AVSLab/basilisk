@@ -70,7 +70,7 @@ def defaultVSCMG():
     VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.mass = 12.
     VSCMG.linearFrictionRatio = -1
-    VSCMG.RWModel = 0
+    VSCMG.VSCMGModel = 0
     return VSCMG
 
 
@@ -147,7 +147,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         VSCMGModel = 2
 
     for VSCMG in VSCMGs:
-        VSCMG.RWModel = VSCMGModel
+        VSCMG.VSCMGModel = VSCMGModel
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
