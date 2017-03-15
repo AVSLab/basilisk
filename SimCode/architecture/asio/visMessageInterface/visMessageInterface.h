@@ -14,24 +14,28 @@
 #include <unordered_map>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include "boost_communication.h"
+#include "architecture/messaging/system_messaging.h"
+#include "environment/spice/spice_interface.h"
 #include "dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "dynamics/reactionWheels/reactionWheelStateEffector.h"
 #include "dynamics/Thrusters/thrusterDynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "dynamics/_GeneralModuleFiles/gravityEffector.h"
-#include "architecture/messaging/system_messaging.h"
-#include "environment/spice/spice_planet_state.h"
-#include "environment/spice/spice_interface.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/rwSpeedData.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/rwConfigSimMsg.h"
+#include "simMessages/thrOutputSimMsg.h"
+#include "simMessages/spiceTimeSimMsg.h"
+#include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SpacecraftSimDefinitions.h"
 
 
 typedef struct {
     uint64_t msgId;
-    std::string msgName;// -- It pains me, but let's fix name
-    std::string msgStructName; // -- Again, pain, but it's better
-    uint32_t currentReadBuffer;  // -- Index for the current read buffer
-    uint64_t maxMsgSize;     // -- Maximum allowable message size
+    std::string msgName;
+    std::string msgStructName;
+    uint32_t currentReadBuffer; // -- Index for the current read buffer
+    uint64_t maxMsgSize;    // -- Maximum allowable message size
 }VisMessageData;
 
 class VisMessageInterface : public SysModel{
@@ -48,19 +52,21 @@ private:
     std::string ipAddress;
     // Message buffers
     std::string UTCCalInit;
-    SCPlusOutputStateData scStateInMsgBuffer;
-    SpicePlanetState sunEphmInMsgBuffer;
-    std::vector<SpicePlanetState> planets;
-    SpicePlanetState centralBodyInMsgBuffer;
-    SpiceTimeOutput spiceTimeDataInMsgBuffer;
-    std::unordered_map<std::string, SpicePlanetState> spicePlanetStates;
-    std::vector<ReactionWheelConfigData> reactionWheels;
-    RWSpeedData rwSpeeds;
-    std::vector<ThrusterOutputData> thrusters;
+    SCPlusStatesSimMsg scStateInMsg;
+    SpicePlanetStateSimMsg sunEphmInMsg;
+    std::vector<SpicePlanetStateSimMsg> planets;
+    int64_t centralBodyInMsgId;
+    SpicePlanetStateSimMsg centralBodyInMsg;
+    
+    std::vector<RWConfigSimMsg> reactionWheels;
+    RWConfigSimMsg rwSpeeds;
+    std::vector<THROutputSimMsg> thrusters;
     std::vector<std::string> rwInMsgNames;
     std::unordered_map<std::string, VisMessageData> rwMsgMap;
-    std::unordered_map<std::string, VisMessageData> thursterMsgMap;
     std::vector<std::string> thrusterInMsgNames;
+    std::unordered_map<std::string, VisMessageData> thursterMsgMap;
+    SpiceTimeSimMsg spiceTimeDataInMsgBuffer;
+    std::unordered_map<std::string, SpicePlanetStateSimMsg> spicePlanetStates;
     
 public:
     VisMessageInterface();
@@ -79,7 +85,8 @@ public:
     
 private:
     void mapMessagesToScSim(uint64_t currentSimNanos);
-
+    void setScSimCelestialObject();
+    void setScSimOrbitalElements();
     
 //    int loadSpiceKernel(char *kernelName, const char *dataPath);
 };

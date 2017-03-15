@@ -41,11 +41,13 @@ public:
     double           u_max;                   /*!< Nm, Max torque allowed */
     double           u_min;                   /*!< Nm, Max torque allowed */
     double           Omega;                  /*!< spin rate relative to body (rad/sec) */
+    double           theta;
     double           Omega_max;
     double           Js;                     /*!< spin inertia (kgm^s) */
+    double           rWB_B[3];
     double           gsHat_B[3];             /*!< spin axis in body frame */
-    double           gtHat0_B[3];            /*!< initial RW Wheel transfer axis */
-    double           ggHat0_B[3];            /*!< initial RW Wheel 3rd axis */
+    double           w2Hat0_B[3];            /*!< initial RW Wheel transfer axis */
+    double           w3Hat0_B[3];            /*!< initial RW Wheel 3rd axis */
     double           wheelAngle;             /*!< rad, angle of the RW wheel */
     double           staticImbalance;
     double           dynamicImbalance;
@@ -79,17 +81,15 @@ private:
         a &BOOST_SERIALIZATION_NVP(Omega);
         a &BOOST_SERIALIZATION_NVP(Js);
         a &BOOST_SERIALIZATION_NVP(gsHat_B);
-        a &BOOST_SERIALIZATION_NVP(gtHat0_B);
-        a &BOOST_SERIALIZATION_NVP(ggHat0_B);
+        a &BOOST_SERIALIZATION_NVP(w2Hat0_B);
+        a &BOOST_SERIALIZATION_NVP(w3Hat0_B);
         a &BOOST_SERIALIZATION_NVP(wheelAngle);
         a &BOOST_SERIALIZATION_NVP(staticImbalance);
         a &BOOST_SERIALIZATION_NVP(dynamicImbalance);
-        a &BOOST_SERIALIZATION_NVP(r_B);
+        a &BOOST_SERIALIZATION_NVP(rWB_B);
         a &BOOST_SERIALIZATION_NVP(motorTemp1);
         a &BOOST_SERIALIZATION_NVP(motorTemp2);
         a &BOOST_SERIALIZATION_NVP(power);
-//        a &BOOST_SERIALIZATION_NVP(speedState);
-//        a &BOOST_SERIALIZATION_NVP(tempState);
         a &boost::serialization::make_array(input, numElems(input));
         a &BOOST_SERIALIZATION_NVP(inputLength);
         a &boost::serialization::make_array(output, numElems(output));

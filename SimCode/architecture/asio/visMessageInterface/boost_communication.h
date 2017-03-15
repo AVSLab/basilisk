@@ -27,7 +27,7 @@
 #include <iostream>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/thread.hpp>
-#include "architecture/asio/boost_communication/TcpSerializeServer.h"
+#include "architecture/asio/visMessageInterface/TcpSerializeServer.h"
 #include "SpacecraftSimDefinitions.h"
 
 #define IP_BASE_PORT         50000
