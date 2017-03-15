@@ -525,7 +525,7 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
 	//! Begin method steps
 	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
-	int vscmgIter = 0;
+	int vscmgIt = 0;
 	double u_s;
 	double omegaCritical;
 
@@ -533,40 +533,40 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	for(CmdIt=NewVSCMGCmds.begin(); CmdIt!=NewVSCMGCmds.end(); CmdIt++)
 	{
 		// saturation
-		if (this->VSCMGData[vscmgIter].u_max > 0) {
-			if(CmdIt->u_s_cmd > this->VSCMGData[vscmgIter].u_max) {
-				CmdIt->u_s_cmd = this->VSCMGData[vscmgIter].u_max;
-			} else if(CmdIt->u_s_cmd < -this->VSCMGData[vscmgIter].u_max) {
-				CmdIt->u_s_cmd = -this->VSCMGData[vscmgIter].u_max;
+		if (this->VSCMGData[vscmgIt].u_max > 0) {
+			if(CmdIt->u_s_cmd > this->VSCMGData[vscmgIt].u_max) {
+				CmdIt->u_s_cmd = this->VSCMGData[vscmgIt].u_max;
+			} else if(CmdIt->u_s_cmd < -this->VSCMGData[vscmgIt].u_max) {
+				CmdIt->u_s_cmd = -this->VSCMGData[vscmgIt].u_max;
 			}
 		}
 
 		// minimum torque
-		if( std::abs(CmdIt->u_s_cmd) < this->VSCMGData[vscmgIter].u_min) {
+		if( std::abs(CmdIt->u_s_cmd) < this->VSCMGData[vscmgIt].u_min) {
 			CmdIt->u_s_cmd = 0.0;
 		}
 
 		// Coulomb friction
-		if (this->VSCMGData[vscmgIter].linearFrictionRatio > 0.0) {
-			omegaCritical = this->VSCMGData[vscmgIter].Omega_max * this->VSCMGData[vscmgIter].linearFrictionRatio;
+		if (this->VSCMGData[vscmgIt].linearFrictionRatio > 0.0) {
+			omegaCritical = this->VSCMGData[vscmgIt].Omega_max * this->VSCMGData[vscmgIt].linearFrictionRatio;
 		} else {
 			omegaCritical = 0.0;
 		}
-		if(this->VSCMGData[vscmgIter].Omega > omegaCritical) {
-			u_s = CmdIt->u_s_cmd - this->VSCMGData[vscmgIter].u_f;
-		} else if(this->VSCMGData[vscmgIter].Omega < -omegaCritical) {
-			u_s = CmdIt->u_s_cmd + this->VSCMGData[vscmgIter].u_f;
+		if(this->VSCMGData[vscmgIt].Omega > omegaCritical) {
+			u_s = CmdIt->u_s_cmd - this->VSCMGData[vscmgIt].u_f;
+		} else if(this->VSCMGData[vscmgIt].Omega < -omegaCritical) {
+			u_s = CmdIt->u_s_cmd + this->VSCMGData[vscmgIt].u_f;
 		} else {
-			if (this->VSCMGData[vscmgIter].linearFrictionRatio > 0) {
-				u_s = CmdIt->u_s_cmd - this->VSCMGData[vscmgIter].u_f*this->VSCMGData[vscmgIter].Omega/omegaCritical;
+			if (this->VSCMGData[vscmgIt].linearFrictionRatio > 0) {
+				u_s = CmdIt->u_s_cmd - this->VSCMGData[vscmgIt].u_f*this->VSCMGData[vscmgIt].Omega/omegaCritical;
 			} else {
 				u_s = CmdIt->u_s_cmd;
 			}
 		}
 
-		this->VSCMGData[vscmgIter].u_current = u_s; // save actual torque for reaction wheel motor
+		this->VSCMGData[vscmgIt].u_current = u_s; // save actual torque for reaction wheel motor
 
-		vscmgIter++;
+		vscmgIt++;
 
 	}
 }
