@@ -46,6 +46,8 @@ Eigen::Matrix3d eigenM2(double angle);
 Eigen::Matrix3d eigenM3(double angle);
 //!@brief returns the tilde matrix representation of a vector (equivalent to a vector cross product)
 Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec);
+//!@brief solves for the zero of the provided function
+double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime);
 
 
 #endif /* _GaussMarkov_HH_ */

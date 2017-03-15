@@ -25,6 +25,7 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../SimCode/utilities/avsEigenMRP.h"
+#include "../SimCode/utilities/avsEigenSupport.h"
 #include "fuelSloshParticle.h"
 
 //Fuel tank models
@@ -78,14 +79,6 @@ struct FuelTankModelEmptying_t :
 {
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
 	Eigen::Vector3d k3;							       //!< [m] Axis of fuel depletion in B frame
-
-	double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function< double(double) >& fPrime) {
-		double currentEstimate = initialEstimate;
-		while (abs(f(currentEstimate)) > accuracy) { //Could loop forever here
-			currentEstimate = currentEstimate - f(currentEstimate) / fPrime(currentEstimate);
-		}
-		return currentEstimate;
-	}
 
 	void computeTankProps(double mFuel, double mDotFuel) {
 		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit);
