@@ -56,11 +56,11 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 	void SelfInit();
 	void CrossInit();
-	void AddReactionWheel(VSCMGConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}
+	void AddVSCMG(VSCMGConfigSimMsg *NewVSCMG) {ReactionWheelData.push_back(*NewVSCMG);}
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();
-	void ConfigureRWRequests(double CurrentTime);
+	void ConfigureVSCMGRequests(double CurrentTime);
     
 public:
 	std::vector<VSCMGConfigSimMsg> ReactionWheelData;  //!< -- RW information2

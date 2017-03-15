@@ -153,7 +153,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
     rwStateEffector.ModelTag = "VSCMGs"
     for item in VSCMGs:
-        rwStateEffector.AddReactionWheel(item)
+        rwStateEffector.AddVSCMG(item)
     scObject.addStateEffector(rwStateEffector)
 
     # set RW torque command

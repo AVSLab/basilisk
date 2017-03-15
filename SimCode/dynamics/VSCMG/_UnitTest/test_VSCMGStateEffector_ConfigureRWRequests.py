@@ -61,7 +61,7 @@ def writeNewRWCmds(self,u_s_cmd,numRW):
         NewRWCmdsVec[i] = cmds # set the data
         self.NewRWCmds = NewRWCmdsVec # set in module
 
-def defaultReactionWheel():
+def defaultVSCMG():
     RW = VSCMGStateEffector.VSCMGConfigSimMsg()
     RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
@@ -120,14 +120,14 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
     testMessages = []  # create empty array to store test log messages
 
     # configure module
-    ReactionWheel = VSCMGStateEffector.VSCMGStateEffector()
-    ReactionWheel.ModelTag = "ReactionWheel"
+    VSCMG = VSCMGStateEffector.VSCMGStateEffector()
+    VSCMG.ModelTag = "VSCMG"
 
     numRW = 2
 
     RWs = []
     for i in range(0,numRW):
-        RWs.append(defaultReactionWheel())
+        RWs.append(defaultVSCMG())
 
 
     expOut = dict() # expected output
@@ -140,7 +140,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         RWs[0].u_max = 1.
         RWs[1].u_max = 2.
         u_s_cmd = [-1.2,1.5]
-        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
+        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [-1.,1.5]
 
@@ -148,7 +148,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         RWs[0].u_min = .1
         RWs[1].u_min = .0
         u_s_cmd = [-.09,0.0001]
-        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
+        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = [0.,0.0001]
 
@@ -163,7 +163,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
             RWs[i].Omega_max = Omega_max[i]
             RWs[i].linearFrictionRatio = linearFrictionRatio[i]
         u_s_cmd = [-1.,0.]
-        writeNewRWCmds(ReactionWheel,u_s_cmd,len(RWs))
+        writeNewRWCmds(VSCMG,u_s_cmd,len(RWs))
 
         expOut['u_current'] = np.asarray(u_s_cmd) + np.asarray(u_f)
 
@@ -171,9 +171,9 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
         raise Exception('invalid test case')
 
     for i in range(0,len(RWs)):
-        ReactionWheel.AddReactionWheel(RWs[i])
+        VSCMG.AddVSCMG(RWs[i])
 
-    ReactionWheel.ConfigureRWRequests(0.)
+    VSCMG.ConfigureVSCMGRequests(0.)
 
 
 
@@ -182,9 +182,9 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     for outputName in expOut.keys():
         for i in range(0,numRW):
-            if expOut[outputName][i] != getattr(ReactionWheel.ReactionWheelData[i],outputName):
+            if expOut[outputName][i] != getattr(VSCMG.ReactionWheelData[i],outputName):
                 print "expected: " + str(expOut[outputName][i])
-                print "got :" + str(getattr(ReactionWheel.ReactionWheelData[i],outputName))
+                print "got :" + str(getattr(VSCMG.ReactionWheelData[i],outputName))
                 testFail = 1
                 break
         if testFail:
@@ -194,7 +194,7 @@ def unitSimVSCMG(show_plots, useFlag, testCase):
 
     if testFail:
         testFailCount += 1
-        testMessages.append("FAILED: " + ReactionWheel.ModelTag + " Module failed " +
+        testMessages.append("FAILED: " + VSCMG.ModelTag + " Module failed " +
                             outputName + " unit test")
 
     np.set_printoptions(precision=16)

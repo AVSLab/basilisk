@@ -498,7 +498,7 @@ void VSCMGStateEffector::ReadInputs()
 // @return void
 // @param CurrentTime The current simulation time converted to a double
 // */
-void VSCMGStateEffector::ConfigureRWRequests(double CurrentTime)
+void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 {
 	//! Begin method steps
 	std::vector<VSCMGCmdSimMsg>::iterator CmdIt;
@@ -559,9 +559,9 @@ void VSCMGStateEffector::ConfigureRWRequests(double CurrentTime)
 void VSCMGStateEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	//! Begin method steps
-	//! - Read the inputs and then call ConfigureRWRequests to set up dynamics
+	//! - Read the inputs and then call ConfigureVSCMGRequests to set up dynamics
 	ReadInputs();
-	ConfigureRWRequests(CurrentSimNanos*NANO2SEC);
+	ConfigureVSCMGRequests(CurrentSimNanos*NANO2SEC);
 	WriteOutputMessages(CurrentSimNanos);
 //
 }
