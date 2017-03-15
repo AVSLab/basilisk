@@ -63,25 +63,25 @@ public:
 	void ConfigureVSCMGRequests(double CurrentTime);
     
 public:
-	std::vector<VSCMGConfigSimMsg> VSCMGData;  //!< -- RW information2
-    Eigen::MatrixXd *g_N;           //!< [m/s^2] Gravitational acceleration in N frame components
-	std::string InputCmds;                                      //!< -- message used to read command inputs
-	std::string OutputDataString;                               //!< -- port to use for output data
-    uint64_t OutputBufferCount;                                 //!< -- Count on number of buffers to output
-	std::vector<VSCMGCmdSimMsg> NewVSCMGCmds;                        //!< -- Incoming attitude commands
-	VSCMGSpeedIntMsg outputStates;                                //!< (-) Output data from the reaction wheels
+	std::vector<VSCMGConfigSimMsg> VSCMGData; 	//!< -- VSCMG data structure
+    Eigen::MatrixXd *g_N; 						//!< [m/s^2] Gravitational acceleration in N frame components
+	std::string InputCmds; 						//!< -- message used to read command inputs
+	std::string OutputDataString; 				//!< -- port to use for output data
+    uint64_t OutputBufferCount; 				//!< -- Count on number of buffers to output
+	std::vector<VSCMGCmdSimMsg> NewVSCMGCmds; 	//!< -- Incoming torque commands
+	VSCMGSpeedIntMsg outputStates; 				//!< (-) Output data from the VSCMGs
     std::string nameOfVSCMGOmegasState;
     std::string nameOfVSCMGThetasState;
-	int numRW;
-	int numRWJitter;
+	int numVSCMG;
+	int numVSCMGJitter;
 
 private:
-	std::vector<std::string> rwOutMsgNames;                     //!< -- vector with the message names of each RW
-	std::vector<uint64_t> rwOutMsgIds;                          //!< -- vector with the ID of each RW
-	int64_t CmdsInMsgID;                                        //!< -- Message ID for incoming data
-	int64_t StateOutMsgID;                                      //!< -- Message ID for outgoing data
-	VSCMGArrayTorqueIntMsg IncomingCmdBuffer;                     //!< -- One-time allocation for savings
-	uint64_t prevCommandTime;                                   //!< -- Time for previous valid thruster firing
+	std::vector<std::string> rwOutMsgNames;		//!< -- vector with the message names of each RW
+	std::vector<uint64_t> rwOutMsgIds;          //!< -- vector with the ID of each RW
+	int64_t CmdsInMsgID;                      	//!< -- Message ID for incoming data
+	int64_t StateOutMsgID;                    	//!< -- Message ID for outgoing data
+	VSCMGArrayTorqueIntMsg IncomingCmdBuffer; 	//!< -- One-time allocation for savings
+	uint64_t prevCommandTime;                  	//!< -- Time for previous valid thruster firing
 
 	StateData *hubSigma;
 	StateData *hubOmega;

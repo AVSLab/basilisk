@@ -66,29 +66,29 @@ void VSCMGStateEffector::linkInStates(DynParamManager& statesIn)
 void VSCMGStateEffector::registerStates(DynParamManager& states)
 {
     //! - Find number of RWs and number of RWs with jitter
-    this->numRWJitter = 0;
-    this->numRW = 0;
+    this->numVSCMGJitter = 0;
+    this->numVSCMG = 0;
     std::vector<VSCMGConfigSimMsg>::iterator RWIt;
     //! zero the RW Omega and theta values (is there I should do this?)
     Eigen::MatrixXd omegasForInit(this->VSCMGData.size(),1);
 
     for(RWIt=VSCMGData.begin(); RWIt!=VSCMGData.end(); RWIt++) {
         if (RWIt->RWModel == JitterSimple || RWIt->RWModel == JitterFullyCoupled) {
-            this->numRWJitter++;
+            this->numVSCMGJitter++;
         }
         omegasForInit(RWIt - this->VSCMGData.begin(), 0) = RWIt->Omega;
-        this->numRW++;
+        this->numVSCMG++;
     }
     
-	this->OmegasState = states.registerState(this->numRW, 1, this->nameOfVSCMGOmegasState);
+	this->OmegasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGOmegasState);
 
-	if (numRWJitter > 0) {
-		this->thetasState = states.registerState(this->numRWJitter, 1, this->nameOfVSCMGThetasState);
+	if (numVSCMGJitter > 0) {
+		this->thetasState = states.registerState(this->numVSCMGJitter, 1, this->nameOfVSCMGThetasState);
 	}
 
     this->OmegasState->setState(omegasForInit);
-    if (this->numRWJitter > 0) {
-        Eigen::MatrixXd thetasForZeroing(this->numRWJitter,1);
+    if (this->numVSCMGJitter > 0) {
+        Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
     }
@@ -245,8 +245,8 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 
 void VSCMGStateEffector::computeDerivatives(double integTime)
 {
-	Eigen::MatrixXd OmegasDot(this->numRW,1);
-    Eigen::MatrixXd thetasDot(this->numRWJitter,1);
+	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
+    Eigen::MatrixXd thetasDot(this->numVSCMGJitter,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
@@ -282,7 +282,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 	}
 
 	OmegasState->setDerivative(OmegasDot);
-    if (this->numRWJitter > 0) {
+    if (this->numVSCMGJitter > 0) {
         thetasState->setDerivative(thetasDot);
     }
 }
@@ -417,7 +417,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 	std::vector<VSCMGConfigSimMsg>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-        if (numRWJitter > 0) {
+        if (numVSCMGJitter > 0) {
             double thetaCurrent = this->thetasState->getState()(it - VSCMGData.begin(), 0);
             it->theta = thetaCurrent;
         }
