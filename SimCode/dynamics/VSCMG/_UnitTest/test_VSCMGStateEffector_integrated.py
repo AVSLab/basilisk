@@ -123,6 +123,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].w2Hat0_S = [[0.0], [0.0], [1.0]]
     VSCMGs[0].w3Hat0_S = [[0.0], [-1.0], [0.0]]
     VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
+    VSCMGs[0].gamma = 0.
     VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
@@ -130,6 +131,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[1].w2Hat0_S = [[0.0], [0.0], [-1.0]]
     VSCMGs[1].w3Hat0_S = [[-1.0], [0.0], [0.0]]
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
+    VSCMGs[1].gamma = 1.
     VSCMGs[1].rWB_S = [[0.0], [0.1], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
@@ -137,6 +139,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[2].w2Hat0_S = [[0.0], [1.0], [0.0]]
     VSCMGs[2].w3Hat0_S = [[-1.0], [0.0], [0.0]]
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
+    VSCMGs[2].gamma = 2.
     VSCMGs[2].rWB_S = [[0.0], [0.0], [0.1]]
 
     if testCase == 'BalancedWheels':
@@ -221,6 +224,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
 
     wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
+    gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",range(3))
     sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
     omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
 
@@ -293,7 +297,14 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
-    #
+
+    plt.figure()
+    for i in range(1,4):
+        plt.subplot(4,1,i)
+        plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label='RWA' + str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'RW' + str(i) + r' $\gamma$ (rad)')
+
     # plt.figure(4)
     # for i in range(1,4):
     #     plt.subplot(4,1,i)

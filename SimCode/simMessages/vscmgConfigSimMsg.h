@@ -35,9 +35,10 @@ typedef struct {
     Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
     Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
     Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
-    double mass;               //!< [kg], reaction wheel rotor mass
+    double mass;               //!< [kg], wheel rotor mass
     double theta;              //!< [rad], wheel angle
     double Omega;              //!< [rad/s], wheel speed
+	double gamma;              //!< [rad/s], gimbal angle
     double Js;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
     double Jt;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
     double Jg;                 //!< [kg-m^2], ggHat axis rotor moment of inertia

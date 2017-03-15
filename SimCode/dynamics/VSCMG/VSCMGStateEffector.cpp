@@ -42,6 +42,8 @@ VSCMGStateEffector::VSCMGStateEffector()
 
     this->nameOfVSCMGOmegasState = "VSCMGOmegas";
     this->nameOfVSCMGThetasState = "VSCMGThetas";
+	this->nameOfVSCMGGammasState = "VSCMGGammas";
+	this->nameOfVSCMGGammaDotsState = "VSCMGGammaDots";
     
     return;
 }
@@ -71,23 +73,25 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
     std::vector<VSCMGConfigSimMsg>::iterator vscmgIt;
     //! zero the Omega and theta values
     Eigen::MatrixXd omegasForInit(this->VSCMGData.size(),1);
+	Eigen::MatrixXd gammasForInit(this->VSCMGData.size(),1);
 
     for(vscmgIt=VSCMGData.begin(); vscmgIt!=VSCMGData.end(); vscmgIt++) {
         if (vscmgIt->VSCMGModel == JitterSimple || vscmgIt->VSCMGModel == JitterFullyCoupled) {
             this->numVSCMGJitter++;
         }
         omegasForInit(vscmgIt - this->VSCMGData.begin(), 0) = vscmgIt->Omega;
+		gammasForInit(vscmgIt - this->VSCMGData.begin(), 0) = vscmgIt->gamma;
         this->numVSCMG++;
     }
     
 	this->OmegasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGOmegasState);
+	this->gammasState = states.registerState(this->numVSCMG, 1, this->nameOfVSCMGGammasState);
+
+    this->OmegasState->setState(omegasForInit);
+	this->gammasState->setState(gammasForInit);
 
 	if (numVSCMGJitter > 0) {
 		this->thetasState = states.registerState(this->numVSCMGJitter, 1, this->nameOfVSCMGThetasState);
-	}
-
-    this->OmegasState->setState(omegasForInit);
-    if (this->numVSCMGJitter > 0) {
         Eigen::MatrixXd thetasForZeroing(this->numVSCMGJitter,1);
         thetasForZeroing.setZero();
         this->thetasState->setState(thetasForZeroing);
@@ -247,6 +251,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 {
 	Eigen::MatrixXd OmegasDot(this->numVSCMG,1);
     Eigen::MatrixXd thetasDot(this->numVSCMGJitter,1);
+	Eigen::MatrixXd gammasDot(this->numVSCMG,1);
 	Eigen::Vector3d omegaDotBNLoc_B;
 	Eigen::MRPd sigmaBNLocal;
 	Eigen::Matrix3d dcm_BN;                        /* direction cosine matrix from N to B */
@@ -268,6 +273,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 	//! - Compute Derivatives
 	for(vscmgIt=VSCMGData.begin(); vscmgIt!=VSCMGData.end(); vscmgIt++)
 	{
+		gammasDot(VSCMGi,0) = 1.0;
         if(vscmgIt->VSCMGModel == JitterFullyCoupled || vscmgIt->VSCMGModel == JitterSimple) {
             // - Set trivial kinemetic derivative
             thetasDot(thetaCount,0) = vscmgIt->Omega;
@@ -282,6 +288,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 	}
 
 	OmegasState->setDerivative(OmegasDot);
+	gammasState->setDerivative(gammasDot);
     if (this->numVSCMGJitter > 0) {
         thetasState->setDerivative(thetasDot);
     }
@@ -424,6 +431,9 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         double omegaCurrent = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
         it->Omega = omegaCurrent;
 		outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
+		double gammaCurrent = this->gammasState->getState()(it - VSCMGData.begin(), 0);
+		it->gamma = gammaCurrent;
+		outputStates.gimbalAngles[it - VSCMGData.begin()] = it->gamma;
 
 		tmpVSCMG.rWB_S = it->rWB_S;
 		tmpVSCMG.gsHat_S = it->gsHat_S;
@@ -436,6 +446,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.u_f = it->u_f;
 		tmpVSCMG.Omega = it->Omega;
 		tmpVSCMG.Omega_max = it->Omega_max;
+		tmpVSCMG.gamma = it->gamma;
 		tmpVSCMG.Js = it->Js;
 		tmpVSCMG.U_s = it->U_s;
 		tmpVSCMG.U_d = it->U_d;

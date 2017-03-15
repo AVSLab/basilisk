@@ -72,6 +72,8 @@ public:
 	VSCMGSpeedIntMsg outputStates; 				//!< (-) Output data from the VSCMGs
     std::string nameOfVSCMGOmegasState;
     std::string nameOfVSCMGThetasState;
+	std::string nameOfVSCMGGammasState;
+	std::string nameOfVSCMGGammaDotsState;
 	int numVSCMG;
 	int numVSCMGJitter;
 
@@ -88,6 +90,7 @@ private:
 	StateData *hubVelocity;
 	StateData *OmegasState;
 	StateData *thetasState;
+	StateData *gammasState;
 
 };
 
