@@ -253,7 +253,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 	Eigen::Matrix3d dcm_NB;                        /* direction cosine matrix from B to N */
 	Eigen::Vector3d rDDotBNLoc_N;                 /* second time derivative of rBN in N frame */
 	Eigen::Vector3d rDDotBNLoc_B;                 /* second time derivative of rBN in B frame */
-	int RWi = 0;
+	int VSCMGi = 0;
     int thetaCount = 0;
 	std::vector<VSCMGConfigSimMsg>::iterator vscmgIt;
 
@@ -274,11 +274,11 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
             thetaCount++;
         }
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
-			OmegasDot(RWi,0) = vscmgIt->u_current/vscmgIt->Js - vscmgIt->gsHat_B.transpose()*omegaDotBNLoc_B;
+			OmegasDot(VSCMGi,0) = vscmgIt->u_current/vscmgIt->Js - vscmgIt->gsHat_B.transpose()*omegaDotBNLoc_B;
         } else if(vscmgIt->VSCMGModel == JitterFullyCoupled) {
-			OmegasDot(RWi,0) = vscmgIt->aOmega.dot(rDDotBNLoc_B) + vscmgIt->bOmega.dot(omegaDotBNLoc_B) + vscmgIt->cOmega;
+			OmegasDot(VSCMGi,0) = vscmgIt->aOmega.dot(rDDotBNLoc_B) + vscmgIt->bOmega.dot(omegaDotBNLoc_B) + vscmgIt->cOmega;
 		}
-		RWi++;
+		VSCMGi++;
 	}
 
 	OmegasState->setDerivative(OmegasDot);
@@ -315,20 +315,20 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
     return;
 }
 
-/*! This method is used to clear out the current RW states and make sure
+/*! This method is used to clear out the current VSCMG states and make sure
  that the overall model is ready
  @return void
  */
 void VSCMGStateEffector::SelfInit()
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	VSCMGCmdSimMsg RWCmdInitializer;
-	RWCmdInitializer.u_s_cmd = 0.0;
+	VSCMGCmdSimMsg VSCMGCmdInitializer;
+	VSCMGCmdInitializer.u_s_cmd = 0.0;
 
 	//! Begin method steps
-	//! - Clear out any currently firing RWs and re-init cmd array
+	//! - Clear out any currently firing VSCMGs and re-init cmd array
 	NewVSCMGCmds.clear();
-	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), RWCmdInitializer );
+	NewVSCMGCmds.insert(NewVSCMGCmds.begin(), VSCMGData.size(), VSCMGCmdInitializer );
 
 	// Reserve a message ID for each reaction wheel config output message
 	uint64_t tmpWheeltMsgId;
@@ -336,7 +336,7 @@ void VSCMGStateEffector::SelfInit()
 	std::vector<VSCMGConfigSimMsg>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-		tmpWheelMsgName = "rw_bla" + std::to_string(it - VSCMGData.begin()) + "_data";
+		tmpWheelMsgName = "vscmg_bla" + std::to_string(it - VSCMGData.begin()) + "_data";
 		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(VSCMGConfigSimMsg), OutputBufferCount, "VSCMGConfigSimMsg", moduleID);
 		this->vscmgOutMsgNames.push_back(tmpWheelMsgName);
 		this->vscmgOutMsgIds.push_back(tmpWheeltMsgId);
@@ -348,7 +348,7 @@ void VSCMGStateEffector::SelfInit()
     return;
 }
 
-/*! This method is used to connect the input command message to the RWs.
+/*! This method is used to connect the input command message to the VSCMGs.
  It sets the message ID based on what it finds for the input string.  If the
  message is not successfully linked, it will warn the user.
  @return void
@@ -413,7 +413,7 @@ void VSCMGStateEffector::CrossInit()
 void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	VSCMGConfigSimMsg tmpRW;
+	VSCMGConfigSimMsg tmpVSCMG;
 	std::vector<VSCMGConfigSimMsg>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
@@ -425,26 +425,26 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         it->Omega = omegaCurrent;
 		outputStates.wheelSpeeds[it - VSCMGData.begin()] = it->Omega;
 
-		tmpRW.rWB_S = it->rWB_S;
-		tmpRW.gsHat_S = it->gsHat_S;
-		tmpRW.w2Hat0_S = it->w2Hat0_S;
-		tmpRW.w3Hat0_S = it->w3Hat0_S;
-		tmpRW.theta = it->theta;
-		tmpRW.u_current = it->u_current;
-		tmpRW.u_max = it->u_max;
-		tmpRW.u_min = it->u_min;
-		tmpRW.u_f = it->u_f;
-		tmpRW.Omega = it->Omega;
-		tmpRW.Omega_max = it->Omega_max;
-		tmpRW.Js = it->Js;
-		tmpRW.U_s = it->U_s;
-		tmpRW.U_d = it->U_d;
-		tmpRW.VSCMGModel = it->VSCMGModel;
+		tmpVSCMG.rWB_S = it->rWB_S;
+		tmpVSCMG.gsHat_S = it->gsHat_S;
+		tmpVSCMG.w2Hat0_S = it->w2Hat0_S;
+		tmpVSCMG.w3Hat0_S = it->w3Hat0_S;
+		tmpVSCMG.theta = it->theta;
+		tmpVSCMG.u_current = it->u_current;
+		tmpVSCMG.u_max = it->u_max;
+		tmpVSCMG.u_min = it->u_min;
+		tmpVSCMG.u_f = it->u_f;
+		tmpVSCMG.Omega = it->Omega;
+		tmpVSCMG.Omega_max = it->Omega_max;
+		tmpVSCMG.Js = it->Js;
+		tmpVSCMG.U_s = it->U_s;
+		tmpVSCMG.U_d = it->U_d;
+		tmpVSCMG.VSCMGModel = it->VSCMGModel;
 		// Write out config data for eachreaction wheel
 		messageSys->WriteMessage(this->vscmgOutMsgIds.at(it - VSCMGData.begin()),
 								 CurrentClock,
 								 sizeof(VSCMGConfigSimMsg),
-								 reinterpret_cast<uint8_t*> (&tmpRW),
+								 reinterpret_cast<uint8_t*> (&tmpVSCMG),
 								 moduleID);
 	}
 
@@ -454,7 +454,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 /*! This method is used to read the incoming command message and set the
- associated command structure for operating the RWs.
+ associated command structure for operating the VSCMGs.
  @return void
  */
 void VSCMGStateEffector::ReadInputs()
@@ -492,9 +492,9 @@ void VSCMGStateEffector::ReadInputs()
 
 }
 
-///*! This method is used to read the new commands vector and set the RW
-// firings appropriately.  It assumes that the ReadInputs method has already been
-// run successfully.
+///*! This method is used to read the new commands vector and set the VSCMG
+// torque commands appropriately.  It assumes that the ReadInputs method has
+// already been run successfully.
 // @return void
 // @param CurrentTime The current simulation time converted to a double
 // */
@@ -548,8 +548,8 @@ void VSCMGStateEffector::ConfigureVSCMGRequests(double CurrentTime)
 	}
 }
 
-/*! This method is the main cyclical call for the scheduled part of the RW
- dynamics model.  It reads the current commands array and sets the RW
+/*! This method is the main cyclical call for the scheduled part of the VSCMG
+ dynamics model.  It reads the current commands array and sets the VSCMG
  configuration data based on that incoming command set.  Note that the main
  dynamical method (ComputeDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
