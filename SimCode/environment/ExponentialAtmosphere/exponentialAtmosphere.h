@@ -73,6 +73,7 @@ public:
     void AddSpacecraftToModel(std::string tmpScMsgName);
     void SetBaseDensity(double newBaseDens);
     void SetScaleHeight(double newScaleHeight);
+    void SetPlanetRadius(double newPlanetRadius);
     void SetPlanet(std::string newPlanetName);
 
 
@@ -91,9 +92,9 @@ public:
     std::vector<SCPlusOutputStateData> scStates;
     SpicePlanetState bodyState;
     Eigen::Vector3d relativePos; //!< [-] Container for local position
+    exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
 
 private:
-    exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
     double tmpPosMag;
     uint64_t OutputBufferCount;
     std::vector<AtmoOutputData> atmoOutBuffer; //!< -- Message buffer for thruster data
