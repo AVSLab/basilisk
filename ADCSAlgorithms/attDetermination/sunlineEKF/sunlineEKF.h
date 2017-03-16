@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _SUNLINE_UKF_H_
-#define _SUNLINE_UKF_H_
+#ifndef _SUNLINE_EKF_H_
+#define _SUNLINE_EKF_H_
 
 #include "messaging/static_messaging.h"
 #include "sensorInterfaces/CSSSensorData/cssComm.h"
@@ -93,7 +93,7 @@ typedef struct {
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
-}SunlineUKFConfig;
+}SunlineEKFConfig;
 
 #ifdef __cplusplus
 extern "C" {
