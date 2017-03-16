@@ -72,9 +72,9 @@ def defaultVSCMG():
     VSCMG.gammaDot = 0.
     VSCMG.Omega_max = 6000. * rpm2rad
     VSCMG.gammaDot_max = -1
-    VSCMG.Js = 100./VSCMG.Omega_max # 0.159154943092
-    VSCMG.Jt = 0.5*VSCMG.Js # 0.0795774715459
-    VSCMG.Jg = 0.5*VSCMG.Js # 0.0795774715459
+    VSCMG.IW1 = 100./VSCMG.Omega_max # 0.159154943092
+    VSCMG.IW2 = 0.5*VSCMG.IW1 # 0.0795774715459
+    VSCMG.IW3 = 0.5*VSCMG.IW1 # 0.0795774715459
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.mass = 12.

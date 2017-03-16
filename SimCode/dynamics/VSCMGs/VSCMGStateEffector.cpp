@@ -131,9 +131,9 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 
 			//! wheel inertia tensor about wheel center of mass represented in B frame
 			Eigen::Matrix3d IRWPntWc_W;
-			IRWPntWc_W << vscmgIt->Js, 0., vscmgIt->J13, \
-								0., vscmgIt->Jt, 0., \
-								vscmgIt->J13, 0., vscmgIt->Jg;
+			IRWPntWc_W << vscmgIt->IW1, 0., vscmgIt->J13, \
+								0., vscmgIt->IW2, 0., \
+								vscmgIt->J13, 0., vscmgIt->IW3;
 			vscmgIt->IRWPntWc_B = dcm_BW * IRWPntWc_W * dcm_BW.transpose();
 
 			//! wheel inertia tensor body frame derivative about wheel center of mass represented in B frame
@@ -212,8 +212,8 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 		OmegaSquared = vscmgIt->Omega * vscmgIt->Omega;
 
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
-			matrixDcontr -= vscmgIt->Js * vscmgIt->gsHat_B * vscmgIt->gsHat_B.transpose();
-			vecRotcontr -= vscmgIt->gsHat_B * vscmgIt->u_s_current + vscmgIt->Js*vscmgIt->Omega*omegaLoc_BN_B.cross(vscmgIt->gsHat_B);
+			matrixDcontr -= vscmgIt->IW1 * vscmgIt->gsHat_B * vscmgIt->gsHat_B.transpose();
+			vecRotcontr -= vscmgIt->gsHat_B * vscmgIt->u_s_current + vscmgIt->IW1*vscmgIt->Omega*omegaLoc_BN_B.cross(vscmgIt->gsHat_B);
 
 			//! imbalance torque (simplified external)
 			if (vscmgIt->VSCMGModel == JitterSimple) {
@@ -236,9 +236,9 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 
 			dSquared = vscmgIt->d * vscmgIt->d;
 
-			vscmgIt->aOmega = -vscmgIt->mass*vscmgIt->d/(vscmgIt->Js + vscmgIt->mass*dSquared) * vscmgIt->w3Hat_B;
-			vscmgIt->bOmega = -1.0/(vscmgIt->Js + vscmgIt->mass*dSquared)*((vscmgIt->Js+vscmgIt->mass*dSquared)*vscmgIt->gsHat_B + vscmgIt->J13*vscmgIt->w3Hat_B + vscmgIt->mass*vscmgIt->d*vscmgIt->rWB_B.cross(vscmgIt->w3Hat_B));
-			vscmgIt->cOmega = 1.0/(vscmgIt->Js + vscmgIt->mass*dSquared)*(omegaw2*omegaw3*(-vscmgIt->mass*dSquared)-vscmgIt->J13*omegaw2*omegas-vscmgIt->mass*vscmgIt->d*vscmgIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(vscmgIt->rWB_B))+vscmgIt->u_s_current + vscmgIt->gsHat_B.dot(gravityTorquePntW_B));
+			vscmgIt->aOmega = -vscmgIt->mass*vscmgIt->d/(vscmgIt->IW1 + vscmgIt->mass*dSquared) * vscmgIt->w3Hat_B;
+			vscmgIt->bOmega = -1.0/(vscmgIt->IW1 + vscmgIt->mass*dSquared)*((vscmgIt->IW1+vscmgIt->mass*dSquared)*vscmgIt->gsHat_B + vscmgIt->J13*vscmgIt->w3Hat_B + vscmgIt->mass*vscmgIt->d*vscmgIt->rWB_B.cross(vscmgIt->w3Hat_B));
+			vscmgIt->cOmega = 1.0/(vscmgIt->IW1 + vscmgIt->mass*dSquared)*(omegaw2*omegaw3*(-vscmgIt->mass*dSquared)-vscmgIt->J13*omegaw2*omegas-vscmgIt->mass*vscmgIt->d*vscmgIt->w3Hat_B.transpose()*omegaLoc_BN_B.cross(omegaLoc_BN_B.cross(vscmgIt->rWB_B))+vscmgIt->u_s_current + vscmgIt->gsHat_B.dot(gravityTorquePntW_B));
 
 			matrixAcontr += vscmgIt->mass * vscmgIt->d * vscmgIt->w3Hat_B * vscmgIt->aOmega.transpose();
 			matrixBcontr += vscmgIt->mass * vscmgIt->d * vscmgIt->w3Hat_B * vscmgIt->bOmega.transpose();
@@ -285,7 +285,7 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
             thetaCount++;
         }
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
-			OmegasDot(VSCMGi,0) = vscmgIt->u_s_current/vscmgIt->Js - vscmgIt->gsHat_B.transpose()*omegaDotBNLoc_B;
+			OmegasDot(VSCMGi,0) = vscmgIt->u_s_current/vscmgIt->IW1 - vscmgIt->gsHat_B.transpose()*omegaDotBNLoc_B;
 			gammaDotsDot(VSCMGi,0) = 1.0;
         } else if(vscmgIt->VSCMGModel == JitterFullyCoupled) {
 			OmegasDot(VSCMGi,0) = vscmgIt->aOmega.dot(rDDotBNLoc_B) + vscmgIt->bOmega.dot(omegaDotBNLoc_B) + vscmgIt->cOmega;
@@ -315,8 +315,8 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
     for(vscmgIt=VSCMGData.begin(); vscmgIt!=VSCMGData.end(); vscmgIt++)
     {
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
-			rotAngMomPntCContr_B += vscmgIt->Js*vscmgIt->gsHat_B*vscmgIt->Omega;
-			rotEnergyContr += 1.0/2.0*vscmgIt->Js*vscmgIt->Omega*vscmgIt->Omega;
+			rotAngMomPntCContr_B += vscmgIt->IW1*vscmgIt->gsHat_B*vscmgIt->Omega;
+			rotEnergyContr += 1.0/2.0*vscmgIt->IW1*vscmgIt->Omega*vscmgIt->Omega;
 		} else if (vscmgIt->VSCMGModel == JitterFullyCoupled) {
 			Eigen::Vector3d omega_WN_B = omegaLoc_BN_B + vscmgIt->Omega*vscmgIt->gsHat_B;
 			Eigen::Vector3d r_WcB_B = vscmgIt->rWcB_B;
@@ -465,7 +465,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		tmpVSCMG.gamma = it->gamma;
 		tmpVSCMG.gammaDot = it->gammaDot;
 		tmpVSCMG.gammaDot_max = it->gammaDot_max;
-		tmpVSCMG.Js = it->Js;
+		tmpVSCMG.IW1 = it->IW1;
 		tmpVSCMG.U_s = it->U_s;
 		tmpVSCMG.U_d = it->U_d;
 		tmpVSCMG.VSCMGModel = it->VSCMGModel;

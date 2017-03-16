@@ -87,9 +87,9 @@ def defaultVSCMG():
     VSCMG.gammaDot = 0.
     VSCMG.Omega_max = 0.
     VSCMG.gammaDot_max = -1
-    VSCMG.Js = 0.
-    VSCMG.Jt = 0.
-    VSCMG.Jg = 0.
+    VSCMG.IW1 = 0.
+    VSCMG.IW2 = 0.
+    VSCMG.IW3 = 0.
     VSCMG.U_s = 0.
     VSCMG.U_d = 0.
     VSCMG.mass = 0.

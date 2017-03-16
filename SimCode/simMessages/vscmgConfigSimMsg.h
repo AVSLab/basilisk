@@ -40,9 +40,9 @@ typedef struct {
     double Omega;              //!< [rad/s], wheel speed
 	double gamma;              //!< [s], gimbal angle
 	double gammaDot;              //!< [rad/s], gimbal rate
-    double Js;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
-    double Jt;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
-    double Jg;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
+    double IW1;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
+    double IW2;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
+    double IW3;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
     double U_s;                //!< [kg-m], static imbalance
     double U_d;                //!< [kg-m^2], dynamic imbalance
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
