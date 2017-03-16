@@ -100,6 +100,10 @@ void ExponentialAtmosphere::SetScaleHeight(double newScaleHeight){
   this->atmosphereProps.scaleHeight = newScaleHeight;
 }
 
+void ExponentialAtmosphere::SetPlanetRadius(double newPlanetRadius){
+  this->atmosphereProps.planetRadius = newPlanetRadius;
+}
+
 void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
   this->planetName = newPlanetName;
   double newBaseDens = 0; // In kg/m^3
@@ -113,17 +117,17 @@ void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
   } else if(newPlanetName.compare("Mars")==0){
     newBaseDens = 0.020;
     newScaleHeight = 11000.0;
-    this->atmosphereProps.planetRadius = 3389.5 * 1000.0;
+    SetPlanetRadius(3389.5 * 1000.0);
     SetBaseDensity(newBaseDens);
     SetScaleHeight(newScaleHeight);
   } else if (newPlanetName.compare("Venus")==0){
-    this->atmosphereProps.planetRadius = 6051.8 * 1000.0;
+    SetPlanetRadius(6051.8 * 1000.0);
     newBaseDens = 65.0;
     newScaleHeight = 15900.0;
     SetBaseDensity(newBaseDens);
     SetScaleHeight(newScaleHeight);
   } else{
-    std::cout<<"Error: Planet not found. Either undefined or non-atmospheric."<<std::endl;
+    std::cout<<"Error: Planet "<< newPlanetName<<" not found. Either undefined or non-atmospheric."<<std::endl;
   }
   return;
 }
