@@ -39,10 +39,10 @@ void SelfInit_sunlineEKF(SunlineEKFConfig *ConfigData, uint64_t moduleID)
     
     /*! Begin method steps */
     /*! - Create output message for module */
-	ConfigData->EKFStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
+	ConfigData->navStateOutMsgId = CreateNewMessage(ConfigData->navStateOutMsgName,
 		sizeof(NavAttOut), "NavAttOut", moduleID);
     /*! - Create filter states output message which is mostly for debug*/
-    ConfigData->EKFDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
+    ConfigData->filtDataOutMsgId = CreateNewMessage(ConfigData->filtDataOutMsgName,
         sizeof(SunlineMeasOut), "SunlineMeasOut", moduleID);
     
 }
