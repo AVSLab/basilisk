@@ -28,11 +28,17 @@ enum VSCMGModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 typedef struct {
     std::string typeName;      //!< [-], string containing the VSCMG type name
     Eigen::Vector3d rWB_S;		//!< [m], position vector of the VSCMG relative to the spacecraft structural frame
-    Eigen::Vector3d gsHat_S;	//!< [-] spin axis unit vector in structural frame
-    Eigen::Vector3d w2Hat0_S;	//!< [-] initial torque axis unit vector in structural
-    Eigen::Vector3d w3Hat0_S;	//!< [-] initial gimbal axis unit vector in structural frame
+    Eigen::Vector3d gsHat0_S;	//!< [-] spin axis unit vector in structural frame
+	Eigen::Vector3d gtHat0_S;	//!< [-] spin axis unit vector in structural frame
+	Eigen::Vector3d ggHat_S;	//!< [-] spin axis unit vector in structural frame
     Eigen::Vector3d rWB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
     Eigen::Vector3d gsHat_B;	//!< [-] spin axis unit vector in body frame
+	Eigen::Vector3d gtHat_B;
+	Eigen::Vector3d ggHat_B;
+	Eigen::Vector3d w2Hat_B;
+	Eigen::Vector3d w3Hat_B;
+	Eigen::Vector3d gsHat0_B;
+	Eigen::Vector3d gtHat0_B;
     Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
     Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
     double mass;               //!< [kg], wheel rotor mass
@@ -43,10 +49,19 @@ typedef struct {
     double IW1;                 //!< [kg-m^2], spin axis gsHat rotor moment of inertia
     double IW2;                 //!< [kg-m^2], gtHat axis rotor moment of inertia
     double IW3;                 //!< [kg-m^2], ggHat axis rotor moment of inertia
+	double IW13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
+	double IG1;              	//!< [kg-m^2]
+	double IG2;          		//!< [kg-m^2]
+	double IG3;                 //!< [kg-m^2]
+	double IG12;             	//!< [kg-m^2]
+	double IG13;         		//!< [kg-m^2]
+	double IG23;                //!< [kg-m^2]
+	double IV1;              	//!< [kg-m^2]
+	double IV2;          		//!< [kg-m^2]
+	double IV3;                 //!< [kg-m^2]
     double U_s;                //!< [kg-m], static imbalance
     double U_d;                //!< [kg-m^2], dynamic imbalance
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
-    double J13;                	//!< [kg-m^2], x-z inertia of wheel about wheel center in wheel frame (imbalance)
     double u_s_current;          //!< [N-m], current motor torque
     double u_s_max;              //!< [N-m], Max torque
     double u_s_min;              //!< [N-m], Min torque
@@ -64,12 +79,12 @@ typedef struct {
     Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
     double cOmega; //!< [-], parameter used in coupled jitter back substitution
     Eigen::Matrix3d IRWPntWc_B;
+	Eigen::Matrix3d IGIMPntGc_B;
     Eigen::Matrix3d IPrimeRWPntWc_B;
+	Eigen::Matrix3d IPrimeGIMPntGc_B;
     Eigen::Vector3d rWcB_B;
     Eigen::Matrix3d rTildeWcB_B;
     Eigen::Vector3d rPrimeWcB_B;
-    Eigen::Vector3d w2Hat_B;
-    Eigen::Vector3d w3Hat_B;
 }VSCMGConfigSimMsg;
 
 

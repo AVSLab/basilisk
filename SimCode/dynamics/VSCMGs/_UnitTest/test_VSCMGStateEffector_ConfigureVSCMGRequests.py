@@ -66,11 +66,13 @@ def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
     VSCMG.typeName = ''
     VSCMG.rWB_S = [[0.],[0.],[0.]]
-    VSCMG.gsHat_S = [[1.],[0.],[0.]]
-    VSCMG.w2Hat0_S = [[0.],[1.],[0.]]
-    VSCMG.w3Hat0_S = [[0.],[0.],[1.]]
+    VSCMG.gsHat0_S = [[1.],[0.],[0.]]
+    VSCMG.gtHat0_S = [[1.],[0.],[0.]]
+    VSCMG.ggHat_S = [[1.],[0.],[0.]]
     VSCMG.rWB_B = [[0.],[0.],[0.]]
-    VSCMG.gsHat_B = [[1.],[0.],[0.]]
+    VSCMG.gsHat0_B = [[1.],[0.],[0.]]
+    VSCMG.gtHat0_B = [[1.],[0.],[0.]]
+    VSCMG.ggHat_B = [[1.],[0.],[0.]]
     VSCMG.w2Hat0_B = [[0.],[1.],[0.]]
     VSCMG.w3Hat0_B = [[0.],[0.],[1.]]
     VSCMG.theta = 0.

@@ -47,18 +47,22 @@ def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
     VSCMG.typeName = 'Honeywell_HR16'
     VSCMG.rWB_S = [[0.],[0.],[0.]]
-    VSCMG.gsHat_S = [[0.],[0.],[0.]]
-    VSCMG.w2Hat0_S = [[0.], [0.], [0.]]
-    VSCMG.w3Hat0_S = [[0.], [0.], [0.]]
+    VSCMG.gsHat0_S = [[0.],[0.],[0.]]
+    VSCMG.gtHat0_S = [[0.],[0.],[0.]]
+    VSCMG.ggHat_S = [[0.],[0.],[0.]]
     VSCMG.rWB_B = [[0.],[0.],[0.]]
-    VSCMG.gsHat_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat0_B = [[0.],[0.],[0.]]
+    VSCMG.gtHat0_B = [[0.],[0.],[0.]]
+    VSCMG.ggHat_B = [[0.],[0.],[0.]]
     VSCMG.w2Hat0_B = [[0.],[0.],[0.]]
     VSCMG.w3Hat0_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat_B = [[0.],[0.],[0.]]
+    VSCMG.gtHat_B = [[0.],[0.],[0.]]
     VSCMG.w2Hat_B = [[0.],[0.],[0.]]
     VSCMG.w3Hat_B = [[0.],[0.],[0.]]
     VSCMG.u_s_current = 0.
-    VSCMG.u_s_max = 0.2
-    VSCMG.u_s_min = 0.
+    VSCMG.u_s_max = -1
+    VSCMG.u_s_min = -1
     VSCMG.u_s_f = 0.
     VSCMG.wheelLinearFrictionRatio = -1
     VSCMG.u_g_current = 0.
@@ -75,8 +79,13 @@ def defaultVSCMG():
     VSCMG.IW1 = 100./VSCMG.Omega_max # 0.159154943092
     VSCMG.IW2 = 0.5*VSCMG.IW1 # 0.0795774715459
     VSCMG.IW3 = 0.5*VSCMG.IW1 # 0.0795774715459
-    VSCMG.U_s = 4.8e-06 * 1e4
-    VSCMG.U_d = 1.54e-06 * 1e4
+    VSCMG.IG1 = 0.1
+    VSCMG.IG2 = 0.2
+    VSCMG.IG3 = 0.3
+    VSCMG.U_s = 0. #4.8e-06 * 1e4
+    VSCMG.U_d = 0. #1.54e-06 * 1e4
+    VSCMG.d = 0.
+    VSCMG.IW13 = 0.
     VSCMG.mass = 12.
     VSCMG.VSCMGModel = 0
     return VSCMG
@@ -118,7 +127,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -127,31 +136,31 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs = []
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[0].gsHat_S = [[1.0], [0.0], [0.0]]
-    VSCMGs[0].w2Hat0_S = [[0.0], [0.0], [1.0]]
-    VSCMGs[0].w3Hat0_S = [[0.0], [-1.0], [0.0]]
+    VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
+    VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[0].ggHat_S = [[0.0], [0.0], [1.0]]
     VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
     VSCMGs[0].gamma = 0.
-    VSCMGs[0].gammaDot = 0.
-    VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
+    VSCMGs[0].gammaDot = 0.1
+    VSCMGs[0].rWB_S = [[0.0], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[1].gsHat_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[1].w2Hat0_S = [[0.0], [0.0], [-1.0]]
-    VSCMGs[1].w3Hat0_S = [[-1.0], [0.0], [0.0]]
+    VSCMGs[1].gsHat0_S = [[1.0], [0.0], [0.0]]
+    VSCMGs[1].gtHat0_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[1].ggHat_S = [[0.0], [0.0], [1.0]]
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
-    VSCMGs[1].gamma = 10.
-    VSCMGs[1].gammaDot = 0.
-    VSCMGs[1].rWB_S = [[0.0], [0.1], [0.0]]
+    VSCMGs[1].gamma = 0.
+    VSCMGs[1].gammaDot = 0.1
+    VSCMGs[1].rWB_S = [[0.0], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[2].gsHat_S = [[0.0], [0.0], [1.0]]
-    VSCMGs[2].w2Hat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[2].w3Hat0_S = [[-1.0], [0.0], [0.0]]
+    VSCMGs[2].gsHat0_S = [[1.0], [0.0], [0.0]]
+    VSCMGs[2].gtHat0_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[2].ggHat_S = [[0.0], [0.0], [1.0]]
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
-    VSCMGs[2].gamma = 20.
-    VSCMGs[2].gammaDot = 10.
-    VSCMGs[2].rWB_S = [[0.0], [0.0], [0.1]]
+    VSCMGs[2].gamma = 0.
+    VSCMGs[2].gammaDot = 0.1
+    VSCMGs[2].rWB_S = [[0.0], [0.0], [0.0]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0
@@ -172,8 +181,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
-    cmdArray.wheelTorque = [0.20, 0.10, -0.50] # [Nm]
-    cmdArray.gimbalTorque = [0.99, 0.99, -0.0099] # [Nm]
+    cmdArray.wheelTorque = [0.0, 0.0, 0.0] # [Nm]
+    cmdArray.gimbalTorque = [0.0, 0.0, 0.0] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -221,6 +230,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
     velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
+    # posRef.setState([[0.0],	[0.0],	[0.0]])
+    # velRef.setState([[0.0],	[0.0],	[0.0]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
     omegaRef.setState([[0.08], [0.01], [0.0]])
 
@@ -228,7 +239,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = 5.
+    stopTime = .5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -296,13 +307,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                  ]
 
 
-    # plt.figure(1)
-    # plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
-    # plt.title("Change in Orbital Angular Momentum")
-    #
-    # plt.figure(2)
-    # plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
-    # plt.title("Change in Rotational Angular Momentum")
+    plt.figure(1)
+    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.title("Change in Orbital Angular Momentum")
+
+    plt.figure(2)
+    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    plt.title("Change in Rotational Angular Momentum")
     #
     # plt.figure(3)
     # for i in range(1,4):
@@ -369,12 +380,18 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
+        print 'Position'
+        print truePos
+        print dataPos
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Reaction Wheel Integrated Test failed pos unit test")
 
     for i in range(0,len(trueSigma)):
         # check a vector values
+        print 'Attitude'
+        print trueSigma
+        print dataSigma
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Reaction Wheel Integrated Test failed attitude unit test")
@@ -382,12 +399,18 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
         for i in range(0,len(initialOrbAngMom_N)):
             # check a vector values
+            print 'Orbital Angular Momentum'
+            print initialOrbAngMom_N
+            print finalOrbAngMom
             if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital angular momentum unit test")
 
         for i in range(0,len(initialRotAngMom_N)):
             # check a vector values
+            print 'Rotational Angular Momentum'
+            print initialRotAngMom_N
+            print finalRotAngMom
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
@@ -402,4 +425,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
+    VSCMGIntegratedTest(True,False,'BalancedWheels')
