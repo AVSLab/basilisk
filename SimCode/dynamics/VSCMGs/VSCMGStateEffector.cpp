@@ -189,7 +189,6 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			it->rWcB_B = it->rGB_B;
 			it->rTildeWcB_B = eigenTilde(it->rWcB_B);
 			it->rPrimeWcB_B.setZero();
-			Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(it->rPrimeWcB_B);
 
 			//! - Give the mass of the VSCMG to the effProps mass
 			this->effProps.mEff += it->massV;
@@ -235,6 +234,10 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			it->IPrimeWPntWc_B = dcm_BW * IPrimeRWPntWc_W * dcm_BW.transpose();
 
 			//! VSCMG center of mass location
+			it->rGcB_B = it->rGB_B + it->rGcG_B;
+			it->rTildeGcB_B = eigenTilde(it->rGcB_B);
+			it->rPrimeGcB_B = it->gammaDot*it->ggHat_B.cross(it->rGcG_B);
+			Eigen::Matrix3d rPrimeTildeGcB_B = eigenTilde(it->rPrimeGcB_B);
 			it->rWcB_B = it->rGB_B + it->L*it->ggHat_B + it->l*it->gsHat_B + it->d*it->w2Hat_B;
 			it->rTildeWcB_B = eigenTilde(it->rWcB_B);
 			it->rPrimeWcB_B = it->d*it->Omega*it->w3Hat_B - it->d*it->gammaDot*cos(it->theta)*it->gsHat_B + it->l*it->gammaDot*it->gtHat_B;
@@ -242,13 +245,12 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 
 			//! - Give the mass of the VSCMG to the effProps mass
 			this->effProps.mEff += it->massV;
-			this->effProps.rEff_CB_B += it->massV*it->rGB_B;
-			this->effProps.IEffPntB_B += it->IWPntWc_B + it->IGPntGc_B + it->massV*it->rTildeWcB_B*it->rTildeWcB_B.transpose();
-			this->effProps.rEffPrime_CB_B += it->massV*it->rPrimeWcB_B;
-			this->effProps.IEffPrimePntB_B += it->IPrimeWPntWc_B + it->IPrimeGPntGc_B;
-
+			this->effProps.rEff_CB_B += it->massG*it->rGcB_B + it->massW*it->rWcB_B;
+			this->effProps.IEffPntB_B += it->IWPntWc_B + it->IGPntGc_B + it->massG*it->rTildeGcB_B*it->rTildeGcB_B.transpose() + it->massW*it->rTildeWcB_B*it->rTildeWcB_B.transpose();
+			this->effProps.rEffPrime_CB_B += it->massG*it->rPrimeGcB_B + it->massW*it->rPrimeWcB_B;
+			this->effProps.IEffPrimePntB_B += it->IPrimeGPntGc_B + it->massG*rPrimeTildeGcB_B*it->rTildeGcB_B.transpose() + it->massG*it->rTildeGcB_B*rPrimeTildeGcB_B.transpose()
+											+ it->IPrimeWPntWc_B + it->massW*rPrimeTildeWcB_B*it->rTildeWcB_B.transpose() + it->massW*it->rTildeWcB_B*rPrimeTildeWcB_B.transpose();
 		}
-
 	}
 
     // - Need to divide out the total mass of the VSCMGs from rCB_B and rPrimeCB_B

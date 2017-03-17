@@ -64,6 +64,7 @@ typedef struct {
 	double IV3;                 //!< [kg-m^2]
     double U_s;                //!< [kg-m], static imbalance
     double U_d;                //!< [kg-m^2], dynamic imbalance
+	Eigen::Vector3d rGcG_B;
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
 	double l;
 	double L;
@@ -79,13 +80,18 @@ typedef struct {
 	double u_g_f;                //!< [N-m], Coulomb friction torque magnitude
 	double gammaDot_max;          //!< [rad/s], max wheel speed
 	double gimbalLinearFrictionRatio;//!< [%] ratio relative to max speed value up to which the friction behaves linearly
-    Eigen::Matrix3d IWPntWc_B;
+
 	Eigen::Matrix3d IGPntGc_B;
-    Eigen::Matrix3d IPrimeWPntWc_B;
+    Eigen::Matrix3d IWPntWc_B;
 	Eigen::Matrix3d IPrimeGPntGc_B;
+	Eigen::Matrix3d IPrimeWPntWc_B;
+	Eigen::Vector3d rGcB_B;
     Eigen::Vector3d rWcB_B;
+	Eigen::Matrix3d rTildeGcB_B;
     Eigen::Matrix3d rTildeWcB_B;
+	Eigen::Vector3d rPrimeGcB_B;
     Eigen::Vector3d rPrimeWcB_B;
+
 	Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
 	Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
 	double cOmega; //!< [-], parameter used in coupled jitter back substitution
