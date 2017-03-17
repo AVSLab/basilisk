@@ -144,6 +144,14 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			vscmgIt->gsHat_B = dcm_BG.col(0);
 			vscmgIt->gtHat_B = dcm_BG.col(1);
 
+			if (vscmgIt->VSCMGModel == JitterSimple) {
+				Eigen::Matrix3d dcm_WG = eigenM1(vscmgIt->theta);
+				Eigen::Matrix3d dcm_WG0 = dcm_WG * dcm_GG0;
+				Eigen::Matrix3d dcm_BW = dcm_BG0 * dcm_WG0.transpose();
+				vscmgIt->w2Hat_B = dcm_BW.col(1);
+				vscmgIt->w3Hat_B = dcm_BW.col(2);
+			}
+
 			//! wheel inertia tensor about wheel center of mass represented in B frame
 			Eigen::Matrix3d IRWPntWc_W;
 			IRWPntWc_W << vscmgIt->IW1, 0., 0., \
@@ -214,10 +222,6 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 
 		}
 
-		if (integTime >= 0.0001) {
-			1.0;
-		}
-
 	}
 
     // - Need to divide out the total mass of the VSCMGs from rCB_B and rPrimeCB_B
@@ -236,8 +240,6 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 	double omegas;
 	double omegat;
 	double omegag;
-	double omegaw2;
-	double omegaw3;
 	double dSquared;
 	double OmegaSquared;
 	Eigen::Matrix3d omegaTilde;
@@ -268,20 +270,12 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 		omegas = vscmgIt->gsHat_B.transpose()*omegaLoc_BN_B;
 		omegat = vscmgIt->gtHat_B.transpose()*omegaLoc_BN_B;
 		omegag = vscmgIt->ggHat_B.transpose()*omegaLoc_BN_B;
-		omegaw2 = vscmgIt->w2Hat_B.transpose()*omegaLoc_BN_B;
-		omegaw3 = vscmgIt->w3Hat_B.transpose()*omegaLoc_BN_B;
 
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
 			matrixDcontr -= vscmgIt->IV3 * vscmgIt->ggHat_B * vscmgIt->ggHat_B.transpose() + vscmgIt->IW1 * vscmgIt->gsHat_B * vscmgIt->gsHat_B.transpose();
 			vecRotcontr_temp = (vscmgIt->u_s_current-vscmgIt->IW1*omegat*vscmgIt->gammaDot)*vscmgIt->gsHat_B + vscmgIt->IW1*vscmgIt->Omega*vscmgIt->gammaDot*vscmgIt->gtHat_B + (vscmgIt->u_g_current+(vscmgIt->IV1-vscmgIt->IV2)*omegas*omegat+vscmgIt->IW1*vscmgIt->Omega*omegat)*vscmgIt->ggHat_B
 							+ omegaTilde*vscmgIt->IGIMPntGc_B*vscmgIt->gammaDot*vscmgIt->ggHat_B + omegaTilde*vscmgIt->IRWPntWc_B*omega_WB_B;
 			vecRotcontr -= vecRotcontr_temp;
-
-
-
-			if (integTime >= 0.0001) {
-				1.0;
-			}
 
 			//! imbalance torque (simplified external)
 			if (vscmgIt->VSCMGModel == JitterSimple) {
@@ -492,7 +486,7 @@ void VSCMGStateEffector::CrossInit()
 			it->d = it->U_s/it->massW; //!< determine CoM offset from static imbalance parameter
 			it->IW13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
 		}
-		if (it->VSCMGModel == BalancedWheels) {
+		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
 			it->IV1 = it->IW1 + it->IG1;
 			it->IV2 = it->IW2 + it->IG2;
 			it->IV3 = it->IW3 + it->IG3;

@@ -82,8 +82,8 @@ def defaultVSCMG():
     VSCMG.IG1 = 0.1
     VSCMG.IG2 = 0.2
     VSCMG.IG3 = 0.3
-    VSCMG.U_s = 0. #4.8e-06 * 1e4
-    VSCMG.U_d = 0. #1.54e-06 * 1e4
+    VSCMG.U_s = 4.8e-06 * 1e4
+    VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.d = 0.
     VSCMG.IW13 = 0.
     VSCMG.massW = 6.
@@ -94,7 +94,7 @@ def defaultVSCMG():
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
-    pytest.mark.xfail((False,'JitterSimple'),run=False),
+    (False,'JitterSimple'),
     pytest.mark.xfail((False,'JitterFullyCoupled'),run=False),
 ])
 
@@ -136,6 +136,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     VSCMGs = []
 
+    ang = 54.75 * np.pi/180
+
     VSCMGs.append(defaultVSCMG())
     VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
     VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
@@ -146,18 +148,18 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[1].gsHat0_S = [[1.0], [0.0], [0.0]]
-    VSCMGs[1].gtHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[1].ggHat_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
+    VSCMGs[1].ggHat_S = [[math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[1].gtHat0_S = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.1
     VSCMGs[1].rWB_S = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[2].gsHat0_S = [[1.0], [0.0], [0.0]]
-    VSCMGs[2].gtHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[2].ggHat_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
+    VSCMGs[2].ggHat_S = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[2].gtHat0_S = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = 0.1
@@ -265,20 +267,20 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-            [-4046317.4459707015, 7473345.937351465, 5253480.873456985]
+            [-4046317.4482230823, 7473345.937379789, 5253480.873598164]
         ]
 
         trueSigma = [
-            [0.09966419127750267, 0.010872328775925571, 0.001219335064365561]
+            [0.09977362982932744, 0.017148014446366596, 5.0393940411903925e-05]
         ]
 
     elif testCase == 'JitterSimple':
         truePos = [
-            [-4046317.4472558703, 7473345.920433197, 5253480.873665418]
+            [-4046317.4416707205, 7473345.937608859, 5253480.890928658]
         ]
 
         trueSigma = [
-            [0.09925443342446622, 0.010153635701299952, -6.716226879431521e-05]
+            [0.10014378493745967, 0.016460100055456416, 0.0018928776716140476]
         ]
 
     elif testCase == 'JitterFullyCoupled':
@@ -321,16 +323,16 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     # plt.plot(orbKinEnergy[:,0]*1e-9, orbKinEnergy[:,1] - orbKinEnergy[0,1])
     # plt.title("Change in Orbital Kinetic Energy")
 
-    plt.figure()
-    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
-    plt.title("Change in Rotational Energy")
+    # plt.figure()
+    # plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    # plt.title("Change in Rotational Energy")
 
-    plt.figure()
-    for i in range(1,4):
-        plt.subplot(4,1,i)
-        plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
-        plt.xlabel('Time (s)')
-        plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
+    # plt.figure()
+    # for i in range(1,4):
+    #     plt.subplot(4,1,i)
+    #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
 
     # plt.figure()
     # for i in range(1,4):
@@ -339,12 +341,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
 
-    plt.figure()
-    for i in range(1,4):
-        plt.subplot(4,1,i)
-        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
-        plt.xlabel('Time (s)')
-        plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
+    # plt.figure()
+    # for i in range(1,4):
+    #     plt.subplot(4,1,i)
+    #     plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
+    #     plt.xlabel('Time (s)')
+    #     plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
 
     # plt.figure()
     # for i in range(1,4):
@@ -359,24 +361,25 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaData[i,1:]))
     thetaFit = np.empty([len(sigmaData[:,0]),2])
     thetaFit[:,0] = thetaData[:,0]
-    fitOrd = 2
+    fitOrd = 8
     p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
     thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
 
-    # plt.figure(5)
+    # plt.figure()
     # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
     # plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
     # plt.title("Principle Angle")
     # plt.xlabel('Time (s)')
     # plt.ylabel(r'$\theta$ (deg)')
 
-    plt.figure(6)
-    plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
-    plt.title("Principle Angle Fit")
-    plt.xlabel('Time (s)')
-    plt.ylabel(r'$\theta$ (deg)')
+    if testCase != 'BalancedWheels':
+        plt.figure()
+        plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
+        plt.title("Principle Angle Fit")
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\theta$ (deg)')
 
-    # plt.figure(7)
+    # plt.figure()
     # for i in range(1,4):
     #     plt.subplot(4,1,i)
     #     plt.plot(omegaData[:,0]*1.0E-9, omegaData[:,i] * 180/math.pi, label='omega' + str(i))
