@@ -94,8 +94,8 @@ def defaultVSCMG():
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
-    (False,'JitterSimple'),
-    (False,'JitterFullyCoupled')
+    pytest.mark.xfail((False,'JitterSimple'),run=False),
+    pytest.mark.xfail((False,'JitterFullyCoupled'),run=False),
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -123,12 +123,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitProcessName = "TestProcess"  # arbitrary name (don't change)
     rwCommandName = "vscmg_cmds"
 
-    #   Create a sim module as an empty container
+    # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.0001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -152,7 +152,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.1
-    VSCMGs[1].rWB_S = [[0.1], [0.0], [0.0]]
+    VSCMGs[1].rWB_S = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[2].gsHat0_S = [[1.0], [0.0], [0.0]]
@@ -161,7 +161,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = 0.1
-    VSCMGs[2].rWB_S = [[0.1], [0.0], [0.0]]
+    VSCMGs[2].rWB_S = [[-0.1], [0.05], [0.05]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0
@@ -182,8 +182,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
-    cmdArray.wheelTorque = [0.0, 0.0, 0.0] # [Nm]
-    cmdArray.gimbalTorque = [0.0, 0.0, 0.0] # [Nm]
+    cmdArray.wheelTorque = [0.01, 0.05, -0.09] # [Nm]
+    cmdArray.gimbalTorque = [0.08, -0.15, -0.06] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -223,6 +223,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -240,21 +242,20 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = .5
+    stopTime = 5.
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
+    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
 
     wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
     gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",range(3))
     gimbalRates = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalRates",range(3))
     sigmaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
     omegaData = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.omega_BN_B',range(3))
-
-    # rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    # orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
 
     dataPos = posRef.getState()
     dataSigma = sigmaRef.getState()
@@ -264,11 +265,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-            [-4046317.446006109, 7473345.937334083, 5253480.873774451]
+            [-4046317.4459707015, 7473345.937351465, 5253480.873456985]
         ]
 
         trueSigma = [
-            [0.09973672149864025, 0.011213339971279653, 0.0003115172941344355]
+            [0.09966419127750267, 0.010872328775925571, 0.001219335064365561]
         ]
 
     elif testCase == 'JitterSimple':
@@ -308,36 +309,44 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                  ]
 
 
-    plt.figure(1)
+    plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     plt.title("Change in Orbital Angular Momentum")
 
-    plt.figure(2)
+    plt.figure()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
-    #
-    # plt.figure(3)
+
+    # plt.figure()
+    # plt.plot(orbKinEnergy[:,0]*1e-9, orbKinEnergy[:,1] - orbKinEnergy[0,1])
+    # plt.title("Change in Orbital Kinetic Energy")
+
+    plt.figure()
+    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.title("Change in Rotational Energy")
+
+    plt.figure()
+    for i in range(1,4):
+        plt.subplot(4,1,i)
+        plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
+
+    # plt.figure()
     # for i in range(1,4):
     #     plt.subplot(4,1,i)
-    #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
+    #     plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
     #     plt.xlabel('Time (s)')
-    #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
+    #     plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
 
     plt.figure()
     for i in range(1,4):
         plt.subplot(4,1,i)
-        plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
+        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
         plt.xlabel('Time (s)')
-        plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
+        plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
 
-    plt.figure()
-    for i in range(1,4):
-        plt.subplot(4,1,i)
-        plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i], label=str(i))
-        plt.xlabel('Time (s)')
-        plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (rad)')
-
-    # plt.figure(4)
+    # plt.figure()
     # for i in range(1,4):
     #     plt.subplot(4,1,i)
     #     plt.plot(sigmaData[:,0]*1.0E-9, sigmaData[:,i], label='MRP' + str(i))
@@ -426,4 +435,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'BalancedWheels')
+    VSCMGIntegratedTest(True,False,'JitterSimple')

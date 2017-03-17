@@ -94,7 +94,8 @@ def defaultVSCMG():
     VSCMG.IW3 = 0.
     VSCMG.U_s = 0.
     VSCMG.U_d = 0.
-    VSCMG.mass = 0.
+    VSCMG.massW = 0.
+    VSCMG.massG = 0.
     VSCMG.wheelLinearFrictionRatio = 0.
     VSCMG.VSCMGModel = 0
     return VSCMG
