@@ -86,7 +86,8 @@ def defaultVSCMG():
     VSCMG.U_d = 0. #1.54e-06 * 1e4
     VSCMG.d = 0.
     VSCMG.IW13 = 0.
-    VSCMG.mass = 12.
+    VSCMG.massW = 6.
+    VSCMG.massG = 6.
     VSCMG.VSCMGModel = 0
     return VSCMG
 
@@ -142,7 +143,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
     VSCMGs[0].gamma = 0.
     VSCMGs[0].gammaDot = 0.1
-    VSCMGs[0].rWB_S = [[0.0], [0.0], [0.0]]
+    VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[1].gsHat0_S = [[1.0], [0.0], [0.0]]
@@ -151,7 +152,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.1
-    VSCMGs[1].rWB_S = [[0.0], [0.0], [0.0]]
+    VSCMGs[1].rWB_S = [[0.1], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[2].gsHat0_S = [[1.0], [0.0], [0.0]]
@@ -160,7 +161,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = 0.1
-    VSCMGs[2].rWB_S = [[0.0], [0.0], [0.0]]
+    VSCMGs[2].rWB_S = [[0.1], [0.0], [0.0]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0

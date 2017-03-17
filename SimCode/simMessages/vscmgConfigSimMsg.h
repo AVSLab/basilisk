@@ -41,7 +41,9 @@ typedef struct {
 	Eigen::Vector3d gtHat0_B;
     Eigen::Vector3d w2Hat0_B;	//!< [-] initial torque axis unit vector in body frame
     Eigen::Vector3d w3Hat0_B;	//!< [-] initial gimbal axis unit vector in body frame
-    double mass;               //!< [kg], wheel rotor mass
+    double massV;               //!< [kg]
+	double massG;               //!< [kg]
+	double massW;               //!< [kg]
     double theta;              //!< [rad], wheel angle
     double Omega;              //!< [rad/s], wheel speed
 	double gamma;              //!< [s], gimbal angle
