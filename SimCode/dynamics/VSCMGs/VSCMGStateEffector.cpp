@@ -133,24 +133,36 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			thetaCount++;
 		}
 
+		Eigen::Matrix3d dcm_GG0 = eigenM3(vscmgIt->gamma);
+		Eigen::Matrix3d dcm_BG0;
+		dcm_BG0.col(0) = vscmgIt->gsHat0_B;
+		dcm_BG0.col(1) = vscmgIt->gtHat0_B;
+		dcm_BG0.col(2) = vscmgIt->ggHat_B;
+		Eigen::Matrix3d dcm_BG = dcm_BG0 * dcm_GG0.transpose();
+		vscmgIt->gsHat_B = dcm_BG.col(0);
+		vscmgIt->gtHat_B = dcm_BG.col(1);
+
+		Eigen::Matrix3d dcm_WG = eigenM1(vscmgIt->theta);
+		Eigen::Matrix3d dcm_WG0 = dcm_WG * dcm_GG0;
+		Eigen::Matrix3d dcm_BW = dcm_BG0 * dcm_WG0.transpose();
+		vscmgIt->w2Hat_B = dcm_BW.col(1);
+		vscmgIt->w3Hat_B = dcm_BW.col(2);
+
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
 
-			Eigen::Matrix3d dcm_GG0 = eigenM3(vscmgIt->gamma);
-			Eigen::Matrix3d dcm_BG0;
-			dcm_BG0.col(0) = vscmgIt->gsHat0_B;
-			dcm_BG0.col(1) = vscmgIt->gtHat0_B;
-			dcm_BG0.col(2) = vscmgIt->ggHat_B;
-			Eigen::Matrix3d dcm_BG = dcm_BG0 * dcm_GG0.transpose();
-			vscmgIt->gsHat_B = dcm_BG.col(0);
-			vscmgIt->gtHat_B = dcm_BG.col(1);
+			//! gimbal inertia tensor about wheel center of mass represented in B frame
+			Eigen::Matrix3d IGIMPntGc_G;
+			IGIMPntGc_G << vscmgIt->IG1, 0., 0., \
+							0., vscmgIt->IG2, 0., \
+							0., 0., vscmgIt->IG3;
+			vscmgIt->IGPntGc_B = dcm_BG * IGIMPntGc_G * dcm_BG.transpose();
 
-			if (vscmgIt->VSCMGModel == JitterSimple) {
-				Eigen::Matrix3d dcm_WG = eigenM1(vscmgIt->theta);
-				Eigen::Matrix3d dcm_WG0 = dcm_WG * dcm_GG0;
-				Eigen::Matrix3d dcm_BW = dcm_BG0 * dcm_WG0.transpose();
-				vscmgIt->w2Hat_B = dcm_BW.col(1);
-				vscmgIt->w3Hat_B = dcm_BW.col(2);
-			}
+			//! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
+			Eigen::Matrix3d IPrimeGIMPntGc_G;
+			IPrimeGIMPntGc_G << 0., vscmgIt->gammaDot*(vscmgIt->IG1-vscmgIt->IG2), 0., \
+								vscmgIt->gammaDot*(vscmgIt->IG1-vscmgIt->IG2), 0., 0., \
+								0., 0., 0.;
+			vscmgIt->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
 
 			//! wheel inertia tensor about wheel center of mass represented in B frame
 			Eigen::Matrix3d IRWPntWc_W;
@@ -172,21 +184,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			IPrimeRWPntWc_W(2,2) = 0.0;
 			vscmgIt->IPrimeWPntWc_B = dcm_BG * IPrimeRWPntWc_W * dcm_BG.transpose();
 
-			//! gimbal inertia tensor about wheel center of mass represented in B frame
-			Eigen::Matrix3d IGIMPntGc_G;
-			IGIMPntGc_G << vscmgIt->IG1, 0., 0., \
-							0., vscmgIt->IG2, 0., \
-							0., 0., vscmgIt->IG3;
-			vscmgIt->IGPntGc_B = dcm_BG * IGIMPntGc_G * dcm_BG.transpose();
-
-			//! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
-			Eigen::Matrix3d IPrimeGIMPntGc_G;
-			IPrimeGIMPntGc_G << 0., vscmgIt->gammaDot*(vscmgIt->IG1-vscmgIt->IG2), 0., \
-							vscmgIt->gammaDot*(vscmgIt->IG1-vscmgIt->IG2), 0., 0., \
-							0., 0., 0.;
-			vscmgIt->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
-
-			//! wheel center of mass location
+			//! VSCMG center of mass location
 			vscmgIt->rWcB_B = vscmgIt->rWB_B;
 			vscmgIt->rTildeWcB_B = eigenTilde(vscmgIt->rWcB_B);
 			vscmgIt->rPrimeWcB_B.setZero();
@@ -200,25 +198,53 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			this->effProps.IEffPrimePntB_B += vscmgIt->IPrimeWPntWc_B + vscmgIt->IPrimeGPntGc_B;
 
 		} else if (vscmgIt->VSCMGModel == JitterFullyCoupled) {
-//			Eigen::Matrix3d dcm_WG = eigenM1(vscmgIt->theta);
-//			Eigen::Matrix3d dcm_WG0 = dcm_WG * dcm_GG0;
-//			Eigen::Matrix3d dcm_BW = dcm_BG0 * dcm_WG0.transpose();
-//			vscmgIt->w2Hat_B = dcm_BW.col(1);
-//			vscmgIt->w3Hat_B = dcm_BW.col(2);
 
-//			//! gimbal inertia tensor about wheel center of mass represented in B frame
-//			Eigen::Matrix3d IGIMPntGc_G;
-//			IGIMPntGc_G << vscmgIt->IG1, vscmgIt->IG12, vscmgIt->IG13, \
-//			vscmgIt->IG12, vscmgIt->IG2, vscmgIt->IG23, \
-//			vscmgIt->IG13, vscmgIt->IG23, vscmgIt->IG3;
-//			vscmgIt->IGPntGc_B = dcm_BG * IGIMPntGc_G * dcm_BG.transpose();
+			//! gimbal inertia tensor about wheel center of mass represented in B frame
+			Eigen::Matrix3d IGIMPntGc_G;
+			IGIMPntGc_G << vscmgIt->IG1, vscmgIt->IG12, vscmgIt->IG13, \
+							vscmgIt->IG12, vscmgIt->IG2, vscmgIt->IG23, \
+							vscmgIt->IG13, vscmgIt->IG23, vscmgIt->IG3;
+			vscmgIt->IGPntGc_B = dcm_BG * IGIMPntGc_G * dcm_BG.transpose();
 
-//			//! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
-//			Eigen::Matrix3d IPrimeGIMPntGc_G;
-//			IPrimeGIMPntGc_G << -2*vscmgIt->IG12, (vscmgIt->IG1-vscmgIt->IG2), -vscmgIt->IG23, \
-//			(vscmgIt->IG1-vscmgIt->IG2), 2*vscmgIt->IG12, vscmgIt->IG13, \
-//			-vscmgIt->IG23, vscmgIt->IG13, 0.;
-//			vscmgIt->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
+			//! gimbal inertia tensor body frame derivative about gimbal center of mass represented in B frame
+			Eigen::Matrix3d IPrimeGIMPntGc_G;
+			IPrimeGIMPntGc_G << -2*vscmgIt->IG12, (vscmgIt->IG1-vscmgIt->IG2), -vscmgIt->IG23, \
+								(vscmgIt->IG1-vscmgIt->IG2), 2*vscmgIt->IG12, vscmgIt->IG13, \
+								-vscmgIt->IG23, vscmgIt->IG13, 0.;
+			vscmgIt->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
+
+			//! wheel inertia tensor about wheel center of mass represented in B frame
+			Eigen::Matrix3d IRWPntWc_W;
+			IRWPntWc_W << vscmgIt->IW1, 0., vscmgIt->IW13, \
+							0., vscmgIt->IW2, 0., \
+							vscmgIt->IW13, 0., vscmgIt->IW3;
+			vscmgIt->IWPntWc_B = dcm_BW * IRWPntWc_W * dcm_BW.transpose();
+
+			//! wheel inertia tensor body frame derivative about wheel center of mass represented in B frame
+			Eigen::Matrix3d IPrimeRWPntWc_W;
+			IPrimeRWPntWc_W(0,0) = 0.0;
+			IPrimeRWPntWc_W(0,1) = vscmgIt->gammaDot*(vscmgIt->IW1-vscmgIt->IW2);
+			IPrimeRWPntWc_W(0,2) = 0.0;
+			IPrimeRWPntWc_W(1,0) = IPrimeRWPntWc_W(0,1);
+			IPrimeRWPntWc_W(1,1) = 0.0;
+			IPrimeRWPntWc_W(1,2) = 0.0;
+			IPrimeRWPntWc_W(2,0) = 0.0;
+			IPrimeRWPntWc_W(2,1) = 0.0;
+			IPrimeRWPntWc_W(2,2) = 0.0;
+			vscmgIt->IPrimeWPntWc_B = dcm_BW * IPrimeRWPntWc_W * dcm_BW.transpose();
+
+			//! VSCMG center of mass location
+			vscmgIt->rWcB_B = vscmgIt->rGB_B + vscmgIt->L*vscmgIt->ggHat_B + vscmgIt->l*vscmgIt->gsHat_B + vscmgIt->d*vscmgIt->w2Hat_B;
+			vscmgIt->rTildeWcB_B = eigenTilde(vscmgIt->rWcB_B);
+			vscmgIt->rPrimeWcB_B.setZero();
+			Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(vscmgIt->rPrimeWcB_B);
+
+			//! - Give the mass of the VSCMG to the effProps mass
+			this->effProps.mEff += vscmgIt->massV;
+			this->effProps.rEff_CB_B += vscmgIt->massV*vscmgIt->rWB_B;
+			this->effProps.IEffPntB_B += vscmgIt->IWPntWc_B + vscmgIt->IGPntGc_B + vscmgIt->massV*vscmgIt->rTildeWcB_B*vscmgIt->rTildeWcB_B.transpose();
+			this->effProps.rEffPrime_CB_B += vscmgIt->massV*vscmgIt->rPrimeWcB_B;
+			this->effProps.IEffPrimePntB_B += vscmgIt->IPrimeWPntWc_B + vscmgIt->IPrimeGPntGc_B;
 
 		}
 
