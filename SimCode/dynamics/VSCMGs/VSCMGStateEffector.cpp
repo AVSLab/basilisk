@@ -185,14 +185,15 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			vscmgIt->IPrimeWPntWc_B = dcm_BG * IPrimeRWPntWc_W * dcm_BG.transpose();
 
 			//! VSCMG center of mass location
-			vscmgIt->rWcB_B = vscmgIt->rWB_B;
+			//! Note that points W, G, Wc, Gc are coincident
+			vscmgIt->rWcB_B = vscmgIt->rGB_B;
 			vscmgIt->rTildeWcB_B = eigenTilde(vscmgIt->rWcB_B);
 			vscmgIt->rPrimeWcB_B.setZero();
 			Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(vscmgIt->rPrimeWcB_B);
 
 			//! - Give the mass of the VSCMG to the effProps mass
 			this->effProps.mEff += vscmgIt->massV;
-			this->effProps.rEff_CB_B += vscmgIt->massV*vscmgIt->rWB_B;
+			this->effProps.rEff_CB_B += vscmgIt->massV*vscmgIt->rGB_B;
 			this->effProps.IEffPntB_B += vscmgIt->IWPntWc_B + vscmgIt->IGPntGc_B + vscmgIt->massV*vscmgIt->rTildeWcB_B*vscmgIt->rTildeWcB_B.transpose();
 			this->effProps.rEffPrime_CB_B += vscmgIt->massV*vscmgIt->rPrimeWcB_B;
 			this->effProps.IEffPrimePntB_B += vscmgIt->IPrimeWPntWc_B + vscmgIt->IPrimeGPntGc_B;
@@ -236,12 +237,12 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			//! VSCMG center of mass location
 			vscmgIt->rWcB_B = vscmgIt->rGB_B + vscmgIt->L*vscmgIt->ggHat_B + vscmgIt->l*vscmgIt->gsHat_B + vscmgIt->d*vscmgIt->w2Hat_B;
 			vscmgIt->rTildeWcB_B = eigenTilde(vscmgIt->rWcB_B);
-			vscmgIt->rPrimeWcB_B.setZero();
+			vscmgIt->rPrimeWcB_B = vscmgIt->d*vscmgIt->Omega*vscmgIt->w3Hat_B - vscmgIt->d*vscmgIt->gammaDot*cos(vscmgIt->theta)*vscmgIt->gsHat_B + vscmgIt->l*vscmgIt->gammaDot*vscmgIt->gtHat_B;
 			Eigen::Matrix3d rPrimeTildeWcB_B = eigenTilde(vscmgIt->rPrimeWcB_B);
 
 			//! - Give the mass of the VSCMG to the effProps mass
 			this->effProps.mEff += vscmgIt->massV;
-			this->effProps.rEff_CB_B += vscmgIt->massV*vscmgIt->rWB_B;
+			this->effProps.rEff_CB_B += vscmgIt->massV*vscmgIt->rGB_B;
 			this->effProps.IEffPntB_B += vscmgIt->IWPntWc_B + vscmgIt->IGPntGc_B + vscmgIt->massV*vscmgIt->rTildeWcB_B*vscmgIt->rTildeWcB_B.transpose();
 			this->effProps.rEffPrime_CB_B += vscmgIt->massV*vscmgIt->rPrimeWcB_B;
 			this->effProps.IEffPrimePntB_B += vscmgIt->IPrimeWPntWc_B + vscmgIt->IPrimeGPntGc_B;
@@ -312,7 +313,7 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 				//! add in dynamic imbalance torque
 				/* tau_s = cross(r_B,Fs) */ // static imbalance torque
 				/* tau_d = Ud * Omega^2 */ // dynamic imbalance torque
-				vecRotcontr += ( vscmgIt->rWB_B.cross(tempF) ) + ( vscmgIt->U_d*OmegaSquared * vscmgIt->w2Hat_B );
+				vecRotcontr += ( vscmgIt->rGB_B.cross(tempF) ) + ( vscmgIt->U_d*OmegaSquared * vscmgIt->w2Hat_B );
 			}
         } else if (vscmgIt->VSCMGModel == JitterFullyCoupled) {
 
@@ -410,7 +411,7 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 		Eigen::Vector3d omega_GN_B = omegaLoc_BN_B + vscmgIt->gammaDot*vscmgIt->ggHat_B;
 		Eigen::Vector3d omega_WN_B = omega_GN_B + vscmgIt->Omega*vscmgIt->gsHat_B;
 		if (vscmgIt->VSCMGModel == BalancedWheels || vscmgIt->VSCMGModel == JitterSimple) {
-			vscmgIt->rWcB_B = vscmgIt->rWB_B;
+			vscmgIt->rWcB_B = vscmgIt->rGB_B;
 			Eigen::Vector3d rDotWcB_B = omegaLoc_BN_B.cross(vscmgIt->rWcB_B);
 			rotAngMomPntCContr_B += vscmgIt->IWPntWc_B*omega_WN_B + vscmgIt->IGPntGc_B*omega_GN_B + vscmgIt->massV*vscmgIt->rWcB_B.cross(rDotWcB_B);
 			rotEnergyContr += 1.0/2.0*omega_WN_B.dot(vscmgIt->IWPntWc_B*omega_WN_B) + 1.0/2.0*omega_GN_B.dot(vscmgIt->IGPntGc_B*omega_GN_B) + 1.0/2.0*vscmgIt->massV*rDotWcB_B.dot(rDotWcB_B);
@@ -522,7 +523,7 @@ void VSCMGStateEffector::CrossInit()
 			it->IW13 = 0.;
 		}
 
-		it->rWB_B = dcm_BS * it->rWB_S;
+		it->rGB_B = dcm_BS * it->rGB_S;
 		it->massV = it->massG + it->massW;
 	}
 }
@@ -555,7 +556,7 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		it->gammaDot = gammaDotCurrent;
 		outputStates.gimbalRates[it - VSCMGData.begin()] = it->gammaDot;
 
-		tmpVSCMG.rWB_S = it->rWB_S;
+		tmpVSCMG.rGB_S = it->rGB_S;
 		tmpVSCMG.gsHat0_S = it->gsHat0_S;
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;

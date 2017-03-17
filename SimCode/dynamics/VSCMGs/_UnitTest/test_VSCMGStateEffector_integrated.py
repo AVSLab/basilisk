@@ -46,11 +46,11 @@ rpm2rad = 2.*math.pi/60.
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
     VSCMG.typeName = 'Honeywell_HR16'
-    VSCMG.rWB_S = [[0.],[0.],[0.]]
+    VSCMG.rGB_S = [[0.],[0.],[0.]]
     VSCMG.gsHat0_S = [[0.],[0.],[0.]]
     VSCMG.gtHat0_S = [[0.],[0.],[0.]]
     VSCMG.ggHat_S = [[0.],[0.],[0.]]
-    VSCMG.rWB_B = [[0.],[0.],[0.]]
+    VSCMG.rGB_B = [[0.],[0.],[0.]]
     VSCMG.gsHat0_B = [[0.],[0.],[0.]]
     VSCMG.gtHat0_B = [[0.],[0.],[0.]]
     VSCMG.ggHat_B = [[0.],[0.],[0.]]
@@ -145,7 +145,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
     VSCMGs[0].gamma = 0.
     VSCMGs[0].gammaDot = 0.1
-    VSCMGs[0].rWB_S = [[0.1], [0.0], [0.0]]
+    VSCMGs[0].rGB_S = [[0.1], [0.0], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
@@ -154,7 +154,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.1
-    VSCMGs[1].rWB_S = [[0.0], [-0.05], [0.0]]
+    VSCMGs[1].rGB_S = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
@@ -163,7 +163,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = 0.1
-    VSCMGs[2].rWB_S = [[-0.1], [0.05], [0.05]]
+    VSCMGs[2].rGB_S = [[-0.1], [0.05], [0.05]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0

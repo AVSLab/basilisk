@@ -28,8 +28,6 @@ enum VSCMGModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 typedef struct {
     std::string typeName;      //!< [-], string containing the VSCMG type name
 	VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
-	Eigen::Vector3d rWB_S;		//!< [m], position vector of the VSCMG relative to the spacecraft structural frame
-	Eigen::Vector3d rWB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
 	Eigen::Vector3d rGB_S;		//!< [m], position vector of the VSCMG relative to the spacecraft structural frame
 	Eigen::Vector3d rGB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
     Eigen::Vector3d gsHat0_S;	//!< [-] spin axis unit vector in structural frame
