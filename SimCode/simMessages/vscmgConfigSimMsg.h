@@ -66,7 +66,7 @@ typedef struct {
 	double rhoW;
     double U_s;                //!< [kg-m], static imbalance
     double U_d;                //!< [kg-m^2], dynamic imbalance
-	Eigen::Vector3d rGcG_B;
+	Eigen::Vector3d rGcG_G;
     double d;                	//!< [m], wheel center of mass offset from wheel frame origin
 	double l;
 	double L;
@@ -87,6 +87,7 @@ typedef struct {
     Eigen::Matrix3d IWPntWc_B;
 	Eigen::Matrix3d IPrimeGPntGc_B;
 	Eigen::Matrix3d IPrimeWPntWc_B;
+	Eigen::Vector3d rGcG_B;
 	Eigen::Vector3d rGcB_B;
     Eigen::Vector3d rWcB_B;
 	Eigen::Vector3d rWcG_B;

@@ -85,6 +85,9 @@ def defaultVSCMG():
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
     VSCMG.d = 0.
+    VSCMG.l = 0.
+    VSCMG.L = 0.
+    VSCMG.rGcG_G = [[0.],[0.],[0.]]
     VSCMG.IW13 = 0.
     VSCMG.massW = 6.
     VSCMG.massG = 6.
@@ -95,7 +98,7 @@ def defaultVSCMG():
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
     (False,'JitterSimple'),
-    pytest.mark.xfail((False,'JitterFullyCoupled'),run=False),
+    (False,'JitterFullyCoupled'),
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -128,7 +131,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.00001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -244,7 +247,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = 5.
+    stopTime = .1
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -438,4 +441,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterSimple')
+    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')

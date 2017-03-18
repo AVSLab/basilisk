@@ -222,16 +222,19 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			it->IWPntWc_B = dcm_BW * IRWPntWc_W * dcm_BW.transpose();
 
 			//! wheel inertia tensor body frame derivative about wheel center of mass represented in B frame
+			double Ia = it->IW1 - it->IW2;
+			double Ib = it->IW3 - it->IW1;
+			double Ic = it->IW2 - it->IW3;
 			Eigen::Matrix3d IPrimeRWPntWc_W;
-			IPrimeRWPntWc_W(0,0) = 0.0;
-			IPrimeRWPntWc_W(0,1) = it->gammaDot*(it->IW1-it->IW2);
-			IPrimeRWPntWc_W(0,2) = 0.0;
+			IPrimeRWPntWc_W(0,0) = 2.0*it->gammaDot*it->IW13*sin(it->theta);
+			IPrimeRWPntWc_W(0,1) = it->gammaDot*Ia*cos(it->theta)-it->IW13*it->Omega;
+			IPrimeRWPntWc_W(0,2) = it->gammaDot*Ib*sin(it->theta);
 			IPrimeRWPntWc_W(1,0) = IPrimeRWPntWc_W(0,1);
 			IPrimeRWPntWc_W(1,1) = 0.0;
-			IPrimeRWPntWc_W(1,2) = 0.0;
-			IPrimeRWPntWc_W(2,0) = 0.0;
-			IPrimeRWPntWc_W(2,1) = 0.0;
-			IPrimeRWPntWc_W(2,2) = 0.0;
+			IPrimeRWPntWc_W(1,2) = it->gammaDot*it->IW13*cos(it->theta)+Ic*it->Omega;
+			IPrimeRWPntWc_W(2,0) = IPrimeRWPntWc_W(0,2);
+			IPrimeRWPntWc_W(2,1) = IPrimeRWPntWc_W(1,2);
+			IPrimeRWPntWc_W(2,2) = -2.0*it->IW13*it->gammaDot*sin(it->theta);
 			it->IPrimeWPntWc_B = dcm_BW * IPrimeRWPntWc_W * dcm_BW.transpose();
 
 			//! VSCMG center of mass location
@@ -587,6 +590,16 @@ void VSCMGStateEffector::CrossInit()
 			it->IW13 = 0.;
 		}
 
+		Eigen::Matrix3d dcm_GG0 = eigenM3(it->gamma);
+		Eigen::Matrix3d dcm_BG0;
+		dcm_BG0.col(0) = it->gsHat0_B;
+		dcm_BG0.col(1) = it->gtHat0_B;
+		dcm_BG0.col(2) = it->ggHat_B;
+		Eigen::Matrix3d dcm_BG = dcm_BG0 * dcm_GG0.transpose();
+		it->gsHat_B = dcm_BG.col(0);
+		it->gtHat_B = dcm_BG.col(1);
+
+		it->rGcG_B = dcm_BG * it->rGcG_G;
 		it->rGB_B = dcm_BS * it->rGB_S;
 		it->massV = it->massG + it->massW;
 		it->rhoG = it->massG/it->massV;
