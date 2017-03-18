@@ -478,10 +478,12 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->IGPntGc_B*omega_GN_B + it->massV*it->rWcB_B.cross(rDotWcB_B);
 			rotEnergyContr += 1.0/2.0*omega_WN_B.dot(it->IWPntWc_B*omega_WN_B) + 1.0/2.0*omega_GN_B.dot(it->IGPntGc_B*omega_GN_B) + 1.0/2.0*it->massV*rDotWcB_B.dot(rDotWcB_B);
 		} else if (it->VSCMGModel == JitterFullyCoupled) {
-//			Eigen::Vector3d r_WcB_B = it->rWcB_B;
-//			Eigen::Vector3d rDot_WcB_B = it->d*it->Omega*it->w3Hat_B + omegaLoc_BN_B.cross(it->rWcB_B);
-//			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->mass*r_WcB_B.cross(rDot_WcB_B);
-//			rotEnergyContr += 0.5*omega_WN_B.transpose()*it->IWPntWc_B*omega_WN_B + 0.5*it->mass*rDot_WcB_B.dot(rDot_WcB_B);
+			Eigen::Vector3d rDotWcB_B = it->rPrimeWcB_B + omegaLoc_BN_B.cross(it->rWcB_B);
+			Eigen::Vector3d rDotGcB_B = it->rPrimeGcB_B + omegaLoc_BN_B.cross(it->rGcB_B);
+			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->massW*it->rWcB_B.cross(rDotWcB_B);
+			rotAngMomPntCContr_B += it->IGPntGc_B*omega_GN_B + it->massG*it->rGcB_B.cross(rDotGcB_B);
+			rotEnergyContr += 0.5*omega_WN_B.transpose()*it->IWPntWc_B*omega_WN_B + 0.5*it->massW*rDotWcB_B.dot(rDotWcB_B);
+			rotEnergyContr += 0.5*omega_GN_B.transpose()*it->IGPntGc_B*omega_GN_B + 0.5*it->massG*rDotGcB_B.dot(rDotGcB_B);
 		}
     }
 
