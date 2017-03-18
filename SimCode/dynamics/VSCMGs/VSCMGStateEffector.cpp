@@ -372,12 +372,26 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 										  + it->massW*it->d*it->gsHat_B.transpose()*w2HatTilde_B*(2.0*it->rPrimeTildeWcB_B.transpose()*omegaLoc_BN_B+omegaTilde*omegaTilde*it->rWcB_B)
 										  + it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current );
 
-//			matrixAcontr += ;
-//			matrixBcontr += ;
-//			matrixCcontr += ;
-//			matrixDcontr += ;
-//			vecTranscontr += ;
-//			vecRotcontr += ;
+			Eigen::Vector3d p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
+			Eigen::Vector3d q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
+			double s = (it->dOmega+it->cOmega*it->dgamma)/(1.0-it->cOmega*it->cgamma);
+
+			ur = it->massG*ggHatTilde_B*it->rGcG_B - it->massW*it->d*cos(it->theta)*it->gsHat_B + it->massW*it->l*it->gtHat_B;
+			vr = it->massW*it->d*it->w3Hat_B;
+			kr = it->massG*it->gammaDot*ggHatTilde_B*it->rPrimeGcB_B + it->massW*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
+
+			uomega = it->IGPntGc_B*it->ggHat_B + it->massG*it->rTildeGcB_B*ggHatTilde_B*it->rGcG_B + it->IWPntWc_B*it->ggHat_B + it->massW*it->rTildeWcB_B*(it->l*it->gtHat_B-it->d*cos(it->theta)*it->gsHat_B);
+			vomega = it->IWPntWc_B*it->gsHat_B + it->massW*it->d*it->rTildeWcB_B*it->w3Hat_B;
+			komega = it->IPrimeGPntGc_B*it->gammaDot*it->ggHat_B + omegaTilde*it->IGPntGc_B*it->gammaDot*it->ggHat_B + it->massG*omegaTilde*it->rTildeGcB_B*it->rPrimeGcB_B + it->massG*it->gammaDot*it->rTildeGcB_B*ggHatTilde_B*rPrimeGcG_B
+						+ it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WB_B + omegaTilde*it->IWPntWc_B*omega_WB_B + it->massW*omegaTilde*it->rTildeWcB_B*it->rPrimeWcB_B
+						+ it->massW*it->rTildeWcB_B*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
+
+			matrixAcontr += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*p.transpose();
+			matrixBcontr += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*q.transpose();
+			matrixCcontr += uomega*it->agamma.transpose() + (vomega+uomega*it->cgamma)*p.transpose();
+			matrixDcontr += uomega*it->bgamma.transpose() + (vomega+uomega*it->cgamma)*q.transpose();
+			vecTranscontr -= kr + ur*it->dgamma + (vr+ur*it->cgamma)*s;
+			vecRotcontr -= komega + uomega*it->dgamma + (vomega+uomega*it->cgamma)*s;
 		}
 	}
 	return;
