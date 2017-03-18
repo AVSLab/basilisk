@@ -62,6 +62,8 @@ typedef struct {
 	double IV1;              	//!< [kg-m^2]
 	double IV2;          		//!< [kg-m^2]
 	double IV3;                 //!< [kg-m^2]
+	double rhoG;
+	double rhoW;
     double U_s;                //!< [kg-m], static imbalance
     double U_d;                //!< [kg-m^2], dynamic imbalance
 	Eigen::Vector3d rGcG_B;
@@ -87,14 +89,24 @@ typedef struct {
 	Eigen::Matrix3d IPrimeWPntWc_B;
 	Eigen::Vector3d rGcB_B;
     Eigen::Vector3d rWcB_B;
+	Eigen::Vector3d rWcG_B;
 	Eigen::Matrix3d rTildeGcB_B;
     Eigen::Matrix3d rTildeWcB_B;
 	Eigen::Vector3d rPrimeGcB_B;
     Eigen::Vector3d rPrimeWcB_B;
+	Eigen::Matrix3d rPrimeTildeGcB_B;
+	Eigen::Matrix3d rPrimeTildeWcB_B;
 
 	Eigen::Vector3d aOmega; //!< [-], parameter used in coupled jitter back substitution
 	Eigen::Vector3d bOmega; //!< [-], parameter used in coupled jitter back substitution
 	double cOmega; //!< [-], parameter used in coupled jitter back substitution
+	double dOmega;
+	double eOmega;
+	Eigen::Vector3d agamma;
+	Eigen::Vector3d bgamma;
+	double cgamma;
+	double dgamma;
+	double egamma;
 }VSCMGConfigSimMsg;
 
 
