@@ -199,6 +199,8 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 
 		} else if (it->VSCMGModel == JitterFullyCoupled) {
 
+			it->rGcG_B = dcm_BG * it->rGcG_G;
+
 			//! gimbal inertia tensor about wheel center of mass represented in B frame
 			Eigen::Matrix3d IGIMPntGc_G;
 			IGIMPntGc_G << it->IG1, it->IG12, it->IG13, \
