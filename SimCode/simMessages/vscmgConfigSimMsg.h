@@ -107,6 +107,9 @@ typedef struct {
 	double cgamma;
 	double dgamma;
 	double egamma;
+	Eigen::Vector3d p;
+	Eigen::Vector3d q;
+	double s;
 }VSCMGConfigSimMsg;
 
 

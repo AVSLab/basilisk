@@ -211,6 +211,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			IPrimeGIMPntGc_G << -2*it->IG12, (it->IG1-it->IG2), -it->IG23, \
 								(it->IG1-it->IG2), 2*it->IG12, it->IG13, \
 								-it->IG23, it->IG13, 0.;
+			IPrimeGIMPntGc_G *= it->gammaDot;
 			it->IPrimeGPntGc_B = dcm_BG * IPrimeGIMPntGc_G * dcm_BG.transpose();
 
 			//! wheel inertia tensor about wheel center of mass represented in B frame
@@ -372,9 +373,9 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 										  + it->massW*it->d*it->gsHat_B.transpose()*w2HatTilde_B*(2.0*it->rPrimeTildeWcB_B.transpose()*omegaLoc_BN_B+omegaTilde*omegaTilde*it->rWcB_B)
 										  + it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current );
 
-			Eigen::Vector3d p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
-			Eigen::Vector3d q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
-			double s = (it->dOmega+it->cOmega*it->dgamma)/(1.0-it->cOmega*it->cgamma);
+			it->p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
+			it->q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
+			it->s = (it->dOmega+it->cOmega*it->dgamma)/(1.0-it->cOmega*it->cgamma);
 
 			ur = it->massG*ggHatTilde_B*it->rGcG_B - it->massW*it->d*cos(it->theta)*it->gsHat_B + it->massW*it->l*it->gtHat_B;
 			vr = it->massW*it->d*it->w3Hat_B;
@@ -386,12 +387,12 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 						+ it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WB_B + omegaTilde*it->IWPntWc_B*omega_WB_B + it->massW*omegaTilde*it->rTildeWcB_B*it->rPrimeWcB_B
 						+ it->massW*it->rTildeWcB_B*((2.0*it->d*it->gammaDot*it->Omega*sin(it->theta)-it->l*gammaDotSquared)*it->gsHat_B-it->d*gammaDotSquared*cos(it->theta)*it->gtHat_B-it->d*OmegaSquared*it->w2Hat_B);
 
-			matrixAcontr += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*p.transpose();
-			matrixBcontr += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*q.transpose();
-			matrixCcontr += uomega*it->agamma.transpose() + (vomega+uomega*it->cgamma)*p.transpose();
-			matrixDcontr += uomega*it->bgamma.transpose() + (vomega+uomega*it->cgamma)*q.transpose();
-			vecTranscontr -= kr + ur*it->dgamma + (vr+ur*it->cgamma)*s;
-			vecRotcontr -= komega + uomega*it->dgamma + (vomega+uomega*it->cgamma)*s;
+			matrixAcontr += ur*it->agamma.transpose() + (vr+ur*it->cgamma)*it->p.transpose();
+			matrixBcontr += ur*it->bgamma.transpose() + (vr+ur*it->cgamma)*it->q.transpose();
+			matrixCcontr += uomega*it->agamma.transpose() + (vomega+uomega*it->cgamma)*it->p.transpose();
+			matrixDcontr += uomega*it->bgamma.transpose() + (vomega+uomega*it->cgamma)*it->q.transpose();
+			vecTranscontr -= kr + ur*it->dgamma + (vr+ur*it->cgamma)*it->s;
+			vecRotcontr -= komega + uomega*it->dgamma + (vomega+uomega*it->cgamma)*it->s;
 		}
 	}
 	return;
@@ -440,11 +441,11 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
             thetaCount++;
         }
 		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
-			OmegasDot(VSCMGi,0) =  - omegat*it->gammaDot - it->gsHat_B.transpose()*omegaDotBNLoc_B + it->u_s_current/it->IW1;
+			OmegasDot(VSCMGi,0) = - omegat*it->gammaDot - it->gsHat_B.transpose()*omegaDotBNLoc_B + it->u_s_current/it->IW1;
 			gammaDotsDot(VSCMGi,0) = 1/it->IV3*(it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat-it->IV3*it->ggHat_B.transpose()*omegaDotBNLoc_B);
         } else if(it->VSCMGModel == JitterFullyCoupled) {
-			OmegasDot(VSCMGi,0) = it->aOmega.dot(rDDotBNLoc_B) + it->bOmega.dot(omegaDotBNLoc_B) + it->cOmega;
-			gammaDotsDot(VSCMGi,0) = 1.0;
+			OmegasDot(VSCMGi,0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
+			gammaDotsDot(VSCMGi,0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B) + it->cgamma*OmegasDot(VSCMGi,0) + it->dgamma;
 		}
 		VSCMGi++;
 	}
