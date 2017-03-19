@@ -50,17 +50,6 @@ def defaultVSCMG():
     VSCMG.gsHat0_S = [[0.],[0.],[0.]]
     VSCMG.gtHat0_S = [[0.],[0.],[0.]]
     VSCMG.ggHat_S = [[0.],[0.],[0.]]
-    VSCMG.rGB_B = [[0.],[0.],[0.]]
-    VSCMG.gsHat0_B = [[0.],[0.],[0.]]
-    VSCMG.gtHat0_B = [[0.],[0.],[0.]]
-    VSCMG.ggHat_B = [[0.],[0.],[0.]]
-    VSCMG.w2Hat0_B = [[0.],[0.],[0.]]
-    VSCMG.w3Hat0_B = [[0.],[0.],[0.]]
-    VSCMG.gsHat_B = [[0.],[0.],[0.]]
-    VSCMG.gtHat_B = [[0.],[0.],[0.]]
-    VSCMG.w2Hat_B = [[0.],[0.],[0.]]
-    VSCMG.w3Hat_B = [[0.],[0.],[0.]]
-    VSCMG.u_s_current = 0.
     VSCMG.u_s_max = -1
     VSCMG.u_s_min = -1
     VSCMG.u_s_f = 0.
@@ -70,7 +59,7 @@ def defaultVSCMG():
     VSCMG.u_g_min = -1
     VSCMG.u_g_f = 0.
     VSCMG.gimbalLinearFrictionRatio = -1
-    VSCMG.theta = 0.
+    # VSCMG.theta = 0. # theta is always set to zero from within the module
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
     VSCMG.gammaDot = 0.
@@ -84,11 +73,11 @@ def defaultVSCMG():
     VSCMG.IG3 = 0.3
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
-    VSCMG.d = 0.
-    VSCMG.l = 0.
-    VSCMG.L = 0.
-    VSCMG.rGcG_G = [[0.],[0.],[0.]]
-    VSCMG.IW13 = 0.
+    # VSCMG.d = 0. # d gets set within the module from U_s
+    VSCMG.l = 0.01
+    VSCMG.L = 0.1
+    VSCMG.rGcG_G = [[0.0001],[-0.02],[0.1]]
+    # VSCMG.IW13 = 0. # IW13 gets set within the module from U_d
     VSCMG.massW = 6.
     VSCMG.massG = 6.
     VSCMG.VSCMGModel = 0
@@ -131,7 +120,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.00001)  # update process rate update time
+    if testCase == 'JitterFullyCoupled':
+        dt = 0.00001
+        duration = 1.
+    else:
+        dt = 0.001
+        duration = 1.
+    testProcessRate = macros.sec2nano(dt)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -145,27 +140,27 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
     VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
     VSCMGs[0].ggHat_S = [[0.0], [0.0], [1.0]]
-    VSCMGs[0].Omega = 500 * rpm2rad # 52.3598775598
+    VSCMGs[0].Omega = 2000 * rpm2rad # 52.3598775598
     VSCMGs[0].gamma = 0.
-    VSCMGs[0].gammaDot = 0.1
-    VSCMGs[0].rGB_S = [[0.1], [0.0], [0.0]]
+    VSCMGs[0].gammaDot = 0.06
+    VSCMGs[0].rGB_S = [[0.1], [0.002], [-0.02]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
     VSCMGs[1].ggHat_S = [[math.cos(ang)], [0.0], [math.sin(ang)]]
     VSCMGs[1].gtHat0_S = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
-    VSCMGs[1].Omega =  200 * rpm2rad # 20.9439510239
+    VSCMGs[1].Omega =  350 * rpm2rad # 20.9439510239
     VSCMGs[1].gamma = 0.
-    VSCMGs[1].gammaDot = 0.1
+    VSCMGs[1].gammaDot = 0.011
     VSCMGs[1].rGB_S = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
     VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
     VSCMGs[2].ggHat_S = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
     VSCMGs[2].gtHat0_S = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
-    VSCMGs[2].Omega = -150 * rpm2rad # -15.7079632679
+    VSCMGs[2].Omega = -900 * rpm2rad # -15.7079632679
     VSCMGs[2].gamma = 0.
-    VSCMGs[2].gammaDot = 0.1
+    VSCMGs[2].gammaDot = -0.003
     VSCMGs[2].rGB_S = [[-0.1], [0.05], [0.05]]
 
     if testCase == 'BalancedWheels':
@@ -178,6 +173,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     for VSCMG in VSCMGs:
         VSCMG.VSCMGModel = VSCMGModel
 
+    if testCase == 'JitterFullyCoupled':
+        VSCMGs = [VSCMGs[0],VSCMGs[2]]
+
+    N = len(VSCMGs)
+
     # create RW object container and tie to spacecraft object
     rwStateEffector = VSCMGStateEffector.VSCMGStateEffector()
     rwStateEffector.ModelTag = "VSCMGs"
@@ -187,8 +187,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     # set RW torque command
     cmdArray = VSCMGStateEffector.VSCMGArrayTorqueIntMsg()
-    cmdArray.wheelTorque = [0.01, 0.05, -0.09] # [Nm]
-    cmdArray.gimbalTorque = [0.08, -0.15, -0.06] # [Nm]
+    cmdArray.wheelTorque = [0.001, 0.005, -0.009] # [Nm]
+    cmdArray.gimbalTorque = [0.008, -0.0015, -0.006] # [Nm]
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,
                                rwCommandName,
@@ -198,33 +198,34 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.AddModelToTask(unitTaskName, rwStateEffector)
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    unitTestSim.earthGravBody = gravityEffector.GravBodyData()
-    unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
-    unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
-    unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
-    unitTestSim.earthGravBody.isCentralBody = True
-    unitTestSim.earthGravBody.useSphericalHarmParams = False
+    if testCase != 'JitterFullyCoupled':
+        unitTestSim.earthGravBody = gravityEffector.GravBodyData()
+        unitTestSim.earthGravBody.bodyInMsgName = "earth_planet_data"
+        unitTestSim.earthGravBody.outputMsgName = "earth_display_frame_data"
+        unitTestSim.earthGravBody.mu = 0.3986004415E+15 # meters!
+        unitTestSim.earthGravBody.isCentralBody = True
+        unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
+        earthEphemData = spice_interface.SpicePlanetStateSimMsg()
+        earthEphemData.J2000Current = 0.0
+        earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+        earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+        earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+        earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+        earthEphemData.PlanetName = "earth"
 
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+        scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
+
+        msgSize = earthEphemData.getStructSize()
+        unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+            unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+        unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
+
+    unitTestSim.InitializeSimulation()
 
     # log data
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
     unitTestSim.TotalSim.logThisMessage(rwStateEffector.OutputDataString, testProcessRate)
-
-    msgSize = earthEphemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-        unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
-    unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
-
-    unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
@@ -236,10 +237,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    # posRef.setState([[0.0],	[0.0],	[0.0]])
-    # velRef.setState([[0.0],	[0.0],	[0.0]])
+    if testCase == 'JitterFullyCoupled':
+        posRef.setState([[0.0],	[0.0],	[0.0]])
+        velRef.setState([[0.0],	[0.0],	[0.0]])
+    else:
+        posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
+        velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
     sigmaRef.setState([[0.0], [0.0], [0.0]])
     omegaRef.setState([[0.08], [0.01], [0.0]])
 
@@ -247,7 +250,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    stopTime = .1
+    stopTime = duration
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -270,29 +273,29 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-            [-4046317.4482230823, 7473345.937379789, 5253480.873598164]
+            [-4025537.663530937, 7487128.5629007, 5249339.739717924]
         ]
 
         trueSigma = [
-            [0.09977362982932744, 0.017148014446366596, 5.0393940411903925e-05]
+            [0.01857774589897812, 0.0021098814589502733, -0.001194065770317139]
         ]
 
     elif testCase == 'JitterSimple':
         truePos = [
-            [-4046317.4416707205, 7473345.937608859, 5253480.890928658]
+            [-4025537.6587910117, 7487128.563118205, 5249339.749664459]
         ]
 
         trueSigma = [
-            [0.10014378493745967, 0.016460100055456416, 0.0018928776716140476]
+            [0.018774477186285467, 0.0018376842577357564, -0.00023633044221463834]
         ]
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-            [-4046317.4472384057, 7473345.921374322, 5253480.873495584]
+            [0.0009998791949221823, 0.003085053664784031, 0.008772780702050606]
         ]
 
         trueSigma = [
-            [0.09926551360276777, 0.010153926978972804, -6.141297232067025e-05]
+            [0.028007665602731092, 0.007826213565073164, -0.0011225237462873503]
         ]
 
 
@@ -331,63 +334,112 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     # plt.title("Change in Rotational Energy")
 
     # plt.figure()
-    # for i in range(1,4):
+    # for i in range(1,N+1):
     #     plt.subplot(4,1,i)
     #     plt.plot(wheelSpeeds[:,0]*1.0E-9, wheelSpeeds[:,i] / (2.0 * math.pi) * 60, label='RWA' + str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'RW' + str(i) + r' $\Omega$ (RPM)')
 
     # plt.figure()
-    # for i in range(1,4):
+    # for i in range(1,N+1):
     #     plt.subplot(4,1,i)
     #     plt.plot(gimbalAngles[:,0]*1.0E-9, gimbalAngles[:,i], label=str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'$\gamma_'+str(i)+'$ (rad)')
 
     # plt.figure()
-    # for i in range(1,4):
+    # for i in range(1,N+1):
     #     plt.subplot(4,1,i)
     #     plt.plot(gimbalRates[:,0]*1.0E-9, gimbalRates[:,i] * 180/np.pi, label=str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'$\dot{\gamma}_'+str(i)+'$ (d/s)')
 
     # plt.figure()
-    # for i in range(1,4):
+    # for i in range(1,N+1):
     #     plt.subplot(4,1,i)
     #     plt.plot(sigmaData[:,0]*1.0E-9, sigmaData[:,i], label='MRP' + str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'MRP b' + str(i))
 
-    thetaData = np.empty([len(sigmaData[:,0]),2])
-    thetaData[:,0] = sigmaData[:,0]
-    for i in range(0,len(sigmaData[:,0])):
-        thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaData[i,1:]))
-    thetaFit = np.empty([len(sigmaData[:,0]),2])
-    thetaFit[:,0] = thetaData[:,0]
-    fitOrd = 8
-    p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
-    thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
-
     # plt.figure()
-    # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
-    # plt.plot(thetaFit[:,0]*1e-9, thetaFit[:,1], 'r--')
-    # plt.title("Principle Angle")
-    # plt.xlabel('Time (s)')
-    # plt.ylabel(r'$\theta$ (deg)')
-
-    if testCase != 'BalancedWheels':
-        plt.figure()
-        plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
-        plt.title("Principle Angle Fit")
-        plt.xlabel('Time (s)')
-        plt.ylabel(r'$\theta$ (deg)')
-
-    # plt.figure()
-    # for i in range(1,4):
+    # for i in range(1,N+1):
     #     plt.subplot(4,1,i)
     #     plt.plot(omegaData[:,0]*1.0E-9, omegaData[:,i] * 180/math.pi, label='omega' + str(i))
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'b' + str(i) + r' $\omega$ (d/s)')
+
+    if testCase != 'BalancedWheels':
+        istart = int(.01/dt)
+        sigmaDataCut = sigmaData[istart:,:]
+        thetaData = np.empty([len(sigmaDataCut[:,0]),2])
+        thetaData[:,0] = sigmaDataCut[:,0]
+        for i in range(0,len(thetaData[:,0])):
+            thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaDataCut[i,1:]))
+
+        if testCase == 'JitterSimple':
+            fitOrdsToTry = [11]
+        else:
+            fitOrdsToTry = [9]
+
+        for fitOrd in fitOrdsToTry:
+
+            thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
+            thetaFit[:,0] = thetaData[:,0]
+            p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
+            thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
+
+            plt.figure()
+            plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
+            plt.title("Principle Angle Fit")
+            plt.xlabel('Time (s)')
+            plt.ylabel(r'$\theta$ (deg)')
+            # plt.show()
+
+        Fs = 1.0/dt  # sampling rate
+        Ts = dt # sampling interval
+
+        t = thetaFit[:,0]*1e-9
+        y = thetaData[:,1]-thetaFit[:,1]
+
+        n = len(y) # length of the signal
+        k = np.arange(n)
+        T = n/Fs
+        frq = k/T # two sides frequency range
+        frq = frq[range(n/2)] # one side frequency range
+
+        Y = np.fft.fft(y)/n # fft computing and normalization
+        Y = Y[range(n/2)]
+
+        fig, ax = plt.subplots(2, 1)
+        ax[0].plot(t,y)
+        ax[0].set_xlabel('Time')
+        ax[0].set_ylabel('Amplitude')
+        ax[1].plot(frq,abs(Y),'r') # plotting the spectrum
+        ax[1].set_xlabel('Freq (Hz)')
+        ax[1].set_ylabel('|Y(freq)|')
+
+        a = abs(Y)
+        cb = np.r_[True, a[1:] > a[:-1]] & np.r_[a[:-1] > a[1:], True]
+        cb[0] = False
+        cb[-1] = False
+
+        whr = np.array(np.where(cb==True))[0]
+        thrsh = np.sort(a[whr])[-N]
+        whrthrsh = np.where(a[whr] >= thrsh)[0]
+        whr = whr[whrthrsh]
+        ax[1].plot(frq[whr],a[whr],'bo')
+        plt.xlim((0,VSCMGs[0].Omega_max/rpm2rad/60.))
+
+        wfrq_data = np.array(frq[whr])*60.
+        wfrq_true = np.sort(abs(np.array([VSCMG.Omega/rpm2rad for VSCMG in VSCMGs])))
+        wfrq_err = wfrq_data - wfrq_true
+
+
+        # plt.figure()
+        # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
+        # plt.title("Principle Angle")
+        # plt.xlabel('Time (s)')
+        # plt.ylabel(r'$\theta$ (deg)')
 
     if show_plots == True:
         plt.show()
@@ -431,6 +483,15 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
 
+    if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
+        print wfrq_true
+        print wfrq_data
+        for i in range(N):
+            # check a vector values
+            if not abs(wfrq_data[i]-wfrq_true[i])/wfrq_true[i] < .09:
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed jitter unit test")
+
     if testFailCount == 0:
         print "PASSED: " + " Reaction Wheel Integrated Sim Test"
 
@@ -441,4 +502,6 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
+    VSCMGIntegratedTest(True,False,'BalancedWheels')
+    # VSCMGIntegratedTest(True,False,'JitterSimple')
+    # VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
