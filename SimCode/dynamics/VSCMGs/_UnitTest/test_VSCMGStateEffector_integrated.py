@@ -109,6 +109,7 @@ def findPeaks(Y,maxfind):
     (False,'BalancedWheels'),
     (False,'JitterSimple'),
     (False,'JitterFullyCoupled'),
+    pytest.mark.xfail((False,'JitterFullyCoupledGravity'),run=False),
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
