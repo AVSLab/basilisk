@@ -83,6 +83,30 @@ def defaultVSCMG():
     VSCMG.VSCMGModel = 0
     return VSCMG
 
+def computeFFT(t,y,dt):
+    Fs = 1.0/dt  # sampling rate
+    Ts = dt # sampling interval
+    n = len(y) # length of the signal
+    k = np.arange(n)
+    T = n/Fs
+    frq = k/T # two sides frequency range
+    frq = frq[range(n/2)] # one side frequency range
+    Y = np.fft.fft(y)/n # fft computing and normalization
+    Y = Y[range(n/2)]
+    Y = abs(Y)
+    return [frq,Y]
+
+def findPeaks(Y,maxfind):
+        peakIdxs = np.r_[True, Y[1:] > Y[:-1]] & np.r_[Y[:-1] > Y[1:], True]
+        peakIdxs[0] = False
+        peakIdxs[-1] = False
+
+        peakIdxs = np.array(np.where(peakIdxs==True))[0]
+        threshold = np.sort(Y[peakIdxs])[-maxfind]
+        peakIdxs = peakIdxs[np.where(Y[peakIdxs] >= threshold)[0]]
+
+        return peakIdxs
+
 
 @pytest.mark.parametrize("useFlag, testCase", [
     (False,'BalancedWheels'),
@@ -377,63 +401,35 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             thetaData[i,1] = 4*np.arctan(np.linalg.norm(sigmaDataCut[i,1:]))
 
         if testCase == 'JitterSimple':
-            fitOrdsToTry = [11]
+            fitOrd = 11
         else:
-            fitOrdsToTry = [9]
+            fitOrd = 9
 
-        for fitOrd in fitOrdsToTry:
+        thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
+        thetaFit[:,0] = thetaData[:,0]
+        p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
+        thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
 
-            thetaFit = np.empty([len(sigmaDataCut[:,0]),2])
-            thetaFit[:,0] = thetaData[:,0]
-            p = np.polyfit(thetaData[:,0]*1e-9,thetaData[:,1],fitOrd)
-            thetaFit[:,1] = np.polyval(p,thetaFit[:,0]*1e-9)
+        plt.figure()
+        plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
+        plt.title("Principle Angle Fit")
+        plt.xlabel('Time (s)')
+        plt.ylabel(r'$\theta$ (deg)')
 
-            plt.figure()
-            plt.plot(thetaData[:,0]*1e-9, thetaData[:,1]-thetaFit[:,1])
-            plt.title("Principle Angle Fit")
-            plt.xlabel('Time (s)')
-            plt.ylabel(r'$\theta$ (deg)')
-            # plt.show()
+        [frq,Y] = computeFFT(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1],dt)
+        peakIdxs = findPeaks(Y,N)
+        wheelSpeeds_data = np.array(frq[peakIdxs])*60.
+        wheelSpeeds_true = np.sort(abs(np.array([VSCMG.Omega/rpm2rad for VSCMG in VSCMGs])))
 
-        Fs = 1.0/dt  # sampling rate
-        Ts = dt # sampling interval
-
-        t = thetaFit[:,0]*1e-9
-        y = thetaData[:,1]-thetaFit[:,1]
-
-        n = len(y) # length of the signal
-        k = np.arange(n)
-        T = n/Fs
-        frq = k/T # two sides frequency range
-        frq = frq[range(n/2)] # one side frequency range
-
-        Y = np.fft.fft(y)/n # fft computing and normalization
-        Y = Y[range(n/2)]
-
-        fig, ax = plt.subplots(2, 1)
-        ax[0].plot(t,y)
+        fig, ax = plt.subplots(2,1)
+        ax[0].plot(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1])
         ax[0].set_xlabel('Time')
         ax[0].set_ylabel('Amplitude')
-        ax[1].plot(frq,abs(Y),'r') # plotting the spectrum
+        ax[1].plot(frq,abs(Y),'r')
         ax[1].set_xlabel('Freq (Hz)')
-        ax[1].set_ylabel('|Y(freq)|')
-
-        a = abs(Y)
-        cb = np.r_[True, a[1:] > a[:-1]] & np.r_[a[:-1] > a[1:], True]
-        cb[0] = False
-        cb[-1] = False
-
-        whr = np.array(np.where(cb==True))[0]
-        thrsh = np.sort(a[whr])[-N]
-        whrthrsh = np.where(a[whr] >= thrsh)[0]
-        whr = whr[whrthrsh]
-        ax[1].plot(frq[whr],a[whr],'bo')
+        ax[1].set_ylabel('Magnitude')
+        ax[1].plot(frq[peakIdxs],Y[peakIdxs],'bo')
         plt.xlim((0,VSCMGs[0].Omega_max/rpm2rad/60.))
-
-        wfrq_data = np.array(frq[whr])*60.
-        wfrq_true = np.sort(abs(np.array([VSCMG.Omega/rpm2rad for VSCMG in VSCMGs])))
-        wfrq_err = wfrq_data - wfrq_true
-
 
         # plt.figure()
         # plt.plot(thetaData[:,0]*1e-9, thetaData[:,1])
@@ -484,11 +480,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
 
     if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
-        print wfrq_true
-        print wfrq_data
+        print wheelSpeeds_true
+        print wheelSpeeds_data
         for i in range(N):
             # check a vector values
-            if not abs(wfrq_data[i]-wfrq_true[i])/wfrq_true[i] < .09:
+            if not abs(wheelSpeeds_data[i]-wheelSpeeds_true[i])/wheelSpeeds_true[i] < .09:
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed jitter unit test")
 
@@ -502,6 +498,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'BalancedWheels')
-    # VSCMGIntegratedTest(True,False,'JitterSimple')
-    # VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
+    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
