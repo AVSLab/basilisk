@@ -59,7 +59,6 @@ def defaultVSCMG():
     VSCMG.u_g_min = -1
     VSCMG.u_g_f = 0.
     VSCMG.gimbalLinearFrictionRatio = -1
-    # VSCMG.theta = 0. # theta is always set to zero from within the module
     VSCMG.Omega = 0.
     VSCMG.gamma = 0.
     VSCMG.gammaDot = 0.
@@ -73,17 +72,15 @@ def defaultVSCMG():
     VSCMG.IG3 = 0.3
     VSCMG.U_s = 4.8e-06 * 1e4
     VSCMG.U_d = 1.54e-06 * 1e4
-    # VSCMG.d = 0. # d gets set within the module from U_s
     VSCMG.l = 0.01
     VSCMG.L = 0.1
     VSCMG.rGcG_G = [[0.0001],[-0.02],[0.1]]
-    # VSCMG.IW13 = 0. # IW13 gets set within the module from U_d
     VSCMG.massW = 6.
     VSCMG.massG = 6.
     VSCMG.VSCMGModel = 0
     return VSCMG
 
-def computeFFT(t,y,dt):
+def computeFFT(y,dt):
     Fs = 1.0/dt  # sampling rate
     Ts = dt # sampling interval
     n = len(y) # length of the signal
@@ -164,7 +161,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
     VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
     VSCMGs[0].ggHat_S = [[0.0], [0.0], [1.0]]
-    VSCMGs[0].Omega = 2000 * rpm2rad # 52.3598775598
+    VSCMGs[0].Omega = 2000 * rpm2rad
     VSCMGs[0].gamma = 0.
     VSCMGs[0].gammaDot = 0.06
     VSCMGs[0].rGB_S = [[0.1], [0.002], [-0.02]]
@@ -173,7 +170,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
     VSCMGs[1].ggHat_S = [[math.cos(ang)], [0.0], [math.sin(ang)]]
     VSCMGs[1].gtHat0_S = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
-    VSCMGs[1].Omega =  350 * rpm2rad # 20.9439510239
+    VSCMGs[1].Omega =  350 * rpm2rad
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.011
     VSCMGs[1].rGB_S = [[0.0], [-0.05], [0.0]]
@@ -182,7 +179,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
     VSCMGs[2].ggHat_S = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
     VSCMGs[2].gtHat0_S = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
-    VSCMGs[2].Omega = -900 * rpm2rad # -15.7079632679
+    VSCMGs[2].Omega = -900 * rpm2rad
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = -0.003
     VSCMGs[2].rGB_S = [[-0.1], [0.05], [0.05]]
@@ -416,7 +413,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         plt.xlabel('Time (s)')
         plt.ylabel(r'$\theta$ (deg)')
 
-        [frq,Y] = computeFFT(thetaFit[:,0]*1e-9,thetaData[:,1]-thetaFit[:,1],dt)
+        [frq,Y] = computeFFT(thetaData[:,1]-thetaFit[:,1],dt)
         peakIdxs = findPeaks(Y,N)
         wheelSpeeds_data = np.array(frq[peakIdxs])*60.
         wheelSpeeds_true = np.sort(abs(np.array([VSCMG.Omega/rpm2rad for VSCMG in VSCMGs])))
