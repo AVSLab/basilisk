@@ -84,14 +84,10 @@ def test_scenarioAtmosphereOrbit():
     showVal = False
     testResults = []
     testMessage = []
-    [leoResults, leoMessages] = run(
-            showVal, orb1, earthCase)
-    [gtoResults, gtoMessages] = run(
-        showVal, orb2, earthCase)
-    [lmoResults, lmoMessages] = run(
-        showVal, orb1, marsCase)
-    [mtoResults, mtoMessages] = run(
-        showVal, orb2, marsCase)
+    [leoResults, leoMessages] = run(showVal, orb1, earthCase)
+    [gtoResults, gtoMessages] = run(showVal, orb2, earthCase)
+    [lmoResults, lmoMessages] = run(showVal, orb1, marsCase)
+    [mtoResults, mtoMessages] = run(showVal, orb2, marsCase)
 
     testResults = leoResults+gtoResults+lmoResults+mtoResults
     testMessage.append(leoMessages)
@@ -135,10 +131,6 @@ def run(show_plots, orbitCase, planetCase):
     atmoTaskName = "atmosphere"
     newAtmo.ModelTag = "ExpAtmo"
     dragEffector = dragDynamicEffector.DragDynamicEffector()
-    #dragEffector.ModelTag = "DragEff"
-    #dragEffectorTaskName = "drag"
-    #dragEffector.SetArea(projArea)
-    #dragEffector.SetDragCoeff(dragCoeff)
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
     #dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
