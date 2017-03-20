@@ -16,7 +16,12 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-
+#include <Eigen/Dense>
+#include <vector>
+#include "environment/spice/spice_interface.h"
+#include <cstring>
+#include <iostream>
+#include <cmath>
 
 #include "exponentialAtmosphere.h"
 #include "architecture/messaging/system_messaging.h"
@@ -27,13 +32,8 @@
 #include "../spice/spice_planet_state.h"
 #include "../../dynamics/spacecraftPlus/spacecraftPlus.h"
 #include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-#include <Eigen/Dense>
-#include <vector>
+#include "densityMsg.h"
 
-#include "environment/spice/spice_interface.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
 
 ExponentialAtmosphere::ExponentialAtmosphere()
 {

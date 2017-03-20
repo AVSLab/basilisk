@@ -21,12 +21,13 @@
 #ifndef THRUSTER_DYNAMIC_EFFECTOR_H
 #define THRUSTER_DYNAMIC_EFFECTOR_H
 
+#include <Eigen/Dense>
+#include <vector>
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../environment/ExponentialAtmosphere/exponentialAtmosphere.h"
-#include <Eigen/Dense>
-#include <vector>
+#include "../../environment/ExponentialAtmosphere/densityMsg.h"
+
 
 
 
@@ -36,40 +37,16 @@
 
 //! @brief Container for basic drag parameters - the spacecraft's atmosphere-relative velocity, its projected area, and its drag coefficient.*/
 typedef struct {
-    double velocityMag;                 //!< m/s Norm of the atmosphere-relative velocity
+    double velocityMag;                 //!< m/s Magnitude of the atmosphere-relative velocity
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
     double dragCoeff;                    //!< --  Nondimensional drag coefficient
     Eigen::Vector3d comOffset     ;               //!< m distance from center of mass to center of projected area
 }DragBaseData;
 
-//! @brief Container for current operational data of a given thruster
-/*! This structure is used to determine the current state of a given thruster.
- It defines where in the cycle the thruster is and how much longer it should be
- on for.  It is intended to have the previous firing remain resident for logging*/
-typedef struct {
-    double PreviousIterTime;             //!< s  Previous thruster int time
-    double PreviousDragForce;                  //!< N  Total amount of time thruster has fire
-}CurrentDragData;
-
-/*! This structure is used in the messaging system to communicate what the
- state of the vehicle is currently.*/
-typedef struct {
-    Eigen::Vector3d bodyDragForce;                     //!< m  Current position vector (inertial)
-    Eigen::Vector3d bodyDragTorque;                    //!< -- Unit vector of thruster pointing
-    double maxDrag;                               //!< N  Steady state thrust of thruster
-    double maxTorque;                            //!< -- Current Thrust Percentage
-}DragOutputData;
-
-//! @brief Thruster dynamics class used to provide thruster effects on body
-/*! This class is used to hold and operate a set of thrusters that are located
- on the spacecraft.  It contains all of the configuration data for the thruster
- set, reads an array of on-time requests (double precision in seconds).  It is
- intended to be attached to the dynamics plant in the system using the
- DynEffector interface and as such, does not directly write the current force
- or torque into the messaging system.  The nominal interface to dynamics are the
- dynEffectorForce and dynEffectorTorque arrays that are provided by the DynEffector base class.
- There is technically double inheritance here, but both the DynEffector and
- SysModel classes are abstract base classes so there is no risk of diamond.*/
+//! @brief Drag dynamics class used to compute drag effects on spacecraft bodies
+/*! This class is used to implement drag dynamic effects on spacecraft using a variety of simple or complex models, which will include
+cannonball (attitude-independent) drag, single flat-plate drag, faceted drag models, and an interface to full-CAD GPU-accellerated
+drag models. */
 class DragDynamicEffector: public SysModel, public DynamicEffector {
 public:
     DragDynamicEffector();
@@ -87,18 +64,15 @@ public:
     void SetDensityMessage(std::string newDensMessage);
 
 public:
-    DragBaseData coreParams;
+    DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters
     std::string atmoDensInMsgName;                         //!< -- message used to read command inputs
-    std::string modelType;
-    StateData *hubSigma;
-    StateData *hubVelocity;
-    CurrentDragData dragHist;
-    Eigen::Vector3d locInertialVel;
-    AtmoOutputData densityBuffer;
+    std::string modelType;                                 //!< -- String used to set the type of model used to compute drag
+    StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
+    StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
+    Eigen::Vector3d locInertialVel;                         //!< m/s local variable to hold the inertial velocity
+    AtmoOutputData densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
 
 private:
-    //    bool bdyFrmReady;                              //!< [-] Flag indicating that the body frame is ready
-    Eigen::MatrixXd *dcm_BS;               //!< [kg] spacecrafts total mass
     uint64_t DensInMsgId;                            //!< -- Message ID for incoming data
     AtmoOutputData atmoInData;
     Eigen::Vector3d dragDirection;
