@@ -37,7 +37,7 @@ namespace std {
 %include "thrusterDynamicEffector.h"
 %include "simMessages/thrTimePairSimMsg.h"
 %include "simMessages/thrConfigSimMsg.h"
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+%include "../../../SimCode/simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRTimePairSimMsg)
 GEN_SIZEOF(THRConfigSimMsg)
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)

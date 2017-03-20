@@ -17,19 +17,20 @@
 
  */
 
-#ifndef SIM_RW_VOLTAGE_INPUT_H
-#define SIM_RW_VOLTAGE_INPUT_H
+#ifndef THR_CMD_MESSAGE_H
+#define THR_CMD_MESSAGE_H
 
-#include "../../SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! @brief Structure used to define the message format of the RW voltage input  */
+/*! \addtogroup ADCSAlgGroup
+ * @{
+ */
+
+/*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
-}RWArrayVoltageIntMsg;
+    double OnTimeRequest[MAX_EFF_CNT];     /*!< - Control request fraction array*/
+}THRArrayOnTimeCmdIntMsg;
 
-
-
-
-
+/*! @} */
 
 #endif

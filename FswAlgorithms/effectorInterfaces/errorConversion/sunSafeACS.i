@@ -31,9 +31,9 @@
 %include "dvAttEffect.h"
 GEN_SIZEOF(sunSafeACSConfig);
 %include "sunSafeACS.h"
-%include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
-%include "../../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+%include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg);
 
 %pythoncode %{

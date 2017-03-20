@@ -34,7 +34,7 @@ GEN_SIZEOF(lowPassFilterTorqueCommandConfig);
 %include "lowPassFilterTorqueCommand.h"
 
 // sample Module supportfile to be included in this sub-module
-%include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 
 %pythoncode %{

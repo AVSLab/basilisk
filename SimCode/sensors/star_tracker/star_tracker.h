@@ -25,7 +25,7 @@
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
-#include "../SimFswInterfaceMessages/stSensorIntMsg.h"
+#include "simFswInterfaceMessages/stSensorIntMsg.h"
 
 class StarTracker: public SysModel {
 public:

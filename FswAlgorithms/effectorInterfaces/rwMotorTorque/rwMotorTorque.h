@@ -22,8 +22,8 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
-#include "../../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"
+#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"

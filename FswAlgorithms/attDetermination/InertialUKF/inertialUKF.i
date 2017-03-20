@@ -37,7 +37,7 @@
 %include "../../fswMessages/stAttFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);

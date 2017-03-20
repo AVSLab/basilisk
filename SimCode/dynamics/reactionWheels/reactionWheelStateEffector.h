@@ -26,9 +26,9 @@
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/dynamicObject.h"
 #include <Eigen/Dense>
-#include "../SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../simMessages/rwCmdSimMsg.h"
 #include "../../simMessages/rwConfigSimMsg.h"
 #include "../../SimFswInterfaceMessages/rwArrayTorqueIntMsg.h"

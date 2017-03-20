@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
-#include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
 
 #define MAX_CHEB_COEFF 40
 #define MAX_CHEB_RECORDS 4

@@ -17,20 +17,15 @@
 
  */
 
-#ifndef THR_CMD_MESSAGE_H
-#define THR_CMD_MESSAGE_H
+#ifndef CSS_ARRAY_SENSOR_MESSAGE_H
+#define CSS_ARRAY_SENSOR_MESSAGE_H
 
-#include "../../SimFswInterfaceMessages/macroDefinitions.h"
+#include "macroDefinitions.h"
 
-/*! \addtogroup ADCSAlgGroup
- * @{
- */
-
-/*! @brief Structure used to define the output definition for vehicle effectors*/
+/*! @brief Output structure for CSS array or constellation interface.  Each element contains the raw measurement which should be a cosine value nominally */
 typedef struct {
-    double OnTimeRequest[MAX_EFF_CNT];     /*!< - Control request fraction array*/
-}THRArrayOnTimeCmdIntMsg;
-
-/*! @} */
+    double CosValue[MAX_NUM_CSS_SENSORS];   /*!< Current measured CSS value (ideally a cosine value) 
+                                                 for the constellation of CSS sensors*/
+}CSSArraySensorIntMsg;
 
 #endif

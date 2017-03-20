@@ -17,15 +17,14 @@
 
  */
 
-#ifndef EPHEMERIS_OUTPUT_H
-#define EPHEMERIS_OUTPUT_H
+#ifndef FSW_RW_TORQUE_H
+#define FSW_RW_TORQUE_H
 
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! @brief Message structure used to write ephemeris states out to other modules*/
+/*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
-    double r_BdyZero_N[3];          /*!< [m] Position of orbital body*/
-    double v_BdyZero_N[3];          /*!< [m/s] Velocity of orbital body*/
-    double timeTag;                 /*!< [s] vehicle Time-tag for state*/
-}EphemerisIntMsg;
+    double motorTorque[MAX_EFF_CNT];     /*!< [Nm] RW motor torque array*/
+}RWArrayTorqueIntMsg;
 
 #endif

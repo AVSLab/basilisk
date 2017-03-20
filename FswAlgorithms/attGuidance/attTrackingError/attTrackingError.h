@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../../SimFswInterfaceMessages/navAttIntMsg.h"
+#include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 

@@ -32,7 +32,7 @@
 %ignore Reset_ephemNavConverter;
 GEN_SIZEOF(EphemerisIntMsg)
 %include "ephemNavConverter.h"
-%include "../../SimFswInterfaceMessages/ephemerisIntMsg.h"
+%include "simFswInterfaceMessages/ephemerisIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

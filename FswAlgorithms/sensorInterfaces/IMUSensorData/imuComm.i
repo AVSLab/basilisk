@@ -34,7 +34,7 @@ GEN_SIZEOF(VehicleConfigFswMsg);
 %include "imuComm.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/imuSensorBodyFswMsg.h"
-%include "../../../SimFswInterfaceMessages/imuSensorIntMsg.h"
+%include "simFswInterfaceMessages/imuSensorIntMsg.h"
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

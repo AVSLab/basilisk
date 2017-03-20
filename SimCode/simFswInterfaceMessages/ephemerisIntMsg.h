@@ -17,17 +17,14 @@
 
  */
 
-#ifndef RW_SPEED_MESSAGE_STRUCT_H
-#define RW_SPEED_MESSAGE_STRUCT_H
+#ifndef EPHEMERIS_OUTPUT_H
+#define EPHEMERIS_OUTPUT_H
 
-#include "macroDefinitions.h"
-
-/*! @brief Structure used to define the output definition for reaction wheel speeds*/
+/*! @brief Message structure used to write ephemeris states out to other modules*/
 typedef struct {
-    double wheelSpeeds[MAX_EFF_CNT];                //!< r/s The current angular velocities of the RW wheel
-}RWSpeedIntMsg;
-
-
-
+    double r_BdyZero_N[3];          /*!< [m] Position of orbital body*/
+    double v_BdyZero_N[3];          /*!< [m/s] Velocity of orbital body*/
+    double timeTag;                 /*!< [s] vehicle Time-tag for state*/
+}EphemerisIntMsg;
 
 #endif

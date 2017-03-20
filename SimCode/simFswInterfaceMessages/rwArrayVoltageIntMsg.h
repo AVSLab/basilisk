@@ -17,20 +17,14 @@
 
  */
 
-#ifndef CSS_ARRAY_SENSOR_MESSAGE_H
-#define CSS_ARRAY_SENSOR_MESSAGE_H
+#ifndef SIM_RW_VOLTAGE_INPUT_H
+#define SIM_RW_VOLTAGE_INPUT_H
 
-#include "macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
-/*! @brief Output structure for CSS array or constellation interface.  Each element contains the raw measurement which should be a cosine value nominally */
+/*! @brief Structure used to define the message format of the RW voltage input  */
 typedef struct {
-    double CosValue[MAX_NUM_CSS_SENSORS];   /*!< Current measured CSS value (ideally a cosine value) 
-                                                 for the constellation of CSS sensors*/
-}CSSArraySensorIntMsg;
-
-
-
-
-
+    double voltage[MAX_EFF_CNT]; //!< [V]     RW voltage input value
+}RWArrayVoltageIntMsg;
 
 #endif

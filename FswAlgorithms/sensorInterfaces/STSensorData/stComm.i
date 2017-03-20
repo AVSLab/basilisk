@@ -28,7 +28,7 @@
 %ignore SelfInit_stProcessTelem;
 %constant void CrossInit_stProcessTelem(void*, uint64_t);
 %ignore CrossInit_stProcessTelem;
-%include "../../../SimFswInterfaceMessages/stSensorIntMsg.h"
+%include "simFswInterfaceMessages/stSensorIntMsg.h"
 %include "../../fswMessages/stAttFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 GEN_SIZEOF(STAttFswMsg);

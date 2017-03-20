@@ -35,7 +35,7 @@
 GEN_SIZEOF(MRP_PDConfig);
 GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
-%include "../../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);
 
 %include "MRP_PD.h"
