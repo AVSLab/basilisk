@@ -17,12 +17,11 @@
 
  */
 
-
+#include <iostream>
 #include "dragDynamicEffector.h"
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include "../../environment/ExponentialAtmosphere/densityMsg.h"
 
 DragDynamicEffector::DragDynamicEffector()
 {
@@ -65,7 +64,7 @@ void DragDynamicEffector::CrossInit()
 	//! Begin method steps
 	//! - Find the message ID associated with the atmoDensInMsgName string.
 	this->DensInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
-																	 sizeof(AtmoOutputData), moduleID);
+																	 sizeof(atmoPropsSimMsg), moduleID);
 }
 
 /*! This method is used to set the input density message produced by some atmospheric model.
@@ -95,10 +94,10 @@ bool DragDynamicEffector::ReadInputs()
 	bool dataGood;
 	//! - Zero the command buffer and read the incoming command array
 	SingleMessageHeader LocalHeader;
-	memset(&densityBuffer, 0x0, sizeof(AtmoOutputData));
+	memset(&densityBuffer, 0x0, sizeof(atmoPropsSimMsg));
 	memset(&LocalHeader, 0x0, sizeof(LocalHeader));
 	dataGood = SystemMessaging::GetInstance()->ReadMessage(this->DensInMsgId, &LocalHeader,
-														  sizeof(AtmoOutputData),
+														  sizeof(atmoPropsSimMsg),
 														   reinterpret_cast<uint8_t*> (&densityBuffer), moduleID);
 	this->atmoInData = densityBuffer;
 	return(dataGood);

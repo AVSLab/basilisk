@@ -26,11 +26,12 @@
 %include "swig_common_model.i"
 
 %include "sys_model.h"
+%include "../simMessages/spicePlanetStateSimMsg.h"
+%include "../simMessages/scPlusStatesSimMsg.h"
+%include "../simMessages/atmoPropsSimMsg.h"
 %include "exponentialAtmosphere.h"
-%include "../spice/spice_planet_state.h"
-%include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
 
-GEN_SIZEOF(AtmoOutputData)
+GEN_SIZEOF(atmoPropsSimMsg)
 
 %pythoncode %{
 import sys

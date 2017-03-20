@@ -18,15 +18,15 @@
  */
 
 
-#ifndef THRUSTER_DYNAMIC_EFFECTOR_H
-#define THRUSTER_DYNAMIC_EFFECTOR_H
+#ifndef DRAG_DYNAMIC_EFFECTOR_H
+#define DRAG_DYNAMIC_EFFECTOR_H
 
 #include <Eigen/Dense>
 #include <vector>
 #include "../_GeneralModuleFiles/dynamicEffector.h"
 #include "../_GeneralModuleFiles/stateData.h"
 #include "_GeneralModuleFiles/sys_model.h"
-#include "../../environment/ExponentialAtmosphere/densityMsg.h"
+#include "../../simMessages/atmoPropsSimMsg.h"
 
 
 
@@ -40,7 +40,7 @@ typedef struct {
     double velocityMag;                 //!< m/s Magnitude of the atmosphere-relative velocity
     double projectedArea;                    //!< m^2   Area of spacecraft projected in velocity direction
     double dragCoeff;                    //!< --  Nondimensional drag coefficient
-    Eigen::Vector3d comOffset     ;               //!< m distance from center of mass to center of projected area
+    Eigen::Vector3d comOffset;               //!< m distance from center of mass to center of projected area
 }DragBaseData;
 
 //! @brief Drag dynamics class used to compute drag effects on spacecraft bodies
@@ -70,11 +70,11 @@ public:
     StateData *hubSigma;                                   //!< -- Hub/Inertial attitude represented by MRP
     StateData *hubVelocity;                                //!< m/s Hub inertial velocity vector
     Eigen::Vector3d locInertialVel;                         //!< m/s local variable to hold the inertial velocity
-    AtmoOutputData densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
+    atmoPropsSimMsg densityBuffer;                           //!< -- Struct to hold local atmospheric conditions
 
 private:
     uint64_t DensInMsgId;                            //!< -- Message ID for incoming data
-    AtmoOutputData atmoInData;
+    atmoPropsSimMsg atmoInData;
     Eigen::Vector3d dragDirection;
 };
 

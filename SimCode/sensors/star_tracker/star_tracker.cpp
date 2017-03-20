@@ -21,7 +21,9 @@
 #include "utilities/rigidBodyKinematics.h"
 #include "utilities/linearAlgebra.h"
 #include "../SimFswInterfaceMessages/macroDefinitions.h"
+#include "../../simMessages/spiceTimeSimMsg.h"
 #include <iostream>
+#include <cstring>
 
 StarTracker::StarTracker()
 {
@@ -48,8 +50,8 @@ bool StarTracker::LinkMessages()
         inputTimeMessage, sizeof(SpiceTimeSimMsg), moduleID);
     inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
         inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
-    
-    
+
+
     return(inputTimeID >=0 && inputStateID >= 0);
 }
 
@@ -60,7 +62,7 @@ void StarTracker::SelfInit()
     outputStateID = SystemMessaging::GetInstance()->
         CreateNewMessage(outputStateMessage, sizeof(STSensorIntMsg),
         OutputBufferCount, "STSensorIntMsg", moduleID);
-    
+
     AMatrix.clear();
     AMatrix.insert(AMatrix.begin(), numStates*numStates, 0.0);
     mSetIdentity(AMatrix.data(), numStates, numStates);
@@ -89,12 +91,12 @@ void StarTracker::CrossInit()
 void StarTracker::readInputMessages()
 {
     SingleMessageHeader localHeader;
-    
+
     if(!this->messagesLinked)
     {
         this->messagesLinked = LinkMessages();
     }
-    
+
     memset(&this->timeState, 0x0, sizeof(SpiceTimeSimMsg));
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)

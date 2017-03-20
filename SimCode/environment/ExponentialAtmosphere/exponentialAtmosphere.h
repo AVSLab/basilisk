@@ -24,9 +24,9 @@
 #include <Eigen/Dense>
 #include <vector>
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "../spice/spice_planet_state.h"
-#include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-#include "densityMsg.h"
+#include "../../simMessages/spicePlanetStateSimMsg.h"
+#include "../../simMessages/scPlusStatesSimMsg.h"
+#include "../../simMessages/atmoPropsSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -65,7 +65,7 @@ public:
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void updateLocalAtmo(double currentTime);
-    void updateRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
+    void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState);
     void AddSpacecraftToModel(std::string tmpScMsgName);
     void SetPlanet(std::string newPlanetName);
 private:
@@ -76,7 +76,7 @@ private:
 
 
 public:
-    AtmoOutputData tmpAtmo;
+    atmoPropsSimMsg tmpAtmo;
     double localAtmoDens; //!< [kg/m^3] Local neutral atmospheric density (computed)
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
@@ -87,15 +87,15 @@ public:
     std::vector<uint64_t> atmoDensOutMsgIds;
     std::vector<uint64_t> scStateInMsgIds;
     uint64_t planetPosInMsgId;
-    std::vector<SCPlusOutputStateData> scStates;
-    SpicePlanetState bodyState;
+    std::vector<SCPlusStatesSimMsg> scStates;
+    SpicePlanetStateSimMsg bodyState;
     Eigen::Vector3d relativePos; //!< [-] Container for local position
     exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
 
 private:
     double tmpPosMag;
     uint64_t OutputBufferCount;
-    std::vector<AtmoOutputData> atmoOutBuffer; //!< -- Message buffer for thruster data
+    std::vector<atmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for thruster data
 
 };
 

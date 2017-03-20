@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMEssages/spicePlanetStateSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "../SimFswInterfaceMessages/navAttIntMsg.h"
 #include "../SimFswInterfaceMessages/navTransIntMsg.h"
 
@@ -33,24 +33,24 @@
  */
 
 //!@brief Simple navigation model used to provide error-ed truth (or truth)
-/*! This class is used to perturb the truth state away using a gauss-markov 
- error model.  It is designed to look like a random walk process put on top of 
- the nominal position, velocity, attitude, and attitude rate.  This is meant to 
+/*! This class is used to perturb the truth state away using a gauss-markov
+ error model.  It is designed to look like a random walk process put on top of
+ the nominal position, velocity, attitude, and attitude rate.  This is meant to
  be used in place of the nominal navigation system output*/
 class SimpleNav: public SysModel {
 public:
     SimpleNav();
     ~SimpleNav();
-   
+
     void SelfInit();
-    void CrossInit(); 
+    void CrossInit();
     void UpdateState(uint64_t CurrentSimNanos);
     void computeTrueOutput(uint64_t Clock);
     void computeErrors(uint64_t CurrentSimNanos);
     void applyErrors();
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-    
+
 public:
     uint64_t outputBufferCount;        //!< -- Number of output state buffers in msg
     std::vector<double> PMatrix;       //!< -- Covariance matrix used to perturb state

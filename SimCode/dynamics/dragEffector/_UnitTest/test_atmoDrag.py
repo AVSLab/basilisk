@@ -75,7 +75,7 @@ import dragDynamicEffector
 #   of the multiple test runs for this test.
 
 # provide a unique test method name, starting with test_
-def test_scenarioAtmosphereOrbit():
+def test_scenarioDragOrbit():
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     earthCase = "Earth"
@@ -149,11 +149,10 @@ def run(show_plots, orbitCase, planetCase):
     dragEffector = dragDynamicEffector.DragDynamicEffector()
     dragEffector.ModelTag = "DragEff"
     dragEffectorTaskName = "drag"
-    dragEffector.SetArea(projArea)
-    dragEffector.SetDragCoeff(dragCoeff)
+    dragEffector.coreParams.projectedArea = projArea
+    dragEffector.coreParams.dragCoeff = dragCoeff
 
     dynProcess.addTask(scSim.CreateNewTask(atmoTaskName, simulationTimeStep))
-    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     scSim.AddModelToTask(atmoTaskName, newAtmo)
 
 
@@ -170,8 +169,7 @@ def run(show_plots, orbitCase, planetCase):
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
-    scSim.AddModelToTask(simTaskName, dragEffector)
-
+    dynProcess.addTask(scSim.CreateNewTask(dragEffectorTaskName, simulationTimeStep))
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
     newAtmo.AddSpacecraftToModel(scObject.scStateOutMsgName)

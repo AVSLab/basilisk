@@ -71,54 +71,19 @@ def test_unitAtmosphere():
     # each test method requires a single assert method to be called
 
     #   Initialize new atmosphere and drag model, add them to task
-    newAtmo = exponentialAtmosphere.ExponentialAtmosphere()
-    atmoTaskName = "atmosphere"
-    newAtmo.ModelTag = "ExpAtmo"
-
+    newDrag = dragDynamicEffector.dragDynamicEffector()
     showVal = False
     testResults = []
     testMessage = []
 
-    planetRes, planetMsg = test_setPlanet(newAtmo)
+    planetRes, planetMsg = testSetDensityMsg(newDrag)
     testMessage.append(planetMsg)
     testResults.append(planetRes)
-    test_setBaseDens(newAtmo)
-
-    planetRes, planetMsg = test_setScaleHeight(newAtmo)
-    testMessage.append(planetMsg)
-    testResults.append(planetRes)
-    test_setBaseDens(newAtmo)
-
-    planetRes, planetMsg = test_setPlanetRadius(newAtmo)
-    testMessage.append(planetMsg)
-    testResults.append(planetRes)
-    test_setBaseDens(newAtmo)
-
-    planetRes, planetMsg = test_setPlanet(newAtmo)
-    testMessage.append(planetMsg)
-    testResults.append(planetRes)
-    test_setBaseDens(newAtmo)
-
-    planetRes, planetMsg = test_AddSpacecraftToModel(newAtmo)
-    testMessage.append(planetMsg)
-    testResults.append(planetRes)
-    test_setBaseDens(newAtmo)
 
     testSum = sum(testResults)
     assert testSum < 1, testMessage
 
-def test_computeDragDir(atmoModel):
-    testFailCount = 0
-    testMessages = []
-    testScaleHeight = 20000.0
-    atmoModel.SetScaleHeight(testScaleHeight)
-    if atmoModel.atmosphereProps.scaleHeight != testScaleHeight:
-        testFailCount += 1
-        testMessages.append(
-            "FAILED: ExponentialAtmosphere could not set scale height.")
-    return testFailCount, testMessages
-
-def test_AddSpacecraftToModel(atmoModel):
+def testSetDensityMsg(dragEffector):
     testFailCount = 0
     testMessages = []
 
@@ -128,24 +93,15 @@ def test_AddSpacecraftToModel(atmoModel):
     scObject.hub.useTranslation = True
     scObject.hub.useRotation = False
 
-    scObject2 = spacecraftPlus.SpacecraftPlus()
-    scObject2.ModelTag = "spacecraftBody"
-    scObject2.hub.useTranslation = True
-    scObject2.hub.useRotation = False
+    scObject.addDynamicEffector(dragEffector)
 
     # add spacecraftPlus object to the simulation process
-    atmoModel.AddSpacecraftToModel(scObject.scStateOutMsgName)
-    atmoModel.AddSpacecraftToModel(scObject2.scStateOutMsgName)
+    dragEffector.SetDensityMessage("testDensMsgName")
 
-    if len(atmoModel.scStateInMsgNames) != 2:
+    if dragEffector.atmoDensInMsgName != "testDensMsgName":
         testFailCount += 1
         testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough input message names.")
-
-    if len(atmoModel.atmoDensOutMsgNames) != 2:
-        testFailCount += 1
-        testMessages.append(
-            "FAILED: ExponentialAtmosphere does not have enough output message names.")
+            "FAILED: DragEffector does not correctly set message names.")
     return testFailCount, testMessages
 
 

@@ -21,6 +21,7 @@
 #define STAR_TRACKER_H
 
 #include <vector>
+#include <cstring>
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
@@ -31,7 +32,7 @@ class StarTracker: public SysModel {
 public:
     StarTracker();
     ~StarTracker();
-    
+
     bool LinkMessages();
     void UpdateState(uint64_t CurrentSimNanos);
     void SelfInit();
@@ -43,9 +44,9 @@ public:
     void computeTrueOutput();
     void computeSensorTimeTag(uint64_t CurrentSimNanos);
     void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
-    
+
 public:
-    
+
     double sensorTimeTag;             //!< [s] Current time tag for sensor out
     std::string inputStateMessage;    //!< [-] String for the input state message
     std::string inputTimeMessage;     //!< [-] String for time input msg
@@ -63,9 +64,9 @@ public:
     SpiceTimeSimMsg timeState;       //!< [-] Module variable where the input Spice Time message is stored
     SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
 
-    
-    
-    
+
+
+
 private:
     std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
     int64_t inputTimeID;              //!< [-] Connect to input time message

@@ -26,11 +26,11 @@
 %include "swig_common_model.i"
 
 // Instantiate templates used by example
-
 %include "sys_model.h"
 %include "../_GeneralModuleFiles/stateData.h"
 %include "../_GeneralModuleFiles/dynamicEffector.h"
 %include "../_GeneralModuleFiles/dynParamManager.h"
+%include  "simMessages/atmoPropsSimMsg.h"
 %include "dragDynamicEffector.h"
 
 %pythoncode %{

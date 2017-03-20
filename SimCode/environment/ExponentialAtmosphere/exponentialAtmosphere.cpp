@@ -29,10 +29,6 @@
 #include "utilities/astroConstants.h"
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
-#include "../spice/spice_planet_state.h"
-#include "../../dynamics/spacecraftPlus/spacecraftPlus.h"
-#include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-#include "densityMsg.h"
 
 
 ExponentialAtmosphere::ExponentialAtmosphere()
@@ -79,7 +75,7 @@ void ExponentialAtmosphere::SelfInit()
     std::vector<std::string>::iterator nameIt;
 
     for(it = this->atmoDensOutMsgNames.begin(); it!=this->atmoDensOutMsgNames.end(); it++){
-      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoOutputData), this->OutputBufferCount, "AtmoOutputData", moduleID);
+      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(atmoPropsSimMsg), this->OutputBufferCount, "atmoPropsSimMsg", moduleID);
 
       this->atmoDensOutMsgIds.push_back(tmpAtmoMsgId);
     }
@@ -123,7 +119,7 @@ void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
     SetBaseDensity(newBaseDens);
     SetScaleHeight(newScaleHeight);
   } else{
-    std::cout<<"Error: Planet "<< newPlanetName<<" not found. Either undefined or non-atmospheric."<<std::endl;
+    std::cout<<"Error: Planet "<< newPlanetName<<" not found. Either undefined or non-atmospheric. Please define other atmospheric parameters."<<std::endl;
   }
   return;
 }
@@ -135,12 +131,11 @@ void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
 void ExponentialAtmosphere::CrossInit()
 {
   this->planetPosInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(
-  this->planetPosInMsgName, sizeof(SpicePlanetState), moduleID);
+  this->planetPosInMsgName, sizeof(SpicePlanetStateSimMsg), moduleID);
 
   std::vector<std::string>::iterator it;
   for(it = scStateInMsgNames.begin(); it!=scStateInMsgNames.end(); it++){
-    std::cout<<"CrossInit: "<<*it<<std::endl;
-    this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusOutputStateData), moduleID));
+    this->scStateInMsgIds.push_back(SystemMessaging::GetInstance()->subscribeToMessage(*it, sizeof(SCPlusStatesSimMsg), moduleID));
   }
   return;
 }
@@ -155,16 +150,16 @@ void ExponentialAtmosphere::CrossInit()
  */
 void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
 {
-    AtmoOutputData tmpAtmo;
+    atmoPropsSimMsg tmpAtmo;
     std::vector<uint64_t>::iterator it;
-    std::vector<AtmoOutputData>::iterator atmoIt;
+    std::vector<atmoPropsSimMsg>::iterator atmoIt;
     atmoIt = atmoOutBuffer.begin();
     for(it = atmoDensOutMsgIds.begin(); it!= atmoDensOutMsgIds.end(); it++, atmoIt++){
       tmpAtmo = *atmoIt;
       //std::cout<<"WriteMsg: "<<tmpAtmo.neutralDensity<<std::endl;
       SystemMessaging::GetInstance()->WriteMessage(*it,
                                                   CurrentClock,
-                                                  sizeof(AtmoOutputData),
+                                                  sizeof(atmoPropsSimMsg),
                                                   reinterpret_cast<uint8_t*>(&tmpAtmo),
                                                   moduleID);
     }
@@ -182,11 +177,11 @@ void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
  */
 bool ExponentialAtmosphere::ReadInputs()
 {
-  SCPlusOutputStateData tmpState;
+  SCPlusStatesSimMsg tmpState;
   //! Begin method steps
   SingleMessageHeader localHeader;
-  memset(&this->bodyState, 0x0, sizeof(SpicePlanetState));
-  memset(&tmpState, 0x0, sizeof(SCPlusOutputStateData));
+  memset(&this->bodyState, 0x0, sizeof(SpicePlanetStateSimMsg));
+  memset(&tmpState, 0x0, sizeof(SCPlusStatesSimMsg));
   scStates.clear();
   if(scStateInMsgIds[0] >= 0)
   {
@@ -194,7 +189,7 @@ bool ExponentialAtmosphere::ReadInputs()
     std::vector<uint64_t>::iterator it;
     for(it = scStateInMsgIds.begin(); it!= scStateInMsgIds.end(); it++){
       SystemMessaging::GetInstance()->ReadMessage(*it, &localHeader,
-                                                  sizeof(SCPlusOutputStateData),
+                                                  sizeof(SCPlusStatesSimMsg),
                                                   reinterpret_cast<uint8_t*>(&tmpState),
                                                   moduleID);
     this->scStates.push_back(tmpState);
@@ -203,7 +198,7 @@ bool ExponentialAtmosphere::ReadInputs()
   if(planetPosInMsgId >= 0)
   {
       SystemMessaging::GetInstance()->ReadMessage(this->planetPosInMsgId , &localHeader,
-                                                  sizeof(SpicePlanetState), reinterpret_cast<uint8_t*>(&this->bodyState), moduleID);
+                                                  sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&this->bodyState), moduleID);
   }
   return(true);
 
@@ -220,8 +215,8 @@ void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
 {
     double tmpDensity = 0.0;
     double tmpAltitude = 0.0;
-    std::vector<SCPlusOutputStateData>::iterator it;
-    AtmoOutputData tmpData;
+    std::vector<SCPlusStatesSimMsg>::iterator it;
+    atmoPropsSimMsg tmpData;
     uint64_t atmoInd = 0;
     this->atmoOutBuffer.clear();
     for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
@@ -239,7 +234,7 @@ void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
       return;
 }
 
-void ExponentialAtmosphere::updateRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState)
+void ExponentialAtmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState)
 {
     uint64_t iter = 0;
     if(planetPosInMsgId >= 0)
