@@ -79,30 +79,46 @@ def test_unitAtmosphere():
     testResults = []
     testMessage = []
 
-    planetRes, planetMsg = setPlanet(newAtmo)
+    planetRes, planetMsg = test_setPlanet(newAtmo)
     testMessage.append(planetMsg)
     testResults.append(planetRes)
+    test_setBaseDens(newAtmo)
 
-    planetRes, planetMsg = AddSpacecraftToModel(newAtmo)
+    planetRes, planetMsg = test_setScaleHeight(newAtmo)
     testMessage.append(planetMsg)
     testResults.append(planetRes)
+    test_setBaseDens(newAtmo)
+
+    planetRes, planetMsg = test_setPlanetRadius(newAtmo)
+    testMessage.append(planetMsg)
+    testResults.append(planetRes)
+    test_setBaseDens(newAtmo)
+
+    planetRes, planetMsg = test_setPlanet(newAtmo)
+    testMessage.append(planetMsg)
+    testResults.append(planetRes)
+    test_setBaseDens(newAtmo)
+
+    planetRes, planetMsg = test_AddSpacecraftToModel(newAtmo)
+    testMessage.append(planetMsg)
+    testResults.append(planetRes)
+    test_setBaseDens(newAtmo)
 
     testSum = sum(testResults)
     assert testSum < 1, testMessage
 
-def setPlanet(atmoModel):
+def test_computeDragDir(atmoModel):
     testFailCount = 0
     testMessages = []
-    nameVec = ["Venus","Earth","Mars","Krypton"]
-    for name in nameVec:
-        atmoModel.SetPlanet(name)
-        if atmoModel.planetName != name:
-            testFailCount += 1
-            testMessages.append(
-                "FAILED: ExponentialAtmosphere could not set planet name to "+name+".")
+    testScaleHeight = 20000.0
+    atmoModel.SetScaleHeight(testScaleHeight)
+    if atmoModel.atmosphereProps.scaleHeight != testScaleHeight:
+        testFailCount += 1
+        testMessages.append(
+            "FAILED: ExponentialAtmosphere could not set scale height.")
     return testFailCount, testMessages
 
-def AddSpacecraftToModel(atmoModel):
+def test_AddSpacecraftToModel(atmoModel):
     testFailCount = 0
     testMessages = []
 

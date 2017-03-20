@@ -67,7 +67,6 @@ void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
   this->scStateInMsgNames.push_back(tmpScMsgName);
   tmpAtmoMsgName = "atmo_dens"+ std::to_string(this->scStateInMsgNames.size()-1)+"_data";
   this->atmoDensOutMsgNames.push_back(tmpAtmoMsgName);
-  std::cout<<"AddSpacecraftToModel: "<<tmpScMsgName<<std::endl;
   return;
 }
 
@@ -79,13 +78,10 @@ void ExponentialAtmosphere::SelfInit()
     std::vector<std::string>::iterator it;
     std::vector<std::string>::iterator nameIt;
 
-    for(it = this->scStateInMsgNames.begin(); it!=this->scStateInMsgNames.end(); it++){
-      tmpAtmoMsgName = "atmo_dens" + std::to_string(it - this->scStateInMsgNames.begin()) + "_data";
-
-      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(tmpAtmoMsgName, sizeof(AtmoOutputData), this->OutputBufferCount, "AtmoOutputData", moduleID);
+    for(it = this->atmoDensOutMsgNames.begin(); it!=this->atmoDensOutMsgNames.end(); it++){
+      tmpAtmoMsgId = SystemMessaging::GetInstance()->CreateNewMessage(*it, sizeof(AtmoOutputData), this->OutputBufferCount, "AtmoOutputData", moduleID);
 
       this->atmoDensOutMsgIds.push_back(tmpAtmoMsgId);
-      std::cout<<"Self Init Message Name:"<<this->atmoDensOutMsgNames[0]<<std::endl;
     }
 
     return;
@@ -220,7 +216,7 @@ bool ExponentialAtmosphere::ReadInputs()
  @param CurrentThruster Pointer to the configuration data for a given thruster
  @param CurrentTime The current simulation clock time converted to a double
  */
-void ExponentialAtmosphere::ComputeLocalAtmo(double currentTime)
+void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
 {
     double tmpDensity = 0.0;
     double tmpAltitude = 0.0;
@@ -229,7 +225,7 @@ void ExponentialAtmosphere::ComputeLocalAtmo(double currentTime)
     uint64_t atmoInd = 0;
     this->atmoOutBuffer.clear();
     for(it = scStates.begin(); it != scStates.end(); it++, atmoInd++){
-      this->ComputeRelativePos(this->bodyState, *it);
+      this->updateRelativePos(this->bodyState, *it);
       tmpPosMag = this->relativePos.norm();
       tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
 
@@ -243,7 +239,7 @@ void ExponentialAtmosphere::ComputeLocalAtmo(double currentTime)
       return;
 }
 
-void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState)
+void ExponentialAtmosphere::updateRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState)
 {
     uint64_t iter = 0;
     if(planetPosInMsgId >= 0)
@@ -267,7 +263,7 @@ void ExponentialAtmosphere::ComputeRelativePos(SpicePlanetState& planetState, SC
 /*! This method is the main cyclical call for the scheduled part of the thruster
  dynamics model.  It reads the current commands array and sets the thruster
  configuration data based on that incoming command set.  Note that the main
- dynamical method (ComputeDynamics()) is not called here and is intended to be
+ dynamical method (updateDynamics()) is not called here and is intended to be
  called from the dynamics plant in the system
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
@@ -278,7 +274,7 @@ void ExponentialAtmosphere::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())
     {
-        ComputeLocalAtmo(CurrentSimNanos*1.0E-9);
+        updateLocalAtmo(CurrentSimNanos*1.0E-9);
     }
     WriteOutputMessages(CurrentSimNanos);
 

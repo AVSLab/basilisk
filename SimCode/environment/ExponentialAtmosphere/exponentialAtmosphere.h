@@ -68,13 +68,15 @@ public:
     //void computeStateContribution(double integTime);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void ComputeLocalAtmo(double currentTime);
-    void ComputeRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
+    void updateLocalAtmo(double currentTime);
+    void updateRelativePos(SpicePlanetState& planetState, SCPlusOutputStateData& scState);
     void AddSpacecraftToModel(std::string tmpScMsgName);
+    void SetPlanet(std::string newPlanetName);
+private:
     void SetBaseDensity(double newBaseDens);
     void SetScaleHeight(double newScaleHeight);
     void SetPlanetRadius(double newPlanetRadius);
-    void SetPlanet(std::string newPlanetName);
+
 
 
 public:
@@ -83,7 +85,7 @@ public:
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
     std::string planetName;
-    std::vector<std::string> atmoDensOutMsgNames;
+    std::vector<std::string> atmoDensOutMsgNames; //!<
     std::vector<std::string> scStateInMsgNames;
     std::string planetPosInMsgName;
     std::vector<uint64_t> atmoDensOutMsgIds;

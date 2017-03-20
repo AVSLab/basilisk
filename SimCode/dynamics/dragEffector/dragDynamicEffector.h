@@ -81,11 +81,9 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void WriteOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
-    void CannonballDrag();
-    void PlateDrag();
-    void ComputeDragDir();
-    void SetArea(double newArea);
-    void SetDragCoeff(double newCoeff);
+    void cannonballDrag();
+    void plateDrag();
+    void updateDragDir();
     void SetDensityMessage(std::string newDensMessage);
 
 public:
