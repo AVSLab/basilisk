@@ -21,13 +21,12 @@
 #ifndef EXPONENTIAL_ATMOSPHERE_H
 #define EXPONENTIAL_ATMOSPHERE_H
 
+#include <Eigen/Dense>
+#include <vector>
 #include "../../_GeneralModuleFiles/sys_model.h"
 #include "../spice/spice_planet_state.h"
 #include "../../dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-#include <Eigen/Dense>
-#include <vector>
-
-
+#include "densityMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -42,10 +41,7 @@ typedef struct {
 
 /*! This structure is used in the messaging system to communicate what the
  state of the vehicle is currently.*/
-typedef struct {
-    double neutralDensity;                               //!< kg/m^3 Local neutral particle density
-    double localTemp;                           //!< K Local avg particle temperature
-}AtmoOutputData;
+
 
 
 //! @brief Thruster dynamics class used to provide thruster effects on body

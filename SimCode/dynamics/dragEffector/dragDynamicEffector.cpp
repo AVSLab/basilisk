@@ -22,10 +22,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
-#include "../../environment/ExponentialAtmosphere/exponentialAtmosphere.h"
-#include <cstring>
-#include <iostream>
-#include <cmath>
+#include "../../environment/ExponentialAtmosphere/densityMsg.h"
 
 DragDynamicEffector::DragDynamicEffector()
 {
@@ -38,8 +35,6 @@ DragDynamicEffector::DragDynamicEffector()
 	this->forceExternal_B.fill(0.0);
 	this->torqueExternalPntB_B.fill(0.0);
 	this->forceExternal_N.fill(0.0);
-	this->dragHist.PreviousIterTime = 0;
-	this->dragHist.PreviousDragForce = 0;
 	this->locInertialVel.fill(0.0);
 	this->dragDirection.fill(0.0);
 	this->DensInMsgId = -1;
@@ -52,8 +47,7 @@ DragDynamicEffector::~DragDynamicEffector()
 	return;
 }
 
-/*! This method is used to clear out the current drag states and make sure
- that the overall model is ready for firing
+/*! This method currently does very little.
  @return void
  */
 void DragDynamicEffector::SelfInit()
@@ -61,33 +55,30 @@ void DragDynamicEffector::SelfInit()
   return;
 }
 
-/*! This method is used to connect the input command message to the drags.
- It sets the message ID based on what it finds for the input string.  If the
- message is not successfully linked, it will warn the user.
+/*! This method is used to connect the input density message to the drag effector.
+ It sets the message ID based on what it finds for the input string.
  @return void
  */
 void DragDynamicEffector::CrossInit()
 {
 
 	//! Begin method steps
-	//! - Find the message ID associated with the InputCmds string.
-	//! - Warn the user if the message is not successfully linked.
+	//! - Find the message ID associated with the atmoDensInMsgName string.
 	this->DensInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->atmoDensInMsgName,
 																	 sizeof(AtmoOutputData), moduleID);
 }
 
+/*! This method is used to set the input density message produced by some atmospheric model.
+@return void
+*/
 void DragDynamicEffector::SetDensityMessage(std::string newDensMessage)
 {
 	this->atmoDensInMsgName = newDensMessage;
 	return;
 }
 
-/*! This method is here to write the output message structure into the specified
- message.  It is currently blank but we will certainly have an output message
- soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.sizeof(dragOutputData)
- @param CurrentClock The current time used for time-stamping the message
- @return void
+/*! The DragEffector does not write output messages to the rest of the sim.
+@return void
  */
 void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
@@ -95,8 +86,8 @@ void DragDynamicEffector::WriteOutputMessages(uint64_t CurrentClock)
 }
 
 
-/*! This method is used to read the incoming command message and set the
- associated command structure for operating the drags.
+/*! This method is used to read the incoming density message and update the internal density/
+atmospheric data.
  @return void
  */
 bool DragDynamicEffector::ReadInputs()
@@ -114,11 +105,8 @@ bool DragDynamicEffector::ReadInputs()
 
 }
 
-/*! This method is used to read the new commands vector and set the drag
- firings appropriately.  It assumes that the ReadInputs method has already been
- run successfully.  It honors all previous drag firings if they are still
- active.  Note that for unit testing purposes you can insert firings directly
- into NewThrustCmds.
+/*! This method is used to link the dragEffector to the hub attitude and velocity,
+which are required for calculating drag forces and torques.
  @return void
  @param currentTime The current simulation time converted to a double
  */
@@ -128,22 +116,23 @@ void DragDynamicEffector::linkInStates(DynParamManager& states){
 	this->hubVelocity = states.getStateObject("hubVelocity");
 }
 
+/*! This method updates the internal drag direction based on the spacecraft velocity vector.
+*/
 void DragDynamicEffector::updateDragDir(){
 	this->locInertialVel = this->hubVelocity->getState();
   	//std::cout<<"Velocity direction:"<<this->locInertialVel<<std::endl;
 	this->dragDirection = -(this->locInertialVel / this->locInertialVel.norm());
 	this->coreParams.velocityMag = this->locInertialVel.norm();
-	//std::cout<<"Drag Direction: "<<this->dragDirection<<std::endl;
 	return;
 }
 
+/*! This method implements a simple "cannnonball" (attitude-independent) drag model.
+*/
 void DragDynamicEffector::cannonballDrag(){
   	Eigen::Vector3d SingleDragForce;
   	Eigen::Vector3d SingleDragTorque;
   	//! Begin method steps
   	//! - Zero out the structure force/torque for the drag set
-  	// MassProps are missing, so setting CoM to zero momentarily
-
   	this->forceExternal_B.setZero();
   	this->forceExternal_N.setZero();
   	this->torqueExternalPntB_B.setZero();
@@ -155,30 +144,31 @@ void DragDynamicEffector::cannonballDrag(){
   	return;
 }
 
+/*! This method WILL implement a more complex flat-plate aerodynamics model with attitude
+dependence and lift forces.
+*/
 void DragDynamicEffector::plateDrag(){
-  	cannonballDrag();
+  	cannonballDrag(); //! Right now, it just calls the cannonball model.
   	return;
 }
 
 
-
+/*! This method computes the body forces and torques for the dragEffector in a simulation loop,
+selecting the model type based on the settable attribute "modelType."
+*/
 void DragDynamicEffector::computeBodyForceTorque(double integTime){
 	updateDragDir();
 	if(this->modelType == "cannonball"){
 		cannonballDrag();
   	}
-
   	else if(this->modelType == "plate"){
 	  	plateDrag();
   	}
   	return;
 }
 
-/*! This method is the main cyclical call for the scheduled part of the drag
- dynamics model.  It reads the current commands array and sets the drag
- configuration data based on that incoming command set.  Note that the main
- dynamical method (ComputeDynamics()) is not called here and is intended to be
- called from the dynamics plant in the system
+/*! This method is called to update the local atmospheric conditions at each timestep.
+Naturally, this means that conditions are held piecewise-constant over an integration step.
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */
@@ -186,5 +176,4 @@ void DragDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
 {
 	ReadInputs();
 	return;
-
 }
