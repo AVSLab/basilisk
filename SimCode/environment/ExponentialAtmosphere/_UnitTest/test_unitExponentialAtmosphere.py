@@ -93,7 +93,7 @@ def test_unitAtmosphere():
 def setPlanet(atmoModel):
     testFailCount = 0
     testMessages = []
-    nameVec = ["Venus","Earth","Mars","Krypton"]
+    nameVec = ["venus","earth","mars","krypton"]
     for name in nameVec:
         atmoModel.SetPlanet(name)
         if atmoModel.planetName != name:

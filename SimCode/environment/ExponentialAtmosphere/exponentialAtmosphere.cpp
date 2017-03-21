@@ -30,7 +30,8 @@
 #include "../../dynamics/_GeneralModuleFiles/stateData.h"
 #include "../../_GeneralModuleFiles/sys_model.h"
 
-
+/*! Initializer - sets the default properties to those of Earth.
+*/
 ExponentialAtmosphere::ExponentialAtmosphere()
 {
     this->planetName = "Earth";
@@ -38,13 +39,14 @@ ExponentialAtmosphere::ExponentialAtmosphere()
     this->OutputBufferCount = 2;
     //! Set the default atmospheric properties to those of Earth
     this->atmosphereProps.baseDensity = 1.217;
-    this->atmosphereProps.scaleHeight = 8500.0; //  Meters
+    this->atmosphereProps.scaleHeight = 8500.0;
     this->atmosphereProps.planetRadius = 6371.008 * 1000.0;
-    this->localAtmoTemp = 293.0; // Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+    this->localAtmoTemp = 293.0; //! Placeholder value from http://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
     this->relativePos.fill(0.0);
     this->scStateInMsgNames.clear();
     this->tmpAtmo.neutralDensity = this->atmosphereProps.baseDensity;
     this->tmpAtmo.localTemp = this->localAtmoTemp;
+    this->planetPosInMsgId = -1;
     return;
 }
 
@@ -54,8 +56,8 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
     return;
 }
 
-/*! This method is used to clear out the current thruster states and make sure
- that the overall model is ready for firing
+/*! This method is used to add additional spacecraft to the model density update. This allows
+the use of a single exponentialAtmosphere instance for multiple spacecraft about a planet.
  @return void
  */
 void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
@@ -66,6 +68,9 @@ void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
   return;
 }
 
+/*! SelfInit for this method creates a seperate density message for each of the spacecraft
+that were added using AddSpacecraftToModel.
+*/
 void ExponentialAtmosphere::SelfInit()
 {
     std::string tmpAtmoMsgName;
@@ -83,43 +88,47 @@ void ExponentialAtmosphere::SelfInit()
     return;
 }
 
-void ExponentialAtmosphere::SetBaseDensity(double newBaseDens){
-  this->atmosphereProps.baseDensity = newBaseDens;
+/*! Private "setter" method for changing the base density.*/
+void ExponentialAtmosphere::SetBaseDensity(double BaseDens){
+  this->atmosphereProps.baseDensity = BaseDens;
   return;
 }
 
-void ExponentialAtmosphere::SetScaleHeight(double newScaleHeight){
-  this->atmosphereProps.scaleHeight = newScaleHeight;
+/*! Private "setter" method for changing the scale height.*/
+void ExponentialAtmosphere::SetScaleHeight(double ScaleHeight){
+  this->atmosphereProps.scaleHeight = ScaleHeight;
 }
 
-void ExponentialAtmosphere::SetPlanetRadius(double newPlanetRadius){
-  this->atmosphereProps.planetRadius = newPlanetRadius;
+/*! Private "setter" method for changing the planet radius.*/
+void ExponentialAtmosphere::SetPlanetRadius(double PlanetRadius){
+  this->atmosphereProps.planetRadius = PlanetRadius;
 }
 
-void ExponentialAtmosphere::SetPlanet(std::string newPlanetName){
-  this->planetName = newPlanetName;
-  double newBaseDens = 0; // In kg/m^3
-  double newScaleHeight = 0; // In meters
+/*! Public "setter" method to change the planet referenced by the model.*/
+void ExponentialAtmosphere::SetPlanet(std::string PlanetName){
+  this->planetName = PlanetName;
+  double BaseDens = 0; // In kg/m^3
+  double ScaleHeight = 0; // In meters
 
-  if(newPlanetName.compare("Earth") == 0){
-    newBaseDens = 1.217;
-    newScaleHeight = 8500.0;
-    SetBaseDensity(newBaseDens);
-    SetScaleHeight(newScaleHeight);
-  } else if(newPlanetName.compare("Mars")==0){
-    newBaseDens = 0.020;
-    newScaleHeight = 11000.0;
+  if(PlanetName.compare("earth") == 0){
+    BaseDens = 1.217;
+    ScaleHeight = 8500.0;
+    SetBaseDensity(BaseDens);
+    SetScaleHeight(ScaleHeight);
+} else if(PlanetName.compare("mars")==0){
+    BaseDens = 0.020;
+    ScaleHeight = 11100.0;
     SetPlanetRadius(3389.5 * 1000.0);
-    SetBaseDensity(newBaseDens);
-    SetScaleHeight(newScaleHeight);
-  } else if (newPlanetName.compare("Venus")==0){
+    SetBaseDensity(BaseDens);
+    SetScaleHeight(ScaleHeight);
+} else if (PlanetName.compare("venus")==0){
     SetPlanetRadius(6051.8 * 1000.0);
-    newBaseDens = 65.0;
-    newScaleHeight = 15900.0;
-    SetBaseDensity(newBaseDens);
-    SetScaleHeight(newScaleHeight);
+    BaseDens = 65.0;
+    ScaleHeight = 15900.0;
+    SetBaseDensity(BaseDens);
+    SetScaleHeight(ScaleHeight);
   } else{
-    std::cout<<"Error: Planet "<< newPlanetName<<" not found. Either undefined or non-atmospheric. Please define other atmospheric parameters."<<std::endl;
+    std::cout<<"Error: Planet "<< PlanetName<<" not found. Either undefined or non-atmospheric. Please define other atmospheric parameters."<<std::endl;
   }
   return;
 }
@@ -225,7 +234,7 @@ void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
       tmpAltitude = tmpPosMag - this->atmosphereProps.planetRadius;
 
       tmpDensity = this->atmosphereProps.baseDensity * exp(-1.0 * tmpAltitude / this->atmosphereProps.scaleHeight);
-      //std::cout<<tmpPosMag<<","<<this->currentAlt<<","<<tmpDensity<<","<<std::endl;
+      //std::cout<<"Altitude:"<<tmpAltitude<<", Density:"<<tmpDensity<<std::endl;
       tmpData.neutralDensity = tmpDensity;
       tmpData.localTemp = 300.0;
 

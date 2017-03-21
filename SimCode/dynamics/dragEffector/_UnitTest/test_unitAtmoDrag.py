@@ -71,7 +71,7 @@ def test_unitAtmosphere():
     # each test method requires a single assert method to be called
 
     #   Initialize new atmosphere and drag model, add them to task
-    newDrag = dragDynamicEffector.dragDynamicEffector()
+    newDrag = dragDynamicEffector.DragDynamicEffector()
     showVal = False
     testResults = []
     testMessage = []

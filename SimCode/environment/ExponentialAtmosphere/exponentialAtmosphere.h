@@ -86,7 +86,7 @@ public:
     std::string planetPosInMsgName;
     std::vector<uint64_t> atmoDensOutMsgIds;
     std::vector<uint64_t> scStateInMsgIds;
-    uint64_t planetPosInMsgId;
+    int64_t planetPosInMsgId;
     std::vector<SCPlusStatesSimMsg> scStates;
     SpicePlanetStateSimMsg bodyState;
     Eigen::Vector3d relativePos; //!< [-] Container for local position

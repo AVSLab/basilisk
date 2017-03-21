@@ -184,7 +184,7 @@ def run(show_plots, orbitCase, planetCase):
             orbAltMax = 800.0 * 1000.0
     elif planetCase == "Mars":
         refBaseDens = 0.020
-        refScaleHeight = 11000.0
+        refScaleHeight = 11100.0
         r_eq = 3389.5 * 1000.0
         if orbitCase == "LPO":
             orbAltMin = 100.0*1000.0
@@ -263,7 +263,7 @@ def run(show_plots, orbitCase, planetCase):
 
     refAtmoDensData = []
 
-    accuracy = 1e-16
+    accuracy = 1e-13
 
     for relPos in relPosData:
         dist = np.linalg.norm(relPos[1:])

@@ -122,6 +122,7 @@ void DragDynamicEffector::updateDragDir(){
   	//std::cout<<"Velocity direction:"<<this->locInertialVel<<std::endl;
 	this->dragDirection = -(this->locInertialVel / this->locInertialVel.norm());
 	this->coreParams.velocityMag = this->locInertialVel.norm();
+	//std::cout<<"Drag direction: "<<this->dragDirection<<", Velocity direction:"<<this->locInertialVel / this->locInertialVel.norm()<<std::endl;
 	return;
 }
 
