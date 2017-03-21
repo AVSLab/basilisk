@@ -22,6 +22,7 @@
 #include "utilities/linearAlgebra.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include <iostream>
+#include <cstring>
 
 StarTracker::StarTracker()
 {

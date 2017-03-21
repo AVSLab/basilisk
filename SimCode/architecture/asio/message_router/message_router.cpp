@@ -263,14 +263,14 @@ void MessageRouter::routeMessages()
     {
         return;
     }
-
+    while(this->theConnection->bytesWaiting() > 0) {
     std::vector<char> inSize(4, 0x00);
     theConnection->receiveData(inSize);
     uint32_t stringLength;
     memcpy(&stringLength, inSize.data(), sizeof(stringLength));
     if(stringLength == 0)
     {
-        return;
+        continue;
     }
     std::vector<char> inData(stringLength, 0xFF);
     theConnection->receiveData(inData);
@@ -285,6 +285,7 @@ void MessageRouter::routeMessages()
             localHdr->headerData.WriteClockNanos, localHdr->headerData.WriteSize,
             (uint8_t *)(&(inData.data()[bytesRead])));
         bytesRead += localHdr->headerData.WriteSize;
+    }
     }
     
 }
