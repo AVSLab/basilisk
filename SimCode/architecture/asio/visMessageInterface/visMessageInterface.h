@@ -26,7 +26,7 @@
 #include "simMessages/rwConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
-#include "../SimFswInterfaceMessages/rwSpeedIntMsg.h"
+#include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SpacecraftSimDefinitions.h"
 
 
@@ -47,9 +47,8 @@ public:
     
 private:
     std::unordered_map<std::string, VisMessageData> msgMap;  // Map of <message string, message Id>
-    
-//    TcpSerializeServer<SpacecraftSim, SpacecraftSim> server;
-    std::string ipAddress;
+    std::unordered_map<std::string, VisMessageData> acsThrusterMsgMap;
+    std::unordered_map<std::string, VisMessageData> dvThrusterMsgMap;
     // Message buffers
     std::string UTCCalInit;
     SCPlusStatesSimMsg scStateInMsg;
@@ -58,14 +57,15 @@ private:
     int64_t centralBodyInMsgId;
     SpicePlanetStateSimMsg centralBodyInMsg;
     
-    std::vector<RWConfigSimMsg> reactionWheels;
+    std::vector<RWConfigSimMsg> rwConfigMsgs;
     RWConfigSimMsg rwSpeeds;
-    std::vector<THROutputSimMsg> thrusters;
-    std::vector<std::string> rwInMsgNames;
-    std::unordered_map<std::string, VisMessageData> rwMsgMap;
+    std::vector<THROutputSimMsg> acsThrusters;
+    std::vector<THROutputSimMsg> dvThrusters;
+//  std::unordered_map<std::string, VisMessageData> rwMsgMap;
+//    std::vector<std::pair<std::string, VisMessageData>> rwMsgPairs;
     std::vector<std::string> thrusterInMsgNames;
-    std::unordered_map<std::string, VisMessageData> thursterMsgMap;
-    SpiceTimeSimMsg spiceTimeDataInMsgBuffer;
+    int64_t spiceTimeDataInMsgId;
+    SpiceTimeSimMsg spiceTimeDataInMsg;
     std::unordered_map<std::string, SpicePlanetStateSimMsg> spicePlanetStates;
     
 public:
@@ -87,6 +87,7 @@ private:
     void mapMessagesToScSim(uint64_t currentSimNanos);
     void setScSimCelestialObject();
     void setScSimOrbitalElements();
+    void setScSimJulianDate(uint64_t currentSimNanos);
     
 //    int loadSpiceKernel(char *kernelName, const char *dataPath);
 };
