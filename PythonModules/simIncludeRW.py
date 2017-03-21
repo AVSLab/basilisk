@@ -145,7 +145,7 @@ def addToSpacecraft(modelTag, rwStateEffector, scPlus):
 
     rwStateEffector.ModelTag = modelTag
     for item in rwList:
-        rwStateEffector.AddReactionWheel(item)
+        rwStateEffector.addReactionWheel(item)
 
     scPlus.addStateEffector(rwStateEffector)
 

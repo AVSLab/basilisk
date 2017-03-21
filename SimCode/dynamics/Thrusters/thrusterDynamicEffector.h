@@ -61,9 +61,9 @@ public:
     void SelfInit();
     void CrossInit();
     //! Add a new thruster to the thruster set
-    void AddThruster(THRConfigSimMsg *NewThruster) {ThrusterData.push_back(*NewThruster);}
+    void addThruster(THRConfigSimMsg *newThruster);
     void UpdateState(uint64_t CurrentSimNanos);
-    void WriteOutputMessages(uint64_t CurrentClock);
+    void writeOutputMessages(uint64_t CurrentClock);
     bool ReadInputs();
     void ConfigureThrustRequests(double currentTime);
     void ComputeThrusterFire(THRConfigSimMsg *CurrentThruster,
@@ -74,7 +74,7 @@ public:
 
 public:
     int stepsInRamp;
-    std::vector<THRConfigSimMsg> ThrusterData;  //!< -- Thruster information
+    std::vector<THRConfigSimMsg> thrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
     std::string inputBSName;                       //!< [-] Structure to body dynamic property

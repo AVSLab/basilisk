@@ -87,9 +87,12 @@ int TcpSerializeConnection::sendData(const T &t, Handler handler)
         boost::system::error_code error(boost::asio::error::invalid_argument);
         return 1;
     }
+//    std::cout << "archiveStream.str() " << archiveStream.str().size() << std::endl;
+    uint32_t stringLength = archiveStream.str().length();
+    char * cstr = new char [stringLength+1];
+    std::strcpy (cstr, archiveStream.str().c_str());
     m_outboundBuffer.clear();
-    m_outboundBuffer.insert(m_outboundBuffer.begin(), archiveStream.str().c_str(),
-        archiveStream.str().c_str() + archiveStream.str().size());
+    m_outboundBuffer.insert(m_outboundBuffer.begin(), cstr, cstr + stringLength);
 
     // Format the header
     std::ostringstream headerStream;
@@ -107,6 +110,8 @@ int TcpSerializeConnection::sendData(const T &t, Handler handler)
     buffers.push_back(boost::asio::buffer(m_outputHeader));
     buffers.push_back(boost::asio::buffer(m_outboundBuffer));
     boost::asio::async_write(*m_stream.get(), buffers, handler);
+    
+    delete[] cstr;
     return 0;
 }
 

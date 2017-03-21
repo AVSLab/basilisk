@@ -128,7 +128,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
     thruster1.MaxThrust = 1.0
     thruster1.steadyIsp = 226.7
     thruster1.MinOnTime = 0.006
-    thrusterSet.AddThruster(thruster1)
+    thrusterSet.addThruster(thruster1)
 
     if thrustNumber==2:
         thruster2 = thrusterDynamicEffector.THRConfigSimMsg()
@@ -137,7 +137,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         thruster2.MaxThrust = 1.0
         thruster2.steadyIsp = 226.7
         thruster2.MinOnTime = 0.006
-        thrusterSet.AddThruster(thruster2)
+        thrusterSet.addThruster(thruster2)
 
     #  Create a Simulation
     testRate = int(rate) # Parametrized rate of test
@@ -328,9 +328,9 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             rampOffList.append(newElement)
 
         # Set up the ramps
-        thrusterSet.ThrusterData[0].ThrusterOnRamp = \
+        thrusterSet.thrusterData[0].ThrusterOnRamp = \
             thrusterDynamicEffector.ThrusterTimeVector(rampOnList)
-        thrusterSet.ThrusterData[0].ThrusterOffRamp = \
+        thrusterSet.thrusterData[0].ThrusterOffRamp = \
             thrusterDynamicEffector.ThrusterTimeVector(rampOffList)
 
         if rampDown == "OFF":
