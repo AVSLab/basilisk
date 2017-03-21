@@ -24,6 +24,7 @@
 #include "boost_communication.h"
 #include <string>
 
+
 OpenGLIO::OpenGLIO()
     : ipAddress("127.0.0.1")
 {
