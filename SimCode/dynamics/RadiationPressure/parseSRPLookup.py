@@ -35,7 +35,7 @@ class SRPLookupTableHandler:
         self.torqueBLookup.resize([len(torqueBTree._children), 3])
 
         for node in sHatBTree.getchildren():
-            idx = node.attrib['index']
+            idx = int(node.attrib['index'])
             for value in node.getchildren():
                 if value.tag == 'value_1':
                     self.sHatBLookup[idx, 0] = value.text
@@ -45,7 +45,7 @@ class SRPLookupTableHandler:
                     self.sHatBLookup[idx, 2] = value.text
 
         for node in forceBTree.getchildren():
-            idx = node.attrib['index']
+            idx = int(node.attrib['index'])
             for value in node.getchildren():
                 if value.tag == 'value_1':
                     self.forceBLookup[idx, 0] = value.text
@@ -55,7 +55,7 @@ class SRPLookupTableHandler:
                     self.forceBLookup[idx, 2] = value.text
 
         for node in torqueBTree.getchildren():
-            idx = node.attrib['index']
+            idx = int(node.attrib['index'])
             for value in node.getchildren():
                 if value.tag == 'value_1':
                     self.torqueBLookup[idx, 0] = value.text
