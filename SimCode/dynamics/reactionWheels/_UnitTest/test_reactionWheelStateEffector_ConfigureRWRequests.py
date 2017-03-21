@@ -171,7 +171,7 @@ def unitSimReactionWheel(show_plots, useFlag, testCase):
         raise Exception('invalid test case')
 
     for i in range(0,len(RWs)):
-        ReactionWheel.AddReactionWheel(RWs[i])
+        ReactionWheel.addReactionWheel(RWs[i])
 
     ReactionWheel.ConfigureRWRequests(0.)
 

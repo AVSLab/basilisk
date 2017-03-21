@@ -93,7 +93,7 @@ def test_thrusterIntegratedTest(show_plots):
 
     # Add tank and thruster
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
-    simIncludeThruster.addToSpacecraft(  "Thrusters",
+    simIncludeThruster.addToSpacecraft("Thrusters",
                                        thrustersDynamicEffector,
                                        scObject, unitTestSim.fuelTankStateEffector)
 

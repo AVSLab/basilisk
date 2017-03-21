@@ -102,7 +102,7 @@ def addToSpacecraft(modelTag, thDynamicEffector, scPlus, fuelTankEffector):
 
     thDynamicEffector.ModelTag = modelTag
 
-    thDynamicEffector.ThrusterData = thrusterDynamicEffector.ThrusterConfigVector(thrusterList)
+    thDynamicEffector.thrusterData = thrusterDynamicEffector.ThrusterConfigVector(thrusterList)
 
     fuelTankEffector.addThrusterSet(thDynamicEffector)
 
