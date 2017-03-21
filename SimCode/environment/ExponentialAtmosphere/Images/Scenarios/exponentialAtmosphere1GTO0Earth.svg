@@ -27,6 +27,7 @@ z
 " style="fill:none;"/>
    </g>
    <g id="line2d_1">
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 56.192516 
@@ -36,6 +37,9 @@ z
 =======
     <path clip-path="url(#p801eb26173)" d="M 67.811094 56.192516 
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 56.192516 
+>>>>>>> nrlmsis_model
 L 70.908243 61.236763 
 L 74.005391 65.950845 
 L 77.10254 70.35127 
@@ -137,6 +141,7 @@ L 371.33168 74.393201
 " style="fill:none;stroke:#2b737e;stroke-linecap:square;"/>
    </g>
    <g id="line2d_2">
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 18.082022 
@@ -146,6 +151,9 @@ L 371.33168 74.393201
 =======
     <path clip-path="url(#p801eb26173)" d="M 67.811094 18.082022 
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 18.082022 
+>>>>>>> nrlmsis_model
 L 70.908243 18.090496 
 L 74.005391 18.506104 
 L 77.10254 19.226585 
@@ -247,6 +255,7 @@ L 371.33168 112.54411
 " style="fill:none;stroke:#5ea04b;stroke-linecap:square;"/>
    </g>
    <g id="line2d_3">
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
     <path clip-path="url(#p801eb26173)" d="M 67.811094 41.782437 
@@ -256,6 +265,9 @@ L 371.33168 112.54411
 =======
     <path clip-path="url(#p801eb26173)" d="M 67.811094 41.782437 
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+    <path clip-path="url(#p801eb26173)" d="M 67.811094 41.782437 
+>>>>>>> nrlmsis_model
 L 70.908243 41.782437 
 L 74.005391 41.782437 
 L 77.10254 41.782437 
@@ -382,6 +394,7 @@ L 67.811094 17.315156
       <defs>
        <path d="M 0 0 
 L 0 -4 
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 " id="m2efe8cbd87" style="stroke:#000000;stroke-width:0.5;"/>
@@ -395,23 +408,32 @@ L 0 -4
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#ma2fe654c10" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
 =======
+=======
+>>>>>>> nrlmsis_model
 " id="m2efe8cbd87" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+<<<<<<< HEAD
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_5">
       <defs>
        <path d="M 0 0 
 L 0 4 
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
+=======
+>>>>>>> nrlmsis_model
 " id="me995062c12" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#me995062c12" y="17.31515625"/>
+<<<<<<< HEAD
 =======
 " id="m9d551a8983" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
@@ -424,6 +446,8 @@ L 0 4
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_1">
@@ -465,6 +489,7 @@ z
     <g id="xtick_2">
      <g id="line2d_6">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -474,10 +499,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_7">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#me995062c12" y="17.31515625"/>
@@ -487,6 +516,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="108.57015625" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_2">
@@ -516,6 +548,7 @@ z
     <g id="xtick_3">
      <g id="line2d_8">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -525,10 +558,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_9">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#me995062c12" y="17.31515625"/>
@@ -538,6 +575,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="149.32921875" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_3">
@@ -577,6 +617,7 @@ Q 31.109375 20.453125 19.1875 8.296875
     <g id="xtick_4">
      <g id="line2d_10">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -586,10 +627,14 @@ Q 31.109375 20.453125 19.1875 8.296875
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_11">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#me995062c12" y="17.31515625"/>
@@ -599,6 +644,9 @@ Q 31.109375 20.453125 19.1875 8.296875
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="190.08828125" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_4">
@@ -646,6 +694,7 @@ Q 46.96875 40.921875 40.578125 39.3125
     <g id="xtick_5">
      <g id="line2d_12">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -655,10 +704,14 @@ Q 46.96875 40.921875 40.578125 39.3125
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_13">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#me995062c12" y="17.31515625"/>
@@ -668,6 +721,9 @@ Q 46.96875 40.921875 40.578125 39.3125
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="230.84734375" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_5">
@@ -701,6 +757,7 @@ z
     <g id="xtick_6">
      <g id="line2d_14">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -710,10 +767,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_15">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#me995062c12" y="17.31515625"/>
@@ -723,6 +784,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="271.60640625" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_6">
@@ -763,6 +827,7 @@ z
     <g id="xtick_7">
      <g id="line2d_16">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -772,10 +837,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_17">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#me995062c12" y="17.31515625"/>
@@ -785,6 +854,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="312.36546875" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_7">
@@ -829,6 +901,7 @@ Q 48.484375 72.75 52.59375 71.296875
     <g id="xtick_8">
      <g id="line2d_18">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -838,10 +911,14 @@ Q 48.484375 72.75 52.59375 71.296875
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_19">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#me995062c12" y="17.31515625"/>
@@ -851,6 +928,9 @@ Q 48.484375 72.75 52.59375 71.296875
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="353.12453125" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_8">
@@ -876,6 +956,7 @@ z
     <g id="xtick_9">
      <g id="line2d_20">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
@@ -885,10 +966,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m2efe8cbd87" y="139.6515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_21">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#me995062c12" y="17.31515625"/>
@@ -898,6 +983,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#me995062c12" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#me995062c12" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_9">
@@ -1177,6 +1265,7 @@ z
       <defs>
        <path d="M 0 0 
 L 4 0 
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
 " id="m53ed107d6b" style="stroke:#000000;stroke-width:0.5;"/>
@@ -1190,23 +1279,32 @@ L 4 0
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#md56f6d6620" y="139.6515625"/>
 >>>>>>> [BSK 535] Moved atmospherics to /environment, fixed messaging issue
 =======
+=======
+>>>>>>> nrlmsis_model
 " id="m53ed107d6b" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="139.6515625"/>
+<<<<<<< HEAD
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_23">
       <defs>
        <path d="M 0 0 
 L -4 0 
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
+=======
+>>>>>>> nrlmsis_model
 " id="m90e81a416a" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="139.6515625"/>
+<<<<<<< HEAD
 =======
 " id="md1a01080e0" style="stroke:#000000;stroke-width:0.5;"/>
       </defs>
@@ -1219,6 +1317,8 @@ L -4 0
       <g>
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="139.6515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_11">
@@ -1244,6 +1344,7 @@ z
     <g id="ytick_2">
      <g id="line2d_24">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="115.18428125"/>
@@ -1253,10 +1354,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="115.18428125"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="115.18428125"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_25">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="115.18428125"/>
@@ -1266,6 +1371,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="115.18428125"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="115.18428125"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_12">
@@ -1283,6 +1391,7 @@ z
     <g id="ytick_3">
      <g id="line2d_26">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="90.717"/>
@@ -1292,10 +1401,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="90.717"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="90.717"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_27">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="90.717"/>
@@ -1305,6 +1418,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="90.717"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="90.717"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_13">
@@ -1322,6 +1438,7 @@ z
     <g id="ytick_4">
      <g id="line2d_28">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="66.24971875"/>
@@ -1331,10 +1448,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="66.24971875"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="66.24971875"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_29">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="66.24971875"/>
@@ -1344,6 +1465,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="66.24971875"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="66.24971875"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_14">
@@ -1361,6 +1485,7 @@ z
     <g id="ytick_5">
      <g id="line2d_30">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="41.7824375"/>
@@ -1370,10 +1495,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="41.7824375"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="41.7824375"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_31">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="41.7824375"/>
@@ -1383,6 +1512,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="41.7824375"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="41.7824375"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_15">
@@ -1395,6 +1527,7 @@ z
     <g id="ytick_6">
      <g id="line2d_32">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="17.31515625"/>
@@ -1404,10 +1537,14 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="67.81109375" xlink:href="#m53ed107d6b" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="line2d_33">
       <g>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="17.31515625"/>
@@ -1417,6 +1554,9 @@ z
 =======
        <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="17.31515625"/>
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+       <use style="stroke:#000000;stroke-width:0.5;" x="393.88359375" xlink:href="#m90e81a416a" y="17.31515625"/>
+>>>>>>> nrlmsis_model
       </g>
      </g>
      <g id="text_16">
@@ -1887,6 +2027,7 @@ z
   </g>
  </g>
  <defs>
+<<<<<<< HEAD
 <<<<<<< develop
 <<<<<<< develop
   <clipPath id="p801eb26173">
@@ -1896,6 +2037,9 @@ z
 =======
   <clipPath id="p801eb26173">
 >>>>>>> [BSK-535] Draft implementation of dragEffector
+=======
+  <clipPath id="p801eb26173">
+>>>>>>> nrlmsis_model
    <rect height="122.33640625" width="326.0725" x="67.81109375" y="17.31515625"/>
   </clipPath>
  </defs>
