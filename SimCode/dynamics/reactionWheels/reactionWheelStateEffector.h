@@ -56,7 +56,7 @@ public:
     void updateEnergyMomContributions(double integTime, Eigen::Vector3d & rotAngMomPntCContr_B, double & rotEnergyContr);
 	void SelfInit();
 	void CrossInit();
-	void AddReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}
+	void addReactionWheel(RWConfigSimMsg *NewRW) {ReactionWheelData.push_back(*NewRW);}
 	void UpdateState(uint64_t CurrentSimNanos);
 	void WriteOutputMessages(uint64_t CurrentClock);
 	void ReadInputs();

@@ -16,9 +16,9 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module boost_communication
+%module vis_message_interface
 %{
-    #include "boost_communication.h"
+    #include "visMessageInterface.h"
 %}
 
 %include "std_vector.i"
@@ -26,4 +26,4 @@
 
 
 %include "sys_model.h"
-%include "boost_communication.h"
+%include "visMessageInterface.h"

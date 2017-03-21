@@ -125,16 +125,15 @@ template<> const enumMap<CommandedState_t> enumStrings<CommandedState_t>::data =
 RWSim::RWSim()
 {
     this->state = COMPONENT_OFF;
-    this->u = 0.0;
-    this->maxU = 0.0;
+    this->u_current = 0.0;
+    this->u_max = 0.0;
     this->Omega = 0.0;
+    this->Omega_max = 0.0;
     this->Js = 0.0;
-    v3SetZero(this->gs);
+    v3SetZero(this->gsHat_S);
     this->motorTemp1 = 0.0;
     this->motorTemp2 = 0.0;
     this->power = 0.0;
-//    this->speedState = TEMP_SPEED_NOMINAL;
-//    this->tempState = TEMP_SPEED_NOMINAL;
     for(int i = 0; i < numElems(this->input); i++) {
         this->input[i] = '\0';
     }
@@ -195,7 +194,7 @@ Thruster::~Thruster()
 
 SpacecraftSim::SpacecraftSim(void)
 {
-    time = 0.0;
+    this->time = 0.0;
     this->numRun = 1;
     this->rerunCaseNum = 0;
     this->maxSimTime = 100.0 * 60.0;
@@ -228,7 +227,6 @@ SpacecraftSim::SpacecraftSim(void)
     /* parameters for calculating power */
     this->rwPowerMin = 1.0;
     this->rwPowerMax = 3.0;
-    this->rwSpeedMax = 6000.0;
     this->trPowerMax = 1.0;
     
     this->adcsState = MAX_ADCS_STATE;
@@ -316,6 +314,17 @@ CoarseSunSensor::CoarseSunSensor()
 CoarseSunSensor::~CoarseSunSensor()
 {
 }
+
+SpiceTime::SpiceTime()
+{
+    this->J2000Current = 0;
+    this->julianDateCurrent = 0;
+    this->GPSSeconds = 0;
+    this->GPSWeek = 0;
+    this->GPSRollovers = 0;
+}
+
+SpiceTime::~SpiceTime(){}
 
 InitialConditions::InitialConditions(void)
 {

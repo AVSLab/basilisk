@@ -27,6 +27,7 @@
 #include <boost/serialization/base_object.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/archive/xml_iarchive.hpp>
+#include <boost/serialization/vector.hpp>
 #include <stdio.h>
 extern "C" {
 #include "spacecraftDefinitions.h"
@@ -36,17 +37,20 @@ class RWSim
 {
 public:
     ComponentState_t state;
-    double           u;                      /*!< Nm, commanded torque */
-    double           maxU;                   /*!< Nm, Max torque allowed */
+    double           u_current;                      /*!< Nm, commanded torque */
+    double           u_max;                   /*!< Nm, Max torque allowed */
+    double           u_min;                   /*!< Nm, Max torque allowed */
     double           Omega;                  /*!< spin rate relative to body (rad/sec) */
+    double           theta;
+    double           Omega_max;
     double           Js;                     /*!< spin inertia (kgm^s) */
-    double           gs[3];                  /*!< spin axis in body frame */
-    double           gt0[3];                 /*!< initial RW Wheel transfer axis */
-    double           gg0[3];                 /*!< initial RW Wheel 3rd axis */
+    double           rWB_S[3];               /*!< m, position vector of the RW relative to the spacecraft structure frame */
+    double           gsHat_S[3];             /*!< spin axis in body frame */
+    double           w2Hat0_B[3];            /*!< initial RW Wheel transfer axis */
+    double           w3Hat0_B[3];            /*!< initial RW Wheel 3rd axis */
     double           wheelAngle;             /*!< rad, angle of the RW wheel */
     double           staticImbalance;
     double           dynamicImbalance;
-    double           r_B[3];                 /*!< m, position vector of the RW relative to the spacecraft body frame */
     double           motorTemp1;             /*!< temperature of RW */
     double           motorTemp2;             /*!< temperature of RW */
     double           power;                  /*!< power usage of RW */
@@ -61,8 +65,6 @@ public:
     double frictionTimeConstant; /*!< time constant for RW friction */
     double highSpeed;            /*!< rad/s, max speed before speed limiting occurs */
     double maxTemp;              /*!< C, max temp before temperature limiting occurs */
-    double maxTorque;            /*!< Nm, max torque accepted */
-    double minTorque;            /*!< Nm, minimum "set max torque" command value allowed */
     
     RWSim();
     ~RWSim();
@@ -72,22 +74,22 @@ private:
     template<typename Archive>
     void serialize(Archive &a, const unsigned int version) {
         a &BOOST_SERIALIZATION_NVP(state);
-        a &BOOST_SERIALIZATION_NVP(u);
-        a &BOOST_SERIALIZATION_NVP(maxU);
+        a &BOOST_SERIALIZATION_NVP(u_current);
+        a &BOOST_SERIALIZATION_NVP(u_max);
+        a &BOOST_SERIALIZATION_NVP(u_min);
         a &BOOST_SERIALIZATION_NVP(Omega);
+        a &BOOST_SERIALIZATION_NVP(Omega_max);
         a &BOOST_SERIALIZATION_NVP(Js);
-        a &BOOST_SERIALIZATION_NVP(gs);
-        a &BOOST_SERIALIZATION_NVP(gt0);
-        a &BOOST_SERIALIZATION_NVP(gg0);
+        a &BOOST_SERIALIZATION_NVP(gsHat_S);
+        a &BOOST_SERIALIZATION_NVP(w2Hat0_B);
+        a &BOOST_SERIALIZATION_NVP(w3Hat0_B);
         a &BOOST_SERIALIZATION_NVP(wheelAngle);
         a &BOOST_SERIALIZATION_NVP(staticImbalance);
         a &BOOST_SERIALIZATION_NVP(dynamicImbalance);
-        a &BOOST_SERIALIZATION_NVP(r_B);
+        a &BOOST_SERIALIZATION_NVP(rWB_S);
         a &BOOST_SERIALIZATION_NVP(motorTemp1);
         a &BOOST_SERIALIZATION_NVP(motorTemp2);
         a &BOOST_SERIALIZATION_NVP(power);
-//        a &BOOST_SERIALIZATION_NVP(speedState);
-//        a &BOOST_SERIALIZATION_NVP(tempState);
         a &boost::serialization::make_array(input, numElems(input));
         a &BOOST_SERIALIZATION_NVP(inputLength);
         a &boost::serialization::make_array(output, numElems(output));
@@ -96,8 +98,6 @@ private:
         a &BOOST_SERIALIZATION_NVP(frictionTimeConstant);
         a &BOOST_SERIALIZATION_NVP(highSpeed);
         a &BOOST_SERIALIZATION_NVP(maxTemp);
-        a &BOOST_SERIALIZATION_NVP(maxTorque);
-        a &BOOST_SERIALIZATION_NVP(minTorque);
     }
 };
 
@@ -238,6 +238,33 @@ typedef enum {
     MCPRINT_CSSEST,                             /* printMCStatesCssEst */
     MAX_MCPRINT
 } MCPrintFunction_t;
+
+
+//! The SPICE time output structure outputs time information to the rest of the system
+class SpiceTime
+{
+public:
+    double J2000Current;        //!< s Current J2000 elapsed time
+    double julianDateCurrent;   //!< s Current JulianDate
+    double GPSSeconds;          //!< s Current GPS seconds
+    uint16_t GPSWeek;           //!< -- Current GPS week value
+    uint64_t GPSRollovers;      //!< -- Count on the number of GPS rollovers
+    
+    SpiceTime();
+    ~SpiceTime();
+    
+private:
+    friend class boost::serialization::access;
+    template<typename Archive>
+    void serialize(Archive &a, const unsigned int version) {
+        a &BOOST_SERIALIZATION_NVP(J2000Current);
+        a &BOOST_SERIALIZATION_NVP(julianDateCurrent);
+        a &BOOST_SERIALIZATION_NVP(GPSSeconds);
+        a &BOOST_SERIALIZATION_NVP(GPSWeek);
+        a &BOOST_SERIALIZATION_NVP(GPSRollovers);
+    }
+};
+
 
 /* Initial conditions */
 class InitialConditions
@@ -566,10 +593,10 @@ public:
     /* parameters for calculating power */
     double rwPowerMin; /*!< Watts just to be turn on, maintain zero speed */
     double rwPowerMax; /*!< Watts to maintain max speed */
-    double rwSpeedMax; /*!< rpm */
     double trPowerMax;
     
     InitialConditions ics;
+    SpiceTime spiceTime;
     
     /*-----------------------------------------------------------------------*/
     /* Spacecraft parameters */
@@ -580,12 +607,13 @@ public:
     
     /* Sub components */
     //    ControllerSim   control;
-    Thruster        thrusters[NUM_ACS_THRUSTER + NUM_DV_THRUSTER];  /*!< Array of attitude control thruster objects */
+    std::vector<Thruster> acsThrusters;  /*!< Array of attitude control thruster objects */
+    std::vector<Thruster> dvThrusters;  /*!< Array of attitude control thruster objects */
     CoarseSunSensor css[NUM_CSS];
 //    TAM             tam;
     IRUSim          iru;
     PODSim          pod;
-    RWSim           rw[NUM_RW];
+    std::vector<RWSim> reactionWheels;
     STSim           st;
     TRSim           tr[NUM_TR];
     
@@ -657,6 +685,7 @@ private:
     template<typename Archive>
     void serialize(Archive &a, const unsigned int version) {
         a &BOOST_SERIALIZATION_NVP(time);
+        a &BOOST_SERIALIZATION_NVP(spiceTime);
         a &BOOST_SERIALIZATION_NVP(numRun);
         a &BOOST_SERIALIZATION_NVP(rerunCaseNum);
         a &BOOST_SERIALIZATION_NVP(maxSimTime);
@@ -688,18 +717,18 @@ private:
         
         a &BOOST_SERIALIZATION_NVP(rwPowerMin);
         a &BOOST_SERIALIZATION_NVP(rwPowerMax);
-        a &BOOST_SERIALIZATION_NVP(rwSpeedMax);
         a &BOOST_SERIALIZATION_NVP(trPowerMax);
         
         a &BOOST_SERIALIZATION_NVP(ics);
         
         a &BOOST_SERIALIZATION_NVP(adcsState);
         
-        a &BOOST_SERIALIZATION_NVP(thrusters);
+        a &BOOST_SERIALIZATION_NVP(acsThrusters);
+        a &BOOST_SERIALIZATION_NVP(dvThrusters);
         a &BOOST_SERIALIZATION_NVP(css);
         a &BOOST_SERIALIZATION_NVP(iru);
         a &BOOST_SERIALIZATION_NVP(pod);
-        a &BOOST_SERIALIZATION_NVP(rw);
+        a &BOOST_SERIALIZATION_NVP(reactionWheels);
         a &BOOST_SERIALIZATION_NVP(st);
         a &BOOST_SERIALIZATION_NVP(tr);
         
