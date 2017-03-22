@@ -33,10 +33,7 @@ import pytest
 import sys, os, inspect
 import matplotlib
 import numpy as np
-import ctypes
-import math
-import csv
-import logging
+
 
 # @cond DOXYGEN_IGNORE
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -69,6 +66,8 @@ import MRP_Feedback
 import inertial3D
 import attTrackingError
 
+# import message declarations
+import fswMessages
 
 
 
@@ -449,7 +448,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
+    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,
