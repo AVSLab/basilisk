@@ -586,7 +586,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = ["rw_bla0_data", "rw_bla1_data", "rw_bla2_data"]
+    rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
     if useRWVoltageIO:
