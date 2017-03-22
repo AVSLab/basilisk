@@ -35,6 +35,7 @@ import SimulationBaseClass
 import macros
 import reactionWheelStateEffector
 import unitTestSupport
+import simMessages
 
 
 # define RW model types
@@ -78,7 +79,7 @@ def create(
     global options
 
     # create the blank RW object
-    RW = reactionWheelStateEffector.RWConfigSimMsg()
+    RW = simMessages.RWConfigSimMsg()
 
     # populate the RW object with the type specific parameters
     try:

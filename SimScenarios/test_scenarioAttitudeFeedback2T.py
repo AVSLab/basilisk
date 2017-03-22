@@ -72,8 +72,9 @@ import simple_nav
 import MRP_Feedback
 import inertial3D
 import attTrackingError
-import vehicleConfigData
 
+# import message declarations
+import fswMessages
 
 
 
@@ -382,7 +383,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
+    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I      # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                fswProcessName,

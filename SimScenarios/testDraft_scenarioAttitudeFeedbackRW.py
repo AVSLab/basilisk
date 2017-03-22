@@ -72,10 +72,11 @@ import MRP_Feedback
 import inertial3D
 import attTrackingError
 import rwMotorTorque
-import vehicleConfigData
 import fswSetupRW
 import rwMotorVoltage
 
+# import message declarations
+import fswMessages
 
 
 
@@ -93,7 +94,7 @@ import rwMotorVoltage
 ])
 
 # provide a unique test method name, starting with test_
-def test_bskAttitudeFeedbackMRP(show_plots, useJitterSimple, useRWVoltageIO):
+def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
     '''This function is called by the py.test environment.'''
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run( True,
@@ -585,7 +586,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.TotalSim.logThisMessage(attErrorConfig.outputDataName, samplingTime)
     scSim.TotalSim.logThisMessage(sNavObject.outputTransName, samplingTime)
     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-    rwOutName = ["rw_bla0_data", "rw_bla1_data", "rw_bla2_data"]
+    rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
     for item in rwOutName:
         scSim.TotalSim.logThisMessage(item, samplingTime)
     if useRWVoltageIO:
@@ -597,7 +598,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     # create the FSW vehicle configuration message
-    vehicleConfigOut = MRP_Feedback.VehicleConfigFswMsg()
+    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
     vehicleConfigOut.ISCPntB_B = I  # use the same inertia in the FSW algorithm as in the simulation
     unitTestSupport.setMessage(scSim.TotalSim,
                                simProcessName,

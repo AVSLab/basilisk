@@ -61,7 +61,6 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import gravityEffector
 import simIncludeGravity
 
 
