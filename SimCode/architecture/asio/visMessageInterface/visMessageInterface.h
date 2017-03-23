@@ -85,7 +85,6 @@ public:
     void setCelestialObject(int celestialObject);
     void addThrusterMessageName(std::string msgName);
     void addRwMessageName(std::string msgName);
-    void computeSunHeadingData();
     
 private:
     void mapMessagesToScSim(uint64_t currentSimNanos);

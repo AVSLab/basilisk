@@ -648,7 +648,6 @@ public:
     double sHatN[3];    /*!< sun direction vector in inertial frame components */
     double sHatB[3];    /*!< sun direction vector in body frame components */
     double sunAngle;    /*!< sun pointing angle */
-    double helioRadius; /*!< distance [km] of the spacecraft to the sun */
     
     double earthHeadingSim_N[3]; /*!< unit direction vector pointing from spacecraft back to Earth in inertial frame components */
     double earthHeadingSim_B[3]; /*!< unit direction vector pointing from spacecraft back to Earth in body frame components */
@@ -759,7 +758,6 @@ private:
         a &BOOST_SERIALIZATION_NVP(sHatN);
         a &BOOST_SERIALIZATION_NVP(sHatB);
         a &BOOST_SERIALIZATION_NVP(sunAngle);
-        a &BOOST_SERIALIZATION_NVP(helioRadius);
         
         a &BOOST_SERIALIZATION_NVP(earthHeadingSim_N);
         a &BOOST_SERIALIZATION_NVP(earthHeadingSim_B);        

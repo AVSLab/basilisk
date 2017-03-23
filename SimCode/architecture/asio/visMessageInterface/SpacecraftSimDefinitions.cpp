@@ -267,7 +267,6 @@ SpacecraftSim::SpacecraftSim(void)
     v3SetZero(this->sHatN);
     v3SetZero(this->sHatB);
     this->sunAngle = 0.0;
-    this->helioRadius = 0.0;
     
     v3SetZero(this->earthHeadingSim_N);
     v3SetZero(this->earthHeadingSim_B);
