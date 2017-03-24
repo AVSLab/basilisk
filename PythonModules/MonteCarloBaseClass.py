@@ -385,7 +385,7 @@ class MonteCarloBaseClass:
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
-                    execString = 'newSim.' + disp.varName + ' = '
+                    execString = 'newSim.' + disp.varName + ' = ['
                     for i in range(9):
                         execString += str(nextValue[i]) + ', '
                     execString = execString[0:-1] + ']'

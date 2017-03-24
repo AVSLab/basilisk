@@ -25,6 +25,7 @@
 
 import gravityEffector
 import spice_interface
+import simMessages
 import pyswice
 
 gravBodyList = []
@@ -185,7 +186,7 @@ def addNeptune():
 
 
 def defaultEphemData(name):
-    ephemData = spice_interface.SpicePlanetStateSimMsg()
+    ephemData = simMessages.SpicePlanetStateSimMsg()
     ephemData.J2000Current = 0.0
     ephemData.PositionVector = [0.0, 0.0, 0.0]
     ephemData.VelocityVector = [0.0, 0.0, 0.0]

@@ -232,18 +232,6 @@ void VisMessageInterface::addThrusterMessageName(std::string msgName)
     this->thrusterInMsgNames.push_back(msgName);
 }
 
-void VisMessageInterface::computeSunHeadingData()
-{
-    double Sc2Sun_Inrtl[3];
-    double dcm_BN[3][3];
-    
-    v3Scale(-1.0, this->scStateInMsg.r_BN_N, Sc2Sun_Inrtl);
-    v3Add(Sc2Sun_Inrtl, this->sunEphmInMsg.PositionVector, Sc2Sun_Inrtl);
-    v3Normalize(Sc2Sun_Inrtl, this->scSim->sHatN);
-    MRP2C(this->scStateInMsg.sigma_BN, dcm_BN);
-    m33MultV3(dcm_BN, this->scSim->sHatN, this->scSim->sHatB);
-}
-
 void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
 {
     double m2km = 0.001;
@@ -289,17 +277,9 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     // Now that we have the spacecraft state all set up we can go ahead and
     // generate the required ephemeris and orbital information.
     
-    double sc2Sun_N[3]; // position vector of sun relative to the spacecraft
     // map sim time
     this->scSim->time = currentSimNanos*1.0E-9;
-    // map helicentric distance to sun from spacecraft
-    v3Scale(-1.0, this->scStateInMsg.r_BN_N, sc2Sun_N);
-    v3Add(sc2Sun_N, this->sunEphmInMsg.PositionVector, sc2Sun_N);
-    this->scSim->helioRadius =  v3Norm(sc2Sun_N)*m2km;   /* km */
-    
-    // map the inertial and body frame sun unit direction vectors
-    this->computeSunHeadingData();
-    
+        
     // map the primary celestial body
     this->setScSimCelestialObject();
     this->setScSimOrbitalElements();
