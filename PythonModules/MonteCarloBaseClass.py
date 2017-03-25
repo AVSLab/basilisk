@@ -95,7 +95,7 @@ class VectorVariableDispersion(object):
             rndVec[0] *= -1
         eigenAxis = np.cross(vector, rndVec)
         thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
-        return np.dot(thrusterMisalignDCM,vector)
+        return np.dot(thrusterMisalignDCM, vector)
 
     def perturbCartesianVectorUniform(self, vector):
         dispValues = np.zeros(3)
@@ -111,18 +111,18 @@ class VectorVariableDispersion(object):
 
     @staticmethod
     def eigAxisAndAngleToDCM(axis, angle):
-        axis = axis/np.linalg.norm(axis)
+        axis = axis / np.linalg.norm(axis)
         sigma = 1 - np.cos(angle)
         dcm = np.zeros((3, 3))
-        dcm[0,0] = axis[0]**2 * sigma + np.cos(angle)
-        dcm[0,1] = axis[0] * axis[1] * sigma + axis[2] * np.sin(angle)
-        dcm[0,2] = axis[0] * axis[2] * sigma - axis[1] * np.sin(angle)
-        dcm[1,0] = axis[1] * axis[0] * sigma - axis[2] * np.sin(angle)
-        dcm[1,1] = axis[1]**2 * sigma + np.cos(angle)
-        dcm[1,2] = axis[1] * axis[2] * sigma + axis[0] * np.sin(angle)
-        dcm[2,0] = axis[2] * axis[0] * sigma + axis[1] * np.sin(angle)
-        dcm[2,1] = axis[2] * axis[1] * sigma - axis[0] * np.sin(angle)
-        dcm[2,2] = axis[2]**2 * sigma + np.cos(angle)
+        dcm[0, 0] = axis[0] ** 2 * sigma + np.cos(angle)
+        dcm[0, 1] = axis[0] * axis[1] * sigma + axis[2] * np.sin(angle)
+        dcm[0, 2] = axis[0] * axis[2] * sigma - axis[1] * np.sin(angle)
+        dcm[1, 0] = axis[1] * axis[0] * sigma - axis[2] * np.sin(angle)
+        dcm[1, 1] = axis[1] ** 2 * sigma + np.cos(angle)
+        dcm[1, 2] = axis[1] * axis[2] * sigma + axis[0] * np.sin(angle)
+        dcm[2, 0] = axis[2] * axis[0] * sigma + axis[1] * np.sin(angle)
+        dcm[2, 1] = axis[2] * axis[1] * sigma - axis[0] * np.sin(angle)
+        dcm[2, 2] = axis[2] ** 2 * sigma + np.cos(angle)
         return dcm
 
     # @TODO This should be a @classmethod.
@@ -145,6 +145,7 @@ class UniformVectorDispersion(VectorVariableDispersion):
         vector = eval('sim.' + self.varName)
         dispValue = self.perturbCartesianVectorUniform(vector)
         return dispValue
+
 
 # class NormalVectorDispersion(VectorVariableDispersion):
 #     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
@@ -188,10 +189,10 @@ class UniformEulerAngleMRPDispersion(VectorVariableDispersion):
         """
         super(UniformEulerAngleMRPDispersion, self).__init__(varName, bounds)
         if self.bounds is None:
-            self.bounds = ([0, 2*np.pi])
+            self.bounds = ([0, 2 * np.pi])
 
     def generate(self, sim=None):
-        rndAngles = np.zeros((3,1))
+        rndAngles = np.zeros((3, 1))
         for i in range(3):
             rndAngles[i] = (self.bounds[1] - self.bounds[0]) * np.random.random() + self.bounds[0]
         dispMRP = rbk.euler3232MRP(rndAngles)
@@ -220,7 +221,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
     def generate(self, sim=None):
         if sim is None:
             print("No simulation object parameter set in '" + self.generate.__name__ + "()'"
-                  " dispersions will not be set for variable " + self.varName)
+                                                                                       " dispersions will not be set for variable " + self.varName)
             return
         else:
             separator = '.'
@@ -257,7 +258,7 @@ class NormalVectorCartDispersion(VectorVariableDispersion):
     def generate(self, sim=None):
         dispVec = []
         for i in range(3):
-            if(isinstance(self.stdDeviation, collections.Sequence)):
+            if isinstance(self.stdDeviation, collections.Sequence):
                 rnd = random.gauss(self.mean[i], self.stdDeviation[i])
             else:
                 rnd = random.gauss(self.mean, self.stdDeviation)
@@ -291,11 +292,11 @@ class InertiaTensorDispersion:
     def generate(self, sim=None):
         if sim is None:
             print("No simulation object parameter set in '" + self.generate.__name__ + "()'"
-                  " dispersions will not be set for variable " + self.varName)
+                                                                                       " dispersions will not be set for variable " + self.varName)
             return
         else:
             vehDynObject = getattr(sim, self.varNameComponents[0])
-            I = np.array(eval('sim.'+self.varName)).reshape(3, 3)
+            I = np.array(eval('sim.' + self.varName)).reshape(3, 3)
 
             # generate random values for the diagonals
             temp = []
@@ -303,7 +304,7 @@ class InertiaTensorDispersion:
                 rnd = random.gauss(0, self.stdDiag)
                 rnd = self.checkBounds(rnd)
                 temp.append(rnd)
-            dispIdentityMatrix = np.identity(3)*temp
+            dispIdentityMatrix = np.identity(3) * temp
             # generate random values for the similarity transform to produce off-diagonal terms
             angles = np.random.normal(0, self.stdAngle, 3)
             disp321Matrix = rbk.euler3212C(angles)
@@ -313,8 +314,7 @@ class InertiaTensorDispersion:
             # disperse the off diagonals with a slight similarity transform of the inertia tensor
             dispI = np.dot(np.dot(disp321Matrix, dispI), disp321Matrix.T)
 
-            # return as a single row shape so it's easier for the executeSimulation runner to read
-        return dispI#.reshape(9)
+        return dispI
 
     def checkBounds(self, value):
         if value < self.bounds[0]:
@@ -342,7 +342,7 @@ class MonteCarloBaseClass:
 
     def setExecutionModule(self, newModule):
         self.executionModule = newModule
-    
+
     def setConfigureModule(self, newModule):
         self.configureModule = newModule
 
@@ -357,52 +357,53 @@ class MonteCarloBaseClass:
 
     def addNewDispersion(self, disp):
         self.varDisp.append(disp)
+
     def setDisperseSeeds(self, seedDisp):
         self.disperseSeeds = seedDisp
+
     def archiveICs(self, dirName):
         self.archiveDir = dirName + '_MonteCarloICs'
         self.archiveSettings = True
-        
+
     def reRunCases(self, caseList):
         previousSimulation = None
         for caseNumber in caseList:
-            if not os.path.exists(self.archiveDir + "/Run" +str(caseNumber) + ".py"):
+            if not os.path.exists(self.archiveDir + "/Run" + str(caseNumber) + ".py"):
                 print "ERROR re-running case: " + self.archiveDir + "/Run" + \
-                    str(caseNumber) + ".py"
+                      str(caseNumber) + ".py"
                 continue
             if previousSimulation is not None:
                 previousSimulation.terminateSimulation()
-        
+
             newSim = self.simulationObject()
             updateModule = imp.load_source("disperseVariables",
-                self.archiveDir + "/Run" +str(caseNumber) + ".py")
+                                           self.archiveDir + "/Run" + str(caseNumber) + ".py")
             updateModule.disperseVariables(newSim)
             if self.configureModule is not None:
                 self.configureModule(newSim)
             self.executionModule(newSim)
             if self.retainSimulationData:
                 self.simList.append(newSim)
-                
+
             previousSimulation = newSim
             print caseNumber
-
 
     def executeSimulations(self):
         simRunCounter = 0
         previousSimulation = None
 
-        if(self.archiveSettings):
-            if(os.path.exists(self.archiveDir)):
+        if self.archiveSettings:
+            if os.path.exists(self.archiveDir):
                 shutil.rmtree(self.archiveDir)
             os.mkdir(self.archiveDir)
         while simRunCounter < self.executionCount:
             fHandle = None
             if previousSimulation is not None:
                 previousSimulation.terminateSimulation()
-            if(self.archiveSettings):
+            if self.archiveSettings:
                 fHandle = open(self.archiveDir + '/Run' + str(simRunCounter) + '.py', 'w')
             newSim = self.simulationObject()
-            
+
             execString = "def disperseVariables(newSim): \n"
             if fHandle is not None:
                 fHandle.write(execString + '\n')
@@ -413,7 +414,7 @@ class MonteCarloBaseClass:
                     execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.inputThrDir_S = ['
                     for i in range(3):
                         execString += str(nextValue[i])
-                        if(i<2):
+                        if (i < 2):
                             execString += ', '
                     execString += ']'
                     exec execString
@@ -434,7 +435,7 @@ class MonteCarloBaseClass:
                 elif isinstance(disp, VectorVariableDispersion):
                     execString = 'newSim.' + disp.varName + ' = ['
                     for i in range(3):
-                        execString += str(nextValue[i]) +','
+                        execString += str(nextValue[i]) + ','
                     execString = execString[0:-1] + ']'
                     exec execString
                     if fHandle is not None:
@@ -453,7 +454,7 @@ class MonteCarloBaseClass:
                         execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
                         execString += '[' + str(j) + '].RNGSeed = '
                         try:
-                            model.RNGSeed = random.randint(0, 1<<32-1)
+                            model.RNGSeed = random.randint(0, 1 << 32 - 1)
                             execString += str(model.RNGSeed)
                         except ValueError:
                             execString = []
@@ -464,7 +465,7 @@ class MonteCarloBaseClass:
                         j += 1
                     i += 1
             if fHandle is not None:
-               fHandle.close()
+                fHandle.close()
 
             if self.configureModule is not None:
                 self.configureModule(newSim)
