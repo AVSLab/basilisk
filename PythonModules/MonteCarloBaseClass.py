@@ -146,7 +146,6 @@ class UniformVectorDispersion(VectorVariableDispersion):
         dispValue = self.perturbCartesianVectorUniform(vector)
         return dispValue
 
-
 # class NormalVectorDispersion(VectorVariableDispersion):
 #     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
 #         VectorVariableDispersion.__init__(self, varName, bounds)
