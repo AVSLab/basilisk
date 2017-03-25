@@ -97,6 +97,18 @@ class VectorVariableDispersion(object):
         thrusterMisalignDCM = self.eigAxisAndAngleToDCM(eigenAxis, angle)
         return np.dot(thrusterMisalignDCM,vector)
 
+    def perturbCartesianVectorUniform(self, vector):
+        dispValues = np.zeros(3)
+        for i in range(len(vector)):
+            dispValues[i] = random.uniform(self.bounds[0], self.bounds[1])
+        return dispValues
+
+    def perturbCartesianVectorNormal(self, vector):
+        dispValues = np.zeros(3)
+        for i in range(len(vector)):
+            dispValues[i] = random.gauss(self.mean, self.stdDeviation)
+        return dispValues
+
     @staticmethod
     def eigAxisAndAngleToDCM(axis, angle):
         axis = axis/np.linalg.norm(axis)
@@ -121,6 +133,29 @@ class VectorVariableDispersion(object):
         if value > bounds[1]:
             value = bounds[1]
         return value
+
+
+class UniformVectorDispersion(VectorVariableDispersion):
+    def __init__(self, varName, bounds=None):
+        VectorVariableDispersion.__init__(self, varName, bounds)
+        if self.bounds is None:
+            self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
+
+    def generate(self, sim):
+        vector = eval('sim.' + self.varName)
+        dispValue = self.perturbCartesianVectorUniform(vector)
+        return dispValue
+
+# class NormalVectorDispersion(VectorVariableDispersion):
+#     def __init__(self, varName, mean=0.0, stdDeviation=0.5, bounds=None):
+#         VectorVariableDispersion.__init__(self, varName, bounds)
+#         if self.bounds is None:
+#             self.bounds = ([-1.0, 1.0])  # defines a hard floor/ceiling
+#
+#     def generate(self, sim):
+#         vector = eval('sim.' + self.varName)
+#         dispValue = self.perturbCartesianVectorNormal(vector,self.mean,self.stdDeviation)
+#         return dispValue
 
 
 class UniformVectorAngleDispersion(VectorVariableDispersion):
@@ -279,7 +314,7 @@ class InertiaTensorDispersion:
             dispI = np.dot(np.dot(disp321Matrix, dispI), disp321Matrix.T)
 
             # return as a single row shape so it's easier for the executeSimulation runner to read
-        return dispI.reshape(9)
+        return dispI#.reshape(9)
 
     def checkBounds(self, value):
         if value < self.bounds[0]:
@@ -381,15 +416,19 @@ class MonteCarloBaseClass:
                         if(i<2):
                             execString += ', '
                     execString += ']'
-                    exec(execString)
+                    exec execString
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, InertiaTensorDispersion):
                     execString = 'newSim.' + disp.varName + ' = ['
-                    for i in range(9):
-                        execString += str(nextValue[i]) + ', '
-                    execString = execString[0:-1] + ']'
-                    exec(execString)
+                    for i in range(3):
+                        execString += '[' + str(nextValue[i][0]) + ', ' \
+                                      + str(nextValue[i][1]) + ', ' \
+                                      + str(nextValue[i][2]) + ']'
+                        if i is not 2:
+                            execString += ','
+                    execString = execString[0:] + ']'
+                    exec execString
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
                 elif isinstance(disp, VectorVariableDispersion):
@@ -397,19 +436,19 @@ class MonteCarloBaseClass:
                     for i in range(3):
                         execString += str(nextValue[i]) +','
                     execString = execString[0:-1] + ']'
-                    exec(execString)
+                    exec execString
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
                 else:
                     execString = 'newSim.' + disp.varName + ' = ' + str(nextValue)
-                    exec(execString)
+                    exec execString
                     if fHandle is not None:
                         fHandle.write('    ' + execString + '\n')
 
             if self.disperseSeeds == True:
-                i=0
+                i = 0
                 for Task in newSim.TaskList:
-                    j=0;
+                    j = 0
                     for model in Task.TaskModels:
                         execString = 'newSim.TaskList[' + str(i) + '].TaskModels'
                         execString += '[' + str(j) + '].RNGSeed = '
@@ -422,8 +461,8 @@ class MonteCarloBaseClass:
                             continue
                         if fHandle is not None:
                             fHandle.write('    ' + execString + '\n')
-                        j+=1
-                    i+=1
+                        j += 1
+                    i += 1
             if fHandle is not None:
                fHandle.close()
 
