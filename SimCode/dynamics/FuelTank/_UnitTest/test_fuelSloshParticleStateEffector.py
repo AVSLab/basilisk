@@ -107,7 +107,11 @@ def test_hubPropagate(show_plots):
 
     #define the fuel tank
     unitTestSim.tank1 = fuelTank.FuelTank()
-    unitTestSim.tank1.radiusTank = 0.5
+    unitTestSim.tank1.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
+    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+    tankModel.propMassInit = 30.0
+    tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
+    tankModel.radiusTankInit = 0.5
     unitTestSim.tank1.r_TB_B = [[0],[0],[0.1]]
     unitTestSim.tank1.nameOfMassState = "fuelTankMass1"
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
@@ -274,4 +278,4 @@ def test_hubPropagate(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(False)
+    spacecraftPlusAllTest(True)

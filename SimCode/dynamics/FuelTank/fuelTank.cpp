@@ -129,7 +129,7 @@ void FuelTank::updateEffectorMassProps(double integTime)
 	double massLocal = this->massState->getState()(0, 0);
 	Eigen::Vector3d r_TcB_B = r_TB_B + dcm_TB*this->fuelTankModel->r_TcT_T;
 	this->effProps.mEff += massLocal;
-	this->effProps.IEffPntB_B += dcm_TB*this->fuelTankModel->ITankPntT_T + massLocal * (r_TcB_B.dot(r_TcB_B)*Eigen::Matrix3d::Identity()
+	this->effProps.IEffPntB_B += dcm_TB*this->fuelTankModel->ITankPntT_T +massLocal * (r_TcB_B.dot(r_TcB_B)*Eigen::Matrix3d::Identity()
                                                                                          - r_TcB_B * r_TcB_B.transpose());
 	this->effProps.rEff_CB_B += massLocal * r_TcB_B;
 

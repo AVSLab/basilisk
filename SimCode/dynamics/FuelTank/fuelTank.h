@@ -80,7 +80,7 @@ struct FuelTankModelEmptying_t :
 	double radiusTankInit;                             //!< [m] Initial radius of the spherical tank
 
 	void computeTankProps(double mFuel, double mDotFuel) {
-		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit);
+		double rhoFuel = propMassInit / (4.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*radiusTankInit);
 		double rtank = radiusTankInit;
 		double thetaStar, thetaDotStar, thetaDDotStar;
 		double volume;
@@ -89,26 +89,29 @@ struct FuelTankModelEmptying_t :
 		k3 << 0, 0, 1; //k3 is zhat
 
 		if (mFuel != propMassInit) {
-			std::function<double(double)> f = [rhoFuel, rtank](double thetaStar)-> double {
-				return 2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(1 + 3.0 / 2.0*cos(thetaStar) - 1.0 / 2.0*pow(cos(thetaStar), 3));
+			std::function<double(double)> f = [rhoFuel, rtank, mFuel](double thetaStar)-> double {
+				return 2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(1 + 3.0 / 2.0*cos(thetaStar) - 1.0 / 2.0*pow(cos(thetaStar), 3))-mFuel;
 			};
 			std::function<double(double)> fPrime = [rhoFuel, rtank](double thetaStar)-> double {
 				return  2.0 / 3.0*M_PI*rhoFuel*rtank*rtank*rtank*(-3.0 / 2.0*sin(thetaStar) + 3.0 / 2.0*pow(cos(thetaStar), 2)*sin(thetaStar));
 			};
 
-			thetaStar = newtonRaphsonSolve(M_PI/2.0, 1E-14, f, fPrime);
+			thetaStar = newtonRaphsonSolve(M_PI/2.0, 1E-20, f, fPrime);
 			thetaDotStar = -mDotFuel / (M_PI*rhoFuel*std::pow(radiusTankInit, 3)*std::sin(thetaStar));
-			thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar) / std::sin(thetaStar);
-
+			thetaDDotStar = -3 * thetaDotStar*thetaDotStar*std::cos(thetaStar) / std::sin(thetaStar); //This assumes that mddot = 0
 		}
 		else {
 			thetaStar = 0.0;
 			thetaDotStar = 0.0;
 			thetaDDotStar = 0.0;
 		}
-		printf("t %f, td %f, tdd %f", thetaStar, thetaDotStar, thetaDDotStar);
-		volume = 2.0 / 3.0*M_PI*radiusTankInit*radiusTankInit*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
-		deltaRadiusK3 = M_PI*std::pow(radiusTankInit, 4) / (4.0*volume)*(2.0*std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1);
+		volume = 2.0 / 3.0*M_PI*std::pow(radiusTankInit,3)*(1 + 3.0 / 2.0*std::cos(thetaStar) - 1.0 / 2.0*std::pow(std::cos(thetaStar), 3));
+		if (volume != 0) {
+			deltaRadiusK3 = M_PI*std::pow(radiusTankInit, 4) / (4.0*volume)*(2.0*std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1);
+		}
+		else {
+			deltaRadiusK3 = -radiusTankInit;
+		}
 
 		r_TcT_T = r_TcT_TInit + deltaRadiusK3*k3;
 		ITankPntT_T.setZero();
@@ -118,7 +121,7 @@ struct FuelTankModelEmptying_t :
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
 			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) + 
 				5.0 / 4.0*cos(thetaStar) + 1 / 8.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4));
-		
+
 		IPrimeTankPntT_T(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) * thetaDotStar *
 			(std::pow(std::cos(thetaStar), 2)*std::pow(std::sin(thetaStar), 3) - 1.0 / 4.0*std::pow(std::sin(thetaStar), 5)+ 
 				1 / 4.0*std::sin(3 * thetaStar) - 3.0 / 4.0*std::sin(thetaStar));
@@ -126,12 +129,21 @@ struct FuelTankModelEmptying_t :
 			(5.0 / 4.0*std::sin(thetaStar)*std::cos(thetaStar) - 5.0 / 4.0*std::sin(thetaStar) - 1 / 8.0*std::sin(3 * thetaStar) +
 				3.0 / 8.0*sin(thetaStar) + 1 / 2.0*std::pow(std::cos(thetaStar), 2)*std::pow(std::sin(thetaStar), 3) - 1 / 8.0*std::pow(std::sin(thetaStar), 5));
 
-		rPrime_TcT_T = -M_PI*std::pow(radiusTankInit,4)*rhoFuel/(4*mFuel*mFuel)*(4*mFuel*thetaDotStar*std::pow(std::sin(thetaStar),3)*std::cos(thetaStar)+
-			mDotFuel*(2*std::pow(std::cos(thetaStar),2)-std::pow(std::cos(thetaStar),4)-1))*k3;
-		rPPrime_TcT_T = -M_PI*std::pow(radiusTankInit, 4)*rhoFuel / (2 * mFuel*mFuel*mFuel)*(4 * mFuel*std::pow(std::sin(thetaStar),3)*std::cos(thetaStar)*
-			(thetaDDotStar*mFuel-2*thetaDotStar*mDotFuel) -4*mFuel*mFuel*thetaDotStar*thetaDotStar*std::pow(std::sin(thetaStar),2)*
-			(3*std::pow(std::cos(thetaStar),2)-std::pow(std::sin(thetaStar),2))+(2*std::pow(std::cos(thetaStar),2)-std::pow(std::cos(thetaStar),4)-1)*
-			(-2*mDotFuel*mDotFuel))*k3;
+		if (mFuel != 0) {
+			rPrime_TcT_T = -M_PI*std::pow(radiusTankInit, 4)*rhoFuel / (4 * mFuel*mFuel)*(4 * mFuel*thetaDotStar*std::pow(std::sin(thetaStar), 3)*std::cos(thetaStar) +
+				mDotFuel*(2 * std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1))*k3;
+
+			rPPrime_TcT_T = -M_PI*std::pow(radiusTankInit, 4)*rhoFuel / (2 * mFuel*mFuel*mFuel)*(4 * mFuel*std::pow(std::sin(thetaStar), 3)*std::cos(thetaStar)*
+				(thetaDDotStar*mFuel - 2 * thetaDotStar*mDotFuel) - 4 * mFuel*mFuel*thetaDotStar*thetaDotStar*std::pow(std::sin(thetaStar), 2)*
+				(3 * std::pow(std::cos(thetaStar), 2) - std::pow(std::sin(thetaStar), 2)) + (2 * std::pow(std::cos(thetaStar), 2) - std::pow(std::cos(thetaStar), 4) - 1)*
+				(-2 * mDotFuel*mDotFuel))*k3;
+
+		}
+		else {
+			rPrime_TcT_T.setZero();
+			rPPrime_TcT_T.setZero();
+		}
+		
 	}
 };
 

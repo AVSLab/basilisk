@@ -219,7 +219,6 @@ def test_tankModelConstantDensity(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-@pytest.mark.xfail() # need to find true values
 def test_tankModelEmptying(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -233,33 +232,32 @@ def test_tankModelEmptying(show_plots):
     model.propMassInit = 10
     model.r_TcT_TInit = [[1],[1],[1]]
     model.radiusTankInit = 5
-    model.k3 = [[0],[0],[1]]
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
     true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,0],
-                                [100,0,0,0,100,0,0,0,100],
-                                [31.498026247371826,0,0,0,31.498026247371826,0,0,0,31.498026247371826]
+                                [0,0,0,0,0,0,0,0,-20],
+                                [100,0,0,0,100,0,0,0,80],
+                                [50.0,0,0,0,50.0,0,0,0,30]
                             ]
     true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
-                                [-16.666666666666668,0,0,0,-16.666666666666668,0,0,0,-16.666666666666668],
-                                [-10.499342082457275,0,0,0,-10.499342082457275,0,0,0,-10.499342082457275]
+                                [0,0,0,0,0,0,0,0,0],
+                                [-8.75,0,0,0,-8.75,0,0,0,-12.5]
                             ]
     true_r_TcT_T =           [
+                                [1,1,1-5.0],
                                 [1,1,1],
-                                [1,1,1],
-                                [1,1,1]
+                                [1,1,1.0-15.0/8.0]
                             ]
     true_rPrime_TcT_T =      [
                                 [0,0,0],
                                 [0,0,0],
-                                [0,0,0]
+                                [0,0,-3.0/8.0]
                             ]
     true_rPPrime_TcT_T =     [
                                 [0,0,0],
                                 [0,0,0],
-                                [0,0,0]
+                                [0,0,-17.0/30.0]
                             ]
     
     accuracy = 1e-8
@@ -267,7 +265,8 @@ def test_tankModelEmptying(show_plots):
         model.computeTankProps(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
-        if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
+        if not unitTestSupport.isArrayEqual(dataITank, true_ITankPntT_T[idx],9,accuracy):
+            print dataITank
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_T test")
 
