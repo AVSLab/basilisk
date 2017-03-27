@@ -61,6 +61,10 @@ import spacecraftPlus
 import gravityEffector
 import simIncludeGravity
 
+# import Viz messaging interface
+import vis_message_interface
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -118,6 +122,16 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 #~~~~~~~~~~~~~~
 # must be uncommented and edited for the particular user's Basilisk directory path.
+#
+# If you wish to transmit the simulation data to the Qt Vizualization, then uncomment the following
+# lines from the python scenario script.  If the Viz is running, and searching for a connection on
+# 127.0.0.1 (using Open Connection command from the File menu), the simualtion is visualized in
+# realtime
+#~~~~~~~~~~~~~~{.py}
+# dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
+# viz = vis_message_interface.VisMessageInterface()
+# scSim.AddModelToTask("VisTask", viz)
+#~~~~~~~~~~~~~~
 #
 # When the simulation completes 2 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot either shows a planar
@@ -295,6 +309,11 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     # create the dynamics task and specify the integration update time
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
+    # viz = vis_message_interface.VisMessageInterface()
+    # scSim.AddModelToTask("VisTask", viz)
 
     #
     #   setup the simulation tasks/objects

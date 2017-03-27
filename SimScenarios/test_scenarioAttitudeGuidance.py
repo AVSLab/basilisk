@@ -74,6 +74,9 @@ import attTrackingError
 # import message declarations
 import fswMessages
 
+# import Viz messaging interface
+import vis_message_interface
+
 
 
 
@@ -236,6 +239,10 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
+    # viz = vis_message_interface.VisMessageInterface()
+    # scSim.AddModelToTask("VisTask", viz)
 
     #
     #   setup the simulation tasks/objects

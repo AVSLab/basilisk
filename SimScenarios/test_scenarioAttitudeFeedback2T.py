@@ -76,6 +76,8 @@ import attTrackingError
 # import message declarations
 import fswMessages
 
+# import Viz messaging interface
+import vis_message_interface
 
 
 
@@ -266,6 +268,11 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     dynProcess.addTask(scSim.CreateNewTask(dynTaskName, simTimeStep))
     fswTimeStep = macros.sec2nano(0.5)
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
+
+    # if this scenario is to interface with the BSK Viz, uncomment the following lines
+    # dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
+    # viz = vis_message_interface.VisMessageInterface()
+    # scSim.AddModelToTask("VisTask", viz)
 
 
     #
