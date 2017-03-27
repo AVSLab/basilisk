@@ -25,7 +25,7 @@
 #include "attGuidance/attTrackingError/attTrackingError.h"
 #include <string.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 
 

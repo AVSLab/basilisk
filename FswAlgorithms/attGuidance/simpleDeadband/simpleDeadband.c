@@ -26,7 +26,7 @@
 #include <string.h>
 #include <math.h>
 #include "fswUtilities/fswDefinitions.h"
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /* update this include to reflect the required module input messages */
 #include "attGuidance/attTrackingError/attTrackingError.h"

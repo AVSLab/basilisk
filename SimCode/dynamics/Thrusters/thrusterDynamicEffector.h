@@ -28,7 +28,7 @@
 #include "simMessages/thrOperationSimMsg.h"
 #include "simMessages/thrConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
-#include "../../SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "../../simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 #include <Eigen/Dense>
 #include <vector>
 

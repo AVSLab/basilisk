@@ -263,7 +263,7 @@ set_property(GLOBAL PROPERTY BUILT_LIB_LIST "SimUtilities;SimMessaging")
 set_property(GLOBAL PROPERTY ALG_LIB_LIST "AlgorithmMessaging")
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-#add_subdirectory("SimFswInterfaceMessages")
+#add_subdirectory("simFswInterfaceMessages")
 add_subdirectory("SimCode/utilities")
 #add_subdirectory("SimCode/simMessages")
 #add_subdirectory("FswAlgorithms/fswMessages")

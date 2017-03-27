@@ -24,7 +24,7 @@
 #include "_GeneralModuleFiles/sys_model.h"
 #include "utilities/gauss_markov.h"
 #include "simMessages/scPlusStatesSimMsg.h"
-#include "simMEssages/spicePlanetStateSimMsg.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
 #include "simFswInterfaceMessages/navAttIntMsg.h"
 #include "simFswInterfaceMessages/navTransIntMsg.h"
 

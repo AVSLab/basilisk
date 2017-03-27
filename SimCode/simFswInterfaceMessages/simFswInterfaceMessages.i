@@ -19,7 +19,7 @@
 %module simFswInterfaceMessages
 %{
 #include "cmdForceBodyIntMsg.h"
-#include "cmdForceinertialIntMsg.h"
+#include "cmdForceInertialIntMsg.h"
 #include "cmdTorqueBodyIntMsg.h"
 #include "cssArraySensorIntMsg.h"
 #include "ephemerisIntMsg.h"
@@ -30,7 +30,7 @@
 #include "rwArrayVoltageIntMsg.h"
 #include "rwSpeedIntMsg.h"
 #include "stSensorIntMsg.h"
-#include "thrArrayonTimeCmdIntMsg.h"
+#include "thrArrayOnTimeCmdIntMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -38,7 +38,7 @@
 
 %include "cmdForceBodyIntMsg.h"
 GEN_SIZEOF(CmdForceBodyIntMsg)
-%include "cmdForceinertialIntMsg.h"
+%include "cmdForceInertialIntMsg.h"
 GEN_SIZEOF(CmdForceInertialIntMsg)
 %include "cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg)
@@ -60,7 +60,7 @@ GEN_SIZEOF(RWArrayVoltageIntMsg)
 GEN_SIZEOF(RWSpeedIntMsg)
 %include "stSensorIntMsg.h"
 GEN_SIZEOF(STSensorIntMsg)
-%include "thrArrayonTimeCmdIntMsg.h"
+%include "thrArrayOnTimeCmdIntMsg.h"
 GEN_SIZEOF(THRArrayOnTimeCmdIntMsg)
 
 

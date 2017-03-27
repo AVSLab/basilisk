@@ -18,7 +18,7 @@
  */
 
 #include "navAggregate/navAggregate.h"
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 #include <string.h>
 
 /*! This method initializes the ConfigData for the nav aggregation algorithm.  

@@ -25,8 +25,8 @@
 
 /* Required module input messages */
 #include "SimCode/utilities/orbitalMotion.h"
-#include "SimFswInterfaceMessages/ephemerisIntMsg.h"
-#include "SimFswInterfaceMessages/navTransIntMsg.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/navTransIntMsg.h"
 #include "fswMessages/attRefFswMsg.h"
 
 /*! \addtogroup ADCSAlgGroup

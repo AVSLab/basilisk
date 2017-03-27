@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/imuSensorBodyFswMsg.h"
-#include "SimFswInterfaceMessages/imuSensorIntMsg.h"
+#include "simFswInterfaceMessages/imuSensorIntMsg.h"
 
 
 

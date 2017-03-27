@@ -31,8 +31,8 @@
 %ignore CrossInit_celestialTwoBodyPoint;
 %constant void Reset_celestialTwoBodyPoint(void*, uint64_t, uint64_t);
 %ignore Reset_celestialTwoBodyPoint;
-%include "../SimFswInterfaceMessages/ephemerisIntMsg.h"
-%include "../SimFswInterfaceMessages/navTransIntMsg.h"
+%include "../simFswInterfaceMessages/ephemerisIntMsg.h"
+%include "../simFswInterfaceMessages/navTransIntMsg.h"
 %include "../../fswMessages/attRefFswMsg.h"
 GEN_SIZEOF(celestialTwoBodyPointConfig);
 GEN_SIZEOF(EphemerisIntMsg);

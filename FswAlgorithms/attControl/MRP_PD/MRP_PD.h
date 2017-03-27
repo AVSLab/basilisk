@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup

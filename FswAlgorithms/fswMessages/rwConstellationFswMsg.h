@@ -20,7 +20,7 @@
 #ifndef _RW_CONSTELLATION_MESSAGE_H
 #define _RW_CONSTELLATION_MESSAGE_H
 
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 #include "rwConfigElementFswMsg.h"
 
 

@@ -23,7 +23,7 @@
 #include "messaging/static_messaging.h"
 #include "fswMessages/TDBVehicleClockCorrelationFswMsg.h"
 #include "transDetermination/oeStateEphem/oeStateEphem.h"
-#include "SimFswInterfaceMessages/ephemerisIntMsg.h"
+#include "simFswInterfaceMessages/ephemerisIntMsg.h"
 
 #define MAX_OE_RECORDS 10
 #define MAX_OE_COEFF 20

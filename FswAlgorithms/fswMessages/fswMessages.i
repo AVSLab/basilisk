@@ -46,7 +46,7 @@
 
 %include "swig_conly_data.i"
 
-%include "../SimFswInterfaceMessages/macroDefinitions.h"
+%include "../simFswInterfaceMessages/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
 GEN_SIZEOF(AccDataFswMsg)
 %include "../fswMessages/AccPktDataFswMsg.h"

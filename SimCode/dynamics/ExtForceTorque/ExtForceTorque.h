@@ -22,9 +22,9 @@
 
 #include "_GeneralModuleFiles/sys_model.h"
 #include "../_GeneralModuleFiles/dynamicEffector.h"
-#include "../../SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-#include "../../SimFswInterfaceMessages/cmdForceBodyIntMsg.h"
-#include "../../SimFswInterfaceMessages/cmdForceInertialIntMsg.h"
+#include "../../simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "../../simFswInterfaceMessages/cmdForceBodyIntMsg.h"
+#include "../../simFswInterfaceMessages/cmdForceInertialIntMsg.h"
 
 
 

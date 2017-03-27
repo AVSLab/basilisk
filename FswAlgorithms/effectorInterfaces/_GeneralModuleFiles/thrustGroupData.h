@@ -20,8 +20,8 @@
 #ifndef _THRUST_GROUP_DATA_
 #define _THRUST_GROUP_DATA_
 
-#include "SimFswInterfaceMessages/macroDefinitions.h"
-#include "SimFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/thrArrayOnTimeCmdIntMsg.h"
 
 /*! @brief Sub structure that contains all of the configuration data and output
     information for a single thruster group.  There can be several thruster 

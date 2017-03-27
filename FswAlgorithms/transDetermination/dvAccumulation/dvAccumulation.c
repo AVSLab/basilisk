@@ -18,7 +18,7 @@
  */
 
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/linearAlgebra.h"
 #include <string.h>
 #include <stdlib.h>

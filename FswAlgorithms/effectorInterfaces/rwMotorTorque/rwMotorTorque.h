@@ -26,7 +26,7 @@
 #include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
-#include "SimFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
+#include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 
 
 /*! \addtogroup ADCSAlgGroup
