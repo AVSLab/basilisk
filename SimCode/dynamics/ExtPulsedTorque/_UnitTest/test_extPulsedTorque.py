@@ -55,22 +55,22 @@ import ExtPulsedTorque
 # @pytest.mark.xfail(True)
 
 
-@pytest.mark.parametrize("case", [
-      (1)
-     ,(2)
+@pytest.mark.parametrize("offCount", [
+      (3)
+     ,(0)
 ])
 
 
 # provide a unique test method name, starting with test_
-def test_module(show_plots, case):
+def test_module(show_plots, offCount):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = run(
-            show_plots, case)
+            show_plots, offCount)
     assert testResults < 1, testMessage
 
 
 
-def run(show_plots, case):
+def run(show_plots, offCount):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
     unitTaskName = "unitTask"
@@ -94,10 +94,7 @@ def run(show_plots, case):
 
     testObject.pulsedTorqueExternalPntB_B = [[-1], [1],[ -1]]
     testObject.countOnPulse = 1
-    if case == 1:
-        testObject.countOff = 3
-    else:
-        testObject.countOff = 0
+    testObject.countOff = offCount
 
     scSim.AddModelToTask(unitTaskName, testObject)
 
@@ -105,7 +102,6 @@ def run(show_plots, case):
     #   initialize the simulation
     #
     scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(0.1))
 
 
     #
@@ -140,7 +136,7 @@ def run(show_plots, case):
     #
     #   set true position information
     #
-    if (case == 1):
+    if (offCount == 3):
         trueTorque_B = [
                   [0.0, 0.0, 0.0]
                 , [-1.0, 1.0, -1.0]
@@ -154,7 +150,7 @@ def run(show_plots, case):
                 , [0.0, 0.0, 0.0]
                 , [0.0, 0.0, 0.0]
         ]
-    if (case == 2):
+    if (offCount == 0):
         trueTorque_B = [
                   [0.0, 0.0, 0.0]
                 , [-1.0, 1.0, -1.0]
