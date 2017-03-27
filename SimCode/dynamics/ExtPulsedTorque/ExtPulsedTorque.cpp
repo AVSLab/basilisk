@@ -20,7 +20,7 @@
 #include "architecture/messaging/system_messaging.h"
 #include <iostream>
 #include "utilities/avsEigenSupport.h"
-#include "SimFswInterfaceMessages/macroDefinitions.h"
+#include "simFswInterfaceMessages/macroDefinitions.h"
 
 /*! This is the constructor.  It sets some default initializers that can be
  overriden by the user.*/
