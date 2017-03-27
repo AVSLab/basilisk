@@ -45,14 +45,12 @@ public:
     void computeBodyForceTorque(double integTime);
 
 private:
-    double t0;                                  //!< time the last pulse sequence started
     int    c;                                   //!< numer of time steps for pulse
-    double tPrior;                              //!< time value of the prior evaluation step 
 
 public:
     Eigen::Vector3d pulsedTorqueExternalPntB_B; //!< pulsed torque vector about point B, in B frame components 
-    double countOnPulse;                        //!< number of integration time steps to simulate a pulse
-    double countOff;                            //!< number of integration time steps to have no pulses
+    int countOnPulse;                           //!< number of integration time steps to simulate a pulse
+    int countOff;                               //!< number of integration time steps to have no pulses
 
 };
 

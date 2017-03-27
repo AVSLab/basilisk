@@ -26,9 +26,7 @@
  overriden by the user.*/
 ExtPulsedTorque::ExtPulsedTorque()
 {
-    this->t0 = -100000;
     this->c = 0;
-    this->tPrior = 0;
 
     CallCounts = 0;
     return;
