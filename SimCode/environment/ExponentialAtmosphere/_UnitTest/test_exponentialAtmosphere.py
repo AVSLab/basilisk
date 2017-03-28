@@ -154,15 +154,15 @@ def run(show_plots, orbitCase, planetCase):
 
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
-    newAtmo.AddSpacecraftToModel(scObject.scStateOutMsgName)
+    newAtmo.addSpacecraftToModel(scObject.scStateOutMsgName)
     #dragEffector.SetDensityMessage(newAtmo.atmoDensOutMsgNames[-1])
 
     if planetCase == "Earth":
         simIncludeGravity.addEarth()
-        newAtmo.SetPlanet("Earth")
+        newAtmo.setPlanet("earth")
     elif planetCase == "Mars":
         simIncludeGravity.addMars()
-        newAtmo.SetPlanet("Mars")
+        newAtmo.setPlanet("mars")
     simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
     mu = simIncludeGravity.gravBodyList[-1].mu
     # attach gravity model to spaceCraftPlus

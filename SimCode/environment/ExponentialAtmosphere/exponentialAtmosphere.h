@@ -44,16 +44,11 @@ typedef struct {
 
 
 
-//! @brief Thruster dynamics class used to provide thruster effects on body
-/*! This class is used to hold and operate a set of thrusters that are located
- on the spacecraft.  It contains all of the configuration data for the thruster
- set, reads an array of on-time requests (double precision in seconds).  It is
- intended to be attached to the dynamics plant in the system using the
- DynEffector interface and as such, does not directly write the current force
- or torque into the messaging system.  The nominal interface to dynamics are the
- dynEffectorForce and dynEffectorTorque arrays that are provided by the DynEffector base class.
- There is technically double inheritance here, but both the DynEffector and
- SysModel classes are abstract base classes so there is no risk of diamond.*/
+//! @brief Exponential atmosphere class used to calculate temperature / density above a body.
+/*! This class is used to hold relevant atmospheric properties and to compute the density for a given set of spacecraft 
+relative to a specified planet. Planetary parameters, including position and input message, are settable by the user. 
+Internal support is provided for Venus, Earth, and Mars. In a given simulation, each planet of interest should have only
+one exponentialAtmosphere model associated with it linked to the spacecraft in orbit about that body.*/
 class ExponentialAtmosphere: public SysModel {
 public:
     ExponentialAtmosphere();
@@ -66,12 +61,12 @@ public:
     bool ReadInputs();
     void updateLocalAtmo(double currentTime);
     void updateRelativePos(SpicePlanetStateSimMsg& planetState, SCPlusStatesSimMsg& scState);
-    void AddSpacecraftToModel(std::string tmpScMsgName);
-    void SetPlanet(std::string newPlanetName);
+    void addSpacecraftToModel(std::string tmpScMsgName);
+    void setPlanet(std::string newPlanetName);
 private:
-    void SetBaseDensity(double newBaseDens);
-    void SetScaleHeight(double newScaleHeight);
-    void SetPlanetRadius(double newPlanetRadius);
+    void setBaseDensity(double newBaseDens);
+    void setScaleHeight(double newScaleHeight);
+    void setPlanetRadius(double newPlanetRadius);
 
 
 
@@ -81,9 +76,9 @@ public:
     double localAtmoTemp; //!< [K] Local atmospheric temperature, SET TO BE CONSTANT
     double currentAlt; //!< [m] Current s/c altitude
     std::string planetName;
-    std::vector<std::string> atmoDensOutMsgNames; //!<
-    std::vector<std::string> scStateInMsgNames;
-    std::string planetPosInMsgName;
+    std::vector<std::string> atmoDensOutMsgNames; //!< Vector of strings containing atmospheric output message names
+    std::vector<std::string> scStateInMsgNames;	//!< Vector of the spacecraft position/velocity message names
+    std::string planetPosInMsgName;			//!< Message name for the planet's SPICE position message
     std::vector<uint64_t> atmoDensOutMsgIds;
     std::vector<uint64_t> scStateInMsgIds;
     int64_t planetPosInMsgId;
@@ -93,9 +88,9 @@ public:
     exponentialProperties atmosphereProps; //! < -- Struct containing exponential atmosphere properties
 
 private:
-    double tmpPosMag;
-    uint64_t OutputBufferCount;
-    std::vector<atmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for thruster data
+    double tmpPosMag;	//<! [m/s] Magnitude of the spacecraft's current position
+    uint64_t OutputBufferCount;	//!< number of output buffers for messaging system
+    std::vector<atmoPropsSimMsg> atmoOutBuffer; //!< -- Message buffer for density messages
 
 };
 

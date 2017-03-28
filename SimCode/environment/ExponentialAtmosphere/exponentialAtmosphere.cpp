@@ -60,7 +60,7 @@ ExponentialAtmosphere::~ExponentialAtmosphere()
 the use of a single exponentialAtmosphere instance for multiple spacecraft about a planet.
  @return void
  */
-void ExponentialAtmosphere::AddSpacecraftToModel(std::string tmpScMsgName){
+void ExponentialAtmosphere::addSpacecraftToModel(std::string tmpScMsgName){
   std::string tmpAtmoMsgName;
   this->scStateInMsgNames.push_back(tmpScMsgName);
   tmpAtmoMsgName = "atmo_dens"+ std::to_string(this->scStateInMsgNames.size()-1)+"_data";
@@ -89,23 +89,23 @@ void ExponentialAtmosphere::SelfInit()
 }
 
 /*! Private "setter" method for changing the base density.*/
-void ExponentialAtmosphere::SetBaseDensity(double BaseDens){
+void ExponentialAtmosphere::setBaseDensity(double BaseDens){
   this->atmosphereProps.baseDensity = BaseDens;
   return;
 }
 
 /*! Private "setter" method for changing the scale height.*/
-void ExponentialAtmosphere::SetScaleHeight(double ScaleHeight){
+void ExponentialAtmosphere::setScaleHeight(double ScaleHeight){
   this->atmosphereProps.scaleHeight = ScaleHeight;
 }
 
 /*! Private "setter" method for changing the planet radius.*/
-void ExponentialAtmosphere::SetPlanetRadius(double PlanetRadius){
+void ExponentialAtmosphere::setPlanetRadius(double PlanetRadius){
   this->atmosphereProps.planetRadius = PlanetRadius;
 }
 
 /*! Public "setter" method to change the planet referenced by the model.*/
-void ExponentialAtmosphere::SetPlanet(std::string PlanetName){
+void ExponentialAtmosphere::setPlanet(std::string PlanetName){
   this->planetName = PlanetName;
   double BaseDens = 0; // In kg/m^3
   double ScaleHeight = 0; // In meters
@@ -113,20 +113,20 @@ void ExponentialAtmosphere::SetPlanet(std::string PlanetName){
   if(PlanetName.compare("earth") == 0){
     BaseDens = 1.217;
     ScaleHeight = 8500.0;
-    SetBaseDensity(BaseDens);
-    SetScaleHeight(ScaleHeight);
+    setBaseDensity(BaseDens);
+    setScaleHeight(ScaleHeight);
 } else if(PlanetName.compare("mars")==0){
     BaseDens = 0.020;
     ScaleHeight = 11100.0;
-    SetPlanetRadius(3389.5 * 1000.0);
-    SetBaseDensity(BaseDens);
-    SetScaleHeight(ScaleHeight);
+    setPlanetRadius(3389.5 * 1000.0);
+    setBaseDensity(BaseDens);
+    setScaleHeight(ScaleHeight);
 } else if (PlanetName.compare("venus")==0){
-    SetPlanetRadius(6051.8 * 1000.0);
+    setPlanetRadius(6051.8 * 1000.0);
     BaseDens = 65.0;
     ScaleHeight = 15900.0;
-    SetBaseDensity(BaseDens);
-    SetScaleHeight(ScaleHeight);
+    setBaseDensity(BaseDens);
+    setScaleHeight(ScaleHeight);
   } else{
     std::cout<<"Error: Planet "<< PlanetName<<" not found. Either undefined or non-atmospheric. Please define other atmospheric parameters."<<std::endl;
   }
@@ -150,10 +150,7 @@ void ExponentialAtmosphere::CrossInit()
 }
 
 
-/*! This method is here to write the output message structure into the specified
- message.  It is currently blank but we will certainly have an output message
- soon.  If it is already here, bludgeon whoever added it and didn't fix the
- comment.sizeof(ThrusterOutputData)
+/*! This method is used to write the output densities whose names are established in AddSpacecraftToModel.
  @param CurrentClock The current time used for time-stamping the message
  @return void
  */
@@ -181,8 +178,7 @@ void ExponentialAtmosphere::WriteOutputMessages(uint64_t CurrentClock)
 
 
 /*! This method is used to read the incoming command message and set the
- associated command structure for operating the thrusters.
- @return void
+ associated spacecraft positions for computing the atmosphere.
  */
 bool ExponentialAtmosphere::ReadInputs()
 {
@@ -213,12 +209,8 @@ bool ExponentialAtmosphere::ReadInputs()
 
 }
 
-/*! This method is used to get the current force for a thruster firing.  It uses
- the configuration data associated with a given thruster and the current clock
- time to determine what state and force the thruster should be in.
- @return void
- @param CurrentThruster Pointer to the configuration data for a given thruster
- @param CurrentTime The current simulation clock time converted to a double
+/*! This method is used to update the internal density variables based on each spacecraft's position
+and the pre-set atmospheric density properties. 
  */
 void ExponentialAtmosphere::updateLocalAtmo(double currentTime)
 {
@@ -264,11 +256,7 @@ void ExponentialAtmosphere::updateRelativePos(SpicePlanetStateSimMsg& planetStat
     return;
 }
 
-/*! This method is the main cyclical call for the scheduled part of the thruster
- dynamics model.  It reads the current commands array and sets the thruster
- configuration data based on that incoming command set.  Note that the main
- dynamical method (updateDynamics()) is not called here and is intended to be
- called from the dynamics plant in the system
+/*! This method prompts the exponential atmosphere model to update the state message as part of the cyclic simulation run.
  @return void
  @param CurrentSimNanos The current simulation time in nanoseconds
  */

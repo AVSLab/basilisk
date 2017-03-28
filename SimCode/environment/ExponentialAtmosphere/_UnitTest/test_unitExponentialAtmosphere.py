@@ -95,7 +95,7 @@ def setPlanet(atmoModel):
     testMessages = []
     nameVec = ["venus","earth","mars","krypton"]
     for name in nameVec:
-        atmoModel.SetPlanet(name)
+        atmoModel.setPlanet(name)
         if atmoModel.planetName != name:
             testFailCount += 1
             testMessages.append(
@@ -118,8 +118,8 @@ def AddSpacecraftToModel(atmoModel):
     scObject2.hub.useRotation = False
 
     # add spacecraftPlus object to the simulation process
-    atmoModel.AddSpacecraftToModel(scObject.scStateOutMsgName)
-    atmoModel.AddSpacecraftToModel(scObject2.scStateOutMsgName)
+    atmoModel.addSpacecraftToModel(scObject.scStateOutMsgName)
+    atmoModel.addSpacecraftToModel(scObject2.scStateOutMsgName)
 
     if len(atmoModel.scStateInMsgNames) != 2:
         testFailCount += 1

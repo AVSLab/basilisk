@@ -70,7 +70,7 @@ void DragDynamicEffector::CrossInit()
 /*! This method is used to set the input density message produced by some atmospheric model.
 @return void
 */
-void DragDynamicEffector::SetDensityMessage(std::string newDensMessage)
+void DragDynamicEffector::setDensityMessage(std::string newDensMessage)
 {
 	this->atmoDensInMsgName = newDensMessage;
 	return;

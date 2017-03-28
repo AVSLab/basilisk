@@ -61,7 +61,7 @@ public:
     void cannonballDrag();
     void plateDrag();
     void updateDragDir();
-    void SetDensityMessage(std::string newDensMessage);
+    void setDensityMessage(std::string newDensMessage);
 
 public:
     DragBaseData coreParams;                               //!< -- Struct used to hold drag parameters

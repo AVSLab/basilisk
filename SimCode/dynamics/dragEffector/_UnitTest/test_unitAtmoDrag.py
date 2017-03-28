@@ -76,14 +76,14 @@ def test_unitAtmosphere():
     testResults = []
     testMessage = []
 
-    planetRes, planetMsg = testSetDensityMsg(newDrag)
+    planetRes, planetMsg = SetDensityMsgTest(newDrag)
     testMessage.append(planetMsg)
     testResults.append(planetRes)
 
     testSum = sum(testResults)
     assert testSum < 1, testMessage
 
-def testSetDensityMsg(dragEffector):
+def SetDensityMsgTest(dragEffector):
     testFailCount = 0
     testMessages = []
 
@@ -96,7 +96,7 @@ def testSetDensityMsg(dragEffector):
     scObject.addDynamicEffector(dragEffector)
 
     # add spacecraftPlus object to the simulation process
-    dragEffector.SetDensityMessage("testDensMsgName")
+    dragEffector.setDensityMessage("testDensMsgName")
 
     if dragEffector.atmoDensInMsgName != "testDensMsgName":
         testFailCount += 1
