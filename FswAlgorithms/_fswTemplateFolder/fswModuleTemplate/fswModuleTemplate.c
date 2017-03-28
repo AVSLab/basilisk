@@ -22,7 +22,7 @@
  */
 
 /* modify the path to reflect the new module names */
-#include "_fswTemplateFolder/fswModuleTemplate/fswModuleTemplate.h"
+#include "fswModuleTemplate.h"
 
 
 
