@@ -17,12 +17,12 @@
 
  */
 
-#ifndef _FSW_MODULE_TEMPLATE_H_
-#define _FSW_MODULE_TEMPLATE_H_
+#ifndef _FSW_MODULE_TEMPLATE_FSW_MSG_H_
+#define _FSW_MODULE_TEMPLATE_FSW_MSG_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
-#include "../_GeneralModuleFiles/fswModuleTemplateOut.h"
+#include "../_GeneralModuleFiles/fswModuleTemplateFswMsg.h"
 
 
 
@@ -38,13 +38,13 @@ typedef struct {
 
     /* declare module IO interfaces */
     char dataOutMsgName[MAX_STAT_MSG_LENGTH];       /*!< The name of the output message*/
-    int32_t dataOutMsgID;                            /*!< ID for the outgoing message */
+    int32_t dataOutMsgID;                           /*!< ID for the outgoing message */
     char dataInMsgName[MAX_STAT_MSG_LENGTH];        /*!< The name of the Input message*/
-    int32_t dataInMsgID;                             /*!< ID for the incoming message */
+    int32_t dataInMsgID;                            /*!< ID for the incoming message */
 
     double  inputVector[3];                         /*!< [units]  vector description */
 
-    FswModuleTemplateOut fswModuleOut;              /*!< -- copy of the output message */
+    FswModuleTemplateFswMsg fswModuleOut;           /*!< -- copy of the output message */
 
 }fswModuleTemplateConfig;
 

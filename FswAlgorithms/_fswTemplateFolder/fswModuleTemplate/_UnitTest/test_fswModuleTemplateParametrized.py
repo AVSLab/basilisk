@@ -103,7 +103,7 @@ def fswModuleTestFunction(show_plots, param1, param2):
 
     # Create input message and size it because the regular creator of that message
     # is not part of the test.
-    inputMessageData = fswModuleTemplate.FswModuleTemplateOut()  # Create a structure for the input message
+    inputMessageData = fswModuleTemplate.FswModuleTemplateFswMsg()  # Create a structure for the input message
     inputMessageData.outputVector = [param1, param2, 0.7]       # Set up a list as a 3-vector
     unitTestSupport.setMessage(unitTestSim.TotalSim,
                                unitProcessName,

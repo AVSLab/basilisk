@@ -30,7 +30,7 @@
  
     or 
  
-    simFswInterfaceMessages/
+    SimCode/simFswInterfaceMessages/
 
 */
 
@@ -39,7 +39,7 @@
     output message that is used by all sub-modules in the module folder. */
 typedef struct {
     double outputVector[3];     /*!< [units] sample output vector*/
-}FswModuleTemplateOut;
+}FswModuleTemplateFswMsg;
 
 /*! @} */
 
