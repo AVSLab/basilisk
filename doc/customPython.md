@@ -17,13 +17,10 @@ It its important to not that if you plan to run a simulation scenario from the c
 
 The following screen shots are taken on macOS using the CMake.app application:
 
-**Screenshot 1**
-![Screen Shot 1](Images/customPython1.png)
+\image html Images/doc/customPython1.png "Screenshot 1"
 
-**Screenshot 2**
-![Screen Shot 2](Images/customPython2.png)
+\image html Images/doc/customPython2.png "Screenshot 2" 
 
-**Screenshot 3**
-![Screen Shot 3](Images/customPython3.png)
+\image html Images/doc/customPython3.png "Screenshot 3" 
 
 
