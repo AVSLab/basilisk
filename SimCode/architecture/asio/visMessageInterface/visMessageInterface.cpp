@@ -330,7 +330,17 @@ void VisMessageInterface::setScSimCelestialObject()
 
 void VisMessageInterface::setScSimOrbitalElements()
 {
-    rv2elem(this->scSim->mu, this->scSim->r_N, this->scSim->v_N, &this->scSim->oe);
+    if (v3Norm(this->scSim->r_N) + v3Norm(this->scSim->v_N) > 0.1) {
+        rv2elem(this->scSim->mu, this->scSim->r_N, this->scSim->v_N, &this->scSim->oe);
+    } else {
+        this->scSim->oe.a = 1.0;
+        this->scSim->oe.alpha = 1.0;
+        this->scSim->oe.e = 0.0;
+        this->scSim->oe.i = 0.0;
+        this->scSim->oe.Omega = 0.0;
+        this->scSim->oe.omega = 0.0;
+        this->scSim->oe.f = 0.0;
+    }
 }
 
 
