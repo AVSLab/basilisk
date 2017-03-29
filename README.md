@@ -21,7 +21,7 @@ Of the following requirements Python is the only one for which prebuilt librarie
 
 ### Basilisk Development guidelines ###
 
-* [Setup a Linux Development Environment](@ref codingGuidelines)
+* [Coding Guidelines](@ref codingGuidelines)
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 
