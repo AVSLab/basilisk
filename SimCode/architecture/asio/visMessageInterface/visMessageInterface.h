@@ -91,6 +91,7 @@ private:
     void setScSimCelestialObject();
     void setScSimOrbitalElements();
     void setScSimJulianDate(uint64_t currentSimNanos);
+    long generateTimeStamp();
     
 };
 #endif /* visMessageInterface_h */

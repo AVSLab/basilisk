@@ -554,7 +554,7 @@ class SpacecraftSim
 {
 public:
     double               time;
-    unsigned int         numRun;                         /*!< number of runs to perform */
+    long                 timeStamp;                      /*!< number of runs to perform */
     unsigned int         rerunCaseNum;                   /*!< if non-zero will attempt to rerun requested mcrun from previous MC */
     double               maxSimTime;                     /*!< sec */
     
@@ -685,7 +685,7 @@ private:
     void serialize(Archive &a, const unsigned int version) {
         a &BOOST_SERIALIZATION_NVP(time);
         a &BOOST_SERIALIZATION_NVP(spiceTime);
-        a &BOOST_SERIALIZATION_NVP(numRun);
+        a &BOOST_SERIALIZATION_NVP(timeStamp);
         a &BOOST_SERIALIZATION_NVP(rerunCaseNum);
         a &BOOST_SERIALIZATION_NVP(maxSimTime);
         a &BOOST_SERIALIZATION_NVP(celestialObject);

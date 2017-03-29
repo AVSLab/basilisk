@@ -18,6 +18,7 @@
  */
 
 #include <string>
+#include <chrono>
 #include <Eigen/Dense>
 #include "visMessageInterface.h"
 #include "../External/cspice/include/SpiceUsr.h"
@@ -284,6 +285,16 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     this->setScSimCelestialObject();
     this->setScSimOrbitalElements();
     this->setScSimJulianDate(currentSimNanos);
+    this->scSim->timeStamp = this->generateTimeStamp();
+}
+
+long VisMessageInterface::generateTimeStamp()
+{
+    auto now = std::chrono::system_clock::now();
+    auto nowInMilliSec = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+    auto value = nowInMilliSec.time_since_epoch();
+    
+    return value.count();
 }
 
 void VisMessageInterface::setScSimJulianDate(uint64_t currentSimNanos)

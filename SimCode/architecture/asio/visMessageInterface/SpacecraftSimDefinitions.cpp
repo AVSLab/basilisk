@@ -195,7 +195,7 @@ Thruster::~Thruster()
 SpacecraftSim::SpacecraftSim(void)
 {
     this->time = 0.0;
-    this->numRun = 1;
+    this->timeStamp = 0.0;
     this->rerunCaseNum = 0;
     this->maxSimTime = 100.0 * 60.0;
     
