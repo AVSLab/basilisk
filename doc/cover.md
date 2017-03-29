@@ -7,7 +7,7 @@
 
 - - - - - - 
 
-Architecture
+Architecture {#cover}
 ------------
 The Basilisk astrodynamics software architecture is being designed to be 
 capable of both faster-than realtime simulations, including repeatable 

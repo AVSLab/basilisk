@@ -1,4 +1,4 @@
-# Using a Custom Python Installation
+# Using a Custom Python Installation {#customPython}
 
 The following instructions are guidelines on how to run Basilisk with a computer that is not using a system installed version of Python. First some general notes:
 
