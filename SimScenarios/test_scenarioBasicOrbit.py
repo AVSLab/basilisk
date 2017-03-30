@@ -468,7 +468,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
         # draw the planet
         fig = plt.gcf()
         ax = fig.gca()
-        if planetCase == 1:
+        if planetCase == 'Mars':
             planetColor = '#884400'
         else:
             planetColor= '#008800'
