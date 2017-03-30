@@ -86,7 +86,7 @@ import vis_message_interface
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("scCase", [
       ('Hubble')
-    , ('NewHorizon')
+    , ('NewHorizons')
 ])
 
 # provide a unique test method name, starting with test_
@@ -271,14 +271,14 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          'NewHorizon'
+#          'NewHorizons'
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
 # large distance from the sun.  The
 # resulting position coordinates and trajectorie differences are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizon.svg "Position history")
-# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizon.svg "Trajectory Difference")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizons.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
 #
 ## @}
 def run(doUnitTests, show_plots, scCase):
@@ -598,6 +598,6 @@ def run(doUnitTests, show_plots, scCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         'Hubble'
+         'Hubble'     # 'Hubble' or 'NewHorizons'
        )
 
