@@ -330,7 +330,8 @@ void VisMessageInterface::setScSimCelestialObject()
     if (strcmp(centralBodyInMsg.PlanetName, "sun") == 0) {
         this->scSim->celestialObject = CELESTIAL_SUN;
         this->scSim->mu = MU_SUN;
-    } else if (strcmp(centralBodyInMsg.PlanetName, "mars") == 0) {
+    } else if ( (strcmp(centralBodyInMsg.PlanetName, "mars") == 0) ||
+               (strcmp(centralBodyInMsg.PlanetName, "mars barycenter") == 0)) {
         this->scSim->celestialObject = CELESTIAL_MARS;
         this->scSim->mu = MU_MARS;
     } else {
