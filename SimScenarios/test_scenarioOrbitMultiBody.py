@@ -364,14 +364,19 @@ def run(doUnitTests, show_plots, scCase):
     if scCase is 'NewHorizons':
         scEphemerisName = 'nh_pred_od077.bsp'
         scSpiceName = 'NEW HORIZONS'
+        vizPlanetName = "sun"
     else:   # default case
         scEphemerisName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
         mu = muEarth
+        vizPlanetName = "earth"
     pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
 
     # add spice interface object to task list
     scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
+
+    # write Viz display body message
+    simIncludeGravity.writeVizCentralPlanetMessage(scSim.TotalSim, simProcessName, vizPlanetName)
 
 
     #
