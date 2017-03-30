@@ -104,7 +104,7 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
     assert testResults < 1, testMessage
 
 
-## \defgroup Tutorials_2_2
+## \defgroup Tutorials_2_0_2
 ##   @{
 ## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
 # Earth that is initially tumbling, but uses 2 separate threads.

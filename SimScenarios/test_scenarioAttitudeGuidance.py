@@ -102,7 +102,7 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
     assert testResults < 1, testMessage
 
 
-## \defgroup Tutorials_2_3
+## \defgroup Tutorials_2_1
 ##   @{
 ## How to use guidance modules to align the spacecraft frame to the orbit or Hill frame.
 #

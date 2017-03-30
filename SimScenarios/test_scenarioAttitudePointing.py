@@ -96,7 +96,7 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 
 
 
-## \defgroup Tutorials_2_1
+## \defgroup Tutorials_2_0_1
 ##   @{
 ## Demonstrates how to stabilize the tumble without translational motion.
 #
