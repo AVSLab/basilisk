@@ -244,6 +244,7 @@ def unloadDefaultSpiceLibraries():
 
 def addDefaultEphemerisMsg(obj,processName):
     global gravBodyList
+    global spicePlanetNames
 
     if len(gravBodyList)>1:
         print "WARNING:  addDefaultEphemerisMsg() should not be used if more than one gravity body is setup."
@@ -253,7 +254,20 @@ def addDefaultEphemerisMsg(obj,processName):
     ephemData = defaultEphemData(msgName)
     messageSize = ephemData.getStructSize()
     obj.CreateNewMessage(processName,
-                         msgName, messageSize, 2)
+                         msgName, messageSize, 2, "SpicePlanetStateSimMsg")
     obj.WriteMessageData(msgName, messageSize, 0,
                                     ephemData)
+
+    # write Viz display body message
+    writeVizCentralPlanetMessage(obj,processName,spicePlanetNames[0])
+
     return
+
+def writeVizCentralPlanetMessage(obj,processName,planetName):
+    ephemData = defaultEphemData(planetName)
+    msgName = "central_body_spice"
+    messageSize = ephemData.getStructSize()
+    obj.CreateNewMessage(processName,
+                         msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+    obj.WriteMessageData(msgName, messageSize, 0,
+                         ephemData)

@@ -86,7 +86,7 @@ import vis_message_interface
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("scCase", [
       ('Hubble')
-    , ('NewHorizon')
+    , ('NewHorizons')
 ])
 
 # provide a unique test method name, starting with test_
@@ -200,9 +200,12 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #       if scCase is 'NewHorizons':
 #           scEphemerisName = 'nh_pred_od077.bsp'
 #           scSpiceName = 'NEW HORIZONS'
+#           vizPlanetName = "sun"
 #       else:   # default case
 #           scEphemerisName = 'hst_edited.bsp'
 #           scSpiceName = 'HUBBLE SPACE TELESCOPE'
+#           mu = muEarth
+#           vizPlanetName = "earth"
 #       pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
 #~~~~~~~~~~~~~~~~~
 # Finally, the SPICE object is added to the simulation task list, but with a higher priority
@@ -210,6 +213,13 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #~~~~~~~~~~~~~~~~~{.py}
 #       scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
 #~~~~~~~~~~~~~~~~~
+# If this simulation is to interface with the Qt Visualization, then the central planet
+# message must be specified through:
+#~~~~~~~~~~~~~~~~~{.py}
+#       # write Viz display body message
+#       simIncludeGravity.writeVizCentralPlanetMessage(scSim.TotalSim, simProcessName, vizPlanetName)
+#~~~~~~~~~~~~~~~~~
+#
 #
 # The initial spacecraft position and velocity vector is obtained via the SPICE function call:
 #~~~~~~~~~~~~~~~~~{.py}
@@ -271,14 +281,14 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # if __name__ == "__main__":
 #     run( False,       # do unit tests
 #          True,        # show_plots
-#          'NewHorizon'
+#          'NewHorizons'
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a simulation of the New Horizons spacecraft.  Here the craft is already a very
 # large distance from the sun.  The
 # resulting position coordinates and trajectorie differences are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizon.svg "Position history")
-# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizon.svg "Trajectory Difference")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitMultiBody1NewHorizons.svg "Position history")
+# ![Trajectory Difference](Images/Scenarios/scenarioOrbitMultiBody3NewHorizons.svg "Trajectory Difference")
 #
 ## @}
 def run(doUnitTests, show_plots, scCase):
@@ -364,14 +374,19 @@ def run(doUnitTests, show_plots, scCase):
     if scCase is 'NewHorizons':
         scEphemerisName = 'nh_pred_od077.bsp'
         scSpiceName = 'NEW HORIZONS'
+        vizPlanetName = "sun"
     else:   # default case
         scEphemerisName = 'hst_edited.bsp'
         scSpiceName = 'HUBBLE SPACE TELESCOPE'
         mu = muEarth
+        vizPlanetName = "earth"
     pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
 
     # add spice interface object to task list
     scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
+
+    # write Viz display body message
+    simIncludeGravity.writeVizCentralPlanetMessage(scSim.TotalSim, simProcessName, vizPlanetName)
 
 
     #
@@ -598,6 +613,6 @@ def run(doUnitTests, show_plots, scCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         'Hubble'
+         'Hubble'     # 'Hubble' or 'NewHorizons'
        )
 
