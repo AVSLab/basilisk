@@ -181,7 +181,9 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 #~~~~~~~~~~~~~~~~~
 # Note that this latter default planet ephemeris call should only be used if a single gravitational body
-# is being simulated.  If multiple bodies are simulated, then their positions would need to be
+# is being simulated.  It both writes the required planet simulation ephemeris message, as well as a
+# Visualization message specifying about which celestial object the motion should be shown.
+#  If multiple bodies are simulated, then their positions would need to be
 # dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
 # done via a SPICE object.
 #
