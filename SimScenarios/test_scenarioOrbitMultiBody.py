@@ -127,6 +127,11 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
 # orbit simulation.
 #
+# The simulation layout is shown in the following illustration.  The SPICE interface object keeps track of
+# the selection celestial objects, and ensures the gravity body object has the correct locations at
+# each time step.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioOrbitMultiBody.svg "Illustration")
+#
 # The spacecraftPlus() module is setup as before, except that we need to specify a priority to this task.
 #~~~~~~~~~~~~~~~~~{.py}
 #     # initialize spacecraftPlus object and set properties

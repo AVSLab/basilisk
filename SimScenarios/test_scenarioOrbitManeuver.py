@@ -109,7 +109,12 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #
 # To run the default scenario 1., call the python script through
 #
-#       python test_scenarioBasicOrbit.py
+#       python test_scenarioOrbitManeuver.py
+#
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the
+# states are changed and the simulation is resumed.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioOrbitManeuver.svg "Illustration")
 #
 # When the simulation completes 2 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot either shows a plot

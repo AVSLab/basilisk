@@ -135,6 +135,12 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 # When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
 #
+# The simulation layout is shown in the following illustration.  Both a simulation process is created
+# which contains the spacecraft simulation modules.  A separate FSW algorithm process is run
+# at a different updated rate to evaluate the Flight Software (FSW) algorithm
+# modules.  Interface messages are now shared across SIM and FSW message passing interfaces (MPIs).
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback2T.svg "Illustration")
+#
 # A key difference to the 1-process setup is that after the processes are created, the
 # dynamics and FSW messages system must be linked to connect messages with the same name.
 # Note that the interface references are added to the process that they are SUPPLYING data 
