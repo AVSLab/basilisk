@@ -22,7 +22,6 @@
 #
 
 import sys, os, inspect
-import math
 import numpy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -31,9 +30,7 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
-import thrusterDynamicEffector
-import fuelTank
+import simMessages
 
 class thrusterOptions:
     useMinPulseTime = True
@@ -62,7 +59,7 @@ def create(
     global options
 
     # create the blank thruster object
-    TH = thrusterDynamicEffector.THRConfigSimMsg()
+    TH = simMessages.THRConfigSimMsg()
 
     # populate the thruster object with the type specific parameters
     try:
@@ -102,7 +99,7 @@ def addToSpacecraft(modelTag, thDynamicEffector, scPlus, fuelTankEffector):
 
     thDynamicEffector.ModelTag = modelTag
 
-    thDynamicEffector.thrusterData = thrusterDynamicEffector.ThrusterConfigVector(thrusterList)
+    thDynamicEffector.thrusterData = simMessages.ThrusterConfigVector(thrusterList)
 
     fuelTankEffector.addThrusterSet(thDynamicEffector)
 

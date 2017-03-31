@@ -29,8 +29,7 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import rwConfigData
-import vehicleConfigData
+import fswMessages
 import numpy
 
 
@@ -50,7 +49,7 @@ def create(
     global rwList
 
     # create the blank RW object
-    RW = vehicleConfigData.RWConfigElementFswMsg()
+    RW = fswMessages.RWConfigElementFswMsg()
 
     norm = numpy.linalg.norm(gsHat_S)
     if norm > 1e-10:
@@ -84,7 +83,7 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
         JsList.extend([rw.Js])
         uMaxList.extend([rw.uMax])
 
-    rwConfigParams = rwConfigData.RWArrayConfigFswMsg()
+    rwConfigParams = fswMessages.RWArrayConfigFswMsg()
     rwConfigParams.GsMatrix_B = GsMatrix_B
     rwConfigParams.JsList = JsList
     rwConfigParams.uMax = uMaxList

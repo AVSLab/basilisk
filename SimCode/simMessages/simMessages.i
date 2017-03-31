@@ -39,6 +39,11 @@
 %include "swig_conly_data.i"
 %include "swig_common_model.i"
 
+namespace std {
+    %template(ThrusterTimeVector) vector<THRTimePairSimMsg>;
+    %template(ThrusterConfigVector) vector<THRConfigSimMsg>;
+}
+
 %include "boreAngleSimMsg.h"
 GEN_SIZEOF(AngOffValuesSimMsg)
 %include "cssRawDataSimMsg.h"

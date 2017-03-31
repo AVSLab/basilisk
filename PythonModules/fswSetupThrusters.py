@@ -31,9 +31,7 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
-import vehicleConfigData
-
+import fswMessages
 
 
 thrList = []
@@ -52,7 +50,7 @@ def create(
     global thrList
 
     # create the blank Thruster object
-    thrPointer = vehicleConfigData.THRConfigFswMsg()
+    thrPointer = fswMessages.THRConfigFswMsg()
 
     thrPointer.rThrust_S = rThrust_S
     thrPointer.tHatThrust_S = tHatThrust_S
@@ -71,11 +69,11 @@ def create(
 def writeConfigMessage(thrConfigMsgName, simObject, processName):
     global thrList
 
-    thrClass = vehicleConfigData.THRArrayConfigFswMsg()
+    thrClass = fswMessages.THRArrayConfigFswMsg()
 
     i = 0
     for item in thrList:
-        vehicleConfigData.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
+        fswMessages.ThrustConfigArray_setitem(thrClass.thrusters, i, item)
         i += 1
 
     messageSize = thrClass.getStructSize()

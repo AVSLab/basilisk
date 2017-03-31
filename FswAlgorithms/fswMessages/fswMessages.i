@@ -46,6 +46,9 @@
 
 %include "swig_conly_data.i"
 
+%array_functions(RWConfigElementFswMsg, RWConfigArray);
+%array_functions(THRConfigFswMsg, ThrustConfigArray);
+
 %include "../simFswInterfaceMessages/macroDefinitions.h"
 %include "../fswMessages/AccDataFswMsg.h"
 GEN_SIZEOF(AccDataFswMsg)

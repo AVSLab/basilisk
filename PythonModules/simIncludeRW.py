@@ -22,7 +22,6 @@
 #
 
 import sys, os, inspect
-import math
 import numpy
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -31,9 +30,7 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
 import macros
-import reactionWheelStateEffector
 import unitTestSupport
 import simMessages
 
