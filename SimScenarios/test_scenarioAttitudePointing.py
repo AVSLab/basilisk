@@ -123,6 +123,11 @@ def test_bskAttitudePointing(show_plots, useLargeTumble):
 # the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+# modules.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudePointing.svg "Illustration")
+#
 # Besides removing any orbit related code, the only difference is to turn of
 # the spacecraftPlus() translational simulation mode.  This is done with:
 # ~~~~~~~~~~~~~~~~{.py}

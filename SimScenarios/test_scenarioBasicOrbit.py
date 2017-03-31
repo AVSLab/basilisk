@@ -123,6 +123,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~
 # must be uncommented and edited for the particular user's Basilisk directory path.
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
+# simulate the gravitational accelerations.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioBasicOrbit.svg "Illustration")
+#
 # If you wish to transmit the simulation data to the Qt Vizualization, then uncomment the following
 # lines from the python scenario script.  If the Viz is running, and searching for a connection on
 # 127.0.0.1 (using Open Connection command from the File menu), the simualtion is visualized in

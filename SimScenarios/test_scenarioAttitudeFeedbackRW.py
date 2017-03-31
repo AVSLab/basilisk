@@ -132,6 +132,11 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 #       python test_scenarioAttitudeFeedbackRW.py
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+# modules.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRW.svg "Illustration")
+#
 # When the simulation completes several plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the RW motor torque components, as well as the RW wheel speeds.
 #

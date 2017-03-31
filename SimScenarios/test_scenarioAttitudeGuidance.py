@@ -122,6 +122,11 @@ def test_bskAttitudeGuidance(show_plots, useAltBodyFrame):
 #
 #       python test_scenarioAttitudeGuidance.py
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+# modules.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeGuidance.svg "Illustration")
+#
 # When the simulation completes 4 plots are shown for the MRP attitude history, the rate
 # tracking errors, the control torque vector, as well as the projection of the body-frame B
 # axes \f$\hat b_1\f$, b2 and b3 onto the respect Hill or Orbit frame axes \f$\hat\imath_r\f$,

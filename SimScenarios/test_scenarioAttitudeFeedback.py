@@ -126,6 +126,12 @@ def test_bskAttitudeFeedback(show_plots, useUnmodeledTorque, useIntGain, useKnow
 # When the simulation completes 3 plots are shown for the MRP attitude history, the rate
 # tracking errors, as well as the control torque vector.
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains both the spacecraft simulation modules, as well as the Flight Software (FSW) algorithm
+# modules.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedback.svg "Illustration")
+#
+#
 # The dynamics simulation is setup using a SpacecraftPlus() module to which a gravity
 # effector is attached.  Note that both the rotational and translational degrees of
 # freedom of the spacecraft hub are turned on here to get a 6-DOF simulation.  For more

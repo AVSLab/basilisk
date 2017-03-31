@@ -104,6 +104,12 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # When the simulation completes a plot is shown for illustrating both the true and the numerically
 # evaluated orbit.
 #
+# The simulation layout is shown in the following illustration.  A single simulation process is created
+# which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
+# simulate the gravitational accelerations.  The spacecraft object provides the states that the integration
+# module needs to perform the time integration.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioIntegrators.svg "Illustration")
+#
 # If spacecraftPlus(), or any other dynamics module, is created without specifying a particular
 # integration type, the fixed time step 4th order Runge-Kutta method is used by default.  To invoke a
 # different integration scheme, the following code is used before the dynamics module is added to the
