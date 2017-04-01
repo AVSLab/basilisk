@@ -54,13 +54,11 @@ public:
 	bool displayTime;            //!< [-] Flag indicating that we want to display the time elapsed in cmd line
 private:
 	std::chrono::high_resolution_clock::time_point startTime; //! (-) first time pass through data
-    uint64_t startSimTime;                  //!< ns Previous simulation time observed
-    int64_t clockOutMsgId;                  //!< (-) Output ID for clock module
     int64_t realTimeFactorInMsgId;          //!< (-) Input Msg ID for real time factor
     std::string realTimeFactorInMsgName;    //!< (-) Input Msg name for real time factor
     RealTimeFactorSimMsg realTimeFactor;    //!< (-) Factor by which to multiple the sim time rate.
     std::chrono::high_resolution_clock::time_point prevFrameStartTime;
-    uint64_t prevFrameSimTime;
+    uint64_t prevFrameSimTime; //!< ns Previous simulation time frame
 };
 
 /*! @} */

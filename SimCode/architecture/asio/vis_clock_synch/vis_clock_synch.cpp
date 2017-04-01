@@ -19,7 +19,7 @@
 #include <iostream>
 #include <cstring>
 #include <thread>
-#include "vis_clock_synch/vis_clock_synch.h"
+#include "architecture/asio/vis_clock_synch/vis_clock_synch.h"
 #include "architecture/messaging/system_messaging.h"
 #include "simMessages/realTimeFactorSimMsg.h"
 
