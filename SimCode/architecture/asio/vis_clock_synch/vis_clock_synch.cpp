@@ -74,8 +74,7 @@ void VisClockSynch::CrossInit()
 void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
 {
     this->readInputMessages();
-    std::cout << this->realTimeFactor.speedFactor << std::endl;
-    std::cout << "accel " << this->accelFactor << std::endl;
+    
     if (this->realTimeFactor.speedFactor >= 1.0) {
         this->accelFactor = this->realTimeFactor.speedFactor;
     }
@@ -110,13 +109,10 @@ void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
             -# Lather/rinse/repeat
     */
     sleepAmount = 0;
-    std::cout << "elapsedWallFrameTime " << std::chrono::duration_cast<std::chrono::microseconds>(elapsedWallFrameTime).count() << std::endl;
-    std::cout << "elapsedSimFrameTime/accelFactor " << (elapsedSimFrameTime/this->accelFactor)/1E3 << std::endl;
 	while (((int64_t) elapsedWallFrameTime.count() - (int64_t) (elapsedSimFrameTime/this->accelFactor))
         < this->accuracyNanos)
 	{
         int64_t tmp = ((int64_t) elapsedWallFrameTime.count() - (int64_t) (elapsedSimFrameTime/this->accelFactor))/1E3;
-        std::cout << "in wait loop " << tmp << std::endl;
 		currentTime = std::chrono::high_resolution_clock::now();
 		elapsedWallFrameTime = std::chrono::duration_cast<std::chrono::nanoseconds>
 			(currentTime - this->prevFrameStartTime);
