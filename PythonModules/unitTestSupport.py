@@ -354,7 +354,7 @@ def pullVectorSetFromData(inpMat):
 
 def enableVisualization(scSim, dynProcess):
     VizTaskName = "VizTask"
-    dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.1)))
+    dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.5)))
     viz = vis_message_interface.VisMessageInterface()
     scSim.AddModelToTask(VizTaskName, viz)
     clockSynch = vis_clock_synch.VisClockSynch()
