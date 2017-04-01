@@ -32,6 +32,7 @@
 #include "simMessages/rwConfigSimMsg.h"
 #include "simMessages/thrOutputSimMsg.h"
 #include "simMessages/spiceTimeSimMsg.h"
+#include "simMessages/realTimeFactorSimMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "SpacecraftSimDefinitions.h"
 
@@ -71,6 +72,9 @@ private:
     int64_t spiceTimeDataInMsgId;
     SpiceTimeSimMsg spiceTimeDataInMsg;
     std::unordered_map<std::string, SpicePlanetStateSimMsg> spicePlanetStates;
+    int64_t realTimeOutMsgId;
+    std::string realTimeOutMsgName;
+    RealTimeFactorSimMsg realTimeFactor;
     
 public:
     VisMessageInterface();
@@ -92,6 +96,6 @@ private:
     void setScSimOrbitalElements();
     void setScSimJulianDate(uint64_t currentSimNanos);
     long generateTimeStamp();
-    
+    void writeOutputMessages(uint64_t currentSimNanos);
 };
 #endif /* visMessageInterface_h */

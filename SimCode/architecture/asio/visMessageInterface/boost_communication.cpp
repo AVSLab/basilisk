@@ -65,27 +65,25 @@ bool OpenGLIO::send()
     return true;
 }
 
-bool OpenGLIO::receive(SpacecraftSim *scSim, std::string tmpDataVariable1)
+bool OpenGLIO::receive(SpacecraftSim *scSim)
 {
-//    SpacecraftSimVisualization visualizationData = m_server.getInboundData();
-//    SpacecraftSimVisualization temp;
-//    if(visualizationData != temp) {
-//        if(visualizationData.adcsState != temp.adcsState) {
-//            sc->stateRequest = visualizationData.adcsState;
-//        }
-//        if(visualizationData.perturbRates) {
-//            for(size_t i = 0; i < 3; i++) {
-//                scSim->omega[i] = scSim->perturb.initialOmegaDisp * (2.0 * prn_uniform() - 1.0);
-//            }
-//        }
-//        if(visualizationData.controlState != temp.controlState) {
-//            scSim->ctrlState = visualizationData.controlState;
-//        }
-//        if(visualizationData.realTimeSpeedUpFactor != temp.realTimeSpeedUpFactor)
-//        {
-//            scSim->realTimeSpeedUpFactor = visualizationData.realTimeSpeedUpFactor;
+    SpacecraftSim visualizationData = this->server.getInboundData();
+    
+//    if(visualizationData.adcsState != temp.adcsState) {
+//        sc->stateRequest = visualizationData.adcsState;
+//    }
+//    if(visualizationData.perturbRates) {
+//        for(size_t i = 0; i < 3; i++) {
+//            scSim->omega[i] = scSim->perturb.initialOmegaDisp * (2.0 * prn_uniform() - 1.0);
 //        }
 //    }
+//    if(visualizationData.controlState != temp.controlState) {
+//        scSim->ctrlState = visualizationData.controlState;
+//    }
+    if(visualizationData.realTimeSpeedUpFactor != scSim->realTimeSpeedUpFactor)
+    {
+        scSim->realTimeSpeedUpFactor = visualizationData.realTimeSpeedUpFactor;
+    }
     return true;
 }
 

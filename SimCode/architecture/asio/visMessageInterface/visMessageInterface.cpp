@@ -39,6 +39,9 @@ VisMessageInterface::VisMessageInterface()
     this->spiceTimeDataInMsg = {0.0, 0.0, 0.0, 0, 0};
     this->centralBodyInMsgId = -1;
     this->centralBodyInMsg = SpicePlanetStateSimMsg();
+    this->realTimeOutMsgId = -1;
+    this->realTimeOutMsgName = "real_time_factor";
+    this->realTimeFactor.speedFactor = 1.0;
 }
 
 VisMessageInterface::~VisMessageInterface()
@@ -51,6 +54,7 @@ void VisMessageInterface::SelfInit()
 {
     this->openglIo = new OpenGLIO();
     this->openglIo->initialize();
+    this->realTimeOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->realTimeOutMsgName, sizeof(RealTimeFactorSimMsg), 2, "RealTimeFactorSimMsg", this->moduleID);
 }
 
 void VisMessageInterface::CrossInit()
@@ -122,14 +126,19 @@ void VisMessageInterface::subscribeToMessages()
 
 void VisMessageInterface::UpdateState(uint64_t CurrentSimNanos)
 {
-    SpacecraftSim tmpSim;
-    std::string tmpString;
-    this->openglIo->receive(&tmpSim, tmpString);
-    
     this->readInputMessages();
     this->mapMessagesToScSim(CurrentSimNanos);
     this->openglIo->setOutputSpacecraft(*this->scSim);
     this->openglIo->send();
+    
+    this->openglIo->receive(this->scSim);
+    this->realTimeFactor.speedFactor = this->scSim->realTimeSpeedUpFactor;
+    this->writeOutputMessages(CurrentSimNanos);
+}
+
+void VisMessageInterface::writeOutputMessages(uint64_t currentSimNanos)
+{
+    SystemMessaging::GetInstance()->WriteMessage(this->realTimeOutMsgId, currentSimNanos, sizeof(RealTimeFactorSimMsg), reinterpret_cast<uint8_t*>(&this->realTimeFactor), this->moduleID);
 }
 
 //int OpenGLIO::loadSpiceKernel(char *kernelName, const char *dataPath)
