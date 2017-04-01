@@ -205,7 +205,7 @@ SpacecraftSim::SpacecraftSim(void)
     this->polarRate = OMEGA_EARTH;
     
     this->useRealTimeSync = 0;
-    this->realTimeSpeedUpFactor = -1.0;
+    this->realTimeSpeedUpFactor = 1.0;
     this->useOpenGLVisualization = 0;
     this->openglLastSync = 0.0;
     

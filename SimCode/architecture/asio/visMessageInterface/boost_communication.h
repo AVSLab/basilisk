@@ -54,13 +54,13 @@ public:
     bool initialize();
     bool shutdown();
     bool send();
-    bool receive(SpacecraftSim *scSim, std::string tmpDataVariable1);
+    bool receive(SpacecraftSim *scSim);
     void setIpAddress(std::string ipAddress);
     void setOutputSpacecraft(SpacecraftSim scSim);
     
 private:
     SpacecraftSim scSim;
-    TcpSerializeServer<SpacecraftSim, int> server;
+    TcpSerializeServer<SpacecraftSim, SpacecraftSim> server;
     std::string ipAddress;
 };
 
