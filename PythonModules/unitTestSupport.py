@@ -44,6 +44,10 @@ import matplotlib.cm as cmx
 
 import macros
 
+# import Viz messaging related modules
+import vis_message_interface
+import vis_clock_synch
+
 import tabulate as T
 del(T.LATEX_ESCAPE_RULES[u'$'])
 del(T.LATEX_ESCAPE_RULES[u'\\'])
@@ -347,4 +351,13 @@ def EigenVector3d2np(eig):
 def pullVectorSetFromData(inpMat):
     outMat = np.array(inpMat).transpose()
     return outMat[1:].transpose()
+
+def enableVisualization(scSim, dynProcess):
+    VizTaskName = "VizTask"
+    dynProcess.addTask(scSim.CreateNewTask(VizTaskName, macros.sec2nano(0.1)))
+    viz = vis_message_interface.VisMessageInterface()
+    scSim.AddModelToTask(VizTaskName, viz)
+    clockSynch = vis_clock_synch.VisClockSynch()
+    scSim.AddModelToTask(VizTaskName, clockSynch, None, 101)
+    return
 
