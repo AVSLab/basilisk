@@ -61,8 +61,6 @@ import spacecraftPlus
 import gravityEffector
 import simIncludeGravity
 
-# import Viz messaging interface
-import vis_message_interface
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -123,20 +121,32 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #~~~~~~~~~~~~~~
 # must be uncommented and edited for the particular user's Basilisk directory path.
 #
+# Qt Visualization Option
+# -----
+# If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
+# line from the python scenario script.  If the Viz is running, and searching for a connection on
+# 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
+# realtime
+#~~~~~~~~~~~~~~{.py}
+# unitTestSupport.enableVisualization(scSim, dynProcess)
+#~~~~~~~~~~~~~~
+# Note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
+# speed up factor can be increased in the Qt GUI by calling up the
+#
+#       View/Bottom Playback Controls
+#
+# The speed up factor is adusting in 2x steps up or down using the green arrows in this GUI.
+# This simulation is only updated at the rate of the simulation.  Thus, for this orbit simulation with 10s
+# time steps the Viz will be choppy at 1x.  Speeding up the Viz playback with the green arrows quickly illustrates
+# the orbital motion.
+#
+#
+# Simulation Scenario Setup Details
+# -----
 # The simulation layout is shown in the following illustration.  A single simulation process is created
 # which contains the spacecraft object.  Gravity effectors are attached to the spacecraft dynamics to
 # simulate the gravitational accelerations.
 # ![Simulation Flow Diagram](Images/doc/test_scenarioBasicOrbit.svg "Illustration")
-#
-# If you wish to transmit the simulation data to the Qt Vizualization, then uncomment the following
-# lines from the python scenario script.  If the Viz is running, and searching for a connection on
-# 127.0.0.1 (using Open Connection command from the File menu), the simualtion is visualized in
-# realtime
-#~~~~~~~~~~~~~~{.py}
-# dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
-# viz = vis_message_interface.VisMessageInterface()
-# scSim.AddModelToTask("VisTask", viz)
-#~~~~~~~~~~~~~~
 #
 # When the simulation completes 2 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot either shows a planar
@@ -317,10 +327,9 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simulationTimeStep = macros.sec2nano(10.)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
-    # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # dynProcess.addTask(scSim.CreateNewTask("VisTask", macros.sec2nano(0.1)))
-    # viz = vis_message_interface.VisMessageInterface()
-    # scSim.AddModelToTask("VisTask", viz)
+    # if this scenario is to interface with the BSK Viz, uncomment the following line
+    # unitTestSupport.enableVisualization(scSim, dynProcess)
+
 
     #
     #   setup the simulation tasks/objects
