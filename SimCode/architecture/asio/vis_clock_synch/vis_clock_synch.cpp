@@ -52,13 +52,6 @@ VisClockSynch::~VisClockSynch()
 */
 void VisClockSynch::SelfInit()
 {
-    //! Begin method steps
-    //! - Initialize the output message
-//    this->clockOutMsgId = SystemMessaging::GetInstance()->
-//    CreateNewMessage(this->clockOutMsgName, sizeof(SynchClockSimMsg), this->outputBufferCount,
-//                     "SynchClockSimMsg", this->moduleID);
-//    //! - Set the overrun counter to zero
-//    this->clockOutMsgData.overrunCounter = 0;
 
 }
 
@@ -96,9 +89,6 @@ void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
     //! - If we haven't initialized the timers yet, initialize the start times and flag it as initialized
 	if (!this->timeInitialized)
 	{
-//		this->startTime = std::chrono::high_resolution_clock::now();
-//		this->startSimTime = CurrentSimNanos;
-//		
         this->prevFrameStartTime = std::chrono::high_resolution_clock::now();
         this->prevFrameSimTime = CurrentSimNanos;
         this->timeInitialized = true;
@@ -113,15 +103,6 @@ void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
 	currentTime = std::chrono::high_resolution_clock::now();
 	std::chrono::nanoseconds elapsedWallFrameTime = std::chrono::duration_cast<std::chrono::nanoseconds>
 		(currentTime - this->prevFrameStartTime);
-    
-    //! - Save off the observed time-delta for analysis and flag any unexpected overruns
-//    this->clockOutMsgData.initTimeDelta = (int64_t) (elapsedSimFrameTime/accelFactor) -
-//        (int64_t) elapsedWallFrameTime.count();
-//    this->clockOutMsgData.initTimeDelta *= 1.0E-9;
-//    if(this->clockOutMsgData.initTimeDelta < 0)
-//    {
-//        this->clockOutMsgData.overrunCounter++;
-//    }
     
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time
@@ -147,10 +128,6 @@ void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
     //! - Update prev frame times for next time around
     this->prevFrameSimTime = CurrentSimNanos;
     this->prevFrameStartTime = std::chrono::high_resolution_clock::now();
-//    //! - Save off the output message information for analysis
-//    this->clockOutMsgData.finalTimeDelta = (int64_t) (elapsedSimFrameTime/this->accelFactor) -
-//    (int64_t) elapsedWallFrameTime.count() - sleepAmount;
-//    this->clockOutMsgData.finalTimeDelta *= 1.0E-9;
 }
 
 void VisClockSynch::readInputMessages()
