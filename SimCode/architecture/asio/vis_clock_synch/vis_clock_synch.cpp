@@ -31,7 +31,6 @@ VisClockSynch::VisClockSynch()
 	this->accuracyNanos = 10000;
 	this->accelFactor = 1.0;
     this->outputBufferCount = 2;
-	this->displayTime = true;
     this->realTimeFactorInMsgId = -1;
     this->realTimeFactorInMsgName = "real_time_factor";
     this->realTimeFactor.speedFactor = 1.0;

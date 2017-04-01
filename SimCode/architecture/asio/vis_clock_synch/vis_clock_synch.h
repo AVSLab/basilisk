@@ -51,7 +51,6 @@ public:
     std::string clockOutMsgName; //!< (-) Name of the output message that we are using
     uint64_t outputBufferCount;  //!< (-) Count on the number of output buffers that we have
     int64_t accuracyNanos;       //!< ns Level of accuracy that we want out of the timer
-	bool displayTime;            //!< [-] Flag indicating that we want to display the time elapsed in cmd line
 private:
 	std::chrono::high_resolution_clock::time_point startTime; //! (-) first time pass through data
     int64_t realTimeFactorInMsgId;          //!< (-) Input Msg ID for real time factor
