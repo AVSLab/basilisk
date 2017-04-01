@@ -328,7 +328,38 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 # Setup 2
 # -----
-# The second scenario illustrates how to setup RW analog I/O modules.  On the simulation side, the
+#
+# Which scenario is run is controlled at the bottom of the file in the code
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#        , True,        # show_plots
+#        , True         # useJitterSimple
+#        , False        # useRWVoltageIO
+#        )
+# ~~~~~~~~~~~~~
+# The first 2 arguments can be left as is.  The last arguments control the
+# simulation scenario flags to turn on or off certain simulation conditions.  Here the simple RW jitter
+# model is engaged for each of the RWs.  To turn this on, the command
+#~~~~~~~~~~~~~~{.py}
+#     simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
+#~~~~~~~~~~~~~~
+# Change this option before the RW is created.  As this is set before any of the RW created in this
+# scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
+# resulting simulation illustrations are shown below.
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW110.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW310.svg "RW Omega history")
+# The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
+# the balanced RW case.  But there is a distinct numerical difference.
+#
+# Setup 3
+# -----
+# The second scenario illustrates how to setup RW analog I/O modules.  This is illustrated in the updated
+# flow diagram illustration.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRWc2.svg "Illustration")
+#
+# On the simulation side, the
 # voltage interface is setup by adding
 # ~~~~~~~~~~~~~~{.py}
 #     rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
