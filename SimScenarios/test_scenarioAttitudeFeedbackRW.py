@@ -89,6 +89,7 @@ import fswMessages
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("useJitterSimple, useRWVoltageIO", [
       (False, False)
+    , (True, False)
     , (False, True)
 ])
 
@@ -120,7 +121,8 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # Setup | useJitterSimple    | useRWVoltageIO
 # ----- | -------------------|----------------
 # 1     | False              | False
-# 2     | False              | True
+# 2     | True               | False
+# 3     | False              | True
 #
 # The first setup runs the RW control to produce a desired set of RW motor torques
 # which are then connected directly to the RW device input states.  The second setup illustrates
@@ -326,7 +328,38 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 # Setup 2
 # -----
-# The second scenario illustrates how to setup RW analog I/O modules.  On the simulation side, the
+#
+# Which scenario is run is controlled at the bottom of the file in the code
+# ~~~~~~~~~~~~~{.py}
+# if __name__ == "__main__":
+#     run( False,       # do unit tests
+#        , True,        # show_plots
+#        , True         # useJitterSimple
+#        , False        # useRWVoltageIO
+#        )
+# ~~~~~~~~~~~~~
+# The first 2 arguments can be left as is.  The last arguments control the
+# simulation scenario flags to turn on or off certain simulation conditions.  Here the simple RW jitter
+# model is engaged for each of the RWs.  To turn this on, the command
+#~~~~~~~~~~~~~~{.py}
+#     simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
+#~~~~~~~~~~~~~~
+# Change this option before the RW is created.  As this is set before any of the RW created in this
+# scenario, all the RWs have jitter engaged if this 'useJitterSimple' flag is set. The
+# resulting simulation illustrations are shown below.
+# ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW110.svg "MRP history")
+# ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW210.svg "RW motor torque history")
+# ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW310.svg "RW Omega history")
+# The impact of the RW jitter is very small, naturally.  The plots for this case look very similar to
+# the balanced RW case.  But there is a distinct numerical difference.
+#
+# Setup 3
+# -----
+# The second scenario illustrates how to setup RW analog I/O modules.  This is illustrated in the updated
+# flow diagram illustration.
+# ![Simulation Flow Diagram](Images/doc/test_scenarioAttitudeFeedbackRWc2.svg "Illustration")
+#
+# On the simulation side, the
 # voltage interface is setup by adding
 # ~~~~~~~~~~~~~~{.py}
 #     rwVoltageIO = rwVoltageInterface.RWVoltageInterface()
@@ -461,6 +494,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     simIncludeRW.clearSetup()
     # the Honeywell HR16 comes in three momentum configuration, 100, 75 and 50 Nms
     simIncludeRW.options.maxMomentum = 50
+    if useJitterSimple:
+        simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
     simIncludeRW.create(
             'Honeywell_HR16',
@@ -472,8 +507,6 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
             [0, 1, 0],              # gsHat_S
             200.0                     # RPM
             )
-    if useJitterSimple:
-        simIncludeRW.options.RWmodel = simIncludeRW.JitterSimple
     simIncludeRW.create(
             'Honeywell_HR16',
             [0, 0, 1],              # gsHat_S
@@ -787,6 +820,29 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
                 , [-2.7923740563112063e-02, 1.1269976169106372e-02, 4.7871422910631181e-04]
                 , [ 6.1959342447429396e-03, 2.4918559180853771e-03, 3.7300409079442311e-03]
                 , [ 1.5260133637049377e-05,-1.2491549414001010e-03,-1.4158582039329860e-03]
+            ]
+
+        if useJitterSimple == True and useRWVoltageIO == False:
+            trueUs = [
+                  [ 3.8000000000000000e-01, 4.0000000000000008e-01,-1.5000000000000013e-01]
+                , [ 1.1065138334427127e-02,-5.1268877119457312e-01,-5.0197674196675285e-02]
+                , [-5.0848148107366119e-02, 7.4099100493587991e-02, 2.2771409384433863e-02]
+                , [ 2.4176151141330489e-02,-2.8562626784347737e-03,-1.1764370510636973e-04]
+                , [-4.4366215100514186e-03,-3.0640074660972742e-03,-3.2900068347372418e-03]
+            ]
+            trueSigmaBR = [
+                  [ 1.0000000000000001e-01, 2.0000000000000001e-01,-2.9999999999999999e-01]
+                , [ 1.4000649100987304e-02,-1.5524376685777014e-01,-1.7672779218442999e-02]
+                , [-2.7813457642929151e-02, 1.0946112552094834e-02, 4.4875764271143668e-04]
+                , [ 6.2095289346616083e-03, 2.4867062677496696e-03, 3.6922501700617210e-03]
+                , [ 1.6904290117009812e-05,-1.2461998354027675e-03,-1.4336939003900724e-03]
+            ]
+            truePos = [
+                  [-4.0203386903966456e+06, 7.4905667418525163e+06, 5.2482992115893615e+06]
+                , [-4.6421397299586143e+06, 7.0494535906981705e+06, 5.3596540487686256e+06]
+                , [-5.2364027267925823e+06, 6.5665184975009989e+06, 5.4392130114279613e+06]
+                , [-5.7996736190037578e+06, 6.0447161564746955e+06, 5.4865783260474391e+06]
+                , [-6.3286970385898352e+06, 5.4872168578844322e+06, 5.5015439263280211e+06]
             ]
 
         if useJitterSimple == False and useRWVoltageIO == True:
