@@ -95,7 +95,8 @@ def test_tankModelConstantVolume(show_plots):
     
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
+        model.computeTankProps(trial[0])
+        model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
@@ -178,7 +179,8 @@ def test_tankModelConstantDensity(show_plots):
     
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
+        model.computeTankProps(trial[0])
+        model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
@@ -262,7 +264,8 @@ def test_tankModelEmptying(show_plots):
     
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
+        model.computeTankProps(trial[0])
+        model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqual(dataITank, true_ITankPntT_T[idx],9,accuracy):
@@ -348,7 +351,8 @@ def test_tankModelUniformBurn(show_plots):
     
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
+        model.computeTankProps(trial[0])
+        model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):
@@ -434,7 +438,8 @@ def test_tankModelCentrifugalBurn(show_plots):
     
     accuracy = 1e-8
     for idx, trial in enumerate(trials):
-        model.computeTankProps(*trial)
+        model.computeTankProps(trial[0])
+        model.computeTankPropDerivs(*trial)
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataITank, true_ITankPntT_T[idx],9,accuracy):

@@ -138,7 +138,7 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
 	cRho = 1.0/(this->massFSP)*(this->pHat_B.dot(this->massFSP * g_B) - this->k*this->rho - this->c*this->rhoDot
 		         - 2 * this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local * this->rPrime_PcB_B)
 		                   - this->massFSP*this->pHat_B.dot(omegaTilde_BN_B_local*omegaTilde_BN_B_local*this->r_PcB_B));
-
+	
 	// - Compute matrix/vector contributions
 	matrixAcontr = this->massFSP*this->pHat_B*this->aRho.transpose();
     matrixBcontr = this->massFSP*this->pHat_B*this->bRho.transpose();
@@ -147,7 +147,6 @@ void FuelSloshParticle::updateContributions(double integTime, Eigen::Matrix3d & 
 	vecTranscontr = -this->massFSP*this->cRho*this->pHat_B;
 	vecRotcontr = -this->massFSP*omegaTilde_BN_B_local * this->rTilde_PcB_B *this->rPrime_PcB_B -
                                                              this->massFSP*this->cRho*this->rTilde_PcB_B * this->pHat_B;
-
     return;
 }
 
@@ -173,6 +172,7 @@ void FuelSloshParticle::computeDerivatives(double integTime)
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
 	this->rhoDotState->setDerivative(conv);
 
+
     return;
 }
 
@@ -192,7 +192,7 @@ void FuelSloshParticle::updateEnergyMomContributions(double integTime, Eigen::Ve
 
     // - Find rotational energy contribution from the hub
     rotEnergyContr = 1.0/2.0*this->massFSP*rDotPcB_B.dot(rDotPcB_B) + 1.0/2.0*this->k*this->rho*this->rho;
-    
+
     return;
 }
 

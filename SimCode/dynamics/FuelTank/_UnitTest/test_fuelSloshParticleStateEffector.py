@@ -117,6 +117,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle1)
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle2)
     unitTestSim.tank1.pushFuelSloshParticle(unitTestSim.particle3)
+    unitTestSim.tank1.updateOnly = True
 
     # Add panels to spaceCraft
     # this next line is not working
@@ -273,9 +274,11 @@ def test_hubPropagate(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Slosh Test"
+
+    assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    spacecraftPlusAllTest(True)
+    spacecraftPlusAllTest(False)

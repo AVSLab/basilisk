@@ -37,7 +37,7 @@ FuelTankModel* FuelTankModels[TANK_MODEL_LAST_MODEL - TANK_MODEL_FIRST_MODEL] = 
 
 /*! This is the constructor, setting variables to default values */
 FuelTank::FuelTank() 
-	:fuelSloshParticles()
+	:fuelSloshParticles(), updateOnly(true)
 {
 	// - zero the contributions for mass props and mass rates
 	this->effProps.mEff = 0.0;
@@ -127,9 +127,11 @@ void FuelTank::updateEffectorMassProps(double integTime)
 
 	// - Add contributions of the mass of the tank
 	double massLocal = this->massState->getState()(0, 0);
-	Eigen::Vector3d r_TcB_B = r_TB_B + dcm_TB*this->fuelTankModel->r_TcT_T;
+	this->fuelTankModel->computeTankProps(massLocal);
+	r_TcB_B = r_TB_B +dcm_TB*this->fuelTankModel->r_TcT_T;
 	this->effProps.mEff += massLocal;
-	this->effProps.IEffPntB_B += dcm_TB*this->fuelTankModel->ITankPntT_T +massLocal * (r_TcB_B.dot(r_TcB_B)*Eigen::Matrix3d::Identity()
+	this->ITankPntT_B = dcm_TB*fuelTankModel->ITankPntT_T;
+	this->effProps.IEffPntB_B += ITankPntT_B+massLocal * (r_TcB_B.dot(r_TcB_B)*Eigen::Matrix3d::Identity()
                                                                                          - r_TcB_B * r_TcB_B.transpose());
 	this->effProps.rEff_CB_B += massLocal * r_TcB_B;
 
@@ -162,15 +164,18 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 		(*dynIt)->computeStateContribution(integTime);
 		fuelConsumption += (*dynIt)->stateDerivContribution(0);
 	}
-	fuelTankModel->computeTankProps(massState->getState()(0, 0), -fuelConsumption);
+	tankFuelConsumption = fuelConsumption*massState->getState()(0, 0) / effProps.mEff;
+	fuelTankModel->computeTankPropDerivs(massState->getState()(0, 0), -tankFuelConsumption);
 	r_TB_BLocal = fuelTankModel->r_TcT_T;
 	rPrime_TB_BLocal = fuelTankModel->rPrime_TcT_T;
 	rPPrime_TB_BLocal = fuelTankModel->rPPrime_TcT_T;
 	omega_BN_BLocal = omegaState->getState();
-	vecRotcontr = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
-		- massState->getState()(0, 0)*omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
-		- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);
-	vecRotcontr -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
+	if (!updateOnly) {
+		vecRotcontr = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
+			- massState->getState()(0, 0)*omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
+			- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);
+		vecRotcontr -= fuelTankModel->IPrimeTankPntT_T * omega_BN_BLocal;
+	}
     // - Get the contributions from the fuel slosh particles
     std::vector<FuelSloshParticle>::iterator intFSP;
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
@@ -198,14 +203,12 @@ void FuelTank::computeDerivatives(double integTime)
 	}
 
 	// - Call compute derivatives for all fuel slosh particles, and set mDot
-	double tankFuelConsumption = fuelConsumption;
 	for (intFSP = fuelSloshParticles.begin(); intFSP < fuelSloshParticles.end(); intFSP++) {
 		intFSP->computeDerivatives(integTime);
 		double mDot = intFSP->massState->getState()(0, 0) / totalMass * fuelConsumption;
 		Eigen::MatrixXd conv(1, 1);
 		conv(0, 0) = -mDot;
 		intFSP->massState->setDerivative(conv);
-		tankFuelConsumption -= mDot;
 	}
 	Eigen::MatrixXd conv(1, 1);
 	conv(0, 0) = -tankFuelConsumption;
@@ -230,22 +233,22 @@ void FuelTank::updateEnergyMomContributions(double integTime, Eigen::Vector3d & 
         rotAngMomPntCContrFSP_B.setZero();
         intFSP->updateEnergyMomContributions(integTime, rotAngMomPntCContrFSP_B, rotEnergyContrFSP);
         rotAngMomPntCContr_B += rotAngMomPntCContrFSP_B;
-        rotEnergyContr += rotEnergyContrFSP;
-    }
+        rotEnergyContr += rotEnergyContrFSP; 
+	}
 
     // - Get variables needed for energy momentum calcs
     Eigen::Vector3d omegaLocal_BN_B;
     omegaLocal_BN_B = omegaState->getState();
-    Eigen::Vector3d rDot_TB_B;
+    Eigen::Vector3d rDot_TcB_B;
 
     // - Find rotational angular momentum contribution from hub
     double massLocal = this->massState->getState()(0, 0);
-    rDot_TB_B = omegaLocal_BN_B.cross(fuelTankModel->r_TcT_T);
-    rotAngMomPntCContr_B += fuelTankModel->ITankPntT_T*omegaLocal_BN_B + massLocal*fuelTankModel->r_TcT_T.cross(rDot_TB_B);
+    rDot_TcB_B = omegaLocal_BN_B.cross(r_TcB_B);
+    rotAngMomPntCContr_B += ITankPntT_B*omegaLocal_BN_B + massLocal*r_TcB_B.cross(rDot_TcB_B);
 
     // - Find rotational energy contribution from the hub
-    rotEnergyContr += 1.0/2.0*omegaLocal_BN_B.dot(fuelTankModel->ITankPntT_T*omegaLocal_BN_B) + 1.0/2.0*massLocal*
-                                                                                               rDot_TB_B.dot(rDot_TB_B);
-    
-    return;
+    rotEnergyContr += 1.0/2.0*omegaLocal_BN_B.dot(ITankPntT_B*omegaLocal_BN_B) + 1.0/2.0*massLocal*
+                                                                             rDot_TcB_B.dot(rDot_TcB_B);
+
+	 return;
 }
