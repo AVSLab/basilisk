@@ -88,8 +88,12 @@ def test_thrusterIntegratedTest(show_plots):
     thrustersDynamicEffector = thrusterDynamicEffector.ThrusterDynamicEffector()
 
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
-    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0], [0.0], [0.0]]
-    unitTestSim.fuelTankStateEffector.radiusTank = 46.0 / 2.0 / 3.2808399 / 12.0
+    unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
+    tankModel = fuelTank.cvar.FuelTankModelConstantVolume
+    tankModel.propMassInit = 40.0
+    tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
+    unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
+    tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
 
     # Add tank and thruster
     scObject.addStateEffector(unitTestSim.fuelTankStateEffector)
@@ -184,6 +188,7 @@ def test_thrusterIntegratedTest(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
+            print dataSigma[i]
             testMessages.append("FAILED: Thruster Integrated Test failed attitude unit test")
 
     if testFailCount == 0:

@@ -84,9 +84,8 @@ public:
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
     double mDotTotal;                              //!< kg/s Current mass flow rate of thrusters
     double prevFireTime;                           //!< s  Previous thruster firing time
-
-    double thrFactorToTime(ThrusterConfigData *thrData,
-                           std::vector<ThrusterTimePair> *thrRamp);
+	double thrFactorToTime(THRConfigSimMsg *thrData,
+		std::vector<THRTimePairSimMsg> *thrRamp);
 	StateData *hubSigma;
     StateData *hubOmega;
     

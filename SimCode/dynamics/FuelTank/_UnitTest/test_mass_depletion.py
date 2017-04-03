@@ -51,7 +51,7 @@ import fuelSloshParticle
 def massDepletionTest(show_plots):
     [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
     assert testResults < 1, testMessage
-    
+
 @pytest.mark.xfail #Currently not sure if this is valid or not
 def test_massDepletionTest(show_plots=False):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -105,10 +105,10 @@ def test_massDepletionTest(show_plots=False):
                                        scObject, unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     msgSize = ThrustMessage.getStructSize()
-    ThrustMessage.OnTimeRequest = 10.0
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
+    ThrustMessage.OnTimeRequest = [10.0]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 
     # Add test module to runtime call list
@@ -122,7 +122,7 @@ def test_massDepletionTest(show_plots=False):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
@@ -266,10 +266,10 @@ def axisChangeHelper(r_BcB_B):
                                        scObject, unitTestSim.fuelTankStateEffector)
 
     # set thruster commands
-    ThrustMessage = thrusterDynamicEffector.ThrustCmdStruct()
+    ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     msgSize = ThrustMessage.getStructSize()
-    ThrustMessage.OnTimeRequest = 10.0
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, 8, 2)
+    ThrustMessage.OnTimeRequest = [10.0]
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 
     # Add test module to runtime call list
@@ -283,7 +283,7 @@ def axisChangeHelper(r_BcB_B):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
 
-    earthEphemData = spice_interface.SpicePlanetState()
+    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
     earthEphemData.J2000Current = 0.0
     earthEphemData.PositionVector = [0.0, 0.0, 0.0]
     earthEphemData.VelocityVector = [0.0, 0.0, 0.0]

@@ -26,8 +26,6 @@
 #include "utilities/linearAlgebra.h"
 #include "utilities/astroConstants.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
-#include "../ADCSAlgorithms/effectorInterfaces/_GeneralModuleFiles/vehEffectorOut.h"
-#include "../ADCSAlgorithms/ADCSUtilities/ADCSAlgorithmMacros.h"
 #include "utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
@@ -282,24 +280,27 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
         SingleThrusterTorque = it->thrLoc_B.cross(SingleThrusterForce);
         this->torqueExternalPntB_B = SingleThrusterTorque + torqueExternalPntB_B;
 
-		//! - Add the mass depletion force contribution
-		mDotNozzle = 0.0;
-		if (it->steadyIsp * ops->IspFactor > 0.0)
-		{
-			mDotNozzle = it->MaxThrust*ops->ThrustFactor / (EARTH_GRAV *
-				it->steadyIsp * ops->IspFactor);
-		}
-		this->forceExternal_B += 2 * mDotNozzle*omegaLocal_BN_B.cross(it->thrLoc_B);
+		if (!it->updateOnly) {
+			//! - Add the mass depletion force contribution
+			mDotNozzle = 0.0;
+			if (it->steadyIsp * ops->IspFactor > 0.0)
+			{
+				mDotNozzle = it->MaxThrust*ops->ThrustFactor / (EARTH_GRAV *
+					it->steadyIsp * ops->IspFactor);
+			}
+			this->forceExternal_B += 2 * mDotNozzle*omegaLocal_BN_B.cross(it->thrLoc_B);
 
-		//! - Add the mass depletion torque contribution
-		BM1 = it->thrDir_B;
-		BM2 << -BM1(1), BM1(0), BM1(2);
-		BM3 = BM1.cross(BM2);
-		BMj.col(0) = BM1;
-		BMj.col(1) = BM2;
-		BMj.col(2) = BM3;
-		this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose()
-			+ it->areaNozzle / (4 * M_PI) * BMj*axesWeightMatrix*BMj.transpose())*omegaLocal_BN_B;
+			//! - Add the mass depletion torque contribution
+			BM1 = it->thrDir_B;
+			BM2 << -BM1(1), BM1(0), BM1(2);
+			BM3 = BM1.cross(BM2);
+			BMj.col(0) = BM1;
+			BMj.col(1) = BM2;
+			BMj.col(2) = BM3;
+			this->torqueExternalPntB_B += mDotNozzle * (eigenTilde(it->thrDir_B)*eigenTilde(it->thrDir_B).transpose()
+				+ it->areaNozzle / (4 * M_PI) * BMj*axesWeightMatrix*BMj.transpose())*omegaLocal_BN_B;
+
+		}
     }
     //! - Once all thrusters have been checked, update time-related variables for next evaluation
     prevFireTime = integTime;
