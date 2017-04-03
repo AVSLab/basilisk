@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-101 10 418 356" width="418pt" height="356pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.3 
-    <dc:date>2017-04-01 20:48:29 +0000</dc:date>
+    <dc:date>2017-04-03 14:46:20 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="530" cap-height="728" ascent="966.9952" descent="-212.99744" font-weight="300">
@@ -120,15 +120,7 @@
       <path d="M 77.49091 75 L 79.49091 75 L 90.29545 75 L 90.29545 89.5 L 90.29545 104 L 101.1 104 L 103.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <path d="M 77.49091 104 L 79.49091 104 L 90.29545 104 L 101.1 104 L 103.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <path d="M 77.49091 133 L 79.49091 133 L 90.29545 133 L 90.29545 118.5 L 90.29545 104 L 101.1 104 L 103.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 31.840908 133 L 24.440908 133 L 24.220454 152.8 L 24 172.6 L 24 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 31.840908 104 L 24.440908 104 L 24.220454 138.3 L 24 172.6 L 24 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 31.840908 75 L 24.440908 75 L 24.220454 123.8 L 24 172.6 L 24 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 1 180 L 47 180 L 47 208 L 1 208 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
-      <text transform="translate(6 182.73894)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.159" y="9" textLength="29.682">rwArray</tspan>
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="7.47" y="20.261063" textLength="21.06">Msg()</tspan>
-      </text>
-      <path d="M 24 208 L 24 215.4 L 24 302 L 108.5 302 L 101.1 302 L 103.1 302" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <path d="M 52.46023 152 L 52.46023 159.4 L 52.46023 302 L 108.5 302 L 101.1 302 L 103.1 302" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
       <path d="M 108.5 351.5 L 101.1 351.5 L -7.636719 351.5 L -7.636719 294.79297 L -7.636719 25 L -.979546 25 L 1.020454 25" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
       <rect x="108.5" y="337.5" width="83" height="28" fill="#ffffc0"/>
       <rect x="108.5" y="337.5" width="83" height="28" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
@@ -142,6 +134,13 @@
         <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="2.938273" y="9" textLength="76.203">rwVoltageInterface()</tspan>
       </text>
       <line x1="52.46023" y1="39" x2="52.46023" y2="48.82727" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      <text transform="translate(52 279.23894)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.494" y="9" textLength="44.514">RW Speed </tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="16.139" y="20.261063" textLength="16.722">Msg</tspan>
+      </text>
+      <text transform="translate(26.5 336.36947)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x=".49" y="9" textLength="70.02">RW motor voltage</tspan>
+      </text>
     </g>
   </g>
 </svg>

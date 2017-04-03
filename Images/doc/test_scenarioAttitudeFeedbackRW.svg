@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-117 33 418 291" width="418pt" height="291pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="-117 33 418 294" width="418pt" height="294pt" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata> Produced by OmniGraffle 7.3 
-    <dc:date>2017-04-01 20:48:29 +0000</dc:date>
+    <dc:date>2017-04-03 14:46:20 +0000</dc:date>
   </metadata>
   <defs>
     <font-face font-family="Helvetica Neue" font-size="9" panose-1="2 0 4 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="530" cap-height="728" ascent="966.9952" descent="-212.99744" font-weight="300">
@@ -120,16 +120,15 @@
       <path d="M 61.49091 75 L 63.49091 75 L 74.295455 75 L 74.295455 89.5 L 74.295455 104 L 85.1 104 L 87.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <path d="M 61.49091 104 L 63.49091 104 L 74.295455 104 L 85.1 104 L 87.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       <path d="M 61.49091 133 L 63.49091 133 L 74.295455 133 L 74.295455 118.5 L 74.295455 104 L 85.1 104 L 87.1 104" marker-end="url(#SharpArrow_Marker)" marker-start="url(#SharpArrow_Marker_2)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 15.840908 133 L 8.440908 133 L 8.220454 152.8 L 8 172.6 L 8 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 15.840908 104 L 8.440908 104 L 8.220454 138.3 L 8 172.6 L 8 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M 15.840908 75 L 8.440908 75 L 8.220454 123.8 L 8 172.6 L 8 174.6" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      <path d="M -15 180 L 31 180 L 31 208 L -15 208 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
-      <text transform="translate(-10 182.73894)" fill="black">
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.159" y="9" textLength="29.682">rwArray</tspan>
-        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="7.47" y="20.261063" textLength="21.06">Msg()</tspan>
+      <path d="M 36.460227 152 L 36.460227 159.4 L 36.460227 302 L 92.5 302 L 85.1 302 L 87.1 302" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <path d="M 134 316 L 134 323.4 L -3.8632812 323.4 L -3.8632812 187.55078 L -3.8632812 46.82727 L 36.460227 46.82727 L 36.460227 48.82727" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <text transform="translate(9 310.36947)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x=".3265" y="9" textLength="67.347">RW motor torque</tspan>
       </text>
-      <path d="M 8 208 L 8 215.4 L 8 302 L 92.5 302 L 85.1 302 L 87.1 302" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
-      <path d="M 134 316 L 134 323.4 L -24.26953 323.4 L -24.26953 188.26562 L -24.26953 46.82727 L 36.460227 46.82727 L 36.460227 48.82727" marker-end="url(#SharpArrow_Marker)" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" stroke-dasharray="4,4"/>
+      <text transform="translate(36 279.23894)" fill="black">
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="3.494" y="9" textLength="44.514">RW Speed </tspan>
+        <tspan font-family="Helvetica Neue" font-size="9" font-weight="300" x="16.139" y="20.261063" textLength="16.722">Msg</tspan>
+      </text>
     </g>
   </g>
 </svg>
