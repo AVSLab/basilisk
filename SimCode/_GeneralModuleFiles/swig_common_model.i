@@ -21,7 +21,7 @@
 %include "std_set.i"
 %include "std_pair.i"
 %include "swig_conly_data.i"
-
+%feature("copyctor");
 %array_functions(bool, boolArray);
 
 // Instantiate templates used by example

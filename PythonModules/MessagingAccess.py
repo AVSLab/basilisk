@@ -54,14 +54,15 @@ def obtainMessageVector(MessageName, MessageModule, MessageObj, MessageCount,
    swigObject = eval('LocalContainer.' + VarName)
    swigObjectGood = type(swigObject).__name__ == 'SwigPyObject'
    TimeValues = array.array('d')
-   messageNoSpace = MessageName.replace(" ", "")
+   messageNoSpace = MessageName.translate(None, "[]'() .")
+   varNameClean = VarName.translate(None, "[]'() .")
    if swigObjectGood:
       functionCall = eval('sim_model.' + VarType + 'Array_getitem')
    else: #So this is weird, but weirdly we need to punch a duck now
-      RefFunctionString = 'def GetMessage' + messageNoSpace + VarName + '(self):\n'
+      RefFunctionString = 'def GetMessage' + messageNoSpace + varNameClean + '(self):\n'
       RefFunctionString += '   return self.' + VarName
       exec(RefFunctionString)
-      functionCall = eval('GetMessage' + messageNoSpace + VarName)
+      functionCall = eval('GetMessage' + messageNoSpace + varNameClean)
    while(LocalCount < MessageCount):
       WriteTime = SimContainer.GetWriteData(MessageName, 10000, 
          LocalContainer, messageType, LocalCount)

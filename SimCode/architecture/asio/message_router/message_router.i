@@ -22,6 +22,7 @@
 %}
 
 %include "swig_common_model.i"
+%feature("copyctor", "0");
 
 %include "sys_model.h"
 %include "sys_interface.h"
