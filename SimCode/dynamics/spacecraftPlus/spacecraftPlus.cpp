@@ -67,7 +67,7 @@ void SpacecraftPlus::SelfInit()
     this->scMassStateOutMsgId = SystemMessaging::GetInstance()->CreateNewMessage(this->scMassStateOutMsgName,
                                                                              sizeof(SCPlusMassPropsSimMsg),
                                                                                  this->numOutMsgBuffers,
-                                                                                 "SCPlusMassPropsSimMsg", this->moduleID);
+                                                                               "SCPlusMassPropsSimMsg", this->moduleID);
     // - Call the gravity fields selfInit method
     this->gravField.SelfInit();
 
@@ -256,12 +256,14 @@ void SpacecraftPlus::equationsOfMotion(double t)
         (*this->ISCPntB_B) += (*it)->effProps.IEffPntB_B;
         (*this->c_B) += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
         (*this->ISCPntBPrime_B) += (*it)->effProps.IEffPrimePntB_B;
-        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+        (*this->cPrime_B) += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
+                                                                    + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
     }
 
     // Divide c_B and cPrime_B by the total mass of the spaceCraft to finalize c_B and cPrime_B
     (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
-    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0) - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
+    (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0)
+                                             - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
@@ -435,7 +437,8 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         (*it)->updateEffectorMassProps(time);
         mSCLocal += (*it)->effProps.mEff;
         cLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEff_CB_B;
-        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
+        cPrimeLocal_B += (*it)->effProps.mEff*(*it)->effProps.rEffPrime_CB_B
+                                                                    + (*it)->effProps.mEffDot*(*it)->effProps.rEff_CB_B;
 		mDotSCLocal += (*it)->effProps.mEffDot;
 
         // - Call energy and momentum calulations for stateEffectors
