@@ -233,6 +233,7 @@ void SpacecraftPlus::equationsOfMotion(double t)
 
     // - Zero the properties which will get populated in this method
     (*this->m_SC).setZero();
+    (*this->mDot_SC).setZero();
     (*this->c_B).setZero();
     (*this->ISCPntB_B).setZero();
     (*this->cPrime_B).setZero();
