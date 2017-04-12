@@ -170,7 +170,7 @@ void FuelTank::updateContributions(double integTime, Eigen::Matrix3d & matrixAco
 	rPrime_TB_BLocal = fuelTankModel->rPrime_TcT_T;
 	rPPrime_TB_BLocal = fuelTankModel->rPPrime_TcT_T;
 	omega_BN_BLocal = omegaState->getState();
-	if (!updateOnly) {
+	if (!this->updateOnly) {
 		vecRotcontr = -massState->getState()(0, 0) * r_TB_BLocal.cross(rPPrime_TB_BLocal)
 			- massState->getState()(0, 0)*omega_BN_BLocal.cross(r_TB_BLocal.cross(rPrime_TB_BLocal))
 			- massState->getStateDeriv()(0, 0)*r_TB_BLocal.cross(rPrime_TB_BLocal);

@@ -172,7 +172,6 @@ void FuelSloshParticle::computeDerivatives(double integTime)
     conv(0, 0) = this->aRho.dot(rDDot_BN_B_local) + this->bRho.dot(omegaDot_BN_B_local) + this->cRho;
 	this->rhoDotState->setDerivative(conv);
 
-
     return;
 }
 

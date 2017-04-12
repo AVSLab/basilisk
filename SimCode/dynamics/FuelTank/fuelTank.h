@@ -32,12 +32,12 @@
 /*! @brief This class is an abstract class that has the minimum interfaces for a tank model */
 struct FuelTankModel {
 	double propMassInit;                               //!< [kg] Initial propellant mass in tank
-	Eigen::Vector3d r_TcT_TInit;                        //!< [m] Initial position vector from B to tank point in B frame comp.
+	Eigen::Vector3d r_TcT_TInit;                       //!< [m] Initial position vector from B to tank point in B frame comp.
 	Eigen::Matrix3d ITankPntT_T;					   //!< [kg m^2] Inertia of tank about pnt T in B frame comp.
 	Eigen::Matrix3d IPrimeTankPntT_T;				   //!< [kg m^2/s] Derivative of inertia of tank about pnt T in B frame comp.
-	Eigen::Vector3d r_TcT_T;                            //!< [m] position vector from B to tank point in B frame comp.
-	Eigen::Vector3d rPrime_TcT_T;                       //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
-	Eigen::Vector3d rPPrime_TcT_T;                      //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
+	Eigen::Vector3d r_TcT_T;                           //!< [m] position vector from B to tank point in B frame comp.
+	Eigen::Vector3d rPrime_TcT_T;                      //!< [m/s] Derivative of position vector from B to tank point in B frame comp.
+	Eigen::Vector3d rPPrime_TcT_T;                     //!< [m/s^2] Second derivative of position vector from B to tank point in B frame comp.
 	virtual void computeTankProps(double mFuel) = 0;
 	virtual void computeTankPropDerivs(double mFuel, double mDotFuel) = 0;
 	FuelTankModel() {
