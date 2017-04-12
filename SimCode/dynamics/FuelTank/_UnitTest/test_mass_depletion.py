@@ -49,11 +49,11 @@ import fuelSloshParticle
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def massDepletionTest(show_plots):
-    [testResults, testMessage] = test_thrusterIntegratedTest(show_plots)
+    [testResults, testMessage] = test_massDepletionTest(show_plots)
     assert testResults < 1, testMessage
 
-@pytest.mark.xfail #Currently not sure if this is valid or not
-def test_massDepletionTest(show_plots=False):
+# @pytest.mark.xfail #Currently not sure if this is valid or not
+def test_massDepletionTest(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -93,7 +93,7 @@ def test_massDepletionTest(show_plots=False):
     unitTestSim.fuelTankStateEffector = fuelTank.FuelTank()
     unitTestSim.fuelTankStateEffector.setTankModel(fuelTank.TANK_MODEL_CONSTANT_VOLUME)
     tankModel = fuelTank.cvar.FuelTankModelConstantVolume
-    tankModel.propMassInit = 40.0;
+    tankModel.propMassInit = 40.0
     tankModel.r_TcT_TInit = [[0.0],[0.0],[0.0]]
     unitTestSim.fuelTankStateEffector.r_TB_B = [[0.0],[0.0],[0.0]]
     tankModel.radiusTankInit = 46.0 / 2.0 / 3.2808399 / 12.0
@@ -196,9 +196,7 @@ def test_massDepletionTest(show_plots=False):
                                                   range(3))
     moduleOutputSigma = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
-    print dataPos
-    print "dataPos"
-    print dataSigma
+
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
@@ -334,7 +332,7 @@ def axisChangeHelper(r_BcB_B):
     return (dataPos, dataSigma)
     
 
-def test_axisChange(showPlots=False):
+def test_axisChange(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -346,13 +344,5 @@ def test_axisChange(showPlots=False):
     dataPos1, dataSigma1 = axisChangeHelper([[0.0], [0.0], [0.0]])
     dataPos2, dataSigma2 = axisChangeHelper([[0.5], [0.0], [0.0]])
 
-    print dataPos1
-    print dataPos2
-    print (dataPos1[0][1] - dataPos2[0][1])**2 + (dataPos1[0][2] - dataPos2[0][2])**2 + (dataPos1[0][3] - dataPos2[0][3])**2
-    print dataSigma1
-    print dataSigma2
-    print (dataSigma1[0][1] - dataSigma2[0][1])**2 + (dataSigma1[0][2] - dataSigma2[0][2])**2 + (dataSigma1[0][3] - dataSigma2[0][3])**2
-    
-
 if __name__ == "__main__":
-    test_axisChange()
+    test_axisChange(False)
