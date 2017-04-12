@@ -44,6 +44,8 @@ struct FuelTankModel {
 		propMassInit = 0.0;
 		r_TcT_TInit.setZero();
 	}
+    virtual ~FuelTankModel() {
+    }
 };
 
 struct FuelTankModelConstantVolume_t :
