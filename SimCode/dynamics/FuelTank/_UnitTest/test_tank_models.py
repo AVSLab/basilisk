@@ -269,14 +269,12 @@ def test_tankModelEmptying(show_plots):
         dataITank = model.ITankPntT_T
         dataITank = [0] + [dataITank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqual(dataITank, true_ITankPntT_T[idx],9,accuracy):
-            print dataITank
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed ITankPntT_T test")
 
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            print dataIPrimeTank, idx
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank emptying unit test failed IPrimeTankPntT_T test")
 
@@ -362,7 +360,6 @@ def test_tankModelUniformBurn(show_plots):
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            print dataIPrimeTank, idx
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank centrifugal burn unit test failed IPrimeTankPntT_T test")
 
@@ -449,7 +446,6 @@ def test_tankModelCentrifugalBurn(show_plots):
         dataIPrimeTank = model.IPrimeTankPntT_T
         dataIPrimeTank = [0] + [dataIPrimeTank[i][j] for i in range(3) for j in range(3)]
         if not unitTestSupport.isArrayEqualRelative(dataIPrimeTank, true_IPrimeTankPntT_T[idx],9,accuracy):
-            print dataIPrimeTank, idx
             testFailCount += 1
             testMessages.append("FAILED: Fuel Tank uniform burn unit test failed IPrimeTankPntT_T test")
 
