@@ -125,7 +125,7 @@ struct FuelTankModelEmptying_t :
 		ITankPntT_T.setZero();
 		IPrimeTankPntT_T.setZero();
 		ITankPntT_T(2, 2) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
-			(2.0 / 5.0 + 1.0 / 4.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4) - 1 / 12.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)));
+			(2.0 / 3.0 + 1.0 / 4.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4) - 1 / 12.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)));
 		ITankPntT_T(0, 0) = ITankPntT_T(1, 1) = 2.0 / 5.0 *M_PI*rhoFuel*std::pow(radiusTankInit, 5) *
 			(2.0 / 3.0 - 1.0 / 4.0*std::pow(std::cos(thetaStar), 5) + 1 / 24.0*(std::cos(3 * thetaStar) - 9 * std::cos(thetaStar)) + 
 				5.0 / 4.0*cos(thetaStar) + 1 / 8.0*std::cos(thetaStar)*std::pow(std::sin(thetaStar), 4));

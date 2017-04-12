@@ -237,9 +237,9 @@ def test_tankModelEmptying(show_plots):
     
     trials = [(0, 0), (10, -1), (5, -1)] #mFuel, mDotFuel
     true_ITankPntT_T =      [
-                                [0,0,0,0,0,0,0,0,-20],
-                                [100,0,0,0,100,0,0,0,80],
-                                [50.0,0,0,0,50.0,0,0,0,30]
+                                [0,0,0,0,0,0,0,0,0],
+                                [100,0,0,0,100,0,0,0,100],
+                                [50.0,0,0,0,50.0,0,0,0,50]
                             ]
     true_IPrimeTankPntT_T = [
                                 [0,0,0,0,0,0,0,0,0],
@@ -481,5 +481,4 @@ def test_tankModelCentrifugalBurn(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    raw_input("Waiting for debugger attach...")
     test_tankModelEmptying(False)
