@@ -69,6 +69,7 @@ public:
     
     void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
+    double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
     
 public:
@@ -122,6 +123,7 @@ public:
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
     Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
+    double gravityPotentialEnergyCalcs;
     
 private:
     StateData *posState;                            //! [-] Position state of the vehicle
