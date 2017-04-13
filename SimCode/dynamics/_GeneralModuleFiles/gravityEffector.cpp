@@ -495,6 +495,44 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *b
 
 void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
 {
+    Eigen::Vector3d centralPos;
+    Eigen::Vector3d centralVel;
+    centralPos.fill(0.0);
+    centralVel.fill(0.0);
+    double gravPotOut = 0.0;
+    Eigen::Vector3d cLocal_N;
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcm_NB;
+
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*this->c_B);
+
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
+    {
+        Eigen::Vector3d posRelBody_N;
+        posRelBody_N = this->posState->getState();
+        posRelBody_N += cLocal_N;
+        Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
+        posRelBody_N -= mappedPos;
+
+        if(this->centralBody)
+        {
+            centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
+            posRelBody_N += centralPos;
+            if(this->centralBody != (*it))
+            {
+                double frmPot =
+                (*it)->computePotentialEnergy(mappedPos-centralPos);
+                gravPotOut += frmPot;
+            }
+        }
+
+        double bodyPot = (*it)->computePotentialEnergy(posRelBody_N);
+        gravPotOut += bodyPot;
+    }
+
     return;
 }
 
