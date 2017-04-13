@@ -106,6 +106,7 @@ public:
     void registerProperties(DynParamManager& statesIn);
     void computeGravityField();
     void updateInertialPosAndVel();
+    void updateEnergyMomContributions(double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
 
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);
