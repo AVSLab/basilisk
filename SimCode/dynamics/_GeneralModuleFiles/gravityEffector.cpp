@@ -478,3 +478,8 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *b
     return mappedPos;
 }
 
+void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
+{
+    return;
+}
+
