@@ -316,6 +316,21 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     return(gravOut);
 }
 
+double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
+{
+    double gravPotentialEnergyOut = 0.0;
+
+    double rMag = r_I.norm();
+    gravPotentialEnergyOut  = -this->mu/rMag;
+
+    if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
+    {
+
+    }
+    
+    return(gravPotentialEnergyOut);
+}
+
 void GravBodyData::loadEphemeris(uint64_t moduleID)
 {
     SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
