@@ -189,3 +189,22 @@ Eigen::Matrix3d eigenTilde(Eigen::Vector3d vec)
     return mOut;
 }
 
+
+/*! This function solves for the zero of the passed function using the Newton Raphson Method
+@return double
+@param initialEstimate The initial value to use for newton-raphson
+@param accuracy The desired upper bound for the error
+@param f Function to find the zero of
+@param fPrime First derivative of the function
+*/
+double newtonRaphsonSolve(double initialEstimate, double accuracy, std::function< double(double) >& f, std::function<
+                          double(double) >& fPrime) {
+	double currentEstimate = initialEstimate;
+	for (int i = 0; i < 100 && std::abs(f(currentEstimate)) > accuracy; i++) {
+		double functionVal = f(currentEstimate);
+		double functionDeriv = fPrime(currentEstimate);
+		currentEstimate = currentEstimate - functionVal/functionDeriv;
+	}
+	return currentEstimate;
+}
+

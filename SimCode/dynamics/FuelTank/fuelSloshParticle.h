@@ -31,18 +31,20 @@ class FuelSloshParticle :
 	public StateEffector, public SysModel
 {
 public:
-	double massFSP;                //!< [kg] mass of fuel slosh particle
     double k;                      //!< [N/m] linear spring constant for fuel slosh
     double c;                      //!< [N-s/m] linear damping term for fuel slosh
     std::string nameOfRhoState;    //!< [-] Identifier for the rho state data container
     std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
+	std::string nameOfMassState;      //!< [-] Identifier for the mass state data container
 	Eigen::Vector3d r_PB_B;        //!< [m] position vector from B point to slosh equilibrium, P, in body frame
 	Eigen::Vector3d pHat_B;        //!< [-] slosh direction unit vector, in body frame
+	StateData *massState;		   //!< -- state data for the particles mass 
 
 private:
     double cRho;                   //!< -- Term needed for back-sub method
     double rho;                    //!< [m] fuel slosh displacement from equilibrium
     double rhoDot;                 //!< [m/s] time derivative of displacement from equilibrium
+	double massFSP;                //!< [kg] mass of fuel slosh particle
     Eigen::Vector3d r_PcB_B;       //!< [m] position vector form B to center of mass location of particle
     Eigen::Matrix3d rTilde_PcB_B;  //!< [m] tilde matrix of r_Pc_B
 	Eigen::Vector3d rPrime_PcB_B;  //!< [m/s] Body time derivative of r_Pc_B

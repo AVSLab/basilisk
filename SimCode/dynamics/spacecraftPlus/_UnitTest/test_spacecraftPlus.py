@@ -186,6 +186,7 @@ def test_SCHubIntegratedSim(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
+            print dataPos[i]
             testMessages.append("FAILED: SCHub test failed pos unit test")
 
     for i in range(0,len(trueSigma)):

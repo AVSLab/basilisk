@@ -114,6 +114,12 @@ def isArrayEqualRelative(result, truth, dim, accuracy):
     if foundNAN(result): return 0
 
     for i in range(0,dim):
+        if truth[i] == 0:
+            if result[i+1] == 0:
+                continue
+            else:
+                print "Truth array contains zero"
+                return 0
         if math.fabs((result[i+1] - truth[i])/truth[i]) > accuracy:
             return 0    # return 0 to indicate the array's are not equal
     return 1            # return 1 to indicate the two array's are equal
