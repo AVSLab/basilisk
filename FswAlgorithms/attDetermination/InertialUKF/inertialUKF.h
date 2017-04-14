@@ -27,6 +27,7 @@
 #include "fswMessages/stAttFswMsg.h"
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
+#include "transDetermination/dvAccumulation/dvAccumulation.h"
 #include <stdint.h>
 
 
@@ -45,6 +46,7 @@ typedef struct {
     char rwParamsInMsgName[MAX_STAT_MSG_LENGTH];  /*!< The name of the RWConfigParams input message*/
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input RW speeds message*/
     char stDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
+    char gyrBuffInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] Input message buffer from MIRU*/
     char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
 
 	int numStates;                /*!< [-] Number of states for this filter*/
@@ -59,7 +61,9 @@ typedef struct {
 
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
-
+    double gyrAggTimeTag;          /*!< [s] Time-tag for aggregated gyro data*/
+    double aggSigma_b2b1[3];       /*!< [-] Aggregated attitude motion from gyros*/
+    double dcm_BdyGyrpltf[3][3];   /*!< [-] DCM for converting gyro data to body frame*/
 	double wM[2 * AKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
 	double wC[2 * AKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
 
@@ -95,6 +99,7 @@ typedef struct {
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t rwParamsInMsgID;     /*!< [-] ID for the RWArrayConfigFswMsg ingoing message */
     int32_t rwSpeedsInMsgID;      /*!< [-] ID for the incoming RW speeds*/
+    int32_t gyrBuffInMsgID;         /*!< [-] ID of the input message buffer*/
 }InertialUKFConfig;
 
 #ifdef __cplusplus
@@ -107,6 +112,7 @@ extern "C" {
         uint64_t moduleID);
 	void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 		uint64_t moduleID);
+    void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double propTime, AccDataFswMsg *gyrData);
 	void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
     void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime);
 	void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double dt);

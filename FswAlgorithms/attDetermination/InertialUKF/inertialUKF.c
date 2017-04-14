@@ -63,6 +63,9 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,
         sizeof(RWSpeedIntMsg), moduleID);
     
+    ConfigData->gyrBuffInMsgID = subscribeToMessage(ConfigData->gyrBuffInMsgName,
+                                                   sizeof(AccDataFswMsg), moduleID);
+    
     
 }
 
@@ -161,18 +164,20 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     uint64_t ClockTime;
     uint32_t ReadSize;
     uint32_t otherSize;
+    int32_t trackerValid;
     InertialFilterFswMsg inertialDataOutBuffer;
+    AccDataFswMsg gyrBuffer;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
     memset(&(ConfigData->stSensorIn), 0x0, sizeof(STAttFswMsg));
-    ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
+    trackerValid = ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
         sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn)), moduleID);
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
-    newTimeTag = ClockTime * NANO2SEC;
+    newTimeTag = ConfigData->stSensorIn.timeTag * NANO2SEC;
     
     if (v3Norm(ConfigData->state) > ConfigData->switchMag) //Little extra margin
     {
@@ -181,9 +186,13 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
         sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
-    if(ConfigData->firstPassComplete == 0)
+    ReadMessage(ConfigData->gyrBuffInMsgID, &ClockTime, &ReadSize,
+                sizeof(AccDataFswMsg), &gyrBuffer, moduleID);
+    if(ConfigData->firstPassComplete == 0 && trackerValid)
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
+        //v3Copy(ConfigData->stSensorIn.MRP_BdyInrtl, ConfigData->state);
+        //ConfigData->timeTag = ConfigData->stSensorIn.timeTag*NANO2SEC;
         ConfigData->firstPassComplete = 1;
     }
     
@@ -193,6 +202,7 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
     {
+        inertialUKFAggGyrData(ConfigData, newTimeTag, &gyrBuffer);
         inertialUKFTimeUpdate(ConfigData, newTimeTag);
         inertialUKFMeasUpdate(ConfigData, newTimeTag);
     }
@@ -395,6 +405,54 @@ void inertialUKFMeasModel(InertialUKFConfig *ConfigData)
     v3Copy(ConfigData->stSensorIn.MRP_BdyInrtl, ConfigData->obs);
     ConfigData->numObs = 3;
     
+}
+
+/*! This method aggregates the input gyro data into a combined total quaternion 
+    rotation to push the state forward by.  This information is stored in the 
+    main data structure for use in the propagation routines.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ @param propTime The time that we need to fix the filter to (seconds)
+ @param gyrData The gyro measurements that we are going to accumulate forward into time
+ */
+void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double propTime, AccDataFswMsg *gyrData)
+{
+    uint32_t minFutInd;
+    int i;
+    double minFutTime = propTime;
+    double measTime;
+    double prv_BpropB0[3], prv_B1B0[3], omeg_BN_B[3], prvTemp[3];
+    double dt;
+    for(i=0; i<MAX_ACC_BUF_PKT; i++)
+    {
+        measTime = gyrData->accPkts[i].measTime*NANO2SEC;
+        if(measTime > ConfigData->timeTag && measTime < minFutTime)
+        {
+            minFutInd = i;
+            minFutTime = measTime;
+        }
+    }
+    v3SetZero(prv_BpropB0);
+    i=0;
+    measTime = ConfigData->timeTag;
+    while(minFutTime <= propTime && minFutTime > ConfigData->timeTag
+        && i<MAX_ACC_BUF_PKT)
+    {
+        dt = minFutTime - measTime;
+//        m33MultV3(ConfigData->dcm_BdyGyrpltf,
+//                  gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
+        v3Copy(gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
+        v3Scale(dt, omeg_BN_B, prv_B1B0);
+        v3Copy(prv_BpropB0, prvTemp);
+        addPRV(prvTemp, prv_B1B0, prv_BpropB0);
+        ConfigData->gyrAggTimeTag = minFutTime;
+        i++;
+        measTime = minFutTime;
+        minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
+        minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;
+    }
+    PRV2MRP(prv_BpropB0, ConfigData->aggSigma_b2b1);
+    return;
 }
 
 /*! This method performs the measurement update for the inertial kalman filter.

@@ -28,12 +28,11 @@ StarTracker::StarTracker()
 {
     CallCounts = 0;
     this->messagesLinked = false;
-    this->inputTimeID = -1;
     this->inputStateID = -1;
-    this->inputTimeMessage = "spice_time_output_data";
     this->inputStateMessage = "inertial_state_output";
     this->outputStateMessage = "star_tracker_state";
     this->OutputBufferCount = 2;
+    this->sensorTimeTag = 0;
     m33SetIdentity(RECAST3X3 this->dcm_CS);
     return;
 }
@@ -45,13 +44,11 @@ StarTracker::~StarTracker()
 
 bool StarTracker::LinkMessages()
 {
-    inputTimeID = SystemMessaging::GetInstance()->subscribeToMessage(
-        inputTimeMessage, sizeof(SpiceTimeSimMsg), moduleID);
     inputStateID = SystemMessaging::GetInstance()->subscribeToMessage(
         inputStateMessage, sizeof(SCPlusStatesSimMsg), moduleID);
     
     
-    return(inputTimeID >=0 && inputStateID >= 0);
+    return(inputStateID >= 0);
 }
 
 void StarTracker::SelfInit()
@@ -96,18 +93,12 @@ void StarTracker::readInputMessages()
         this->messagesLinked = LinkMessages();
     }
     
-    memset(&this->timeState, 0x0, sizeof(SpiceTimeSimMsg));
     memset(&this->scState, 0x0, sizeof(SCPlusStatesSimMsg));
     if(inputStateID >= 0)
     {
         SystemMessaging::GetInstance()->ReadMessage(inputStateID, &localHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&scState), moduleID);
-    }
-    if(inputTimeID >= 0)
-    {
-        SystemMessaging::GetInstance()->ReadMessage(inputTimeID, &localHeader,
-                                                    sizeof(SpiceTimeSimMsg), reinterpret_cast<uint8_t*>(&timeState), moduleID);
-        this->envTimeClock = localHeader.WriteClockNanos;
+        this->sensorTimeTag = localHeader.WriteClockNanos;
     }
 }
 
@@ -138,12 +129,6 @@ void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
     C2EP(dcm_CN, sensorValues->qInrtl2Case);
 }
 
-void StarTracker::computeSensorTimeTag(uint64_t CurrentSimNanos)
-{
-    this->sensorTimeTag = this->timeState.J2000Current;
-    this->sensorTimeTag += (CurrentSimNanos - this->envTimeClock)*1.0E-9;
-}
-
 void StarTracker::computeTrueOutput()
 {
     this->trueValues.timeTag = this->sensorTimeTag;
@@ -160,7 +145,6 @@ void StarTracker::writeOutputMessages(uint64_t CurrentSimNanos)
 void StarTracker::UpdateState(uint64_t CurrentSimNanos)
 {
     readInputMessages();
-    computeSensorTimeTag(CurrentSimNanos);
     computeSensorErrors();
     computeTrueOutput();
     applySensorErrors();
