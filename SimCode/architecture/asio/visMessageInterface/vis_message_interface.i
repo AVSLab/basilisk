@@ -21,9 +21,7 @@
     #include "visMessageInterface.h"
 %}
 
-%include "std_vector.i"
-%include "std_string.i"
-
+%include "swig_common_model.i"
 
 %include "sys_model.h"
 %include "visMessageInterface.h"
