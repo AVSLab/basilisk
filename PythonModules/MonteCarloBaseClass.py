@@ -173,9 +173,10 @@ class UniformVectorAngleDispersion(VectorVariableDispersion):
         vector = eval('sim.' + self.varName)
         phiRnd = random.uniform(self.phiBounds[0], self.phiBounds[1])
         thetaRnd = random.uniform(self.thetaBounds[0], self.thetaBounds[1])
-        dispVec = vector + ([np.sin(phiRnd) * np.cos(thetaRnd),
-                    np.sin(phiRnd) * np.sin(thetaRnd),
-                    phiRnd])
+        dispVec = np.array(vector) + np.array([[np.sin(phiRnd) * np.cos(thetaRnd)],
+                    [np.sin(phiRnd) * np.sin(thetaRnd)],
+                    [phiRnd]])
+        dispVec = dispVec/np.linalg.norm(dispVec)
         return dispVec
 
 
