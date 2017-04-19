@@ -10,7 +10,6 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * Variable Speed CMG module that include imbalanced dynamics
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
-* depletable mass dynamics model
 
 
 ## Version 0.1.1
