@@ -99,6 +99,12 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     /* stacks data in time order*/
     QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
     
+    /*! Ensure that the computed dt doesn't get huge.*/
+    if(ConfigData->previousTime == 0)
+    {
+        ConfigData->previousTime = inputAccData.accPkts[0].measTime;
+    }
+    
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
         if(inputAccData.accPkts[i].measTime > ConfigData->previousTime)

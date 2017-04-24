@@ -28,6 +28,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "transDetermination/dvAccumulation/dvAccumulation.h"
+#include "SimCode/utilities/signalCondition.h"
 #include <stdint.h>
 
 
@@ -83,16 +84,18 @@ typedef struct {
 	double qObs[3*3];  /*!< [-] Maximally sized obs noise matrix*/
     double IInv[3][3];
 
-    uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
-    uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
-    double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
+    uint32_t numUsedGyros;   /*!< -- Number of currently active CSS sensors*/
     uint32_t firstPassComplete;
+    double sigma_BNOut[3];   /*!< [-] Output MRP*/
+    double omega_BN_BOut[3]; /*!< [r/s] Body rate output data*/
+    double timeTagOut;       /*!< [s] Output time-tag information*/
 	NavAttIntMsg outputInertial;        /*!< -- Output inertial estimate data */
     STAttFswMsg stSensorIn;             /*!< [-] ST sensor data read in from message bus*/
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
     VehicleConfigFswMsg localConfigData;   /*! [-] Vehicle configuration data*/
+    LowPassFilterData gyroFilt[3];      /*! [-] Low-pass filters for input gyro data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/
     int32_t filtDataOutMsgId;   /*!< [-] ID for the filter data output message*/
     int32_t stDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
@@ -112,7 +115,8 @@ extern "C" {
         uint64_t moduleID);
 	void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
 		uint64_t moduleID);
-    void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double propTime, AccDataFswMsg *gyrData);
+    void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
+                          double propTime, AccDataFswMsg *gyrData);
 	void inertialUKFTimeUpdate(InertialUKFConfig *ConfigData, double updateTime);
     void inertialUKFMeasUpdate(InertialUKFConfig *ConfigData, double updateTime);
 	void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double dt);

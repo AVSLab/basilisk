@@ -16,23 +16,30 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module star_tracker
-%{
-   #include "star_tracker.h"
-%}
 
-%include "swig_common_model.i"
+#ifndef _SIGNAL_CONDITION_H_
+#define _SIGNAL_CONDITION_H_
 
-%include "stdint.i"
-%include "sys_model.h"
-%include "star_tracker.h"
-%include "simFswInterfaceMessages/stSensorIntMsg.h"
-%include "simMessages/scPlusStatesSimMsg.h"
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(SCPlusStatesSimMsg)
-GEN_SIZEOF(STSensorIntMsg)
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! \addtogroup Sim Utility Group
+ * @{
+ */
+
+typedef struct {
+    double hStep;         /*!< [s]      filter time step (assumed to be fixed) */
+    double omegCutoff;    /*!< [rad/s]  Cutoff frequency for the filter        */
+    double currentState;  /*!< [-] Current state of the filter                 */
+    double currentMeas;   /*!< [-] Current measurement that we read            */
+}LowPassFilterData;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
+    void    lowPassFilterSignal(double newMeas, LowPassFilterData *lpData);
+    
+#ifdef __cplusplus
+}
+#endif
+/*! @} */
+#endif

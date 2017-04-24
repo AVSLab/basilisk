@@ -147,6 +147,10 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     mTranspose(ConfigData->sQnoise, ConfigData->numStates,
                ConfigData->numStates, ConfigData->sQnoise);
     
+    v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
+    v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
+    ConfigData->timeTagOut = ConfigData->timeTag;
+    
 
     return;
 }
@@ -165,15 +169,17 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     uint32_t ReadSize;
     uint32_t otherSize;
     int32_t trackerValid;
+    double sigma_BNSum[3];
     InertialFilterFswMsg inertialDataOutBuffer;
     AccDataFswMsg gyrBuffer;
+    int i;
     
     /*! Begin method steps*/
     /*! - Read the input parsed CSS sensor data message*/
     ClockTime = 0;
     ReadSize = 0;
     memset(&(ConfigData->stSensorIn), 0x0, sizeof(STAttFswMsg));
-    trackerValid = ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
+    ReadMessage(ConfigData->stDataInMsgId, &ClockTime, &ReadSize,
         sizeof(STAttFswMsg), (void*) (&(ConfigData->stSensorIn)), moduleID);
     /*! - If the time tag from the measured data is new compared to previous step, 
           propagate and update the filter*/
@@ -186,9 +192,10 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     
     ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
         sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
-    ReadMessage(ConfigData->gyrBuffInMsgID, &ClockTime, &ReadSize,
+    memset(&gyrBuffer, 0x0, sizeof(AccDataFswMsg));
+    ReadMessage(ConfigData->gyrBuffInMsgID, &ClockTime, &otherSize,
                 sizeof(AccDataFswMsg), &gyrBuffer, moduleID);
-    if(ConfigData->firstPassComplete == 0 && trackerValid)
+    if(ConfigData->firstPassComplete == 0)
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
         //v3Copy(ConfigData->stSensorIn.MRP_BdyInrtl, ConfigData->state);
@@ -200,11 +207,12 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
                 sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
     m33Inverse(RECAST3X3 ConfigData->localConfigData.ISCPntB_B, ConfigData->IInv);
     
-    if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
+    trackerValid = 0;
+    if(newTimeTag > ConfigData->timeTag && ReadSize > 0)
     {
-        inertialUKFAggGyrData(ConfigData, newTimeTag, &gyrBuffer);
         inertialUKFTimeUpdate(ConfigData, newTimeTag);
         inertialUKFMeasUpdate(ConfigData, newTimeTag);
+        trackerValid = 1;
     }
     
     /*! - If current clock time is further ahead than the measured time, then
@@ -212,13 +220,45 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     newTimeTag = callTime*NANO2SEC;
     if(newTimeTag > ConfigData->timeTag)
     {
-        inertialUKFTimeUpdate(ConfigData, newTimeTag);
+        if(trackerValid)
+        {
+            inertialUKFTimeUpdate(ConfigData, newTimeTag);
+            v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
+            v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
+            ConfigData->timeTagOut = ConfigData->timeTag;
+        }
+        else
+        {
+            inertialUKFAggGyrData(ConfigData, ConfigData->timeTagOut,
+                                  newTimeTag, &gyrBuffer);
+            addMRP(ConfigData->sigma_BNOut, ConfigData->aggSigma_b2b1,
+                    sigma_BNSum);
+            if (v3Norm(sigma_BNSum) > ConfigData->switchMag) //Little extra margin
+            {
+                MRPswitch(sigma_BNSum, ConfigData->switchMag, sigma_BNSum);
+            }
+            v3Copy(sigma_BNSum, ConfigData->sigma_BNOut);
+            for(i=0; i<3; i++)
+            {
+                ConfigData->omega_BN_BOut[i] =
+                    ConfigData->gyroFilt[i].currentState;
+            }
+            ConfigData->timeTagOut = newTimeTag;
+
+        }
+    }
+    else
+    {
+        v3Copy(ConfigData->state, ConfigData->sigma_BNOut);
+        v3Copy(&(ConfigData->state[3]), ConfigData->omega_BN_BOut);
+        ConfigData->timeTagOut = ConfigData->timeTag;
     }
     
     /*! - Write the inertial estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputInertial.sigma_BN);
-    v3Copy(&(ConfigData->state[3]), ConfigData->outputInertial.omega_BN_B);
-    ConfigData->outputInertial.timeTag = ConfigData->timeTag;
+    v3Copy(ConfigData->sigma_BNOut, ConfigData->outputInertial.sigma_BN);
+    v3Copy(ConfigData->omega_BN_BOut, ConfigData->outputInertial.omega_BN_B);
+    ConfigData->outputInertial.timeTag = ConfigData->timeTagOut;
+	
 	WriteMessage(ConfigData->navStateOutMsgId, callTime, sizeof(NavAttIntMsg),
 		&(ConfigData->outputInertial), moduleID);
     
@@ -415,43 +455,50 @@ void inertialUKFMeasModel(InertialUKFConfig *ConfigData)
  @param propTime The time that we need to fix the filter to (seconds)
  @param gyrData The gyro measurements that we are going to accumulate forward into time
  */
-void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double propTime, AccDataFswMsg *gyrData)
+void inertialUKFAggGyrData(InertialUKFConfig *ConfigData, double prevTime,
+    double propTime, AccDataFswMsg *gyrData)
 {
     uint32_t minFutInd;
-    int i;
+    int i, j;
     double minFutTime = propTime;
     double measTime;
-    double prv_BpropB0[3], prv_B1B0[3], omeg_BN_B[3], prvTemp[3];
+    double ep_BpropB0[4], ep_B1B0[4], epTemp[4], omeg_BN_B[3], prvTemp[3];
     double dt;
+    minFutInd = 0;
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
         measTime = gyrData->accPkts[i].measTime*NANO2SEC;
-        if(measTime > ConfigData->timeTag && measTime < minFutTime)
+        if(measTime > prevTime && measTime < minFutTime)
         {
             minFutInd = i;
             minFutTime = measTime;
         }
     }
-    v3SetZero(prv_BpropB0);
+    v4SetZero(ep_BpropB0);
+    ep_BpropB0[0] = 1.0;
     i=0;
-    measTime = ConfigData->timeTag;
-    while(minFutTime <= propTime && minFutTime > ConfigData->timeTag
+    measTime = prevTime;
+    while(minFutTime <= propTime && minFutTime > prevTime
         && i<MAX_ACC_BUF_PKT)
     {
         dt = minFutTime - measTime;
-//        m33MultV3(ConfigData->dcm_BdyGyrpltf,
-//                  gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
         v3Copy(gyrData->accPkts[minFutInd].gyro_B, omeg_BN_B);
-        v3Scale(dt, omeg_BN_B, prv_B1B0);
-        v3Copy(prv_BpropB0, prvTemp);
-        addPRV(prvTemp, prv_B1B0, prv_BpropB0);
+        v3Scale(dt, omeg_BN_B, prvTemp);
+        PRV2EP(prvTemp, ep_B1B0);
+        v4Copy(ep_BpropB0, epTemp);
+        addEP(epTemp, ep_B1B0, ep_BpropB0);
         ConfigData->gyrAggTimeTag = minFutTime;
         i++;
         measTime = minFutTime;
         minFutInd = (minFutInd + 1)%MAX_ACC_BUF_PKT;
         minFutTime = gyrData->accPkts[minFutInd].measTime*NANO2SEC;
+        for(j=0; j<3; j++)
+        {
+            lowPassFilterSignal(omeg_BN_B[j], &(ConfigData->gyroFilt[j]));
+        }
     }
-    PRV2MRP(prv_BpropB0, ConfigData->aggSigma_b2b1);
+    ConfigData->numUsedGyros = i;
+    EP2MRP(ep_BpropB0, ConfigData->aggSigma_b2b1);
     return;
 }
 

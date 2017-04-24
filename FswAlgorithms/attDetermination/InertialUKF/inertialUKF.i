@@ -31,6 +31,8 @@
 %ignore CrossInit_inertialUKF;
 %constant void Reset_inertialUKF(void*, uint64_t, uint64_t);
 %ignore Reset_inertialUKF;
+STRUCTASLIST(LowPassFilterData)
+STRUCTASLIST(AccPktDataFswMsg)
 %include "inertialUKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/inertialFilterFswMsg.h"
@@ -38,10 +40,14 @@
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
+%include "../../fswMessages/AccDataFswMsg.h"
+%include "../../fswMessages/AccPktDataFswMsg.h"
+%include "utilities/signalCondition.h"
 GEN_SIZEOF(STAttFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
+GEN_SIZEOF(AccDataFswMsg)
 
 %pythoncode %{
 import sys
