@@ -41,14 +41,12 @@ public:
     void computeSensorErrors();
     void applySensorErrors();
     void computeTrueOutput();
-    void computeSensorTimeTag(uint64_t CurrentSimNanos);
     void computeQuaternion(double *sigma, STSensorIntMsg *sensorValue);
     
 public:
     
-    double sensorTimeTag;             //!< [s] Current time tag for sensor out
+    uint64_t sensorTimeTag;            //!< [ns] Current time tag for sensor out
     std::string inputStateMessage;    //!< [-] String for the input state message
-    std::string inputTimeMessage;     //!< [-] String for time input msg
     std::string outputStateMessage;   //!< [-] String for the output state message
     bool messagesLinked;              //!< [-] Indicator for whether inputs bound
     std::vector<double> PMatrix;      //!< [-] Covariance matrix used to perturb state
@@ -59,8 +57,6 @@ public:
     STSensorIntMsg trueValues;  //!< [-] total measurement without perturbations
     STSensorIntMsg sensedValues;//!< [-] total measurement including perturbations
     double mrpErrors[3];              //!< [-] Errors to be applied to the input MRP set indicating whether
-    uint64_t envTimeClock;            //!< [ns] Clock associated with the environment time message
-    SpiceTimeSimMsg timeState;       //!< [-] Module variable where the input Spice Time message is stored
     SCPlusStatesSimMsg scState;      //!< [-] Module variable where the input State Data message is stored
 
     
@@ -68,7 +64,6 @@ public:
     
 private:
     std::vector<double> AMatrix;      //!< [-] AMatrix that we use for error propagation
-    int64_t inputTimeID;              //!< [-] Connect to input time message
     int64_t inputStateID;             //!< [-] Connection to input state message
     int64_t outputStateID;            //!< [-] Connection to outgoing state message
     GaussMarkov errorModel;           //!< [-] Gauss-markov error states

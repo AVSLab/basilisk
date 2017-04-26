@@ -362,8 +362,17 @@ void addPRV(double *qq1, double *qq2, double *result)
     double sp;
     double e1[3];
     double e2[3];
+    double compSum[3];
     double q1[4];
     double q2[4];
+    
+    v3Add(qq1, qq2, compSum);
+
+    if((v3Norm(qq1) < 1.0E-7 || v3Norm(qq2) < 1.0E-7))
+    {
+        v3Add(qq1, qq2, result);
+        return;
+    }
 
     PRV2elem(qq1, q1);
     PRV2elem(qq2, q2);
@@ -375,6 +384,11 @@ void addPRV(double *qq1, double *qq2, double *result)
     v3Set(q2[1], q2[2], q2[3], e2);
 
     p = 2 * acos(cp1 * cp2 - sp1 * sp2 * v3Dot(e1, e2));
+    if(fabs(p) < 1.0E-13)
+    {
+        v3SetZero(result);
+        return;
+    }
     sp = sin(p / 2.);
     v3Scale(cp1 * sp2, e2, q1);
     v3Scale(cp2 * sp1, e1, q2);

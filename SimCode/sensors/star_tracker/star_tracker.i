@@ -23,6 +23,7 @@
 
 %include "swig_common_model.i"
 
+%include "stdint.i"
 %include "sys_model.h"
 %include "star_tracker.h"
 %include "simFswInterfaceMessages/stSensorIntMsg.h"

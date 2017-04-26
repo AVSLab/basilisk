@@ -87,15 +87,9 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
 {
     uint64_t writeTime;
     uint32_t writeSize;
-//    uint64_t measTime[MAX_ACC_BUF_PKT];
-//    double accel_pltf[MAX_ACC_BUF_PKT];
-//    double DV[MAX_ACC_BUF_PKT];
-//    double sum[MAX_ACC_BUF_PKT];
-//    double dvMean[MAX_ACC_BUF_PKT];
     double dt;
-    double frameDVPlt[3];
-    double frameDVBdy[3];
-    double frameDVStr[3];
+
+    double frameDV_B[3];
     AccDataFswMsg inputAccData;
     int i;
     
@@ -105,15 +99,19 @@ void Update_dvAccumulation(DVAccumulationData *ConfigData, uint64_t callTime, ui
     /* stacks data in time order*/
     QuickSort(&(inputAccData.accPkts[0]), 0, MAX_ACC_BUF_PKT-1); //measTime is the array we want to sort. We're sorting the time calculated for each measurement taken from the accelerometer in order in terms of time.
     
+    /*! Ensure that the computed dt doesn't get huge.*/
+    if(ConfigData->previousTime == 0)
+    {
+        ConfigData->previousTime = inputAccData.accPkts[0].measTime;
+    }
+    
     for(i=0; i<MAX_ACC_BUF_PKT; i++)
     {
         if(inputAccData.accPkts[i].measTime > ConfigData->previousTime)
         {
             dt = (inputAccData.accPkts[i].measTime - ConfigData->previousTime)*NANO2SEC;
-            v3Scale(dt, inputAccData.accPkts[i].accel_Pltf, frameDVPlt);
-            m33MultV3(RECAST3X3 ConfigData->dcm_SPltf, frameDVPlt, frameDVStr);
-            v3Copy(frameDVStr, frameDVBdy);
-            v3Add(ConfigData->outputData.vehAccumDV, frameDVBdy,
+            v3Scale(dt, inputAccData.accPkts[i].accel_B, frameDV_B);
+            v3Add(ConfigData->outputData.vehAccumDV, frameDV_B,
                 ConfigData->outputData.vehAccumDV);
             ConfigData->previousTime = inputAccData.accPkts[i].measTime;
         }

@@ -17,16 +17,29 @@
 
  */
 
-#ifndef ST_ATTITUDE_MESSAGE_H
-#define ST_ATTITUDE_MESSAGE_H
+#ifndef _SIGNAL_CONDITION_H_
+#define _SIGNAL_CONDITION_H_
 
 
-/*! @brief Output structure for ST attitude measurement in vehicle body frame*/
+/*! \addtogroup Sim Utility Group
+ * @{
+ */
+
 typedef struct {
-    uint64_t timeTag;              /*!< [ns] Vehicle time code associated with measurement*/
-    double MRP_BdyInrtl[3];      /*!< [-] MRP estimate of inertial to body transformation*/
-}STAttFswMsg;
+    double hStep;         /*!< [s]      filter time step (assumed to be fixed) */
+    double omegCutoff;    /*!< [rad/s]  Cutoff frequency for the filter        */
+    double currentState;  /*!< [-] Current state of the filter                 */
+    double currentMeas;   /*!< [-] Current measurement that we read            */
+}LowPassFilterData;
 
-
-
+#ifdef __cplusplus
+extern "C" {
+#endif
+    
+    void    lowPassFilterSignal(double newMeas, LowPassFilterData *lpData);
+    
+#ifdef __cplusplus
+}
+#endif
+/*! @} */
 #endif

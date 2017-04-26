@@ -20,7 +20,7 @@
 #ifndef _ACC_PKT_DATA_MESSAGE_H
 #define _ACC_PKT_DATA_MESSAGE_H
 
-#define MAX_ACC_BUF_PKT 25
+#define MAX_ACC_BUF_PKT 75
 
 #include "fswMessages/AccPktDataFswMsg.h"
 
