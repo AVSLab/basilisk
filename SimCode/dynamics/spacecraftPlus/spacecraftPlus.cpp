@@ -92,6 +92,10 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     SCPlusStatesSimMsg stateOut;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
+    Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + (*this->c_B);
+    Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + (*this->cDot_B);
+    eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
+    eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
     eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
@@ -401,7 +405,6 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     Eigen::Vector3d rLocal_BN_N = hubR_N->getState();
     Eigen::Vector3d rDotLocal_BN_N = hubV_N->getState();
     Eigen::MRPd sigmaLocal_BN;
-    Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getState();
     sigmaLocal_BN = (Eigen::Vector3d ) hubSigma->getState();
 
     // - Find DCM's
