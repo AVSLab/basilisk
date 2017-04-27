@@ -59,7 +59,7 @@ private:
     // Message buffers
     std::string UTCCalInit;
     SCPlusStatesSimMsg scStateInMsg;
-    SpicePlanetStateSimMsg sunEphmInMsg;
+//    SpicePlanetStateSimMsg sunEphmInMsg;
     std::vector<SpicePlanetStateSimMsg> planets;
     int64_t centralBodyInMsgId;
     SpicePlanetStateSimMsg centralBodyInMsg;
