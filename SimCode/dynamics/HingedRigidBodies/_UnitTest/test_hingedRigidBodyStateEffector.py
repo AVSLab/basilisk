@@ -103,6 +103,8 @@ def test_hubPropagate(show_plots):
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
     
     unitTestSim.InitializeSimulation()
 
@@ -136,6 +138,11 @@ def test_hubPropagate(show_plots):
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
+
+    rOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_CN_N',range(3))
+    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
+    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
+    vOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
 
     orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -198,6 +205,18 @@ def test_hubPropagate(show_plots):
     plt.figure(4)
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
+    plt.figure(5)
+    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,1], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,2], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,3])
+    plt.title("Position of Body Frame Origin")
+    plt.figure(6)
+    plt.plot(vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,1], vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,2], vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,3])
+    plt.title("Velocity of Body Frame Origin")
+    plt.figure(7)
+    plt.plot(rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,1], rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,2], rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,3])
+    plt.title("Position of Center Mass of SC")
+    plt.figure(8)
+    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
+    plt.title("Velocity of Center of Mass of SC")
     if show_plots == True:
         plt.show()
 

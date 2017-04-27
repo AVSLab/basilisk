@@ -92,8 +92,11 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     SCPlusStatesSimMsg stateOut;
     eigenMatrixXd2CArray(*this->inertialPositionProperty, stateOut.r_BN_N);
     eigenMatrixXd2CArray(*this->inertialVelocityProperty, stateOut.v_BN_N);
-    Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + (*this->c_B);
-    Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + (*this->cDot_B);
+    Eigen::MRPd sigmaLocal_BN;
+    sigmaLocal_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    Eigen::Matrix3d dcm_NB = sigmaLocal_BN.toRotationMatrix();
+    Eigen::Vector3d rLocal_CN_N = (*this->inertialPositionProperty) + dcm_NB*(*this->c_B);
+    Eigen::Vector3d vLocal_CN_N = (*this->inertialVelocityProperty) + dcm_NB*(*this->cDot_B);
     eigenVector3d2CArray(rLocal_CN_N, stateOut.r_CN_N);
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
