@@ -31,6 +31,7 @@
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "../../simMessages/rwCmdSimMsg.h"
 #include "../../simMessages/rwConfigSimMsg.h"
+#include "../../simMessages/rwConfigLogSimMsg.h"
 #include "../../simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 #include "../../simFswInterfaceMessages/macroDefinitions.h"
 
