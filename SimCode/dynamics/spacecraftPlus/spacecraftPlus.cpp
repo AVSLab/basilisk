@@ -159,6 +159,7 @@ void SpacecraftPlus::initializeDynamics()
     Eigen::MatrixXd initC_B(3,1);
     Eigen::MatrixXd initISCPntB_B(3,3);
     Eigen::MatrixXd initCPrime_B(3,1);
+    Eigen::MatrixXd initCDot_B(3,1);
     Eigen::MatrixXd initISCPntBPrime_B(3,3);
     Eigen::MatrixXd systemTime(2,1);
     systemTime.setZero();
@@ -169,6 +170,7 @@ void SpacecraftPlus::initializeDynamics()
     this->ISCPntB_B = this->dynManager.createProperty("inertiaSC", initISCPntB_B);
     this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
     this->cPrime_B = this->dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
+    this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
     this->property_dcm_BS = this->dynManager.createProperty(this->struct2BdyPropertyName, this->dcm_BS);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
     
@@ -218,6 +220,7 @@ void SpacecraftPlus::updateSCMassProps(double time)
     (*this->c_B).setZero();
     (*this->ISCPntB_B).setZero();
     (*this->cPrime_B).setZero();
+    (*this->cDot_B).setZero();
     (*this->ISCPntBPrime_B).setZero();
 
     // Add in hubs mass props to the spacecraft mass props
@@ -245,6 +248,9 @@ void SpacecraftPlus::updateSCMassProps(double time)
     (*this->c_B) = (*this->c_B)/(*this->m_SC)(0,0);
     (*this->cPrime_B) = (*this->cPrime_B)/(*this->m_SC)(0,0)
                                              - (*this->mDot_SC)(0,0)*(*this->c_B)/(*this->m_SC)(0,0)/(*this->m_SC)(0,0);
+    Eigen::Vector3d omegaLocal_BN_B = hubOmega_BN_B->getState();
+    Eigen::Vector3d cLocal_B = (*this->c_B);
+    (*this->cDot_B) = (*this->cPrime_B) + omegaLocal_BN_B.cross(cLocal_B);
 
     return;
 }
@@ -337,11 +343,10 @@ void SpacecraftPlus::integrateState(double time)
     Eigen::Vector3d oldC_B;     // - Center of mass offset before integration
     Eigen::MRPd oldSigma_BN;    // - Sigma_BN before integration
     // - Get center of mass, v_BN_N and dcm_NB from the dyn manager
-    oldC_B = *this->c_B;
     oldSigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
     // - Finally find v_CN_N
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
-    oldV_CN_N = oldV_BN_N + oldDcm_NB*((Eigen::Vector3d) this->hubOmega_BN_B->getState()).cross(oldC_B);
+    oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
 
     // - Integrate the state forward in time
 	this->integrator->integrate(time, localTimeStep);
@@ -362,13 +367,11 @@ void SpacecraftPlus::integrateState(double time)
     // - Find v_CN_N after the integration for accumulated DV
     Eigen::Vector3d newV_BN_N = this->hubV_N->getState(); // - V_BN_N after integration
     Eigen::Vector3d newV_CN_N;  // - V_CN_N after integration
-    Eigen::Vector3d newC_B;     // - Center of mass offset after integration
     Eigen::MRPd newSigma_BN;    // - Sigma_BN after integration
     // - Get center of mass, v_BN_N and dcm_NB
-    newC_B = *this->c_B;
     newSigma_BN = sigmaBNLoc;
     Eigen::Matrix3d newDcm_NB = newSigma_BN.toRotationMatrix();  // - dcm_NB after integration
-    newV_CN_N = newV_BN_N + newDcm_NB*((Eigen::Vector3d) this->hubOmega_BN_B->getState()).cross(newC_B);
+    newV_CN_N = newV_BN_N + newDcm_NB*(*this->cDot_B);
 
     // - Find change in velocity
     Eigen::Vector3d dV_N;
@@ -414,10 +417,8 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - zero necessarry variables
     Eigen::Vector3d totOrbAngMomPntN_B;
     Eigen::Vector3d totRotAngMomPntC_B;
-    Eigen::Vector3d cDotLocal_B;
     totOrbAngMomPntN_B.setZero();
     totRotAngMomPntC_B.setZero();
-    cDotLocal_B.setZero();
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
     this->rotAngMomPntCContr_B.setZero();
@@ -444,12 +445,8 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
         this->totRotEnergy += this->rotEnergyContr;
     }
 
-    // - Find cDot_B
-    Eigen::Vector3d cLocal_B;
-    Eigen::Vector3d cPrimeLocal_B;
-    cLocal_B = (*this->c_B);
-    cPrimeLocal_B = (*this->cPrime_B);
-    cDotLocal_B = cPrimeLocal_B + omegaLocal_BN_B.cross(cLocal_B);
+    // - Get cDot_B from manager
+    Eigen::Vector3d cDotLocal_B = (*this->cDot_B);
 
     // - Find orbital kinetic energy for the spacecraft
     this->totOrbKinEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
@@ -461,12 +458,12 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - Find orbital angular momentum for the spacecraft
     Eigen::Vector3d rCN_N;
     Eigen::Vector3d rDotCN_N;
-    rCN_N = rLocal_BN_N + dcmLocal_NB*cLocal_B;
+    rCN_N = rLocal_BN_N + dcmLocal_NB*(*this->c_B);
     rDotCN_N = rDotLocal_BN_N + dcmLocal_NB*cDotLocal_B;
     this->totOrbAngMomPntN_N = (*this->m_SC)(0,0)*(rCN_N.cross(rDotCN_N));
 
     // - Find rotational angular momentum for the spacecraft
-    totRotAngMomPntC_B += -(*this->m_SC)(0,0)*cLocal_B.cross(cDotLocal_B);
+    totRotAngMomPntC_B += -(*this->m_SC)(0,0)*(Eigen::Vector3d (*this->c_B)).cross(cDotLocal_B);
     this->totRotAngMomPntC_N = dcmLocal_NB*totRotAngMomPntC_B;
     
     return;

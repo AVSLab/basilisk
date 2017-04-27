@@ -64,6 +64,7 @@ public:
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     Eigen::MatrixXd *property_dcm_BS;    //!< -- Dynamic property version of the structure to body dmc
