@@ -106,6 +106,8 @@ void Reset_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
     ConfigData->countHalfSPs = AKF_N_STATES;
     ConfigData->numObs = 3;
     ConfigData->firstPassComplete = 0;
+    ConfigData->speedDt = 0.0;
+    ConfigData->timeWheelPrev = 0;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
