@@ -95,6 +95,8 @@ typedef struct {
     RWArrayConfigFswMsg rwConfigParams;       /*!< [-] struct to store message containing RW config parameters in body B frame */
     RWSpeedIntMsg rwSpeeds;             /*! [-] Local reaction wheel speeds */
     RWSpeedIntMsg rwSpeedPrev;          /*! [-] Local reaction wheel speeds */
+    double speedDt;                     /*! [s] The time difference between speeds*/
+    uint64_t timeWheelPrev;             /*! [ns] Previous wheel time-tag from msg*/
     VehicleConfigFswMsg localConfigData;   /*! [-] Vehicle configuration data*/
     LowPassFilterData gyroFilt[3];      /*! [-] Low-pass filters for input gyro data*/
     int32_t navStateOutMsgId;     /*!< -- ID for the outgoing body estimate message*/

@@ -190,17 +190,20 @@ void Update_inertialUKF(InertialUKFConfig *ConfigData, uint64_t callTime,
         MRPswitch(ConfigData->state, ConfigData->switchMag, ConfigData->state);
     }
     
-    ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
-        sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
     memset(&gyrBuffer, 0x0, sizeof(AccDataFswMsg));
     ReadMessage(ConfigData->gyrBuffInMsgID, &ClockTime, &otherSize,
                 sizeof(AccDataFswMsg), &gyrBuffer, moduleID);
+    ReadMessage(ConfigData->rwSpeedsInMsgID, &ClockTime, &otherSize,
+                sizeof(RWSpeedIntMsg), &(ConfigData->rwSpeeds), moduleID);
     if(ConfigData->firstPassComplete == 0)
     {
         memcpy(&(ConfigData->rwSpeedPrev), &(ConfigData->rwSpeeds), sizeof(RWSpeedIntMsg));
+        ConfigData->timeWheelPrev = ClockTime;
 
         ConfigData->firstPassComplete = 1;
     }
+    ConfigData->speedDt = (ClockTime - ConfigData->timeWheelPrev)*NANO2SEC;
+    ConfigData->timeWheelPrev = ClockTime;
     
     ReadMessage(ConfigData->massPropsInMsgId, &ClockTime, &otherSize,
                 sizeof(VehicleConfigFswMsg), &(ConfigData->localConfigData), moduleID);
@@ -321,9 +324,13 @@ void inertialStateProp(InertialUKFConfig *ConfigData, double *stateInOut, double
     v3SetZero(torqueTotal);
     for(i=0; i<ConfigData->rwConfigParams.numRW; i++)
     {
+        if(ConfigData->speedDt == 0.0)
+        {
+            continue;
+        }
         wheelAccel = ConfigData->rwSpeeds.wheelSpeeds[i]-
             ConfigData->rwSpeedPrev.wheelSpeeds[i];
-        wheelAccel /= dt/ConfigData->rwConfigParams.JsList[i];
+        wheelAccel /= ConfigData->speedDt/ConfigData->rwConfigParams.JsList[i];
         v3Scale(wheelAccel, &(ConfigData->rwConfigParams.GsMatrix_B[i*3]), torqueSingle);
         v3Subtract(torqueTotal, torqueSingle, torqueTotal);
     }
