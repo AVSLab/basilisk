@@ -26,7 +26,6 @@
 
 /*! @brief Structure used to define the individual RW configuration data message*/
 typedef struct {
-    std::string typeName;       //!< [-], string containing the RW type name
     double rWB_S[3];            //!< [m], position vector of the RW relative to the spacecraft structural frame
     double gsHat_S[3];          //!< [-] spin axis unit vector in structural frame
     double w2Hat0_S[3];         //!< [-] initial torque axis unit vector in structural
