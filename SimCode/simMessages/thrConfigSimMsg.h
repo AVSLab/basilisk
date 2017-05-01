@@ -27,7 +27,6 @@
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
 typedef struct {
-    std::string typeName;                           //!< [], string containing the thruster type name
     Eigen::Vector3d inputThrLoc_S;                  //!< m Location of thruster in structural
     Eigen::Vector3d inputThrDir_S;                  //!< -- Unit vector of thruster pointing
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body

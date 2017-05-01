@@ -64,7 +64,6 @@ def create(
     # populate the thruster object with the type specific parameters
     try:
         eval(thrusterType + '(TH)')
-        TH.typeName = thrusterType
     except:
         print 'ERROR: Thruster type ' + thrusterType + ' is not implemented'
         exit(1)
