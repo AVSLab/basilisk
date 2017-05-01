@@ -64,6 +64,7 @@ public:
     Eigen::MatrixXd *ISCPntB_B;          //!< [kg m^2] Inertia of s/c about point B in B frame components
     Eigen::MatrixXd *c_B;                //!< [m] Vector from point B to CoM of s/c in B frame components
     Eigen::MatrixXd *cPrime_B;           //!< [m/s] Body time derivative of c_B
+    Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;            //!< [s] System time
     Eigen::MatrixXd *property_dcm_BS;    //!< -- Dynamic property version of the structure to body dmc
@@ -79,14 +80,15 @@ public:
     SpacecraftPlus();                    //!< -- Constructor
     ~SpacecraftPlus();                   //!< -- Destructor
     void initializeDynamics();           //!< -- This method initializes all of the dynamics and variables for the s/c
-    void computeEnergyMomentum(double t);  //!< -- This method computes the total energy and momentum of the s/c
+    void computeEnergyMomentum(double time);  //!< -- This method computes the total energy and momentum of the s/c
+    void updateSCMassProps(double time);  //!< -- This method computes the total mass properties of the s/c
     void SelfInit();                     //!< -- Lets spacecraft plus create its own msgs
     void CrossInit();                    //!< -- Hook to tie s/c plus back into provided msgs
 	void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
-    void equationsOfMotion(double t);    //!< -- This method computes the equations of motion for the whole system
-    void integrateState(double t);       //!< -- This method steps the state forward one step in time
+    void equationsOfMotion(double time);    //!< -- This method computes the equations of motion for the whole system
+    void integrateState(double time);       //!< -- This method steps the state forward one step in time
 
 private:
 	StateData *hubR_N;                          //!< -- State data accesss to inertial position for the hub
