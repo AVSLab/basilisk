@@ -31,8 +31,9 @@
 %include "../_GeneralModuleFiles/dynamicObject.h"
 %include "reactionWheelStateEffector.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "../../simMessages/rwCmdSimMsg.h"
-%include "../../simMessages/rwConfigSimMsg.h"
+%include "simMessages/rwCmdSimMsg.h"
+%include "simMessages/rwConfigSimMsg.h"
+%include "simMessages/rwConfigLogSimMsg.h"
 %include "simFswInterfaceMessages/macroDefinitions.h"
 %include "simFswInterfaceMessages/rwArrayTorqueIntMsg.h"
 
@@ -44,6 +45,7 @@ namespace std {
 	%template(RWCmdVector) vector<RWCmdSimMsg>;
 }
 GEN_SIZEOF(RWArrayTorqueIntMsg);
+GEN_SIZEOF(RWConfigLogSimMsg);
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])

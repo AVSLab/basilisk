@@ -63,7 +63,6 @@ def writeNewRWCmds(self,u_cmd,numRW):
 
 def defaultReactionWheel():
     RW = reactionWheelStateEffector.RWConfigSimMsg()
-    RW.typeName = ''
     RW.rWB_S = [[0.],[0.],[0.]]
     RW.gsHat_S = [[1.],[0.],[0.]]
     RW.w2Hat0_S = [[0.],[1.],[0.]]

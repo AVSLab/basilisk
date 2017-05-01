@@ -20,6 +20,7 @@
 
 #include "reactionWheelStateEffector.h"
 #include "architecture/messaging/system_messaging.h"
+#include "utilities/avsEigenSupport.h"
 #include <cstring>
 #include <iostream>
 #include <cmath>
@@ -337,7 +338,7 @@ void ReactionWheelStateEffector::SelfInit()
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
 		tmpWheelMsgName = "rw_config_" + std::to_string(it - ReactionWheelData.begin()) + "_data";
-		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigSimMsg), OutputBufferCount, "RWConfigSimMsg", moduleID);
+		tmpWheeltMsgId = messageSys->CreateNewMessage(tmpWheelMsgName, sizeof(RWConfigLogSimMsg), OutputBufferCount, "RWConfigLogSimMsg", moduleID);
 		this->rwOutMsgNames.push_back(tmpWheelMsgName);
 		this->rwOutMsgIds.push_back(tmpWheeltMsgId);
 	}
@@ -413,7 +414,7 @@ void ReactionWheelStateEffector::CrossInit()
 void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 {
 	SystemMessaging *messageSys = SystemMessaging::GetInstance();
-	RWConfigSimMsg tmpRW;
+	RWConfigLogSimMsg tmpRW;
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
@@ -425,10 +426,10 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         it->Omega = omegaCurrent;
 		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
 
-		tmpRW.rWB_S = it->rWB_S;
-		tmpRW.gsHat_S = it->gsHat_S;
-		tmpRW.w2Hat0_S = it->w2Hat0_S;
-		tmpRW.w3Hat0_S = it->w3Hat0_S;
+        eigenVector3d2CArray(it->rWB_S, tmpRW.rWB_S);
+        eigenVector3d2CArray(it->gsHat_S, tmpRW.gsHat_S);
+        eigenVector3d2CArray(it->w2Hat0_S, tmpRW.w2Hat0_S);
+        eigenVector3d2CArray(it->w3Hat0_S, tmpRW.w3Hat0_S);
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
 		tmpRW.u_max = it->u_max;
@@ -443,7 +444,7 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		// Write out config data for eachreaction wheel
 		messageSys->WriteMessage(this->rwOutMsgIds.at(it - ReactionWheelData.begin()),
 								 CurrentClock,
-								 sizeof(RWConfigSimMsg),
+								 sizeof(RWConfigLogSimMsg),
 								 reinterpret_cast<uint8_t*> (&tmpRW),
 								 moduleID);
 	}
