@@ -12,6 +12,13 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
 
+## Version 0.1.2
+<ul>
+	   <li>All unit and integrated tests now pass on Linux.  The root issue was a varaible length string variable in an output message.  These strings have now been removed as they are no longer needed.</li>
+	   <li>The position and velocity of the center of mass of the spacecraft was added to the messaging system, so now the spacecraft’s translational states can be logged by the center of mass of the spacecraft (r_CN_N and v_CN_N) or the origin of the body frame which is fixed to the hub (r_BN_N and v_BN_N). Additionally, the mass properties of the spacecraft was organized into an updateSCMassProps method that incapsulates the calculations of mass property calculations.</li>
+	   <li>Updated UKF FSW module to be able to run on gryo only information when the star tracker is not available.</li> 
+</ul>
+
 ## Version 0.1.1
 <ul>
 	   <li>On Linux, simplified the processing running BSK modules that require boost.  This makes the Viz related communicaiton modules working again.</li>
