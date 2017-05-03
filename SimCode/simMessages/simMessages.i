@@ -29,6 +29,7 @@
 #include "idEphemerisSimMsg.h"
 #include "rwCmdSimMsg.h"
 #include "rwConfigSimMsg.h"
+#include "rwConfigLogSimMsg.h"
 #include "scPlusMassPropsSimMsg.h"
 #include "scPlusStatesSimMsg.h"
 #include "spiceTimeSimMsg.h"
@@ -55,6 +56,8 @@ GEN_SIZEOF(IDEphemerisSimMsg)
 GEN_SIZEOF(RWCmdSimMsg)
 %include "rwConfigSimMsg.h"
 GEN_SIZEOF(RWConfigSimMsg);
+%include "rwConfigLogSimMsg.h"
+GEN_SIZEOF(RWConfigLogSimMsg);
 %include "scPlusMassPropsSimMsg.h"
 GEN_SIZEOF(SCPlusMassPropsSimMsg)
 %include "scPlusStatesSimMsg.h"
