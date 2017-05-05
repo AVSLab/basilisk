@@ -102,11 +102,12 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
     //! - Save off the observed time-delta for analysis and flag any unexpected overruns
     outputData.initTimeDelta = (int64_t) (nanosDelta/accelFactor) -
         (int64_t) diffNanos.count();
-    outputData.initTimeDelta *= 1.0E-9;
-    if(outputData.initTimeDelta < 0)
+   
+    if(outputData.initTimeDelta < -accuracyNanos)
     {
         outputData.overrunCounter++;
     }
+	outputData.initTimeDelta *= 1.0E-9;
     
     /*! - Loop behavior is fairly straightforward.  While we haven't reached the specified accuracy:
             -# Compute the current time
@@ -116,13 +117,13 @@ void ClockSynch::UpdateState(uint64_t CurrentSimNanos)
     */
     sleepAmount = 0;
 	while (((int64_t) diffNanos.count() - (int64_t) (nanosDelta/accelFactor))
-        < accuracyNanos)
+        < -accuracyNanos)
 	{
 		currentTime = std::chrono::high_resolution_clock::now();
 		diffNanos = std::chrono::duration_cast<std::chrono::nanoseconds>
 			(currentTime - startTime);
 		sleepAmount = (nanosDelta/accelFactor - diffNanos.count()) / (2);
-		std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmount));
+		//std::this_thread::sleep_for(std::chrono::nanoseconds(sleepAmount));
 	}
     
     //! - Save off the output message information for analysis

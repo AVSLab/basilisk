@@ -25,6 +25,7 @@
 
 %include "sys_model.h"
 %include "clock_synch.h"
+%include "simMessages/syncClockSimMsg.h"
 
 %pythoncode %{
 import sys
