@@ -1,12 +1,12 @@
 /*
  ISC License
- 
+
  Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
- 
+
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
  copyright notice and this permission notice appear in all copies.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
  WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -14,8 +14,9 @@
  WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
+
  */
+
 %module simMessages
 %{
 #include <Eigen/Dense>
@@ -28,6 +29,7 @@
 #include "idEphemerisSimMsg.h"
 #include "rwCmdSimMsg.h"
 #include "rwConfigSimMsg.h"
+#include "rwConfigLogSimMsg.h"
 #include "scPlusMassPropsSimMsg.h"
 #include "scPlusStatesSimMsg.h"
 #include "spiceTimeSimMsg.h"
@@ -54,6 +56,8 @@ GEN_SIZEOF(IDEphemerisSimMsg)
 GEN_SIZEOF(RWCmdSimMsg)
 %include "rwConfigSimMsg.h"
 GEN_SIZEOF(RWConfigSimMsg);
+%include "rwConfigLogSimMsg.h"
+GEN_SIZEOF(RWConfigLogSimMsg);
 %include "scPlusMassPropsSimMsg.h"
 GEN_SIZEOF(SCPlusMassPropsSimMsg)
 %include "scPlusStatesSimMsg.h"
