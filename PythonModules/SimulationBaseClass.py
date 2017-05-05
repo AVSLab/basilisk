@@ -249,50 +249,6 @@ class SimBaseClass:
         Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
-    '''
-
-    def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
-        SplitName = VarName.split('.')
-        Subname = '.'
-        Subname = Subname.join(SplitName[1:])
-        NoDotName = ''
-        NoDotName = NoDotName.join(SplitName)
-        NoDotName = NoDotName.translate(None, '[]')
-        inv_map = {v: k for k, v in self.NameReplace.items()}
-        if SplitName[0] in inv_map:
-            LogName = inv_map[SplitName[0]] + '.' + Subname
-            if (LogName in self.VarLogList):
-                return
-            if (type(eval(LogName)).__name__ == 'SwigPyObject'):
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
-                    RefFunctionString += LogName + ', ' + str(StartIndex + i) + '),'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-            else:
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString += LogName + '[' + str(StartIndex + i) + '],'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-            RefFunctionString = RefFunctionString[:-1] + ']'
-            exec (RefFunctionString)
-            methodHandle = eval('Get' + NoDotName)
-            self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                    methodHandle, StopIndex - StartIndex + 1)
-        else:
-            print "Could not find a structure that has the ModelTag: %(ModName)s" % \
-                  {"ModName": SplitName[0]}
-            '''
 
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         SplitName = VarName.split('.')
@@ -365,10 +321,13 @@ class SimBaseClass:
 
     def RecordLogVars(self):
         CurrSimTime = self.TotalSim.CurrentNanos
+        minNextTime = -1
         for LogItem, LogValue in self.VarLogList.iteritems():
             LocalPrev = LogValue.PrevLogTime
             if (LocalPrev != None and (CurrSimTime -
                                            LocalPrev) < LogValue.Period):
+                if(minNextTime < 0 or LocalPrev + LogValue.Period < minNextTime):
+                    minNextTime = LocalPrev + LogValue.Period
                 continue
             CurrentVal = LogValue.CallableFunction(self)
             LocalTimeVal = LogValue.TimeValuePairs
@@ -382,6 +341,9 @@ class SimBaseClass:
                     LocalTimeVal.append(CurrentVal)
                 LogValue.PrevLogTime = CurrSimTime
                 LogValue.PrevValue = CurrentVal
+                if(minNextTime < 0 or CurrSimTime + LogValue.Period < minNextTime):
+                    minNextTime = CurrSimTime + LogValue.Period
+        return minNextTime
 
     def ExecuteSimulation(self):
         self.initializeEventChecks()
