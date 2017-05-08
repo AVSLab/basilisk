@@ -204,7 +204,7 @@ void SysProcess::scheduleTask(ModelScheduleEntry & taskCall)
     //! - Iteratre through all of the task models to find correct place
     for(it = processTasks.begin(); it != processTasks.end(); it++)
     {
-        /// - If the next Task starts after new Task, pop it on just prior
+        //! - If the next Task starts after new Task, pop it on just prior
         if(it->NextTaskStart > taskCall.NextTaskStart ||
            (it->NextTaskStart == taskCall.NextTaskStart &&
             taskCall.taskPriority > it->taskPriority))
@@ -260,6 +260,37 @@ void SysProcess::enableAllTasks()
     {
         it->TaskPtr->enableTask();
     }
+}
+
+/*! This method updates a specified task's period once it locates that task 
+    in the list.  It will warn the user if a task is not found and will then 
+	seed the task into the task-list appropriately.
+	@param taskName The name of the task you want to change period of
+	@param newPeriod the new number of nanoseconds you want between calls
+    @return void
+*/
+void SysProcess::changeTaskPeriod(std::string taskName, uint64_t newPeriod)
+{
+	//! Begin Method steps
+	std::vector<ModelScheduleEntry>::iterator it;
+	//! - Iteratre through all of the task models to disable them
+	for (it = processTasks.begin(); it != processTasks.end(); it++)
+	{
+		if (it->TaskPtr->TaskName == taskName)
+		{
+			it->TaskPtr->updatePeriod(newPeriod);
+			ModelScheduleEntry localEntry;
+			localEntry.TaskPtr = it->TaskPtr;
+			localEntry.TaskUpdatePeriod = it->TaskPtr->TaskPeriod;
+			localEntry.NextTaskStart = it->TaskPtr->NextStartTime;
+			localEntry.taskPriority = it->taskPriority;
+			processTasks.erase(it);
+			scheduleTask(localEntry);
+			return;
+		}
+	}
+	std::cerr << "You attempted to change the period of task: " << taskName << std::endl;
+	std::cerr << "I couldn't find that in process: " << this->processName << std::endl;
 }
 
 //void SysProcess::getAllMessageDefinitions()

@@ -58,6 +58,9 @@ class ProcessBaseClass:
     def selectProcess(self):
         self.processData.selectProcess()
 
+    def updateTaskPeriod(self, TaskName, newPeriod):
+        self.processData.changeTaskPeriod(TaskName, newPeriod)
+
 
 class TaskBaseClass:
     def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
@@ -72,9 +75,6 @@ class TaskBaseClass:
 
     def enable(self):
         self.TaskData.enableTask()
-
-    def updatePeriod(self, newPeriod):
-        self.TaskData.updatePeriod(newPeriod)
 
     def resetTask(self, callTime):
         self.TaskData.ResetTaskList(callTime)
@@ -135,7 +135,8 @@ class EventHandlerClass:
         if self.eventActive == False:
             return
         nextTime = self.prevTime + self.eventRate
-        if self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate:
+        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate and 
+            parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
             nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
             eventCount = self.checkCall(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
@@ -357,11 +358,11 @@ class SimBaseClass:
             nextStopTime = self.StopTime
             nextEventTime= self.checkEvents()
             nextStopTime = nextEventTime if nextEventTime < nextStopTime and nextEventTime>=0 else nextStopTime
-            if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
-                nextStopTime = nextLogTime
             self.TotalSim.StepUntilTime(nextStopTime)
             #self.TotalSim.SingleStepProcesses()
             nextLogTime = self.RecordLogVars()
+            if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
+                nextStopTime = nextLogTime
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
@@ -378,11 +379,6 @@ class SimBaseClass:
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.enable()
-
-    def updateTaskPeriod(self, TaskName, newPeriod):
-        for Task in self.TaskList:
-            if Task.Name == TaskName:
-                Task.updatePeriod(newPeriod)
 
     def parseDataIndex(self):
         self.dataStructureDictionary = {}

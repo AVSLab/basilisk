@@ -61,6 +61,7 @@ public:
     void singleStepNextTask(uint64_t currentNanos);
     bool processEnabled() {return processActive;}
     void addInterfaceRef(SysInterface *newInt) {intRefs.push_back(newInt);}
+	void changeTaskPeriod(std::string taskName, uint64_t newPeriod);
     void routeInterfaces();
     void disableAllTasks();
     void enableAllTasks();
