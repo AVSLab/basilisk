@@ -172,7 +172,7 @@ void SimModel::StepUntilTime(uint64_t SimStopTime)
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future */
-    while(CurrentNanos <= SimStopTime)
+    while(NextTaskTime <= SimStopTime)
     {
         SingleStepProcesses();
     }

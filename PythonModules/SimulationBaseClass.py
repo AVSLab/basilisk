@@ -131,15 +131,19 @@ class EventHandlerClass:
         self.operateCall = eval('EVENT_operate_' + self.eventName)
 
     def checkEvent(self, parentSim):
+        nextTime = int(-1)
         if self.eventActive == False:
             return
+        nextTime = self.prevTime + self.eventRate
         if self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate:
+            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
             eventCount = self.checkCall(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
                 self.occurCounter += 1
+        return(nextTime)
 
 
 class StructDocData:
@@ -347,10 +351,17 @@ class SimBaseClass:
 
     def ExecuteSimulation(self):
         self.initializeEventChecks()
-        while (self.TotalSim.CurrentNanos < self.StopTime):
-            self.checkEvents()
-            self.TotalSim.SingleStepProcesses()
-            self.RecordLogVars()
+        nextLogTime = self.RecordLogVars()
+        while (self.TotalSim.NextTaskTime <= self.StopTime):
+            
+            nextStopTime = self.StopTime
+            nextEventTime= self.checkEvents()
+            nextStopTime = nextEventTime if nextEventTime < nextStopTime and nextEventTime>=0 else nextStopTime
+            if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
+                nextStopTime = nextLogTime
+            self.TotalSim.StepUntilTime(nextStopTime)
+            #self.TotalSim.SingleStepProcesses()
+            nextLogTime = self.RecordLogVars()
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
@@ -471,8 +482,13 @@ class SimBaseClass:
             self.eventList.append(value)
 
     def checkEvents(self):
+        nextTime = -1
         for localEvent in self.eventList:
-            localEvent.checkEvent(self)
+            localNextTime = localEvent.checkEvent(self)
+            if(localNextTime >= 0 and (localNextTime < nextTime or nextTime <0)):
+                nextTime = localNextTime
+        return nextTime
+            
 
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in self.eventMap.keys():
