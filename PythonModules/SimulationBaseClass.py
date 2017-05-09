@@ -359,7 +359,6 @@ class SimBaseClass:
             nextEventTime= self.checkEvents()
             nextStopTime = nextEventTime if nextEventTime < nextStopTime and nextEventTime>=0 else nextStopTime
             self.TotalSim.StepUntilTime(nextStopTime)
-            #self.TotalSim.SingleStepProcesses()
             nextLogTime = self.RecordLogVars()
             if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
                 nextStopTime = nextLogTime
