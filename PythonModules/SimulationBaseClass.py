@@ -352,16 +352,20 @@ class SimBaseClass:
 
     def ExecuteSimulation(self):
         self.initializeEventChecks()
-        nextLogTime = self.RecordLogVars()
+        nextStopTime = self.TotalSim.CurrentNanos
+        
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             
-            nextStopTime = self.StopTime
+            
             nextEventTime= self.checkEvents()
             nextStopTime = nextEventTime if nextEventTime < nextStopTime and nextEventTime>=0 else nextStopTime
             self.TotalSim.StepUntilTime(nextStopTime)
+            nextStopTime = self.StopTime
             nextLogTime = self.RecordLogVars()
             if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
                 nextStopTime = nextLogTime
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)

@@ -164,9 +164,9 @@ def unitDynamicsModesTestFunction(show_plots, torqueInput, forceNInput, forceBIn
     np.set_printoptions(precision=16)
 
     # Remove time zero from list
-    dataForceN = dataForceN[2:len(dataForceN),:]
-    dataForceB = dataForceB[2:len(dataForceB),:]
-    dataTorque = dataTorque[2:len(dataTorque),:]
+    dataForceN = dataForceN[1:len(dataForceN),:]
+    dataForceB = dataForceB[1:len(dataForceB),:]
+    dataTorque = dataTorque[1:len(dataTorque),:]
 
 
     #
