@@ -203,14 +203,21 @@ class SimBaseClass:
         print "Could not find a Task with name: %(TaskName)s" % \
               {"TaskName": TaskName}
 
-    def CreateNewProcess(self, procName):
+    def CreateNewProcess(self, procName, priority = -1):
         proc = simulationArchTypes.ProcessBaseClass(procName)
         self.procList.append(proc)
+        proc.processPriority = priority
         self.TotalSim.addNewProcess(proc.processData)
         return proc
     
-    def CreateNewPythonProcess(self, procName):
+    def CreateNewPythonProcess(self, procName, priority = -1):
         proc = simulationArchTypes.PythonProcessClass(procName)
+        i=0;
+        for procLoc in self.pyProcList:
+            if priority > procLoc.procPriority:
+                self.pyProcList.insert(i, proc)
+                return proc
+            i+=1
         self.pyProcList.append(proc)
         return proc
 

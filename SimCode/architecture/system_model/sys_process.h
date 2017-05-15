@@ -62,6 +62,7 @@ public:
     bool processEnabled() {return processActive;}
     void addInterfaceRef(SysInterface *newInt) {intRefs.push_back(newInt);}
 	void changeTaskPeriod(std::string taskName, uint64_t newPeriod);
+    void setPriority(int64_t newPriority) {processPriority = newPriority;}
     void routeInterfaces();
     void disableAllTasks();
     void enableAllTasks();
@@ -73,7 +74,8 @@ public:
     uint64_t nextTaskTime;                      //!< ns time for the next Task
     uint64_t prevRouteTime;                     //!< ns Time that interfaces were previously routed
     std::string processName;                      //!< -- Identified for Task
-	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled 
+	bool processActive;                           //!< -- Flag indicating whether the Task has been disabled
+    int64_t processPriority;                    //!< [-] Priority level for process (higher first)
 };
 
 /*! @} */

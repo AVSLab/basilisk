@@ -89,11 +89,21 @@ uint64_t SimModel::GetWriteData(std::string MessageName, uint64_t MaxSize,
 }
 
 /*! This method allows the user to attach a process to the simulation for 
-    execution.  Note that for a single time, processes will be executed in 
-    the order they were added in
+    execution.  Note that the priority level of the process determines what 
+    order it gets called in.  Otherwise it's first-in, first-out
+    @return void
 */
 void SimModel::addNewProcess(SysProcess *newProc)
 {
+    std::vector<SysProcess *>::iterator it;
+    for(it = processList.begin(); it != processList.end(); it++)
+    {
+        if(newProc->processPriority > (*it)->processPriority)
+        {
+            processList.insert(it, newProc);
+            return;
+        }
+    }
     processList.push_back(newProc);
 }
 

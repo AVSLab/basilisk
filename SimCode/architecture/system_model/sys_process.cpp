@@ -26,6 +26,7 @@ SysProcess :: SysProcess()
 {
     nextTaskTime = 0;
     processActive = true;
+    processPriority = -1;
     disableProcess();
 }
 /*! A construction option that allows the user to set all Task parameters.
