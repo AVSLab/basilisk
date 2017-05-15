@@ -34,50 +34,7 @@ import xml.etree.ElementTree as ET
 import inspect
 import MonteCarloBaseClass
 import sets
-
-class ProcessBaseClass:
-    def __init__(self, procName):
-        self.Name = procName
-        self.processData = sim_model.SysProcess(procName)
-
-    def addTask(self, newTask, taskPriority=-1):
-        self.processData.addNewTask(newTask.TaskData, taskPriority)
-
-    def addInterfaceRef(self, newInt):
-        self.processData.addInterfaceRef(newInt)
-
-    def discoverAllMessages(self):
-        self.processData.discoverAllMessages()
-
-    def disableAllTasks(self):
-        self.processData.disableAllTasks()
-
-    def enableAllTasks(self):
-        self.processData.enableAllTasks()
-
-    def selectProcess(self):
-        self.processData.selectProcess()
-
-    def updateTaskPeriod(self, TaskName, newPeriod):
-        self.processData.changeTaskPeriod(TaskName, newPeriod)
-
-
-class TaskBaseClass:
-    def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
-        self.Name = TaskName
-        self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
-                                                    FirstStart)
-        self.TaskData.TaskName = TaskName
-        self.TaskModels = []
-
-    def disable(self):
-        self.TaskData.disableTask()
-
-    def enable(self):
-        self.TaskData.enableTask()
-
-    def resetTask(self, callTime):
-        self.TaskData.ResetTaskList(callTime)
+import simulationArchTypes
 
 
 class LogBaseClass:
@@ -215,7 +172,9 @@ class SimBaseClass:
         self.TotalSim = sim_model.SimModel()
         self.TaskList = []
         self.procList = []
+        self.pyProcList = []
         self.StopTime = 0
+        self.nextEventTime = 0
         self.NameReplace = {}
         self.VarLogList = {}
         self.eventMap = {}
@@ -245,13 +204,18 @@ class SimBaseClass:
               {"TaskName": TaskName}
 
     def CreateNewProcess(self, procName):
-        proc = ProcessBaseClass(procName)
+        proc = simulationArchTypes.ProcessBaseClass(procName)
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
+    
+    def CreateNewPythonProcess(self, procName):
+        proc = simulationArchTypes.PythonProcessClass(procName)
+        self.pyProcList.append(proc)
+        return proc
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
-        Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
+        Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
 
@@ -317,6 +281,12 @@ class SimBaseClass:
     def InitializeSimulation(self):
         self.TotalSim.ResetSimulation()
         self.TotalSim.InitSimulation()
+        for proc in self.pyProcList:
+            proc.selfInitProcess()
+        for proc in self.pyProcList:
+            proc.crossInitProcess()
+        for proc in self.pyProcList:
+            proc.resetProcess(0)
         for LogItem, LogValue in self.VarLogList.iteritems():
             LogValue.clearItem()
         self.simulationInitialized = True
@@ -352,18 +322,24 @@ class SimBaseClass:
 
     def ExecuteSimulation(self):
         self.initializeEventChecks()
-        nextStopTime = self.TotalSim.CurrentNanos
+        nextStopTime = self.TotalSim.NextTaskTime
         
         while (self.TotalSim.NextTaskTime <= self.StopTime):
-            
-            
-            nextEventTime= self.checkEvents()
-            nextStopTime = nextEventTime if nextEventTime < nextStopTime and nextEventTime>=0 else nextStopTime
+            if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
+                self.nextEventTime = self.checkEvents()
+            nextStopTime = self.nextEventTime if self.nextEventTime < nextStopTime and self.nextEventTime>=0 else nextStopTime
             self.TotalSim.StepUntilTime(nextStopTime)
             nextStopTime = self.StopTime
             nextLogTime = self.RecordLogVars()
-            if((nextLogTime < nextStopTime and nextLogTime>=0) or nextStopTime < 0):
-                nextStopTime = nextLogTime
+            procStopTimes = []
+            for pyProc in self.pyProcList:
+                nextCallTime = pyProc.nextCallTime()
+                procStopTimes.append(nextCallTime)
+                if(nextCallTime<=self.TotalSim.CurrentNanos):
+                    pyProc.executeTaskList(self.TotalSim.CurrentNanos)
+        
+            nextStopTime = nextStopTime if nextStopTime < min(procStopTimes) else min(procStopTimes)
+            nextStopTime = nextLogTime if nextLogTime>=0 and nextLogTime < nextStopTime else nextStopTime
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
 
 
@@ -479,6 +455,7 @@ class SimBaseClass:
         for key, value in self.eventMap.iteritems():
             value.methodizeEvent()
             self.eventList.append(value)
+        self.nextEventTime = 0
 
     def checkEvents(self):
         nextTime = -1
