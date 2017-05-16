@@ -100,6 +100,7 @@ class PythonProcessClass(ProcessBaseClass):
         self.taskList = []
         self.executionOrder = []
         self.nextTaskTime = 0
+        self.pyProcPriority = -1
     def nextCallTime(self):
         return self.nextTaskTime
     def scheduleTask(self, newTask):

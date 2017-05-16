@@ -30,6 +30,7 @@ SimModel::SimModel()
 {
     CurrentNanos = 0;
     NextTaskTime = 0;
+    nextProcPriority = -1;
 }
 
 /*! Nothing to destroy really */
@@ -136,9 +137,10 @@ void SimModel::InitSimulation()
 /*! This method steps all of the processes forward to the current time.  It also 
     increments the internal simulation time appropriately as the simulation 
     processes are triggered
+    @param stopPri The priority level below which the sim won't go
     @return void
 */
-void SimModel::SingleStepProcesses()
+void SimModel::SingleStepProcesses(int64_t stopPri)
 {
     uint64_t nextCallTime = ~0;
     std::vector<SysProcess *>::iterator it = processList.begin();
@@ -148,7 +150,9 @@ void SimModel::SingleStepProcesses()
         SysProcess *localProc = (*it);
         if(localProc->processEnabled())
         {
-            while(localProc->nextTaskTime <= CurrentNanos)
+            while(localProc->nextTaskTime < CurrentNanos ||
+                (localProc->nextTaskTime == CurrentNanos &&
+                  localProc->processPriority >= stopPri))
             {
                 localProc->singleStepNextTask(CurrentNanos);
             }
@@ -172,19 +176,21 @@ void SimModel::SingleStepProcesses()
     messageLogs.logAllMessages();
 }
 
-/*! This method steps the simulation until the specified stop time has been
- reached.
+/*! This method steps the simulation until the specified stop time and 
+ stop priority have been reached.
  @return void
  @param SimStopTime Nanoseconds to step the simulation for
+ @param stopPri The priority level below which the sim won't go
  */
-void SimModel::StepUntilTime(uint64_t SimStopTime)
+void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
 {
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future */
-    while(NextTaskTime <= SimStopTime)
+    while(NextTaskTime < SimStopTime || (NextTaskTime == SimStopTime &&
+        nextProcPriority >= stopPri) )
     {
-        SingleStepProcesses();
+        SingleStepProcesses(stopPri);
     }
 }
 /*! This method is used to push the current simulation forward in time by the

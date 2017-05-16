@@ -205,8 +205,8 @@ class SimBaseClass:
 
     def CreateNewProcess(self, procName, priority = -1):
         proc = simulationArchTypes.ProcessBaseClass(procName)
+        proc.processData.processPriority = priority
         self.procList.append(proc)
-        proc.processPriority = priority
         self.TotalSim.addNewProcess(proc.processData)
         return proc
     
@@ -330,12 +330,18 @@ class SimBaseClass:
     def ExecuteSimulation(self):
         self.initializeEventChecks()
         nextStopTime = self.TotalSim.NextTaskTime
-        
+        nextPriority = -1
+        pyProcPresent = False
+        if(len(self.pyProcList) > 0):
+            nextPriority = self.pyProcList[0].pyProcPriority
+            pyProcPresent = True
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
                 self.nextEventTime = self.checkEvents()
-            nextStopTime = self.nextEventTime if self.nextEventTime < nextStopTime and self.nextEventTime>=0 else nextStopTime
-            self.TotalSim.StepUntilTime(nextStopTime)
+            if(self.nextEventTime >= 0 and self.nextEventTime < nextStopTime):
+                nextStopTime = self.nextEventTime
+                nextPriority = -1
+            self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
             nextStopTime = self.StopTime
             nextLogTime = self.RecordLogVars()
             procStopTimes = []
@@ -345,8 +351,12 @@ class SimBaseClass:
                 if(nextCallTime<=self.TotalSim.CurrentNanos):
                     pyProc.executeTaskList(self.TotalSim.CurrentNanos)
         
-            nextStopTime = nextStopTime if nextStopTime < min(procStopTimes) else min(procStopTimes)
-            nextStopTime = nextLogTime if nextLogTime>=0 and nextLogTime < nextStopTime else nextStopTime
+            if(pyProcPresent and nextStopTime > min(procStopTimes)):
+                nextStopTime = min(procStopTimes)
+                nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
+            if(nextLogTime >= 0 and nextLogTime < nextStopTime):
+                nextStopTime = nextLogTime
+                nextPriority = -1
             nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
 
 

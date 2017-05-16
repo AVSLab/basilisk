@@ -44,8 +44,8 @@ public:
     SimModel(); //!< The SimModel constructor
     ~SimModel();//!< SimModel destructor
     void InitSimulation();  //!< Method to initialize all added Tasks
-    void StepUntilTime(uint64_t SimStopTime); //!< Step simulation until stop time uint64_t reached
-    void SingleStepProcesses(); //!< Step only the next Task in the simulation
+    void StepUntilStop(uint64_t SimStopTime, int64_t stopPri); //!< Step simulation until stop time uint64_t reached
+    void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void PrintSimulatedMessageData(); //!< Print out all messages that have been created
     void addNewProcess(SysProcess *newProc);
     uint64_t GetWriteData(std::string MessageName, uint64_t MaxSize,
@@ -73,6 +73,7 @@ public:
     std::string SimulationName;                     //!< -- Identifier for Task
     uint64_t CurrentNanos;                          //!< ns Current clock time
     uint64_t NextTaskTime;                          //!< ns time for the next Task
+    int64_t nextProcPriority;                       //!< [-] Priority level for the next process
     messageLogger messageLogs;                      //!< -- Message log data
 };
 
