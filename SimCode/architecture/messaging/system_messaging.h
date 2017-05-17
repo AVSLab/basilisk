@@ -88,9 +88,9 @@ public:
     int64_t CreateNewMessage(std::string MessageName, uint64_t MaxSize,
         uint64_t NumMessageBuffers = 2, std::string messageStruct = "", int64_t moduleID = -1);
     bool WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos, uint64_t MsgSize,
-                      uint8_t *MsgPayload, int64_t moduleID = -1);
+                      void *MsgPayload, int64_t moduleID = -1);
     bool ReadMessage(uint64_t MessageID, SingleMessageHeader *DataHeader,
-                     uint64_t MaxBytes, uint8_t *MsgPayload, int64_t moduleID=-1, uint64_t CurrentOffset=0);
+                     uint64_t MaxBytes, void *MsgPayload, int64_t moduleID=-1, uint64_t CurrentOffset=0);
     static void AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes,
                                   uint64_t CurrentOffset, SingleMessageHeader *DataHeader,
                                   uint64_t maxReadBytes, uint8_t *OutputBuffer);

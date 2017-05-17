@@ -95,12 +95,13 @@ class PythonTaskClass(object):
             model.updateState(currentTime)
 
 class PythonProcessClass(ProcessBaseClass):
-    def __init__(self, procName):
+    def __init__(self, procName, priority=-1):
         super(PythonProcessClass, self).__init__(procName)
         self.taskList = []
         self.executionOrder = []
         self.nextTaskTime = 0
-        self.pyProcPriority = -1
+        self.pyProcPriority = priority
+        self.intRefs = []
     def nextCallTime(self):
         return self.nextTaskTime
     def scheduleTask(self, newTask):
@@ -125,24 +126,32 @@ class PythonProcessClass(ProcessBaseClass):
         print "Attempted to add model: " + newModel.modelName
         print "to non-existent task: " + taskName
     def selfInitProcess(self):
+        self.processData.selectProcess()
         for task in self.taskList:
             task.selfInitTask()
         self.nextTaskTime = 0
         self.scheduleTask(self.taskList[-1])
     def crossInitProcess(self):
+        self.processData.selectProcess()
         for task in self.taskList:
             task.crossInitTask()
     def resetProcess(self, currentTime):
         self.executionOrder = []
+        self.processData.selectProcess()
         for task in self.taskList:
             task.resetTask(currentTime)
             self.scheduleTask(task)
     def executeTaskList(self, currentTime):
         taskNext = self.executionOrder[0]
+        for intCurr in self.intRefs:
+            intCurr.routeInputs(self.processData.messageBuffer)
+        self.processData.selectProcess()
         while(taskNext.nextTaskTime <= currentTime):
             taskNext.executeModelList(currentTime)
             self.executionOrder.pop(0)
             self.scheduleTask(taskNext)
             taskNext = self.executionOrder[0]
         self.nextTaskTime = taskNext.nextTaskTime
+    def addInterfaceRef(self, newInt):
+        self.intRefs.append(newInt)
 

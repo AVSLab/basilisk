@@ -43,7 +43,9 @@ class SimModel
 public:
     SimModel(); //!< The SimModel constructor
     ~SimModel();//!< SimModel destructor
-    void InitSimulation();  //!< Method to initialize all added Tasks
+    void selfInitSimulation();  //!< Method to initialize all added Tasks
+    void crossInitSimulation();  //!< Method to initialize all added Tasks
+    void resetInitSimulation();  //!< Method to reset all added tasks
     void StepUntilStop(uint64_t SimStopTime, int64_t stopPri); //!< Step simulation until stop time uint64_t reached
     void SingleStepProcesses(int64_t stopPri=-1); //!< Step only the next Task in the simulation
     void PrintSimulatedMessageData(); //!< Print out all messages that have been created

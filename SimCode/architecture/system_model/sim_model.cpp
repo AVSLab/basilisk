@@ -109,31 +109,59 @@ void SimModel::addNewProcess(SysProcess *newProc)
 }
 
 /*! This method goes through all of the Task models that have been added and
- calls those Tasks to init their lower level models.
+ calls those Tasks to self-init their lower level models.
  @return void
  */
-void SimModel::InitSimulation()
+void SimModel::selfInitSimulation()
 {
     std::vector<SysProcess *>::iterator it;
     for(it=processList.begin(); it!= processList.end(); it++)
     {
         (*it)->selfInitProcess();
     }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message creation failed during self.  Please examine output.\n");
+    }
+    NextTaskTime = 0;
+    CurrentNanos = 0;
+    it=processList.begin();
+    nextProcPriority = (*it)->processPriority;
+}
+/*! This method goes through all of the Task models that have been added and
+ calls those Tasks to cross-init their lower level models.
+ @return void
+ */
+void SimModel::crossInitSimulation()
+{
+    std::vector<SysProcess *>::iterator it;
     for(it=processList.begin(); it!= processList.end(); it++)
     {
         (*it)->crossInitProcess();
     }
+    if(SystemMessaging::GetInstance()->getFailureCount() > 0)
+    {
+        throw std::range_error("Message creation failed during cross.  Please examine output.\n");
+    }
+    
+}
+/*! This method goes through all of the Task models that have been added and
+ calls those Tasks to reset-init their lower level models.
+ @return void
+ */
+void SimModel::resetInitSimulation()
+{
+    std::vector<SysProcess *>::iterator it;
     for(it=processList.begin(); it!= processList.end(); it++)
     {
         (*it)->resetProcess(0);
     }
     if(SystemMessaging::GetInstance()->getFailureCount() > 0)
     {
-        throw std::range_error("Message creation failed.  Please examine output.\n");
+        throw std::range_error("Message creation failed during reset.  Please examine output.\n");
     }
-    NextTaskTime = 0;
-    CurrentNanos = 0;
 }
+
 /*! This method steps all of the processes forward to the current time.  It also 
     increments the internal simulation time appropriately as the simulation 
     processes are triggered
@@ -159,6 +187,12 @@ void SimModel::SingleStepProcesses(int64_t stopPri)
             if(localProc->getNextTime() < nextCallTime)
             {
                 nextCallTime = localProc->getNextTime();
+                nextProcPriority = localProc->processPriority;
+            }
+            else if(localProc->getNextTime() == nextCallTime &&
+                localProc->processPriority > nextProcPriority)
+            {
+                nextProcPriority = localProc->processPriority;
             }
         }
         it++;
@@ -187,10 +221,12 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future */
+    int64_t inPri = SimStopTime == CurrentNanos ? stopPri : -1;
     while(NextTaskTime < SimStopTime || (NextTaskTime == SimStopTime &&
         nextProcPriority >= stopPri) )
     {
-        SingleStepProcesses(stopPri);
+        SingleStepProcesses(inPri);
+        inPri = SimStopTime == NextTaskTime ? stopPri : -1;
     }
 }
 /*! This method is used to push the current simulation forward in time by the
