@@ -117,10 +117,11 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         outTorque = MRP_PD.CmdTorqueBodyIntMsg()
         
         outTorque.torqueRequestBody = (-lrCmd).tolist()
-        print currentTime*1.0E-9
-        print outTorque.torqueRequestBody
-        print localAttErr.sigma_BR
-        print localAttErr.omega_BR_B
+        def print_output():
+            print currentTime*1.0E-9
+            print outTorque.torqueRequestBody
+            print localAttErr.sigma_BR
+            print localAttErr.omega_BR_B
         sim_model.SystemMessaging_GetInstance().WriteMessage(self.outputDataID, currentTime,
             outTorque.getStructSize(), outTorque, self.moduleID)
         
@@ -491,10 +492,11 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
-    scSim.pre2ContInterface.discoverAllMessages()
-    scSim.cont2PostInterface.discoverAllMessages()
-    scSim.post2PreInterface.discoverAllMessages()
+    scSim.InitializeSimulation_andDiscover()
+    # scSim.InitializeSimulation()
+    # scSim.pre2ContInterface.discoverAllMessages()
+    # scSim.cont2PostInterface.discoverAllMessages()
+    # scSim.post2PreInterface.discoverAllMessages()
 
 
     #

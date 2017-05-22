@@ -300,6 +300,16 @@ class SimBaseClass:
             LogValue.clearItem()
         self.simulationInitialized = True
 
+    def InitializeSimulation_andDiscover(self):
+        self.InitializeSimulation()
+        for process in self.procList:
+            for interface in process.processData.intRefs:
+                interface.discoverAllMessages()
+        for process in self.pyProcList:
+            for interface in process.intRefs:
+                interface.discoverAllMessages()
+
+
     def ConfigureStopTime(self, TimeStop):
         self.StopTime = TimeStop
 

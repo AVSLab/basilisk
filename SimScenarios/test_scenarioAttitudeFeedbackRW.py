@@ -655,7 +655,8 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    #scSim.InitializeSimulation()
+    scSim.InitializeSimulation_andDiscover()
 
 
     #
