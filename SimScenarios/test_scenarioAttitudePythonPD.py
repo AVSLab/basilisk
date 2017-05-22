@@ -80,12 +80,40 @@ import simulationArchTypes
 # import message declarations
 import fswMessages
 
+
+# ------------------------------------- Interface Functions ------------------------------------- #
+def GetStructSize(messageStructName):
+    return  eval(messageStructName + '()').getStructSize()
+
+def CreateNewMessage(self, messageName, messageStructName):
+    messageID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(
+        messageName, GetStructSize(messageStructName), 2, messageStructName.split('.')[1], self.moduleID)
+    return messageID
+
+def SubscribeToMessage(self, messageName, messageStructName):
+    messageID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(
+        messageName, GetStructSize(messageStructName), self.moduleID)
+    return messageID
+
+def ReadMessage(self, messageID, messageStructName):
+    localHeader = sim_model.SingleMessageHeader()
+    localData = eval(messageStructName + '()')
+    sim_model.SystemMessaging_GetInstance().ReadMessage(messageID, localHeader, localData.getStructSize(), localData, self.moduleID)
+    return localData
+
+def WriteMessage(self, messageID, currentTime, messageStruct):
+    sim_model.SystemMessaging_GetInstance().WriteMessage(
+        messageID, currentTime, messageStruct.getStructSize(), messageStruct, self.moduleID)
+    return
+# -------------------------------------------------------------------------- #
+
 class PythonMRPPD(simulationArchTypes.PythonModelClass):
     def __init__(self, modelName, modelActive = True, modelPriority = -1):
         self.modelName = modelName
         self.modelActive = modelActive
         self.modelPriority = -1
         self.moduleID = sim_model.SystemMessaging_GetInstance().checkoutModuleID()
+
         self.K = 0
         self.P = 0
         self.inputGuidName =""
@@ -94,40 +122,37 @@ class PythonMRPPD(simulationArchTypes.PythonModelClass):
         self.inputGuidID = -1
         self.inputVehConfigID = -1
         self.outputDataID = -1
+
+
     def selfInit(self):
-        self.outputDataID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(self.outputDataName,
-            MRP_PD.CmdTorqueBodyIntMsg().getStructSize(), 2, "CmdTorqueBodyIntMsg", self.moduleID)
-            
+        self.outputDataID = CreateNewMessage(self, self.outputDataName, 'MRP_PD.CmdTorqueBodyIntMsg')
         return
     def crossInit(self):
-        self.inputGuidID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(self.inputGuidName,
-            MRP_PD.AttGuidFswMsg().getStructSize(), self.moduleID)
-        self.inputVehConfigID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(
-            self.inputVehicleConfigDataName, MRP_PD.VehicleConfigFswMsg().getStructSize(), self.moduleID)
+        self.inputGuidID = SubscribeToMessage(self, self.inputGuidName, 'MRP_PD.AttGuidFswMsg')
+        self.inputVehConfigID = SubscribeToMessage(self, self.inputVehicleConfigDataName, 'MRP_PD.VehicleConfigFswMsg')
         return
     def reset(self, currentTime):
         return
     def updateState(self, currentTime):
-        localAttErr = MRP_PD.AttGuidFswMsg()
-        localHeader = sim_model.SingleMessageHeader()
-        sim_model.SystemMessaging_GetInstance().ReadMessage(self.inputGuidID, localHeader,
-            localAttErr.getStructSize(), localAttErr, self.moduleID)
+        localAttErr = ReadMessage(self, self.inputGuidID, 'MRP_PD.AttGuidFswMsg')
         lrCmd = np.array(localAttErr.sigma_BR) * self.K + np.array(localAttErr.omega_BR_B)*self.P
-        
         outTorque = MRP_PD.CmdTorqueBodyIntMsg()
-        
         outTorque.torqueRequestBody = (-lrCmd).tolist()
+        WriteMessage(self, self.outputDataID, currentTime, outTorque)
+
         def print_output():
             print currentTime*1.0E-9
             print outTorque.torqueRequestBody
             print localAttErr.sigma_BR
             print localAttErr.omega_BR_B
-        sim_model.SystemMessaging_GetInstance().WriteMessage(self.outputDataID, currentTime,
-            outTorque.getStructSize(), outTorque, self.moduleID)
         
         return
 
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+
+
+
+
+    # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
