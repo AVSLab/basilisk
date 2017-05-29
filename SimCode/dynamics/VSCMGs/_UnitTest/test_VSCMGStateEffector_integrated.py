@@ -109,7 +109,7 @@ def findPeaks(Y,maxfind):
     (False,'BalancedWheels'),
     (False,'JitterSimple'),
     (False,'JitterFullyCoupled'),
-    pytest.mark.xfail((False,'JitterFullyCoupledGravity'),run=False),
+    (False,'JitterFullyCoupledGravity'),
 ])
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -142,7 +142,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    if testCase == 'JitterFullyCoupled':
+    if testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
         dt = 0.00001
         duration = 1.
     else:
@@ -189,7 +189,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         VSCMGModel = 0
     elif testCase == 'JitterSimple':
         VSCMGModel = 1
-    elif testCase == 'JitterFullyCoupled':
+    elif testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
         VSCMGModel = 2
 
     for VSCMG in VSCMGs:
@@ -319,6 +319,14 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         trueSigma = [
             [0.028007665602731092, 0.007826213565073164, -0.0011225237462873503]
         ]
+    elif testCase == 'JitterFullyCoupledGravity':
+        truePos = [
+            [-4025537.6614945363, 7487128.566755128, 5249339.750010515]
+        ]
+
+        trueSigma = [
+            [0.028752723904601644, 0.008186006022536746, -0.001688652713919489]
+        ]
 
 
 
@@ -390,7 +398,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     #     plt.xlabel('Time (s)')
     #     plt.ylabel(r'b' + str(i) + r' $\omega$ (d/s)')
 
-    if testCase != 'BalancedWheels':
+    if testCase != 'BalancedWheels' and testCase != 'JitterFullyCoupledGravity':
         istart = int(.01/dt)
         sigmaDataCut = sigmaData[istart:,:]
         thetaData = np.empty([len(sigmaDataCut[:,0]),2])
@@ -458,7 +466,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             testFailCount += 1
             testMessages.append("FAILED: Reaction Wheel Integrated Test failed attitude unit test")
 
-    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled':
+    if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
         for i in range(0,len(initialOrbAngMom_N)):
             # check a vector values
             print 'Orbital Angular Momentum'

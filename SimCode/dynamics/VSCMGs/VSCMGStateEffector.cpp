@@ -330,6 +330,9 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 
             gravityTorquePntW_B = it->d*it->w2Hat_B.cross(it->massW*g_B);
 			gravityTorquePntG_B = it->rGcG_B.cross(it->massG*g_B);
+			it->gravityTorqueWheel_s = it->gsHat_B.dot(gravityTorquePntW_B);
+			it->gravityTorqueGimbal_g = it->ggHat_B.dot(gravityTorquePntG_B);
+
 
 			double dSquared = it->d * it->d;
 			double gammaDotSquared = it->gammaDot * it->gammaDot;
@@ -367,7 +370,7 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 							+ it->IPrimeGPntGc_B*omega_GN_B + omegaTilde*it->IGPntGc_B*omega_GN_B + it->IWPntWc_B*it->Omega*it->gammaDot*it->gtHat_B + it->IPrimeWPntWc_B*omega_WN_B + omegaTilde*it->IWPntWc_B*omega_WN_B
 							+ it->massG*rTildeGcVc_B*(2.0*omegaTilde*rPrimeGcVc_B+omegaTilde*omegaTilde*rGcVc_B) + it->massW*rTildeWcVc_B*(2.0*omegaTilde*rPrimeWcVc_B+omegaTildeSquared*rWcVc_B)
 							+ it->massV*rTildeVcG_B*(2.0*omegaTilde*rPrimeVcB_B+omegaTildeSquared*rVcB_B) )
-							+ 1.0/it->egamma*it->u_g_current;
+							+ 1.0/it->egamma*(it->u_g_current + it->gravityTorqueGimbal_g);
 
 			it->eOmega = it->IW1 + it->massW*dSquared;
 			it->aOmega = -1.0/it->eOmega*it->massW*it->d*it->w3Hat_B;
@@ -376,7 +379,7 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 			it->dOmega = -1.0/it->eOmega*(it->gsHat_B.dot(it->IPrimeWPntWc_B*omega_WN_B)
 										  + it->gsHat_B.transpose()*omegaTilde*it->IWPntWc_B*omega_WN_B
 										  + it->massW*it->d*it->gsHat_B.transpose()*w2HatTilde_B*(2.0*it->rPrimeTildeWcB_B.transpose()*omegaLoc_BN_B+omegaTilde*omegaTilde*it->rWcB_B)
-										  + it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current );
+										  + it->IW13*sin(it->theta)*it->Omega*it->gammaDot - it->massW*dSquared*gammaDotSquared*cos(it->theta)*sin(it->theta) + it->u_s_current + it->gravityTorqueWheel_s);
 
 			it->p = (it->aOmega+it->cOmega*it->agamma)/(1.0-it->cOmega*it->cgamma);
 			it->q = (it->bOmega+it->cOmega*it->bgamma)/(1.0-it->cOmega*it->cgamma);
@@ -446,8 +449,8 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
             thetaCount++;
         }
 		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
-			OmegasDot(VSCMGi,0) = - omegat*it->gammaDot - it->gsHat_B.transpose()*omegaDotBNLoc_B + it->u_s_current/it->IW1;
-			gammaDotsDot(VSCMGi,0) = 1/it->IV3*(it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat-it->IV3*it->ggHat_B.transpose()*omegaDotBNLoc_B);
+			OmegasDot(VSCMGi,0) = - omegat*it->gammaDot - it->gsHat_B.transpose()*omegaDotBNLoc_B + (it->u_s_current+it->gravityTorqueWheel_s)/it->IW1;
+			gammaDotsDot(VSCMGi,0) = 1/it->IV3*((it->u_g_current+it->gravityTorqueGimbal_g)+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat-it->IV3*it->ggHat_B.transpose()*omegaDotBNLoc_B);
         } else if(it->VSCMGModel == JitterFullyCoupled) {
 			OmegasDot(VSCMGi,0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
 			gammaDotsDot(VSCMGi,0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B) + it->cgamma*OmegasDot(VSCMGi,0) + it->dgamma;
@@ -487,8 +490,8 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
 			Eigen::Vector3d rDotGcB_B = it->rPrimeGcB_B + omegaLoc_BN_B.cross(it->rGcB_B);
 			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->massW*it->rWcB_B.cross(rDotWcB_B);
 			rotAngMomPntCContr_B += it->IGPntGc_B*omega_GN_B + it->massG*it->rGcB_B.cross(rDotGcB_B);
-			rotEnergyContr += 0.5*omega_WN_B.transpose()*it->IWPntWc_B*omega_WN_B + 0.5*it->massW*rDotWcB_B.dot(rDotWcB_B);
-			rotEnergyContr += 0.5*omega_GN_B.transpose()*it->IGPntGc_B*omega_GN_B + 0.5*it->massG*rDotGcB_B.dot(rDotGcB_B);
+			rotEnergyContr += 1.0/2.0*omega_WN_B.transpose()*it->IWPntWc_B*omega_WN_B + 1.0/2.0*it->massW*rDotWcB_B.dot(rDotWcB_B);
+			rotEnergyContr += 1.0/2.0*omega_GN_B.transpose()*it->IGPntGc_B*omega_GN_B + 1.0/2.0*it->massG*rDotGcB_B.dot(rDotGcB_B);
 		}
     }
 

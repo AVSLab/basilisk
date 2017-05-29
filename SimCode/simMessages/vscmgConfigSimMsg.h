@@ -111,6 +111,9 @@ typedef struct {
 	Eigen::Vector3d p;
 	Eigen::Vector3d q;
 	double s;
+
+	double gravityTorqueWheel_s;
+	double gravityTorqueGimbal_g;
 }VSCMGConfigSimMsg;
 
 
