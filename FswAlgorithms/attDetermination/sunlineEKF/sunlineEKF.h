@@ -86,22 +86,22 @@ typedef struct {
     int32_t cssDataInMsgId;      /*!< -- ID for the incoming CSS sensor message*/
     int32_t massPropsInMsgId;    /*!< [-] ID for the incoming mass properties message*/
     int32_t cssConfInMsgId;   /*!< [-] ID associated with the CSS configuration data*/
-}SunlineUKFConfig;
+}sunlineEKFConfig;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-    void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID);
-    void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID);
-    void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+    void SelfInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID);
+    void CrossInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID);
+    void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
         uint64_t moduleID);
-	void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+	void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 		uint64_t moduleID);
-	void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime);
-    void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime);
+	void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
+    void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
 	void sunlineStateProp(double *stateInOut, double dt);
-    void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData);
+    void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData);
     
 #ifdef __cplusplus
 }

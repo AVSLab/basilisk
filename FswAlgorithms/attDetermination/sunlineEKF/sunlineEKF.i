@@ -16,25 +16,25 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module sunlineUKF
+%module sunlineEKF
 %{
    #include "sunlineEKF.h"
    #include "../_GeneralModuleFiles/ukfUtilities.h"
 %}
 
 %include "swig_conly_data.i"
-%constant void Update_sunlineUKF(void*, uint64_t, uint64_t);
-%ignore Update_sunlineUKF;
-%constant void SelfInit_sunlineUKF(void*, uint64_t);
-%ignore SelfInit_sunlineUKF;
-%constant void CrossInit_sunlineUKF(void*, uint64_t);
-%ignore CrossInit_sunlineUKF;
-%constant void Reset_sunlineUKF(void*, uint64_t, uint64_t);
-%ignore Reset_sunlineUKF;
+%constant void Update_sunlineEKF(void*, uint64_t, uint64_t);
+%ignore Update_sunlineEKF;
+%constant void SelfInit_sunlineEKF(void*, uint64_t);
+%ignore SelfInit_sunlineEKF;
+%constant void CrossInit_sunlineEKF(void*, uint64_t);
+%ignore CrossInit_sunlineEKF;
+%constant void Reset_sunlineEKF(void*, uint64_t, uint64_t);
+%ignore Reset_sunlineEKF;
 STRUCTASLIST(CSSConfigFswMsg)
 GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(SunlineFilterFswMsg);
-GEN_SIZEOF(SunlineUKFConfig);
+GEN_SIZEOF(sunlineEKFConfig);
 GEN_SIZEOF(VehicleConfigFswMsg);
 %include "sunlineEKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"

@@ -17,7 +17,7 @@
 
  */
 
-#include "attDetermination/sunlineUKF/sunlineUKF.h"
+#include "attDetermination/sunlineEKF/sunlineEKF.h"
 #include "attDetermination/_GeneralModuleFiles/ukfUtilities.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
@@ -32,7 +32,7 @@
  @return void
  @param ConfigData The configuration data associated with the CSS WLS estimator
  */
-void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
+void SelfInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID)
 {
     
     mSetZero(ConfigData->cssNHat_B, MAX_NUM_CSS_SENSORS, 3);
@@ -53,7 +53,7 @@ void SelfInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
  @return void
  @param ConfigData The configuration data associated with the CSS interface
  */
-void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
+void CrossInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID)
 {
     /*! Begin method steps */
     /*! - Find the message ID for the coarse sun sensor data message */
@@ -75,7 +75,7 @@ void CrossInit_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t moduleID)
  @param ConfigData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
                       uint64_t moduleID)
 {
     
@@ -164,7 +164,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
  @param ConfigData The configuration data associated with the CSS estimator
  @param callTime The clock time at which the function was called (nanoseconds)
  */
-void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
+void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     uint64_t moduleID)
 {
     double newTimeTag;
@@ -185,8 +185,8 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     newTimeTag = ClockTime * NANO2SEC;
     if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
     {
-        sunlineUKFTimeUpdate(ConfigData, newTimeTag);
-        sunlineUKFMeasUpdate(ConfigData, newTimeTag);
+        sunlineEKFTimeUpdate(ConfigData, newTimeTag);
+        sunlineEKFMeasUpdate(ConfigData, newTimeTag);
     }
     
     /*! - If current clock time is further ahead than the measured time, then
@@ -194,7 +194,7 @@ void Update_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     newTimeTag = callTime*NANO2SEC;
     if(newTimeTag > ConfigData->timeTag)
     {
-        sunlineUKFTimeUpdate(ConfigData, newTimeTag);
+        sunlineEKFTimeUpdate(ConfigData, newTimeTag);
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
@@ -250,7 +250,7 @@ void sunlineStateProp(double *stateInOut, double dt)
      @param ConfigData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
+void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
 	int i, Index;
 	double sBarT[SKF_N_STATES*SKF_N_STATES];
@@ -348,7 +348,7 @@ void sunlineUKFTimeUpdate(SunlineUKFConfig *ConfigData, double updateTime)
  @param ConfigData The configuration data associated with the CSS estimator
 
  */
-void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
+void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData)
 {
     uint32_t i, j, obsCounter;
     double sensorNormal[3];
@@ -359,8 +359,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
     {
         if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
-            /*! - For each valid measurement, copy observation value and compute expected obs value 
-                  on a per sigma-point basis.*/
+            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
             v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
             ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
             for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
@@ -385,7 +384,7 @@ void sunlineUKFMeasModel(SunlineUKFConfig *ConfigData)
  @param ConfigData The configuration data associated with the CSS estimator
  @param updateTime The time that we need to fix the filter to (seconds)
  */
-void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
+void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     uint32_t i;
     double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
@@ -399,7 +398,7 @@ void sunlineUKFMeasUpdate(SunlineUKFConfig *ConfigData, double updateTime)
     /*! Begin method steps*/
     
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineUKFMeasModel(ConfigData);
+    sunlineEKFMeasModel(ConfigData);
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
