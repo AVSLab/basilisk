@@ -69,7 +69,7 @@ void Eclipse::CrossInit()
         this->planetInMsgIdAndStates[msgID] = SpicePlanetStateSimMsg();
     }
     
-    // If the user didn't set a custom sun meesage name then use
+    // If the user didn't b set a custom sun meesage name then use
     // the default system name of sun_planet_data
     if (this->sunInMsgName.empty()) {
         this->sunInMsgName = "sun_planet_data";
@@ -169,10 +169,11 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         double tmpShadowFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
         r_BN_N = Eigen::Map<Eigen::Vector3d>(&(scIt->second.r_BN_N[0]), 3, 1);
         
-        // Set min planet distance using first planet
+        // Initially set min planet distance using first planet
         r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates.begin()->second.PositionVector[0]), 3, 1);
         s_BP_N = r_BN_N - r_PN_N;
-        double minPlanetDistance = fabs(s_BP_N.norm());
+        double eclipsePlanetDistance = fabs(s_BP_N.norm());
+        uint64_t eclipsePlanetKey = this->planetInMsgIdAndStates.begin()->first;
         
         // Find the closest planet if there is one
         for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
@@ -187,9 +188,12 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
                 break;
             }
             
-            if (fabs(s_BP_N.norm()) < minPlanetDistance) {
-                minPlanetDistance = fabs(s_BP_N.norm());
+            // Find the closest planet and save its distance and std::map key
+            if (fabs(s_BP_N.norm()) < eclipsePlanetDistance) {
+                eclipsePlanetDistance = fabs(s_BP_N.norm());
+                eclipsePlanetKey = planetIt->first;
             }
+            
             // Keep track of the index for the planetary radius
             // of the closest planet
             radiusIdx++;
@@ -199,6 +203,8 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
         // we compute the eclipse conditions
         if (radiusIdx >= 0) {
                 Eigen::Vector3d r_HB_N = r_HN_N - r_BN_N;
+                r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates[eclipsePlanetKey].PositionVector[0]), 3, 1);
+                s_BP_N = r_BN_N - r_PN_N;
                 tmpShadowFactor = this->computePercentShadow(this->planetRadii[radiusIdx], r_HB_N, s_BP_N);
         }
         
@@ -280,7 +286,7 @@ void Eclipse::addPlanetName(std::string planetName)
         this->planetRadii.push_back(REQ_VENUS*1000);
     } else if (planetName == "earth") {
         this->planetRadii.push_back(REQ_EARTH*1000);
-    } else if (planetName == "mars") {
+    } else if (planetName == "mars barycenter") {
         this->planetRadii.push_back(REQ_MARS*1000);
     }
     this->planetNames.push_back(planetName);
