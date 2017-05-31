@@ -22,10 +22,11 @@
 
 #include <vector>
 #include <map>
+#include <Eigen/Dense>
 #include "_GeneralModuleFiles/sys_model.h"
-#include "environment/spice/spice_planet_state.h"
-#include "dynamics/spacecraftPlus/spacecraftPlusMsg.h"
-#include "eclipse_data.h"
+#include "simMessages/spicePlanetStateSimMsg.h"
+#include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/eclipseSimMsg.h"
 #include "utilities/linearAlgebra.h"
 
 /*! \addtogroup SimModelGroup
@@ -47,21 +48,30 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void writeOutputMessages(uint64_t CurrentClock);
     std::string addPositionMsgName(std::string msgName);
+    void addPlanetName(std::string planetName);
     
 public:
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
-    std::vector<std::string> planetNames;
     
 private:
-    std::vector<SpicePlanetState> planets;  //!< -- Names of planets we want to track
-    std::map<uint64_t, std::string> planetInMsgIdAndName; //!< -- Internal vector of planets
+    std::vector<std::string> planetNames;  //!< -- Names of planets we want to track
+    std::vector<std::string> planetInMsgNames; //!< -- A vector of planet incoming message names ordered by the sequence in which planet names are added to the module
+    std::map<uint64_t, SpicePlanetStateSimMsg> planetInMsgIdAndStates; //!< -- A map of incoming planet message Ids and planet state ordered by the sequence in which planet names are added to the module
+    std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module
+    std::string sunInMsgName; //!< -- Internal vector of planets
+    uint64_t sunInMsgId; //!< -- Internal
+    SpicePlanetStateSimMsg sunInMsgState;
     std::vector<std::string> positionMsgNames;  //!< -- vector of msg names for each position state for which to evaluate eclipse conditions.
-    std::map<uint64_t, SCPlusOutputStateData> positionInMsgIdAndState;
+    std::map<uint64_t, SCPlusStatesSimMsg> positionInMsgIdAndState;
+//    std::map<uint64_t, std::string> eclipseOutMsgIdAndNames;
     std::vector<uint64_t> eclipseOutMsgId;
-    std::vector<std::string> eclipseOutMsgName;
+    std::vector<std::string> eclipseOutMsgNames;
+    std::vector<double> eclipseShadowFactors;
 
 private:
     void readInputMessages();
+    double computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
+
 };
 
 /*! @} */
