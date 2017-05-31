@@ -100,6 +100,21 @@ def test_hubPropagate(show_plots):
     # this next line is not working
     scObject.addStateEffector(unitTestSim.panel1)
     scObject.addStateEffector(unitTestSim.panel2)
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
+    unitTestSim.panel1.thetaDotInit = 0.0
+    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaDotInit = 0.0
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -121,19 +136,6 @@ def test_hubPropagate(show_plots):
     thetaDot1Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot1")
     theta2Ref = scObject.dynManager.getStateObject("hingedRigidBodyTheta2")
     thetaDot2Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot2")
-
-    posRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.0], [0.0], [0.0]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.1], [-0.1], [0.1]])
-    theta1Ref.setState([[5*numpy.pi/180.0]])
-    thetaDot1Ref.setState([[0.0]])
-    theta2Ref.setState([[0.0]])
-    thetaDot2Ref.setState([[0.0]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -259,6 +261,8 @@ def test_hubPropagate(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " Hinged Rigid Body unit test"
+
+    assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
