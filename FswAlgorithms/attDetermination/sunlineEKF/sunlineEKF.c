@@ -84,7 +84,6 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     CSSConstConfig cssConfigInBuffer;
     uint64_t writeTime;
     uint32_t writeSize;
-    double tempMatrix[SKF_N_STATES*SKF_N_STATES];
     
     /*! Begin method steps*/
     /*! - Zero the local configuration data structures and outputs */
@@ -101,8 +100,8 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
-         m33MultV3(RECAST3X3 massPropsInBuffer.dcm_BS, cssConfigInBuffer.cssVals[i].nHat_S,
-             &(ConfigData->cssNHat_B[i*3]));
+        m33MultV3(RECAST3X3 massPropsInBuffer.dcm_BS, cssConfigInBuffer.cssVals[i].nHat_S,
+                  ConfigData->cssNHat_B[i]);
     }
     /*! - Save the count of sun sensors for later use */
     ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;
@@ -111,50 +110,21 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     ConfigData->timeTag = callTime*NANO2SEC;
     ConfigData->dt = 0.0;
     ConfigData->numStates = SKF_N_STATES;
-    ConfigData->countHalfSPs = SKF_N_STATES;
     ConfigData->numObs = MAX_N_CSS_MEAS;
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
-    vSetZero(ConfigData->wM, ConfigData->countHalfSPs * 2 + 1);
-    vSetZero(ConfigData->wC, ConfigData->countHalfSPs * 2 + 1);
-    mSetZero(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->SP, ConfigData->countHalfSPs * 2 + 1,
-             ConfigData->numStates);
-    mSetZero(ConfigData->sQnoise, ConfigData->numStates, ConfigData->numStates);
+    vSetZero(ConfigData->x, ConfigData->numStates);
+    mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->covar, ConfigData->numStates, ConfigData->numStates);
     
-    /*! - Set lambda/gamma to standard value for unscented kalman filters */
-    ConfigData->lambdaVal = ConfigData->alpha*ConfigData->alpha*
-    (ConfigData->numStates + ConfigData->kappa) - ConfigData->numStates;
-    ConfigData->gamma = sqrt(ConfigData->numStates + ConfigData->lambdaVal);
+    mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->measMat, ConfigData->numStates, ConfigData->numStates);
     
+    mSetZero(ConfigData->procNoise, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->measNoise, ConfigData->numStates, ConfigData->numStates);
     
-    /*! - Set the wM/wC vectors to standard values for unscented kalman filters*/
-    ConfigData->wM[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal);
-    ConfigData->wC[0] = ConfigData->lambdaVal / (ConfigData->numStates +
-                                                 ConfigData->lambdaVal) + (1 - ConfigData->alpha*ConfigData->alpha + ConfigData->beta);
-    for (i = 1; i<ConfigData->countHalfSPs * 2 + 1; i++)
-    {
-        ConfigData->wM[i] = 1.0 / 2.0*1.0 / (ConfigData->numStates +
-                                             ConfigData->lambdaVal);
-        ConfigData->wC[i] = ConfigData->wM[i];
-    }
-    
-    /*! - User a cholesky decomposition to obtain the sBar and sQnoise matrices for use in 
-          filter at runtime*/
-    mCopy(ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->sBar, ConfigData->numStates,
-                  ConfigData->numStates, tempMatrix);
-    mCopy(tempMatrix, ConfigData->numStates, ConfigData->numStates,
-          ConfigData->sBar);
-    ukfCholDecomp(ConfigData->qNoise, ConfigData->numStates,
-                  ConfigData->numStates, ConfigData->sQnoise);
-    mTranspose(ConfigData->sQnoise, ConfigData->numStates,
-               ConfigData->numStates, ConfigData->sQnoise);
-    
-
     return;
 }
 
@@ -198,7 +168,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
-	v3Copy(ConfigData->state, ConfigData->outputSunline.vehSunPntBdy);
+	v3Copy(ConfigData->states, ConfigData->outputSunline.vehSunPntBdy);
     v3Normalize(ConfigData->outputSunline.vehSunPntBdy,
         ConfigData->outputSunline.vehSunPntBdy);
     ConfigData->outputSunline.timeTag = ConfigData->timeTag;
@@ -210,7 +180,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     sunlineDataOutBuffer.numObs = ConfigData->numObs;
     memmove(sunlineDataOutBuffer.covar, ConfigData->covar,
             SKF_N_STATES*SKF_N_STATES*sizeof(double));
-    memmove(sunlineDataOutBuffer.state, ConfigData->state, SKF_N_STATES*sizeof(double));
+    memmove(sunlineDataOutBuffer.state, ConfigData->states, SKF_N_STATES*sizeof(double));
     WriteMessage(ConfigData->filtDataOutMsgId, callTime, sizeof(SunlineFilterFswMsg),
                  &sunlineDataOutBuffer, moduleID);
     

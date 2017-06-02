@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _SUNLINE_UKF_H_
-#define _SUNLINE_UKF_H_
+#ifndef _SUNLINE_EKF_H_
+#define _SUNLINE_EKF_H_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>
@@ -44,37 +44,30 @@ typedef struct {
     char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
     
 	int numStates;                /*!< [-] Number of states for this filter*/
-	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */
 	int numObs;                   /*!< [-] Number of measurements this cycle */
-	double beta;                  /*!< [-] Beta parameter for filter */
-	double alpha;                 /*!< [-] Alpha parameter for filter*/
-	double kappa;                 /*!< [-] Kappa parameter for filter*/
-	double lambdaVal;             /*!< [-] Lambda parameter for filter*/
-	double gamma;                 /*!< [-] Gamma parameter for filter*/
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
+    double qProcVal;               /*!< [-] Process noise parameter*/
 
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double wM[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
-	double wC[2 * SKF_N_STATES + 1]; /*!< [-] Weighting vector for sigma points*/
-
-	double state[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-	double sBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
+	double states[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
+    double x[SKF_N_STATES];             /*! State errors */
     double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
+	double covarBar[SKF_N_STATES][SKF_N_STATES];         /*!< [-] Time updated covariance */
+	double covar[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
+    double stateTransition[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
 
-	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
-	double yMeas[MAX_N_CSS_MEAS*(2*SKF_N_STATES+1)];        /*!< [-] Measurement model data */
-
-	double SP[(2*SKF_N_STATES+1)*SKF_N_STATES];          /*!< [-]    sigma point matrix */
-
-	double qNoise[SKF_N_STATES*SKF_N_STATES];       /*!< [-] process noise matrix */
-	double sQnoise[SKF_N_STATES*SKF_N_STATES];      /*!< [-] cholesky of Qnoise */
-
-	double qObs[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
+    double dynMat[SKF_N_STATES][SKF_N_STATES];        /*!< [-] Dynamics Matrix */
+    double measMat[SKF_N_STATES][SKF_N_STATES];        /*!< [-] Measurement Matrix */
     
-    double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
+	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
+	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
+
+	double procNoise[SKF_N_STATES/2][SKF_N_STATES/2];       /*!< [-] process noise matrix */
+	double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
+    
+    double cssNHat_B[MAX_NUM_CSS_SENSORS][3];     /*!< [-] CSS normal vectors converted over to body*/
 
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
@@ -100,7 +93,8 @@ extern "C" {
 		uint64_t moduleID);
 	void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
     void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
-	void sunlineStateProp(double *stateInOut, double dt);
+	void sunlineStateSTMProp(double *stateInOut, double (*STM)[6][6], double (*A)[6][6], double dt);
+    void sunlineDynMatrix(double *stateInOut, double (*A)[6][6]);
     void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData);
     
 #ifdef __cplusplus
