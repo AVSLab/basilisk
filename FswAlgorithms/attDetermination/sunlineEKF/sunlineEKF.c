@@ -211,8 +211,63 @@ void sunlineStateSTMProp(double *stateInOut, double (*STMin)[6][6], double (*A)[
     v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
     v3Scale(dt, &(stateInOut[3]), propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
+    
+    /*! Begin STM propagation step */
+    
+    m66MultM66((*A), (*STMin), deltatASTM);
+    m66Scale(dt, deltatASTM, deltatASTM);
+    m66Add((*STMin), deltatASTM, propagatedSTM);
 
 	return;
+}
+
+/*! This method computes the dynamics matrix, which is the derivative of the
+ dynamics F by the state X, evaluated at the reference state. It takes in the
+ configure data and updates this A matrix
+ @return void
+ @param ConfigData The configuration data associated with the estimator
+ */
+
+void sunlineDynMatrix(double *states, double (*A)[6][6])
+{
+    double dovernorm2d[3], dddot, ddtnorm2[3][3];
+    double I3[3][3], d2I3[3][3];
+    double douterddot[3][3], douterd[3][3], neg2dddot[3][3];
+    double secondterm[3][3], firstterm[3][3];
+    double normd2;
+    double dFdd[3][3], dFdddot[3][3];
+    
+    /* dFdd */
+    mSetIdentity(I3, 3, 3);
+    dddot = v3Dot(&(states[3]), &(states[0]));
+    normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
+                  
+    mScale(normd2, I3, 3, 3, d2I3);
+    
+    v3OuterProduct(&(states[0]), &(states[3]), douterddot);
+    m33Scale(-2, douterddot, neg2dddot);
+    m33Subtract(d2I3, neg2dddot, secondterm);
+    m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
+                    
+    v3Scale(1/normd2, &(states[0]), dovernorm2d);
+    v3OuterProduct(&(states[3]), dovernorm2d, firstterm);
+             
+    m33Add(firstterm, secondterm, dFdd);
+    m33Scale(-1, dFdd, dFdd);
+
+    /* Populate the first 3x3 matrix of the dynamics matrix*/
+    m66Set33Matrix(0, 0, dFdd, (*A));
+           
+    /* dFdddot */
+    v3OuterProduct(&(states[0]), &(states[0]), douterd);
+    m33Scale(-1/normd2, douterd, ddtnorm2);
+    
+    m33Add(I3, ddtnorm2, dFdddot);
+             
+    /* Populate the second 3x3 matrix */
+    m66Set33Matrix(0, 3, dFdddot, (*A));
+
+    return;
 }
 
 /*! This method performs the time update for the sunline kalman filter.
