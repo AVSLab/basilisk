@@ -32,7 +32,7 @@ import SimulationBaseClass
 import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import sunlineUKF  # import the module that is to be tested
+import sunlineEKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData
 import macros
@@ -51,7 +51,7 @@ def setupFilterData(filterObject):
     filterObject.beta = 2.0
     filterObject.kappa = 0.0
 
-    filterObject.state = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
@@ -94,16 +94,16 @@ def sunline_utilities_test(show_plots):
                 0.293871, -2.94428, -0.102242, -0.164879,
                -0.787283, 1.43838, -0.241447, 0.627707]
    
-    RVector = sunlineUKF.new_doubleArray(len(AMatrix))
-    AVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    RVector = sunlineEKF.new_doubleArray(len(AMatrix))
+    AVector = sunlineEKF.new_doubleArray(len(AMatrix))
     for i in range(len(AMatrix)):
-        sunlineUKF.doubleArray_setitem(AVector, i, AMatrix[i])
-        sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(AVector, i, AMatrix[i])
+        sunlineEKF.doubleArray_setitem(RVector, i, 0.0)
 
-    sunlineUKF.ukfQRDJustR(AVector, 6, 4, RVector)
+    sunlineEKF.ukfQRDJustR(AVector, 6, 4, RVector)
     RMatrix = []
     for i in range(4*4):
-        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+        RMatrix.append(sunlineEKF.doubleArray_getitem(RVector, i))
     RBaseNumpy = numpy.array(RMatrix).reshape(4,4)
     AMatNumpy = numpy.array(AMatrix).reshape(6,4)
     q,r = numpy.linalg.qr(AMatNumpy)
@@ -120,16 +120,16 @@ def sunline_utilities_test(show_plots):
      -1.08906, 0.0325575, 0.552527, -1.6256,
      1.54421, 0.0859311, -1.49159, 1.59683]
 
-    RVector = sunlineUKF.new_doubleArray(len(AMatrix))
-    AVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    RVector = sunlineEKF.new_doubleArray(len(AMatrix))
+    AVector = sunlineEKF.new_doubleArray(len(AMatrix))
     for i in range(len(AMatrix)):
-        sunlineUKF.doubleArray_setitem(AVector, i, AMatrix[i])
-        sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(AVector, i, AMatrix[i])
+        sunlineEKF.doubleArray_setitem(RVector, i, 0.0)
 
-    sunlineUKF.ukfQRDJustR(AVector, 5, 4, RVector)
+    sunlineEKF.ukfQRDJustR(AVector, 5, 4, RVector)
     RMatrix = []
     for i in range(4*4):
-        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+        RMatrix.append(sunlineEKF.doubleArray_getitem(RVector, i))
     RBaseNumpy = numpy.array(RMatrix).reshape(4,4)
     AMatNumpy = numpy.array(AMatrix).reshape(5,4)
     q,r = numpy.linalg.qr(AMatNumpy)
@@ -147,16 +147,16 @@ def sunline_utilities_test(show_plots):
                0.0170,         0,
                0,    0.0170]
 
-    RVector = sunlineUKF.new_doubleArray(len(AMatrix))
-    AVector = sunlineUKF.new_doubleArray(len(AMatrix))
+    RVector = sunlineEKF.new_doubleArray(len(AMatrix))
+    AVector = sunlineEKF.new_doubleArray(len(AMatrix))
     for i in range(len(AMatrix)):
-        sunlineUKF.doubleArray_setitem(AVector, i, AMatrix[i])
-        sunlineUKF.doubleArray_setitem(RVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(AVector, i, AMatrix[i])
+        sunlineEKF.doubleArray_setitem(RVector, i, 0.0)
 
-    sunlineUKF.ukfQRDJustR(AVector, 6, 2, RVector)
+    sunlineEKF.ukfQRDJustR(AVector, 6, 2, RVector)
     RMatrix = []
     for i in range(2*2):
-        RMatrix.append(sunlineUKF.doubleArray_getitem(RVector, i))
+        RMatrix.append(sunlineEKF.doubleArray_getitem(RVector, i))
     RBaseNumpy = numpy.array(RMatrix).reshape(2,2)
     AMatNumpy = numpy.array(AMatrix).reshape(6,2)
     q,r = numpy.linalg.qr(AMatNumpy)
@@ -170,41 +170,41 @@ def sunline_utilities_test(show_plots):
 
 
     LUSourceMat = [8,1,6,3,5,7,4,9,2]
-    LUSVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
-    LVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
-    UVector = sunlineUKF.new_doubleArray(len(LUSourceMat))
-    intSwapVector = sunlineUKF.new_intArray(3)
+    LUSVector = sunlineEKF.new_doubleArray(len(LUSourceMat))
+    LVector = sunlineEKF.new_doubleArray(len(LUSourceMat))
+    UVector = sunlineEKF.new_doubleArray(len(LUSourceMat))
+    intSwapVector = sunlineEKF.new_intArray(3)
     
     for i in range(len(LUSourceMat)):
-        sunlineUKF.doubleArray_setitem(LUSVector, i, LUSourceMat[i])
-        sunlineUKF.doubleArray_setitem(UVector, i, 0.0)
-        sunlineUKF.doubleArray_setitem(LVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(LUSVector, i, LUSourceMat[i])
+        sunlineEKF.doubleArray_setitem(UVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(LVector, i, 0.0)
 
-    exCount = sunlineUKF.ukfLUD(LUSVector, 3, 3, LVector, intSwapVector)
-    #sunlineUKF.ukfUInv(LUSVector, 3, 3, UVector)
+    exCount = sunlineEKF.ukfLUD(LUSVector, 3, 3, LVector, intSwapVector)
+    #sunlineEKF.ukfUInv(LUSVector, 3, 3, UVector)
     LMatrix = []
     UMatrix = []
     #UMatrix = []
     for i in range(3):
-        currRow = sunlineUKF.intArray_getitem(intSwapVector, i)
+        currRow = sunlineEKF.intArray_getitem(intSwapVector, i)
         for j in range(3):
             if(j<i):
-                LMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
+                LMatrix.append(sunlineEKF.doubleArray_getitem(LVector, i*3+j))
                 UMatrix.append(0.0)
             elif(j>i):
                 LMatrix.append(0.0)
-                UMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
+                UMatrix.append(sunlineEKF.doubleArray_getitem(LVector, i*3+j))
             else:
                 LMatrix.append(1.0)
-                UMatrix.append(sunlineUKF.doubleArray_getitem(LVector, i*3+j))
-    #    UMatrix.append(sunlineUKF.doubleArray_getitem(UVector, i))
+                UMatrix.append(sunlineEKF.doubleArray_getitem(LVector, i*3+j))
+    #    UMatrix.append(sunlineEKF.doubleArray_getitem(UVector, i))
 
     LMatrix = numpy.array(LMatrix).reshape(3,3)
     UMatrix = numpy.array(UMatrix).reshape(3,3)
     outMat = numpy.dot(LMatrix, UMatrix)
     outMatSwap = numpy.zeros((3,3)) 
     for i in range(3):
-        currRow = sunlineUKF.intArray_getitem(intSwapVector, i)
+        currRow = sunlineEKF.intArray_getitem(intSwapVector, i)
         outMatSwap[i,:] = outMat[currRow, :]
         outMat[currRow,:] = outMat[i, :]
     LuSourceArray = numpy.array(LUSourceMat).reshape(3,3)
@@ -215,24 +215,24 @@ def sunline_utilities_test(show_plots):
 
     EqnSourceMat = [2.0, 1.0, 3.0, 2.0, 6.0, 8.0, 6.0, 8.0, 18.0]
     BVector = [1.0, 3.0, 5.0]
-    EqnVector = sunlineUKF.new_doubleArray(len(EqnSourceMat))
-    EqnBVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
-    EqnOutVector = sunlineUKF.new_doubleArray(len(LUSourceMat)/3)
+    EqnVector = sunlineEKF.new_doubleArray(len(EqnSourceMat))
+    EqnBVector = sunlineEKF.new_doubleArray(len(LUSourceMat)/3)
+    EqnOutVector = sunlineEKF.new_doubleArray(len(LUSourceMat)/3)
 
     for i in range(len(EqnSourceMat)):
-        sunlineUKF.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
-        sunlineUKF.doubleArray_setitem(EqnBVector, i/3, BVector[i/3])
-        sunlineUKF.intArray_setitem(intSwapVector, i/3, 0)
-        sunlineUKF.doubleArray_setitem(LVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(EqnVector, i, EqnSourceMat[i])
+        sunlineEKF.doubleArray_setitem(EqnBVector, i/3, BVector[i/3])
+        sunlineEKF.intArray_setitem(intSwapVector, i/3, 0)
+        sunlineEKF.doubleArray_setitem(LVector, i, 0.0)
     
-    exCount = sunlineUKF.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
+    exCount = sunlineEKF.ukfLUD(EqnVector, 3, 3, LVector, intSwapVector)
     
-    sunlineUKF.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
+    sunlineEKF.ukfLUBckSlv(LVector, 3, 3, intSwapVector, EqnBVector, EqnOutVector)
     
     expectedSol = [3.0/10.0, 4.0/10.0, 0.0]
     errorVal = 0.0
     for i in range(3):
-        errorVal += abs(sunlineUKF.doubleArray_getitem(EqnOutVector, i) -expectedSol[i])
+        errorVal += abs(sunlineEKF.doubleArray_getitem(EqnOutVector, i) -expectedSol[i])
 
     if(errorVal > 1.0E-14):
         testFailCount += 1
@@ -240,17 +240,17 @@ def sunline_utilities_test(show_plots):
 
 
     InvSourceMat = [8,1,6,3,5,7,4,9,2]
-    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
-        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
     nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineUKF.ukfMatInv(SourceVector, nRow, nRow, InvVector)
+    sunlineEKF.ukfMatInv(SourceVector, nRow, nRow, InvVector)
 
     InvOut = []
     for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
 
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(3,3))
@@ -261,16 +261,16 @@ def sunline_utilities_test(show_plots):
 
     
     cholTestMat = [1.0, 0.0, 0.0, 0.0, 10.0, 5.0, 0.0, 5.0, 10.0]
-    SourceVector = sunlineUKF.new_doubleArray(len(cholTestMat))
-    CholVector = sunlineUKF.new_doubleArray(len(cholTestMat))
+    SourceVector = sunlineEKF.new_doubleArray(len(cholTestMat))
+    CholVector = sunlineEKF.new_doubleArray(len(cholTestMat))
     for i in range(len(cholTestMat)):
-        sunlineUKF.doubleArray_setitem(SourceVector, i, cholTestMat[i])
-        sunlineUKF.doubleArray_setitem(CholVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(SourceVector, i, cholTestMat[i])
+        sunlineEKF.doubleArray_setitem(CholVector, i, 0.0)
     nRow = int(math.sqrt(len(cholTestMat)))
-    sunlineUKF.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)
+    sunlineEKF.ukfCholDecomp(SourceVector, nRow, nRow, CholVector)
     cholOut = []
     for i in range(len(cholTestMat)):
-        cholOut.append(sunlineUKF.doubleArray_getitem(CholVector, i))
+        cholOut.append(sunlineEKF.doubleArray_getitem(CholVector, i))
 
     cholOut = numpy.array(cholOut).reshape(nRow, nRow)
     cholComp = numpy.linalg.cholesky(numpy.array(cholTestMat).reshape(nRow, nRow))
@@ -285,17 +285,17 @@ def sunline_utilities_test(show_plots):
                0.0, 1.2672359635912551, 1.7923572711881284, 0.0,
                1.0974804773131113, -0.63357997864171967, 1.7920348101787789, 0.033997451205364251]
                
-    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
-        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
     nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineUKF.ukfLInv(SourceVector, nRow, nRow, InvVector)
+    sunlineEKF.ukfLInv(SourceVector, nRow, nRow, InvVector)
 
     InvOut = []
     for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
 
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow,nRow))
@@ -306,17 +306,17 @@ def sunline_utilities_test(show_plots):
         testMessages.append("L Matrix Inverse accuracy failure")
 
     InvSourceMat = numpy.transpose(numpy.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
-    SourceVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineUKF.new_doubleArray(len(InvSourceMat))
+    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
+    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
     for i in range(len(InvSourceMat)):
-        sunlineUKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineUKF.doubleArray_setitem(InvVector, i, 0.0)
+        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
+        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
     nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineUKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
+    sunlineEKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
 
     InvOut = []
     for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineUKF.doubleArray_getitem(InvVector, i))
+        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
 
     InvOut = numpy.array(InvOut).reshape(nRow, nRow)
     expectIdent = numpy.dot(InvOut, numpy.array(InvSourceMat).reshape(nRow,nRow))
@@ -362,13 +362,13 @@ def testStateUpdateSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineUKF.SunlineUKFConfig()
+    moduleConfig = sunlineEKF.SunlineEKFConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineUKF.Update_sunlineUKF,
-                                        sunlineUKF.SelfInit_sunlineUKF,
-                                        sunlineUKF.CrossInit_sunlineUKF,
-                                        sunlineUKF.Reset_sunlineUKF)
-    moduleWrap.ModelTag = "SunlineUKF"
+                                        sunlineEKF.Update_sunlineEKF,
+                                        sunlineEKF.SelfInit_sunlineEKF,
+                                        sunlineEKF.CrossInit_sunlineEKF,
+                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap.ModelTag = "SunlineEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -402,7 +402,7 @@ def testStateUpdateSunLine(show_plots):
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
 
-    vehicleConfigOut = sunlineUKF.VehicleConfigFswMsg()
+    vehicleConfigOut = sunlineEKF.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.massPropsInMsgName,
@@ -436,9 +436,9 @@ def testStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.state = [0.7, 0.7, 0.0]
-    unitTestSim.AddVariableForLogging('SunlineUKF.covar', testProcessRate*10, 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('SunlineUKF.state', testProcessRate*10, 0, 5, 'double')
+    moduleConfig.states = [0.7, 0.7, 0.0]
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate*10, 0, 35, 'double')
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate*10, 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -451,8 +451,8 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
     for i in range(6):
         if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
@@ -481,8 +481,8 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     for i in range(6):
@@ -533,26 +533,26 @@ def testStatePropSunLine(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineUKF.SunlineUKFConfig()
+    moduleConfig = sunlineEKF.sunlineEKFConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineUKF.Update_sunlineUKF,
-                                        sunlineUKF.SelfInit_sunlineUKF,
-                                        sunlineUKF.CrossInit_sunlineUKF,
-                                        sunlineUKF.Reset_sunlineUKF)
-    moduleWrap.ModelTag = "SunlineUKF"
+                                        sunlineEKF.Update_sunlineEKF,
+                                        sunlineEKF.SelfInit_sunlineEKF,
+                                        sunlineEKF.CrossInit_sunlineEKF,
+                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap.ModelTag = "SunlineEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    unitTestSim.AddVariableForLogging('SunlineUKF.covar', testProcessRate*10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineUKF.state', testProcessRate*10, 0, 5)
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate*10, 0, 35)
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate*10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
     
-    covarLog = unitTestSim.GetLogVariableData('SunlineUKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineUKF.state')
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
     
     for i in range(6):
