@@ -192,14 +192,16 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 	@return void
 	@param stateInOut The state that is propagated
 */
-void sunlineStateProp(double *stateInOut, double dt)
+void sunlineStateSTMProp(double *stateInOut, double (*STMin)[6][6], double (*A)[6][6], double dt)
 {
 
     double propagatedVel[3];
     double pointUnit[3];
     double unitComp;
+    double propagatedSTM[6][6];
+    double deltatASTM[6][6];
     
-    /*! Begin method steps */
+    /*! Begin state update steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
     v3Normalize(stateInOut, pointUnit);
     unitComp = v3Dot(&(stateInOut[3]), pointUnit);
