@@ -359,14 +359,7 @@ void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData)
  */
 void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-    uint32_t i;
-    double yBar[MAX_N_CSS_MEAS], syInv[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
-    double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
-    double AT[(2 * SKF_N_STATES + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
+//    uint32_t i;
     
     /*! Begin method steps*/
     
@@ -375,110 +368,29 @@ void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
-    vSetZero(yBar, ConfigData->numObs);
-    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
-    {
-        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
-              tempYVec);
-        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
-    }
-    
-    /*! - Populate the matrix that we perform the QR decomposition on in the measurement 
+//    vSetZero(yBar, ConfigData->numObs);
+//    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
+//    {
+//        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
+//              tempYVec);
+//        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
+//        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
+//    }
+//    
+    /*! - Populate the matrix that we perform the QR decomposition on in the measurement
           update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
-    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
-        ConfigData->numObs);
-    for(i=0; i<ConfigData->countHalfSPs*2; i++)
-    {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
-        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
-        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
-               ConfigData->numObs*sizeof(double));
-    }
+//    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
+//        ConfigData->numObs);
+//    for(i=0; i<ConfigData->countHalfSPs*2; i++)
+//    {
+//        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
+//        vAdd(tempYVec, ConfigData->numObs,
+//             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
+//        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
+//        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
+//               ConfigData->numObs*sizeof(double));
+//    }
     
-    /*! - This is the square-root of the Rk matrix which we treat as the Cholesky
-        decomposition of the observation variance matrix constructed for our number 
-        of observations*/
-    mSetZero(ConfigData->qObs, ConfigData->numCSSTotal, ConfigData->numCSSTotal);
-    mSetIdentity(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs);
-    mScale(ConfigData->qObsVal, ConfigData->qObs, ConfigData->numObs,
-           ConfigData->numObs, ConfigData->qObs);
-    ukfCholDecomp(ConfigData->qObs, ConfigData->numObs, ConfigData->numObs, qChol);
-    memcpy(&(AT[2*ConfigData->countHalfSPs*ConfigData->numObs]),
-           qChol, ConfigData->numObs*ConfigData->numObs*sizeof(double));
-    /*! - Perform QR decomposition (only R again) of the above matrix to obtain the 
-          current Sy matrix*/
-    ukfQRDJustR(AT, 2*ConfigData->countHalfSPs+ConfigData->numObs,
-                ConfigData->numObs, rAT);
-    mCopy(rAT, ConfigData->numObs, ConfigData->numObs, syT);
-    mTranspose(syT, ConfigData->numObs, ConfigData->numObs, sy);
-    /*! - Shift the matrix over by the difference between the 0th SP-based measurement 
-          model and the yBar matrix (cholesky down-date again)*/
-    vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-    vAdd(tempYVec, ConfigData->numObs, &(ConfigData->yMeas[0]), tempYVec);
-    ukfCholDownDate(sy, tempYVec, ConfigData->wC[0],
-                    ConfigData->numObs, updMat);
-    /*! - Shifted matrix represents the Sy matrix */
-    mCopy(updMat, ConfigData->numObs, ConfigData->numObs, sy);
-    mTranspose(sy, ConfigData->numObs, ConfigData->numObs, syT);
 
-    /*! - Construct the Pxy matrix (equation 26) which multiplies the Sigma-point cloud 
-          by the measurement model cloud (weighted) to get the total Pxy matrix*/
-    mSetZero(pXY, ConfigData->numStates, ConfigData->numObs);
-    for(i=0; i<2*ConfigData->countHalfSPs+1; i++)
-    {
-        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-        vAdd(tempYVec, ConfigData->numObs,
-             &(ConfigData->yMeas[i*ConfigData->numObs]), tempYVec);
-        vSubtract(&(ConfigData->SP[i*ConfigData->numStates]), ConfigData->numStates,
-                  ConfigData->xBar, xHat);
-        vScale(ConfigData->wC[i], xHat, ConfigData->numStates, xHat);
-        mMultM(xHat, ConfigData->numStates, 1, tempYVec, 1, ConfigData->numObs,
-            kMat);
-        mAdd(pXY, ConfigData->numStates, ConfigData->numObs, kMat, pXY);
-    }
-
-    /*! - Then we need to invert the SyT*Sy matrix to get the Kalman gain factor.  Since
-          The Sy matrix is lower triangular, we can do a back-sub inversion instead of 
-          a full matrix inversion.  That is the ukfUInv and ukfLInv calls below.  Once that 
-          multiplication is done (equation 27), we have the Kalman Gain.*/
-    ukfUInv(syT, ConfigData->numObs, ConfigData->numObs, syInv);
-    
-    mMultM(pXY, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
-    ukfLInv(sy, ConfigData->numObs, ConfigData->numObs, syInv);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, syInv,
-           ConfigData->numObs, ConfigData->numObs, kMat);
-    
-    
-    /*! - Difference the yBar and the observations to get the observed error and 
-          multiply by the Kalman Gain to get the state update.  Add the state update 
-          to the state to get the updated state value (equation 27).*/
-    vSubtract(ConfigData->obs, ConfigData->numObs, yBar, tempYVec);
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, tempYVec,
-        ConfigData->numObs, 1, xHat);
-    vAdd(ConfigData->state, ConfigData->numStates, xHat, ConfigData->state);
-    /*! - Compute the updated matrix U from equation 28.  Note that I then transpose it 
-         so that I can extract "columns" from adjacent memory*/
-    mMultM(kMat, ConfigData->numStates, ConfigData->numObs, sy,
-           ConfigData->numObs, ConfigData->numObs, pXY);
-    mTranspose(pXY, ConfigData->numStates, ConfigData->numObs, pXY);
-    /*! - For each column in the update matrix, perform a cholesky down-date on it to 
-          get the total shifted S matrix (called sBar in internal parameters*/
-    for(i=0; i<ConfigData->numObs; i++)
-    {
-        vCopy(&(pXY[i*ConfigData->numStates]), ConfigData->numStates, tempYVec);
-        ukfCholDownDate(ConfigData->sBar, tempYVec, -1.0, ConfigData->numStates, sBarT);
-        mCopy(sBarT, ConfigData->numStates, ConfigData->numStates,
-            ConfigData->sBar);
-    }
-    /*! - Compute equivalent covariance based on updated sBar matrix*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-               ConfigData->covar);
-    mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
 }
