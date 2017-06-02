@@ -135,8 +135,8 @@ def test_earthOrbitFit(show_plots):
     
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))-100))
-    
+    FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
+ 
     oeStateModel = oe_state_ephem.OEStateEphemData()
     oeStateModelWrap = TotalSim.setModelDataWrap(oeStateModel)
     oeStateModelWrap.ModelTag = "oeStateModel"
@@ -177,18 +177,18 @@ def test_earthOrbitFit(show_plots):
     velChebData = TotalSim.pullMessageLogData(oeStateModel.stateFitOutMsgName + ".v_BdyZero_N",
                                                   range(3))
 
-    maxErrVec = [abs(max(posChebData[0:-1,1] - tdrssPosList[:,0])),
-        abs(max(posChebData[0:-1,2] - tdrssPosList[:,1])),
-        abs(max(posChebData[0:-1,3] - tdrssPosList[:,2]))]
-    maxVelErrVec = [abs(max(velChebData[0:-1,1] - tdrssVelList[:,0])),
-             abs(max(velChebData[0:-1,2] - tdrssVelList[:,1])),
-             abs(max(velChebData[0:-1,3] - tdrssVelList[:,2]))]
+    maxErrVec = [abs(max(posChebData[:,1] - tdrssPosList[:,0])),
+        abs(max(posChebData[:,2] - tdrssPosList[:,1])),
+        abs(max(posChebData[:,3] - tdrssPosList[:,2]))]
+    maxVelErrVec = [abs(max(velChebData[:,1] - tdrssVelList[:,0])),
+             abs(max(velChebData[:,2] - tdrssVelList[:,1])),
+             abs(max(velChebData[:,3] - tdrssVelList[:,2]))]
     print "TDRSS Orbit Accuracy: " + str(max(maxErrVec))
     print "TDRSS Velocity Accuracy: " + str(max(maxVelErrVec))
     assert (max(maxErrVec)) < orbitPosAccuracy
     assert (max(maxVelErrVec)) < orbitVelAccuracy
     plt.figure()
-    plt.plot(velChebData[:,0]*1.0E-9, velChebData[:,1], velChebData[0:-1,0]*1.0E-9, tdrssVelList[:,0])
+    plt.plot(velChebData[:,0]*1.0E-9, velChebData[:,1], velChebData[:,0]*1.0E-9, tdrssVelList[:,0])
 
     if(show_plots):
         plt.show()

@@ -202,7 +202,7 @@ def test_earthOrbitFit(show_plots):
     
     FSWUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))-100))
+    FSWUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(curveDurationSeconds/(numCurvePoints-1))))
     
     chebyFitModel = cheby_pos_ephem.ChebyPosEphemData()
     chebyFitModelWrap = TotalSim.setModelDataWrap(chebyFitModel)
@@ -241,18 +241,18 @@ def test_earthOrbitFit(show_plots):
                                               range(3))
     velChebData = TotalSim.pullMessageLogData(chebyFitModel.posFitOutMsgName + ".v_BdyZero_N",
                                                   range(3))
-    maxErrVec = [abs(max(posChebData[0:-1,1] - hubblePosList[:,0])),
-        abs(max(posChebData[0:-1,2] - hubblePosList[:,1])),
-        abs(max(posChebData[0:-1,3] - hubblePosList[:,2]))]
-    maxVelErrVec = [abs(max(velChebData[0:-1,1] - hubbleVelList[:,0])),
-             abs(max(velChebData[0:-1,2] - hubbleVelList[:,1])),
-             abs(max(velChebData[0:-1,3] - hubbleVelList[:,2]))]
+    maxErrVec = [abs(max(posChebData[:,1] - hubblePosList[:,0])),
+        abs(max(posChebData[:,2] - hubblePosList[:,1])),
+        abs(max(posChebData[:,3] - hubblePosList[:,2]))]
+    maxVelErrVec = [abs(max(velChebData[:,1] - hubbleVelList[:,0])),
+             abs(max(velChebData[:,2] - hubbleVelList[:,1])),
+             abs(max(velChebData[:,3] - hubbleVelList[:,2]))]
     print "Hubble Orbit Accuracy: " + str(max(maxErrVec))
     print "Hubble Velocity Accuracy: " + str(max(maxVelErrVec))
     assert (max(maxErrVec)) < orbitPosAccuracy
     assert (max(maxVelErrVec)) < orbitVelAccuracy
     plt.figure()
-    plt.plot(velChebData[:,0]*1.0E-9, velChebData[:,1], velChebData[0:-1,0]*1.0E-9, hubbleVelList[:,0])
+    plt.plot(velChebData[:,0]*1.0E-9, velChebData[:,1], velChebData[:,0]*1.0E-9, hubbleVelList[:,0])
 
     if(show_plots):
         plt.show()

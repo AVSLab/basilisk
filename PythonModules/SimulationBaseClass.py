@@ -34,50 +34,7 @@ import xml.etree.ElementTree as ET
 import inspect
 import MonteCarloBaseClass
 import sets
-
-class ProcessBaseClass:
-    def __init__(self, procName):
-        self.Name = procName
-        self.processData = sim_model.SysProcess(procName)
-
-    def addTask(self, newTask, taskPriority=-1):
-        self.processData.addNewTask(newTask.TaskData, taskPriority)
-
-    def addInterfaceRef(self, newInt):
-        self.processData.addInterfaceRef(newInt)
-
-    def discoverAllMessages(self):
-        self.processData.discoverAllMessages()
-
-    def disableAllTasks(self):
-        self.processData.disableAllTasks()
-
-    def enableAllTasks(self):
-        self.processData.enableAllTasks()
-
-    def selectProcess(self):
-        self.processData.selectProcess()
-
-
-class TaskBaseClass:
-    def __init__(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
-        self.Name = TaskName
-        self.TaskData = sys_model_task.SysModelTask(TaskRate, InputDelay,
-                                                    FirstStart)
-        self.TaskData.TaskName = TaskName
-        self.TaskModels = []
-
-    def disable(self):
-        self.TaskData.disableTask()
-
-    def enable(self):
-        self.TaskData.enableTask()
-
-    def updatePeriod(self, newPeriod):
-        self.TaskData.updatePeriod(newPeriod)
-
-    def resetTask(self, callTime):
-        self.TaskData.ResetTaskList(callTime)
+import simulationArchTypes
 
 
 class LogBaseClass:
@@ -131,15 +88,20 @@ class EventHandlerClass:
         self.operateCall = eval('EVENT_operate_' + self.eventName)
 
     def checkEvent(self, parentSim):
+        nextTime = int(-1)
         if self.eventActive == False:
             return
-        if self.prevTime < 0 or parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate:
+        nextTime = self.prevTime + self.eventRate
+        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate and 
+            parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
+            nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
             eventCount = self.checkCall(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
             if eventCount > 0:
                 self.eventActive = False
                 self.operateCall(parentSim)
                 self.occurCounter += 1
+        return(nextTime)
 
 
 class StructDocData:
@@ -210,7 +172,9 @@ class SimBaseClass:
         self.TotalSim = sim_model.SimModel()
         self.TaskList = []
         self.procList = []
+        self.pyProcList = []
         self.StopTime = 0
+        self.nextEventTime = 0
         self.NameReplace = {}
         self.VarLogList = {}
         self.eventMap = {}
@@ -239,60 +203,28 @@ class SimBaseClass:
         print "Could not find a Task with name: %(TaskName)s" % \
               {"TaskName": TaskName}
 
-    def CreateNewProcess(self, procName):
-        proc = ProcessBaseClass(procName)
+    def CreateNewProcess(self, procName, priority = -1):
+        proc = simulationArchTypes.ProcessBaseClass(procName)
+        proc.processData.processPriority = priority
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
+    
+    def CreateNewPythonProcess(self, procName, priority = -1):
+        proc = simulationArchTypes.PythonProcessClass(procName, priority)
+        i=0;
+        for procLoc in self.pyProcList:
+            if priority > procLoc.procPriority:
+                self.pyProcList.insert(i, proc)
+                return proc
+            i+=1
+        self.pyProcList.append(proc)
+        return proc
 
     def CreateNewTask(self, TaskName, TaskRate, InputDelay=0, FirstStart=0):
-        Task = TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
+        Task = simulationArchTypes.TaskBaseClass(TaskName, TaskRate, InputDelay, FirstStart)
         self.TaskList.append(Task)
         return Task
-    '''
-
-    def AddVectorForLogging(self, VarName, VarType, StartIndex, StopIndex=0, LogPeriod=0):
-        SplitName = VarName.split('.')
-        Subname = '.'
-        Subname = Subname.join(SplitName[1:])
-        NoDotName = ''
-        NoDotName = NoDotName.join(SplitName)
-        NoDotName = NoDotName.translate(None, '[]')
-        inv_map = {v: k for k, v in self.NameReplace.items()}
-        if SplitName[0] in inv_map:
-            LogName = inv_map[SplitName[0]] + '.' + Subname
-            if (LogName in self.VarLogList):
-                return
-            if (type(eval(LogName)).__name__ == 'SwigPyObject'):
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString += 'sim_model.' + VarType + 'Array_getitem('
-                    RefFunctionString += LogName + ', ' + str(StartIndex + i) + '),'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-            else:
-                RefFunctionString = 'def Get' + NoDotName + '(self):\n'
-                RefFunctionString += '   return ['
-                LoopTerminate = False
-                i = 0
-                while not LoopTerminate:
-                    RefFunctionString += LogName + '[' + str(StartIndex + i) + '],'
-                    i += 1
-                    if (i > StopIndex - StartIndex):
-                        LoopTerminate = True
-            RefFunctionString = RefFunctionString[:-1] + ']'
-            exec (RefFunctionString)
-            methodHandle = eval('Get' + NoDotName)
-            self.VarLogList[VarName] = LogBaseClass(LogName, LogPeriod,
-                                                    methodHandle, StopIndex - StartIndex + 1)
-        else:
-            print "Could not find a structure that has the ModelTag: %(ModName)s" % \
-                  {"ModName": SplitName[0]}
-            '''
 
     def AddVariableForLogging(self, VarName, LogPeriod=0, StartIndex=0, StopIndex=0, VarType=None):
         SplitName = VarName.split('.')
@@ -355,20 +287,41 @@ class SimBaseClass:
 
     def InitializeSimulation(self):
         self.TotalSim.ResetSimulation()
-        self.TotalSim.InitSimulation()
+        self.TotalSim.selfInitSimulation()
+        for proc in self.pyProcList:
+            proc.selfInitProcess()
+        self.TotalSim.crossInitSimulation()
+        for proc in self.pyProcList:
+            proc.crossInitProcess()
+        self.TotalSim.resetInitSimulation()
+        for proc in self.pyProcList:
+            proc.resetProcess(0)
         for LogItem, LogValue in self.VarLogList.iteritems():
             LogValue.clearItem()
         self.simulationInitialized = True
+
+    def InitializeSimulation_andDiscover(self):
+        self.InitializeSimulation()
+        for process in self.procList:
+            for interface in process.processData.intRefs:
+                interface.discoverAllMessages()
+        for process in self.pyProcList:
+            for interface in process.intRefs:
+                interface.discoverAllMessages()
+
 
     def ConfigureStopTime(self, TimeStop):
         self.StopTime = TimeStop
 
     def RecordLogVars(self):
         CurrSimTime = self.TotalSim.CurrentNanos
+        minNextTime = -1
         for LogItem, LogValue in self.VarLogList.iteritems():
             LocalPrev = LogValue.PrevLogTime
             if (LocalPrev != None and (CurrSimTime -
                                            LocalPrev) < LogValue.Period):
+                if(minNextTime < 0 or LocalPrev + LogValue.Period < minNextTime):
+                    minNextTime = LocalPrev + LogValue.Period
                 continue
             CurrentVal = LogValue.CallableFunction(self)
             LocalTimeVal = LogValue.TimeValuePairs
@@ -382,13 +335,45 @@ class SimBaseClass:
                     LocalTimeVal.append(CurrentVal)
                 LogValue.PrevLogTime = CurrSimTime
                 LogValue.PrevValue = CurrentVal
+                if(minNextTime < 0 or CurrSimTime + LogValue.Period < minNextTime):
+                    minNextTime = CurrSimTime + LogValue.Period
+        return minNextTime
 
     def ExecuteSimulation(self):
         self.initializeEventChecks()
-        while (self.TotalSim.CurrentNanos < self.StopTime):
-            self.checkEvents()
-            self.TotalSim.SingleStepProcesses()
-            self.RecordLogVars()
+        nextStopTime = self.TotalSim.NextTaskTime
+        nextPriority = -1
+        pyProcPresent = False
+        if(len(self.pyProcList) > 0):
+            nextPriority = self.pyProcList[0].pyProcPriority
+            pyProcPresent = True
+            nextStopTime = self.pyProcList[0].nextCallTime()
+        while (self.TotalSim.NextTaskTime <= self.StopTime):
+            if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
+                self.nextEventTime = self.checkEvents()
+            if(self.nextEventTime >= 0 and self.nextEventTime < nextStopTime):
+                nextStopTime = self.nextEventTime
+                nextPriority = -1
+            self.TotalSim.StepUntilStop(nextStopTime, nextPriority)
+            nextPriority = -1
+            nextStopTime = self.StopTime
+            nextLogTime = self.RecordLogVars()
+            procStopTimes = []
+            for pyProc in self.pyProcList:
+                nextCallTime = pyProc.nextCallTime()
+                if(nextCallTime<=self.TotalSim.CurrentNanos):
+                    pyProc.executeTaskList(self.TotalSim.CurrentNanos)
+                nextCallTime = pyProc.nextCallTime()
+                procStopTimes.append(nextCallTime)
+        
+            if(pyProcPresent and nextStopTime >= min(procStopTimes)):
+                nextStopTime = min(procStopTimes)
+                nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
+            if(nextLogTime >= 0 and nextLogTime < nextStopTime):
+                nextStopTime = nextLogTime
+                nextPriority = -1
+            nextStopTime = nextStopTime if nextStopTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
+
 
     def GetLogVariableData(self, LogName):
         TheArray = np.array(self.VarLogList[LogName].TimeValuePairs)
@@ -405,11 +390,6 @@ class SimBaseClass:
         for Task in self.TaskList:
             if Task.Name == TaskName:
                 Task.enable()
-
-    def updateTaskPeriod(self, TaskName, newPeriod):
-        for Task in self.TaskList:
-            if Task.Name == TaskName:
-                Task.updatePeriod(newPeriod)
 
     def parseDataIndex(self):
         self.dataStructureDictionary = {}
@@ -507,10 +487,16 @@ class SimBaseClass:
         for key, value in self.eventMap.iteritems():
             value.methodizeEvent()
             self.eventList.append(value)
+        self.nextEventTime = 0
 
     def checkEvents(self):
+        nextTime = -1
         for localEvent in self.eventList:
-            localEvent.checkEvent(self)
+            localNextTime = localEvent.checkEvent(self)
+            if(localNextTime >= 0 and (localNextTime < nextTime or nextTime <0)):
+                nextTime = localNextTime
+        return nextTime
+            
 
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in self.eventMap.keys():

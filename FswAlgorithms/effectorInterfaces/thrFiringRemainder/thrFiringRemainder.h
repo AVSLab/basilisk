@@ -17,8 +17,8 @@
 
  */
 
-#ifndef _FSW_MODULE_TEMPLATE_H_
-#define _FSW_MODULE_TEMPLATE_H_
+#ifndef _THR_FIRING_REMAINDER_
+#define _THR_FIRING_REMAINDER_
 
 #include "messaging/static_messaging.h"
 #include <stdint.h>

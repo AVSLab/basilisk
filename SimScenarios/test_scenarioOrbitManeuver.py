@@ -453,11 +453,11 @@ def run(doUnitTests, show_plots, maneuverCase):
         # setup truth data for unit test
         if maneuverCase == 0:
             truePos = [
-                  [9856338.4245505630970001, 41056125.249196968972683, 0.]
+                  [10298352.587758573, 40947481.244493686, 0.0]
             ]
         if maneuverCase == 1:
             truePos = [
-                  [5897618.522255497, 3739026.1404991057, 477499.5477283395]
+                  [5937590.072546725, 3675220.9560903916, 477503.77340122446]
             ]
 
         # compare the results to the truth values
