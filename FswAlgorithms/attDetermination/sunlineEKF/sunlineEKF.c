@@ -279,106 +279,52 @@ void sunlineDynMatrix(double *states, double (*A)[6][6])
 */
 void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-	int i, Index;
-	double sBarT[SKF_N_STATES*SKF_N_STATES];
-	double xComp[SKF_N_STATES], AT[(2 * SKF_N_STATES + SKF_N_STATES)*SKF_N_STATES];
-	double aRow[SKF_N_STATES], rAT[SKF_N_STATES*SKF_N_STATES], xErr[SKF_N_STATES]; 
-	double sBarUp[SKF_N_STATES*SKF_N_STATES];
-	double *spPtr;
+    double stmT[6][6], covPhiT[6][6], qGammaT[3][6], gammaQGammaT[6][6];
+    
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
-    /*! - Copy over the current state estimate into the 0th Sigma point and propagate by dt*/
-	vCopy(ConfigData->state, ConfigData->numStates,
-		&(ConfigData->SP[0 * ConfigData->numStates + 0]));
-	sunlineStateProp(&(ConfigData->SP[0 * ConfigData->numStates + 0]),
-        ConfigData->dt);
-    /*! - Scale that Sigma point by the appopriate scaling factor (Wm[0])*/
-	vScale(ConfigData->wM[0], &(ConfigData->SP[0 * ConfigData->numStates + 0]),
-        ConfigData->numStates, ConfigData->xBar);
-    /*! - Get the transpose of the sBar matrix because it is easier to extract Rows vs columns*/
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-               sBarT);
-    /*! - For each Sigma point, apply sBar-based error, propagate forward, and scale by Wm just like 0th.
-          Note that we perform +/- sigma points simultaneously in loop to save loop values.*/
-	for (i = 0; i<ConfigData->countHalfSPs; i++)
-	{
-		Index = i + 1;
-		spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-		vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-		vScale(ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-		vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-		sunlineStateProp(spPtr, ConfigData->dt);
-		vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-		vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
-		
-		Index = i + 1 + ConfigData->countHalfSPs;
-        spPtr = &(ConfigData->SP[Index*ConfigData->numStates]);
-        vCopy(&sBarT[i*ConfigData->numStates], ConfigData->numStates, spPtr);
-        vScale(-ConfigData->gamma, spPtr, ConfigData->numStates, spPtr);
-        vAdd(spPtr, ConfigData->numStates, ConfigData->state, spPtr);
-        sunlineStateProp(spPtr, ConfigData->dt);
-        vScale(ConfigData->wM[Index], spPtr, ConfigData->numStates, xComp);
-        vAdd(xComp, ConfigData->numStates, ConfigData->xBar, ConfigData->xBar);
-	}
-    /*! - Zero the AT matrix prior to assembly*/
-    mSetZero(AT, (2 * ConfigData->countHalfSPs + ConfigData->numStates),
-        ConfigData->countHalfSPs);
-	/*! - Assemble the AT matrix.  Note that this matrix is the internals of 
-          the qr decomposition call in the source design documentation.  It is 
-          the inside of equation 20 in that document*/
-	for (i = 0; i<2 * ConfigData->countHalfSPs; i++)
-	{
-		
-        vScale(-1.0, ConfigData->xBar, ConfigData->numStates, aRow);
-        vAdd(aRow, ConfigData->numStates,
-             &(ConfigData->SP[(i+1)*ConfigData->numStates]), aRow);
-        vScale(sqrt(ConfigData->wC[i+1]), aRow, ConfigData->numStates, aRow);
-		memcpy((void *)&AT[i*ConfigData->numStates], (void *)aRow,
-			ConfigData->numStates*sizeof(double));
-	}
-    /*! - Pop the sQNoise matrix on to the end of AT prior to getting QR decomposition*/
-	memcpy(&AT[2 * ConfigData->countHalfSPs*ConfigData->numStates],
-		ConfigData->sQnoise, ConfigData->numStates*ConfigData->numStates
-        *sizeof(double));
-    /*! - QR decomposition (only R computed!) of the AT matrix provides the new sBar matrix*/
-    ukfQRDJustR(AT, 2 * ConfigData->countHalfSPs + ConfigData->numStates,
-                ConfigData->countHalfSPs, rAT);
-    mCopy(rAT, ConfigData->numStates, ConfigData->numStates, sBarT);
-    mTranspose(sBarT, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->sBar);
+    /*! - Propagate the previous reference states and STM to the current time */
+    sunlineDynMatrix(ConfigData->states, &(ConfigData->dynMat));
+    sunlineStateSTMProp(ConfigData->states, &(ConfigData->stateTransition), &(ConfigData->dynMat), ConfigData->dt);
+
+    /* xbar = Phi*x */
+    m66MultV6(ConfigData->stateTransition, ConfigData->x, ConfigData->xBar);
     
-    /*! - Shift the sBar matrix over by the xBar vector using the appropriate weight 
-          like in equation 21 in design document.*/
-    vScale(-1.0, ConfigData->xBar, ConfigData->numStates, xErr);
-    vAdd(xErr, ConfigData->numStates, &ConfigData->SP[0], xErr);
-    ukfCholDownDate(ConfigData->sBar, xErr, ConfigData->wC[0],
-        ConfigData->numStates, sBarUp);
+    /*! - Update the covariance */
+    /*Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T*/
+    m66Transpose(ConfigData->stateTransition, stmT);
+    m66MultM66(ConfigData->covar, stmT, covPhiT);
+    m66MultM66(ConfigData->stateTransition, stmT, ConfigData->covarBar);
     
-    /*! - Save current sBar matrix, covariance, and state estimate off for further use*/
-    mCopy(sBarUp, ConfigData->numStates, ConfigData->numStates, ConfigData->sBar);
-    mTranspose(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar);
-	mMultM(ConfigData->sBar, ConfigData->numStates, ConfigData->numStates,
-        ConfigData->covar, ConfigData->numStates, ConfigData->numStates,
-           ConfigData->covar);
-    vCopy(&(ConfigData->SP[0]), ConfigData->numStates, ConfigData->state );
-	
+    /*Compute Gamma and add gammaQGamma^T to Pbar*/
+    double Gamma[6][3]={{ConfigData->dt/4,0,0},{0,ConfigData->dt/4,0},{0,0,ConfigData->dt/4},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
+    
+    mMultMt(ConfigData->procNoise, 3, 3, Gamma, 6, 3, qGammaT);
+    mMultM(Gamma, 6, 3, qGammaT, 3, 6, gammaQGammaT);
+    m66Add(ConfigData->covarBar, gammaQGammaT, ConfigData->covarBar);
+    
+    
 	ConfigData->timeTag = updateTime;
 }
 
-/*! This method computes what the expected measurement vector is for each CSS 
-    that is present on the spacecraft.  All data is transacted from the main 
-    data structure for the model because there are many variables that would 
-    have to be updated otherwise.
+
+
+
+/*! This method computes what the expected measurement vector is for each CSS
+ that is present on the spacecraft.  All data is transacted from the main
+ data structure for the model because there are many variables that would
+ have to be updated otherwise.
  @return void
  @param ConfigData The configuration data associated with the CSS estimator
-
+ 
  */
+
 void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData)
 {
-    uint32_t i, j, obsCounter;
-    double sensorNormal[3];
+    uint32_t i, obsCounter;
+//    uint32_t j;
+//    double sensorNormal[3];
     /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
@@ -386,20 +332,20 @@ void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData)
     {
         if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
-            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
-            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
-            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
-            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
-            {
-                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
-                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES]), sensorNormal);
-            }
+//            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
+//            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
+//            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
+//            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
+//            {
+//                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
+//                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES]), sensorNormal);
+//            }
             obsCounter++;
         }
     }
     /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
-        ConfigData->yMeas);
+//    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
+//        ConfigData->yMeas);
     ConfigData->numObs = obsCounter;
     
 }
