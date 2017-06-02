@@ -310,7 +310,6 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 
 
 
-
 /*! This method computes what the expected measurement vector is for each CSS
  that is present on the spacecraft.  All data is transacted from the main
  data structure for the model because there are many variables that would
