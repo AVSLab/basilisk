@@ -394,6 +394,8 @@ def run(doUnitTests, show_plots, scCase):
     scInitialState = 1000*pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
     rN = scInitialState[0:3]         # meters
     vN = scInitialState[3:6]         # m/s
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
 
 
     #
@@ -414,17 +416,6 @@ def run(doUnitTests, show_plots, scCase):
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
-
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
 
     #
