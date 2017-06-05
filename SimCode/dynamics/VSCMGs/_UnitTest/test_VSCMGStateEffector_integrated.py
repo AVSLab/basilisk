@@ -242,6 +242,19 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
         unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    if testCase == 'JitterFullyCoupled':
+        scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
+        scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+    else:
+        scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+        scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.08], [0.01], [0.0]]
+
     unitTestSim.InitializeSimulation()
 
     # log data
@@ -258,20 +271,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
-    if testCase == 'JitterFullyCoupled':
-        posRef.setState([[0.0],	[0.0],	[0.0]])
-        velRef.setState([[0.0],	[0.0],	[0.0]])
-    else:
-        posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-        velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.08], [0.01], [0.0]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-
     unitTestSim.ConfigureStopTime(macros.sec2nano(duration))
+
     unitTestSim.ExecuteSimulation()
 
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
