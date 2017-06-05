@@ -406,6 +406,11 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
                                                 # with circular or equatorial orbit, some angles are
                                                 # arbitrary
+    #
+    #   initialize Spacecraft States with the initialization variables
+    #
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
 
 
     # set the simulation time
@@ -438,16 +443,6 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
     scSim.InitializeSimulationAndDiscover()
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
