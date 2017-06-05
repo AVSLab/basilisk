@@ -217,6 +217,11 @@ def run(doUnitTests, show_plots, useLargeTumble):
     scObject.hub.IHubPntBc_B = unitTestSupport.np2EigenMatrix3d(I)
     scObject.hub.useTranslation = False
     scObject.hub.useRotation = True
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]       # sigma_BN_B
+    if useLargeTumble:
+        scObject.hub.omega_BN_BInit = [[0.8], [-0.6], [0.5]]  # rad/s - omega_BN_B
+    else:
+        scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]   # rad/s - omega_BN_B
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -310,12 +315,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
     omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
-    if useLargeTumble:
-        omegaRef.setState([[0.8], [-0.6], [0.5]])  # rad/s - omega_BN_B
-    else:
-        omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
 
     #
     #   configure a simulation stop time time and execute the simulation run
