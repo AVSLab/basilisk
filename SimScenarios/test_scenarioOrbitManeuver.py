@@ -257,6 +257,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -284,14 +286,10 @@ def run(doUnitTests, show_plots, maneuverCase):
 
 
     #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
+    #  get access to dynManager translational states for future access to the states
     #
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
 
     #
@@ -313,7 +311,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         vHat = np.cross(hHat,rHat)
         v0 = np.dot(vHat,vVt)
         vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        # velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
         T2 = macros.sec2nano(P*0.25)
     else:
         # Hohmann Transfer to GEO
@@ -325,7 +323,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         T2 = macros.sec2nano((np.pi)/n1)
         vHat = vVt/v0
         vVt = vVt + vHat*(v0p-v0)
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        # velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime+T2)
@@ -344,7 +342,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         vHat = np.cross(hHat,rHat)
         v0 = np.dot(vHat,vVt)
         vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        # velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
         T3 = macros.sec2nano(P*0.25)
     else:
         # Hohmann Transfer to GEO
@@ -354,7 +352,7 @@ def run(doUnitTests, show_plots, maneuverCase):
         T3 = macros.sec2nano(0.25*(np.pi)/n1)
         vHat = vVt/v1
         vVt = vVt + vHat*(v1p-v1)
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        # velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 3rd chunk
     scSim.ConfigureStopTime(simulationTime+T2+T3)
