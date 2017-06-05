@@ -513,22 +513,9 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simControlProc)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simPostControlProc)
 
-
     #
-    #   initialize Simulation
+    #   initialize Spacecraft States with intitialization variables
     #
-    scSim.InitializeSimulationAndDiscover()
-
-
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -540,10 +527,15 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - r_BN_N
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
-    omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - r_BN_N
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]       # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]   # rad/s - omega_BN_B
+
+    #
+    #   initialize Simulation
+    #
+    scSim.InitializeSimulationAndDiscover()
 
     # initialize the RW state effector states
     simIncludeRW.setInitialStates(scObject)
