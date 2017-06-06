@@ -129,17 +129,20 @@ def test_singleGravityBody(show_plots):
 
     stateOut = pyswice.spkRead('HUBBLE SPACE TELESCOPE', stringCurrent, 'J2000', 'EARTH')
 
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+
+    scObject.hub.r_CN_NInit = (1000.0*stateOut[0:3].reshape(3,1)).tolist()
+    velStart = 1000.0*stateOut[3:6]
+    scObject.hub.v_CN_NInit = (velStart.reshape(3,1)).tolist()
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+
     unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    posRef.setState((1000.0*stateOut[0:3].reshape(3,1)).tolist())
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velStart =  1000.0*stateOut[3:6]
-    velRef.setState((velStart.reshape(3,1)).tolist())
     
     scObject.hub.mHub = 100
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
@@ -277,21 +280,19 @@ def test_multiBodyGravity(show_plots):
 
     stateOut = pyswice.spkRead('NEW HORIZONS', stringCurrent, 'J2000', 'SUN')
 
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.r_CN_NInit = (1000.0*stateOut[0:3].reshape(3,1)).tolist()
+    velStart = 1000.0*stateOut[3:6]
+    scObject.hub.v_CN_NInit = (velStart.reshape(3,1)).tolist()
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+
     unitTestSim.InitializeSimulation()
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    posRef.setState((1000.0*stateOut[0:3].reshape(3,1)).tolist())
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velStart = 1000.0*stateOut[3:6]
-    velRef.setState((velStart.reshape(3,1)).tolist())
-    
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     dt = 50.0
     totalTime = 20000.0
@@ -332,8 +333,6 @@ def test_multiBodyGravity(show_plots):
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de-403-masses.tpc')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/../_UnitTest/nh_pred_od077.bsp')
-
-    print numpy.max(abs(posError[:,1:4]))
 
     plt.figure()
     plt.plot(posError[:,0], posError[:,1:4])
