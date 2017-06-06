@@ -36,6 +36,9 @@ FuelSloshParticle::FuelSloshParticle()
 	this->pHat_B.setIdentity();
 	this->k = 1.0;
 	this->c = 0.0;
+    this->rhoInit = 0.0;
+    this->rhoDotInit = 0.0;
+    this->massInit = 0.0;
 	this->nameOfRhoState = "fuelSloshParticleRho";
 	this->nameOfRhoDotState = "fuelSloshParticleRhoDot";
 	this->nameOfMassState = "fuelSloshParticleMass";
@@ -68,10 +71,19 @@ void FuelSloshParticle::registerStates(DynParamManager& states)
 {
     // - Register rho and rhoDot
 	this->rhoState = states.registerState(1, 1, nameOfRhoState);
+    Eigen::MatrixXd rhoInitMatrix(1,1);
+    rhoInitMatrix(0,0) = this->rhoInit;
+    this->rhoState->setState(rhoInitMatrix);
 	this->rhoDotState = states.registerState(1, 1, nameOfRhoDotState);
+    Eigen::MatrixXd rhoDotInitMatrix(1,1);
+    rhoDotInitMatrix(0,0) = this->rhoDotInit;
+    this->rhoDotState->setState(rhoDotInitMatrix);
 
 	// - Register m
 	this->massState = states.registerState(1, 1, nameOfMassState);
+    Eigen::MatrixXd massInitMatrix(1,1);
+    massInitMatrix(0,0) = this->massInit;
+    this->massState->setState(massInitMatrix);
 
 	return;
 }

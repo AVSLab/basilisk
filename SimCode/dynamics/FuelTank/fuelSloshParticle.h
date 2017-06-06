@@ -33,6 +33,9 @@ class FuelSloshParticle :
 public:
     double k;                      //!< [N/m] linear spring constant for fuel slosh
     double c;                      //!< [N-s/m] linear damping term for fuel slosh
+    double rhoInit;                //!< [m] Initial value for fuel slosh particle offset
+    double rhoDotInit;             //!< [m/s] Initial value for fuel slosh particle offset derivative
+    double massInit;               //!< [m] Initial value for fuel slosh particle mass
     std::string nameOfRhoState;    //!< [-] Identifier for the rho state data container
     std::string nameOfRhoDotState; //!< [-] Identifier for the rhoDot state data container
 	std::string nameOfMassState;      //!< [-] Identifier for the mass state data container
