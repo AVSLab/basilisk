@@ -247,8 +247,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     if testCase == 'JitterFullyCoupled':
-        scObject.hub.r_CN_NInit = [[0.0],	[0.0],	[0.0]]
-        scObject.hub.v_CN_NInit = [[0.0],	[0.0],	[0.0]]
+        scObject.hub.r_CN_NInit = [[0.1],	[-0.2],	[0.3]]
+        scObject.hub.v_CN_NInit = [[-0.4],	[0.5],	[-0.8]]
     else:
         scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
         scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
@@ -267,9 +267,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     unitTestSim.ConfigureStopTime(macros.sec2nano(duration))
 
@@ -293,7 +291,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-            [-4025537.663530937, 7487128.5629007, 5249339.739717924]
+            [-4025537.664298894, 7487128.570444949, 5249339.643828076]
         ]
 
         trueSigma = [
@@ -302,7 +300,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     elif testCase == 'JitterSimple':
         truePos = [
-            [-4025537.6587910117, 7487128.563118205, 5249339.749664459]
+            [-4025537.659558947, 7487128.570662447, 5249339.653774626]
         ]
 
         trueSigma = [
@@ -311,7 +309,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-            [1.4827474179738195e-05, 8.863827711505084e-05, 8.421936210521219e-05]
+            [0.09705729702178499, -0.19556309271470682, 0.19187422125896728]
         ]
 
         trueSigma = [
@@ -319,7 +317,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
         ]
     elif testCase == 'JitterFullyCoupledGravity':
         truePos = [
-            [-4020390.688075833, 7490532.374973515, 5248309.627338164]
+            [-4020390.688018252, 7490532.375018967, 5248309.5274464]
         ]
 
         trueSigma = [
@@ -450,18 +448,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
-        print 'Position'
-        print truePos
-        print dataPos
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Reaction Wheel Integrated Test failed pos unit test")
 
     for i in range(0,len(trueSigma)):
         # check a vector values
-        print 'Attitude'
-        print trueSigma
-        print dataSigma
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Reaction Wheel Integrated Test failed attitude unit test")
@@ -469,18 +461,12 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     if testCase == 'BalancedWheels' or testCase == 'JitterFullyCoupled' or testCase == 'JitterFullyCoupledGravity':
         for i in range(0,len(initialOrbAngMom_N)):
             # check a vector values
-            print 'Orbital Angular Momentum'
-            print initialOrbAngMom_N
-            print finalOrbAngMom
             if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital angular momentum unit test")
 
         for i in range(0,len(initialRotAngMom_N)):
             # check a vector values
-            print 'Rotational Angular Momentum'
-            print initialRotAngMom_N
-            print finalRotAngMom
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
@@ -504,4 +490,4 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    VSCMGIntegratedTest(True,False,'JitterFullyCoupled')
+    VSCMGIntegratedTest(True,False,'JitterFullyCoupledGravity')
