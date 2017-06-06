@@ -85,7 +85,7 @@ void VSCMGStateEffector::registerStates(DynParamManager& states)
 
 	std::vector<VSCMGConfigSimMsg>::iterator it;
     for(it=VSCMGData.begin(); it!=VSCMGData.end(); it++) {
-        if (it->VSCMGModel == JitterSimple || it->VSCMGModel == JitterFullyCoupled) {
+        if (it->VSCMGModel == vscmgJitterSimple || it->VSCMGModel == vscmgJitterFullyCoupled) {
             this->numVSCMGJitter++;
         }
         omegasForInit(it - this->VSCMGData.begin(), 0) = it->Omega;
@@ -128,7 +128,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 		it->Omega = this->OmegasState->getState()(it - VSCMGData.begin(), 0);
 		it->gamma = this->gammasState->getState()(it - VSCMGData.begin(), 0);
 		it->gammaDot = this->gammaDotsState->getState()(it - VSCMGData.begin(), 0);
-		if (it->VSCMGModel == JitterFullyCoupled || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgJitterFullyCoupled || it->VSCMGModel == vscmgJitterSimple) {
 			it->theta = this->thetasState->getState()(thetaCount, 0);
 			thetaCount++;
 		}
@@ -148,7 +148,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 		it->w2Hat_B = dcm_BW.col(1);
 		it->w3Hat_B = dcm_BW.col(2);
 
-		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 
 			//! gimbal inertia tensor about wheel center of mass represented in B frame
 			Eigen::Matrix3d IGIMPntGc_G;
@@ -197,7 +197,7 @@ void VSCMGStateEffector::updateEffectorMassProps(double integTime)
 			this->effProps.rEffPrime_CB_B += it->massV*it->rPrimeWcB_B;
 			this->effProps.IEffPrimePntB_B += it->IPrimeWPntWc_B + it->IPrimeGPntGc_B;
 
-		} else if (it->VSCMGModel == JitterFullyCoupled) {
+		} else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 
 			it->rGcG_B = dcm_BG * it->rGcG_G;
 
@@ -315,18 +315,18 @@ void VSCMGStateEffector::updateContributions(double integTime, Eigen::Matrix3d &
 		omegat = it->gtHat_B.transpose()*omegaLoc_BN_B;
 		omegag = it->ggHat_B.transpose()*omegaLoc_BN_B;
 
-		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			matrixDcontr -= it->IV3 * it->ggHat_B * it->ggHat_B.transpose() + it->IW1 * it->gsHat_B * it->gsHat_B.transpose();
 			vecRotcontr -= (it->u_s_current-it->IW1*omegat*it->gammaDot)*it->gsHat_B + it->IW1*it->Omega*it->gammaDot*it->gtHat_B + (it->u_g_current+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat)*it->ggHat_B
 			+ omegaTilde*it->IGPntGc_B*it->gammaDot*it->ggHat_B + omegaTilde*it->IWPntWc_B*omega_WB_B;
-			if (it->VSCMGModel == JitterSimple) {
+			if (it->VSCMGModel == vscmgJitterSimple) {
 				/* static imbalance force: Fs = Us * Omega^2 */
 				tempF = it->U_s * OmegaSquared * it->w2Hat_B;
 				vecTranscontr += tempF;
 				/* static imbalance torque: tau_s = cross(r_B,Fs), dynamic imbalance torque: tau_d = Ud * Omega^2 */
 				vecRotcontr += it->rGB_B.cross(tempF) + it->U_d*OmegaSquared*it->w2Hat_B;
 			}
-        } else if (it->VSCMGModel == JitterFullyCoupled) {
+        } else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 
             gravityTorquePntW_B = it->d*it->w2Hat_B.cross(it->massW*g_B);
 			gravityTorquePntG_B = it->rGcG_B.cross(it->massG*g_B);
@@ -443,15 +443,15 @@ void VSCMGStateEffector::computeDerivatives(double integTime)
 		omegag = it->ggHat_B.transpose()*omegaLoc_BN_B;
 
 		gammasDot(VSCMGi,0) = it->gammaDot;
-        if(it->VSCMGModel == JitterFullyCoupled || it->VSCMGModel == JitterSimple) {
+        if(it->VSCMGModel == vscmgJitterFullyCoupled || it->VSCMGModel == vscmgJitterSimple) {
             // - Set trivial kinemetic derivative
             thetasDot(thetaCount,0) = it->Omega;
             thetaCount++;
         }
-		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			OmegasDot(VSCMGi,0) = - omegat*it->gammaDot - it->gsHat_B.transpose()*omegaDotBNLoc_B + (it->u_s_current+it->gravityTorqueWheel_s)/it->IW1;
 			gammaDotsDot(VSCMGi,0) = 1/it->IV3*((it->u_g_current+it->gravityTorqueGimbal_g)+(it->IV1-it->IV2)*omegas*omegat+it->IW1*it->Omega*omegat-it->IV3*it->ggHat_B.transpose()*omegaDotBNLoc_B);
-        } else if(it->VSCMGModel == JitterFullyCoupled) {
+        } else if(it->VSCMGModel == vscmgJitterFullyCoupled) {
 			OmegasDot(VSCMGi,0) = it->p.dot(rDDotBNLoc_B) + it->q.dot(omegaDotBNLoc_B) + it->s;
 			gammaDotsDot(VSCMGi,0) = it->agamma.dot(rDDotBNLoc_B) + it->bgamma.dot(omegaDotBNLoc_B) + it->cgamma*OmegasDot(VSCMGi,0) + it->dgamma;
 		}
@@ -480,12 +480,12 @@ void VSCMGStateEffector::updateEnergyMomContributions(double integTime, Eigen::V
     {
 		Eigen::Vector3d omega_GN_B = omegaLoc_BN_B + it->gammaDot*it->ggHat_B;
 		Eigen::Vector3d omega_WN_B = omega_GN_B + it->Omega*it->gsHat_B;
-		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			it->rWcB_B = it->rGB_B;
 			Eigen::Vector3d rDotWcB_B = omegaLoc_BN_B.cross(it->rWcB_B);
 			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->IGPntGc_B*omega_GN_B + it->massV*it->rWcB_B.cross(rDotWcB_B);
 			rotEnergyContr += 1.0/2.0*omega_WN_B.dot(it->IWPntWc_B*omega_WN_B) + 1.0/2.0*omega_GN_B.dot(it->IGPntGc_B*omega_GN_B) + 1.0/2.0*it->massV*rDotWcB_B.dot(rDotWcB_B);
-		} else if (it->VSCMGModel == JitterFullyCoupled) {
+		} else if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 			Eigen::Vector3d rDotWcB_B = it->rPrimeWcB_B + omegaLoc_BN_B.cross(it->rWcB_B);
 			Eigen::Vector3d rDotGcB_B = it->rPrimeGcB_B + omegaLoc_BN_B.cross(it->rGcB_B);
 			rotAngMomPntCContr_B += it->IWPntWc_B*omega_WN_B + it->massW*it->rWcB_B.cross(rDotWcB_B);
@@ -581,11 +581,11 @@ void VSCMGStateEffector::CrossInit()
 		it->w3Hat0_B = it->ggHat_B;
 
 		//! Define CoM offset d and off-diagonal inertia IW13 if using fully coupled model
-		if (it->VSCMGModel == JitterFullyCoupled) {
+		if (it->VSCMGModel == vscmgJitterFullyCoupled) {
 			it->d = it->U_s/it->massW; //!< determine CoM offset from static imbalance parameter
 			it->IW13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
 		}
-		if (it->VSCMGModel == BalancedWheels || it->VSCMGModel == JitterSimple) {
+		if (it->VSCMGModel == vscmgBalancedWheels || it->VSCMGModel == vscmgJitterSimple) {
 			it->IV1 = it->IW1 + it->IG1;
 			it->IV2 = it->IW2 + it->IG2;
 			it->IV3 = it->IW3 + it->IG3;

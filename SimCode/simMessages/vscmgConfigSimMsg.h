@@ -21,12 +21,11 @@
 #define SIM_VSCMG_CONFIG_MESSAGE_H
 
 /*! @brief enumeration definiting the types of VSCMG modes */ 
-enum VSCMGModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupled };
 
 
 /*! @brief Structure used to define the individual VSCMG configuration data message*/
 typedef struct {
-    std::string typeName;      //!< [-], string containing the VSCMG type name
 	VSCMGModels VSCMGModel; //!< [-], Type of imbalance model to use
 	Eigen::Vector3d rGB_S;		//!< [m], position vector of the VSCMG relative to the spacecraft structural frame
 	Eigen::Vector3d rGB_B;		//!< [m], position vector of the VSCMG relative to the spacecraft body frame
