@@ -309,6 +309,56 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 }
 
 
+/*! This method computes the H matrix, defined by dGdX
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ 
+ */
+
+void sunlineHMatrix(sunlineEKFConfig *ConfigData)
+{
+    uint32_t i, obsCounter;
+    //    uint32_t j;
+    //    double sensorNormal[3];
+    /* Begin method steps */
+    obsCounter = 0;
+    /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
+    for(i=0; i<ConfigData->numCSSTotal; i++)
+    {
+        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
+        {
+            //            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
+            //            v3Copy(&(ConfigData->cssNHat_B[i*3]), sensorNormal);
+            //            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
+            //            for(j=0; j<ConfigData->countHalfSPs*2+1; j++)
+            //            {
+            //                ConfigData->yMeas[obsCounter*(ConfigData->countHalfSPs*2+1) + j] =
+            //                    v3Dot(&(ConfigData->SP[j*SKF_N_STATES]), sensorNormal);
+            //            }
+            obsCounter++;
+        }
+    }
+    /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
+    //    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
+    //        ConfigData->yMeas);
+    ConfigData->numObs = obsCounter;
+
+    
+}
+
+/*! This method reads in the measurements and adds them to the yMeas pointer
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ 
+ */
+
+void sunlineYMeas(sunlineEKFConfig *ConfigData)
+{
+    
+    return;
+}
+
+
 
 /*! This method computes what the expected measurement vector is for each CSS
  that is present on the spacecraft.  All data is transacted from the main
