@@ -46,24 +46,7 @@ if __name__ == "__main__":
     TheBSKSim.TotalSim.logThisMessage(TheBSKSim.DynClass.simpleNavObject.outputTransName, samplingTime)
     TheBSKSim.TotalSim.logThisMessage(TheBSKSim.DynClass.simpleNavObject.outputAttName, samplingTime)
 
-
-    # Initialize Simulation
-    TheBSKSim.InitializeSimulation()
-    # The next call ensures that the FSW and Dynamics Message that have the same
-    # name are copied over every time the simulation ticks forward.  This function
-    # has to be called after the simulation is initialized to ensure that all modules
-    # have created their own output/input messages declarations.
-    TheBSKSim.dyn2FSWInterface.discoverAllMessages()
-    TheBSKSim.fsw2DynInterface.discoverAllMessages()
-
-
-    # Initialize Spacecraft States within the state manager.
-    # This must occur after the initialization
-    posRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubPosition")
-    velRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = TheBSKSim.DynClass.scObject.dynManager.getStateObject("hubOmega")
-
+    # Initialize Spacecraft States with the initialization variables
 
     # Set up the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
@@ -76,10 +59,19 @@ if __name__ == "__main__":
     oe.f = 85.3 * mc.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
 
-    posRef.setState(sp.np2EigenVectorXd(rN))  # r_BN_N [m]
-    velRef.setState(sp.np2EigenVectorXd(vN))  # r_BN_N [m]
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])  # sigma_BN_B
-    omegaRef.setState([[0.001], [-0.01], [0.03]])  # omega_BN_B [rad/s]
+    TheBSKSim.scObject.hub.r_CN_NInit =  sp.np2EigenVectorXd(rN)  # r_BN_N [m]
+    TheBSKSim.scObject.hub.v_CN_NInit = sp.np2EigenVectorXd(vN)  # r_BN_N [m]
+    TheBSKSim.scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]  # sigma_BN_B
+    TheBSKSim.scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]  # omega_BN_B [rad/s]
+
+    # Initialize Simulation
+    TheBSKSim.InitializeSimulation()
+    # The next call ensures that the FSW and Dynamics Message that have the same
+    # name are copied over every time the simulation ticks forward.  This function
+    # has to be called after the simulation is initialized to ensure that all modules
+    # have created their own output/input messages declarations.
+    TheBSKSim.dyn2FSWInterface.discoverAllMessages()
+    TheBSKSim.fsw2DynInterface.discoverAllMessages()
 
 
     # Configure a simulation stop time time and execute the simulation run
