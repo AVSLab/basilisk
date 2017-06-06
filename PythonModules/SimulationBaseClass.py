@@ -300,7 +300,7 @@ class SimBaseClass:
             LogValue.clearItem()
         self.simulationInitialized = True
 
-    def InitializeSimulation_andDiscover(self):
+    def InitializeSimulationAndDiscover(self):
         self.InitializeSimulation()
         for process in self.procList:
             for interface in process.processData.intRefs:

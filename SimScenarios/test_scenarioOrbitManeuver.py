@@ -280,7 +280,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #

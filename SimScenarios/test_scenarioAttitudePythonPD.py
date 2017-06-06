@@ -517,11 +517,8 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation_andDiscover()
-    # scSim.InitializeSimulation()
-    # scSim.pre2ContInterface.discoverAllMessages()
-    # scSim.cont2PostInterface.discoverAllMessages()
-    # scSim.post2PreInterface.discoverAllMessages()
+    scSim.InitializeSimulationAndDiscover()
+
 
 
     #

@@ -364,7 +364,7 @@ def run(doUnitTests, show_plots, useAltBodyFrame):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #

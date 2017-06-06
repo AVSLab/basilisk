@@ -301,7 +301,7 @@ def run(doUnitTests, show_plots, useLargeTumble):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #
