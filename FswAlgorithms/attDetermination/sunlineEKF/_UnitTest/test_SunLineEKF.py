@@ -96,20 +96,25 @@ def sunline_utilities_test(show_plots):
     expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
 
     sunlineEKF.Dynamics = np.zeros([6,6]).tolist()
+    dynMat = sunlineEKF.new_doubleArray(36)
+    states = sunlineEKF.new_doubleArray(6)
 
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineEKF.ukfMatInv(SourceVector, nRow, nRow, InvVector)
+    sunlineEKF.sunlineDynMatrix(states, dynMat)
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
 
-    InvOut = np.array(InvOut).reshape(nRow, nRow)
-    expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(3,3))
-    errorNorm = np.linalg.norm(expectIdent - np.identity(3))
-    if(errorNorm > 1.0E-14):
-        testFailCount += 1
-        testMessages.append("Filter Reset Failure")
+    # nRow = int(math.sqrt(len(InvSourceMat)))
+    # sunlineEKF.ukfMatInv(SourceVector, nRow, nRow, InvVector)
+    #
+    # InvOut = []
+    # for i in range(len(InvSourceMat)):
+    #     InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
+    #
+    # InvOut = np.array(InvOut).reshape(nRow, nRow)
+    # expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(3,3))
+    # errorNorm = np.linalg.norm(expectIdent - np.identity(3))
+    # if(errorNorm > 1.0E-14):
+    #     testFailCount += 1
+    #     testMessages.append("Filter Reset Failure")
 
 
 
