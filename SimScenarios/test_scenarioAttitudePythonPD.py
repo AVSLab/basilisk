@@ -537,9 +537,6 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #
     scSim.InitializeSimulationAndDiscover()
 
-    # initialize the RW state effector states
-    simIncludeRW.setInitialStates(scObject)
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
