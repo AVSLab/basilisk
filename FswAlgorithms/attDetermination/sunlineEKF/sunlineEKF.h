@@ -59,7 +59,7 @@ typedef struct {
     double stateTransition[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
 
     double dynMat[SKF_N_STATES][SKF_N_STATES];        /*!< [-] Dynamics Matrix */
-    double measMat[MAX_N_CSS_MEAS][SKF_N_STATES];        /*!< [-] Measurement Matrix */
+    double measMat[MAX_N_CSS_MEAS][SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
@@ -96,7 +96,7 @@ extern "C" {
 	void sunlineStateSTMProp(double *stateInOut, double (*STM)[6][6], double (*A)[6][6], double dt);
     void sunlineHMatrix(sunlineEKFConfig *ConfigData);
     void sunlineDynMatrix(double *stateInOut, double (*A)[6][6]);
-    void sunlineEKFMeasModel(sunlineEKFConfig *ConfigData);
+    void sunlineYMeas(sunlineEKFConfig *ConfigData);
     
 #ifdef __cplusplus
 }
