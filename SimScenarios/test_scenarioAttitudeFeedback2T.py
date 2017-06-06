@@ -154,10 +154,10 @@ def test_bskAttitudeFeedback2T(show_plots, useUnmodeledTorque, useIntGain):
 #     fswProcess.addInterfaceRef(dyn2FSWInterface)
 #~~~~~~~~~~~~~~
 # Next, after the simulation has been initialized and the modules messages are created
-# a discover process must be called that links messages that have the same name.
+# a discover process must be called that links messages that have the same name.  This is
+# achieved through the combined initialization and message discovery macro.
 #~~~~~~~~~~~~~~{.py}
-#     dyn2FSWInterface.discoverAllMessages()
-#     fsw2DynInterface.discoverAllMessages()
+#     scSim.InitializeSimulationAndDiscover()
 #~~~~~~~~~~~~~~
 #
 #
@@ -408,8 +408,8 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     # name are copied over every time the simulation ticks forward.  This function
     # has to be called after the simulation is initialized to ensure that all modules
     # have created their own output/input messages declarations.
-    dyn2FSWInterface.discoverAllMessages()
-    fsw2DynInterface.discoverAllMessages()
+    # dyn2FSWInterface.discoverAllMessages()
+    # fsw2DynInterface.discoverAllMessages()
 
 
     #

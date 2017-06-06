@@ -202,6 +202,15 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
 # done via a SPICE object.
 #
+# Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
+# which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
+#~~~~~~~~~~~~~~~~~{.py}
+#     scSim.InitializeSimulationAndDiscover()
+#~~~~~~~~~~~~~~~~~
+# If there are messages that are shared across multiple BSK threads, as shown in
+# [test_scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
+# auto-discovers these shared messages.
+#
 # Setup 1
 # -----
 #
@@ -423,7 +432,10 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
-    #   initialize Simulation
+    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
+    #   cross_init() and reset() routines on each module.
+    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
+    #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
     scSim.InitializeSimulationAndDiscover()
 
