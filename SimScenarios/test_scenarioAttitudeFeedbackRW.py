@@ -213,15 +213,6 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 #       effectors -> dynamics -> sensors
 #
-# As with spacecraftPlus(), the reactionWheelStateEffector() class is a sub-class of the StateEffector() class.
-# As such, the RW states that get integrated are setup in a state class, and must be specified after the
-# simulation is initialized.  The `create()` macros above already stored what desired RW speeds
-# were to be simulated.  The macro call
-# ~~~~~~~~~~~~~~~~~{.py}
-#     # initialize the RW state effector states
-#     simIncludeRW.setInitialStates(scObject)
-# ~~~~~~~~~~~~~~~~~
-# loops through all the setup RW effectors and sets the initial wheel speeds to the desired values.
 #
 # To log the RW information, the following code is used:
 # ~~~~~~~~~~~~~~~~~{.py}
@@ -672,10 +663,6 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
-
-
-    # initialize the RW state effector states
-    simIncludeRW.setInitialStates(scObject)
 
     #
     #   configure a simulation stop time time and execute the simulation run
