@@ -21,7 +21,7 @@
 #define SIM_VSCMG_CONFIG_MESSAGE_H
 
 /*! @brief enumeration definiting the types of VSCMG modes */ 
-enum VSCMGModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
+enum VSCMGModels { vscmgBalancedWheels, vscmgJitterSimple, vscmgJitterFullyCoupled };
 
 
 /*! @brief Structure used to define the individual VSCMG configuration data message*/
