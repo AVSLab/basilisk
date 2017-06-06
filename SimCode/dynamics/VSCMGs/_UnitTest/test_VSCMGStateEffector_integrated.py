@@ -45,7 +45,7 @@ rpm2rad = 2.*math.pi/60.
 
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
-    VSCMG.typeName = 'Honeywell_HR16'
+
     VSCMG.rGB_S = [[0.],[0.],[0.]]
     VSCMG.gsHat0_S = [[0.],[0.],[0.]]
     VSCMG.gtHat0_S = [[0.],[0.],[0.]]

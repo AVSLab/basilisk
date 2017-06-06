@@ -64,7 +64,6 @@ def writeNewVSCMGCmds(self,u_s_cmd,u_g_cmd,numVSCMG):
 
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
-    VSCMG.typeName = ''
     VSCMG.rGB_S = [[0.],[0.],[0.]]
     VSCMG.gsHat0_S = [[1.],[0.],[0.]]
     VSCMG.gtHat0_S = [[1.],[0.],[0.]]
