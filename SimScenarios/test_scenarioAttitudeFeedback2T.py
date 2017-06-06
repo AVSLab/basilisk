@@ -402,7 +402,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
     # this next call ensures that the FSW and Dynamics Message that have the same
     # name are copied over every time the simulation ticks forward.  This function

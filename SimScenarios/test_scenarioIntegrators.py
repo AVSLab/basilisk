@@ -236,7 +236,7 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
     #
     #   initialize Spacecraft States within the state manager

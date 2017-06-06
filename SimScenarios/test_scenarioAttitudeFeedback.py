@@ -466,7 +466,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain, useKnownTorque)
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #

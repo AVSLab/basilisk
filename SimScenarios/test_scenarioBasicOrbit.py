@@ -425,7 +425,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
     #
     #   initialize Spacecraft States within the state manager

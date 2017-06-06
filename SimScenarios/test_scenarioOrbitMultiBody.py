@@ -413,7 +413,7 @@ def run(doUnitTests, show_plots, scCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #
