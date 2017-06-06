@@ -230,19 +230,15 @@ def run(show_plots, orbitCase, planetCase):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
+    #   initialize Spacecraft States with the initialization variables
+    #
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
+
+    #
     #   initialize Simulation
     #
     scSim.InitializeSimulation()
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
     #
     #   configure a simulation stop time time and execute the simulation run
