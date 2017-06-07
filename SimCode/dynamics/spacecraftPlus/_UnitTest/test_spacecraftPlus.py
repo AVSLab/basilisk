@@ -38,6 +38,7 @@ import ctypes
 import gravityEffector
 import spice_interface
 import ExtForceTorque
+import RigidBodyKinematics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -103,6 +104,23 @@ def test_SCHubIntegratedSim(show_plots):
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+    scObject.hub.omega_BN_BInit = [[0.01], [-0.02], [0.03]]
+    dcm_BN = numpy.asarray(RigidBodyKinematics.MRP2C(numpy.asarray(scObject.hub.sigma_BNInit).flatten().tolist()))
+    r_CN_NInit = numpy.asarray(scObject.hub.r_CN_NInit)
+    r_CN_NInit += numpy.dot(dcm_BN.transpose(),numpy.asarray(scObject.hub.r_BcB_B))
+    scObject.hub.r_CN_NInit = r_CN_NInit.tolist()
+    v_CN_NInit = numpy.asarray(scObject.hub.v_CN_NInit)
+    v_CN_NInit += numpy.dot(dcm_BN.transpose(),numpy.cross(numpy.asarray(scObject.hub.omega_BN_BInit).ravel(),numpy.asarray(scObject.hub.r_BcB_B).ravel()).reshape((3,1)))
+    scObject.hub.v_CN_NInit = v_CN_NInit.tolist()
+
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
@@ -111,18 +129,7 @@ def test_SCHubIntegratedSim(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    omegaRef.setState([[0.01], [-0.02], [0.03]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
 
     stopTime = 10
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -144,7 +151,6 @@ def test_SCHubIntegratedSim(show_plots):
         plt.show()
 
     dataPos = posRef.getState()
-    dataVel = velRef.getState()
     dataSigma = sigmaRef.getState()
     dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
@@ -271,22 +277,20 @@ def test_gravityIntegratedSim(show_plots):
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 100
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    omegaRef.setState([[0.001], [-0.002], [0.003]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    
-    scObject.hub.mHub = 100
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -367,6 +371,16 @@ def test_extForceBodyAndTorque(show_plots):
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+
+    # Define initial conditions
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
+
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
@@ -378,18 +392,7 @@ def test_extForceBodyAndTorque(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -482,6 +485,16 @@ def test_extForceInertialAndTorque(show_plots):
     msgSize = earthEphemData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
+
+    # Define initial conditions of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
+
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
@@ -493,18 +506,7 @@ def test_extForceInertialAndTorque(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))

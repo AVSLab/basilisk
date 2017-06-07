@@ -86,6 +86,9 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle1.nameOfRhoState = "fuelSloshParticleRho1"
     unitTestSim.particle1.nameOfRhoDotState = "fuelSloshParticleRhoDot1"
     unitTestSim.particle1.nameOfMassState = "fuelSloshParticleMass1"
+    unitTestSim.particle1.rhoInit = 0.05
+    unitTestSim.particle1.rhoDotInit = 0.0
+    unitTestSim.particle1.massInit = 10.0
 
     # Define Variables for particle 2
     unitTestSim.particle2.k = 100.0
@@ -95,6 +98,9 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle2.nameOfRhoState = "fuelSloshParticleRho2"
     unitTestSim.particle2.nameOfRhoDotState = "fuelSloshParticleRhoDot2"
     unitTestSim.particle2.nameOfMassState = "fuelSloshParticleMass2"
+    unitTestSim.particle2.rhoInit = -0.025
+    unitTestSim.particle2.rhoDotInit = 0.0
+    unitTestSim.particle2.massInit = 20.0
 
     # Define Variables for particle 3
     unitTestSim.particle3.k = 100.0
@@ -104,6 +110,9 @@ def test_hubPropagate(show_plots):
     unitTestSim.particle3.nameOfRhoState = "fuelSloshParticleRho3"
     unitTestSim.particle3.nameOfRhoDotState = "fuelSloshParticleRhoDot3"
     unitTestSim.particle3.nameOfMassState = "fuelSloshParticleMass3"
+    unitTestSim.particle3.rhoInit = -0.015
+    unitTestSim.particle3.rhoDotInit = 0.0
+    unitTestSim.particle3.massInit = 15.0
 
     #define the fuel tank
     unitTestSim.tank1 = fuelTank.FuelTank()
@@ -125,7 +134,15 @@ def test_hubPropagate(show_plots):
     
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
-    
+
+    scObject.hub.mHub = 750
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[0.5], [0.4], [-0.7]]
+    scObject.hub.v_CN_NInit = [[0.1], [0.-5], [0.3]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
@@ -134,38 +151,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-    rho1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho1")
-    rhoDot1Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot1")
-    mass1Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass1")
-    rho2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho2")
-    rhoDot2Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot2")
-    mass2Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass2")
-    rho3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRho3")
-    rhoDot3Ref = scObject.dynManager.getStateObject("fuelSloshParticleRhoDot3")
-    mass3Ref = scObject.dynManager.getStateObject("fuelSloshParticleMass3")
-    massTank = scObject.dynManager.getStateObject(unitTestSim.tank1.nameOfMassState)
-
-    posRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.0], [0.0], [0.0]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.1], [-0.1], [0.1]])
-    rho1Ref.setState([[0.05]])
-    rhoDot1Ref.setState([[0.0]])
-    mass1Ref.setState([[10.0]])
-    rho2Ref.setState([[-0.025]])
-    rhoDot2Ref.setState([[0.0]])
-    mass2Ref.setState([[20.0]])
-    rho3Ref.setState([[-0.015]])
-    rhoDot3Ref.setState([[0.0]])
-    mass3Ref.setState([[15.0]])
-    massTank.setState([[30]])
-
-    scObject.hub.mHub = 750
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -182,7 +168,7 @@ def test_hubPropagate(show_plots):
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
-                [0.0004742421817176357, 9.64154405238357e-05, 0.000528986131060958]
+                [0.7519212118786878, -12.09769903910499, 0.04428656188863823]
                 ]
     trueSigma = [
                   [0.06115213876020642, -0.06561968675506792, 0.061244392141876255]

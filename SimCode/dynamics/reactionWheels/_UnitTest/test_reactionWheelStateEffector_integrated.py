@@ -160,20 +160,22 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
+    # Define initial conditions of the sim
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.08], [0.01], [0.0]]
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.08], [0.01], [0.0]])
 
     scObject.hub.mHub = 750.0
     scObject.hub.r_BcB_B = [[-0.0002], [0.0001], [0.1]]
@@ -201,29 +203,29 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     if testCase == 'BalancedWheels':
         truePos = [
-                    [-4046317.446006109, 7473345.937334083, 5253480.873774451]
+                    [-4046317.4508058587, 7473345.977233366, 5253480.773724472]
                     ]
 
         trueSigma = [
-                    [0.09973672149864025, 0.011213339971279653, 0.0003115172941344355]
+                    [0.09973672149864025, 0.011213339971279651, 0.00031151729413443483]
                     ]
 
     elif testCase == 'JitterSimple':
         truePos = [
-                    [-4046317.4472558703, 7473345.920433197, 5253480.873665418]
+                    [-4046317.4520555926, 7473345.96033272, 5253480.773615453]
                     ]
 
         trueSigma = [
-                    [0.09925443342446622, 0.010153635701299952, -6.716226879431521e-05]
+                    [0.09925443342446623, 0.010153635701299948, -6.716226879431377e-05]
                     ]
 
     elif testCase == 'JitterFullyCoupled':
         truePos = [
-                    [-4046317.4472384057, 7473345.921374322, 5253480.873495584]
+                    [-4046317.451822623, 7473345.974457051, 5253480.775942831]
                     ]
 
         trueSigma = [
-                    [0.09926551360276777, 0.010153926978972804, -6.141297232067025e-05]
+                    [0.09926551360276784, 0.010153926978972815, -6.141297232069836e-05]
                     ]
 
 

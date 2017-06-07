@@ -139,6 +139,14 @@ def test_massDepletionTest(show_plots):
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
@@ -146,18 +154,7 @@ def test_massDepletionTest(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -298,6 +295,14 @@ def axisChangeHelper(r_BcB_B):
         unitTestSim.earthGravBody.bodyInMsgName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = r_BcB_B
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+    scObject.hub.r_CN_NInit = [[-4020338.690396649-r_BcB_B[0][0]],	[7490566.741852513-r_BcB_B[1][0]],	[5248299.211589362-r_BcB_B[2][0]]]
+    scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]
+
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
@@ -305,18 +310,7 @@ def axisChangeHelper(r_BcB_B):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
-    posRef.setState([[-4020338.690396649-r_BcB_B[0][0]],	[7490566.741852513-r_BcB_B[1][0]],	[5248299.211589362-r_BcB_B[2][0]]])
-    velRef.setState([[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]])
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])
-    omegaRef.setState([[0.001], [-0.01], [0.03]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = r_BcB_B
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
