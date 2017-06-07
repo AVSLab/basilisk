@@ -24,9 +24,6 @@
 #include "utilities/astroConstants.h"
 
 
-/*! This constructor initializes the variables that spice uses.  Most of them are
- not intended to be changed, but a couple are user configurable.
- */
 Eclipse::Eclipse() :
     outputBufferCount(2)
 {
@@ -34,14 +31,12 @@ Eclipse::Eclipse() :
         return;
 }
 
-/*! The only needed activity in the destructor is to delete the spice I/O buffer
- that was allocated in the constructor*/
 Eclipse::~Eclipse()
 {
     return;
 }
 
-/*! This method initializes the object.  It creates the module's output 
+/*! This method initializes the object. It creates the module's output
  messages.
  @return void*/
 void Eclipse::SelfInit()
@@ -58,14 +53,14 @@ void Eclipse::SelfInit()
     this->eclipseShadowFactors.resize(this->eclipseOutMsgId.size());
 }
 
-/*! This method .
+/*! This method subscribes to the spice planet states and spaceccraft state messages.
  @return void*/
 void Eclipse::CrossInit()
 {
     std::vector<std::string>::iterator it;
     for(it = this->planetInMsgNames.begin(); it != this->planetInMsgNames.end(); it++)
     {
-        uint64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*it), sizeof(SpicePlanetStateSimMsg), this->moduleID);
+        int64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*it), sizeof(SpicePlanetStateSimMsg), this->moduleID);
         this->planetInMsgIdAndStates[msgID] = SpicePlanetStateSimMsg();
     }
     
@@ -79,14 +74,12 @@ void Eclipse::CrossInit()
     std::vector<std::string>::iterator posIt;
     for(posIt = this->positionMsgNames.begin(); posIt != this->positionMsgNames.end(); posIt++)
     {
-        uint64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*posIt), sizeof(SCPlusStatesSimMsg), this->moduleID);
+        int64_t msgID = SystemMessaging::GetInstance()->subscribeToMessage((*posIt), sizeof(SCPlusStatesSimMsg), this->moduleID);
         this->positionInMsgIdAndState[msgID] = SCPlusStatesSimMsg();
     }
 }
 
-/*! This method takes the values computed in the model and outputs them.
- It packages up the internal variables into the output structure definitions
- and puts them out on the messaging system
+/*! This method reads the spacecraft state and spice planet states from the messaging system.
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
@@ -98,9 +91,10 @@ void Eclipse::readInputMessages()
     //! - Iterate through all of the position Msgs
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
     std::map<uint64_t, SCPlusStatesSimMsg>::iterator stateIt;
+    bool msgRead = false;
     for(stateIt = this->positionInMsgIdAndState.begin(); stateIt != this->positionInMsgIdAndState.end(); stateIt++)
     {
-        messageSys->ReadMessage(stateIt->first, &tmpHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&stateIt->second), this->moduleID);
+        msgRead = messageSys->ReadMessage(stateIt->first, &tmpHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&stateIt->second), this->moduleID);
     }
     
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
@@ -111,13 +105,12 @@ void Eclipse::readInputMessages()
     std::map<uint64_t, SpicePlanetStateSimMsg>::iterator planetIt;
     for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
     {
-        messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
+       msgRead = messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
     }
 }
 
-/*! This method takes the values computed in the model and outputs them.
- It packages up the internal variables into the output structure definitions
- and puts them out on the messaging system
+/*! This method takes the computed shadow factors and outputs them to the m
+ messaging system.
  @return void
  @param CurrentClock The current simulation time (used for time stamping)
  */
@@ -134,9 +127,8 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
     }
 }
 
-/*! This method is the interface point between the upper level simulation and
- the SPICE interface at runtime.  It calls all of the necessary lower level
- methods.
+/*! This method is governs the calculation and checking for eclipse
+ conditions.
  @return void
  @param CurrentSimNanos The current clock time for the simulation
  */
@@ -152,14 +144,12 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d r_PN_N(0.0, 0.0, 0.0); // r_planet
     Eigen::Vector3d r_HN_N(this->sunInMsgState.PositionVector); // r_sun
     Eigen::Vector3d r_BN_N(0.0, 0.0, 0.0); // r_sc
-    Eigen::Vector3d s_BP_N(0.0, 0.0, 0.0); //s_sc/B
-    Eigen::Vector3d s_HP_N(0.0, 0.0, 0.0); //s_sun
-    Eigen::Vector3d r_BH_N(0.0, 0.0, 0.0); //s_sc/sun
-
+    Eigen::Vector3d s_BP_N(0.0, 0.0, 0.0); // s_sc wrt planet
+    Eigen::Vector3d s_HP_N(0.0, 0.0, 0.0); // s_sun wrt planet
+    Eigen::Vector3d r_HB_N(0.0, 0.0, 0.0); // r_sun wrt sc
     std::map<uint64_t, SpicePlanetStateSimMsg>::iterator planetIt;
     std::map<uint64_t, SCPlusStatesSimMsg>::iterator scIt;
-    // Index to move through the ordered planet radii vector
-    int radiusIdx = -1;
+    
     // Index to assign the shadowFactor for each body position (S/C)
     // being tracked
     int scIdx = 0;
@@ -167,47 +157,65 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     for(scIt = this->positionInMsgIdAndState.begin(); scIt != this->positionInMsgIdAndState.end(); scIt++)
     {
         double tmpShadowFactor = 1.0; // 1.0 means 100% illumination (no eclipse)
+        int idx = 0;
+        double eclipsePlanetDistance = 0.0;
+        int64_t eclipsePlanetKey = -1;
         r_BN_N = Eigen::Map<Eigen::Vector3d>(&(scIt->second.r_BN_N[0]), 3, 1);
-        
-        // Initially set min planet distance using first planet
-        r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates.begin()->second.PositionVector[0]), 3, 1);
-        s_BP_N = r_BN_N - r_PN_N;
-        double eclipsePlanetDistance = fabs(s_BP_N.norm());
-        uint64_t eclipsePlanetKey = this->planetInMsgIdAndStates.begin()->first;
         
         // Find the closest planet if there is one
         for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
         {
             r_PN_N = Eigen::Map<Eigen::Vector3d>(&(planetIt->second.PositionVector[0]), 3, 1);
             s_HP_N = r_HN_N - r_PN_N;
-            r_BH_N = r_BN_N - r_HN_N;
+            r_HB_N = r_HN_N - r_BN_N;
             s_BP_N = r_BN_N - r_PN_N;
 
-            // Spacecraft is closer to sun than planet eclipse not possible
-            if (r_BH_N.norm() < s_HP_N.norm()) {
+            // If spacecraft is closer to sun than planet
+            // then eclipse not possible
+            if (r_HB_N.norm() < s_HP_N.norm()) {
                 break;
             }
             
             // Find the closest planet and save its distance and std::map key
-            if (fabs(s_BP_N.norm()) < eclipsePlanetDistance) {
-                eclipsePlanetDistance = fabs(s_BP_N.norm());
+            if (idx == 0) {
+                eclipsePlanetDistance = s_BP_N.norm();
+                eclipsePlanetKey = planetIt->first;
+            } else if (s_BP_N.norm() < eclipsePlanetDistance) {
+                eclipsePlanetDistance = s_BP_N.norm();
                 eclipsePlanetKey = planetIt->first;
             }
-            
-            // Keep track of the index for the planetary radius
-            // of the closest planet
-            radiusIdx++;
+            idx++;
         }
         
-        // If radius index is not -1 then we have a planet for which
+        // If planetkey is not -1 then we have a planet for which
         // we compute the eclipse conditions
-        if (radiusIdx >= 0) {
-                Eigen::Vector3d r_HB_N = r_HN_N - r_BN_N;
-                r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates[eclipsePlanetKey].PositionVector[0]), 3, 1);
-                s_BP_N = r_BN_N - r_PN_N;
-                tmpShadowFactor = this->computePercentShadow(this->planetRadii[radiusIdx], r_HB_N, s_BP_N);
+        if (eclipsePlanetKey >= 0) {
+            r_PN_N = Eigen::Map<Eigen::Vector3d>(&(this->planetInMsgIdAndStates[eclipsePlanetKey].PositionVector[0]), 3, 1);
+            s_BP_N = r_BN_N - r_PN_N;
+            r_HB_N = r_HN_N - r_BN_N;
+            s_HP_N = r_HN_N - r_PN_N;
+            
+            double s = s_BP_N.norm();
+            double planetRadius = this->getPlanetEquatorialRadius(this->planetInMsgIdAndStates[eclipsePlanetKey].PlanetName);
+            double f_1 = asin((REQ_SUN*1000 + planetRadius)/s_HP_N.norm());
+            double f_2 = asin((REQ_SUN*1000 - planetRadius)/s_HP_N.norm());
+            double s_0 = (-s_BP_N.dot(s_HP_N))/s_HP_N.norm();
+            double c_1 = s_0 + planetRadius/sin(f_1);
+            double c_2 = s_0 - planetRadius/sin(f_2);
+            double l = sqrt(s*s - s_0*s_0);
+            double l_1 = c_1*tan(f_1);
+            double l_2 = c_2*tan(f_2);
+            
+            if (fabs(l) < fabs(l_2)) {
+                if (c_2 < 0) { // total eclipse
+                    tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+                } else { //c_2 > 0 // annular
+                    tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+                }
+            } else if (fabs(l) < fabs(l_1)) { // partial
+                tmpShadowFactor = this->computePercentShadow(planetRadius, r_HB_N, s_BP_N);
+            }
         }
-        
         this->eclipseShadowFactors.at(scIdx) = tmpShadowFactor;
         scIdx++;
     }
@@ -229,8 +237,8 @@ double Eclipse::computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N
     double c = acos((-s_BP_N.dot(r_HB_N))/(normS_BP_N*normR_HB_N));
     
     // The order of these conditionals is important.
-    // Inparticular (c < a + b) must chek last to avoid testing
-    // with bad a, b and c values
+    // In particular (c < a + b) must check last to avoid testing
+    // with implausible a, b and c values
     if (c < b - a) { // total eclipse, implying a < b
         shadowFraction = 0.0;
     } else if (c < a - b) { // partial maximum eclipse, implying a > b
@@ -278,18 +286,49 @@ std::string Eclipse::addPositionMsgName(std::string msgName)
  */
 void Eclipse::addPlanetName(std::string planetName)
 {
-//    std::string planetMsgName = planetName + "_planet_data";
-    this->planetInMsgNames.push_back(planetName + "_planet_data");
     if (planetName == "mercury") {
-        this->planetRadii.push_back(REQ_MERCURY*1000); // [metres]
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else if (planetName == "venus") {
-        this->planetRadii.push_back(REQ_VENUS*1000);
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else if (planetName == "earth") {
-        this->planetRadii.push_back(REQ_EARTH*1000);
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else if (planetName == "mars barycenter") {
-        this->planetRadii.push_back(REQ_MARS*1000);
+        this->planetNames.push_back(planetName);
+        this->planetInMsgNames.push_back(planetName + "_planet_data");
+    } else {
+        std::cerr << __PRETTY_FUNCTION__
+        << "- Planet name \""
+        << planetName
+        << "\" not found. \""
+        << planetName
+        << "\" will not be used to compute eclipse conditions."
+        << std::endl;
     }
-    this->planetNames.push_back(planetName);
     
     return;
+}
+
+/*! This method return planet radii.
+ methods.
+ @return double  The equatorial radius in metres
+ associated with the given planet name.
+ @param std::string planetSpiceName The planet name according
+ to the spice NAIF Integer ID codes.
+ */
+double Eclipse::getPlanetEquatorialRadius(std::string planetSpiceName)
+{
+    if (planetSpiceName == "mercury") {
+        return REQ_MERCURY*1000.0; // [metres]
+    } else if (planetSpiceName == "venus") {
+        return REQ_VENUS*1000.0;
+    } else if (planetSpiceName == "earth") {
+        return REQ_EARTH*1000.0;
+    } else if (planetSpiceName == "mars barycenter") {
+        return REQ_MARS*1000.0;
+    } else {
+        return 0.0;
+    }
 }

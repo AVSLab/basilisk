@@ -52,18 +52,17 @@ public:
     
 public:
     uint64_t outputBufferCount; //!< -- Number of output buffers to use
-    
+    std::string sunInMsgName; //!< -- Internal vector of planets
+
 private:
     std::vector<std::string> planetNames;  //!< -- Names of planets we want to track
     std::vector<std::string> planetInMsgNames; //!< -- A vector of planet incoming message names ordered by the sequence in which planet names are added to the module
     std::map<uint64_t, SpicePlanetStateSimMsg> planetInMsgIdAndStates; //!< -- A map of incoming planet message Ids and planet state ordered by the sequence in which planet names are added to the module
     std::vector<float> planetRadii; //!< [m] A vector of planet radii ordered by the sequence in which planet names are added to the module
-    std::string sunInMsgName; //!< -- Internal vector of planets
     uint64_t sunInMsgId; //!< -- Internal
     SpicePlanetStateSimMsg sunInMsgState;
     std::vector<std::string> positionMsgNames;  //!< -- vector of msg names for each position state for which to evaluate eclipse conditions.
     std::map<uint64_t, SCPlusStatesSimMsg> positionInMsgIdAndState;
-//    std::map<uint64_t, std::string> eclipseOutMsgIdAndNames;
     std::vector<uint64_t> eclipseOutMsgId;
     std::vector<std::string> eclipseOutMsgNames;
     std::vector<double> eclipseShadowFactors;
@@ -71,6 +70,7 @@ private:
 private:
     void readInputMessages();
     double computePercentShadow(double planetRadius, Eigen::Vector3d r_HB_N, Eigen::Vector3d s_BP_N);
+    double getPlanetEquatorialRadius(std::string planetSpiceName);
 
 };
 
