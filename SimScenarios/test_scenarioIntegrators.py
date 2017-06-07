@@ -218,8 +218,8 @@ def run(doUnitTests, show_plots, integratorCase):
     #
     #   initialize Spacecraft States with in the initialization variables
     #
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)

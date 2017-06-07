@@ -231,13 +231,14 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraftPlus()
 # initial position and velocity vectors through before initialization
 #~~~~~~~~~~~~~~~~~{.py}
-#     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
-#     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
+#     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+#     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 #~~~~~~~~~~~~~~~~~
 # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
 # actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
 # Without this statement, the code would assume the spacecraftPlus() states are relative to the default zeroBase frame.
-# In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.  This is because there
+# In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.
+# This is because there
 # the planets ephemeris message is being set to the default messages which zero's both the position and orientation
 # states.  However, if Spice is used to setup the bodies, the zeroBase state must be carefully considered.
 #
@@ -391,8 +392,8 @@ def run(doUnitTests, show_plots, scCase):
     scInitialState = 1000*pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
     rN = scInitialState[0:3]         # meters
     vN = scInitialState[3:6]         # m/s
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
 
     #

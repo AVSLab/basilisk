@@ -188,6 +188,26 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The value 3 indidates that the first three harmonics, including the 0th order harmonic,
 # is included.  This harmonics data file only includes a zeroth order and J2 term.
 #
+# To set the spacecraft initial conditions, the following initial position and velocity variables are set:
+#~~~~~~~~~~~~~~~~~{.py}
+#    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+#    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+#~~~~~~~~~~~~~~~~~
+# These vectors specify the inertial position and velocity vectors relative to the planet of the
+# spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always
+# specifies the spacecraft center of mass location with the above code.  If the simulation output should be
+# about another body fixed point B, this can be done as well.  This is useful in particular with more challenging
+# dynamics where the center of mass moves relative to the body.  The following vector would specify the location of
+# the spacecraft hub center of mass (Bc) relative to this body fixed point.
+# ~~~~~~~~~~~~~~~~{.py}
+#    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+# ~~~~~~~~~~~~~~~~
+# If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
+# is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
+# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C woudl
+# not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
+# identical.
+#
 # Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
 # a fixed location with zero position and velocity coordinates, so this message is not updated.
 # If the planets move with time, such as with the SPICE
@@ -409,8 +429,8 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     #
     #   initialize Spacecraft States with the initialization variables
     #
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_BN_N
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
 
 
     # set the simulation time

@@ -399,21 +399,21 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
                                vehicleConfigOut)
 
     #
-    #   initialize Spacecraft States with initialization variables
+    #   set initial Spacecraft States
     #
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0           # meters
+    oe.a     = 10000000.0                                           # meters
     oe.e     = 0.01
     oe.i     = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
-    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_BN_N
-    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - r_BN_N
-    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]       # sigma_BN_B
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]   # rad/s - omega_BN_B
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_BN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_BN_B
 
     #
     #   initialize Simulation

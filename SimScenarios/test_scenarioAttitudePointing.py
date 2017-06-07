@@ -309,12 +309,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
     scSim.InitializeSimulationAndDiscover()
 
 
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
 
     #
     #   configure a simulation stop time time and execute the simulation run
