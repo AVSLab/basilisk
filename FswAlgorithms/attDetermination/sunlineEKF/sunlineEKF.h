@@ -57,6 +57,7 @@ typedef struct {
 	double covarBar[SKF_N_STATES][SKF_N_STATES];         /*!< [-] Time updated covariance */
 	double covar[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
     double stateTransition[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
+    double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS];    /* Kalman Gain */
 
     double dynMat[SKF_N_STATES][SKF_N_STATES];        /*!< [-] Dynamics Matrix */
     double measMat[MAX_N_CSS_MEAS][SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
@@ -94,9 +95,9 @@ extern "C" {
 	void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
     void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
 	void sunlineStateSTMProp(double *stateInOut, double (*STM)[6][6], double (*A)[6][6], double dt);
-    void sunlineHMatrix(sunlineEKFConfig *ConfigData);
+    void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData);
+    void sunlineKalmanGain(sunlineEKFConfig *ConfigData);
     void sunlineDynMatrix(double *stateInOut, double (*A)[6][6]);
-    void sunlineYMeas(sunlineEKFConfig *ConfigData);
     
 #ifdef __cplusplus
 }

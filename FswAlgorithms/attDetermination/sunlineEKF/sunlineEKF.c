@@ -309,47 +309,14 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 }
 
 
-/*! This method computes the H matrix, defined by dGdX
+/*! This method computes the H matrix, defined by dGdX. As well as computing the 
+ innovation, difference between the measurements and the expected measurements.
  @return void
  @param ConfigData The configuration data associated with the CSS estimator
  
  */
 
-void sunlineHMatrix(sunlineEKFConfig *ConfigData)
-{
-    uint32_t i, obsCounter;
-    /* Begin method steps */
-    obsCounter = 0;
-    /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
-    for(i=0; i<ConfigData->numCSSTotal; i++)
-    {
-        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
-        {
-            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
-            
-            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
-            v3Copy(ConfigData->cssNHat_B[i], ConfigData->measMat[i]);
-        
-            obsCounter++;
-        }
-    }
-    /*! - yMeas matrix was set backwards deliberately so we need to transpose it through*/
-    //    mTranspose(ConfigData->yMeas, obsCounter, ConfigData->countHalfSPs*2+1,
-    //        ConfigData->yMeas);
-    ConfigData->numObs = obsCounter;
-
-    
-}
-
-/*! This method reads in the measurements, differentiates them with the expected 
- measurements (which are given by the G fucntion). This difference is then
- added to the yMeas pointer.
- @return void
- @param ConfigData The configuration data associated with the CSS estimator
- 
- */
-
-void sunlineYMeas(sunlineEKFConfig *ConfigData)
+void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
@@ -360,18 +327,53 @@ void sunlineYMeas(sunlineEKFConfig *ConfigData)
     {
         if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
         {
-            /*! - For each valid measurement, copy observation value and compute expected obs value on a per sigma-point basis.*/
+            /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
             v3Copy(ConfigData->cssNHat_B[i], sensorNormal);
+            
             ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
             
-            ConfigData->yMeas[i] = ConfigData->cssSensorInBuffer.CosValue[i] - v3Dot(ConfigData->states, sensorNormal);
-
+            v3Copy(ConfigData->cssNHat_B[i], ConfigData->measMat[obsCounter]);
+            ConfigData->yMeas[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i] - v3Dot(&(ConfigData->states[0]), sensorNormal);
+        
             obsCounter++;
         }
     }
     ConfigData->numObs = obsCounter;
-    
 }
+
+
+
+/*! This method computes the Kalman gain given the measurements.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ 
+ */
+
+void sunlineKalmanGain(sunlineEKFConfig *ConfigData)
+{
+    uint32_t i, obsCounter;
+    double sensorNormal[3];
+    /* Begin method steps */
+    obsCounter = 0;
+    /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
+    for(i=0; i<ConfigData->numCSSTotal; i++)
+    {
+        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
+        {
+            /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
+            v3Copy(ConfigData->cssNHat_B[i], sensorNormal);
+            
+            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
+            
+            v3Copy(ConfigData->cssNHat_B[i], ConfigData->measMat[obsCounter]);
+            ConfigData->yMeas[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i] - v3Dot(&(ConfigData->states[0]), sensorNormal);
+            
+            obsCounter++;
+        }
+    }
+    ConfigData->numObs = obsCounter;
+}
+
 
 /*! This method performs the measurement update for the sunline kalman filter.
  It applies the observations in the obs vectors to the current state estimate and 
@@ -382,16 +384,30 @@ void sunlineYMeas(sunlineEKFConfig *ConfigData)
  */
 void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-//    uint32_t i;
+    uint32_t i;
+    double yObs[MAX_N_CSS_MEAS],  hObs[MAX_N_CSS_MEAS][SKF_N_STATES];
+//    double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
+//    double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
+//    double AT[(2 * SKF_N_STATES + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+//    double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+//    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
+//    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
     
     /*! Begin method steps*/
-    
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineYMeas(ConfigData);
+    sunlineHMatrixYMeas(ConfigData);
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
           time update section of the reference document*/
-//    vSetZero(yBar, ConfigData->numObs);
+    vSetZero(yObs, ConfigData->numObs);
+    mSetZero(hObs, ConfigData->numObs, ConfigData->numStates);
+    
+    vCopy(ConfigData->yMeas, ConfigData->numObs, yObs);
+    
+    for(i=0; i<ConfigData->numObs+1; i++)
+    {
+        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
+    }
 //    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
 //    {
 //        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
