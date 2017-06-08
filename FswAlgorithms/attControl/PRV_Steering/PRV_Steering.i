@@ -32,16 +32,10 @@
 %ignore Reset_PRV_Steering;
 %include "PRV_Steering.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
+%include "../../fswMessages/rateSteeringFswMsg.h"
 GEN_SIZEOF(PRV_SteeringConfig);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+GEN_SIZEOF(RateSteeringFswMsg);
 
 %pythoncode %{
 import sys
