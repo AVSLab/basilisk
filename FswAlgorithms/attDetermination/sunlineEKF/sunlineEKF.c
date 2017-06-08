@@ -192,7 +192,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 	@return void
 	@param stateInOut The state that is propagated
 */
-void sunlineStateSTMProp(double *stateInOut, double (*STMin)[6][6], double (*A)[6][6], double dt)
+void sunlineStateSTMProp(double *stateInOut, double (*STMin)[SKF_N_STATES][SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES], double dt)
 {
 
     double propagatedVel[3];
@@ -228,7 +228,7 @@ void sunlineStateSTMProp(double *stateInOut, double (*STMin)[6][6], double (*A)[
  @param ConfigData The configuration data associated with the estimator
  */
 
-void sunlineDynMatrix(double *states, double (*A)[6][6])
+void sunlineDynMatrix(double *states, double (*A)[SKF_N_STATES][SKF_N_STATES])
 {
     double dovernorm2d[3], dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
@@ -279,7 +279,7 @@ void sunlineDynMatrix(double *states, double (*A)[6][6])
 */
 void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-    double stmT[6][6], covPhiT[6][6], qGammaT[3][6], gammaQGammaT[6][6];
+    double stmT[SKF_N_STATES][SKF_N_STATES], covPhiT[SKF_N_STATES][SKF_N_STATES], qGammaT[SKF_N_STATES/2][SKF_N_STATES], gammaQGammaT[SKF_N_STATES][SKF_N_STATES];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
@@ -300,8 +300,8 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     /*Compute Gamma and add gammaQGamma^T to Pbar*/
     double Gamma[6][3]={{ConfigData->dt/4,0,0},{0,ConfigData->dt/4,0},{0,0,ConfigData->dt/4},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
     
-    mMultMt(ConfigData->procNoise, 3, 3, Gamma, 6, 3, qGammaT);
-    mMultM(Gamma, 6, 3, qGammaT, 3, 6, gammaQGammaT);
+    mMultMt(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT);
+    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT, SKF_N_STATES/2, SKF_N_STATES, gammaQGammaT);
     m66Add(ConfigData->covarBar, gammaQGammaT, ConfigData->covarBar);
     
     
@@ -320,6 +320,7 @@ void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData)
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
+
     /* Begin method steps */
     obsCounter = 0;
     /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
