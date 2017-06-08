@@ -88,16 +88,18 @@ extern "C" {
     
     void SelfInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID);
     void CrossInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID);
-    void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
-        uint64_t moduleID);
 	void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 		uint64_t moduleID);
-	void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
-    void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double *stateInOut, double (*STM)[SKF_N_STATES][SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES], double dt);
+    void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
+                           uint64_t moduleID);
+	void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
+    void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
+	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*STMin)[SKF_N_STATES][SKF_N_STATES]);
     void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData);
-    void sunlineKalmanGain(double (*covarBar)[SKF_N_STATES][SKF_N_STATES], double (*hObs)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*measNoise)[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS]);
-    void sunlineDynMatrix(double *stateInOut, double (*A)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS]);
+    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineEKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*states)[SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES]);
     
 #ifdef __cplusplus
 }

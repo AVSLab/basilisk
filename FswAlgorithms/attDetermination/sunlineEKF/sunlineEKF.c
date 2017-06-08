@@ -155,8 +155,8 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     newTimeTag = ClockTime * NANO2SEC;
     if(newTimeTag >= ConfigData->timeTag && ReadSize > 0)
     {
-        sunlineEKFTimeUpdate(ConfigData, newTimeTag);
-        sunlineEKFMeasUpdate(ConfigData, newTimeTag);
+        sunlineTimeUpdate(ConfigData, newTimeTag);
+        sunlineMeasUpdate(ConfigData, newTimeTag);
     }
     
     /*! - If current clock time is further ahead than the measured time, then
@@ -164,7 +164,7 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     newTimeTag = callTime*NANO2SEC;
     if(newTimeTag > ConfigData->timeTag)
     {
-        sunlineEKFTimeUpdate(ConfigData, newTimeTag);
+        sunlineTimeUpdate(ConfigData, newTimeTag);
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
@@ -187,89 +187,6 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     return;
 }
 
-/*! This method propagates a sunline state vector forward in time.  Note 
-    that the calling parameter is updated in place to save on data copies.
-	@return void
-	@param stateInOut The state that is propagated
-*/
-void sunlineStateSTMProp(double *stateInOut, double (*STMin)[SKF_N_STATES][SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES], double dt)
-{
-
-    double propagatedVel[3];
-    double pointUnit[3];
-    double unitComp;
-    double propagatedSTM[6][6];
-    double deltatASTM[6][6];
-    
-    /*! Begin state update steps */
-    /*! - Unitize the current estimate to find direction to restrict motion*/
-    v3Normalize(stateInOut, pointUnit);
-    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
-    v3Scale(unitComp, pointUnit, pointUnit);
-    /*! - Subtract out rotation in the sunline axis because that is not observable 
-          for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
-    v3Scale(dt, &(stateInOut[3]), propagatedVel);
-    v3Add(stateInOut, propagatedVel, stateInOut);
-    
-    /*! Begin STM propagation step */
-    
-    m66MultM66((*A), (*STMin), deltatASTM);
-    m66Scale(dt, deltatASTM, deltatASTM);
-    m66Add((*STMin), deltatASTM, propagatedSTM);
-
-	return;
-}
-
-/*! This method computes the dynamics matrix, which is the derivative of the
- dynamics F by the state X, evaluated at the reference state. It takes in the
- configure data and updates this A matrix
- @return void
- @param ConfigData The configuration data associated with the estimator
- */
-
-void sunlineDynMatrix(double *states, double (*A)[SKF_N_STATES][SKF_N_STATES])
-{
-    double dovernorm2d[3], dddot, ddtnorm2[3][3];
-    double I3[3][3], d2I3[3][3];
-    double douterddot[3][3], douterd[3][3], neg2dddot[3][3];
-    double secondterm[3][3], firstterm[3][3];
-    double normd2;
-    double dFdd[3][3], dFdddot[3][3];
-    
-    /* dFdd */
-    mSetIdentity(I3, 3, 3);
-    dddot = v3Dot(&(states[3]), &(states[0]));
-    normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
-                  
-    mScale(normd2, I3, 3, 3, d2I3);
-    
-    v3OuterProduct(&(states[0]), &(states[3]), douterddot);
-    m33Scale(-2, douterddot, neg2dddot);
-    m33Subtract(d2I3, neg2dddot, secondterm);
-    m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
-                    
-    v3Scale(1/normd2, &(states[0]), dovernorm2d);
-    v3OuterProduct(&(states[3]), dovernorm2d, firstterm);
-             
-    m33Add(firstterm, secondterm, dFdd);
-    m33Scale(-1, dFdd, dFdd);
-
-    /* Populate the first 3x3 matrix of the dynamics matrix*/
-    m66Set33Matrix(0, 0, dFdd, (*A));
-           
-    /* dFdddot */
-    v3OuterProduct(&(states[0]), &(states[0]), douterd);
-    m33Scale(-1/normd2, douterd, ddtnorm2);
-    
-    m33Add(I3, ddtnorm2, dFdddot);
-             
-    /* Populate the second 3x3 matrix */
-    m66Set33Matrix(0, 3, dFdddot, (*A));
-
-    return;
-}
-
 /*! This method performs the time update for the sunline kalman filter.
      It propagates the sigma points forward in time and then gets the current 
 	 covariance and state estimates.
@@ -277,7 +194,7 @@ void sunlineDynMatrix(double *states, double (*A)[SKF_N_STATES][SKF_N_STATES])
      @param ConfigData The configuration data associated with the CSS estimator
      @param updateTime The time that we need to fix the filter to (seconds)
 */
-void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
+void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES][SKF_N_STATES], covPhiT[SKF_N_STATES][SKF_N_STATES], qGammaT[SKF_N_STATES/2][SKF_N_STATES], gammaQGammaT[SKF_N_STATES][SKF_N_STATES];
     
@@ -286,7 +203,7 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /*! - Propagate the previous reference states and STM to the current time */
     sunlineDynMatrix(ConfigData->states, &(ConfigData->dynMat));
-    sunlineStateSTMProp(ConfigData->states, &(ConfigData->stateTransition), &(ConfigData->dynMat), ConfigData->dt);
+    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->states, &(ConfigData->stateTransition));
 
     /* xbar = Phi*x */
     m66MultV6(ConfigData->stateTransition, ConfigData->x, ConfigData->xBar);
@@ -309,8 +226,213 @@ void sunlineEKFTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 }
 
 
+/*! This method propagates a sunline state vector forward in time.  Note
+ that the calling parameter is updated in place to save on data copies.
+	@return void
+	@param stateInOut The state that is propagated
+ */
+void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*STMin)[SKF_N_STATES][SKF_N_STATES])
+{
+    
+    double propagatedVel[3];
+    double pointUnit[3];
+    double unitComp;
+    double propagatedSTM[6][6];
+    double deltatASTM[6][6];
+    
+    /*! Begin state update steps */
+    /*! - Unitize the current estimate to find direction to restrict motion*/
+    v3Normalize(stateInOut, pointUnit);
+    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
+    v3Scale(unitComp, pointUnit, pointUnit);
+    /*! - Subtract out rotation in the sunline axis because that is not observable
+     for coarse sun sensors*/
+    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
+    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    v3Add(stateInOut, propagatedVel, stateInOut);
+    
+    /*! Begin STM propagation step */
+    
+    m66MultM66(A, (*STMin), deltatASTM);
+    m66Scale(dt, deltatASTM, deltatASTM);
+    m66Add((*STMin), deltatASTM, propagatedSTM);
+    
+    return;
+}
+
+/*! This method computes the dynamics matrix, which is the derivative of the
+ dynamics F by the state X, evaluated at the reference state. It takes in the
+ configure data and updates this A matrix
+ @return void
+ @param ConfigData The configuration data associated with the estimator
+ */
+
+void sunlineDynMatrix(double states[SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES])
+{
+    double dovernorm2d[3], dddot, ddtnorm2[3][3];
+    double I3[3][3], d2I3[3][3];
+    double douterddot[3][3], douterd[3][3], neg2dddot[3][3];
+    double secondterm[3][3], firstterm[3][3];
+    double normd2;
+    double dFdd[3][3], dFdddot[3][3];
+    
+    /* dFdd */
+    mSetIdentity(I3, 3, 3);
+    dddot = v3Dot(&(states[3]), &(states[0]));
+    normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
+    
+    mScale(normd2, I3, 3, 3, d2I3);
+    
+    v3OuterProduct(&(states[0]), &(states[3]), douterddot);
+    m33Scale(-2, douterddot, neg2dddot);
+    m33Subtract(d2I3, neg2dddot, secondterm);
+    m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
+    
+    v3Scale(1/normd2, &(states[0]), dovernorm2d);
+    v3OuterProduct(&(states[3]), dovernorm2d, firstterm);
+    
+    m33Add(firstterm, secondterm, dFdd);
+    m33Scale(-1, dFdd, dFdd);
+    
+    /* Populate the first 3x3 matrix of the dynamics matrix*/
+    m66Set33Matrix(0, 0, dFdd, (*A));
+    
+    /* dFdddot */
+    v3OuterProduct(&(states[0]), &(states[0]), douterd);
+    m33Scale(-1/normd2, douterd, ddtnorm2);
+    
+    m33Add(I3, ddtnorm2, dFdddot);
+    
+    /* Populate the second 3x3 matrix */
+    m66Set33Matrix(0, 3, dFdddot, (*A));
+    
+    return;
+}
+
+
+/*! This method performs the measurement update for the sunline kalman filter.
+ It applies the observations in the obs vectors to the current state estimate and
+ updates the state/covariance with that information.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ @param updateTime The time that we need to fix the filter to (seconds)
+ */
+void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
+{
+    uint32_t i;
+    double yObs[MAX_N_CSS_MEAS],  hObs[MAX_N_CSS_MEAS][SKF_N_STATES];
+    double noise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];
+    
+    /*! Begin method steps*/
+    /*! - Compute the valid observations and the measurement model for all observations*/
+    sunlineHMatrixYMeas(ConfigData);
+    
+    /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
+     time update section of the reference document*/
+    vSetZero(yObs, ConfigData->numObs);
+    mSetZero(hObs, ConfigData->numObs, ConfigData->numStates);
+    mSetZero(noise, ConfigData->numObs, ConfigData->numObs);
+    
+    vCopy(ConfigData->yMeas, ConfigData->numObs, yObs);
+    
+    for(i=0; i<ConfigData->numObs+1; i++)
+    {
+        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
+        vCopy(ConfigData->measNoise[i], ConfigData->numObs, noise[i]);
+    }
+    
+    /*! - Compute the Kalman Gain. */
+    sunlineKalmanGain(ConfigData->covarBar, hObs, ConfigData->measNoise, ConfigData->numObs, &(ConfigData->kalmanGain));
+    
+    /*! - Compute the update with a CKF */
+    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, noise, ConfigData->numObs, yObs, hObs, &(ConfigData->x), &(ConfigData->covar));
+    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+    sunlineEKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, noise, ConfigData->numObs, yObs, hObs, &(ConfigData->states), &(ConfigData->x), &(ConfigData->covar));
+    
+}
+
+/*! This method computes the updated states, state error, and covariance for
+ the filter in the case that we are using a CKF. This is done in the case 
+ where the covariance is too large and needs to be brought down in order to 
+ assure filter convergence.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ 
+ */
+
+void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES])
+{
+    double measMatx[numObs], innov[numObs], kInnov[SKF_N_STATES];
+    double eye[SKF_N_STATES][SKF_N_STATES], kH[SKF_N_STATES][SKF_N_STATES];
+    double eyeKalH[SKF_N_STATES][SKF_N_STATES], eyeKalHT[SKF_N_STATES][SKF_N_STATES];
+    double eyeKalHCovarBar[SKF_N_STATES][SKF_N_STATES], kalR[SKF_N_STATES][numObs];
+    double kalT[MAX_N_CSS_MEAS][SKF_N_STATES], kalRKalT[SKF_N_STATES][SKF_N_STATES];
+    
+    /*! - Compute innovation, multiply it my Kalman Gain, and add it to xBar*/
+    mMultM(hObs, numObs, SKF_N_STATES, xBar, SKF_N_STATES, 1, measMatx);
+    vSubtract(yObs, numObs, measMatx, innov);
+    mMultM(kalmanGain, SKF_N_STATES, numObs, innov, numObs, 1, kInnov);
+    vAdd(xBar, SKF_N_STATES, kInnov, x);
+    
+    /*! - Compute new covariance with Joseph's method*/
+    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
+    mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
+    mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
+    mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
+    mMultM(eyeKalH, SKF_N_STATES, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHCovarBar);
+    mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
+    
+    /* Add noise to the covariance*/
+    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
+    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
+    mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
+    
+    
+}
+
+/*! This method computes the updated states, state error, and covariance for
+ the filter in the case that we are using a EKF. This is done in the case
+ where the covariance is small enough.
+ @return void
+ @param ConfigData The configuration data associated with the CSS estimator
+ 
+ */
+
+void sunlineEKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*states)[SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES])
+{
+
+    double eye[SKF_N_STATES][SKF_N_STATES], kH[SKF_N_STATES][SKF_N_STATES];
+    double eyeKalH[SKF_N_STATES][SKF_N_STATES], eyeKalHT[SKF_N_STATES][SKF_N_STATES];
+    double eyeKalHCovarBar[SKF_N_STATES][SKF_N_STATES], kalR[SKF_N_STATES][numObs];
+    double kalT[MAX_N_CSS_MEAS][SKF_N_STATES], kalRKalT[SKF_N_STATES][SKF_N_STATES];
+    
+    /*! - Update the state error*/
+    mMultM(kalmanGain, SKF_N_STATES, numObs, yObs, numObs, 1, x);
+
+    /*! - Change the reference state*/
+    mAdd(states, SKF_N_STATES, 1, x, states);
+    
+    /*! - Compute new covariance with Joseph's method*/
+    mMultM(kalmanGain, SKF_N_STATES, numObs, hObs, numObs, SKF_N_STATES, kH);
+    mSetIdentity(eye, SKF_N_STATES, SKF_N_STATES);
+    mSubtract(eye, SKF_N_STATES, SKF_N_STATES, kH, eyeKalH);
+    mTranspose(eyeKalH, SKF_N_STATES, SKF_N_STATES, eyeKalHT);
+    mMultM(eyeKalH, SKF_N_STATES, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHCovarBar);
+    mMultM(eyeKalHCovarBar, SKF_N_STATES, SKF_N_STATES, eyeKalHT, SKF_N_STATES, SKF_N_STATES, covar);
+    
+    /* Add noise to the covariance*/
+    mMultM(kalmanGain, SKF_N_STATES, numObs, noiseMat, numObs, numObs, kalR);
+    mTranspose(kalmanGain, SKF_N_STATES, numObs, kalT);
+    mMultM(kalR, SKF_N_STATES, numObs, kalT, numObs, SKF_N_STATES, kalRKalT);
+    mAdd(covar, SKF_N_STATES, SKF_N_STATES, kalRKalT, covar);
+    
+}
+
 /*! This method computes the H matrix, defined by dGdX. As well as computing the 
  innovation, difference between the measurements and the expected measurements.
+ This methods modifies the numObs, measMat, and yMeas. It takes in all the parameters
+ in order to avoid a method with 10 arguments.
  @return void
  @param ConfigData The configuration data associated with the CSS estimator
  
@@ -350,7 +472,7 @@ void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData)
  
  */
 
-void sunlineKalmanGain(double (*covarBar)[SKF_N_STATES][SKF_N_STATES], double (*hObs)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*measNoise)[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS])
+void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS])
 {
     double hObsT[SKF_N_STATES][numObs];
     double covHT[SKF_N_STATES][numObs];
@@ -378,57 +500,3 @@ void sunlineKalmanGain(double (*covarBar)[SKF_N_STATES][SKF_N_STATES], double (*
 }
 
 
-/*! This method performs the measurement update for the sunline kalman filter.
- It applies the observations in the obs vectors to the current state estimate and 
- updates the state/covariance with that information.
- @return void
- @param ConfigData The configuration data associated with the CSS estimator
- @param updateTime The time that we need to fix the filter to (seconds)
- */
-void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
-{
-    uint32_t i;
-    double yObs[MAX_N_CSS_MEAS],  hObs[MAX_N_CSS_MEAS][SKF_N_STATES];
-//    double kMat[SKF_N_STATES*MAX_N_CSS_MEAS];
-//    double xHat[SKF_N_STATES], sBarT[SKF_N_STATES*SKF_N_STATES], tempYVec[MAX_N_CSS_MEAS];
-//    double AT[(2 * SKF_N_STATES + MAX_N_CSS_MEAS)*MAX_N_CSS_MEAS], qChol[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-//    double rAT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], syT[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-//    double sy[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];
-//    double updMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], pXY[SKF_N_STATES*MAX_N_CSS_MEAS];
-    
-    /*! Begin method steps*/
-    /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData);
-    
-    /*! - Compute the value for the yBar parameter (note that this is equation 23 in the 
-          time update section of the reference document*/
-    vSetZero(yObs, ConfigData->numObs);
-    mSetZero(hObs, ConfigData->numObs, ConfigData->numStates);
-    
-    vCopy(ConfigData->yMeas, ConfigData->numObs, yObs);
-    
-    for(i=0; i<ConfigData->numObs+1; i++)
-    {
-        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
-    }
-
-    /*! - Compute the Kalman Gain. */
-    sunlineKalmanGain(&(ConfigData->covarBar), &(hObs), &(ConfigData->measNoise), ConfigData->numObs, &(ConfigData->kalmanGain));
-    
-    /*! - Populate the matrix that we perform the QR decomposition on in the measurement
-          update section of the code.  This is based on the differenence between the yBar 
-          parameter and the calculated measurement models.  Equation 24 in driving doc. */
-//    mSetZero(AT, ConfigData->countHalfSPs*2+ConfigData->numObs,
-//        ConfigData->numObs);
-//    for(i=0; i<ConfigData->countHalfSPs*2; i++)
-//    {
-//        vScale(-1.0, yBar, ConfigData->numObs, tempYVec);
-//        vAdd(tempYVec, ConfigData->numObs,
-//             &(ConfigData->yMeas[(i+1)*ConfigData->numObs]), tempYVec);
-//        vScale(sqrt(ConfigData->wC[i+1]), tempYVec, ConfigData->numObs, tempYVec);
-//        memcpy(&(AT[i*ConfigData->numObs]), tempYVec,
-//               ConfigData->numObs*sizeof(double));
-//    }
-    
-
-}
