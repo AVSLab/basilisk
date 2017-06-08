@@ -24,11 +24,6 @@
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "sensorInterfaces/IMUSensorData/imuComm.h"
-#include "simFswInterfaceMessages/macroDefinitions.h"
-#include "fswUtilities/fswDefinitions.h"
-#include "SimCode/utilities/astroConstants.h"
-#include "fswMessages/rwAvailabilityFswMsg.h"
 #include "fswMessages/rateSteeringFswMsg.h"
 #include <string.h>
 #include <math.h>
