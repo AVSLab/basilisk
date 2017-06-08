@@ -62,7 +62,7 @@ void CrossInit_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, 
     ConfigData->vehConfigInMsgID = subscribeToMessage(ConfigData->vehConfigInMsgName,
                                                  sizeof(VehicleConfigFswMsg), moduleID);
     ConfigData->inputRateSteeringID = subscribeToMessage(ConfigData->inputRateSteeringName,
-                                                     sizeof(RateSteeringFswMsg), moduleID);
+                                                     sizeof(RateCmdFswMsg), moduleID);
     ConfigData->rwParamsInMsgID = -1;
     ConfigData->inputRWSpeedsID = -1;
     ConfigData->rwAvailInMsgID = -1;
@@ -129,7 +129,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     AttGuidFswMsg       guidCmd;            /*!< Guidance Message */
     RWSpeedIntMsg       wheelSpeeds;        /*!< Reaction wheel speed estimates */
     RWAvailabilityFswMsg wheelsAvailability;/*!< Reaction wheel availability */
-    RateSteeringFswMsg  rateGuid;           /*!< rate steering law message */
+    RateCmdFswMsg       rateGuid;           /*!< rate steering law message */
     uint64_t            clockTime;
     uint32_t            readSize;
     double              dt;                 /*!< [s] control update period */
@@ -159,7 +159,7 @@ void Update_rateServoFullNonlinear(rateServoFullNonlinearConfig *ConfigData, uin
     ReadMessage(ConfigData->inputGuidID, &clockTime, &readSize,
                 sizeof(AttGuidFswMsg), (void*) &(guidCmd), moduleID);
     ReadMessage(ConfigData->inputRateSteeringID, &clockTime, &readSize,
-                sizeof(RateSteeringFswMsg), (void*) &(rateGuid), moduleID);
+                sizeof(RateCmdFswMsg), (void*) &(rateGuid), moduleID);
 
 
     memset(wheelSpeeds.wheelSpeeds, 0x0, MAX_EFF_CNT * sizeof(double));

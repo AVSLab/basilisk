@@ -40,7 +40,7 @@ void SelfInit_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(RateSteeringFswMsg), "RateSteeringFswMsg", moduleID);
+        sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
     
 }
 
@@ -89,7 +89,7 @@ void Update_PRV_Steering(PRV_SteeringConfig *ConfigData, uint64_t callTime,
     PRVSteeringLaw(ConfigData, guidCmd.sigma_BR, ConfigData->outMsg.omega_BastR_B, ConfigData->outMsg.omegap_BastR_B);
     
     /* Store the output message and pass it to the message bus */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RateSteeringFswMsg),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
                  (void*) &(ConfigData->outMsg), moduleID);
     
     return;

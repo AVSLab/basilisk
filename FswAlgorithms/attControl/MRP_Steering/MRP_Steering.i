@@ -32,10 +32,10 @@
 %ignore Reset_MRP_Steering;
 GEN_SIZEOF(MRP_SteeringConfig);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(RateSteeringFswMsg);
+GEN_SIZEOF(RateCmdFswMsg);
 %include "MRP_Steering.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/rateSteeringFswMsg.h"
+%include "../../fswMessages/rateCmdFswMsg.h"
 
 %pythoncode %{
 import sys

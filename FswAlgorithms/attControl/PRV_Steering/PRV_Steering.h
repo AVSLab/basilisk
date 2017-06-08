@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/rateSteeringFswMsg.h"
+#include "fswMessages/rateCmdFswMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -43,7 +43,7 @@ typedef struct {
     char inputGuidName[MAX_STAT_MSG_LENGTH];                /*!< The name of the input guidance message*/
     int32_t inputGuidID;                                    /*!< [-] ID for the input guidance message*/
 
-    RateSteeringFswMsg outMsg;                              /*!< -- copy of output message */
+    RateCmdFswMsg outMsg;               /*!< -- copy of output message */
 }PRV_SteeringConfig;
 
 #ifdef __cplusplus

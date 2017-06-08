@@ -37,14 +37,14 @@ GEN_SIZEOF(AttGuidFswMsg);
 GEN_SIZEOF(VehicleConfigFswMsg);
 GEN_SIZEOF(RWArrayConfigFswMsg);
 GEN_SIZEOF(RWSpeedIntMsg);
-GEN_SIZEOF(RateSteeringFswMsg);
+GEN_SIZEOF(RateCmdFswMsg);
 %include "rateServoFullNonlinear.h"
 %include "../../fswMessages/rwAvailabilityFswMsg.h"
 %include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "../../fswMessages/rateSteeringFswMsg.h"
+%include "../../fswMessages/rateCmdFswMsg.h"
 %include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 %include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 GEN_SIZEOF(CmdTorqueBodyIntMsg);

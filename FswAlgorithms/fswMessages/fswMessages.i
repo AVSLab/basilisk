@@ -43,7 +43,7 @@
     #include "../fswMessages/thrArrayConfigFswMsg.h"
     #include "../fswMessages/thrConfigFswMsg.h"
     #include "../fswMessages/vehicleConfigFswMsg.h"
-    #include "../fswMessages/rateSteeringFswMsg.h"
+    #include "../fswMessages/rateCmdFswMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -94,8 +94,8 @@ GEN_SIZEOF(THRArrayConfigFswMsg);
 GEN_SIZEOF(THRConfigFswMsg);
 %include "../fswMessages/vehicleConfigFswMsg.h"
 GEN_SIZEOF(VehicleConfigFswMsg);
-%include "../fswMessages/rateSteeringFswMsg.h"
-GEN_SIZEOF(RateSteeringFswMsg);
+%include "../fswMessages/rateCmdFswMsg.h"
+GEN_SIZEOF(RateCmdFswMsg);
 
 
 %pythoncode %{

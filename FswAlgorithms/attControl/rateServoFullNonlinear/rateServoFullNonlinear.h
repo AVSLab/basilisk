@@ -25,7 +25,7 @@
 #include "fswMessages/vehicleConfigFswMsg.h"
 #include "fswMessages/rwArrayConfigFswMsg.h"
 #include "fswMessages/rwAvailabilityFswMsg.h"
-#include "fswMessages/rateSteeringFswMsg.h"
+#include "fswMessages/rateCmdFswMsg.h"
 #include "simFswInterfaceMessages/rwSpeedIntMsg.h"
 #include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
 #include <stdint.h>

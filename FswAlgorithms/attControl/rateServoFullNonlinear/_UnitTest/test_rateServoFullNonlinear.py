@@ -169,7 +169,7 @@ def rate_servo_full_nonlinear(show_plots):
         writeMsgInWheelAvailability()
 
     # rateSteering message
-    rateSteeringMsg = fswMessages.RateSteeringFswMsg()
+    rateSteeringMsg = fswMessages.RateCmdFswMsg()
     inputMessageSize = rateSteeringMsg.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRateSteeringName,

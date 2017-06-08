@@ -24,7 +24,7 @@
 #include "attControl/MRP_Steering/MRP_Steering.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
-#include "fswMessages/rateSteeringFswMsg.h"
+#include "fswMessages/rateCmdFswMsg.h"
 #include <string.h>
 #include <math.h>
 
@@ -40,7 +40,7 @@ void SelfInit_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t moduleID)
     /*! Begin method steps */
     /*! - Create output message for module */
     ConfigData->outputMsgID = CreateNewMessage(ConfigData->outputDataName,
-        sizeof(RateSteeringFswMsg), "RateSteeringFswMsg", moduleID);
+        sizeof(RateCmdFswMsg), "RateCmdFswMsg", moduleID);
 
 }
 
@@ -89,7 +89,7 @@ void Update_MRP_Steering(MRP_SteeringConfig *ConfigData, uint64_t callTime,
     MRPSteeringLaw(ConfigData, guidCmd.sigma_BR, ConfigData->outMsg.omega_BastR_B, ConfigData->outMsg.omegap_BastR_B);
 
     /* Store the output message and pass it to the message bus */
-    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RateSteeringFswMsg),
+    WriteMessage(ConfigData->outputMsgID, callTime, sizeof(RateCmdFswMsg),
                  (void*) &(ConfigData->outMsg), moduleID);
     
     return;

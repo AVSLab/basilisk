@@ -22,7 +22,7 @@
 
 #include "messaging/static_messaging.h"
 #include "fswMessages/attGuidFswMsg.h"
-#include "fswMessages/rateSteeringFswMsg.h"
+#include "fswMessages/rateCmdFswMsg.h"
 #include <stdint.h>
 
 /*! \addtogroup ADCSAlgGroup
@@ -44,7 +44,7 @@ typedef struct {
     char inputGuidName[MAX_STAT_MSG_LENGTH];    /*!< The name of the Input message*/
     int32_t inputGuidID;                        /*!< [] ID for the incoming guidance errors*/
 
-    RateSteeringFswMsg outMsg;          /*!< [] copy of output message */
+    RateCmdFswMsg outMsg;               /*!< [] copy of output message */
 }MRP_SteeringConfig;
 
 #ifdef __cplusplus
