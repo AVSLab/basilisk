@@ -127,7 +127,7 @@ void Eclipse::writeOutputMessages(uint64_t CurrentClock)
     }
 }
 
-/*! This method is governs the calculation and checking for eclipse
+/*! This method governs the calculation and checking for eclipse
  conditions.
  @return void
  @param CurrentSimNanos The current clock time for the simulation
@@ -138,7 +138,7 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     
     // A lot of different vectors here. The below letters denote frames
     // P: planet frame
-    // S: spacecraft frame
+    // B: spacecraft body frame
     // N: inertial frame
     // H: sun (helio) frame
     Eigen::Vector3d r_PN_N(0.0, 0.0, 0.0); // r_planet

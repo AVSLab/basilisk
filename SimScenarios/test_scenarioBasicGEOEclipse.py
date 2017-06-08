@@ -153,6 +153,8 @@ def run(show_plots):
     # oe.f = 0
     rN, vN = orbitalMotion.elem2rv(earth.mu, oe)
     oe = orbitalMotion.rv2elem(earth.mu, rN, vN)
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # [m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
     # set the simulation time
     n = np.sqrt(earth.mu/oe.a/oe.a/oe.a)
@@ -173,10 +175,6 @@ def run(show_plots):
     #   initialize Spacecraft States within the state manager
     #   this must occur after the initialization
     #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # [m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
     simContainer.TotalSim.logThisMessage(eclipse.eclipseOutMsgIdAndName, samplingTime)
 
     #
