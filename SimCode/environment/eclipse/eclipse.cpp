@@ -91,10 +91,10 @@ void Eclipse::readInputMessages()
     //! - Iterate through all of the position Msgs
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
     std::map<uint64_t, SCPlusStatesSimMsg>::iterator stateIt;
-    bool msgRead = false;
+    
     for(stateIt = this->positionInMsgIdAndState.begin(); stateIt != this->positionInMsgIdAndState.end(); stateIt++)
     {
-        msgRead = messageSys->ReadMessage(stateIt->first, &tmpHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&stateIt->second), this->moduleID);
+        messageSys->ReadMessage(stateIt->first, &tmpHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*>(&stateIt->second), this->moduleID);
     }
     
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
@@ -105,7 +105,7 @@ void Eclipse::readInputMessages()
     std::map<uint64_t, SpicePlanetStateSimMsg>::iterator planetIt;
     for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
     {
-       msgRead = messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
+       messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
     }
 }
 

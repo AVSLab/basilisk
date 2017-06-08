@@ -122,8 +122,8 @@ def unitEclipse(show_plots, eclipseCondition):
         oe.omega = 0 * macros.D2R
         oe.f = 173 * macros.D2R
         r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_NInit = v_N_0 * 1000  # convert to meters
+        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "partial":
         # setup SPICE ephemeris support
         spiceObject = spice_interface.SpiceInterface()
@@ -149,8 +149,8 @@ def unitEclipse(show_plots, eclipseCondition):
         oe.omega = 0 * macros.D2R
         oe.f = 107.5 * macros.D2R
         r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_NInit = v_N_0 * 1000  # convert to meters
+        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "none":
         # setup SPICE ephemeris support
         spiceObject = spice_interface.SpiceInterface()
@@ -184,8 +184,8 @@ def unitEclipse(show_plots, eclipseCondition):
         oe.omega = 0 * macros.D2R
         oe.f = 107.5 * macros.D2R
         r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-        scObject_0.hub.r_NInit = r_N_0 * 1000  # convert to meters
-        scObject_0.hub.v_NInit = v_N_0 * 1000  # convert to meters
+        scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
+        scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
 
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject_0.scStateOutMsgName)
