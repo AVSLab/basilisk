@@ -59,8 +59,8 @@ import spacecraftPlus
 import macros
 import spice_interface
 import eclipse
-import simIncludeGravity
 import pyswice
+import gravityEffector
 import orbitalMotion
 
 
@@ -97,12 +97,16 @@ def unitEclipse(show_plots, eclipseCondition):
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
     # setup SPICE ephemeris support
-    simIncludeGravity.clearSetup()
-    simIncludeGravity.addEarth()
-    earth = simIncludeGravity.gravBodyList[-1]
+    earth = gravityEffector.GravBodyData()
+    earth.bodyInMsgName = "earth_planet_data"
+    earth.outputMsgName = "earth_display_frame_data"
+    earth.mu = 0.3986004415E+15  # meters^3/s^2
+    earth.radEquator = 6378136.6  # meters
     earth.isCentralBody = True
+    earth.useSphericalHarmParams = False
+
     # attach gravity model to spaceCraftPlus
-    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
 
     spiceObject = spice_interface.SpiceInterface()
     spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
