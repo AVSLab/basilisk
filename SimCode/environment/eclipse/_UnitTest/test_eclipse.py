@@ -122,7 +122,6 @@ def unitEclipse(show_plots, eclipseCondition):
 
     if eclipseCondition == "full":
         spiceObject.zeroBase = "earth"
-
         # set up spacecraft 0 position and velocity for full eclipse
         oe = orbitalMotion.ClassicElements()
         r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
@@ -137,7 +136,7 @@ def unitEclipse(show_plots, eclipseCondition):
         scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "partial":
         spiceObject.zeroBase = "earth"
-
+        # set up spacecraft 0 position and velocity for full eclipse
         oe = orbitalMotion.ClassicElements()
         r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
         oe.a = r_0
@@ -150,14 +149,6 @@ def unitEclipse(show_plots, eclipseCondition):
         scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
         scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "none":
-        # startTimeArray = pyswice.new_doubleArray(1)
-        # pyswice.str2et_c(spiceObject.UTCCalInit, startTimeArray)
-        # etTime = pyswice.doubleArray_getitem(startTimeArray, 0)
-        # pyswice.delete_doubleArray(startTimeArray)
-        # marsState = pyswice.new_doubleArray(6)
-        # lightTime = pyswice.new_doubleArray(1)
-        # pyswice.spkez_c(4, etTime, "J2000", "NONE", 0, marsState, lightTime)  # NAIF code 4 is mars_barycenter
-
         oe = orbitalMotion.ClassicElements()
         r_0 = 9959991.68982  # km
         oe.a = r_0
@@ -188,20 +179,20 @@ def unitEclipse(show_plots, eclipseCondition):
 
     errTol = 1E-12
     if eclipseCondition == "partial":
-        truthshadowFactor = 0.62310760206735027
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthshadowFactor, errTol):
+        truthShadowFactor = 0.62310760206735027
+        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
             testFailCount = testFailCount + 1
             testMessages.append("Shadow Factor failed for partial eclipse condition")
 
     elif eclipseCondition == "full":
-        truthshadowFactor = 0.0
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthshadowFactor, errTol):
+        truthShadowFactor = 0.0
+        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
             testFailCount = testFailCount + 1
             testMessages.append("Shadow Factor failed for full eclipse condition")
 
     elif eclipseCondition == "none":
-        truthshadowFactor = 1.0
-        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthshadowFactor, errTol):
+        truthShadowFactor = 1.0
+        if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
             testFailCount = testFailCount + 1
             testMessages.append("Shadow Factor failed for none eclipse condition")
 
@@ -209,7 +200,6 @@ def unitEclipse(show_plots, eclipseCondition):
         print "PASSED: " + eclipseCondition
     # return fail count and join into a single string all messages in the list
     # testMessage
-
 
     return [testFailCount, ''.join(testMessages)]
 
