@@ -350,29 +350,31 @@ void sunlineHMatrixYMeas(sunlineEKFConfig *ConfigData)
  
  */
 
-void sunlineKalmanGain(sunlineEKFConfig *ConfigData)
+void sunlineKalmanGain(double (*covarBar)[SKF_N_STATES][SKF_N_STATES], double (*hObs)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*measNoise)[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS])
 {
-    uint32_t i, obsCounter;
-    double sensorNormal[3];
+    double hObsT[SKF_N_STATES][numObs];
+    double covHT[SKF_N_STATES][numObs];
+    double hCovar[numObs][SKF_N_STATES], hCovarHT[numObs][numObs], hCovarHTinv[numObs][numObs];
+    double rMat[numObs][numObs];
     /* Begin method steps */
-    obsCounter = 0;
-    /*! - Loop over all available coarse sun sensors and only use ones that meet validity threshold*/
-    for(i=0; i<ConfigData->numCSSTotal; i++)
-    {
-        if(ConfigData->cssSensorInBuffer.CosValue[i] > ConfigData->sensorUseThresh)
-        {
-            /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
-            v3Copy(ConfigData->cssNHat_B[i], sensorNormal);
-            
-            ConfigData->obs[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i];
-            
-            v3Copy(ConfigData->cssNHat_B[i], ConfigData->measMat[obsCounter]);
-            ConfigData->yMeas[obsCounter] = ConfigData->cssSensorInBuffer.CosValue[i] - v3Dot(&(ConfigData->states[0]), sensorNormal);
-            
-            obsCounter++;
-        }
-    }
-    ConfigData->numObs = obsCounter;
+    
+    mTranspose(hObs, MAX_N_CSS_MEAS, SKF_N_STATES, hObsT);
+    
+    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, MAX_N_CSS_MEAS, covHT);
+    mMultM(hObs, numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
+    mMultM(hCovar, numObs, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, hCovarHT);
+    
+    mCopy(measNoise, numObs, numObs, rMat);
+    
+    /*! - Add measurement noise */
+    mAdd(hCovarHT, numObs, numObs, rMat, hCovarHT);
+    
+    /*! - Invert the previous matrix */
+    mInverse(hCovarHT, numObs, hCovarHTinv);
+    
+    /*! - Compute the Kalman Gain */
+    mMultM(covHT, SKF_N_STATES, numObs, hCovarHTinv, numObs, numObs, kalmanGain);
+    
 }
 
 
@@ -409,14 +411,10 @@ void sunlineEKFMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     {
         vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
     }
-//    for(i=0; i<ConfigData->countHalfSPs*2+1; i++)
-//    {
-//        vCopy(&(ConfigData->yMeas[i*ConfigData->numObs]), ConfigData->numObs,
-//              tempYVec);
-//        vScale(ConfigData->wM[i], tempYVec, ConfigData->numObs, tempYVec);
-//        vAdd(yBar, ConfigData->numObs, tempYVec, yBar);
-//    }
-//    
+
+    /*! - Compute the Kalman Gain. */
+    sunlineKalmanGain(&(ConfigData->covarBar), &(hObs), &(ConfigData->measNoise), ConfigData->numObs, &(ConfigData->kalmanGain));
+    
     /*! - Populate the matrix that we perform the QR decomposition on in the measurement
           update section of the code.  This is based on the differenence between the yBar 
           parameter and the calculated measurement models.  Equation 24 in driving doc. */
