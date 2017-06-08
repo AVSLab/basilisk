@@ -96,21 +96,28 @@ def unitEclipse(show_plots, eclipseCondition):
     scObject_0.scStateOutMsgName = "inertial_state_output"
     unitTestSim.AddModelToTask(testTaskName, scObject_0)
 
+    # setup SPICE ephemeris support
+    simIncludeGravity.clearSetup()
+    simIncludeGravity.addEarth()
+    earth = simIncludeGravity.gravBodyList[-1]
+    earth.isCentralBody = True
+    # attach gravity model to spaceCraftPlus
+    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+
+    spiceObject = spice_interface.SpiceInterface()
+    spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
+    spiceObject.ModelTag = "SpiceInterfaceData"
+    spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
+    spiceObject.OutputBufferCount = 100000
+    spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
+    # pull in SPICE support libraries
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+    pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+
     if eclipseCondition == "full":
-        # setup SPICE ephemeris support
-        spiceObject = spice_interface.SpiceInterface()
-        spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
-        spiceObject.ModelTag = "SpiceInterfaceData"
-        spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
-        spiceObject.OutputBufferCount = 100000
-        spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
         spiceObject.zeroBase = "earth"
-        # pull in SPICE support libraries
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
-        unitTestSim.AddModelToTask(testTaskName, spiceObject)
 
         # set up spacecraft 0 position and velocity for full eclipse
         oe = orbitalMotion.ClassicElements()
@@ -125,20 +132,7 @@ def unitEclipse(show_plots, eclipseCondition):
         scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
         scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "partial":
-        # setup SPICE ephemeris support
-        spiceObject = spice_interface.SpiceInterface()
-        spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
-        spiceObject.ModelTag = "SpiceInterfaceData"
-        spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
-        spiceObject.OutputBufferCount = 100000
-        spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
         spiceObject.zeroBase = "earth"
-        # pull in SPICE support libraries
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
-        unitTestSim.AddModelToTask(testTaskName, spiceObject)
 
         oe = orbitalMotion.ClassicElements()
         r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
@@ -152,21 +146,6 @@ def unitEclipse(show_plots, eclipseCondition):
         scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
         scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
     elif eclipseCondition == "none":
-        # setup SPICE ephemeris support
-        spiceObject = spice_interface.SpiceInterface()
-        spiceObject.PlanetNames = spice_interface.StringVector(["sun", "venus", "earth", "mars barycenter"])
-        spiceObject.ModelTag = "SpiceInterfaceData"
-        spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
-        spiceObject.OutputBufferCount = 100000
-        spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
-        # spiceObject.zeroBase = "earth"
-        # pull in SPICE support libraries
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-        pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
-        unitTestSim.AddModelToTask(testTaskName, spiceObject)
-
         # startTimeArray = pyswice.new_doubleArray(1)
         # pyswice.str2et_c(spiceObject.UTCCalInit, startTimeArray)
         # etTime = pyswice.doubleArray_getitem(startTimeArray, 0)
@@ -187,19 +166,13 @@ def unitEclipse(show_plots, eclipseCondition):
         scObject_0.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
         scObject_0.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
 
+    unitTestSim.AddModelToTask(testTaskName, spiceObject)
     eclipseObject = eclipse.Eclipse()
     eclipseObject.addPositionMsgName(scObject_0.scStateOutMsgName)
     eclipseObject.addPlanetName('earth')
     eclipseObject.addPlanetName('mars barycenter')
     eclipseObject.addPlanetName('venus')
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
-
-    simIncludeGravity.clearSetup()
-    simIncludeGravity.addEarth()
-    earth = simIncludeGravity.gravBodyList[-1]
-    earth.isCentralBody = True
-    # attach gravity model to spaceCraftPlus
-    scObject_0.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
     unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
     unitTestSim.InitializeSimulation()
