@@ -67,7 +67,7 @@ import orbitalMotion
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 @pytest.mark.parametrize("eclipseCondition", ["partial", "full", "none"])
-def test_unitRadiationPressure(show_plots, eclipseCondition):
+def test_unitEclipse(show_plots, eclipseCondition):
     [testResults, testMessage] = unitEclipse(show_plots, eclipseCondition)
     assert testResults < 1, testMessage
 
@@ -209,6 +209,8 @@ def unitEclipse(show_plots, eclipseCondition):
         print "PASSED: " + eclipseCondition
     # return fail count and join into a single string all messages in the list
     # testMessage
+
+
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
