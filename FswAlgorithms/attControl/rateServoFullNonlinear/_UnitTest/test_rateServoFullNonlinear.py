@@ -28,23 +28,24 @@ sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
-import alg_contain
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
-import MRP_Steering  # import the module that is to be tested
+import rateServoFullNonlinear  # import the module that is to be tested
 import macros
+import fswMessages
+import simFswInterfaceMessages
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_mrp_steering_tracking(show_plots):
-    [testResults, testMessage] = mrp_steering_tracking(show_plots)
+def test_rate_servo_full_nonlinear(show_plots):
+    [testResults, testMessage] = rate_servo_full_nonlinear(show_plots)
     assert testResults < 1, testMessage
 
 
-def mrp_steering_tracking(show_plots):
+def rate_servo_full_nonlinear(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -65,9 +66,9 @@ def mrp_steering_tracking(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = MRP_Steering.MRP_SteeringConfig()
+    moduleConfig = rateServoFullNonlinear.rateServoFullNonlinearConfig()
     moduleWrap = unitTestSim.setModelDataWrap(moduleConfig)
-    moduleWrap.ModelTag = "MRP_Steering"
+    moduleWrap.ModelTag = "rate_servo"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -78,6 +79,7 @@ def mrp_steering_tracking(show_plots):
     moduleConfig.rwParamsInMsgName = "rwa_config_data_parsed"
     moduleConfig.rwAvailInMsgName = "rw_availability"
     moduleConfig.inputRWSpeedsName = "reactionwheel_speeds"
+    moduleConfig.inputRateSteeringName = "rate_steering"
     moduleConfig.outputDataName = "outputName"
 
     moduleConfig.K1 = 0.15
@@ -91,7 +93,7 @@ def mrp_steering_tracking(show_plots):
     #   Create input message and size it because the regular creator of that message
     #   is not part of the test.
     #   attGuidOut Message:
-    guidCmdData = MRP_Steering.AttGuidFswMsg()  # Create a structure for the input message
+    guidCmdData = fswMessages.AttGuidFswMsg()  # Create a structure for the input message
     inputMessageSize = guidCmdData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.inputGuidName,
                                           inputMessageSize, 2)# number of buffers (leave at 2 as default, don't make zero)
@@ -108,7 +110,7 @@ def mrp_steering_tracking(show_plots):
                                           0, guidCmdData)
 
     # vehicleConfigData Message:
-    vehicleConfigOut = MRP_Steering.VehicleConfigFswMsg()
+    vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
     inputMessageSize = vehicleConfigOut.getStructSize()                           # 18 doubles + 1 32bit integer
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.vehConfigInMsgName,
                                           inputMessageSize, 2)            # number of buffers (leave at 2 as default, don't make zero)
@@ -121,7 +123,7 @@ def mrp_steering_tracking(show_plots):
                                           0, vehicleConfigOut)
 
     # wheelSpeeds Message
-    rwSpeedMessage = MRP_Steering.RWSpeedIntMsg()
+    rwSpeedMessage = simFswInterfaceMessages.RWSpeedIntMsg()
     inputMessageSize = rwSpeedMessage.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.inputRWSpeedsName,
@@ -136,7 +138,7 @@ def mrp_steering_tracking(show_plots):
 
     # wheelConfigData message
     def writeMsgInWheelConfiguration():
-        rwConfigParams = MRP_Steering.RWArrayConfigFswMsg()
+        rwConfigParams = fswMessages.RWArrayConfigFswMsg()
         inputMessageSize = rwConfigParams.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwParamsInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
@@ -155,16 +157,30 @@ def mrp_steering_tracking(show_plots):
 
     # wheelAvailability message
     def writeMsgInWheelAvailability():
-        rwAvailabilityMessage = MRP_Steering.RWAvailabilityFswMsg()
+        rwAvailabilityMessage = rateServoFullNonlinear.RWAvailabilityFswMsg()
         inputMessageSize = rwAvailabilityMessage.getStructSize()
         unitTestSim.TotalSim.CreateNewMessage(unitProcessName, moduleConfig.rwAvailInMsgName,
                                               inputMessageSize, 2) # number of buffers (leave at 2 as default)
-        avail = [MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE, MRP_Steering.AVAILABLE]
+        avail = [rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE, rateServoFullNonlinear.AVAILABLE]
         rwAvailabilityMessage.wheelAvailability = avail
         unitTestSim.TotalSim.WriteMessageData(moduleConfig.rwAvailInMsgName, inputMessageSize,
                                               0, rwAvailabilityMessage)
     if len(moduleConfig.rwAvailInMsgName)>0:
         writeMsgInWheelAvailability()
+
+    # rateSteering message
+    rateSteeringMsg = fswMessages.RateSteeringFswMsg()
+    inputMessageSize = rateSteeringMsg.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.inputRateSteeringName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    rateSteeringMsg.omega_BastR_B  = [-2.23886891e-02, 2.47942516e-02,-2.55601849e-02]
+    rateSteeringMsg.omegap_BastR_B = [ 1.87766650e-04,-3.91233583e-05, 3.56369489e-05]
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputRateSteeringName,
+                                          inputMessageSize,
+                                          0,
+                                          rateSteeringMsg)
 
     # Setup logging on the test module output message so that we get all the writes to it
     unitTestSim.TotalSim.logThisMessage(moduleConfig.outputDataName, testProcessRate)
@@ -196,8 +212,9 @@ def mrp_steering_tracking(show_plots):
         , [-4.4480000793994314, 8.4093848702156535, -4.8611816778282186]
     ]
 
+
     # compare the module results to the truth values
-    accuracy = 1e-12
+    accuracy = 1e-8
     for i in range(0, len(trueVector)):
         # check a vector values
         if not unitTestSupport.isArrayEqual(moduleOutput[i], trueVector[i], 3, accuracy):
@@ -221,4 +238,4 @@ def mrp_steering_tracking(show_plots):
 
 
 if __name__ == "__main__":
-    test_mrp_steering_tracking(False)
+    test_rate_servo_full_nonlinear(False)
