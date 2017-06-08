@@ -32,7 +32,6 @@ import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import MRP_Steering  # import the module that is to be tested
 import fswMessages
-import simFswInterfaceMessages
 import macros
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
