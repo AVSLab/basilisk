@@ -25,6 +25,7 @@
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
 #include "fswMessages/rateCmdFswMsg.h"
+#include "SimCode/utilities/astroConstants.h"
 #include <string.h>
 #include <math.h>
 

@@ -24,6 +24,7 @@
 #include "attControl/PRV_Steering/PRV_Steering.h"
 #include "SimCode/utilities/linearAlgebra.h"
 #include "SimCode/utilities/rigidBodyKinematics.h"
+#include "SimCode/utilities/astroConstants.h"
 #include <string.h>
 #include <math.h>
 
