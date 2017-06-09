@@ -31,8 +31,6 @@
 %ignore CrossInit_sunlineEKF;
 %constant void Reset_sunlineEKF(void*, uint64_t, uint64_t);
 %ignore Reset_sunlineEKF;
-//%constant void sunlineDynMatrix(double*, double*);
-//%ignore sunlineDynMatrix;
 STRUCTASLIST(CSSConfigFswMsg)
 GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(SunlineFilterFswMsg);
