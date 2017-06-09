@@ -231,7 +231,7 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 	@return void
 	@param stateInOut The state that is propagated
  */
-void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*STMin)[SKF_N_STATES][SKF_N_STATES])
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stmIn)[SKF_N_STATES][SKF_N_STATES])
 {
     
     double propagatedVel[3];
@@ -253,9 +253,9 @@ void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double
     
     /*! Begin STM propagation step */
     
-    m66MultM66(A, (*STMin), deltatASTM);
+    m66MultM66(dynMat, (*stmIn), deltatASTM);
     m66Scale(dt, deltatASTM, deltatASTM);
-    m66Add((*STMin), deltatASTM, propagatedSTM);
+    m66Add((*stmIn), deltatASTM, propagatedSTM);
     
     return;
 }
@@ -267,7 +267,7 @@ void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double
  @param ConfigData The configuration data associated with the estimator
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES], double (*A)[SKF_N_STATES][SKF_N_STATES])
+void sunlineDynMatrix(double states[SKF_N_STATES], double (*dynMat)[SKF_N_STATES][SKF_N_STATES])
 {
     double dovernorm2d[3], dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
@@ -295,7 +295,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double (*A)[SKF_N_STATES][SKF
     m33Scale(-1, dFdd, dFdd);
     
     /* Populate the first 3x3 matrix of the dynamics matrix*/
-    m66Set33Matrix(0, 0, dFdd, (*A));
+    m66Set33Matrix(0, 0, dFdd, (*dynMat));
     
     /* dFdddot */
     v3OuterProduct(&(states[0]), &(states[0]), douterd);
@@ -304,7 +304,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double (*A)[SKF_N_STATES][SKF
     m33Add(I3, ddtnorm2, dFdddot);
     
     /* Populate the second 3x3 matrix */
-    m66Set33Matrix(0, 3, dFdddot, (*A));
+    m66Set33Matrix(0, 3, dFdddot, (*dynMat));
     
     return;
 }

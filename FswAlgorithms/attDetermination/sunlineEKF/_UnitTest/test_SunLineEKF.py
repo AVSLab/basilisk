@@ -95,11 +95,7 @@ def sunline_utilities_test(show_plots):
                          (np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[3:6]))/np.linalg.norm(inputStates[0:3])**4.)
     expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
 
-    sunlineEKF.Dynamics = np.zeros([6,6]).tolist()
-    dynMat = sunlineEKF.new_doubleArray(36)
-    states = sunlineEKF.new_doubleArray(6)
-
-    sunlineEKF.sunlineDynMatrix(states, dynMat)
+    sunlineEKF.doubleArray_setitem(dynMat, indexHere, valueHere)
 
 
     # nRow = int(math.sqrt(len(InvSourceMat)))
