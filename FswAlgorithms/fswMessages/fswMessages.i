@@ -25,24 +25,25 @@
     #include "../fswMessages/AccDataFswMsg.h"
     #include "../fswMessages/AccPktDataFswMsg.h"
     #include "../fswMessages/TDBVehicleClockCorrelationFswMsg.h"
-#include "../fswMessages/attGuidFswMsg.h"
-#include "../fswMessages/attRefFswMsg.h"
-#include "../fswMessages/cssConfigFswMsg.h"
-#include "../fswMessages/dvBurnCmdFswMsg.h"
-#include "../fswMessages/eulerAngleFswMsg.h"
-#include "../fswMessages/imuSensorBodyFswMsg.h"
-#include "../fswMessages/inertialFilterFswMsg.h"
-#include "../fswMessages/rwArrayConfigFswMsg.h"
-#include "../fswMessages/rwAvailabilityFswMsg.h"
-#include "../fswMessages/rwConfigElementFswMsg.h"
-#include "../fswMessages/rwConstellationFswMsg.h"
-#include "../fswMessages/stAttFswMsg.h"
-#include "../fswMessages/sunHeadingEstFswMsg.h"
-#include "../fswMessages/sunlineFilterFswMsg.h"
-#include "../fswMessages/thrArrayCmdForceFswMsg.h"
-#include "../fswMessages/thrArrayConfigFswMsg.h"
-#include "../fswMessages/thrConfigFswMsg.h"
-#include "../fswMessages/vehicleConfigFswMsg.h"
+    #include "../fswMessages/attGuidFswMsg.h"
+    #include "../fswMessages/attRefFswMsg.h"
+    #include "../fswMessages/cssConfigFswMsg.h"
+    #include "../fswMessages/dvBurnCmdFswMsg.h"
+    #include "../fswMessages/eulerAngleFswMsg.h"
+    #include "../fswMessages/imuSensorBodyFswMsg.h"
+    #include "../fswMessages/inertialFilterFswMsg.h"
+    #include "../fswMessages/rwArrayConfigFswMsg.h"
+    #include "../fswMessages/rwAvailabilityFswMsg.h"
+    #include "../fswMessages/rwConfigElementFswMsg.h"
+    #include "../fswMessages/rwConstellationFswMsg.h"
+    #include "../fswMessages/stAttFswMsg.h"
+    #include "../fswMessages/sunHeadingEstFswMsg.h"
+    #include "../fswMessages/sunlineFilterFswMsg.h"
+    #include "../fswMessages/thrArrayCmdForceFswMsg.h"
+    #include "../fswMessages/thrArrayConfigFswMsg.h"
+    #include "../fswMessages/thrConfigFswMsg.h"
+    #include "../fswMessages/vehicleConfigFswMsg.h"
+    #include "../fswMessages/rateCmdFswMsg.h"
 %}
 
 %include "swig_conly_data.i"
@@ -93,6 +94,8 @@ GEN_SIZEOF(THRArrayConfigFswMsg);
 GEN_SIZEOF(THRConfigFswMsg);
 %include "../fswMessages/vehicleConfigFswMsg.h"
 GEN_SIZEOF(VehicleConfigFswMsg);
+%include "../fswMessages/rateCmdFswMsg.h"
+GEN_SIZEOF(RateCmdFswMsg);
 
 
 %pythoncode %{

@@ -16,28 +16,15 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
  */
-%module MRP_Steering
-%{
-   #include "MRP_Steering.h"
-%}
 
-%include "swig_conly_data.i"
-%constant void Update_MRP_Steering(void*, uint64_t, uint64_t);
-%ignore Update_MRP_Steering;
-%constant void SelfInit_MRP_Steering(void*, uint64_t);
-%ignore SelfInit_MRP_Steering;
-%constant void CrossInit_MRP_Steering(void*, uint64_t);
-%ignore CrossInit_MRP_Steering;
-%constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
-%ignore Reset_MRP_Steering;
-GEN_SIZEOF(MRP_SteeringConfig);
-GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(RateCmdFswMsg);
-%include "MRP_Steering.h"
-%include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/rateCmdFswMsg.h"
+#ifndef _RATE_STEERING_MSG_H
+#define _RATE_STEERING_MSG_H
 
-%pythoncode %{
-import sys
-protectAllClasses(sys.modules[__name__])
-%}
+/*! @brief Structure used to define the output definition for attitude guidance*/
+typedef struct {
+    double omega_BastR_B[3];    /*!< [r/s]   Desired body rate relative to R */
+    double omegap_BastR_B[3];   /*!< [r/s^2] Body-frame derivative of omega_BastR_B */
+}RateCmdFswMsg;
+
+
+#endif
