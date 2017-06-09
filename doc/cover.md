@@ -2,7 +2,7 @@
 
 **License:** [ISC Open Source License](https://en.wikipedia.org/wiki/ISC_license)
 
-**Status:** Limited public release expected by January 2017
+**Status:** Limited public alpha release
 
 
 - - - - - - 
