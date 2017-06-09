@@ -20,7 +20,7 @@
 #ifndef FSW_VSCMG_TORQUE_H
 #define FSW_VSCMG_TORQUE_H
 
-#include "../../SimFswInterfaceMessages/macroDefinitions.h"
+#include "../../simFswInterfaceMessages/macroDefinitions.h"
 
 /*! @brief Structure used to define the output definition for vehicle effectors*/
 typedef struct {
