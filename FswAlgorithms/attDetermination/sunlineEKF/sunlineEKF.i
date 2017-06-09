@@ -38,11 +38,23 @@ GEN_SIZEOF(CSSConfigFswMsg)
 GEN_SIZEOF(SunlineFilterFswMsg);
 GEN_SIZEOF(sunlineEKFConfig);
 GEN_SIZEOF(VehicleConfigFswMsg);
-%include "sunlineEKF.h"
 %include "../_GeneralModuleFiles/ukfUtilities.h"
 %include "../../fswMessages/cssConfigFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
+%typemap(in) double (*A)[6][6] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
+    double *actData = (double*) dataPtr;
+    $1 = actData;
+}
+%typemap(in) double (*STM)[6][6] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
+    double *actData = (double*) dataPtr;
+    $1 = actData;
+}
+%include "sunlineEKF.h"
 
 %pythoncode %{
 import sys
