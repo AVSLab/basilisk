@@ -36,6 +36,7 @@ import spacecraftPlus
 import hingedRigidBodyStateEffector
 import sim_model
 import macros
+import RigidBodyKinematics
 import ctypes
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -53,7 +54,7 @@ def test_hubPropagate(show_plots):
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
-    testFailCount = 0  # zero unit test result counter
+    testFailCount = 0  # zero unit test result counter  
     testMessages = []  # create empty list to store test log messages
     
     scObject = spacecraftPlus.SpacecraftPlus()
@@ -84,6 +85,8 @@ def test_hubPropagate(show_plots):
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
+    unitTestSim.panel1.thetaDotInit = 0.0
 
     # Define Variables for panel 2
     unitTestSim.panel2.mass = 100.0
@@ -95,12 +98,49 @@ def test_hubPropagate(show_plots):
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
     # this next line is not working
     scObject.addStateEffector(unitTestSim.panel1)
     scObject.addStateEffector(unitTestSim.panel2)
-    
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Find c_B
+    r_Bc_B = numpy.array(scObject.hub.r_BcB_B)
+    r1_HB_B = numpy.array(unitTestSim.panel1.r_HB_B)
+    HB_1 = numpy.array(unitTestSim.panel1.dcm_HB)
+    SH_1 = RigidBodyKinematics.Mi(unitTestSim.panel1.thetaInit,2)
+    SH_1 = numpy.asarray(SH_1)
+    r1_ScH_S = numpy.array([[-unitTestSim.panel1.d],[0.0],[0.0]])
+    r1_ScH_B = numpy.dot(numpy.dot(HB_1.transpose(),SH_1.transpose()),r1_ScH_S)
+    r1_ScB_B = r1_HB_B + r1_ScH_B
+    # Same for panel 2
+    r2_HB_B = numpy.array(unitTestSim.panel2.r_HB_B)
+    HB_2 = numpy.array(unitTestSim.panel2.dcm_HB)
+    SH_2 = RigidBodyKinematics.Mi(unitTestSim.panel2.thetaInit,2)
+    SH_2 = numpy.asarray(SH_2)
+    r2_ScH_S = numpy.array([[-unitTestSim.panel2.d],[0.0],[0.0]])
+    r2_ScH_B = numpy.dot(numpy.dot(HB_2.transpose(),SH_2.transpose()),r2_ScH_S)
+    r2_ScB_B = r2_HB_B + r2_ScH_B
+    # Now all mass props have been defined, so find average
+    c_B = (scObject.hub.mHub*r_Bc_B + unitTestSim.panel1.mass*r1_ScB_B + unitTestSim.panel2.mass*r2_ScB_B)/(scObject.hub.mHub + unitTestSim.panel1.mass + unitTestSim.panel2.mass)
+
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+    r_CN_NInit = numpy.asarray(scObject.hub.r_CN_NInit) + c_B
+    scObject.hub.r_CN_NInit = r_CN_NInit.tolist()
+    v_CN_NInit = numpy.asarray(scObject.hub.v_CN_NInit) + numpy.cross(numpy.asarray(scObject.hub.omega_BN_BInit).ravel(),c_B.ravel()).reshape([3,1])
+    scObject.hub.v_CN_NInit = v_CN_NInit.tolist()
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
@@ -121,19 +161,6 @@ def test_hubPropagate(show_plots):
     thetaDot1Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot1")
     theta2Ref = scObject.dynManager.getStateObject("hingedRigidBodyTheta2")
     thetaDot2Ref = scObject.dynManager.getStateObject("hingedRigidBodyThetaDot2")
-
-    posRef.setState([[0.0], [0.0], [0.0]])
-    velRef.setState([[0.0], [0.0], [0.0]])
-    sigmaRef.setState([[0.0], [0.0], [0.0]])
-    omegaRef.setState([[0.1], [-0.1], [0.1]])
-    theta1Ref.setState([[5*numpy.pi/180.0]])
-    thetaDot1Ref.setState([[0.0]])
-    theta2Ref.setState([[0.0]])
-    thetaDot2Ref.setState([[0.0]])
-
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     stopTime = 2.5
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
@@ -259,6 +286,8 @@ def test_hubPropagate(show_plots):
 
     if testFailCount == 0:
         print "PASSED: " + " Hinged Rigid Body unit test"
+
+    assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]

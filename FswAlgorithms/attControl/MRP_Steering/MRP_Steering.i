@@ -30,22 +30,12 @@
 %ignore CrossInit_MRP_Steering;
 %constant void Reset_MRP_Steering(void*, uint64_t, uint64_t);
 %ignore Reset_MRP_Steering;
-ARRAYASLIST(FSWdeviceAvailability)
 GEN_SIZEOF(MRP_SteeringConfig);
-GEN_SIZEOF(RWAvailabilityFswMsg);
 GEN_SIZEOF(AttGuidFswMsg);
-GEN_SIZEOF(VehicleConfigFswMsg);
-GEN_SIZEOF(RWArrayConfigFswMsg);
-GEN_SIZEOF(RWSpeedIntMsg);
+GEN_SIZEOF(RateCmdFswMsg);
 %include "MRP_Steering.h"
-%include "../../fswMessages/rwAvailabilityFswMsg.h"
-%include "../../fswUtilities/fswDefinitions.h"
 %include "../../fswMessages/attGuidFswMsg.h"
-%include "../../fswMessages/vehicleConfigFswMsg.h"
-%include "../../fswMessages/rwArrayConfigFswMsg.h"
-%include "simFswInterfaceMessages/rwSpeedIntMsg.h"
-%include "simFswInterfaceMessages/cmdTorqueBodyIntMsg.h"
-GEN_SIZEOF(CmdTorqueBodyIntMsg);
+%include "../../fswMessages/rateCmdFswMsg.h"
 
 %pythoncode %{
 import sys

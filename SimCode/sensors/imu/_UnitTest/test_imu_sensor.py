@@ -164,7 +164,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
     # configure tests
     if testCase == 'mrp switch':
         # this test verifies basic input and output and checks the MRP switch
-        simStopTime = 6.0 * 4 # run the sim long enough for the MRP to switch
+        simStopTime = 1.0 # run the sim long enough for the MRP to switch
         StateCurrent.sigma_BN = np.array([0.9,0,0])
         omega = myRand(3)*0.1
         StateCurrent.omega_BN_B = omega

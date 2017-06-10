@@ -32,8 +32,8 @@ HubEffector::HubEffector()
     this->sumForceExternal_N.setZero();
     this->sumForceExternal_B.setZero();
     this->sumTorquePntB_B.setZero();
-    this->r_NInit.setZero();
-    this->v_NInit.setZero();
+    this->r_CN_NInit.setZero();
+    this->v_CN_NInit.setZero();
     this->sigma_BNInit.setZero();
     this->omega_BN_BInit.setZero();
 
@@ -85,8 +85,10 @@ void HubEffector::registerStates(DynParamManager& states)
     this->velocityState = states.registerState(3, 1, this->nameOfHubVelocity);
     this->sigmaState = states.registerState(3, 1, this->nameOfHubSigma);
     this->omegaState = states.registerState(3, 1, this->nameOfHubOmega);
-    this->posState->setState(this->r_NInit);
-    this->velocityState->setState(this->v_NInit);
+    /* - r_BN_N and v_BN_N of the hub is first set to r_CN_N and v_CN_N and then is corrected in spacecraftPlus
+     initializeDynamics to incorporate the fact that point B and point C are not necessarily coincident */
+    this->posState->setState(this->r_CN_NInit);
+    this->velocityState->setState(this->v_CN_NInit);
     this->sigmaState->setState(this->sigma_BNInit);
     this->omegaState->setState(this->omega_BN_BInit);
 

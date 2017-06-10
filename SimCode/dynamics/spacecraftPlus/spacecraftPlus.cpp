@@ -198,7 +198,25 @@ void SpacecraftPlus::initializeDynamics()
     this->linkInStates(this->dynManager);
     this->gravField.linkInStates(this->dynManager);
     this->hub.linkInStates(this->dynManager);
-    
+
+    // - Update the mass properties of the spacecraft to retrieve c_B and cDot_B to update r_BN_N and v_BN_N
+    this->updateSCMassProps(0.0);
+
+    // - Edit r_BN_N and v_BN_N to take into account that point B and point C are not coincident
+    // - Pulling the state from the hub at this time gives us r_CN_N
+    Eigen::Vector3d rInit_BN_N = this->hubR_N->getState();
+    Eigen::MRPd sigma_BN;
+    sigma_BN = (Eigen::Vector3d) this->hubSigma->getState();
+    Eigen::Matrix3d dcm_NB = sigma_BN.toRotationMatrix();
+    // - Substract off the center mass to leave r_BN_N
+    rInit_BN_N -= dcm_NB*(*this->c_B);
+    // - Subtract off cDot_B to get v_BN_N
+    Eigen::Vector3d vInit_BN_N = this->hubV_N->getState();
+    vInit_BN_N -= dcm_NB*(*this->cDot_B);
+    // - Finally set the translational states r_BN_N and v_BN_N with the corrections
+    this->hubR_N->setState(rInit_BN_N);
+    this->hubV_N->setState(vInit_BN_N);
+
     // - Loop through the stateEffectros to link in the states needed
     for(stateIt = this->states.begin(); stateIt != this->states.end(); stateIt++)
     {

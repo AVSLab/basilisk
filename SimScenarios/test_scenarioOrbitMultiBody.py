@@ -229,18 +229,16 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #       vN = scInitialState[3:6]         # m/s
 #~~~~~~~~~~~~~~~~~
 # Note that these vectors are given here relative to the Earth frame.  When we set the spacecraftPlus()
-# initial position and velocity vectors through
+# initial position and velocity vectors through before initialization
 #~~~~~~~~~~~~~~~~~{.py}
-#       posRef = scObject.dynManager.getStateObject("hubPosition")
-#       velRef = scObject.dynManager.getStateObject("hubVelocity")
-#
-#       posRef.setState(unitTestSupport.np2EigenVector3d(rN))  # m - r_BN_N
-#       velRef.setState(unitTestSupport.np2EigenVector3d(vN))  # m - v_BN_N
+#     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+#     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 #~~~~~~~~~~~~~~~~~
 # the natural question arises, how does Basilisk know relative to what frame these states are defined?  This is
 # actually setup above where we set `.isCentralBody = True` and mark the Earth as are central body.
 # Without this statement, the code would assume the spacecraftPlus() states are relative to the default zeroBase frame.
-# In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.  This is because there
+# In the earlier basic orbital motion script (@ref scenarioBasicOrbit) this subtleties were not discussed.
+# This is because there
 # the planets ephemeris message is being set to the default messages which zero's both the position and orientation
 # states.  However, if Spice is used to setup the bodies, the zeroBase state must be carefully considered.
 #
@@ -394,6 +392,8 @@ def run(doUnitTests, show_plots, scCase):
     scInitialState = 1000*pyswice.spkRead(scSpiceName, timeInitString, 'J2000', 'EARTH')
     rN = scInitialState[0:3]         # meters
     vN = scInitialState[3:6]         # m/s
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
 
     #
@@ -413,18 +413,7 @@ def run(doUnitTests, show_plots, scCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
-
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
+    scSim.InitializeSimulationAndDiscover()
 
 
     #

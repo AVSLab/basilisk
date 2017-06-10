@@ -334,7 +334,7 @@ MessageIdentData SystemMessaging::messagePublishSearch(std::string messageName)
 }
 
 bool SystemMessaging::WriteMessage(uint64_t MessageID, uint64_t ClockTimeNanos,
-                                   uint64_t MsgSize, uint8_t *MsgPayload, int64_t moduleID)
+                                   uint64_t MsgSize, void *MsgPayload, int64_t moduleID)
 {
     if(MessageID >= GetMessageCount())
     {
@@ -412,7 +412,7 @@ void SystemMessaging::AccessMessageData(uint8_t *MsgBuffer, uint64_t maxMsgBytes
 }
 
 bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
-                                  *DataHeader, uint64_t MaxBytes, uint8_t *MsgPayload, int64_t moduleID, uint64_t CurrentOffset)
+                                  *DataHeader, uint64_t MaxBytes, void *MsgPayload, int64_t moduleID, uint64_t CurrentOffset)
 {
     if(MessageID >= GetMessageCount())
     {
@@ -455,7 +455,7 @@ bool SystemMessaging::ReadMessage(uint64_t MessageID, SingleMessageHeader
     uint64_t MaxOutputBytes = MaxBytes < MsgHdr->MaxMessageSize ? MaxBytes :
     MsgHdr->MaxMessageSize;
     AccessMessageData(ReadBuffer, MsgHdr->MaxMessageSize, CurrentIndex,
-                      DataHeader, MaxOutputBytes, MsgPayload);
+                      DataHeader, MaxOutputBytes, reinterpret_cast<uint8_t*>(MsgPayload));
     return(true);
 }
 

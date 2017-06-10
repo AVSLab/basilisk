@@ -251,11 +251,11 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
             for reset in allAlgReset:
                 if not(reset in globalAllAlgReset):
                     globalAllAlgReset.append(reset)
-    algNameAllSelfInit = 'AllAlg_SelfInit'
-    algNameAllCrossInit = 'AllAlg_CrossInit'
-    algNameAllReset = 'AllAlg_Reset'
-    taskNameUpdate = 'AllTasks_Update'
-    algNameDataInit = 'DataInit'
+    algNameAllSelfInit = str_ConfigData + '_AllAlg_SelfInit'
+    algNameAllCrossInit = str_ConfigData + '_AllAlg_CrossInit'
+    algNameAllReset = str_ConfigData + '_AllAlg_Reset'
+    taskNameUpdate = str_ConfigData + '_AllTasks_Update'
+    algNameDataInit = str_ConfigData + '_DataInit'
 
     writeTaskAlgs(algNameAllSelfInit + ConfigData, allAlgSelfInit, theVoidList, theAlgList)
     writeTaskAlgs(algNameAllCrossInit  + ConfigData, allAlgCrossInit, theVoidList, theAlgList)

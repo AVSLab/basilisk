@@ -213,15 +213,6 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 #       effectors -> dynamics -> sensors
 #
-# As with spacecraftPlus(), the reactionWheelStateEffector() class is a sub-class of the StateEffector() class.
-# As such, the RW states that get integrated are setup in a state class, and must be specified after the
-# simulation is initialized.  The `create()` macros above already stored what desired RW speeds
-# were to be simulated.  The macro call
-# ~~~~~~~~~~~~~~~~~{.py}
-#     # initialize the RW state effector states
-#     simIncludeRW.setInitialStates(scObject)
-# ~~~~~~~~~~~~~~~~~
-# loops through all the setup RW effectors and sets the initial wheel speeds to the desired values.
 #
 # To log the RW information, the following code is used:
 # ~~~~~~~~~~~~~~~~~{.py}
@@ -651,39 +642,27 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
-
     #
-    #   initialize Simulation
+    #   set initial Spacecraft States
     #
-    scSim.InitializeSimulation()
-
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-    sigmaRef = scObject.dynManager.getStateObject("hubSigma")
-    omegaRef = scObject.dynManager.getStateObject("hubOmega")
-
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
-    oe.a     = 10000000.0           # meters
+    oe.a     = 10000000.0                                           # meters
     oe.e     = 0.01
     oe.i     = 33.3*macros.D2R
     oe.Omega = 48.2*macros.D2R
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+    scObject.hub.sigma_BNInit = [[0.1], [0.2], [-0.3]]              # sigma_CN_B
+    scObject.hub.omega_BN_BInit = [[0.001], [-0.01], [0.03]]        # rad/s - omega_CN_B
 
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - r_BN_N
-    sigmaRef.setState([[0.1], [0.2], [-0.3]])       # sigma_BN_B
-    omegaRef.setState([[0.001], [-0.01], [0.03]])   # rad/s - omega_BN_B
-
-    # initialize the RW state effector states
-    simIncludeRW.setInitialStates(scObject)
+    #
+    #   initialize Simulation
+    #
+    scSim.InitializeSimulationAndDiscover()
 
     #
     #   configure a simulation stop time time and execute the simulation run

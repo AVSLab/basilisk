@@ -257,6 +257,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     oe.omega = 347.8*macros.D2R
     oe.f     = 85.3*macros.D2R
     rN, vN = orbitalMotion.elem2rv(mu, oe)
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
@@ -280,18 +282,14 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     #   initialize Simulation
     #
-    scSim.InitializeSimulation()
+    scSim.InitializeSimulationAndDiscover()
 
 
     #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
+    #  get access to dynManager translational states for future access to the states
     #
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
 
 
     #
@@ -453,11 +451,11 @@ def run(doUnitTests, show_plots, maneuverCase):
         # setup truth data for unit test
         if maneuverCase == 0:
             truePos = [
-                  [9856338.4245505630970001, 41056125.249196968972683, 0.]
+                  [10298352.587758573, 40947481.244493686, 0.0]
             ]
         if maneuverCase == 1:
             truePos = [
-                  [5897618.522255497, 3739026.1404991057, 477499.5477283395]
+                  [5937590.072546725, 3675220.9560903916, 477503.77340122446]
             ]
 
         # compare the results to the truth values

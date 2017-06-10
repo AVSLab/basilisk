@@ -139,19 +139,19 @@ def unitRadiationPressure(show_plots, modelType):
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [0, 0, 0]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
-                                                                    srpDataForce_B[2,1:],
+                                                                    srpDataForce_B[1,1:],
                                                                     errTol,
                                                                     "Force_B",
                                                                     testFailCount,
                                                                     testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
-                                                                srpDataForce_N[2, 1:],
+                                                                srpDataForce_N[1, 1:],
                                                                 errTol,
                                                                 "Force_N",
                                                                 testFailCount,
                                                                 testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
-                                                                srpTorqueData[2, 1:],
+                                                                srpTorqueData[1, 1:],
                                                                 errTol,
                                                                 "Torque",
                                                                 testFailCount,
@@ -161,19 +161,19 @@ def unitRadiationPressure(show_plots, modelType):
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
-                                                                    srpDataForce_B[2, 1:],
+                                                                    srpDataForce_B[1, 1:],
                                                                     errTol,
                                                                     "Force_B",
                                                                     testFailCount,
                                                                     testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_N,
-                                                                    srpDataForce_N[2, 1:],
+                                                                    srpDataForce_N[1, 1:],
                                                                     errTol,
                                                                     "Force_N",
                                                                     testFailCount,
                                                                     testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
-                                                                    srpTorqueData[2, 1:],
+                                                                    srpTorqueData[1, 1:],
                                                                     errTol,
                                                                     "Torque",
                                                                     testFailCount,

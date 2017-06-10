@@ -27,6 +27,8 @@
 #include "thrOperationSimMsg.h"
 #include "thrTimePairSimMsg.h"
 #include "idEphemerisSimMsg.h"
+#include "vscmgConfigSimMsg.h"
+#include "vscmgCmdSimMsg.h"
 #include "rwCmdSimMsg.h"
 #include "rwConfigSimMsg.h"
 #include "rwConfigLogSimMsg.h"
@@ -52,6 +54,10 @@ GEN_SIZEOF(AngOffValuesSimMsg)
 GEN_SIZEOF(CSSRawDataSimMsg)
 %include "idEphemerisSimMsg.h"
 GEN_SIZEOF(IDEphemerisSimMsg)
+%include "vscmgConfigSimMsg.h"
+GEN_SIZEOF(VSCMGConfigSimMsg);
+%include "vscmgCmdSimMsg.h"
+GEN_SIZEOF(VSCMGCmdSimMsg)
 %include "rwCmdSimMsg.h"
 GEN_SIZEOF(RWCmdSimMsg)
 %include "rwConfigSimMsg.h"

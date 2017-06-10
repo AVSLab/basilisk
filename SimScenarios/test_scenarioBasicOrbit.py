@@ -188,6 +188,26 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # The value 3 indidates that the first three harmonics, including the 0th order harmonic,
 # is included.  This harmonics data file only includes a zeroth order and J2 term.
 #
+# To set the spacecraft initial conditions, the following initial position and velocity variables are set:
+#~~~~~~~~~~~~~~~~~{.py}
+#    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_CN_N
+#    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_CN_N
+#~~~~~~~~~~~~~~~~~
+# These vectors specify the inertial position and velocity vectors relative to the planet of the
+# spacecraft center of mass location.  Note that there are 2 points that can be tracked.  The user always
+# specifies the spacecraft center of mass location with the above code.  If the simulation output should be
+# about another body fixed point B, this can be done as well.  This is useful in particular with more challenging
+# dynamics where the center of mass moves relative to the body.  The following vector would specify the location of
+# the spacecraft hub center of mass (Bc) relative to this body fixed point.
+# ~~~~~~~~~~~~~~~~{.py}
+#    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+# ~~~~~~~~~~~~~~~~
+# If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
+# is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
+# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C woudl
+# not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
+# identical.
+#
 # Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
 # a fixed location with zero position and velocity coordinates, so this message is not updated.
 # If the planets move with time, such as with the SPICE
@@ -201,6 +221,15 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #  If multiple bodies are simulated, then their positions would need to be
 # dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
 # done via a SPICE object.
+#
+# Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
+# which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
+#~~~~~~~~~~~~~~~~~{.py}
+#     scSim.InitializeSimulationAndDiscover()
+#~~~~~~~~~~~~~~~~~
+# If there are messages that are shared across multiple BSK threads, as shown in
+# [test_scenarioAttitudeFeedback2T.py](@ref scenarioAttitudeFeedback2T), then this routine also
+# auto-discovers these shared messages.
 #
 # Setup 1
 # -----
@@ -397,6 +426,11 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     oe = orbitalMotion.rv2elem(mu, rN, vN)      # this stores consistent initial orbit elements
                                                 # with circular or equatorial orbit, some angles are
                                                 # arbitrary
+    #
+    #   initialize Spacecraft States with the initialization variables
+    #
+    scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
+    scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
 
 
     # set the simulation time
@@ -423,19 +457,12 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
-    #   initialize Simulation
+    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
+    #   cross_init() and reset() routines on each module.
+    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
+    #   then the all messages are auto-discovered that are shared across different BSK threads.
     #
-    scSim.InitializeSimulation()
-
-    #
-    #   initialize Spacecraft States within the state manager
-    #   this must occur after the initialization
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-    posRef.setState(unitTestSupport.np2EigenVectorXd(rN))  # m - r_BN_N
-    velRef.setState(unitTestSupport.np2EigenVectorXd(vN))  # m - v_BN_N
+    scSim.InitializeSimulationAndDiscover()
 
     #
     #   configure a simulation stop time time and execute the simulation run
