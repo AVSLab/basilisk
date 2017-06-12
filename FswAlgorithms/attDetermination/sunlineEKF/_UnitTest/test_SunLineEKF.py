@@ -69,13 +69,13 @@ def setupFilterData(filterObject):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_kf(show_plots):
+def test_all_sunline_ekf(show_plots):
     [testResults, testMessage] = sunline_utilities_test(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropSunLine(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
-    assert testResults < 1, testMessage
+    # [testResults, testMessage] = testStatePropSunLine(show_plots)
+    # assert testResults < 1, testMessage
+    # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    # assert testResults < 1, testMessage
 
 def sunline_utilities_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -87,12 +87,12 @@ def sunline_utilities_test(show_plots):
     testMessages = []  # create empty list to store test log messages
 
     # Testing dynamics matrix computation
-    inputStates = [0,1,0,0.1,0,0.05]
+    inputStates = [2,1,0.75,0.1,0.4,0.05]
 
     expDynMat = np.zeros([6,6])
     expDynMat[0:3, 0:3] = -(np.outer(inputStates[3:6],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2. +
                          np.dot(inputStates[3:6],inputStates[0:3])*
-                         (np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[3:6]))/np.linalg.norm(inputStates[0:3])**4.)
+                         (np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
     expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
 
     dynMat = sunlineEKF.new_doubleArray(6*6)
@@ -100,19 +100,18 @@ def sunline_utilities_test(show_plots):
         sunlineEKF.doubleArray_setitem(dynMat, i, 0)
     sunlineEKF.sunlineDynMatrix(inputStates, dynMat)
 
-    InvOut = []
+    DynOut = []
     for i in range(36):
-        InvOut.append(sunlineEKF.doubleArray_getitem(dynMat, i))
+        DynOut.append(sunlineEKF.doubleArray_getitem(dynMat, i))
 
-    InvOut = np.array(InvOut).reshape(6, 6)
-    errorNorm = np.linalg.norm(expDynMat - InvOut)
-    print errorNorm
+    DynOut = np.array(DynOut).reshape(6, 6)
+    errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-12):
         print errorNorm
-        print InvOut
+        print DynOut
         print expDynMat
         testFailCount += 1
-        testMessages.append("State Propagation Failure")
+        testMessages.append("Dynamics Matrix generation Failure")
 
 
     InvSourceMat =[]
@@ -200,7 +199,7 @@ def testStateUpdateSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -227,11 +226,11 @@ def testStateUpdateSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
-    
+
     cssConstelation = vehicleConfigData.CSSConstConfig()
-    
+
     CSSOrientationList = [
        [0.70710678118654746, -0.5, 0.5],
        [0.70710678118654746, -0.5, -0.5],
@@ -325,7 +324,7 @@ def testStateUpdateSunLine(show_plots):
         dotProd = np.dot(np.array(element), testVector)
         dotList.append(dotProd)
     inputData.CosValue = dotList
-        
+
     for i in range(20000):
         if i > 20:
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
@@ -371,7 +370,7 @@ def testStatePropSunLine(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-    
+
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -398,25 +397,25 @@ def testStatePropSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-    
+
     setupFilterData(moduleConfig)
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate*10, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate*10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
-    
+
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
-    
+
     for i in range(6):
         if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
             print abs(stateLog[-1, i+1] - stateLog[0, i+1])
             testFailCount += 1
             testMessages.append("State propagation failure")
 
-    
+
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -427,4 +426,4 @@ def testStatePropSunLine(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_all_sunline_kf(False)
+    test_all_sunline_ekf(False)

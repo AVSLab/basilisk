@@ -269,9 +269,9 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES][SKF_N_STATES], double dt, d
 
 void sunlineDynMatrix(double states[SKF_N_STATES], double (*dynMat)[SKF_N_STATES][SKF_N_STATES])
 {
-    double dovernorm2d[3], dddot, ddtnorm2[3][3];
+    double dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
-    double douterddot[3][3], douterd[3][3], neg2dddot[3][3];
+    double douterddot[3][3], douterd[3][3], neg2dd[3][3];
     double secondterm[3][3], firstterm[3][3];
     double normd2;
     double dFdd[3][3], dFdddot[3][3];
@@ -284,27 +284,26 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double (*dynMat)[SKF_N_STATES
     mScale(normd2, I3, 3, 3, d2I3);
     
     v3OuterProduct(&(states[0]), &(states[3]), douterddot);
-    m33Scale(-2, douterddot, neg2dddot);
-    m33Subtract(d2I3, neg2dddot, secondterm);
+    v3OuterProduct(&(states[0]), &(states[0]), douterd);
+    
+    m33Scale(-2.0, douterd, neg2dd);
+    m33Subtract(d2I3, neg2dd, secondterm);
     m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
     
-    v3Scale(1/normd2, &(states[0]), dovernorm2d);
-    v3OuterProduct(&(states[3]), dovernorm2d, firstterm);
+    m33Scale(1.0/normd2, douterddot, firstterm);
     
     m33Add(firstterm, secondterm, dFdd);
-    m33Scale(-1, dFdd, dFdd);
+    m33Scale(-1.0, dFdd, dFdd);
     
     /* Populate the first 3x3 matrix of the dynamics matrix*/
     m66Set33Matrix(0, 0, dFdd, (*dynMat));
     
     /* dFdddot */
-    v3OuterProduct(&(states[0]), &(states[0]), douterd);
-    m33Scale(-1/normd2, douterd, ddtnorm2);
-    
+    m33Scale(-1.0/normd2, douterd, ddtnorm2);
     m33Add(I3, ddtnorm2, dFdddot);
     
     /* Populate the second 3x3 matrix */
-    m66Set33Matrix(0, 3, dFdddot, (*dynMat));
+    m66Set33Matrix(0, 1, dFdddot, (*dynMat));
     
     return;
 }
