@@ -40,13 +40,13 @@ GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../../fswMessages/cssConfigFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
-%typemap(in) double (*dynMat)[6][6] {
+%typemap(in) double (*dynMat)[SKF_N_STATES][SKF_N_STATES] {
     void *dataPtr;
     SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
     double *actData = (double*) dataPtr;
     $1 = actData;
 }
-%typemap(in) double (*stmIn)[6][6] {
+%typemap(in) double (*stmIn)[SKF_N_STATES][SKF_N_STATES] {
     void *dataPtr;
     SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
     double *actData = (double*) dataPtr;
