@@ -86,7 +86,7 @@ def sunline_utilities_test(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
-    # Testing dynamics matrix computation
+    ## Testing dynamics matrix computation
     inputStates = [2,1,0.75,0.1,0.4,0.05]
 
     expDynMat = np.zeros([6,6])
@@ -107,37 +107,48 @@ def sunline_utilities_test(show_plots):
     DynOut = np.array(DynOut).reshape(6, 6)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-12):
-        print errorNorm
-        print DynOut
-        print expDynMat
+        # print errorNorm
+        # print DynOut
+        # print expDynMat
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure")
 
 
-    InvSourceMat =[]
-    nRow=0
+    ## STM and State Test
 
-    InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
-    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    for i in range(len(InvSourceMat)):
-        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineEKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
+    dt =0.1
+    stmIn = sunlineEKF.new_doubleArray(6*6)
+    states = sunlineEKF.new_doubleArray(6)
+    for i in range(6):
+        sunlineEKF.doubleArray_setitem(states, i, inputStates[i])
+        for j in range(6):
+            if i==j:
+                sunlineEKF.doubleArray_setitem(stmIn, i+j, 1.0)
+            else:
+                sunlineEKF.doubleArray_setitem(stmIn, i+j, 0.0)
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
+    sunlineEKF.sunlineStateSTMProp(expDynMat, 0.1, states, stmIn)
 
-    InvOut = np.array(InvOut).reshape(nRow, nRow)
-    expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
-    errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
+    PropStateOut = []
+    PropSTMOut = []
+    for i in range(6):
+        PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
+    for i in range(6*6):
+        PropSTMOut.append(sunlineEKF.doubleArray_getitem(stmIn, i))
+    STMout = np.array(PropSTMOut).reshape([6,6])
+
+    expectedSTM = dt*np.dot(expDynMat, np.eye(6)) + np.eye(6)
+    errorNorm = np.linalg.norm(expectedSTM - STMout)
     if(errorNorm > 1.0E-12):
         print errorNorm
+        print STMout
+        print expectedSTM
         testFailCount += 1
         testMessages.append("STM Propagation Failure")
 
+    InvSourceMat= []
+    nRow = 0
+
     InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
     SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
     InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
@@ -157,7 +168,7 @@ def sunline_utilities_test(show_plots):
     if(errorNorm > 1.0E-12):
         print errorNorm
         testFailCount += 1
-        testMessages.append("Dynamics Matrix Failure")
+        testMessages.append("State Propagation Failure")
 
     InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
     SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))

@@ -278,7 +278,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double (*dynMat)[SKF_N_STATES
     
     /* dFdd */
     mSetIdentity(I3, 3, 3);
-    dddot = v3Dot(&(states[3]), &(states[0]));
+    dddot = v3Dot(&(states[0]), &(states[3]));
     normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
     
     mScale(normd2, I3, 3, 3, d2I3);
