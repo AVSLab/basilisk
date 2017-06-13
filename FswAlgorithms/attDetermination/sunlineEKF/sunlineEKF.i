@@ -46,7 +46,7 @@ GEN_SIZEOF(VehicleConfigFswMsg);
     double *actData = (double*) dataPtr;
     $1 = actData;
 }
-%typemap(in) double (*stmIn)[SKF_N_STATES][SKF_N_STATES] {
+%typemap(in) double (*stateTransition)[SKF_N_STATES][SKF_N_STATES] {
     void *dataPtr;
     SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
     double *actData = (double*) dataPtr;

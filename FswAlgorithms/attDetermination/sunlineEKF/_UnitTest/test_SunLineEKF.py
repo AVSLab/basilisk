@@ -90,9 +90,8 @@ def sunline_utilities_test(show_plots):
     inputStates = [2,1,0.75,0.1,0.4,0.05]
 
     expDynMat = np.zeros([6,6])
-    expDynMat[0:3, 0:3] = -(np.outer(inputStates[3:6],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2. +
-                         np.dot(inputStates[3:6],inputStates[0:3])*
-                         (np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
+    expDynMat[0:3, 0:3] = -(np.outer(inputStates[0:3],inputStates[3:6])/np.linalg.norm(inputStates[0:3])**2. +
+                         np.dot(inputStates[3:6],inputStates[0:3])*(np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
     expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
 
     dynMat = sunlineEKF.new_doubleArray(6*6)
@@ -107,68 +106,58 @@ def sunline_utilities_test(show_plots):
     DynOut = np.array(DynOut).reshape(6, 6)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-12):
-        # print errorNorm
-        # print DynOut
-        # print expDynMat
+        print errorNorm
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure")
 
 
     ## STM and State Test
-
+    inputStates = [2,1,0.75,0.1,0.4,0.05]
     dt =0.1
-    stmIn = sunlineEKF.new_doubleArray(6*6)
+    stateTransition = sunlineEKF.new_doubleArray(6*6)
     states = sunlineEKF.new_doubleArray(6)
     for i in range(6):
         sunlineEKF.doubleArray_setitem(states, i, inputStates[i])
         for j in range(6):
             if i==j:
-                sunlineEKF.doubleArray_setitem(stmIn, i+j, 1.0)
+                sunlineEKF.doubleArray_setitem(stateTransition, 6*i+j, 1.0)
             else:
-                sunlineEKF.doubleArray_setitem(stmIn, i+j, 0.0)
+                sunlineEKF.doubleArray_setitem(stateTransition, 6*i+j, 0.0)
 
-    sunlineEKF.sunlineStateSTMProp(expDynMat, 0.1, states, stmIn)
+    sunlineEKF.sunlineStateSTMProp(expDynMat, 0.1, states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
     for i in range(6):
         PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
     for i in range(6*6):
-        PropSTMOut.append(sunlineEKF.doubleArray_getitem(stmIn, i))
+        PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, i))
     STMout = np.array(PropSTMOut).reshape([6,6])
+    StatesOut = np.array(PropStateOut)
 
     expectedSTM = dt*np.dot(expDynMat, np.eye(6)) + np.eye(6)
-    errorNorm = np.linalg.norm(expectedSTM - STMout)
-    if(errorNorm > 1.0E-12):
-        print errorNorm
+    expectedStates = np.zeros(6)
+    inputStatesArray = np.array(inputStates)
+    expectedStates[3:6] = np.array(inputStatesArray[3:6])
+    expectedStates[0:3] = np.array(inputStatesArray[0:3] + dt*(inputStatesArray[3:6] - np.dot(inputStatesArray[3:6], inputStatesArray[0:3])*inputStatesArray[0:3]/np.linalg.norm(inputStatesArray[0:3])**2.))
+    errorNormSTM = np.linalg.norm(expectedSTM - STMout)
+    errorNormStates = np.linalg.norm(expectedStates - StatesOut)
+    if(errorNormSTM > 1.0E-12):
+        print errorNormSTM
         print STMout
         print expectedSTM
         testFailCount += 1
         testMessages.append("STM Propagation Failure")
 
-    InvSourceMat= []
-    nRow = 0
+    #print np.dot(np.array(inputStates[3:6]),np.array(inputStates[0:3]))/np.linalg.norm(inputStates[0:3])*np.array(inputStates[0:3])/np.linalg.norm(inputStates[0:3])
 
-    InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
-    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    for i in range(len(InvSourceMat)):
-        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineEKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
-
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
-
-    InvOut = np.array(InvOut).reshape(nRow, nRow)
-    expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
-    errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
-    if(errorNorm > 1.0E-12):
-        print errorNorm
+    if(errorNormStates > 1.0E-12):
+        print errorNormStates
         testFailCount += 1
         testMessages.append("State Propagation Failure")
+
+    InvSourceMat= []
+    nRow = 0
 
     InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
     SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))

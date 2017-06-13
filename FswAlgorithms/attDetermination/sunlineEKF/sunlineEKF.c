@@ -231,13 +231,12 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 	@return void
 	@param stateInOut The state that is propagated
  */
-void sunlineStateSTMProp(double dynMat[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stmIn)[SKF_N_STATES][SKF_N_STATES])
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stateTransition)[SKF_N_STATES][SKF_N_STATES])
 {
     
-    double propagatedVel[3];
+    double propagatedVel[3], ddotminusdtilde[3];
     double pointUnit[3];
     double unitComp;
-    double propagatedSTM[6][6];
     double deltatASTM[6][6];
     
     /*! Begin state update steps */
@@ -247,15 +246,15 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES][SKF_N_STATES], double dt, d
     v3Scale(unitComp, pointUnit, pointUnit);
     /*! - Subtract out rotation in the sunline axis because that is not observable
      for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
-    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    v3Subtract(&(stateInOut[3]), pointUnit, ddotminusdtilde);
+    v3Scale(dt, ddotminusdtilde, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
     
-    m66MultM66(dynMat, (*stmIn), deltatASTM);
+    m66MultM66(dynMat, *stateTransition, deltatASTM);
     m66Scale(dt, deltatASTM, deltatASTM);
-    m66Add((*stmIn), deltatASTM, propagatedSTM);
+    m66Add(*stateTransition, deltatASTM, *stateTransition);
     
     return;
 }
@@ -287,7 +286,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double (*dynMat)[SKF_N_STATES
     v3OuterProduct(&(states[0]), &(states[0]), douterd);
     
     m33Scale(-2.0, douterd, neg2dd);
-    m33Subtract(d2I3, neg2dd, secondterm);
+    m33Add(d2I3, neg2dd, secondterm);
     m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
     
     m33Scale(1.0/normd2, douterddot, firstterm);

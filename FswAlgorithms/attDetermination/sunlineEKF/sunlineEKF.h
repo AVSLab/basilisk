@@ -94,7 +94,7 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stmIn)[SKF_N_STATES][SKF_N_STATES]);
+	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stateTransition)[SKF_N_STATES][SKF_N_STATES]);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double obs[MAX_N_CSS_MEAS], double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*yMeas)[MAX_N_CSS_MEAS], int *numObs);
     
