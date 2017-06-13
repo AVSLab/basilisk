@@ -380,7 +380,7 @@ def run(doUnitTests, show_plots, scCase):
     pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)      # Hubble Space Telescope data
 
     # add spice interface object to task list
-    scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
+    scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, -1)
 
     # write Viz display body message
     simIncludeGravity.writeVizCentralPlanetMessage(scSim.TotalSim, simProcessName, vizPlanetName)
