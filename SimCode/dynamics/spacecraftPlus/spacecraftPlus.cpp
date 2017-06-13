@@ -124,7 +124,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     // - Convert current time to seconds
     double newTime = CurrentSimNanos*NANO2SEC;
 
-    // - Get access to the ephemeris bodies
+    // - Get access to the spice bodies
     this->gravField.UpdateState(CurrentSimNanos);
 
     // - Integrate the state forward in time
@@ -287,8 +287,7 @@ void SpacecraftPlus::updateSCMassProps(double time)
 void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
 {
     // - Update time to the current time
-    uint64_t integTimeNanos;
-    integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
+    uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
     (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
