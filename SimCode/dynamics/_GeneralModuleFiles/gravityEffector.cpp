@@ -499,7 +499,6 @@ void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
     Eigen::Vector3d centralVel;
     centralPos.fill(0.0);
     centralVel.fill(0.0);
-    double gravPotOut = 0.0;
     Eigen::Vector3d cLocal_N;
     Eigen::MRPd sigmaBNLoc;
     Eigen::Matrix3d dcm_NB;
@@ -525,12 +524,12 @@ void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
             {
                 double frmPot =
                 (*it)->computePotentialEnergy(mappedPos-centralPos);
-                gravPotOut += frmPot;
+                orbPotEnergyContr += frmPot;
             }
         }
 
         double bodyPot = (*it)->computePotentialEnergy(posRelBody_N);
-        gravPotOut += bodyPot;
+        orbPotEnergyContr += bodyPot;
     }
 
     return;

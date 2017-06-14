@@ -123,7 +123,6 @@ public:
     std::string inertialPositionPropName;           //! [-] Name of the inertial position property
     std::string inertialVelocityPropName;           //! [-] Name of the inertial velocity property
     Eigen::MatrixXd *c_B;                           //!< [m] Vector from point B to CoM of s/c in B frame components
-    double gravityPotentialEnergyCalcs;
     
 private:
     StateData *posState;                            //! [-] Position state of the vehicle

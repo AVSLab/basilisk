@@ -446,7 +446,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
     this->rotAngMomPntCContr_B.setZero();
-    this->totOrbKinEnergy = 0.0;
+    this->totOrbEnergy = 0.0;
     this->totRotEnergy = 0.0;
     this->rotEnergyContr = 0.0;
 
@@ -472,9 +472,14 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - Get cDot_B from manager
     Eigen::Vector3d cDotLocal_B = (*this->cDot_B);
 
-    // - Find orbital kinetic energy for the spacecraft
-    this->totOrbKinEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
+    // - Add in orbital kinetic energy into the total orbital energy calculations
+    this->totOrbEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
                                                + cDotLocal_B.dot(cDotLocal_B));
+
+    // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
+    this->orbPotentialEnergyContr = 0.0;
+    gravField.updateEnergyContributions(this->orbPotentialEnergyContr);
+    this->totOrbEnergy += (*this->m_SC)(0,0)*this->orbPotentialEnergyContr;
 
     // - Find total rotational energy
     this->totRotEnergy += -1.0/2.0*(*this->m_SC)(0,0)*cDotLocal_B.dot(cDotLocal_B);
