@@ -68,8 +68,6 @@ public:
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    Eigen::MatrixXd *property_dcm_BS;    //!< -- Dynamic property version of the structure to body dmc
-    Eigen::Matrix3d dcm_BS;              //!< -- Transformation from structure to body frame
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
     Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg m^2/s] Total orbital angular momentum about N in N frame compenents
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
