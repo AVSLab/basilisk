@@ -33,7 +33,7 @@ StarTracker::StarTracker()
     this->outputStateMessage = "star_tracker_state";
     this->OutputBufferCount = 2;
     this->sensorTimeTag = 0;
-    m33SetIdentity(RECAST3X3 this->dcm_CS);
+    m33SetIdentity(RECAST3X3 this->dcm_CB);
     return;
 }
 
@@ -121,11 +121,9 @@ void StarTracker::applySensorErrors()
 void StarTracker::computeQuaternion(double *sigma, STSensorIntMsg *sensorValues)
 {
     double dcm_BN[3][3];            /* dcm, inertial to body frame */
-    double dcm_SN[3][3];            /* dcm, inertial to structure frame */
     double dcm_CN[3][3];            /* dcm, inertial to case frame */
     MRP2C(sigma, dcm_BN);
-    m33tMultM33(scState.dcm_BS, dcm_BN, dcm_SN);
-    m33MultM33(RECAST3X3 dcm_CS, dcm_SN, dcm_CN);
+    m33MultM33(RECAST3X3 this->dcm_CB, dcm_BN, dcm_CN);
     C2EP(dcm_CN, sensorValues->qInrtl2Case);
 }
 
