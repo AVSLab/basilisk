@@ -52,6 +52,24 @@ GEN_SIZEOF(VehicleConfigFswMsg);
     double *actData = (double*) dataPtr;
     $1 = actData;
 }
+%typemap(in) double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
+    double *actData = (double*) dataPtr;
+    $1 = actData;
+}
+%typemap(in) double (*obs)[MAX_N_CSS_MEAS] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
+    double *actData = (double*) dataPtr;
+    $1 = actData;
+}
+%typemap(in) double (*yMeas)[MAX_N_CSS_MEAS] {
+    void *dataPtr;
+    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
+    double *actData = (double*) dataPtr;
+    $1 = actData;
+}
 %include "sunlineEKF.h"
 
 %pythoncode %{

@@ -70,14 +70,14 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots):
-    [testResults, testMessage] = sunline_utilities_test(show_plots)
+    [testResults, testMessage] = sunline_individual_test(show_plots)
     assert testResults < 1, testMessage
     # [testResults, testMessage] = testStatePropSunLine(show_plots)
     # assert testResults < 1, testMessage
     # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
     # assert testResults < 1, testMessage
 
-def sunline_utilities_test(show_plots):
+def sunline_individual_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -156,29 +156,58 @@ def sunline_utilities_test(show_plots):
         testFailCount += 1
         testMessages.append("State Propagation Failure")
 
-    InvSourceMat= []
-    nRow = 0
+    numCSS = 8
+    cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
+    sensorTresh = np.cos(np.deg2rad(50.))
+    cssNormals = [[1.,0.,0.],[0.,1.,0.],[0.,0.,1.],[1./np.sqrt(2), 1./np.sqrt(2),0.]]
 
-    InvSourceMat = np.transpose(np.array(InvSourceMat).reshape(nRow, nRow)).reshape(nRow*nRow).tolist()
-    SourceVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    InvVector = sunlineEKF.new_doubleArray(len(InvSourceMat))
-    for i in range(len(InvSourceMat)):
-        sunlineEKF.doubleArray_setitem(SourceVector, i, InvSourceMat[i])
-        sunlineEKF.doubleArray_setitem(InvVector, i, 0.0)
-    nRow = int(math.sqrt(len(InvSourceMat)))
-    sunlineEKF.ukfUInv(SourceVector, nRow, nRow, InvVector)
+    measMat = sunlineEKF.new_doubleArray(8*6)
+    obs = sunlineEKF.new_doubleArray(8)
+    yMeas = sunlineEKF.new_doubleArray(8)
+    numObs = sunlineEKF.new_intArray(1)
 
-    InvOut = []
-    for i in range(len(InvSourceMat)):
-        InvOut.append(sunlineEKF.doubleArray_getitem(InvVector, i))
+    expectedH = np.zeros([8,6])
+    expectedY = np.zeros(8)
+    for j in range(3):
+        expectedH[0,0:3] = np.eye(3)[j,:]
+        expectedY[j] =np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j,:])
+    expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
+    expectedNumObs = 3.
 
-    InvOut = np.array(InvOut).reshape(nRow, nRow)
-    expectIdent = np.dot(InvOut, np.array(InvSourceMat).reshape(nRow,nRow))
-    errorNorm = np.linalg.norm(expectIdent - np.identity(nRow))
-    if(errorNorm > 1.0E-12):
-        print errorNorm
-        testFailCount += 1
-        testMessages.append("Time update Failure")
+    for i in range(8*6):
+        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+    for i in range(8):
+        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
+        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+
+    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, measMat, yMeas, numObs)
+
+    obsOut = []
+    yMeasOut = []
+    numObsOut = []
+    HOut = []
+    for i in range(8*6):
+        HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
+    for i in range(8):
+        yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
+        obsOut.append(sunlineEKF.doubleArray_getitem(obs, i))
+    numObsOut.append(sunlineEKF.intArray_getitem(numObs, 0))
+
+    print np.shape(expectedH)
+
+    HOut = np.array(HOut).reshape([8, 6])
+    errorNorm = np.zeros(4)
+    errorNorm[0] = np.linalg.norm(HOut - expectedH)
+    errorNorm[1] = np.linalg.norm(yMeasOut - expectedY)
+    errorNorm[2] = np.linalg.norm(obsOut - expectedObs)
+    errorNorm[3] = np.linalg.norm(numObsOut[0] - 3)
+    for i in range(4):
+        if(errorNorm[i] > 1.0E-12):
+            print i
+            print errorNorm[i]
+            print numObsOut[0]
+            testFailCount += 1
+            testMessages.append("H and yMeas update failure")
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,

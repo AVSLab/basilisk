@@ -96,7 +96,7 @@ extern "C" {
     void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
 	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stateTransition)[SKF_N_STATES][SKF_N_STATES]);
     
-    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double obs[MAX_N_CSS_MEAS], double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*yMeas)[MAX_N_CSS_MEAS], int *numObs);
+    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double (*obs)[MAX_N_CSS_MEAS], double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*yMeas)[MAX_N_CSS_MEAS], int *numObs);
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS]);
     
