@@ -145,7 +145,7 @@ def test_hubPropagate(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
@@ -157,7 +157,7 @@ def test_hubPropagate(show_plots):
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
@@ -190,12 +190,12 @@ def test_hubPropagate(show_plots):
                 [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
-    initialOrbKinEnergy = [
-                [orbKinEnergy[0,1]]
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
                 ]
 
-    finalOrbKinEnergy = [
-                [orbKinEnergy[-1,0], orbKinEnergy[-1,1]]
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
                  ]
 
     initialRotEnergy = [
@@ -213,8 +213,8 @@ def test_hubPropagate(show_plots):
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     plt.title("Change in Rotational Angular Momentum")
     plt.figure(3)
-    plt.plot(orbKinEnergy[:,0]*1e-9, orbKinEnergy[:,1] - orbKinEnergy[0,1])
-    plt.title("Change in Orbital Kinetic Energy")
+    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.title("Change in Orbital Energy")
     plt.figure(4)
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     plt.title("Change in Rotational Energy")
@@ -252,11 +252,11 @@ def test_hubPropagate(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Fuel Slosh unit test failed rotational energy unit test")
 
-    for i in range(0,len(initialOrbKinEnergy)):
+    for i in range(0,len(initialOrbEnergy)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(finalOrbKinEnergy[i],initialOrbKinEnergy[i],1,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Fuel Slosh unit test failed orbital kinetic energy unit test")
+            testMessages.append("FAILED: Fuel Slosh unit test failed orbital energy unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " Fuel Slosh Test"
