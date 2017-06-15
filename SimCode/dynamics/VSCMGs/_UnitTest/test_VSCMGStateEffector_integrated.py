@@ -342,6 +342,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
+                ]
+
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                 ]
 
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
@@ -470,6 +477,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
+        for i in range(0,len(initialOrbEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital energy unit test")
 
     # if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
     #     print wheelSpeeds_true
