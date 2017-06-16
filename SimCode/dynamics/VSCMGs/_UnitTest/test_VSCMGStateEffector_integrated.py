@@ -264,7 +264,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -276,7 +276,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
     wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
     gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",range(3))
@@ -342,6 +342,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
+                ]
+
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                 ]
 
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
@@ -352,8 +359,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.title("Change in Rotational Angular Momentum")
 
     # plt.figure()
-    # plt.plot(orbKinEnergy[:,0]*1e-9, orbKinEnergy[:,1] - orbKinEnergy[0,1])
-    # plt.title("Change in Orbital Kinetic Energy")
+    # plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    # plt.title("Change in Orbital Energy")
 
     # plt.figure()
     # plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
@@ -470,6 +477,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
+        for i in range(0,len(initialOrbEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital energy unit test")
 
     # if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
     #     print wheelSpeeds_true

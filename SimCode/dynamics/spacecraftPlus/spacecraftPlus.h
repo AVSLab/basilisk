@@ -48,9 +48,10 @@ public:
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string struct2BdyPropertyName;  //!< -- Name of the structure to body dynamics property
-    double totOrbKinEnergy;              //!< [J] Total orbital kinetic energy
+    double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
+    double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
