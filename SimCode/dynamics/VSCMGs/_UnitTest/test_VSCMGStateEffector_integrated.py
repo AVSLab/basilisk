@@ -45,10 +45,10 @@ mpl.rc("figure", figsize=(5.75,4))
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
 
-    VSCMG.rGB_S = [[0.],[0.],[0.]]
-    VSCMG.gsHat0_S = [[0.],[0.],[0.]]
-    VSCMG.gtHat0_S = [[0.],[0.],[0.]]
-    VSCMG.ggHat_S = [[0.],[0.],[0.]]
+    VSCMG.rGB_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat0_B = [[0.],[0.],[0.]]
+    VSCMG.gtHat0_B = [[0.],[0.],[0.]]
+    VSCMG.ggHat_B = [[0.],[0.],[0.]]
     VSCMG.u_s_max = -1
     VSCMG.u_s_min = -1
     VSCMG.u_s_f = 0.
@@ -158,31 +158,31 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     ang = 54.75 * np.pi/180
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
-    VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[0].ggHat_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[0].gsHat0_B = [[1.0], [0.0], [0.0]]
+    VSCMGs[0].gtHat0_B = [[0.0], [1.0], [0.0]]
+    VSCMGs[0].ggHat_B = [[0.0], [0.0], [1.0]]
     VSCMGs[0].Omega = 2000 * macros.RPM
     VSCMGs[0].gamma = 0.
     VSCMGs[0].gammaDot = 0.06
-    VSCMGs[0].rGB_S = [[0.1], [0.002], [-0.02]]
+    VSCMGs[0].rGB_B = [[0.1], [0.002], [-0.02]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[1].ggHat_S = [[math.cos(ang)], [0.0], [math.sin(ang)]]
-    VSCMGs[1].gtHat0_S = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
+    VSCMGs[1].gsHat0_B = [[0.0], [1.0], [0.0]]
+    VSCMGs[1].ggHat_B = [[math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[1].gtHat0_B = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
     VSCMGs[1].Omega =  350 * macros.RPM
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.011
-    VSCMGs[1].rGB_S = [[0.0], [-0.05], [0.0]]
+    VSCMGs[1].rGB_B = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
-    VSCMGs[2].ggHat_S = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
-    VSCMGs[2].gtHat0_S = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
+    VSCMGs[2].gsHat0_B = [[0.0], [-1.0], [0.0]]
+    VSCMGs[2].ggHat_B = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[2].gtHat0_B = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
     VSCMGs[2].Omega = -900 * macros.RPM
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = -0.003
-    VSCMGs[2].rGB_S = [[-0.1], [0.05], [0.05]]
+    VSCMGs[2].rGB_B = [[-0.1], [0.05], [0.05]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0
