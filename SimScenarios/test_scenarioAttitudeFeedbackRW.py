@@ -165,19 +165,19 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
 #     simIncludeRW.create(
 #             'Honeywell_HR16',
-#             [1, 0, 0],              # gsHat_S
+#             [1, 0, 0],              # gsHat_B
 #             100.0                     # RPM
 #             )
 #     simIncludeRW.create(
 #             'Honeywell_HR16',
-#             [0, 1, 0],              # gsHat_S
+#             [0, 1, 0],              # gsHat_B
 #             200.0                     # RPM
 #             )
 #     simIncludeRW.create(
 #             'Honeywell_HR16',
-#             [0, 0, 1],              # gsHat_S
+#             [0, 0, 1],              # gsHat_B
 #             300.0,                    # RPM
-#             [0.5,0.5,0.5]           # r_S (optional argument)
+#             [0.5,0.5,0.5]           # r_B (optional argument)
 #             )
 #     numRW = simIncludeRW.getNumOfDevices()
 #
@@ -196,7 +196,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 # The next step is to use create() to include a particular RW devices.  The `simIncludeRW.py` file contains several
 # public specifications of RW devices which can be accessed by specifying the wheel name, `Honeywell_HR16`
-# in this case.  The other 2 arguments provide the spin axis \f$\hat{\mathbf g}_s\f$ and initial RW spin \f$\Omega\f$
+# in this case.  The other 2 arguments provide the spin axis \f$\hat{\mathbf g}_B\f$ and initial RW spin \f$\Omega\f$
 # in RPMs.  The 3rd argument is optional, and specifies the body-relative location of the RW center of mass.
 # This information is only used if an off-balanced RW device is being modeled.
 #
@@ -246,7 +246,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #
 # Instead of directly simulating this control torque vector, new
 # algorithm modules are required to first map \f${\mathbf L}_r\f$ on the set of RW motor torques
-# \f$u_s\f$.
+# \f$u_B\f$.
 # ~~~~~~~~~~~~~~~{.py}
 #     # add module that maps the Lr control torque into the RW motor torques
 #     rwMotorTorqueConfig = rwMotorTorque.rwMotorTorqueConfig()
@@ -265,7 +265,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #         ]
 #     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 # ~~~~~~~~~~~~~~~
-# Note that the output vector of RW motoro torques \f$u_s\f$ is set to connect with
+# Note that the output vector of RW motoro torques \f$u_B\f$ is set to connect with
 # the RW state effector command input message.  Further, this module inputs the typical
 # vehicle configuration message, as well as a message containing the flight algorithm
 # information of the RW devices.  This torque mapping module can map the full 3D \f${\mathbf L}_r\f$
@@ -274,7 +274,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # mapped onto motor torques.
 #
 # The flight algorithm need to know how many RW devices are on the spacecraft and what their
-# spin axis \f$\hat{\mathbf g}_s\f$ are.  This is set through a flight software message that is read
+# spin axis \f$\hat{\mathbf g}_B\f$ are.  This is set through a flight software message that is read
 # in by flight algorithm modules that need this info.  To write the required flight RW configuration message
 # a separate support macros called `fswSetupRW.py`  is used.
 # ~~~~~~~~~~~~~~~~{.py}
@@ -282,7 +282,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #     # use the same RW states in the FSW algorithm as in the simulation
 #     fswSetupRW.clearSetup()
 #     for rw in simIncludeRW.rwList:
-#         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js)
+#         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js)
 #     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 # ~~~~~~~~~~~~~~~~
 # Again a `clearSetup()` should be called first to clear out any pre-existing RW devices from an
@@ -312,8 +312,8 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ![MRP Attitude History](Images/Scenarios/scenarioAttitudeFeedbackRW100.svg "MRP history")
 # ![RW Motor Torque History](Images/Scenarios/scenarioAttitudeFeedbackRW200.svg "RW motor torque history")
 # ![RW Spin History](Images/Scenarios/scenarioAttitudeFeedbackRW300.svg "RW Omega history")
-# Note that in the RW motor torque plot both the required control torque \f$\hat u_s\f$ and the true
-# motor torque \f$u_s\f$ are shown.  This illustrates that with this maneuver the RW devices are being
+# Note that in the RW motor torque plot both the required control torque \f$\hat u_B\f$ and the true
+# motor torque \f$u_B\f$ are shown.  This illustrates that with this maneuver the RW devices are being
 # saturated, and the attitude still eventually stabilizes.
 #
 #
@@ -490,19 +490,19 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
     simIncludeRW.create(
             'Honeywell_HR16',
-            [1, 0, 0],              # gsHat_S
+            [1, 0, 0],              # gsHat_B
             100.0                     # RPM
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0, 1, 0],              # gsHat_S
+            [0, 1, 0],              # gsHat_B
             200.0                     # RPM
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0, 0, 1],              # gsHat_S
+            [0, 0, 1],              # gsHat_B
             300.0,                    # RPM
-            [0.5,0.5,0.5]           # r_S (optional argument)
+            [0.5,0.5,0.5]           # r_B (optional argument)
             )
     numRW = simIncludeRW.getNumOfDevices()
 
@@ -639,7 +639,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for rw in simIncludeRW.rwList:
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js, 0.2)
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
     #
