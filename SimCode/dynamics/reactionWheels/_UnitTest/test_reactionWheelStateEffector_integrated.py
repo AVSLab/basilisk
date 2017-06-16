@@ -96,19 +96,19 @@ def reactionWheelIntegratedTest(show_plots,useFlag,testCase):
 
     simIncludeRW.create(
             'Honeywell_HR16',
-            [1,0,0],                # gsHat_S
+            [1,0,0],                # gsHat_B
             500.,                     # RPM
             [0.1,0.,0.]
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0,1,0],                # gsHat_S
+            [0,1,0],                # gsHat_B
             200.,                     # RPM
             [0.,0.1,0.]
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0,0,1],                # gsHat_S
+            [0,0,1],                # gsHat_B
             -150.,                    # RPM
             [0.,0.,0.1]
             )
