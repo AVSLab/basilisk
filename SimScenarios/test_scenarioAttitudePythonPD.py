@@ -357,19 +357,19 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
     simIncludeRW.create(
             'Honeywell_HR16',
-            [1, 0, 0],              # gsHat_S
+            [1, 0, 0],              # gsHat_B
             100.0                     # RPM
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0, 1, 0],              # gsHat_S
+            [0, 1, 0],              # gsHat_B
             200.0                     # RPM
             )
     simIncludeRW.create(
             'Honeywell_HR16',
-            [0, 0, 1],              # gsHat_S
+            [0, 0, 1],              # gsHat_B
             300.0,                    # RPM
-            [0.5,0.5,0.5]           # r_S (optional argument)
+            [0.5,0.5,0.5]           # r_B (optional argument)
             )
     numRW = simIncludeRW.getNumOfDevices()
 
@@ -508,7 +508,7 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
     for rw in simIncludeRW.rwList:
-        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_S), rw.Js, 0.2)
+        fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simPreControlProc)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simControlProc)
     fswSetupRW.writeConfigMessage(rwMotorTorqueConfig.rwParamsInMsgName, scSim.TotalSim, scSim.simPostControlProc)
