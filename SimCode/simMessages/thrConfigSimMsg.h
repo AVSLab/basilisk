@@ -27,8 +27,6 @@
  ramp/max/min configuration data, and the physical location/orientation data for
  a thruster.*/
 typedef struct {
-    Eigen::Vector3d inputThrLoc_S;                  //!< m Location of thruster in structural
-    Eigen::Vector3d inputThrDir_S;                  //!< -- Unit vector of thruster pointing
     Eigen::Vector3d thrLoc_B;                       //!< [m] Thruster location expressed in body
     Eigen::Vector3d thrDir_B;                       //!< [-] Thruster direction unit vector in body
     std::vector<THRTimePairSimMsg> ThrusterOnRamp; //!< -- Percentage of max thrust for ramp up
