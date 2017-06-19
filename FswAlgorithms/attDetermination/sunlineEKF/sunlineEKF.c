@@ -323,7 +323,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, &(ConfigData->obs), &(ConfigData->measMat), &(ConfigData->yMeas), &(ConfigData->numObs));
+    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, ConfigData->numObs, &(ConfigData->measMat));
     
     /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
      time update section of the reference document*/
@@ -435,11 +435,12 @@ void sunlineEKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES]
  
  */
 
-void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double (*obs)[MAX_N_CSS_MEAS], double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*yMeas)[MAX_N_CSS_MEAS], int *numObs)
+void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double *obs, double *yMeas, int *numObs, double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES])
 {
     uint32_t i, obsCounter;
     double sensorNormal[3];
-    double y[MAX_N_CSS_MEAS];
+    
+    v3SetZero(sensorNormal);
 
     /* Begin method steps */
     obsCounter = 0;
@@ -451,16 +452,14 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
             /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
             v3Copy(cssNHat_B[i], sensorNormal);
             
-            *obs[obsCounter] = cssSensorCos[i];
+            *(obs+obsCounter) = cssSensorCos[i];
+            *(yMeas+obsCounter) = cssSensorCos[i];// - v3Dot(&(states[0]), sensorNormal);
             
-            vCopy(&(cssNHat_B[i]), SKF_N_STATES, &(measMat[obsCounter]));
-            y[obsCounter] = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
-            *yMeas[obsCounter] = y[obsCounter];
-        
+            v3Copy(cssNHat_B[i], *(measMat+obsCounter)[0]);
             obsCounter++;
         }
     }
-    numObs = obsCounter;
+    *numObs = obsCounter;
 }
 
 
@@ -473,15 +472,23 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
 
 void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS])
 {
-    double hObsT[SKF_N_STATES][numObs];
-    double covHT[SKF_N_STATES][numObs];
-    double hCovar[numObs][SKF_N_STATES], hCovarHT[numObs][numObs], hCovarHTinv[numObs][numObs];
-    double rMat[numObs][numObs];
+    double hObsT[SKF_N_STATES][MAX_N_CSS_MEAS];
+    double covHT[SKF_N_STATES][MAX_N_CSS_MEAS];
+    double hCovar[MAX_N_CSS_MEAS][SKF_N_STATES], hCovarHT[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], hCovarHTinv[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];
+    double rMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];
+    
+    /* Setting all local variables to zero */
+    mSetZero(hObsT, SKF_N_STATES, MAX_N_CSS_MEAS);
+    mSetZero(covHT, SKF_N_STATES, MAX_N_CSS_MEAS);
+    mSetZero(hCovar, MAX_N_CSS_MEAS, SKF_N_STATES);
+    mSetZero(hCovarHT, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
+    mSetZero(hCovarHTinv, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
+    mSetZero(rMat, MAX_N_CSS_MEAS, MAX_N_CSS_MEAS);
+    
     /* Begin method steps */
+    mTranspose(hObs, numObs, SKF_N_STATES, hObsT);
     
-    mTranspose(hObs, MAX_N_CSS_MEAS, SKF_N_STATES, hObsT);
-    
-    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, MAX_N_CSS_MEAS, covHT);
+    mMultM(covarBar, SKF_N_STATES, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, covHT);
     mMultM(hObs, numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
     mMultM(hCovar, numObs, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, hCovarHT);
     

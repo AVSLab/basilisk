@@ -111,7 +111,9 @@ def sunline_individual_test(show_plots):
         testMessages.append("Dynamics Matrix generation Failure")
 
 
+
     ## STM and State Test
+
     inputStates = [2,1,0.75,0.1,0.4,0.05]
     dt =0.1
     stateTransition = sunlineEKF.new_doubleArray(6*6)
@@ -149,65 +151,120 @@ def sunline_individual_test(show_plots):
         testFailCount += 1
         testMessages.append("STM Propagation Failure")
 
-    #print np.dot(np.array(inputStates[3:6]),np.array(inputStates[0:3]))/np.linalg.norm(inputStates[0:3])*np.array(inputStates[0:3])/np.linalg.norm(inputStates[0:3])
 
     if(errorNormStates > 1.0E-12):
         print errorNormStates
         testFailCount += 1
         testMessages.append("State Propagation Failure")
 
-    numCSS = 8
-    cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
-    sensorTresh = np.cos(np.deg2rad(50.))
-    cssNormals = [[1.,0.,0.],[0.,1.,0.],[0.,0.,1.],[1./np.sqrt(2), 1./np.sqrt(2),0.]]
+    ## Test the H and yMeas matrix generation as well as the observation count
 
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
+    # numCSS = 4
+    # cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
+    # sensorTresh = np.cos(np.deg2rad(50.))
+    # cssNormals = [[1.,0.,0.],[0.,1.,0.],[0.,0.,1.],[1./np.sqrt(2), 1./np.sqrt(2),0.]]
+    #
+    # measMat = sunlineEKF.new_doubleArray(8*6)
+    # obs = sunlineEKF.new_doubleArray(8)
+    # yMeas = sunlineEKF.new_doubleArray(8)
+    # numObs = sunlineEKF.new_intArray(1)
+    #
+    # for i in range(8*6):
+    #     sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+    # for i in range(8):
+    #     sunlineEKF.doubleArray_setitem(obs, i, 0.0)
+    #     sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+    #
+    # sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
+    #
+    # obsOut = []
+    # yMeasOut = []
+    # numObsOut = []
+    # HOut = []
+    # for i in range(8*6):
+    #     HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
+    # for i in range(8):
+    #     yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
+    #     obsOut.append(sunlineEKF.doubleArray_getitem(obs, i))
+    # numObsOut.append(sunlineEKF.intArray_getitem(numObs, 0))
+    #
+    # #Fill in expected values for test
+    # expectedH = np.zeros([8,6])
+    # expectedY = np.zeros(8)
+    # for j in range(3):
+    #     expectedH[0,0:3] = np.eye(3)[j,:]
+    #     expectedY[j] =np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j,:])
+    # expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
+    # expectedNumObs = 3
+    #
+    # # print np.array(HOut).reshape([8, 6])
+    # print 'yMeasOut' , yMeasOut
+    # print 'expectedY' , expectedY
+    #
+    # HOut = np.array(HOut).reshape([8, 6])
+    # errorNorm = np.zeros(4)
+    # errorNorm[0] = np.linalg.norm(HOut - expectedH)
+    # errorNorm[1] = np.linalg.norm(yMeasOut - expectedY)
+    # errorNorm[2] = np.linalg.norm(obsOut - expectedObs)
+    # errorNorm[3] = np.linalg.norm(numObsOut[0] - expectedNumObs)
+    # print errorNorm
+    # for i in range(4):
+    #     if(errorNorm[i] > 1.0E-12):
+    #         testFailCount += 1
+    #         testMessages.append("H and yMeas update failure")
 
-    expectedH = np.zeros([8,6])
-    expectedY = np.zeros(8)
-    for j in range(3):
-        expectedH[0,0:3] = np.eye(3)[j,:]
-        expectedY[j] =np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j,:])
-    expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
-    expectedNumObs = 3.
+    ## Test the Kalman Gain
 
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
-    for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+    numObs = 3
+    h = [[1., 0., 0., 0., 0., 0.], [0., 1., 0., 0., 0., 0.], [0., 0., 1., 0., 0., 0.], [0., 0., 0., 0., 0., 0.],
+         [0., 0., 0., 0., 0., 0.], [0., 0., 0., 0., 0., 0.], [0., 0., 0., 0., 0., 0.], [0., 0., 0., 0., 0., 0.]]
+    noise = [
+        [0.01, 0., 0., 0., 0., 0., 0., 0.],
+        [0., 0.01, 0., 0., 0., 0., 0., 0.],
+        [0., 0., 0.01, 0., 0., 0., 0., 0.],
+        [0., 0., 0., 0.01, 0., 0., 0., 0.],
+        [0., 0., 0., 0., 0.01, 0., 0., 0.],
+        [0., 0., 0., 0., 0., 0.01, 0., 0.],
+        [0., 0., 0., 0., 0., 0., 0.01, 0.],
+        [0., 0., 0., 0., 0., 0., 0., 0.01],
+    ]
+    covar = [[1., 0., 0., 1., 0., 0.],
+        [0., 1., 0., 0., 1., 0.],
+        [0., 0., 1., 0., 0., 1.],
+        [1., 0., 0., 1., 0., 0.],
+        [0., 1., 0., 0., 1., 0.],
+        [0., 0., 1., 0., 0., 1.]]
 
-    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, measMat, yMeas, numObs)
+    Kalman = sunlineEKF.new_doubleArray(6 * 8)
 
-    obsOut = []
-    yMeasOut = []
-    numObsOut = []
-    HOut = []
-    for i in range(8*6):
-        HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
-    for i in range(8):
-        yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
-        obsOut.append(sunlineEKF.doubleArray_getitem(obs, i))
-    numObsOut.append(sunlineEKF.intArray_getitem(numObs, 0))
+    for i in range(8 * 6):
+        sunlineEKF.doubleArray_setitem(Kalman, i, 0.)
 
-    print np.shape(expectedH)
+    sunlineEKF.sunlineKalmanGain(covar, h, noise, numObs, Kalman)
 
-    HOut = np.array(HOut).reshape([8, 6])
-    errorNorm = np.zeros(4)
-    errorNorm[0] = np.linalg.norm(HOut - expectedH)
-    errorNorm[1] = np.linalg.norm(yMeasOut - expectedY)
-    errorNorm[2] = np.linalg.norm(obsOut - expectedObs)
-    errorNorm[3] = np.linalg.norm(numObsOut[0] - 3)
-    for i in range(4):
-        if(errorNorm[i] > 1.0E-12):
-            print i
-            print errorNorm[i]
-            print numObsOut[0]
-            testFailCount += 1
-            testMessages.append("H and yMeas update failure")
+    KalmanOut = []
+    for i in range(8 * 6):
+        KalmanOut.append(sunlineEKF.doubleArray_getitem(Kalman, i))
+
+    # Fill in expected values for test
+    expectedK = np.zeros([6, 8])
+
+    Hmat = np.array(h)
+    Pk = np.array(covar)
+    R = np.array(noise)
+    expectedK = np.dot(np.dot(Pk, Hmat[0:numObs,:].T), np.linalg.inv(np.dot(np.dot(Hmat[0:numObs,:], Pk), Hmat[0:numObs,:].T) + R[0:numObs,0:numObs]))
+
+
+    KalmanOut = np.array(KalmanOut).reshape([6, 8])
+    errorNorm = np.linalg.norm(KalmanOut[0:6,0:numObs] - expectedK)
+
+    print KalmanOut[0:6,0:numObs]
+    print expectedK
+
+    print errorNorm
+    if (errorNorm > 1.0E-12):
+        testFailCount += 1
+        testMessages.append("Kalman Gain update failure")
 
 
     # If the argument provided at commandline "--show_plots" evaluates as true,

@@ -43,8 +43,6 @@ typedef struct {
     char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
     
-	int numStates;                /*!< [-] Number of states for this filter*/
-	int numObs;                   /*!< [-] Number of measurements this cycle */
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/
     double qProcVal;               /*!< [-] Process noise parameter*/
 
@@ -70,6 +68,8 @@ typedef struct {
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS][3];     /*!< [-] CSS normal vectors converted over to body*/
 
+    uint32_t numStates;                /*!< [-] Number of states for this filter*/
+    uint32_t numObs;                   /*!< [-] Number of measurements this cycle */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/
@@ -96,7 +96,7 @@ extern "C" {
     void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
 	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stateTransition)[SKF_N_STATES][SKF_N_STATES]);
     
-    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double (*obs)[MAX_N_CSS_MEAS], double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES], double (*yMeas)[MAX_N_CSS_MEAS], int *numObs);
+    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double *obs, double *yMeas, int *numObs, double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES]);
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS]);
     
