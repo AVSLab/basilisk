@@ -316,6 +316,21 @@ Eigen::Vector3d GravBodyData::computeGravityInertial(Eigen::Vector3d r_I,
     return(gravOut);
 }
 
+double GravBodyData::computePotentialEnergy(Eigen::Vector3d r_I)
+{
+    double gravPotentialEnergyOut = 0.0;
+
+    double rMag = r_I.norm();
+    gravPotentialEnergyOut  = -this->mu/rMag;
+
+    if(this->spherHarm.harmReady() && this->useSphericalHarmParams)
+    {
+
+    }
+    
+    return(gravPotentialEnergyOut);
+}
+
 void GravBodyData::loadEphemeris(uint64_t moduleID)
 {
     SystemMessaging::GetInstance()->ReadMessage(this->bodyMsgID, &this->localHeader,
@@ -452,7 +467,8 @@ void GravityEffector::updateInertialPosAndVel()
 {
     // Here we explicitly update the system inertial spacecraft position
     // in the spice reference frame if we are computing dynamics
-    // relative to a central body
+    // relative to a central body (!Is the velocity for the central body
+    // correct here?)
     if(this->centralBody)
     {
         Eigen::Vector3d centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
@@ -475,5 +491,47 @@ Eigen::Vector3d GravityEffector::getEulerSteppedGravBodyPosition(GravBodyData *b
     mappedPos += Eigen::Map<Eigen::Vector3d>
     (&(bodyData->localPlanet.VelocityVector[0]), 3, 1)*dt;
     return mappedPos;
+}
+
+void GravityEffector::updateEnergyContributions(double & orbPotEnergyContr)
+{
+    Eigen::Vector3d centralPos;
+    Eigen::Vector3d centralVel;
+    centralPos.fill(0.0);
+    centralVel.fill(0.0);
+    Eigen::Vector3d cLocal_N;
+    Eigen::MRPd sigmaBNLoc;
+    Eigen::Matrix3d dcm_NB;
+
+    sigmaBNLoc = (Eigen::Vector3d) this->hubSigma->getState();
+    dcm_NB = sigmaBNLoc.toRotationMatrix();
+    cLocal_N = dcm_NB*(*this->c_B);
+
+    std::vector<GravBodyData *>::iterator it;
+    for(it = this->gravBodies.begin(); it != this->gravBodies.end(); it++)
+    {
+        Eigen::Vector3d posRelBody_N;
+        posRelBody_N = this->posState->getState();
+        posRelBody_N += cLocal_N;
+        Eigen::Vector3d mappedPos = getEulerSteppedGravBodyPosition(*it);
+        posRelBody_N -= mappedPos;
+
+        if(this->centralBody)
+        {
+            centralPos = getEulerSteppedGravBodyPosition(this->centralBody);
+            posRelBody_N += centralPos;
+            if(this->centralBody != (*it))
+            {
+                double frmPot =
+                (*it)->computePotentialEnergy(mappedPos-centralPos);
+                orbPotEnergyContr += frmPot;
+            }
+        }
+
+        double bodyPot = (*it)->computePotentialEnergy(posRelBody_N);
+        orbPotEnergyContr += bodyPot;
+    }
+
+    return;
 }
 

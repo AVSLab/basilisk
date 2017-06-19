@@ -51,7 +51,7 @@ public:
     std::string OutputDataString;     //!< (-) port to use for output data
     uint64_t OutputBufferCount;       //!< (-) Count on number of buffers to output
     bool ReinitSelf;                  //!< (-) Indicator to reset conversion type
-    double strBoreVec[3];             //!< (-) boresight vector in structure
+    double boreVec_B[3];              //!< (-) boresight vector in structure
     double boreVecPoint[3];           //!< (-) pointing vector in the target relative point frame
     AngOffValuesSimMsg boresightAng; //!< (-) Boresigt angles relative to target
     bool inputsGood;                  //!< (-) Flag indicating that inputs were read correctly

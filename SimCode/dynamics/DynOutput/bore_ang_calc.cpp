@@ -135,10 +135,8 @@ void BoreAngCalc::computeAxisPoint()
     v3Cross(&(dcm_PoN[2][0]), &(dcm_PoN[0][0]),
             &(dcm_PoN[1][0]));
     m33MultM33t(dcm_BN, dcm_PoN, dcm_BPo);
-    Eigen::MatrixXd strVec = Eigen::Map<Eigen::MatrixXd>(strBoreVec, 3, 1);
-    Eigen::MatrixXd dcm_BS = Eigen::Map<Eigen::MatrixXd>(&(localState.dcm_BS[0][0]), 3, 3);
-    Eigen::MatrixXd bVec_B = dcm_BS*strVec;
-    m33tMultV3(dcm_BPo, bVec_B.data(), boreVecPoint);
+    Eigen::MatrixXd vecBore_B = Eigen::Map<Eigen::MatrixXd>(boreVec_B, 3, 1);
+    m33tMultV3(dcm_BPo, vecBore_B.data(), boreVecPoint);
     
 }
 /*! This method computes the output structure for messaging. The miss angle is 

@@ -31,7 +31,6 @@ SpacecraftPlus::SpacecraftPlus()
     this->sysTimePropertyName = "systemTime";
     this->scStateOutMsgName = "inertial_state_output";
     this->scMassStateOutMsgName = "mass_state_output";
-    this->struct2BdyPropertyName = "dcm_BS";
 
     // - Set values to either zero or default values
 	this->currTimeStep = 0.0;
@@ -40,7 +39,6 @@ SpacecraftPlus::SpacecraftPlus()
     this->MRPSwitchCount = 0;
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
-    this->dcm_BS.setIdentity();
     this->dvAccum_B.setZero();
 
     // - Set integrator as RK4 by default
@@ -101,7 +99,6 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->MRPSwitchCount;
     SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
@@ -124,7 +121,7 @@ void SpacecraftPlus::UpdateState(uint64_t CurrentSimNanos)
     // - Convert current time to seconds
     double newTime = CurrentSimNanos*NANO2SEC;
 
-    // - Update the gravity field
+    // - Get access to the spice bodies
     this->gravField.UpdateState(CurrentSimNanos);
 
     // - Integrate the state forward in time
@@ -178,7 +175,6 @@ void SpacecraftPlus::initializeDynamics()
     this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
     this->cPrime_B = this->dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
     this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
-    this->property_dcm_BS = this->dynManager.createProperty(this->struct2BdyPropertyName, this->dcm_BS);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
     
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!
@@ -284,12 +280,11 @@ void SpacecraftPlus::updateSCMassProps(double time)
  the stateEffectors. The hub also has gravity and dynamicEffectors acting on it and these relationships are controlled 
  in this method. At the end of this method all of the states will have their corresponding state derivatives set in the 
  dynParam Manager thus solving for Xdot*/
-void SpacecraftPlus::equationsOfMotion(double time)
+void SpacecraftPlus::equationsOfMotion(double integTimeSeconds)
 {
     // - Update time to the current time
-    uint64_t CurrentSimNanos;
-    CurrentSimNanos = this->simTimePrevious + (time-this->timePrevious)/NANO2SEC;
-    (*this->sysTime) << CurrentSimNanos, time;
+    uint64_t integTimeNanos = this->simTimePrevious + (integTimeSeconds-this->timePrevious)/NANO2SEC;
+    (*this->sysTime) << integTimeNanos, integTimeSeconds;
 
     // - Zero all Matrices and vectors for back-sub and the dynamics
     this->hub.matrixA.setZero();
@@ -303,7 +298,7 @@ void SpacecraftPlus::equationsOfMotion(double time)
     this->hub.sumTorquePntB_B.setZero();
 
     // - Update the mass properties of the spacecraft
-    this->updateSCMassProps(time);
+    this->updateSCMassProps(integTimeSeconds);
 
     // - This is where gravity is computed (gravity needs to know c_B to calculated gravity about r_CN_N)
     this->gravField.computeGravityField();
@@ -322,7 +317,7 @@ void SpacecraftPlus::equationsOfMotion(double time)
         this->vecRotContr.setZero();
 
         // - Call the update contributions method for the stateEffectors and add in contributions to the hub matrices
-        (*it)->updateContributions(time, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
+        (*it)->updateContributions(integTimeSeconds, this->matrixAContr, this->matrixBContr, this->matrixCContr, this->matrixDContr,
                                    this->vecTransContr, this->vecRotContr);
         this->hub.matrixA += this->matrixAContr;
         this->hub.matrixB += this->matrixBContr;
@@ -337,19 +332,19 @@ void SpacecraftPlus::equationsOfMotion(double time)
     for(dynIt = this->dynEffectors.begin(); dynIt != this->dynEffectors.end(); dynIt++)
     {
         // - Compute the force and torque contributions from the dynamicEffectors
-        (*dynIt)->computeBodyForceTorque(time);
+        (*dynIt)->computeBodyForceTorque(integTimeSeconds);
         this->hub.sumForceExternal_N += (*dynIt)->forceExternal_N;
         this->hub.sumForceExternal_B += (*dynIt)->forceExternal_B;
         this->hub.sumTorquePntB_B += (*dynIt)->torqueExternalPntB_B;
     }
 
     // - Compute the derivatives of the hub states before looping through stateEffectors
-    this->hub.computeDerivatives(time);
+    this->hub.computeDerivatives(integTimeSeconds);
 
     // - Loop through state effectors for compute derivatives
     for(it = states.begin(); it != states.end(); it++)
     {
-        (*it)->computeDerivatives(time);
+        (*it)->computeDerivatives(integTimeSeconds);
     }
 
     return;
@@ -357,10 +352,10 @@ void SpacecraftPlus::equationsOfMotion(double time)
 
 /*! This method is used to integrate the state forward in time, switch MRPs, calculate energy and momentum, and 
  calculate the accumulated deltaV */
-void SpacecraftPlus::integrateState(double time)
+void SpacecraftPlus::integrateState(double integrateToThisTime)
 {
     // - Find the time step
-	double localTimeStep = time - timePrevious;
+	double localTimeStep = integrateToThisTime - timePrevious;
 
     // - Find v_CN_N before integration for accumulated DV
     Eigen::Vector3d oldV_BN_N = this->hubV_N->getState();  // - V_BN_N before integration
@@ -373,9 +368,10 @@ void SpacecraftPlus::integrateState(double time)
     Eigen::Matrix3d oldDcm_NB = oldSigma_BN.toRotationMatrix(); // - dcm_NB before integration
     oldV_CN_N = oldV_BN_N + oldDcm_NB*(*this->cDot_B);
 
-    // - Integrate the state forward in time
-	this->integrator->integrate(time, localTimeStep);
-	this->timePrevious = time;     // - copy the current time into previous time for next integrate state call
+    // - Integrate the state from the last time (timeBefore) to the integrateToThisTime
+    double timeBefore = integrateToThisTime - localTimeStep;
+	this->integrator->integrate(timeBefore, localTimeStep);
+	this->timePrevious = integrateToThisTime;     // - copy the current time into previous time for next integrate state call
     
     // Lets switch those MRPs!!
     Eigen::Vector3d sigmaBNLoc;
@@ -387,7 +383,7 @@ void SpacecraftPlus::integrateState(double time)
     }
 
     // - Call mass properties to get current info on the mass props of the spacecraft
-    this->updateSCMassProps(time);
+    this->updateSCMassProps(integrateToThisTime);
 
     // - Find v_CN_N after the integration for accumulated DV
     Eigen::Vector3d newV_BN_N = this->hubV_N->getState(); // - V_BN_N after integration
@@ -412,7 +408,7 @@ void SpacecraftPlus::integrateState(double time)
     this->dvAccum_B += dcm_BN*dV_N;
 
     // - Compute Energy and Momentum
-    this->computeEnergyMomentum(time);
+    this->computeEnergyMomentum(integrateToThisTime);
 
     return;
 }
@@ -446,7 +442,7 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     this->totOrbAngMomPntN_N.setZero();
     this->totRotAngMomPntC_N.setZero();
     this->rotAngMomPntCContr_B.setZero();
-    this->totOrbKinEnergy = 0.0;
+    this->totOrbEnergy = 0.0;
     this->totRotEnergy = 0.0;
     this->rotEnergyContr = 0.0;
 
@@ -472,9 +468,14 @@ void SpacecraftPlus::computeEnergyMomentum(double time)
     // - Get cDot_B from manager
     Eigen::Vector3d cDotLocal_B = (*this->cDot_B);
 
-    // - Find orbital kinetic energy for the spacecraft
-    this->totOrbKinEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
+    // - Add in orbital kinetic energy into the total orbital energy calculations
+    this->totOrbEnergy += 1.0/2.0*(*this->m_SC)(0,0)*(rDotBNLocal_B.dot(rDotBNLocal_B) + 2.0*rDotBNLocal_B.dot(cDotLocal_B)
                                                + cDotLocal_B.dot(cDotLocal_B));
+
+    // - Call gravity effector and add in its potential contributions to the total orbital energy calculations
+    this->orbPotentialEnergyContr = 0.0;
+    gravField.updateEnergyContributions(this->orbPotentialEnergyContr);
+    this->totOrbEnergy += (*this->m_SC)(0,0)*this->orbPotentialEnergyContr;
 
     // - Find total rotational energy
     this->totRotEnergy += -1.0/2.0*(*this->m_SC)(0,0)*cDotLocal_B.dot(cDotLocal_B);

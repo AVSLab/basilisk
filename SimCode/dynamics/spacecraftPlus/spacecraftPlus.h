@@ -48,9 +48,10 @@ public:
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
     std::string struct2BdyPropertyName;  //!< -- Name of the structure to body dynamics property
-    double totOrbKinEnergy;              //!< [J] Total orbital kinetic energy
+    double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
+    double orbPotentialEnergyContr;      //!< [J] Contribution of stateEffector to total rotational energy
     double currTimeStep;                 //!< [s] Time after integration, used for dvAccum calculation
     double timePrevious;                 //!< [s] Time before integration, used for dvAccum calculation
     Eigen::Matrix3d matrixAContr;        //!< -- The contribution of each stateEffetor to matrix A
@@ -67,8 +68,6 @@ public:
     Eigen::MatrixXd *cDot_B;             //!< [m/s] Inertial time derivative of c_B
     Eigen::MatrixXd *ISCPntBPrime_B;     //!< [kg m^2/s] Body time derivative of ISCPntB_B
     Eigen::MatrixXd *sysTime;            //!< [s] System time
-    Eigen::MatrixXd *property_dcm_BS;    //!< -- Dynamic property version of the structure to body dmc
-    Eigen::Matrix3d dcm_BS;              //!< -- Transformation from structure to body frame
     Eigen::Vector3d dvAccum_B;           //!< [m/s] Accumulated delta-v in body frame
     Eigen::Vector3d totOrbAngMomPntN_N;  //!< [kg m^2/s] Total orbital angular momentum about N in N frame compenents
     Eigen::Vector3d totRotAngMomPntC_N;  //!< [kg m^2/s] Total rotational angular momentum about C in N frame compenents
@@ -87,7 +86,7 @@ public:
 	void writeOutputMessages(uint64_t clockTime); //!< -- Method to write all of the class output messages
     void UpdateState(uint64_t CurrentSimNanos);  //!< -- Runtime hook back into Basilisk arch
     void linkInStates(DynParamManager& statesIn);  //!< Method to get access to the hub's states
-    void equationsOfMotion(double time);    //!< -- This method computes the equations of motion for the whole system
+    void equationsOfMotion(double integTimeSeconds);    //!< -- This method computes the equations of motion for the whole system
     void integrateState(double time);       //!< -- This method steps the state forward one step in time
 
 private:

@@ -26,10 +26,6 @@
 
 /*! @brief Structure used to define the individual RW configuration data message*/
 typedef struct {
-    double rWB_S[3];            //!< [m], position vector of the RW relative to the spacecraft structural frame
-    double gsHat_S[3];          //!< [-] spin axis unit vector in structural frame
-    double w2Hat0_S[3];         //!< [-] initial torque axis unit vector in structural
-    double w3Hat0_S[3];         //!< [-] initial gimbal axis unit vector in structural frame
     double rWB_B[3];            //!< [m], position vector of the RW relative to the spacecraft body frame
     double gsHat_B[3];          //!< [-] spin axis unit vector in body frame
     double w2Hat0_B[3];         //!< [-] initial torque axis unit vector in body frame
@@ -51,16 +47,6 @@ typedef struct {
     double Omega_max;           //!< [rad/s], max wheel speed
     double linearFrictionRatio; //!< [%] ratio relative to max speed value up to which the friction behaves linearly
     RWModels RWModel;           //!< [-], Type of imbalance model to use
-    double aOmega[3];           //!< [-], parameter used in coupled jitter back substitution
-    double bOmega[3];           //!< [-], parameter used in coupled jitter back substitution
-    double cOmega;              //!< [-], parameter used in coupled jitter back substitution
-    double IRWPntWc_B[9];
-    double IPrimeRWPntWc_B[9];
-    double rWcB_B[3];
-    double rTildeWcB_B[9];
-    double rPrimeWcB_B[3];
-    double w2Hat_B[3];
-    double w3Hat_B[3];
 }RWConfigLogSimMsg;
 
 
