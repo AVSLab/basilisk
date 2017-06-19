@@ -40,42 +40,6 @@ GEN_SIZEOF(VehicleConfigFswMsg);
 %include "../../fswMessages/cssConfigFswMsg.h"
 %include "../../fswMessages/vehicleConfigFswMsg.h"
 %include "../../fswMessages/sunlineFilterFswMsg.h"
-%typemap(in) double (*dynMat)[SKF_N_STATES][SKF_N_STATES] {
-    void *dataPtr;
-    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-    double *actData = (double*) dataPtr;
-    $1 = actData;
-}
-%typemap(in) double (*stateTransition)[SKF_N_STATES][SKF_N_STATES] {
-    void *dataPtr;
-    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-    double *actData = (double*) dataPtr;
-    $1 = actData;
-}
-%typemap(in) double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES] {
-    void *dataPtr;
-    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-    double *actData = (double*) dataPtr;
-    $1 = actData;
-}
-%typemap(in) double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS] {
-    void *dataPtr;
-    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-    double *actData = (double*) dataPtr;
-    $1 = actData;
-}
-//%typemap(in) double *obs {
-//    void *dataPtr;
-//    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-//    double *actData = (double*) dataPtr;
-//    $1 = actData;
-//}
-//%typemap(in) double *yMeas {
-//    void *dataPtr;
-//    SWIG_ConvertPtr($input, &dataPtr, $descriptor(double *), 0 |  0);
-//    double *actData = (double*) dataPtr;
-//    $1 = actData;
-//}
 %include "sunlineEKF.h"
 
 %pythoncode %{

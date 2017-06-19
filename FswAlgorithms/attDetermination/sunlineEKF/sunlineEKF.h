@@ -52,21 +52,21 @@ typedef struct {
 	double states[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
     double x[SKF_N_STATES];             /*! State errors */
     double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
-	double covarBar[SKF_N_STATES][SKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
-    double stateTransition[SKF_N_STATES][SKF_N_STATES];        /*!< [-] covariance */
-    double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS];    /* Kalman Gain */
+	double covarBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
+	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
+    double stateTransition[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
+    double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES][SKF_N_STATES];        /*!< [-] Dynamics Matrix */
-    double measMat[MAX_N_CSS_MEAS][SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
+    double dynMat[SKF_N_STATES*SKF_N_STATES];        /*!< [-] Dynamics Matrix */
+    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
 
-	double procNoise[SKF_N_STATES/2][SKF_N_STATES/2];       /*!< [-] process noise matrix */
-	double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
+	double procNoise[SKF_N_STATES/2*SKF_N_STATES/2];       /*!< [-] process noise matrix */
+	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
-    double cssNHat_B[MAX_NUM_CSS_SENSORS][3];     /*!< [-] CSS normal vectors converted over to body*/
+    double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
 
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
     uint32_t numObs;                   /*!< [-] Number of measurements this cycle */
@@ -94,17 +94,17 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double A[SKF_N_STATES][SKF_N_STATES], double dt, double *stateInOut, double (*stateTransition)[SKF_N_STATES][SKF_N_STATES]);
+	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
     
-    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS][3], double *obs, double *yMeas, int *numObs, double (*measMat)[MAX_N_CSS_MEAS][SKF_N_STATES]);
+    void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
-    void sunlineKalmanGain(double covarBar[SKF_N_STATES][SKF_N_STATES], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double measNoise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double (*kalmanGain)[SKF_N_STATES][MAX_N_CSS_MEAS]);
+    void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double (*dynMat)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double *dynMat);
     
-    void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *x, double *covar);
     
-    void sunlineEKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES][MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES][SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS][SKF_N_STATES], double (*states)[SKF_N_STATES], double (*x)[SKF_N_STATES], double (*covar)[SKF_N_STATES][SKF_N_STATES]);
+    void sunlineEKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double noiseMat[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS], int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *states, double *x, double *covar);
     
 #ifdef __cplusplus
 }
