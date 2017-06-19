@@ -33,7 +33,7 @@ ImuSensor::ImuSensor()
     this->InputStateMsg = "inertial_state_output";
     this->OutputDataMsg = "imu_meas_data";
     this->InputMassMsg = "spacecraft_mass_props";
-    this->setStructureToPlatformDCM(0.0, 0.0, 0.0);
+    this->setBodyToPlatformDCM(0.0, 0.0, 0.0);
     this->OutputBufferCount = 2;
     memset(&this->StatePrevious, 0x0, sizeof(SCPlusStatesSimMsg));
     memset(&this->StateCurrent, 0x0, sizeof(SCPlusStatesSimMsg));
@@ -47,10 +47,10 @@ ImuSensor::ImuSensor()
     return;
 }
 
-void ImuSensor::setStructureToPlatformDCM(double yaw, double pitch, double roll)
+void ImuSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->Str2Platform);
+    Euler3212C(q, this->dcm_PB);
 }
 
 ImuSensor::~ImuSensor()
@@ -255,9 +255,7 @@ void ImuSensor::computePlatformDR()
     double MRP_Bdy2Inrtl_Prev[3];
     double MRP_BdyPrev2BdyNow[3];
     double DRBodyFrame[3];
-    double dcm_PB[3][3];            /*!< dcm, body to platform frame */
-    
-    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, dcm_PB);
+
     v3Scale(-1.0, StatePrevious.sigma_BN, MRP_Bdy2Inrtl_Prev);
     if(StateCurrent.MRPSwitchCount != StatePrevious.MRPSwitchCount)
     {
@@ -270,8 +268,8 @@ void ImuSensor::computePlatformDR()
     }
     addMRP(MRP_Bdy2Inrtl_Prev, StateCurrent.sigma_BN, MRP_BdyPrev2BdyNow);
     MRP2PRV(MRP_BdyPrev2BdyNow, DRBodyFrame);
-    m33MultV3(dcm_PB, DRBodyFrame, this->trueValues.DRFramePlatform);
-    m33MultV3(dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
+    m33MultV3(this->dcm_PB, DRBodyFrame, this->trueValues.DRFramePlatform);
+    m33MultV3(this->dcm_PB, StateCurrent.omega_BN_B, this->trueValues.AngVelPlatform);
 }
 
 void ImuSensor::computePlatformDV(uint64_t CurrentTime)
@@ -284,10 +282,7 @@ void ImuSensor::computePlatformDV(uint64_t CurrentTime)
     double RotForces[3];
     double InertialAccel[3];
     double dt;
-    double dcm_PB[3][3];            /*!< dcm, body to platform frame */
-    m33MultM33t(Str2Platform, StateCurrent.dcm_BS, dcm_PB);
-    v3Subtract(SensorPosStr.data(), MassCurrent.c_B, CmRelPos);
-    m33MultV3(StateCurrent.dcm_BS, CmRelPos, CmRelPos);
+    v3Subtract(this->sensorPos_B.data(), MassCurrent.c_B, CmRelPos);
     dt = (CurrentTime - PreviousTime)*1.0E-9;
     v3Subtract(StateCurrent.omega_BN_B, StatePrevious.omega_BN_B, AlphaBodyRough);
     v3Scale(1.0/dt, AlphaBodyRough, AlphaBodyRough);

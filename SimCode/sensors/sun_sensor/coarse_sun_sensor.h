@@ -58,7 +58,7 @@ public:
     bool LinkMessages(); //!< @brief method to re-init message linkage
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
-    void setStructureToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
+    void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
     bool spacecraftIlluminated(); //!< @brief method to determine if the S/C is illuminated
     void readInputMessages(); //!< @brief method to read the input messages
     void computeSunData(); //!< @brief method to get the sun vector information
@@ -75,10 +75,10 @@ public:
     double              stuckPercent;           //!< [%] percent of full value the CSS will remain stuck at if a fault is triggered
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
     double              phi;                    //!< [rad] css elevation angle, measured positive toward the body +z axis from the x-y plane
-    double              B2P321Angles[3];        //!< [-] 321 Euler anhles for Structure to platform
-    double              dcm_PS[3][3];           //!< [-] DCM from platform frame P to structure frame S
-    double              nHatStr[3];             //!< [-] css unit direction vector in structural components
-    double              sHatStr[3];             //!< [-] unit vector to sun in str
+    double              B2P321Angles[3];        //!< [-] 321 Euler anhles for body to platform
+    double              dcm_PB[3][3];           //!< [-] DCM from platform frame P to body frame B
+    double              nHat_B[3];              //!< [-] css unit direction vector in body frame components
+    double              sHat_B[3];              //!< [-] unit vector to sun in B
     double              horizonPlane[3];        //!< [-] unit direction vector defining horizon cut off plane of CSS
     double              directValue;            //!< [-] direct solar irradiance measurement
     double              albedoValue;            //!< [-] albedo irradiance measurement

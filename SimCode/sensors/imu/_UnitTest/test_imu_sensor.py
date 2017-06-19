@@ -120,8 +120,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     # configure module
     ImuSensor = imu_sensor.ImuSensor()
     ImuSensor.ModelTag = "imusensor"
-    ImuSensor.SensorPosStr = imu_sensor.DoubleVector([0.0, 0.0, 0.0])
-    ImuSensor.setStructureToPlatformDCM(0.0, 0.0, 0.0)
+    ImuSensor.sensorPos_B = imu_sensor.DoubleVector([0.0, 0.0, 0.0])
+    ImuSensor.setBodyToPlatformDCM(0.0, 0.0, 0.0)
     ImuSensor.accelLSB = 0.0
     ImuSensor.gyroLSB = 0.0
     ImuSensor.senRotBias = [0.0] * 3
@@ -142,7 +142,6 @@ def unitSimIMU(show_plots, useFlag, testCase):
     StateCurrent.v_BN_N = [0,0,0]
     StateCurrent.sigma_BN = np.array([0,0,0])
     StateCurrent.omega_BN_B = [0,0,0]
-    StateCurrent.dcm_BS = [[1,0,0],[0,1,0],[0,0,1]]
     StateCurrent.TotalAccumDVBdy = [0,0,0]
     StateCurrent.MRPSwitchCount = 0
 
@@ -244,7 +243,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         accuracy = 1e-5
         simStopTime = 0.1
         SensorPosStr = myRand(3)
-        ImuSensor.SensorPosStr = imu_sensor.DoubleVector(SensorPosStr)
+        ImuSensor.sensorPos_B = imu_sensor.DoubleVector(SensorPosStr)
         CoM = myRand(3)
         MassPropsData.c_B = CoM
         omega = myRand(3)*0.1
@@ -273,7 +272,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         accuracy = 1e-4
         simStopTime = 0.5
         euler = myRand(3)*(np.pi/2 - 1e-3)
-        ImuSensor.setStructureToPlatformDCM(euler[0], euler[1], euler[2])
+        ImuSensor.setBodyToPlatformDCM(euler[0], euler[1], euler[2])
         omega = myRand(3)
         StateCurrent.omega_BN_B = omega
         omegaOut = np.dot(rbk.euler3212C(euler),np.asarray(omega))

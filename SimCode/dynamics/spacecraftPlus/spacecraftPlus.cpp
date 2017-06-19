@@ -31,7 +31,6 @@ SpacecraftPlus::SpacecraftPlus()
     this->sysTimePropertyName = "systemTime";
     this->scStateOutMsgName = "inertial_state_output";
     this->scMassStateOutMsgName = "mass_state_output";
-    this->struct2BdyPropertyName = "dcm_BS";
 
     // - Set values to either zero or default values
 	this->currTimeStep = 0.0;
@@ -40,7 +39,6 @@ SpacecraftPlus::SpacecraftPlus()
     this->MRPSwitchCount = 0;
     this->scStateOutMsgId = -1;
 	this->numOutMsgBuffers = 2;
-    this->dcm_BS.setIdentity();
     this->dvAccum_B.setZero();
 
     // - Set integrator as RK4 by default
@@ -101,7 +99,6 @@ void SpacecraftPlus::writeOutputMessages(uint64_t clockTime)
     eigenVector3d2CArray(vLocal_CN_N, stateOut.v_CN_N);
     eigenMatrixXd2CArray(this->hubSigma->getState(), stateOut.sigma_BN);
     eigenMatrixXd2CArray(this->hubOmega_BN_B->getState(), stateOut.omega_BN_B);
-    eigenMatrix3d2CArray(this->dcm_BS, (double *)stateOut.dcm_BS);
     eigenMatrixXd2CArray(this->dvAccum_B, stateOut.TotalAccumDVBdy);
     stateOut.MRPSwitchCount = this->MRPSwitchCount;
     SystemMessaging::GetInstance()->WriteMessage(this->scStateOutMsgId, clockTime, sizeof(SCPlusStatesSimMsg),
@@ -178,7 +175,6 @@ void SpacecraftPlus::initializeDynamics()
     this->ISCPntBPrime_B = this->dynManager.createProperty("inertiaPrimeSC", initISCPntBPrime_B);
     this->cPrime_B = this->dynManager.createProperty("centerOfMassPrimeSC", initCPrime_B);
     this->cDot_B = this->dynManager.createProperty("centerOfMassDotSC", initCDot_B);
-    this->property_dcm_BS = this->dynManager.createProperty(this->struct2BdyPropertyName, this->dcm_BS);
     this->sysTime = this->dynManager.createProperty(this->sysTimePropertyName, systemTime);
     
     // - Register the gravity properties with the dynManager, 'erbody wants g_N!

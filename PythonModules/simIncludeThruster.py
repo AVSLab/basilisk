@@ -52,8 +52,8 @@ options = thrusterOptions()
 #
 def create(
         thrusterType,
-        r_S,
-        tHat_S
+        r_B,
+        tHat_B
     ):
     global thrusterList
     global options
@@ -69,16 +69,16 @@ def create(
         exit(1)
 
     # set thruster direction axis
-    norm = numpy.linalg.norm(tHat_S)
+    norm = numpy.linalg.norm(tHat_B)
     if norm>1e-10:
-        tHat_S = tHat_S / norm
+        tHat_B = tHat_B / norm
     else:
         print 'Error: Thruster ' + sys._getframe().f_code.co_name +' direction tHat input must be non-zero 3x1 vector'
         exit(1)
-    TH.inputThrDir_S = [[tHat_S[0]], [tHat_S[1]], [tHat_S[2]]]
+    TH.thrDir_B = [[tHat_B[0]], [tHat_B[1]], [tHat_B[2]]]
 
     # set thruster position vector
-    TH.inputThrLoc_S = [[r_S[0]], [r_S[1]], [r_S[2]]]
+    TH.thrLoc_B = [[r_B[0]], [r_B[1]], [r_B[2]]]
     # enforce Thruster options
     if not options.useMinPulseTime:
         TH.MinOnTime = 0.0

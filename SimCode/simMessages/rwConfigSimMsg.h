@@ -28,10 +28,6 @@ enum RWModels { BalancedWheels, JitterSimple, JitterFullyCoupled };
 
 /*! @brief Structure used to define the individual RW configuration data message*/
 typedef struct {
-    Eigen::Vector3d rWB_S;      //!< [m], position vector of the RW relative to the spacecraft structural frame
-    Eigen::Vector3d gsHat_S;    //!< [-] spin axis unit vector in structural frame
-    Eigen::Vector3d w2Hat0_S;   //!< [-] initial torque axis unit vector in structural
-    Eigen::Vector3d w3Hat0_S;   //!< [-] initial gimbal axis unit vector in structural frame
     Eigen::Vector3d rWB_B;      //!< [m], position vector of the RW relative to the spacecraft body frame
     Eigen::Vector3d gsHat_B;    //!< [-] spin axis unit vector in body frame
     Eigen::Vector3d w2Hat0_B;   //!< [-] initial torque axis unit vector in body frame
