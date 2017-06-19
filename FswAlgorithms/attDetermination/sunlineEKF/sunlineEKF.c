@@ -339,19 +339,19 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     vCopy(ConfigData->yMeas, ConfigData->numObs, yObs);
     
-    for(i=0; i<ConfigData->numObs+1; i++)
-    {
-        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
-        vCopy(ConfigData->measNoise[i], ConfigData->numObs, noise[i]);
-    }
-    
+//    for(i=0; i<ConfigData->numObs+1; i++)
+//    {
+//        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
+//        vCopy(ConfigData->measNoise[i], ConfigData->numObs, noise[i]);
+//    }
+//    
     /*! - Compute the Kalman Gain. */
-    sunlineKalmanGain(ConfigData->covarBar, hObs, ConfigData->measNoise, ConfigData->numObs, &(ConfigData->kalmanGain));
+    sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
     
     /*! - Compute the update with a CKF */
-    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, noise, ConfigData->numObs, yObs, hObs, &(ConfigData->x), &(ConfigData->covar));
+    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->measNoise, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
     /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    sunlineEKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, noise, ConfigData->numObs, yObs, hObs, &(ConfigData->states), &(ConfigData->x), &(ConfigData->covar));
+    sunlineEKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->measNoise, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
     
 }
 
@@ -456,12 +456,11 @@ void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSens
         if(cssSensorCos[i] > sensorUseThresh)
         {
             /*! - For each valid measurement, copy observation value and compute expected obs value and fill out H matrix.*/
-            v3Copy(cssNHat_B[i], sensorNormal);
+            v3Copy(&(cssNHat_B[i*3]), sensorNormal);
             
             *(obs+obsCounter) = cssSensorCos[i];
-            *(yMeas+obsCounter) = cssSensorCos[i];// - v3Dot(&(states[0]), sensorNormal);
-            
-            v3Copy(cssNHat_B[i], *(measMat+obsCounter)[0]);
+            *(yMeas+obsCounter) = cssSensorCos[i] - v3Dot(&(states[0]), sensorNormal);
+            mSetSubMatrix(&(cssNHat_B[i*3]), 1, 3, measMat, MAX_NUM_CSS_SENSORS, SKF_N_STATES, obsCounter, 0);
             obsCounter++;
         }
     }
@@ -496,16 +495,17 @@ void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[M
     mMultM(hObs, numObs, SKF_N_STATES, covarBar, SKF_N_STATES, SKF_N_STATES, hCovar);
     mMultM(hCovar, numObs, SKF_N_STATES, hObsT, SKF_N_STATES, numObs, hCovarHT);
     
-    mCopy(measNoise, numObs, numObs, rMat);
+    mSetIdentity(rMat, numObs, numObs);
+    mScale(qObsVal, rMat, numObs, numObs, rMat);
     
     /*! - Add measurement noise */
     mAdd(hCovarHT, numObs, numObs, rMat, hCovarHT);
     
     /*! - Invert the previous matrix */
-    mInverse(hCovarHT, numObs, hCovarHTinv);
+    mInverse(hCovarHT, numObs, hCovarHT);
     
     /*! - Compute the Kalman Gain */
-    mMultM(covHT, SKF_N_STATES, numObs, hCovarHTinv, numObs, numObs, kalmanGain);
+    mMultM(covHT, SKF_N_STATES, numObs, hCovarHT, numObs, numObs, kalmanGain);
     
 }
 
