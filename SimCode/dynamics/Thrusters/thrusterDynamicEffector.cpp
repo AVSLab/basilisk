@@ -508,7 +508,7 @@ void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())
     {
-        this->ConfigureThrustRequests(CurrentSimNanos*1.0E-9);
+        this->ConfigureThrustRequests(prevCommandTime*1.0E-9);
     }
     this->writeOutputMessages(CurrentSimNanos);
     
