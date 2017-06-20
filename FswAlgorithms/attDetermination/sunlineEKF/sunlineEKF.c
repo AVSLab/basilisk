@@ -119,6 +119,8 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     mSetZero(ConfigData->covar, ConfigData->numStates, ConfigData->numStates);
     
     mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
+    mSetIdentity(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2);
+    mScale(ConfigData->qProcVal, ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, ConfigData->procNoise);
     mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
     mSetZero(ConfigData->measMat, ConfigData->numStates, ConfigData->numStates);
     
@@ -196,10 +198,13 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
 */
 void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-    double stmT[SKF_N_STATES][SKF_N_STATES], covPhiT[SKF_N_STATES][SKF_N_STATES], qGammaT[SKF_N_STATES/2][SKF_N_STATES], gammaQGammaT[SKF_N_STATES][SKF_N_STATES];
+    double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
+    double qGammaT[SKF_N_STATES/2*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
+    double eye[SKF_N_STATES*SKF_N_STATES];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
+    mCopy(eye, SKF_N_STATES, SKF_N_STATES, ConfigData->stateTransition);
     
     /*! - Propagate the previous reference states and STM to the current time */
     sunlineDynMatrix(ConfigData->states, ConfigData->dynMat);
@@ -323,35 +328,21 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double *dynMat)
  */
 void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
-//    uint32_t i;
-    double yObs[MAX_N_CSS_MEAS],  hObs[MAX_N_CSS_MEAS][SKF_N_STATES];
-    double noise[MAX_N_CSS_MEAS][MAX_N_CSS_MEAS];
+
     
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, ConfigData->numObs, ConfigData->measMat);
     
-    /*! - Compute the value for the yBar parameter (note that this is equation 23 in the
-     time update section of the reference document*/
-    vSetZero(yObs, ConfigData->numObs);
-    mSetZero(hObs, ConfigData->numObs, ConfigData->numStates);
-    mSetZero(noise, ConfigData->numObs, ConfigData->numObs);
-    
-    vCopy(ConfigData->yMeas, ConfigData->numObs, yObs);
-    
-//    for(i=0; i<ConfigData->numObs+1; i++)
-//    {
-//        vCopy(ConfigData->measMat[i], SKF_N_STATES, hObs[i]);
-//        vCopy(ConfigData->measNoise[i], ConfigData->numObs, noise[i]);
-//    }
-//    
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
     
+    /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
+    
     /*! - Compute the update with a CKF */
-    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->measNoise, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
-    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-    sunlineEKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->measNoise, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
+    sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
+//    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
+//    sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
     
 }
 
