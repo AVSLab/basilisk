@@ -228,7 +228,7 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
             separator = '.'
             thrusterObject = getattr(sim, self.varNameComponents[0])
             totalVar = separator.join(self.varNameComponents[0:-1])
-            dirVec = eval('sim.' + totalVar + '.inputThrDir_S')
+            dirVec = eval('sim.' + totalVar + '.thrDir_B')
             angle = np.random.normal(0, self.phiStd, 1)
             dirVec = np.array(dirVec).reshape(3).tolist()
             dispVec = self.perturbVectorByAngle(dirVec, angle)
@@ -412,7 +412,7 @@ class MonteCarloBaseClass:
                 nextValue = disp.generate(newSim)
                 if isinstance(disp, NormalThrusterUnitDirectionVectorDispersion):
                     separator = '.'
-                    execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.inputThrDir_S = ['
+                    execString = 'newSim.' + separator.join(disp.varNameComponents[0:-1]) + '.thrDir_B = ['
                     for i in range(3):
                         execString += str(nextValue[i])
                         if (i < 2):
