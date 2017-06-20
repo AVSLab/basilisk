@@ -86,7 +86,10 @@ def sunline_individual_test(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
+    ###################################################################################
     ## Testing dynamics matrix computation
+    ###################################################################################
+
     inputStates = [2,1,0.75,0.1,0.4,0.05]
 
     expDynMat = np.zeros([6,6])
@@ -110,9 +113,9 @@ def sunline_individual_test(show_plots):
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure")
 
-
-
+    ###################################################################################
     ## STM and State Test
+    ###################################################################################
 
     inputStates = [2,1,0.75,0.1,0.4,0.05]
     dt =0.1
@@ -130,55 +133,10 @@ def sunline_individual_test(show_plots):
 
     PropStateOut = []
     PropSTMOut = []
-    # for i in range(6):
-    #     PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
-    # for i in range(36):
-    #     PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, i))
-
-    # Loop is not working, I don't even care
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 0))
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 1))
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 2))
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 3))
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 4))
-    PropStateOut.append(sunlineEKF.doubleArray_getitem(states, 5))
-
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 0))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 1))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 2))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 3))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 4))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 5))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 6))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 7))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 8))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 9))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 10))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 11))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 12))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 13))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 14))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 15))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 16))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 17))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 18))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 19))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 20))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 21))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 22))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 23))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 24))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 25))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 26))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 27))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 28))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 29))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 30))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 31))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 32))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 33))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 34))
-    PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, 35))
+    for i in range(6):
+        PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
+    for i in range(36):
+        PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, i))
 
     STMout = np.array(PropSTMOut).reshape([6,6])
     StatesOut = np.array(PropStateOut)
@@ -201,7 +159,10 @@ def sunline_individual_test(show_plots):
         testFailCount += 1
         testMessages.append("State Propagation Failure")
 
+    ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
+    ###################################################################################
+
     numCSS = 4
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
@@ -251,7 +212,9 @@ def sunline_individual_test(show_plots):
             testFailCount += 1
             testMessages.append("H and yMeas update failure")
 
+    ###################################################################################
     ## Test the Kalman Gain
+    ###################################################################################
 
     numObs = 3
     h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
@@ -284,11 +247,135 @@ def sunline_individual_test(show_plots):
     KalmanOut = np.array(KalmanOut)[0:6*numObs].reshape([6, 3])
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
+
     if (errorNorm > 1.0E-12):
         print errorNorm
         testFailCount += 1
         testMessages.append("Kalman Gain update failure")
 
+    ###################################################################################
+    ## Test the EKF update
+    ###################################################################################
+
+    KGain = [1.,2.,3., 0., 1., 2., 1., 0., 1., 0., 1., 0., 3., 0., 1., 0., 2., 0.]
+    for i in range(6*8-6*3):
+        KGain.append(0.)
+    inputStates = [2,1,0.75,0.1,0.4,0.05]
+    xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
+    numObs = 3
+    h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
+    covar = [1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.,
+             1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.]
+    noise = 0.01
+    inputY = np.zeros(3)
+    for j in range(3):
+        inputY[j] = np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j * 3:(j + 1) * 3])
+    inputY = inputY.tolist()
+
+    stateError = sunlineEKF.new_doubleArray(6)
+    covarMat = sunlineEKF.new_doubleArray(6*6)
+    inputs = sunlineEKF.new_doubleArray(6)
+
+
+    for i in range(6):
+        sunlineEKF.doubleArray_setitem(stateError, i, 0.)
+        sunlineEKF.doubleArray_setitem(inputs, i, inputStates[i])
+        for j in range(6):
+            sunlineEKF.doubleArray_setitem(covarMat,i+j,0.)
+
+    sunlineEKF.sunlineEKFUpdate(KGain, covar, noise, numObs, inputY, h, inputs, stateError, covarMat)
+
+    stateOut = []
+    covarOut = []
+    errorOut = []
+    for i in range(6):
+        stateOut.append(sunlineEKF.doubleArray_getitem(inputs, i))
+        errorOut.append(sunlineEKF.doubleArray_getitem(stateError, i))
+    for j in range(36):
+        covarOut.append(sunlineEKF.doubleArray_getitem(covarMat, j))
+
+    # Fill in expected values for test
+    KK = np.array(KGain)[0:6*3].reshape([6,3])
+    expectedStates = np.array(inputStates) + np.dot(KK, np.array(inputY))
+    H = np.array(h).reshape([8,6])[0:3,:]
+    Pk = np.array(covar).reshape([6, 6])
+    R = noise * np.eye(3)
+    expectedP = np.dot(np.dot(np.eye(6) - np.dot(KK, H), Pk), np.transpose(np.eye(6) - np.dot(KK, H))) + np.dot(KK, np.dot(R,KK.T))
+
+    errorNorm = np.zeros(2)
+    errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedStates)
+    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6,6]))
+    for i in range(2):
+        if(errorNorm[i] > 1.0E-12):
+            testFailCount += 1
+            testMessages.append("EKF update failure")
+
+    ###################################################################################
+    ## Test the CKF update
+    ###################################################################################
+
+    KGain = [1., 2., 3., 0., 1., 2., 1., 0., 1., 0., 1., 0., 3., 0., 1., 0., 2., 0.]
+    for i in range(6 * 8 - 6 * 3):
+        KGain.append(0.)
+    inputStates = [2, 1, 0.75, 0.1, 0.4, 0.05]
+    xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
+    numObs = 3
+    h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
+    covar = [1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.,
+             1., 0., 0., 1., 0., 0.,
+             0., 1., 0., 0., 1., 0.,
+             0., 0., 1., 0., 0., 1.]
+    noise =0.01
+    inputY = np.zeros(3)
+    for j in range(3):
+        inputY[j] = np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3],
+                                                 np.array(cssNormals)[j * 3:(j + 1) * 3])
+    inputY = inputY.tolist()
+
+    stateError = sunlineEKF.new_doubleArray(6)
+    covarMat = sunlineEKF.new_doubleArray(6 * 6)
+
+    for i in range(6):
+        sunlineEKF.doubleArray_setitem(stateError, i, xbar[i])
+        for j in range(6):
+            sunlineEKF.doubleArray_setitem(covarMat, i + j, 0.)
+
+    sunlineEKF.sunlineCKFUpdate(xbar, KGain, covar, noise, numObs, inputY, h, stateError, covarMat)
+
+    covarOut = []
+    errorOut = []
+    for i in range(6):
+        errorOut.append(sunlineEKF.doubleArray_getitem(stateError, i))
+    for j in range(36):
+        covarOut.append(sunlineEKF.doubleArray_getitem(covarMat, j))
+
+    # Fill in expected values for test
+    KK = np.array(KGain)[0:6 * 3].reshape([6, 3])
+    H = np.array(h).reshape([8, 6])[0:3, :]
+    expectedStateError = np.array(xbar) + np.dot(KK, (np.array(inputY) - np.dot(H, np.array(xbar))))
+    Pk = np.array(covar).reshape([6, 6])
+    expectedP = np.dot(np.dot(np.eye(6) - np.dot(KK, H), Pk), np.transpose(np.eye(6) - np.dot(KK, H))) + np.dot(KK,
+                                                                                                                np.dot(
+                                                                                                                    R,
+                                                                                                                    KK.T))
+
+    errorNorm = np.zeros(2)
+    errorNorm[0] = np.linalg.norm(np.array(errorOut) - expectedStateError)
+    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6, 6]))
+    for i in range(2):
+        if (errorNorm[i] > 1.0E-12):
+            testFailCount += 1
+            testMessages.append("CKF update failure")
+
+    ###################################################################################
     # If the argument provided at commandline "--show_plots" evaluates as true,
     # plot all figures
     if show_plots:
@@ -296,7 +383,7 @@ def sunline_individual_test(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + " EKF utilities"
+        print "PASSED: " + " EKF individual tests"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
