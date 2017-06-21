@@ -34,6 +34,7 @@
 #define FREE_DOUBLE(arr) (free(arr))
 #define MOVE_DOUBLE(source, dim, destination) (memmove((void*)(destination), (void*)(source), sizeof(double)*(dim)))
 
+
 void vCopy(void *v, size_t dim,
            void *result)
 {
@@ -207,6 +208,38 @@ double vNorm(void *v, size_t dim)
 {
     return sqrt(vDot(v, dim, v));
 }
+
+double vMax(void *array, size_t dim)
+{
+    size_t i;
+    double result;
+    double *m_array = (double *)array;
+    
+    result = m_array[0];
+    for(i=1; i<dim; i++){
+        if (m_array[i]>result){
+            result = m_array[i];
+        }
+    }
+    return result;
+}
+
+
+double vMaxAbs(void *array, size_t dim)
+{
+    size_t i;
+    double result;
+    double *m_array = (double *)array;
+    
+    result = fabs(m_array[0]);
+    for(i=1; i<dim; i++){
+        if (fabs(m_array[i])>result){
+            result = fabs(m_array[i]);
+        }
+    }
+    return result;
+}
+
 
 void vNormalize(void *v, size_t dim, void *result)
 {
