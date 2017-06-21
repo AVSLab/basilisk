@@ -98,7 +98,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
                 sizeof(CSSConstConfig), &cssConfigInBuffer, moduleID);
     
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
-    for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
+    for(i=0; i<cssConfigInBuffer.nCSS; i++)
     {
         m33MultV3(RECAST3X3 massPropsInBuffer.dcm_BS, cssConfigInBuffer.cssVals[i].nHat_S,
                   &(ConfigData->cssNHat_B[i*3]));
@@ -114,18 +114,19 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
+    vSetZero(ConfigData->yMeas, ConfigData->numObs);
     vSetZero(ConfigData->x, ConfigData->numStates);
     mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->covar, ConfigData->numStates, ConfigData->numStates);
     
     mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
-    mSetIdentity(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2);
-    mScale(ConfigData->qProcVal, ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, ConfigData->procNoise);
+
     mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->measMat, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->measMat, ConfigData->numObs, ConfigData->numStates);
+    mSetZero(ConfigData->kalmanGain, ConfigData->numStates, ConfigData->numObs);
     
-    mSetZero(ConfigData->procNoise, ConfigData->numStates, ConfigData->numStates);
-    mSetZero(ConfigData->measNoise, ConfigData->numStates, ConfigData->numStates);
+    mSetZero(ConfigData->measNoise, ConfigData->numObs, ConfigData->numObs);
+    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates/2, ConfigData->numStates/2);
+    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates/2, ConfigData->numStates/2, ConfigData->procNoise);
     
     return;
 }

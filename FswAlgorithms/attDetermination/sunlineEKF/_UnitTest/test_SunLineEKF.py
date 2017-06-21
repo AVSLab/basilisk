@@ -54,15 +54,21 @@ def setupFilterData(filterObject):
                           0.0, 0.0, 0.0, 0.04, 0.0, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.04, 0.0,
                           0.0, 0.0, 0.0, 0.0, 0.0, 0.04]
-    R = np.identity(6)
-    R[0:3, 0:3] = R[0:3, 0:3]*0.017*0.017
-    R[3:6, 3:6] = R[3:6, 3:6]*0.0017*0.0017
+    R = [0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0,
+         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2]
     filterObject.measNoise = R
 
-    Q = np.identity(3)
-    Q[0:3, 0:3] = Q[0:3, 0:3]*0.017*0.017
+    Q = [0.001**2, 0.0, 0.0,
+         0.0, 0.001**2, 0.0,
+         0.0, 0.0, 0.001**2]
     filterObject.procNoise = Q
-    filterObject.qObsVal = 0.017*0.017
+    filterObject.qObsVal = 0.001**2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -72,8 +78,8 @@ def setupFilterData(filterObject):
 def test_all_sunline_ekf(show_plots):
     [testResults, testMessage] = sunline_individual_test(show_plots)
     assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropSunLine(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropSunLine(show_plots)
+    assert testResults < 1, testMessage
     # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
     # assert testResults < 1, testMessage
 
@@ -560,7 +566,6 @@ def testStateUpdateSunLine(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 def testStatePropSunLine(show_plots):
-
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -594,8 +599,8 @@ def testStatePropSunLine(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate*10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate*10, 0, 5)
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate * 10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
@@ -603,14 +608,11 @@ def testStatePropSunLine(show_plots):
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
-
     for i in range(6):
-        if(abs(stateLog[-1, i+1] - stateLog[0, i+1]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateLog[0, i+1])
+        if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
+            print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
             testFailCount += 1
             testMessages.append("State propagation failure")
-
-
 
     # print out success message if no error were found
     if testFailCount == 0:
@@ -619,6 +621,7 @@ def testStatePropSunLine(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
+
 
 if __name__ == "__main__":
     test_all_sunline_ekf(False)
