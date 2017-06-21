@@ -339,11 +339,14 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
+    if (vMaxAbs(ConfigData->covar, SKF_N_STATES*SKF_N_STATES < ConfigData->eKFSwitch)){
     /*! - Compute the update with a CKF */
     sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
+    }
+    else{
 //    /*! - Compute the update with a EKF, notice the reference state is added as an argument because it is changed by the filter update */
-//    sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
-    
+    sunlineEKFUpdate(ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->states, ConfigData->x, ConfigData->covar);
+    }
 }
 
 /*! This method computes the updated states, state error, and covariance for
