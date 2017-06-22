@@ -40,6 +40,7 @@ import sim_model
 import ctypes
 
 
+
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -47,7 +48,9 @@ def setupFilterData(filterObject):
     filterObject.massPropsInMsgName = "adcs_config_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
-    filterObject.states = [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
+    # filterObject.x = [0.0, 0.001, 0.001, 0.0, 0.0005, 0.0]
+    filterObject.x = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
@@ -68,7 +71,8 @@ def setupFilterData(filterObject):
          0.0, 0.001**2, 0.0,
          0.0, 0.0, 0.001**2]
     filterObject.procNoise = Q
-    filterObject.qObsVal = 0.001**2
+    filterObject.qProcVal = 0.001**2
+    filterObject.qObsVal = 0.017 ** 2
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -78,10 +82,12 @@ def setupFilterData(filterObject):
 def test_all_sunline_ekf(show_plots):
     [testResults, testMessage] = sunline_individual_test(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropSunLine(show_plots)
+    [testResults, testMessage] = testStatePropStatic(show_plots)
     assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropVariable(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    assert testResults < 1, testMessage
 
 def sunline_individual_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -506,6 +512,7 @@ def testStateUpdateSunLine(show_plots):
         unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
         unitTestSim.ExecuteSimulation()
 
+
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
@@ -565,7 +572,8 @@ def testStateUpdateSunLine(show_plots):
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
-def testStatePropSunLine(show_plots):
+
+def testStatePropStatic(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -608,6 +616,7 @@ def testStatePropSunLine(show_plots):
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
+
     for i in range(6):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
@@ -616,7 +625,80 @@ def testStatePropSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state propagation"
+        print "PASSED: " + moduleWrap.ModelTag + " static state propagation"
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+
+
+def testStatePropVariable(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = sunlineEKF.sunlineEKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        sunlineEKF.Update_sunlineEKF,
+                                        sunlineEKF.SelfInit_sunlineEKF,
+                                        sunlineEKF.CrossInit_sunlineEKF,
+                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap.ModelTag = "SunlineEKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    setupFilterData(moduleConfig)
+    moduleConfig.states = [1.0, 1.0, 1.0, 0.1, 0.1, 0.1]
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate * 10, 0, 5)
+    unitTestSim.InitializeSimulation()
+    unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
+    unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+
+    dt = stateLog[1][0] - stateLog[0][0]
+    expectedStateArray = np.zeros([1601,7])
+    expectedStateArray[0,1:7] = moduleConfig.states
+
+    for i in range(1,1600):
+        expectedStateArray[i,0] = dt*i
+        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt*(expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.)
+        expectedStateArray[i, 4:7] = expectedStateArray[i-1,4:7]
+
+    print expectedStateArray[100,:]
+    print stateLog[100,:]
+
+    for j in range(1,1600):
+        for i in range(6):
+            if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-10):
+                # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
+                testFailCount += 1
+                testMessages.append("State propagation failure")
+
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + moduleWrap.ModelTag + " general state propagation"
 
     # return fail count and join into a single string all messages in the list
     # testMessage

@@ -69,7 +69,7 @@ typedef struct {
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/
 
     uint32_t numStates;                /*!< [-] Number of states for this filter*/
-    uint32_t numObs;                   /*!< [-] Number of measurements this cycle */
+    int numObs;                   /*!< [-] Number of measurements this cycle */
     uint32_t numActiveCss;   /*!< -- Number of currently active CSS sensors*/
     uint32_t numCSSTotal;    /*!< [-] Count on the number of CSS we have on the spacecraft*/
     double sensorUseThresh;  /*!< -- Threshold below which we discount sensors*/

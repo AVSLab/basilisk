@@ -115,7 +115,7 @@ void Reset_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     /*! - Ensure that all internal filter matrices are zeroed*/
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->yMeas, ConfigData->numObs);
-    vSetZero(ConfigData->x, ConfigData->numStates);
+    vSetZero(ConfigData->xBar, ConfigData->numStates);
     mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
     
     mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
@@ -168,6 +168,8 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     if(newTimeTag > ConfigData->timeTag)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);
+//        vCopy(ConfigData->xBar, SKF_N_STATES, ConfigData->x);
+//        mCopy(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, ConfigData->covar);
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
@@ -201,11 +203,9 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
     double stmT[SKF_N_STATES*SKF_N_STATES], covPhiT[SKF_N_STATES*SKF_N_STATES];
     double qGammaT[SKF_N_STATES/2*SKF_N_STATES], gammaQGammaT[SKF_N_STATES*SKF_N_STATES];
-    double eye[SKF_N_STATES*SKF_N_STATES];
     
 	/*! Begin method steps*/
 	ConfigData->dt = updateTime - ConfigData->timeTag;
-    mCopy(eye, SKF_N_STATES, SKF_N_STATES, ConfigData->stateTransition);
     
     /*! - Propagate the previous reference states and STM to the current time */
     sunlineDynMatrix(ConfigData->states, ConfigData->dynMat);
@@ -333,7 +333,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
-    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, ConfigData->numObs, ConfigData->measMat);
+    sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
     
     /*! - Compute the Kalman Gain. */
     sunlineKalmanGain(ConfigData->covarBar, ConfigData->measMat, ConfigData->qObsVal, ConfigData->numObs, ConfigData->kalmanGain);
