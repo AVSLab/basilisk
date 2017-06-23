@@ -23,7 +23,7 @@
 
 /*! @brief Structure used to define a single FSW RW configuration with vector in Structure S frame */
 typedef struct {
-    double gsHat_S[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
+    double gsHat_B[3];          /*!< [-] Spin axis unit vector of the wheel in structure */
     double Js;                  /*!< [kgm2] Spin axis inertia of the wheel */
     double uMax;                /*!< [Nm]   maximum RW motor torque */
 }RWConfigElementFswMsg;
