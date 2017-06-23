@@ -129,8 +129,8 @@ def sunline_individual_test(show_plots):
     ## STM and State Test
     ###################################################################################
 
-    inputStates = [2,1,0.75,0.1,0.4,0.05]
-    dt =0.1
+    inputStates = [2,1,0.75, 1.5, 0.5, 0.5]
+    dt =0.5
     stateTransition = sunlineEKF.new_doubleArray(36)
     states = sunlineEKF.new_doubleArray(6)
     for i in range(6):
@@ -623,6 +623,8 @@ def testStatePropStatic(show_plots):
             testFailCount += 1
             testMessages.append("State propagation failure")
 
+    unitTestSim.terminateSimulation()
+
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " static state propagation"
@@ -663,38 +665,47 @@ def testStatePropVariable(show_plots):
                                         sunlineEKF.Reset_sunlineEKF)
     moduleWrap.ModelTag = "SunlineEKF"
 
+
+    InitialState = [1.0, 1.0, 1.0, 1.5, 0.5, 0.5]
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    moduleConfig.states = [1.0, 1.0, 1.0, 0.1, 0.1, 0.1]
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate * 10, 0, 5)
+    moduleConfig.states = InitialState
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5)
     unitTestSim.InitializeSimulation()
-    unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
+    unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
     unitTestSim.ExecuteSimulation()
+
 
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
 
-    dt = stateLog[1][0] - stateLog[0][0]
-    expectedStateArray = np.zeros([1601,7])
-    expectedStateArray[0,1:7] = moduleConfig.states
+    dt = 0.5
+    expectedStateArray = np.zeros([2001,7])
+    expectedStateArray[0,1:7] = np.array(InitialState)
 
-    for i in range(1,1600):
-        expectedStateArray[i,0] = dt*i
+    for i in range(1,2001):
+        expectedStateArray[i,0] = dt*i*1E9
         expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt*(expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.)
         expectedStateArray[i, 4:7] = expectedStateArray[i-1,4:7]
 
-    print expectedStateArray[100,:]
-    print stateLog[100,:]
+    plt.figure()
+    for i in range(3):
+        plt.plot(stateLog[:,0] * 1.0E-9, expectedStateArray[:,i+1], 'b')
+        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i+1], 'r')
+        plt.xlabel('Time (nanosec)')
+        plt.ylabel('States')
+    if (show_plots):
+        plt.show()
 
-    for j in range(1,1600):
+    for j in range(1,2001):
         for i in range(6):
             if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-10):
                 # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
                 testFailCount += 1
-                testMessages.append("State propagation failure")
+                testMessages.append("General state propagation failure")
 
     # print out success message if no error were found
     if testFailCount == 0:

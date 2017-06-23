@@ -168,8 +168,8 @@ void Update_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t callTime,
     if(newTimeTag > ConfigData->timeTag)
     {
         sunlineTimeUpdate(ConfigData, newTimeTag);
-//        vCopy(ConfigData->xBar, SKF_N_STATES, ConfigData->x);
-//        mCopy(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, ConfigData->covar);
+        vCopy(ConfigData->xBar, SKF_N_STATES, ConfigData->x);
+        mCopy(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, ConfigData->covar);
     }
     
     /*! - Write the sunline estimate into the copy of the navigation message structure*/
