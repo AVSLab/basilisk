@@ -131,10 +131,6 @@ def test_StateUpdateInertialAttitude(show_plots):
      0., 800., 0.,
      0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
                                                 inputMessageSize,
                                                 0,
@@ -261,10 +257,6 @@ def test_StatePropInertialAttitude(show_plots):
      0., 800., 0.,
      0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
                                                 inputMessageSize,
                                                 0,
@@ -343,10 +335,6 @@ def test_StatePropRateInertialAttitude(show_plots):
      0., 800., 0.,
      0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
                                                 inputMessageSize,
                                                 0,
