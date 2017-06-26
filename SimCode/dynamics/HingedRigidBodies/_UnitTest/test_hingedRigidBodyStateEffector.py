@@ -111,35 +111,11 @@ def test_hubPropagate(show_plots):
     scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
-    # Find c_B
-    r_Bc_B = numpy.array(scObject.hub.r_BcB_B)
-    r1_HB_B = numpy.array(unitTestSim.panel1.r_HB_B)
-    HB_1 = numpy.array(unitTestSim.panel1.dcm_HB)
-    SH_1 = RigidBodyKinematics.Mi(unitTestSim.panel1.thetaInit,2)
-    SH_1 = numpy.asarray(SH_1)
-    r1_ScH_S = numpy.array([[-unitTestSim.panel1.d],[0.0],[0.0]])
-    r1_ScH_B = numpy.dot(numpy.dot(HB_1.transpose(),SH_1.transpose()),r1_ScH_S)
-    r1_ScB_B = r1_HB_B + r1_ScH_B
-    # Same for panel 2
-    r2_HB_B = numpy.array(unitTestSim.panel2.r_HB_B)
-    HB_2 = numpy.array(unitTestSim.panel2.dcm_HB)
-    SH_2 = RigidBodyKinematics.Mi(unitTestSim.panel2.thetaInit,2)
-    SH_2 = numpy.asarray(SH_2)
-    r2_ScH_S = numpy.array([[-unitTestSim.panel2.d],[0.0],[0.0]])
-    r2_ScH_B = numpy.dot(numpy.dot(HB_2.transpose(),SH_2.transpose()),r2_ScH_S)
-    r2_ScB_B = r2_HB_B + r2_ScH_B
-    # Now all mass props have been defined, so find average
-    c_B = (scObject.hub.mHub*r_Bc_B + unitTestSim.panel1.mass*r1_ScB_B + unitTestSim.panel2.mass*r2_ScB_B)/(scObject.hub.mHub + unitTestSim.panel1.mass + unitTestSim.panel2.mass)
-
     # Set the initial values for the states
-    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
-    r_CN_NInit = numpy.asarray(scObject.hub.r_CN_NInit) + c_B
-    scObject.hub.r_CN_NInit = r_CN_NInit.tolist()
-    v_CN_NInit = numpy.asarray(scObject.hub.v_CN_NInit) + numpy.cross(numpy.asarray(scObject.hub.omega_BN_BInit).ravel(),c_B.ravel()).reshape([3,1])
-    scObject.hub.v_CN_NInit = v_CN_NInit.tolist()
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
@@ -182,7 +158,7 @@ def test_hubPropagate(show_plots):
     dataSigma = [[stopTime, dataSigma[0][0], dataSigma[1][0], dataSigma[2][0]]]
 
     truePos = [
-                [-0.01236914281625432, 0.018891149195017262, 0.0838512642857403]
+                [-0.15832794740648992, 1.122481716747217, -0.37975995949382907]
                 ]
     trueSigma = [
                   [0.06170318243240492, -0.07089090074412899, 0.06409500412692531]
