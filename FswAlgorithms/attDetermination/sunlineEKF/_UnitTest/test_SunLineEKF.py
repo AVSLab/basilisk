@@ -825,8 +825,8 @@ def testStatePropVariable(show_plots):
     expectedCovar = np.zeros([2001,37])
     expectedCovar[0,1:37] = np.array(InitialCovar)
     Gamma = np.zeros([6, 3])
-    # Gamma[0:3, 0:3] = dt ** 2. / 2. * np.eye(3)
-    # Gamma[3:6, 0:3] = dt * np.eye(3)
+    Gamma[0:3, 0:3] = dt ** 2. / 2. * np.eye(3)
+    Gamma[3:6, 0:3] = dt * np.eye(3)
     ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
