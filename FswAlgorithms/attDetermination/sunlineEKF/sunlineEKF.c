@@ -218,14 +218,14 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     /*Pbar = Phi*P*Phi^T + Gamma*Q*Gamma^T*/
     mTranspose(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, stmT);
     mMultM(ConfigData->covar, SKF_N_STATES, SKF_N_STATES, stmT, SKF_N_STATES, SKF_N_STATES, covPhiT);
-    mMultM(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, stmT, SKF_N_STATES, SKF_N_STATES, ConfigData->covarBar);
+    mMultM(ConfigData->stateTransition, SKF_N_STATES, SKF_N_STATES, covPhiT, SKF_N_STATES, SKF_N_STATES, ConfigData->covarBar);
     
     /*Compute Gamma and add gammaQGamma^T to Pbar*/
-    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
-    
-    mMultMt(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT);
-    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT, SKF_N_STATES/2, SKF_N_STATES, gammaQGammaT);
-    mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);
+//    double Gamma[6][3]={{ConfigData->dt*ConfigData->dt/2,0,0},{0,ConfigData->dt*ConfigData->dt/2,0},{0,0,ConfigData->dt*ConfigData->dt/2},{ConfigData->dt,0,0},{0,ConfigData->dt,0},{0,0,ConfigData->dt}};
+//    
+//    mMultMt(ConfigData->procNoise, SKF_N_STATES/2, SKF_N_STATES/2, Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT);
+//    mMultM(Gamma, SKF_N_STATES, SKF_N_STATES/2, qGammaT, SKF_N_STATES/2, SKF_N_STATES, gammaQGammaT);
+//    mAdd(ConfigData->covarBar, SKF_N_STATES, SKF_N_STATES, gammaQGammaT, ConfigData->covarBar);
     
 	ConfigData->timeTag = updateTime;
 }
@@ -263,9 +263,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
-
-    mMultM(dynMat, SKF_N_STATES, SKF_N_STATES, stateTransition, SKF_N_STATES, SKF_N_STATES, deltatASTM);
-    mScale(dt, deltatASTM, SKF_N_STATES, SKF_N_STATES, deltatASTM);
+    mSetIdentity(stateTransition, SKF_N_STATES, SKF_N_STATES);
+    mScale(dt, dynMat, SKF_N_STATES, SKF_N_STATES, deltatASTM);
     mAdd(stateTransition, SKF_N_STATES, SKF_N_STATES, deltatASTM, stateTransition);
     
     return;

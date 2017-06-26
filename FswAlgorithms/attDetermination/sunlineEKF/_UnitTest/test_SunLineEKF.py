@@ -54,60 +54,60 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
         P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
 
     plt.subplot(321)
-    plt.plot(t , x[:, 1], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 0, 0]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 0, 0]), 'r--')
-    plt.plot(t , x2[:, 1], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 0, 0]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 0, 0]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 1], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 0, 0]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 0, 0]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 1], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
     plt.legend(loc='best')
     #plt.ylim([-10.,10.])
     plt.title('First LOS component')
     plt.grid()
 
     plt.subplot(322)
-    plt.plot(t , x[:, 4], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , x2[:, 4], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 3, 3]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 3, 3]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 4], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 3, 3]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 3, 3]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 4], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
     plt.legend(loc='best')
     #plt.ylim([-0.01, 0.01])
     plt.title('First rate component')
     plt.grid()
 
     plt.subplot(323)
-    plt.plot(t , x[:, 2], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.plot(t , x2[:, 2], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 1, 1]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 1, 1]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 2], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 1, 1]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 1, 1]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 2], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
     plt.legend(loc='best')
     #plt.ylim([-10.,10.])
     plt.title('Second LOS component')
     plt.grid()
 
     plt.subplot(324)
-    plt.plot(t , x[:, 5], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , x2[:, 5], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 4, 4]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 4, 4]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 5], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 4, 4]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 4, 4]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 5], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
     plt.legend(loc='best')
     #plt.ylim([-0.01, 0.01])
     plt.title('Second rate component')
     plt.grid()
 
     plt.subplot(325)
-    plt.plot(t , x[:, 3], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.plot(t , x2[:, 3], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 2, 2]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 2, 2]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 3], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 2, 2]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 2, 2]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 3], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
     plt.legend(loc='best')
     plt.xlabel('t(s)')
     #plt.ylim([-10.,10.])
@@ -115,12 +115,12 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
     plt.grid()
 
     plt.subplot(326)
-    plt.plot(t , x[:, 6], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 5, 5]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 5, 5]), 'r--')
-    plt.plot(t , x2[:, 6], "g")
-    plt.plot(t , 3 * np.sqrt(P2[:, 5, 5]), 'c--')
-    plt.plot(t , -3 * np.sqrt(P2[:, 5, 5]), 'c--')
+    plt.plot(t[0:30] , x[0:30, 6], "b")
+    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 5, 5]), 'r--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 5, 5]), 'r--')
+    plt.plot(t[0:30] , x2[0:30, 6], "g")
+    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
+    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
     plt.legend(loc='best')
     plt.xlabel('t(s)')
     #plt.ylim([-0.01, 0.01])
@@ -138,7 +138,7 @@ def setupFilterData(filterObject):
     filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
-    filterObject.x = [0.01, 0.0, 0.01, 0.0, 0.0001, 0.0]
+    filterObject.x = [0.1, 0.0, 0.1, 0.0, 0.001, 0.0]
     filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
@@ -169,10 +169,10 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots):
-    # [testResults, testMessage] = sunline_individual_test(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropStatic(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = sunline_individual_test(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropStatic(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = testStatePropVariable(show_plots)
     assert testResults < 1, testMessage
     # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
@@ -767,7 +767,7 @@ def testStatePropVariable(show_plots):
 
 
     InitialState = [1.0, 1.0, 1.0, 1.5, 0.5, 0.5]
-    Initialx = [0.01, 0.0, 0.01, 0.0, 0.0001, 0.0]
+    Initialx = [0.1, 0.0, 0.1, 0.0, 0.001, 0.0]
     InitialCovar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
                           0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
@@ -809,27 +809,28 @@ def testStatePropVariable(show_plots):
                              np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
         expDynMat[i, 0:3, 3:6] = np.eye(3) - np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2
 
+
     expectedSTM = np.zeros([2001,6,6])
     expectedSTM[0,:,:] = np.eye(6)
     for i in range(1,2001):
         expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(6)) + np.eye(6)
-    # print expectedSTM[1, :, :] - stmLog[1, 1:37].reshape([6, 6])
 
     expectedXBar = np.zeros([2001,7])
     expectedXBar[0,1:7] = np.array(Initialx)
     for i in range(1,2001):
         expectedXBar[i,0] = dt*i*1E9
-        expectedXBar[i,1:7] = np.dot(expectedSTM[i,:,:],expectedXBar[i-1,1:7])
+        # expectedXBar[i,1:7] = np.dot(np.dot(expectedSTM[i,:,:], np.linalg.inv(expectedSTM[i-1,:,:])),expectedXBar[i-1,1:7])
+        expectedXBar[i, 1:7] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:7])
 
     expectedCovar = np.zeros([2001,37])
     expectedCovar[0,1:37] = np.array(InitialCovar)
     Gamma = np.zeros([6, 3])
-    Gamma[0:3, 0:3] = dt ** 2. / 2. * np.eye(3)
-    Gamma[3:6, 0:3] = dt * np.eye(3)
+    # Gamma[0:3, 0:3] = dt ** 2. / 2. * np.eye(3)
+    # Gamma[3:6, 0:3] = dt * np.eye(3)
     ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
-        expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ProcNoiseCovar).flatten()
+        expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
     plt.figure()
     for i in range(3):
@@ -841,30 +842,27 @@ def testStatePropVariable(show_plots):
         plt.show()
     plt.close()
 
-    show_plots =True
     if show_plots:
         StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar)
 
     for j in range(1,2001):
         for i in range(6):
             if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-10):
-                # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: State Prop \n")
-            # if (abs(stateErrorLog[j, i + 1] - expectedXBar[j, i + 1]) > 1.0E-10):
-            #     # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
-            #     testFailCount += 1
-            #     testMessages.append("General state propagation failure: State Error Prop \n")
+            if (abs(stateErrorLog[j, i + 1] - expectedXBar[j, i + 1]) > 1.0E-10):
+                testFailCount += 1
+                testMessages.append("General state propagation failure: State Error Prop \n")
 
-        # for i in range(36):
-            # if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-10):
-            #     # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
-            #     testFailCount += 1
-            #     testMessages.append("General state propagation failure: Covariance Prop \n")
-            # if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
+        for i in range(36):
+            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-10):
                 # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
-                # testFailCount += 1
-                # testMessages.append("General state propagation failure: STM Prop \n")
+                testFailCount += 1
+                testMessages.append("General state propagation failure: Covariance Prop \n")
+            if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
+                print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
+                testFailCount += 1
+                testMessages.append("General state propagation failure: STM Prop \n")
 
     # print out success message if no error were found
     if testFailCount == 0:
