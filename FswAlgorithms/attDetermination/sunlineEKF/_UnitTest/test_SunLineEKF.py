@@ -138,30 +138,17 @@ def setupFilterData(filterObject):
     filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
-    filterObject.x = [0.1, 0.0, 0.1, 0.0, 0.001, 0.0]
-    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.04, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.04, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.04]
-    R = [0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-         0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-         0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0, 0.0,
-         0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0, 0.0,
-         0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0, 0.0,
-         0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0, 0.0,
-         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2, 0.0,
-         0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.017**2]
-    filterObject.measNoise = R
+    filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1, 0.0]
+    filterObject.covar = [0.8, 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.8, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.8, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.08, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.08, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.08]
 
-    Q = [0.001**2, 0.0, 0.0,
-         0.0, 0.001**2, 0.0,
-         0.0, 0.0, 0.001**2]
-    filterObject.procNoise = Q
-    filterObject.qProcVal = 0.001**2
-    filterObject.qObsVal = 0.017 ** 2
-    filterObject.eKFSwitch = 50.
+    filterObject.qProcVal = 0.1**2
+    filterObject.qObsVal = 0.17 ** 2
+    filterObject.eKFSwitch = 20.
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -169,14 +156,14 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots):
-    [testResults, testMessage] = sunline_individual_test(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropStatic(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropVariable(show_plots)
-    assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    # [testResults, testMessage] = sunline_individual_test(show_plots)
     # assert testResults < 1, testMessage
+    # [testResults, testMessage] = testStatePropStatic(show_plots)
+    # assert testResults < 1, testMessage
+    # [testResults, testMessage] = testStatePropVariable(show_plots)
+    # assert testResults < 1, testMessage
+    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+    assert testResults < 1, testMessage
 
 def sunline_individual_test(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -490,189 +477,9 @@ def sunline_individual_test(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def testStateUpdateSunLine(show_plots):
-    # The __tracebackhide__ setting influences pytest showing of tracebacks:
-    # the mrp_steering_tracking() function will not be shown unless the
-    # --fulltrace command line option is specified.
-    __tracebackhide__ = True
-
-    testFailCount = 0  # zero unit test result counter
-    testMessages = []  # create empty list to store test log messages
-
-    unitTaskName = "unitTask"  # arbitrary name (don't change)
-    unitProcessName = "TestProcess"  # arbitrary name (don't change)
-
-    #   Create a sim module as an empty container
-    unitTestSim = SimulationBaseClass.SimBaseClass()
-    unitTestSim.TotalSim.terminateSimulation()
-
-    # Create test thread
-    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
-    testProc = unitTestSim.CreateNewProcess(unitProcessName)
-    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
-
-    # Construct algorithm and associated C++ container
-    moduleConfig = sunlineEKF.sunlineEKFConfig()
-    moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
-    moduleWrap.ModelTag = "SunlineEKF"
-
-    # Add test module to runtime call list
-    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-
-    setupFilterData(moduleConfig)
-
-    cssConstelation = vehicleConfigData.CSSConstConfig()
-
-    CSSOrientationList = [
-       [0.70710678118654746, -0.5, 0.5],
-       [0.70710678118654746, -0.5, -0.5],
-       [0.70710678118654746, 0.5, -0.5],
-       [0.70710678118654746, 0.5, 0.5],
-       [-0.70710678118654746, 0, 0.70710678118654757],
-       [-0.70710678118654746, 0.70710678118654757, 0.0],
-       [-0.70710678118654746, 0, -0.70710678118654757],
-       [-0.70710678118654746, -0.70710678118654757, 0.0],
-    ]
-    totalCSSList = []
-    i=0
-    #Initializing a 2D double array is hard with SWIG.  That's why there is this
-    #layer between the above list and the actual C variables.
-    for CSSHat in CSSOrientationList:
-        newCSS = vehicleConfigData.CSSConfigurationElement()
-        newCSS.nHat_S = CSSHat
-        totalCSSList.append(newCSS)
-    cssConstelation.nCSS = len(CSSOrientationList)
-    cssConstelation.cssVals = totalCSSList
-    msgSize = cssConstelation.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
-                                          msgSize, 2, "CSSConstellation")
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
-
-    vehicleConfigOut = sunlineEKF.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    I = [1000., 0., 0.,
-     0., 800., 0.,
-     0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
-                                                inputMessageSize,
-                                                0,
-                                                vehicleConfigOut)
-
-    testVector = np.array([-0.7, 0.7, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
-    inputMessageSize = inputData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                      moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.states = [0.7, 0.7, 0.0]
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate*10, 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate*10, 0, 5, 'double')
-
-    unitTestSim.InitializeSimulation()
-
-    for i in range(20000):
-        if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+1)*0.5))
-        unitTestSim.ExecuteSimulation()
-
-
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    show_plots=True
-
-    plt.figure()
-    for i in range(3):
-        plt.plot(covarLog[:,0] * 1.0E-9, covarLog[:, i*6+1+i], 'b')
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i+1], 'r')
-        plt.xlabel('Time (nanosec)')
-    if (show_plots):
-        plt.show()
-    plt.close()
-
-
-    for i in range(6):
-        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
-            testFailCount += 1
-            testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
-
-    testVector = np.array([-0.8, -0.9, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
-
-    for i in range(20000):
-        if i > 20:
-            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
-                                      inputMessageSize,
-                                      unitTestSim.TotalSim.CurrentNanos,
-                                      inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i+20001)*0.5))
-        unitTestSim.ExecuteSimulation()
-
-
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
-    for i in range(6):
-        if(covarLog[-1, i*6+1+i] > covarLog[0, i*6+1+i]/100):
-            testFailCount += 1
-            testMessages.append("Covariance update failure")
-        if(abs(stateLog[-1, i+1] - stateTarget[i]) > 1.0E-10):
-            print abs(stateLog[-1, i+1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(stateLog[:,0]*1.0E-9, stateLog[:,i+1])
-
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(covarLog[:,0]*1.0E-9, covarLog[:,i*moduleConfig.numStates+i+1])
-
-    if(show_plots):
-        plt.show()
-    # print out success message if no error were found
-    if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
-
-    # return fail count and join into a single string all messages in the list
-    # testMessage
-    return [testFailCount, ''.join(testMessages)]
-
+####################################################################################
+# Test for the time and update with static states (zero d_dot)
+####################################################################################
 def testStatePropStatic(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -734,7 +541,9 @@ def testStatePropStatic(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
-
+####################################################################################
+# Test for the time and update with changing states (non-zero d_dot)
+####################################################################################
 def testStatePropVariable(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -873,5 +682,190 @@ def testStatePropVariable(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 
+####################################################################################
+# Test for the full filter with time and measurement update
+####################################################################################
+def testStateUpdateSunLine(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.5)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    # Construct algorithm and associated C++ container
+    moduleConfig = sunlineEKF.sunlineEKFConfig()
+    moduleWrap = alg_contain.AlgContain(moduleConfig,
+                                        sunlineEKF.Update_sunlineEKF,
+                                        sunlineEKF.SelfInit_sunlineEKF,
+                                        sunlineEKF.CrossInit_sunlineEKF,
+                                        sunlineEKF.Reset_sunlineEKF)
+    moduleWrap.ModelTag = "SunlineEKF"
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
+
+    setupFilterData(moduleConfig)
+
+    cssConstelation = vehicleConfigData.CSSConstConfig()
+
+    CSSOrientationList = [
+        [0.70710678118654746, -0.5, 0.5],
+        [0.70710678118654746, -0.5, -0.5],
+        [0.70710678118654746, 0.5, -0.5],
+        [0.70710678118654746, 0.5, 0.5],
+        [-0.70710678118654746, 0, 0.70710678118654757],
+        [-0.70710678118654746, 0.70710678118654757, 0.0],
+        [-0.70710678118654746, 0, -0.70710678118654757],
+        [-0.70710678118654746, -0.70710678118654757, 0.0],
+    ]
+    totalCSSList = []
+    i = 0
+    # Initializing a 2D double array is hard with SWIG.  That's why there is this
+    # layer between the above list and the actual C variables.
+    for CSSHat in CSSOrientationList:
+        newCSS = vehicleConfigData.CSSConfigurationElement()
+        newCSS.nHat_S = CSSHat
+        totalCSSList.append(newCSS)
+    cssConstelation.nCSS = len(CSSOrientationList)
+    cssConstelation.cssVals = totalCSSList
+    msgSize = cssConstelation.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
+                                          msgSize, 2, "CSSConstellation")
+    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
+
+    vehicleConfigOut = sunlineEKF.VehicleConfigFswMsg()
+    inputMessageSize = vehicleConfigOut.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.massPropsInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+    I = [1000., 0., 0.,
+         0., 800., 0.,
+         0., 0., 800.]
+    vehicleConfigOut.ISCPntB_B = I
+    BS = [1.0, 0.0, 0.0,
+          0.0, 1.0, 0.0,
+          0.0, 0.0, 1.0]
+    vehicleConfigOut.dcm_BS = BS
+    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
+                                          inputMessageSize,
+                                          0,
+                                          vehicleConfigOut)
+
+    testVector = np.array([-0.7, 0.7, 0.0])
+    inputData = cssComm.CSSArraySensorIntMsg()
+    dotList = []
+    for element in CSSOrientationList:
+        dotProd = np.dot(np.array(element), testVector)
+        dotList.append(dotProd)
+    inputData.CosValue = dotList
+    inputMessageSize = inputData.getStructSize()
+    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
+                                          moduleConfig.cssDataInMsgName,
+                                          inputMessageSize,
+                                          2)  # number of buffers (leave at 2 as default, don't make zero)
+
+    stateTarget = testVector.tolist()
+    stateTarget.extend([0.0, 0.0, 0.0])
+    moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
+    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
+    # print (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
+    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
+    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
+    unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
+
+    unitTestSim.InitializeSimulation()
+
+    for i in range(200):
+        if i > 20:
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
+        unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+
+    for i in range(6):
+        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+            print abs(stateLog[-1, i + 1] - stateTarget[i])
+            testFailCount += 1
+            testMessages.append("State update failure")
+
+    testVector = np.array([-0.8, -0.9, 0.0])
+    inputData = cssComm.CSSArraySensorIntMsg()
+    dotList = []
+    for element in CSSOrientationList:
+        dotProd = np.dot(np.array(element), testVector)
+        dotList.append(dotProd)
+    inputData.CosValue = dotList
+
+    for i in range(200):
+        if i > 20:
+            unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
+                                                  inputMessageSize,
+                                                  unitTestSim.TotalSim.CurrentNanos,
+                                                  inputData)
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 201) * 0.5))
+        unitTestSim.ExecuteSimulation()
+
+    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    stateTarget = testVector.tolist()
+    stateTarget.extend([0.0, 0.0, 0.0])
+    for i in range(6):
+        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+            print abs(stateLog[-1, i + 1] - stateTarget[i])
+            testFailCount += 1
+            testMessages.append("State update failure")
+    plt.figure()
+    for i in range(moduleConfig.numStates):
+        if i<4:
+            plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'b')
+            plt.plot(covarLog[:, 0] * 1.0E-9, 3*covarLog[:, i * moduleConfig.numStates + i + 1], 'r--')
+            plt.plot(covarLog[:, 0] * 1.0E-9, -3*covarLog[:, i * moduleConfig.numStates + i + 1], 'r--')
+        if i >3:
+            plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'g')
+            plt.plot(covarLog[:, 0] * 1.0E-9, 3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
+            plt.plot(covarLog[:, 0] * 1.0E-9, -3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
+
+    show_plots=True
+    if (show_plots):
+        plt.show()
+    # print out success message if no error were found
+    if testFailCount == 0:
+        print "PASSED: " + moduleWrap.ModelTag + " state update"
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
+
+
 if __name__ == "__main__":
     test_all_sunline_ekf(False)
+

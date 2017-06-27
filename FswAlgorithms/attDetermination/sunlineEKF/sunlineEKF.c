@@ -329,7 +329,6 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double *dynMat)
 void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 {
 
-    
     /*! Begin method steps*/
     /*! - Compute the valid observations and the measurement model for all observations*/
     sunlineHMatrixYMeas(ConfigData->states, ConfigData->numCSSTotal, ConfigData->cssSensorInBuffer.CosValue, ConfigData->sensorUseThresh, ConfigData->cssNHat_B, ConfigData->obs, ConfigData->yMeas, &(ConfigData->numObs), ConfigData->measMat);
@@ -339,7 +338,7 @@ void sunlineMeasUpdate(sunlineEKFConfig *ConfigData, double updateTime)
     
     /* Logic to switch from EKF to CKF. If the covariance is too large, switching references through an EKF could lead to filter divergence in extreme cases. In order to remedy this, past a certain infinite norm of the covariance, we update with a CKF in order to bring down the covariance. */
     
-    if (vMaxAbs(ConfigData->covar, SKF_N_STATES*SKF_N_STATES < ConfigData->eKFSwitch)){
+    if (vMaxAbs(ConfigData->covar, SKF_N_STATES*SKF_N_STATES) > ConfigData->eKFSwitch){
     /*! - Compute the update with a CKF */
     sunlineCKFUpdate(ConfigData->xBar, ConfigData->kalmanGain, ConfigData->covarBar, ConfigData->qObsVal, ConfigData->numObs, ConfigData->yMeas, ConfigData->measMat, ConfigData->x,ConfigData->covar);
     }
