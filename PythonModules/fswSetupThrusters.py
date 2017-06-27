@@ -43,8 +43,8 @@ thrList = []
 #   by the user.
 #
 def create(
-        rThrust_S,
-        tHatThrust_S,
+        rThrust_B,
+        tHatThrust_B,
         Fmax
     ):
     global thrList
@@ -52,8 +52,8 @@ def create(
     # create the blank Thruster object
     thrPointer = fswMessages.THRConfigFswMsg()
 
-    thrPointer.rThrust_S = rThrust_S
-    thrPointer.tHatThrust_S = tHatThrust_S
+    thrPointer.rThrust_B = rThrust_B
+    thrPointer.tHatThrust_B = tHatThrust_B
     thrPointer.maxThrust = Fmax
 
     # add RW to the list of RW devices

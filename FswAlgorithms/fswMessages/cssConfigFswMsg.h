@@ -24,7 +24,6 @@
  each sun sensor*/
 typedef struct {
     double nHatBdy[3];      /*!< -- Normal unit vector for sensor in body frame*/
-    double nHatStr[3];      /*!< [-] Normal unit vector for sensor in structural frame*/
     double CBias;           /*!< W  Calibration coefficient bias for CSS */
     double cssNoiseStd;     /*!< -- Measurement noise uncertainty*/
 }CSSConfigFswMsg;

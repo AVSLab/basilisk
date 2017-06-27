@@ -101,8 +101,7 @@ void Reset_sunlineUKF(SunlineUKFConfig *ConfigData, uint64_t callTime,
     /*! - For each coarse sun sensor, convert the configuration data over from structure to body*/
     for(i=0; i<cssConfigInBuffer.nCSS; i = i+1)
     {
-         m33MultV3(RECAST3X3 massPropsInBuffer.dcm_BS, cssConfigInBuffer.cssVals[i].nHat_S,
-             &(ConfigData->cssNHat_B[i*3]));
+        v3Copy(cssConfigInBuffer.cssVals[i].nHat_B, &(ConfigData->cssNHat_B[i*3]));
     }
     /*! - Save the count of sun sensors for later use */
     ConfigData->numCSSTotal = cssConfigInBuffer.nCSS;

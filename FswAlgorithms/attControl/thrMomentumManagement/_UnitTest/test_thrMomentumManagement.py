@@ -130,9 +130,6 @@ def thrMomentumManagementTestFunction(show_plots, hsMinCheck):
                                           moduleConfig.vehicleConfigDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    vehicleConfigOut.dcm_BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.vehicleConfigDataInMsgName,
                                           inputMessageSize,
                                           0,

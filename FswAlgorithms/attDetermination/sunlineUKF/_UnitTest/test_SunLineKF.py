@@ -393,7 +393,7 @@ def testStateUpdateSunLine(show_plots):
     #layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
         newCSS = vehicleConfigData.CSSConfigurationElement()
-        newCSS.nHat_S = CSSHat
+        newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
@@ -412,10 +412,6 @@ def testStateUpdateSunLine(show_plots):
      0., 800., 0.,
      0., 0., 800.]
     vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
                                                 inputMessageSize,
                                                 0,

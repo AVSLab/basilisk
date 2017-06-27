@@ -111,15 +111,11 @@ def thrusterForceTest(show_plots, useDVThruster, useCOMOffset, dropThruster, dro
                                           moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
-    BS = [1.0, 0., 0.,
-         0., 1.0, 0.,
-         0., 0., 1.0]
     if useCOMOffset == 1:
-        CoM_S = [0,0,0.02]
+        CoM_B = [0,0,0.02]
     else:
-        CoM_S = [0,0,0]
-    vehicleConfigOut.dcm_BS = BS
-    vehicleConfigOut.CoM_B = CoM_S
+        CoM_B = [0,0,0]
+    vehicleConfigOut.CoM_B = CoM_B
     unitTestSim.TotalSim.WriteMessageData(moduleConfig.inputVehicleConfigDataName,
                                           inputMessageSize,
                                           0,
