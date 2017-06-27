@@ -130,6 +130,96 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
     plt.show()
     plt.close()
 
+def PostFitResiduals(Res, noise):
+    fig7 = plt.figure(7)
+    rect = fig7.patch
+    rect.set_facecolor('white')
+
+    MeasNoise = np.zeros(len(Res[:,0]))
+    t= np.zeros(len(Res[:,0]))
+    for i in range(len(Res[:,0])):
+        t[i] = Res[i, 0]*1E-9
+        MeasNoise[i] = 3*noise
+
+
+    plt.subplot(421)
+    plt.plot(t , Res[:, 1], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.title('First CSS')
+    plt.grid()
+
+    plt.subplot(422)
+    plt.plot(t , Res[:, 5], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.title('Fifth CSS')
+    plt.grid()
+
+    plt.subplot(423)
+    plt.plot(t , Res[:, 2], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    #plt.ylim([-10.,10.])
+    plt.title('Second CSS')
+    plt.grid()
+
+    plt.subplot(424)
+    plt.plot(t , Res[:, 6], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    #plt.ylim([-0.01, 0.01])
+    plt.title('Sixth CSS')
+    plt.grid()
+
+    plt.subplot(425)
+    plt.plot(t , Res[:, 3], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.xlabel('t(s)')
+    #plt.ylim([-10.,10.])
+    plt.title('Third CSS')
+    plt.grid()
+
+    plt.subplot(426)
+    plt.plot(t , Res[:, 7], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.xlabel('t(s)')
+    #plt.ylim([-0.01, 0.01])
+    plt.title('Seventh CSS')
+    plt.grid()
+
+    plt.subplot(427)
+    plt.plot(t , Res[:, 4], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.xlabel('t(s)')
+    #plt.ylim([-0.01, 0.01])
+    plt.title('Fourth CSS')
+    plt.grid()
+
+    plt.subplot(428)
+    plt.plot(t , Res[:, 8], "b")
+    plt.plot(t , MeasNoise, 'r--')
+    plt.plot(t , -MeasNoise, 'r--')
+    plt.legend(loc='best')
+    plt.xlabel('t(s)')
+    #plt.ylim([-0.01, 0.01])
+    plt.title('Eight CSS')
+    plt.grid()
+
+    plt.show()
+    plt.close()
+
+
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -137,14 +227,15 @@ def setupFilterData(filterObject):
     filterObject.massPropsInMsgName = "adcs_config_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
+    filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
     filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1, 0.0]
-    filterObject.covar = [0.8, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.8, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.8, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.08, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.08, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.08]
+    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.17 ** 2
@@ -781,8 +872,8 @@ def testStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
-    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
+    moduleConfig.states = [0.7, 0.7, 0.0, 0.01, 0.01, 0.0]
+    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.01, 0.0, 0.01])).tolist()
     # print (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
@@ -807,7 +898,7 @@ def testStateUpdateSunLine(show_plots):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+        if (abs(stateErrorLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
@@ -834,14 +925,68 @@ def testStateUpdateSunLine(show_plots):
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
+
+
+    measMat = sunlineEKF.new_doubleArray(8*6)
+    obs = sunlineEKF.new_doubleArray(8)
+    yMeas = sunlineEKF.new_doubleArray(8)
+    numObs = sunlineEKF.new_intArray(1)
+
+    ####################################################################################
+    # Compute H and y in order to check post-fit residuals
+    ####################################################################################
+    threshold = moduleConfig.sensorUseThresh
+    CSSnormals = []
+    for j in range(8):
+        CSSnormals+=CSSOrientationList[j]
+
+    ytest = np.zeros([len(stateLog[:, 0]), 9])
+    Htest = np.zeros([len(stateLog[:, 0]), 49])
+    PostFitRes = np.zeros([len(stateLog[:,0]), 9])
+
+    print len(stateLog[:,0])
+    print np.shape(ytest)
+
+    for i in range(1,len(stateLog[:,0])):
+        ytest[i,0] = stateLog[i,0]
+        Htest[i,0] = stateLog[i,0]
+        PostFitRes[i, 0] = stateLog[i, 0]
+
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        obsOut = []
+        yMeasOut = []
+        numObsOut = []
+        HOut = []
+        for i in range(8*6):
+            HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
+        for i in range(8):
+            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
+
+        ytest[i,1:9] = np.array(yMeasOut)
+        Htest[i,1:49] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot( Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+
+    PostFitResiduals(PostFitRes, moduleConfig.qObsVal)
+
     for i in range(6):
-        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
+        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] /100.):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
+
+
+    plt.figure()
+    for i in range(moduleConfig.numStates):
+        plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'b')
+        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], 'g')
+        plt.title('States in green, vs State Errors in blue')
+
+    show_plots=True
+    if (show_plots):
+        plt.show()
     plt.figure()
     for i in range(moduleConfig.numStates):
         if i<4:
@@ -853,7 +998,7 @@ def testStateUpdateSunLine(show_plots):
             plt.plot(covarLog[:, 0] * 1.0E-9, 3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
             plt.plot(covarLog[:, 0] * 1.0E-9, -3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
 
-    show_plots=True
+    # show_plots=True
     if (show_plots):
         plt.show()
     # print out success message if no error were found
