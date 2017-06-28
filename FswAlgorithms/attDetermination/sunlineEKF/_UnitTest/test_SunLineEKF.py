@@ -649,36 +649,45 @@ def testStateUpdateSunLine(show_plots):
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
     msgSize = cssConstelation.getStructSize()
+    inputData = cssComm.CSSArraySensorIntMsg()
+
+
+    inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
                                           msgSize, 2, "CSSConstellation")
-    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
-
-    testVector = np.array([-0.7, 0.7, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
-    inputMessageSize = inputData.getStructSize()
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
                                           moduleConfig.cssDataInMsgName,
                                           inputMessageSize,
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
+    unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
+
+
+
+    testVector = np.array([-0.7, 0.7, 0.0])
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
     moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
-    # print (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
 
-    for i in range(200):
+
+
+    for i in range(SimHalfLength):
         if i > 20:
+            dotList = []
+            for element in CSSOrientationList:
+                if AddMeasNoise:
+                    dotProd = np.dot(np.array(element), testVector) + np.random.normal(0., moduleConfig.qObsVal)
+                else:
+                    dotProd = np.dot(np.array(element), testVector)
+                dotList.append(dotProd)
+            inputData.CosValue = dotList
+
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
