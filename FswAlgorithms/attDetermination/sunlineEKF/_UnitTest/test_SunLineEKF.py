@@ -30,6 +30,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
 import alg_contain
+import SunLineEKF_test_utilities as FilterPlots
 import unitTestSupport  # general support file with common unit test functions
 import matplotlib.pyplot as plt
 import sunlineEKF  # import the module that is to be tested
@@ -38,186 +39,6 @@ import vehicleConfigData
 import macros
 import sim_model
 import ctypes
-
-
-def StatesPlotCompare(x, x2, Pflat, Pflat2):
-    fig6 = plt.figure(6)
-    rect = fig6.patch
-    rect.set_facecolor('white')
-
-    P = np.zeros([len(Pflat[:,0]),6,6])
-    P2 = np.zeros([len(Pflat[:,0]),6,6])
-    t= np.zeros(len(Pflat[:,0]))
-    for i in range(len(Pflat[:,0])):
-        t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:37].reshape([6,6])
-        P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
-
-    plt.subplot(321)
-    plt.plot(t[0:30] , x[0:30, 1], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 0, 0]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 0, 0]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 1], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 0, 0]), 'c--')
-    plt.legend(loc='best')
-    #plt.ylim([-10.,10.])
-    plt.title('First LOS component')
-    plt.grid()
-
-    plt.subplot(322)
-    plt.plot(t[0:30] , x[0:30, 4], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 4], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.legend(loc='best')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('First rate component')
-    plt.grid()
-
-    plt.subplot(323)
-    plt.plot(t[0:30] , x[0:30, 2], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 1, 1]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 1, 1]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 2], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
-    plt.legend(loc='best')
-    #plt.ylim([-10.,10.])
-    plt.title('Second LOS component')
-    plt.grid()
-
-    plt.subplot(324)
-    plt.plot(t[0:30] , x[0:30, 5], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 5], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
-    plt.legend(loc='best')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Second rate component')
-    plt.grid()
-
-    plt.subplot(325)
-    plt.plot(t[0:30] , x[0:30, 3], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 2, 2]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 2, 2]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 3], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-10.,10.])
-    plt.title('Third LOS component')
-    plt.grid()
-
-    plt.subplot(326)
-    plt.plot(t[0:30] , x[0:30, 6], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 6], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Third rate component')
-    plt.grid()
-
-    plt.show()
-    plt.close()
-
-def PostFitResiduals(Res, noise):
-    fig7 = plt.figure(7)
-    rect = fig7.patch
-    rect.set_facecolor('white')
-
-    MeasNoise = np.zeros(len(Res[:,0]))
-    t= np.zeros(len(Res[:,0]))
-    for i in range(len(Res[:,0])):
-        t[i] = Res[i, 0]*1E-9
-        MeasNoise[i] = 3*noise
-
-
-    plt.subplot(421)
-    plt.plot(t , Res[:, 1], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.title('First CSS')
-    plt.grid()
-
-    plt.subplot(422)
-    plt.plot(t , Res[:, 5], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.title('Fifth CSS')
-    plt.grid()
-
-    plt.subplot(423)
-    plt.plot(t , Res[:, 2], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    #plt.ylim([-10.,10.])
-    plt.title('Second CSS')
-    plt.grid()
-
-    plt.subplot(424)
-    plt.plot(t , Res[:, 6], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Sixth CSS')
-    plt.grid()
-
-    plt.subplot(425)
-    plt.plot(t , Res[:, 3], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-10.,10.])
-    plt.title('Third CSS')
-    plt.grid()
-
-    plt.subplot(426)
-    plt.plot(t , Res[:, 7], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Seventh CSS')
-    plt.grid()
-
-    plt.subplot(427)
-    plt.plot(t , Res[:, 4], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Fourth CSS')
-    plt.grid()
-
-    plt.subplot(428)
-    plt.plot(t , Res[:, 8], "b")
-    plt.plot(t , MeasNoise, 'r--')
-    plt.plot(t , -MeasNoise, 'r--')
-    plt.legend(loc='best')
-    plt.xlabel('t(s)')
-    #plt.ylim([-0.01, 0.01])
-    plt.title('Eight CSS')
-    plt.grid()
-
-    plt.show()
-    plt.close()
 
 
 def setupFilterData(filterObject):
@@ -247,12 +68,12 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots):
-    # [testResults, testMessage] = sunline_individual_test(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropStatic(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropVariable(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = sunline_individual_test(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropStatic(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropVariable(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = testStateUpdateSunLine(show_plots)
     assert testResults < 1, testMessage
 
@@ -666,18 +487,16 @@ def testStatePropVariable(show_plots):
     moduleWrap.ModelTag = "SunlineEKF"
 
 
-    InitialState = [1.0, 1.0, 1.0, 1.5, 0.5, 0.5]
-    Initialx = [0.1, 0.0, 0.1, 0.0, 0.001, 0.0]
-    InitialCovar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.04, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.04, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.04]
+
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+
+    InitialState = moduleConfig.states
+    Initialx = moduleConfig.x
+    InitialCovar = moduleConfig.covar
+
     moduleConfig.states = InitialState
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
@@ -719,7 +538,6 @@ def testStatePropVariable(show_plots):
     expectedXBar[0,1:7] = np.array(Initialx)
     for i in range(1,2001):
         expectedXBar[i,0] = dt*i*1E9
-        # expectedXBar[i,1:7] = np.dot(np.dot(expectedSTM[i,:,:], np.linalg.inv(expectedSTM[i-1,:,:])),expectedXBar[i-1,1:7])
         expectedXBar[i, 1:7] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:7])
 
     expectedCovar = np.zeros([2001,37])
@@ -732,18 +550,9 @@ def testStatePropVariable(show_plots):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
-    plt.figure()
-    for i in range(3):
-        plt.plot(stateLog[:,0] * 1.0E-9, expectedStateArray[:,i+1], 'b')
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i+1], 'r')
-        plt.xlabel('Time (nanosec)')
-        plt.ylabel('States')
-    if (show_plots):
-        plt.show()
-    plt.close()
-
     if show_plots:
-        StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar)
+        FilterPlots.StatesVsExpected(stateLog, expectedStateArray)
+        FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar)
 
     for j in range(1,2001):
         for i in range(6):
@@ -755,8 +564,8 @@ def testStatePropVariable(show_plots):
                 testMessages.append("General state propagation failure: State Error Prop \n")
 
         for i in range(36):
-            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-10):
-                # print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
+            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
+                print abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: Covariance Prop \n")
             if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
@@ -872,8 +681,8 @@ def testStateUpdateSunLine(show_plots):
 
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.states = [0.7, 0.7, 0.0, 0.01, 0.01, 0.0]
-    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.01, 0.0, 0.01])).tolist()
+    moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
+    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
     # print (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
@@ -944,9 +753,6 @@ def testStateUpdateSunLine(show_plots):
     Htest = np.zeros([len(stateLog[:, 0]), 49])
     PostFitRes = np.zeros([len(stateLog[:,0]), 9])
 
-    print len(stateLog[:,0])
-    print np.shape(ytest)
-
     for i in range(1,len(stateLog[:,0])):
         ytest[i,0] = stateLog[i,0]
         Htest[i,0] = stateLog[i,0]
@@ -966,41 +772,25 @@ def testStateUpdateSunLine(show_plots):
         Htest[i,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i,1:9] - np.dot( Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-    PostFitResiduals(PostFitRes, moduleConfig.qObsVal)
-
     for i in range(6):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] /100.):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateTarget[i])
+            print i
             testFailCount += 1
             testMessages.append("State update failure")
 
+    target1 = np.array([-0.7, 0.7, 0.0, 0., 0., 0.])
+    target2 = np.array([-0.8, -0.9, 0.0, 0., 0., 0.])
 
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'b')
-        plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, i + 1], 'g')
-        plt.title('States in green, vs State Errors in blue')
+    # show_plots =True
+    if show_plots:
+        FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal)
+        FilterPlots.StatesVsTargets(target1, target2, stateLog)
+        FilterPlots.StatesPlot(stateErrorLog, covarLog)
 
-    show_plots=True
-    if (show_plots):
-        plt.show()
-    plt.figure()
-    for i in range(moduleConfig.numStates):
-        if i<4:
-            plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'b')
-            plt.plot(covarLog[:, 0] * 1.0E-9, 3*covarLog[:, i * moduleConfig.numStates + i + 1], 'r--')
-            plt.plot(covarLog[:, 0] * 1.0E-9, -3*covarLog[:, i * moduleConfig.numStates + i + 1], 'r--')
-        if i >3:
-            plt.plot(stateLog[:, 0] * 1.0E-9, stateErrorLog[:, i + 1], 'g')
-            plt.plot(covarLog[:, 0] * 1.0E-9, 3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
-            plt.plot(covarLog[:, 0] * 1.0E-9, -3*covarLog[:, i * moduleConfig.numStates + i + 1], 'c--')
-
-    # show_plots=True
-    if (show_plots):
-        plt.show()
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + moduleWrap.ModelTag + " state update"
