@@ -683,30 +683,75 @@ def testStateUpdateSunLine(show_plots):
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
 
+    ####################################################################################
+    # Compute H and y in order to check post-fit residuals
+    ####################################################################################
+    threshold = moduleConfig.sensorUseThresh
+    CSSnormals = []
+    for j in range(8):
+        CSSnormals+=CSSOrientationList[j]
+
+    measMat = sunlineEKF.new_doubleArray(8*6)
+    obs = sunlineEKF.new_doubleArray(8)
+    yMeas = sunlineEKF.new_doubleArray(8)
+    numObs = sunlineEKF.new_intArray(1)
+
+    for i in range(8*6):
+        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+    for i in range(8):
+        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
+        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+
+    ytest = np.zeros([SimHalfLength, 9])
+    Htest = np.zeros([SimHalfLength, 49])
+    PostFitRes = np.zeros([2*SimHalfLength+1, 9])
+
+    for i in range(1,SimHalfLength):
+        ytest[i,0] = stateLog[i,0]
+        Htest[i,0] = stateLog[i,0]
+        PostFitRes[i, 0] = stateLog[i, 0]
+
+        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        yMeasOut = []
+        HOut = []
+        for j in range(8*6):
+            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
+        for j in range(8):
+            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
+
+        ytest[i,1:9] = np.array(yMeasOut)
+        Htest[i,1:49] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+
+
     for i in range(6):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
             testFailCount += 1
             testMessages.append("Covariance update failure")
-        if (abs(stateErrorLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateTarget[i])
             testFailCount += 1
             testMessages.append("State update failure")
 
     testVector = np.array([-0.8, -0.9, 0.0])
     inputData = cssComm.CSSArraySensorIntMsg()
-    dotList = []
-    for element in CSSOrientationList:
-        dotProd = np.dot(np.array(element), testVector)
-        dotList.append(dotProd)
-    inputData.CosValue = dotList
 
-    for i in range(200):
+    for i in range(SimHalfLength):
         if i > 20:
+            dotList = []
+            for element in CSSOrientationList:
+                if AddMeasNoise:
+                    dotProd = np.dot(np.array(element), testVector)  + np.random.normal(0., moduleConfig.qObsVal)
+                else:
+                    dotProd = np.dot(np.array(element), testVector)
+                dotList.append(dotProd)
+            inputData.CosValue = dotList
+
             unitTestSim.TotalSim.WriteMessageData(moduleConfig.cssDataInMsgName,
                                                   inputMessageSize,
                                                   unitTestSim.TotalSim.CurrentNanos,
                                                   inputData)
-        unitTestSim.ConfigureStopTime(macros.sec2nano((i + 201) * 0.5))
+        unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
@@ -714,12 +759,6 @@ def testStateUpdateSunLine(show_plots):
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
-
-
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
 
     ####################################################################################
     # Compute H and y in order to check post-fit residuals
@@ -729,28 +768,37 @@ def testStateUpdateSunLine(show_plots):
     for j in range(8):
         CSSnormals+=CSSOrientationList[j]
 
-    ytest = np.zeros([len(stateLog[:, 0]), 9])
-    Htest = np.zeros([len(stateLog[:, 0]), 49])
-    PostFitRes = np.zeros([len(stateLog[:,0]), 9])
+    measMat = sunlineEKF.new_doubleArray(8*6)
+    obs = sunlineEKF.new_doubleArray(8)
+    yMeas = sunlineEKF.new_doubleArray(8)
+    numObs = sunlineEKF.new_intArray(1)
 
-    for i in range(1,len(stateLog[:,0])):
-        ytest[i,0] = stateLog[i,0]
-        Htest[i,0] = stateLog[i,0]
+    for i in range(8*6):
+        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+    for i in range(8):
+        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
+        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+
+    ytest = np.zeros([SimHalfLength+1, 9])
+    Htest = np.zeros([SimHalfLength+1, 49])
+
+    for i in range(SimHalfLength,2*SimHalfLength):
+        ytest[i-SimHalfLength,0] = stateLog[i,0]
+        Htest[i-SimHalfLength,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
         sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
-        obsOut = []
         yMeasOut = []
-        numObsOut = []
         HOut = []
-        for i in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
-        for i in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
+        for j in range(8*6):
+            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
+        for j in range(8):
+            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
 
-        ytest[i,1:9] = np.array(yMeasOut)
-        Htest[i,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot( Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+        ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
+        Htest[i-SimHalfLength,1:49] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+
 
     for i in range(6):
         if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] /100.):
