@@ -32,9 +32,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import matplotlib.pyplot as plt
 
 def StatesPlot(x, Pflat):
-    fig6 = plt.figure(6)
-    rect = fig6.patch
-    rect.set_facecolor('white')
+
 
     P = np.zeros([len(Pflat[:,0]),6,6])
     t= np.zeros(len(Pflat[:,0]))
@@ -42,6 +40,7 @@ def StatesPlot(x, Pflat):
         t[i] = x[i, 0]*1E-9
         P[i,:,:] = Pflat[i,1:37].reshape([6,6])
 
+    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
 
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
@@ -93,9 +92,7 @@ def StatesPlot(x, Pflat):
 
 
 def StatesPlotCompare(x, x2, Pflat, Pflat2):
-    fig6 = plt.figure(6)
-    rect = fig6.patch
-    rect.set_facecolor('white')
+
 
     P = np.zeros([len(Pflat[:,0]),6,6])
     P2 = np.zeros([len(Pflat[:,0]),6,6])
@@ -104,6 +101,8 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
         t[i] = x[i, 0]*1E-9
         P[i,:,:] = Pflat[i,1:37].reshape([6,6])
         P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
+
+    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
 
     plt.subplot(321)
     plt.plot(t[0:30] , x[0:30, 1], "b", label='Error Filter')
@@ -172,19 +171,20 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
     plt.close()
 
 def PostFitResiduals(Res, noise):
-    fig7 = plt.figure(7)
-    rect = fig7.patch
-    rect.set_facecolor('white')
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
     for i in range(len(Res[:,0])):
         t[i] = Res[i, 0]*1E-9
         MeasNoise[i] = 3*noise
+        # Don't plot zero values, since they mean that no measurement is taken
+        for j in range(len(Res[0,:])-1):
+            if -1E-10 < Res[i,j+1] < 1E-10:
+                Res[i, j+1] = np.nan
 
-
+    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(421)
-    plt.plot(t , Res[:, 1], "b", label='Residual')
+    plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
@@ -192,28 +192,28 @@ def PostFitResiduals(Res, noise):
     plt.grid()
 
     plt.subplot(422)
-    plt.plot(t , Res[:, 5], "b")
+    plt.plot(t , Res[:, 5], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.title('Fifth CSS')
     plt.grid()
 
     plt.subplot(423)
-    plt.plot(t , Res[:, 2], "b")
+    plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.title('Second CSS')
     plt.grid()
 
     plt.subplot(424)
-    plt.plot(t , Res[:, 6], "b")
+    plt.plot(t , Res[:, 6], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.title('Sixth CSS')
     plt.grid()
 
     plt.subplot(425)
-    plt.plot(t , Res[:, 3], "b")
+    plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.xlabel('t(s)')
@@ -221,7 +221,7 @@ def PostFitResiduals(Res, noise):
     plt.grid()
 
     plt.subplot(426)
-    plt.plot(t , Res[:, 7], "b")
+    plt.plot(t , Res[:, 7], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.xlabel('t(s)')
@@ -229,7 +229,7 @@ def PostFitResiduals(Res, noise):
     plt.grid()
 
     plt.subplot(427)
-    plt.plot(t , Res[:, 4], "b")
+    plt.plot(t , Res[:, 4], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.xlabel('t(s)')
@@ -237,7 +237,7 @@ def PostFitResiduals(Res, noise):
     plt.grid()
 
     plt.subplot(428)
-    plt.plot(t , Res[:, 8], "b")
+    plt.plot(t , Res[:, 8], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
     plt.xlabel('t(s)')
@@ -248,8 +248,7 @@ def PostFitResiduals(Res, noise):
     plt.close()
 
 def StatesVsExpected(stateLog, expectedStateArray):
-    plt.figure()
-
+    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
 
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
@@ -297,13 +296,13 @@ def StatesVsExpected(stateLog, expectedStateArray):
     plt.close()
 
 def StatesVsTargets(target1, target2, stateLog):
-    fig6 = plt.figure(6)
-    rect = fig6.patch
-    rect.set_facecolor('white')
+
 
     target = np.ones([len(stateLog[:, 0]),6])
     target[0:(len(stateLog[:, 0])-1)/2, :] = target1*target[0:(len(stateLog[:, 0])-1)/2, :]
     target[(len(stateLog[:, 0]) - 1) / 2:len(stateLog[:, 0]),:] = target2 * target[(len(stateLog[:, 0]) - 1) / 2:len(stateLog[:, 0]),:]
+
+    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
 
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1], 'b', label='Filter')
