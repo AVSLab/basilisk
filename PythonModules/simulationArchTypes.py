@@ -1,6 +1,30 @@
 import sim_model
 import sys_model_task
 
+def CreateNewMessage(messageName, messageType, moduleID):
+    messageStructName = messageType.__class__.__name__
+    messageID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(
+        messageName, messageType.getStructSize(), 2, messageStructName, moduleID)
+    return messageID
+
+def SubscribeToMessage(messageName, messageType, moduleID):
+    messageID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(
+        messageName, messageType.getStructSize(), moduleID)
+    return messageID
+
+def ReadMessage(messageID, messageType, moduleID):
+    localHeader = sim_model.SingleMessageHeader()
+    sim_model.SystemMessaging_GetInstance().ReadMessage(
+          messageID, localHeader, messageType.getStructSize(), messageType, moduleID)
+    return localHeader
+
+def WriteMessage(messageID, currentTime, messageStruct, moduleID, msgSize = -1):
+    if msgSize <= 0:
+        msgSize = messageStruct.getStructSize()
+    sim_model.SystemMessaging_GetInstance().WriteMessage(
+        messageID, currentTime, msgSize, messageStruct, moduleID)
+    return
+
 class ProcessBaseClass(object):
     def __init__(self, procName):
         self.Name = procName
@@ -48,6 +72,7 @@ class PythonModelClass(object):
     def __init__(self, modelName, modelActive = True, modelPriority = -1):
         self.modelName = modelName
         self.modelActive = modelActive
+        self.moduleID = sim_model.SystemMessaging_GetInstance().checkoutModuleID()
         self.modelPriority = -1
     def selfInit(self):
         print "Uhhh the model: " + self.modelName + " is just the python base class"
