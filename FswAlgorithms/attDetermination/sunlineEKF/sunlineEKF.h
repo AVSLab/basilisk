@@ -40,7 +40,6 @@ typedef struct {
     char navStateOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
     char filtDataOutMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output filter data message*/
     char cssDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
-    char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
     char cssConfInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the CSS configuration message*/
     
     double qObsVal;               /*!< [-] CSS instrument noise parameter*/

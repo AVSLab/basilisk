@@ -45,7 +45,6 @@ def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
     filterObject.cssDataInMsgName = "css_sensors_data"
-    filterObject.massPropsInMsgName = "adcs_config_data"
     filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
@@ -646,25 +645,6 @@ def testStateUpdateSunLine(show_plots):
     unitTestSim.TotalSim.CreateNewMessage("TestProcess", "css_config_data",
                                           msgSize, 2, "CSSConstellation")
     unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
-
-    vehicleConfigOut = sunlineEKF.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    I = [1000., 0., 0.,
-         0., 800., 0.,
-         0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          0,
-                                          vehicleConfigOut)
 
     testVector = np.array([-0.7, 0.7, 0.0])
     inputData = cssComm.CSSArraySensorIntMsg()

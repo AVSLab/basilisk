@@ -59,9 +59,9 @@ void CrossInit_sunlineEKF(sunlineEKFConfig *ConfigData, uint64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->cssDataInMsgId = subscribeToMessage(ConfigData->cssDataInMsgName,
         sizeof(CSSArraySensorIntMsg), moduleID);
-    /*! - Find the message ID for the vehicle mass properties configuration message */
-    ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
-        sizeof(VehicleConfigFswMsg), moduleID);
+//    /*! - Find the message ID for the vehicle mass properties configuration message */
+//    ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
+//        sizeof(VehicleConfigFswMsg), moduleID);
     /*! - Find the message ID for the coarse sun sensor configuration message */
     ConfigData->cssConfInMsgId = subscribeToMessage(ConfigData->cssConfInMsgName,
                                                    sizeof(CSSConstConfig), moduleID);
