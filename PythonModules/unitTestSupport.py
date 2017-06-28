@@ -290,7 +290,7 @@ def saveFigurePDF(figureName, plt, path):
         except OSError as exc:  # Guard against race condition
             if exc.errno != errno.EEXIST:
                 raise
-    plt.savefig(figFileName, transparent=True)
+    plt.savefig(figFileName, transparent=True, bbox_inches='tight', pad_inches=0.05)
 
 
 def writeFigureLaTeX(figureName, caption, plt, format, path):
