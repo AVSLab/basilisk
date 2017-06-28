@@ -50,16 +50,16 @@ def setupFilterData(filterObject):
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
     filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1, 0.0]
-    filterObject.covar = [1., 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 1., 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 1., 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.1, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.1, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
+    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.004, 0.0,
+                          0.0, 0.0, 0.0, 0.0, 0.0, 0.004]
 
     filterObject.qProcVal = 0.1**2
-    filterObject.qObsVal = 0.17 ** 2
-    filterObject.eKFSwitch = 20.
+    filterObject.qObsVal = 0.017 ** 2
+    filterObject.eKFSwitch = 10. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -616,8 +616,15 @@ def testStateUpdateSunLine(show_plots):
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
-
     setupFilterData(moduleConfig)
+
+    # Set up some test parameters
+
+    SimHalfLength = 20000
+    AddMeasNoise = True
+
+    # if not AddMeasNoise:
+    #     moduleConfig.qObsVal = 0.0
 
     cssConstelation = vehicleConfigData.CSSConstConfig()
 
