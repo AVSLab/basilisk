@@ -29,7 +29,7 @@
 /*! @brief Top level structure for the CSS sensor interface system.  Contains all parameters for the
  CSS interface*/
 typedef struct {
-    double dcm_SP[9];                         /*!< Row major platform 2 str DCM*/
+    double dcm_BP[9];                /*!< Row major platform 2 body DCM*/
     char InputDataName[MAX_STAT_MSG_LENGTH];  /*!< The name of the input message*/
     char InputPropsName[MAX_STAT_MSG_LENGTH]; /*!< The name of the ADCS config data message*/
     char OutputDataName[MAX_STAT_MSG_LENGTH]; /*!< The name of the output message*/
@@ -37,7 +37,6 @@ typedef struct {
     int32_t PropsMsgID;  /*!< Sensor ID tied to the ADCS config data message*/
     int32_t OutputMsgID; /*!< Message ID for the output port*/
     STAttFswMsg LocalOutput; /*!< Output data structure*/
-    double dcm_BP[9];                /*!< Row major platform 2 body DCM*/
 }STConfigData;
 
 #ifdef __cplusplus

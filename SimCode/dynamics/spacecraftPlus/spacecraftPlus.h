@@ -47,7 +47,6 @@ public:
     std::string sysTimePropertyName;     //!< -- Name of the system time property
     std::string scStateOutMsgName;       //!< -- Name of the state output message
     std::string scMassStateOutMsgName;   //!< -- Name of the state output message
-    std::string struct2BdyPropertyName;  //!< -- Name of the structure to body dynamics property
     double totOrbEnergy;                 //!< [J] Total orbital kinetic energy
     double totRotEnergy;                 //!< [J] Total rotational energy
     double rotEnergyContr;               //!< [J] Contribution of stateEffector to total rotational energy
