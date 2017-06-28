@@ -638,7 +638,7 @@ def testStateUpdateSunLine(show_plots):
     # layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
         newCSS = vehicleConfigData.CSSConfigurationElement()
-        newCSS.nHat_S = CSSHat
+        newCSS.nHat_B = CSSHat
         totalCSSList.append(newCSS)
     cssConstelation.nCSS = len(CSSOrientationList)
     cssConstelation.cssVals = totalCSSList
