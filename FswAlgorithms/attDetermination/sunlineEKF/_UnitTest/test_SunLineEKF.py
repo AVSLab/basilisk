@@ -67,12 +67,12 @@ def setupFilterData(filterObject):
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_all_sunline_ekf(show_plots):
-    # [testResults, testMessage] = sunline_individual_test(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropStatic(show_plots)
-    # assert testResults < 1, testMessage
-    # [testResults, testMessage] = testStatePropVariable(show_plots)
-    # assert testResults < 1, testMessage
+    [testResults, testMessage] = sunline_individual_test(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropStatic(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = testStatePropVariable(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = testStateUpdateSunLine(show_plots)
     assert testResults < 1, testMessage
 
@@ -90,16 +90,22 @@ def sunline_individual_test(show_plots):
     ###################################################################################
 
     inputStates = [2,1,0.75,0.1,0.4,0.05]
+    dt =0.5
 
     expDynMat = np.zeros([6,6])
     expDynMat[0:3, 0:3] = -(np.outer(inputStates[0:3],inputStates[3:6])/np.linalg.norm(inputStates[0:3])**2. +
                          np.dot(inputStates[3:6],inputStates[0:3])*(np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
     expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
 
+    ## Equations when removing the unobservable states from d_dot
+    expDynMat[3:6, 0:3] = -1/dt*(np.outer(inputStates[0:3],inputStates[3:6])/np.linalg.norm(inputStates[0:3])**2. +
+                         np.dot(inputStates[3:6],inputStates[0:3])*(np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
+    expDynMat[3:6, 3:6] =- 1/dt*(np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2)
+
     dynMat = sunlineEKF.new_doubleArray(6*6)
     for i in range(36):
         sunlineEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineEKF.sunlineDynMatrix(inputStates, dynMat)
+    sunlineEKF.sunlineDynMatrix(inputStates, dt, dynMat)
 
     DynOut = []
     for i in range(36):
@@ -143,7 +149,8 @@ def sunline_individual_test(show_plots):
     expectedSTM = dt*np.dot(expDynMat, np.eye(6)) + np.eye(6)
     expectedStates = np.zeros(6)
     inputStatesArray = np.array(inputStates)
-    expectedStates[3:6] = np.array(inputStatesArray[3:6])
+    ## Equations when removing the unobservable states from d_dot
+    expectedStates[3:6] = np.array(inputStatesArray[3:6]  - np.dot(inputStatesArray[3:6], inputStatesArray[0:3])*inputStatesArray[0:3]/np.linalg.norm(inputStatesArray[0:3])**2.)
     expectedStates[0:3] = np.array(inputStatesArray[0:3] + dt*(inputStatesArray[3:6] - np.dot(inputStatesArray[3:6], inputStatesArray[0:3])*inputStatesArray[0:3]/np.linalg.norm(inputStatesArray[0:3])**2.))
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
@@ -519,14 +526,18 @@ def testStatePropVariable(show_plots):
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
         expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt*(expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.)
-        expectedStateArray[i, 4:7] = expectedStateArray[i-1,4:7]
+        ## Equations when removing the unobservable states from d_dot
+        expectedStateArray[i, 4:7] = expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.
 
     expDynMat = np.zeros([2001,6,6])
     for i in range(0,2001):
         expDynMat[i, 0:3, 0:3] = -(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
                              np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
         expDynMat[i, 0:3, 3:6] = np.eye(3) - np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2
-
+        ## Equations when removing the unobservable states from d_dot
+        expDynMat[i, 3:6, 0:3] = -1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
+                             np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
+        expDynMat[i, 3:6, 3:6] =- 1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2)
 
     expectedSTM = np.zeros([2001,6,6])
     expectedSTM[0,:,:] = np.eye(6)
@@ -564,11 +575,11 @@ def testStatePropVariable(show_plots):
 
         for i in range(36):
             if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
-                print abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
+                abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: Covariance Prop \n")
             if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
-                print abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1])
+                print abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: STM Prop \n")
 
@@ -621,10 +632,7 @@ def testStateUpdateSunLine(show_plots):
     # Set up some test parameters
 
     SimHalfLength = 20000
-    AddMeasNoise = True
-
-    # if not AddMeasNoise:
-    #     moduleConfig.qObsVal = 0.0
+    AddMeasNoise = False
 
     cssConstelation = vehicleConfigData.CSSConstConfig()
 
@@ -639,7 +647,6 @@ def testStateUpdateSunLine(show_plots):
         [-0.70710678118654746, -0.70710678118654757, 0.0],
     ]
     totalCSSList = []
-    i = 0
     # Initializing a 2D double array is hard with SWIG.  That's why there is this
     # layer between the above list and the actual C variables.
     for CSSHat in CSSOrientationList:
@@ -664,7 +671,7 @@ def testStateUpdateSunLine(show_plots):
 
 
     testVector = np.array([-0.7, 0.7, 0.0])
-
+    dt =0.5
     stateTarget = testVector.tolist()
     stateTarget.extend([0.0, 0.0, 0.0])
     moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
@@ -739,9 +746,8 @@ def testStateUpdateSunLine(show_plots):
         Htest[i,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-
     for i in range(6):
-        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] / 100):
+        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
@@ -817,7 +823,7 @@ def testStateUpdateSunLine(show_plots):
 
 
     for i in range(6):
-        if (covarLog[-1, i * 6 + 1 + i] > covarLog[0, i * 6 + 1 + i] /100.):
+        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
             testFailCount += 1
             testMessages.append("Covariance update failure")
         if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
@@ -825,12 +831,9 @@ def testStateUpdateSunLine(show_plots):
             testFailCount += 1
             testMessages.append("State update failure")
 
-    target1 = np.array([-0.7, 0.7, 0.0, 0., 0., 0.])
-    target2 = np.array([-0.8, -0.9, 0.0, 0., 0., 0.])
-
-
-    show_plots =True
     if show_plots:
+        target1 = np.array([-0.7, 0.7, 0.0, 0., 0., 0.])
+        target2 = np.array([-0.8, -0.9, 0.0, 0., 0., 0.])
         FilterPlots.StatesPlot(stateErrorLog, covarLog)
         FilterPlots.StatesVsTargets(target1, target2, stateLog)
         FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal)

@@ -188,6 +188,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , MeasNoise, 'r--', label='Covar')
     plt.plot(t , -MeasNoise, 'r--')
     plt.legend(loc='best')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('First CSS')
     plt.grid()
 
@@ -195,6 +196,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 5], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('Fifth CSS')
     plt.grid()
 
@@ -202,6 +204,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 2], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('Second CSS')
     plt.grid()
 
@@ -209,6 +212,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 6], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('Sixth CSS')
     plt.grid()
 
@@ -216,7 +220,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 3], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.xlabel('t(s)')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('Third CSS')
     plt.grid()
 
@@ -224,7 +228,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 7], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
-    plt.xlabel('t(s)')
+    plt.ylim([-10*noise, 10*noise])
     plt.title('Seventh CSS')
     plt.grid()
 
@@ -232,6 +236,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 4], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
+    plt.ylim([-10*noise, 10*noise])
     plt.xlabel('t(s)')
     plt.title('Fourth CSS')
     plt.grid()
@@ -240,6 +245,7 @@ def PostFitResiduals(Res, noise):
     plt.plot(t , Res[:, 8], "b.")
     plt.plot(t , MeasNoise, 'r--')
     plt.plot(t , -MeasNoise, 'r--')
+    plt.ylim([-10*noise, 10*noise])
     plt.xlabel('t(s)')
     plt.title('Eight CSS')
     plt.grid()
