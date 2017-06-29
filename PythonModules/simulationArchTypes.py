@@ -1,3 +1,23 @@
+''' '''
+'''
+    ISC License
+    
+    Copyright (c) 2016-2017, Autonomous Vehicle Systems Lab, University of Colorado at Boulder
+    
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted, provided that the above
+    copyright notice and this permission notice appear in all copies.
+    
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+    ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+    WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+    ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+    OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+    
+'''
+
 import sim_model
 import sys_model_task
 
@@ -70,17 +90,42 @@ class TaskBaseClass(object):
 
 class PythonModelClass(object):
     def __init__(self, modelName, modelActive = True, modelPriority = -1):
+        ## The modelName is a unique identifier (unique to simulation) passed
+        # in to a class.
         self.modelName = modelName
+        ## The modelActive flag indicates if the model should be run or not
         self.modelActive = modelActive
+        ## The moduleID is a numeric identifier used to track message usage in
+        # a given simulation.
         self.moduleID = sim_model.SystemMessaging_GetInstance().checkoutModuleID()
-        self.modelPriority = -1
+        ## The modelPriority variable is the setting for which models get run
+        # first.  Higher priority indicates that a model will get run sooner.
+        self.modelPriority = modelPriority
+    
+    ## The selfInit method is used to initialze all of the output messages of a class.
+    # It is important that ALL outputs are initialized here so that other models can
+    # subscribe to these messages in their crossInit method.
     def selfInit(self):
         print "Uhhh the model: " + self.modelName + " is just the python base class"
         return
+    
+    ## The crossInit method is used to initialize all of the input messages of a class.
+    #  This subscription assumes that all of the other models present in a given simulation
+    #  instance have initialized their messages during the selfInit step.
     def crossInit(self):
         return
+    
+    ## The reset method is used to clear out any persistent variables that need to get changed
+    #  when a task is restarted.  This method is typically only called once after selfInit/crossInit,
+    #  but it should be written to allow the user to call it multiple times if necessary.
     def reset(self, currentTime):
         return
+    
+    ## The updateState method is the cyclical worker method for a given Basilisk class.  It
+    # will get called periodically at the rate specified in the Python task that the model is
+    # attached to.  It persists and anything can be done inside of it.  If you have realtime
+    # requirements though, be careful about how much processing you put into a Python updateState
+    # method.  You could easily detonate your sim's ability to run in realtime.
     def updateState(self, currentTime):
         return
 
