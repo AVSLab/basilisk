@@ -30,7 +30,6 @@
 void SelfInit_vehicleConfigData(VehConfigInputData *ConfigData, uint64_t moduleID)
 {
 
-    double halfInertia[3][3];
     VehicleConfigFswMsg localConfigData;
     /*! Begin function steps*/
     

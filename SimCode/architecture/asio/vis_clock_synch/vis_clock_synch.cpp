@@ -112,7 +112,7 @@ void VisClockSynch::UpdateState(uint64_t CurrentSimNanos)
 	while (((int64_t) elapsedWallFrameTime.count() - (int64_t) (elapsedSimFrameTime/this->accelFactor))
         < this->accuracyNanos)
 	{
-        int64_t tmp = ((int64_t) elapsedWallFrameTime.count() - (int64_t) (elapsedSimFrameTime/this->accelFactor))/1E3;
+//        int64_t tmp = ((int64_t) elapsedWallFrameTime.count() - (int64_t) (elapsedSimFrameTime/this->accelFactor))/1E3;
 		currentTime = std::chrono::high_resolution_clock::now();
 		elapsedWallFrameTime = std::chrono::duration_cast<std::chrono::nanoseconds>
 			(currentTime - this->prevFrameStartTime);
