@@ -37,8 +37,7 @@ import sunlineEKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData
 import macros
-import sim_model
-import ctypes
+
 
 
 def setupFilterData(filterObject):
@@ -59,7 +58,7 @@ def setupFilterData(filterObject):
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
-    filterObject.eKFSwitch = 10. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
+    filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -452,7 +451,7 @@ def testStatePropStatic(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " static state propagation"
+        print "PASSED: " + "EKF static state propagation"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -585,7 +584,7 @@ def testStatePropVariable(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " general state propagation"
+        print "PASSED: " + "EKF general state propagation"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
@@ -632,7 +631,7 @@ def testStateUpdateSunLine(show_plots):
     # Set up some test parameters
 
     SimHalfLength = 20000
-    AddMeasNoise = False
+    AddMeasNoise = True
 
     cssConstelation = vehicleConfigData.CSSConstConfig()
 
@@ -746,14 +745,25 @@ def testStateUpdateSunLine(show_plots):
         Htest[i,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-    for i in range(6):
-        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-            testFailCount += 1
-            testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
-            print abs(stateLog[-1, i + 1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
+    if not AddMeasNoise:
+        for i in range(6):
+            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+                testFailCount += 1
+                testMessages.append("Covariance update failure")
+            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+                print abs(stateLog[-1, i + 1] - stateTarget[i])
+                testFailCount += 1
+                testMessages.append("State update failure")
+    else:
+        for i in range(6):
+            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+                testFailCount += 1
+                testMessages.append("Covariance update failure")
+            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-3):
+                print abs(stateLog[-1, i + 1] - stateTarget[i])
+                testFailCount += 1
+                testMessages.append("State update failure")
+
 
     testVector = np.array([-0.8, -0.9, 0.0])
     inputData = cssComm.CSSArraySensorIntMsg()
@@ -821,15 +831,24 @@ def testStateUpdateSunLine(show_plots):
         Htest[i-SimHalfLength,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-
-    for i in range(6):
-        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-            testFailCount += 1
-            testMessages.append("Covariance update failure")
-        if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
-            print abs(stateLog[-1, i + 1] - stateTarget[i])
-            testFailCount += 1
-            testMessages.append("State update failure")
+    if not AddMeasNoise:
+        for i in range(6):
+            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+                testFailCount += 1
+                testMessages.append("Covariance update failure")
+            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
+                print abs(stateLog[-1, i + 1] - stateTarget[i])
+                testFailCount += 1
+                testMessages.append("State update failure")
+    else:
+        for i in range(6):
+            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+                testFailCount += 1
+                testMessages.append("Covariance update failure")
+            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-3):
+                print abs(stateLog[-1, i + 1] - stateTarget[i])
+                testFailCount += 1
+                testMessages.append("State update failure")
 
     if show_plots:
         target1 = np.array([-0.7, 0.7, 0.0, 0., 0., 0.])
@@ -840,7 +859,7 @@ def testStateUpdateSunLine(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print "PASSED: " + moduleWrap.ModelTag + " state update"
+        print "PASSED: " + "EKF full test"
 
     # return fail count and join into a single string all messages in the list
     # testMessage
