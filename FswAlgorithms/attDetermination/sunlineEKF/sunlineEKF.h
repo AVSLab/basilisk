@@ -100,7 +100,7 @@ extern "C" {
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double *dynMat);
+    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double dt, double *dynMat);
     
     void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *x, double *covar);
     

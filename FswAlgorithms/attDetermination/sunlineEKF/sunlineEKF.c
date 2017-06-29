@@ -207,7 +207,7 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->states, ConfigData->dynMat);
+    sunlineDynMatrix(ConfigData->states, ConfigData->dt, ConfigData->dynMat);
     sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->states, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
@@ -238,7 +238,7 @@ void sunlineTimeUpdate(sunlineEKFConfig *ConfigData, double updateTime)
 void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition)
 {
     
-    double propagatedVel[SKF_N_STATES/2], ddotminusdtilde[SKF_N_STATES/2];
+    double propagatedVel[SKF_N_STATES/2];
     double pointUnit[SKF_N_STATES/2];
     double unitComp;
     double deltatASTM[SKF_N_STATES*SKF_N_STATES];
@@ -248,7 +248,6 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
     unitComp=0.0;
     vSetZero(pointUnit, SKF_N_STATES/2);
     vSetZero(propagatedVel, SKF_N_STATES/2);
-    vSetZero(ddotminusdtilde, SKF_N_STATES/2);
     
     /*! Begin state update steps */
     /*! - Unitize the current estimate to find direction to restrict motion*/
@@ -257,8 +256,8 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
     v3Scale(unitComp, pointUnit, pointUnit);
     /*! - Subtract out rotation in the sunline axis because that is not observable
      for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, ddotminusdtilde);
-    v3Scale(dt, ddotminusdtilde, propagatedVel);
+    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
+    v3Scale(dt, &(stateInOut[3]), propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
@@ -276,7 +275,7 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, do
  @param ConfigData The configuration data associated with the estimator
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES], double *dynMat)
+void sunlineDynMatrix(double states[SKF_N_STATES], double dt, double *dynMat)
 {
     double dddot, ddtnorm2[3][3];
     double I3[3][3], d2I3[3][3];
@@ -285,7 +284,7 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double *dynMat)
     double normd2;
     double dFdd[3][3], dFdddot[3][3];
     
-    /* dFdd */
+    /* dF1dd */
     mSetIdentity(I3, 3, 3);
     dddot = v3Dot(&(states[0]), &(states[3]));
     normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
@@ -307,13 +306,26 @@ void sunlineDynMatrix(double states[SKF_N_STATES], double *dynMat)
     /* Populate the first 3x3 matrix of the dynamics matrix*/
     mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 0, 0);
     
-    /* dFdddot */
+    /* dF1dddot */
     m33Scale(-1.0/normd2, douterd, ddtnorm2);
     m33Add(I3, ddtnorm2, dFdddot);
     
     /* Populate the second 3x3 matrix */
     mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 0, 3);
     
+    /* Only propagate d_dot if dt is greater than zero, if not leave dynMat zeroed*/
+    if (dt>1E-10){
+        /* dF2dd */
+        m33Scale(1.0/dt, dFdd, dFdd);
+        /* Populate the third 3x3 matrix of the dynamics matrix*/
+        mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 3, 0);
+    
+        /* dF2dddot */
+        m33Subtract(dFdddot, I3, dFdddot);
+        m33Scale(1.0/dt, dFdddot, dFdddot);
+        /* Populate the fourth 3x3 matrix */
+        mSetSubMatrix(dFdddot, 3, 3, dynMat, SKF_N_STATES, SKF_N_STATES, 3, 3);
+    }
     return;
 }
 
