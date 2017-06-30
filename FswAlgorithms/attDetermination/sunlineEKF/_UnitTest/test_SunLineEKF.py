@@ -31,8 +31,6 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import SunLineEKF_test_utilities as FilterPlots
-import unitTestSupport  # general support file with common unit test functions
-import matplotlib.pyplot as plt
 import sunlineEKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData
@@ -611,12 +609,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
-
-    # SimHalfLength= 200
-    # AddMeasNoise = True
-    # testVector1 = [0., 0.7, 0.2]
-    # testVector2=[0.8, 0.9, 0.0]
-    # stateGuess=[0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
