@@ -22,10 +22,12 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraftPlus(), RWs, simpleNav() and
-#           MRP_PD() modules.  Illustrates a 6-DOV spacecraft detumbling in orbit
-#           while using the RWs to do the attitude control actuation.
-# Author:   Hanspeter Schaub
-# Creation Date:  Jan. 7, 2017
+#           a Python implementation of the MRP_PD module.  Illustrates
+#           a 6-DOV spacecraft detumbling in orbit
+#           while using the RWs to do the attitude control actuation.  The main
+#           purpose of this module is to illustrate how to use python processes.
+# Author:   Scott Piggott
+# Creation Date:  Jun. 28, 2017
 #
 
 
@@ -80,78 +82,70 @@ import simulationArchTypes
 # import message declarations
 import fswMessages
 
-
-# ------------------------------------- Interface Functions ------------------------------------- #
-def GetStructSize(messageStructName):
-    return  eval(messageStructName + '()').getStructSize()
-
-def CreateNewMessage(self, messageName, messageStructName):
-    messageID = sim_model.SystemMessaging_GetInstance().CreateNewMessage(
-        messageName, GetStructSize(messageStructName), 2, messageStructName.split('.')[1], self.moduleID)
-    return messageID
-
-def SubscribeToMessage(self, messageName, messageStructName):
-    messageID = sim_model.SystemMessaging_GetInstance().subscribeToMessage(
-        messageName, GetStructSize(messageStructName), self.moduleID)
-    return messageID
-
-def ReadMessage(self, messageID, messageStructName):
-    localHeader = sim_model.SingleMessageHeader()
-    localData = eval(messageStructName + '()')
-    sim_model.SystemMessaging_GetInstance().ReadMessage(messageID, localHeader, localData.getStructSize(), localData, self.moduleID)
-    return localData
-
-def WriteMessage(self, messageID, currentTime, messageStruct):
-    sim_model.SystemMessaging_GetInstance().WriteMessage(
-        messageID, currentTime, messageStruct.getStructSize(), messageStruct, self.moduleID)
-    return
 # -------------------------------------------------------------------------- #
-
-class PythonMRPPD(simulationArchTypes.PythonModelClass):
-    def __init__(self, modelName, modelActive = True, modelPriority = -1):
-        self.modelName = modelName
-        self.modelActive = modelActive
-        self.modelPriority = -1
-        self.moduleID = sim_model.SystemMessaging_GetInstance().checkoutModuleID()
-
-        self.K = 0
-        self.P = 0
-        self.inputGuidName =""
-        self.inputVehicleConfigDataName = ""
-        self.outputDataName = ""
-        self.inputGuidID = -1
-        self.inputVehConfigID = -1
-        self.outputDataID = -1
-
-
-    def selfInit(self):
-        self.outputDataID = CreateNewMessage(self, self.outputDataName, 'MRP_PD.CmdTorqueBodyIntMsg')
-        return
-    def crossInit(self):
-        self.inputGuidID = SubscribeToMessage(self, self.inputGuidName, 'MRP_PD.AttGuidFswMsg')
-        self.inputVehConfigID = SubscribeToMessage(self, self.inputVehicleConfigDataName, 'MRP_PD.VehicleConfigFswMsg')
-        return
-    def reset(self, currentTime):
-        return
-    def updateState(self, currentTime):
-        localAttErr = ReadMessage(self, self.inputGuidID, 'MRP_PD.AttGuidFswMsg')
-        lrCmd = np.array(localAttErr.sigma_BR) * self.K + np.array(localAttErr.omega_BR_B)*self.P
-        outTorque = MRP_PD.CmdTorqueBodyIntMsg()
-        outTorque.torqueRequestBody = (-lrCmd).tolist()
-        WriteMessage(self, self.outputDataID, currentTime, outTorque)
-
-        def print_output():
-            print currentTime*1.0E-9
-            print outTorque.torqueRequestBody
-            print localAttErr.sigma_BR
-            print localAttErr.omega_BR_B
-        
-        return
-
-
-
-
-
+## \defgroup Tutorials_2_0_3
+##   @{
+## Demonstrates how to stabilize the tumble of a spacecraft orbiting the
+# Earth that is initially tumbling, but uses 3 separate threads, one of them python.
+#
+# Attitude Detumbling Simulation in a Three Process Simulation Setup {#scenarioAttitudePythonPD}
+# ====
+#
+# Scenario Description
+# -----
+# This script sets up a 6-DOF spacecraft which is orbiting the Earth. This setup
+# is similar to the [test_scenarioAttitudeFeedback.py](@ref scenarioAttitudeFeedback),
+# but here the dynamics
+# simulation and the Flight Software (FSW) algorithms are run at different time steps.
+# The scenario runs two different cases.  The first is with the nominal MRP_PD (c-code), the
+# second is with the same module coded into a python process.  Identical results should be
+# obtained.
+#
+# To run the default scenario 1., call the python script through
+#
+#       python test_scenarioAttitudePythonPD.py
+#
+# When the simulation completes 3 plots are shown for the MRP attitude history, the differences
+# between the attitude history, and the differences between the RWA commands.  The attitude history
+# should show a clean overlay, and there should be zero differences.
+#
+# It is assumed at this point that you are familiar with how to set up simulations in Basilisk and that
+# you have a good understanding of processes/Tasks/models/etc.  This document tries to call out the
+# unique changes that are needed for python processes.
+#
+# The simulation layout is broken up into three different processes.  In the nominal sim (with MRP_PD c-code),
+# the processes contain the following contents:
+# -# Dynamics and control leading up to MRP_PD
+# -# MRP_PD (c-code)
+# -# RWA control based on MRP_PD outputs
+#
+# For the simulation with the python task, the scenario is broken up as follows:
+# -# Dynamics and control leading up to MRP_PD
+# -# MRP_PD (python-code)
+# -# RWA control based on MRP_PD outputs
+#
+# The process, task, and model settings for the standard models follow a procedure identical to the
+# other tutorials.  Then for Python processes, the spin up procedure closely mirrors that of the
+# regular processes.
+#
+# For the python processes, the creation step is almost identical to the creation step for standard
+# C/C++ processes.  Instead of:
+#~~~~~~~~~~~~~~{.py}
+#       scSim.dynProcessSecond = scSim.CreateNewProcess(scSim.simControlProc, 2)
+#~~~~~~~~~~~~~~
+# We use:
+#~~~~~~~~~~~~~~{.py}
+#       scSimPy.dynProcessSecond = scSimPy.CreateNewPythonProcess(scSimPy.simControlProc, 2)
+#~~~~~~~~~~~~~~
+# With this process, we've embedded Py in most of the naming, but that is an arbitrary user
+# choice, the only thing that matters is the CreateNewPythonProcess instead of CreateNewProcess.
+# Note that the prioritization is the same procedure as is used for standard tasks.
+#
+# Then, models are created using model classes that have been defined (more on this later).  These
+# models are then attached to the python task which has been attached to the python process.  Again
+# the same prioritization procedures are used for the python tasks as are used for the standard tasks.
+#
+##  @}
     # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -220,6 +214,9 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     scSimPy.TotalSim.terminateSimulation()
     
     # Create simulation variable names
+    ## For the python process, the name used includes Py at the end for this tutorial.
+    # However there is no magic to that, they can be named arbitrarily like any other process
+    # or task
     scSimPy.simTaskPreControlName = "simTaskPreControl"
     scSimPy.simTaskControlName = "simTaskControlPy"
     scSimPy.simTaskPostControlName = "simTaskPostControl"
@@ -284,6 +281,15 @@ def runRegularTask(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     plt.xlabel('Time [min]')
     plt.ylabel('RW tau diff [Nm] ')
 
+    dataSigDiff = dataSigmaBR[:,1:4] - dataSigmaBRBase[:,1:4]
+    if(np.linalg.norm(dataSigDiff) > 1.0E-10):
+        testFailCount += 1
+        testMessages.append("Failed to get accurate agreement between attitude variables")
+
+    dataUsDiff = dataUsReq[:, 1:4] - dataUsReqBase[:, 1:4]
+    if (np.linalg.norm(dataUsDiff) > 1.0E-10):
+        testFailCount += 1
+        testMessages.append("Failed to get accurate agreement between torque command variables")
 
     if show_plots:
         plt.show()
@@ -556,6 +562,108 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
 
     return dataUsReq, dataSigmaBR, dataOmegaBR, dataPos, dataOmegaRW, dataRW
 
+## \addtogroup Tutorials_2_0_3
+##   @{
+# ====
+#
+# PythonMRPPD module implementation
+# -----
+#
+# This class inherits from the PythonModelClass available in the simulationArchTypes module.
+# The PythonModelClass is the polymorphic base class that is used to attach models to a
+# PythonTask that has been implemented in your simulation.  The base class uses the following
+# virtual functions:
+# -# selfInit: The method that creates all of the messages that will be written by the
+#    python model that is implemented in your class.
+# -# crossInit: The method that will subscribe to all of the input messages that your class
+#    needs in order to perform its function.
+# -# reset: The method that will initialize any persistent data in your model to a common
+#    "ready to run" state (e.g. filter states, integral control sums, etc).
+# -# updateState: The method that will be run cyclically in your model at the rate specified
+#    in the PythonTask that was created in the input file.
+#
+# Additionally, your class should ensure that in the __init__ method, your call the super
+# __init__ method for the class so that the base class' constructor also gets called to
+# initialize the model-name, activity, moduleID, and other important class members:
+#~~~~~~~~~~~~~~{.py}
+#       super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
+#~~~~~~~~~~~~~~
+# Once you have made your class consistent with these polymorphic constraints, it is
+# essentially free-form.  The only limit is your imagination.  Numpy, matplotlib, vision processing,
+# AI, whatever.  Go nuts.  Don't do anything I wouldn't do though.
+class PythonMRPPD(simulationArchTypes.PythonModelClass):
+    def __init__(self, modelName, modelActive=True, modelPriority=-1):
+        super(PythonMRPPD, self).__init__(modelName, modelActive, modelPriority)
+
+        ## Proportional gain term used in control
+        self.K = 0
+        ## Derivative gain term used in control
+        self.P = 0
+        ## Input guidance structure message name
+        self.inputGuidName = ""
+        ## Input vehicle configuration structure message name
+        self.inputVehicleConfigDataName = ""
+        ## Output body torque message name
+        self.outputDataName = ""
+        ## Input message ID (initialized to -1 to break messaging if unset)
+        self.inputGuidID = -1
+        ## Input message ID (initialized to -1 to break messaging if unset)
+        self.inputVehConfigID = -1
+        ## Output message ID (initialized to -1 to break messaging if unset)
+        self.outputDataID = -1
+        ## Output Lr torque structure instantiation.  Note that this creates the whole class for interation
+        # with the messaging system
+        self.outputMessageData = MRP_PD.CmdTorqueBodyIntMsg()
+        ## Input guidance error structure instantiation.  Note that this creates the whole class for interation
+        # with the messaging system
+        self.inputGuidMsg = MRP_PD.AttGuidFswMsg()
+        ## Input vehicle configuration structure instantiation.  Note that this creates the whole class for interation
+        # with the messaging system
+        self.inputConfigMsg = MRP_PD.VehicleConfigFswMsg()
+
+    ## The selfInit method is used to initialze all of the output messages of a class.
+    # It is important that ALL outputs are initialized here so that other models can
+    # subscribe to these messages in their crossInit method.
+    def selfInit(self):
+        self.outputDataID = simulationArchTypes.CreateNewMessage(self.outputDataName, self.outputMessageData,
+                                                                 self.moduleID)
+        return
+
+    ## The crossInit method is used to initialize all of the input messages of a class.
+    #  This subscription assumes that all of the other models present in a given simulation
+    #  instance have initialized their messages during the selfInit step.
+    def crossInit(self):
+        self.inputGuidID = simulationArchTypes.SubscribeToMessage(self.inputGuidName, self.inputGuidMsg, self.moduleID)
+        self.inputVehConfigID = simulationArchTypes.SubscribeToMessage(self.inputVehicleConfigDataName,
+                                                                       self.inputConfigMsg, self.moduleID)
+        return
+
+    ## The reset method is used to clear out any persistent variables that need to get changed
+    #  when a task is restarted.  This method is typically only called once after selfInit/crossInit,
+    #  but it should be written to allow the user to call it multiple times if necessary.
+    def reset(self, currentTime):
+        return
+
+    ## The updateState method is the cyclical worker method for a given Basilisk class.  It
+    # will get called periodically at the rate specified in the Python task that the model is
+    # attached to.  It persists and anything can be done inside of it.  If you have realtime
+    # requirements though, be careful about how much processing you put into a Python updateState
+    # method.  You could easily detonate your sim's ability to run in realtime.
+    def updateState(self, currentTime):
+        simulationArchTypes.ReadMessage(self.inputGuidID, self.inputGuidMsg, self.moduleID)
+        lrCmd = np.array(self.inputGuidMsg.sigma_BR) * self.K + np.array(self.inputGuidMsg.omega_BR_B) * self.P
+        self.outputMessageData.torqueRequestBody = (-lrCmd).tolist()
+        simulationArchTypes.WriteMessage(self.outputDataID, currentTime, self.outputMessageData, self.moduleID)
+
+        def print_output():
+            print currentTime * 1.0E-9
+            print outTorque.torqueRequestBody
+            print localAttErr.sigma_BR
+            print localAttErr.omega_BR_B
+
+        return
+
+##  @}
 #
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
