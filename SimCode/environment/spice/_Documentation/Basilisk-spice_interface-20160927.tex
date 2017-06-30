@@ -15,8 +15,6 @@
 
 
 \makeCover
-
-
 %
 %	enter the revision documentation here
 %	to add more lines, copy the table entry and the \hline, and paste after the current entry.
@@ -96,7 +94,7 @@ The time increment error tolerance is taken at 1 ms generically. The GPS time er
 
 \subsection{Pass/Fail results}
 
-When running py.test, we came to notice that the time checks were failing for two of the days. This is due to the fact that they are Sunday mornings, which is the end of a GPS week. The seconds therefore jump from 604800 to 0. Since we understand the source of this error, and in order to make py.test pass, we skip the time checks of two days. Their other tests passed, and all 22 other dates, being that they are not Sundays, pass the time checks as desired. 
+When running py.test, we came to notice that the time checks were failing for two of the days. This is due to the fact that they are Sunday mornings, which is the end of a GPS week. The seconds therefore jump from 604800 to 0. Since we understand the source of this error, and in order to make pytest pass, we skip the time checks of two days. Their other tests passed, and all 22 other dates, being that they are not Sundays, pass the time checks as desired. 
 
 \begin{table}[htbp]
     \caption{Test Parameters}
@@ -117,10 +115,10 @@ When running py.test, we came to notice that the time checks were failing for tw
       10/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       10/20/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       12/10/15 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      12/20/15 & \textcolor{red}{Failed} & \textcolor{red}{Failed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      12/20/15 & \textcolor{orange}{Exp. Fail} & \textcolor{orange}{Exp. Fail} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       02/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       02/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
-      04/10/16 & \textcolor{red}{Failed} & \textcolor{red}{Failed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
+      04/10/16 & \textcolor{orange}{Exp. Fail} & \textcolor{orange}{Exp. Fail} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       04/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       06/10/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
       06/20/16 & \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}&  \textcolor{ForestGreen}{Passed} & \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed}\\
@@ -137,31 +135,11 @@ When running py.test, we came to notice that the time checks were failing for tw
 
 \subsection{Ephemeris precision}
 
-From these tests, we can also plot out the precision of the planet ephemeris. This is done in \ref{fig:Ephem}. We notice that Mars has the highest error by orders of magnitude. This is expected, and the errors are still bounded by 200m, which is well beyond the precision needed. We can also look more closely are the precision for Earth and the Sun, seen in figures  \ref{fig:EphemEarth} and  \ref{fig:EphemSun} respectively. The Earth and Sun's positions are known very precisely. 
+From these tests, we can also plot out the precision of the planet ephemeris. This is done in \ref{fig:EphemMars}. We notice that Mars has the highest error by orders of magnitude. This is expected, and the errors are still bounded by 200m, which is well beyond the precision needed. We can also look more closely are the precision for Earth and the Sun, seen in figures  \ref{fig:EphemEarth} and  \ref{fig:EphemSun} respectively. The Earth and Sun's positions are known very precisely. 
 
+\input{AutoTex/EphemMars}
+\input{AutoTex/EphemEarth}
+\input{AutoTex/EphemSun}
 
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[scale=0.65]{Figures/Ephem2.png}
-	}
-	\caption{Ephemeris scaled to Mars error}
-	\label{fig:Ephem}
-\end{figure}
-
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[scale=0.65]{Figures/EphemEarth2.png}
-	}
-	\caption{Ephemeris scaled to Earth error}
-	\label{fig:EphemEarth}
-\end{figure}
-
-\begin{figure}[htb]
-	\centerline{
-	\includegraphics[scale=0.65]{Figures/EphemSun2.png}
-	}
-	\caption{Ephemeris scaled to Sun error}
-	\label{fig:EphemSun}
-\end{figure}
 
 \end{document}
