@@ -39,7 +39,6 @@ import vehicleConfigData
 import macros
 
 
-
 def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "sunline_state_estimate"
     filterObject.filtDataOutMsgName = "sunline_filter_data"
@@ -60,22 +59,41 @@ def setupFilterData(filterObject):
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
+def test_all_functions_ekf(show_plots):
+    [testResults, testMessage] = sunline_individual_test()
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = StatePropStatic()
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = StatePropVariable(show_plots)
+    assert testResults < 1, testMessage
+
+# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
+# @pytest.mark.skipif(conditionstring)
+# uncomment this line if this test has an expected failure, adjust message as needed
+# @pytest.mark.xfail(True)
+
+# The following 'parametrize' function decorator provides the parameters and expected results for each
+#   of the multiple test runs for this test.
+@pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
+    (20000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
+    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
+    (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0, 0.0]),
+    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
+])
+
+
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_ekf(show_plots):
-    [testResults, testMessage] = sunline_individual_test(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropStatic(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStatePropVariable(show_plots)
-    assert testResults < 1, testMessage
-    [testResults, testMessage] = testStateUpdateSunLine(show_plots)
+def test_all_sunline_ekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
     assert testResults < 1, testMessage
 
-def sunline_individual_test(show_plots):
+
+def sunline_individual_test():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -380,12 +398,6 @@ def sunline_individual_test(show_plots):
             testFailCount += 1
             testMessages.append("CKF update failure \n")
 
-    ###################################################################################
-    # If the argument provided at commandline "--show_plots" evaluates as true,
-    # plot all figures
-    if show_plots:
-        plt.show()
-
     # print out success message if no error were found
     if testFailCount == 0:
         print "PASSED: " + " EKF individual tests"
@@ -397,7 +409,7 @@ def sunline_individual_test(show_plots):
 ####################################################################################
 # Test for the time and update with static states (zero d_dot)
 ####################################################################################
-def testStatePropStatic(show_plots):
+def StatePropStatic():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -461,7 +473,7 @@ def testStatePropStatic(show_plots):
 ####################################################################################
 # Test for the time and update with changing states (non-zero d_dot)
 ####################################################################################
-def testStatePropVariable(show_plots):
+def StatePropVariable(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -594,11 +606,17 @@ def testStatePropVariable(show_plots):
 ####################################################################################
 # Test for the full filter with time and measurement update
 ####################################################################################
-def testStateUpdateSunLine(show_plots):
+def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+
+    # SimHalfLength= 200
+    # AddMeasNoise = True
+    # testVector1 = [0., 0.7, 0.2]
+    # testVector2=[0.8, 0.9, 0.0]
+    # stateGuess=[0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -629,9 +647,6 @@ def testStateUpdateSunLine(show_plots):
     setupFilterData(moduleConfig)
 
     # Set up some test parameters
-
-    SimHalfLength = 20000
-    AddMeasNoise = True
 
     cssConstelation = vehicleConfigData.CSSConstConfig()
 
@@ -669,12 +684,11 @@ def testStateUpdateSunLine(show_plots):
 
 
 
-    testVector = np.array([-0.7, 0.7, 0.0])
     dt =0.5
-    stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
-    moduleConfig.states = [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]
-    moduleConfig.x = (stateTarget - np.array([0.7, 0.7, 0.0, 0.0, 0.0, 0.0])).tolist()
+    stateTarget1 = testVector1
+    stateTarget1 += [0.0, 0.0, 0.0]
+    moduleConfig.states = stateGuess
+    moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
@@ -688,9 +702,9 @@ def testStateUpdateSunLine(show_plots):
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), testVector) + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3]) + np.random.normal(0., moduleConfig.qObsVal)
                 else:
-                    dotProd = np.dot(np.array(element), testVector)
+                    dotProd = np.dot(np.array(element), np.array(testVector1)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
 
@@ -750,8 +764,7 @@ def testStateUpdateSunLine(show_plots):
             if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
-                print abs(stateLog[-1, i + 1] - stateTarget[i])
+            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
@@ -759,23 +772,23 @@ def testStateUpdateSunLine(show_plots):
             if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-3):
-                print abs(stateLog[-1, i + 1] - stateTarget[i])
+            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
                 testFailCount += 1
                 testMessages.append("State update failure")
 
 
-    testVector = np.array([-0.8, -0.9, 0.0])
-    inputData = cssComm.CSSArraySensorIntMsg()
+    stateTarget2 = testVector2
+    stateTarget2 = stateTarget2+[0.,0.,0.]
 
+    inputData = cssComm.CSSArraySensorIntMsg()
     for i in range(SimHalfLength):
         if i > 20:
             dotList = []
             for element in CSSOrientationList:
                 if AddMeasNoise:
-                    dotProd = np.dot(np.array(element), testVector)  + np.random.normal(0., moduleConfig.qObsVal)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])  + np.random.normal(0., moduleConfig.qObsVal)
                 else:
-                    dotProd = np.dot(np.array(element), testVector)
+                    dotProd = np.dot(np.array(element), np.array(testVector2)[0:3])
                 dotList.append(dotProd)
             inputData.CosValue = dotList
 
@@ -789,8 +802,7 @@ def testStateUpdateSunLine(show_plots):
     covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
     stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
-    stateTarget = testVector.tolist()
-    stateTarget.extend([0.0, 0.0, 0.0])
+
 
     ####################################################################################
     # Compute H and y in order to check post-fit residuals
@@ -836,8 +848,7 @@ def testStateUpdateSunLine(show_plots):
             if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-10):
-                print abs(stateLog[-1, i + 1] - stateTarget[i])
+            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
@@ -845,14 +856,13 @@ def testStateUpdateSunLine(show_plots):
             if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget[i]) > 1.0E-3):
-                print abs(stateLog[-1, i + 1] - stateTarget[i])
+            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
                 testFailCount += 1
                 testMessages.append("State update failure")
 
     if show_plots:
-        target1 = np.array([-0.7, 0.7, 0.0, 0., 0., 0.])
-        target2 = np.array([-0.8, -0.9, 0.0, 0., 0., 0.])
+        target1 = np.array(testVector1)
+        target2 = np.array(testVector2)
         FilterPlots.StatesPlot(stateErrorLog, covarLog)
         FilterPlots.StatesVsTargets(target1, target2, stateLog)
         FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal)
@@ -869,4 +879,3 @@ def testStateUpdateSunLine(show_plots):
 
 if __name__ == "__main__":
     test_all_sunline_ekf(False)
-
