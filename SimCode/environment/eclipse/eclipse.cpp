@@ -90,7 +90,7 @@ void Eclipse::readInputMessages()
     
     //! - Iterate through all of the position Msgs
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    std::map<uint64_t, SCPlusStatesSimMsg>::iterator stateIt;
+    std::map<int64_t, SCPlusStatesSimMsg>::iterator stateIt;
     
     for(stateIt = this->positionInMsgIdAndState.begin(); stateIt != this->positionInMsgIdAndState.end(); stateIt++)
     {
@@ -102,7 +102,7 @@ void Eclipse::readInputMessages()
     
     //! - Iterate through all of the spice planet Msgs
     memset(&tmpHeader, 0x0, sizeof(tmpHeader));
-    std::map<uint64_t, SpicePlanetStateSimMsg>::iterator planetIt;
+    std::map<int64_t, SpicePlanetStateSimMsg>::iterator planetIt;
     for(planetIt = this->planetInMsgIdAndStates.begin(); planetIt != this->planetInMsgIdAndStates.end(); planetIt++)
     {
        messageSys->ReadMessage(planetIt->first, &tmpHeader, sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*>(&planetIt->second), this->moduleID);
@@ -117,7 +117,7 @@ void Eclipse::readInputMessages()
 void Eclipse::writeOutputMessages(uint64_t CurrentClock)
 {
     //! - Iterate through all of the planets that are on and write their outputs
-    std::vector<uint64_t>::iterator msgIt;
+    std::vector<int64_t>::iterator msgIt;
     for(msgIt = this->eclipseOutMsgId.begin(); msgIt != this->eclipseOutMsgId.end(); msgIt++)
     {
         EclipseSimMsg tmpEclipseSimMsg;
@@ -147,8 +147,8 @@ void Eclipse::UpdateState(uint64_t CurrentSimNanos)
     Eigen::Vector3d s_BP_N(0.0, 0.0, 0.0); // s_sc wrt planet
     Eigen::Vector3d s_HP_N(0.0, 0.0, 0.0); // s_sun wrt planet
     Eigen::Vector3d r_HB_N(0.0, 0.0, 0.0); // r_sun wrt sc
-    std::map<uint64_t, SpicePlanetStateSimMsg>::iterator planetIt;
-    std::map<uint64_t, SCPlusStatesSimMsg>::iterator scIt;
+    std::map<int64_t, SpicePlanetStateSimMsg>::iterator planetIt;
+    std::map<int64_t, SCPlusStatesSimMsg>::iterator scIt;
     
     // Index to assign the shadowFactor for each body position (S/C)
     // being tracked

@@ -178,22 +178,22 @@ def unitEclipse(show_plots, eclipseCondition):
     eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
 
     errTol = 1E-12
-    if eclipseCondition == "partial":
+    if eclipseCondition is "partial":
         truthShadowFactor = 0.62310760206735027
         if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount = testFailCount + 1
+            testFailCount += 1
             testMessages.append("Shadow Factor failed for partial eclipse condition")
 
-    elif eclipseCondition == "full":
+    elif eclipseCondition is "full":
         truthShadowFactor = 0.0
         if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount = testFailCount + 1
+            testFailCount += 1
             testMessages.append("Shadow Factor failed for full eclipse condition")
 
-    elif eclipseCondition == "none":
+    elif eclipseCondition is "none":
         truthShadowFactor = 1.0
         if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-            testFailCount = testFailCount + 1
+            testFailCount += 1
             testMessages.append("Shadow Factor failed for none eclipse condition")
 
     if testFailCount == 0:
