@@ -82,15 +82,15 @@ testNames = ['mrp switch','bias','noise','discretization','saturation','misalign
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
-@pytest.mark.parametrize("useFlag, testCase", [
-    (False,'mrp switch'),
-    (False,'bias'),
-    (False,'noise'),
-    (False,'discretization'),
-    (False,'saturation'),
-    (False,'misalignment'),
-    (False,'CoM offset'),
-    (False,'walk bounds'),
+@pytest.mark.parametrize("show_plots, useFlag, testCase", [
+    (False, False,'mrp switch'),
+    (False, False,'bias'),
+    (False, False,'noise'),
+    (False, False,'discretization'),
+    (False, False,'saturation'),
+    (False, False,'misalignment'),
+    (False, False,'CoM offset'),
+    (False, False,'walk bounds'),
 ])
 
 # provide a unique test method name, starting with test_
