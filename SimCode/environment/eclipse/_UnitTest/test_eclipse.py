@@ -34,25 +34,16 @@ import sys
 import os
 import pytest
 import inspect
-filename = inspect.getframeinfo(inspect.currentframe()).filename
-path = os.path.dirname(os.path.abspath(filename))
-splitPath = path.split('SimCode')
-sys.path.append(splitPath[0] + '/modules')
-sys.path.append(splitPath[0] + '/PythonModules')
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
 bskName = 'Basilisk'
 splitPath = path.split(bskName)
 bskPath = splitPath[0] + bskName + '/'
-# if this script is run from a custom folder outside of the Basilisk folder, then uncomment the
-# following line and specify the absolute bath to the Basilisk folder
-#bskPath = '/Users/hp/Documents/Research/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
-#Import all of the modules that we are going to call in this simulation
 import SimulationBaseClass
 import unitTestSupport
 import spacecraftPlus
@@ -62,7 +53,6 @@ import eclipse
 import pyswice
 import gravityEffector
 import orbitalMotion
-# import simMessages
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -169,23 +159,7 @@ def unitEclipse(show_plots, eclipseCondition):
     eclipseObject.addPlanetName('mars barycenter')
     eclipseObject.addPlanetName('venus')
     unitTestSim.AddModelToTask(testTaskName, eclipseObject)
-
     unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
-
-    # add default ephemeris message
-    # msgName = earth.bodyInMsgName
-    # ephemData = simMessages.SpicePlanetStateSimMsg()
-    # ephemData.J2000Current = 0.0
-    # ephemData.PositionVector = [0.0, 0.0, 0.0]
-    # ephemData.VelocityVector = [0.0, 0.0, 0.0]
-    # ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    # ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    # ephemData.PlanetName = msgName
-    # messageSize = ephemData.getStructSize()
-    # unitTestSim.TotalSim.CreateNewMessage(testProcessName,
-    #                      msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-    # unitTestSim.TotalSim.WriteMessageData(msgName, messageSize, 0,
-    #                                 ephemData)
 
     unitTestSim.InitializeSimulation()
 
