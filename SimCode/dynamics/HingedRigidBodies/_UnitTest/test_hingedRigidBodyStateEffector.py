@@ -197,29 +197,48 @@ def test_hubPropagate(show_plots):
                  ]
 
     plt.figure(1)
+    plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
-    plt.title("Change in Orbital Angular Momentum")
+    PlotName = "ChangeInOrbitalAngularMomentumNoGravity"
+    PlotTitle = "Change in Orbital Angular Momentum No Gravity"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure(2)
-    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
-    plt.title("Change in Rotational Angular Momentum")
-    plt.figure(3)
+    plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
-    plt.title("Change in Orbital Kinetic Energy")
+    PlotName = "ChangeInOrbitalEnergyNoGravity"
+    PlotTitle = "Change in Orbital Energy No Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure(3)
+    plt.clf()
+    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    PlotName = "ChangeInRotationalAngularMomentumNoGravity"
+    PlotTitle = "Change In Rotational Angular Momentum No Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure(4)
+    plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
-    plt.title("Change in Rotational Energy")
+    PlotName = "ChangeInRotationalEnergyNoGravity"
+    PlotTitle = "Change In Rotational Energy No Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     plt.figure(5)
-    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,1], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,2], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,3])
-    plt.title("Position of Body Frame Origin")
-    plt.figure(6)
-    plt.plot(vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,1], vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,2], vOut_BN_N[:,0]*1e-9, vOut_BN_N[:,3])
-    plt.title("Velocity of Body Frame Origin")
-    plt.figure(7)
-    plt.plot(rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,1], rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,2], rOut_CN_N[:,0]*1e-9, rOut_CN_N[:,3])
-    plt.title("Position of Center Mass of SC")
-    plt.figure(8)
+    plt.clf()
     plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
-    plt.title("Velocity of Center of Mass of SC")
+    PlotName = "VelocityOfCenterOfMassNoGravity"
+    PlotTitle = "Velocity Of Center Of Mass No Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure(6)
+    plt.clf()
+    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1] - vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2] - vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3] - vOut_CN_N[0,3])
+    PlotName = "ChangeInVelocityOfCenterOfMassNoGravity"
+    PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
     if show_plots == True:
         plt.show()
 
