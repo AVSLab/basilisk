@@ -62,7 +62,7 @@ import eclipse
 import pyswice
 import gravityEffector
 import orbitalMotion
-import simMessages
+# import simMessages
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -173,19 +173,19 @@ def unitEclipse(show_plots, eclipseCondition):
     unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
 
     # add default ephemeris message
-    msgName = earth.bodyInMsgName
-    ephemData = simMessages.SpicePlanetStateSimMsg()
-    ephemData.J2000Current = 0.0
-    ephemData.PositionVector = [0.0, 0.0, 0.0]
-    ephemData.VelocityVector = [0.0, 0.0, 0.0]
-    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    ephemData.PlanetName = msgName
-    messageSize = ephemData.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(testProcessName,
-                         msgName, messageSize, 2, "SpicePlanetStateSimMsg")
-    unitTestSim.TotalSim.WriteMessageData(msgName, messageSize, 0,
-                                    ephemData)
+    # msgName = earth.bodyInMsgName
+    # ephemData = simMessages.SpicePlanetStateSimMsg()
+    # ephemData.J2000Current = 0.0
+    # ephemData.PositionVector = [0.0, 0.0, 0.0]
+    # ephemData.VelocityVector = [0.0, 0.0, 0.0]
+    # ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    # ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    # ephemData.PlanetName = msgName
+    # messageSize = ephemData.getStructSize()
+    # unitTestSim.TotalSim.CreateNewMessage(testProcessName,
+    #                      msgName, messageSize, 2, "SpicePlanetStateSimMsg")
+    # unitTestSim.TotalSim.WriteMessageData(msgName, messageSize, 0,
+    #                                 ephemData)
 
     unitTestSim.InitializeSimulation()
 
