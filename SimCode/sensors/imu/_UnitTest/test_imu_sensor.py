@@ -418,9 +418,17 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     np.set_printoptions(precision=16)
 
-    # print out success message if no error were found
+    snippetName = testCase + 'PassFail' #name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    # print out success message if no error were found.
     if testFailCount == 0:
-        print   "PASSED "
+        passFailText = " Passed"
+        print testCase, ": ", passFailText #terminal output of pass/fail
+        colorText = 'ForestGreen' #color to write auto-documented "PASSED" message in in LATEX
+    else:
+        passFailText = " Failed"
+        colorText = 'Red'#color to write auto-documented "FAILED" message in in LATEX
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
