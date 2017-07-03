@@ -203,6 +203,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         PlotTitle = "Force on Y with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " +str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(1)
+        plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrForce[:,2])
         plt.xlabel('Time(s)')
         plt.ylabel('Thrust Factor (-)')
@@ -216,6 +217,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         PlotTitle = "Torque on X with " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg " + "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(11)
+        plt.clf()
         plt.plot(thrForce[:,0]*macros.NANO2SEC, thrTorque[:,1])
         plt.xlabel('Time(s)')
         plt.ylabel('Thrust Torque (-)')
@@ -230,6 +232,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
         PlotTitle = "All Forces and Torques " + str(thrustNumber) + " thrusters, for "  +  str(int(duration))+ " sec at " + str(int(angle))+" deg "+ "Rate"+str(int(1./(testRate*macros.NANO2SEC)))
 
         plt.figure(22)
+        plt.clf()
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,1], 'b', label='x Force')
         plt.plot(thrTorque[:,0]*1.0E-9, thrTorque[:,1], 'b--', label='x Torque')
         plt.plot(thrForce[:,0]*1.0E-9, thrForce[:,2], 'g', label='y Force')
@@ -359,6 +362,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
                 int(1. / (testRate * macros.NANO2SEC)))
 
                 plt.figure(22)
+                plt.clf()
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
                 plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
@@ -480,6 +484,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
                 unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
                 plt.figure(55)
+                plt.clf()
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
                 plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
                 plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
@@ -592,6 +597,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
             plt.figure(55)
+            plt.clf()
             plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 1], 'b', label='x Force')
             plt.plot(thrTorque[:, 0] * 1.0E-9, thrTorque[:, 1], 'b--', label='x Torque')
             plt.plot(thrForce[:, 0] * 1.0E-9, thrForce[:, 2], 'g', label='y Force')
@@ -630,6 +636,7 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             PlotTitle = "Example of ramp function"
 
             plt.figure(11)
+            plt.clf()
             plt.plot(thrForce[:, 0] * macros.NANO2SEC, RampFunction)
             plt.xlabel('Time(s)')
             plt.ylabel('Ramp(-)')

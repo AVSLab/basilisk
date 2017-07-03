@@ -75,6 +75,8 @@ class DataStore:
         plt.show()
 
     def giveData(self):
+        plt.figure(1)
+        plt.close()
         fig1 = plt.figure(1,figsize=(7,5), dpi=80, facecolor='w', edgecolor='k')
 
         plt.xticks(numpy.arange(len(self.Date)), self.Date)
