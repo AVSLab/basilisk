@@ -95,7 +95,7 @@ There are specific error tolerances for each test. Error tolerances are determin
 
 \section{Test Results}
 
-All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results. Figures \ref{fig:noise}-\ref{fig:walk} show the module output for the process noise and walk bounds checks, respectively.
+All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results. Figures \ref{fig:noise} and \ref{fig:walk} show the module output for the process noise and walk bounds checks, respectively.
 
 \begin{table}[htbp]
 	\caption{Test results.}
@@ -103,32 +103,21 @@ All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:result
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c | c | c  } % Column formatting, 
 		\hline
-		\textbf{Test} & \textbf{Pass/Fail} & \textbf{Notes} \\ \hline
-		Gyro/Accelerometer I/O & \textcolor{ForestGreen}{Passed} & \\ \hline
-		MRP Switching & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Static Bias & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Process Noise & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Discretization & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Saturation & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Accelerometer Center of Mass Offset & \textcolor{ForestGreen}{Passed} & \\ \hline
-		IMU Misalignment & \textcolor{ForestGreen}{Passed} & \\ \hline
-		Bias Walk Bounds & \textcolor{ForestGreen}{Passed} & \\ \hline
+		\textbf{Test} 						  			   & \textbf{Pass/Fail} 						   			& \textbf{Notes} \\ \hline
+		Gyro/Accelerometer I/O 		   				& --------- 												& \\ \hline
+		MRP Switching 					   				& \input{"AutoTex/mrp switchPassFail"} 	   & \\ \hline
+		Static Bias 										 & \input{AutoTex/biasPassFail} 				 & \\ \hline
+		Process Noise 							         & \input{AutoTex/noisePassFail} 				& \\ \hline
+		Discretization 						  			   & \input{AutoTex/discretizationPassFail}    & \\ \hline
+		Saturation 							   				&  \input{AutoTex/saturationPassFail} 		 & \\ \hline
+		Accelerometer Center of Mass Offset & \input{"AutoTex/COM offsetPassFail"}    & \\ \hline
+		IMU Misalignment 							   & \input{AutoTex/misalignmentPassFail}     & \\ \hline
+		Bias Walk Bounds 							   & \input{"AutoTex/walk boundsPassFail"}   & \\ \hline
 	\end{tabular}
 \end{table}
 
-\begin{figure}
-	\centering
-	\includegraphics[width=0.7\linewidth]{Figures/noise}
-	\caption{Module output of noise standard deviation check.}
-	\label{fig:noise}
-\end{figure}
-
-\begin{figure}
-	\centering
-	\includegraphics[width=0.7\linewidth]{Figures/walk}
-	\caption{Module output for random walk bounds check.}
-	\label{fig:walk}
-\end{figure}
+\input{AutoTex/noisePlot} \label{fig:noise}
+\input{AutoTex/walkBoundPlot} \label{fig:walk}
 
 
 \end{document}
