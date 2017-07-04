@@ -78,11 +78,12 @@ def setRandomWalk(self,senRotNoiseStd = 0.0,senTransNoiseStd = 0.0,errorBoundsGy
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 
-testNames = ['mrp switch','bias','noise','discretization','saturation','misalignment','CoM offset','walk bounds']
+testNames = ['gyroIO','mrp switch','bias','noise','discretization','saturation','misalignment','CoM offset','walk bounds']
 
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("show_plots, useFlag, testCase", [
+    (False, False,'gyroIO'),
     (False, False,'mrp switch'),
     (False, False,'bias'),
     (False, False,'noise'),
@@ -161,7 +162,20 @@ def unitSimIMU(show_plots, useFlag, testCase):
     domega = [0.0,0.0,0.0]
 
     # configure tests
-    if testCase == 'mrp switch':
+    if testCase == 'gyroIO':
+        accuracy = 1e-6
+        simStopTime = 0.25
+        StateCurrent.sigma_BN = np.array([0.9,0,0])
+        omega = myRand(3)*0.1
+        StateCurrent.omega_BN_B = omega
+        accel = myRand(3)*0.1
+        trueVector['AngVelPlatform'] = listStack(omega,simStopTime,unitProcRate)
+        trueVector['AccelPlatform'] = listStack(accel,simStopTime,unitProcRate)
+        trueVector['DRFramePlatform'] = listStack(np.asarray(omega)*unitProcRate_s,simStopTime,unitProcRate)
+        trueVector['DVFramePlatform'] = listStack(np.asarray(accel)*unitProcRate_s,simStopTime,unitProcRate)
+
+
+    elif testCase == 'mrp switch':
         # this test verifies basic input and output and checks the MRP switch
         simStopTime = 1.0 # run the sim long enough for the MRP to switch
         StateCurrent.sigma_BN = np.array([0.9,0,0])
@@ -386,6 +400,11 @@ def unitSimIMU(show_plots, useFlag, testCase):
     if not 'accuracy' in vars():
         accuracy = 1e-3
 
+    # write test accuracy to LATEX file for AutoTex
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '1e' + '{:d}'.format(int(np.log10(accuracy))) #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
     testFail = False
     for moduleOutputName in fieldNames:
         if testCase == 'noise':
@@ -404,6 +423,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
                 if not unitTestSupport.isArrayEqual(moduleOutput[moduleOutputName][i], trueVector[moduleOutputName][i], 3, accuracy):
                     testFail = True
 
+
         # make sure that the MRP switched
         if testCase == 'MRP switch' and StateCurrent.MRPSwitchCount == 0:
             testFail = True
@@ -414,7 +434,15 @@ def unitSimIMU(show_plots, useFlag, testCase):
                                 moduleOutputName + " unit test at t=" +
                                 str(moduleOutput[moduleOutputName][i,0]*macros.NANO2SEC) +
                                 "sec\n")
+            snippetName = testCase + "FailMsg"
+            snippetContent = "FAILED: " + moduleOutputName
+            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
+        else:
+            snippetName = testCase + "FailMsg"
+            snippetContent = ""
+            unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write note for AutoTEX saying what failure was.
 
+    del accuracy #make sure that the default accuracy if-check above doesn't find an old accuracy value.
 
     np.set_printoptions(precision=16)
 
@@ -428,7 +456,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
         passFailText = " Failed"
         colorText = 'Red'#color to write auto-documented "FAILED" message in in LATEX
     snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
@@ -441,5 +469,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         False, # show_plots
         False, # useFlag
-        'CoM offset' # testCase
+        'gyroIO' # testCase
     )
