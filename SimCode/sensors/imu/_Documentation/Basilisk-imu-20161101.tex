@@ -77,18 +77,18 @@ There are specific error tolerances for each test. Error tolerances are determin
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{| c | c | c | c | c |} % Column formatting, 
+	\begin{tabular}{ c | c } % Column formatting, 
 		\hline
-		\textbf{Test}   & \textbf{Tolerated Error} & \textbf{Digits of Precision} \\ \hline
-		Gyro/Accelerometer I/O & 1E-13 & \\ \hline
-		MRP Switching & - & - \\ \hline
-		Static Bias & 1E-13 & \\ \hline
-		Process Noise & 1E-1 & \\ \hline
-		Discretization & 1E-5 & \\ \hline
-		Saturation & 1E-13 & \\ \hline
-		Accelerometer Center of Mass Offset & 1E-5 & \\ \hline
-		IMU Misalignment & 1E-4 & \\ \hline
-		Bias Walk Bounds & - & - \\ \hline
+		\textbf{Test}   									& \textbf{Tolerated Error} 						  \\ \hline
+		Gyro/Accelerometer I/O 						& \input{AutoTex/gyroIOAccuracy}		   \\ \hline
+		MRP Switching 									& - 														   \\ \hline
+		Static Bias 										& \input{AutoTex/biasAccuracy} 	 		       \\ \hline
+		Process Noise 									& \input{AutoTex/noiseAccuracy}			      \\ \hline
+		Discretization 				  					   & \input{AutoTex/discretizationAccuracy}  \\ \hline
+		Saturation 											& \input{AutoTex/saturationAccuracy} 	  \\ \hline
+		Accelerometer Center of Mass Offset & \input{"AutoTex/COM offsetAccuracy"} \\ \hline
+		IMU Misalignment 								& \input{AutoTex/misalignmentAccuracy} \\ \hline
+		Bias Walk Bounds 								& - 														   \\ \hline
 	\end{tabular}
 \end{table}
 \end{itemize}
@@ -103,16 +103,16 @@ All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:result
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c | c | c  } % Column formatting, 
 		\hline
-		\textbf{Test} 						  			   & \textbf{Pass/Fail} 						   			& \textbf{Notes} \\ \hline
-		Gyro/Accelerometer I/O 		   				& --------- 												& \\ \hline
-		MRP Switching 					   				& \input{"AutoTex/mrp switchPassFail"} 	   & \\ \hline
-		Static Bias 										 & \input{AutoTex/biasPassFail} 				 & \\ \hline
-		Process Noise 							         & \input{AutoTex/noisePassFail} 				& \\ \hline
-		Discretization 						  			   & \input{AutoTex/discretizationPassFail}    & \\ \hline
-		Saturation 							   				&  \input{AutoTex/saturationPassFail} 		 & \\ \hline
-		Accelerometer Center of Mass Offset & \input{"AutoTex/COM offsetPassFail"}    & \\ \hline
-		IMU Misalignment 							   & \input{AutoTex/misalignmentPassFail}     & \\ \hline
-		Bias Walk Bounds 							   & \input{"AutoTex/walk boundsPassFail"}   & \\ \hline
+		\textbf{Test} 						  			   & \textbf{Pass/Fail} 						   			& \textbf{Notes} 									\\ \hline
+		Gyro/Accelerometer I/O 		   				& \input{AutoTex/gyroIOPassFail}              & \input{AutoTex/gyroIOFailMsg}			 \\ \hline
+		MRP Switching 					   				& \input{"AutoTex/mrp switchPassFail"} 	   & \input{"AutoTex/mrp switchFailMsg"}  \\ \hline
+		Static Bias 										 & \input{AutoTex/biasPassFail} 				 & \input{AutoTex/biasFailMsg} 				   \\ \hline
+		Process Noise 							         & \input{AutoTex/noisePassFail} 				& \input{AutoTex/noiseFailMsg}				 \\ \hline
+		Discretization 						  			   & \input{AutoTex/discretizationPassFail}    & \input{AutoTex/discretizationFailMsg}  \\ \hline
+		Saturation 							   				&  \input{AutoTex/saturationPassFail} 		 &  \input{AutoTex/saturationFailMsg}      \\ \hline
+		Accelerometer Center of Mass Offset & \input{"AutoTex/COM offsetPassFail"}    & \input{"AutoTex/COM offsetFailMsg"}  \\ \hline
+		IMU Misalignment 							   & \input{AutoTex/misalignmentPassFail}     & \input{AutoTex/misalignmentFailMsg}  \\ \hline
+		Bias Walk Bounds 							   & \input{"AutoTex/walk boundsPassFail"}   & \input{"AutoTex/walk boundsFailMsg"}\\ \hline
 	\end{tabular}
 \end{table}
 

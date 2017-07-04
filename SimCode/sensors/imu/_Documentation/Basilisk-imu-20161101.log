@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  3 JUL 2017 16:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  4 JUL 2017 12:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1270,11 +1270,20 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbullet' on input line 72.
 
-(./AutoTex/mrp switchPassFail.tex) (./AutoTex/biasPassFail.tex)
-(./AutoTex/noisePassFail.tex) (./AutoTex/discretizationPassFail.tex)
-(./AutoTex/saturationPassFail.tex) (./AutoTex/COM offsetPassFail.tex)
-(./AutoTex/misalignmentPassFail.tex) (./AutoTex/walk boundsPassFail.tex)
-(./AutoTex/noisePlot.tex <AutoTeX/noisePlot.pdf, id=104, 505.89pt x 361.35pt>
+(./AutoTex/gyroIOAccuracy.tex) (./AutoTex/biasAccuracy.tex)
+(./AutoTex/noiseAccuracy.tex) (./AutoTex/discretizationAccuracy.tex)
+(./AutoTex/saturationAccuracy.tex) (./AutoTex/COM offsetAccuracy.tex)
+(./AutoTex/misalignmentAccuracy.tex) (./AutoTex/gyroIOPassFail.tex)
+(./AutoTex/gyroIOFailMsg.tex) (./AutoTex/mrp switchPassFail.tex)
+(./AutoTex/mrp switchFailMsg.tex) (./AutoTex/biasPassFail.tex)
+(./AutoTex/biasFailMsg.tex) (./AutoTex/noisePassFail.tex)
+(./AutoTex/noiseFailMsg.tex) (./AutoTex/discretizationPassFail.tex)
+(./AutoTex/discretizationFailMsg.tex) (./AutoTex/saturationPassFail.tex)
+(./AutoTex/saturationFailMsg.tex) (./AutoTex/COM offsetPassFail.tex)
+(./AutoTex/COM offsetFailMsg.tex) (./AutoTex/misalignmentPassFail.tex)
+(./AutoTex/misalignmentFailMsg.tex) (./AutoTex/walk boundsPassFail.tex)
+(./AutoTex/walk boundsFailMsg.tex) (./AutoTex/noisePlot.tex
+<AutoTeX/noisePlot.pdf, id=104, 505.89pt x 361.35pt>
 File: AutoTeX/noisePlot.pdf Graphic file (type pdf)
 
 <use AutoTeX/noisePlot.pdf>
@@ -1305,9 +1314,9 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 123.
  ) 
 Here is how much of TeX's memory you used:
- 20059 strings out of 492995
- 365038 string characters out of 6132704
- 448684 words of memory out of 5000000
+ 20110 strings out of 492995
+ 366316 string characters out of 6132704
+ 447684 words of memory out of 5000000
  23143 multiletter control sequences out of 15000+600000
  25233 words of font info for 89 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1324,7 +1333,7 @@ ocal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/lo
 cal/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr/
 local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr
 /local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb>
-Output written on Basilisk-imu-20161101.pdf (5 pages, 1333559 bytes).
+Output written on Basilisk-imu-20161101.pdf (5 pages, 1332620 bytes).
 PDF statistics:
  253 PDF objects out of 1000 (max. 8388607)
  152 compressed objects within 2 object streams
