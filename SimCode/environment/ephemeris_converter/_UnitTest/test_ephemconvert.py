@@ -39,6 +39,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import datetime
 import unitTestSupport
 import SimulationBaseClass
+import spice_interface
 import numpy as np
 import ephemeris_converter
 import macros
@@ -74,29 +75,62 @@ def unitephemeris_converter(show_plots):
     TotalSim = SimulationBaseClass.SimBaseClass()
     TotalSim.TotalSim.terminateSimulation()
 
+    simulationTime = macros.min2nano(10.)
+    numDataPoints = 1000 #Test fails if number of data points too small. This is because the sampling time is too large
+    samplingTime = simulationTime / (numDataPoints-1)
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
-    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
+    DynUnitTestProc.addTask(TotalSim.CreateNewTask(unitTaskName, samplingTime))
 
-    # Initialize the spice modules that we are using.
+    # List of planets tested
+    planets = ['sun', 'earth', 'mars barycenter']
+
+    # Initialize the ephermis module
     EphemObject = ephemeris_converter.EphemerisConverter()
     EphemObject.ModelTag = 'EphemData'
+    messageMap = {}
+    for planet in planets:
+        messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
+    EphemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
     TotalSim.AddModelToTask(unitTaskName, EphemObject)
 
+    # Initialize the spice module
+    SpiceObject = spice_interface.SpiceInterface()
+    SpiceObject.ModelTag = "SpiceInterfaceData"
+    SpiceObject.SPICEDataPath = splitPath[0] + '/External/EphemerisData/'
+    SpiceObject.OutputBufferCount = 10000
+    SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
+    SpiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
+    TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+
     # Configure simulation
-    TotalSim.ConfigureStopTime(int(60.0 * 1E9))
+    TotalSim.ConfigureStopTime(int(simulationTime))
     TotalSim.AddVariableForLogging('EphemData.messagesLinked')
-    TotalSim.AddVariableForLogging('EphemData.messageNameMap')
+    for planet in planets:
+        TotalSim.TotalSim.logThisMessage(planet + '_planet_data', 2*samplingTime)
+        TotalSim.TotalSim.logThisMessage(planet + '_ephemeris_data', 2*samplingTime)
 
     # Execute simulation
     TotalSim.InitializeSimulation()
     TotalSim.ExecuteSimulation()
 
-    # Get the logged variables (GPS seconds, Julian Date)
+    # Get the link confirmation
     LinkMessagesCheck = TotalSim.GetLogVariableData('EphemData.messagesLinked')
-    # print np.array(LinkMessagesCheck)
-    # NameMapCheck = TotalSim.GetLogVariableData('EphemData.messageNameMap')
-    # print NameMapCheck
+    for i in range(len(LinkMessagesCheck[:,0])):
+        if LinkMessagesCheck[i,1] - 1.0 > 1E-10:
+            testFailCount += 1
+            testMessages.append("FAILED: Messages not linked succesfully")
+
+    # Get the position, velocities and time for the message before and after the copy
+
+    for planet in planets:
+        for j in range(2*int(simulationTime/simulationTime+1)):
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) >1E5 ):
+                testFailCount += 1
+                testMessages.append("FAILED: PositionVector not copied")
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) >1E5 ):
+                testFailCount += 1
+                testMessages.append("FAILED: VelocityVector not copied")
 
 
     # print out success message if no error were found
