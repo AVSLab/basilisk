@@ -60,9 +60,9 @@ This test is located in {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_s
 	\item \underline{Saturation} The check verifies that the module saturates the output according to specified values. Gyro and accelerometer maximum output are set to nonzero values. Output is verified to not exceed specified saturation values for both negative and positive cases.
 	\item \underline{Accelerometer Center of Mass Offset} The check validates that the accelerometer will give appropriate output based on an offset in center of mass from accelerometer. Sensed acceleration is given by the equation
 	\begin{equation}
-	\ddot{\bm r}_\mathrm{sensed} = \bm\omega \times (\bm\omega \times (\bm r_{\mathrm{imu/S}} - \bm r_{\mathrm{CoM/S}})) + \dot{\bm\omega} \times (\bm r_{\mathrm{imu}/S} - \bm r_{\mathrm{CoM}/S}) + \ddot{\bm r}_{B/N}
+	\ddot{\bm r}_\mathrm{sensed} = \bm\omega \times (\bm\omega \times \bm r_{\mathrm{SC}}) + \dot{\bm\omega} \times \bm r_{\mathrm{SC}} + \ddot{\bm r}_{B/N}
 	\end{equation}
-	where $\bm\omega$ is the spacecraft angular velocity vector, $\bm r_{\mathrm{imu}/S}$ is the position vector of the IMU with respect to the structure origin, $\bm r_{\mathrm{CoM}/S}$ is the position vector of the CoM with respect to the structure origin, and $ \ddot{\bm r}_{B/N}$ is the actual inertial acceleration of the spacecraft.
+	where $\bm\omega$ is the spacecraft angular velocity vector, $\bm r_{\mathrm{SC}}$ is the position vector of the IMU with respect to the spacecraft center of mass, and $ \ddot{\bm r}_{B/N}$ is the actual inertial acceleration of the spacecraft.
 	\item \underline{IMU Misalignment} The check validates measurements taken when the IMU is not correctly aligned (i.e. the IMU measurements are taken in a frame with constant rotational offset from assumed IMU orientation).
 	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the gyro and accelerometer output. Specified walk bounds are validated.
 \end{enumerate} 
