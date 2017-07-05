@@ -10,6 +10,14 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
 
+## Version 0.1.4
+<ul>
+    <li>A planetary eclipse model has been added.  This allows for the shadow of one or multiple planets to be taken into account, including the penumbra region.  This module writes an output message indicating if the spacecraft is in full sun light, partial shadow, or full shadow of the sun.</li>
+	   <li>The body-fixed spacecraft structure frame has now been removed from the simulation and flight algorithm codes.  All spacecraft vectors and tensors are now set directly in the body frame B.  If the spacecraft parameters are given in terms of an alternate structure frame, these vectors and tensor must be transformed into the body frame first before being set in BSK.</li>
+	   <li>The integrated tutorial test for using a Python based BSK module now has some documentation.</li>
+	   <li>Created a method to compute the orbital potential and angular momentum energy.  This allows for the kinetic energy and angular momentum checks to flat-line even if the satellite is in orbit.  The spherical harmonics of the planet are taken into account as well.</li>
+</ul>
+
 ## Version 0.1.3
 <ul>
 	   <li>There is a new capability to now write BSK modules in Python, and integrated them directly with the C and C++ BSK modules.  Documentation is still in progress, but a sample is found in <code>SimScenarios/test_scenarioAttitudePythonPD.py</code>.</li>
