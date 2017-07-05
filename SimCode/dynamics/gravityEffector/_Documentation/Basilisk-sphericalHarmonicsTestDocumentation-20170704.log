@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 11:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 14:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1264,31 +1264,47 @@ Overfull \hbox (23.87775pt too wide) in paragraph at lines 50--50
 cs/gravityEffector/[]UnitTest/test[]gravityDynEffector.py\OT1/cmss/m/n/10.95 .
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmss on input line 62.
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 55.
 
-LaTeX Font Info:    No file OMScmss.fd. on input line 62.
+LaTeX Font Info:    No file OMScmss.fd. on input line 55.
 
 LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbullet' on input line 62.
+(Font)              for symbol `textbullet' on input line 55.
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--57
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 57--58
+
+ []
+
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.67 \item \underline
+                     {Error Tolerance} [1]
 (./AutoTex/sphericalHarmonicsAccuracy.tex) (./AutoTex/singleBodyAccuracy.tex)
 (./AutoTex/multiBodyAccuracy.tex) (./AutoTex/sphericalHarmonicsPassFail.tex)
 (./AutoTex/sphericalHarmonicsFailMsg.tex) (./AutoTex/singleBodyPassFail.tex)
 (./AutoTex/singleBodyFailMsg.tex) (./AutoTex/multiBodyPassFail.tex)
-(./AutoTex/multiBodyFailMsg.tex)pdfTeX warning (ext4): destination with the sam
-e identifier (name{page.1}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.95 \end{table}
-                 [1] 
+(./AutoTex/multiBodyFailMsg.tex) 
 AED: lastpage setting LastPage
 [2]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 98.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 98.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 103.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 103.
  (./Basilisk-sphericalHarmonicsTestDocumentation-20170704.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 98.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 98.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 103.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 103.
 Package rerunfilecheck Info: File `Basilisk-sphericalHarmonicsTestDocumentation
 -20170704.out' has not changed.
 (rerunfilecheck)             Checksum: 326EE5C8CB7139843D9BA39BF898FFD7;222.
@@ -1296,27 +1312,31 @@ Package rerunfilecheck Info: File `Basilisk-sphericalHarmonicsTestDocumentation
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 98.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 103.
  ) 
 Here is how much of TeX's memory you used:
  20029 strings out of 492995
  365127 string characters out of 6132704
- 445681 words of memory out of 5000000
+ 444681 words of memory out of 5000000
  23129 multiletter control sequences out of 15000+600000
  25233 words of font info for 89 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  69i,11n,77p,693b,457s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
-></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb><
-/usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
-</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><
-/usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
-usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+</usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb
+></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><
+/usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></us
+r/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr
+/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/l
+ocal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/
+local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/l
+ocal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/lo
+cal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/loc
+al/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb>
 Output written on Basilisk-sphericalHarmonicsTestDocumentation-20170704.pdf (3 
-pages, 439207 bytes).
+pages, 465765 bytes).
 PDF statistics:
- 133 PDF objects out of 1000 (max. 8388607)
- 102 compressed objects within 2 object streams
+ 149 PDF objects out of 1000 (max. 8388607)
+ 114 compressed objects within 2 object streams
  13 named destinations out of 1000 (max. 500000)
  50 words of extra memory for PDF output out of 10000 (max. 10000000)
 
