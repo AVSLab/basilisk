@@ -369,7 +369,6 @@ def test_multiBodyGravity(show_plots):
     snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
     if testFailCount == 0:
         passFailText = 'PASSED'
         print "PASSED: " + "Multi-body with Spherical Harmonics"
