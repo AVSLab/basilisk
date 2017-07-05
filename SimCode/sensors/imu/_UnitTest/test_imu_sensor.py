@@ -402,7 +402,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     # write test accuracy to LATEX file for AutoTex
     snippetName = testCase + 'Accuracy'
-    snippetContent = '1e' + '{:d}'.format(int(np.log10(accuracy))) #write formatted LATEX string to file to be used by auto-documentation.
+    snippetContent = '{:1.1e}'.format(accuracy)#write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     testFail = False
