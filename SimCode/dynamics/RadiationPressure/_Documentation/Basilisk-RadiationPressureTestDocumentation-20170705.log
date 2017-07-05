@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 11:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 14:39
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1259,9 +1259,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 42--43
  []
 
 
-Overfull \hbox (23.87775pt too wide) in paragraph at lines 50--50
+Overfull \hbox (29.62643pt too wide) in paragraph at lines 50--50
 \OT1/cmss/m/n/10.95 This test is lo-cated in \OT1/cmtt/m/n/10.95 SimCode/dynami
-cs/gravityEffector/[]UnitTest/test[]gravityDynEffector.py\OT1/cmss/m/n/10.95 .
+cs/RadiationPressure/[]UnitTest/test[]radiationPressure.py\OT1/cmss/m/n/10.95 .
+
  []
 
 LaTeX Font Info:    Try loading font information for OMS+cmss on input line 61.
@@ -1291,7 +1292,7 @@ Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 95.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 95.
 Package rerunfilecheck Info: File `Basilisk-RadiationPressureTestDocumentation-
 20170705.out' has not changed.
-(rerunfilecheck)             Checksum: 326EE5C8CB7139843D9BA39BF898FFD7;222.
+(rerunfilecheck)             Checksum: AA086643B66C29063322EAFFC422B7A1;221.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1313,7 +1314,7 @@ Here is how much of TeX's memory you used:
 /usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
 usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
 Output written on Basilisk-RadiationPressureTestDocumentation-20170705.pdf (3 p
-ages, 437612 bytes).
+ages, 436055 bytes).
 PDF statistics:
  130 PDF objects out of 1000 (max. 8388607)
  100 compressed objects within 1 object stream

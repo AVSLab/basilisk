@@ -45,9 +45,9 @@ Draft & Initial document creation & S. Carnahan \\
 \section{Introduction}
 The Basilisk radiation pressure module (radiation\_pressure.cpp) is responsible for calculating the effects of radiation pressure on a spacecraft. This unit test contains two checks which use the cannonball method and table look-up, respectively.
 
-\section{{\tt test\_gravityDynEffector} Test Description}
+\section{{\tt test\_radiationPressure} Test Description}
 
-This test is located in {\tt SimCode/dynamics/gravityEffector/\_UnitTest/test\_gravityDynEffector.py}. In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests: \par
+This test is located in {\tt SimCode/dynamics/RadiationPressure/\_UnitTest/test\_radiationPressure.py}. In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
 
 \begin{enumerate}
 	\item \underline{"Cannonball" Method} This test utilizes the "cannonball" ball method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
@@ -77,7 +77,7 @@ There are specific error tolerances for each test. Error tolerances are determin
 
 \section{Test Results}
 
-All checks within test\_gravityDynEffector.py passed as expected. Table \ref{tab:results} shows the test results.
+All checks within test\_radiationPressure.py passed as expected. Table \ref{tab:results} shows the test results.
 
 \begin{table}[htbp]
 	\caption{Test results.}
