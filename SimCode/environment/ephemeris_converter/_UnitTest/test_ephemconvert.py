@@ -106,6 +106,7 @@ def unitephemeris_converter(show_plots):
     # Configure simulation
     TotalSim.ConfigureStopTime(int(simulationTime))
     TotalSim.AddVariableForLogging('EphemData.messagesLinked')
+    TotalSim.AddVariableForLogging('EphemData.numOutputBuffers')
     for planet in planets:
         TotalSim.TotalSim.logThisMessage(planet + '_planet_data', 2*samplingTime)
         TotalSim.TotalSim.logThisMessage(planet + '_ephemeris_data', 2*samplingTime)
@@ -121,8 +122,8 @@ def unitephemeris_converter(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Messages not linked succesfully")
 
-    # Get the position, velocities and time for the message before and after the copy
 
+    # Get the position, velocities and time for the message before and after the copy
     for planet in planets:
         for j in range(2*int(simulationTime/simulationTime+1)):
             if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) >1E5 ):
