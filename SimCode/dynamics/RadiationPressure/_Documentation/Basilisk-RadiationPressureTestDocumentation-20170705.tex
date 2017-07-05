@@ -1,0 +1,95 @@
+\documentclass[]{BasiliskReportMemo}
+\usepackage{AVS}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+\newcommand{\ModuleName}{RadiationPressure}
+\newcommand{\subject}{Radiation Pressure Test Report}
+\newcommand{\status}{Initial document draft}
+\newcommand{\preparer}{S. Carnahan}
+\newcommand{\summary}{This unit test validates the internal aspects of the Basilisk radiation pressure dynamics effector module {\tt test\_RadiationPressure.py} by comparing module output to expected output. The Basilisk radiation pressure module is responsible for calculating the effects of radiation pressure on a spacecraft. The unit test verifies the radiation pressure module uses the "cannonball" method for the the first test and table look-ups for the second test.}
+
+
+\begin{document}
+
+
+\makeCover
+
+
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{1.1}
+\noindent
+\begin{longtable}{|p{0.5in}|p{4.5in}|p{1.14in}|}
+\hline
+{\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
+\hline
+Draft & Initial document creation & S. Carnahan \\
+\hline
+
+\end{longtable}
+}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents
+~\\ \hrule ~\\
+
+
+\section{Introduction}
+The Basilisk radiation pressure module (radiation\_pressure.cpp) is responsible for calculating the effects of radiation pressure on a spacecraft. This unit test contains two checks which use the cannonball method and table look-up, respectively.
+
+\section{{\tt test\_gravityDynEffector} Test Description}
+
+This test is located in {\tt SimCode/dynamics/gravityEffector/\_UnitTest/test\_gravityDynEffector.py}. In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests: \par
+
+\begin{enumerate}
+	\item \underline{"Cannonball" Method} This test utilizes the "cannonball" ball method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
+	\item \underline{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to verify radiation pressure table look-up capabilities.
+\end{enumerate} 
+
+\section{Test Parameters}
+
+This section summarizes the test input/output for each of the checks. 
+\begin{itemize}
+\item \underline{Error Tolerance}
+
+There are specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. 
+
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline
+		\textbf{Test}   							& \textbf{Tolerated Error} 						  \\ \hline
+		"Cannonball" &\input{AutoTex/cannonballAccuracy}		   \\ \hline
+		Look-up					& \input{AutoTex/lookupAccuracy}														   \\ \hline
+	\end{tabular}
+\end{table}
+\end{itemize}
+
+\section{Test Results}
+
+All checks within test\_gravityDynEffector.py passed as expected. Table \ref{tab:results} shows the test results.
+
+\begin{table}[htbp]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c  } % Column formatting, 
+		\hline
+		\textbf{Test} 				      & \textbf{Pass/Fail} 						   		   & \textbf{Notes} 									\\ \hline
+		"Cannonball"	   			  	&\input{AutoTex/cannonballPassFail}      &\input{AutoTex/cannonballFailMsg} 			 \\ \hline
+		Look-up	   	                     &\input{AutoTex/lookupPassFail}              &\input{AutoTex/lookupFailMsg}  \\ \hline
+	\end{tabular}
+\end{table}
+
+
+\end{document}
