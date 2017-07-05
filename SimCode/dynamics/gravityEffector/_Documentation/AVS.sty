@@ -12,8 +12,8 @@
 %
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage[backgroundcolor= Goldenrod, linecolor= Maroon, bordercolor= Maroon, textsize=footnotesize]{todonotes}
-\usepackage[normalem]{ulem} % added this to enable sout for strike outs
-\usepackage[nointegrals]{wasysym}
+%\usepackage[normalem]{ulem} % added this to enable sout for strike outs
+%\usepackage[nointegrals]{wasysym}
 
 \setlength{\marginparwidth}{1in}
 
@@ -22,8 +22,10 @@
 % 
 \definecolor{colorHPS}{rgb}{1,0,0} % Red
 \definecolor{COLORHPS}{rgb}{1,0,0} % Red
-\definecolor{colorPA}{rgb}{1,0,1} % Bright purple
-\definecolor{COLORPA}{rgb}{1,0,1} % Bright purple
+%\definecolor{colorPA}{rgb}{1,0,1} % Magenta
+%\definecolor{COLORPA}{rgb}{1,0,1} % Magenta
+\definecolor{colorPK}{rgb}{1,0,1} % Magenta
+\definecolor{COLORPK}{rgb}{1,0,1} % Magenta
 \definecolor{colorSO}{rgb}{0,0.7,0.7} % Teal
 \definecolor{COLORSO}{rgb}{0,0.7,0.7} % Teal
 \definecolor{colorDS}{rgb}{.8,0.8,0} % Yellow
@@ -32,8 +34,8 @@
 \definecolor{COLORLM}{rgb}{.9,0,.6} % Pink
 \definecolor{colorTB}{rgb}{0.5,.8,0} % Green
 \definecolor{COLORTB}{rgb}{0.5,.8,0} % Green
-\definecolor{colorJF}{rgb}{0.6,0.6,1} % Light blue
-\definecolor{COLORJF}{rgb}{0.6,0.6,1} % Light blue
+\definecolor{colorJF}{rgb}{0.6,0.6,1} % Lavender
+\definecolor{COLORJF}{rgb}{0.6,0.6,1} % Lavender
 \definecolor{colorJH}{rgb}{0,0,0.9} % Blue
 \definecolor{COLORJH}{rgb}{0,0,0.9} % Blue
 \definecolor{colorJC}{rgb}{0.3,0,0.9} % Dark Purple
@@ -47,8 +49,10 @@
 
 \newcommand{\EditHPS}[1]{{\color{colorHPS} #1}}
 \newcommand{\EditHPSd}[1]{{\color{colorHPS}\sout { #1}}}
-\newcommand{\EditPA}[1]{{\color{colorPA} #1}}
-\newcommand{\EditPAd}[1]{{\color{colorPA} \sout{ #1}}}
+%\newcommand{\EditPA}[1]{{\color{colorPA} #1}}
+%\newcommand{\EditPAd}[1]{{\color{colorPA} \sout{ #1}}}
+\newcommand{\EditPK}[1]{{\color{colorPK} #1}}
+\newcommand{\EditPKd}[1]{{\color{colorPK} \sout{ #1}}}
 \newcommand{\EditSO}[1]{{\color{colorSO} #1}}
 \newcommand{\EditSOd}[1]{{\color{colorSO} \sout{ #1}}}
 \newcommand{\EditDS}[1]{{\color{colorDS} #1}}
