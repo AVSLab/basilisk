@@ -46,14 +46,14 @@ import stateArchitecture
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_gravityEffectorAllTest(show_plots):
-    [testResults, testMessage] = test_sphericalHarmonics(show_plots)
+    [testResults, testMessage] = sphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_singleGravityBody(show_plots)
+    [testResults, testMessage] = singleGravityBody(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_multiBodyGravity(show_plots)
+    [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
-def test_sphericalHarmonics(show_plots):
+def sphericalHarmonics(show_plots):
     testCase = 'sphericalHarmonics'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -123,7 +123,7 @@ def test_sphericalHarmonics(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_singleGravityBody(show_plots):
+def singleGravityBody(show_plots):
     testCase = 'singleBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -249,7 +249,7 @@ def test_singleGravityBody(show_plots):
     
     return [testFailCount, ''.join(testMessages)]
 
-def test_multiBodyGravity(show_plots):
+def multiBodyGravity(show_plots):
     testCase = 'multiBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -392,7 +392,6 @@ def test_multiBodyGravity(show_plots):
 
     # return fail count and join into a single string all messages in the list
     # testMessage
-    print testFailCount
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
