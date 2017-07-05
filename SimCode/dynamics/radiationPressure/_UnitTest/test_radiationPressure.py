@@ -193,6 +193,29 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     if testFailCount == 0:
         print "PASSED: " + modelType
+        passFailText = "PASSED"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        snippetName = modelType + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = modelType + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = modelType + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
+    # write test accuracy to LATEX file for AutoTex
+    snippetName = modelType + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(errTol)#write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
