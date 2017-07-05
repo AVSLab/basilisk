@@ -6,7 +6,7 @@
 
 \newcommand{\ModuleName}{imu\_sensor}
 \newcommand{\subject}{Testing IMU Sensor Model}
-\newcommand{\status}{Initial document draft}
+\newcommand{\status}{Revision 1}
 \newcommand{\preparer}{J. Alcorn}
 \newcommand{\summary}{This unit test validates the internal aspects of the Basilisk IMU module {\tt test\_imu\_sensor.py} by comparing module output to expected output. The Basilisk IMU module is responsible for producing sensed body rates and acceleration from simulation truth values. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. The unit test validates MRP switching, static bias, process noise, discretization, saturation, spacecraft center of mass (CoM) offset, sensor misalignment, and bias walk bounds for both the gyroscope and accelerometer.}
 
@@ -29,6 +29,8 @@
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
 Draft & Initial document creation & J. Alcorn \\
+\hline
+Rev. 1 & Updated with AutoTex implementation & S. Carnahan \\
 \hline
 
 \end{longtable}

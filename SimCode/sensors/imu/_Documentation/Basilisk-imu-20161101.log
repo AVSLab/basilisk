@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 08:37
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 11:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1231,12 +1231,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 17--17
  []
 
 
-Overfull \hbox (9.98274pt too wide) in alignment at lines 27--34
+Overfull \hbox (9.98274pt too wide) in alignment at lines 27--36
  [] [] [] 
  []
 
 
-Underfull \vbox (badness 10000) detected at line 34
+Underfull \vbox (badness 10000) detected at line 36
  []
 
 [1{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
@@ -1246,12 +1246,12 @@ Underfull \vbox (badness 10000) detected at line 34
 \openout5 = `Basilisk-imu-20161101.toc'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 42--42
+Underfull \hbox (badness 10000) in paragraph at lines 44--44
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 42--43
+Underfull \hbox (badness 10000) in paragraph at lines 44--45
 
  []
 
@@ -1259,16 +1259,16 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.62 	\end{equation}
+l.64 	\end{equation}
                      [1]
-LaTeX Font Info:    Try loading font information for OMS+cmss on input line 72.
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 74.
 
-LaTeX Font Info:    No file OMScmss.fd. on input line 72.
+LaTeX Font Info:    No file OMScmss.fd. on input line 74.
 
 
 LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbullet' on input line 72.
+(Font)              for symbol `textbullet' on input line 74.
 
 (./AutoTex/gyroIOAccuracy.tex) (./AutoTex/biasAccuracy.tex)
 (./AutoTex/noiseAccuracy.tex) (./AutoTex/discretizationAccuracy.tex)
@@ -1299,24 +1299,24 @@ Package pdftex.def Info: AutoTeX/walkBoundPlot.pdf used on input line 3.
 ) 
 AED: lastpage setting LastPage
 [2] [3 <./AutoTeX/noisePlot.pdf>] [4 <./AutoTeX/walkBoundPlot.pdf>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 123.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 123.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 125.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 125.
 
 (./Basilisk-imu-20161101.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 123.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 123.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 125.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 125.
 Package rerunfilecheck Info: File `Basilisk-imu-20161101.out' has not changed.
 (rerunfilecheck)             Checksum: 775B09887F977662FEDE652866116EC3;217.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 123.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 125.
  ) 
 Here is how much of TeX's memory you used:
  20110 strings out of 492995
  366316 string characters out of 6132704
- 447684 words of memory out of 5000000
+ 447672 words of memory out of 5000000
  23143 multiletter control sequences out of 15000+600000
  25233 words of font info for 89 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1333,7 +1333,7 @@ ocal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/lo
 cal/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr/
 local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr
 /local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb>
-Output written on Basilisk-imu-20161101.pdf (5 pages, 1332804 bytes).
+Output written on Basilisk-imu-20161101.pdf (5 pages, 1332901 bytes).
 PDF statistics:
  253 PDF objects out of 1000 (max. 8388607)
  152 compressed objects within 2 object streams
