@@ -309,7 +309,7 @@ void CSSConstellation::SelfInit()
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
         sizeof(CSSArraySensorIntMsg), outputBufferCount,
-        "CSSRawDataSimMsg", moduleID);
+        "CSSArraySensorIntMsg", moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
