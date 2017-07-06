@@ -74,10 +74,11 @@ def test_all_functions_ekf(show_plots):
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
     (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
-    (20000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
+    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
     (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
     (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0, 0.0]),
-    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
+    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
 ])
 
 
@@ -569,9 +570,8 @@ def StatePropVariable(show_plots):
         expectedCovar[i,0] =  dt*i*1E9
         expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
-    if show_plots:
-        FilterPlots.StatesVsExpected(stateLog, expectedStateArray)
-        FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar)
+    FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
+    FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     for j in range(1,2001):
         for i in range(6):
@@ -852,12 +852,12 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                 testFailCount += 1
                 testMessages.append("State update failure")
 
-    if show_plots:
-        target1 = np.array(testVector1)
-        target2 = np.array(testVector2)
-        FilterPlots.StatesPlot(stateErrorLog, covarLog)
-        FilterPlots.StatesVsTargets(target1, target2, stateLog)
-        FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal)
+
+    target1 = np.array(testVector1)
+    target2 = np.array(testVector2+[0.,0.,0.])
+    FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
+    FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
+    FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
 
     # print out success message if no error were found
     if testFailCount == 0:

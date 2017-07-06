@@ -19,7 +19,7 @@
 '''
 import sys, os, inspect
 import numpy as np
-import pytest
+import unitTestSupport
 import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import matplotlib.pyplot as plt
 
-def StatesPlot(x, Pflat):
+def StatesPlot(x, Pflat, show_plots):
 
 
     P = np.zeros([len(Pflat[:,0]),6,6])
@@ -40,8 +40,7 @@ def StatesPlot(x, Pflat):
         t[i] = x[i, 0]*1E-9
         P[i,:,:] = Pflat[i,1:37].reshape([6,6])
 
-    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
-
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , 3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
@@ -87,11 +86,13 @@ def StatesPlot(x, Pflat):
     plt.title('Third rate component')
     plt.grid()
 
-    plt.show()
+    unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
     plt.close()
 
 
-def StatesPlotCompare(x, x2, Pflat, Pflat2):
+def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
 
 
     P = np.zeros([len(Pflat[:,0]),6,6])
@@ -102,8 +103,7 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
         P[i,:,:] = Pflat[i,1:37].reshape([6,6])
         P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
 
-    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
-
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(t[0:30] , x[0:30, 1], "b", label='Error Filter')
     plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 0, 0]), 'r--',  label='Covar Filter')
@@ -167,10 +167,13 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2):
     plt.title('Third rate component')
     plt.grid()
 
-    plt.show()
+    unitTestSupport.writeFigureLaTeX('StatesCompare', 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+
+    if show_plots:
+        plt.show()
     plt.close()
 
-def PostFitResiduals(Res, noise):
+def PostFitResiduals(Res, noise, show_plots):
 
     MeasNoise = np.zeros(len(Res[:,0]))
     t= np.zeros(len(Res[:,0]))
@@ -182,7 +185,7 @@ def PostFitResiduals(Res, noise):
             if -1E-10 < Res[i,j+1] < 1E-10:
                 Res[i, j+1] = np.nan
 
-    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(421)
     plt.plot(t , Res[:, 1], "b.", label='Residual')
     plt.plot(t , MeasNoise, 'r--', label='Covar')
@@ -250,12 +253,14 @@ def PostFitResiduals(Res, noise):
     plt.title('Eight CSS')
     plt.grid()
 
-    plt.show()
+    unitTestSupport.writeFigureLaTeX('PostFit', 'Post Fit Residuals', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+
+    if show_plots:
+        plt.show()
     plt.close()
 
-def StatesVsExpected(stateLog, expectedStateArray):
-    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
-
+def StatesVsExpected(stateLog, expectedStateArray, show_plots):
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1], 'r', label='Filter')
@@ -295,21 +300,22 @@ def StatesVsExpected(stateLog, expectedStateArray):
     plt.title('Third rate component')
     plt.grid()
 
-    plt.show()
+    unitTestSupport.writeFigureLaTeX('StatesExpected', 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+
+    if show_plots:
+        plt.show()
     plt.close()
 
-    plt.show()
-    plt.close()
 
-def StatesVsTargets(target1, target2, stateLog):
+def StatesVsTargets(target1, target2, stateLog, show_plots):
 
 
     target = np.ones([len(stateLog[:, 0]),6])
-    target[0:(len(stateLog[:, 0])-1)/2, :] = target1*target[0:(len(stateLog[:, 0])-1)/2, :]
-    target[(len(stateLog[:, 0]) - 1) / 2:len(stateLog[:, 0]),:] = target2 * target[(len(stateLog[:, 0]) - 1) / 2:len(stateLog[:, 0]),:]
+    for i in range((len(stateLog[:, 0])-1)/2):
+        target[i, :] = target1
+        target[i+(len(stateLog[:, 0]) - 1) / 2,:] = target2
 
-    plt.figure(num=None, figsize=(15, 15), dpi=80, facecolor='w', edgecolor='k')
-
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(321)
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1], 'b', label='Filter')
     plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 0], 'r--', label='Expected')
@@ -349,5 +355,8 @@ def StatesVsTargets(target1, target2, stateLog):
     plt.title('Third rate component')
     plt.grid()
 
-    plt.show()
+    unitTestSupport.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+
+    if show_plots:
+        plt.show()
     plt.close()
