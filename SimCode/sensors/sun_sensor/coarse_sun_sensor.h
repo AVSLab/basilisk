@@ -26,6 +26,7 @@
 #include "simMessages/scPlusStatesSimMsg.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/cssRawDataSimMsg.h"
+#include "simMessages/eclipseSimMsg.h"
 #include "simFswInterfaceMessages/cssArraySensorIntMsg.h"
 
 typedef enum {
@@ -71,6 +72,7 @@ public:
     std::string InputSunMsg;                    //!< [-] Message name for sun data
     std::string InputStateMsg;                  //!< [-] Message name for spacecraft state */
     std::string OutputDataMsg;                  //!< [-] Message name for CSS output data */
+    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
     CSSFaultState_t     faultState;             //!< [-] Specification used if state is set to COMPONENT_FAULT */
     double              stuckPercent;           //!< [%] percent of full value the CSS will remain stuck at if a fault is triggered
     double              theta;                  //!< [rad] css azimuth angle, measured positive from the body +x axis around the +z axis
@@ -93,10 +95,12 @@ public:
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
+    double              sunVisibilityFactor;    //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
 private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
     int64_t OutputDataID;                       //!< [-] Connect to output CSS data
+    int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
     std::default_random_engine rgen;            //!< [-] Random number generator for disp

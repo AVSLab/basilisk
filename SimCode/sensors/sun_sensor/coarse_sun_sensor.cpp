@@ -56,6 +56,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
+    this->sunVisibilityFactor = 1.0;
     
     return;
 }
@@ -147,7 +148,9 @@ bool CoarseSunSensor::LinkMessages()
         sizeof(SpicePlanetStateSimMsg), moduleID);
     this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
         sizeof(SCPlusStatesSimMsg), moduleID);
-    
+    this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
+                                                                      sizeof(EclipseSimMsg), moduleID);
+
     //! - If both messages are valid, return true, otherwise warnd and return false
     if(InputSunID >= 0 && InputStateID >= 0)
     {
@@ -183,6 +186,10 @@ void CoarseSunSensor::readInputMessages()
         SystemMessaging::GetInstance()->ReadMessage(this->InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
+    if(this->sunEclipseInMsgId >= 0) {
+        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgId, &LocalHeader,
+                                                    sizeof(EclipseSimMsg), reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor), moduleID);
+    }
 }
 
 /*! This method computes the sun-vector heading information in the vehicle 
@@ -215,6 +222,10 @@ void CoarseSunSensor::computeTrueOutput()
     {
        this->directValue = temp1;
     }
+
+    // apply sun visibility (eclipse) information
+    this->directValue = this->directValue * this->sunVisibilityFactor;
+    
     //! - Albedo is forced to zero for now.
     this->albedoValue = 0.0;
     this->trueValue = this->directValue + this->albedoValue;
