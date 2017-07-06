@@ -28,14 +28,14 @@
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
 {
-    CallCounts = 0;
-    MessagesLinked = false;
-    InputSunID = -1;
-    InputStateID = -1;
-    InputStateMsg = "inertial_state_output";
-    InputSunMsg = "sun_planet_data";
-    OutputDataMsg = "";
+    this->CallCounts = 0;
+    this->MessagesLinked = false;
+    this->InputSunID = -1;
+    this->InputStateID = -1;
     this->sunEclipseInMsgId = -1;
+    this->InputStateMsg = "inertial_state_output";
+    this->InputSunMsg = "sun_planet_data";
+    this->OutputDataMsg = "";
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
     
@@ -112,7 +112,7 @@ void CoarseSunSensor::SelfInit()
 {
     //! Begin Method Steps
     std::normal_distribution<double>::param_type
-    UpdatePair(SenBias, SenNoiseStd);
+    UpdatePair(this->SenBias, this->SenNoiseStd);
     //! - Configure the random number generator
     rgen.seed(RNGSeed);
     rnum.param(UpdatePair);
@@ -189,7 +189,7 @@ void CoarseSunSensor::computeSunData()
     //! - Normalize the relative position into a unit vector
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
-    MRP2C(StateCurrent.sigma_BN, dcm_BN);
+    MRP2C(this->StateCurrent.sigma_BN, dcm_BN);
     m33MultV3(dcm_BN, Sc2Sun_Inrtl, this->sHat_B);
 }
 
@@ -248,7 +248,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
     //! - Set the outgoing data to the scaled computation
     LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
-    SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
+    SystemMessaging::GetInstance()->WriteMessage(this->OutputDataID, Clock,
                                                  sizeof(CSSRawDataSimMsg), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 /*! This method is called at a specified rate by the architecture.  It makes the 
@@ -276,14 +276,14 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     sensor list.*/
 CSSConstellation::CSSConstellation()
 {
-    sensorList.clear();
-    outputBufferCount = 2;
+    this->sensorList.clear();
+    this->outputBufferCount = 2;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
 CSSConstellation::~CSSConstellation()
 {
-    sensorList.clear();
+    this->sensorList.clear();
 }
 
 /*! This method loops through the sensor list and calls the self init method for 
@@ -293,16 +293,16 @@ void CSSConstellation::SelfInit()
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and initialize all children
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->SelfInit();
     }
 
-    memset(&outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
+    memset(&this->outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSArraySensorIntMsg), outputBufferCount,
+        sizeof(CSSArraySensorIntMsg), this->outputBufferCount,
         "CSSArraySensorIntMsg", moduleID);
 }
 
@@ -313,7 +313,7 @@ void CSSConstellation::CrossInit()
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and initialize all children
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->CrossInit();
     }
@@ -324,14 +324,14 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and update all data
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->readInputMessages();
         it->computeSunData();
         it->computeTrueOutput();
         it->applySensorErrors();
         it->scaleSensorValues();
-        outputBuffer.CosValue[it - sensorList.begin()] = it->sensedValue;
+        this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
                                                  sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t *>(&outputBuffer));
