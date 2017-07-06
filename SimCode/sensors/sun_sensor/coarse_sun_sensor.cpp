@@ -143,9 +143,9 @@ bool CoarseSunSensor::LinkMessages()
 {
     //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
-    InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
+    this->InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputSunMsg,
         sizeof(SpicePlanetStateSimMsg), moduleID);
-    InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
+    this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
         sizeof(SCPlusStatesSimMsg), moduleID);
     
     //! - If both messages are valid, return true, otherwise warnd and return false
@@ -174,13 +174,13 @@ void CoarseSunSensor::readInputMessages()
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(InputSunID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
+        SystemMessaging::GetInstance()->ReadMessage(this->InputSunID, &LocalHeader,
                                                     sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
     if(InputStateID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
+        SystemMessaging::GetInstance()->ReadMessage(this->InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
     }
 }
@@ -194,8 +194,8 @@ void CoarseSunSensor::computeSunData()
     
     //! Begin Method Steps
     //! - Get the position from spacecraft to Sun
-    v3Scale(-1.0, StateCurrent.r_BN_N, Sc2Sun_Inrtl);
-    v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
+    v3Scale(-1.0, this->StateCurrent.r_BN_N, Sc2Sun_Inrtl);
+    v3Add(Sc2Sun_Inrtl, this->SunData.PositionVector, Sc2Sun_Inrtl);
     //! - Normalize the relative position into a unit vector
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
@@ -216,8 +216,8 @@ void CoarseSunSensor::computeTrueOutput()
        this->directValue = temp1;
     }
     //! - Albedo is forced to zero for now.
-    albedoValue = 0.0;
-    trueValue = directValue + albedoValue;
+    this->albedoValue = 0.0;
+    this->trueValue = this->directValue + this->albedoValue;
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
@@ -227,11 +227,11 @@ void CoarseSunSensor::applySensorErrors()
 {
     //! Begin Method Steps
     //! - Get current error from random number generator
-    double CurrentError = rnum(rgen);
+    double CurrentError = rnum(this->rgen);
     //! - Apply the kelly fit to the truth direct value
-    double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
+    double KellyFit = 1.0 - exp(-this->directValue * this->directValue/this->KellyFactor);
     //! - Sensed value is total illuminance with a kelly fit + noise
-    this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;
+    this->sensedValue = (this->directValue + this->albedoValue)*KellyFit + CurrentError;
     
 }
 
