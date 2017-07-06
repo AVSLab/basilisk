@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 14:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  6 JUL 2017 09:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1333,9 +1333,9 @@ ocal/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/lo
 cal/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></usr/
 local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr
 /local/texlive/2017/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb>
-Output written on Basilisk-imu-20161101.pdf (5 pages, 1331233 bytes).
+Output written on Basilisk-imu-20161101.pdf (5 pages, 3019033 bytes).
 PDF statistics:
- 253 PDF objects out of 1000 (max. 8388607)
+ 254 PDF objects out of 1000 (max. 8388607)
  152 compressed objects within 2 object streams
  24 named destinations out of 1000 (max. 500000)
  60 words of extra memory for PDF output out of 10000 (max. 10000000)
