@@ -39,6 +39,8 @@ extern "C" {
     void    vtMultM(void *v, void *mx, size_t dim1, size_t dim2, void *result);
     void    vtMultMt(void *v, void *mx, size_t dim1, size_t dim2, void *result);
     double  vNorm(void *v, size_t dim);
+    double  vMax(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of a small 1-D array*/
+    double  vMaxAbs(void *v, size_t dim); /* Non-sorted, non-optimized algorithm for finding the max of the absolute values of the elements of a small 1-D array*/
     void    vNormalize(void *v, size_t dim, void *result);
     int     vIsEqual(void *v1, size_t dim, void *v2, double accuracy);
     int     vIsZero(void *v, size_t dim, double accuracy);
