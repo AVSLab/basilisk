@@ -239,8 +239,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     elif testCase == 'saturation':
         # this test checks saturation
         simStopTime = 0.1
-        ImuSensor.senRotMax = .2
-        ImuSensor.senTransMax = .3
+        ImuSensor.senRotMax = 0.2
+        ImuSensor.senTransMax = 0.3
         omega = [1.,-1.,0.123]
         StateCurrent.omega_BN_B = omega
         omegaSaturated = [.2,-.2,0.123]
@@ -374,23 +374,23 @@ def unitSimIMU(show_plots, useFlag, testCase):
             moduleOutput[moduleOutputName] = newArr
 
     if (testCase == 'noise'):
-     for i in range(0,3):
-         plt.figure(1,figsize=(7,5), dpi=80, facecolor='w', edgecolor='k')
+         plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
          plt.clf()
-         plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-         plt.xlabel('Time (s)')
-         plt.ylabel('Angular velocity (rad/s)')
-         plt.xlim((0,1000))
-         unitTestSupport.writeFigureLaTeX('noisePlot', 'Module output of noise standard deviation check', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+         for i in range(0,3):
+             plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
+             plt.xlabel('Time (s)')
+             plt.ylabel('Angular velocity (rad/s)')
+             plt.xlim((0,1000))
+             unitTestSupport.writeFigureLaTeX('noisePlot', 'Module output of noise standard deviation check', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     if (testCase == 'walk bounds'):
-     for i in range(0,3):
-         plt.figure(2,figsize=(7,5), dpi=80, facecolor='w', edgecolor='k')
+         plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
          plt.clf()
-         plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-         plt.xlabel('Time (s)')
-         plt.ylabel('Angular velocity (rad/s)')
-         plt.xlim((0,1000))
-         unitTestSupport.writeFigureLaTeX('walkBoundPlot', 'Module output for random walk bounds check', plt,
+         for i in range(0,3):
+             plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
+             plt.xlabel('Time (s)')
+             plt.ylabel('Angular velocity (rad/s)')
+             plt.xlim((0,1000))
+             unitTestSupport.writeFigureLaTeX('walkBoundPlot', 'Module output for random walk bounds check', plt,
                                       'height=0.7\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
@@ -467,7 +467,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 # stand-along python script
 if __name__ == "__main__":
     test_unitSimIMU(
-        False, # show_plots
+        True, # show_plots
         False, # useFlag
-        'gyroIO' # testCase
+        'saturation' # testCase
     )
