@@ -35,6 +35,7 @@ CoarseSunSensor::CoarseSunSensor()
     InputStateMsg = "inertial_state_output";
     InputSunMsg = "sun_planet_data";
     OutputDataMsg = "";
+    this->sunEclipseInMsgId = -1;
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
     
