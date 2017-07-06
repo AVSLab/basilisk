@@ -132,11 +132,6 @@ void CoarseSunSensor::CrossInit()
     LinkMessages();
 }
 
-/*! This method determines if the spacecraft is illuminated by the sun*/
-bool CoarseSunSensor::spacecraftIlluminated()
-{
-    return(true); /// Sun is always shining baby.  Fix this...
-}
 
 /*! This method links the input messages with the ID matched to the input message 
     and warns the user if any messages can't be found */

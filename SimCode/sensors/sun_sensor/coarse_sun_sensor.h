@@ -60,7 +60,6 @@ public:
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM
-    bool spacecraftIlluminated(); //!< @brief method to determine if the S/C is illuminated
     void readInputMessages(); //!< @brief method to read the input messages
     void computeSunData(); //!< @brief method to get the sun vector information
     void computeTrueOutput(); //!< @brief method to compute the true sun-fraction of CSS
