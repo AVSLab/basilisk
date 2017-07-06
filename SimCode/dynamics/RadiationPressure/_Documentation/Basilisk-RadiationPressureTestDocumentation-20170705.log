@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  5 JUL 2017 14:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  6 JUL 2017 09:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1302,11 +1302,11 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 95.
 Here is how much of TeX's memory you used:
  20019 strings out of 492995
  364770 string characters out of 6132704
- 445528 words of memory out of 5000000
+ 445529 words of memory out of 5000000
  23129 multiletter control sequences out of 15000+600000
  25233 words of font info for 89 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 69i,11n,77p,541b,457s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 69i,11n,77p,542b,457s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb
 ></usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb><
 /usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb>
@@ -1314,7 +1314,7 @@ Here is how much of TeX's memory you used:
 /usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></
 usr/local/texlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
 Output written on Basilisk-RadiationPressureTestDocumentation-20170705.pdf (3 p
-ages, 436055 bytes).
+ages, 436053 bytes).
 PDF statistics:
  130 PDF objects out of 1000 (max. 8388607)
  100 compressed objects within 1 object stream

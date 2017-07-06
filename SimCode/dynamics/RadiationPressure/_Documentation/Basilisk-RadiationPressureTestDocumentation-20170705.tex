@@ -8,7 +8,7 @@
 \newcommand{\subject}{Radiation Pressure Test Report}
 \newcommand{\status}{Initial document draft}
 \newcommand{\preparer}{S. Carnahan}
-\newcommand{\summary}{This unit test validates the internal aspects of the Basilisk radiation pressure dynamics effector module {\tt test\_RadiationPressure.py} by comparing module output to expected output. The Basilisk radiation pressure module is responsible for calculating the effects of radiation pressure on a spacecraft. The unit test verifies the radiation pressure module uses the "cannonball" method for the the first test and table look-ups for the second test.}
+\newcommand{\summary}{This unit test validates the internal aspects of the Basilisk radiation pressure dynamics effector module {\tt test\_RadiationPressure.py} by comparing module output to expected output. The Basilisk radiation pressure module is responsible for calculating the effects of radiation pressure on a spacecraft. The unit test verifies the radiation pressure module using the "cannonball" method for the the first test and table look-ups for the second test.}
 
 
 \begin{document}
@@ -50,7 +50,7 @@ The Basilisk radiation pressure module (radiation\_pressure.cpp) is responsible 
 This test is located in {\tt SimCode/dynamics/RadiationPressure/\_UnitTest/test\_radiationPressure.py}. In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
 
 \begin{enumerate}
-	\item \underline{"Cannonball" Method} This test utilizes the "cannonball" ball method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
+	\item \underline{"Cannonball" Method} This test utilizes the "cannonball" method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
 	\item \underline{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to verify radiation pressure table look-up capabilities.
 \end{enumerate} 
 
