@@ -56,7 +56,6 @@ public:
     
     void CrossInit(); //!< @brief method for initializing cross dependencies
     void SelfInit();  //!< @brief method for initializing own messages
-    bool LinkMessages(); //!< @brief method to re-init message linkage
     void UpdateState(uint64_t CurrentSimNanos); //!< @brief method to update state for runtime
     void setUnitDirectionVectorWithPerturbation(double cssThetaPerturb, double cssPhiPerturb); //!< @brief utility method to perturb CSS unit vector
     void setBodyToPlatformDCM(double yaw, double pitch, double roll); //!< @brief utility method to configure the platform DCM

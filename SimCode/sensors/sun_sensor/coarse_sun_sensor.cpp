@@ -129,36 +129,24 @@ void CoarseSunSensor::SelfInit()
     are matched correctly.*/
 void CoarseSunSensor::CrossInit()
 {
-    LinkMessages();
-}
-
-
-/*! This method links the input messages with the ID matched to the input message 
-    and warns the user if any messages can't be found */
-bool CoarseSunSensor::LinkMessages()
-{
     //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
     this->InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputSunMsg,
-        sizeof(SpicePlanetStateSimMsg), moduleID);
+                                                                          sizeof(SpicePlanetStateSimMsg), moduleID);
     this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
-        sizeof(SCPlusStatesSimMsg), moduleID);
+                                                                            sizeof(SCPlusStatesSimMsg), moduleID);
     this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
-                                                                      sizeof(EclipseSimMsg), moduleID);
+                                                                                 sizeof(EclipseSimMsg), moduleID);
 
-    //! - If both messages are valid, return true, otherwise warnd and return false
-    if(InputSunID >= 0 && InputStateID >= 0)
-    {
-        return(true);
-    }
-    else
-    {
+    //! - If either messages is not valid, send a warning message
+    if(this->InputSunID < 0 || this->InputStateID < 0) {
         std::cerr << "WARNING: Failed to link a sun sensor input message: ";
-        std::cerr << std::endl << "Sun: "<<InputSunID;
-        std::cerr << std::endl << "Sun: "<<InputStateID;
+        std::cerr << std::endl << "Sun: "<<this->InputSunID;
+        std::cerr << std::endl << "Sun: "<<this->InputStateID;
     }
-    return(false);
+    return;
 }
+
 
 void CoarseSunSensor::readInputMessages()
 {
