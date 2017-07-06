@@ -48,7 +48,6 @@ CoarseSunSensor::CoarseSunSensor()
     this->KellyFactor = 0.0;
     this->sensedValue = 0.0;
     this->fov           = 1.0471975512;
-    this->maxVoltage    = 0.0;
     this->phi           = 0.785398163397;
     this->theta         = 0.0;
     v3SetZero(this->B2P321Angles);

@@ -87,7 +87,6 @@ public:
     double              trueValue;              //!< [-] total measurement without perturbations
     double              KellyFactor;            //!< [-] Kelly curve fit for output cosine curve
     double              fov;                    //!< [-] rad, field of view half angle
-    double              maxVoltage;             //!< [V] max voltage measurable by CSS, used in discretization
     double              r_B[3];
     bool                MessagesLinked;         //!< [-] Indicator for whether inputs bound
     double              SenBias;                //!< [-] Sensor bias value
