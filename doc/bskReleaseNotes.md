@@ -16,6 +16,7 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 	   <li>The body-fixed spacecraft structure frame has now been removed from the simulation and flight algorithm codes.  All spacecraft vectors and tensors are now set directly in the body frame B.  If the spacecraft parameters are given in terms of an alternate structure frame, these vectors and tensor must be transformed into the body frame first before being set in BSK.</li>
 	   <li>The integrated tutorial test for using a Python based BSK module now has some documentation.</li>
 	   <li>Created a method to compute the orbital potential and angular momentum energy.  This allows for the kinetic energy and angular momentum checks to flat-line even if the satellite is in orbit.  The spherical harmonics of the planet are taken into account as well.</li>
+	   <li>Included a new Extended Kalman Filter module that determines the body-relative sun heading using the CSS signals.</li>
 </ul>
 
 ## Version 0.1.3
