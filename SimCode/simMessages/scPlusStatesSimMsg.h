@@ -29,7 +29,6 @@ typedef struct {
     double v_CN_N[3];                 //!< m/s Current velocity of CoM vector (inertial)
     double sigma_BN[3];               //!< -- Current MRPs (inertial)
     double omega_BN_B[3];             //!< r/s Current angular velocity (inertial)
-    double dcm_BS[3][3];              //!< -- Transformation from str to body
     double TotalAccumDVBdy[3];        //!< m/s Accumulated DV for simulation
     uint64_t MRPSwitchCount;          //!< -- Number of times that MRPs have switched
 }SCPlusStatesSimMsg;

@@ -35,7 +35,6 @@
 ThrusterDynamicEffector::ThrusterDynamicEffector()
 : stepsInRamp(30)
 , InputCmds("acs_thruster_cmds")
-, inputBSName("dcm_BS")
 , thrusterOutMsgNameBufferCount(2)
 , prevFireTime(0.0)
 , CmdsInMsgID(-1)
@@ -217,7 +216,6 @@ void ThrusterDynamicEffector::ConfigureThrustRequests(double currentTime)
 void ThrusterDynamicEffector::linkInStates(DynParamManager& states){
     this->hubSigma = states.getStateObject("hubSigma");
 	this->hubOmega = states.getStateObject("hubOmega");
-    this->dcm_BS = states.getPropertyReference(inputBSName);
 }
 
 /*! This method computes the Forces on Torque on the Spacecraft Body.
@@ -256,8 +254,6 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     for(it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
     {
         ops = &it->ThrustOps;
-        it->thrDir_B = (*this->dcm_BS) * it->inputThrDir_S;
-        it->thrLoc_B = (*this->dcm_BS) * it->inputThrLoc_S;
         //! - For each thruster see if the on-time is still valid and if so, call ComputeThrusterFire()
         if((ops->ThrustOnCmd + ops->ThrusterStartTime  - integTime) >= -dt*10E-10 &&
            ops->ThrustOnCmd > 0.0)
@@ -512,7 +508,7 @@ void ThrusterDynamicEffector::UpdateState(uint64_t CurrentSimNanos)
     //! - Read the inputs and then call ConfigureThrustRequests to set up dynamics
     if(this->ReadInputs())
     {
-        this->ConfigureThrustRequests(CurrentSimNanos*1.0E-9);
+        this->ConfigureThrustRequests(prevCommandTime*1.0E-9);
     }
     this->writeOutputMessages(CurrentSimNanos);
     

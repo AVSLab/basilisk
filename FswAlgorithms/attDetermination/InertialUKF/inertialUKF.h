@@ -49,7 +49,6 @@ typedef struct {
     char rwSpeedsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the input RW speeds message*/
     char stDataInMsgName[MAX_STAT_MSG_LENGTH]; /*!< The name of the Input message*/
     char gyrBuffInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] Input message buffer from MIRU*/
-    char massPropsInMsgName[MAX_STAT_MSG_LENGTH]; /*!< [-] The name of the mass props message*/
 
 	int numStates;                /*!< [-] Number of states for this filter*/
 	int countHalfSPs;             /*!< [-] Number of sigma points over 2 */

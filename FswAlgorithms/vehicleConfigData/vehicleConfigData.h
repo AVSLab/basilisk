@@ -41,15 +41,14 @@
 
 /*! @brief Structure used to define a common structure for top level vehicle information*/
 typedef struct {
-    double dcm_BS[9];             /*!< [-] DCM from structure frame S to ADCS body frame B (row major)*/
-    double ISCPntB_S[9];          /*!< [kg m^2] Spacecraft Inertia */
-    double CoM_S[3];              /*!< [m] Center of mass of spacecraft in body*/
+    double ISCPntB_B[9];          /*!< [kg m^2] Spacecraft Inertia */
+    double CoM_B[3];              /*!< [m] Center of mass of spacecraft in body*/
     char outputPropsName[MAX_STAT_MSG_LENGTH]; /*!< [-] Name of the output properties message*/
     int32_t outputPropsID;       /*!< [-] Message ID associated with the output properties message*/
 }VehConfigInputData;
 
 typedef struct {
-    double nHat_S[3];          /*! [-] CSS unit normal expressed in structure */
+    double nHat_B[3];          /*! [-] CSS unit normal expressed in structure */
 }CSSConfigurationElement;
 
 typedef struct {

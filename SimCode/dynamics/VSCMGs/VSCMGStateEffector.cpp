@@ -539,10 +539,6 @@ void VSCMGStateEffector::SelfInit()
  */
 void VSCMGStateEffector::CrossInit()
 {
-    //! massProps doesn't exist anymore, hardcode structure to body for now (NEEDS TO CHANGE)
-    Eigen::Matrix3d dcm_BS;             /* structure to body frame DCM */
-    dcm_BS.setIdentity();
-
 	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
@@ -558,25 +554,6 @@ void VSCMGStateEffector::CrossInit()
 	std::vector<VSCMGConfigSimMsg>::iterator it;
 	for (it = VSCMGData.begin(); it != VSCMGData.end(); it++)
 	{
-		if (it->gsHat0_S.norm() > 0.01) {
-			it->gsHat0_B = dcm_BS * it->gsHat0_S;
-		} else {
-			std::cerr <<
-			"Error: gsHat0_S not properly initialized.  Don't set gsHat_B directly in python.";
-		}
-		if (it->gtHat0_S.norm() > 0.01) {
-			it->gtHat0_B = dcm_BS * it->gtHat0_S;
-		} else {
-			std::cerr <<
-			"Error: gtHat0_S not properly initialized.  Don't set gtHat_B directly in python.";
-		}
-		if (it->ggHat_S.norm() > 0.01) {
-			it->ggHat_B = dcm_BS * it->ggHat_S;
-		} else {
-			std::cerr <<
-			"Error: ggHat_S not properly initialized.  Don't set ggHat_B directly in python.";
-		}
-
 		it->w2Hat0_B = it->gtHat0_B;
 		it->w3Hat0_B = it->ggHat_B;
 
@@ -605,11 +582,11 @@ void VSCMGStateEffector::CrossInit()
 		it->gtHat_B = dcm_BG.col(1);
 
 		it->rGcG_B = dcm_BG * it->rGcG_G;
-		it->rGB_B = dcm_BS * it->rGB_S;
 		it->massV = it->massG + it->massW;
 		it->rhoG = it->massG/it->massV;
 		it->rhoW = it->massW/it->massV;
 	}
+    return;
 }
 
 /*! This method is here to write the output message structure into the specified
@@ -640,8 +617,6 @@ void VSCMGStateEffector::WriteOutputMessages(uint64_t CurrentClock)
 		it->gammaDot = gammaDotCurrent;
 		outputStates.gimbalRates[it - VSCMGData.begin()] = it->gammaDot;
 
-		tmpVSCMG.rGB_S = it->rGB_S;
-		tmpVSCMG.gsHat0_S = it->gsHat0_S;
 		tmpVSCMG.u_s_current = it->u_s_current;
 		tmpVSCMG.u_s_max = it->u_s_max;
 		tmpVSCMG.u_s_min = it->u_s_min;

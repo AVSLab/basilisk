@@ -39,7 +39,7 @@ public:
     void UpdateState(uint64_t CurrentSimNanos);
     void readInputMessages();
     void writeOutputMessages(uint64_t Clock);
-    void setStructureToPlatformDCM(double yaw, double pitch, double roll);
+    void setBodyToPlatformDCM(double yaw, double pitch, double roll);
     void computePlatformDR();
     void computePlatformDV(uint64_t CurrentTime);
     void applySensorErrors(uint64_t CurrentTime);
@@ -51,8 +51,8 @@ public:
     std::string InputStateMsg;          /*!< Message name for spacecraft state */
     std::string InputMassMsg;           /*!< Mass properties message name */
     std::string OutputDataMsg;          /*!< Message name for CSS output data */
-    std::vector<double> SensorPosStr;   /// [m] IMU sensor location in structure
-    double Str2Platform[3][3];          /// -- Transform from body to platform
+    std::vector<double> sensorPos_B;    /// [m] IMU sensor location in body
+    double dcm_PB[3][3];                /// -- Transform from body to platform
     double senRotBias[3];               /// [r/s] Rotational Sensor bias value
     double senTransBias[3];             /// [m/s2] Translational acceleration sen bias
 	double senRotMax;					/// [r/s] Gyro saturation value

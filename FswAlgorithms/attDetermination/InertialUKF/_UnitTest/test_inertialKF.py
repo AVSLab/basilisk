@@ -42,7 +42,6 @@ def setupFilterData(filterObject):
     filterObject.navStateOutMsgName = "inertial_state_estimate"
     filterObject.filtDataOutMsgName = "inertial_filter_data"
     filterObject.stDataInMsgName = "star_tracker_data"
-    filterObject.massPropsInMsgName = "adcs_config_data"
     filterObject.rwSpeedsInMsgName = "reactionwheel_output_states"
     filterObject.rwParamsInMsgName = "rwa_config_data_parsed"
     filterObject.gyrBuffInMsgName = "gyro_buffer_data"
@@ -121,24 +120,6 @@ def test_StateUpdateInertialAttitude(show_plots):
     setupFilterData(moduleConfig)
 
     vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-
-    I = [1000., 0., 0.,
-     0., 800., 0.,
-     0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
-                                                inputMessageSize,
-                                                0,
-                                                vehicleConfigOut)
                                                 
     stMessage = inertialUKF.STAttFswMsg()
     stMessage.MRP_BdyInrtl = [0.3, 0.4, 0.5]
@@ -251,24 +232,7 @@ def test_StatePropInertialAttitude(show_plots):
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     
     setupFilterData(moduleConfig)
-    vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    I = [1000., 0., 0.,
-     0., 800., 0.,
-     0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
-                                                inputMessageSize,
-                                                0,
-                                                vehicleConfigOut)
+
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)
     unitTestSim.AddVariableForLogging('InertialUKF.state', testProcessRate*10, 0, 5)
     unitTestSim.InitializeSimulation()
@@ -334,23 +298,7 @@ def test_StatePropRateInertialAttitude(show_plots):
     
     setupFilterData(moduleConfig)
     vehicleConfigOut = inertialUKF.VehicleConfigFswMsg()
-    inputMessageSize = vehicleConfigOut.getStructSize()
-    unitTestSim.TotalSim.CreateNewMessage(unitProcessName,
-                                          moduleConfig.massPropsInMsgName,
-                                          inputMessageSize,
-                                          2)  # number of buffers (leave at 2 as default, don't make zero)
-    I = [1000., 0., 0.,
-     0., 800., 0.,
-     0., 0., 800.]
-    vehicleConfigOut.ISCPntB_B = I
-    BS = [1.0, 0.0, 0.0,
-          0.0, 1.0, 0.0,
-          0.0, 0.0, 1.0]
-    vehicleConfigOut.dcm_BS = BS
-    unitTestSim.TotalSim.WriteMessageData(moduleConfig.massPropsInMsgName,
-                                                inputMessageSize,
-                                                0,
-                                                vehicleConfigOut)
+
     stateInit = [0.0, 0.0, 0.0, math.pi/1800.0, 0.0, 0.0]
     moduleConfig.state = stateInit
     unitTestSim.AddVariableForLogging('InertialUKF.covar', testProcessRate*10, 0, 35)

@@ -45,10 +45,10 @@ mpl.rc("figure", figsize=(5.75,4))
 def defaultVSCMG():
     VSCMG = VSCMGStateEffector.VSCMGConfigSimMsg()
 
-    VSCMG.rGB_S = [[0.],[0.],[0.]]
-    VSCMG.gsHat0_S = [[0.],[0.],[0.]]
-    VSCMG.gtHat0_S = [[0.],[0.],[0.]]
-    VSCMG.ggHat_S = [[0.],[0.],[0.]]
+    VSCMG.rGB_B = [[0.],[0.],[0.]]
+    VSCMG.gsHat0_B = [[0.],[0.],[0.]]
+    VSCMG.gtHat0_B = [[0.],[0.],[0.]]
+    VSCMG.ggHat_B = [[0.],[0.],[0.]]
     VSCMG.u_s_max = -1
     VSCMG.u_s_min = -1
     VSCMG.u_s_f = 0.
@@ -158,31 +158,31 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     ang = 54.75 * np.pi/180
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[0].gsHat0_S = [[1.0], [0.0], [0.0]]
-    VSCMGs[0].gtHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[0].ggHat_S = [[0.0], [0.0], [1.0]]
+    VSCMGs[0].gsHat0_B = [[1.0], [0.0], [0.0]]
+    VSCMGs[0].gtHat0_B = [[0.0], [1.0], [0.0]]
+    VSCMGs[0].ggHat_B = [[0.0], [0.0], [1.0]]
     VSCMGs[0].Omega = 2000 * macros.RPM
     VSCMGs[0].gamma = 0.
     VSCMGs[0].gammaDot = 0.06
-    VSCMGs[0].rGB_S = [[0.1], [0.002], [-0.02]]
+    VSCMGs[0].rGB_B = [[0.1], [0.002], [-0.02]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[1].gsHat0_S = [[0.0], [1.0], [0.0]]
-    VSCMGs[1].ggHat_S = [[math.cos(ang)], [0.0], [math.sin(ang)]]
-    VSCMGs[1].gtHat0_S = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
+    VSCMGs[1].gsHat0_B = [[0.0], [1.0], [0.0]]
+    VSCMGs[1].ggHat_B = [[math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[1].gtHat0_B = np.cross(np.array([math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, 1.0, 0.0]))
     VSCMGs[1].Omega =  350 * macros.RPM
     VSCMGs[1].gamma = 0.
     VSCMGs[1].gammaDot = 0.011
-    VSCMGs[1].rGB_S = [[0.0], [-0.05], [0.0]]
+    VSCMGs[1].rGB_B = [[0.0], [-0.05], [0.0]]
 
     VSCMGs.append(defaultVSCMG())
-    VSCMGs[2].gsHat0_S = [[0.0], [-1.0], [0.0]]
-    VSCMGs[2].ggHat_S = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
-    VSCMGs[2].gtHat0_S = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
+    VSCMGs[2].gsHat0_B = [[0.0], [-1.0], [0.0]]
+    VSCMGs[2].ggHat_B = [[-math.cos(ang)], [0.0], [math.sin(ang)]]
+    VSCMGs[2].gtHat0_B = np.cross(np.array([-math.cos(ang), 0.0, math.sin(ang)]),np.array([0.0, -1.0, 0.0]))
     VSCMGs[2].Omega = -900 * macros.RPM
     VSCMGs[2].gamma = 0.
     VSCMGs[2].gammaDot = -0.003
-    VSCMGs[2].rGB_S = [[-0.1], [0.05], [0.05]]
+    VSCMGs[2].rGB_B = [[-0.1], [0.05], [0.05]]
 
     if testCase == 'BalancedWheels':
         VSCMGModel = 0
@@ -264,7 +264,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
-    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbKinEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
 
     posRef = scObject.dynManager.getStateObject("hubPosition")
     sigmaRef = scObject.dynManager.getStateObject("hubSigma")
@@ -276,7 +276,7 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
     rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
-    orbKinEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbKinEnergy")
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
     wheelSpeeds = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "wheelSpeeds",range(3))
     gimbalAngles = unitTestSim.pullMessageLogData(rwStateEffector.OutputDataString + "." + "gimbalAngles",range(3))
@@ -342,6 +342,13 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
                 [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
                  ]
 
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
+                ]
+
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                 ]
 
     plt.figure()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
@@ -352,8 +359,8 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
     plt.title("Change in Rotational Angular Momentum")
 
     # plt.figure()
-    # plt.plot(orbKinEnergy[:,0]*1e-9, orbKinEnergy[:,1] - orbKinEnergy[0,1])
-    # plt.title("Change in Orbital Kinetic Energy")
+    # plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    # plt.title("Change in Orbital Energy")
 
     # plt.figure()
     # plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
@@ -470,6 +477,11 @@ def VSCMGIntegratedTest(show_plots,useFlag,testCase):
             if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
                 testFailCount += 1
                 testMessages.append("FAILED: Reaction Wheel Integrated Test failed rotational angular momentum unit test")
+        for i in range(0,len(initialOrbEnergy)):
+            # check a vector values
+            if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: Reaction Wheel Integrated Test failed orbital energy unit test")
 
     # if testCase == 'JitterSimple' or testCase == 'JitterFullyCoupled':
     #     print wheelSpeeds_true

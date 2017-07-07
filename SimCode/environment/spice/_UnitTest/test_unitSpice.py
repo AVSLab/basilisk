@@ -38,11 +38,10 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 # @cond DOXYGEN_IGNOREimport spice_interface
 import datetime
-import MessagingAccess
+import unitTestSupport
 import SimulationBaseClass
 import numpy
 import spice_interface
-import ctypes
 import macros
 import matplotlib.pyplot as plt
 # @endcond
@@ -54,6 +53,7 @@ class DataStore:
         self.MarsPosErr = []
         self.EarthPosErr = []
         self.SunPosErr = []
+
 
     def plotData(self):
         fig1 = plt.figure(1)
@@ -67,17 +67,42 @@ class DataStore:
 #        plt.ylim(0,0.000005)
 #        plt.ylim(0,0.02)
 
+        plt.rc('font', size=50)
         plt.legend(loc='upper left')
         fig1.autofmt_xdate()
         plt.xlabel('Date of test')
         plt.ylabel('Position Error [m]')
         plt.show()
 
+    def giveData(self):
+        plt.figure(1)
+        plt.close()
+        fig1 = plt.figure(1,figsize=(7,5), dpi=80, facecolor='w', edgecolor='k')
+
+        plt.xticks(numpy.arange(len(self.Date)), self.Date)
+        plt.plot(self.MarsPosErr, 'r', label='Mars')
+        plt.plot(self.EarthPosErr, 'b', label='Earth')
+        plt.plot(self.SunPosErr, 'y', label='Sun')
+
+        plt.legend(loc='upper left')
+        fig1.autofmt_xdate()
+        plt.xlabel('Date of test')
+        plt.ylabel('Position Error [m]')
+
+        return plt
+
 # Py.test fixture in order to plot
 @pytest.fixture(scope="module")
 def testPlottingFixture(show_plots):
     dataStore = DataStore()
     yield dataStore
+
+    plt = dataStore.giveData()
+    unitTestSupport.writeFigureLaTeX('EphemMars', 'Ephemeris Error on Mars', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    plt.ylim(0, 2E-2)
+    unitTestSupport.writeFigureLaTeX('EphemEarth', 'Ephemeris Error on Earth', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    plt.ylim(0, 5E-6)
+    unitTestSupport.writeFigureLaTeX('EphemSun', 'Ephemeris Error on Sun', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     if show_plots:
         dataStore.plotData()
 

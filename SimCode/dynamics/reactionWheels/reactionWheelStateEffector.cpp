@@ -356,10 +356,6 @@ void ReactionWheelStateEffector::SelfInit()
  */
 void ReactionWheelStateEffector::CrossInit()
 {
-    //! massProps doesn't exist anymore, hardcode structure to body for now (NEEDS TO CHANGE)
-    Eigen::Matrix3d dcm_BS;             /* structure to body frame DCM */
-    dcm_BS.setIdentity();
-
 	//! Begin method steps
 	//! - Find the message ID associated with the InputCmds string.
 	//! - Warn the user if the message is not successfully linked.
@@ -375,32 +371,11 @@ void ReactionWheelStateEffector::CrossInit()
 	std::vector<RWConfigSimMsg>::iterator it;
 	for (it = ReactionWheelData.begin(); it != ReactionWheelData.end(); it++)
 	{
-		if (it->gsHat_S.norm() > 0.01) {
-			it->gsHat_B = dcm_BS * it->gsHat_S;
-		} else {
-			std::cerr <<
-			"Error: gsHat_S not properly initialized.  Don't set gsHat_B directly in python.";
-		}
-		if (it->RWModel == JitterSimple || it->RWModel == JitterFullyCoupled) {
-			if (it->w2Hat0_S.norm() > 0.01) {
-				it->w2Hat0_B = dcm_BS * it->w2Hat0_S;
-			} else {
-				std::cerr << "Error: gtHat0_S not properly initialized.  Don't set gtHat0_B directly in python.";
-			}
-			if (it->w3Hat0_S.norm() > 0.01) {
-				it->w3Hat0_B = dcm_BS * it->w3Hat0_S;
-			} else {
-				std::cerr << "Error: ggHat0_S not properly initialized.  Don't set ggHat0_S directly in python.";
-			}
-		}
-
 		//! Define CoM offset d and off-diagonal inertia J13 if using fully coupled model
 		if (it->RWModel == JitterFullyCoupled) {
 			it->d = it->U_s/it->mass; //!< determine CoM offset from static imbalance parameter
 			it->J13 = it->U_d; //!< off-diagonal inertia is equal to dynamic imbalance parameter
 		}
-
-		it->rWB_B = dcm_BS * it->rWB_S;
 	}
 }
 
@@ -426,10 +401,6 @@ void ReactionWheelStateEffector::WriteOutputMessages(uint64_t CurrentClock)
         it->Omega = omegaCurrent;
 		outputStates.wheelSpeeds[it - ReactionWheelData.begin()] = it->Omega;
 
-        eigenVector3d2CArray(it->rWB_S, tmpRW.rWB_S);
-        eigenVector3d2CArray(it->gsHat_S, tmpRW.gsHat_S);
-        eigenVector3d2CArray(it->w2Hat0_S, tmpRW.w2Hat0_S);
-        eigenVector3d2CArray(it->w3Hat0_S, tmpRW.w3Hat0_S);
 		tmpRW.theta = it->theta;
 		tmpRW.u_current = it->u_current;
 		tmpRW.u_max = it->u_max;

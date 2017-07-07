@@ -76,7 +76,7 @@ void CrossInit_rwNullSpace(rwNullSpaceConfig *ConfigData, uint64_t moduleID)
     {
         for(j=0; j<3; j=j+1)
         {
-            GsMatrix[j*ConfigData->numWheels+i] = localRWData.reactionWheels[i].gsHat_S[j];
+            GsMatrix[j*ConfigData->numWheels+i] = localRWData.reactionWheels[i].gsHat_B[j];
         }
     }
     

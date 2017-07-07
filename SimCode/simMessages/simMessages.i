@@ -23,6 +23,7 @@
 #include <vector>
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
+#include "eclipseSimMsg.h"
 #include "spicePlanetStateSimMsg.h"
 #include "thrOperationSimMsg.h"
 #include "thrTimePairSimMsg.h"
@@ -52,6 +53,8 @@ namespace std {
 GEN_SIZEOF(AngOffValuesSimMsg)
 %include "cssRawDataSimMsg.h"
 GEN_SIZEOF(CSSRawDataSimMsg)
+%include "eclipseSimMsg.h"
+GEN_SIZEOF(EclipseSimMsg)
 %include "idEphemerisSimMsg.h"
 GEN_SIZEOF(IDEphemerisSimMsg)
 %include "vscmgConfigSimMsg.h"

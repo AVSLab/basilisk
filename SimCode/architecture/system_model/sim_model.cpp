@@ -221,7 +221,7 @@ void SimModel::StepUntilStop(uint64_t SimStopTime, int64_t stopPri)
     //! Begin Method steps
     /*! - Note that we have to step until both the time is greater and the next
      Task's start time is in the future */
-    int64_t inPri = SimStopTime == CurrentNanos ? stopPri : -1;
+    int64_t inPri = SimStopTime == NextTaskTime ? stopPri : -1;
     while(NextTaskTime < SimStopTime || (NextTaskTime == SimStopTime &&
         nextProcPriority >= stopPri) )
     {

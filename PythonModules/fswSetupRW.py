@@ -42,7 +42,7 @@ rwList = []
 #   by the user.
 #
 def create(
-        gsHat_S,
+        gsHat_B,
         Js,
         uMax = numpy.NaN
     ):
@@ -51,14 +51,14 @@ def create(
     # create the blank RW object
     RW = fswMessages.RWConfigElementFswMsg()
 
-    norm = numpy.linalg.norm(gsHat_S)
+    norm = numpy.linalg.norm(gsHat_B)
     if norm > 1e-10:
-        gsHat_S = gsHat_S / norm
+        gsHat_B = gsHat_B / norm
     else:
         print 'Error: RW gsHat input must be non-zero 3x1 vector'
         exit(1)
 
-    RW.gsHat_S = gsHat_S
+    RW.gsHat_B = gsHat_B
     RW.uMax = uMax
     RW.Js = Js
 
@@ -79,7 +79,7 @@ def writeConfigMessage(rwConfigMsgName, simObject, processName):
     JsList = []
     uMaxList = []
     for rw in rwList:
-        GsMatrix_B.extend(rw.gsHat_S)
+        GsMatrix_B.extend(rw.gsHat_B)
         JsList.extend([rw.Js])
         uMaxList.extend([rw.uMax])
 

@@ -56,8 +56,6 @@ void CrossInit_inertialUKF(InertialUKFConfig *ConfigData, uint64_t moduleID)
     /*! - Find the message ID for the coarse sun sensor data message */
     ConfigData->stDataInMsgId = subscribeToMessage(ConfigData->stDataInMsgName, sizeof(STAttFswMsg), moduleID);
     /*! - Find the message ID for the vehicle mass properties configuration message */
-    ConfigData->massPropsInMsgId = subscribeToMessage(ConfigData->massPropsInMsgName,
-        sizeof(VehicleConfigFswMsg), moduleID);
     ConfigData->rwParamsInMsgID = subscribeToMessage(ConfigData->rwParamsInMsgName,
                                                      sizeof(RWArrayConfigFswMsg), moduleID);
     ConfigData->rwSpeedsInMsgID = subscribeToMessage(ConfigData->rwSpeedsInMsgName,

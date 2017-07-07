@@ -90,10 +90,9 @@ class EventHandlerClass:
     def checkEvent(self, parentSim):
         nextTime = int(-1)
         if self.eventActive == False:
-            return
-        nextTime = self.prevTime + self.eventRate
-        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos - self.prevTime >= self.eventRate and 
-            parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
+            return(nextTime)
+        nextTime = self.prevTime + self.eventRate - (self.prevTime%self.eventRate)
+        if self.prevTime < 0 or (parentSim.TotalSim.CurrentNanos%self.eventRate == 0):
             nextTime = parentSim.TotalSim.CurrentNanos + self.eventRate
             eventCount = self.checkCall(parentSim)
             self.prevTime = parentSim.TotalSim.CurrentNanos
@@ -351,6 +350,7 @@ class SimBaseClass:
         while (self.TotalSim.NextTaskTime <= self.StopTime):
             if(self.nextEventTime <= self.TotalSim.CurrentNanos and self.nextEventTime >= 0):
                 self.nextEventTime = self.checkEvents()
+                self.nextEventTime = self.nextEventTime if self.nextEventTime >= self.TotalSim.NextTaskTime else self.TotalSim.NextTaskTime
             if(self.nextEventTime >= 0 and self.nextEventTime < nextStopTime):
                 nextStopTime = self.nextEventTime
                 nextPriority = -1

@@ -281,7 +281,7 @@ def test_gravityIntegratedSim(show_plots):
     # Define initial conditions of the spacecraft
     scObject.hub.mHub = 100
     scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scObject.hub.IHubPntBc_B = [[1, 0.0, 0.0], [0.0, 1, 0.0], [0.0, 0.0, 1]]
     scObject.hub.r_CN_NInit = [[-4020338.690396649],	[7490566.741852513],	[5248299.211589362]]
     scObject.hub.v_CN_NInit = [[-5199.77710904224],	[-3436.681645356935],	[1041.576797498721]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
@@ -290,28 +290,103 @@ def test_gravityIntegratedSim(show_plots):
     unitTestSim.InitializeSimulation()
     unitTestSim.TotalSim.WriteMessageData(unitTestSim.earthGravBody.bodyInMsgName, msgSize, 0, earthEphemData)
 
-    posRef = scObject.dynManager.getStateObject("hubPosition")
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
     stopTime = 60.0*10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
-    dataPos = posRef.getState()
-    dataPos = [[stopTime, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+    rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     truePos = [
                 [-6.78159911e+06,   4.94686541e+06,   5.48674159e+06]
                 ]
 
+    initialOrbAngMom_N = [
+                [orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]
+                ]
+
+    finalOrbAngMom = [
+                [orbAngMom_N[-1,0], orbAngMom_N[-1,1], orbAngMom_N[-1,2], orbAngMom_N[-1,3]]
+                 ]
+
+    initialRotAngMom_N = [
+                [rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]
+                ]
+
+    finalRotAngMom = [
+                [rotAngMom_N[-1,0], rotAngMom_N[-1,1], rotAngMom_N[-1,2], rotAngMom_N[-1,3]]
+                 ]
+
+    initialOrbEnergy = [
+                [orbEnergy[0,1]]
+                ]
+
+    finalOrbEnergy = [
+                [orbEnergy[-1,0], orbEnergy[-1,1]]
+                 ]
+
+    initialRotEnergy = [
+                [rotEnergy[0,1]]
+                ]
+
+    finalRotEnergy = [
+                [rotEnergy[-1,0], rotEnergy[-1,1]]
+                 ]
+
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.r_BN_N',
                                                   range(3))
+
+    plt.figure(1)
+    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.title("Change in Orbital Angular Momentum")
+    plt.figure(2)
+    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    plt.title("Change in Rotational Angular Momentum")
+    plt.figure(3)
+    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.title("Change in Orbital Energy")
+    plt.figure(4)
+    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.title("Change in Rotational Energy")
+    plt.show(show_plots)
 
     accuracy = 1e-8
     for i in range(0,len(truePos)):
         # check a vector values
-        if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
+        if not unitTestSupport.isArrayEqualRelative(moduleOutput[-1,:],truePos[i],3,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Gravity Integrated test failed pos unit test")
+
+    for i in range(0,len(initialOrbAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Gravity Integrated test failed orbital angular momentum unit test")
+
+    for i in range(0,len(initialRotAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Gravity Integrated test failed rotational angular momentum unit test")
+
+    for i in range(0,len(initialRotEnergy)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Gravity Integrated test failed rotational energy unit test")
+
+    for i in range(0,len(initialOrbEnergy)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Gravity Integrated test failed orbital energy unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " Gravity Integrated Sim Test"
@@ -548,4 +623,4 @@ def test_extForceInertialAndTorque(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_SCHubIntegratedSim(False)
+    test_gravityIntegratedSim(False)

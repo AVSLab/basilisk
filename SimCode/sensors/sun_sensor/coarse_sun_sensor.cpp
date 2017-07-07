@@ -40,7 +40,7 @@ CoarseSunSensor::CoarseSunSensor()
     
     this->faultState = MAX_CSSFAULT;
     this->stuckPercent = 0.0;
-    v3SetZero(this->nHatStr);
+    v3SetZero(this->nHat_B);
     v3SetZero(this->horizonPlane);
     this->directValue = 0.0;
     this->albedoValue = 0.0;
@@ -53,7 +53,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->theta         = 0.0;
     v3SetZero(this->B2P321Angles);
     v3SetZero(this->r_B);
-    this->setStructureToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
+    this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
     
@@ -81,8 +81,8 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
     sensorV3_P[1] = cos(tempPhi) * sin(tempTheta);
     sensorV3_P[2] = sin(tempPhi);
     
-    //! Rotation from P frame to structure frame (S)
-    m33tMultV3(this->dcm_PS, sensorV3_P, this->nHatStr);
+    //! Rotation from P frame to body frame (B)
+    m33tMultV3(this->dcm_PB, sensorV3_P, this->nHat_B);
 }
 
 /*!
@@ -92,10 +92,10 @@ void CoarseSunSensor::setUnitDirectionVectorWithPerturbation(double cssThetaPert
  *   @param pitch (radians) second axis rotation about interim frame +y
  *   @param roll  (radians) first axis rotation about platform frame +x
  */
-void CoarseSunSensor::setStructureToPlatformDCM(double yaw, double pitch, double roll)
+void CoarseSunSensor::setBodyToPlatformDCM(double yaw, double pitch, double roll)
 {
     double q[3] = {yaw, pitch, roll};
-    Euler3212C(q, this->dcm_PS);
+    Euler3212C(q, this->dcm_PB);
 }
 
 //! There is nothing to do in the default destructor
@@ -186,11 +186,10 @@ void CoarseSunSensor::readInputMessages()
 }
 
 /*! This method computes the sun-vector heading information in the vehicle 
-    structural frame.*/
+    body frame.*/
 void CoarseSunSensor::computeSunData()
 {
     double Sc2Sun_Inrtl[3];
-    double sHatSunBdy[3];
     double dcm_BN[3][3];
     
     //! Begin Method Steps
@@ -199,17 +198,16 @@ void CoarseSunSensor::computeSunData()
     v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
     //! - Normalize the relative position into a unit vector
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
-    //! - Get the inertial to structure transformation information and convert sHat to structural frame
+    //! - Get the inertial to body frame transformation information and convert sHat to body frame
     MRP2C(StateCurrent.sigma_BN, dcm_BN);
-    m33MultV3(dcm_BN, Sc2Sun_Inrtl, sHatSunBdy);
-    m33tMultV3(this->StateCurrent.dcm_BS, sHatSunBdy, this->sHatStr);
+    m33MultV3(dcm_BN, Sc2Sun_Inrtl, this->sHat_B);
 }
 
 /*! This method computes the tru sensed values for the sensor */
 void CoarseSunSensor::computeTrueOutput()
 {
     //! Begin Method Steps
-    double temp1 = v3Dot(this->nHatStr, this->sHatStr);
+    double temp1 = v3Dot(this->nHat_B, this->sHat_B);
     //! - Get dot product of the CSS normal and the sun vector
     this->directValue = 0.0;
     //! - If the dot product is within the simulated field of view, set direct value to it

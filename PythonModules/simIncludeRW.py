@@ -68,9 +68,9 @@ options = rwOptions()
 #
 def create(
         rwType,
-        gsHat_S,
+        gsHat_B,
         Omega,
-        rWB_S = [0.,0.,0.]
+        rWB_B = [0.,0.,0.]
     ):
     global rwList
     global options
@@ -91,27 +91,27 @@ def create(
     RW.Jg = RW.Jt
 
     # set RW spin axis gsHat
-    norm = numpy.linalg.norm(gsHat_S)
+    norm = numpy.linalg.norm(gsHat_B)
     if norm>1e-10:
-        gsHat_S = gsHat_S / norm
+        gsHat_B = gsHat_B / norm
     else:
         print 'Error: RW gsHat input must be non-zero 3x1 vector'
         exit(1)
-    RW.gsHat_S = [[gsHat_S[0]],[gsHat_S[1]],[gsHat_S[2]]]
+    RW.gsHat_B = [[gsHat_B[0]],[gsHat_B[1]],[gsHat_B[2]]]
 
     # set RW t and g unit axes
-    w2Hat0_S = numpy.cross(gsHat_S,[1,0,0])
-    norm = numpy.linalg.norm(w2Hat0_S)
+    w2Hat0_B = numpy.cross(gsHat_B,[1,0,0])
+    norm = numpy.linalg.norm(w2Hat0_B)
     if norm < 0.01:
-        w2Hat0_S = numpy.cross(gsHat_S,[0,1,0])
-        norm = numpy.linalg.norm(w2Hat0_S)
-    w2Hat0_S = w2Hat0_S / norm
-    w3Hat0_S = numpy.cross(gsHat_S,w2Hat0_S)
-    RW.w2Hat0_S = [[w2Hat0_S[0]],[w2Hat0_S[1]],[w2Hat0_S[2]]]
-    RW.w3Hat0_S = [[w3Hat0_S[0]],[w3Hat0_S[1]],[w3Hat0_S[2]]]
+        w2Hat0_B = numpy.cross(gsHat_B,[0,1,0])
+        norm = numpy.linalg.norm(w2Hat0_B)
+    w2Hat0_B = w2Hat0_B / norm
+    w3Hat0_B = numpy.cross(gsHat_B,w2Hat0_B)
+    RW.w2Hat0_B = [[w2Hat0_B[0]],[w2Hat0_B[1]],[w2Hat0_B[2]]]
+    RW.w3Hat0_B = [[w3Hat0_B[0]],[w3Hat0_B[1]],[w3Hat0_B[2]]]
 
     # set RW position vector
-    RW.rWB_S = [[rWB_S[0]],[rWB_S[1]],[rWB_S[2]]]
+    RW.rWB_B = [[rWB_B[0]],[rWB_B[1]],[rWB_B[2]]]
 
     # set initial RW states
     RW.Omega = Omega*macros.RPM

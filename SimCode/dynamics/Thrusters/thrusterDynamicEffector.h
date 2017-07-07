@@ -78,7 +78,6 @@ public:
     std::vector<THRConfigSimMsg> thrusterData;  //!< -- Thruster information
     std::string InputCmds;                         //!< -- message used to read command inputs
     std::string inputProperties;                   //!< [-] The mass properties of the spacecraft
-    std::string inputBSName;                       //!< [-] Structure to body dynamic property
     uint64_t thrusterOutMsgNameBufferCount;        //!< -- Count on number of buffers to output
     std::vector<std::string> thrusterOutMsgNames;  //!< -- Message name for all thruster data
     std::vector<double> NewThrustCmds;             //!< -- Incoming thrust commands
@@ -91,7 +90,6 @@ public:
     
 private:
     //    bool bdyFrmReady;                         //!< [-] Flag indicating that the body frame is ready
-    Eigen::MatrixXd *dcm_BS;                        //!< [kg] spacecrafts total mass
     std::vector<uint64_t> thrusterOutMsgIds;        //!< -- Message ID of each thruster
     std::vector<THROutputSimMsg> thrusterOutBuffer;//!< -- Message buffer for thruster data
     int64_t CmdsInMsgID;                            //!< -- Message ID for incoming data

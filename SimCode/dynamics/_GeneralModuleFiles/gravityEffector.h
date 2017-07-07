@@ -69,6 +69,7 @@ public:
     
     void initBody(uint64_t moduleID); //!<        Method to initialize the gravity body
     Eigen::Vector3d computeGravityInertial(Eigen::Vector3d r_I, uint64_t simTimeNanos);
+    double computePotentialEnergy(Eigen::Vector3d r_I);
     void loadEphemeris(uint64_t moduleID); //!< Command to load the ephemeris data
     
 public:
@@ -106,6 +107,7 @@ public:
     void registerProperties(DynParamManager& statesIn);
     void computeGravityField();
     void updateInertialPosAndVel();
+    void updateEnergyContributions(double & orbPotEnergyContr);  //!< -- Orbital Potential Energy Contributions
 
 private:
     Eigen::Vector3d getEulerSteppedGravBodyPosition(GravBodyData *bodyData);

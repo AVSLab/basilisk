@@ -282,6 +282,17 @@ def saveScenarioFigure(figureName, plt, path):
                 raise
     plt.savefig(texFileName, transparent=True)
 
+def saveFigurePDF(figureName, plt, path):
+    figFileName = path+figureName+".pdf"
+    if not os.path.exists(os.path.dirname(figFileName)):
+        try:
+            os.makedirs(os.path.dirname(figFileName))
+        except OSError as exc:  # Guard against race condition
+            if exc.errno != errno.EEXIST:
+                raise
+    plt.savefig(figFileName, transparent=True, bbox_inches='tight', pad_inches=0.05)
+
+
 def writeFigureLaTeX(figureName, caption, plt, format, path):
 
     texFileName = path + "/../_Documentation/AutoTeX/" + figureName + ".tex"

@@ -273,8 +273,8 @@ void VisMessageInterface::mapMessagesToScSim(uint64_t currentSimNanos)
     {
         this->scSim->reactionWheels[i].state = COMPONENT_ON;
         RWConfigSimMsg rwData = this->rwConfigMsgs.at(i);
-        eigenVector3d2CArray(rwData.rWB_S, this->scSim->reactionWheels[i].rWB_S);
-        eigenVector3d2CArray(rwData.gsHat_S, this->scSim->reactionWheels[i].gsHat_S);
+        eigenVector3d2CArray(rwData.rWB_B, this->scSim->reactionWheels[i].rWB_S);
+        eigenVector3d2CArray(rwData.gsHat_B, this->scSim->reactionWheels[i].gsHat_S);
         eigenVector3d2CArray(rwData.w3Hat0_B, this->scSim->reactionWheels[i].w3Hat0_B);
         eigenVector3d2CArray(rwData.w2Hat0_B, this->scSim->reactionWheels[i].w2Hat0_B);
         this->scSim->reactionWheels[i].u_current = rwData.u_current;

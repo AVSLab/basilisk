@@ -107,7 +107,7 @@ def test_massDepletionTest(show_plots):
     # set thruster commands
     ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     msgSize = ThrustMessage.getStructSize()
-    ThrustMessage.OnTimeRequest = [10.0]
+    ThrustMessage.OnTimeRequest = [9.9]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 
@@ -263,7 +263,7 @@ def axisChangeHelper(r_BcB_B):
     # set thruster commands
     ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     msgSize = ThrustMessage.getStructSize()
-    ThrustMessage.OnTimeRequest = [10.0]
+    ThrustMessage.OnTimeRequest = [9.9]
     unitTestSim.TotalSim.CreateNewMessage(unitProcessName, thrusterCommandName, msgSize, 2)
     unitTestSim.TotalSim.WriteMessageData(thrusterCommandName, msgSize, 0, ThrustMessage)
 

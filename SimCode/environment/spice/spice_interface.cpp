@@ -105,6 +105,9 @@ void SpiceInterface::SelfInit()
     PlanetData.clear();
     ComputePlanetData();
     TimeDataInit = true;
+
+    // - This method populates the output messages at time zero
+    this->Reset(0);
 }
 
 /*! This method is used to initialize the zero-time that will be used to
@@ -204,6 +207,12 @@ void SpiceInterface::UpdateState(uint64_t CurrentSimNanos)
     ComputeGPSData();
     ComputePlanetData();
     this->writeOutputMessages(CurrentSimNanos);
+}
+
+void SpiceInterface::Reset(uint64_t CurrenSimNanos)
+{
+    // - Call Update state so that the spice bodies are inputted into the messaging system on reset
+    this->UpdateState(CurrenSimNanos);
 }
 
 /*! This method gets the state of each planet that has been added to the model
