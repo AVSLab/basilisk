@@ -113,6 +113,18 @@ At this point the signal shape is correct, but not the scale.  The final step is
 
 
 \subsection{Setting the CSS Unit Direction Vector}
+The unit vector of each CSS device is set through the $\cal B$ frame vector representation
+\begin{equation}
+		{\tt nHat\_B} \equiv \leftexp{B}{\hat{\bm n}}
+\end{equation}
+It is possible to set these vectors directly.  However, there are some convenience functions that make this process easier.  
+
+Multiple CSS devices are often arranged together on a single CSS platform.  The orientation of the body-fixed platform frame $\cal P$ is given through $[PB]$.  In the CSS module, the DCM is specified through the variable {\tt dcm\_PB}.
+
+
+
+
+
 
 
 
@@ -121,7 +133,6 @@ This section describes the various module parameters that can be set via Python 
 
 \subsubsection{{\tt theta} Parameter}
 This is the CSS azimuth angle relative to the platform frame.
-
 
 
 
