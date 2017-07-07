@@ -86,7 +86,9 @@ The unit test for the thruster\_dynamics module is located in:\\
 \noindent
 {\tt SimCode/dynamics/Thrusters/$\_$UnitTest/unit$\_$ThrusterDynamicsUnit.py} \\
 
-The thruster parameters that were used are:
+\subsection{Test inputs}
+
+The thruster inputs that were used are:
 
 \begin{itemize}
 \item The specific impulse: $I_{sp} = 266.7$s 
@@ -100,6 +102,7 @@ The scaling factor yielding the thrust.
 The minimum time that the thruster can be fired.
 \end{itemize}
 
+\subsection{Test sections}
 
 \noindent This unit test is designed to functionally test the simulation model 
 outputs as well as get complete code path coverage.  The test design is broken 
@@ -132,6 +135,14 @@ up into several parts:\\
    steady state correctly.}
 \end{enumerate}
 
+These scenarios create a set of different runs. These are run in the same test using pytest parameters. Therefore 12 different parameter sets were created to cover all of the listed parts.
+
+\subsection{Test success criteria}
+
+This thrusters test is considered successful if, for each of the scenarios, the output data matches exactly the truth data that is computed in python. This means that at every time step, the thrust is the one that is expected down to near machine precision ($\epsilon = 10^{-9}$). 
+
+This leave no slack for uncertainty in the thrusters module.
+
 \section{Truth Values}
 
 In order to have a rigorous automated test, we have to predict the forces and torques that will apply on the spacecraft. We use the following equations to compute the thrust at each time step. We call $\alpha$ the angle in which the thruster is pointing, $\bm r = r \hat{\bm e_r}= \left(r_x, r_y, r_z \right)$ it's position vector, 
@@ -158,7 +169,7 @@ F_z =  F_{z1} + F_{z2} &\hspace{1cm} T_z =  T_{z1} + T_{z2}
 
  \input{AutoTex/Ramp_function.tex}
 
-We then prolong the force and torque end times as a function of the ramp slope, and multiply the inital functions by this ramping function:
+We then prolong the force and torque end times as a function of the ramp slope, and multiply the initial functions by this ramping function:
 
 \begin{align}
 \tilde{F_x} = \rho F_{x} &\hspace{1cm} \tilde{T_x} =\rho T_{x}  \\ 
@@ -169,6 +180,27 @@ We then prolong the force and torque end times as a function of the ramp slope, 
 \end{enumerate}
 
 \section{Test Results}
+
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+Parameter Sets & Test Result & Error Tolerance \\ \hline \hline
+1  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+2  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+3  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+4  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+5  &\textcolor{ForestGreen}{Passed}& $10^{-9}$ \\ \hline
+6  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+7  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+8  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+9  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+10  &\textcolor{ForestGreen}{Passed}& $10^{-9}$ \\ \hline
+11  & \textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ \hline
+12  &\textcolor{ForestGreen}{Passed} & $10^{-9}$ \\ 
+\hline
+
+\end{tabular}
+\end{center}
 
 \begin{enumerate}
 \item{\underline{ Instantaneous On/Off Factor}:} 
