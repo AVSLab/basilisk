@@ -49,6 +49,10 @@ This test set's up an appropriate simulation by creating a Spice Object, which w
 
 This test is located in {\tt SimCode/environment/ephemeris$\_$converter/$\_$UnitTest/test$\_$ephemerisconvert.py}. \par
 
+\subsection{Validation success criteria }
+
+The criteria for a successful testing of this module is driven by the correct copy of the spice messages. This is done simply by comparing the messages before the copy with the outcome of the copied message. The error tolerance is at $\epsilon =10^{-10}$. 
+
 \section{Test Setup}
 
 The spice object was set on the following date: 2015 February 10, 00:00:00.0 TDB, and the planets that were loaded where the Earth, Mars Barycenter, and the Sun.
@@ -66,6 +70,14 @@ and the second message is the ephemeris converted data $\texttt{mars$\_$ephemeri
 \section{Test Results}
 
 \subsection{Pass/Fail results}
+
+\begin{center}
+\begin{tabular}{c|c|c}
+Test & Link Test & Copy Test \\ \hline
+Result &  \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed} \\ \hline
+Tolerance & $10^{-10}$ & $10^{-10}$
+\end{tabular}
+\end{center}
 
 Both components of the test pass. The copy is therefore a properly executed.
 
