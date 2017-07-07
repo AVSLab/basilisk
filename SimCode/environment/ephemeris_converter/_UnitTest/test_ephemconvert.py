@@ -21,13 +21,10 @@ import pytest
 import sys, os, inspect
 
 #
-# Spice Unit Test
+# Ephemeris Converter Unit Test
 #
-# Purpose:  Test the proper function of the Spice Ephemeris module.
-#           Proper function is tested by comparing Spice Ephermis to
-#           JPL Horizons Database for different planets and times of year
+# Purpose:  Test the proper function of the ephemeris_converter module.
 # Author:   Thibaud Teil
-# Creation Date:  Dec. 20, 2016
 #
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
@@ -43,17 +40,6 @@ import spice_interface
 import numpy as np
 import ephemeris_converter
 import macros
-
-
-
-# uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
-# @pytest.mark.skipif(conditionstring)
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-# @pytest.mark.parametrize("", [])
 
 
 # provide a unique test method name, starting with test_
@@ -75,8 +61,8 @@ def unitephemeris_converter(show_plots):
     TotalSim = SimulationBaseClass.SimBaseClass()
     TotalSim.TotalSim.terminateSimulation()
 
-    simulationTime = macros.min2nano(10.)
-    numDataPoints = 1000 #Test fails if number of data points too small. This is because the sampling time is too large
+    simulationTime = macros.sec2nano(30.)
+    numDataPoints = 600
     samplingTime = simulationTime / (numDataPoints-1)
     DynUnitTestProc = TotalSim.CreateNewProcess(unitProcessName)
     # create the dynamics task and specify the integration update time
@@ -108,8 +94,8 @@ def unitephemeris_converter(show_plots):
     TotalSim.AddVariableForLogging('EphemData.messagesLinked')
     TotalSim.AddVariableForLogging('EphemData.numOutputBuffers')
     for planet in planets:
-        TotalSim.TotalSim.logThisMessage(planet + '_planet_data', 2*samplingTime)
-        TotalSim.TotalSim.logThisMessage(planet + '_ephemeris_data', 2*samplingTime)
+        TotalSim.TotalSim.logThisMessage(planet + '_planet_data', 5*samplingTime)
+        TotalSim.TotalSim.logThisMessage(planet + '_ephemeris_data', 5*samplingTime)
 
     # Execute simulation
     TotalSim.InitializeSimulation()
@@ -122,14 +108,15 @@ def unitephemeris_converter(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Messages not linked succesfully")
 
-
     # Get the position, velocities and time for the message before and after the copy
     for planet in planets:
-        for j in range(2*int(simulationTime/simulationTime+1)):
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) >1E5 ):
+        print np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[30, :]
+        print np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[30, :]
+        for j in range(int(simulationTime/samplingTime+1)/5):
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) >1E-2 ):
                 testFailCount += 1
                 testMessages.append("FAILED: PositionVector not copied")
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) >1E5 ):
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) >1E-2 ):
                 testFailCount += 1
                 testMessages.append("FAILED: VelocityVector not copied")
 
