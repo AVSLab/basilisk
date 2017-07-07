@@ -17,10 +17,14 @@
  OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 '''
+
+#   This test validates the EKF module by running several
+#   scenarios on both individual functions and the full module.
+#   Author: Thibaud Teil
+
 import sys, os, inspect
 import numpy as np
 import pytest
-import math
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -129,7 +133,7 @@ def sunline_individual_test():
 
     DynOut = np.array(DynOut).reshape(6, 6)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
-    if(errorNorm > 1.0E-12):
+    if(errorNorm > 1.0E-10):
         print errorNorm
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
@@ -171,13 +175,11 @@ def sunline_individual_test():
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
-    if(errorNormSTM > 1.0E-12):
-        print errorNormSTM
+    if(errorNormSTM > 1.0E-10):
         testFailCount += 1
         testMessages.append("STM Propagation Failure \n")
 
-    if(errorNormStates > 1.0E-12):
-        print errorNormStates
+    if(errorNormStates > 1.0E-10):
         testFailCount += 1
         testMessages.append("State Propagation Failure \n")
 
@@ -229,8 +231,9 @@ def sunline_individual_test():
     errorNorm[1] = np.linalg.norm(yMeasOut - expectedY)
     errorNorm[2] = np.linalg.norm(obsOut - expectedObs)
     errorNorm[3] = np.linalg.norm(numObsOut[0] - expectedNumObs)
+
     for i in range(4):
-        if(errorNorm[i] > 1.0E-12):
+        if(errorNorm[i] > 1.0E-10):
             testFailCount += 1
             testMessages.append("H and yMeas update failure \n")
 
@@ -269,8 +272,7 @@ def sunline_individual_test():
     KalmanOut = np.array(KalmanOut)[0:6*numObs].reshape([6, 3])
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
-
-    if (errorNorm > 1.0E-12):
+    if (errorNorm > 1.0E-10):
         print errorNorm
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
@@ -332,8 +334,9 @@ def sunline_individual_test():
     errorNorm = np.zeros(2)
     errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedStates)
     errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6,6]))
+
     for i in range(2):
-        if(errorNorm[i] > 1.0E-12):
+        if(errorNorm[i] > 1.0E-10):
             testFailCount += 1
             testMessages.append("EKF update failure \n")
 
@@ -392,8 +395,9 @@ def sunline_individual_test():
     errorNorm = np.zeros(2)
     errorNorm[0] = np.linalg.norm(np.array(errorOut) - expectedStateError)
     errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6, 6]))
+
     for i in range(2):
-        if (errorNorm[i] > 1.0E-12):
+        if (errorNorm[i] > 1.0E-10):
             testFailCount += 1
             testMessages.append("CKF update failure \n")
 
@@ -448,13 +452,10 @@ def StatePropStatic():
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-
 
     for i in range(6):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
-            print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
             testFailCount += 1
             testMessages.append("State propagation failure \n")
 
@@ -514,6 +515,7 @@ def StatePropVariable(show_plots):
     InitialCovar = moduleConfig.covar
 
     moduleConfig.states = InitialState
+
     unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
     unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5)
@@ -575,20 +577,19 @@ def StatePropVariable(show_plots):
 
     for j in range(1,2001):
         for i in range(6):
-            if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-10):
+            if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-4):
                 testFailCount += 1
                 testMessages.append("General state propagation failure: State Prop \n")
-            if (abs(stateErrorLog[j, i + 1] - expectedXBar[j, i + 1]) > 1.0E-10):
+            if (abs(stateErrorLog[j, i + 1] - expectedXBar[j, i + 1]) > 1.0E-4):
                 testFailCount += 1
                 testMessages.append("General state propagation failure: State Error Prop \n")
 
         for i in range(36):
-            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
+            if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-4):
                 abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: Covariance Prop \n")
-            if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
-                print abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i])
+            if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-4):
                 testFailCount += 1
                 testMessages.append("General state propagation failure: STM Prop \n")
 
@@ -674,9 +675,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
                                           2)  # number of buffers (leave at 2 as default, don't make zero)
     unitTestSim.TotalSim.WriteMessageData("css_config_data", msgSize, 0, cssConstelation)
 
-
-
-    dt =0.5
     stateTarget1 = testVector1
     stateTarget1 += [0.0, 0.0, 0.0]
     moduleConfig.states = stateGuess
@@ -686,8 +684,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
-
-
 
     for i in range(SimHalfLength):
         if i > 20:
@@ -751,22 +747,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-    if not AddMeasNoise:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-                testFailCount += 1
-                testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-10):
-                testFailCount += 1
-                testMessages.append("State update failure")
-    else:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-                testFailCount += 1
-                testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
-                testFailCount += 1
-                testMessages.append("State update failure")
+    for i in range(6):
+        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
+            testFailCount += 1
+            testMessages.append("State update failure")
 
 
     stateTarget2 = testVector2
@@ -835,23 +822,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i-SimHalfLength,1:49] = np.array(HOut)
         PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
 
-    if not AddMeasNoise:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-                testFailCount += 1
-                testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-10):
-                testFailCount += 1
-                testMessages.append("State update failure")
-    else:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
-                testFailCount += 1
-                testMessages.append("Covariance update failure")
-            if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
-                testFailCount += 1
-                testMessages.append("State update failure")
-
+    for i in range(6):
+        if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+            testFailCount += 1
+            testMessages.append("Covariance update failure")
+        if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
+            testFailCount += 1
+            testMessages.append("State update failure")
 
     target1 = np.array(testVector1)
     target2 = np.array(testVector2+[0.,0.,0.])
@@ -870,4 +847,4 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_sunline_ekf(False)
+    test_all_sunline_ekf(False, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
