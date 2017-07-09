@@ -1,5 +1,5 @@
 \documentclass[]{BasiliskReportMemo}
-
+\usepackage{AVS}
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 \newcommand{\ModuleName}{simpleNav}
@@ -28,7 +28,7 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & Initial Revision & S. Piggott \\
+Draft & Initial Revision & T. Teil \\
 \hline
 
 \end{longtable}
@@ -66,14 +66,11 @@ in a vehicle's navigation system is always a combination of bias, white noise,
 and brown noise (or random walk).  In order to provide this, a second-order 
 Gauss-Markov process model was added to the simulation utilities that allows 
 the user to configure a random walk process.  The output of this model when 
-applied to the vehicle position can be observed in Figure~\ref{fig:pos_fig}.
-\begin{figure}[htb]
-        \centerline{
-        \includegraphics[scale=0.5]{Figures/SimpleNavPosition}
-        }
-        \caption{Simple Navigation Position Signal}
-        \label{fig:pos_fig}
-\end{figure} 
+applied to the vehicle position can be observed in Figure~\ref{fig:SimpleNavPos}, 
+and the attitude can be observed in Figure~\ref{fig:SimpleNavAtt}.
+
+\input{AutoTeX/SimpleNavPos.tex}
+\input{AutoTeX/SimpleNavAtt.tex}
 
 In this figure, the nominal position that the error was being distributed about
  was [10000.0, 0.0, 0.0] in meters and the error was bounded such that the 
@@ -95,11 +92,16 @@ functionality and in terms of code coverage.  The coverage results are included
 in a table in the results.
 
 \section{Test Design}
+
+\subsection{Test location}
+
 The unit test for the simple\_nav module is located in:\\
 
 \noindent
 {\tt SimCode/navigation/simple\_nav/UnitTest/SimpleNavUnitTest.py} \\
 \\
+
+\subsection{Subtests}
 
 \noindent This unit test is designed to functionally test the simulation model 
 outputs as well as get complete code path coverage.  The test design is broken 
@@ -115,21 +117,62 @@ up into three main parts:\\
    ensure that it alerts the user and does not crash.}
 \end{enumerate}
 
+\subsection{Test success criteria}
+
+These tests are considered to pass if during the whole simulation time of 144 minutes,
+all the variables need to say within an allowable statistical error. This means that they
+must stay within their 1-sigma bounds $30\%$ of the time.
+
+These sigma bounds are defined in Table~\ref{tab:sigmas}. These are chosen in regard to
+the simulation's parameters and their orders of magnitude.
+
+\begin{table}[htbp]
+    \caption{Sigma Values}
+\label{tab:sigmas}
+    \centering \fontsize{10}{10}\selectfont
+\begin{tabular}{|c||c|c|c|c|c|c|}
+\hline
+Variable & Position & Velocity & Attitude & Rates & $\Delta$ V & Sun Position \\ \hline \hline
+Associated $\sigma$ & 5 & 0.05 & $\frac{5}{3600}$ (rad) & 0.05 (rad/s) & 0.053 & 5 \\ \hline 
+\end{tabular}
+\end{table}
+
+%The corner case is tested by checking that none of the output messages have time greater
+%than one time step of the simulation. This assures that the simulation indeed detects the 
+%fault and does not go forward.
+
 
 \section{Test Results}
+
+The test results are explained below and summarized in Table~\ref{tab:results}.
+
 \begin{enumerate}
 \item{Error Bound Enforcement: We do want to violate the error bound a 
    statistically small number of times as most bounds are specified 3-sigma 
    and we'll need to be at the spec to make sure it works.  All signals remained 
-   inside their bounds greater than 1-sigma (~0.3\%) of the time.  Check 
-   successful. }
+   inside their bounds greater than 1-sigma (~30\%) of the time.  }
 \item{Error Bound Usage: As stated above, we want to ensure that the random 
    walk process is effectively utilizing the error bound that it has been 
    given and not remaining mired near zero.  All error signals cross up above 
-   75\% of their error bound at least once.  Check successful.}
+   75\% of their error bound at least once.}
 \item{Corner Case Usage: All errors/warnings were stimulated and the simulation 
-   still ran without incident.  Check successful.}
+   still ran without incident. }
 \end{enumerate}
+
+\begin{table}[htbp]
+    \caption{Test Results}
+\label{tab:results}
+    \centering \fontsize{10}{10}\selectfont
+\begin{tabular}{|c||c|}
+\hline
+SubTest & Result \\ \hline \hline
+Bound Enforcement& \textcolor{ForestGreen}{Passed} \\ \hline
+Bound Usage &  \textcolor{ForestGreen}{Passed}\\ \hline
+Corner Case &  \textcolor{ForestGreen}{Passed}\\ \hline
+\end{tabular}
+\end{table}
+
+
 
 \section{Test Coverage}
 The method coverage for all of the methods included in the simple\_nav 
