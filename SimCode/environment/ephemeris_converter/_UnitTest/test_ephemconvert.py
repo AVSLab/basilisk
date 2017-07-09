@@ -78,7 +78,6 @@ def unitephemeris_converter(show_plots):
     for planet in planets:
         messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
     EphemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
-    TotalSim.AddModelToTask(unitTaskName, EphemObject)
 
     # Initialize the spice module
     SpiceObject = spice_interface.SpiceInterface()
@@ -88,6 +87,7 @@ def unitephemeris_converter(show_plots):
     SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+    TotalSim.AddModelToTask(unitTaskName, EphemObject)
 
     # Configure simulation
     TotalSim.ConfigureStopTime(int(simulationTime))
@@ -110,13 +110,11 @@ def unitephemeris_converter(show_plots):
 
     # Get the position, velocities and time for the message before and after the copy
     for planet in planets:
-        print np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[30, :]
-        print np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[30, :]
         for j in range(int(simulationTime/samplingTime+1)/5):
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) >1E-2 ):
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) > 1E-5 ):
                 testFailCount += 1
                 testMessages.append("FAILED: PositionVector not copied")
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) >1E-2 ):
+            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) > 1E-5 ):
                 testFailCount += 1
                 testMessages.append("FAILED: VelocityVector not copied")
 
