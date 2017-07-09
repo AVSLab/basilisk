@@ -71,14 +71,6 @@ def unitephemeris_converter(show_plots):
     # List of planets tested
     planets = ['sun', 'earth', 'mars barycenter']
 
-    # Initialize the ephermis module
-    EphemObject = ephemeris_converter.EphemerisConverter()
-    EphemObject.ModelTag = 'EphemData'
-    messageMap = {}
-    for planet in planets:
-        messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
-    EphemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
-
     # Initialize the spice module
     SpiceObject = spice_interface.SpiceInterface()
     SpiceObject.ModelTag = "SpiceInterfaceData"
@@ -87,6 +79,14 @@ def unitephemeris_converter(show_plots):
     SpiceObject.PlanetNames = spice_interface.StringVector(["earth", "mars barycenter", "sun"])
     SpiceObject.UTCCalInit = "2015 February 10, 00:00:00.0 TDB"
     TotalSim.AddModelToTask(unitTaskName, SpiceObject)
+
+    # Initialize the ephermis module
+    EphemObject = ephemeris_converter.EphemerisConverter()
+    EphemObject.ModelTag = 'EphemData'
+    messageMap = {}
+    for planet in planets:
+        messageMap[planet + '_planet_data'] = planet + '_ephemeris_data'
+    EphemObject.messageNameMap = ephemeris_converter.map_string_string(messageMap)
     TotalSim.AddModelToTask(unitTaskName, EphemObject)
 
     # Configure simulation
@@ -109,15 +109,14 @@ def unitephemeris_converter(show_plots):
             testMessages.append("FAILED: Messages not linked succesfully")
 
     # Get the position, velocities and time for the message before and after the copy
+    accuracy = 1e-12
     for planet in planets:
-        for j in range(int(simulationTime/samplingTime+1)/5):
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3)))[j,:]) > 1E-5 ):
-                testFailCount += 1
-                testMessages.append("FAILED: PositionVector not copied")
-            if (np.linalg.norm(np.array(TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3)))[j,:] - np.array(TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3)))[j,:]) > 1E-5 ):
-                testFailCount += 1
-                testMessages.append("FAILED: VelocityVector not copied")
-
+        ephemPlanetPosData = TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.r_BdyZero_N', range(3))
+        spicePlanetPosData = TotalSim.pullMessageLogData(planet + '_planet_data' + '.PositionVector', range(3))
+        ephemPlanetVelData = TotalSim.pullMessageLogData(planet + '_ephemeris_data' + '.v_BdyZero_N', range(3))
+        spicePlanetVelData = TotalSim.pullMessageLogData(planet + '_planet_data' + '.VelocityVector', range(3))
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetPosData[:,1:4], ephemPlanetPosData, accuracy, "Position", testFailCount, testMessages)
+        testFailCount, testMessages = unitTestSupport.compareArrayRelative(spicePlanetVelData[:,1:4], ephemPlanetVelData, accuracy, "Velocity", testFailCount, testMessages)
 
     # print out success message if no error were found
     if testFailCount == 0:
