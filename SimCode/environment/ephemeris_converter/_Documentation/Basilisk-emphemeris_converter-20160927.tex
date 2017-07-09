@@ -42,6 +42,28 @@ Draft & Initial document creation & T. Teil \\
 
 
 \section{Introduction}
+
+The ephemeris converter module has the purpose of copying the spice sim messages into a flight software interface message. 
+
+The spice message, contains the following variables:
+
+\begin{itemize}
+\item J2000Current: the time of validity for the planet state
+\item PositionVector : the true position of the planet for the time
+    \item  VelocityVector[3]: the tue velocity of the planet for the time
+    \item  J20002Pfix: the orientation matrix of planet-fixed relative to inertial
+    \item  J20002Pfix\_dot: the derivative of the orientation matrix of planet-fixed relative to inertial
+    \item  computeOrient: a flag indicating whether the reference should be computed
+    \item  PlanetName
+\end{itemize}
+
+Only a the position and velocity vectors are transferred to the ephemeris message, which therefore contains:
+\begin{itemize}
+    \item r\_BdyZero\_N[3]: the position of orbital body 
+    \item v\_BdyZero\_N[3]: the velocity of orbital body
+    \item timeTag: the vehicle Time-tag for state
+\end{itemize}
+
 This test set's up an appropriate simulation by creating a Spice Object, which will write messages containing ephemerides. A ephemeris converter object is also created with the map between the message names. This test guarantees that the data is properly copied.
 
 
@@ -51,7 +73,7 @@ This test is located in {\tt SimCode/environment/ephemeris$\_$converter/$\_$Unit
 
 \subsection{Validation success criteria }
 
-The criteria for a successful testing of this module is driven by the correct copy of the spice messages. This is done simply by comparing the messages before the copy with the outcome of the copied message. The error tolerance is at $\epsilon =10^{-10}$. 
+The criteria for a successful testing of this module is driven by the correct copy of the spice messages. This is done simply by comparing the messages before the copy with the outcome of the copied message. The error tolerance is at $\epsilon =10^{-5}$ which corresponds to 12 significant digits. This gives a healthy margin from machine precision all the while getting all of the physical information from the ephemerides. 
 
 \section{Test Setup}
 
@@ -59,12 +81,12 @@ The spice object was set on the following date: 2015 February 10, 00:00:00.0 TDB
 
 \subsubsection*{Successful link test}
 
-A boolean variable is added for logging and is verified to have successfully linked the desired messages.
+A boolean variable is added for logging and is verified to have successfully linked the desired messages. This is done by comparing the variables down to $\epsilon =10^{-10}$, since we are looking for a value of 1.
 
 \subsubsection*{Successful copy test}
 
 For each of the celestial bodies who get a message output, we log the two messages that contain their position and velocities in the inertial frames. For mars the first message is the Spice message is $\texttt{mars$\_$planet$\_$data}$
-and the second message is the ephemeris converted data $\texttt{mars$\_$ephemeris$\_$data}$. If the norm of their difference (including the time component of the vector), at any time, is greater than our error tolerance $\epsilon =10^{-10}$, then the test fails.
+and the second message is the ephemeris converted data $\texttt{mars$\_$ephemeris$\_$data}$. If the norm of their difference (including the time component of the vector), at any time, is greater than our error tolerance $\epsilon =10^{-5}$, then the test fails.
 
 
 \section{Test Results}
@@ -75,7 +97,7 @@ and the second message is the ephemeris converted data $\texttt{mars$\_$ephemeri
 \begin{tabular}{c|c|c}
 Test & Link Test & Copy Test \\ \hline
 Result &  \textcolor{ForestGreen}{Passed} &  \textcolor{ForestGreen}{Passed} \\ \hline
-Tolerance & $10^{-10}$ & $10^{-10}$
+Tolerance & $10^{-10}$ & $10^{-5}$
 \end{tabular}
 \end{center}
 
