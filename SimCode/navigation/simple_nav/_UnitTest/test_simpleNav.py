@@ -44,6 +44,7 @@ import spice_interface
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
+import unitTestSupport
 
 
 def listNorm(inputList):
@@ -56,48 +57,6 @@ def listNorm(inputList):
       inputList[i] = inputList[i]/normValue
       i += 1
 
-class DataStore:
-    def __init__(self):
-        self.xposNav = [] # replace these with appropriate containers for the data to be stored for plotting
-        self.yposNav = []
-        self.zposNav = []
-        self.time = []
-
-    def plotData(self):
-        fig1 = plt.figure(1)
-        rect =fig1.patch
-        rect.set_facecolor('white')
-
-        plt.plot(self.time*1.0E-9, self.xposNav, label='x-position')
-        plt.plot(self.time*1.0E-9, self.yposNav, label='y-position')
-        plt.plot(self.time*1.0E-9, self.zposNav, label='z-position')
-
-        plt.legend(loc='upper left')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Position (m)')
-        plt.show()
-
-        fig2 = plt.figure(2)
-        rect =fig2.patch
-        rect.set_facecolor('white')
-
-        plt.plot(self.attNav, self.xattNav, label='x-rotation')
-        plt.plot(self.attNav, self.yattNav, label='y-rotation')
-        plt.plot(self.attNav, self.zattNav, label='z-rotation')
-
-        plt.legend(loc='upper left')
-        plt.xlabel('Attitude relative to inertial')
-        plt.ylabel('Position (m)')
-        plt.show()
-
-@pytest.fixture(scope="module")
-def testPlottingFixture(show_plots):
-    dataStore = DataStore()
-    yield dataStore
-    if show_plots:
-        dataStore.plotData()
-
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -108,13 +67,13 @@ def testPlottingFixture(show_plots):
 @pytest.mark.parametrize("UseFlag", [False]
   )
 
-def test_unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
+def test_unitSimpleNav(show_plots, UseFlag):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimpleNav(testPlottingFixture, show_plots, UseFlag)
+    [testResults, testMessage] = unitSimpleNav(show_plots, UseFlag)
     assert testResults < 1, testMessage
 
 
-def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
+def unitSimpleNav(show_plots, UseFlag):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     # Create a sim module as an empty container
@@ -222,7 +181,7 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
 
-    countAllow = posNav.shape[0] * 0.3*100
+    countAllow = posNav.shape[0] * 0.3 * 100
 
 
     sigmaThreshold = 0.0
@@ -260,23 +219,40 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
     i=0
+    print errorCounts
     for count in errorCounts:
         if count > countAllow:
             print "Too many error counts for element: "
-            print i
+            print count
             testFailCount += 1
             testMessages.append("FAILED: Too many error counts for element: %(DiffVal)i \n" % \
                             {"i": i})
 
-    testPlottingFixture.time = posNav[:,0]
-    testPlottingFixture.xposNav = posNav[:, 1]
-    testPlottingFixture.yposNav = posNav[:, 2]
-    testPlottingFixture.zposNav = posNav[:, 3]
 
-    testPlottingFixture.attNav = attNav[:,0]
-    testPlottingFixture.xattNav = attNav[:, 1]
-    testPlottingFixture.yattNav = attNav[:, 2]
-    testPlottingFixture.zattNav = attNav[:, 3]
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
+    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,2], label='y-position')
+    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,3], label='z-position')
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (m)')
+    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
+    plt.close()
+
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 1], label='x-rotation')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 2], label='y-rotation')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 3], label='z-rotation')
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Attitude (rad)')
+    if show_plots:
+        plt.show()
+    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
 
 
     # Corner case usage
@@ -304,7 +280,6 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitSimpleNav(testPlottingFixture,
-                       False, # show_plots
+    test_unitSimpleNav(False, # show_plots
                        False
                    )
