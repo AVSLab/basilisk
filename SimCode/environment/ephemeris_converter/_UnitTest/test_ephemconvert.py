@@ -104,7 +104,7 @@ def unitephemeris_converter(show_plots):
     # Get the link confirmation
     LinkMessagesCheck = TotalSim.GetLogVariableData('EphemData.messagesLinked')
     for i in range(len(LinkMessagesCheck[:,0])):
-        if LinkMessagesCheck[i,1] - 1.0 > 1E-10:
+        if LinkMessagesCheck[i,1] - 1.0 > 1E-12:
             testFailCount += 1
             testMessages.append("FAILED: Messages not linked succesfully")
 
