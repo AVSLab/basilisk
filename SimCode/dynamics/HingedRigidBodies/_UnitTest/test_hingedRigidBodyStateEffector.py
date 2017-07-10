@@ -145,7 +145,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.ExecuteSimulation()
 
     sigmaOut = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
 
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
     orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
@@ -201,24 +200,10 @@ def test_hingedRigidBodyGravity(show_plots):
     PlotTitle = "Change In Rotational Energy Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
-    PlotName = "VelocityOfCenterOfMassGravity"
-    PlotTitle = "Velocity Of Center Of Mass Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1] - vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2] - vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3] - vOut_CN_N[0,3])
-    PlotName = "ChangeInVelocityOfCenterOfMassGravity"
-    PlotTitle = "Change In Velocity Of Center Of Mass Gravity"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
     if show_plots == True:
         plt.show()
 
-    accuracy = 1e-12
+    accuracy = 1e-10
     for i in range(0,len(trueSigma)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataSigma[i],trueSigma[i],3,accuracy):
@@ -420,7 +405,7 @@ def test_hingedRigidBodyNoGravity(show_plots):
     if show_plots == True:
         plt.show()
 
-    accuracy = 1e-12
+    accuracy = 1e-10
     for i in range(0,len(truePos)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(dataPos[i],truePos[i],3,accuracy):
