@@ -175,7 +175,7 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.clf()
     plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
     PlotName = "ChangeInOrbitalAngularMomentumGravity"
-    PlotTitle = "Change in Orbital Angular Momentum Gravity"
+    PlotTitle = "Change in Orbital Angular Momentum with Gravity"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
@@ -183,21 +183,21 @@ def test_hingedRigidBodyGravity(show_plots):
     plt.clf()
     plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
     PlotName = "ChangeInOrbitalEnergyGravity"
-    PlotTitle = "Change in Orbital Energy Gravity"
+    PlotTitle = "Change in Orbital Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
     PlotName = "ChangeInRotationalAngularMomentumGravity"
-    PlotTitle = "Change In Rotational Angular Momentum Gravity"
+    PlotTitle = "Change In Rotational Angular Momentum with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
     PlotName = "ChangeInRotationalEnergyGravity"
-    PlotTitle = "Change In Rotational Energy Gravity"
+    PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     if show_plots == True:
