@@ -1,14 +1,16 @@
 \documentclass[]{BasiliskReportMemo}
 \usepackage{AVS}
-
+\usepackage{float}
+\usepackage{array}
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 \newcommand{\ModuleName}{RadiationPressure}
-\newcommand{\subject}{Radiation Pressure Test Report}
+\newcommand{\subject}{Radiation Pressure Model}
 \newcommand{\status}{Initial document draft}
 \newcommand{\preparer}{S. Carnahan}
-\newcommand{\summary}{This unit test validates the internal aspects of the Basilisk radiation pressure dynamics effector module {\tt test\_RadiationPressure.py} by comparing module output to expected output. The Basilisk radiation pressure module is responsible for calculating the effects of radiation pressure on a spacecraft. The unit test verifies the radiation pressure module using the "cannonball" method for the the first test and table look-ups for the second test.}
+\newcommand{\summary}{The radiation pressure module is responsible for calculating the dyamic effects of radiation pressure on a spacecraft. Effects can be calculated either by use of a simplified "cannonball" method or table look-up. A unit test has been written which checks both calculation methods against expected output values.}
+\newcommand{\testname}{test\_radiationPressure.py }
 
 
 \begin{document}
@@ -28,7 +30,7 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & Initial document creation & S. Carnahan \\
+Draft & Initial document creation & \preparer\\
 \hline
 
 \end{longtable}
@@ -43,18 +45,45 @@ Draft & Initial document creation & S. Carnahan \\
 
 
 \section{Introduction}
-The Basilisk radiation pressure module (radiation\_pressure.cpp) is responsible for calculating the effects of radiation pressure on a spacecraft. This unit test contains two checks which use the cannonball method and table look-up, respectively.
+The Basilisk radiation pressure module (radiation\_pressure.cpp) is responsible for calculating the effects of radiation pressure on a spacecraft. The mathematical models used are described below. The code unit tests are then presented and discussed.
 
-\section{{\tt test\_radiationPressure} Test Description}
+\section{Mathematical Model}
+Maths are modeled.
+\subsection{Radiation Model}
+Radiation is modeled by...
+\subsection{Radiation Pressure Model}
+Radiation Pressure is modeled by...
+\subsection{Recursion Formulas}
+The above formulas for the radiation pressure are broken down into iterative steps in order to be modeled in the simulation. The recursive formulas follow.
+\subsection{Variable Definitions}
+The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
+	\begin{table}[H]
+		\caption{Definition and Explanation of Variables Used.}
+		\label{tab:errortol}
+		\centering \fontsize{10}{10}\selectfont
+		\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
+			\hline
+			\textbf{Variable}   		& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes} \\ \hline
+			stateInMsgName			&N/A		   							    & string 								& Default setting: "inertial\_state\_output". This is the message from which the radiation pressure module receives spacecraft inertial data.\\ \hline
+			sunEphmInMsgName	& N/A 										& string 								& Default setting: "sun\_planet\_data". This is the message through which radiation pressure gets information about the sun and planets.\\ \hline
+			area 						  	  & N/A yet 							    & double 								& [m2] Default setting: 0.0f. Required input for cannonball method to get any real output. This is the area to use when approximating the surface area of the spacecraft.\\ \hline
+			coefficientReflection 	  & N/A yet 								& double 								& Default setting: 1.2. This is a factor applied to the radiation pressure based on spacecraft surface properties.\\ \hline
+			useCannonballModel	   & N/A 									   & bool 									& Default setting: True. To switch cannonball mode off, use the call setUseCanonballModel("False")\\ \hline
+		\end{tabular}
+	\label{tabular:vars}
+	\end{table}
+\section{Library}
+This section means nothing to me.
 
-This test is located in {\tt SimCode/dynamics/RadiationPressure/\_UnitTest/test\_radiationPressure.py}. In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
+\section{Unit Test}
 
-\begin{enumerate}
-	\item \underline{"Cannonball" Method} This test utilizes the "cannonball" method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
-	\item \underline{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to verify radiation pressure table look-up capabilities.
-\end{enumerate} 
+This test is located at {\tt SimCode/dynamics/RadiationPressure/\_UnitTest/\testname} In order to get good coverage of all the aspects of the module, the test is broken up into two sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
 
-\section{Test Parameters}
+\subsection{"Cannonball" Method} This test utilizes the "cannonball" method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
+\subsection{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to validate radiation pressure table look-up capabilities.
+
+
+\subsection{Test Parameters}
 
 This section summarizes the test input/output for each of the checks. 
 \begin{itemize}
@@ -75,9 +104,9 @@ There are specific error tolerances for each test. Error tolerances are determin
 \end{table}
 \end{itemize}
 
-\section{Test Results}
+\subsection{Test Results}
 
-All checks within test\_radiationPressure.py passed as expected. Table \ref{tab:results} shows the test results.
+All checks within \testname passed as expected. Table \ref{tab:results} shows the test results.
 
 \begin{table}[htbp]
 	\caption{Test results.}
@@ -86,10 +115,14 @@ All checks within test\_radiationPressure.py passed as expected. Table \ref{tab:
 	\begin{tabular}{c | c | c  } % Column formatting, 
 		\hline
 		\textbf{Test} 				      & \textbf{Pass/Fail} 						   		   & \textbf{Notes} 									\\ \hline
-		"Cannonball"	   			  	&\input{AutoTex/cannonballPassFail}      &\input{AutoTex/cannonballFailMsg} 			 \\ \hline
-		Look-up	   	                     &\input{AutoTex/lookupPassFail}              &\input{AutoTex/lookupFailMsg}  \\ \hline
+		"Cannonball"	   			  	&\input{AutoTex/cannonballPassFail}      &\input{AutoTex/cannonballFailMsg} 	 \\ \hline
+		Look-up	   	                     &\input{AutoTex/lookupPassFail}              &\input{AutoTex/lookupFailMsg}            \\ \hline
 	\end{tabular}
 \end{table}
 
+\subsection{Test Coverage}
+The test covers 2000\% of the code.
+\section{Conclusion}
+What a great piece of code.
 
 \end{document}
