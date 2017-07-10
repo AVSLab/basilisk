@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Mathematical Model}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Radiation Model}{section.2}% 3
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Solar Eclipses}{subsection.2.1}% 4
+\BOOKMARK [2][-]{subsection.2.2}{Radiation Pressure Model}{section.2}% 5
+\BOOKMARK [3][-]{subsubsection.2.2.1}{Cannonball Method}{subsection.2.2}% 6
+\BOOKMARK [3][-]{subsubsection.2.2.2}{Table Look-up Method}{subsection.2.2}% 7
+\BOOKMARK [2][-]{subsection.2.3}{Variable Definitions}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{Library}{}% 9
+\BOOKMARK [1][-]{section.4}{Unit Test}{}% 10
+\BOOKMARK [2][-]{subsection.4.1}{``Cannonball" Method}{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.2}{Table Look-up Method}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.3}{Test Parameters}{section.4}% 13
+\BOOKMARK [2][-]{subsection.4.4}{Test Results}{section.4}% 14
+\BOOKMARK [2][-]{subsection.4.5}{Test Coverage}{section.4}% 15
+\BOOKMARK [1][-]{section.5}{Conclusion}{}% 16
