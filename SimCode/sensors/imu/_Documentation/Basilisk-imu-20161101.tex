@@ -1,5 +1,7 @@
 \documentclass[]{BasiliskReportMemo}
 \usepackage{AVS}
+\usepackage{array}
+\usepackage{float}
 
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
@@ -7,7 +9,7 @@
 \newcommand{\ModuleName}{imu\_sensor}
 \newcommand{\subject}{Testing IMU Sensor Model}
 \newcommand{\status}{Revision 1}
-\newcommand{\preparer}{J. Alcorn}
+\newcommand{\preparer}{S. Carnahan}
 \newcommand{\summary}{This unit test validates the internal aspects of the Basilisk IMU module {\tt test\_imu\_sensor.py} by comparing module output to expected output. The Basilisk IMU module is responsible for producing sensed body rates and acceleration from simulation truth values. The IMU module applies Gauss-Markov process noise to the true body rates and acceleration. The unit test validates MRP switching, static bias, process noise, discretization, saturation, spacecraft center of mass (CoM) offset, sensor misalignment, and bias walk bounds for both the gyroscope and accelerometer.}
 
 
@@ -28,9 +30,9 @@
 \hline
 {\bfseries Rev}: & {\bfseries Change Description} & {\bfseries By} \\
 \hline
-Draft & Initial document creation & J. Alcorn \\
+Draft & Initial document creation. Test Descriptions. & J. Alcorn \\
 \hline
-Rev. 1 & Updated with AutoTex implementation & S. Carnahan \\
+Rev. 1 & Updated with AutoTex implementation & \preparer \\
 \hline
 
 \end{longtable}
@@ -47,7 +49,46 @@ Rev. 1 & Updated with AutoTex implementation & S. Carnahan \\
 \section{Introduction}
 The Basilisk IMU module imu\_sensor.cpp is responsible for producing sensed body rates and acceleration from simulation truth values. Each check within {\tt test\_imu\_sensor.py} sets initial attitude MRP, body rates, and accumulated Delta V and validates output for a range of time.
 
-\section{{\tt test\_imu\_sensor} Test Description}
+\section{Mathematical Model}
+
+\subsection{Gyro Model}
+The gyro is modeled by...
+\subsection{Accelerometer Model}
+The accelerometer is modelled according to...
+\subsection{Recursion Formulas}
+The above formulas for the gyro and accelerometer are broken down into iterative steps in order to be modeled in the simulation. The recursive formulas follow
+\subsection{Variable Definitions}
+The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
+\begin{table}[H]
+	\caption{Definition and Explanation of Variables Used.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
+		\hline
+		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
+		InputStateMsg&N/A		   & string & Default setting: "inertial\_state\_output". This is the message from which the IMU receives spacecraft inertial data.\\ \hline
+		OutputDataMsg & N/A & string & Default setting: "imu\_meas\_data". This message contains the information output by the IMU. \\ \hline
+		InputMassMsg & N/A & string & Default setting: \\&&&"spacecraft\_mass\_props". This is the message from which the IMU received spacecraft mass data. \\ \hline
+		SensorPos\_B & N/A yet & double [3] & [m] Required input - no default. This is the sensor position in the body frame relative to the body frame.\\ \hline
+		roll, pitch, yaw & N/A yet & double, double, double& Default setting: (0,0,0). To set non-zero initial angles between imu and spacecraft body, call setBodyToPlatformDCM(roll, pitch, yaw) \\ \hline
+		dcm\_PB & N/A yet & double [3][3] & Default setting: Identity. Setting dcm\_PB is equivalent to calling setBodyToPlatformDCM(roll, pitch yaw) above. Use one method or the other. \\ \hline
+		senRotBias & N/A yet & double [3] & [r/s] Default setting: zeros. This is the rotational sensor bias value for each axis. \\ \hline
+		senTransBias & N/A yet & double [3] & [m/s2] Default setting: zeros. This is the translational sensor bias value for each axis \\ \hline
+		senRotMax & N/A yet & double & [r/s] Required input - no default. This is the gyro saturation value. \\ \hline
+		senTransMax & N/A yet & double & [m/s2] Required input - no default. This is the accelerometer saturation value. \\ \hline
+		PMatrixAccel & N/A yet & double [3][3] & Default: zeros. This is the covariance matrix used to perturb the state. \\ \hline
+		PMatrixGyro & N/A yet & double [3][3] & Default: zeros. This is the covariance matrix used to perturb the state. \\ \hline
+		walkBoundsGyro & N/A yet& double [3] & Default: zeros. This is the "3-sigma" errors to permit for gyro states \\ \hline
+		walkBoundsAccel & N/A yet & double [3] & Default: zeros. This is the "3-sigma errors ot permit for acceleration states. \\ \hline
+		accelLSB & N/A yet & double & Default: 0.0. This is the discretization value (least significant bit) for acceleration. Zero indicates no discretization. \\ \hline
+		gyroLSB & N/A yet & double & Default: 0.0. This is the discretization value (least significant bit) for acceleration. Zero indicates no discretization. \\ \hline
+	\end{tabular}
+	\label{tabular:vars}
+\end{table}
+\section{Library}
+
+
+\section{Unit Test}
 
 This test is located in {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_sensor.py}. In order to get good coverage of all the aspects of the module, the test is broken up into several parts: \par
 
@@ -67,7 +108,7 @@ This test is located in {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_s
 	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the gyro and accelerometer output. Specified walk bounds are validated.
 \end{enumerate} 
 
-\section{Test Parameters}
+\subsection{Test Parameters}
 
 This section summarizes the test input/output for each of the checks. 
 \begin{itemize}
@@ -75,7 +116,7 @@ This section summarizes the test input/output for each of the checks.
 
 There are specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. 
 
-\begin{table}[htbp]
+\begin{table}[H]
 	\caption{Error tolerance for each test.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
@@ -95,12 +136,12 @@ There are specific error tolerances for each test. Error tolerances are determin
 \end{table}
 \end{itemize}
 
-\section{Test Results}
+\subsection{Test Results}
 
 All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:results} shows the test results. Figures \ref{fig:noise} and \ref{fig:walk} show the module output for the process noise and walk bounds checks, respectively.
 
-\begin{table}[htbp]
-	\caption{Test results.}
+\begin{table}[H]
+	\caption{Test results}
 	\label{tab:results}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{c | c | c  } % Column formatting, 
@@ -118,8 +159,21 @@ All checks within test\_imu\_sensor.py passed as expected. Table \ref{tab:result
 	\end{tabular}
 \end{table}
 
+
 \input{AutoTex/noisePlot} \label{fig:noise}
 \input{AutoTex/walkBoundPlot} \label{fig:walk}
+
+\pagebreak %needed to keep images/paragraphs in the right place. Cannot \usepackage{float} here because it is not used in the AutoTex implementation.
+
+
+
+
+
+\subsection{Test Coverage}
+The test covers 100\% of the code.
+
+\section{Conclusion}
+What a great piece of code.
 
 
 \end{document}
