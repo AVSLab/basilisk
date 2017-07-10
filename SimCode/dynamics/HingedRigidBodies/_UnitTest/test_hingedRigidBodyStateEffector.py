@@ -466,4 +466,4 @@ def test_hingedRigidBodyNoGravity(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    test_hingedRigidBodyNoGravity(True)
+    test_hingedRigidBodyNoGravity(False)
