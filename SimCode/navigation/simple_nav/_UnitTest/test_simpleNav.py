@@ -46,7 +46,6 @@ import SimulationBaseClass
 import sim_model
 import unitTestSupport
 
-
 def listNorm(inputList):
    normValue = 0.0
    for elem in inputList:
@@ -171,12 +170,10 @@ def unitSimpleNav(show_plots):
     sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'simple_nav',
         'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 
-
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
 
     countAllow = posNav.shape[0] * 0.3 * 100
-
 
     sigmaThreshold = 0.0
     posDiffCount = 0
@@ -213,7 +210,6 @@ def unitSimpleNav(show_plots):
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
     i=0
-    print errorCounts
     for count in errorCounts:
         if count > countAllow:
             print "Too many error counts for element: "
@@ -221,7 +217,6 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too many error counts for element: %(DiffVal)i \n" % \
                             {"i": i})
-
 
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
@@ -248,7 +243,6 @@ def unitSimpleNav(show_plots):
         plt.show()
     unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
 
-
     # Corner case usage
 
     pMatrixBad = [0.0]*12*12
@@ -263,15 +257,14 @@ def unitSimpleNav(show_plots):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   " \n PASSED "
+        print   "PASSED"
 
+    assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
-#
 if __name__ == "__main__":
     unitSimpleNav(False)
