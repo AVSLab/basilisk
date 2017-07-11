@@ -92,7 +92,6 @@ public:
     double              SenBias;                //!< [-] Sensor bias value
     double              SenNoiseStd;            //!< [-] Sensor noise value
     uint64_t            OutputBufferCount;      //!< [-] number of output msgs stored
-    double              sunVisibilityFactor;    //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
 private:
     int64_t InputSunID;                         //!< [-] Connect to input time message
     int64_t InputStateID;                       //!< [-] Connect to input time message
@@ -100,6 +99,7 @@ private:
     int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg SunData;            //!< [-] Unused for now, but including it for future
     SCPlusStatesSimMsg StateCurrent;           //!< [-] Current SSBI-relative state
+    EclipseSimMsg sunVisibilityFactor;          //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
     std::default_random_engine rgen;            //!< [-] Random number generator for disp
     std::normal_distribution<double> rnum;      //! [-] Random number distribution
 };

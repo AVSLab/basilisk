@@ -56,7 +56,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
-    this->sunVisibilityFactor = 1.0;
+    this->sunVisibilityFactor.shadowFactor = 1.0;
     
     return;
 }
@@ -207,7 +207,7 @@ void CoarseSunSensor::computeTrueOutput()
     }
 
     // apply sun visibility (eclipse) information
-    this->directValue = this->directValue * this->sunVisibilityFactor;
+    this->directValue = this->directValue * this->sunVisibilityFactor.shadowFactor;
     
     //! - Albedo is forced to zero for now.
     this->albedoValue = 0.0;
