@@ -62,18 +62,12 @@ def listNorm(inputList):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("UseFlag", [False]
-  )
-
-def test_unitSimpleNav(show_plots, UseFlag):
+def test_unitSimpleNav(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimpleNav(show_plots, UseFlag)
+    [testResults, testMessage] = unitSimpleNav(show_plots)
     assert testResults < 1, testMessage
 
-
-def unitSimpleNav(show_plots, UseFlag):
+def unitSimpleNav(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     # Create a sim module as an empty container
@@ -280,6 +274,4 @@ def unitSimpleNav(show_plots, UseFlag):
 # stand-along python script
 #
 if __name__ == "__main__":
-    test_unitSimpleNav(False, # show_plots
-                       False
-                   )
+    unitSimpleNav(False)
