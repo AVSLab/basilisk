@@ -28,13 +28,14 @@
 //! Initialize a bunch of defaults in the constructor.  Is this the right thing to do?
 CoarseSunSensor::CoarseSunSensor()
 {
-    CallCounts = 0;
-    MessagesLinked = false;
-    InputSunID = -1;
-    InputStateID = -1;
-    InputStateMsg = "inertial_state_output";
-    InputSunMsg = "sun_planet_data";
-    OutputDataMsg = "";
+    this->CallCounts = 0;
+    this->MessagesLinked = false;
+    this->InputSunID = -1;
+    this->InputStateID = -1;
+    this->sunEclipseInMsgId = -1;
+    this->InputStateMsg = "inertial_state_output";
+    this->InputSunMsg = "sun_planet_data";
+    this->OutputDataMsg = "";
     this->SenBias = 0.0;
     this->SenNoiseStd = 0.0;
     
@@ -48,7 +49,6 @@ CoarseSunSensor::CoarseSunSensor()
     this->KellyFactor = 0.0;
     this->sensedValue = 0.0;
     this->fov           = 1.0471975512;
-    this->maxVoltage    = 0.0;
     this->phi           = 0.785398163397;
     this->theta         = 0.0;
     v3SetZero(this->B2P321Angles);
@@ -56,6 +56,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setBodyToPlatformDCM(B2P321Angles[0], B2P321Angles[1], B2P321Angles[2]);
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
+    this->sunVisibilityFactor.shadowFactor = 1.0;
     
     return;
 }
@@ -111,7 +112,7 @@ void CoarseSunSensor::SelfInit()
 {
     //! Begin Method Steps
     std::normal_distribution<double>::param_type
-    UpdatePair(SenBias, SenNoiseStd);
+    UpdatePair(this->SenBias, this->SenNoiseStd);
     //! - Configure the random number generator
     rgen.seed(RNGSeed);
     rnum.param(UpdatePair);
@@ -128,39 +129,24 @@ void CoarseSunSensor::SelfInit()
     are matched correctly.*/
 void CoarseSunSensor::CrossInit()
 {
-    LinkMessages();
-}
-
-/*! This method determines if the spacecraft is illuminated by the sun*/
-bool CoarseSunSensor::spacecraftIlluminated()
-{
-    return(true); /// Sun is always shining baby.  Fix this...
-}
-
-/*! This method links the input messages with the ID matched to the input message 
-    and warns the user if any messages can't be found */
-bool CoarseSunSensor::LinkMessages()
-{
     //! Begin Method Steps
     //! - Subscribe to the Sun ephemeris message and the vehicle state ephemeris
-    InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(InputSunMsg,
-        sizeof(SpicePlanetStateSimMsg), moduleID);
-    InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(InputStateMsg,
-        sizeof(SCPlusStatesSimMsg), moduleID);
-    
-    //! - If both messages are valid, return true, otherwise warnd and return false
-    if(InputSunID >= 0 && InputStateID >= 0)
-    {
-        return(true);
-    }
-    else
-    {
+    this->InputSunID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputSunMsg,
+                                                                          sizeof(SpicePlanetStateSimMsg), moduleID);
+    this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
+                                                                            sizeof(SCPlusStatesSimMsg), moduleID);
+    this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
+                                                                                 sizeof(EclipseSimMsg), moduleID);
+
+    //! - If either messages is not valid, send a warning message
+    if(this->InputSunID < 0 || this->InputStateID < 0) {
         std::cerr << "WARNING: Failed to link a sun sensor input message: ";
-        std::cerr << std::endl << "Sun: "<<InputSunID;
-        std::cerr << std::endl << "Sun: "<<InputStateID;
+        std::cerr << std::endl << "Sun: "<<this->InputSunID;
+        std::cerr << std::endl << "Sun: "<<this->InputStateID;
     }
-    return(false);
+    return;
 }
+
 
 void CoarseSunSensor::readInputMessages()
 {
@@ -174,14 +160,18 @@ void CoarseSunSensor::readInputMessages()
     //! - If we have a valid sun ID, read Sun ephemeris message
     if(InputSunID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(InputSunID, &LocalHeader,
+        SystemMessaging::GetInstance()->ReadMessage(this->InputSunID, &LocalHeader,
                                                     sizeof(SpicePlanetStateSimMsg), reinterpret_cast<uint8_t*> (&this->SunData), moduleID);
     }
     //! - If we have a valid state ID, read vehicle state ephemeris message
     if(InputStateID >= 0)
     {
-        SystemMessaging::GetInstance()->ReadMessage(InputStateID, &LocalHeader,
+        SystemMessaging::GetInstance()->ReadMessage(this->InputStateID, &LocalHeader,
                                                     sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->StateCurrent), moduleID);
+    }
+    if(this->sunEclipseInMsgId >= 0) {
+        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgId, &LocalHeader,
+                                                    sizeof(EclipseSimMsg), reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor), moduleID);
     }
 }
 
@@ -194,12 +184,12 @@ void CoarseSunSensor::computeSunData()
     
     //! Begin Method Steps
     //! - Get the position from spacecraft to Sun
-    v3Scale(-1.0, StateCurrent.r_BN_N, Sc2Sun_Inrtl);
-    v3Add(Sc2Sun_Inrtl, SunData.PositionVector, Sc2Sun_Inrtl);
+    v3Scale(-1.0, this->StateCurrent.r_BN_N, Sc2Sun_Inrtl);
+    v3Add(Sc2Sun_Inrtl, this->SunData.PositionVector, Sc2Sun_Inrtl);
     //! - Normalize the relative position into a unit vector
     v3Normalize(Sc2Sun_Inrtl, Sc2Sun_Inrtl);
     //! - Get the inertial to body frame transformation information and convert sHat to body frame
-    MRP2C(StateCurrent.sigma_BN, dcm_BN);
+    MRP2C(this->StateCurrent.sigma_BN, dcm_BN);
     m33MultV3(dcm_BN, Sc2Sun_Inrtl, this->sHat_B);
 }
 
@@ -215,9 +205,13 @@ void CoarseSunSensor::computeTrueOutput()
     {
        this->directValue = temp1;
     }
+
+    // apply sun visibility (eclipse) information
+    this->directValue = this->directValue * this->sunVisibilityFactor.shadowFactor;
+    
     //! - Albedo is forced to zero for now.
-    albedoValue = 0.0;
-    trueValue = directValue + albedoValue;
+    this->albedoValue = 0.0;
+    this->trueValue = this->directValue + this->albedoValue;
 }
 
 /*! This method takes the true observed cosine value (directValue) and converts 
@@ -227,11 +221,11 @@ void CoarseSunSensor::applySensorErrors()
 {
     //! Begin Method Steps
     //! - Get current error from random number generator
-    double CurrentError = rnum(rgen);
+    double CurrentError = rnum(this->rgen);
     //! - Apply the kelly fit to the truth direct value
-    double KellyFit = 1.0 - exp(-directValue * directValue/KellyFactor);
+    double KellyFit = 1.0 - exp(-this->directValue * this->directValue/this->KellyFactor);
     //! - Sensed value is total illuminance with a kelly fit + noise
-    this->sensedValue = (directValue + albedoValue)*KellyFit + CurrentError;
+    this->sensedValue = (this->directValue + this->albedoValue)*KellyFit + CurrentError;
     
 }
 
@@ -254,7 +248,7 @@ void CoarseSunSensor::writeOutputMessages(uint64_t Clock)
     //! - Set the outgoing data to the scaled computation
     LocalMessage.OutputData = this->sensedValue;
     //! - Write the outgoing message to the architecture
-    SystemMessaging::GetInstance()->WriteMessage(OutputDataID, Clock, 
+    SystemMessaging::GetInstance()->WriteMessage(this->OutputDataID, Clock,
                                                  sizeof(CSSRawDataSimMsg), reinterpret_cast<uint8_t *> (&LocalMessage), moduleID);
 }
 /*! This method is called at a specified rate by the architecture.  It makes the 
@@ -282,14 +276,14 @@ void CoarseSunSensor::UpdateState(uint64_t CurrentSimNanos)
     sensor list.*/
 CSSConstellation::CSSConstellation()
 {
-    sensorList.clear();
-    outputBufferCount = 2;
+    this->sensorList.clear();
+    this->outputBufferCount = 2;
 }
 
 /*! The default destructor for the constellation just clears the sensor list.*/
 CSSConstellation::~CSSConstellation()
 {
-    sensorList.clear();
+    this->sensorList.clear();
 }
 
 /*! This method loops through the sensor list and calls the self init method for 
@@ -299,17 +293,17 @@ void CSSConstellation::SelfInit()
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and initialize all children
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->SelfInit();
     }
 
-    memset(&outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
+    memset(&this->outputBuffer, 0x0, sizeof(CSSArraySensorIntMsg));
     //! - Create the output message sized to the number of sensors
     outputConstID = SystemMessaging::GetInstance()->
     CreateNewMessage(outputConstellationMessage,
-        sizeof(CSSArraySensorIntMsg), outputBufferCount,
-        "CSSRawDataSimMsg", moduleID);
+        sizeof(CSSArraySensorIntMsg), this->outputBufferCount,
+        "CSSArraySensorIntMsg", moduleID);
 }
 
 /*! This method loops through the sensor list and calls the CrossInit method for 
@@ -319,7 +313,7 @@ void CSSConstellation::CrossInit()
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and initialize all children
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->CrossInit();
     }
@@ -330,14 +324,14 @@ void CSSConstellation::UpdateState(uint64_t CurrentSimNanos)
     std::vector<CoarseSunSensor>::iterator it;
     //! Begin Method Steps
     //! - Loop over the sensor list and update all data
-    for(it=sensorList.begin(); it!= sensorList.end(); it++)
+    for(it=this->sensorList.begin(); it!= this->sensorList.end(); it++)
     {
         it->readInputMessages();
         it->computeSunData();
         it->computeTrueOutput();
         it->applySensorErrors();
         it->scaleSensorValues();
-        outputBuffer.CosValue[it - sensorList.begin()] = it->sensedValue;
+        this->outputBuffer.CosValue[it - this->sensorList.begin()] = it->sensedValue;
     }
     SystemMessaging::GetInstance()->WriteMessage(outputConstID, CurrentSimNanos,
                                                  sizeof(CSSArraySensorIntMsg), reinterpret_cast<uint8_t *>(&outputBuffer));
