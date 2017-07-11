@@ -1,10 +1,10 @@
-\input{header.tex} %include packages, styles, and new commands in this file.
+\input{sec_header.tex} %include packages, styles, and new commands in this file.
 
 \begin{document}
 
 \makeCover
 
-\input{revisionTable.tex} %when you update the file, update the revision table.
+\input{sec_revisionTable.tex} %when you update the file, update the revision table.
 
 \newpage
 \setcounter{page}{1}
@@ -13,19 +13,19 @@
 \tableofcontents %Autogenerate the table of contents
 ~\\ \hrule ~\\ %Makes the line under table of contents
 	
-\input{modelDescription.tex} %This section includes mathematical models, code description, etc.
+\input{sec_modelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\input{modelFunctions.tex} %This includes a concise list of what the module does.
+\input{sec_modelFunctions.tex} %This includes a concise list of what the module does.
 
-\input{modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\input{sec_modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
 
-\input{testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
+\input{sec_testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
 
-\input{testParameters.tex}
+\input{sec_testParameters.tex}
 
-\input{testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
+\input{sec_testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
 
-\input{user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+\input{sec_user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
 
 \bibliography{bibliography.bib} %This includes references used and mentioned.
 
