@@ -2,6 +2,9 @@
 
 \usepackage{cite}
 \usepackage{AVS}
+\usepackage{float}
+\usepackage{array}
+
 
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
@@ -42,6 +45,33 @@
 
 \tableofcontents
 ~\\ \hrule ~\\
+
+	\section*{Nomenclature\\}
+\noindent\begin{tabular}{@{}lcl@{}}
+	$\alpha$ &=& angle from $\bar{\mathbf{r}}$ to $\bar{\mathbf{r}}_{\text{Q}}$   \\
+	$C_{l,m}, S_{l,m}$ &=& Integration coefficients \\
+	$\delta_{m}$ &=& the Kronecker delta \\
+	$\mathrm{d}m_{\text{Q}}$  &=&  differential mass element of celestial body Q\\
+	$G$ &=& universal gravitational constant\\
+	$\gamma$ &=& $\frac{|\bar{\mathbf{r}}_{\text{Q}}|}{|\bar{\mathbf{r}}|}$ \\
+	$l$ &=& Legendre function degree \\
+	$m$ &=& Legendre function order \\
+	$\mu$ &=& gravitation parameter for the celestial body \\
+	$N_{l,m}$ &=& the normalization factor \\
+	$\nabla$ &=& gradient\\
+	$P_l[\beta]$ &=& Legendre polynomial \\
+	$(\phi_\text{Q}, \lambda_\text{Q})$ &=& (latitude, longitude) of the differental mass element \\
+	$\bar{\mathbf{r}}$ &=&position vector from body center of gravity to spacecraft \\
+	$\bar{\mathbf{r}}_{\text{Q}}$ &=& position vector from gravitational body center of mass to differential mass element $\mathrm{d}m_{\text{Q}}$\\
+	$R_{\mathrm{ref}}^{l}$ &=& the reference radius of the gravitational body - usually the mean or maximum radius\\
+	${\rho}_{\text{Q}}$  &=&  position vector from differential mass element of body Q to spacecraft\\
+	${\rho}_{\text{Q}}$  &=&  position vector from differential mass element of body Q to spacecraft\\
+	$U$ &=& potential gravitational energy \\
+	$[X_\text{CoM}, Y_\text{CoM}, Z_\text{CoM}]$ &=& center of mass coordinates for the celestial body \\
+	
+	
+\end{tabular} 
+\pagebreak
 
 \section{Introduction}
 
@@ -372,6 +402,41 @@ Using all these expressions, the potential and the gravity field can be computed
 
 \clearpage
 
+\section{Variable Definition and Code Description}
+The variables in Table \ref{tabular:vars} are available for user input. Variables used by the module but not available to the user are not mentioned here. Variables with default settings do not necessarily need to be changed by the user, but may be.
+	\begin{table}[H]
+		\caption{Definition and Explanation of Variables Used.}
+		\label{tab:errortol}
+		\centering \fontsize{10}{10}\selectfont
+		\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
+			\hline
+			\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
+			spherHarm.maxDeg					&$l_{\text{max}}$		 	  & double & Default setting: 0"inertial\_state number of degree to use when calculating gravity effects using sperical harmonics.\\ \hline
+			radEquator			   & $R_{\mathrm{ref}}^{l}$			& double & [m] Default setting: 0.0. 	This is the reference radius of the gravity body.\\ \hline
+			muBody					& $\mu$ 		& double & [m3/s2] Default setting: 0.0f. This is the gravitational parameter of the body. Required Input to get any non-zero values out of the code.\\ \hline
+			isCentralBody & N/A & bool & Default setting: False. Determines whether the body in question is the central (inertial) body.\\ \hline
+			isDisplayBody & N/A & bool & Default setting: False. Determines whether the body in question is the focus of the visualization\\ \hline
+			ephemTime & N/A & double & [s] Default setting: 0. The ephemeris time for the body in question \\ \hline
+			ephIntTime & N/A & double & [s] Default setting: 0. Required Input. The integration time asociated with the ephem data. \\ \hline
+			bodyInMsgName & N/A & string & Required Input. The name of the message with body data in the body frame. \\ \hline
+			outputMsgName & N/A & string & Required Input. The name of the message containing ephemeris information in display frame \\ \hline
+			planetEphemNae & N/A & string & Required Input. An ephemeris name for the planet (user-named). \\ \hline
+		\end{tabular}
+		\label{tabular:vars}
+	\end{table}
+
+\subsection{Code Diagram}
+
+\begin{figure}[H]
+	\centering \includegraphics[height=0.8\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
+	\caption{A pseudo-code diagram demonstrating the flow of inputs and outputs in the gravity effector module.}
+	\label{img:codeFlow}
+\end{figure}
+
+The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravity.addEarth() in the test\_scenarioOrbitManeuver.py tutorial.
+
+After the inputs are given for each gravity body, the computeGravityInertial() calculates the $0^{\textbf{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate higher degree spherical harmonics terms for that body.
+
 \section{Library}
 
 The library is structured around the class \textit{sphericalHarmonics}, which computes the gravity field, and a family of classes which inherit from \textit{coeffLoader} that load the coefficients from any source. The abstract class \textit{coeffLoader} can be inherited if coefficient files with new formats are found.
@@ -389,6 +454,61 @@ A class diagram of the library can be seen in Figure \ref{fig:class}. Figure \re
 \includegraphics[width=0.7\textwidth]{Figures/usecase_diagram.pdf}
 \caption{UML use case diagram.}\label{fig:use_case}
 \end{figure}
+
+\section{Unit Test}
+The unit test, \testname  validates the internal aspects of the Basilisk spherical harmonics gravity effector module by comparing module output to expected output. It utilizes spherical harmonics for calulcation given the gravitation parameter for the massive body, a reference radius, and the maximum degree of spherical harmonics to be used. The unit test verifies basic set-up, single-body gravitational acceleration, and multi-body gravitational acceleration.
+
+\subsection{Test Description}
+This test is located in {\tt SimCode/dynamics/gravityEffector/\_UnitTest/\testname}. In order to get good coverage of all the aspects of the module, the test is broken up into three sub-tests: \par
+\subsubsection{Model Set-Up Verification}
+This test verifies, via three checks, that the model is appropriately initialized when called.
+		\begin{itemize}
+			\item \underline{1.1} The first check verifies that the normalized coefficient matrix for the spherical harmonics calculations is initialized appropriately as a $3\times3$ identity matrix. \\
+			\item \underline{1.2} The second check verifies that the magnitude of the gravity being calculated is reasonable(i.e. between $9.7$ and $9.9$ $m/s^2$). \\
+			\item \underline{1.3} The final check ensures that the maximum degrees value is truly acting as a ceiling on the maximum number of degrees being used in the spherical harmonics algorithms. For example, if the maximum degrees value is set to 20, an attempt is made to call the spherical harmonics algorithms with a degrees value of 100 and another attempt is made with a degrees value of 20. The results are compared and should be equal due to the enforcement of the maximum degrees value.\\
+		\end{itemize}
+\subsubsection{Single-Body Gravity Calculations} This test compares calculated gravity values around the Earth with ephemeris data from the Hubble telescope. The simulation begins shortly after 0200 UTC May 1, 2012 and carries on for two hours, evaluating the gravitational acceleration at two  second intervals.
+\subsubsection{Multi-Body Gravity Calculations} This test includes gravity effects from Earth, Mars, Jupiter, and the Sun. Calculations are verified by comparing against ephemeris data from the DAWN mission. The simulation begins at midnight, October 24th, 2008 and carries on for just under 22 minutes, evaluating the gravitational acceleration at two second intervals.
+
+\subsection{Test Parameters}
+
+This section summarizes the  specific error tolerances for each test. Error tolerances are determined based on whether the test results comparison should be exact or approximate due to integration or other reasons. Error tolerances for each test are summarized in table \ref{tab:errortol}. \\
+	
+	\begin{table}[htbp]
+		\caption{Error tolerance for each test.}
+		\label{tab:errortol}
+		\centering \fontsize{10}{10}\selectfont
+		\begin{tabular}{ c | c } % Column formatting, 
+			\hline
+			\textbf{Test}   							    & \textbf{Tolerated Error} 						  \\ \hline
+			Gravity Magnitude (check 1.2)        & \input{AutoTex/sphericalHarmonicsAccuracy}		   \\ \hline
+			Single-Body Gravity						   & \input{AutoTex/singleBodyAccuracy}														   \\ \hline
+			Multi-Body Gravity 						   & \input{AutoTex/multiBodyAccuracy}	 		       \\ \hline
+		\end{tabular}
+	\end{table}
+
+
+\subsection{Test Results}
+
+All checks within \testname passed as expected. Table \ref{tab:results} shows the test results.\\
+
+\begin{table}[htbp]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | c  } % Column formatting, 
+		\hline
+		\textbf{Test} 				    & \textbf{Pass/Fail} 						   			           & \textbf{Notes} 									\\ \hline
+		Setup Test 		   			  	& \input{AutoTex/sphericalHarmonicsPassFail}     & \input{AutoTex/sphericalHarmonicsFailMsg}			 \\ \hline
+		Single-Body Gravity		   	& \input{AutoTex/singleBodyPassFail}                 & \input{AutoTex/singleBodyFailMsg} \\ \hline
+		Multi-Body Gravity			 &\input{AutoTex/multiBodyPassFail}  			 	 &  \input{AutoTex/multiBodyFailMsg} 			   \\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{Test Coverage}
+This test covers 2000\% of the code.
+\section{Conclusion}
+What a great piece of code.
 
 \bibliography{bibliography}{}
 \bibliographystyle{plain}
