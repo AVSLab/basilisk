@@ -35,6 +35,7 @@ SimpleNav::SimpleNav()
     this->crossAtt = false;
     this->outputBufferCount = 2;
     this->inputStateID = -1;
+    this->inputSunID = -1;
     this->outputAttID = -1;
     this->outputTransID = -1;
     this->AMatrix.clear();
