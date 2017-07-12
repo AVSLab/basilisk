@@ -166,6 +166,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                 testFailCount,
                                                                 testMessages)
     if modelType == "lookup":
+        errTolTorque = errTol/100
         truthForceExternal_B = [0.26720220706099184E-04, - 0.13596079145805012E-04, 0.93948649829282319E-05]
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
@@ -186,10 +187,14 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
                                                                     srpTorqueData[1, 1:],
-                                                                    errTol/100,
+                                                                    errTolTorque,
                                                                     "Torque",
                                                                     testFailCount,
                                                                     testMessages)
+
+
+    if eclipseOn:
+        modelType = modelType + 'WithEclipse'   #Do this so that the AutoTeX messages are clearly distinguishable.
 
     if testFailCount == 0:
         print "PASSED: " + modelType
@@ -215,6 +220,11 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     snippetName = modelType + 'Accuracy'
     snippetContent = '{:1.1e}'.format(errTol)#write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+    if modelType == 'lookupWithEclipse' or modelType == 'lookup':
+        snippetName = modelType + 'TorqueAccuracy'
+        snippetContent = '{:1.1e}'.format(errTolTorque)  # write formatted LATEX string to file to be used by auto-documentation.
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
 
     # return fail count and join into a single string all messages in the list
     # testMessage
