@@ -156,10 +156,8 @@ void RadiationPressure::computeBodyForceTorque(double integTime)
         this->computeLookupModel(s_B);
     }
 
-    if (sunEclipseInMsgId>=0) {
-        this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
-        this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
-    }
+    this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
+    this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
 }
 
 /*! Update model state by reading in new message data
