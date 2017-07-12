@@ -186,7 +186,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     testMessages)
         testFailCount, testMessages = unitTestSupport.compareVector(truthTorqueExternalPntB_B,
                                                                     srpTorqueData[1, 1:],
-                                                                    errTol,
+                                                                    errTol/100,
                                                                     "Torque",
                                                                     testFailCount,
                                                                     testMessages)
