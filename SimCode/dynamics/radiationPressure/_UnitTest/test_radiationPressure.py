@@ -50,16 +50,19 @@ import radiation_pressure
 import macros
 import spice_interface
 
-
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
-@pytest.mark.parametrize("modelType", ["cannonball", "lookup"])
-def test_unitRadiationPressure(show_plots, modelType):
-    [testResults, testMessage] = unitRadiationPressure(show_plots, modelType)
+@pytest.mark.parametrize("modelType, eclipseOn", [
+      ("cannonball",False)
+    , ("lookup", False)
+    , ("lookup", True)
+])
+def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
+    [testResults, testMessage] = unitRadiationPressure(show_plots, modelType, eclipseOn)
     assert testResults < 1, testMessage
 
 
-def unitRadiationPressure(show_plots, modelType):
+def unitRadiationPressure(show_plots, modelType, eclipseOn):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -97,6 +100,12 @@ def unitRadiationPressure(show_plots, modelType):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
+    if eclipseOn:
+        sunEclipseInMsgName = "sun_eclipse"
+        sunEclipseMsgData = radiation_pressure.EclipseSimMsg()
+        sunEclipseMsgData.shadowFactor = 0.5
+        unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsgData)
+        srpDynEffector.sunEclipseInMsgName = sunEclipseInMsgName
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
 
@@ -160,6 +169,9 @@ def unitRadiationPressure(show_plots, modelType):
         truthForceExternal_B = [0.26720220706099184E-04, - 0.13596079145805012E-04, 0.93948649829282319E-05]
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
+        if eclipseOn:
+            truthForceExternal_B = sunEclipseMsgData.shadowFactor*np.array(truthForceExternal_B)
+            truthTorqueExternalPntB_B = sunEclipseMsgData.shadowFactor * np.array(truthTorqueExternalPntB_B)
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,

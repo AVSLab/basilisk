@@ -30,8 +30,10 @@
 
 %include "../../simMessages/spicePlanetStateSimMsg.h"
 %include "../../simMessages/scPlusStatesSimMsg.h"
+%include "../../simMessages/eclipseSimMsg.h"
 GEN_SIZEOF(SpicePlanetStateSimMsg);
 GEN_SIZEOF(SCPlusStatesSimMsg);
+GEN_SIZEOF(EclipseSimMsg);
 
 %pythoncode %{
 import sys

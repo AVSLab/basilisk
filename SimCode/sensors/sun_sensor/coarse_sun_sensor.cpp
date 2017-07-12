@@ -135,8 +135,12 @@ void CoarseSunSensor::CrossInit()
                                                                           sizeof(SpicePlanetStateSimMsg), moduleID);
     this->InputStateID = SystemMessaging::GetInstance()->subscribeToMessage(this->InputStateMsg,
                                                                             sizeof(SCPlusStatesSimMsg), moduleID);
-    this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
-                                                                                 sizeof(EclipseSimMsg), moduleID);
+
+    /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
+    if (this->sunEclipseInMsgName.length() > 0) {
+        this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
+                                                                                     sizeof(EclipseSimMsg), moduleID);
+    }
 
     //! - If either messages is not valid, send a warning message
     if(this->InputSunID < 0 || this->InputStateID < 0) {
