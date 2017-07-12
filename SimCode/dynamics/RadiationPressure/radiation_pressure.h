@@ -27,6 +27,7 @@
 #include "../_GeneralModuleFiles/dynParamManager.h"
 #include "simMessages/spicePlanetStateSimMsg.h"
 #include "simMessages/scPlusStatesSimMsg.h"
+#include "simMessages/eclipseSimMsg.h"
 
 /*! \addtogroup SimModelGroup
  * @{
@@ -59,17 +60,20 @@ public:
     double  coefficientReflection; //!< -- Factor grouping surface optical properties
     std::string sunEphmInMsgName; //!< -- Message name for the sun state
     std::string stateInMsgName; //!< -- Message name for the S/C state
-    std::vector<Eigen::Vector3d> lookupForce_B; //!< -- Force on S/C at 1 AU from sun
-    std::vector<Eigen::Vector3d> lookupTorque_B; //!< -- Torque on S/C
-    std::vector<Eigen::Vector3d> lookupSHat_B; //!< -- S/C to sun unit vector defined in the body frame.
+    std::string sunEclipseInMsgName;            //!< [-] Message name for sun eclipse state message
+    std::vector<Eigen::Vector3d> lookupForce_B;     //!< -- Force on S/C at 1 AU from sun
+    std::vector<Eigen::Vector3d> lookupTorque_B;    //!< -- Torque on S/C
+    std::vector<Eigen::Vector3d> lookupSHat_B;      //!< -- S/C to sun unit vector defined in the body frame.
 
 private:
     bool    useCannonballModel; //!< -- Use cannnonball or lookup table model
     int64_t sunEphmInMsgId; //!< -- Message ID for incoming sun ephemeris data
+    int64_t sunEclipseInMsgId;                  //!< [-] Connect to input sun eclipse message
     SpicePlanetStateSimMsg sunEphmInBuffer; //!< -- Buffer for incoming ephemeris message data
     int64_t stateInMsgId; //!< -- Message ID for incoming SC state data
     bool stateRead; //!< -- Indicates a succesful read of incoming SC state message data
     SCPlusStatesSimMsg stateInBuffer; //!< -- Buffer for incoming state message data
+    EclipseSimMsg sunVisibilityFactor;              //!< [-] scaling parameter from 0 (fully obscured) to 1 (fully visible)
 };
 
 /*! @} */

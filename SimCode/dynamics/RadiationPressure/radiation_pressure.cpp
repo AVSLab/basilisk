@@ -36,6 +36,9 @@ RadiationPressure::RadiationPressure()
     ,stateInMsgId(-1)
     ,stateRead(false)
 {
+    this->sunEclipseInMsgId = -1;
+    this->sunVisibilityFactor.shadowFactor = 1.0;
+
     CallCounts = 0;
     return;
 }
@@ -77,6 +80,12 @@ void RadiationPressure::CrossInit()
         std::cerr << "WARNING: Did not find a valid message with name: ";
         std::cerr << this->stateInMsgId << "  :" << __FILE__ << std::endl;
     }
+
+    /* reading in the sun eclipse message is optional.  It only gets used if this message is successfully suscribed.  */
+    if (this->sunEclipseInMsgName.length() > 0) {
+        this->sunEclipseInMsgId = SystemMessaging::GetInstance()->subscribeToMessage(this->sunEclipseInMsgName,
+                                                                                     sizeof(EclipseSimMsg), moduleID);
+    }
 }
 
 /*! This method retrieves pointers to parameters/data stored
@@ -114,6 +123,12 @@ void RadiationPressure::readInputMessages()
         memset(&this->stateInBuffer, 0x0, sizeof(SCPlusStatesSimMsg));
         this->stateRead = SystemMessaging::GetInstance()->ReadMessage(this->stateInMsgId, &localHeader, sizeof(SCPlusStatesSimMsg), reinterpret_cast<uint8_t*> (&this->stateInBuffer));
     }
+
+    memset(&localHeader, 0x0, sizeof(localHeader));
+    if(this->sunEclipseInMsgId >= 0) {
+        SystemMessaging::GetInstance()->ReadMessage(this->sunEclipseInMsgId, &localHeader,
+                                                    sizeof(EclipseSimMsg), reinterpret_cast<uint8_t*> (&this->sunVisibilityFactor), moduleID);
+    }
 }
 
 /*! This method computes the dynamic effect due to solar raidation pressure.
@@ -139,6 +154,11 @@ void RadiationPressure::computeBodyForceTorque(double integTime)
         this->computeCannonballModel(s_B);
     } else {
         this->computeLookupModel(s_B);
+    }
+
+    if (sunEclipseInMsgId>=0) {
+        this->forceExternal_B = this->forceExternal_B * this->sunVisibilityFactor.shadowFactor;
+        this->torqueExternalPntB_B = this->torqueExternalPntB_B * this->sunVisibilityFactor.shadowFactor;
     }
 }
 
