@@ -74,7 +74,7 @@ The mathematical models used are described below. The code unit tests are then p
 
 
 \section{Mathematical Model}
-Both methods of calculating solar radiation pressure have simple implementations in Basilisk using basic coefficients and assumptions. The methods of arriving at these coefficients can be complex and making the coefficients time-varying to improve accuracy can greatly increase complexity. The cannonball method used here essentially follows the mathematics described by Vallado.
+Both methods of calculating solar radiation pressure have simple implementations in Basilisk using basic coefficients and assumptions. The methods of arriving at these coefficients can be complex and making the coefficients time-varying to improve accuracy can greatly increase complexity. The cannonball method used here essentially follows the mathematics described by Vallado\cite{vallado2001}.
 \subsection{Radiation Model}
 Radiation is modeled by using the solar flux at one astronomical unit and scaling by distance from the sun relative to 1 AU. The solar flux at one AU is taken as :
 \begin{equation}
@@ -172,5 +172,8 @@ All checks within \testname passed as expected. Table \ref{tab:results} shows th
 The test covers 2000\% of the code.
 \section{Conclusion}
 What a great piece of code.
+
+\bibliography{bibliography}{}
+\bibliographystyle{plain}
 
 \end{document}
