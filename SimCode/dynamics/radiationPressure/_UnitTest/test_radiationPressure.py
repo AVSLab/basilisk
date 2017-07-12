@@ -49,14 +49,13 @@ import spacecraftPlus
 import radiation_pressure
 import macros
 import spice_interface
-import simMessages
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 @pytest.mark.parametrize("modelType, eclipseOn", [
       ("cannonball",False)
     , ("lookup", False)
-    , ("cannonball", True)
+    , ("lookup", True)
 ])
 def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
     [testResults, testMessage] = unitRadiationPressure(show_plots, modelType, eclipseOn)
@@ -103,10 +102,9 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
     if eclipseOn:
         sunEclipseInMsgName = "sun_eclipse"
-        sunEclipseMsg = simMessages.EclipseSimMsg()
-        # sunEclipseMsg = srpDynEffector.EclipseSimMsg()
-        sunEclipseMsg.shadowFactor = 0.5
-        unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsg)
+        sunEclipseMsgData = radiation_pressure.EclipseSimMsg()
+        sunEclipseMsgData.shadowFactor = 0.5
+        unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsgData)
         srpDynEffector.sunEclipseInMsgName = sunEclipseInMsgName
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
@@ -149,8 +147,6 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         truthForceExternal_B = [1.85556867482797E-05, -8.82911772465848E-06, 5.64107588371567E-06]
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [0, 0, 0]
-        if eclipseOn:
-            truthForceExternal_B = [0.5*1.85556867482797E-05, 0.5*-8.82911772465848E-06, 0.5*5.64107588371567E-06]
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1,1:],
                                                                     errTol,
@@ -173,6 +169,9 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
         truthForceExternal_B = [0.26720220706099184E-04, - 0.13596079145805012E-04, 0.93948649829282319E-05]
         truthForceExternal_N = [0, 0, 0]
         truthTorqueExternalPntB_B = [-0.80492463017846114E-12, 0.50888380426172319E-12, 0.10249431804585393E-11]
+        if eclipseOn:
+            truthForceExternal_B = sunEclipseMsgData.shadowFactor*np.array(truthForceExternal_B)
+            truthTorqueExternalPntB_B = sunEclipseMsgData.shadowFactor * np.array(truthTorqueExternalPntB_B)
         testFailCount, testMessages = unitTestSupport.compareVector(truthForceExternal_B,
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,
