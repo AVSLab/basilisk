@@ -30,6 +30,10 @@ namespace std {
 %include "sys_model.h"
 %include "coarse_sun_sensor.h"
 %include "../../simMessages/cssRawDataSimMsg.h"
+%include "../../simMessages/eclipseSimMsg.h"
+GEN_SIZEOF(CSSRawDataSimMsg);
+GEN_SIZEOF(EclipseSimMsg);
+
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
