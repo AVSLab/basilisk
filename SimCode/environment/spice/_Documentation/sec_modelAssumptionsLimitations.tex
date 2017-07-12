@@ -1,0 +1,10 @@
+\section{Model Assumptions and Limitations}
+
+\subsection{Assumptions}
+
+Spice interface reads extremely precise ephemeris data, which we compare with JPL's Horizons data. Depending on the celestial body, the accuracy may vary. 
+There are no direct assumptions made while using this module. A user must simply make sure to be comparing the write data by assuring the the frames, times, and loaded kernels (mars vs mars barycenter) are the same.
+
+\subsection{Limitations}
+
+The limitations come directly from the kernels that are available to be loaded. These will limit the planets that can be tracked.

@@ -1,0 +1,19 @@
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\usepackage{hyperref}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{spice\_interface}
+\newcommand{\subject}{Spice data interface module}
+\newcommand{\status}{Initial Document}
+\newcommand{\preparer}{T. Teil}
+\newcommand{\summary}{This unit test compares the results of the Spice data within the AVS Basilisk simulation with outside data. Spice generates information on universal time (UTC/GPS...) as well as ephemeris information for the bodies of the Solar System. The time information creates accurate time tags to be used by others on the project, and the planet ephemeris gives the location of the bodies of interest, and therefore their gravitational effects on the spacecraft. In this test, we compare the values given by Spice values to the actual expected values in order to validate the code.}
