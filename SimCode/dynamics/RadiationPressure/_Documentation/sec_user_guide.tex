@@ -7,31 +7,32 @@ The variables in Table \ref{tabular:vars} are available for user input. Variable
 	\caption{Definition and Explanation of Variables Used.}
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
-	\begin{tabular}{ | m{3cm}| m{3cm} | m{3cm} | m{6cm} |} % Column formatting, 
+	\begin{tabular}{ | m{5cm}| m{2cm} | m{1.5cm} | m{6cm} |} % Column formatting, 
 		\hline
-		\textbf{Variable}   							& \textbf{LaTeX Equivalent} 	&		\textbf{Variable Type} & \textbf{Notes}			  \\ \hline
-		spherHarm.maxDeg					&$l_{\text{max}}$		 	  & double & Default setting: 0"inertial\_state number of degree to use when calculating gravity effects using sperical harmonics.\\ \hline
-		radEquator			   & $R_{\mathrm{ref}}^{l}$			& double & [m] Default setting: 0.0. 	This is the reference radius of the gravity body.\\ \hline
-		muBody					& $\mu$ 		& double & [m3/s2] Default setting: 0.0f. This is the gravitational parameter of the body. Required Input to get any non-zero values out of the code.\\ \hline
-		isCentralBody & N/A & bool & Default setting: False. Determines whether the body in question is the central (inertial) body.\\ \hline
-		isDisplayBody & N/A & bool & Default setting: False. Determines whether the body in question is the focus of the visualization\\ \hline
-		ephemTime & N/A & double & [s] Default setting: 0. The ephemeris time for the body in question \\ \hline
-		ephIntTime & N/A & double & [s] Default setting: 0. Required Input. The integration time asociated with the ephem data. \\ \hline
-		bodyInMsgName & N/A & string & Required Input. The name of the message with body data in the body frame. \\ \hline
-		outputMsgName & N/A & string & Required Input. The name of the message containing ephemeris information in display frame \\ \hline
-		planetEphemNae & N/A & string & Required Input. An ephemeris name for the planet (user-named). \\ \hline
+		\textbf{Variable}   		& \textbf{LaTeX Equivalent} 	                  &		\textbf{Variable Type}   & \textbf{Notes} \\ \hline
+		stateInMsgName			&N/A		   							    & string 								& Default setting: ``inertial\_state\_output". This is the message from which the radiation pressure module receives spacecraft inertial data.\\ \hline
+		sunEphmInMsgName	& N/A 										& string 								& Default setting: ``sun\_planet\_data". This is the message through which radiation pressure gets information about the sun and planets.\\ \hline
+		area 						  	  & $A_{\odot}$							  & double 								& [m2] Default setting: 0.0f. Required input for cannonball method to get any real output. This is the area to use when approximating the surface area of the spacecraft.\\ \hline
+		coefficientReflection 	  & $c_{R}$ 								& double 								& Default setting: 1.2. This is a factor applied to the radiation pressure based on spacecraft surface properties.\\ \hline
+		useCannonballModel	   & N/A 									   & bool 									& Default setting: True. To switch cannonball mode off, use the call setUseCanonballModel(``False")\\ \hline
+		sunEclipseInMsgName	 & N/A 										 & string									& No default. Must be set. If an eclipse model is being used, this should reference eclipse output. \\ \hline
+		sunEclipseMsgData		& N/A										& string									& No default. If creating a "fake" eclipse message, set to radiation\_pressure.EclipseSimMsg() \\ \hline
+		sunEclipseMsgData.shadowFactor & $F_{\mathrm{s}}$& double								& Default setting: 1.0. i.e. there is no shadow by default. \\ \hline
 	\end{tabular}
 	\label{tabular:vars}
 \end{table}
 
+It is important to note that in order for the sunEclipse information in the table above to be utilized, one must call:
+unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsgData). In other cases, the eclipse message will be set by the eclipse module and the radiation pressure module will only need to be told where to look for it.
+
 \subsubsection{Code Diagram}
 
 \begin{figure}[H]
-	\centering \includegraphics[height=0.8\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
-	\caption{A pseudo-code diagram demonstrating the flow of inputs and outputs in the gravity effector module.}
+	\centering \includegraphics[height=0.6\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
+	\caption{A pseudo-code diagram showing the flow of inputs and outputs in the radiation pressure module.}
 	\label{img:codeFlow}
 \end{figure}
 
-The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another. In general, the inputs shown must be given for each gravity body to be considered. There are, however, convenience functions which add the standard values of these inputs for common celestial bodies. An example is simIncludeGravity.addEarth() in the test\_scenarioOrbitManeuver.py tutorial.
+The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of the gravity effector module. There is extensive additional code that deals with things from the messaging system to transforming the spacecraft position from one frame to another.
 
-After the inputs are given for each gravity body, the computeGravityInertial() calculates the $0^{\textbf{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate higher degree spherical harmonics terms for that body.
+After the inputs are given, radiation\_pressure.cpp calculates the effects of radiation pressure via one of the two methods. At the end, the eclipse factor scales the output forces and torques.
