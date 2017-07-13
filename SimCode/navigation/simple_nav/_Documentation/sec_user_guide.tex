@@ -1,0 +1,14 @@
+\section{User Guide}
+
+The nominal set-up for the ephemeris converter is done as follows:
+
+\begin{itemize}
+\item[-]     \texttt{EphemObject = ephemeris\_converter.EphemerisConverter()}
+\item[-]     \texttt{EphemObject.ModelTag = 'EphemData'}
+\item[-]     \texttt{messageMap = \{\}}
+\item[-]  \texttt{for planet in planetList:}
+
+\hspace{2cm}   \texttt{messageMap[planet + '\_planet\_data'] = planet + '\_ephemeris\_data'}
+
+\item[-]   \texttt{EphemObject.messageNameMap = ephemeris\_converter.map\_string\_string(messageMap)}
+\end{itemize}

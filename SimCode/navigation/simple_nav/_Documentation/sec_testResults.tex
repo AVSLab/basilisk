@@ -1,0 +1,86 @@
+\section{Test Results}
+
+\subsection{Pass/Fail}
+The test results are explained below and summarized in Table~\ref{tab:results}.
+
+\begin{enumerate}
+\item{Error Bound Enforcement: We do want to violate the error bound a 
+   statistically small number of times as most bounds are specified 3-sigma 
+   and we'll need to be at the spec to make sure it works.  All signals remained 
+   inside their bounds greater than 1-sigma (~30\%) of the time.  }
+\item{Error Bound Usage: As stated above, we want to ensure that the random 
+   walk process is effectively utilizing the error bound that it has been 
+   given and not remaining mired near zero.  All error signals cross up above 
+   75\% of their error bound at least once.}
+\item{Corner Case Usage: All errors/warnings were stimulated and the simulation 
+   still ran without incident. }
+\end{enumerate}
+
+\begin{table}[htbp]
+    \caption{Test Results}
+\label{tab:results}
+    \centering \fontsize{10}{10}\selectfont
+\begin{tabular}{|c||c|}
+\hline
+SubTest & Result \\ \hline \hline
+Bound Enforcement& \textcolor{ForestGreen}{Passed} \\ \hline
+Bound Usage &  \textcolor{ForestGreen}{Passed}\\ \hline
+Corner Case &  \textcolor{ForestGreen}{Passed}\\ \hline
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Test Coverage}
+The method coverage for all of the methods included in the simple\_nav 
+module are tabulated in Tables~\ref{tab:cov_met} and \ref{tab:cov_met2}.
+
+\begin{table}[htbp]
+    \caption{Simple Navigation Test Analysis Results}
+   \label{tab:cov_met}
+        \centering \fontsize{10}{10}\selectfont
+   \begin{tabular}{c | r | r | r} % Column formatting, 
+      \hline
+      Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
+      \hline
+      UpdateState & 100.0 & 0.08 & 15.0 \\
+      SelfInit & 100.0 & 0.0 & 0.0 \\
+      CrossInit & 100.0 & 0.0 & 0.0 \\
+      computeOutput & 100.0 & 0.0 & 0.0 \\
+      \hline
+   \end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+    \caption{GaussMarkov Test Analysis Results}
+   \label{tab:cov_met2}
+        \centering \fontsize{10}{10}\selectfont
+   \begin{tabular}{c | r | r | r} % Column formatting, 
+      \hline
+      Method Name    & Unit Test Coverage (\%) & Runtime Self (\%) & Runtime Children (\%) \\
+      \hline
+      computeNextState & 100.0 & 0.71 & 12.4 \\
+      setRNGSeed & 100.0 & 0.0 & 0.0 \\
+      setPropMatrix & 100.0 & 0.0 & 0.0 \\
+      getCurrentState & 100.0 & 0.0 & 0.0 \\
+      setUpperBounds & 100.0 & 0.0 & 0.0 \\
+      setNoiseMatrix & 100.0 & 0.0 & 0.0 \\
+      setPropMatrix & 100.0 & 0.0 & 0.0 \\
+      \hline
+   \end{tabular}
+\end{table}
+For all of the code this test was designed for, the coverage percentage is 
+100\%.  The CPU usage of the model is higher than would be ideal although this 
+might just be a symptom of the level of simplicity present in the overall 
+simulation.  The majority of the computations are coming from two pieces of the 
+GaussMarkov code.  
+
+The first is the random number generator.  The model is using 
+one of the simplest random number generators in the standard template library.  
+That is still a relatively expensive operation as random numbers are costly and 
+we generate a new random number for each state.  The second factor is in the 
+state and noise propagation.  Those are being performed with a matrix 
+multiplication that is an $n^2$ operation.  We could save some computations 
+here in the future if we took away the cross-correlation capability from some 
+of the states which would definitely be easy and accurate.  It would just take 
+some more code.
