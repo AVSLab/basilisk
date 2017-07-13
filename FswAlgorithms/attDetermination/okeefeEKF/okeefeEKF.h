@@ -50,6 +50,7 @@ typedef struct {
 
 	double states[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
     double prev_states[SKF_N_STATES_HALF];        /*!< [-] State estimate for previous time TimeTag*/
+    double omega[SKF_N_STATES_HALF];        /*!< [-] Rotation rate vector*/
     double x[SKF_N_STATES_HALF];             /*! State errors */
     double xBar[SKF_N_STATES_HALF];            /*! [-] Current mean state estimate*/
 	double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];         /*!< [-] Time updated covariance */
@@ -95,13 +96,15 @@ extern "C" {
                            uint64_t moduleID);
 	void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime);
     void sunlineMeasUpdate(okeefeEKFConfig *ConfigData, double updateTime);
-	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double *stateInOut, double *stateTransition);
+	void sunlineStateSTMProp(double dynMat[SKF_N_STATES*SKF_N_STATES], double dt, double omega[SKF_N_STATES_HALF],double *stateInOut, double *prevstates, double *stateTransition);
     
     void sunlineHMatrixYMeas(double states[SKF_N_STATES], int numCSS, double cssSensorCos[MAX_N_CSS_MEAS], double sensorUseThresh, double cssNHat_B[MAX_NUM_CSS_SENSORS*3], double *obs, double *yMeas, int *numObs, double *measMat);
     
     void sunlineKalmanGain(double covarBar[SKF_N_STATES*SKF_N_STATES], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double qObsVal, int numObs, double *kalmanGain);
     
-    void sunlineDynMatrix(double stateInOut[SKF_N_STATES], double dt, double *dynMat);
+    void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev_states[SKF_N_STATES_HALF], double *omega);
+    
+    void sunlineDynMatrix(double omega[SKF_N_STATES], double dt, double *dynMat);
     
     void sunlineCKFUpdate(double xBar[SKF_N_STATES], double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS], double covarBar[SKF_N_STATES*SKF_N_STATES], double qObsVal, int numObs, double yObs[MAX_N_CSS_MEAS], double hObs[MAX_N_CSS_MEAS*SKF_N_STATES], double *x, double *covar);
     

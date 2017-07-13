@@ -111,15 +111,16 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->yMeas, ConfigData->numObs);
     vSetZero(ConfigData->xBar, ConfigData->numStates);
-    mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
+    vSetZero(ConfigData->omega, ConfigData->numStates);
+    vSetZero(ConfigData->prev_states, ConfigData->numStates);
     
-    mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
-
+    mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
     mSetZero(ConfigData->dynMat, ConfigData->numStates, ConfigData->numStates);
     mSetZero(ConfigData->measMat, ConfigData->numObs, ConfigData->numStates);
     mSetZero(ConfigData->kalmanGain, ConfigData->numStates, ConfigData->numObs);
-    
     mSetZero(ConfigData->measNoise, ConfigData->numObs, ConfigData->numObs);
+    
+    mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
     mSetIdentity(ConfigData->procNoise,  ConfigData->numStates/2, ConfigData->numStates/2);
     mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates/2, ConfigData->numStates/2, ConfigData->procNoise);
     
@@ -203,8 +204,9 @@ void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineDynMatrix(ConfigData->states, ConfigData->dt, ConfigData->dynMat);
-    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->states, ConfigData->stateTransition);
+    sunlineRateCompute(ConfigData->states, ConfigData->dt, ConfigData->prev_states, ConfigData->omega);
+    sunlineDynMatrix(ConfigData->omega, ConfigData->dt, ConfigData->dynMat);
+    sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->omega, ConfigData->states, ConfigData->prev_states, ConfigData->stateTransition);
 
     /* xbar = Phi*x */
     mMultV(ConfigData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->x, ConfigData->xBar);
@@ -226,35 +228,72 @@ void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime)
 }
 
 
+/*! This method computes the rotation rate of the spacecraft by using the two previous state estimates.
+	@return void
+    @param states Updated states
+    @param dt Time step
+    @param prev_states The states saved from previous step for this purpose
+    @param omega Pointer to the rotation rate
+ */
+void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev_states[SKF_N_STATES_HALF], double *omega)
+{
+    
+    double dk_dot_dkmin1, dk_dot_dkmin1_normal, dk_cross_dkmin1_normal[SKF_N_STATES_HALF];
+    double dk_hat[SKF_N_STATES_HALF], dkmin1_hat[SKF_N_STATES_HALF];
+
+    if (v3IsZero(prev_states, 1E-10)){
+    
+        v3SetZero(omega);
+    }
+    else{
+        /* Set local variables to zero */
+        dk_dot_dkmin1=0;
+        dk_dot_dkmin1_normal=0;
+        vSetZero(dk_hat, SKF_N_STATES_HALF);
+        vSetZero(dkmin1_hat, SKF_N_STATES_HALF);
+    
+        /* Normalized d_k and d_k-1 */
+        v3Normalize(states, dk_hat);
+        v3Normalize(prev_states, dkmin1_hat);
+        
+        /* Get the dot product to use in acos computation*/
+        dk_dot_dkmin1_normal = v3Dot(dk_hat, dkmin1_hat);
+        
+        /*Get the cross prodcut for the direction of omega*/
+        v3Cross(dk_hat, dkmin1_hat, dk_cross_dkmin1_normal);
+        
+        /* Scale direction by the acos and the 1/dt*/
+        v3Scale(1/dt*acos(dk_dot_dkmin1_normal), dk_cross_dkmin1_normal, omega);
+    }
+    return;
+}
+
 /*! This method propagates a sunline state vector forward in time.  Note
  that the calling parameter is updated in place to save on data copies.
  This also updates the STM using the dynamics matrix.
 	@return void
-	@param stateInOut,
+
  */
-void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double dt, double *stateInOut, double *stateTransition)
+void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], double dt, double omega[SKF_N_STATES_HALF], double *stateInOut, double *prevstates, double *stateTransition)
 {
     
     double propagatedVel[SKF_N_STATES_HALF];
-    double pointUnit[SKF_N_STATES_HALF];
-    double unitComp;
+    double omegaCrossd[SKF_N_STATES_HALF];
     double deltatASTM[SKF_N_STATES_HALF*SKF_N_STATES_HALF];
+    
+    /* Populate d_k-1 */
+    vCopy(stateInOut, SKF_N_STATES_HALF, prevstates);
     
     /* Set local variables to zero*/
     mSetZero(deltatASTM, SKF_N_STATES_HALF, SKF_N_STATES_HALF);
-    unitComp=0.0;
-    vSetZero(pointUnit, SKF_N_STATES_HALF);
     vSetZero(propagatedVel, SKF_N_STATES_HALF);
     
     /*! Begin state update steps */
-    /*! - Unitize the current estimate to find direction to restrict motion*/
-    v3Normalize(stateInOut, pointUnit);
-    unitComp = v3Dot(&(stateInOut[3]), pointUnit);
-    v3Scale(unitComp, pointUnit, pointUnit);
-    /*! - Subtract out rotation in the sunline axis because that is not observable
-     for coarse sun sensors*/
-    v3Subtract(&(stateInOut[3]), pointUnit, &(stateInOut[3]));
-    v3Scale(dt, &(stateInOut[3]), propagatedVel);
+    /*! Take omega cross d*/
+    v3Cross(omega, stateInOut, omegaCrossd);
+
+    /*! - Multiply omega cross d by -dt and add to state to propagate */
+    v3Scale(-dt, omegaCrossd, propagatedVel);
     v3Add(stateInOut, propagatedVel, stateInOut);
     
     /*! Begin STM propagation step */
@@ -269,45 +308,19 @@ void sunlineStateSTMProp(double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF], dou
  dynamics F by the state X, evaluated at the reference state. It takes in the
  configure data and updates this A matrix pointer called dynMat
  @return void
- @param states Updated states
+ @param omega The rotation rate
  @param dt Time step
  @param dynMat Pointer to the Dynamic Matrix
  */
 
-void sunlineDynMatrix(double states[SKF_N_STATES_HALF], double dt, double *dynMat)
+void sunlineDynMatrix(double omega[SKF_N_STATES_HALF], double dt, double *dynMat)
 {
-    double dddot, ddtnorm2[3][3];
-    double I3[3][3], d2I3[3][3];
-    double douterddot[3][3], douterd[3][3], neg2dd[3][3];
-    double secondterm[3][3], firstterm[3][3];
-    double normd2;
-    double dFdd[3][3], dFdddot[3][3];
+    double skewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
+    double negskewOmega[SKF_N_STATES_HALF][SKF_N_STATES_HALF];
     
-    /* dF1dd */
-    mSetIdentity(I3, 3, 3);
-    dddot = v3Dot(&(states[0]), &(states[3]));
-    normd2 = v3Norm(&(states[0]))*v3Norm(&(states[0]));
-    
-    mScale(normd2, I3, 3, 3, d2I3);
-    
-    v3OuterProduct(&(states[0]), &(states[3]), douterddot);
-    v3OuterProduct(&(states[0]), &(states[0]), douterd);
-    
-    m33Scale(-2.0, douterd, neg2dd);
-    m33Add(d2I3, neg2dd, secondterm);
-    m33Scale(dddot/(normd2*normd2), secondterm, secondterm);
-    
-    m33Scale(1.0/normd2, douterddot, firstterm);
-    
-    m33Add(firstterm, secondterm, dFdd);
-    m33Scale(-1.0, dFdd, dFdd);
-    
-    /* Populate the first 3x3 matrix of the dynamics matrix*/
-    mSetSubMatrix(dFdd, 3, 3, dynMat, SKF_N_STATES_HALF, SKF_N_STATES_HALF, 0, 0);
-    
-    /* dF1dddot */
-    m33Scale(-1.0/normd2, douterd, ddtnorm2);
-    m33Add(I3, ddtnorm2, dFdddot);
+    v3Tilde(omega, skewOmega);
+    m33Scale(-1, skewOmega, negskewOmega);
+    mCopy(negskewOmega, SKF_N_STATES_HALF, SKF_N_STATES_HALF, dynMat);
     
     return;
 }
