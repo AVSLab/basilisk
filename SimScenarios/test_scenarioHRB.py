@@ -85,10 +85,15 @@ simulationBase.AddModelToTask(dynamicsTaskName, satellite)
 # clear prior gravity data left over from earlier sims
 simIncludeGravity.clearSetup()
 
-# setup Gravity Body (Earth)
-simIncludeGravity.addEarth()                            #add the earth to the simulation including the radius and gravitional parameter
+# setup Gravity Body (Sun)
+simIncludeGravity.addSun()                            #add the sun to the simulation including the radius and gravitional parameter
 simIncludeGravity.gravBodyList[-1].isCentralBody = True #make the most recently added gravBody be the central body.
 mu = simIncludeGravity.gravBodyList[-1].mu              #get mu from the added Earth data.
+
+simIncludeGravity.addEarth()
+simIncludeGravity.addMars()
+
+
 
 # attach gravity model to spaceCraftPlus
 satellite.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList) #Tell the satellite that every body in the gravBodyList is acting on it.
@@ -98,17 +103,17 @@ satellite.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity
 #
 # setup the orbit using classical orbit elements
 oe = orbitalMotion.ClassicElements() #create an empty set of orbital elements
-rLEO = 7000.*1000      # meters from the center of the earth
-rGEO = 42000.*1000     # meters from the center of the earth
+AU = 1.496e11      # meters from the center of the sun
 #Now set up the orbital elements for a LEO circular orbit
-oe.a     = rLEO
-oe.e     = 0.1
-oe.i     = 0.0*macros.D2R
-oe.Omega = 48.2*macros.D2R
-oe.omega = 0.0*macros.D2R
-oe.f     = 85.3*macros.D2R
+oe.a     = AU
+oe.e     = 0.5
+oe.i     = 90.0*macros.D2R
+oe.Omega = 48.2 * macros.D2R
+oe.omega = 347.8 * macros.D2R
+oe.f = 85.3 * macros.D2R
 rN, vN = orbitalMotion.elem2rv(mu, oe) #convert the orbital elements to inertial position and velocity
 oe = orbitalMotion.rv2elem(mu, rN, vN) # this stores consistent initial orbit elements
+
 # with circular or equatorial orbit, some angles are arbitrary
 
 #
@@ -122,7 +127,7 @@ satellite.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # meters/second
 n = np.sqrt(mu/oe.a/oe.a/oe.a)  #The orbital frequency of the orbit set above
 P = 2.*np.pi/n                  #The period, P of the orbit set above
 
-simulationTime = macros.sec2nano(P)    #run the simulation for three-quarters of a period
+simulationTime = macros.sec2nano(P/100)    #run the simulation for three-quarters of a period
 
 #
 #   Setup data logging before the simulation is initialized
@@ -136,7 +141,8 @@ simulationBase.TotalSim.logThisMessage(satellite.scStateOutMsgName, samplingTime
 #
 # create simulation messages
 # the addDefaultEphemerisMsg can be used if only one gravBody is present
-simIncludeGravity.addDefaultEphemerisMsg(simulationBase.TotalSim, dynamicsProcessName) #create a message from simulationBase.TotalSim which includes the default gravBody information
+#simIncludeGravity.addDefaultEphemerisMsg(simulationBase.TotalSim, dynamicsProcessName) #create a message from simulationBase.TotalSim which includes the default gravBody information
+#above message not needed with multiple gravBodies for some reason - SJKC.
 
 #
 #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
@@ -165,6 +171,7 @@ velData = simulationBase.pullMessageLogData(satellite.scStateOutMsgName+'.v_BN_N
 fileNameString = filename[len(path)+6:-3] #grab the name of this test (scenarioHRB) from the filepath.
     
 # draw the inertial position vector components
+# This plots the X, Y, and Z positions of the spacecraft relative to the planet vs. time.
 plt.close("all")    # clears out plots from earlier test runs
 plt.figure(1)       # select figure 1 for plotting
 fig = plt.gcf()     # create a handle for figure 1 called fig
@@ -179,40 +186,40 @@ plt.xlabel('Time [orbits]')
 plt.ylabel('Inertial Position [km]')
 
 
-# # draw orbit in perifocal frame
-# b = oe.a*np.sqrt(1-oe.e*oe.e)   #the semi-minor axis
-# p = oe.a*(1-oe.e*oe.e)          #the parameter, semilatus rectum
-# plt.figure(2,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)      #switch to figure 2 and set it up to fit the data nicely
-# plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)   #set the axis to handle the data nicely.
-# # draw the planet (just a colored circle on the graph)
-# fig = plt.gcf()         #make fig the handle for figure 2 now
-# ax = fig.gca()          #make ax the handle for the axis on figure 2 now
-# planetColor= '#008800'  #choose whatever you like
-# planetRadius = simIncludeGravity.gravBodyList[0].radEquator/1000    #set the radius of the circle in [km]
-# ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))  #use the artist functionality to draw the circle(planet)
-# # draw the actual orbit
-# rData=[] #an empty list for radius data
-# fData=[] #an empty list for orbital ???
-# for idx in range(0,len(posData)): #for every time step
-#     oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4]) #convert r,v back to oe
-#     rData.append(oeData.rmag)
-#     fData.append(oeData.f + oeData.omega - oe.omega)
-# plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-#          ,color='#aa0000'
-#          ,linewidth = 3.0
-#          )
-# # draw the full osculating orbit from the initial conditions
-# fData = np.linspace(0,2*np.pi,100)
-# rData = []
-# for idx in range(0,len(fData)):
-#     rData.append(p/(1+oe.e*np.cos(fData[idx])))
-# plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
-#          ,'--'
-#          , color='#555555'
-#          )
-# plt.xlabel('$i_e$ Cord. [km]')
-# plt.ylabel('$i_p$ Cord. [km]')
-# plt.grid()
+# draw orbit in perifocal frame
+b = oe.a*np.sqrt(1-oe.e*oe.e)   #the semi-minor axis
+p = oe.a*(1-oe.e*oe.e)          #the parameter, semilatus rectum
+plt.figure(2,figsize=np.array((1.0, b/oe.a))*4.75,dpi=100)      #switch to figure 2 and set it up to fit the data nicely
+plt.axis(np.array([-oe.rApoap, oe.rPeriap, -b, b])/1000*1.25)   #set the axis to handle the data nicely.
+# draw the planet (just a colored circle on the graph)
+fig = plt.gcf()         #make fig the handle for figure 2 now
+ax = fig.gca()          #make ax the handle for the axis on figure 2 now
+planetColor= '#559900'  #choose whatever you like
+planetRadius = simIncludeGravity.gravBodyList[0].radEquator/1000    #set the radius of the circle in [km]
+ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))  #use the artist functionality to draw the circle(planet)
+# draw the actual orbit
+rData=[] #an empty list for radius data
+fData=[] #an empty list for orbital ???
+for idx in range(0,len(posData)): #for every time step
+    oeData = orbitalMotion.rv2elem(mu,posData[idx,1:4],velData[idx,1:4]) #convert r,v back to oe
+    rData.append(oeData.rmag)
+    fData.append(oeData.f + oeData.omega - oe.omega)
+plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
+         ,color='#aa0000'
+         ,linewidth = 3.0
+         )
+# draw the full osculating orbit from the initial conditions
+fData = np.linspace(0,2*np.pi,100)
+rData = []
+for idx in range(0,len(fData)):
+    rData.append(p/(1+oe.e*np.cos(fData[idx])))
+plt.plot(rData*np.cos(fData)/1000, rData*np.sin(fData)/1000
+         ,'--'
+         , color='#555555'
+         )
+plt.xlabel('$i_e$ Cord. [km]')
+plt.ylabel('$i_p$ Cord. [km]')
+plt.grid()
 
 
 plt.show()
