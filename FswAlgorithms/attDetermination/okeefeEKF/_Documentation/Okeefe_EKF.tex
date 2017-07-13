@@ -70,21 +70,27 @@ was implemented for it.
 
 \subsection{Dynamics}
 
-The states that are estimated in this filter are the sunline vector, and it's rate of change $\bm X^* = \begin{bmatrix} \bm d &  \dot{\bm d}\end{bmatrix}^T$. The star superscript represents that
+The states that are estimated in this filter are the sunline vector, and it's rate of change $\bm X^* = \begin{bmatrix} \bm d\end{bmatrix}^T$. The star superscript represents that
 this is the reference state. 
 
 The dynamics are given in equation \ref{eq:dyn}. Given the nature of the filter, there is an unobservable state component: the rotation about the $\bm d$ axis. In order to remedy this, we project the states along this axis and subtract them, in order to measure only observable state components. 
 
 \begin{equation}\label{eq:dyn}
-\bm F(\bm X) = \begin{bmatrix} \bm F_1(\bm d) \\  \bm F_2(\dot{\bm d})\end{bmatrix} =  \begin{bmatrix} \dot{\bm d} - \left( (\bm d \cdot \dot{\bm d} )\frac{\bm d}{||\bm d||^2} \right) \\ - \frac{1}{\Delta t}\left( (\bm d \cdot \dot{\bm d}) \frac{\bm d}{||\bm d||^2} \right)\end{bmatrix} 
+\bm F(\bm X) =\dot{\bm d}  = - \bm \omega \times \bm d
 \end{equation}
 
 This leads us to the computation of the dynamics matrix $A = \left[\frac{\partial \bm F (\bm X, t_i)}{\partial \bm X}\right]^{*}$. The partials are given in equation \ref{eq:dynmat}, and were verified in Mathematica.
 
 \begin{align}\label{eq:dynmat}
-A&= \begin{bmatrix} \frac{\partial \bm F_1 (\bm X, t_i)}{\partial \bm d} &  \frac{\partial \bm F_1 (\bm X, t_i)}{\partial \dot{\bm d}} \\  \frac{\partial \bm F_2 (\bm X, t_i)}{\partial \bm d} &  \frac{\partial \bm F_2 (\bm X, t_i)}{\partial \dot{\bm d}}\end{bmatrix} \\
-&=  \begin{bmatrix}- \left( \frac{\dot{\bm d} \bm d^T}{||\bm d||^2} + (\bm d \cdot \dot{\bm d})\frac{||\bm d||^2 I - 2 \bm d \bm d^T}{||\bm d||^4} \right) & I -\frac{\bm d \bm d^T}{||\bm d||^2} \\ - \frac{1}{\Delta t}\left( \frac{\dot{\bm d} \bm d^T}{||\bm d||^2} + (\bm d \cdot \dot{\bm d})\frac{||\bm d||^2 I - 2 \bm d \bm d^T}{||\bm d||^4} \right) & -\frac{1}{\Delta t}\frac{\bm d \bm d^T}{||\bm d||^2}\end{bmatrix} 
+A&= \begin{bmatrix} \frac{\partial \bm F (\bm d, t_i)}{\partial \bm d}  \end{bmatrix} \\
+&=  - \begin{bmatrix} \tilde{\bm \omega}\end{bmatrix} 
 \end{align}
+
+If rate gyro measurements are available, we can use the $\bm \omega$ vector that they provide. In the case where they are not available, we can approximate it by logging an extra time step of the sun heading vector estimate $\bm d$:
+
+\begin{equation}
+\bm \omega_k = \frac{1}{\Delta t} \frac{\bm d_k \times \bm d_{k-1}}{\|\bm d_k \times \bm d_{k-1} \|} \arccos\left( \frac{\bm d_k \cdot \bm d_{k-1}}{\|\bm d_k \| \| \bm d_{k-1}\|}\right) 
+\end{equation}
 
 The measurement model is given in equation \ref{eq:meas}, and the $H$ matrix defined as $H = \left[\frac{\partial \bm G (\bm X, t_i)}{\partial \bm X}\right]^{*}$ is given in equation $\ref{eq:Hmat}$. 
 
