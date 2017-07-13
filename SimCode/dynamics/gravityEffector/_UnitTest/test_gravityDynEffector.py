@@ -21,6 +21,7 @@ import sys, os, inspect
 import numpy
 import pytest
 import math
+import numpy as np
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -44,15 +45,16 @@ import stateArchitecture
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def gravityEffectorAllTest(show_plots):
-    [testResults, testMessage] = test_sphericalHarmonics(show_plots)
+def test_gravityEffectorAllTest(show_plots):
+    [testResults, testMessage] = sphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_singleGravityBody(show_plots)
+    [testResults, testMessage] = singleGravityBody(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_multiBodyGravity(show_plots)
+    [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
-def test_sphericalHarmonics(show_plots):
+def sphericalHarmonics(show_plots):
+    testCase = 'sphericalHarmonics'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -82,24 +84,47 @@ def test_sphericalHarmonics(show_plots):
     spherHarm.initializeParameters()
     gravOut = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 20, True)
     gravMag = numpy.linalg.norm(numpy.array(gravOut))
-    
-    if gravMag > 9.9 or gravMag < 9.7:
+
+    accuracy = 0.1
+    gravExpected = 9.8
+    if gravMag > (gravExpected + accuracy) or gravMag < (gravExpected - accuracy):
         testFailCount += 1
         testMessages.append("Gravity magnitude not within allowable tolerance")
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
     gravOutMax = spherHarm.computeField([[0.0], [0.0], [(6378.1363)*1.0E3]], 100, True)
-
     if gravOutMax != gravOut:
         testFailCount += 1
         testMessages.append("Gravity ceiling not enforced correctly")
 
     if testFailCount == 0:
+        passFailText = 'PASSED'
         print "PASSED: " + " Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_singleGravityBody(show_plots):
+def singleGravityBody(show_plots):
+    testCase = 'singleBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -173,7 +198,6 @@ def test_singleGravityBody(show_plots):
         SpiceObject.J2000Current = etCurr;SpiceObject.UpdateState(0)
         earthGravBody.loadEphemeris(0)
         gravOut = earthGravBody.computeGravityInertial(stateOut[0:3].reshape(3,1).tolist(), 0)
- 
         gravErrNorm.append(numpy.linalg.norm(gravVec*1000.0 - numpy.array(gravOut).reshape(3))/
             numpy.linalg.norm(gravVec*1000.0))
         
@@ -181,14 +205,16 @@ def test_singleGravityBody(show_plots):
         etCurr = pyswice.doubleArray_getitem(et, 0)
         etCurr += dt;
         stringCurrent = pyswice.et2utc_c(etCurr, 'C', 4, 1024, "Yo")
-    
 
-    
+    accuracy = 1.0e-4
     for gravErr in gravErrNorm:
-        if gravErr > 1.0e-4:
+        if gravErr > accuracy:
             testFailCount += 1
             testMessages.append("Gravity numerical error too high for kernel comparison")
             break
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
     
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/de430.bsp')
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/naif0011.tls')
@@ -196,14 +222,35 @@ def test_singleGravityBody(show_plots):
     pyswice.unload_c(splitPath[0] + '/External/EphemerisData/pck00010.tpc')
     pyswice.unload_c(path + '/hst_edited.bsp')
 
+
     if testFailCount == 0:
-        print "PASSED: " + " Single body with spherical harmonics"
+        passFailText = 'PASSED'
+        print "PASSED: " + "Single-body with Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     
     return [testFailCount, ''.join(testMessages)]
 
-def test_multiBodyGravity(show_plots):
+def multiBodyGravity(show_plots):
+    testCase = 'multiBody'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -310,22 +357,43 @@ def test_multiBodyGravity(show_plots):
         stateNext = pyswice.spkRead('DAWN', stringNext, 'J2000', 'SUN')*1000.0
         gravVec = (stateNext[3:6] - statePrev[3:6])/(etNext - etPrev)
         gravErrVec.append(numpy.linalg.norm(gravVec.reshape(3,1) - numpy.array(TotalSim.newManager.getPropertyReference("g_N"))))
-    
+
+    accuracy = 5.0e-4
+
     for gravMeas in gravErrVec:
-        if gravMeas > 5.0e-4:
-            print gravMeas
+        if gravMeas > accuracy:
             testFailCount += 1
             testMessages.append("Gravity multi-body error too high for kernel comparison")
             break
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
 
-    
     if testFailCount == 0:
-        print "PASSED: " + " Multi gravitational bodies"
+        passFailText = 'PASSED'
+        print "PASSED: " + "Multi-body with Spherical Harmonics"
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}' #write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
+
+
     # return fail count and join into a single string all messages in the list
     # testMessage
-    
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    gravityEffectorAllTest(False)
+    test_gravityEffectorAllTest(False)
     

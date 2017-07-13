@@ -1,0 +1,18 @@
+\section{Test Description and Success Criteria}
+This test is located at {\tt SimCode/sensors/imu\_sensor/\_UnitTest/test\_imu\_sensor.py}. In order to get good coverage of all the aspects of the module, the test is broken up into several parts: \par
+
+\begin{enumerate}
+	\item \underline{Gyro/Accelerometer I/O} The check verifies basic I/O of body rates and acceleration. Initial attitude MRP, body rates, and Delta V are propagated and corresponding body rates, acceleration, DR, and DV are compared to module output.
+	\item \underline{MRP Switch} The check validates that the module accounts for attitude MRP switching in calculation of body rates. Initial attitude MRP and body rates are propagated for a sufficient amount of time for the MRP to switch to the shadow set. The test verifies that the module sets the MRP switch flag to TRUE.
+	\item \underline{Static Bias} The check validates static bias in gyro/accel measurements. Gyro and accelerometer static bias are set to nonzero values. Initial MRP, body rates, and DV are propagated. Module output is verified to contain data with static bias.
+	\item \underline{Process Noise} The check verifies that the Gauss-Markov model applies noise of appropriate mean and standard deviation to the attitude coordinate output. This check does not consider bias random walk. Accelerometer and gyro noise standard deviations are set to nonzero values for each axis. Module output is verified by taking the standard deviation of output data and comparing to specified values.
+	\item \underline{Discretization} The check verifies that the module correctly discretizes the gyro/accel data according to the specified least significant bit (LSB). LSB of gyro and accelerometer are set to nonzero values. Output is verifed to round input to nearest multiple of LSB.
+	\item \underline{Saturation} The check verifies that the module saturates the output according to specified values. Gyro and accelerometer maximum output are set to nonzero values. Output is verified to not exceed specified saturation values for both negative and positive cases.
+	\item \underline{Accelerometer Center of Mass Offset} The check validates that the accelerometer will give appropriate output based on an offset in center of mass from accelerometer. Sensed acceleration is given by the equation
+	\begin{equation}
+	\ddot{\bm r}_\mathrm{sensed} = \bm\omega \times (\bm\omega \times \bm r_{\mathrm{SC}}) + \dot{\bm\omega} \times \bm r_{\mathrm{SC}} + \ddot{\bm r}_{B/N}
+	\end{equation}
+	where $\bm\omega$ is the spacecraft angular velocity vector, $\bm r_{\mathrm{SC}}$ is the position vector of the IMU with respect to the spacecraft center of mass, and $ \ddot{\bm r}_{B/N}$ is the actual inertial acceleration of the spacecraft.
+	\item \underline{IMU Misalignment} The check validates measurements taken when the IMU is not correctly aligned (i.e. the IMU measurements are taken in a frame with constant rotational offset from assumed IMU orientation).
+	\item \underline{Bias Random Walk Bounds} The check verifies that the Gauss-Markov model correctly applies bias random walk to the gyro and accelerometer output. Specified walk bounds are validated.
+\end{enumerate} 

@@ -11,6 +11,6 @@ lastfailed
 cmake-build*/*
 *.aux
 *.log
-*.gz
 *.out
+*.gz
 *.toc
