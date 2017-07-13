@@ -48,21 +48,22 @@ typedef struct {
 	double dt;                     /*!< [s] seconds since last data epoch */
 	double timeTag;                /*!< [s]  Time tag for statecovar/etc */
 
-	double states[SKF_N_STATES];        /*!< [-] State estimate for time TimeTag*/
-    double x[SKF_N_STATES];             /*! State errors */
-    double xBar[SKF_N_STATES];            /*! [-] Current mean state estimate*/
-	double covarBar[SKF_N_STATES*SKF_N_STATES];         /*!< [-] Time updated covariance */
-	double covar[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
-    double stateTransition[SKF_N_STATES*SKF_N_STATES];        /*!< [-] covariance */
-    double kalmanGain[SKF_N_STATES*MAX_N_CSS_MEAS];    /* Kalman Gain */
+	double states[SKF_N_STATES_HALF];        /*!< [-] State estimate for time TimeTag*/
+    double prev_states[SKF_N_STATES_HALF];        /*!< [-] State estimate for previous time TimeTag*/
+    double x[SKF_N_STATES_HALF];             /*! State errors */
+    double xBar[SKF_N_STATES_HALF];            /*! [-] Current mean state estimate*/
+	double covarBar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];         /*!< [-] Time updated covariance */
+	double covar[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
+    double stateTransition[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] covariance */
+    double kalmanGain[SKF_N_STATES_HALF*MAX_N_CSS_MEAS];    /* Kalman Gain */
 
-    double dynMat[SKF_N_STATES*SKF_N_STATES];        /*!< [-] Dynamics Matrix */
-    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES];        /*!< [-] Measurement Matrix H*/
+    double dynMat[SKF_N_STATES_HALF*SKF_N_STATES_HALF];        /*!< [-] Dynamics Matrix */
+    double measMat[MAX_N_CSS_MEAS*SKF_N_STATES_HALF];        /*!< [-] Measurement Matrix H*/
     
 	double obs[MAX_N_CSS_MEAS];          /*!< [-] Observation vector for frame*/
 	double yMeas[MAX_N_CSS_MEAS];        /*!< [-] Measurement model data */
 
-	double procNoise[SKF_N_STATES/2*SKF_N_STATES/2];       /*!< [-] process noise matrix */
+	double procNoise[SKF_N_STATES_HALF*SKF_N_STATES_HALF];       /*!< [-] process noise matrix */
 	double measNoise[MAX_N_CSS_MEAS*MAX_N_CSS_MEAS];  /*!< [-] Maximally sized obs noise matrix*/
     
     double cssNHat_B[MAX_NUM_CSS_SENSORS*3];     /*!< [-] CSS normal vectors converted over to body*/

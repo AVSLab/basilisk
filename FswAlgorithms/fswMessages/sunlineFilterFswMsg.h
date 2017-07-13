@@ -21,6 +21,7 @@
 #define SUNLINE_FILTER_MESSAGE_H
 
 #define SKF_N_STATES 6
+#define SKF_N_STATES_HALF 3
 #define MAX_N_CSS_MEAS 8
 
 /*! @brief structure for filter-states output for the unscented kalman filter
