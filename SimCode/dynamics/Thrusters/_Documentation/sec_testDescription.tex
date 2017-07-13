@@ -1,0 +1,63 @@
+\section{Test Description and Success Criteria}
+
+The unit test for the thruster\_dynamics module is located in:\\
+
+\noindent
+{\tt SimCode/dynamics/Thrusters/$\_$UnitTest/unit$\_$ThrusterDynamicsUnit.py} \\
+
+\subsection{Test inputs}
+
+The thruster inputs that were used are:
+
+\begin{itemize}
+\item The specific impulse: $I_{sp} = 266.7$s 
+
+A thrusters potential to deliver force per mass flow rate. 
+\item The maximum thrust: $F_{\mathrm{max}} = 1.0$ N
+
+The scaling factor yielding the thrust.
+\item The minimum On time: $t_{\mathrm{min}} = 0.006$s
+
+The minimum time that the thruster can be fired.
+\end{itemize}
+
+\subsection{Test sections}
+
+\noindent This unit test is designed to functionally test the simulation model 
+outputs as well as get complete code path coverage.  The test design is broken 
+up into several parts:\\
+\begin{enumerate}
+\item{\underline{Instantaneous On/Off Factor:} The thrusters are fired with an 
+  instantaneous ramp to ensure that the firing is correct. This gives us a base case.}
+\item{\underline{Short Instantaneous Firing:} A "short" firing that still respects the 
+  rules of thumb above is fired to ensure that it is still correct.}
+ \item{\underline{Short Instantaneous Firing with faster test rate:} A "short" firing that still respects the 
+  rules of thumb above but with a faster test rate to see the jump.}
+ \item{\underline{Instantaneous On/Off Factor with faster test rate:} The thrusters are fired with an 
+  instantaneous ramp to ensure that the firing is correct given a different test rate. This shouldn't modify the physics.}
+ \item{\underline{Thruster Angle Test:} The output forces/torques from the simulation 
+  are checked with a thruster pointing in a different direction.}
+   \item{\underline{Thruster Position Test:} The output forces/torques from the simulation 
+  are checked with a thruster in a different position.}
+   \item{\underline{Thruster Number Test:} The output forces/torques from the simulation 
+  are checked with two thruster in different positions, with different angles.}
+\item{\underline{Ramp On/Ramp Off Firing:} A set of ramps are set for the thruster to ensure 
+  that the ramp configuration is respected during a ramped firing.}
+  \item{\underline{Short ramped firing:} A thruster is fired for less than the amount of time it 
+   takes to reach the end of its ramp.}
+\item{\underline{Ramp On/Ramp Off Firing with faster test rate:} A set of ramps are set for the thruster to ensure 
+  that the ramp configuration is respected during a ramped firing with different test rate.}
+\item{\underline{Cutoff firing:} A thruster is commanded off (zero firing time) in the middle 
+   of its ramp up to ensure that it correctly cuts off the current firing}
+\item{\underline{Ramp down firing:} A thruster is fired during the middle of its ramp down 
+   to ensure that it picks up at that point in its ramp-up curve and reaches 
+   steady state correctly.}
+\end{enumerate}
+
+These scenarios create a set of different runs. These are run in the same test using pytest parameters. Therefore 12 different parameter sets were created to cover all of the listed parts.
+
+\subsection{Test success criteria}
+
+This thrusters test is considered successful if, for each of the scenarios, the output data matches exactly the truth data that is computed in python. This means that at every time step, the thrust is the one that is expected down to near machine precision ($\epsilon = 10^{-9}$). 
+
+This leave no slack for uncertainty in the thrusters module.

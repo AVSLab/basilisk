@@ -1,0 +1,59 @@
+\section{User Guide}
+
+The model can be configured according to the user's wishes, but the following 
+rules of thumb should probably be respected unless the user is confident:
+\begin{enumerate}
+\item{The internal simulation dynamics step time should be less than or equal 
+     to the thruster ramp-up/ramp-down time steps}
+\item{The internal simulation dynamics step time should be less than or equal to 
+     the desired thruster discretization level}
+\item{The internal simulation dynamics step time should be less than one-tenth 
+    of the expected minimum allowable thruster firing duration}
+\end{enumerate}
+
+A common set up for thrusters, contains:
+
+\begin{itemize}
+ \item[-]      \texttt{thrusterSet = thrusterDynamicEffector.ThrusterDynamicEffector()}: Construct the Thruster Dyn Effector
+  \item[-]   \texttt{thrusterSet.ModelTag = "ACSThrusterDynamics"}: Set the model tag
+   \item[-]    \texttt{thruster1 = thrusterDynamicEffector.THRConfigSimMsg()}: Create a individual thruster
+    \item[-] \texttt{thruster1.thrLoc\_B = [[1.0] ,[ 0.], [0.]] }: Set the thruster's location
+   \item[-]  \texttt{thruster1.thrDir\_B = [[math.cos(anglerad)], [math.sin(anglerad)], [0.0]]}: Set the thruster thrust direction
+  \item[-]   \texttt{thruster1.MaxThrust = 1.0}: Set the max thrust
+  \item[-]    \texttt{thruster1.steadyIsp = 226.7}: Set the $I_{sp}$
+  \item[-]   \texttt{thruster1.MinOnTime = 0.006}: Set the minimum on time
+   \item[-]   \texttt{thrusterSet.addThruster(thruster1)}: Add thruster to the Dyn Effector
+\end{itemize}
+
+If setting up a ramp, the user must also perform this:
+
+\begin{itemize}
+ \item[-]      \texttt{rampOnList = []}
+ \item[-]      \texttt{rampOffList = []}
+
+ \item[-]      \texttt{for i in range(rampsteps):}
+ 
+\hspace{2cm}\texttt{fnewElement = thrusterDynamicEffector.THRTimePairSimMsg()}
+
+\hspace{2cm}\texttt{fnewElement.TimeDelta = (i + 1.) * 0.1}
+
+\hspace{2cm}\texttt{fnewElement.ThrustFactor = (i + 1.0) / 10.0}
+
+\hspace{2cm}\texttt{fnewElement.IspFactor = (i + 1.0) / 10.0}
+
+\hspace{2cm}\texttt{frampOnList.append(newElement)}
+
+\hspace{2cm}\texttt{fnewElement = thrusterDynamicEffector.THRTimePairSimMsg()}
+
+\hspace{2cm}\texttt{fnewElement.TimeDelta = (i + 1) * 0.1}
+
+\hspace{2cm}\texttt{fnewElement.ThrustFactor = 1.0 - (i + 1.0) / 10.0}
+
+ \hspace{2cm}\texttt{fnewElement.IspFactor = newElement.ThrustFactor}
+ 
+ \hspace{2cm}\texttt{frampOffList.append(newElement)}
+
+ \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOnRamp = thrusterDynamicEffector.ThrusterTimeVector(rampOnList)}: Add the on ramp
+ \item[-]      \texttt{thrusterSet.thrusterData[0].ThrusterOffRamp = thrusterDynamicEffector.ThrusterTimeVector(rampOffList)}: Add the off ramp
+            
+            \end{itemize}
