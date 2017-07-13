@@ -1,0 +1,42 @@
+%This example shows how to load sections that are written elsewhere and look for their inputs in their own relative file path, rather than look from the document you are building.
+%Here, the sec_header.tex file has \usepackage{import}
+%Then, the sections are called with \subimport{relative path}{file} in order to \input{file} using the right relative path.
+%\import{full path}{file} can also be used if absolute paths are preferred over relative paths.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\input{../example/sec_header.tex} %include packages, styles, and new commands in this file.
+
+\begin{document}
+
+\makeCover
+
+%\input{../example/sec_revisionTable.tex} %when you update the file, update the revision table.
+\subimport{../example/}{sec_revisionTable.tex}
+
+\newpage
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+\tableofcontents %Autogenerate the table of contents
+~\\ \hrule ~\\ %Makes the line under table of contents
+	
+\subimport{../example/}{sec_modelDescription.tex} %This section includes mathematical models, code description, etc.
+
+\subimport{../example/}{sec_modelFunctions.tex} %This includes a concise list of what the module does.
+
+\subimport{../example/}{sec_modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+
+\subimport{../example/}{sec_testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
+
+\subimport{../example/}{sec_testParameters.tex}
+
+\subimport{../example/}{sec_testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
+
+\subimport{../example/}{sec_user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+
+\bibliography{../example/bibliography.bib} %This includes references used and mentioned.
+
+\end{document}
