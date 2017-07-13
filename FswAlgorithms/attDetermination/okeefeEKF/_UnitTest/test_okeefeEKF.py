@@ -44,20 +44,18 @@ def setupFilterData(filterObject):
     filterObject.cssConfInMsgName = "css_config_data"
 
     filterObject.sensorUseThresh = 0.
-    filterObject.states = [1.0, 1.0, 1.0, 0.0, 0.0, 0.0]
-    filterObject.x = [1.0, 0.0, 1.0, 0.0, 0.1, 0.0]
-    filterObject.covar = [0.4, 0.0, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.4, 0.0, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.4, 0.0, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.004, 0.0, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.004, 0.0,
-                          0.0, 0.0, 0.0, 0.0, 0.0, 0.004]
+    filterObject.states = [1.0, 1.0, 1.0]
+    filterObject.omega = [0.1, 0.2, 0.1]
+    filterObject.x = [1.0, 0.0, 1.0]
+    filterObject.covar = [0.4, 0.0, 0.0,
+                          0.0, 0.4, 0.0,
+                          0.0, 0.0, 0.4]
 
     filterObject.qProcVal = 0.1**2
     filterObject.qObsVal = 0.017 ** 2
     filterObject.eKFSwitch = 5. #If low (0-5), the CKF kicks in easily, if high (>10) it's mostly only EKF
 
-def test_all_functions_ekf(show_plots):
+def test_all_functions_oekf(show_plots):
     [testResults, testMessage] = sunline_individual_test()
     assert testResults < 1, testMessage
     [testResults, testMessage] = StatePropStatic()
@@ -73,12 +71,12 @@ def test_all_functions_ekf(show_plots):
 # The following 'parametrize' function decorator provides the parameters and expected results for each
 #   of the multiple test runs for this test.
 @pytest.mark.parametrize("SimHalfLength, AddMeasNoise , testVector1 , testVector2, stateGuess", [
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
-    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
-    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
-    (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6, 0.0, 0.0, 0.0]),
-    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0]),
-    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0, 0.0, 0.0, 0.0])
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0]),
+    (2000, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0]),
+    (200, False ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0]),
+    (200, False ,[0., 0.4, -0.4] ,[0., 0.7, 0.2], [0.3, 0.0, 0.6]),
+    (200, True ,[0., 0.4, -0.4] ,[0.4, 0.5, 0.], [0.7, 0.7, 0.0]),
+    (200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
 ])
 
 
@@ -87,7 +85,7 @@ def test_all_functions_ekf(show_plots):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_ekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+def test_all_sunline_oekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
     [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
     assert testResults < 1, testMessage
 
@@ -105,23 +103,20 @@ def sunline_individual_test():
     ## Testing dynamics matrix computation
     ###################################################################################
 
-    inputStates = [2,1,0.75,0.1,0.4,0.05]
+    NUMSTATES = 3
+
+    inputOmega = [0.1, 0.2, 0.1]
     dt =0.5
 
-    expDynMat = np.zeros([6,6])
-    expDynMat[0:3, 0:3] = -(np.outer(inputStates[0:3],inputStates[3:6])/np.linalg.norm(inputStates[0:3])**2. +
-                         np.dot(inputStates[3:6],inputStates[0:3])*(np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
-    expDynMat[0:3, 3:6] = np.eye(3) - np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2
+    expDynMat = - np.array([[0., -inputOmega[2], inputOmega[1]],
+                                      [inputOmega[2], 0., inputOmega[0]],
+                                      [ -inputOmega[1], inputOmega[0], 0.]])
 
-    ## Equations when removing the unobservable states from d_dot
-    expDynMat[3:6, 0:3] = -1/dt*(np.outer(inputStates[0:3],inputStates[3:6])/np.linalg.norm(inputStates[0:3])**2. +
-                         np.dot(inputStates[3:6],inputStates[0:3])*(np.linalg.norm(inputStates[0:3])**2.*np.eye(3)- 2*np.outer(inputStates[0:3],inputStates[0:3]))/np.linalg.norm(inputStates[0:3])**4.)
-    expDynMat[3:6, 3:6] =- 1/dt*(np.outer(inputStates[0:3],inputStates[0:3])/np.linalg.norm(inputStates[0:3])**2)
 
-    dynMat = sunlineEKF.new_doubleArray(6*6)
-    for i in range(36):
+    dynMat = sunlineEKF.new_doubleArray(3*3)
+    for i in range(9):
         sunlineEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineEKF.sunlineDynMatrix(inputStates, dt, dynMat)
+    sunlineEKF.sunlineDynMatrix(inputOmega, dt, dynMat)
 
     DynOut = []
     for i in range(36):
@@ -138,36 +133,38 @@ def sunline_individual_test():
     ## STM and State Test
     ###################################################################################
 
-    inputStates = [2,1,0.75, 1.5, 0.5, 0.5]
+    inputStates = [2,1,0.75]
+    inputOmega = [0.1, 0.2, 0.1]
     dt =0.5
-    stateTransition = sunlineEKF.new_doubleArray(36)
-    states = sunlineEKF.new_doubleArray(6)
-    for i in range(6):
+    stateTransition = sunlineEKF.new_doubleArray(NUMSTATES*NUMSTATES)
+    states = sunlineEKF.new_doubleArray(NUMSTATES)
+    prev_states = sunlineEKF.new_doubleArray(NUMSTATES)
+    for i in range(NUMSTATES):
         sunlineEKF.doubleArray_setitem(states, i, inputStates[i])
-        for j in range(6):
+        sunlineEKF.doubleArray_setitem(states, i, 0.)
+        for j in range(NUMSTATES):
             if i==j:
-                sunlineEKF.doubleArray_setitem(stateTransition, 6*i+j, 1.0)
+                sunlineEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 1.0)
             else:
-                sunlineEKF.doubleArray_setitem(stateTransition, 6*i+j, 0.0)
+                sunlineEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 0.0)
 
-    sunlineEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), dt, states, stateTransition)
+    sunlineEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), dt, inputOmega, states, prev_states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
-    for i in range(6):
+    for i in range(NUMSTATES):
         PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
-    for i in range(36):
+    for i in range(NUMSTATES*NUMSTATES):
         PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, i))
 
-    STMout = np.array(PropSTMOut).reshape([6,6])
+    STMout = np.array(PropSTMOut).reshape([NUMSTATES,NUMSTATES])
     StatesOut = np.array(PropStateOut)
 
-    expectedSTM = dt*np.dot(expDynMat, np.eye(6)) + np.eye(6)
-    expectedStates = np.zeros(6)
+    expectedSTM = dt*np.dot(expDynMat, np.eye(NUMSTATES)) + np.eye(NUMSTATES)
+    expectedStates = np.zeros(NUMSTATES)
     inputStatesArray = np.array(inputStates)
     ## Equations when removing the unobservable states from d_dot
-    expectedStates[3:6] = np.array(inputStatesArray[3:6]  - np.dot(inputStatesArray[3:6], inputStatesArray[0:3])*inputStatesArray[0:3]/np.linalg.norm(inputStatesArray[0:3])**2.)
-    expectedStates[0:3] = np.array(inputStatesArray[0:3] + dt*(inputStatesArray[3:6] - np.dot(inputStatesArray[3:6], inputStatesArray[0:3])*inputStatesArray[0:3]/np.linalg.norm(inputStatesArray[0:3])**2.))
+    expectedStates[0:3] = np.array(inputStatesArray - dt*(np.cross(np.array(inputOmega), np.array(inputStatesArray))))
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
@@ -184,7 +181,7 @@ def sunline_individual_test():
     ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
     ###################################################################################
-
+    print 'HERER'
     numCSS = 4
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
@@ -870,4 +867,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    test_all_sunline_ekf(False)
+    #StateUpdateSunLine(False, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
+    sunline_individual_test()
+    #StatePropStatic()
+    #StatePropVariable(show_plots)
