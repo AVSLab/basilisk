@@ -244,8 +244,8 @@ def unitSimpleNav(show_plots):
     unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
 
     # Corner case usage
-    pMatrixBad = [0.0]*18*18
-    stateBoundsBad = [0.0]*18
+    pMatrixBad = [0.0]*12*12
+    stateBoundsBad = [0.0]*12
     sNavObject.walkBounds = sim_model.DoubleVector(stateBoundsBad)
     sNavObject.PMatrix = sim_model.DoubleVector(pMatrixBad)
     sNavObject.inputStateName = "random_name"
