@@ -209,7 +209,7 @@ def unitSimpleNav(show_plots):
 
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
-    i=0
+
     for count in errorCounts:
         if count > countAllow:
             print "Too many error counts for element: "
