@@ -209,8 +209,6 @@ def unitSimpleNav(show_plots):
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
 
-    print errorCounts
-
     for count in errorCounts:
         if count > countAllow:
             testFailCount += 1
@@ -251,7 +249,6 @@ def unitSimpleNav(show_plots):
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
 
-    print errorCounts
     for count in errorCounts:
         if count < 1:
             testFailCount += 1
