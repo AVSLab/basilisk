@@ -35,6 +35,7 @@ import spacecraftPlus
 import hingedRigidBodyStateEffector
 import macros
 import gravityEffector
+import spice_interface
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -45,6 +46,8 @@ def hingedRigidBodyAllTest(show_plots):
     [testResults, testMessage] = test_hingedRigidBodyGravity(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_hingedRigidBodyNoGravity(show_plots)
+    assert testResults < 1, testMessage
+    [testResults, testMessage] = test_hingedRigidBodyNoGravityDamping(show_plots)
     assert testResults < 1, testMessage
 
 def test_hingedRigidBodyGravity(show_plots):
@@ -128,6 +131,14 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.earthGravBody.useSphericalHarmParams = False
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
 
+    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
+    earthEphemData.J2000Current = 0.0
+    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
+    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
+    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    earthEphemData.PlanetName = "earth"
+
     # Log the spacecraft state message
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
 
@@ -173,7 +184,9 @@ def test_hingedRigidBodyGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumGravity"
     PlotTitle = "Change in Orbital Angular Momentum with Gravity"
     format = "width=0.8\\textwidth"
@@ -181,21 +194,27 @@ def test_hingedRigidBodyGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalEnergyGravity"
     PlotTitle = "Change in Orbital Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInRotationalAngularMomentumGravity"
     PlotTitle = "Change In Rotational Angular Momentum with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInRotationalEnergyGravity"
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -361,7 +380,9 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
+    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalAngularMomentumNoGravity"
     PlotTitle = "Change in Orbital Angular Momentum No Gravity"
     format = "width=0.8\\textwidth"
@@ -369,21 +390,27 @@ def test_hingedRigidBodyNoGravity(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
+    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInOrbitalEnergyNoGravity"
     PlotTitle = "Change in Orbital Energy No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,1] - rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,2] - rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, rotAngMom_N[:,3] - rotAngMom_N[0,3])
+    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInRotationalAngularMomentumNoGravity"
     PlotTitle = "Change In Rotational Angular Momentum No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(rotEnergy[:,0]*1e-9, rotEnergy[:,1] - rotEnergy[0,1])
+    plt.plot(rotEnergy[:,0]*1e-9, (rotEnergy[:,1] - rotEnergy[0,1])/rotEnergy[0,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInRotationalEnergyNoGravity"
     PlotTitle = "Change In Rotational Energy No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -391,13 +418,17 @@ def test_hingedRigidBodyNoGravity(show_plots):
     plt.figure()
     plt.clf()
     plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('m/s')
     PlotName = "VelocityOfCenterOfMassNoGravity"
     PlotTitle = "Velocity Of Center Of Mass No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
-    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1] - vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2] - vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3] - vOut_CN_N[0,3])
+    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
     PlotName = "ChangeInVelocityOfCenterOfMassNoGravity"
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
@@ -450,5 +481,182 @@ def test_hingedRigidBodyNoGravity(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_hingedRigidBodyNoGravityDamping(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    unitTestSim.panel1.mass = 100.0
+    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel1.d = 1.5
+    unitTestSim.panel1.k = 100.0
+    unitTestSim.panel1.c = 6.0
+    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
+    unitTestSim.panel1.thetaDotInit = 0.0
+
+    # Define Variables for panel 2
+    unitTestSim.panel2.mass = 100.0
+    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel2.d = 1.5
+    unitTestSim.panel2.k = 100.0
+    unitTestSim.panel2.c = 7.0
+    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaDotInit = 0.0
+
+    # Add panels to spaceCraft
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[0.1], [-0.4], [0.3]]
+    scObject.hub.v_CN_NInit = [[-0.2], [0.5], [0.1]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.1], [-0.1], [0.1]]
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    unitTestSim.InitializeSimulation()
+
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbEnergy", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totOrbAngMomPntN_N", testProcessRate, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
+
+    stopTime = 2.5
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    vOut_CN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_CN_N',range(3))
+
+    orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
+    orbAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbAngMomPntN_N")
+    rotAngMom_N = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotAngMomPntC_N")
+
+    initialOrbAngMom_N = [[orbAngMom_N[0,1], orbAngMom_N[0,2], orbAngMom_N[0,3]]]
+
+    finalOrbAngMom = [orbAngMom_N[-1]]
+
+    initialRotAngMom_N = [[rotAngMom_N[0,1], rotAngMom_N[0,2], rotAngMom_N[0,3]]]
+
+    finalRotAngMom = [rotAngMom_N[-1]]
+
+    initialOrbEnergy = [[orbEnergy[0,1]]]
+
+    finalOrbEnergy = [orbEnergy[-1]]
+
+    plt.figure()
+    plt.clf()
+    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
+    PlotName = "ChangeInOrbitalAngularMomentumNoGravityDamping"
+    PlotTitle = "Change in Orbital Angular Momentum No Gravity with Damping"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
+    PlotName = "ChangeInOrbitalEnergyNoGravityDamping"
+    PlotTitle = "Change in Orbital Energy No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
+    PlotName = "ChangeInRotationalAngularMomentumNoGravityDamping"
+    PlotTitle = "Change In Rotational Angular Momentum No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,1], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,2], vOut_CN_N[:,0]*1e-9, vOut_CN_N[:,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('m/s')
+    PlotName = "VelocityOfCenterOfMassNoGravityDamping"
+    PlotTitle = "Velocity Of Center Of Mass No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,1] - vOut_CN_N[0,1])/vOut_CN_N[0,1], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,2] - vOut_CN_N[0,2])/vOut_CN_N[0,2], vOut_CN_N[:,0]*1e-9, (vOut_CN_N[:,3] - vOut_CN_N[0,3])/vOut_CN_N[0,3])
+    plt.xlabel('time (s)')
+    plt.ylabel('Relative Difference')
+    PlotName = "ChangeInVelocityOfCenterOfMassNoGravityDamping"
+    PlotTitle = "Change In Velocity Of Center Of Mass No Gravity with Damping"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    if show_plots == True:
+        plt.show()
+
+    accuracy = 1e-10
+    for i in range(0,len(initialOrbAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital angular momentum unit test")
+
+    for i in range(0,len(initialRotAngMom_N)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed rotational angular momentum unit test")
+
+    for i in range(0,len(initialOrbEnergy)):
+        # check a vector values
+        if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital energy unit test")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Hinged Rigid Body integrated test with gravity"
+
+    assert testFailCount < 1, testMessages
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
 if __name__ == "__main__":
-    test_hingedRigidBodyNoGravity(False)
+    test_hingedRigidBodyNoGravityDamping(True)
