@@ -117,18 +117,18 @@ def unitSimpleNav(show_plots):
                                           spiceMessage)
 
     sNavObject.ModelTag = "SimpleNavigation"
-    posBound = [1000.0]*3
+    posBound = [200.0]*3
     velBound = [1.0]*3
     attBound = [5E-3]*3
     rateBound = [0.02]*3
-    sunBound = [5.0*math.pi/180.0]*3
+    sunBound = [math.pi/180.0]*3
     dvBound = [0.053]*3
 
     posSigma = 5.0
-    velSigma = 0.05
-    attSigma = 5.0/3600.0*math.pi/180.0
+    velSigma = 0.035
+    attSigma = 50.0/3600.0*math.pi/180.0
     rateSigma = 0.05*math.pi/180.0
-    sunSigma = 0.1*math.pi/180.0
+    sunSigma = 0.75*math.pi/180.0
     dvSigma = 0.1*math.pi/180.0
 
     pMatrix = [0.0]*18*18
@@ -173,9 +173,9 @@ def unitSimpleNav(show_plots):
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
 
-    countAllow = posNav.shape[0] * 0.3 * 100
+    countAllow = posNav.shape[0] * 0.3/100.
 
-    sigmaThreshold = 0.0
+    sigmaThreshold = 0.
     posDiffCount = 0
     velDiffCount = 0
     attDiffCount = 0
@@ -210,13 +210,17 @@ def unitSimpleNav(show_plots):
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
 
+    print errorCounts
+
     for count in errorCounts:
         if count > countAllow:
-            print "Too many error counts for element: "
-            print count
             testFailCount += 1
-            testMessages.append("FAILED: Too many error counts for element: %(DiffVal)i \n" % \
-                            {"i": i})
+            testMessages.append("FAILED: Too many error counts  -" + str(count))
+
+    for count in errorCounts:
+        if count < countAllow*0.2:
+            testFailCount += 1
+            testMessages.append("FAILED: Too few error counts -" + str(count))
 
     plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
