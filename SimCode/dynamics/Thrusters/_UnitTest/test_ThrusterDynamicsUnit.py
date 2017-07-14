@@ -54,6 +54,22 @@ import spacecraftPlus
 import macros
 
 
+class ResultsStore:
+    def __init__(self):
+        self.PassFail = []
+    def texSnippet(self):
+        for i in range(len(self.PassFail)):
+            snippetName = 'Result' + str(i)
+            texSnippet =  '\\textcolor{ForestGreen}{'+ self.PassFail[i] + '}'
+            unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+
+@pytest.fixture(scope="module")
+def testFixture():
+    listRes = ResultsStore()
+    yield listRes
+
+    listRes.texSnippet()
+
 def thrusterEffectorAllTests(show_plots):
    [testResults, testMessage] = test_unitThrusters(show_plots)
 
@@ -90,14 +106,14 @@ def executeSimRun(simContainer, thrusterSet, simRate, totalTime):
 
 
 # provide a unique test method name, starting with test_
-def test_unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
+def test_unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitThrusters(show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
+    [testResults, testMessage] = unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle , location, rate, cutoff, rampDown)
     assert testResults < 1, testMessage
 
 
 # Run the test
-def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
+def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle, location, rate, cutoff, rampDown):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -700,8 +716,14 @@ def unitThrusters(show_plots, ramp, thrustNumber , duration , angle, location, r
             testFailCount, testMessages = unitTestSupport.compareArray(TruthTorque, thrTorque, ErrTolerance,
                                                                        "Torque", testFailCount, testMessages)
 
+
+
     if testFailCount == 0:
         print "PASSED"
+        testFixture.PassFail.append("PASSED")
+    else:
+        testFixture.PassFail.append("FAILED")
+
     # return fail count and join into a single string all messages in the list
     # testMessage
     return [testFailCount, ''.join(testMessages)]
