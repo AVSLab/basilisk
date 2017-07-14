@@ -117,18 +117,18 @@ def unitSimpleNav(show_plots):
                                           spiceMessage)
 
     sNavObject.ModelTag = "SimpleNavigation"
-    posBound = [200.0]*3
+    posBound = [1000.0]*3
     velBound = [1.0]*3
     attBound = [5E-3]*3
     rateBound = [0.02]*3
-    sunBound = [math.pi/180.0]*3
+    sunBound = [5.0*math.pi/180.0]*3
     dvBound = [0.053]*3
 
     posSigma = 5.0
     velSigma = 0.035
-    attSigma = 50.0/3600.0*math.pi/180.0
+    attSigma = 1.0/360.0*math.pi/180.0
     rateSigma = 0.05*math.pi/180.0
-    sunSigma = 0.75*math.pi/180.0
+    sunSigma = math.pi/180.0
     dvSigma = 0.1*math.pi/180.0
 
     pMatrix = [0.0]*18*18
@@ -175,7 +175,6 @@ def unitSimpleNav(show_plots):
 
     countAllow = posNav.shape[0] * 0.3/100.
 
-    sigmaThreshold = 0.
     posDiffCount = 0
     velDiffCount = 0
     attDiffCount = 0
@@ -192,18 +191,18 @@ def unitSimpleNav(show_plots):
         sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
         j=0
         while j<3:
-            if(abs(posVecDiff[j]) > posBound[j] + posSigma*sigmaThreshold):
+            if(abs(posVecDiff[j]) > posBound[j]):
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j] + velSigma*sigmaThreshold):
+            if(abs(velVecDiff[j]) > velBound[j]):
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j] + attSigma*sigmaThreshold):
+            if(abs(attVecDiff[j]) > attBound[j]):
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j] + rateSigma*sigmaThreshold):
+            if(abs(rateVecDiff[j]) > rateBound[j]):
                 rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j] + dvSigma*sigmaThreshold):
+            if(abs(dvVecDiff[j]) > dvBound[j]):
                 dvDiffCount += 1
             j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0] + 4.0*sunSigma*sigmaThreshold):
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]):
             sunDiffCount += 1
         i+= 1
 
@@ -217,8 +216,44 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too many error counts  -" + str(count))
 
+    sigmaThreshold = 0.8
+    posDiffCount = 0
+    velDiffCount = 0
+    attDiffCount = 0
+    rateDiffCount = 0
+    dvDiffCount = 0
+    sunDiffCount = 0
+    i=0
+    while i< posNav.shape[0]:
+        posVecDiff = posNav[i,1:] - vehPosition
+        velVecDiff = velNav[i,1:]
+        attVecDiff = attNav[i,1:]
+        rateVecDiff = rateNav[i,1:]
+        dvVecDiff = dvNav[i,1:]
+        sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
+        j=0
+        while j<3:
+            if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
+                posDiffCount += 1
+            if(abs(velVecDiff[j]) > velBound[j]*sigmaThreshold):
+                velDiffCount += 1
+            if(abs(attVecDiff[j]) > attBound[j]*sigmaThreshold):
+                attDiffCount += 1
+            if(abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold):
+                rateDiffCount += 1
+            if(abs(dvVecDiff[j]) > dvBound[j]*sigmaThreshold):
+                dvDiffCount += 1
+            j+=1
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]*sigmaThreshold):
+            sunDiffCount += 1
+        i+= 1
+
+    errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
+        dvDiffCount, sunDiffCount]
+
+    print errorCounts
     for count in errorCounts:
-        if count < countAllow*0.2:
+        if count < 1:
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts -" + str(count))
 
