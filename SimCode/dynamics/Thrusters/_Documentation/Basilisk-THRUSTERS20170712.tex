@@ -1,21 +1,20 @@
-%README file for moduleDocumentationTemplate TeX template.
-%This template should be used to document all Basilisk modules.
-%Updated 20170711 - S. Carnahan
+% README file for moduleDocumentationTemplate TeX template.
+% This template should be used to document all Basilisk modules.
+% Updated 20170711 - S. Carnahan
 %
 %-Copy the contents of this folder to your own _Documentation folder
 %
 %-Rename the Basilisk-moduleDocumentationTemplate.tex appropriately
 %
-%-All edits should be made in one of:
-%—header.tex
-%— modelAssumptionsLimitations.tex
-%— modelDescription.tex
-%— modelFunctions.tex
-%— revisionTable.tex
-%— testDescription.tex
-%— testParameters.tex
-%— testResults.tex
-%— user_guide.tex
+% All edits should be made in one of:
+% sec_modelAssumptionsLimitations.tex
+% sec_modelDescription.tex
+% sec_modelFunctions.tex
+% sec_revisionTable.tex
+% sec_testDescription.tex
+% sec_testParameters.tex
+% sec_testResults.tex
+% sec_user_guide.tex
 %
 %-Some rules about referencing within the document:
 %1. If writing the suer guide, assume the module description is present
@@ -27,18 +26,54 @@
 %Then, the sections are called with \subimport{relative path}{file} in order to \input{file} using the right relative path.
 %\import{full path}{file} can also be used if absolute paths are preferred over relative paths.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\input{sec_header.tex} %include packages, styles, and new commands in this file.
+
+
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{Thrusters}
+\newcommand{\subject}{Thruster dynamic effector module}
+\newcommand{\status}{Initial Document}
+\newcommand{\preparer}{T. Teil}
+\newcommand{\summary}{ This test compares the simulation's forces and torques due to thrusters with expected values. This test runs a variety of thrust scenarios, creates truth values, and compares them point by point to the simulation. It therefore analyzes the thrust behavior down to test rate precision.}
 
 \begin{document}
 
 \makeCover
 
-\input{sec_revisionTable.tex} %when you update the file, update the revision table.
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{2}
+\noindent
+\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
+\hline
+{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
+\hline
+1.0 & Initial Revision & T. Teil & 11/2016\\
+\hline
+1.1 & Validation Revision& T. Teil & 07/2017\\
+\hline
+
+\end{longtable}
+}
+
+
 
 \newpage
 \setcounter{page}{1}
@@ -46,21 +81,37 @@
 
 \tableofcontents %Autogenerate the table of contents
 ~\\ \hrule ~\\ %Makes the line under table of contents
+
+
+
+
+
+
+
+
+
+
 	
-\input{sec_modelDescription.tex} %This section includes mathematical models, code description, etc.
+\input{secModelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\input{sec_modelFunctions.tex} %This includes a concise list of what the module does.
+\input{secModelFunctions.tex} %This includes a concise list of what the module does.
 
-\input{sec_modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\input{secModelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
 
-\input{sec_testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
+\input{secTestDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
 
-\input{sec_testParameters.tex}
+\input{secTestParameters.tex}
 
-\input{sec_testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
+\input{secTestResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
 
-\input{sec_user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+\input{secUserGuide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
 
-\bibliography{bibliography.bib} %This includes references used and mentioned.
+
+
+
+
+
+
+\bibliography{bibliography} %This includes references used and mentioned.
 
 \end{document}
