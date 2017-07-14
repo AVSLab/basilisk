@@ -1,0 +1,18 @@
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{graphicx}
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{hingedRigidBodyStateEffector}
+\newcommand{\subject}{Hinged Rigid Body Dynamics Model}
+\newcommand{\status}{Initial document draft}
+\newcommand{\preparer}{C. Allard}
+\newcommand{\summary}{The hinged rigid body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the hinged rigid body module and the rigid body hub that it is attached to. In this case, a hinged rigid body has a diagonal inertia tensor and is attached to the hub by a single degree of freedom torsional hinged with a linear spring constant and linear damping term. The integrated tests has two scenarios it is testing: one with gravity and one without gravity. In both cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. This integrated test validates for both scenarios that all of these paramters are conserved.}
