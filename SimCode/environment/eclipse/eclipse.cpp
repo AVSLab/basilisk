@@ -299,7 +299,7 @@ void Eclipse::addPlanetName(std::string planetName)
         this->planetNames.push_back(planetName);
         this->planetInMsgNames.push_back(planetName + "_planet_data");
     } else {
-        std::cerr << __PRETTY_FUNCTION__
+        std::cerr << "Eclipse::addPlanetName(std::string planetName)"
         << "- Planet name \""
         << planetName
         << "\" not found. \""
