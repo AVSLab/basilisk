@@ -67,7 +67,6 @@ class ResultsStore:
 def testFixture():
     listRes = ResultsStore()
     yield listRes
-
     listRes.texSnippet()
 
 def thrusterEffectorAllTests(show_plots):
@@ -124,6 +123,10 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     unitTaskName = "unitTask"               # arbitrary name (don't change)
     unitProcessName = "TestProcess"         # arbitrary name (don't change)
 
+    # Constants
+    g = 9.80665
+    Isp = 226.7
+
     # Create a sim module as an empty container
     unitTestSim = SimulationBaseClass.SimBaseClass()
     # terminateSimulation() is needed if multiple unit test scripts are run
@@ -167,7 +170,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
     #  Create a task manager
     TotalSim.newManager = stateArchitecture.DynParamManager()
-    #TotalSim.AddModelToTask(unitTaskName, TotalSim.scObject)
+    TotalSim.AddModelToTask(unitTaskName, TotalSim.scObject)
 
     #  Define the start of the thrust and it's duration
     sparetime = 3.*1./macros.NANO2SEC
@@ -177,6 +180,9 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     #Configure a single thruster firing, create a message for it
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.forceExternal_B', testRate, 0, 2)
     TotalSim.AddVariableForLogging('ACSThrusterDynamics.torqueExternalPntB_B', testRate, 0, 2)
+    TotalSim.AddVariableForLogging('ACSThrusterDynamics.stateDerivContribution', testRate, 0, 0)
+
+
     ThrustMessage = thrusterDynamicEffector.THRArrayOnTimeCmdIntMsg()
     thrMessageSize = ThrustMessage.getStructSize()
     if thrustNumber==1:
@@ -203,6 +209,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
         # Gather the Force and Torque results
         thrForce = TotalSim.GetLogVariableData('ACSThrusterDynamics.forceExternal_B')
         thrTorque = TotalSim.GetLogVariableData('ACSThrusterDynamics.torqueExternalPntB_B')
+        # mDotData = TotalSim.GetLogVariableData('ACSThrusterDynamics.stateDerivContribution')
 
         # Auto Generate LaTex Figures
         format = "width=0.8\\textwidth"
@@ -264,6 +271,12 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
         plt.close()
 
         #Create expected Force to test against thrForce
+        # expMDot = np.zeros([np.shape(np.array(mDotData))[0],2])
+        # for i in range(np.shape(np.array(mDotData))[0]):
+        #     if (i > int(round(thrStartTime / testRate)) + 1 and i < int(
+        #         round((thrStartTime + thrDurationTime) / testRate)) + 2):
+        #         expMDot[i, 1] = 1. / (g * Isp)
+
         expectedpoints=np.zeros([3,np.shape(thrForce)[0]])
         for i in range(np.shape(thrForce)[0]):
             if (i<int(round(thrStartTime/testRate)) + 2): # Thrust fires 2 times steps after the pause of sim and restart
@@ -286,6 +299,7 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
 
         # Compare Force values
         testFailCount, testMessages = unitTestSupport.compareArray(TruthForce, thrForce, ErrTolerance, "Force", testFailCount, testMessages)
+        # testFailCount, testMessages = unitTestSupport.compareArray(expMDot, mDotArray, ErrTolerance, "M dot", testFailCount, testMessages)
 
         #Create expected Torque to test against thrTorque
         expectedpointstor = np.zeros([3, np.shape(thrTorque)[0]])
@@ -729,5 +743,5 @@ def unitThrusters(testFixture, show_plots, ramp, thrustNumber , duration , angle
     return [testFailCount, ''.join(testMessages)]
 
 if __name__ == "__main__":
-    unitThrusters(False, "ON", 1 , 5. , 30., [[1.125], [0.0], [2.0]], 10E6, "ON", "ON")
+    unitThrusters(ResultsStore(), False, "ON", 1 , 5. , 30., [[1.125], [0.0], [2.0]], 10E6, "ON", "ON")
 
