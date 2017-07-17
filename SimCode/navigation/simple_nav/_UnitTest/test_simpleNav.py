@@ -44,7 +44,7 @@ import spice_interface
 import MessagingAccess
 import SimulationBaseClass
 import sim_model
-
+import unitTestSupport
 
 def listNorm(inputList):
    normValue = 0.0
@@ -56,65 +56,17 @@ def listNorm(inputList):
       inputList[i] = inputList[i]/normValue
       i += 1
 
-class DataStore:
-    def __init__(self):
-        self.xposNav = [] # replace these with appropriate containers for the data to be stored for plotting
-        self.yposNav = []
-        self.zposNav = []
-        self.time = []
-
-    def plotData(self):
-        fig1 = plt.figure(1)
-        rect =fig1.patch
-        rect.set_facecolor('white')
-
-        plt.plot(self.time*1.0E-9, self.xposNav, label='x-position')
-        plt.plot(self.time*1.0E-9, self.yposNav, label='y-position')
-        plt.plot(self.time*1.0E-9, self.zposNav, label='z-position')
-
-        plt.legend(loc='upper left')
-        plt.xlabel('Time (s)')
-        plt.ylabel('Position (m)')
-        plt.show()
-
-        fig2 = plt.figure(2)
-        rect =fig2.patch
-        rect.set_facecolor('white')
-
-        plt.plot(self.attNav, self.xattNav, label='x-rotation')
-        plt.plot(self.attNav, self.yattNav, label='y-rotation')
-        plt.plot(self.attNav, self.zattNav, label='z-rotation')
-
-        plt.legend(loc='upper left')
-        plt.xlabel('Attitude relative to inertial')
-        plt.ylabel('Position (m)')
-        plt.show()
-
-@pytest.fixture(scope="module")
-def testPlottingFixture(show_plots):
-    dataStore = DataStore()
-    yield dataStore
-    if show_plots:
-        dataStore.plotData()
-
-
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
-# The following 'parametrize' function decorator provides the parameters and expected results for each
-#   of the multiple test runs for this test.
-@pytest.mark.parametrize("UseFlag", [False]
-  )
-
-def test_unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
+def test_unitSimpleNav(show_plots):
     # each test method requires a single assert method to be called
-    [testResults, testMessage] = unitSimpleNav(testPlottingFixture, show_plots, UseFlag)
+    [testResults, testMessage] = unitSimpleNav(show_plots)
     assert testResults < 1, testMessage
 
-
-def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
+def unitSimpleNav(show_plots):
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty array to store test log messages
     # Create a sim module as an empty container
@@ -173,10 +125,10 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     dvBound = [0.053]*3
 
     posSigma = 5.0
-    velSigma = 0.05
-    attSigma = 5.0/3600.0*math.pi/180.0
+    velSigma = 0.035
+    attSigma = 1.0/360.0*math.pi/180.0
     rateSigma = 0.05*math.pi/180.0
-    sunSigma = 0.1*math.pi/180.0
+    sunSigma = math.pi/180.0
     dvSigma = 0.1*math.pi/180.0
 
     pMatrix = [0.0]*18*18
@@ -218,14 +170,11 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
     sunNav = MessagingAccess.obtainMessageVector("simple_att_nav_output", 'simple_nav',
         'NavAttIntMsg', 60*144*10, unitTestSim.TotalSim, 'vehSunPntBdy', 'double', 0, 2, sim_model.logBuffer)
 
-
     sunHatPred = numpy.array(sunPosition)-numpy.array(vehPosition)
     listNorm(sunHatPred)
 
-    countAllow = posNav.shape[0] * 0.3*100
+    countAllow = posNav.shape[0] * 0.3/100.
 
-
-    sigmaThreshold = 0.0
     posDiffCount = 0
     velDiffCount = 0
     attDiffCount = 0
@@ -242,47 +191,97 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
         sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
         j=0
         while j<3:
-            if(abs(posVecDiff[j]) > posBound[j] + posSigma*sigmaThreshold):
+            if(abs(posVecDiff[j]) > posBound[j]):
                 posDiffCount += 1
-            if(abs(velVecDiff[j]) > velBound[j] + velSigma*sigmaThreshold):
+            if(abs(velVecDiff[j]) > velBound[j]):
                 velDiffCount += 1
-            if(abs(attVecDiff[j]) > attBound[j] + attSigma*sigmaThreshold):
+            if(abs(attVecDiff[j]) > attBound[j]):
                 attDiffCount += 1
-            if(abs(rateVecDiff[j]) > rateBound[j] + rateSigma*sigmaThreshold):
+            if(abs(rateVecDiff[j]) > rateBound[j]):
                 rateDiffCount += 1
-            if(abs(dvVecDiff[j]) > dvBound[j] + dvSigma*sigmaThreshold):
+            if(abs(dvVecDiff[j]) > dvBound[j]):
                 dvDiffCount += 1
             j+=1
-        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0] + 4.0*sunSigma*sigmaThreshold):
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]):
             sunDiffCount += 1
         i+= 1
 
     errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
         dvDiffCount, sunDiffCount]
-    i=0
+
     for count in errorCounts:
         if count > countAllow:
-            print "Too many error counts for element: "
-            print i
             testFailCount += 1
-            testMessages.append("FAILED: Too many error counts for element: %(DiffVal)i \n" % \
-                            {"i": i})
+            testMessages.append("FAILED: Too many error counts  -" + str(count))
 
-    testPlottingFixture.time = posNav[:,0]
-    testPlottingFixture.xposNav = posNav[:, 1]
-    testPlottingFixture.yposNav = posNav[:, 2]
-    testPlottingFixture.zposNav = posNav[:, 3]
+    sigmaThreshold = 0.8
+    posDiffCount = 0
+    velDiffCount = 0
+    attDiffCount = 0
+    rateDiffCount = 0
+    dvDiffCount = 0
+    sunDiffCount = 0
+    i=0
+    while i< posNav.shape[0]:
+        posVecDiff = posNav[i,1:] - vehPosition
+        velVecDiff = velNav[i,1:]
+        attVecDiff = attNav[i,1:]
+        rateVecDiff = rateNav[i,1:]
+        dvVecDiff = dvNav[i,1:]
+        sunVecDiff = math.acos(numpy.dot(sunNav[i, 1:], sunHatPred))
+        j=0
+        while j<3:
+            if(abs(posVecDiff[j]) > posBound[j]*sigmaThreshold):
+                posDiffCount += 1
+            if(abs(velVecDiff[j]) > velBound[j]*sigmaThreshold):
+                velDiffCount += 1
+            if(abs(attVecDiff[j]) > attBound[j]*sigmaThreshold):
+                attDiffCount += 1
+            if(abs(rateVecDiff[j]) > rateBound[j]*sigmaThreshold):
+                rateDiffCount += 1
+            if(abs(dvVecDiff[j]) > dvBound[j]*sigmaThreshold):
+                dvDiffCount += 1
+            j+=1
+        if(abs(sunVecDiff) > 4.0*math.sqrt(3.0)*sunBound[0]*sigmaThreshold):
+            sunDiffCount += 1
+        i+= 1
 
-    testPlottingFixture.attNav = attNav[:,0]
-    testPlottingFixture.xattNav = attNav[:, 1]
-    testPlottingFixture.yattNav = attNav[:, 2]
-    testPlottingFixture.zattNav = attNav[:, 3]
+    errorCounts = [posDiffCount, velDiffCount, attDiffCount, rateDiffCount,
+        dvDiffCount, sunDiffCount]
 
+    for count in errorCounts:
+        if count < 1:
+            testFailCount += 1
+            testMessages.append("FAILED: Too few error counts -" + str(count))
+
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
+    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,2], label='y-position')
+    plt.plot(posNav[:,0] * 1.0E-9, posNav[:,3], label='z-position')
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (m)')
+    unitTestSupport.writeFigureLaTeX('SimpleNavPos', 'Simple Navigation Position Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
+    if show_plots:
+        plt.show()
+    plt.close()
+
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 1], label='x-rotation')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 2], label='y-rotation')
+    plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 3], label='z-rotation')
+
+    plt.legend(loc='upper left')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Attitude (rad)')
+    if show_plots:
+        plt.show()
+    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
 
     # Corner case usage
-
     pMatrixBad = [0.0]*12*12
-    stateBoundsBad = [0.0]*14
+    stateBoundsBad = [0.0]*12
     sNavObject.walkBounds = sim_model.DoubleVector(stateBoundsBad)
     sNavObject.PMatrix = sim_model.DoubleVector(pMatrixBad)
     sNavObject.inputStateName = "random_name"
@@ -293,18 +292,14 @@ def unitSimpleNav(testPlottingFixture, show_plots, UseFlag):
 
     # print out success message if no error were found
     if testFailCount == 0:
-        print   " \n PASSED "
+        print   "PASSED"
 
+    assert testFailCount < 1, testMessages
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
     return [testFailCount, ''.join(testMessages)]
 
-
 # This statement below ensures that the unit test scrip can be run as a
 # stand-along python script
-#
 if __name__ == "__main__":
-    test_unitSimpleNav(testPlottingFixture,
-                       False, # show_plots
-                       False
-                   )
+    unitSimpleNav(False)
