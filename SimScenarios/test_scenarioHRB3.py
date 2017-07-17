@@ -22,7 +22,7 @@
 # Basilisk Scenario Script and Integrated Test
 #
 # Purpose:  Integrated test of the spacecraftPlus() and gravity modules illustrating
-#           how impulsive Delta_v maneuver can be simulated with stopping and starting the
+#           how impulsive Delta_v maneuver can be simulated with stoping and starting the
 #           simulation.
 # Author:   Hanspeter Schaub
 # Creation Date:  Nov. 26, 2016
@@ -64,7 +64,6 @@ import numpy as np
 import spacecraftPlus
 import simIncludeGravity
 import hingedRigidBodyStateEffector
-
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -215,7 +214,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     dynProcess = scSim.CreateNewProcess(simProcessName)
 
     # create the dynamics task and specify the integration update time
-    simulationTimeStep = macros.sec2nano(10.)
+    simulationTimeStep = macros.sec2nano(0.1)
     dynProcess.addTask(scSim.CreateNewTask(simTaskName, simulationTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
@@ -229,57 +228,10 @@ def run(doUnitTests, show_plots, maneuverCase):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
     scObject.hub.useTranslation = True
-    scObject.hub.useRotation = True
+    scObject.hub.useRotation = False
 
-
-
-    #########Hinged Rigid Body Stuff HERE############
-    scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-    scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
-
-    # Define Variable for panel 1
-    scSim.panel1.mass = 100.0
-    scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    scSim.panel1.d = 1.5
-    scSim.panel1.k = 100.
-    scSim.panel1.c = 0.0
-    scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
-    scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
-    scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
-    scSim.panel1.thetaInit = 0.00
-    scSim.panel1.thetaDotInit = 0.0
-    scSim.panel1.HingedRigidBodyOutMsgName = "panel1Msgs"
-
-    # Define Variables for panel 2
-    scSim.panel2.mass = 100.0
-    scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
-    scSim.panel2.d = 1.5
-    scSim.panel2.k = 100.0
-    scSim.panel2.c = 0.0
-    scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
-    scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
-    scSim.panel2.thetaInit = 0.0
-    scSim.panel2.thetaDotInit = 0.0
-    scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msgs"
-
-    scObject.addStateEffector(scSim.panel1)
-    scObject.addStateEffector(scSim.panel2)
-
-    scSim.AddModelToTask(simTaskName, scSim.panel1)
-    scSim.AddModelToTask(simTaskName, scSim.panel2)
-
-    scObject.hub.sigma_BNInit =     [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit =   [[0.0], [0.0], [0.0]]
-    scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
-    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
-    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
-
-    ##########End Hinged Rigid Body Stuff#############
+    # add spacecraftPlus object to the simulation process
+    scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
     simIncludeGravity.clearSetup()
@@ -291,6 +243,59 @@ def run(doUnitTests, show_plots, maneuverCase):
 
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+
+    ##########################################################################################
+    ########################Adding the HingedRigidBody State Effector#########################
+    ##########################################################################################
+    scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    scSim.panel1.mass = 100.0
+    scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    scSim.panel1.d = 1.5
+    scSim.panel1.k = 10.0
+    scSim.panel1.c = 0.0
+    scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+    scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+    scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    scSim.panel1.thetaInit = 5*np.pi/180.0
+    scSim.panel1.thetaDotInit = 0.0
+    scSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+
+    # Define Variables for panel 2
+    scSim.panel2.mass = 100.0
+    scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    scSim.panel2.d = 1.5
+    scSim.panel2.k = 10.
+    scSim.panel2.c = 0.0
+    scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+    scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+    scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+    scSim.panel2.thetaInit = 5*np.pi/180.0
+    scSim.panel2.thetaDotInit = 0.0
+    scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+
+    # Add panels to spaceCraft
+    # this next line is not working
+    scObject.addStateEffector(scSim.panel1) #in order to affect dynamics
+    scObject.addStateEffector(scSim.panel2) #in order to affect dyanmics
+
+    scSim.AddModelToTask(simTaskName, scSim.panel1) #in order to track messages
+    scSim.AddModelToTask(simTaskName, scSim.panel2) #in order to track messages
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObject.hub.mHub = 800.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+    ##########################################################################################
+    ########################Ending the HingedRigidBody State Effector#########################
+    ##########################################################################################
 
     #
     #   setup orbit and simulation time
@@ -309,13 +314,11 @@ def run(doUnitTests, show_plots, maneuverCase):
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m - r_CN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m - v_CN_N
 
-    # add spacecraftPlus object to the simulation process
-    scSim.AddModelToTask(simTaskName, scObject)
-
     # set the simulation time
     n = np.sqrt(mu/oe.a/oe.a/oe.a)
     P = 2.*np.pi/n
-    simulationTime = macros.sec2nano(0.25*P)
+    simulationTimeFactor = 0.01
+    simulationTime = macros.sec2nano(simulationTimeFactor*P)
 
     #
     #   Setup data logging before the simulation is initialized
@@ -324,6 +327,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
     scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
+    scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
+
 
     #
     # create simulation messages
@@ -338,7 +343,7 @@ def run(doUnitTests, show_plots, maneuverCase):
 
 
     #
-    #  get access to dynManager states for future access to the states
+    #  get access to dynManager translational states for future access to the states
     #
     posRef = scObject.dynManager.getStateObject("hubPosition")
     velRef = scObject.dynManager.getStateObject("hubVelocity")
@@ -350,10 +355,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-
     # get the current spacecraft states
     rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    print rVt
     vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
     # compute maneuver Delta_v's
     if maneuverCase == 1:
@@ -366,61 +369,63 @@ def run(doUnitTests, show_plots, maneuverCase):
         v0 = np.dot(vHat,vVt)
         vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        T2 = macros.sec2nano(P*0.25)
+        T2 = macros.sec2nano(P*simulationTimeFactor)
     else:
         # Hohmann Transfer to GEO
         v0 = np.linalg.norm(vVt)
+        print vVt
         r0 = np.linalg.norm(rVt)
         at = (r0+rGEO)*.5
         v0p = np.sqrt(mu/at*rGEO/r0)
         n1 = np.sqrt(mu/at/at/at)
-        T2 = macros.sec2nano((np.pi)/n1)
+        T2 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
         vHat = vVt/v0
         vVt = vVt + vHat*(v0p-v0)
+        print vVt
+        print np.linalg.norm(vVt), v0
         velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime+T2)
     scSim.ExecuteSimulation()
 
-
-    # get the current spacecraft states
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
-    # compute maneuver Delta_v's
-    if maneuverCase == 1:
-        #inclination change
-        Delta_i = 4.0*macros.D2R
-        rHat = rVt/np.linalg.norm(rVt)
-        hHat = np.cross(rVt,vVt)
-        hHat = hHat/np.linalg.norm(hHat)
-        vHat = np.cross(hHat,rHat)
-        v0 = np.dot(vHat,vVt)
-        vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        T3 = macros.sec2nano(P*0.25)
-    else:
-        # Hohmann Transfer to GEO
-        v1 = np.linalg.norm(vVt)
-        v1p = np.sqrt(mu/rGEO)
-        n1 = np.sqrt(mu/rGEO/rGEO/rGEO)
-        T3 = macros.sec2nano(0.25*(np.pi)/n1)
-        vHat = vVt/v1
-        vVt = vVt + vHat*(v1p-v1)
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-
-    # run simulation for 3rd chunk
-    scSim.ConfigureStopTime(simulationTime+T2+T3)
-    scSim.ExecuteSimulation()
+    #Removing last maneuver. Will only show first maneuver and part of second orbit.
+    # # get the current spacecraft states
+    # rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
+    # vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
+    # # compute maneuver Delta_v's
+    # if maneuverCase == 1:
+    #     #inclination change
+    #     Delta_i = 4.0*macros.D2R
+    #     rHat = rVt/np.linalg.norm(rVt)
+    #     hHat = np.cross(rVt,vVt)
+    #     hHat = hHat/np.linalg.norm(hHat)
+    #     vHat = np.cross(hHat,rHat)
+    #     v0 = np.dot(vHat,vVt)
+    #     vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
+    #     velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    #     T3 = macros.sec2nano(P*simulationTimeFactor)
+    # else:
+    #     # Hohmann Transfer to GEO
+    #     v1 = np.linalg.norm(vVt)
+    #     v1p = np.sqrt(mu/rGEO)
+    #     n1 = np.sqrt(mu/rGEO/rGEO/rGEO)
+    #     T3 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
+    #     vHat = vVt/v1
+    #     vVt = vVt + vHat*(v1p-v1)
+    #     velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+    #
+    # # run simulation for 3rd chunk
+    # scSim.ConfigureStopTime(simulationTime+T2+T3)
+    # scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
     #
     posData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
-
-    panel1MessageLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
+    panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
+    panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName+'.theta',range(1))
 
     np.set_printoptions(precision=16)
 
@@ -490,6 +495,22 @@ def run(doUnitTests, show_plots, maneuverCase):
             unitTestSupport.saveScenarioFigure(
                 fileNameString+"2"+str(int(maneuverCase))
                 , plt, path)
+
+    plt.figure(3)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    plt.plot(panel1thetaLog[:,0]*macros.NANO2HOUR, panel1thetaLog[:,1])
+    plt.xlabel('Time [h]')
+    plt.ylabel('Panel Angular Displacement [r]')
+
+    plt.figure(4)
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.ticklabel_format(useOffset=False, style='plain')
+    plt.plot(panel2thetaLog[:,0]*macros.NANO2HOUR, panel2thetaLog[:,1])
+    plt.xlabel('Time [h]')
+    plt.ylabel('Panel Angular Displacement [r]')
 
 
     if show_plots:
