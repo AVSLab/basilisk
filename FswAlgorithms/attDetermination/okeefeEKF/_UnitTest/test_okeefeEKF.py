@@ -31,7 +31,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 import SimulationBaseClass
 import alg_contain
 import SunLineEKF_test_utilities as FilterPlots
-import sunlineEKF  # import the module that is to be tested
+import okeefeEKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData
 import macros
@@ -99,30 +99,29 @@ def sunline_individual_test():
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
+    NUMSTATES = 3
     ###################################################################################
     ## Testing dynamics matrix computation
     ###################################################################################
-
-    NUMSTATES = 3
 
     inputOmega = [0.1, 0.2, 0.1]
     dt =0.5
 
     expDynMat = - np.array([[0., -inputOmega[2], inputOmega[1]],
-                                      [inputOmega[2], 0., inputOmega[0]],
-                                      [ -inputOmega[1], inputOmega[0], 0.]])
+                            [inputOmega[2], 0., -inputOmega[0]],
+                            [ -inputOmega[1], inputOmega[0], 0.]])
 
 
-    dynMat = sunlineEKF.new_doubleArray(3*3)
+    dynMat = okeefeEKF.new_doubleArray(3*3)
     for i in range(9):
-        sunlineEKF.doubleArray_setitem(dynMat, i, 0.0)
-    sunlineEKF.sunlineDynMatrix(inputOmega, dt, dynMat)
+        okeefeEKF.doubleArray_setitem(dynMat, i, 0.0)
+    okeefeEKF.sunlineDynMatrix(inputOmega, dt, dynMat)
 
     DynOut = []
-    for i in range(36):
-        DynOut.append(sunlineEKF.doubleArray_getitem(dynMat, i))
+    for i in range(NUMSTATES*NUMSTATES):
+        DynOut.append(okeefeEKF.doubleArray_getitem(dynMat, i))
 
-    DynOut = np.array(DynOut).reshape(6, 6)
+    DynOut = np.array(DynOut).reshape(3, 3)
     errorNorm = np.linalg.norm(expDynMat - DynOut)
     if(errorNorm > 1.0E-12):
         print errorNorm
@@ -136,26 +135,26 @@ def sunline_individual_test():
     inputStates = [2,1,0.75]
     inputOmega = [0.1, 0.2, 0.1]
     dt =0.5
-    stateTransition = sunlineEKF.new_doubleArray(NUMSTATES*NUMSTATES)
-    states = sunlineEKF.new_doubleArray(NUMSTATES)
-    prev_states = sunlineEKF.new_doubleArray(NUMSTATES)
+    stateTransition = okeefeEKF.new_doubleArray(NUMSTATES*NUMSTATES)
+    states = okeefeEKF.new_doubleArray(NUMSTATES)
+    prev_states = okeefeEKF.new_doubleArray(NUMSTATES)
     for i in range(NUMSTATES):
-        sunlineEKF.doubleArray_setitem(states, i, inputStates[i])
-        sunlineEKF.doubleArray_setitem(states, i, 0.)
+        okeefeEKF.doubleArray_setitem(states, i, inputStates[i])
+        okeefeEKF.doubleArray_setitem(states, i, 0.)
         for j in range(NUMSTATES):
             if i==j:
-                sunlineEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 1.0)
+                okeefeEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 1.0)
             else:
-                sunlineEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 0.0)
+                okeefeEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 0.0)
 
-    sunlineEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), dt, inputOmega, states, prev_states, stateTransition)
+    okeefeEKF.sunlineStateSTMProp(expDynMat.flatten().tolist(), dt, inputOmega, states, prev_states, stateTransition)
 
     PropStateOut = []
     PropSTMOut = []
     for i in range(NUMSTATES):
-        PropStateOut.append(sunlineEKF.doubleArray_getitem(states, i))
+        PropStateOut.append(okeefeEKF.doubleArray_getitem(states, i))
     for i in range(NUMSTATES*NUMSTATES):
-        PropSTMOut.append(sunlineEKF.doubleArray_getitem(stateTransition, i))
+        PropSTMOut.append(okeefeEKF.doubleArray_getitem(stateTransition, i))
 
     STMout = np.array(PropSTMOut).reshape([NUMSTATES,NUMSTATES])
     StatesOut = np.array(PropStateOut)
@@ -168,51 +167,56 @@ def sunline_individual_test():
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
+    print expectedStates
+    print StatesOut
+
     if(errorNormSTM > 1.0E-12):
         print errorNormSTM
         testFailCount += 1
         testMessages.append("STM Propagation Failure \n")
+    print 'here'
 
     if(errorNormStates > 1.0E-12):
         print errorNormStates
         testFailCount += 1
         testMessages.append("State Propagation Failure \n")
 
+
+
     ###################################################################################
     ## Test the H and yMeas matrix generation as well as the observation count
     ###################################################################################
-    print 'HERER'
     numCSS = 4
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
     cssNormals = [1.,0.,0.,0.,1.,0., 0.,0.,1., 1./np.sqrt(2), 1./np.sqrt(2),0.]
 
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
+    measMat = okeefeEKF.new_doubleArray(8*NUMSTATES)
+    obs = okeefeEKF.new_doubleArray(8)
+    yMeas = okeefeEKF.new_doubleArray(8)
+    numObs = okeefeEKF.new_intArray(1)
 
-    for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+    for i in range(8*NUMSTATES):
+        okeefeEKF.doubleArray_setitem(measMat, i, 0.)
     for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+        okeefeEKF.doubleArray_setitem(obs, i, 0.0)
+        okeefeEKF.doubleArray_setitem(yMeas, i, 0.0)
 
-    sunlineEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
+    okeefeEKF.sunlineHMatrixYMeas(inputStates, numCSS, cssCos, sensorTresh, cssNormals, obs, yMeas, numObs, measMat)
 
     obsOut = []
     yMeasOut = []
     numObsOut = []
     HOut = []
-    for i in range(8*6):
-        HOut.append(sunlineEKF.doubleArray_getitem(measMat, i))
+    for i in range(8*NUMSTATES):
+        HOut.append(okeefeEKF.doubleArray_getitem(measMat, i))
     for i in range(8):
-        yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, i))
-        obsOut.append(sunlineEKF.doubleArray_getitem(obs, i))
-    numObsOut.append(sunlineEKF.intArray_getitem(numObs, 0))
+        yMeasOut.append(okeefeEKF.doubleArray_getitem(yMeas, i))
+        obsOut.append(okeefeEKF.doubleArray_getitem(obs, i))
+    numObsOut.append(okeefeEKF.intArray_getitem(numObs, 0))
 
     #Fill in expected values for test
-    expectedH = np.zeros([8,6])
+    expectedH = np.zeros([8,NUMSTATES])
     expectedY = np.zeros(8)
     for j in range(3):
         expectedH[j,0:3] = np.eye(3)[j,:]
@@ -220,7 +224,7 @@ def sunline_individual_test():
     expectedObs = np.array([np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)),0.,0.,0.,0.,0.])
     expectedNumObs = 3
 
-    HOut = np.array(HOut).reshape([8, 6])
+    HOut = np.array(HOut).reshape([8, NUMSTATES])
     errorNorm = np.zeros(4)
     errorNorm[0] = np.linalg.norm(HOut - expectedH)
     errorNorm[1] = np.linalg.norm(yMeasOut - expectedY)
@@ -246,24 +250,24 @@ def sunline_individual_test():
         0., 0., 1., 0., 0., 1.]
     noise= 0.01
 
-    Kalman = sunlineEKF.new_doubleArray(6 * 8)
+    Kalman = okeefeEKF.new_doubleArray(NUMSTATES * 8)
 
-    for i in range(8 * 6):
-        sunlineEKF.doubleArray_setitem(Kalman, i, 0.)
+    for i in range(8 * NUMSTATES):
+        okeefeEKF.doubleArray_setitem(Kalman, i, 0.)
 
-    sunlineEKF.sunlineKalmanGain(covar, h, noise, numObs, Kalman)
+    okeefeEKF.sunlineKalmanGain(covar, h, noise, numObs, Kalman)
 
     KalmanOut = []
-    for i in range(8 * 6):
-        KalmanOut.append(sunlineEKF.doubleArray_getitem(Kalman, i))
+    for i in range(8 * NUMSTATES):
+        KalmanOut.append(okeefeEKF.doubleArray_getitem(Kalman, i))
 
     # Fill in expected values for test
-    Hmat = np.array(h).reshape([8,6])
-    Pk = np.array(covar).reshape([6,6])
+    Hmat = np.array(h).reshape([8,NUMSTATES])
+    Pk = np.array(covar).reshape([6,NUMSTATES])
     R = noise*np.eye(3)
     expectedK = np.dot(np.dot(Pk, Hmat[0:numObs,:].T), np.linalg.inv(np.dot(np.dot(Hmat[0:numObs,:], Pk), Hmat[0:numObs,:].T) + R[0:numObs,0:numObs]))
 
-    KalmanOut = np.array(KalmanOut)[0:6*numObs].reshape([6, 3])
+    KalmanOut = np.array(KalmanOut)[0:NUMSTATES*numObs].reshape([NUMSTATES, 3])
     errorNorm = np.linalg.norm(KalmanOut[:,0:numObs] - expectedK)
 
 
@@ -276,55 +280,53 @@ def sunline_individual_test():
     ## Test the EKF update
     ###################################################################################
 
-    KGain = [1.,2.,3., 0., 1., 2., 1., 0., 1., 0., 1., 0., 3., 0., 1., 0., 2., 0.]
-    for i in range(6*8-6*3):
+    KGain = [1.,2.,3., 0., 1., 2., 1., 0., 1.]
+    for i in range(NUMSTATES*8-NUMSTATES*3):
         KGain.append(0.)
     inputStates = [2,1,0.75,0.1,0.4,0.05]
     xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
     numObs = 3
-    h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
-    covar = [1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.,
-             1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.]
+    h = [1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0., 0., 0., 0.]
+    covar = [1., 0., 1.,
+             0., 1., 0.,
+             1., 0., 1.,
+             ]
     noise = 0.01
     inputY = np.zeros(3)
     for j in range(3):
         inputY[j] = np.array(cssCos[j]) - np.dot(np.array(inputStates)[0:3], np.array(cssNormals)[j * 3:(j + 1) * 3])
     inputY = inputY.tolist()
 
-    stateError = sunlineEKF.new_doubleArray(6)
-    covarMat = sunlineEKF.new_doubleArray(6*6)
-    inputs = sunlineEKF.new_doubleArray(6)
+    stateError = okeefeEKF.new_doubleArray(NUMSTATES)
+    covarMat = okeefeEKF.new_doubleArray(NUMSTATES*NUMSTATES)
+    inputs = okeefeEKF.new_doubleArray(NUMSTATES)
 
 
-    for i in range(6):
-        sunlineEKF.doubleArray_setitem(stateError, i, 0.)
-        sunlineEKF.doubleArray_setitem(inputs, i, inputStates[i])
-        for j in range(6):
-            sunlineEKF.doubleArray_setitem(covarMat,i+j,0.)
+    for i in range(NUMSTATES):
+        okeefeEKF.doubleArray_setitem(stateError, i, 0.)
+        okeefeEKF.doubleArray_setitem(inputs, i, inputStates[i])
+        for j in range(NUMSTATES):
+            okeefeEKF.doubleArray_setitem(covarMat,i+j,0.)
 
-    sunlineEKF.sunlineEKFUpdate(KGain, covar, noise, numObs, inputY, h, inputs, stateError, covarMat)
+    okeefeEKF.okeefeEKFUpdate(KGain, covar, noise, numObs, inputY, h, inputs, stateError, covarMat)
 
     stateOut = []
     covarOut = []
     errorOut = []
-    for i in range(6):
-        stateOut.append(sunlineEKF.doubleArray_getitem(inputs, i))
-        errorOut.append(sunlineEKF.doubleArray_getitem(stateError, i))
-    for j in range(36):
-        covarOut.append(sunlineEKF.doubleArray_getitem(covarMat, j))
+    for i in range(NUMSTATES):
+        stateOut.append(okeefeEKF.doubleArray_getitem(inputs, i))
+        errorOut.append(okeefeEKF.doubleArray_getitem(stateError, i))
+    for j in range(NUMSTATES*NUMSTATES):
+        covarOut.append(okeefeEKF.doubleArray_getitem(covarMat, j))
 
     # Fill in expected values for test
-    KK = np.array(KGain)[0:6*3].reshape([6,3])
+    KK = np.array(KGain)[0:NUMSTATES*3].reshape([NUMSTATES,3])
     expectedStates = np.array(inputStates) + np.dot(KK, np.array(inputY))
-    H = np.array(h).reshape([8,6])[0:3,:]
-    Pk = np.array(covar).reshape([6, 6])
+    H = np.array(h).reshape([8,NUMSTATES])[0:3,:]
+    Pk = np.array(covar).reshape([NUMSTATES, NUMSTATES])
     R = noise * np.eye(3)
-    expectedP = np.dot(np.dot(np.eye(6) - np.dot(KK, H), Pk), np.transpose(np.eye(6) - np.dot(KK, H))) + np.dot(KK, np.dot(R,KK.T))
+    expectedP = np.dot(np.dot(np.eye(NUMSTATES) - np.dot(KK, H), Pk), np.transpose(np.eye(NUMSTATES) - np.dot(KK, H))) + np.dot(KK, np.dot(R,KK.T))
 
     errorNorm = np.zeros(2)
     errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedStates)
@@ -338,20 +340,17 @@ def sunline_individual_test():
     ## Test the CKF update
     ###################################################################################
 
-    KGain = [1., 2., 3., 0., 1., 2., 1., 0., 1., 0., 1., 0., 3., 0., 1., 0., 2., 0.]
-    for i in range(6 * 8 - 6 * 3):
+    KGain = [1., 2., 3., 0., 1., 2., 1., 0., 1.]
+    for i in range(NUMSTATES * 8 - NUMSTATES * 3):
         KGain.append(0.)
     inputStates = [2, 1, 0.75, 0.1, 0.4, 0.05]
     xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
     numObs = 3
-    h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
-    covar = [1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.,
-             1., 0., 0., 1., 0., 0.,
-             0., 1., 0., 0., 1., 0.,
-             0., 0., 1., 0., 0., 1.]
+    h = [1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0.]
+    covar = [1., 0., 1.,
+             0., 1., 0.,
+             1., 0., 1.]
     noise =0.01
     inputY = np.zeros(3)
     for j in range(3):
@@ -359,29 +358,29 @@ def sunline_individual_test():
                                                  np.array(cssNormals)[j * 3:(j + 1) * 3])
     inputY = inputY.tolist()
 
-    stateError = sunlineEKF.new_doubleArray(6)
-    covarMat = sunlineEKF.new_doubleArray(6 * 6)
+    stateError = okeefeEKF.new_doubleArray(NUMSTATES)
+    covarMat = okeefeEKF.new_doubleArray(NUMSTATES * NUMSTATES)
 
-    for i in range(6):
-        sunlineEKF.doubleArray_setitem(stateError, i, xbar[i])
-        for j in range(6):
-            sunlineEKF.doubleArray_setitem(covarMat, i + j, 0.)
+    for i in range(NUMSTATES):
+        okeefeEKF.doubleArray_setitem(stateError, i, xbar[i])
+        for j in range(NUMSTATES):
+            okeefeEKF.doubleArray_setitem(covarMat, i + j, 0.)
 
-    sunlineEKF.sunlineCKFUpdate(xbar, KGain, covar, noise, numObs, inputY, h, stateError, covarMat)
+    okeefeEKF.sunlineCKFUpdate(xbar, KGain, covar, noise, numObs, inputY, h, stateError, covarMat)
 
     covarOut = []
     errorOut = []
-    for i in range(6):
-        errorOut.append(sunlineEKF.doubleArray_getitem(stateError, i))
-    for j in range(36):
-        covarOut.append(sunlineEKF.doubleArray_getitem(covarMat, j))
+    for i in range(NUMSTATES):
+        errorOut.append(okeefeEKF.doubleArray_getitem(stateError, i))
+    for j in range(NUMSTATES*NUMSTATES):
+        covarOut.append(okeefeEKF.doubleArray_getitem(covarMat, j))
 
     # Fill in expected values for test
-    KK = np.array(KGain)[0:6 * 3].reshape([6, 3])
-    H = np.array(h).reshape([8, 6])[0:3, :]
+    KK = np.array(KGain)[0:NUMSTATES * 3].reshape([NUMSTATES, 3])
+    H = np.array(h).reshape([8, NUMSTATES])[0:3, :]
     expectedStateError = np.array(xbar) + np.dot(KK, (np.array(inputY) - np.dot(H, np.array(xbar))))
-    Pk = np.array(covar).reshape([6, 6])
-    expectedP = np.dot(np.dot(np.eye(6) - np.dot(KK, H), Pk), np.transpose(np.eye(6) - np.dot(KK, H))) + np.dot(KK,
+    Pk = np.array(covar).reshape([NUMSTATES, NUMSTATES])
+    expectedP = np.dot(np.dot(np.eye(NUMSTATES) - np.dot(KK, H), Pk), np.transpose(np.eye(NUMSTATES) - np.dot(KK, H))) + np.dot(KK,
                                                                                                                 np.dot(
                                                                                                                     R,
                                                                                                                     KK.T))
@@ -427,26 +426,26 @@ def StatePropStatic():
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineEKF.sunlineEKFConfig()
+    moduleConfig = okeefeEKF.okeefeEKFConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
-    moduleWrap.ModelTag = "SunlineEKF"
+                                        okeefeEKF.Update_okeefeEKF,
+                                        okeefeEKF.SelfInit_okeefeEKF,
+                                        okeefeEKF.CrossInit_okeefeEKF,
+                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate * 10, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate * 10, 0, 5)
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 35)
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate * 10, 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
+    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
 
 
     for i in range(6):
@@ -491,13 +490,13 @@ def StatePropVariable(show_plots):
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineEKF.sunlineEKFConfig()
+    moduleConfig = okeefeEKF.okeefeEKFConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
-    moduleWrap.ModelTag = "SunlineEKF"
+                                        okeefeEKF.Update_okeefeEKF,
+                                        okeefeEKF.SelfInit_okeefeEKF,
+                                        okeefeEKF.CrossInit_okeefeEKF,
+                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap.ModelTag = "okeefeEKF"
 
 
 
@@ -511,19 +510,19 @@ def StatePropVariable(show_plots):
     InitialCovar = moduleConfig.covar
 
     moduleConfig.states = InitialState
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.stateTransition', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5)
-    unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5)
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 35)
+    unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 35)
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 5)
+    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 5)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
     unitTestSim.ExecuteSimulation()
 
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
-    stmLog = unitTestSim.GetLogVariableData('SunlineEKF.stateTransition')
+    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
+    stmLog = unitTestSim.GetLogVariableData('okeefeEKF.stateTransition')
 
 
     dt = 0.5
@@ -623,13 +622,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
     # Construct algorithm and associated C++ container
-    moduleConfig = sunlineEKF.sunlineEKFConfig()
+    moduleConfig = okeefeEKF.okeefeEKFConfig()
     moduleWrap = alg_contain.AlgContain(moduleConfig,
-                                        sunlineEKF.Update_sunlineEKF,
-                                        sunlineEKF.SelfInit_sunlineEKF,
-                                        sunlineEKF.CrossInit_sunlineEKF,
-                                        sunlineEKF.Reset_sunlineEKF)
-    moduleWrap.ModelTag = "SunlineEKF"
+                                        okeefeEKF.Update_okeefeEKF,
+                                        okeefeEKF.SelfInit_okeefeEKF,
+                                        okeefeEKF.CrossInit_okeefeEKF,
+                                        okeefeEKF.Reset_okeefeEKF)
+    moduleWrap.ModelTag = "okeefeEKF"
 
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
@@ -678,9 +677,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     stateTarget1 += [0.0, 0.0, 0.0]
     moduleConfig.states = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('SunlineEKF.covar', testProcessRate , 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('SunlineEKF.states', testProcessRate , 0, 5, 'double')
-    unitTestSim.AddVariableForLogging('SunlineEKF.x', testProcessRate , 0, 5, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate , 0, 35, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 5, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 5, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -704,9 +703,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + 1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
 
     ####################################################################################
     # Compute H and y in order to check post-fit residuals
@@ -716,16 +715,16 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     for j in range(8):
         CSSnormals+=CSSOrientationList[j]
 
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
+    measMat = okeefeEKF.new_doubleArray(8*6)
+    obs = okeefeEKF.new_doubleArray(8)
+    yMeas = okeefeEKF.new_doubleArray(8)
+    numObs = okeefeEKF.new_intArray(1)
 
     for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+        okeefeEKF.doubleArray_setitem(measMat, i, 0.)
     for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+        okeefeEKF.doubleArray_setitem(obs, i, 0.0)
+        okeefeEKF.doubleArray_setitem(yMeas, i, 0.0)
 
     ytest = np.zeros([SimHalfLength, 9])
     Htest = np.zeros([SimHalfLength, 49])
@@ -736,13 +735,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
+            HOut.append(okeefeEKF.doubleArray_getitem(measMat, j))
         for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
+            yMeasOut.append(okeefeEKF.doubleArray_getitem(yMeas, j))
 
         ytest[i,1:9] = np.array(yMeasOut)
         Htest[i,1:49] = np.array(HOut)
@@ -788,9 +787,9 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         unitTestSim.ConfigureStopTime(macros.sec2nano((i + SimHalfLength+1) * 0.5))
         unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('SunlineEKF.covar')
-    stateLog = unitTestSim.GetLogVariableData('SunlineEKF.states')
-    stateErrorLog = unitTestSim.GetLogVariableData('SunlineEKF.x')
+    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
+    stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
+    stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
 
 
     ####################################################################################
@@ -801,16 +800,16 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     for j in range(8):
         CSSnormals+=CSSOrientationList[j]
 
-    measMat = sunlineEKF.new_doubleArray(8*6)
-    obs = sunlineEKF.new_doubleArray(8)
-    yMeas = sunlineEKF.new_doubleArray(8)
-    numObs = sunlineEKF.new_intArray(1)
+    measMat = okeefeEKF.new_doubleArray(8*6)
+    obs = okeefeEKF.new_doubleArray(8)
+    yMeas = okeefeEKF.new_doubleArray(8)
+    numObs = okeefeEKF.new_intArray(1)
 
     for i in range(8*6):
-        sunlineEKF.doubleArray_setitem(measMat, i, 0.)
+        okeefeEKF.doubleArray_setitem(measMat, i, 0.)
     for i in range(8):
-        sunlineEKF.doubleArray_setitem(obs, i, 0.0)
-        sunlineEKF.doubleArray_setitem(yMeas, i, 0.0)
+        okeefeEKF.doubleArray_setitem(obs, i, 0.0)
+        okeefeEKF.doubleArray_setitem(yMeas, i, 0.0)
 
     ytest = np.zeros([SimHalfLength+1, 9])
     Htest = np.zeros([SimHalfLength+1, 49])
@@ -820,13 +819,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i-SimHalfLength,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        sunlineEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
         for j in range(8*6):
-            HOut.append(sunlineEKF.doubleArray_getitem(measMat, j))
+            HOut.append(okeefeEKF.doubleArray_getitem(measMat, j))
         for j in range(8):
-            yMeasOut.append(sunlineEKF.doubleArray_getitem(yMeas, j))
+            yMeasOut.append(okeefeEKF.doubleArray_getitem(yMeas, j))
 
         ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
         Htest[i-SimHalfLength,1:49] = np.array(HOut)
