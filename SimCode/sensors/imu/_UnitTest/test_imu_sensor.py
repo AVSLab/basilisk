@@ -206,7 +206,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'noise':
         # this test checks the standard deviation of sensor noise
-        simStopTime = 1000.0
+        simStopTime = 200.
         senRotNoiseStd = np.random.rand()
         senTransNoiseStd = np.random.rand()
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
@@ -299,7 +299,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'walk bounds':
         # this test checks the walk bounds of random walk
-        simStopTime = 1000.0
+        simStopTime = 5000.0
         senRotNoiseStd = 0.1
         senTransNoiseStd = 0.2
         errorBoundsGyro = [10.] * 3
@@ -360,9 +360,6 @@ def unitSimIMU(show_plots, useFlag, testCase):
     moduleOutput = dict()
     for moduleOutputName in fieldNames:
         moduleOutput[moduleOutputName] = unitSim.pullMessageLogData(ImuSensor.OutputDataMsg + '.' + moduleOutputName, range(3))
-        # print "\n\n" + moduleOutputName
-        # print str(moduleOutput[moduleOutputName]) + "\n"
-        # print str(trueVector[moduleOutputName]) + "\n\n"
 
 
     # trim the truth and module output arrays
@@ -373,27 +370,43 @@ def unitSimIMU(show_plots, useFlag, testCase):
             del moduleOutput[moduleOutputName]
             moduleOutput[moduleOutputName] = newArr
 
-    if (testCase == 'noise'):
-         plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-         plt.clf()
-         for i in range(0,3):
-             plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-             plt.xlabel('Time (s)')
-             plt.ylabel('Angular velocity (rad/s)')
-             plt.xlim((0,1000))
-             unitTestSupport.writeFigureLaTeX('noisePlot', 'Module output of noise standard deviation check', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    #plotting for walk bounds test
     if (testCase == 'walk bounds'):
-         plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
-         plt.clf()
+         omegaTime = range(0, int(simStopTime)-1, 1)
+         omegaLinePlus = [errorBoundsGyro[0]] * int(simStopTime-1)
+         omegaLineMinus= [-errorBoundsGyro[0]] * int(simStopTime-1)
+         fig = plt.figure(3, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+         fig.clf()
+         plt.plot(omegaTime, omegaLinePlus, label="upper bound", linewidth=3)
+         plt.plot(omegaTime, omegaLineMinus, label="lower bound", linewidth=3)
          for i in range(0,3):
              plt.plot(moduleOutput['AngVelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AngVelPlatform'][:,i+1])
-             plt.xlabel('Time (s)')
-             plt.ylabel('Angular velocity (rad/s)')
-             plt.xlim((0,1000))
-             unitTestSupport.writeFigureLaTeX('walkBoundPlot', 'Module output for random walk bounds check', plt,
-                                      'height=0.7\\textwidth, keepaspectratio', path)
+         plt.xlabel('Time (s)')
+         plt.ylabel('Angular velocity (rad/s)')
+         plt.xlim((0,simStopTime))
+         plt.ylim(-errorBoundsGyro[0]*1.15, errorBoundsGyro[0]*1.15)
+         unitTestSupport.writeFigureLaTeX('omegaWalkBoundPlot', 'Module gyro output for random walk bounds check', plt,
+                                  'height=0.7\\textwidth, keepaspectratio', path)
+
+         fig = plt.figure(4, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+         fig.clf()
+         accelTime = range(0, int(simStopTime)-1, 1)
+         accelLinePlus = [errorBoundsAccel[0]] * int(simStopTime-1)
+         accelLineMinus= [-errorBoundsAccel[0]] * int(simStopTime-1)
+         plt.plot(accelTime, accelLinePlus, label="upper bound", linewidth=3)
+         plt.plot(accelTime, accelLineMinus, label="lower bound", linewidth=3)
+         for i in range(0,3):
+             plt.plot(moduleOutput['AccelPlatform'][:,0]*macros.NANO2SEC,moduleOutput['AccelPlatform'][:,i+1])
+         plt.xlabel('Time (s)')
+         plt.ylabel('Acceleration (m/s)')
+         plt.xlim((0,simStopTime))
+         plt.ylim(-errorBoundsAccel[0]*1.15, errorBoundsAccel[0]*1.15)
+         unitTestSupport.writeFigureLaTeX('accelWalkBoundPlot', 'Module acceleromeer output for random walk bounds check', plt,
+                                  'height=0.7\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
+
+    plt.close()
 
 
     # compare the module results to the truth values
@@ -409,8 +422,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     for moduleOutputName in fieldNames:
         if testCase == 'noise':
             for i in range(0,3):
-                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.1 \
-                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > 0.1 :
+                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.01 \
+                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > accuracy :
                     testFail = True
 
         elif testCase == 'walk bounds':
@@ -469,5 +482,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         True, # show_plots
         False, # useFlag
-        'saturation' # testCase
+        'walk bounds' # testCase
     )
