@@ -33,15 +33,14 @@ import matplotlib.pyplot as plt
 
 def StatesPlot(x, Pflat, show_plots):
 
-
-    P = np.zeros([len(Pflat[:,0]),6,6])
+    P = np.zeros([len(Pflat[:,0]),3,3])
     t= np.zeros(len(Pflat[:,0]))
     for i in range(len(Pflat[:,0])):
         t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:37].reshape([6,6])
+        P[i,:,:] = Pflat[i,1:3*3+1].reshape([3,3])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(311)
     plt.plot(t , x[:, 1], "b", label='Error Filter')
     plt.plot(t , 3 * np.sqrt(P[:, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t , -3 * np.sqrt(P[:, 0, 0]), 'r--')
@@ -49,42 +48,21 @@ def StatesPlot(x, Pflat, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(t , x[:, 4], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 3, 3]), 'r--')
-    plt.title('First rate component')
-    plt.grid()
-
-    plt.subplot(323)
+    plt.subplot(312)
     plt.plot(t , x[:, 2], "b")
     plt.plot(t , 3 * np.sqrt(P[:, 1, 1]), 'r--')
     plt.plot(t , -3 * np.sqrt(P[:, 1, 1]), 'r--')
-    plt.title('Second LOS component')
+    plt.title('First rate component')
     plt.grid()
 
-    plt.subplot(324)
-    plt.plot(t , x[:, 5], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 4, 4]), 'r--')
-    plt.title('Second rate component')
-    plt.grid()
-
-    plt.subplot(325)
+    plt.subplot(313)
     plt.plot(t , x[:, 3], "b")
     plt.plot(t , 3 * np.sqrt(P[:, 2, 2]), 'r--')
     plt.plot(t , -3 * np.sqrt(P[:, 2, 2]), 'r--')
-    plt.xlabel('t(s)')
-    plt.title('Third LOS component')
+    plt.title('Second LOS component')
     plt.grid()
 
-    plt.subplot(326)
-    plt.plot(t , x[:, 6], "b")
-    plt.plot(t , 3 * np.sqrt(P[:, 5, 5]), 'r--')
-    plt.plot(t , -3 * np.sqrt(P[:, 5, 5]), 'r--')
-    plt.xlabel('t(s)')
-    plt.title('Third rate component')
-    plt.grid()
+
 
     unitTestSupport.writeFigureLaTeX('StatesPlot', 'State error and covariance', plt, 'height=0.9\\textwidth, keepaspectratio', path)
     if show_plots:
@@ -95,16 +73,16 @@ def StatesPlot(x, Pflat, show_plots):
 def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
 
 
-    P = np.zeros([len(Pflat[:,0]),6,6])
-    P2 = np.zeros([len(Pflat[:,0]),6,6])
+    P = np.zeros([len(Pflat[:,0]),3,3])
+    P2 = np.zeros([len(Pflat[:,0]),3,3])
     t= np.zeros(len(Pflat[:,0]))
     for i in range(len(Pflat[:,0])):
         t[i] = x[i, 0]*1E-9
-        P[i,:,:] = Pflat[i,1:37].reshape([6,6])
-        P2[i, :, :] = Pflat2[i, 1:37].reshape([6, 6])
+        P[i,:,:] = Pflat[i,1:3*3+1].reshape([3,3])
+        P2[i, :, :] = Pflat2[i, 1:3*3+1].reshape([3, 3])
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(311)
     plt.plot(t[0:30] , x[0:30, 1], "b", label='Error Filter')
     plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 0, 0]), 'r--',  label='Covar Filter')
     plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 0, 0]), 'r--')
@@ -115,57 +93,27 @@ def StatesPlotCompare(x, x2, Pflat, Pflat2, show_plots):
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(t[0:30] , x[0:30, 4], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 3, 3]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 4], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 3, 3]), 'c--')
-    plt.title('First rate component')
-    plt.grid()
-
-    plt.subplot(323)
+    plt.subplot(312)
     plt.plot(t[0:30] , x[0:30, 2], "b")
     plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 1, 1]), 'r--')
     plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 1, 1]), 'r--')
     plt.plot(t[0:30] , x2[0:30, 2], "g")
     plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
     plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 1, 1]), 'c--')
-    plt.title('Second LOS component')
+    plt.title('First rate component')
     plt.grid()
 
-    plt.subplot(324)
-    plt.plot(t[0:30] , x[0:30, 5], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 4, 4]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 5], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 4, 4]), 'c--')
-    plt.title('Second rate component')
-    plt.grid()
-
-    plt.subplot(325)
+    plt.subplot(313)
     plt.plot(t[0:30] , x[0:30, 3], "b")
     plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 2, 2]), 'r--')
     plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 2, 2]), 'r--')
     plt.plot(t[0:30] , x2[0:30, 3], "g")
     plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
     plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 2, 2]), 'c--')
-    plt.xlabel('t(s)')
-    plt.title('Third LOS component')
+    plt.title('Second LOS component')
     plt.grid()
 
-    plt.subplot(326)
-    plt.plot(t[0:30] , x[0:30, 6], "b")
-    plt.plot(t[0:30] , 3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P[0:30, 5, 5]), 'r--')
-    plt.plot(t[0:30] , x2[0:30, 6], "g")
-    plt.plot(t[0:30] , 3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
-    plt.plot(t[0:30] , -3 * np.sqrt(P2[0:30, 5, 5]), 'c--')
-    plt.xlabel('t(s)')
-    plt.title('Third rate component')
-    plt.grid()
+
 
     unitTestSupport.writeFigureLaTeX('StatesCompare', 'State error and covariance vs expected Values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
@@ -261,43 +209,23 @@ def PostFitResiduals(Res, noise, show_plots):
 
 def StatesVsExpected(stateLog, expectedStateArray, show_plots):
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(311)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  1], 'b--', label='Expected')
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  1], 'r', label='Filter')
     plt.legend(loc='best')
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  4], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  4], 'r')
+    plt.subplot(312)
+    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  2], 'b--')
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'r')
     plt.title('First rate component')
     plt.grid()
 
-    plt.subplot(323)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  2], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  2], 'r')
-    plt.title('Second LOS component')
-    plt.grid()
-
-    plt.subplot(324)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  5], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  5], 'r')
-    plt.title('Second rate component')
-    plt.grid()
-
-    plt.subplot(325)
+    plt.subplot(313)
     plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  3], 'b--')
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  3], 'r')
-    plt.xlabel('t(s)')
-    plt.title('Third LOS component')
-    plt.grid()
-
-    plt.subplot(326)
-    plt.plot(stateLog[:, 0] * 1.0E-9, expectedStateArray[:,  6], 'b--')
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:,  6], 'r')
-    plt.xlabel('t(s)')
-    plt.title('Third rate component')
+    plt.title('Second LOS component')
     plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesExpected', 'States vs true states in static case', plt, 'height=0.9\\textwidth, keepaspectratio', path)
@@ -310,50 +238,32 @@ def StatesVsExpected(stateLog, expectedStateArray, show_plots):
 def StatesVsTargets(target1, target2, stateLog, show_plots):
 
 
-    target = np.ones([len(stateLog[:, 0]),6])
+    target = np.ones([len(stateLog[:, 0]),3])
     for i in range((len(stateLog[:, 0])-1)/2):
         target[i, :] = target1
         target[i+(len(stateLog[:, 0]) - 1) / 2,:] = target2
 
     plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
-    plt.subplot(321)
+    plt.subplot(311)
     plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 1], 'b', label='Filter')
     plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 0], 'r--', label='Expected')
     plt.legend(loc='best')
     plt.title('First LOS component')
     plt.grid()
 
-    plt.subplot(322)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 4], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 3], 'r--')
+    plt.subplot(312)
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2], 'b')
+    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 1], 'r--')
     plt.title('First rate component')
     plt.grid()
 
-    plt.subplot(323)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 2], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 1], 'r--')
+    plt.subplot(313)
+    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 3], 'b')
+    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 2], 'r--')
     plt.title('Second LOS component')
     plt.grid()
 
-    plt.subplot(324)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 5], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 4], 'r--')
-    plt.title('Second rate component')
-    plt.grid()
 
-    plt.subplot(325)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 3], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 2], 'r--')
-    plt.xlabel('t(s)')
-    plt.title('Third LOS component')
-    plt.grid()
-
-    plt.subplot(326)
-    plt.plot(stateLog[:, 0] * 1.0E-9, stateLog[:, 6], 'b')
-    plt.plot(stateLog[:, 0] * 1.0E-9, target[:, 5], 'r--')
-    plt.xlabel('t(s)')
-    plt.title('Third rate component')
-    plt.grid()
 
     unitTestSupport.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
 
