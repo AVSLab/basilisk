@@ -85,9 +85,9 @@ def test_all_functions_oekf(show_plots):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-def test_all_sunline_oekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
-    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
-    assert testResults < 1, testMessage
+# def test_all_sunline_oekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+#     [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
+#     assert testResults < 1, testMessage
 
 
 def sunline_individual_test():
@@ -128,6 +128,35 @@ def sunline_individual_test():
         testFailCount += 1
         testMessages.append("Dynamics Matrix generation Failure \n")
 
+
+    ###################################################################################
+    ## Testing omega computation
+    ###################################################################################
+
+    inputStates = [2,1,0.75]
+    inputPrevStates = [1,0.1,0.5]
+    norm1 = np.linalg.norm(np.array(inputStates))
+    norm2 =  np.linalg.norm(np.array(inputPrevStates))
+    dt =0.5
+
+    expOmega = 1./dt*np.cross(np.array(inputStates),np.array(inputPrevStates))/(norm1*norm2)*np.arccos(np.dot(np.array(inputStates),np.array(inputPrevStates))/(norm1*norm2))
+
+    omega = okeefeEKF.new_doubleArray(NUMSTATES)
+    for i in range(3):
+        okeefeEKF.doubleArray_setitem(omega, i, 0.0)
+    okeefeEKF.sunlineRateCompute(inputStates, dt, inputPrevStates, omega)
+
+    omegaOut = []
+    for i in range(NUMSTATES):
+        omegaOut.append(okeefeEKF.doubleArray_getitem(omega, i))
+
+    omegaOut = np.array(omegaOut)
+    errorNorm = np.linalg.norm(expOmega - omegaOut)
+    if(errorNorm > 1.0E-12):
+        print errorNorm
+        testFailCount += 1
+        testMessages.append("Dynamics Matrix generation Failure \n")
+
     ###################################################################################
     ## STM and State Test
     ###################################################################################
@@ -140,7 +169,6 @@ def sunline_individual_test():
     prev_states = okeefeEKF.new_doubleArray(NUMSTATES)
     for i in range(NUMSTATES):
         okeefeEKF.doubleArray_setitem(states, i, inputStates[i])
-        okeefeEKF.doubleArray_setitem(states, i, 0.)
         for j in range(NUMSTATES):
             if i==j:
                 okeefeEKF.doubleArray_setitem(stateTransition, NUMSTATES*i+j, 1.0)
@@ -167,14 +195,11 @@ def sunline_individual_test():
     errorNormSTM = np.linalg.norm(expectedSTM - STMout)
     errorNormStates = np.linalg.norm(expectedStates - StatesOut)
 
-    print expectedStates
-    print StatesOut
-
     if(errorNormSTM > 1.0E-12):
         print errorNormSTM
         testFailCount += 1
         testMessages.append("STM Propagation Failure \n")
-    print 'here'
+
 
     if(errorNormStates > 1.0E-12):
         print errorNormStates
@@ -184,8 +209,8 @@ def sunline_individual_test():
 
 
     ###################################################################################
-    ## Test the H and yMeas matrix generation as well as the observation count
-    ###################################################################################
+    # ## Test the H and yMeas matrix generation as well as the observation count
+    # ###################################################################################
     numCSS = 4
     cssCos = [np.cos(np.deg2rad(10.)), np.cos(np.deg2rad(25.)), np.cos(np.deg2rad(5.)), np.cos(np.deg2rad(90.))]
     sensorTresh = np.cos(np.deg2rad(50.))
@@ -235,19 +260,16 @@ def sunline_individual_test():
             testFailCount += 1
             testMessages.append("H and yMeas update failure \n")
 
-    ###################################################################################
-    ## Test the Kalman Gain
-    ###################################################################################
+    # ###################################################################################
+    # ## Test the Kalman Gain
+    # ###################################################################################
 
     numObs = 3
-    h = [1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-         0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
-    covar = [1., 0., 0., 1., 0., 0.,
-        0., 1., 0., 0., 1., 0.,
-        0., 0., 1., 0., 0., 1.,
-        1., 0., 0., 1., 0., 0.,
-        0., 1., 0., 0., 1., 0.,
-        0., 0., 1., 0., 0., 1.]
+    h = [1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+         0., 0., 0., 0., 0., 0.]
+    covar = [1., 0., 1.,
+        0., 1., 0.,
+        1., 0., 1. ]
     noise= 0.01
 
     Kalman = okeefeEKF.new_doubleArray(NUMSTATES * 8)
@@ -263,7 +285,7 @@ def sunline_individual_test():
 
     # Fill in expected values for test
     Hmat = np.array(h).reshape([8,NUMSTATES])
-    Pk = np.array(covar).reshape([6,NUMSTATES])
+    Pk = np.array(covar).reshape([NUMSTATES,NUMSTATES])
     R = noise*np.eye(3)
     expectedK = np.dot(np.dot(Pk, Hmat[0:numObs,:].T), np.linalg.inv(np.dot(np.dot(Hmat[0:numObs,:], Pk), Hmat[0:numObs,:].T) + R[0:numObs,0:numObs]))
 
@@ -276,15 +298,15 @@ def sunline_individual_test():
         testFailCount += 1
         testMessages.append("Kalman Gain update failure \n")
 
-    ###################################################################################
-    ## Test the EKF update
-    ###################################################################################
+    # ###################################################################################
+    # ## Test the EKF update
+    # ###################################################################################
 
     KGain = [1.,2.,3., 0., 1., 2., 1., 0., 1.]
     for i in range(NUMSTATES*8-NUMSTATES*3):
         KGain.append(0.)
-    inputStates = [2,1,0.75,0.1,0.4,0.05]
-    xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
+    inputStates = [2,1,0.75]
+    xbar = [0.1, 0.2, 0.01]
     numObs = 3
     h = [1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0.,
          0., 0., 0., 0., 0., 0., 0., 0., 0.]
@@ -330,21 +352,21 @@ def sunline_individual_test():
 
     errorNorm = np.zeros(2)
     errorNorm[0] = np.linalg.norm(np.array(stateOut) - expectedStates)
-    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6,6]))
+    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([NUMSTATES,NUMSTATES]))
     for i in range(2):
         if(errorNorm[i] > 1.0E-12):
             testFailCount += 1
             testMessages.append("EKF update failure \n")
+    #
+    # ###################################################################################
+    # ## Test the CKF update
+    # ###################################################################################
 
-    ###################################################################################
-    ## Test the CKF update
-    ###################################################################################
-
-    KGain = [1., 2., 3., 0., 1., 2., 1., 0., 1.]
+    KGain = [1., 2., 3.]
     for i in range(NUMSTATES * 8 - NUMSTATES * 3):
         KGain.append(0.)
-    inputStates = [2, 1, 0.75, 0.1, 0.4, 0.05]
-    xbar = [0.1, 0.2, 0.01, 0.005, 0.009, 0.001]
+    inputStates = [2, 1, 0.75]
+    xbar = [0.1, 0.2, 0.01]
     numObs = 3
     h = [1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
          0., 0., 0., 0., 0., 0.]
@@ -387,7 +409,7 @@ def sunline_individual_test():
 
     errorNorm = np.zeros(2)
     errorNorm[0] = np.linalg.norm(np.array(errorOut) - expectedStateError)
-    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([6, 6]))
+    errorNorm[1] = np.linalg.norm(expectedP - np.array(covarOut).reshape([NUMSTATES, NUMSTATES]))
     for i in range(2):
         if (errorNorm[i] > 1.0E-12):
             testFailCount += 1
@@ -410,6 +432,7 @@ def StatePropStatic():
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
 
+    NUMSTATES=3
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
 
@@ -438,8 +461,8 @@ def StatePropStatic():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
-    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 35)
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate * 10, 0, 5)
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate * 10, 0, 2)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
@@ -448,7 +471,7 @@ def StatePropStatic():
     stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
 
 
-    for i in range(6):
+    for i in range(NUMSTATES):
         if (abs(stateLog[-1, i + 1] - stateLog[0, i + 1]) > 1.0E-10):
             print abs(stateLog[-1, i + 1] - stateLog[0, i + 1])
             testFailCount += 1
@@ -473,6 +496,8 @@ def StatePropVariable(show_plots):
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+
+    NUMSTATES=3
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -510,10 +535,11 @@ def StatePropVariable(show_plots):
     InitialCovar = moduleConfig.covar
 
     moduleConfig.states = InitialState
-    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 35)
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 5)
-    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 5)
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 8)
+    unitTestSim.AddVariableForLogging('okeefeEKF.stateTransition', testProcessRate, 0, 8)
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 2)
+    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2)
+    unitTestSim.AddVariableForLogging('okeefeEKF.omega', testProcessRate , 0, 2)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(1000.0))
     unitTestSim.ExecuteSimulation()
@@ -523,54 +549,55 @@ def StatePropVariable(show_plots):
     stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
     stateErrorLog = unitTestSim.GetLogVariableData('okeefeEKF.x')
     stmLog = unitTestSim.GetLogVariableData('okeefeEKF.stateTransition')
-
+    omegaLog = unitTestSim.GetLogVariableData('okeefeEKF.omega')
 
     dt = 0.5
-    expectedStateArray = np.zeros([2001,7])
-    expectedStateArray[0,1:7] = np.array(InitialState)
+    expectedOmega = np.zeros([2001, (NUMSTATES + 1)])
+    expectedStateArray = np.zeros([2001,(NUMSTATES+1)])
+    expectedStateArray[0,1:(NUMSTATES+1)] = np.array(InitialState)
 
     for i in range(1,2001):
         expectedStateArray[i,0] = dt*i*1E9
-        expectedStateArray[i,1:4] = expectedStateArray[i-1,1:4] + dt*(expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.)
-        ## Equations when removing the unobservable states from d_dot
-        expectedStateArray[i, 4:7] = expectedStateArray[i-1,4:7] - (np.dot(expectedStateArray[i-1,4:7],expectedStateArray[i-1,1:4]))*expectedStateArray[i-1,1:4]/np.linalg.norm(expectedStateArray[i-1,1:4])**2.
+        expectedOmega[i,0] = dt*i*1E9
 
-    expDynMat = np.zeros([2001,6,6])
+        normdk = np.linalg.norm(expectedStateArray[i,1:(NUMSTATES+1)])
+        nomrdkmin1 = np.linalg.norm(expectedStateArray[i-1,1:(NUMSTATES+1)])
+
+        expectedOmega[i,1:(NUMSTATES+1)] = np.cross(expectedStateArray[i,1:(NUMSTATES+1)],expectedStateArray[i-1,1:(NUMSTATES+1)])/(normdk*nomrdkmin1)*np.arccos(np.dot(expectedStateArray[i,1:(NUMSTATES+1)],expectedStateArray[i-1,1:(NUMSTATES+1)])/(normdk*nomrdkmin1))
+        expectedStateArray[i,1:(NUMSTATES+1)] =  np.array(expectedStateArray[i-1,1:(NUMSTATES+1)] - dt*(np.cross(np.array(expectedOmega[i-1,1:(NUMSTATES+1)]), np.array(expectedStateArray[i-1,1:(NUMSTATES+1)]))))
+
+        print nomrdkmin1
+
+    expDynMat = np.zeros([2001,NUMSTATES,NUMSTATES])
     for i in range(0,2001):
-        expDynMat[i, 0:3, 0:3] = -(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
-                             np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
-        expDynMat[i, 0:3, 3:6] = np.eye(3) - np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2
-        ## Equations when removing the unobservable states from d_dot
-        expDynMat[i, 3:6, 0:3] = -1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,4:7])/np.linalg.norm(expectedStateArray[i,1:4])**2. +
-                             np.dot(expectedStateArray[i,4:7], expectedStateArray[i,1:4])*(np.linalg.norm(expectedStateArray[i,1:4])**2.*np.eye(3)- 2*np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4]))/np.linalg.norm(expectedStateArray[i,1:4])**4.)
-        expDynMat[i, 3:6, 3:6] =- 1/dt*(np.outer(expectedStateArray[i,1:4],expectedStateArray[i,1:4])/np.linalg.norm(expectedStateArray[i,1:4])**2)
+        expDynMat[i, :, :] = - np.array([[0., -expectedOmega[i, 3], expectedOmega[i,2]],
+                            [expectedOmega[i,3], 0., -expectedOmega[i,1]],
+                            [ -expectedOmega[i,2], expectedOmega[i,1], 0.]])
 
-    expectedSTM = np.zeros([2001,6,6])
-    expectedSTM[0,:,:] = np.eye(6)
+    expectedSTM = np.zeros([2001,NUMSTATES,NUMSTATES])
+    expectedSTM[0,:,:] = np.eye(NUMSTATES)
     for i in range(1,2001):
-        expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(6)) + np.eye(6)
+        expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(NUMSTATES)) + np.eye(NUMSTATES)
 
-    expectedXBar = np.zeros([2001,7])
-    expectedXBar[0,1:7] = np.array(Initialx)
+    expectedXBar = np.zeros([2001,NUMSTATES+1])
+    expectedXBar[0,1:(NUMSTATES+1)] = np.array(Initialx)
     for i in range(1,2001):
         expectedXBar[i,0] = dt*i*1E9
-        expectedXBar[i, 1:7] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:7])
+        expectedXBar[i, 1:(NUMSTATES+1)] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:(NUMSTATES+1)])
 
-    expectedCovar = np.zeros([2001,37])
-    expectedCovar[0,1:37] = np.array(InitialCovar)
-    Gamma = np.zeros([6, 3])
-    Gamma[0:3, 0:3] = dt ** 2. / 2. * np.eye(3)
-    Gamma[3:6, 0:3] = dt * np.eye(3)
+    expectedCovar = np.zeros([2001,NUMSTATES*NUMSTATES+1])
+    expectedCovar[0,1:(NUMSTATES*NUMSTATES+1)] = np.array(InitialCovar)
+    Gamma = dt ** 2. / 2. * np.eye(3)
     ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
     for i in range(1,2001):
         expectedCovar[i,0] =  dt*i*1E9
-        expectedCovar[i,1:37] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:37],[6,6]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
+        expectedCovar[i,1:(NUMSTATES*NUMSTATES+1)] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:(NUMSTATES*NUMSTATES+1)],[NUMSTATES,NUMSTATES]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
     FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
 
     for j in range(1,2001):
-        for i in range(6):
+        for i in range(NUMSTATES):
             if (abs(stateLog[j, i + 1] - expectedStateArray[j, i + 1]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("General state propagation failure: State Prop \n")
@@ -578,7 +605,7 @@ def StatePropVariable(show_plots):
                 testFailCount += 1
                 testMessages.append("General state propagation failure: State Error Prop \n")
 
-        for i in range(36):
+        for i in range(NUMSTATES*NUMSTATES):
             if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
                 abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
@@ -867,6 +894,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 if __name__ == "__main__":
     #StateUpdateSunLine(False, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
-    sunline_individual_test()
+    # sunline_individual_test()
     #StatePropStatic()
-    #StatePropVariable(show_plots)
+    StatePropVariable(True)
