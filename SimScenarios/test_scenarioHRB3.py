@@ -64,6 +64,7 @@ import numpy as np
 import spacecraftPlus
 import simIncludeGravity
 import hingedRigidBodyStateEffector
+import ExtForceTorque
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -254,7 +255,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.panel1.mass = 100.0
     scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel1.d = 1.5
-    scSim.panel1.k = 10.0
+    scSim.panel1.k = 100.0
     scSim.panel1.c = 0.0
     scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -268,7 +269,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.panel2.mass = 100.0
     scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel2.d = 1.5
-    scSim.panel2.k = 10.
+    scSim.panel2.k = 100.
     scSim.panel2.c = 0.0
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -293,6 +294,18 @@ def run(doUnitTests, show_plots, maneuverCase):
 
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+
+    # setup extForceTorque module
+    # the control torque is read in through the messaging system
+    applyThrust = False
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "maneuverThrust"
+    # use the input flag to determine which external torque should be applied
+    # Note that all variables are initialized to zero.  Thus, not setting this
+    # vector would leave it's components all zero for the simulation.
+    extFTObject.extForce_N = [[0.],[0.],[0.]]
+    scObject.addDynamicEffector(extFTObject)
+    scSim.AddModelToTask(simTaskName, extFTObject)
     ##########################################################################################
     ########################Ending the HingedRigidBody State Effector#########################
     ##########################################################################################
@@ -373,17 +386,16 @@ def run(doUnitTests, show_plots, maneuverCase):
     else:
         # Hohmann Transfer to GEO
         v0 = np.linalg.norm(vVt)
-        print vVt
         r0 = np.linalg.norm(rVt)
         at = (r0+rGEO)*.5
         v0p = np.sqrt(mu/at*rGEO/r0)
         n1 = np.sqrt(mu/at/at/at)
-        T2 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
+        #T2 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
         vHat = vVt/v0
         vVt = vVt + vHat*(v0p-v0)
-        print vVt
-        print np.linalg.norm(vVt), v0
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        #velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
+        extFTObject.extForce_N = [[-4100.], [-2860.], [-.00152]]
+        T2 = macros.sec2nano(468.) #this is the amount of time to get a deltaV equal to what the other tutorial has.
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime+T2)
