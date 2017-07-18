@@ -206,9 +206,14 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'noise':
         # this test checks the standard deviation of sensor noise
-        simStopTime = 200.
-        senRotNoiseStd = np.random.rand()
-        senTransNoiseStd = np.random.rand()
+        simStopTime = 2000.
+        accuracy = 1e-2
+        senRotNoiseStd = 0.
+        senTransNoiseStd = 0.
+        while senRotNoiseStd == 0:
+            senRotNoiseStd = np.random.rand()
+        while senTransNoiseStd == 0:
+            senTransNoiseStd = np.random.rand()
         stdCorrectionFactor = 1.5 # this needs to be used because of the Gauss Markov module. need to fix the GM module
         setRandomWalk(ImuSensor,float(senRotNoiseStd*stdCorrectionFactor),float(senTransNoiseStd*stdCorrectionFactor),[1e-13]*3,[1e-13]*3)
         trueVector['AccelPlatform'] = [senTransNoiseStd] * 3
@@ -299,7 +304,7 @@ def unitSimIMU(show_plots, useFlag, testCase):
 
     elif testCase == 'walk bounds':
         # this test checks the walk bounds of random walk
-        simStopTime = 5000.0
+        simStopTime = 2500.
         senRotNoiseStd = 0.1
         senTransNoiseStd = 0.2
         errorBoundsGyro = [10.] * 3
@@ -422,8 +427,8 @@ def unitSimIMU(show_plots, useFlag, testCase):
     for moduleOutputName in fieldNames:
         if testCase == 'noise':
             for i in range(0,3):
-                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > 0.01 \
-                                or np.abs(np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i]) > accuracy :
+                if np.abs(np.mean(moduleOutput[moduleOutputName][:,i+1])) > accuracy \
+                                or np.abs((np.std(moduleOutput[moduleOutputName][:,i+1]) - trueVector[moduleOutputName][i])/  trueVector[moduleOutputName][i]) > accuracy :
                     testFail = True
 
         elif testCase == 'walk bounds':
@@ -482,5 +487,5 @@ if __name__ == "__main__":
     test_unitSimIMU(
         True, # show_plots
         False, # useFlag
-        'walk bounds' # testCase
+        'noise' # testCase
     )
