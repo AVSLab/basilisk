@@ -46,6 +46,7 @@ def setupFilterData(filterObject):
     filterObject.sensorUseThresh = 0.
     filterObject.states = [1.0, 1.0, 1.0]
     filterObject.omega = [0.1, 0.2, 0.1]
+    # filterObject.omega = [0., 0., 0.]
     filterObject.x = [1.0, 0.0, 1.0]
     filterObject.covar = [0.4, 0.0, 0.0,
                           0.0, 0.4, 0.0,
@@ -461,13 +462,13 @@ def StatePropStatic():
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
 
     setupFilterData(moduleConfig)
+    moduleConfig.omega = [0.,0.,0.]
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate * 10, 0, 8)
     unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate * 10, 0, 2)
     unitTestSim.InitializeSimulation()
     unitTestSim.ConfigureStopTime(macros.sec2nano(8000.0))
     unitTestSim.ExecuteSimulation()
 
-    covarLog = unitTestSim.GetLogVariableData('okeefeEKF.covar')
     stateLog = unitTestSim.GetLogVariableData('okeefeEKF.states')
 
 
@@ -489,7 +490,7 @@ def StatePropStatic():
 
 
 ####################################################################################
-# Test for the time and update with changing states (non-zero d_dot)
+# Test for the time and update with changing states non-zero omega
 ####################################################################################
 def StatePropVariable(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
@@ -533,6 +534,7 @@ def StatePropVariable(show_plots):
     InitialState = moduleConfig.states
     Initialx = moduleConfig.x
     InitialCovar = moduleConfig.covar
+    InitOmega = moduleConfig.omega
 
     moduleConfig.states = InitialState
     unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate, 0, 8)
@@ -554,47 +556,61 @@ def StatePropVariable(show_plots):
     dt = 0.5
     expectedOmega = np.zeros([2001, (NUMSTATES + 1)])
     expectedStateArray = np.zeros([2001,(NUMSTATES+1)])
+    expectedPrevArray = np.zeros([2001,(NUMSTATES+1)])
     expectedStateArray[0,1:(NUMSTATES+1)] = np.array(InitialState)
-
-    for i in range(1,2001):
-        expectedStateArray[i,0] = dt*i*1E9
-        expectedOmega[i,0] = dt*i*1E9
-
-        normdk = np.linalg.norm(expectedStateArray[i,1:(NUMSTATES+1)])
-        nomrdkmin1 = np.linalg.norm(expectedStateArray[i-1,1:(NUMSTATES+1)])
-
-        expectedOmega[i,1:(NUMSTATES+1)] = np.cross(expectedStateArray[i,1:(NUMSTATES+1)],expectedStateArray[i-1,1:(NUMSTATES+1)])/(normdk*nomrdkmin1)*np.arccos(np.dot(expectedStateArray[i,1:(NUMSTATES+1)],expectedStateArray[i-1,1:(NUMSTATES+1)])/(normdk*nomrdkmin1))
-        expectedStateArray[i,1:(NUMSTATES+1)] =  np.array(expectedStateArray[i-1,1:(NUMSTATES+1)] - dt*(np.cross(np.array(expectedOmega[i-1,1:(NUMSTATES+1)]), np.array(expectedStateArray[i-1,1:(NUMSTATES+1)]))))
-
-        print nomrdkmin1
-
-    expDynMat = np.zeros([2001,NUMSTATES,NUMSTATES])
-    for i in range(0,2001):
-        expDynMat[i, :, :] = - np.array([[0., -expectedOmega[i, 3], expectedOmega[i,2]],
-                            [expectedOmega[i,3], 0., -expectedOmega[i,1]],
-                            [ -expectedOmega[i,2], expectedOmega[i,1], 0.]])
-
-    expectedSTM = np.zeros([2001,NUMSTATES,NUMSTATES])
-    expectedSTM[0,:,:] = np.eye(NUMSTATES)
-    for i in range(1,2001):
-        expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(NUMSTATES)) + np.eye(NUMSTATES)
+    expectedOmega[0,1:(NUMSTATES+1)] = np.array(InitOmega)
 
     expectedXBar = np.zeros([2001,NUMSTATES+1])
     expectedXBar[0,1:(NUMSTATES+1)] = np.array(Initialx)
-    for i in range(1,2001):
-        expectedXBar[i,0] = dt*i*1E9
-        expectedXBar[i, 1:(NUMSTATES+1)] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:(NUMSTATES+1)])
+
+    expectedSTM = np.zeros([2001,NUMSTATES,NUMSTATES])
+    expectedSTM[0,:,:] = np.eye(NUMSTATES)
 
     expectedCovar = np.zeros([2001,NUMSTATES*NUMSTATES+1])
     expectedCovar[0,1:(NUMSTATES*NUMSTATES+1)] = np.array(InitialCovar)
+
+    expDynMat = np.zeros([2001,NUMSTATES,NUMSTATES])
     Gamma = dt ** 2. / 2. * np.eye(3)
     ProcNoiseCovar = np.dot(Gamma, np.dot(moduleConfig.qProcVal*np.eye(3),Gamma.T))
+
     for i in range(1,2001):
+        expectedStateArray[i,0] = dt*i*1E9
+        expectedPrevArray[i,0] = dt*i*1E9
+        expectedOmega[i,0] = dt*i*1E9
         expectedCovar[i,0] =  dt*i*1E9
+        expectedXBar[i,0] = dt*i*1E9
+
+        #Simulate sunline Dyn Mat
+        expDynMat[i-1, :, :] = - np.array([[0., -expectedOmega[i-1, 3], expectedOmega[i-1,2]],
+                                         [expectedOmega[i-1,3], 0., -expectedOmega[i-1,1]],
+                                         [ -expectedOmega[i-1,2], expectedOmega[i-1,1], 0.]])
+
+        #Simulate STM State prop
+        expectedStateArray[i,1:(NUMSTATES+1)] =  np.array(expectedStateArray[i-1,1:(NUMSTATES+1)] - dt*(np.cross(np.array(expectedOmega[i-1,1:(NUMSTATES+1)]), np.array(expectedStateArray[i-1,1:(NUMSTATES+1)]))))
+        expectedPrevArray[i, 1:(NUMSTATES + 1)] = expectedStateArray[i-1,1:(NUMSTATES+1)]
+        expectedSTM[i,:,:] = dt * np.dot(expDynMat[i-1,:,:], np.eye(NUMSTATES)) + np.eye(NUMSTATES)
+
+        # Simulate Rate compute
+        normdk = np.linalg.norm(expectedStateArray[i, 1:(NUMSTATES + 1)])
+        nomrdkmin1 = np.linalg.norm(expectedPrevArray[i, 1:(NUMSTATES + 1)])
+        arg = np.dot(expectedStateArray[i, 1:(NUMSTATES + 1)], expectedPrevArray[i , 1:(NUMSTATES + 1)]) / (normdk * nomrdkmin1)
+        if arg>1:
+            expectedOmega[i, 1:(NUMSTATES + 1)] = 1./dt*np.cross(expectedStateArray[i, 1:(NUMSTATES + 1)],
+                                                           expectedPrevArray[i, 1:(NUMSTATES + 1)]) / (normdk * nomrdkmin1) * np.arccos(1)
+        elif arg<-1:
+            expectedOmega[i, 1:(NUMSTATES + 1)] = 1./dt*np.cross(expectedStateArray[i, 1:(NUMSTATES + 1)],
+                                                           expectedPrevArray[i, 1:(NUMSTATES + 1)]) / (
+                                                  normdk * nomrdkmin1) * np.arccos(-1)
+
+        else:
+            expectedOmega[i, 1:(NUMSTATES + 1)] = 1./dt*np.cross(expectedStateArray[i, 1:(NUMSTATES + 1)],expectedPrevArray[i, 1:(NUMSTATES + 1)]) / (normdk * nomrdkmin1) * np.arccos(arg)
+
+        expectedXBar[i, 1:(NUMSTATES+1)] = np.dot(expectedSTM[i, :, :], expectedXBar[i - 1, 1:(NUMSTATES+1)])
         expectedCovar[i,1:(NUMSTATES*NUMSTATES+1)] = (np.dot(expectedSTM[i,:,:], np.dot(np.reshape(expectedCovar[i-1,1:(NUMSTATES*NUMSTATES+1)],[NUMSTATES,NUMSTATES]), np.transpose(expectedSTM[i,:,:])))+ ProcNoiseCovar).flatten()
 
     FilterPlots.StatesVsExpected(stateLog, expectedStateArray, show_plots)
     FilterPlots.StatesPlotCompare(stateErrorLog, expectedXBar, covarLog, expectedCovar, show_plots)
+    FilterPlots.OmegaVsExpected(expectedOmega, omegaLog, show_plots)
 
     for j in range(1,2001):
         for i in range(NUMSTATES):
@@ -607,11 +623,11 @@ def StatePropVariable(show_plots):
 
         for i in range(NUMSTATES*NUMSTATES):
             if (abs(covarLog[j, i + 1] - expectedCovar[j, i + 1]) > 1.0E-8):
+                print abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 abs(covarLog[j, i + 1] - expectedCovar[j, i + 1])
                 testFailCount += 1
-                testMessages.append("General state propagation failure: Covariance Prop \n")
+                # testMessages.append("General state propagation failure: Covariance Prop \n")
             if (abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i]) > 1.0E-10):
-                print abs(stmLog[j, i + 1] - expectedSTM[j,:].flatten()[i])
                 testFailCount += 1
                 testMessages.append("General state propagation failure: STM Prop \n")
 

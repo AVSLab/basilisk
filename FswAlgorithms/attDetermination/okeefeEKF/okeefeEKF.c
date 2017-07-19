@@ -111,7 +111,7 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     vSetZero(ConfigData->obs, ConfigData->numObs);
     vSetZero(ConfigData->yMeas, ConfigData->numObs);
     vSetZero(ConfigData->xBar, ConfigData->numStates);
-    vSetZero(ConfigData->omega, ConfigData->numStates);
+//    vSetZero(ConfigData->omega, ConfigData->numStates);
     vSetZero(ConfigData->prev_states, ConfigData->numStates);
     
     mSetZero(ConfigData->covarBar, ConfigData->numStates, ConfigData->numStates);
@@ -121,8 +121,8 @@ void Reset_okeefeEKF(okeefeEKFConfig *ConfigData, uint64_t callTime,
     mSetZero(ConfigData->measNoise, ConfigData->numObs, ConfigData->numObs);
     
     mSetIdentity(ConfigData->stateTransition, ConfigData->numStates, ConfigData->numStates);
-    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates/2, ConfigData->numStates/2);
-    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates/2, ConfigData->numStates/2, ConfigData->procNoise);
+    mSetIdentity(ConfigData->procNoise,  ConfigData->numStates, ConfigData->numStates);
+    mScale(ConfigData->qProcVal, ConfigData->procNoise, ConfigData->numStates, ConfigData->numStates, ConfigData->procNoise);
     
     return;
 }
@@ -204,9 +204,10 @@ void sunlineTimeUpdate(okeefeEKFConfig *ConfigData, double updateTime)
 	ConfigData->dt = updateTime - ConfigData->timeTag;
     
     /*! - Propagate the previous reference states and STM to the current time */
-    sunlineRateCompute(ConfigData->states, ConfigData->dt, ConfigData->prev_states, ConfigData->omega);
     sunlineDynMatrix(ConfigData->omega, ConfigData->dt, ConfigData->dynMat);
     sunlineStateSTMProp(ConfigData->dynMat, ConfigData->dt, ConfigData->omega, ConfigData->states, ConfigData->prev_states, ConfigData->stateTransition);
+    sunlineRateCompute(ConfigData->states, ConfigData->dt, ConfigData->prev_states, ConfigData->omega);
+
 
     /* xbar = Phi*x */
     mMultV(ConfigData->stateTransition, SKF_N_STATES_HALF, SKF_N_STATES_HALF, ConfigData->x, ConfigData->xBar);
@@ -262,8 +263,16 @@ void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev
         /*Get the cross prodcut for the direction of omega*/
         v3Cross(dk_hat, dkmin1_hat, dk_cross_dkmin1_normal);
         
-        /* Scale direction by the acos and the 1/dt*/
-        v3Scale(1/dt*acos(dk_dot_dkmin1_normal), dk_cross_dkmin1_normal, omega);
+        /* Scale direction by the acos and the 1/dt, and robustly compute arcos of angle*/
+        if(dk_dot_dkmin1_normal>1){
+            v3Scale(1/dt*acos(1), dk_cross_dkmin1_normal, omega);
+        }
+        else if(dk_dot_dkmin1_normal<-1){
+            v3Scale(1/dt*acos(-1), dk_cross_dkmin1_normal, omega);
+        }
+        else {
+            v3Scale(1/dt*acos(dk_dot_dkmin1_normal), dk_cross_dkmin1_normal, omega);
+        }
     }
     return;
 }

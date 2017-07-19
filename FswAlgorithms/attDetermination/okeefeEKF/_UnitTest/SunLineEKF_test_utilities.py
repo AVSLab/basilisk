@@ -270,3 +270,33 @@ def StatesVsTargets(target1, target2, stateLog, show_plots):
     if show_plots:
         plt.show()
     plt.close()
+
+def OmegaVsExpected(omegaExp, omegaSim, show_plots):
+
+    plt.figure(num=None, figsize=(10, 10), dpi=80, facecolor='w', edgecolor='k')
+    plt.subplot(311)
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaSim[:, 1], 'b', label='Filter')
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaExp[:, 1], 'r--', label='Expected')
+    plt.legend(loc='best')
+    plt.title('First omega component')
+    plt.grid()
+
+    plt.subplot(312)
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaSim[:, 2], 'b')
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaExp[:, 2], 'r--')
+    plt.title('Second omega component')
+    plt.grid()
+
+    plt.subplot(313)
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaSim[:, 3], 'b')
+    plt.plot(omegaSim[:, 0] * 1.0E-9, omegaExp[:, 3], 'r--')
+    plt.title('Third omega component')
+    plt.grid()
+
+
+
+    unitTestSupport.writeFigureLaTeX('StatesTarget', 'States tracking target values', plt, 'height=0.9\\textwidth, keepaspectratio', path)
+
+    if show_plots:
+        plt.show()
+    plt.close()
