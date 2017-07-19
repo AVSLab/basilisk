@@ -21,11 +21,12 @@
 #
 # Basilisk Scenario Script and Integrated Test
 #
-# Purpose:  Integrated test of the spacecraftPlus() and gravity modules illustrating
-#           how impulsive Delta_v maneuver can be simulated with stoping and starting the
-#           simulation.
-# Author:   Hanspeter Schaub
-# Creation Date:  Nov. 26, 2016
+# Purpose:  Integrated tutorial of the spacecraftPlus(), gravity, and hinged rigid body modules illustrating
+#           how Delta_v maneuver from test_scenarioOrbitManeuver.py affects the motion of the hinged rigid bodies.
+#           Rotational motion is allowed on the spacecraft to simulation to full interaction of the hinged rigid
+#           bodies and he spacecraft.
+# Author:   Scott Carnahan
+# Creation Date:  Jul. 17, 2017
 #
 
 
@@ -53,18 +54,21 @@ sys.path.append(bskPath + 'PythonModules')
 # @endcond
 
 # import general simulation support files
-import SimulationBaseClass
+import SimulationBaseClass              #The class which contains the basilisk simuation environment
 import unitTestSupport                  # general support file with common unit test functions
-import matplotlib.pyplot as plt
-import macros
+import macros                           #Some unit conversions
 import orbitalMotion
-import numpy as np
+
 
 # import simulation related support
-import spacecraftPlus
+import spacecraftPlus                   #The base of any spacecraft simulation which deals with spacecraft dynamics
 import simIncludeGravity
 import hingedRigidBodyStateEffector
-import ExtForceTorque
+import ExtForceTorque                   #Allows for forces to act on the spacecraft without adding an effector like a thruster
+
+#import non-basilisk libraries
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -86,67 +90,183 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
             show_plots, maneuverCase)
     assert testResults < 1, testMessage
 
+#NOTE: The unit test in this tutorial essentially only checks if the results are a very specific value. It will not
+# work with other input conditions. It serves only to make sure that this specific tutorial is working when pytest is
+# run and does not prove the functionality of any of the modules used.
 
-## \defgroup Tutorials_1_2
+
+## \defgroup Tutorials_1_4
 ##   @{
 ## Illustration how to start and stop the simulation to perform orbit maneuvers within Python.
 #
-# Orbit Maneuvers using Simulation Starting/Stopping in Python {#scenarioOrbitManeuver}
+# A Spacecraft with Hinged Rigid Bodies {#scenarioHingedRigidBody}
 # ====
 #
 # Scenario Description
 # -----
-# This script sets up a 3-DOF spacecraft which is orbiting Earth.  The purpose
-# is to illustrate how to start and stop the Basilisk simulation to apply
-# some Delta_v's for simple orbit maneuvers.  Read
-# [test_scenarioBasicOrbit.py](@ref scenarioBasicOrbit) to learn how to setup an
-# orbit simulation. The scenarios can be run with the followings setups
-# parameters:
+# This script sets up a 6-DOF spacecraft which is orbiting Earth. It is nearly identical to the spacecraft
+# which is demonstrated in test_scenarioOrbitManeuver.py  The purpose
+# is to illustrate the use of the hinged rigid body module and illustrate the effects that a disturbance has on
+# hinged rigid body motion.  Read [test_scenarioOrbitManeuver.py](@ref scenarioOrbitManeuver) to learn how to setup a
+# basic spacecraft with impulsive Delta-v maneuvers. The scenarios in this tutorial are similar to those in the orbit
+# maneuver scenario except that the length of the simulation is shorter and a non-impulsive Delta-v is applied through
+# the external force and torque module. The shortened length of the first simulation execution means that the maneuvers
+# don't happen at the same point, so the effects of the maneuver are different than before, especially for the inclination
+#  change.
+# This scenario can be run with the same inputs as the orbit maneuver scenario:
 # Setup | maneuverCase
 # ----- | -------------------
 # 1     | 0 (Hohmann)
 # 2     | 1 (Inclination)
 #
-# To run the default scenario 1., call the python script through
+# To run the default scenario 1, call the python script through
 #
-#       python test_scenarioOrbitManeuver.py
+#       python test_scenarioHingedRigidBody.py
 #
 # The simulation layout is shown in the following illustration.  A single simulation process is created
-# which contains the spacecraft object.  The BSK simulation is run for a fixed period.  After stopping, the
-# states are changed and the simulation is resumed.
-# ![Simulation Flow Diagram](Images/doc/test_scenarioOrbitManeuver.svg "Illustration")
+# which contains the spacecraft object and two hinged rigid bodies. It should be noted here that "hinged rigid bodies"
+# are rigid, rectangular bodies which are hinged to the spacecraft hub by a single axis and they can rotate only along
+# that axis and cannot translate. Details and graphics of the hinged rigid body can be found in the hinged rigid body
+# documentation.
 #
-# When the simulation completes 2 plots are shown for each case.  One plot always shows
+# The BSK simulation is run for a fixed period.  After stopping, the
+# ExtForceTorque module is given a non-zero external force value.
+# When the simulation completes 4 plots are shown for each case.  One plot always shows
 # the inertial position vector components, while the second plot either shows a plot
 # of the radius time history (Hohmann maneuver), or the
-# inclination angle time history plot (Inclination change maneuver).
+# inclination angle time history plot (Inclination change maneuver). In addition, there is a plot for the angular
+# displacement of each hinged rigid body. The plots are different because the hinged rigid bodies were attached to
+# the spacecraft hub at logical starting positions, but the thrust is applied to the hub in a constant inertial
+# direction. Therefore, the force has asymmetrical effects on the hinged rigid bodies.
 #
-# The dynamics simulation is setup using a SpacecraftPlus() module with the Earth's
-# gravity module attached.  Note that the rotational motion simulation is turned off to leave
-# pure 3-DOF translation motion simulation.  After running the simulation for 1/4 of a period
-# the simulation is stopped to apply impulsive changes to the inertial velocity vector.
-#~~~~~~~~~~~~~~~~~{.py}
-#    scSim.ConfigureStopTime(simulationTime)
-#    scSim.ExecuteSimulation()
-#~~~~~~~~~~~~~~~~~
-# Next, the state manager objects are called to retrieve the latest inerital position and
-# velocity vector components:
-#~~~~~~~~~~~~~~~~~{.py}
-#    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-#    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
-#~~~~~~~~~~~~~~~~~
-# After computing the maneuver specific Delta_v's, the state managers velocity is updated through
-#~~~~~~~~~~~~~~~~~{.py}
-#     velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
-#~~~~~~~~~~~~~~~~~
-# To start up the simulation again, not that the total simulation time must be provided,
-# not just the next incremental simulation time.
-#~~~~~~~~~~~~~~~~~{.py}
-#     scSim.ConfigureStopTime(simulationTime+T2)
-#     scSim.ExecuteSimulation()
-#~~~~~~~~~~~~~~~~~
-# This process is then repeated for the second maneuver.
+# Rather than focusing only on how this simulation works, it may be more instructive to focus on the differences
+# necessary to make this simulation work when added the hinged rigid bodies to the spacecraft as well as the external
+# force.
 #
+# The first change necessary is in the import statements at the beginning of the test scenario. Now,
+# hingedRigidBodyStateEffector and ExtForceTorque must be imported.
+#~~~~~~~~~~~~~~~~~{.py}
+# import hingedRigidBodyStateEffector
+# import ExtForceTorque
+#~~~~~~~~~~~~~~~~~
+#
+# Next, the simulation time step should be reduced. Previously, the time step was easily set to 10 seconds because
+# only orbital dynamics were being modelled. As will be seen in the plots from this tutorial, though, the panels will
+# "flap" at relatively high frequency. Large time steps would not allow for this motion to be solved for correctly. In
+# fact, with the 10 second time step, the simulation will not even run. This is a good reminder to check the time step
+# size when trouble-shooting Basilisk simulations.
+#~~~~~~~~~~~~~~~~~{.py}
+# simulationTimeStep = macros.sec2nano(0.1)
+#~~~~~~~~~~~~~~~~~
+#
+# Importantly, the hinged rigid body and external force are added next. This entire section is clearly marked in the
+# code, but is repeated here for clarity:
+#~~~~~~~~~~~~~~~~~{.py}
+# scSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+# scSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+#
+# # Define Variable for panel 1
+# scSim.panel1.mass = 100.0
+# scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+# scSim.panel1.d = 1.5
+# scSim.panel1.k = 1000.0
+# scSim.panel1.c = 0.0
+# scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
+# scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+# scSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+# scSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+# scSim.panel1.thetaInit = 5 * np.pi / 180.0
+# scSim.panel1.thetaDotInit = 0.0
+# scSim.panel1.HingedRigidBodyOutMsgName = "panel1Msg"
+#
+# # Define Variables for panel 2
+# scSim.panel2.mass = 100.0
+# scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+# scSim.panel2.d = 1.5
+# scSim.panel2.k = 1000.
+# scSim.panel2.c = 0.0
+# scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
+# scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+# scSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+# scSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+# scSim.panel2.thetaInit = 5 * np.pi / 180.0
+# scSim.panel2.thetaDotInit = 0.0
+# scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
+#
+# # Add panels to spaceCraft
+# scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
+# scObject.addStateEffector(scSim.panel2)  # in order to affect dynamics
+#
+# scSim.AddModelToTask(simTaskName, scSim.panel1)  # in order to track messages
+# scSim.AddModelToTask(simTaskName, scSim.panel2)  # in order to track messages
+#
+# # Define mass properties of the rigid part of the spacecraft
+# scObject.hub.mHub = 800.0
+# scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+# scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+#
+# scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+# scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+#
+# # setup extForceTorque module
+# extFTObject = ExtForceTorque.ExtForceTorque()
+# extFTObject.ModelTag = "maneuverThrust"
+# extFTObject.extForce_N = [[0.], [0.], [0.]]
+# scObject.addDynamicEffector(extFTObject)
+# scSim.AddModelToTask(simTaskName, extFTObject)
+#~~~~~~~~~~~~~~~~~
+# Above, it is important to understand that just creating the hinged rigid body is not enough to have it affect the
+# simulation. In order for it to affect spacecraft dynamics, it must also be added to the spacecraft:
+#~~~~~~~~~~~~~~~~~{.py}
+# scObject.addStateEffector(scSim.panel1)  # in order to affect dynamics
+# scObject.addStateEffector(scSim.panel2)  # in order to affect dynamics
+#~~~~~~~~~~~~~~~~~
+# Additionally, plotting the panel states (theta) at the end of the simulation requires use of the messaging system.
+# In order for the messages to be logged, the panels must be added to the simulation dynamics task:
+#~~~~~~~~~~~~~~~~~{.py}
+# scSim.AddModelToTask(simTaskName, scSim.panel1)  # in order to track messages
+# scSim.AddModelToTask(simTaskName, scSim.panel2)  # in order to track messages
+#~~~~~~~~~~~~~~~~~
+# The same goes for the external force:
+#~~~~~~~~~~~~~~~~~{.py}
+# scObject.addDynamicEffector(extFTObject)
+# scSim.AddModelToTask(simTaskName, extFTObject)
+#~~~~~~~~~~~~~~~~~
+# There are additional lines that must be added in order to retreive and plot the data from the panel messages. These
+# lines are split before and after the simulation executes:
+#~~~~~~~~~~~~~~~~~{.py}
+# scSim.TotalSim.logThisMessage(scSim.panel1.HingedRigidBodyOutMsgName, samplingTime)
+# scSim.TotalSim.logThisMessage(scSim.panel2.HingedRigidBodyOutMsgName, samplingTime)
+# ...
+# ...
+# ...
+# panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
+# panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName+'.theta',range(1))
+#~~~~~~~~~~~~~~~~~
+# The panel theta logs are queried with "range(1)" rather than "range(3)" because theta is a scalar rather than a 3-D
+# vector like the position and velocities which are retrieved in the lines just before the panel theta logs. The
+# Hinged Rigid Body module is also set up with a message for "thetaDot" which can be retrieved by replacing ".theta"
+# with ".thetaDot".
+# Moving on, the orbit maneuver code must be changed to  implement the finite thrusting maneuver rather than the
+# impulse Delta-v used before. The code which is removed is not shown here, but can be seen by comparing the orbit
+# change maneuver tutorial to this one. When complete, this section of the code now looks like:
+#~~~~~~~~~~~~~~~~~{.py}
+# if maneuverCase == 1:
+#     # inclination change
+#     extFTObject.extForce_N = [[64.4], [44.9], [1123.]]
+#     T2 = macros.sec2nano(421.) # this is the amount of time to get a deltaV equal to what the other tutorial has
+# else:
+#     # Hohmann transfer
+#     extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
+#     T2 = macros.sec2nano(935.)  # this is the amount of time to get a deltaV equal to what the other tutorial has
+#~~~~~~~~~~~~~~~~~
+# Finally, the third orbit maneuver has been removed from this tutorial. The intended demonstration is already complete,
+# and the smaller time steps necessary here make it wasteful to simulation more than is necessary. Aside from these
+# changes, other variables used in instantaneous Delta-V calculations have been removed.
+#
+# If a user has time, it would be a good exercise to attempt to model the same orbits and maneuvers as
+# test_scenarioOrbitManeuver.py but with non-impulsive Delta-v and to examine the slight differences in the after-
+# maneuver orbits. Be aware that those simulations will require a long time to run.
 #
 # Setup 1
 # -----
@@ -160,13 +280,21 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The remaining argument controls the
-# type of maneuver that is being simulated.  In this case a classical Hohmann transfer is being
-# simulated to go from LEO to reach and stay at GEO. The math behind such maneuvers can be found
-# in textbooks such as *Analytical Mechanics of Space Systems*
+# type of maneuver that is being simulated.  In this case something similar to a classical Hohmann transfer is being
+# simulated to go from LEO to reach and stay at GEO, but with a finite thrusting time. The math behind such maneuvers
+# can be found in textbooks such as *Analytical Mechanics of Space Systems*
 # (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver10.svg "Position history")
-# ![Orbit Radius Illustration](Images/Scenarios/scenarioOrbitManeuver20.svg "Radius Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioHingedRigidBody10.svg "Position history")
+# ![Orbit Radius Illustration](Images/Scenarios/scenarioHingedRigidBody20.svg "Radius Illustration")
+#
+# The hinged rigid bodies were given an initial angular displacement. Then, the externally applied force caused
+# greater displacement. As discussed above, the reaction is asymmetric between the panels due to panel orientation.
+# Another interesting result is that, during the thrusting maneuver, the hinged bodies oscillate about a non-zero point.
+# This is because they are under a constant, non-zero acceleration, similar to a weight hanging from a spring on Earth.
+# The springs know no difference between a gravity field and acceleration.
+# ![Panel 1 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel1theta0.svg "Panel 1 Theta Illustration")
+# ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta0.svg "Panel 2 Theta Illustration")
 #
 # Setup 2
 # -----
@@ -180,15 +308,16 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #        )
 # ~~~~~~~~~~~~~
 # The first 2 arguments can be left as is.  The remaining argument controls the
-# type of maneuver that is being simulated.  In this case a classical plane change is being
-# simulated to go rotate the orbit plane first 8 degrees, then another 4 degrees after
-# orbiting 90 degrees. The math behind such maneuvers can be found
+# type of maneuver that is being simulated.  In this case, an inclination change is being attempted.
+# If the inclination plot here is compared to that from the orbit maneuver tutorial, it can be seen that the inclination
+# change is significantly less effective in the non-instantaneous case. The math behind such maneuvers can be found
 # in textbooks such as *Analytical Mechanics of Space Systems*
-# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).  The final orbit inclination angle is 8.94 degrees
-# which is indicated as a dashed line below.
+# (<http://arc.aiaa.org/doi/book/10.2514/4.102400>).
 # The resulting position coordinates and orbit illustration are shown below.
-# ![Inertial Position Coordinates History](Images/Scenarios/scenarioOrbitManeuver11.svg "Position history")
-# ![Inclination Angle Time History](Images/Scenarios/scenarioOrbitManeuver21.svg "Inclination Illustration")
+# ![Inertial Position Coordinates History](Images/Scenarios/scenarioHingedRigidBody11.svg "Position history")
+# ![Inclination Angle Time History](Images/Scenarios/scenarioHingedRigidBody21.svg "Inclination Illustration")
+# ![Panel 1 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel1theta1.svg "Panel 1 Theta Illustration")
+# ![Panel 2 Displacement](Images/Scenarios/scenarioHingedRigidBodypanel2theta1.svg "Panel 2 Theta Illustration")
 #
 ##  @}
 def run(doUnitTests, show_plots, maneuverCase):
@@ -229,7 +358,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scObject = spacecraftPlus.SpacecraftPlus()
     scObject.ModelTag = "spacecraftBody"
     scObject.hub.useTranslation = True
-    scObject.hub.useRotation = False
+    scObject.hub.useRotation = True
 
     # add spacecraftPlus object to the simulation process
     scSim.AddModelToTask(simTaskName, scObject)
@@ -255,7 +384,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.panel1.mass = 100.0
     scSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel1.d = 1.5
-    scSim.panel1.k = 100.0
+    scSim.panel1.k = 1000.0
     scSim.panel1.c = 0.0
     scSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
     scSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -269,7 +398,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.panel2.mass = 100.0
     scSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     scSim.panel2.d = 1.5
-    scSim.panel2.k = 100.
+    scSim.panel2.k = 1000.
     scSim.panel2.c = 0.0
     scSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
     scSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
@@ -280,9 +409,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.panel2.HingedRigidBodyOutMsgName = "panel2Msg"
 
     # Add panels to spaceCraft
-    # this next line is not working
     scObject.addStateEffector(scSim.panel1) #in order to affect dynamics
-    scObject.addStateEffector(scSim.panel2) #in order to affect dyanmics
+    scObject.addStateEffector(scSim.panel2) #in order to affect dynamics
 
     scSim.AddModelToTask(simTaskName, scSim.panel1) #in order to track messages
     scSim.AddModelToTask(simTaskName, scSim.panel2) #in order to track messages
@@ -296,13 +424,8 @@ def run(doUnitTests, show_plots, maneuverCase):
     scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
 
     # setup extForceTorque module
-    # the control torque is read in through the messaging system
-    applyThrust = False
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "maneuverThrust"
-    # use the input flag to determine which external torque should be applied
-    # Note that all variables are initialized to zero.  Thus, not setting this
-    # vector would leave it's components all zero for the simulation.
     extFTObject.extForce_N = [[0.],[0.],[0.]]
     scObject.addDynamicEffector(extFTObject)
     scSim.AddModelToTask(simTaskName, extFTObject)
@@ -316,7 +439,6 @@ def run(doUnitTests, show_plots, maneuverCase):
     # setup the orbit using classical orbit elements
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000.*1000;      # meters
-    rGEO = math.pow(mu/math.pow((2.*np.pi)/(24.*3600.),2),1./3.)
     oe.a     = rLEO
     oe.e     = 0.0001
     oe.i     = 0.0*macros.D2R
@@ -354,82 +476,23 @@ def run(doUnitTests, show_plots, maneuverCase):
     #
     scSim.InitializeSimulationAndDiscover()
 
-
-    #
-    #  get access to dynManager translational states for future access to the states
-    #
-    posRef = scObject.dynManager.getStateObject("hubPosition")
-    velRef = scObject.dynManager.getStateObject("hubVelocity")
-
-
     #
     #   configure a simulation stop time time and execute the simulation run
     #
     scSim.ConfigureStopTime(simulationTime)
     scSim.ExecuteSimulation()
 
-    # get the current spacecraft states
-    rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
     # compute maneuver Delta_v's
     if maneuverCase == 1:
-        #inclination change
-        Delta_i = 8.0*macros.D2R
-        rHat = rVt/np.linalg.norm(rVt)
-        hHat = np.cross(rVt,vVt)
-        hHat = hHat/np.linalg.norm(hHat)
-        vHat = np.cross(hHat,rHat)
-        v0 = np.dot(vHat,vVt)
-        vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-        velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        T2 = macros.sec2nano(P*simulationTimeFactor)
+        extFTObject.extForce_N = [[64.4], [44.9], [1123.]]
+        T2 = macros.sec2nano(421.) #this is the amount of time to get a deltaV equal to what the other tutorial has.
     else:
-        # Hohmann Transfer to GEO
-        v0 = np.linalg.norm(vVt)
-        r0 = np.linalg.norm(rVt)
-        at = (r0+rGEO)*.5
-        v0p = np.sqrt(mu/at*rGEO/r0)
-        n1 = np.sqrt(mu/at/at/at)
-        #T2 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
-        vHat = vVt/v0
-        vVt = vVt + vHat*(v0p-v0)
-        #velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-        extFTObject.extForce_N = [[-4100.], [-2860.], [-.00152]]
-        T2 = macros.sec2nano(468.) #this is the amount of time to get a deltaV equal to what the other tutorial has.
+        extFTObject.extForce_N = [[-2050.], [-1430.], [-.00076]]
+        T2 = macros.sec2nano(935.) #this is the amount of time to get a deltaV equal to what the other tutorial has.
 
     # run simulation for 2nd chunk
     scSim.ConfigureStopTime(simulationTime+T2)
     scSim.ExecuteSimulation()
-
-    #Removing last maneuver. Will only show first maneuver and part of second orbit.
-    # # get the current spacecraft states
-    # rVt = unitTestSupport.EigenVector3d2np(posRef.getState())
-    # vVt = unitTestSupport.EigenVector3d2np(velRef.getState())
-    # # compute maneuver Delta_v's
-    # if maneuverCase == 1:
-    #     #inclination change
-    #     Delta_i = 4.0*macros.D2R
-    #     rHat = rVt/np.linalg.norm(rVt)
-    #     hHat = np.cross(rVt,vVt)
-    #     hHat = hHat/np.linalg.norm(hHat)
-    #     vHat = np.cross(hHat,rHat)
-    #     v0 = np.dot(vHat,vVt)
-    #     vVt = vVt - (1.-np.cos(Delta_i))*v0*vHat + np.sin(Delta_i)*v0*hHat
-    #     velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-    #     T3 = macros.sec2nano(P*simulationTimeFactor)
-    # else:
-    #     # Hohmann Transfer to GEO
-    #     v1 = np.linalg.norm(vVt)
-    #     v1p = np.sqrt(mu/rGEO)
-    #     n1 = np.sqrt(mu/rGEO/rGEO/rGEO)
-    #     T3 = macros.sec2nano(simulationTimeFactor*(np.pi)/n1)
-    #     vHat = vVt/v1
-    #     vVt = vVt + vHat*(v1p-v1)
-    #     velRef.setState(unitTestSupport.np2EigenVectorXd(vVt))
-    #
-    # # run simulation for 3rd chunk
-    # scSim.ConfigureStopTime(simulationTime+T2+T3)
-    # scSim.ExecuteSimulation()
 
     #
     #   retrieve the logged data
@@ -438,7 +501,6 @@ def run(doUnitTests, show_plots, maneuverCase):
     velData = scSim.pullMessageLogData(scObject.scStateOutMsgName+'.v_BN_N',range(3))
     panel1thetaLog = scSim.pullMessageLogData(scSim.panel1.HingedRigidBodyOutMsgName+'.theta',range(1))
     panel2thetaLog = scSim.pullMessageLogData(scSim.panel2.HingedRigidBodyOutMsgName+'.theta',range(1))
-
     np.set_printoptions(precision=16)
 
     #
@@ -514,7 +576,11 @@ def run(doUnitTests, show_plots, maneuverCase):
     ax.ticklabel_format(useOffset=False, style='plain')
     plt.plot(panel1thetaLog[:,0]*macros.NANO2HOUR, panel1thetaLog[:,1])
     plt.xlabel('Time [h]')
-    plt.ylabel('Panel Angular Displacement [r]')
+    plt.ylabel('Panel 1 Angular Displacement [r]')
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "panel1theta" + str(int(maneuverCase))
+            , plt, path)
 
     plt.figure(4)
     fig = plt.gcf()
@@ -522,7 +588,11 @@ def run(doUnitTests, show_plots, maneuverCase):
     ax.ticklabel_format(useOffset=False, style='plain')
     plt.plot(panel2thetaLog[:,0]*macros.NANO2HOUR, panel2thetaLog[:,1])
     plt.xlabel('Time [h]')
-    plt.ylabel('Panel Angular Displacement [r]')
+    plt.ylabel('Panel 2 Angular Displacement [r]')
+    if doUnitTests:  # only save off the figure if doing a unit test run
+        unitTestSupport.saveScenarioFigure(
+            fileNameString + "panel2theta" + str(int(maneuverCase))
+            , plt, path)
 
 
     if show_plots:
@@ -530,30 +600,25 @@ def run(doUnitTests, show_plots, maneuverCase):
 
     # close the plots being saved off to avoid over-writing old and new figures
     plt.close("all")
-
     #
     #   the python code below is for the unit testing mode.  If you are studying the scenario
     #   to learn how to run BSK, you can stop reading below this line.
     #
     if doUnitTests:
-        dataPos = posRef.getState()
-        dataPos = [[0.0, dataPos[0][0], dataPos[1][0], dataPos[2][0]]]
+        spaceCraftMomentum = np.sqrt(velData[-1,1]**2 + velData[-1,2]**2 + velData[-1,3]**2)
 
         # setup truth data for unit test
         if maneuverCase == 0:
-            truePos = [
-                  [10298352.587758573, 40947481.244493686, 0.0]
-            ]
+            InstMomentum = 8470.84340921
+            accuracy = 345.1819
         if maneuverCase == 1:
-            truePos = [
-                  [5937590.072546725, 3675220.9560903916, 477503.77340122446]
-            ]
-
+            InstMomentum = 7545.72440169
+            accuracy = 14.6478
         # compare the results to the truth values
-        accuracy = 1e-6
-        testFailCount, testMessages = unitTestSupport.compareArray(
-            truePos, dataPos, accuracy, "r_BN_N Vector",
-            testFailCount, testMessages)
+        if abs(spaceCraftMomentum - InstMomentum) > accuracy:
+            testFailCount += 1
+            testMessages.append("Failed HingedRigidBody Tutorial test for Maneuver Case" + str(int(maneuverCase)) +
+                                ". Post-maneuver momentum incorrect.")
 
         #   print out success message if no error were found
         if testFailCount == 0:
@@ -564,6 +629,7 @@ def run(doUnitTests, show_plots, maneuverCase):
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
+
     return [testFailCount, ''.join(testMessages)]
 
 #
@@ -573,6 +639,6 @@ def run(doUnitTests, show_plots, maneuverCase):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         0            # Maneuver Case (0 - Hohmann, 1 - Inclination)
+         1            # Maneuver Case (0 - Hohmann, 1 - Inclination)
        )
 
