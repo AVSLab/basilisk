@@ -32,13 +32,47 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\input{sec_header.tex} %include packages, styles, and new commands in this file.
+\documentclass[]{BasiliskReportMemo}
+
+\usepackage{cite}
+\usepackage{AVS}
+\usepackage{float} %use [H] to keep tables where you put them
+\usepackage{array} %easy control of text in tables
+\usepackage{import} %allows for importing from multiple sub-directories
+\bibliographystyle{plain}
+
+
+\newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
+
+
+\newcommand{\ModuleName}{SphericalHarmonics}
+\newcommand{\subject}{Spherical Harmonics C++ model}
+\newcommand{\status}{Tested}
+\newcommand{\preparer}{S. Carnahan}
+\newcommand{\summary}{The gravity effector module is responsible for calculating the effects of gravity from a body on a spacecraft. A spherical harmonics model and implementation is developed and described. A unit test has been written and run which tests basic input/output, single-body gravitational acceleration, and multi-body gravitational acceleration.}
 
 \begin{document}
 
 \makeCover
 
-\input{sec_revisionTable.tex} %when you update the file, update the revision table.
+%
+%	enter the revision documentation here
+%	to add more lines, copy the table entry and the \hline, and paste after the current entry.
+%
+\pagestyle{empty}
+{\renewcommand{\arraystretch}{2}
+	\noindent
+	\begin{longtable}{|p{0.5in}|p{3.5in}|p{1.07in}|p{0.9in}|}
+		\hline
+		{\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
+		\hline
+		1.0 & First version - Mathematical formulation and implementation & M. Diaz Ramos & 20170101\\
+		\hline
+		1.1 & Added test documentation & S. Carnahan &20170713\\
+		\hline
+		
+	\end{longtable}
+}
 
 \newpage
 \setcounter{page}{1}
@@ -47,19 +81,19 @@
 \tableofcontents %Autogenerate the table of contents
 ~\\ \hrule ~\\ %Makes the line under table of contents
 	
-\input{sec_modelDescription.tex} %This section includes mathematical models, code description, etc.
+\input{secModelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\input{sec_modelFunctions.tex} %This includes a concise list of what the module does.
+\input{secModelFunctions.tex} %This includes a concise list of what the module does.
 
-\input{sec_modelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\input{secModelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
 
-\input{sec_testDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
+\input{secTestDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
 
-\input{sec_testParameters.tex}
+\input{secTestParameters.tex}
 
-\input{sec_testResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
+\input{secTestResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
 
-\input{sec_user_guide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+\input{secUserGuide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
 
 \bibliography{bibliography.bib} %This includes references used and mentioned.
 

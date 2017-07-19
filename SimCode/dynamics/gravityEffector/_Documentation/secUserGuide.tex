@@ -7,7 +7,7 @@ The diagram in Fig. \ref{img:codeFlow} demonstrates the basic iterative logic of
 After the inputs are given for each gravity body, the computeGravityInertial() method calculates the $0^{\textrm{th}}$ degree gravity term for each body and its effects on the spacecraft. If useSphericalHarmParams is True for a given body, then computeField() is called to calculate higher degree spherical harmonics terms for that body.
 
 \begin{figure}[H]
-	\centering \includegraphics[height=0.8\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
+	\centering \includegraphics[height=1.0\textwidth, keepaspectratio]{Figures/codeFlow.pdf}
 	\caption{A pseudo-code diagram demonstrating the flow of inputs and outputs in the gravity effector module.}
 	\label{img:codeFlow}
 \end{figure}
