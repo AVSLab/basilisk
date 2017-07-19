@@ -242,36 +242,42 @@ void sunlineRateCompute(double states[SKF_N_STATES_HALF], double dt, double prev
     double dk_dot_dkmin1, dk_dot_dkmin1_normal, dk_cross_dkmin1_normal[SKF_N_STATES_HALF];
     double dk_hat[SKF_N_STATES_HALF], dkmin1_hat[SKF_N_STATES_HALF];
 
-    if (v3IsZero(prev_states, 1E-10)){
-    
-        v3SetZero(omega);
+    if (dt < 1E-10){
+    v3SetZero(omega);
     }
-    else{
-        /* Set local variables to zero */
-        dk_dot_dkmin1=0;
-        dk_dot_dkmin1_normal=0;
-        vSetZero(dk_hat, SKF_N_STATES_HALF);
-        vSetZero(dkmin1_hat, SKF_N_STATES_HALF);
     
-        /* Normalized d_k and d_k-1 */
-        v3Normalize(states, dk_hat);
-        v3Normalize(prev_states, dkmin1_hat);
+    else{
+        if (v3IsZero(prev_states, 1E-10)){
         
-        /* Get the dot product to use in acos computation*/
-        dk_dot_dkmin1_normal = v3Dot(dk_hat, dkmin1_hat);
-        
-        /*Get the cross prodcut for the direction of omega*/
-        v3Cross(dk_hat, dkmin1_hat, dk_cross_dkmin1_normal);
-        
-        /* Scale direction by the acos and the 1/dt, and robustly compute arcos of angle*/
-        if(dk_dot_dkmin1_normal>1){
-            v3Scale(1/dt*acos(1), dk_cross_dkmin1_normal, omega);
+            v3SetZero(omega);
         }
-        else if(dk_dot_dkmin1_normal<-1){
-            v3Scale(1/dt*acos(-1), dk_cross_dkmin1_normal, omega);
-        }
-        else {
-            v3Scale(1/dt*acos(dk_dot_dkmin1_normal), dk_cross_dkmin1_normal, omega);
+        else{
+            /* Set local variables to zero */
+            dk_dot_dkmin1=0;
+            dk_dot_dkmin1_normal=0;
+            vSetZero(dk_hat, SKF_N_STATES_HALF);
+            vSetZero(dkmin1_hat, SKF_N_STATES_HALF);
+        
+            /* Normalized d_k and d_k-1 */
+            v3Normalize(states, dk_hat);
+            v3Normalize(prev_states, dkmin1_hat);
+            
+            /* Get the dot product to use in acos computation*/
+            dk_dot_dkmin1_normal = v3Dot(dk_hat, dkmin1_hat);
+            
+            /*Get the cross prodcut for the direction of omega*/
+            v3Cross(dk_hat, dkmin1_hat, dk_cross_dkmin1_normal);
+            
+            /* Scale direction by the acos and the 1/dt, and robustly compute arcos of angle*/
+            if(dk_dot_dkmin1_normal>1){
+                v3Scale(1/dt*acos(1), dk_cross_dkmin1_normal, omega);
+            }
+            else if(dk_dot_dkmin1_normal<-1){
+                v3Scale(1/dt*acos(-1), dk_cross_dkmin1_normal, omega);
+            }
+            else {
+                v3Scale(1/dt*acos(dk_dot_dkmin1_normal), dk_cross_dkmin1_normal, omega);
+            }
         }
     }
     return;

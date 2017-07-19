@@ -86,9 +86,9 @@ def test_all_functions_oekf(show_plots):
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
-# def test_all_sunline_oekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
-#     [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
-#     assert testResults < 1, testMessage
+def test_all_sunline_oekf(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess):
+    [testResults, testMessage] = StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, testVector2, stateGuess)
+    assert testResults < 1, testMessage
 
 
 def sunline_individual_test():
@@ -648,6 +648,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
     __tracebackhide__ = True
+    NUMSTATES=3
 
     testFailCount = 0  # zero unit test result counter
     testMessages = []  # create empty list to store test log messages
@@ -676,6 +677,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, moduleWrap, moduleConfig)
     setupFilterData(moduleConfig)
+    moduleConfig.omega = [0.,0.,0.]
 
     # Set up some test parameters
 
@@ -717,12 +719,11 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     dt =0.5
     stateTarget1 = testVector1
-    stateTarget1 += [0.0, 0.0, 0.0]
     moduleConfig.states = stateGuess
     moduleConfig.x = (np.array(stateTarget1) - np.array(stateGuess)).tolist()
-    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate , 0, 35, 'double')
-    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 5, 'double')
-    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 5, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.covar', testProcessRate , 0, 8, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.states', testProcessRate , 0, 2, 'double')
+    unitTestSim.AddVariableForLogging('okeefeEKF.x', testProcessRate , 0, 2, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -752,13 +753,13 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
     ####################################################################################
     # Compute H and y in order to check post-fit residuals
-    ####################################################################################
+
     threshold = moduleConfig.sensorUseThresh
     CSSnormals = []
     for j in range(8):
         CSSnormals+=CSSOrientationList[j]
 
-    measMat = okeefeEKF.new_doubleArray(8*6)
+    measMat = okeefeEKF.new_doubleArray(8*NUMSTATES)
     obs = okeefeEKF.new_doubleArray(8)
     yMeas = okeefeEKF.new_doubleArray(8)
     numObs = okeefeEKF.new_intArray(1)
@@ -770,7 +771,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         okeefeEKF.doubleArray_setitem(yMeas, i, 0.0)
 
     ytest = np.zeros([SimHalfLength, 9])
-    Htest = np.zeros([SimHalfLength, 49])
+    Htest = np.zeros([SimHalfLength, 25])
     PostFitRes = np.zeros([2*SimHalfLength+1, 9])
 
     for i in range(1,SimHalfLength):
@@ -778,29 +779,29 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
         Htest[i,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:NUMSTATES+1].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
-        for j in range(8*6):
+        for j in range(8*NUMSTATES):
             HOut.append(okeefeEKF.doubleArray_getitem(measMat, j))
         for j in range(8):
             yMeasOut.append(okeefeEKF.doubleArray_getitem(yMeas, j))
 
         ytest[i,1:9] = np.array(yMeasOut)
-        Htest[i,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+        Htest[i,1:25] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i,1:9] - np.dot(Htest[i,1:25].reshape([8,NUMSTATES]), stateErrorLog[i,1:(NUMSTATES+1)])
 
     if not AddMeasNoise:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+        for i in range(NUMSTATES):
+            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
             if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+        for i in range(NUMSTATES):
+            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
             if (abs(stateLog[-1, i + 1] - stateTarget1[i]) > 1.0E-3):
@@ -809,7 +810,6 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     stateTarget2 = testVector2
-    stateTarget2 = stateTarget2+[0.,0.,0.]
 
     inputData = cssComm.CSSArraySensorIntMsg()
     for i in range(SimHalfLength):
@@ -843,48 +843,48 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     for j in range(8):
         CSSnormals+=CSSOrientationList[j]
 
-    measMat = okeefeEKF.new_doubleArray(8*6)
+    measMat = okeefeEKF.new_doubleArray(8*NUMSTATES)
     obs = okeefeEKF.new_doubleArray(8)
     yMeas = okeefeEKF.new_doubleArray(8)
     numObs = okeefeEKF.new_intArray(1)
 
-    for i in range(8*6):
+    for i in range(8*NUMSTATES):
         okeefeEKF.doubleArray_setitem(measMat, i, 0.)
     for i in range(8):
         okeefeEKF.doubleArray_setitem(obs, i, 0.0)
         okeefeEKF.doubleArray_setitem(yMeas, i, 0.0)
 
     ytest = np.zeros([SimHalfLength+1, 9])
-    Htest = np.zeros([SimHalfLength+1, 49])
+    Htest = np.zeros([SimHalfLength+1, 25])
 
     for i in range(SimHalfLength,2*SimHalfLength):
         ytest[i-SimHalfLength,0] = stateLog[i,0]
         Htest[i-SimHalfLength,0] = stateLog[i,0]
         PostFitRes[i, 0] = stateLog[i, 0]
 
-        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:7].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
+        okeefeEKF.sunlineHMatrixYMeas(stateLog[i-1,1:(NUMSTATES+1)].tolist(), 8, dotList, threshold, CSSnormals, obs, yMeas, numObs, measMat)
         yMeasOut = []
         HOut = []
-        for j in range(8*6):
+        for j in range(8*NUMSTATES):
             HOut.append(okeefeEKF.doubleArray_getitem(measMat, j))
         for j in range(8):
             yMeasOut.append(okeefeEKF.doubleArray_getitem(yMeas, j))
 
         ytest[i-SimHalfLength,1:9] = np.array(yMeasOut)
-        Htest[i-SimHalfLength,1:49] = np.array(HOut)
-        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:49].reshape([8,6]), stateErrorLog[i,1:7])
+        Htest[i-SimHalfLength,1:25] = np.array(HOut)
+        PostFitRes[i,1:9] = ytest[i-SimHalfLength,1:9] - np.dot(Htest[i-SimHalfLength,1:25].reshape([8,NUMSTATES]), stateErrorLog[i,1:(NUMSTATES+1)])
 
     if not AddMeasNoise:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+        for i in range(NUMSTATES):
+            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
             if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-10):
                 testFailCount += 1
                 testMessages.append("State update failure")
     else:
-        for i in range(6):
-            if (abs(covarLog[-1, i * 6 + 1 + i] - covarLog[0, i * 6 + 1 + i] / 100.) > 1E-2):
+        for i in range(NUMSTATES):
+            if (abs(covarLog[-1, i * NUMSTATES + 1 + i] - covarLog[0, i * NUMSTATES + 1 + i] / 100.) > 1E-2):
                 testFailCount += 1
                 testMessages.append("Covariance update failure")
             if (abs(stateLog[-1, i + 1] - stateTarget2[i]) > 1.0E-3):
@@ -893,7 +893,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
     target1 = np.array(testVector1)
-    target2 = np.array(testVector2+[0.,0.,0.])
+    target2 = np.array(testVector2)
     FilterPlots.StatesPlot(stateErrorLog, covarLog, show_plots)
     FilterPlots.StatesVsTargets(target1, target2, stateLog, show_plots)
     FilterPlots.PostFitResiduals(PostFitRes, moduleConfig.qObsVal, show_plots)
@@ -909,7 +909,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
 
 
 if __name__ == "__main__":
-    #StateUpdateSunLine(False, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
+    StateUpdateSunLine(True, 200, True ,[-0.7, 0.7, 0.0] ,[0.8, 0.9, 0.0], [0.7, 0.7, 0.0])
     # sunline_individual_test()
     #StatePropStatic()
-    StatePropVariable(True)
+    # StatePropVariable(True)
