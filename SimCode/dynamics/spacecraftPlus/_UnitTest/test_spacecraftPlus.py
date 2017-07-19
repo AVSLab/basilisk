@@ -112,11 +112,17 @@ def test_SCTranslation(show_plots):
     orbEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totOrbEnergy")
 
     plt.figure()
-    plt.plot(orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,1] - orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,2] - orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, orbAngMom_N[:,3] - orbAngMom_N[0,3])
-    plt.title("Change in Orbital Angular Momentum")
+    plt.clf()
+    plt.plot(orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,1] - orbAngMom_N[0,1])/orbAngMom_N[0,1], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,2] - orbAngMom_N[0,2])/orbAngMom_N[0,2], orbAngMom_N[:,0]*1e-9, (orbAngMom_N[:,3] - orbAngMom_N[0,3])/orbAngMom_N[0,3])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalAngularMomentumTranslationOnly", "Change in Orbital Angular Momentum Translation Only", plt, "width=0.8\\textwidth", path)
     plt.figure()
-    plt.plot(orbEnergy[:,0]*1e-9, orbEnergy[:,1] - orbEnergy[0,1])
-    plt.title("Change in Orbital Energy")
+    plt.clf()
+    plt.plot(orbEnergy[:,0]*1e-9, (orbEnergy[:,1] - orbEnergy[0,1])/orbEnergy[0,1])
+    plt.xlabel("Time (s)")
+    plt.ylabel("Relative Difference")
+    unitTestSupport.writeFigureLaTeX("ChangeInOrbitalEnergyTranslationOnly", "Change in Orbital Energy Translation Only", plt, "width=0.8\\textwidth", path)
     if show_plots == True:
         plt.show()
 
