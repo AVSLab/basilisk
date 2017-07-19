@@ -46,12 +46,14 @@ ThrusterDynamicEffector::ThrusterDynamicEffector()
     forceExternal_N.fill(0.0);
     this->stateDerivContribution.resize(1);
     this->stateDerivContribution.setZero();
+    this->mDotTotal = 0.0;
     return;
 }
 
 /*! The destructor.*/
 ThrusterDynamicEffector::~ThrusterDynamicEffector()
 {
+    
     return;
 }
 
@@ -70,6 +72,7 @@ void ThrusterDynamicEffector::SelfInit()
     uint64_t tmpThrustMsgId;
     std::string tmpThrustMsgName;
     int thrustIdx = 0;
+    mDotTotal = 0.0;
     for (it = this->thrusterData.begin(); it != this->thrusterData.end(); ++it)
     {
         tmpThrustMsgName = "thruster_" + this->ModelTag + "_" + std::to_string(thrustIdx) + "_data";
@@ -244,7 +247,6 @@ void ThrusterDynamicEffector::computeBodyForceTorque(double integTime){
     this->forceExternal_B.setZero();
     this->forceExternal_N.setZero();
     this->torqueExternalPntB_B.setZero();
-    mDotTotal = 0.0;
     dt = integTime - prevFireTime;
 
 	omegaLocal_BN_B = hubOmega->getState();
@@ -312,10 +314,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
     
     std::vector<THRConfigSimMsg>::iterator it;
     THROperationSimMsg *ops;
-    double mDotSingle;
+    double mDotSingle=0.0;
     this->mDotTotal = 0.0;
 	this->stateDerivContribution.setZero();
-
     //! - Iterate through all of the thrusters to aggregate the force/torque in the system
     for(it = this->thrusterData.begin(); it != this->thrusterData.end(); it++)
     {
@@ -327,6 +328,9 @@ void ThrusterDynamicEffector::computeStateContribution(double integTime){
                                                           it->steadyIsp * ops->IspFactor);
         }
         this->mDotTotal += mDotSingle;
+        
+
+        
     }
     this->stateDerivContribution(0) = this->mDotTotal;
 

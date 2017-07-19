@@ -10,6 +10,7 @@ The unit test for the thruster\_dynamics module is located in:\\
 The thruster inputs that were used are:
 
 \begin{itemize}
+\item Earth's gravity on surface : $g=9.80665$ m s$^{-2}$ 
 \item The specific impulse: $I_{sp} = 266.7$s 
 
 A thrusters potential to deliver force per mass flow rate. 
@@ -24,8 +25,9 @@ The minimum time that the thruster can be fired.
 \subsection{Test sections}
 
 \noindent This unit test is designed to functionally test the simulation model 
-outputs as well as get complete code path coverage.  The test design is broken 
-up into several parts:\\
+outputs as well as get complete code path coverage. 
+The test design is broken 
+up into several parts, and the mass flow rate is tested at each of these subtests. :\\
 \begin{enumerate}
 \item{\underline{Instantaneous On/Off Factor:} The thrusters are fired with an 
   instantaneous ramp to ensure that the firing is correct. This gives us a base case.}

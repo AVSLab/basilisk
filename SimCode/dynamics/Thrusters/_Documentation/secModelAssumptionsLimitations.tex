@@ -4,8 +4,11 @@
 
 The Thruster module assumes that the thruster is thrusting exactly along it's position axis. Even if the position is dispersed, the thrust will be constant along that dispersed axis and will not vary.
 
+The mass flow rate is considered to be constant as long as the thrusters are activated. Even in a ramp scenario, we assume that the mass is lost, without contributing to the thrust.
+
 \subsection{Limitations}
 
 The ramps in the thrusters modules are made by defining a set of elements to the ramp. They therefore form, by definition, a piecewise-linear ramp. If enough points are added, this will strongly ressemble a polynomial, but the ramps are in essence piecewise constant.
 
 The $I_{sp}$ used for each thruster is considered constant throughout a simulation. This means there is no practical way of doing variable $I_{sp}$ simulations. It can nevertheless be done by stopping the simulation and modifying the values.
+
