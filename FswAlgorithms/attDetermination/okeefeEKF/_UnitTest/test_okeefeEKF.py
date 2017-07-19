@@ -764,7 +764,7 @@ def StateUpdateSunLine(show_plots, SimHalfLength, AddMeasNoise, testVector1, tes
     yMeas = okeefeEKF.new_doubleArray(8)
     numObs = okeefeEKF.new_intArray(1)
 
-    for i in range(8*6):
+    for i in range(8*NUMSTATES):
         okeefeEKF.doubleArray_setitem(measMat, i, 0.)
     for i in range(8):
         okeefeEKF.doubleArray_setitem(obs, i, 0.0)
