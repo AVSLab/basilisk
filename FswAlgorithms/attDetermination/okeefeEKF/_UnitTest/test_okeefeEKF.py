@@ -30,7 +30,7 @@ sys.path.append(splitPath[0] + '/PythonModules')
 
 import SimulationBaseClass
 import alg_contain
-import SunLineEKF_test_utilities as FilterPlots
+import SunLineOEKF_test_utilities as FilterPlots
 import okeefeEKF  # import the module that is to be tested
 import cssComm
 import vehicleConfigData
