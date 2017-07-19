@@ -35,7 +35,6 @@ import spacecraftPlus
 import hingedRigidBodyStateEffector
 import macros
 import gravityEffector
-import spice_interface
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -130,14 +129,6 @@ def test_hingedRigidBodyGravity(show_plots):
     unitTestSim.earthGravBody.isCentralBody = True
     unitTestSim.earthGravBody.useSphericalHarmParams = False
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([unitTestSim.earthGravBody])
-
-    earthEphemData = spice_interface.SpicePlanetStateSimMsg()
-    earthEphemData.J2000Current = 0.0
-    earthEphemData.PositionVector = [0.0, 0.0, 0.0]
-    earthEphemData.VelocityVector = [0.0, 0.0, 0.0]
-    earthEphemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    earthEphemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    earthEphemData.PlanetName = "earth"
 
     # Log the spacecraft state message
     unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
@@ -651,7 +642,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
             testMessages.append("FAILED: Hinged Rigid Body integrated test with damping failed orbital energy unit test")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body integrated test with gravity"
+        print "PASSED: " + " Hinged Rigid Body integrated test with damping"
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
