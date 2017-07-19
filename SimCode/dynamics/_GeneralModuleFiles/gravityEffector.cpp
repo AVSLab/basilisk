@@ -21,6 +21,7 @@
 #include "gravityEffector.h"
 #include "simFswInterfaceMessages/macroDefinitions.h"
 #include "utilities/avsEigenMRP.h"
+#include "utilities/linearAlgebra.h"
 
 SphericalHarmonics::SphericalHarmonics()
 {
@@ -268,6 +269,12 @@ GravBodyData::GravBodyData()
     this->ephIntTime = 0;              //!< [s]      Integration time associated with the ephem data
     this->radEquator = 0;              //!< [m]      Equatorial radius for the body
     this->spherHarm.maxDeg = 0;
+    // Default these values to zero just in case they don't get populated
+    this->localPlanet.J2000Current = 0.0;
+    v3SetZero(this->localPlanet.PositionVector);
+    v3SetZero(this->localPlanet.VelocityVector);
+    m33SetZero(this->localPlanet.J20002Pfix);
+    m33SetZero(this->localPlanet.J20002Pfix_dot);
 }
 
 /*!
