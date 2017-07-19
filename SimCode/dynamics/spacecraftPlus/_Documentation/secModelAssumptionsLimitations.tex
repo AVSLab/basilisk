@@ -1,0 +1,12 @@
+\section{Model Assumptions and Limitations}
+Below is a summary of the assumptions/limitations:
+
+\begin{itemize}
+	\item The hinged rigid body must have a diagonal inertia tensor with respect the $\mathcal{S}_i$ frame as seen in Figure~\ref{fig:FlexFigure}
+	\item Only linear spring and damping terms
+	\item Will only approximate one flexing mode at a time
+	\item Cannot simulate multiple interconnected panels
+	\item The hinged rigid will always stay attached to the hub (the hinge does not have torque limits)
+	\item The hinge does not have travel limits, therefore if the spring is not stiff enough it will unrealistically travel through bounds such as running into the spacecraft hub
+	\item The EOMs are nonlinear equations of motion, therefore there can be inaccuracies that result from integration. Having a time step of $<= 0.10\ \text{sec}$ is recommended. 
+\end{itemize}
