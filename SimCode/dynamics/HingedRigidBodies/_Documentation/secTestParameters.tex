@@ -1,3 +1,138 @@
 \section{Test Parameters}
 
-Test parameters and inputs go here. I think that success criteria would work better here than in the test description section.
+Since this is an integrated test, the inputs to the test are the physical parameters of the spacecraft along with the initial conditions of the states. These parameters are outlined in Tables~\ref{tab:hub}-~\ref{tab:initial}. Additionally, the error tolerance used for the relative accuracy checks is 1e-10.
+
+\begin{table}[htbp]
+	\caption{Spacecraft Hub Parameters}
+	\label{tab:hub}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mHub  & mass & 750.0 & kg \\
+		\hline
+		IHubPntBc\_B & Inertia in $\cal{B}$ frame & $\begin{bmatrix}
+		900.0 & 0.0 & 0.0\\
+		0.0 & 600.0 & 0.0\\
+		0.0 & 0.0 & 600.0
+		\end{bmatrix}$ & kg-m$^2$ \\
+		\hline
+		r\_BcB\_B & CoM Location in $\cal{B}$ frame & $\begin{bmatrix}
+		0.0 & 0.0 & 1.0 \end{bmatrix}^T$ & m \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Hinged Rigid Body 1 Parameters}
+	\label{tab:panel1}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mass  & mass & 100.0 & kg \\
+		\hline
+		IPntS\_S & Inertia in $\cal{S}$ frame & $\begin{bmatrix}
+			100.0 & 0.0 & 0.0\\
+			0.0 & 50.0 & 0.0\\
+			0.0 & 0.0 & 50.0
+		\end{bmatrix}$ & kg-m$^2$ \\
+		\hline
+		d & CoM location & 1.5 & m \\
+		\hline
+		k & Spring Constant & 100.0 & N-m/rad \\
+		\hline
+		c & Damping Term & 0.0 (6.0 - damping scenario) & N-m-s/rad \\
+		\hline
+		r\_HB\_B & Hinge Location in $\cal{B}$ frame & $\begin{bmatrix}
+		0.5 & 0.0 & 1.0 \end{bmatrix}^T$ & m \\
+\hline
+		dcm\_HB & $\cal{B}$ to $\cal{H}$ DCM & $\begin{bmatrix}
+		-1.0 & 0.0 & 0.0\\
+		0.0 & -1.0 & 0.0\\
+		0.0 & 0.0 & 1.0
+		\end{bmatrix}$ & - \\
+\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Hinged Rigid Body 2 Parameters}
+	\label{tab:panel2}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		mass  & mass & 100.0 & kg \\
+		\hline
+		IPntS\_S & Inertia in $\cal{S}$ frame & $\begin{bmatrix}
+		100.0 & 0.0 & 0.0\\
+		0.0 & 50.0 & 0.0\\
+		0.0 & 0.0 & 50.0
+		\end{bmatrix}$ & kg-m$^2$ \\
+		\hline
+		d & CoM location & 1.5 & m \\
+		\hline
+		k & Spring Constant & 100.0 & N-m/rad \\
+		\hline
+		c & Damping Term & 0.0 (7.0 - damping scenario) & N-m-s/rad \\
+		\hline
+		r\_HB\_B & Hinge Location in $\cal{B}$ frame & $\begin{bmatrix}
+		-0.5 & 0.0 & 1.0 \end{bmatrix}^T$ & m \\
+		\hline
+		dcm\_HB & $\cal{B}$ to $\cal{H}$ DCM & $\begin{bmatrix}
+		1.0 & 0.0 & 0.0\\
+		0.0 & 1.0 & 0.0\\
+		0.0 & 0.0 & 1.0
+		\end{bmatrix}$ & - \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Initial Conditions}
+	\label{tab:initial}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{Description}  & \textbf{Value} & \textbf{Units} \\
+		\hline
+		(Panel 1) thetaInit  & (Panel 1) Initial $\theta$ & 5.0 & deg \\
+		\hline
+		(Panel 1) thetaDotInit  & (Panel 1) Initial $\dot{\theta}$ & 0.0 & deg \\
+		\hline
+(Panel 2) thetaInit  & (Panel 2) Initial $\theta$ & 0.0 & deg \\
+\hline
+(Panel 2) thetaDotInit  & (Panel 2) Initial $\dot{\theta}$ & 0.0 & deg \\
+\hline
+		r\_CN\_NInit & Initial Position of S/C (gravity scenarios) & $\begin{bmatrix}
+			-4020339 &	7490567 & 5248299 
+		\end{bmatrix}^T$ & m \\
+		\hline
+		v\_CN\_NInit & Initial Velocity of S/C (gravity scenarios) & $\begin{bmatrix}
+		-5199.78 & -3436.68 & 1041.58
+\end{bmatrix}^T$ & m/s \\
+\hline
+		r\_CN\_NInit & Initial Position of S/C (no gravity) & $\begin{bmatrix}
+0.1 & -0.4 & 0.3 
+\end{bmatrix}^T$ & m \\
+\hline
+v\_CN\_NInit & Initial Velocity of S/C (no gravity) & $\begin{bmatrix}
+-0.2 & 0.5 & 0.1
+\end{bmatrix}^T$ & m/s \\
+\hline
+		sigma\_BNInit & Initial MRP of $\cal{B}$ frame & $\begin{bmatrix}
+0.0 & 0.0 & 0.0
+\end{bmatrix}^T$ & - \\
+\hline
+omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $\begin{bmatrix}
+0.1 & -0.1 & 0.1
+\end{bmatrix}^T$ & rad/s \\
+\hline
+	\end{tabular}
+\end{table}
+
+\clearpage
