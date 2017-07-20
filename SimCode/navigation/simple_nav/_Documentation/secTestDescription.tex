@@ -16,11 +16,13 @@ outputs as well as get complete code path coverage.  The test design is broken
 up into three main parts:\\
 \begin{enumerate}
 \item{\underline{Error Bound Enforcement}: The simulation is run for 2.4 hours and the 
-   error bounds for all of the signals }
+   error bounds for all of the signals are tested. This test length is long enough to see both
+   the walk in the signal and the noise, all the while not being so long as to slow down the test.
+   The test ensures that the bounds are crossed no more than 30\% of the time.}
 \item{\underline{Error Bound Usage}: The error signals are checked for all of the model 
    parameters over the course of the simulation to ensure that the error gets 
-   to at least 75\% of its maximum error bound at some point to make sure that 
-   it isn't stuck around zero.}
+   to at least 80\% of its maximum error bound at least once, ensuring that noise is indeed
+   properly introduced.}
 \item{\underline{Corner Case Check}: The simulation is intentionally given bad inputs to 
    ensure that it alerts the user and does not crash.}
 \end{enumerate}
@@ -29,7 +31,7 @@ up into three main parts:\\
 
 These tests are considered to pass if during the whole simulation time of 144 minutes,
 all the variables need to say within an allowable statistical error. This means that they
-must stay within their 1-sigma bounds $30\%$ of the time.
+must stay within their bounds $30\%$ of the time.
 
 At the same time, we want each of the errors to get to $80\%$ of their respective error bounds
 at least once during the run.
@@ -60,5 +62,5 @@ Associated bounds & 1000 (m)& 1 (m/s)& 0.29 (deg) & 1.15 (deg/s) & 5 (deg) & 3.0
 \end{tabular}
 \end{table}
 
-These values were set to make the statistics visible. They are also sometimes set as radians which explains why some values are not round.
+These values were set to make the statistics visible in one test. They are also sometimes set as radians which explains why some values are not round.
 

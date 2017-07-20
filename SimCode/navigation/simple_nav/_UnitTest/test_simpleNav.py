@@ -254,7 +254,7 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts -" + str(count))
 
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
     plt.plot(posNav[:,0] * 1.0E-9, posNav[:,2], label='y-position')
     plt.plot(posNav[:,0] * 1.0E-9, posNav[:,3], label='z-position')
@@ -267,7 +267,7 @@ def unitSimpleNav(show_plots):
         plt.show()
     plt.close()
 
-    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 1], label='x-rotation')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 2], label='y-rotation')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 3], label='z-rotation')
