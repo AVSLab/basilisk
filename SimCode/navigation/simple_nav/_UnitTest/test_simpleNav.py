@@ -254,7 +254,9 @@ def unitSimpleNav(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Too few error counts -" + str(count))
 
-    plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(1)
+    plt.clf()
+    plt.figure(1, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(posNav[:,0] * 1.0E-9 , posNav[:,1], label='x-position')
     plt.plot(posNav[:,0] * 1.0E-9, posNav[:,2], label='y-position')
     plt.plot(posNav[:,0] * 1.0E-9, posNav[:,3], label='z-position')
@@ -267,7 +269,9 @@ def unitSimpleNav(show_plots):
         plt.show()
     plt.close()
 
-    plt.figure(figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(2)
+    plt.clf()
+    plt.figure(2, figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 1], label='x-rotation')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 2], label='y-rotation')
     plt.plot(attNav[:,0] * 1.0E-9 , attNav[:, 3], label='z-rotation')
@@ -275,9 +279,10 @@ def unitSimpleNav(show_plots):
     plt.legend(loc='upper left')
     plt.xlabel('Time (s)')
     plt.ylabel('Attitude (rad)')
+    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
     if show_plots:
         plt.show()
-    unitTestSupport.writeFigureLaTeX('SimpleNavAtt', 'Simple Navigation Att Signal', plt, 'height=0.4\\textwidth, keepaspectratio', path)
+    plt.close()
 
     # Corner case usage
     pMatrixBad = [0.0]*12*12
