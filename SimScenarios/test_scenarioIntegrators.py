@@ -133,7 +133,7 @@ def test_scenarioIntegrators(show_plots, integratorCase):
 # Creating new Integration modules
 # -----
 #
-# New integration modules can readily be created for Basilik.  They are all stored in the folder
+# New integration modules can readily be created for Basilisk.  They are all stored in the folder
 #~~~~~~~~~~~~~~~~~
 #   Basilisk/SimCode/dynamics/Integrators/
 #~~~~~~~~~~~~~~~~~
