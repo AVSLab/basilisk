@@ -671,7 +671,7 @@ def test_hingedRigidBodyTransient(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -683,9 +683,9 @@ def test_hingedRigidBodyTransient(show_plots):
     unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel1.d = 1.5
     unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 6.0
-    unitTestSim.panel1.r_HB_B = [[0.5], [0.0], [1.0]]
-    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel1.c = 0.0
+    unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
+    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
     unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
     unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
     unitTestSim.panel1.thetaInit = 5*numpy.pi/180.0
@@ -696,9 +696,9 @@ def test_hingedRigidBodyTransient(show_plots):
     unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel2.d = 1.5
     unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 7.0
-    unitTestSim.panel2.r_HB_B = [[-0.5], [0.0], [1.0]]
-    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+    unitTestSim.panel2.c = 0.0
+    unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
+    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
     unitTestSim.panel2.thetaInit = 0.0
@@ -710,7 +710,7 @@ def test_hingedRigidBodyTransient(show_plots):
 
     # Define mass properties of the rigid part of the spacecraft
     scObject.hub.mHub = 750.0
-    scObject.hub.r_BcB_B = [[0.0], [0.0], [1.0]]
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
     scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
 
     # Set the initial values for the states
@@ -726,7 +726,7 @@ def test_hingedRigidBodyTransient(show_plots):
 
     unitTestSim.InitializeSimulation()
 
-    stopTime = 2.5
+    stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -734,16 +734,80 @@ def test_hingedRigidBodyTransient(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,1], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,2], rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,3])
+    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,1])
     plt.xlabel('time (s)')
     plt.ylabel('Position (m)')
-    PlotName = "PositionTransientComparisonBetweenPythonScriptBasilisk"
-    PlotTitle = "Transient Comparison Between Python Script and Basilisk"
-    format = "width=0.8\\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    if show_plots == True:
-        plt.show()
+    plt.figure()
+    plt.clf()
+    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,2])
+    plt.xlabel('time (s)')
+    plt.ylabel('Position (m)')
+
+    # Developing the lagrangian result
+    # Define initial values
+    spacecraft = spacecraftClass
+    spacecraft.hub.mass = scObject.hub.mHub
+    spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    # Define variables for panel1
+    spacecraft.panel1.mass = unitTestSim.panel1.mass
+    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[2][2]
+    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraft.panel1.thetaH = 0.0
+    spacecraft.panel1.d = unitTestSim.panel1.d
+    spacecraft.panel1.k = unitTestSim.panel1.k
+    spacecraft.panel1.c = unitTestSim.panel1.c
+    # Define variables for panel2
+    spacecraft.panel2.mass = unitTestSim.panel2.mass
+    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[2][2]
+    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraft.panel2.thetaH = numpy.pi
+    spacecraft.panel2.d = unitTestSim.panel2.d
+    spacecraft.panel2.k = unitTestSim.panel2.k
+    spacecraft.panel2.c = unitTestSim.panel2.c
+    # Define body force and torque
+    spacecraft.xThrust_B = 0.0
+    spacecraft.yThrust_B = 0.0
+    spacecraft.Torque = 0.0
+
+    # Define initial conditions of the sim
+    stepSize = 0.01
+    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    x0 = numpy.zeros(10)
+    x0[3] = 5.*numpy.pi/180.0
+    X = numpy.zeros((len(x0),len(time)))
+    X[:,0] = x0
+    for j in range (1,(len(time))):
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[0,:])
+    plt.ylabel('X Position')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[1,:])
+    plt.ylabel('Y Position')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[2,:])
+    plt.ylabel('Theta')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[3,:])
+    plt.ylabel('Theta 1')
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[4,:])
+    plt.ylabel('Theta 2')
+
+    plt.show(show_plots)
 
     accuracy = 1e-10
     # for i in range(0,len(initialOrbAngMom_N)):
@@ -761,8 +825,6 @@ def test_hingedRigidBodyTransient(show_plots):
     return [testFailCount, ''.join(testMessages)]
 
 def planarFlexFunction(x, t, variables):
-    xHub = x[0]
-    yHub = x[1]
     theta = x[2]
     theta1 = x[3]
     theta2 = x[4]
@@ -792,49 +854,107 @@ def planarFlexFunction(x, t, variables):
     d2 = variables.panel2.d
     k2 = variables.panel2.k
     c2 = variables.panel2.c
+    Tx_B = variables.xThrust_B
+    Ty_B = variables.yThrust_B
+    Torque = variables.Torque
+
+    # Convert Tx_B and Ty_B to the inertial frame
+    dcm_BN = numpy.array([[numpy.cos(theta), numpy.sin(theta)],
+                          [-numpy.sin(theta), numpy.cos(theta)]])
+    Thrust_N = numpy.dot(dcm_BN.transpose(),numpy.array([[Tx_B],[Ty_B]]))
+    Tx = Thrust_N[0,0]
+    Ty = Thrust_N[1,0]
 
     matrixA = numpy.zeros((5,5))
-    vectorB = numpy.zeros(5,1)
+    vectorB = numpy.zeros(5)
     # Populate X Translation Equation
     matrixA[0,0] = 1.0
-    matrixA[0,2] = - 1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.sin(beta1 + theta)+ mSP2*Rhinge2*numpy.sin(beta2 + theta)+ d1*mSP1*numpy.sin(beta1 + thetaH1 + theta + theta1)+ d2*mSP2*numpy.sin(beta2 + thetaH2 + theta + theta2))
-    matrixA[0,3] = - 1/(mHub + mSP1 + mSP2)*d1*mSP1*numpy.sin(beta1 + thetaH1 + theta + theta1)
-    matrixA[0,4] = - 1/(mHub + mSP1 + mSP2)*d2*mSP2*numpy.sin(beta2 + thetaH2 + theta + theta2)
-    vectorB[0,0] = 1/(mHub + mSP1 + mSP2)*(Tx + mSP1*Rhinge1*numpy.cos(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.cos(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.cos(beta1 + thetaH1 + theta + theta1)*thetaDot**2
-            + d2*mSP2*numpy.cos(beta2 + thetaH2 + theta + theta2)*thetaDot**2 + 2*d1*mSP1*numpy.cos(beta1 + thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.cos(beta1 + thetaH1 + theta + theta1)*theta1Dot**2
-            + 2*d2*mSP2*numpy.cos(beta2 + thetaH2 + theta + theta2)*thetaDot*theta2Dot + d2*mSP2*numpy.cos(beta2 + thetaH2 + theta + theta2)*theta2Dot**2)
-    # Populate Y Translation Equation
+    matrixA[0,1] = 0.0
+    matrixA[0,2] = - 1/(mHub + mSP1 +  mSP2)*(mSP1*Rhinge1*numpy.sin(beta1 + theta) + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
+    matrixA[0,3] = - 1/(mHub + mSP1 +  mSP2)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
+    matrixA[0,4] = - 1/(mHub + mSP1 +  mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
+    vectorB[0] = 1/(mHub + mSP1 +  mSP2)*(Tx + mSP1*Rhinge1*numpy.cos(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.cos(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot**2
+              + 2*d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.cos(thetaH1 + theta + theta1)*theta1Dot**2
+              + 2*d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*thetaDot*theta2Dot + d2*mSP2*numpy.cos(thetaH2 + theta + theta2)*theta2Dot**2)
+    # Populate Y translational Equation
+    matrixA[1,0] = 0.0
     matrixA[1,1] = 1.0
-    matrixA[1,2] = 1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.cos(beta1 + theta) + mSP2*Rhinge2*numpy.cos(beta2 +theta) + d1*mSP1*numpy.cos(beta1 + thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(beta2 + thetaH2 + theta + theta2))
-    matrixA[1,3] = 1/(mHub + mSP1 + mSP2)*d1*mSP1*numpy.cos(beta1 + thetaH1 + theta + theta1)
-    matrixA[1,4] = 1/(mHub + mSP1 + mSP2)*d2*mSP2*numpy.cos(beta2 + thetaH2 + theta + theta2)
-    vectorB[1,0] = 1/(mHub + mSP1 + mSP2)*(Ty + mSP1*Rhinge1*numpy.sin(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.sin(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.sin(beta1 + thetaH1 + theta + theta1)*thetaDot**2
-            + d2*mSP2*numpy.sin(beta2 + thetaH2 + theta + theta2)*thetaDot**2 + 2*d1*mSP1*numpy.sin(beta1 + thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.sin(beta1 + thetaH1 + theta + theta1)*theta1Dot**2
-            + 2*d2*mSP2*numpy.sin(beta2 + thetaH2 + theta + theta2)*thetaDot*theta2Dot + d2*mSP2*numpy.sin(beta2 + thetaH2 + theta + theta2)*theta2Dot**2)
-    # Populate rotational Equation
-    thetaDDot = 1/(IHub + ISP1 +ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2
-      +2*d1*mSP1*Rhinge1*numpy.cos(thetaH1 + theta1) +2*d2*mSP2*Rhinge2*numpy.cos(thetaH2 + theta2))*(Torque + 2*d1*mSP1*Rhinge1*numpy.sin(thetaH1 + theta1)*thetaDot*theta1Dot + d1*mSP1*Rhinge1*numpy.sin(thetaH1 + theta1)*theta1Dot**2
-      + 2*d2*mSP2*Rhinge2*numpy.sin(thetaH2 + theta2)*thetaDot*theta2Dot+d2*mSP2*Rhinge2*numpy.sin(thetaH2 + theta2)*theta2Dot**2
-      +mSP1 Rhinge1 Sin[Subscript[\[Beta], 1] + \[Theta][t]] (xHub^\[Prime]\[Prime])[t] +mSP2 Rhinge2 Sin[Subscript[\[Beta], 2] + \[Theta][t]] (xHub^\[Prime]\[Prime])[t] +d1 mSP1 Sin[Subscript[\[Beta], 1] + Subscript[\[Theta], H1] + \[Theta][t] +Subscript[\[Theta], 1][t]] (xHub^\[Prime]\[Prime])[t]
-     +d2 mSP2 Sin[Subscript[\[Beta], 2] + Subscript[\[Theta], H2] + \[Theta][t] + Subscript[\[Theta], 2][t]] (xHub^\[Prime]\[Prime])[t] -mSP1 Rhinge1 Cos[Subscript[\[Beta], 1] + \[Theta][t]] (yHub^\[Prime]\[Prime])[t]
-     -mSP2 Rhinge2 Cos[Subscript[\[Beta], 2] + \[Theta][t]] ( yHub^\[Prime]\[Prime])[t] -d1 mSP1 Cos[Subscript[\[Beta], 1] + Subscript[\[Theta], H1] + \[Theta][t] +Subscript[\[Theta], 1][t]] (yHub^\[Prime]\[Prime])[t]
-     -d2 mSP2 Cos[Subscript[\[Beta], 2] + Subscript[\[Theta], H2] + \[Theta][t] +Subscript[\[Theta], 2][t]] (yHub^\[Prime]\[Prime])[t] -ISP1 (Subscript[\[Theta], 1]^\[Prime]\[Prime])[t] -d1^2 mSP1 (Subscript[\[Theta], 1]^\[Prime]\[Prime])[t]
-      -d1 mSP1 Rhinge1 Cos[Subscript[\[Theta], H1] + Subscript[\[Theta], 1][t]] (Subscript[\[Theta], 1]^\[Prime]\[Prime])[t] - ISP2 (Subscript[\[Theta], 2]^\[Prime]\[Prime])[t] - d2^2 mSP2 (Subscript[\[Theta], 2]^\[Prime]\[Prime])[t]
-      - d2 mSP2 Rhinge2 Cos[Subscript[\[Theta], H2] + Subscript[\[Theta], 2][t]] (Subscript[\[Theta], 2]^\[Prime]\[Prime])[t])
+    matrixA[1,2] = 1/(mHub + mSP1 + mSP2)*(mSP1*Rhinge1*numpy.cos(beta1 + theta) + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
+    matrixA[1,3] = 1/(mHub + mSP1 + mSP2)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
+    matrixA[1,4] = 1/(mHub + mSP1 + mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
+    vectorB[1] = 1/(mHub + mSP1 + mSP2)*(Ty + mSP1*Rhinge1*numpy.sin(beta1 + theta)*thetaDot**2 + mSP2*Rhinge2*numpy.sin(beta2 + theta)*thetaDot**2 + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot**2 + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot**2
+              + 2*d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*thetaDot*theta1Dot + d1*mSP1*numpy.sin(thetaH1 + theta + theta1)*theta1Dot**2 + 2*d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*thetaDot*theta2Dot
+              + d2*mSP2*numpy.sin(thetaH2 + theta + theta2)*theta2Dot**2)
+    # Populte Rotational Equation
+    matrixA[2,0] = -1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.sin(beta1 + theta)
+              + mSP2*Rhinge2*numpy.sin(beta2 + theta) + d1*mSP1*numpy.sin(thetaH1 + theta + theta1) + d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
+    matrixA[2,1] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(mSP1*Rhinge1*numpy.cos(beta1 + theta)
+              + mSP2*Rhinge2*numpy.cos(beta2 + theta) + d1*mSP1*numpy.cos(thetaH1 + theta + theta1) + d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
+    matrixA[2,2] = 1.0
+    matrixA[2,3] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP1
+              + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
+    matrixA[2,4] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(ISP2
+              + d2**2*mSP2 - d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
+    vectorB[2] = 1/(IHub + ISP1 + ISP2 + d1**2*mSP1 + d2**2*mSP2 + mSP1*Rhinge1**2 + mSP2*Rhinge2**2 + 2*d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1) + 2*d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))*(Torque
+              - 2*d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot*theta1Dot - d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*theta1Dot**2 - 2*d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot*theta2Dot
+              - d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*theta2Dot**2)
+    # Populate first solar panel equation
+    matrixA[3,0] = - 1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.sin(thetaH1 + theta + theta1))
+    matrixA[3,1] = 1/(ISP1 + d1**2*mSP1)*(d1*mSP1*numpy.cos(thetaH1 + theta + theta1))
+    matrixA[3,2] = 1/(ISP1 + d1**2*mSP1)*(ISP1 + d1**2*mSP1 + d1*mSP1*Rhinge1*numpy.cos(beta1 - thetaH1 - theta1))
+    matrixA[3,3] = 1.0
+    matrixA[3,4] = 0.0
+    vectorB[3] = 1/(ISP1 + d1**2*mSP1)*(-k1*theta1 + d1*mSP1*Rhinge1*numpy.sin(beta1 - thetaH1 - theta1)*thetaDot**2 - c1*theta1Dot)
+    # Populate second solar panel equation
+    matrixA[4,0] = - 1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.sin(thetaH2 + theta + theta2))
+    matrixA[4,1] = 1/(ISP2 + d2**2*mSP2)*(d2*mSP2*numpy.cos(thetaH2 + theta + theta2))
+    matrixA[4,2] = 1/(ISP2 + d2**2*mSP2)*(ISP2 + d2**2*mSP2 + d2*mSP2*Rhinge2*numpy.cos(beta2 - thetaH2 - theta2))
+    matrixA[4,3] = 0.0
+    matrixA[4,4] = 1.0
+    vectorB[4] = 1/(ISP2 + d2**2*mSP2)*(-k2*theta2 + d2*mSP2*Rhinge2*numpy.sin(beta2 - thetaH2 - theta2)*thetaDot**2 - c2*theta2Dot)
 
+    Xdot = numpy.zeros(len(x))
+    # Populate Trivial derivatives
+    Xdot[0] = xHubDot
+    Xdot[1] = yHubDot
+    Xdot[2] = thetaDot
+    Xdot[3] = theta1Dot
+    Xdot[4] = theta2Dot
+    # Calculate nontrivial derivatives
+    result = numpy.dot(numpy.linalg.inv(matrixA),vectorB)
+    Xdot[5:10] = result
 
-    Xdot = numpy.zeros(len(x),1)
     return Xdot
 
 def rk4(Fn, X, h, t, varargin):
     k1 = h*Fn(X, t, varargin)
     k2 = h*Fn(X+k1/2, t+h/2, varargin)
     k3 = h*Fn(X+k2/2, t+h/2, varargin)
-    k4 = h*(Fn, X+k3, t+h, varargin)
+    k4 = h*Fn(X+k3, t+h, varargin)
     Z = X + (k1 + 2*k2 + 2*k3 + k4)/6
     return Z
 
+class solarPanel:
+    mass = 0.0
+    Inertia = 0.0
+    Rhinge = 0.0
+    beta = 0.0
+    thetaH = 0.0
+    d = 0.0
+    k = 0.0
+    c = 0.0
 
+class hubClass:
+    mass = 0.0
+    Inertia = 0.0
+
+class spacecraftClass:
+    panel1 = solarPanel
+    panel2 = solarPanel
+    hub = hubClass
+    xThrust_B = 0.0
+    yThrust_B = 0.0
+    Torque = 0.0
 
 if __name__ == "__main__":
     test_hingedRigidBodyTransient(True)
