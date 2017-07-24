@@ -1,0 +1,60 @@
+\section{Test Description and Success Criteria}
+
+As the integrator functionality is not a regular BSK module with specified input/output behavior, the integration can only be tested in an integrated test.  
+The integrated test employed is located in:\\
+
+{\tt SimScenarios/test\_scenarioIntegrators.py}
+\\
+
+\subsection{Test inputs}
+Each simulation uses the point-mass spacecraft equations of motion
+\begin{equation}
+	\ddot{\bm r} = - \frac{\mu}{r^{3}}{\bm r}
+\end{equation}
+with the initial orbit elements shown in Table~\ref{tbl:oeInitial}.  The only gravitational body considered is Earth.  The simulation time for each case is 3/4 of an orbit period.  Each implemented Integrator method is tested using the above initial conditions and a large time step of 120 seconds.  This large time step makes the integrator errors more easily visible between the integration methods.  
+
+
+\begin{table}[htbp]
+	\caption{Initial Spacecraft Ephemeris}
+	\label{tbl:oeInitial}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | r | r } % Column formatting, 
+		\hline 
+		\hline 
+		Element    & Description & Value \\
+		\hline 
+		$a$      & Semi-Major Axis & 7000km \\
+		$e$ & Eccentricity     &  0.0001 \\
+		$i$       & Inclination Angle  & 33.3\dg \\
+		$\Omega$       & Ascending Node   & 33.3\dg \\
+		$\omega$       & Argument of Periapses  & 48.2\dg \\
+		$f$       & True Anomaly   & 347.8\dg \\
+		\hline
+		\hline
+	\end{tabular}
+\end{table}
+
+
+
+\subsection{Test sections}
+The same simulation setup is run for each of the integration methods:
+\begin{enumerate}
+\item The first test uses the default RK4 integration method.  Here the simulation script does not specify the integration method, testing both that the RK4 integrator is the default integration method, and that that the integrator is implemented correctly.  
+
+\item The 2nd test uses the Euler's integration method.
+
+\item the 3rd test uses Heun's integration method.  
+
+\end{enumerate}
+
+\begin{figure}[t]
+	\centerline{
+	\includegraphics[]{Figures/intResults}
+	}
+	\caption{Illustration of the true orbit position samples (Black) versus the RK4 (Blue), RK2 (Green) and RK1 (Red) integration results.}
+	\label{fig:intResults}
+\end{figure}
+The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The large 120 second time step causes all the integration methods to significantly deviate from the truth locations (shown in black).  The integrated validation test ensures that the BSK integrations yield the same integration corruptions to validate the mathematical implementation.  
+
+\subsection{Test success criteria}
+The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.  
