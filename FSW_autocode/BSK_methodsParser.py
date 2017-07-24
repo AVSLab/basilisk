@@ -32,12 +32,31 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     simTag='TheSim', localPath = os.path.dirname(os.path.abspath(filename))):
     def areTasksInSimTaskList(taskActivityDir, TheSim):
         print 'TASKS BEING PARSED: '
-        taskIdxDir = {}
+        taskIdxDir = []
+        taskOrderedList = []
         l = len(TheSim.TaskList)
-        for i_task in range(0, l):
-            taskName = TheSim.TaskList[i_task].Name
+        procLength = len(TheSim.TotalSim.processList)
+        for procIdx in range(procLength):
+            locProcList = []
+            for i_task in range(len(TheSim.TotalSim.processList[procIdx].processTasks)):
+                theTask = TheSim.TotalSim.processList[procIdx].processTasks[i_task]
+                taskFound = False
+                for ordIdx in range(len(locProcList)):
+                    locTask = locProcList[ordIdx]
+                    if theTask.taskPriority > locTask[1]:
+                        locProcList.insert(ordIdx, 
+                            [theTask.TaskPtr.TaskName, theTask.taskPriority])
+                        taskFound = True
+                        break
+                if taskFound != True:
+                    locProcList.append([theTask.TaskPtr.TaskName, theTask.taskPriority, theTask])
+            taskOrderedList.extend(locProcList)
+                        
+        for i_task in range(0, len(taskOrderedList)):
+            taskName = taskOrderedList[i_task][0]
             if taskName in taskActivityDir.keys():
-                taskIdxDir[i_task] = str(taskActivityDir[taskName])
+                idxUse = getTaskIndex(TheSim, taskOrderedList[i_task][2].TaskPtr)
+                taskIdxDir.append(idxUse)
                 print i_task, taskName
         return taskIdxDir
 
@@ -99,6 +118,17 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
         key = 'self.TaskList[' + str(i_task) + '].TaskModels[' + str(i_model) + ']'
         return key
 
+
+    # This function returns the key name of the NameReplace dictionary according to the index of the task
+    # and the index of the model inside the task
+    def getTaskIndex(theSim,taskUse):
+        j=0
+        for taskPy in theSim.TaskList:
+            if taskUse.TaskName == taskPy.Name:
+                return j
+            j+=1
+        return -1
+
     # This function makes sure that each algorithm in a data model is matched with the proper algorithm in
     # the corresponding model wrap. If there's a match, returns the ID of the model. Otherwise, an ugly
     # error is raised and the whole program quits.
@@ -136,9 +166,9 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
         void = 'void ' + algName
         void_header = void + ';\n'
         void_source = void + '\n{\n'
-        for k, v in globalAlgUpdate.items():
-            void_source += '\t' + 'if (data->' + v[0] + '){' + '\n'
-            void_source += '\t\t' + k + '(data, callTime);' + '\n'
+        for updateElem in globalAlgUpdate:
+            void_source += '\t' + 'if (data->' + updateElem[1][0] + '){' + '\n'
+            void_source += '\t\t' + updateElem[0] + '(data, callTime);' + '\n'
             void_source += '\t' + '}' + '\n'
         void_source += '}' + '\n'
         theVoidList.append(void_header)
@@ -148,9 +178,9 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     def writeTaskActivityVars(globalAlgUpdate, varType):
         theTaskActivity_declareList = []
         theTaskActivity_initList = []
-        for k, v in globalAlgUpdate.items():
-            declare_str = varType + ' ' + v[0] + ';' + '\n'
-            init_str = 'data->' + v[0] + ' = ' + v[1] + ';' + '\n'
+        for updateElem in globalAlgUpdate:
+            declare_str = varType + ' ' + updateElem[1][0] + ';' + '\n'
+            init_str = 'data->' + updateElem[1][0] + ' = ' + updateElem[1][1] + ';' + '\n'
             theTaskActivity_declareList.append(declare_str)
             theTaskActivity_initList.append(init_str)
         return (theTaskActivity_declareList, theTaskActivity_initList)
@@ -204,7 +234,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     allAlgSelfInit = [] # global list for all models' SelfInit algorithms
     allAlgCrossInit = [] # global list for all models' CrossInit algorithms
     globalAllAlgReset = [] # global list for all models' Reset algorithms
-    globalAlgUpdate = {} #
+    globalAlgUpdate = [] #
     theConfigDataList = []
     theAlgList = [] # global list for all source algorithms
     theVoidList = [] # global list for all header void function definitions.
@@ -216,7 +246,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
     taskIdxDir = areTasksInSimTaskList(taskActivityDir, TheSim)
     for i_task in taskIdxDir:
         task = TheSim.TaskList[i_task]
-        taskActivity = taskIdxDir[i_task]
+        taskActivity = TheSim.TaskList[i_task].Name
         allAlgUpdate = [] # local list for task models' Update algorithms
         allAlgReset = [] # local list for task model's Reset algorithms
         i_model = 0
@@ -243,7 +273,7 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
         algNameUpdate = task.Name + '_Update'
         algNameUpdateTaskActivity = task.Name + '_isActive'
-        globalAlgUpdate[algNameUpdate] = (algNameUpdateTaskActivity, taskActivity)
+        globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity, str(0))])
         algNameReset = task.Name + '_Reset'
         writeTaskAlgs(algNameUpdate + ConfigData_callTime, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
