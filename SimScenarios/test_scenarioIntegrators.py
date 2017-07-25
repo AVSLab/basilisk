@@ -374,11 +374,11 @@ def run(doUnitTests, show_plots, integratorCase):
             snippetContent += "\\end{verbatim}"
         snippetMsgName = fileNameString + 'Msg-' + integratorCase
         unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
-                                    path + "/dummyPath/")
+                                    path + "/_Documentation/")
         snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
         snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
         unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
-                                    path+"/dummyPath/")
+                                    path+"/_Documentation/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
