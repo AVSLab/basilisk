@@ -227,7 +227,11 @@ void CoarseSunSensor::applySensorErrors()
     //! - Get current error from random number generator
     double CurrentError = rnum(this->rgen);
     //! - Apply the kelly fit to the truth direct value
-    double KellyFit = 1.0 - exp(-this->directValue * this->directValue/this->KellyFactor);
+    double KellyFit = 1.0;
+    if (this->KellyFactor > 0.0000000000001) {
+        KellyFit -= exp(-this->directValue * this->directValue/this->KellyFactor);
+    }
+
     //! - Sensed value is total illuminance with a kelly fit + noise
     this->sensedValue = (this->directValue + this->albedoValue)*KellyFit + CurrentError;
     
