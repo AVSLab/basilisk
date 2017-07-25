@@ -29,7 +29,6 @@
 CoarseSunSensor::CoarseSunSensor()
 {
     this->CallCounts = 0;
-    this->MessagesLinked = false;
     this->InputSunID = -1;
     this->InputStateID = -1;
     this->sunEclipseInMsgId = -1;
@@ -40,9 +39,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->SenNoiseStd = 0.0;
     
     this->faultState = MAX_CSSFAULT;
-    this->stuckPercent = 0.0;
     v3SetZero(this->nHat_B);
-    v3SetZero(this->horizonPlane);
     this->directValue = 0.0;
     this->albedoValue = 0.0;
     this->scaleFactor = 1.0;
