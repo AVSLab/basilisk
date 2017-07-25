@@ -304,6 +304,10 @@ def run(doUnitTests, show_plots, integratorCase):
         unitTestSupport.saveScenarioFigure(
             fileNameString
             , plt, path)
+        unitTestSupport.saveFigurePDF(
+            fileNameString
+            , plt, path+"/_Documentation/AutoTeX/"
+        )
 
     if show_plots:
         plt.show()
@@ -356,9 +360,25 @@ def run(doUnitTests, show_plots, integratorCase):
         #   print out success message if no error were found
         if testFailCount == 0:
             print "PASSED "
+            passFailText = "PASSED"
+            colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX
+            snippetContent = ""
         else:
             print testFailCount
             print testMessages
+            passFailText = 'FAILED'
+            colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+            snippetContent = "\\begin{verbatim}"
+            for message in testMessages:
+                snippetContent +=   message
+            snippetContent += "\\end{verbatim}"
+        snippetMsgName = fileNameString + 'Msg-' + integratorCase
+        unitTestSupport.writeTeXSnippet(snippetMsgName, snippetContent,
+                                    path + "/dummyPath/")
+        snippetPassFailName = fileNameString + 'TestMsg-' + integratorCase
+        snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+        unitTestSupport.writeTeXSnippet(snippetPassFailName, snippetContent,
+                                    path+"/dummyPath/")
 
     # each test method requires a single assert method to be called
     # this check below just makes sure no sub-test failures were found
