@@ -35,6 +35,7 @@ import spacecraftPlus
 import hingedRigidBodyStateEffector
 import macros
 import gravityEffector
+import RigidBodyKinematics
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -671,7 +672,8 @@ def test_hingedRigidBodyTransient(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.01)  # update process rate update time
+    stepSize = 0.01
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -701,7 +703,7 @@ def test_hingedRigidBodyTransient(show_plots):
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
     unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
-    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaInit = 5*numpy.pi/180.0
     unitTestSim.panel2.thetaDotInit = 0.0
 
     # Add panels to spaceCraft
@@ -726,32 +728,28 @@ def test_hingedRigidBodyTransient(show_plots):
 
     unitTestSim.InitializeSimulation()
 
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+
     stopTime = 10.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
+
     rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-
-    plt.figure()
-    plt.clf()
-    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,1])
-    plt.xlabel('time (s)')
-    plt.ylabel('Position (m)')
-
-    plt.figure()
-    plt.clf()
-    plt.plot(rOut_BN_N[:,0]*1e-9, rOut_BN_N[:,2])
-    plt.xlabel('time (s)')
-    plt.ylabel('Position (m)')
+    sigmaOut_BN = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
     # Developing the lagrangian result
     # Define initial values
-    spacecraft = spacecraftClass
+    spacecraft = spacecraftClass()
     spacecraft.hub.mass = scObject.hub.mHub
     spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
     # Define variables for panel1
     spacecraft.panel1.mass = unitTestSim.panel1.mass
-    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[2][2]
+    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
     spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
     spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
     spacecraft.panel1.thetaH = 0.0
@@ -760,7 +758,7 @@ def test_hingedRigidBodyTransient(show_plots):
     spacecraft.panel1.c = unitTestSim.panel1.c
     # Define variables for panel2
     spacecraft.panel2.mass = unitTestSim.panel2.mass
-    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[2][2]
+    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
     spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
     spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
     spacecraft.panel2.thetaH = numpy.pi
@@ -773,10 +771,11 @@ def test_hingedRigidBodyTransient(show_plots):
     spacecraft.Torque = 0.0
 
     # Define initial conditions of the sim
-    stepSize = 0.01
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
     x0 = numpy.zeros(10)
-    x0[3] = 5.*numpy.pi/180.0
+    x0[3] = unitTestSim.panel1.thetaInit
+    x0[4] = -unitTestSim.panel2.thetaInit
+
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
@@ -784,28 +783,38 @@ def test_hingedRigidBodyTransient(show_plots):
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[0,:])
-    plt.ylabel('X Position')
+    plt.plot(time, X[0,:],'-b',label = "Lagrangian")
+    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
+    plt.legend(loc ='upper right')
+    plt.title('X Position')
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[1,:])
-    plt.ylabel('Y Position')
+    plt.plot(time, X[1,:],'-b',label = "Lagrangian")
+    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'-r',label = "Basilsik")
+    plt.legend(loc ='upper right')
+    plt.title('Y Position')
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[2,:])
-    plt.ylabel('Theta')
+    plt.plot(time, X[2,:],'-b',label = "Lagrangian")
+    plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilsik")
+    plt.legend(loc ='upper right')
+    plt.title('Theta')
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[3,:])
-    plt.ylabel('Theta 1')
+    plt.plot(time, X[3,:],'-b',label = "Lagrangian")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
+    plt.legend(loc ='upper right')
+    plt.title('Theta1')
 
     plt.figure()
     plt.clf()
-    plt.plot(time, X[4,:])
-    plt.ylabel('Theta 2')
+    plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
+    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
+    plt.legend(loc ='upper right')
+    plt.title('Theta2')
 
     plt.show(show_plots)
 
@@ -949,9 +958,9 @@ class hubClass:
     Inertia = 0.0
 
 class spacecraftClass:
-    panel1 = solarPanel
-    panel2 = solarPanel
-    hub = hubClass
+    panel1 = solarPanel()
+    panel2 = solarPanel()
+    hub = hubClass()
     xThrust_B = 0.0
     yThrust_B = 0.0
     Torque = 0.0
