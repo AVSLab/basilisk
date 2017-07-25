@@ -280,8 +280,8 @@ def parseSimAlgorithms(TheSim, taskActivityDir, outputCFileName, str_ConfigData,
 
         algNameUpdate = task.Name + '_Update'
         algNameUpdateTaskActivity = task.Name + '_isActive'
-        globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity, str(0))])
-        #globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity,isTaskActive)])
+        #globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity, str(0))])
+        globalAlgUpdate.append([algNameUpdate, (algNameUpdateTaskActivity,isTaskActive)])
         algNameReset = task.Name + '_Reset'
         writeTaskAlgs(algNameUpdate + ConfigData_callTime, allAlgUpdate, theVoidList, theAlgList)
         if (allAlgReset): # check if there are any reset methods in the task models
