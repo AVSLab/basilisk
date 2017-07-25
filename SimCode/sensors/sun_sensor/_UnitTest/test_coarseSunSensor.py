@@ -55,6 +55,8 @@ import gravityEffector
 import orbitalMotion as om
 import coarse_sun_sensor
 import numpy as np
+import RigidBodyKinematics as rbk
+from matplotlib import pyplot as plt
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -75,7 +77,7 @@ testFailCount = 0
 testMessages = []
 testTaskName = "unitTestTask"
 testProcessName = "unitTestProcess"
-testTaskRate = macros.sec2nano(1)
+testTaskRate = macros.sec2nano(0.1)
 
 # Create a simulation container
 unitTestSim = SimulationBaseClass.SimBaseClass()
@@ -90,16 +92,17 @@ satellite.scStateOutMsgName = "inertial_state_output"
 satellite.hub.r_CN_NInit = [[-1.11277003e9 - om.AU], [7.08965219e8], [3.28738762e8]] #place spacecraft 1AU from sun in negative first inertial direciton in standard spice inertial frame
                                                                                 # now body frame can be aligned with inertial frame for simplicity.
                                                                                 # this only works if no one changes UTCCalInit below.
-satellite.hub.sigma_BNInit = [[0.], [0.], [0.]]
+satellite.hub.sigma_BNInit = [[0.], [0.], [-0.5]]
 satellite.hub.omega_BN_BInit = [[0.], [0.], [np.pi*2/60.]]
 unitTestSim.AddModelToTask(testTaskName, satellite)
 
 
-# cssSinglePlain = coarse_sun_sensor.CoarseSunSensor()
-# cssSinglePlain.ModelTag = "cssSinglePlain"
-# cssSinglePlain.fov = np.pi/2.
-# cssSinglePlain.OutputDataMsg = "cssSinglePlainOut"
-# cssSinglePlain.nHat_B = [0,0,1] #probably move to after orbit stuff to point at sun - SJKC
+cssSinglePlain = coarse_sun_sensor.CoarseSunSensor()
+cssSinglePlain.ModelTag = "cssSinglePlain"
+cssSinglePlain.fov = np.pi/2.
+cssSinglePlain.OutputDataMsg = "cssSinglePlainOut"
+cssSinglePlain.nHat_B = [1.,0.,0.]
+unitTestSim.AddModelToTask(testTaskName,cssSinglePlain)
 
 
 # setup SPICE ephemeris support
@@ -181,17 +184,44 @@ unitTestSim.AddModelToTask(testTaskName, spiceObject)
 unitTestSim.InitializeSimulation()
 unitTestSim.TotalSim.logThisMessage("sun_planet_data", macros.sec2nano(1.))
 unitTestSim.TotalSim.logThisMessage(satellite.scStateOutMsgName, macros.sec2nano(1.))
+unitTestSim.TotalSim.logThisMessage(cssSinglePlain.OutputDataMsg, macros.sec2nano(0.1))
 
 # Execute the simulation for one time step
 #unitTestSim.TotalSim.SingleStepProcesses()
-simulationTime = macros.sec2nano(60.)
+rotationTime = 60.
+simulationTime = macros.sec2nano(rotationTime)
+unitTestSim.ConfigureStopTime(simulationTime)
+unitTestSim.ExecuteSimulation()
+
+cssSinglePlain.fov = 0.75*np.pi/2
+
+simulationTime = macros.sec2nano(2*rotationTime)
+unitTestSim.ConfigureStopTime(simulationTime)
+unitTestSim.ExecuteSimulation()
+
+cssSinglePlain.fov = np.pi/2
+cssSinglePlain.KellyFactor = 0.1
+
+simulationTime = macros.sec2nano(3*rotationTime)
+unitTestSim.ConfigureStopTime(simulationTime)
+unitTestSim.ExecuteSimulation()
+
+cssSinglePlain.KellyFactor = 0.0
+cssSinglePlain.scaleFactor = 1.25
+
+simulationTime = macros.sec2nano(4*rotationTime)
 unitTestSim.ConfigureStopTime(simulationTime)
 unitTestSim.ExecuteSimulation()
 
 r_sun_N = unitTestSim.pullMessageLogData("sun_planet_data.PositionVector", range(3))
 r_sat_N = unitTestSim.pullMessageLogData(satellite.scStateOutMsgName+".r_BN_N", range(3))
-print r_sun_N
-print r_sat_N
+mrp_sat_N = unitTestSim.pullMessageLogData(satellite.scStateOutMsgName+".sigma_BN", range(3))
+cssOutput = unitTestSim.pullMessageLogData(cssSinglePlain.OutputDataMsg+".OutputData", range(1))
+
+plt.figure(1)
+plt.clf()
+plt.plot(cssOutput[:,0]*macros.NANO2MIN , cssOutput[:,1])
+plt.show()
 
 #eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
 
