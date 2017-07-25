@@ -57,7 +57,7 @@ CoarseSunSensor::CoarseSunSensor()
     this->setUnitDirectionVectorWithPerturbation(0, 0);
     this->OutputBufferCount = 2;
     this->sunVisibilityFactor.shadowFactor = 1.0;
-    
+    m33SetIdentity(this->dcm_PB);    
     return;
 }
 
