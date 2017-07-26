@@ -31,8 +31,10 @@ namespace std {
 %include "coarse_sun_sensor.h"
 %include "../../simMessages/cssRawDataSimMsg.h"
 %include "../../simMessages/eclipseSimMsg.h"
+%include "../../simFswInterfaceMessages/cssArraySensorIntMsg.h"
 GEN_SIZEOF(CSSRawDataSimMsg);
 GEN_SIZEOF(EclipseSimMsg);
+GEN_SIZEOF(CSSArraySensorIntMsg);
 
 %pythoncode %{
 import sys
