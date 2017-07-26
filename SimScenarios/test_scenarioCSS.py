@@ -76,7 +76,7 @@ import simMessages
     , (False, True, False, False)
     , (False, False, True, False)
     , (False, False, False, True)
-    # , (True, False, False, False)
+    , (True, False, False, False)
 ])
 
 # provide a unique test method name, starting with test_
@@ -461,7 +461,6 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     #
     if useCSSConstellation:
         dataCSSArray = scSim.pullMessageLogData(cssArray.outputConstellationMessage+".CosValue", range(len(cssList)))
-        print dataCSSArray
     else:
         dataCSS1 = scSim.pullMessageLogData(CSS1.OutputDataMsg+".OutputData", range(1))
         dataCSS2 = scSim.pullMessageLogData(CSS2.OutputDataMsg+".OutputData", range(1))
@@ -476,7 +475,7 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
     plt.close("all")        # clears out plots from earlier test runs
     plt.figure(1)
     if useCSSConstellation:
-        for idx in range(1, 4):
+        for idx in range(1, len(cssList)+1):
             plt.plot(dataCSSArray[:, 0]*macros.NANO2SEC, dataCSSArray[:, idx],
                          color=unitTestSupport.getLineColor(idx,3),
                          label='CSS$_{'+str(idx)+'}$')
@@ -512,6 +511,15 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         skipValue = int(simulationTime*macros.NANO2SEC/numTruthPoints)
         if useCSSConstellation:
             dataCSSArrayRed = dataCSSArray[::skipValue]
+            trueCSS = [
+                  [ 2.0000000000000000e+00, 0.0000000000000000e+00]
+                , [ 1.8270909152861943e+00, 8.1347328614937120e-01]
+                , [ 1.3382612127209323e+00, 1.4862896509518926e+00]
+                , [ 6.1803398875474258e-01, 1.9021130325887317e+00]
+                , [ 0.0000000000000000e+00, 1.9890437907369840e+00]
+                , [ 0.0000000000000000e+00, 1.7320508075693963e+00]
+            ]
+
         else:
             dataCSS1red = dataCSS1[::skipValue]
             dataCSS2red = dataCSS2[::skipValue]
@@ -572,7 +580,9 @@ def run(doUnitTests, show_plots, useCSSConstellation, usePlatform, useEclipse, u
         accuracy = 1e-6
 
         if useCSSConstellation:
-            print "hello"
+            testFailCount, testMessages = unitTestSupport.compareArrayND(
+                trueCSS, dataCSSArrayRed, accuracy, "CSSarray", 2,
+                testFailCount, testMessages)
         else:
             testFailCount, testMessages = unitTestSupport.compareDoubleArray(
                 trueCSS1, dataCSS1red, accuracy, "CSS1",
