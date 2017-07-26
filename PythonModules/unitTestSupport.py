@@ -178,6 +178,25 @@ def compareArray(trueStates, dataStates, accuracy, msg, testFailCount, testMessa
     return testFailCount, testMessages
 
 #
+#   Compare two arrays of size N for size and values and check absolute accuracy
+#
+def compareArrayND(trueStates, dataStates, accuracy, msg, size, testFailCount, testMessages):
+    if (len(trueStates) != len(dataStates)):
+        testFailCount += 1
+        testMessages.append("FAILED: "+msg+" unequal data array sizes\n")
+    elif (len(trueStates) == 0 or len(dataStates) == 0):
+        testFailCount += 1
+        testMessages.append("FAILED: " + msg + " data had empty arrays\n")
+    else:
+        for i in range(0, len(trueStates)):
+            # check a vector values
+            if not isArrayEqual(dataStates[i], trueStates[i], size, accuracy):
+                testFailCount += 1
+                testMessages.append("FAILED: "+msg+" at t="+str(dataStates[i, 0]*macros.NANO2SEC)+"sec\n")
+    return testFailCount, testMessages
+
+
+#
 #   Compare two arrays size and values and check relative accuracy
 #
 def compareArrayRelative(trueStates, dataStates, accuracy, msg, testFailCount, testMessages):
