@@ -57,6 +57,7 @@ import coarse_sun_sensor
 import numpy as np
 import RigidBodyKinematics as rbk
 from matplotlib import pyplot as plt
+import simMessages
 
 
 # uncomment this line if this test has an expected failure, adjust message as needed
@@ -73,6 +74,23 @@ from matplotlib import pyplot as plt
     # --fulltrace command line option is specified.
 __tracebackhide__ = True
 
+useConstellation = True
+
+##################Single sensor tests######################
+#--------variables will come from pytest parameterization later
+visibilityFactor = 1. #no eclipse = 1., eclipse = 0., anywhere in between works.
+fov = np.pi/2.
+kelly = 0.0
+scaleFactor = 1.
+bias = 0.0
+noiseStd = 0.0
+albedoValue = 0.0
+nHat_B = [1.,0.,0.]
+sigmas = np.linspace(0., 2*np.pi, 5900)
+for i in range(len(sigmas)): #convert rotation angle about 3rd axis to MRP
+    sigmas[i] = np.tan(sigmas[i]/4.)
+#---------
+
 testFailCount = 0
 testMessages = []
 testTaskName = "unitTestTask"
@@ -86,142 +104,152 @@ unitTestSim.TotalSim.terminateSimulation()
 testProc = unitTestSim.CreateNewProcess(testProcessName)
 testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
-# Set up first spacecraft
-satellite = spacecraftPlus.SpacecraftPlus()
-satellite.scStateOutMsgName = "inertial_state_output"
-satellite.hub.r_CN_NInit = [[-1.11277003e9 - om.AU], [7.08965219e8], [3.28738762e8]] #place spacecraft 1AU from sun in negative first inertial direciton in standard spice inertial frame
-                                                                                # now body frame can be aligned with inertial frame for simplicity.
-                                                                                # this only works if no one changes UTCCalInit below.
-satellite.hub.sigma_BNInit = [[0.], [0.], [-0.5]]
-satellite.hub.omega_BN_BInit = [[0.], [0.], [np.pi*2/60.]]
-unitTestSim.AddModelToTask(testTaskName, satellite)
-
-
 cssSinglePlain = coarse_sun_sensor.CoarseSunSensor()
 cssSinglePlain.ModelTag = "cssSinglePlain"
-cssSinglePlain.fov = np.pi/2.
+cssSinglePlain.fov = fov
+cssSinglePlain.KellyFactor = kelly
+cssSinglePlain.scaleFactor = scaleFactor
+cssSinglePlain.SenBias = bias
+cssSinglePlain.SenNoiseStd = noiseStd
 cssSinglePlain.OutputDataMsg = "cssSinglePlainOut"
-cssSinglePlain.nHat_B = [1.,0.,0.]
+cssSinglePlain.nHat_B = nHat_B
+cssSinglePlain.sunEclipseInMsgName = "eclipseMsg"
+cssSinglePlain.InputSunMsg = "sunMsg"
+cssSinglePlain.InputStateMsg = "satelliteState"
 unitTestSim.AddModelToTask(testTaskName,cssSinglePlain)
 
+if useConstellation:
+    cssA1 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssA2 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssA3 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssA4 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssB1 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssB2 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssB3 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+    cssB4 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
 
-# setup SPICE ephemeris support
-# earth = gravityEffector.GravBodyData()
-# earth.bodyInMsgName = "earth_planet_data"
-# earth.outputMsgName = "earth_display_frame_data"
-# earth.mu = 0.3986004415E+15  # meters^3/s^2
-# earth.radEquator = 6378136.6  # meters
-# earth.isCentralBody = True
-# earth.useSphericalHarmParams = False
-
-# attach gravity model to spaceCraftPlus
-# satellite.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
-
-spiceObject = spice_interface.SpiceInterface()
-spiceObject.PlanetNames = spice_interface.StringVector(["sun"]) #, "earth"])
-spiceObject.ModelTag = "SpiceInterfaceData"
-spiceObject.SPICEDataPath = bskPath + 'External/EphemerisData/'
-spiceObject.OutputBufferCount = 100000
-spiceObject.UTCCalInit = '2021 MAY 04 07:47:49.965 (UTC)'
-# pull in SPICE support libraries
-pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
-pyswice.furnsh_c(spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
-pyswice.furnsh_c(spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
-pyswice.furnsh_c(spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
-
-# if eclipseCondition == "full":
-#     spiceObject.zeroBase = "earth"
-#     # set up spacecraft 0 position and velocity for full eclipse
-#     oe = orbitalMotion.ClassicElements()
-#     r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
-#     oe.a = r_0
-#     oe.e = 0.00001
-#     oe.i = 5.0 * macros.D2R
-#     oe.Omega = 48.2 * macros.D2R
-#     oe.omega = 0 * macros.D2R
-#     oe.f = 173 * macros.D2R
-#     r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-#     satellite.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-#     satellite.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
-# elif eclipseCondition == "partial":
-#     spiceObject.zeroBase = "earth"
-#     # set up spacecraft 0 position and velocity for full eclipse
-#     oe = orbitalMotion.ClassicElements()
-#     r_0 = (500 + orbitalMotion.REQ_EARTH)  # km
-#     oe.a = r_0
-#     oe.e = 0.00001
-#     oe.i = 5.0 * macros.D2R
-#     oe.Omega = 48.2 * macros.D2R
-#     oe.omega = 0 * macros.D2R
-#     oe.f = 107.5 * macros.D2R
-#     r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-#     satellite.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-#     satellite.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
-# elif eclipseCondition == "none":
-#     oe = orbitalMotion.ClassicElements()
-#     r_0 = 9959991.68982  # km
-#     oe.a = r_0
-#     oe.e = 0.00001
-#     oe.i = 5.0 * macros.D2R
-#     oe.Omega = 48.2 * macros.D2R
-#     oe.omega = 0 * macros.D2R
-#     oe.f = 107.5 * macros.D2R
-#     r_N_0, v_N_0 = orbitalMotion.elem2rv(orbitalMotion.MU_EARTH, oe)
-#     satellite.hub.r_CN_NInit = r_N_0 * 1000  # convert to meters
-#     satellite.hub.v_CN_NInit = v_N_0 * 1000  # convert to meters
-
-unitTestSim.AddModelToTask(testTaskName, spiceObject)
-# eclipseObject = eclipse.Eclipse()
-# eclipseObject.addPositionMsgName(satellite.scStateOutMsgName)
-# eclipseObject.addPlanetName('earth')
-# eclipseObject.addPlanetName('mars barycenter')
-# eclipseObject.addPlanetName('venus')
-# unitTestSim.AddModelToTask(testTaskName, eclipseObject)
-# unitTestSim.TotalSim.logThisMessage("eclipse_data_0")
+    cssA1.OutputDataMsg = "cssA1Out"
+    cssA2.OutputDataMsg = "cssA2Out"
+    cssA3.OutputDataMsg = "cssA3Out"
+    cssA4.OutputDataMsg = "cssA4Out"
+    cssB1.OutputDataMsg = "cssB1Out"
+    cssB2.OutputDataMsg = "cssB2Out"
+    cssB3.OutputDataMsg = "cssB3Out"
+    cssB4.OutputDataMsg = "cssB4Out"
 
 
+    #all sensors on a 45 degree, four sided pyramid mount
+    cssA1.nHat_B = [1./np.sqrt(2.), 0., -1./np.sqrt(2.)]
+    cssA2.nHat_B = [1./np.sqrt(2.), 1./np.sqrt(2.), 0.]
+    cssA3.nHat_B = [1./np.sqrt(2.), 0.,  1./np.sqrt(2)]
+    cssA4.nHat_B = [1./np.sqrt(2.), -1./np.sqrt(2.), 0.]
 
-unitTestSim.InitializeSimulation()
-unitTestSim.TotalSim.logThisMessage("sun_planet_data", macros.sec2nano(1.))
-unitTestSim.TotalSim.logThisMessage(satellite.scStateOutMsgName, macros.sec2nano(1.))
+    #all except cssB4 given non-zero platform frame. B4 is not changed so that the default is tested.
+    cssB1.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+    cssB2.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+    cssB3.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+    #cssB4 is not changed so that the default is tested to be identity
+
+    cssB1.phi = -3.*np.pi/4.
+    cssB1.theta = 0.
+    cssB2.phi = 0.
+    cssB2.theta = 0.
+    cssB3.phi = 0.
+    cssB3.theta = 0.
+    cssB4.phi = 0.
+    cssB4.theta = 0.
+
+    cssB1.setUnitDirectionVectorWithPerturbation(cssB1.theta, cssB1.phi)
+    cssB2.setUnitDirectionVectorWithPerturbation(cssB2.theta, cssB2.phi)
+    print cssB1.dcm_PB
+    cssB3.setUnitDirectionVectorWithPerturbation(cssB3.theta, cssB3.phi)
+    cssB4.setUnitDirectionVectorWithPerturbation(cssB4.theta, cssB4.phi)
+    
+    constellationAList = [cssA1, cssA2, cssA3, cssA4]
+    constellationA = coarse_sun_sensor.CSSConstellation()
+    constellationA.ModelTag = "constellationA"
+    constellationA.sensorList = coarse_sun_sensor.CSSVector(constellationAList)
+    constellationA.outputConstellationMessage = "constellationA_Array_output"
+    unitTestSim.AddModelToTask(testTaskName, constellationA)
+
+    constellationBList = [cssB1, cssB2, cssB3, cssB4]
+    constellationB = coarse_sun_sensor.CSSConstellation()
+    constellationB.ModelTag = "constellationB"
+    constellationB.sensorList = coarse_sun_sensor.CSSVector(constellationBList)
+    constellationB.outputConstellationMessage = "constellationB_Array_output"
+    unitTestSim.AddModelToTask(testTaskName, constellationB)
+
+    unitTestSim.TotalSim.logThisMessage(constellationA.outputConstellationMessage, testTaskRate)
+    unitTestSim.TotalSim.logThisMessage(constellationB.outputConstellationMessage, testTaskRate)
+
+
+#Create dummy sun message
+sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
+sunPositionMsg.PositionVector = [om.AU, 0.0, 0.0]
+unitTestSupport.setMessage(unitTestSim.TotalSim,
+                           testProcessName,
+                           cssSinglePlain.InputSunMsg,
+                           sunPositionMsg)
+
+#Create dummy spacecraft message
+satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
+satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
+satelliteStateMsg.sigma_BN = [0.,0.,sigmas[0]]
+unitTestSupport.setMessage(unitTestSim.TotalSim,
+                           testProcessName,
+                           cssSinglePlain.InputStateMsg,
+                           satelliteStateMsg)
+satelliteStateMsgSize = satelliteStateMsg.getStructSize()
+
+#create dummy eclipse message
+eclipseMsg = simMessages.EclipseSimMsg()
+eclipseMsg.shadowFactor = visibilityFactor
+unitTestSupport.setMessage(unitTestSim.TotalSim,
+                           testProcessName,
+                           cssSinglePlain.sunEclipseInMsgName,
+                           eclipseMsg)
+
+unitTestSim.InitializeSimulationAndDiscover()
 unitTestSim.TotalSim.logThisMessage(cssSinglePlain.OutputDataMsg, macros.sec2nano(0.1))
 
 # Execute the simulation for one time step
-#unitTestSim.TotalSim.SingleStepProcesses()
-rotationTime = 60.
-simulationTime = macros.sec2nano(rotationTime)
-unitTestSim.ConfigureStopTime(simulationTime)
-unitTestSim.ExecuteSimulation()
+for i in range(len(sigmas)):
+    satelliteStateMsg.sigma_BN = [0.,0.,sigmas[i]]
+    unitTestSim.TotalSim.WriteMessageData(cssSinglePlain.InputStateMsg, satelliteStateMsgSize,
+                                      unitTestSim.TotalSim.CurrentNanos + testTaskRate,
+                                      satelliteStateMsg)
+    unitTestSim.TotalSim.SingleStepProcesses()
 
-cssSinglePlain.fov = 0.75*np.pi/2
-
-simulationTime = macros.sec2nano(2*rotationTime)
-unitTestSim.ConfigureStopTime(simulationTime)
-unitTestSim.ExecuteSimulation()
-
-cssSinglePlain.fov = np.pi/2
-cssSinglePlain.KellyFactor = 0.1
-
-simulationTime = macros.sec2nano(3*rotationTime)
-unitTestSim.ConfigureStopTime(simulationTime)
-unitTestSim.ExecuteSimulation()
-
-cssSinglePlain.KellyFactor = 0.0
-cssSinglePlain.scaleFactor = 1.25
-
-simulationTime = macros.sec2nano(4*rotationTime)
-unitTestSim.ConfigureStopTime(simulationTime)
-unitTestSim.ExecuteSimulation()
-
-r_sun_N = unitTestSim.pullMessageLogData("sun_planet_data.PositionVector", range(3))
-r_sat_N = unitTestSim.pullMessageLogData(satellite.scStateOutMsgName+".r_BN_N", range(3))
-mrp_sat_N = unitTestSim.pullMessageLogData(satellite.scStateOutMsgName+".sigma_BN", range(3))
 cssOutput = unitTestSim.pullMessageLogData(cssSinglePlain.OutputDataMsg+".OutputData", range(1))
+if useConstellation:
+    constellationAdata = unitTestSim.pullMessageLogData(constellationA.outputConstellationMessage + ".CosValue", range(len(constellationAList)))
+    constellationBdata = unitTestSim.pullMessageLogData(constellationB.outputConstellationMessage + ".CosValue", range(len(constellationBList)))
 
 plt.figure(1)
 plt.clf()
-plt.plot(cssOutput[:,0]*macros.NANO2MIN , cssOutput[:,1])
+for i in range(4):
+    sensorlabel = "cssA"+str(i+1)
+    plt.plot(constellationAdata[:,0], constellationAdata[:,i+1], label=sensorlabel, linewidth=4-i)
+plt.legend(loc='upper center')
+
+plt.figure(2)
+plt.clf()
+for i in range(4):
+    sensorlabel = "cssB"+str(i+1)
+    plt.plot(constellationBdata[:,0], constellationBdata[:,i+1], label=sensorlabel, linewidth=4-i)
+plt.legend(loc='upper center')
+
+# plt.figure(3)
+# plt.clf()
+# plt.plot(cssOutput[:,0]*macros.NANO2MIN , cssOutput[:,1])
+
 plt.show()
+
+# plt.figure(1)
+# plt.clf()
+
+# plt.show()
+########################end Single Sensor
 
 #eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
 
