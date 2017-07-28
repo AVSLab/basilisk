@@ -49,7 +49,8 @@ def hingedRigidBodyAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_hingedRigidBodyNoGravityDamping(show_plots)
     assert testResults < 1, testMessage
-    [testResults, testMessage] = test_hingedRigidBodyTransient(show_plots)
+    [testResults, testMessage] = test_hingedRigidBodyThetaSS(show_plots)
+    assert testResults < 1, testMessage
     assert testResults < 1, testMessage
 
 def test_hingedRigidBodyGravity(show_plots):
@@ -213,8 +214,8 @@ def test_hingedRigidBodyGravity(show_plots):
     PlotTitle = "Change In Rotational Energy with Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    if show_plots == True:
-        plt.show()
+    plt.show(show_plots)
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(trueSigma)):
@@ -427,8 +428,8 @@ def test_hingedRigidBodyNoGravity(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    if show_plots == True:
-        plt.show()
+    plt.show(show_plots)
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(truePos)):
@@ -622,8 +623,8 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     PlotTitle = "Change In Velocity Of Center Of Mass No Gravity with Damping"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
-    if show_plots == True:
-        plt.show()
+    plt.show(show_plots)
+    plt.close("all")
 
     accuracy = 1e-10
     for i in range(0,len(initialOrbAngMom_N)):
@@ -652,7 +653,7 @@ def test_hingedRigidBodyNoGravityDamping(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
-def test_hingedRigidBodyTransient(show_plots):
+def test_hingedRigidBodyThetaSS(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
@@ -732,8 +733,6 @@ def test_hingedRigidBodyTransient(show_plots):
     # Add test module to runtime call list
     unitTestSim.AddModelToTask(unitTaskName, scObject)
 
-    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
-
     unitTestSim.InitializeSimulation()
 
     unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
@@ -745,10 +744,6 @@ def test_hingedRigidBodyTransient(show_plots):
 
     theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
     theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
-
-    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
-    sigmaOut_BN = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
-    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
 
     # Developing the lagrangian result
     # Define initial values
@@ -802,6 +797,46 @@ def test_hingedRigidBodyTransient(show_plots):
 
     plt.figure()
     plt.clf()
+    plt.plot(time, X[3,:],'-b',label = "Lagrangian")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
+    plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.legend(loc ='upper right',numpoints = 1)
+    PlotName = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
+    PlotTitle = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
+    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
+    plt.plot(theta2Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.legend(loc ='upper right',numpoints = 1)
+    PlotName = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
+    PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.show(show_plots)
+    plt.close("all")
+
+
+    accuracy = 1e-6
+    if abs(theta1Out[-1,1] - thetaSS) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 1 comparison ")
+
+    if abs(theta2Out[-1,1] - thetaSS) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 2 comparison ")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Hinged Rigid Body steady state Integrated test"
+
+    assert testFailCount < 1, testMessages
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
     plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
     plt.legend(loc ='upper right')
