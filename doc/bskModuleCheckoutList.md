@@ -11,6 +11,10 @@ This documents contains a series of action items that should be checked before a
 * Are all module input and output messages Swig's in the module `*.i` file
 * Does the code contain appropriate comments
 * Does the code contain Doxygen compatible function descriptions, variable defintions, etc.
+* Module startup and initialization
+    * The `SelfInit()` routine should declare the module output messages
+    * The `CrossInit()` routine should subscribe to the module input messages
+    * The `Reset()` in the FSW modules should reset all the default moudle configuration parameters.
 
 ## Module Functionality Testing
 Is a _UnitTest folder included that:
