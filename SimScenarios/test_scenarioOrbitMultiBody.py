@@ -140,7 +140,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 #~~~~~~~~~~~~~~~~~
 # If BSK modules are added to the simulation task process, they are executed in the order that they are added
-# However, we the execution order needs to be control, a priority can be assigned.  The model with a higher priority
+# However, when the execution order needs to be controlled, a priority can be assigned.  The model with a higher priority
 # number is executed first.  Modules with unset priorities will be given a priority of -1 which
 # puts them at the
 # very end of the execution frame.  They will get executed in the order in which they were added.
@@ -250,7 +250,7 @@ def test_scenarioOrbitMultiBody(show_plots, scCase):
 #~~~~~~~~~~~~~~~~~
 # The default libraries loaded with `simIncludeGravity.addSpiceInterface()` unloaded with
 # `simIncludeGravity.unloadDefaultSpiceLibraries()`.  Any custom libraries, such as those of particular
-# spacercraft, must be unloaded individually as shown.
+# spacecraft, must be unloaded individually as shown.
 #
 # Setup 1
 # -----

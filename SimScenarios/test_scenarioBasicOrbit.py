@@ -124,11 +124,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # Qt Visualization Option
 # -----
 # If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
-# line from the python scenario script.  If the Viz is running, and searching for a connection on
+# line (line 360 in the script) from the python scenario script.  If the Viz is running, and searching for a connection on
 # 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
 # realtime
 #~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess)
+# unitTestSupport.enableVisualization(scSim, dynProcess)     (line 360 in the script)
 #~~~~~~~~~~~~~~
 # Note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
 # speed up factor can be increased in the Qt GUI by calling up the
@@ -204,11 +204,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # ~~~~~~~~~~~~~~~~
 # If this vector is not specified, as in this tutorial scenario, then it defaults to zero.  If only a rigid hub
 # is modeled, the Bc (hub center of mass) is the same as C (spacecraft center of mass).  If the spacecrat contains
-# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C woudl
+# state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C would
 # not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
 # identical.
 #
-# Finally, the planet ephemerise data must be written to a message.  In this simulation the planet is held at
+# Finally, the planet ephemeris data must be written to a message.  In this simulation the planet is held at
 # a fixed location with zero position and velocity coordinates, so this message is not updated.
 # If the planets move with time, such as with the SPICE
 # functions, then this message can be written dynamically as well.

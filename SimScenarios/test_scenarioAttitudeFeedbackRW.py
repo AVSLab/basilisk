@@ -230,7 +230,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ### Flight Algorithm Changes to Control RWs
 #
 # The general flight algorithm setup is the same as in the earlier simulation script. Here we
-# use again the inertial3D() guidance module, teh attTrackingError() module to evaluate the
+# use again the inertial3D() guidance module, the attTrackingError() module to evaluate the
 # tracking error states, and the MRP_Feedback() module to provide the desired \f${\mathbf L}_r\f$
 # control torque vector.  In this simulation we want the MRP attitude control module to take
 # advantage of the RW spin information.  This is achieved by adding the 2 extra lines:
@@ -240,7 +240,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ~~~~~~~~~~~~~~~
 # The first line specifies the RW configuration flight message name, and the second name
 # connects the RW speed output message as an input message to this control module.  This simulates
-# the RW speed information being sensed and returned to this algorithm.  This this message names
+# the RW speed information being sensed and returned to this algorithm.  This message names
 # are not provided, then the BSK control modules automatically turn off any RW gyroscopic
 # compensation.
 #
@@ -265,7 +265,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #         ]
 #     rwMotorTorqueConfig.controlAxes_B = controlAxes_B
 # ~~~~~~~~~~~~~~~
-# Note that the output vector of RW motoro torques \f$u_B\f$ is set to connect with
+# Note that the output vector of RW motor torques \f$u_B\f$ is set to connect with
 # the RW state effector command input message.  Further, this module inputs the typical
 # vehicle configuration message, as well as a message containing the flight algorithm
 # information of the RW devices.  This torque mapping module can map the full 3D \f${\mathbf L}_r\f$
@@ -287,7 +287,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ~~~~~~~~~~~~~~~~
 # Again a `clearSetup()` should be called first to clear out any pre-existing RW devices from an
 # earlier simulation run.  Next, the script above uses the same RW information as what the simulation
-# uses.  In this configuration we are simulation perfect RW device knowledge.  If imperfect RW knowledge
+# uses.  In this configuration we are simulating perfect RW device knowledge.  If imperfect RW knowledge
 # is to be simulated, then the user would input the desired flight states rather than the true
 # simulation states.  The support macro `writeConfigMessage()` creates the required RW flight configuration
 # message.

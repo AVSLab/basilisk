@@ -137,7 +137,7 @@ def test_scenarioOrbitManeuver(show_plots, maneuverCase):
 #~~~~~~~~~~~~~~~~~{.py}
 #     velRef.setState(unitTestSupport.np2EigenVector3d(vVt))
 #~~~~~~~~~~~~~~~~~
-# To start up the simulation again, not that the total simulation time must be provided,
+# To start up the simulation again, note that the total simulation time must be provided,
 # not just the next incremental simulation time.
 #~~~~~~~~~~~~~~~~~{.py}
 #     scSim.ConfigureStopTime(simulationTime+T2)

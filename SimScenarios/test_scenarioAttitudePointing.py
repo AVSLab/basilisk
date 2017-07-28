@@ -445,6 +445,6 @@ def run(doUnitTests, show_plots, useLargeTumble):
 if __name__ == "__main__":
     run( False,       # do unit tests
          True,        # show_plots
-         True         # useLargeTumble
+         False,         # useLargeTumble
        )
 
