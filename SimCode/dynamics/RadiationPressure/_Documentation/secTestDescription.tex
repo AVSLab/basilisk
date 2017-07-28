@@ -1,6 +1,0 @@
-\section{Test Description and Success Criteria}
-This test is located at {\tt SimCode/dynamics/RadiationPressure/\_UnitTest/test\_radiationPressure.py} In order to get good coverage of all the aspects of the module, the test is broken up into three sub-tests. In each sub-test, a spacecraft is placed in the solar system and acted upon by the Sun. \par
-
-\subsection{``Cannonball" Method} This test utilizes the ``cannonball" method to calculate the effects of radiation pressure on spacecraft dynamics. The cannonball method approximates the spacecraft as a sphere. External forces in the inertial and body frame, as well as external torques in the body frame, are checked against known values.
-\subsection{Table Look-up Method} This test uses a stored table of known effects of radiation pressure. It looks up values and compares them to the expected result to validate radiation pressure table look-up capabilities.
-\subsection{Table Look-up with Eclipse} This test is the same as the Table Look-up Method except that the spacecraft experiences a partial eclipse during the test. The experiences forces and torques are expected to be exactly half of what they are without the eclipse.

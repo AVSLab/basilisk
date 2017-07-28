@@ -60,3 +60,59 @@ The resulting data points are illustrated in Figure~\ref{fig:intResults}.  The l
 
 \subsection{Test success criteria}
 The integrated position states are checked at 5 even data points along the simulation time again pre-computed truth answers.  These truth answers were generated in Mathematica implementing the same initial conditions, and replicating the integration math.    The accuracy threshold is set to 1 meter, a small value compared to the 7,000,000 meter near-circular orbit radius.  
+
+
+
+\section{Test Parameters}
+Three tests are run controlled through a single test parameter called {\tt integratorCase}.  The possible values are shown in Table~\ref{tbl:intCases}.  
+
+\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tbl:intCases}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c } % Column formatting, 
+		\hline\hline
+		\textbf{Test}   	      	               & \textbf{Tolerated Error} 						           \\ \hline
+		``rk4"                           & 1 meter	  \\ 
+		``euler"                           & 1 meter	  \\ 
+		``rk2"                           & 1 meter	  \\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
+\section{Test Results}
+All integration checks within the integrated test {\tt SimScenarios/test\_scenarioIntegrators.py} passed.  Table~\ref{tbl:intResults} shows the test results, while Figure~\ref{fig:intResults} shows the resulting trajectories for each integration test.
+
+\begin{figure}[t]
+	\centerline{
+		\includegraphics[]{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegrators}
+	}
+	\caption{Illustration of the BSK integrated trajectories.}
+	\label{fig:intResults}
+\end{figure}
+
+\begin{table}[h]
+	\caption{Integration test results.}
+	\label{tbl:intResults}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{c | c | p{4in} } % Column formatting, 
+		\hline\hline
+		\textbf{Test} 			& \textbf{Pass/Fail} 	 & \textbf{BSK Error Notes} 									        
+		\\ \hline
+		``rk4"		  	& 
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk4}      	  &
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk4}
+		\\ \hline
+		``euler''	   	           	&
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-euler}           		&      
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-euler}  
+		\\ \hline
+		``rk2''      	&
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsTestMsg-rk2}
+		&  
+		\input{../../../../SimScenarios/_Documentation/AutoTex/scenarioIntegratorsMsg-rk2}
+		\\ 
+		\hline\hline
+	\end{tabular}
+\end{table}
+
