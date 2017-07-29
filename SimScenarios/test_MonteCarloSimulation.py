@@ -15,13 +15,13 @@ import SimulationBaseClass
 import numpy as np
 import shutil
 
-
 # import simulation related support
 import spacecraftPlus
 import orbitalMotion
 import gravityEffector
 import simIncludeGravity
 import macros
+from math import fabs
 
 import pytest
 import unitTestSupport          # general support file with common unit test functions
@@ -160,7 +160,6 @@ def test_MonteCarloSimulation():
     monteCarlo.setExecutionModule(myExecutionFunction)
     monteCarlo.setSimulationObject(myCreationFunction)
     monteCarlo.setRetentionParameters(myRetainedData)
-    monteCarlo.setDisperseSeeds(True)
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
     monteCarlo.setThreadCount(PROCESSES)
     monteCarlo.setVerbose(VERBOSE)
@@ -178,6 +177,16 @@ def test_MonteCarloSimulation():
     assert "messages" in retainedData, "Retained data should retain messages"
     assert "inertial_state_output.r_BN_N" in retainedData["messages"], "Retained messages should exist"
     assert "inertial_state_output.v_BN_N" in retainedData["messages"], "Retained messages should exist"
+    oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+
+    # rerun the case and it should be the same, because we dispersed random seeds
+    monteCarloLoaded.reRunCases([19])
+    retainedData = monteCarloLoaded.getRetainedData(19)
+    newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+
+    for (k1,v1) in enumerate(oldOutput):
+        for (k2,v2) in enumerate(v1):
+            assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .01, "Outputs shouldn't change on runs if random seeds are same"
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"

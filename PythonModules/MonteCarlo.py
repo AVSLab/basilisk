@@ -524,20 +524,24 @@ class MonteCarloController:
         for caseNumber in caseList:
             print "Rerunning", caseNumber
 
-            oldRunFile = self.archiveDir + "run" + str(caseNumber) + ".py"
+            oldRunFile = self.archiveDir + "run" + str(caseNumber) + ".json"
             if not os.path.exists(oldRunFile):
                 print "ERROR re-running case: " + oldRunFile
                 continue
-            oldRunModule = imp.load_source("disperseVariables", oldRunFile)
 
             # use same simulation parameters but don't archive
             simParams = copy.deepcopy(self.simParams)
             simParams.shouldArchive = False
             simParams.index = caseNumber
+            # don't redisperse seeds, we want to use the ones saved in the oldRunFile
+            simParams.shouldDisperseSeeds = False
+            with open(oldRunFile, "r") as runParameters:
+                simParams.dispersions = json.load(runParameters)
+                print "rerunning with ", simParams.dispersions
 
             #execute simulation with dispersion
             executor = SimulationExecutor()
-            success = executor(simParams, oldRunModule.disperseVariables)
+            success = executor(simParams)
 
             if not success:
                 print "Error re-executing run", caseNumber
@@ -565,7 +569,7 @@ class MonteCarloController:
 
             # generate the desired parameters
             for disp in self.dispersions:
-                # for each dispersion in the MonteCarlo, generate a parameter for a simulation run
+                # for each dispersion in the MonteCarlo, generate parameters for each simulation run
                 variable = disp.getName()
                 value = disp.generateString(disp)
                 simClone.dispersions[variable] = value
@@ -672,14 +676,11 @@ class SimulationExecutor():
     '''
 
     @classmethod
-    def __call__(cls, simParams, dispersionFunction=None):
+    def __call__(cls, simParams):
         ''' In each worker process, we execute this function (by calling this object)
         Args:
             simParams: SimulationParameters
                 The simulation parameters for the simulation to be executed.
-            dispersionFunction: OPTIONAL (sim: SimulationBaseClass) => None
-                A function to be applied after creating the object.
-                It can be used to set random seeds, and parameters for the simulation before it is executed.
         Returns:
             success: bool
                 True if simulation run was successful
@@ -692,17 +693,18 @@ class SimulationExecutor():
 
             # we may also want to randomize the randomSeeds for each of the runs of the MonteCarlo
             if simParams.shouldDisperseSeeds:
-                # generate the random seeds for the model
+                # generate the random seeds for the model (but don't apply them yet)
                 randomSeedDispersions = cls.disperseSeeds(simInstance)
                 for name, value in randomSeedDispersions.items():
                     simParams.dispersions[name] = value
 
-            # if archiving, this run's parameters are saved in its own json file
+            # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchive:
                 # save the dispersions and random seeds for this run
                 with open(simParams.filename + ".json", 'w') as outfile:
                     json.dump(simParams.dispersions, outfile)
 
+            # apply the dispersions and the random seeds
             for variable, value in simParams.dispersions.items():
                 evalStatement = "simInstance" + variable + "=" + value
                 exec evalStatement
@@ -738,13 +740,15 @@ class SimulationExecutor():
                 A basilisk simulation to set random seeds on
         Returns:
             statement: string
-                A python statement that modifies a sim to use these RNG seeds. Can be multiple lines:
+                A dictionary with the random seeds that should be applied:
                 Example:
                 ""
-                simInstance.TaskList[0].TaskModels[1]=1934586
-                simInstance.TaskList[0].TaskModels[2]=3450093
-                simInstance.TaskList[1].TaskModels[0]=2221934
-                simInstance.TaskList[2].TaskModels[0]=1123244
+                {
+                    '.TaskList[0].TaskModels[1]': 1934586,
+                    '.TaskList[0].TaskModels[2]': 3450093,
+                    '.TaskList[1].TaskModels[0]': 2221934,
+                    '.TaskList[2].TaskModels[0]': 1123244
+                }
                 ""
         """
 
@@ -766,7 +770,21 @@ class SimulationExecutor():
 
     @staticmethod
     def getDataForRetention(simInstance, retentionParameters):
-
+        """ Returns the data that should be retained given a simInstance and the retentionParameters
+        Args:
+            simInstance: The simulation instance to retrive data from
+            retentionParameters: A dictionary that states what data to retrieve from the simInstance
+        Returns:
+            Retained Data: In the form of a dictionary with two sub-dictionaries for messages and variables:
+            {
+                "messages": {
+                    "messageName": [value1,value2,value3]
+                },
+                "variables": {
+                    "variableName": [value1,value2,value3]
+                }
+            }
+        """
         data = {}
         if "messages" in retentionParameters:
             data["messages"] = {}
