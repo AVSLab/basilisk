@@ -375,7 +375,7 @@ class InertiaTensorDispersion:
         return val
 
 
-class MonteCarloBaseClass:
+class MonteCarloController:
 
     def __init__(self):
         self.executionCount = 0

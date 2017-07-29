@@ -32,7 +32,6 @@ import numpy as np
 import array
 import xml.etree.ElementTree as ET
 import inspect
-import MonteCarloBaseClass
 import sets
 import simulationArchTypes
 
@@ -76,7 +75,7 @@ class EventHandlerClass:
             funcString = funcString[:-3] + '):\n'
         funcString += '        return 1\n'
         funcString += '    return 0'
-        
+
         exec (funcString)
         self.checkCall = eval('EVENT_check_' + self.eventName)
         funcString = 'def EVENT_operate_' + self.eventName + '(self):\n'
@@ -208,7 +207,7 @@ class SimBaseClass:
         self.procList.append(proc)
         self.TotalSim.addNewProcess(proc.processData)
         return proc
-    
+
     def CreateNewPythonProcess(self, procName, priority = -1):
         proc = simulationArchTypes.PythonProcessClass(procName, priority)
         i=0;
@@ -251,7 +250,7 @@ class SimBaseClass:
                 RefFunctionString = RefFunctionString[:-1] + ']'
                 exec (RefFunctionString)
                 methodHandle = eval('Get' + NoDotName)
-        
+
             elif (type(eval(LogName)).__name__ == 'list'):
                 RefFunctionString = 'def Get' + NoDotName + '(self):\n'
                 RefFunctionString += '   if isinstance(' + LogName + '[0], list):\n'
@@ -365,7 +364,7 @@ class SimBaseClass:
                     pyProc.executeTaskList(self.TotalSim.CurrentNanos)
                 nextCallTime = pyProc.nextCallTime()
                 procStopTimes.append(nextCallTime)
-        
+
             if(pyProcPresent and nextStopTime >= min(procStopTimes)):
                 nextStopTime = min(procStopTimes)
                 nextPriority = self.pyProcList[procStopTimes.index(nextStopTime)].pyProcPriority
@@ -496,7 +495,7 @@ class SimBaseClass:
             if(localNextTime >= 0 and (localNextTime < nextTime or nextTime <0)):
                 nextTime = localNextTime
         return nextTime
-            
+
 
     def setEventActivity(self, eventName, activityCommand):
         if eventName not in self.eventMap.keys():
@@ -586,7 +585,7 @@ class SimBaseClass:
                         continue
                     fDesc.write('    ' + str(key) + ':' + outputConn + 'Out')
                     fDesc.write(' -> ' + str(outputModule) + ':' + outputConn +'In;\n')
-        
+
 
         fDesc.write('\n}')
         fDesc.close()
@@ -673,7 +672,7 @@ def synchronizeTimeHistories(arrayList):
     for i in range(len(returnArrayList)):
         while(returnArrayList[i][1,0] < returnArrayList[0][timeCounter,0]):
             returnArrayList[i] = np.delete(returnArrayList[i], 0, 0)
-        
+
     timeCounter = -1
     for i in range(len(returnArrayList)):
         while returnArrayList[i][-1,0] < returnArrayList[0][timeCounter,0]:
@@ -693,7 +692,7 @@ def synchronizeTimeHistories(arrayList):
         for j in range(1, len(returnArrayList)):
             while(returnArrayList[j][indexPrev[j]+1,0] < returnArrayList[0][i,0]):
                 indexPrev[j] += 1
-        
+
             dataProp = returnArrayList[j][indexPrev[j]+1,1:] - returnArrayList[j][indexPrev[j],1:]
             dataProp *= (timeNow - returnArrayList[j][indexPrev[j],0])/(returnArrayList[j][indexPrev[j]+1,0] - returnArrayList[j][indexPrev[j],0])
             dataProp += returnArrayList[j][indexPrev[j],1:]
@@ -706,7 +705,3 @@ def synchronizeTimeHistories(arrayList):
         outputArrayList[j] = np.array(outputArrayList[j])
 
     return outputArrayList
-
-
-
-
