@@ -467,6 +467,11 @@ class MonteCarloController:
         self.simParams.shouldDisperseSeeds = seedDisp
 
     def setThreadCount(self, threads):
+        """ Set the number of threads to use for the monte carlo simulation
+        Args:
+            threads: int
+                Number of threads to execute the montecarlo run on.
+        """
         self.numProcess = threads
 
     def setVerbose(self, verbose):
