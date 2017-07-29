@@ -10,12 +10,11 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
-from MonteCarloBaseClassNew2 import MonteCarloBaseClass
+import MonteCarlo
 import SimulationBaseClass
 import numpy as np
 import shutil
 
-import SimulationBaseClass
 
 # import simulation related support
 import spacecraftPlus
@@ -156,7 +155,7 @@ def test_MonteCarloSimulation():
     # create a montecarlo class to test
     #
     dirName = "tmp_montecarlo_test"
-    monteCarlo = MonteCarloBaseClass()
+    monteCarlo = MonteCarlo.MonteCarloController()
     monteCarlo.setDisperseSeeds(True)
     monteCarlo.setExecutionModule(myExecutionFunction)
     monteCarlo.setSimulationObject(myCreationFunction)
@@ -172,7 +171,7 @@ def test_MonteCarloSimulation():
 
     assert len(failures) == 0, "No runs should fail"
 
-    monteCarloLoaded = MonteCarloBaseClass.load(dirName)
+    monteCarloLoaded = MonteCarlo.MonteCarloController.load(dirName)
 
     retainedData = monteCarloLoaded.getRetainedData(19)
     assert retainedData is not None, "Retained data should be available after execution"
