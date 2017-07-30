@@ -19,20 +19,22 @@
 '''
 import sys, os, inspect  # Don't worry about this, standard stuff plus file discovery
 import random
-import abc
+
 import numpy as np
+import abc
 import shutil
-import imp
-from multiprocessing import Pool, cpu_count
-import cPickle as pickle
+
 import copy
+
 import gzip
-import signal
 import json
+import cPickle as pickle
+
+from multiprocessing import Pool, cpu_count
+import signal
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
-
 
 class SingleVariableDispersion(object):
     __metaclass__ = abc.ABCMeta
@@ -405,17 +407,22 @@ class MonteCarloController:
             return data
 
     def setRetentionParameters(self, retentionParameters):
-        """ Set an execution function that chooses what data to retain from a simulation instance.
+        """ Set what messages and variables to retain from a simulation.
         Args:
-            retainFunction: (sim: SimulationBaseClass) => any
-                A function with one parameter, a simulation instance.
-                The function must return all data the user wishes to retain from the simulation execution.
-                The function will be called after the executionFunction in each simulation run.
-                It must extract infomation from the simulation instance, and return it as a picklable python object.
+            retentionParameters:
+                Parameters in the form of a dictionary with two sub-dictionaries for messages and variables:
+                {
+                    "messages": {
+                        "messageName": [value1,value2,value3]
+                    },
+                    "variables": {
+                        "variableName": [value1,value2,value3]
+                    }
+                }
         """
         self.simParams.retentionParameters = retentionParameters
 
-    def setExecutionModule(self, newModule):
+    def setExecutionFunction(self, newModule):
         """ Set an execution function that executes a simulation instance.
         Args:
             executionFunction: (sim: SimulationBaseClass) => None
@@ -426,7 +433,7 @@ class MonteCarloController:
         """
         self.simParams.executionFunction = newModule
 
-    def setSimulationObject(self, newObject):
+    def setSimulationFunction(self, newObject):
         """ Set the function that creates the simulation instance.
         Args:
             creationFunction: () => SimulationBaseClass
@@ -434,7 +441,7 @@ class MonteCarloController:
         """
         self.simParams.creationFunction = newObject
 
-    def setDisperseSeeds(self, seedDisp):
+    def setShouldDisperseSeeds(self, seedDisp):
         """ Disperse the RNG seeds of each run in the MonteCarlo
         Args:
             seedDisp: bool
@@ -458,14 +465,6 @@ class MonteCarloController:
         """
         self.dispersions.append(disp)
 
-    def setDisperseSeeds(self, seedDisp):
-        """ Disperse the RNG seeds of each run in the MonteCarlo
-        Args:
-            seedDisp: bool
-                Whether to disperse the RNG seeds in each run of the simulation
-        """
-        self.simParams.shouldDisperseSeeds = seedDisp
-
     def setThreadCount(self, threads):
         """ Set the number of threads to use for the monte carlo simulation
         Args:
@@ -482,14 +481,15 @@ class MonteCarloController:
         """
         self.simParams.verbose = verbose
 
-    def archiveICs(self, dirName):
+    def setArchiveDir(self, dirName):
         """ Set-up archives for this MonteCarlo run
         Args:
             dirName: string
                 The name of the directory to archive runs in.
+                None, if no archive desired.
         """
         self.archiveDir = os.path.abspath(dirName) + "/"
-        self.simParams.shouldArchive = True
+        self.simParams.shouldArchive = dirName != None
         self.simParams.filename = self.archiveDir
 
     def getRetainedData(self, case):
@@ -525,24 +525,25 @@ class MonteCarloController:
             failures: int[]
                 The list of failed runs.
         """
+        # the list of failures
+        failed = []
 
         for caseNumber in caseList:
-            print "Rerunning", caseNumber
+            if self.simParams.verbose:
+                print "Rerunning", caseNumber
 
             oldRunFile = self.archiveDir + "run" + str(caseNumber) + ".json"
             if not os.path.exists(oldRunFile):
                 print "ERROR re-running case: " + oldRunFile
                 continue
 
-            # use same simulation parameters but don't archive
+            # use same simulation parameters
             simParams = copy.deepcopy(self.simParams)
-            simParams.shouldArchive = False
             simParams.index = caseNumber
             # don't redisperse seeds, we want to use the ones saved in the oldRunFile
             simParams.shouldDisperseSeeds = False
             with open(oldRunFile, "r") as runParameters:
                 simParams.dispersions = json.load(runParameters)
-                print "rerunning with ", simParams.dispersions
 
             #execute simulation with dispersion
             executor = SimulationExecutor()
@@ -550,6 +551,12 @@ class MonteCarloController:
 
             if not success:
                 print "Error re-executing run", caseNumber
+                failed.append(caseNumber)
+
+        if len(failed) > 0:
+            print "Failed rerunning cases:", failed
+
+        return failed
 
     def generateSims(self, simNumList):
         ''' Generator function to clone a baseSimulation
@@ -589,7 +596,8 @@ class MonteCarloController:
                 A list of the indices of all failed simulation runs.
         '''
 
-        print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
+        if self.simParams.verbose:
+            print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
 
         if self.simParams.shouldArchive:
             if os.path.exists(self.archiveDir):
@@ -606,7 +614,7 @@ class MonteCarloController:
         # instead only generating simulations right before they are needed by a waiting worker
         # This is accomplished using a generator and pool.imap, -- simulations are only built
         # when they are about to be passed to a worker, avoiding memory overhead of first building simulations
-        # There is a chunking behavior, something like 10-20 are generated at a time.
+        # There is a system-dependent chunking behavior, something like 10-20 can be generated at a time.
         pool = Pool(self.numProcess)
         simGenerator = self.generateSims(range(numSims))
 
@@ -618,14 +626,16 @@ class MonteCarloController:
         jobsFinished = 0  # keep track of what simulations have finished
 
         try:
-            for result in pool.imap(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs
+            for result in pool.imap(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs(ish)
+                #note if job 6 finishes before job 5, wait to yield until job 5 is finished.
                 if result != True:  # workers return True on success
                     failed.append(jobsFinished) # add failed jobs to the list of failures
                 jobsFinished += 1
 
-                if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
-                    print "Finished", jobsFinished, "/", numSims, \
-                          "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
+                if self.simParams.verbose:
+                    if jobsFinished % max(1, numSims / 20) == 0:  # print percentage after every ~5%
+                        print "Finished", jobsFinished, "/", numSims, \
+                              "\t-- {}%".format(int(100 * float(jobsFinished) / numSims))
             pool.close()
         except KeyboardInterrupt:
             print "Ctrl-C was hit, closing pool"
@@ -639,10 +649,13 @@ class MonteCarloController:
 
         # if there are failures
         if len(failed) > 0:
-            print "Failed", failed, "saving to 'failures.txt'"
-            # write a file that contains log of failed runs
-            with open(self.archiveDir + "failures.txt", "w") as failFile:
-                failFile.write(str(failed))
+            if self.simParams.verbose:
+                print "Failed", failed, "saving to 'failures.txt'"
+
+            if self.simParams.shouldArchive:
+                # write a file that contains log of failed runs
+                with open(self.archiveDir + "failures.txt", "w") as failFile:
+                    failFile.write(str(failed))
 
         return failed
 
@@ -790,6 +803,7 @@ class SimulationExecutor():
                 }
             }
         """
+
         data = {}
         if "messages" in retentionParameters:
             data["messages"] = {}
