@@ -24,17 +24,16 @@ import macros
 from math import fabs
 
 import pytest
-import unitTestSupport          # general support file with common unit test functions
+import unitTestSupport  # general support file with common unit test functions
 
 NUMBER_OF_RUNS = 20
-# scale this up to make the simulations faster by shortening the length of
-# the sim.
-LENGTH_SHRINKAGE_FACTOR = 50
+LENGTH_SHRINKAGE_FACTOR = 50 # make the simulations faster by dividing the length of the sim by this.
 VERBOSE = True
-PROCESSES=1
+PROCESSES=8
 
 
 def myCreationFunction():
+    ''' function that returns a functional simulation '''
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
     sim.TotalSim.terminateSimulation()
@@ -125,6 +124,7 @@ def myCreationFunction():
     return sim
 
 def myExecutionFunction(sim):
+    ''' function that executes a simulation '''
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
     #   cross_init() and reset() routines on each module.
@@ -137,6 +137,7 @@ def myExecutionFunction(sim):
     pass
 
 
+# The data to be retained from a simulation is defined in this format
 myRetainedData = {
     "messages": {
         "inertial_state_output.r_BN_N": range(3),
@@ -151,19 +152,17 @@ myRetainedData = {
 @pytest.mark.slowtest
 def test_MonteCarloSimulation():
 
-    #
-    # create a montecarlo class to test
-    #
+    # test a montecarlo simulation
     dirName = "tmp_montecarlo_test"
     monteCarlo = MonteCarlo.MonteCarloController()
-    monteCarlo.setDisperseSeeds(True)
-    monteCarlo.setExecutionModule(myExecutionFunction)
-    monteCarlo.setSimulationObject(myCreationFunction)
+    monteCarlo.setShouldDisperseSeeds(True)
+    monteCarlo.setExecutionFunction(myExecutionFunction)
+    monteCarlo.setSimulationFunction(myCreationFunction)
     monteCarlo.setRetentionParameters(myRetainedData)
     monteCarlo.setExecutionCount(NUMBER_OF_RUNS)
     monteCarlo.setThreadCount(PROCESSES)
     monteCarlo.setVerbose(VERBOSE)
-    monteCarlo.archiveICs(dirName)
+    monteCarlo.setArchiveDir(dirName)
     # monteCarlo.addNewDispersion()
 
     failures = monteCarlo.executeSimulations()
@@ -180,13 +179,15 @@ def test_MonteCarloSimulation():
     oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
 
     # rerun the case and it should be the same, because we dispersed random seeds
-    monteCarloLoaded.reRunCases([19])
-    retainedData = monteCarloLoaded.getRetainedData(19)
+    failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
+    assert len(failed) == 0, "Should rerun case successfully"
+    retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
 
     for (k1,v1) in enumerate(oldOutput):
         for (k2,v2) in enumerate(v1):
-            assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .01, "Outputs shouldn't change on runs if random seeds are same"
+            assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
+            "Outputs shouldn't change on runs if random seeds are same"
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
