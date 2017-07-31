@@ -117,7 +117,7 @@ class Controller:
         """
         self.executionCount = newCount
 
-    def addNewDispersion(self, disp):
+    def addDispersion(self, disp):
         """ Add a dispersion to the simulation.
         Args:
             disp: Dispersion
