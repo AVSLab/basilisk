@@ -146,10 +146,10 @@ def test_MonteCarloSimulation():
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
     disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    monteCarlo.addNewDispersion(UniformEulerAngleMRPDispersion(disp1Name))
-    monteCarlo.addNewDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addNewDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
-    monteCarlo.addNewDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addDispersion(UniformEulerAngleMRPDispersion(disp1Name))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.addDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
+    monteCarlo.addDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
     failures = monteCarlo.executeSimulations()
 
