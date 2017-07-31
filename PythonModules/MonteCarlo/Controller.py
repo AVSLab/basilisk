@@ -42,14 +42,13 @@ class Controller:
     def __init__(self):
         self.executionCount = 0
         self.numProcess = cpu_count()
-        self.dispersions = []
         self.simParams = SimulationParameters(
             creationFunction=None,
             executionFunction=None,
             retentionParameters=None,
             shouldArchive=False,
             shouldDisperseSeeds=False,
-            dispersions=None,
+            dispersions=[],
             filename=""
         )
 
@@ -123,7 +122,7 @@ class Controller:
             disp: Dispersion
                 The dispersion to add to the simulation.
         """
-        self.dispersions.append(disp)
+        self.simParams.dispersions.append(disp)
 
     def setThreadCount(self, threads):
         """ Set the number of threads to use for the monte carlo simulation
@@ -221,7 +220,7 @@ class Controller:
             # don't redisperse seeds, we want to use the ones saved in the oldRunFile
             simParams.shouldDisperseSeeds = False
             with open(oldRunFile, "r") as runParameters:
-                simParams.dispersions = json.load(runParameters)
+                simParams.modifications = json.load(runParameters)
 
             #execute simulation with dispersion
             executor = SimulationExecutor()
@@ -255,14 +254,6 @@ class Controller:
             simClone = copy.deepcopy(self.simParams)
             simClone.index = i
             simClone.filename += "run" + str(i)
-            simClone.dispersions = {}
-
-            # generate the desired parameters
-            for disp in self.dispersions:
-                # for each dispersion in the MonteCarlo, generate parameters for each simulation run
-                variable = disp.getName()
-                value = disp.generateString(disp)
-                simClone.dispersions[variable] = value
 
             yield simClone
 
@@ -347,7 +338,7 @@ class SimulationParameters():
      - whether randomized seeds should be applied to the simulation
      - whether data should be archived
     '''
-    def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchive, filename, index=None, verbose=False):
+    def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchive, filename, index=None, verbose=False, modifications={}):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
@@ -357,6 +348,7 @@ class SimulationParameters():
         self.shouldArchive = shouldArchive
         self.filename = filename
         self.verbose = verbose
+        self.modifications = modifications
 
 
 class SimulationExecutor():
@@ -388,22 +380,30 @@ class SimulationExecutor():
             # create the users sim by calling their supplied creationFunction
             simInstance = simParams.creationFunction()
 
-            # we may also want to randomize the randomSeeds for each of the runs of the MonteCarlo
+            # build a list of the parameter and random seed modifications to make
+            modifications = simParams.modifications
+
+            # we may want to disperse random seeds and parameters
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
                 randomSeedDispersions = cls.disperseSeeds(simInstance)
                 for name, value in randomSeedDispersions.items():
-                    simParams.dispersions[name] = value
+                    modifications[name] = value
+
+                for disp in simParams.dispersions:
+                    modifications[disp.getName()] = disp.generateString(simInstance)
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
             if simParams.shouldArchive:
                 # save the dispersions and random seeds for this run
                 with open(simParams.filename + ".json", 'w') as outfile:
-                    json.dump(simParams.dispersions, outfile)
+                    json.dump(modifications, outfile)
 
+            print "Applying modifications to sim", modifications
             # apply the dispersions and the random seeds
-            for variable, value in simParams.dispersions.items():
-                disperseStatement = "simInstance" + variable + "=" + value
+            for variable, value in modifications.items():
+                disperseStatement = "simInstance." + variable + "=" + value
+                print disperseStatement
                 exec disperseStatement
 
             # execute the simulation, with the user-supplied executionFunction
@@ -454,7 +454,7 @@ class SimulationExecutor():
         for task in simInstance.TaskList:
             j = 0
             for model in task.TaskModels:
-                taskVar = '.TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
+                taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
                 try:
                     randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
                 except ValueError:
