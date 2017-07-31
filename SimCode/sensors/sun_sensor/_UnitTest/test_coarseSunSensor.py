@@ -22,10 +22,12 @@
 #
 # Eclipse Condition Unit Test
 #
-# Purpose:  Test the proper function of the Eclipse environment module.
-#           This is done by comparing computed expected shadow factors in
-#           particular eclipse conditions to what is simulated
-# Author:   Patrick Kenneally
+# Purpose:  Test the proper function of the coarse sun sensor (css) module.
+#           For basic functionality, results are compared to simple truth values calculated using np.cos().
+#           For noise testing, noiseless truth values are subject from the output and the standard deviation is compared
+#           to the input standard devation.
+#           For css constellation set up, two identical constellations are set up with different methods and compared to
+#           each other
 # Creation Date:  May. 31, 2017
 #
 
@@ -46,238 +48,297 @@ sys.path.append(bskPath + 'PythonModules')
 
 import SimulationBaseClass
 import unitTestSupport
-import spacecraftPlus
 import macros
-import spice_interface
-import eclipse
-import pyswice
-import gravityEffector
 import orbitalMotion as om
 import coarse_sun_sensor
 import numpy as np
-import RigidBodyKinematics as rbk
 from matplotlib import pyplot as plt
 import simMessages
 
 
-# uncomment this line if this test has an expected failure, adjust message as needed
-# @pytest.mark.xfail(True)
-# @pytest.mark.parametrize()
-# def test_unitCoarseSunSensor(show_plots, eclipseCondition):
-#     [testResults, testMessage] = unitCoarseSunSensor(show_plots, eclipseCondition)
-#     assert testResults < 1, testMessage
+# The following 'parametrize' function decorator provides the parameters and expected results for each
+#   of the multiple test runs for this test.
+@pytest.mark.parametrize("useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide", [
+      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "plain", 0, 5.),
+      (False, 0.5, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "eclipse", -1, 5.),
+      (False, 1.0, 3*np.pi/8., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "fieldOfView", -2, 5.),
+      (False, 1.0, np.pi/2., 0.15, 1.0, 0.0, 0.0, 0.0, 1e-12, "kellyFactor", 1, 5.),
+      (False, 1.0, np.pi/2., 0.0, 2.0, 0.0, 0.0, 0.0, 1e-12, "scaleFactor", 2, 5.),
+      (False, 1.0, np.pi/2., 0.0, 1.0, 0.5, 0.0, 0.0, 1e-12, "bias", 3, 5.),
+      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.25, 0.0, 1e-3, "deviation", -5, 1.),   #low tolerance for std deviation comparison
+      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.5, 1e-12, "albedo", 0, 5.),
+      (False, 0.5, 3*np.pi/8., 0.15, 2.0, 0.5, 0.25, 0.5, 1e-3, "combined", -6, 1.),
+      (True,  1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "constellation", 0, 1.)
+])
+
+# provide a unique test method name, starting with test_
+def test_coarseSunSensor(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide):
+    '''This function is called by the py.test environment.'''
+    # each test method requires a single assert method to be called
+    [testResults, testMessage] = run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide)
+    assert testResults < 1, testMessage
 
 
 # def unitCoarseSunSensor():
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
     # --fulltrace command line option is specified.
-__tracebackhide__ = True
+    __tracebackhide__ = True
 
-useConstellation = True
+def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide):
 
-##################Single sensor tests######################
-#--------variables will come from pytest parameterization later
-visibilityFactor = 1. #no eclipse = 1., eclipse = 0., anywhere in between works.
-fov = np.pi/2.
-kelly = 0.0
-scaleFactor = 1.
-bias = 0.0
-noiseStd = 0.0
-albedoValue = 0.0
-nHat_B = [1.,0.,0.]
-sigmas = np.linspace(0., 2*np.pi, 5900)
-for i in range(len(sigmas)): #convert rotation angle about 3rd axis to MRP
-    sigmas[i] = np.tan(sigmas[i]/4.)
-#---------
+    #
+    #   Sim Setup
+    #
+    testFailCount = 0
+    testMessages = []
+    testTaskName = "unitTestTask"
+    testProcessName = "unitTestProcess"
+    testTaskRate = macros.sec2nano(0.1)
 
-testFailCount = 0
-testMessages = []
-testTaskName = "unitTestTask"
-testProcessName = "unitTestProcess"
-testTaskRate = macros.sec2nano(0.1)
+    # Create a simulation container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    # Ensure simulation is empty
+    unitTestSim.TotalSim.terminateSimulation()
+    testProc = unitTestSim.CreateNewProcess(testProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
 
-# Create a simulation container
-unitTestSim = SimulationBaseClass.SimBaseClass()
-# Ensure simulation is empty
-unitTestSim.TotalSim.terminateSimulation()
-testProc = unitTestSim.CreateNewProcess(testProcessName)
-testProc.addTask(unitTestSim.CreateNewTask(testTaskName, testTaskRate))
+    #
+    #   Single CSS Setup
+    #   Sets up a single CSS with inputs from the pytest parameterization
+    singleCss = coarse_sun_sensor.CoarseSunSensor()
+    singleCss.ModelTag = "singleCss"
+    singleCss.fov = fov
+    singleCss.KellyFactor = kelly
+    singleCss.scaleFactor = scaleFactor
+    singleCss.SenBias = bias
+    singleCss.SenNoiseStd = noiseStd
+    singleCss.albedoValue = albedoValue
+    singleCss.OutputDataMsg = "singleCssOut"
+    singleCss.nHat_B = [1., 0., 0.]
+    singleCss.sunEclipseInMsgName = "eclipseMsg"
+    singleCss.InputSunMsg = "sunMsg"
+    singleCss.InputStateMsg = "satelliteState"
+    unitTestSim.AddModelToTask(testTaskName,singleCss)
 
-cssSinglePlain = coarse_sun_sensor.CoarseSunSensor()
-cssSinglePlain.ModelTag = "cssSinglePlain"
-cssSinglePlain.fov = fov
-cssSinglePlain.KellyFactor = kelly
-cssSinglePlain.scaleFactor = scaleFactor
-cssSinglePlain.SenBias = bias
-cssSinglePlain.SenNoiseStd = noiseStd
-cssSinglePlain.OutputDataMsg = "cssSinglePlainOut"
-cssSinglePlain.nHat_B = nHat_B
-cssSinglePlain.sunEclipseInMsgName = "eclipseMsg"
-cssSinglePlain.InputSunMsg = "sunMsg"
-cssSinglePlain.InputStateMsg = "satelliteState"
-unitTestSim.AddModelToTask(testTaskName,cssSinglePlain)
+    #
+    #   CSS Constellation Setup
+    #   Sets up two identical constellations (P1 and P2) but uses different methods to establish nHat_B for the sensors.
+    if useConstellation:
+        cssP11 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP12 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP13 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP14 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP21 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP22 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP23 = coarse_sun_sensor.CoarseSunSensor(singleCss)
+        cssP24 = coarse_sun_sensor.CoarseSunSensor(singleCss)
 
-if useConstellation:
-    cssA1 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssA2 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssA3 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssA4 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssB1 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssB2 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssB3 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
-    cssB4 = coarse_sun_sensor.CoarseSunSensor(cssSinglePlain)
+        cssP11.OutputDataMsg = "cssP11Out"
+        cssP12.OutputDataMsg = "cssP12Out"
+        cssP13.OutputDataMsg = "cssP13Out"
+        cssP14.OutputDataMsg = "cssP14Out"
+        cssP21.OutputDataMsg = "cssP21Out"
+        cssP22.OutputDataMsg = "cssP22Out"
+        cssP23.OutputDataMsg = "cssP23Out"
+        cssP24.OutputDataMsg = "cssP24Out"
 
-    cssA1.OutputDataMsg = "cssA1Out"
-    cssA2.OutputDataMsg = "cssA2Out"
-    cssA3.OutputDataMsg = "cssA3Out"
-    cssA4.OutputDataMsg = "cssA4Out"
-    cssB1.OutputDataMsg = "cssB1Out"
-    cssB2.OutputDataMsg = "cssB2Out"
-    cssB3.OutputDataMsg = "cssB3Out"
-    cssB4.OutputDataMsg = "cssB4Out"
+        #all sensors on a 45 degree, four sided pyramid mount
+        cssP11.nHat_B = [1./np.sqrt(2.), 0., -1./np.sqrt(2.)]
+        cssP12.nHat_B = [1./np.sqrt(2.), 1./np.sqrt(2.), 0.]
+        cssP13.nHat_B = [1./np.sqrt(2.), 0.,  1./np.sqrt(2)]
+        cssP14.nHat_B = [1./np.sqrt(2.), -1./np.sqrt(2.), 0.]
 
+        #all except cssP24 given non-zero platform frame. B4 is not changed so that the default is tested.
+        cssP21.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+        cssP22.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+        cssP23.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
+        #cssP24 is not changed so that the default is tested to be identity
 
-    #all sensors on a 45 degree, four sided pyramid mount
-    cssA1.nHat_B = [1./np.sqrt(2.), 0., -1./np.sqrt(2.)]
-    cssA2.nHat_B = [1./np.sqrt(2.), 1./np.sqrt(2.), 0.]
-    cssA3.nHat_B = [1./np.sqrt(2.), 0.,  1./np.sqrt(2)]
-    cssA4.nHat_B = [1./np.sqrt(2.), -1./np.sqrt(2.), 0.]
-
-    #all except cssB4 given non-zero platform frame. B4 is not changed so that the default is tested.
-    cssB1.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
-    cssB2.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
-    cssB3.setBodyToPlatformDCM(np.pi/2., np.pi/2., np.pi/2.)
-    #cssB4 is not changed so that the default is tested to be identity
-
-    cssB1.phi = -3.*np.pi/4.
-    cssB1.theta = 0.
-    cssB2.phi = 0.
-    cssB2.theta = 0.
-    cssB3.phi = 0.
-    cssB3.theta = 0.
-    cssB4.phi = 0.
-    cssB4.theta = 0.
-
-    cssB1.setUnitDirectionVectorWithPerturbation(cssB1.theta, cssB1.phi)
-    cssB2.setUnitDirectionVectorWithPerturbation(cssB2.theta, cssB2.phi)
-    print cssB1.dcm_PB
-    cssB3.setUnitDirectionVectorWithPerturbation(cssB3.theta, cssB3.phi)
-    cssB4.setUnitDirectionVectorWithPerturbation(cssB4.theta, cssB4.phi)
-    
-    constellationAList = [cssA1, cssA2, cssA3, cssA4]
-    constellationA = coarse_sun_sensor.CSSConstellation()
-    constellationA.ModelTag = "constellationA"
-    constellationA.sensorList = coarse_sun_sensor.CSSVector(constellationAList)
-    constellationA.outputConstellationMessage = "constellationA_Array_output"
-    unitTestSim.AddModelToTask(testTaskName, constellationA)
-
-    constellationBList = [cssB1, cssB2, cssB3, cssB4]
-    constellationB = coarse_sun_sensor.CSSConstellation()
-    constellationB.ModelTag = "constellationB"
-    constellationB.sensorList = coarse_sun_sensor.CSSVector(constellationBList)
-    constellationB.outputConstellationMessage = "constellationB_Array_output"
-    unitTestSim.AddModelToTask(testTaskName, constellationB)
-
-    unitTestSim.TotalSim.logThisMessage(constellationA.outputConstellationMessage, testTaskRate)
-    unitTestSim.TotalSim.logThisMessage(constellationB.outputConstellationMessage, testTaskRate)
+        cssP21.phi = np.pi/4.
+        cssP21.theta = 0.
+        cssP22.phi = np.pi/4.
+        cssP22.theta = np.pi/2.
+        cssP23.phi = np.pi/4.
+        cssP23.theta = np.pi
+        cssP24.phi = np.pi/6. #remember, the cssP24 frame is the B frame. This angle is cancelled by a perturbation.
+        cssP24.theta = -np.pi/8. #This angle is also provided with a perturbation to test to perturbation functionality.
 
 
-#Create dummy sun message
-sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
-sunPositionMsg.PositionVector = [om.AU, 0.0, 0.0]
-unitTestSupport.setMessage(unitTestSim.TotalSim,
-                           testProcessName,
-                           cssSinglePlain.InputSunMsg,
-                           sunPositionMsg)
+        cssP21.setUnitDirectionVectorWithPerturbation(0., 0.)
+        cssP22.setUnitDirectionVectorWithPerturbation(0., 0.)
+        cssP23.setUnitDirectionVectorWithPerturbation(0., 0.)
+        cssP24.setUnitDirectionVectorWithPerturbation(-np.pi/8., -np.pi/6.)
 
-#Create dummy spacecraft message
-satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
-satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
-satelliteStateMsg.sigma_BN = [0.,0.,sigmas[0]]
-unitTestSupport.setMessage(unitTestSim.TotalSim,
-                           testProcessName,
-                           cssSinglePlain.InputStateMsg,
-                           satelliteStateMsg)
-satelliteStateMsgSize = satelliteStateMsg.getStructSize()
+        constellationP1List = [cssP11, cssP12, cssP13, cssP14]#P1 is second platform, numbers following P2 are sensor numbers
+        constellationP1 = coarse_sun_sensor.CSSConstellation()
+        constellationP1.ModelTag = "constellationP1"
+        constellationP1.sensorList = coarse_sun_sensor.CSSVector(constellationP1List)
+        constellationP1.outputConstellationMessage = "constellationP1_Array_output"
+        unitTestSim.AddModelToTask(testTaskName, constellationP1)
 
-#create dummy eclipse message
-eclipseMsg = simMessages.EclipseSimMsg()
-eclipseMsg.shadowFactor = visibilityFactor
-unitTestSupport.setMessage(unitTestSim.TotalSim,
-                           testProcessName,
-                           cssSinglePlain.sunEclipseInMsgName,
-                           eclipseMsg)
+        constellationP2List = [cssP21, cssP22, cssP23, cssP24] #P2 is second platform, numbers following P2 are sensor numbers
+        constellationP2 = coarse_sun_sensor.CSSConstellation()
+        constellationP2.ModelTag = "constellationP2"
+        constellationP2.sensorList = coarse_sun_sensor.CSSVector(constellationP2List)
+        constellationP2.outputConstellationMessage = "constellationP2_Array_output"
+        unitTestSim.AddModelToTask(testTaskName, constellationP2)
 
-unitTestSim.InitializeSimulationAndDiscover()
-unitTestSim.TotalSim.logThisMessage(cssSinglePlain.OutputDataMsg, macros.sec2nano(0.1))
+        unitTestSim.TotalSim.logThisMessage(constellationP1.outputConstellationMessage, testTaskRate)
+        unitTestSim.TotalSim.logThisMessage(constellationP2.outputConstellationMessage, testTaskRate)
 
-# Execute the simulation for one time step
-for i in range(len(sigmas)):
-    satelliteStateMsg.sigma_BN = [0.,0.,sigmas[i]]
-    unitTestSim.TotalSim.WriteMessageData(cssSinglePlain.InputStateMsg, satelliteStateMsgSize,
-                                      unitTestSim.TotalSim.CurrentNanos + testTaskRate,
-                                      satelliteStateMsg)
-    unitTestSim.TotalSim.SingleStepProcesses()
+    #
+    #   Input Message Setup
+    #   Creates inputs from sun, spacecraft, and eclipse so that those modules don't have to be included
+    #Create dummy sun message
+    sunPositionMsg = simMessages.SpicePlanetStateSimMsg()
+    sunPositionMsg.PositionVector = [om.AU, 0.0, 0.0]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               testProcessName,
+                               singleCss.InputSunMsg,
+                               sunPositionMsg)
 
-cssOutput = unitTestSim.pullMessageLogData(cssSinglePlain.OutputDataMsg+".OutputData", range(1))
-if useConstellation:
-    constellationAdata = unitTestSim.pullMessageLogData(constellationA.outputConstellationMessage + ".CosValue", range(len(constellationAList)))
-    constellationBdata = unitTestSim.pullMessageLogData(constellationB.outputConstellationMessage + ".CosValue", range(len(constellationBList)))
+    #Create dummy spacecraft message
+    satelliteStateMsg = simMessages.SCPlusStatesSimMsg()
+    satelliteStateMsg.r_BN_N = [0.0, 0.0, 0.0]
+    angles = np.linspace(0., 2*np.pi, 5900)
+    sigmas = np.zeros(len(angles))
+    truthVector = np.cos(angles) #set truth vector initially, modify below based on inputs
+    for i in range(len(sigmas)): #convert rotation angle about 3rd axis to MRP
+        sigmas[i] = np.tan(angles[i]/4.) #This is iterated through in the execution for loop
+    satelliteStateMsg.sigma_BN = [0.,0.,sigmas[0]]
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               testProcessName,
+                               singleCss.InputStateMsg,
+                               satelliteStateMsg)
+    satelliteStateMsgSize = satelliteStateMsg.getStructSize()
 
-plt.figure(1)
-plt.clf()
-for i in range(4):
-    sensorlabel = "cssA"+str(i+1)
-    plt.plot(constellationAdata[:,0], constellationAdata[:,i+1], label=sensorlabel, linewidth=4-i)
-plt.legend(loc='upper center')
+    #create dummy eclipse message
+    eclipseMsg = simMessages.EclipseSimMsg()
+    eclipseMsg.shadowFactor = visibilityFactor
+    unitTestSupport.setMessage(unitTestSim.TotalSim,
+                               testProcessName,
+                               singleCss.sunEclipseInMsgName,
+                               eclipseMsg)
 
-plt.figure(2)
-plt.clf()
-for i in range(4):
-    sensorlabel = "cssB"+str(i+1)
-    plt.plot(constellationBdata[:,0], constellationBdata[:,i+1], label=sensorlabel, linewidth=4-i)
-plt.legend(loc='upper center')
+    #
+    #   Modify Truth Vector Appropriately
+    #
+    truthVector = truthVector * visibilityFactor # account for eclipse effects
+    for i in range(len(truthVector)):
+        if kelly > 0.0000000000001: #only if kelly isn't actually zero
+            truthVector[i] = truthVector[i] * (1. - np.e**(-truthVector[i]**2./kelly)) #apply kelly factor, note: no albedo
+        truthVector[i] += bias #apply bias
+    for i in range(len(angles)):
+        if angles[i] > fov and angles[i] < (2*np.pi - fov): #first, trim to fov
+            truthVector[i] = 0.
+            truthVector[i] += bias
+    truthVector = truthVector * scaleFactor
 
-# plt.figure(3)
-# plt.clf()
-# plt.plot(cssOutput[:,0]*macros.NANO2MIN , cssOutput[:,1])
 
-plt.show()
+    #
+    #   Initialize and run simulation one step at a time
+    #
+    unitTestSim.InitializeSimulationAndDiscover()
+    unitTestSim.TotalSim.logThisMessage(singleCss.OutputDataMsg, macros.sec2nano(0.1))
 
-# plt.figure(1)
-# plt.clf()
+    # Execute the simulation for one time step
+    for i in range(len(sigmas)):
+        satelliteStateMsg.sigma_BN = [0.,0.,sigmas[i]]
+        unitTestSim.TotalSim.WriteMessageData(singleCss.InputStateMsg, satelliteStateMsgSize,
+                                          unitTestSim.TotalSim.CurrentNanos + testTaskRate,
+                                          satelliteStateMsg)
+        unitTestSim.TotalSim.SingleStepProcesses()
 
-# plt.show()
-########################end Single Sensor
+    #
+    #   Constellation Outputs and plots
+    #
+    cssOutput = unitTestSim.pullMessageLogData(singleCss.OutputDataMsg+".OutputData", range(1))
+    if useConstellation:
+        constellationP1data = unitTestSim.pullMessageLogData(constellationP1.outputConstellationMessage + ".CosValue", range(len(constellationP1List)))
+        constellationP2data = unitTestSim.pullMessageLogData(constellationP2.outputConstellationMessage + ".CosValue", range(len(constellationP2List)))
 
-#eclipseData_0 = unitTestSim.pullMessageLogData("eclipse_data_0.shadowFactor")
+        plt.figure(1,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.clf()
+        plt.subplot(2,1,1)
+        for i in range(4):
+            sensorlabel = "cssP1"+str(i+1)
+            plt.plot(constellationP1data[:,0]*macros.NANO2MIN, constellationP1data[:,i+1], label=sensorlabel, linewidth=4-i)
+        plt.xlabel('Time [min]')
+        plt.ylabel('P1 Output Values [ul]')
+        plt.legend(loc='upper center')
 
-# errTol = 1E-12
-# if eclipseCondition is "partial":
-#     truthShadowFactor = 0.62310760206735027
-#     if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-#         testFailCount += 1
-#         testMessages.append("Shadow Factor failed for partial eclipse condition")
-#
-# elif eclipseCondition is "full":
-#     truthShadowFactor = 0.0
-#     if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-#         testFailCount += 1
-#         testMessages.append("Shadow Factor failed for full eclipse condition")
-#
-# elif eclipseCondition is "none":
-#     truthShadowFactor = 1.0
-#     if not unitTestSupport.isDoubleEqual(eclipseData_0[0, :], truthShadowFactor, errTol):
-#         testFailCount += 1
-#         testMessages.append("Shadow Factor failed for none eclipse condition")
-#
-# if testFailCount == 0:
-#     print "PASSED: " + eclipseCondition
-# return fail count and join into a single string all messages in the list
-# testMessage
+        plt.subplot(2,1,2)
+        #plt.figure(2,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        for i in range(4):
+            sensorlabel = "cssP2"+str(i+1)
+            plt.plot(constellationP2data[:,0]*macros.NANO2MIN, constellationP2data[:,i+1], label=sensorlabel, linewidth=4-i)
+        plt.xlabel('Time [min]')
+        plt.ylabel('P2 Output Values [ul]')
+        plt.legend(loc='upper center')
+        unitTestSupport.writeFigureLaTeX('Constellation Plots', 'Plot of first and second constellation outputs for comparision.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+    #
+    #   Single CSS plotting
+    #
+    else:
+        justTheNoise = cssOutput[:, 1] - truthVector #subtract curve from noisy curve
+        outputStd = np.std(justTheNoise)
+        plt.figure(3,figsize=(7, 5), dpi=80, facecolor='w', edgecolor='k')
+        plt.plot(cssOutput[:,0]*macros.NANO2MIN, cssOutput[:,1], label=name, zorder=zLevel, linewidth=lineWide)
+        plt.legend()
+        plt.xlabel('Time [min]')
+        plt.ylabel('Output Value [ul]')
+        if name == "combined":
+            unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to eachother', plt, 'height=0.7\\textwidth, keepaspectratio', path)
 
-# return [testFailCount, ''.join(testMessages)]
+    if name == "constellation":# and show_plots: # Don't show plots until last run.
+        plt.show()
 
-# if __name__ == "__main__":
-#     unitCoarseSunSensor(False, "full")
+    #
+    #   Compare output and truth vectors
+    #
+    if useConstellation: #compare constellation P1 to constellation P2
+        for i in range(4):
+            if not unitTestSupport.isVectorEqual(constellationP2data[:,i], constellationP1data[:,i], errTol):
+                testFailCount += 1
+    elif noiseStd == 0.:
+        if not unitTestSupport.isVectorEqual(cssOutput[:,1], truthVector, errTol):
+            testFailCount += 1
+    else:
+        if not unitTestSupport.isDoubleEqual([0, noiseStd*scaleFactor], outputStd, errTol):
+            testFailCount += 1
+
+    if testFailCount == 0:
+        colorText = 'Forest Green'
+        passFailText = "Passed: " + name + "."
+    else:
+        colorText = 'Red'
+        passFailText = "Failed: " + name + "."
+        testMessages.append(passFailText)
+        testMessages. append(" | ")
+
+    #Write some snippets for AutoTex
+    snippetName = name + "PassFailMsg"
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    print "\n", passFailText
+
+    snippetName = name + "Tolerance"
+    snippetContent = '{:1.1e}'.format(errTol)
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+    return [testFailCount, ''.join(testMessages)]
+
+if __name__ == "__main__":
+     run(
+         True, #show_plots,
+         False, #useConstellation,
+         0.5,    #visibilityFactor,
+         3*np.pi/8.,#fov,
+         0.15,     # kelly
+         5.0,       #scale factor
+         0.5,   #bias,
+         0.25,    #noiseStd,
+         0.5,    # albedoValue
+         1e-4,     #errTol
+        )
