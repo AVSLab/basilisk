@@ -20,6 +20,8 @@
 import random
 import numpy as np
 import abc
+import RigidBodyKinematics as rbk
+import collections
 
 random.seed(0x1badcad1)
 np.random.seed(0x1badcad1)
@@ -48,8 +50,8 @@ class SingleVariableDispersion(object):
     def getName(self):
         return self.varName
 
-    def generateString(self):
-        return str(self.generate())
+    def generateString(self, sim):
+        return str(self.generate(sim))
 
 class UniformDispersion(SingleVariableDispersion):
     def __init__(self, varName, bounds=None):
@@ -132,15 +134,17 @@ class VectorVariableDispersion(object):
             value = bounds[1]
         return value
 
-    def generateString(self):
+    def generateString(self, sim):
         # TODO does this actually behave differently then str(nextValue)?
-        nextValue = self.generate(simInstance)
+        nextValue = self.generate(sim)
         val = '['
         for i in range(3):
             val += str(nextValue[i]) + ','
         val = val[0:-1] + ']'
-
         return val
+
+    def getName(self):
+        return self.varName
 
 
 class UniformVectorDispersion(VectorVariableDispersion):
@@ -231,9 +235,9 @@ class NormalThrusterUnitDirectionVectorDispersion(VectorVariableDispersion):
     def getName(self):
         return '.'.join(self.varNameComponents[0:-1]) + '.thrDir_B'
 
-    def generateString(self):
+    def generateString(self, sim):
         # TODO does this actually behave differently then str(nextValue)?
-        nextValue = self.generate(simInstance)
+        nextValue = self.generate(sim)
 
         val = '['
         for i in range(3):
@@ -351,8 +355,8 @@ class InertiaTensorDispersion:
         return value
 
 
-    def generateString(self):
-        nextValue = self.generate(simInstance)
+    def generateString(self, sim):
+        nextValue = self.generate(sim)
         # TODO does this actually behave differently then str(nextValue)?
         val = '['
         for i in range(3):

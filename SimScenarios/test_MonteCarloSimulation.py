@@ -11,6 +11,7 @@ sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
 from MonteCarlo.controller import Controller
+import MonteCarlo.dispersions as dispersions
 
 import SimulationBaseClass
 import numpy as np
@@ -152,7 +153,6 @@ myRetainedData = {
 
 @pytest.mark.slowtest
 def test_MonteCarloSimulation():
-
     # test a montecarlo simulation
     dirName = "tmp_montecarlo_test"
     monteCarlo = Controller()
@@ -164,7 +164,14 @@ def test_MonteCarloSimulation():
     monteCarlo.setThreadCount(PROCESSES)
     monteCarlo.setVerbose(VERBOSE)
     monteCarlo.setArchiveDir(dirName)
-    # monteCarlo.addNewDispersion()
+    disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
+    disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
+    disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
+    disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
+    monteCarlo.addNewDispersion(dispersions.UniformEulerAngleMRPDispersion(disp1Name))
+    monteCarlo.addNewDispersion(dispersions.NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.addNewDispersion(dispersions.UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
+    monteCarlo.addNewDispersion(dispersions.NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
     failures = monteCarlo.executeSimulations()
 
@@ -191,10 +198,27 @@ def test_MonteCarloSimulation():
             "Outputs shouldn't change on runs if random seeds are same"
 
     params = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-    assert ".TaskList[0].TaskModels[0].RNGSeed" in params, "random number seed should be applied"
+
+    assert "TaskList[0].TaskModels[0].RNGSeed" in params, "random number seed should be applied"
+    assert disp1Name in params, "dispersion should be applied"
+    assert disp2Name in params, "dispersion should be applied"
+    assert disp3Name in params, "dispersion should be applied"
+    assert disp4Name in params, "dispersion should be applied"
+
+    # assert two different runs had different parameters.
+
+    params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+    params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+    assert params1[disp2Name] != params2[disp2Name], "dispersion should be different in each run"
+    assert params1[disp3Name] != params2[disp3Name], "dispersion should be different in each run"
+    assert params1[disp4Name] != params2[disp4Name], "dispersion should be different in each run"
+
+    # TODO why is this always the same
+    # assert params1[disp1Name] != params2[disp1Name], "dispersion should be different in each run"
+    # print "Note how", disp1Name, "is same for different runs...", params1[disp1Name], params2[disp1Name]
+
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
-
 
 if __name__ == "__main__":
     test_MonteCarloSimulation()
