@@ -10,7 +10,8 @@ bskPath = splitPath[0] + '/' + bskName + '/'
 sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
-from MonteCarlo.Controller import MonteCarloController
+from MonteCarlo.controller import Controller
+
 import SimulationBaseClass
 import numpy as np
 import shutil
@@ -154,7 +155,7 @@ def test_MonteCarloSimulation():
 
     # test a montecarlo simulation
     dirName = "tmp_montecarlo_test"
-    monteCarlo = MonteCarloController()
+    monteCarlo = Controller()
     monteCarlo.setShouldDisperseSeeds(True)
     monteCarlo.setExecutionFunction(myExecutionFunction)
     monteCarlo.setSimulationFunction(myCreationFunction)
@@ -169,7 +170,7 @@ def test_MonteCarloSimulation():
 
     assert len(failures) == 0, "No runs should fail"
 
-    monteCarloLoaded = MonteCarloController.load(dirName)
+    monteCarloLoaded = Controller.load(dirName)
 
     retainedData = monteCarloLoaded.getRetainedData(19)
     assert retainedData is not None, "Retained data should be available after execution"
@@ -189,6 +190,8 @@ def test_MonteCarloSimulation():
             assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
             "Outputs shouldn't change on runs if random seeds are same"
 
+    params = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
+    assert ".TaskList[0].TaskModels[0].RNGSeed" in params, "random number seed should be applied"
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
 

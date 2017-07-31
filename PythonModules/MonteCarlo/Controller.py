@@ -33,7 +33,11 @@ import signal
 
 random.seed(0x1badcad1)
 
-class MonteCarloController:
+class Controller:
+    """
+    The MonteCarloController class is used to run a monte carlo simulation.
+    It is used to execute multiple runs of a simulation with varying initial parameters. Data from each run is retained in order to analyze differences in the simulation runs and the parameters used.
+    """
 
     def __init__(self):
         self.executionCount = 0
@@ -172,6 +176,24 @@ class MonteCarloController:
         for case in cases:
             yield self.getRetainedData(case) # call this method recursively, yielding the result
 
+    def getParameters(self, caseNumber):
+        """ Get the parameters used for a particular run of the montecarlo
+        Args:
+            caseNumber: int
+                The number of the run to get the parameters used for.
+        Returns:
+            A dictionary of the parameters of the simulation
+            For example:
+            {
+                "keyForSim": parameterValue,
+                '.TaskList[0].TaskModels[0].RNGSeed': 1674764759
+            }
+        """
+        filename = self.archiveDir + "run" + str(caseNumber) + ".json"
+        with open(filename, "r") as dispersionFile:
+            dispersions = json.load(dispersionFile)
+            return dispersions
+
     def reRunCases(self, caseList):
         """ Rerun some cases from a MonteCarlo run. Does not run in parallel
         Args:
@@ -273,13 +295,12 @@ class MonteCarloController:
         # There is a system-dependent chunking behavior, something like 10-20 can be generated at a time.
         pool = Pool(self.numProcess)
         simGenerator = self.generateSims(range(numSims))
+        failed = []  # keep track of the indices of failed simulations
+        jobsFinished = 0  # keep track of what simulations have finished
 
         # The simulation executor is responsible for executing simulation given a simulation's parameters
         # It is called within worker threads with each worker's simulation parameters
         simulationExecutor = SimulationExecutor()
-
-        failed = []  # keep track of the indices of failed simulations
-        jobsFinished = 0  # keep track of what simulations have finished
 
         try:
             for result in pool.imap(simulationExecutor, simGenerator): # yields results *as* the workers finish jobs(ish)
@@ -316,13 +337,15 @@ class MonteCarloController:
         return failed
 
 
-
 class SimulationParameters():
     '''
     This class represents the run parameters for a simulation, with information including
      - a function that creates the simulation
      - a function that executes the simulation
      - the dispersions to use on that simulation
+     - parameters describing the data to be retained for a simulation
+     - whether randomized seeds should be applied to the simulation
+     - whether data should be archived
     '''
     def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchive, filename, index=None, verbose=False):
         self.index = index
@@ -380,8 +403,8 @@ class SimulationExecutor():
 
             # apply the dispersions and the random seeds
             for variable, value in simParams.dispersions.items():
-                evalStatement = "simInstance" + variable + "=" + value
-                exec evalStatement
+                disperseStatement = "simInstance" + variable + "=" + value
+                exec disperseStatement
 
             # execute the simulation, with the user-supplied executionFunction
             simParams.executionFunction(simInstance)
@@ -428,9 +451,9 @@ class SimulationExecutor():
 
         randomSeeds = {}
         i = 0
-        for Task in simInstance.TaskList:
+        for task in simInstance.TaskList:
             j = 0
-            for model in Task.TaskModels:
+            for model in task.TaskModels:
                 taskVar = '.TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
                 try:
                     randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
