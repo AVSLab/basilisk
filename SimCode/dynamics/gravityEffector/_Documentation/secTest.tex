@@ -1,5 +1,5 @@
 \section{Test Description and Success Criteria}
-The unit test, test\_gravityDynEffector.py,  validates the internal aspects of the Basilisk spherical harmonics gravity effector module by comparing module output to expected output. It utilizes spherical harmonics for calulcation given the gravitation parameter for the massive body, a reference radius, and the maximum degree of spherical harmonics to be used. The unit test verifies basic set-up, single-body gravitational acceleration, and multi-body gravitational acceleration.
+The unit test, test\_gravityDynEffector.py,  validates the internal aspects of the Basilisk spherical harmonics gravity effector module by comparing module output to expected output. It utilizes spherical harmonics for calulcations given the gravitation parameter for the massive body, a reference radius, and the maximum degree of spherical harmonics to be used. The unit test verifies basic set-up, single-body gravitational acceleration, and multi-body gravitational acceleration.
 
 \subsection{Model Set-Up Verification}
 This test verifies, via three checks, that the model is appropriately initialized when called.
@@ -22,7 +22,7 @@ This section summarizes the  specific error tolerances for each test. Error tole
 	\begin{tabular}{ c | c } % Column formatting, 
 		\hline
 		\textbf{Test}   							    & \textbf{Tolerated Error} 						  \\ \hline
-		Gravity Magnitude (check 1.2)        & \input{AutoTex/sphericalHarmonicsAccuracy}		   \\ \hline
+		Setup Test                           			 & \input{AutoTex/sphericalHarmonicsAccuracy}		   \\ \hline
 		Single-Body Gravity						   & \input{AutoTex/singleBodyAccuracy}														   \\ \hline
 		Multi-Body Gravity 						   & \input{AutoTex/multiBodyAccuracy}	 		       \\ \hline
 	\end{tabular}
@@ -39,7 +39,7 @@ All checks within test\_gravityDynEffector.py passed as expected. Table \ref{tab
 	\begin{tabular}{c | c | c  } % Column formatting, 
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail} 						   			           & \textbf{Notes} 									\\ \hline
-		Setup Test 		   			  	& \input{AutoTex/sphericalHarmonicsPassFail}     & \input{AutoTex/sphericalHarmonicsFailMsg}			 \\ \hline
+		Setup Test       			  	& \input{AutoTex/sphericalHarmonicsPassFail}     & \input{AutoTex/sphericalHarmonicsFailMsg}			 \\ \hline
 		Single-Body Gravity		   	& \input{AutoTex/singleBodyPassFail}                 & \input{AutoTex/singleBodyFailMsg} \\ \hline
 		Multi-Body Gravity			 &\input{AutoTex/multiBodyPassFail}  			 	 &  \input{AutoTex/multiBodyFailMsg} 			   \\ \hline
 	\end{tabular}
