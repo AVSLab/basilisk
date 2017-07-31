@@ -179,6 +179,7 @@ def test_MonteCarloSimulation():
 
     assert len(failures) == 0, "No runs should fail"
 
+    # Test loading data from runs from disk
     monteCarloLoaded = Controller.load(dirName)
 
     retainedData = monteCarloLoaded.getRetainedData(19)
@@ -211,13 +212,10 @@ def test_MonteCarloSimulation():
 
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
+    assert params1[disp1Name] != params2[disp1Name], "dispersion should be different in each run"
     assert params1[disp2Name] != params2[disp2Name], "dispersion should be different in each run"
     assert params1[disp3Name] != params2[disp3Name], "dispersion should be different in each run"
     assert params1[disp4Name] != params2[disp4Name], "dispersion should be different in each run"
-
-    # TODO why is this always the same
-    # assert params1[disp1Name] != params2[disp1Name], "dispersion should be different in each run"
-    # print "Note how", disp1Name, "is same for different runs...", params1[disp1Name], params2[disp1Name]
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
