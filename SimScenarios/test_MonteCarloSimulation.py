@@ -164,6 +164,8 @@ def test_MonteCarloSimulation():
     monteCarlo.setThreadCount(PROCESSES)
     monteCarlo.setVerbose(VERBOSE)
     monteCarlo.setArchiveDir(dirName)
+
+    # add some dispersions
     disp1Name = 'TaskList[0].TaskModels[0].hub.sigma_BNInit'
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
