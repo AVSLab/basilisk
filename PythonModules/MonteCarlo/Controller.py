@@ -32,6 +32,7 @@ from multiprocessing import Pool, cpu_count
 import signal
 
 random.seed(0x1badcad1)
+import numpy as np
 
 class Controller:
     """
@@ -374,6 +375,9 @@ class SimulationExecutor():
             success: bool
                 True if simulation run was successful
         '''
+        # must make new random seed on each new thread.
+        np.random.seed(simParams.index * 10)
+        random.seed(simParams.index * 10)
         try:
             signal.signal(signal.SIGINT, signal.SIG_IGN) # On ctrl-c ignore the signal... let the parent deal with it.
 
@@ -399,11 +403,9 @@ class SimulationExecutor():
                 with open(simParams.filename + ".json", 'w') as outfile:
                     json.dump(modifications, outfile)
 
-            print "Applying modifications to sim", modifications
             # apply the dispersions and the random seeds
             for variable, value in modifications.items():
                 disperseStatement = "simInstance." + variable + "=" + value
-                print disperseStatement
                 exec disperseStatement
 
             # execute the simulation, with the user-supplied executionFunction
