@@ -11,7 +11,7 @@ sys.path.append(bskPath + 'modules')
 sys.path.append(bskPath + 'PythonModules')
 
 from MonteCarlo.controller import Controller
-import MonteCarlo.dispersions as dispersions
+from MonteCarlo.dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
 import SimulationBaseClass
 import numpy as np
@@ -35,7 +35,7 @@ PROCESSES=8
 
 
 def myCreationFunction():
-    ''' function that returns a functional simulation '''
+    ''' function that returns a simulation '''
     #  Create a sim module as an empty container
     sim = SimulationBaseClass.SimBaseClass()
     sim.TotalSim.terminateSimulation()
@@ -66,7 +66,6 @@ def myCreationFunction():
 
     # Earth
     simIncludeGravity.addEarth()
-    # ensure this is the central gravitational body
     simIncludeGravity.gravBodyList[-1].isCentralBody = True
     # useSphericalHarmonics:
     simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
@@ -76,28 +75,21 @@ def myCreationFunction():
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
-    #
     #   setup orbit and simulation time
-    #
     # setup the orbit using classical orbit elements
+    # orbitCase is 'GEO':
     oe = orbitalMotion.ClassicElements()
     rLEO = 7000. * 1000      # meters
     rGEO = 42000. * 1000     # meters
-    # orbitCase is 'GEO':
     oe.a = rGEO
     oe.e = 0.00001
     oe.i = 0.0 * macros.D2R
     oe.Omega = 48.2 * macros.D2R
     oe.omega = 347.8 * macros.D2R
     oe.f = 85.3 * macros.D2R
-    rN, vN = orbitalMotion.elem2rv(mu, oe)
-    # this stores consistent initial orbit elements
-    oe = orbitalMotion.rv2elem(mu, rN, vN)
-    # with circular or equatorial orbit, some angles are
-    # arbitrary
-    #
+    rN, vN = orbitalMotion.elem2rv(mu, oe) # this stores consistent initial orbit elements
+    oe = orbitalMotion.rv2elem(mu, rN, vN) # with circular or equatorial orbit, some angles are arbitrary
     #   initialize Spacecraft States with the initialization variables
-    #
     scObject.hub.r_CN_NInit = unitTestSupport.np2EigenVectorXd(rN)  # m   - r_BN_N
     scObject.hub.v_CN_NInit = unitTestSupport.np2EigenVectorXd(vN)  # m/s - v_BN_N
 
@@ -107,17 +99,12 @@ def myCreationFunction():
     # useSphericalHarmonics:
     simulationTime = macros.sec2nano(3. * P)
 
-    #
     #   Setup data logging before the simulation is initialized
-    #
-    # useSphericalHarmonics:
     numDataPoints = 400
     samplingTime = simulationTime / (numDataPoints - 1)
     sim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-    #
     # create simulation messages
-    #
     simIncludeGravity.addDefaultEphemerisMsg(sim.TotalSim, simProcessName)
 
     #   configure a simulation stop time time and execute the simulation run
@@ -127,17 +114,8 @@ def myCreationFunction():
 
 def myExecutionFunction(sim):
     ''' function that executes a simulation '''
-    #
-    #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
-    #   cross_init() and reset() routines on each module.
-    #   If the routine InitializeSimulationAndDiscover() is run instead of InitializeSimulation(),
-    #   then the all messages are auto-discovered that are shared across different BSK threads.
-    #
     sim.InitializeSimulationAndDiscover()
-
     sim.ExecuteSimulation()
-    pass
-
 
 # The data to be retained from a simulation is defined in this format
 myRetainedData = {
@@ -145,9 +123,7 @@ myRetainedData = {
         "inertial_state_output.r_BN_N": range(3),
         "inertial_state_output.v_BN_N": range(3)
     },
-    "variables": {
-
-    }
+    "variables": {}
 }
 
 
@@ -170,10 +146,10 @@ def test_MonteCarloSimulation():
     disp2Name = 'TaskList[0].TaskModels[0].hub.omega_BN_BInit'
     disp3Name = 'TaskList[0].TaskModels[0].hub.mHub'
     disp4Name = 'TaskList[0].TaskModels[0].hub.r_BcB_B'
-    monteCarlo.addNewDispersion(dispersions.UniformEulerAngleMRPDispersion(disp1Name))
-    monteCarlo.addNewDispersion(dispersions.NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
-    monteCarlo.addNewDispersion(dispersions.UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
-    monteCarlo.addNewDispersion(dispersions.NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
+    monteCarlo.addNewDispersion(UniformEulerAngleMRPDispersion(disp1Name))
+    monteCarlo.addNewDispersion(NormalVectorCartDispersion(disp2Name, 0.0, 0.75 / 3.0 * np.pi / 180))
+    monteCarlo.addNewDispersion(UniformDispersion(disp3Name, ([1300.0 - 812.3, 1500.0 - 812.3])))
+    monteCarlo.addNewDispersion(NormalVectorCartDispersion(disp4Name, [0.0, 0.0, 1.0], [0.05 / 3.0, 0.05 / 3.0, 0.1 / 3.0]))
 
     failures = monteCarlo.executeSimulations()
 
@@ -209,7 +185,6 @@ def test_MonteCarloSimulation():
     assert disp4Name in params, "dispersion should be applied"
 
     # assert two different runs had different parameters.
-
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
     assert params1[disp1Name] != params2[disp1Name], "dispersion should be different in each run"
