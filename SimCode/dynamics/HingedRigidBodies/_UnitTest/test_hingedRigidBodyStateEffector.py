@@ -873,8 +873,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel1.mass = 100.0
     unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel1.d = 1.5
-    unitTestSim.panel1.k = 100.0
-    unitTestSim.panel1.c = 75
+    unitTestSim.panel1.k = 300.0
+    unitTestSim.panel1.c = 0.0
     unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
     unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
     unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
@@ -886,8 +886,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.panel2.mass = 100.0
     unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
     unitTestSim.panel2.d = 1.5
-    unitTestSim.panel2.k = 100.0
-    unitTestSim.panel2.c = 75
+    unitTestSim.panel2.k = 300.0
+    unitTestSim.panel2.c = 0.0
     unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
     unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
     unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
@@ -903,7 +903,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     extFTObject = ExtForceTorque.ExtForceTorque()
     extFTObject.ModelTag = "externalDisturbance"
     extFTObject.extTorquePntB_B = [[0], [0], [0]]
-    extFTObject.extForce_B = [[0], [1], [0]]
+    force = 1
+    extFTObject.extForce_B = [[0], [force], [0]]
     scObject.addDynamicEffector(extFTObject)
     unitTestSim.AddModelToTask(unitTaskName, extFTObject)
 
@@ -928,7 +929,13 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
     unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
 
-    stopTime = 60.0
+    stopTime = 58
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime/2))
+    unitTestSim.ExecuteSimulation()
+
+    extFTObject.extTorquePntB_B = [0.0, 0.0, 0.0]
+    extFTObject.extForce_B = [0.0, 0.0, 0.0]
+
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -963,11 +970,9 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     spacecraft.panel2.k = unitTestSim.panel2.k
     spacecraft.panel2.c = unitTestSim.panel2.c
     # Define body force and torque
-    spacecraft.xThrust_B = 0.0
-    spacecraft.yThrust_B = extFTObject.extForce_B[1][0]
-    spacecraft.Torque = 0.0
 
     # Define initial conditions of the sim
+    check = 0
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
     x0 = numpy.zeros(10)
     x0[3] = unitTestSim.panel1.thetaInit
@@ -976,82 +981,91 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
+        if time[j-1] < stopTime/2:
+            spacecraft.xThrust_B = 0.0
+            spacecraft.yThrust_B = force
+            spacecraft.Torque = 0.0
+        else:
+            spacecraft.xThrust_B = 0.0
+            spacecraft.yThrust_B = 0.0
+            spacecraft.Torque = 0.0
         X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+        if check == 0 and X[3,j] < X[3,j-1]:
+            check = 1
+        if check ==1 and X[3,j] > X[3,j-1]:
+            check = 2
+        if check == 2 and X[3,j] < X[3,j-1]:
+            check = 3
+            indexFirstPeak = j-1
+        if check == 3 and X[3,j] > X[3,j-1]:
+            check = 4
+        if check==4 and X[3,j] < X[3,j-1]:
+            check = 5
+            indexSecondPeak = j-1
+
+    # Find energy
+    EnergyAfterForce = 0.5*spacecraft.panel1.Inertia*X[8,300]**2 + 0.5*spacecraft.panel1.k*X[3,300]**2
+    thetaMax2 = numpy.sqrt(2*EnergyAfterForce/spacecraft.panel1.k)
+    thetaMax2Sim = max(X[3,:])
+    print thetaMax2
+    print thetaMax2Sim
+    diffThetaMax2 = (thetaMax2 - thetaMax2Sim)/thetaMax2
+    print diffThetaMax2
+
+    # Find the period
+    T1 = time[indexSecondPeak] - time[indexFirstPeak]
+    freqHz = 1/T1
+    print freqHz
+    omegaAnalytical = numpy.sqrt(spacecraft.panel1.k/(spacecraft.panel1.Inertia + spacecraft.panel1.mass*spacecraft.panel1.d**2))
+    omegaAnalyticalHz = omegaAnalytical/(2*numpy.pi)
+    print omegaAnalyticalHz
+    diffFreq = (freqHz-omegaAnalyticalHz)/omegaAnalyticalHz
+    print diffFreq
 
     # Find steady state value
     variablesIn = boxAndWingParameters()
     variablesIn.k = spacecraft.panel1.k
     variablesIn.d = spacecraft.panel1.d
-    variablesIn.F = spacecraft.yThrust_B
+    variablesIn.F = force
     variablesIn.mSC = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
     variablesIn.mSP = spacecraft.panel1.mass
     thetaSSGuess = -0.01
     tolerance = 1e-14
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(time, X[0,:],'-b',label = "Lagrangian")
-    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
-    plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "XPositionLagrangianVsBasilisk"
-    PlotTitle = "X Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(time, X[1,:],'-b',label = "Lagrangian")
-    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'r',label = "Basilsik")
-    plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "YPositionLagrangianVsBasilisk"
-    PlotTitle = "Y Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(time, X[2,:],'-b',label = "Lagrangian")
-    plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilsik")
-    plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "ThetaLagrangianVsBasilisk"
-    PlotTitle = "Theta Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+    thetaMax = 2*thetaSS
+    thetaMaxSim = min(X[3,:])
+    print thetaMax
+    print thetaMaxSim
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
-    plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "ThetaSS")
+    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-k',label = "Theta Max")
+    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [thetaMax2, thetaMax2],'-k',label = "Theta Max 2")
     plt.legend(loc ='upper left',numpoints = 1)
-    PlotName = "Theta1LagrangianVsBasilisk"
-    PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
-    format = "width=0.8\\textwidth"
-    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
-
-    plt.figure()
-    plt.clf()
-    plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
-    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
-    plt.legend(loc ='lower left',numpoints = 1)
-    PlotName = "Theta2LagrangianVsBasilisk"
-    PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
+    PlotName = "MaxThetaWhileForcing"
+    PlotTitle = "Max Theta While Forcing"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.show(show_plots)
     plt.close("all")
 
+    accuracy = 0.12
+    if abs((thetaMax2 - thetaMax2Sim)/thetaMax2) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
 
-    # accuracy = 1e-6
-    # if abs(theta1Out[-1,1] - thetaSS) > accuracy:
-    #     testFailCount += 1
-    #     testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 1 comparison ")
-    #
-    # if abs(theta2Out[-1,1] - thetaSS) > accuracy:
-    #     testFailCount += 1
-    #     testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 2 comparison ")
+    if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed frequency comparison ")
+
+    accuracy = 1e-3
+    if abs((thetaMax - thetaMaxSim)/thetaMax) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max comparison ")
+
 
     if testFailCount == 0:
         print "PASSED: " + " Hinged Rigid Body steady state Integrated test"
@@ -1488,4 +1502,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyFrequencyAmp(True)
+    test_hingedRigidBodyLagrangVsBasilisk(True)
