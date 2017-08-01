@@ -51,6 +51,8 @@ def hingedRigidBodyAllTest(show_plots):
     assert testResults < 1, testMessage
     [testResults, testMessage] = test_hingedRigidBodyThetaSS(show_plots)
     assert testResults < 1, testMessage
+    [testResults, testMessage] = test_hingedRigidBodyFrequencyAmp(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = test_hingedRigidBodyLagrangVsBasilisk(show_plots)
     assert testResults < 1, testMessage
 
@@ -839,6 +841,226 @@ def test_hingedRigidBodyThetaSS(show_plots):
     # testMessage
     return [testFailCount, ''.join(testMessages)]
 
+def test_hingedRigidBodyFrequencyAmp(show_plots):
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    scObject = spacecraftPlus.SpacecraftPlus()
+    scObject.ModelTag = "spacecraftBody"
+
+    unitTaskName = "unitTask"  # arbitrary name (don't change)
+    unitProcessName = "TestProcess"  # arbitrary name (don't change)
+
+    #   Create a sim module as an empty container
+    unitTestSim = SimulationBaseClass.SimBaseClass()
+    unitTestSim.TotalSim.terminateSimulation()
+
+    # Create test thread
+    stepSize = 0.1
+    testProcessRate = macros.sec2nano(stepSize)  # update process rate update time
+    testProc = unitTestSim.CreateNewProcess(unitProcessName)
+    testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
+
+    unitTestSim.panel1 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+    unitTestSim.panel2 = hingedRigidBodyStateEffector.HingedRigidBodyStateEffector()
+
+    # Define Variable for panel 1
+    unitTestSim.panel1.mass = 100.0
+    unitTestSim.panel1.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel1.d = 1.5
+    unitTestSim.panel1.k = 100.0
+    unitTestSim.panel1.c = 75
+    unitTestSim.panel1.r_HB_B = [[0.5], [1.0], [0.0]]
+    unitTestSim.panel1.dcm_HB = [[-1.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]]
+    unitTestSim.panel1.nameOfThetaState = "hingedRigidBodyTheta1"
+    unitTestSim.panel1.nameOfThetaDotState = "hingedRigidBodyThetaDot1"
+    unitTestSim.panel1.thetaInit = 0.0
+    unitTestSim.panel1.thetaDotInit = 0.0
+
+    # Define Variables for panel 2
+    unitTestSim.panel2.mass = 100.0
+    unitTestSim.panel2.IPntS_S = [[100.0, 0.0, 0.0], [0.0, 50.0, 0.0], [0.0, 0.0, 50.0]]
+    unitTestSim.panel2.d = 1.5
+    unitTestSim.panel2.k = 100.0
+    unitTestSim.panel2.c = 75
+    unitTestSim.panel2.r_HB_B = [[-0.5], [1.0], [0.0]]
+    unitTestSim.panel2.dcm_HB = [[1.0, 0.0, 0.0], [0.0, 0.0, -1.0], [0.0, 1.0, 0.0]]
+    unitTestSim.panel2.nameOfThetaState = "hingedRigidBodyTheta2"
+    unitTestSim.panel2.nameOfThetaDotState = "hingedRigidBodyThetaDot2"
+    unitTestSim.panel2.thetaInit = 0.0
+    unitTestSim.panel2.thetaDotInit = 0.0
+
+    # Add panels to spaceCraft
+    scObject.addStateEffector(unitTestSim.panel1)
+    scObject.addStateEffector(unitTestSim.panel2)
+
+    # Add external force and torque
+    extFTObject = ExtForceTorque.ExtForceTorque()
+    extFTObject.ModelTag = "externalDisturbance"
+    extFTObject.extTorquePntB_B = [[0], [0], [0]]
+    extFTObject.extForce_B = [[0], [1], [0]]
+    scObject.addDynamicEffector(extFTObject)
+    unitTestSim.AddModelToTask(unitTaskName, extFTObject)
+
+    # Define mass properties of the rigid part of the spacecraft
+    scObject.hub.mHub = 750.0
+    scObject.hub.r_BcB_B = [[0.0], [0.0], [0.0]]
+    scObject.hub.IHubPntBc_B = [[900.0, 0.0, 0.0], [0.0, 800.0, 0.0], [0.0, 0.0, 600.0]]
+
+    # Set the initial values for the states
+    scObject.hub.r_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.v_CN_NInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
+    scObject.hub.omega_BN_BInit = [[0.0], [0.0], [0.0]]
+
+    # Add test module to runtime call list
+    unitTestSim.AddModelToTask(unitTaskName, scObject)
+
+    unitTestSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, testProcessRate)
+
+    unitTestSim.InitializeSimulation()
+
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()", testProcessRate, 0, 0, 'double')
+    unitTestSim.AddVariableForLogging("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()", testProcessRate, 0, 0, 'double')
+
+    stopTime = 60.0
+    unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
+    unitTestSim.ExecuteSimulation()
+
+    rOut_BN_N = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.r_BN_N',range(3))
+    sigmaOut_BN = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName+'.sigma_BN',range(3))
+    thetaOut = 4.0*numpy.arctan(sigmaOut_BN[:,3])
+
+    theta1Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta1').getState()")
+    theta2Out = unitTestSim.GetLogVariableData("spacecraftBody.dynManager.getStateObject('hingedRigidBodyTheta2').getState()")
+
+    # Developing the lagrangian result
+    # Define initial values
+    spacecraft = spacecraftClass()
+    spacecraft.hub.mass = scObject.hub.mHub
+    spacecraft.hub.Inertia = scObject.hub.IHubPntBc_B[2][2]
+    # Define variables for panel1
+    spacecraft.panel1.mass = unitTestSim.panel1.mass
+    spacecraft.panel1.Inertia = unitTestSim.panel1.IPntS_S[1][1]
+    spacecraft.panel1.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel1.r_HB_B))
+    spacecraft.panel1.beta = numpy.arctan2(unitTestSim.panel1.r_HB_B[1][0],unitTestSim.panel1.r_HB_B[0][0])
+    spacecraft.panel1.thetaH = 0.0
+    spacecraft.panel1.d = unitTestSim.panel1.d
+    spacecraft.panel1.k = unitTestSim.panel1.k
+    spacecraft.panel1.c = unitTestSim.panel1.c
+    # Define variables for panel2
+    spacecraft.panel2.mass = unitTestSim.panel2.mass
+    spacecraft.panel2.Inertia = unitTestSim.panel2.IPntS_S[1][1]
+    spacecraft.panel2.Rhinge = numpy.linalg.norm(numpy.asarray(unitTestSim.panel2.r_HB_B))
+    spacecraft.panel2.beta = numpy.arctan2(unitTestSim.panel2.r_HB_B[1][0],unitTestSim.panel2.r_HB_B[0][0])
+    spacecraft.panel2.thetaH = numpy.pi
+    spacecraft.panel2.d = unitTestSim.panel2.d
+    spacecraft.panel2.k = unitTestSim.panel2.k
+    spacecraft.panel2.c = unitTestSim.panel2.c
+    # Define body force and torque
+    spacecraft.xThrust_B = 0.0
+    spacecraft.yThrust_B = extFTObject.extForce_B[1][0]
+    spacecraft.Torque = 0.0
+
+    # Define initial conditions of the sim
+    time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
+    x0 = numpy.zeros(10)
+    x0[3] = unitTestSim.panel1.thetaInit
+    x0[4] = -unitTestSim.panel2.thetaInit
+
+    X = numpy.zeros((len(x0),len(time)))
+    X[:,0] = x0
+    for j in range (1,(len(time))):
+        X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
+
+    # Find steady state value
+    variablesIn = boxAndWingParameters()
+    variablesIn.k = spacecraft.panel1.k
+    variablesIn.d = spacecraft.panel1.d
+    variablesIn.F = spacecraft.yThrust_B
+    variablesIn.mSC = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
+    variablesIn.mSP = spacecraft.panel1.mass
+    thetaSSGuess = -0.01
+    tolerance = 1e-14
+    thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[0,:],'-b',label = "Lagrangian")
+    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "XPositionLagrangianVsBasilisk"
+    PlotTitle = "X Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[1,:],'-b',label = "Lagrangian")
+    plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'r',label = "Basilsik")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "YPositionLagrangianVsBasilisk"
+    PlotTitle = "Y Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[2,:],'-b',label = "Lagrangian")
+    plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilsik")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "ThetaLagrangianVsBasilisk"
+    PlotTitle = "Theta Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, X[3,:],'-b',label = "Lagrangian")
+    plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
+    plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "ThetaSS")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "Theta1LagrangianVsBasilisk"
+    PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.figure()
+    plt.clf()
+    plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
+    plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
+    plt.legend(loc ='lower left',numpoints = 1)
+    PlotName = "Theta2LagrangianVsBasilisk"
+    PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    plt.show(show_plots)
+    plt.close("all")
+
+
+    # accuracy = 1e-6
+    # if abs(theta1Out[-1,1] - thetaSS) > accuracy:
+    #     testFailCount += 1
+    #     testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 1 comparison ")
+    #
+    # if abs(theta2Out[-1,1] - thetaSS) > accuracy:
+    #     testFailCount += 1
+    #     testMessages.append("FAILED: Hinged Rigid Body integrated steady state test failed theta 2 comparison ")
+
+    if testFailCount == 0:
+        print "PASSED: " + " Hinged Rigid Body steady state Integrated test"
+
+    assert testFailCount < 1, testMessages
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
 def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
     # the mrp_steering_tracking() function will not be shown unless the
@@ -993,16 +1215,6 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     spacecraft.panel2.d = unitTestSim.panel2.d
     spacecraft.panel2.k = unitTestSim.panel2.k
     spacecraft.panel2.c = unitTestSim.panel2.c
-    # Define body force and torque
-    spacecraft.xThrust1_B = force1_B[0]
-    spacecraft.yThrust1_B = force1_B[1]
-    spacecraft.Torque1 = torque1_B[2]
-    spacecraft.Force1OffTime = force1OffTime
-    spacecraft.xThrust2_B = force2_B[0]
-    spacecraft.yThrust2_B = force2_B[1]
-    spacecraft.Torque2 = torque2_B[2]
-    spacecraft.Force2OnTime = force2OnTime
-    spacecraft.Force2OffTime = force2OffTime
 
     # Define initial conditions of the sim
     time = numpy.arange(0.0,stopTime + stepSize,stepSize).flatten()
@@ -1013,51 +1225,98 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     X = numpy.zeros((len(x0),len(time)))
     X[:,0] = x0
     for j in range (1,(len(time))):
+        if time[j-1] < force1OffTime:
+            spacecraft.xThrust_B = force1_B[0]
+            spacecraft.yThrust_B = force1_B[1]
+            spacecraft.Torque = torque1_B[2]
+        elif time[j-1] >= force2OnTime and time[j-1] < force2OffTime:
+            spacecraft.xThrust_B = force2_B[0]
+            spacecraft.yThrust_B = force2_B[1]
+            spacecraft.Torque = torque2_B[2]
+        else:
+            spacecraft.xThrust_B = 0.0
+            spacecraft.yThrust_B = 0.0
+            spacecraft.Torque = 0.0
         X[:, j] = rk4(planarFlexFunction, X[:, j-1], stepSize, time[j-1], spacecraft)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
     plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
-    plt.legend(loc ='upper right')
-    plt.title('X Position')
+    plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "XPositionLagrangianVsBasilisk"
+    PlotTitle = "X Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
     plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'r',label = "Basilsik")
-    plt.legend(loc ='upper right')
-    plt.title('Y Position')
+    plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "YPositionLagrangianVsBasilisk"
+    PlotTitle = "Y Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[2,:],'-b',label = "Lagrangian")
     plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilsik")
-    plt.legend(loc ='upper right')
-    plt.title('Theta')
+    plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "ThetaLagrangianVsBasilisk"
+    PlotTitle = "Theta Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
-    plt.title('Theta1')
+    plt.plot([time[25], time[75], time[125], time[175]], [X[3,25], X[3,75], X[3,125], X[3,175],],'ok',label = "Test Points")
+    plt.legend(loc ='upper left',numpoints = 1)
+    PlotName = "Theta1LagrangianVsBasilisk"
+    PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.figure()
     plt.clf()
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
     plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
-    plt.legend(loc ='upper right')
-    plt.title('Theta2')
+    plt.plot([time[25], time[75], time[125], time[175]], [-X[4,25], -X[4,75], -X[4,125], -X[4,175],],'ok',label = "Test Points")
+    plt.legend(loc ='lower left',numpoints = 1)
+    PlotName = "Theta2LagrangianVsBasilisk"
+    PlotTitle = "Theta 2 Lagrangian Vs Basilisk"
+    format = "width=0.8\\textwidth"
+    unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
 
     plt.show(show_plots)
     plt.close("all")
 
     accuracy = 1e-10
-    # for i in range(0,len(initialOrbAngMom_N)):
-    #     # check a vector values
-    #     if not unitTestSupport.isArrayEqualRelative(finalOrbAngMom[i],initialOrbAngMom_N[i],3,accuracy):
-    #         testFailCount += 1
-    #         testMessages.append("FAILED: Hinged Rigid Body integrated test Transient Test failed position comparison ")
+    timeList = [25, 75, 125, 175]
+    for i in timeList:
+        if abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1])) > accuracy:
+            print abs(X[0,i] - (rOut_BN_N[i,1]-rOut_BN_N[0,1]))
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilsik failed x position comparison ")
+        if abs(X[1,i] - (rOut_BN_N[i,2]-rOut_BN_N[0,2])) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilsik failed y position comparison ")
+        if abs(X[2,i] - thetaOut[i]) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilsik failed theta comparison ")
+        if abs(X[3,i] - theta1Out[i,1]) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilsik failed theta 1 comparison ")
+        if abs(-X[4,i] - theta2Out[i,1]) > accuracy:
+            testFailCount += 1
+            testMessages.append("FAILED: Hinged Rigid Body integrated test Lagrangian vs. Basilsik failed theta 2 comparison ")
+
 
     if testFailCount == 0:
         print "PASSED: " + " Hinged Rigid Body Transient Integrated test"
@@ -1097,7 +1356,6 @@ def planarFlexFunction(x, t, variables):
     d2 = variables.panel2.d
     k2 = variables.panel2.k
     c2 = variables.panel2.c
-    if t > variables.
     Tx_B = variables.xThrust_B
     Ty_B = variables.yThrust_B
     Torque = variables.Torque
@@ -1196,15 +1454,9 @@ class spacecraftClass:
     panel1 = solarPanel()
     panel2 = solarPanel()
     hub = hubClass()
-    xThrust1_B = 0.0
-    yThrust1_B = 0.0
-    Torque1 = 0.0
-    Force1OffTime = 0.0
-    xThrust2_B = 0.0
-    yThrust2_B = 0.0
-    Torque2 = 0.0
-    Force2OnTime = 0.0
-    Force2OffTime = 0.0
+    xThrust_B = 0.0
+    yThrust_B = 0.0
+    Torque = 0.0
 
 def newtonRapshon(funcAndDervi,guess,tolerance,variables):
     xOld = guess
@@ -1236,4 +1488,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyLagrangVsBasilisk(True)
+    test_hingedRigidBodyFrequencyAmp(True)
