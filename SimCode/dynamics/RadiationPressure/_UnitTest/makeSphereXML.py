@@ -49,10 +49,10 @@ class unitVectorXYZ():
         self.y = y
         self.z = z
 
-numPoints = 200
+numPoints = 64
 radius = 1.                         # radius of unit vector sphere
-theta = np.linspace(0,2*np.pi, numPoints) # angle about third axis
-phi = np.linspace(-np.pi,np.pi, numPoints)   # elevation from x-y plane
+theta = np.linspace(0., 2.*np.pi, numPoints, endpoint=False) # angle about third axis
+phi = np.linspace(-np.pi, np.pi, numPoints, endpoint=False)   # elevation from x-y plane
 xVec = np.zeros(len(theta)*len(phi))   # x component of unit vector
 yVec = np.zeros(len(theta)*len(phi))   # y component of unit vector
 zVec = np.zeros(len(theta)*len(phi))   # z component of unit vector
@@ -63,6 +63,7 @@ sHat_B = unitVectorXYZ(xVec,yVec,zVec)
 
 for i in range(numPoints):
     for j in range(numPoints):
+        print np.cos(theta[i]), np.sin(phi[j])
         x = radius * np.cos(theta[i]) * np.sin(phi[j])
         y = radius * np.sin(theta[i]) * np.sin(phi[j])
         z = radius * np.cos(phi[j])
@@ -86,9 +87,9 @@ lookupFile.writelines(lines)
 
 for i in range(len(sHat_B.x)):
     top ='      <sHat_B index="' + str(i) + '">'
-    value1 = '         <value_1>' + str(sHat_B.x[i]) + '</value_1>'
-    value2 = '         <value_2>' + str(sHat_B.y[i]) + '</value_2>'
-    value3 = '         <value_3>' + str(sHat_B.z[i]) + '</value_3>'
+    value1 = '         <value_1>' + '{:1.16f}'.format(sHat_B.x[i]) + '</value_1>'
+    value2 = '         <value_2>' + '{:1.16f}'.format(sHat_B.y[i]) + '</value_2>'
+    value3 = '         <value_3>' + '{:1.16f}'.format(sHat_B.z[i]) + '</value_3>'
     bottom = '      </sHat_B>'
     lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
     lookupFile.writelines(lines)
@@ -101,9 +102,9 @@ lookupFile.writelines(lines)
 
 for i in range(len(sHat_B.x)):
     top ='      <force_B index="' + str(i) + '">'
-    value1 = '         <value_1>' + str(-sHat_B.x[i]) + '</value_1>'
-    value2 = '         <value_2>' + str(-sHat_B.y[i]) + '</value_2>'
-    value3 = '         <value_3>' + str(-sHat_B.z[i]) + '</value_3>'
+    value1 = '         <value_1>' + '{:1.16f}'.format(-sHat_B.x[i]) + '</value_1>'
+    value2 = '         <value_2>' + '{:1.16f}'.format(-sHat_B.y[i]) + '</value_2>'
+    value3 = '         <value_3>' + '{:1.16f}'.format(-sHat_B.z[i]) + '</value_3>'
     bottom = '      </force_B>'
     lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
     lookupFile.writelines(lines)
@@ -115,11 +116,12 @@ lookupFile.writelines(lines)
 
 torqueValue = .0000000000000000
 
+
 for i in range(len(sHat_B.x)):
     top ='      <torque_B index="' + str(i) + '">'
-    value1 = '         <value_1>' + str(torqueValue) + '</value_1>'
-    value2 = '         <value_2>' + str(torqueValue) + '</value_2>'
-    value3 = '         <value_3>' + str(torqueValue) + '</value_3>'
+    value1 = '         <value_1>' + '{:1.16f}'.format(torqueValue) + '</value_1>'
+    value2 = '         <value_2>' + '{:1.16f}'.format(torqueValue) + '</value_2>'
+    value3 = '         <value_3>' + '{:1.16f}'.format(torqueValue) + '</value_3>'
     bottom = '      </torque_B>'
     lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
     lookupFile.writelines(lines)
