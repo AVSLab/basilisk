@@ -40,8 +40,8 @@ sys.path.append(splitPath[0] + '/PythonModules')
 # @endcond
 
 import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
+# from mpl_toolkits.mplot3d import Axes3D
+# import matplotlib.pyplot as plt
 
 class unitVectorXYZ():
     def __init__(self, x, y, z):
@@ -49,7 +49,7 @@ class unitVectorXYZ():
         self.y = y
         self.z = z
 
-numPoints = 40
+numPoints = 200
 radius = 1.                         # radius of unit vector sphere
 theta = np.linspace(0,2*np.pi, numPoints) # angle about third axis
 phi = np.linspace(-np.pi,np.pi, numPoints)   # elevation from x-y plane
@@ -58,22 +58,74 @@ yVec = np.zeros(len(theta)*len(phi))   # y component of unit vector
 zVec = np.zeros(len(theta)*len(phi))   # z component of unit vector
 sHat_B = unitVectorXYZ(xVec,yVec,zVec)
 
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
 
 for i in range(numPoints):
     for j in range(numPoints):
-        z = radius * np.cos(phi[j])
         x = radius * np.cos(theta[i]) * np.sin(phi[j])
         y = radius * np.sin(theta[i]) * np.sin(phi[j])
+        z = radius * np.cos(phi[j])
         sHat_B.x[numPoints*i+j] = x
         sHat_B.y[numPoints*i+j] = y
         sHat_B.z[numPoints*i+j] = z
-        ax.scatter(sHat_B.x[numPoints*i+j], sHat_B.y[numPoints*i+j], sHat_B.z[numPoints*i+j])
+        # ax.scatter(sHat_B.x[numPoints*i+j], sHat_B.y[numPoints*i+j], sHat_B.z[numPoints*i+j])
 
-plt.show()
-lookupFile = open('cannonballLookup.XML', 'w')
-lookupFile.write()
+# plt.show()
+lookupFile = open('cannonballLookup.xml', 'w')
 
+nl = '\n'
+singleTab = '   '
+doubleTab = '       '
+tripleTab = '           '
+header = '<?xml version="1.0" encoding="utf-8"?>'
+srp_values = '<srp_values>'
+sHat_B_values = '   <sHatBValues>'
+lines =header,nl,srp_values,nl,sHat_B_values,nl
+lookupFile.writelines(lines)
+
+for i in range(len(sHat_B.x)):
+    top ='      <sHat_B index="' + str(i) + '">'
+    value1 = '         <value_1>' + str(sHat_B.x[i]) + '</value_1>'
+    value2 = '         <value_2>' + str(sHat_B.y[i]) + '</value_2>'
+    value3 = '         <value_3>' + str(sHat_B.z[i]) + '</value_3>'
+    bottom = '      </sHat_B>'
+    lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
+    lookupFile.writelines(lines)
+endSHat_B_values ='   </sHatBValues>'
+
+
+startForce_B_values = '   <forceBValues>'
+lines = endSHat_B_values, nl, startForce_B_values, nl
+lookupFile.writelines(lines)
+
+for i in range(len(sHat_B.x)):
+    top ='      <force_B index="' + str(i) + '">'
+    value1 = '         <value_1>' + str(-sHat_B.x[i]) + '</value_1>'
+    value2 = '         <value_2>' + str(-sHat_B.y[i]) + '</value_2>'
+    value3 = '         <value_3>' + str(-sHat_B.z[i]) + '</value_3>'
+    bottom = '      </force_B>'
+    lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
+    lookupFile.writelines(lines)
+endForce_values ='   </forceBValues>'
+
+startTorqueValues = '   <torqueBValues>'
+lines = endForce_values, nl, startTorqueValues, nl
+lookupFile.writelines(lines)
+
+torqueValue = .0000000000000000
+
+for i in range(len(sHat_B.x)):
+    top ='      <torque_B index="' + str(i) + '">'
+    value1 = '         <value_1>' + str(torqueValue) + '</value_1>'
+    value2 = '         <value_2>' + str(torqueValue) + '</value_2>'
+    value3 = '         <value_3>' + str(torqueValue) + '</value_3>'
+    bottom = '      </torque_B>'
+    lines = top,nl,value1,nl,value2,nl,value3,nl,bottom,nl
+    lookupFile.writelines(lines)
+endTorqueValues = '   </torqueBValues>'
+endFile = '</srp_values>'
+lines = endTorqueValues, nl, endFile
+lookupFile.writelines(lines)
 
 lookupFile.close()
