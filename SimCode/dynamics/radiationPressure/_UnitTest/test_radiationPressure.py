@@ -49,6 +49,7 @@ import spacecraftPlus
 import radiation_pressure
 import macros
 import spice_interface
+import orbitalMotion as om
 
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
@@ -112,8 +113,11 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
         srpDynEffector2.setUseCannonballModel(True)
-        srpDynEffector2.area = 1.8214408063066700000000E+05 #set to give a force of 1N to make spherical table generation easy
+        srpDynEffector2.area = 182018.072141393 #set to give a force of 1N at 1AU to make spherical table generation easy
         srpDynEffector2.coefficientReflection = 1.2
+        r_N = [np.sin(np.pi/4.)*np.cos(np.pi/4.)*10.*om.AU*1000., np.sin(np.pi/4.)*np.sin(np.pi/4.)*10.*om.AU*1000., np.cos(np.pi/4.)*10.*om.AU*1000.]  # [m]
+        sun_r_N = [0., 0., 0.]  # [m]
+        sigma_BN = [0., 0., 0.]
 
     if eclipseOn:
         sunEclipseInMsgName = "sun_eclipse"
@@ -220,8 +224,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     testFailCount,
                                                                     testMessages)
     if modelType == "cannonballLookup":
-        errTol = 1e-2
-        errTolTorque = 1e-14
+        errTolTorque = errTol/100
         testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
                                                                     srpDataForce_B[1, 1:],
                                                                     errTol,
