@@ -21,6 +21,7 @@ import sys, os, inspect
 import numpy
 import pytest
 import math
+from scipy.optimize import fsolve
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -1002,25 +1003,49 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
         if check==4 and X[3,j] < X[3,j-1]:
             check = 5
             indexSecondPeak = j-1
+        if check == 5 and X[3,j] > X[3,j-1]:
+            check = 6
+        if check==6 and X[3,j] < X[3,j-1]:
+            check = 7
+            indexThirdPeak = j-1
 
-    # Find energy
-    EnergyAfterForce = 0.5*spacecraft.panel1.Inertia*X[8,300]**2 + 0.5*spacecraft.panel1.k*X[3,300]**2
+    # Find energy to find thetaMax2
+    EnergyAfterForce = 0.5*spacecraft.panel1.Inertia*X[8,stopTime/2/stepSize]**2 + 0.5*spacecraft.panel1.mass*(X[8,stopTime/2/stepSize])**2 + 0.5*spacecraft.panel1.k*X[3,stopTime/2/stepSize]**2
     thetaMax2 = numpy.sqrt(2*EnergyAfterForce/spacecraft.panel1.k)
     thetaMax2Sim = max(X[3,:])
-    print thetaMax2
-    print thetaMax2Sim
-    diffThetaMax2 = (thetaMax2 - thetaMax2Sim)/thetaMax2
-    print diffThetaMax2
+    diffThetaMax2 = abs((thetaMax2 - thetaMax2Sim)/thetaMax2)
 
     # Find the period
     T1 = time[indexSecondPeak] - time[indexFirstPeak]
-    freqHz = 1/T1
-    print freqHz
-    omegaAnalytical = numpy.sqrt(spacecraft.panel1.k/(spacecraft.panel1.Inertia + spacecraft.panel1.mass*spacecraft.panel1.d**2))
+    T2 = time[indexThirdPeak] - time[indexSecondPeak]
+    freqHz = 1/((T1 + T2)/2)
+    matrixM = numpy.zeros([6,6])
+    matrixM[0,0] = 1.0
+    matrixM[1,1] = spacecraft.hub.mass + spacecraft.panel1.mass + spacecraft.panel2.mass
+    matrixM[2,2] = 1.0
+    matrixM[3,3] = spacecraft.panel1.Inertia + spacecraft.panel1.mass*spacecraft.panel1.d**2
+    matrixM[4,4] = 1.0
+    matrixM[5,5] = spacecraft.panel2.Inertia + spacecraft.panel2.mass*spacecraft.panel2.d**2
+    # Define off diagonal terms
+    matrixM[1,3] = spacecraft.panel1.mass*spacecraft.panel1.d
+    matrixM[1,5] = spacecraft.panel2.mass*spacecraft.panel2.d
+    matrixM[3,1] = spacecraft.panel1.mass*spacecraft.panel1.d
+    matrixM[5,1] = spacecraft.panel2.mass*spacecraft.panel2.d
+    # Define A matrix
+    matrixA = numpy.zeros([6,6])
+    matrixA[0,1] = 1.0
+    matrixA[2,3] = 1.0
+    matrixA[4,5] = 1.0
+    matrixA[3,2] = -spacecraft.panel1.k
+    matrixA[3,3] = -spacecraft.panel1.c
+    matrixA[5,4] = -spacecraft.panel2.k
+    matrixA[5,5] = -spacecraft.panel2.c
+    # Define Atilde
+    matrixAtilde = numpy.dot(numpy.linalg.inv(matrixM),matrixA)
+    eigenValues = numpy.linalg.eigvals(matrixAtilde)
+    omegaAnalytical = numpy.imag(eigenValues[2])
     omegaAnalyticalHz = omegaAnalytical/(2*numpy.pi)
-    print omegaAnalyticalHz
     diffFreq = (freqHz-omegaAnalyticalHz)/omegaAnalyticalHz
-    print diffFreq
 
     # Find steady state value
     variablesIn = boxAndWingParameters()
@@ -1034,14 +1059,12 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
     thetaMax = 2*thetaSS
     thetaMaxSim = min(X[3,:])
-    print thetaMax
-    print thetaMaxSim
 
     plt.figure()
     plt.clf()
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
-    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-k',label = "Theta Max")
+    plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-g',label = "Theta Max")
     plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [thetaMax2, thetaMax2],'-k',label = "Theta Max 2")
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "MaxThetaWhileForcing"
@@ -1052,11 +1075,12 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.show(show_plots)
     plt.close("all")
 
-    accuracy = 0.12
+    accuracy = 0.07
     if abs((thetaMax2 - thetaMax2Sim)/thetaMax2) > accuracy:
         testFailCount += 1
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
 
+    accuracy = 0.005
     if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
         testFailCount += 1
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed frequency comparison ")
@@ -1502,4 +1526,4 @@ class boxAndWingParameters:
     d = 0
 
 if __name__ == "__main__":
-    test_hingedRigidBodyLagrangVsBasilisk(True)
+    test_hingedRigidBodyFrequencyAmp(True)
