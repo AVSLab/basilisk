@@ -56,6 +56,7 @@ import spice_interface
       ("cannonball",False)
     , ("lookup", False)
     , ("lookup", True)
+    , ("cannonballLookup", False)
 ])
 def test_unitRadiationPressure(show_plots, modelType, eclipseOn):
     [testResults, testMessage] = unitRadiationPressure(show_plots, modelType, eclipseOn)
@@ -87,6 +88,8 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
 
     srpDynEffector = radiation_pressure.RadiationPressure()
     srpDynEffector.ModelTag = "RadiationPressure"
+    srpDynEffector2 = radiation_pressure.RadiationPressure()
+    srpDynEffector2.ModelTag = "RadiationPressure2"
 
     if modelType == "cannonball":
         srpDynEffector.setUseCannonballModel(True)
@@ -100,14 +103,28 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
             srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
             srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
             srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
+    elif modelType == "cannonballLookup":
+        srpDynEffector.setUseCannonballModel(False)
+        handler = radiation_pressure.SRPLookupTableHandler()
+        handler.parseAndLoadXML(os.path.dirname(__file__) + "/cannonballLookup.xml")
+        for i in xrange(0, len(handler.forceBLookup)):
+            srpDynEffector.addForceLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.forceBLookup[i, :]))
+            srpDynEffector.addTorqueLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.torqueBLookup[i, :]))
+            srpDynEffector.addSHatLookupBEntry(unitTestSupport.np2EigenVectorXd(handler.sHatBLookup[i, :]))
+        srpDynEffector2.setUseCannonballModel(True)
+        srpDynEffector2.area = 1.8214408063066700000000E+05 #set to give a force of 1N to make spherical table generation easy
+        srpDynEffector2.coefficientReflection = 1.2
+
     if eclipseOn:
         sunEclipseInMsgName = "sun_eclipse"
         sunEclipseMsgData = radiation_pressure.EclipseSimMsg()
         sunEclipseMsgData.shadowFactor = 0.5
         unitTestSupport.setMessage(unitTestSim.TotalSim, testProcessName, sunEclipseInMsgName, sunEclipseMsgData)
         srpDynEffector.sunEclipseInMsgName = sunEclipseInMsgName
+        srpDynEffector2.sunEclipseInMsgName = sunEclipseInMsgName
 
     unitTestSim.AddModelToTask(testTaskName, srpDynEffector, None, 3)
+    unitTestSim.AddModelToTask(testTaskName, srpDynEffector2, None, 3)
 
     scPlusStateMsg = spacecraftPlus.SCPlusStatesSimMsg()
     scPlusStateMsgName = "inertial_state_output"
@@ -128,6 +145,12 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                       simulationTime, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(srpDynEffector.ModelTag + ".torqueExternalPntB_B",
                                       simulationTime, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".forceExternal_B",
+                                      simulationTime, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".forceExternal_N",
+                                      simulationTime, 0, 2, 'double')
+    unitTestSim.AddVariableForLogging(srpDynEffector2.ModelTag + ".torqueExternalPntB_B",
+                                      simulationTime, 0, 2, 'double')
 
     unitTestSim.InitializeSimulation()
 
@@ -135,12 +158,17 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     unitTestSim.ConfigureStopTime(simulationTime)
     unitTestSim.ExecuteSimulation()
     srpDynEffector.computeBodyForceTorque(unitTestSim.TotalSim.CurrentNanos)
+    srpDynEffector2.computeBodyForceTorque(unitTestSim.TotalSim.CurrentNanos)
     unitTestSim.TotalSim.SingleStepProcesses()
     unitTestSim.RecordLogVars()
 
     srpDataForce_B = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_B")
     srpDataForce_N = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".forceExternal_N")
     srpTorqueData = unitTestSim.GetLogVariableData(srpDynEffector.ModelTag + ".torqueExternalPntB_B")
+
+    srp2DataForce_B = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".forceExternal_B")
+    srp2DataForce_N = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".forceExternal_N")
+    srp2TorqueData = unitTestSim.GetLogVariableData(srpDynEffector2.ModelTag + ".torqueExternalPntB_B")
 
     errTol = 1E-12
     if modelType == "cannonball":
@@ -191,6 +219,27 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
                                                                     "Torque",
                                                                     testFailCount,
                                                                     testMessages)
+    if modelType == "cannonballLookup":
+        errTol = 1e-2
+        errTolTorque = 1e-14
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_B[1, 1:],
+                                                                    srpDataForce_B[1, 1:],
+                                                                    errTol,
+                                                                    "Force_B",
+                                                                    testFailCount,
+                                                                    testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2DataForce_N[1, 1:],
+                                                                    srpDataForce_N[1, 1:],
+                                                                    errTol,
+                                                                    "Force_N",
+                                                                    testFailCount,
+                                                                    testMessages)
+        testFailCount, testMessages = unitTestSupport.compareVector(srp2TorqueData[1, 1:],
+                                                                    srpTorqueData[1, 1:],
+                                                                    errTolTorque,
+                                                                    "Torque",
+                                                                    testFailCount,
+                                                                    testMessages)
 
 
     if eclipseOn:
@@ -220,7 +269,7 @@ def unitRadiationPressure(show_plots, modelType, eclipseOn):
     snippetName = modelType + 'Accuracy'
     snippetContent = '{:1.1e}'.format(errTol)#write formatted LATEX string to file to be used by auto-documentation.
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path) #write formatted LATEX string to file to be used by auto-documentation.
-    if modelType == 'lookupWithEclipse' or modelType == 'lookup':
+    if modelType == 'lookupWithEclipse' or modelType == 'lookup' or modelType == 'cannonballLookup':
         snippetName = modelType + 'TorqueAccuracy'
         snippetContent = '{:1.1e}'.format(errTolTorque)  # write formatted LATEX string to file to be used by auto-documentation.
         unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
