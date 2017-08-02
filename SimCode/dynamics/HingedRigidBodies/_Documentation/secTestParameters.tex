@@ -93,7 +93,7 @@ Since this is an integrated test, the inputs to the test are the physical parame
 \end{table}
 
 \begin{table}[htbp]
-	\caption{Initial Conditions}
+	\caption{Initial Conditions for Energy Momentum Conservation Scenarios}
 	\label{tab:initial}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{| c | c | c | c |} % Column formatting, 
@@ -132,6 +132,29 @@ omega\_BN\_BInit & Initial Angular Velocity of $\cal{B}$ frame & $\begin{bmatrix
 0.1 & -0.1 & 0.1
 \end{bmatrix}^T$ & rad/s \\
 \hline
+	\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+	\caption{Error Tolerance}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c |} % Column formatting, 
+		\hline
+		Test   & Relative Tolerance \\
+		\hline
+		Energy and Momentum Conservation & 1e-10 \\
+		\hline
+		Steady State Deflection & 1e-6 \\
+		\hline
+		Frequency verification & 0.12 \\
+		\hline
+		Max deflection with force on & 1e-3 \\
+		\hline
+		Max deflection with force off & 0.12 \\
+		\hline
+		Lagrangian vs Basilisk comparison & 1e-10 \\
+		\hline	
 	\end{tabular}
 \end{table}
 
