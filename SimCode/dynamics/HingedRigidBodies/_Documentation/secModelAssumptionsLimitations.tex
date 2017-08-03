@@ -10,5 +10,6 @@ Below is a summary of the assumptions/limitations:
 	\item Cannot simulate multiple interconnected panels
 	\item The hinged rigid body will always stay attached to the hub (the hinge does not have torque limits)
 	\item The hinge does not have travel limits, therefore if the spring is not stiff enough it will unrealistically travel through bounds such as running into the spacecraft hub
-	\item The EOMs are nonlinear equations of motion, therefore there can be inaccuracies (and divergence) that result from integration. Having a time step of $<= 0.10\ \text{sec}$ is recommended.
+	\item The EOMs are nonlinear equations of motion, therefore there can be inaccuracies (and divergence) that result from integration. Having a time step of $<= 0.10\ \text{sec}$ is recommended, but this also depends on the natural frequency of the system
+	\item When trying to match the frequency of a physical appended body, note that the natural frequency of the coupled system will be different than the appending body flexing by itself
 \end{itemize}

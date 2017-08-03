@@ -803,6 +803,8 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
     plt.plot(theta1Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta 1 (rad)')
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta1DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 1 Deflection vs Simulation"
@@ -814,6 +816,8 @@ def test_hingedRigidBodyThetaSS(show_plots):
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
     plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
     plt.plot(theta2Out[-1,0]*1e-9, thetaSS,'ok',label = "BOE Calculation")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta 2 (rad)')
     plt.legend(loc ='upper right',numpoints = 1)
     PlotName = "BOECalculationForSteadyStateTheta2DeflectionVsSimulation"
     PlotTitle = "BOE Calculation for Steady State Theta 2 Deflection vs Simulation"
@@ -1076,6 +1080,8 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
     plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [2*thetaSS, 2*thetaSS],'-g',label = "Theta Max")
     plt.plot([theta1Out[0,0]*1e-9, theta1Out[-1,0]*1e-9], [thetaMax2, thetaMax2],'-k',label = "Theta Max 2")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "MaxThetaWhileForcing"
     PlotTitle = "Max Theta While Forcing"
@@ -1300,6 +1306,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.plot(time, X[0,:],'-b',label = "Lagrangian")
     plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,1]-rOut_BN_N[0,1]),'-r',label = "Basilsik")
     plt.plot([time[25], time[75], time[125], time[175]], [X[0,25], X[0,75], X[0,125], X[0,175],],'ok',label = "Test Points")
+    plt.xlabel('time (s)')
+    plt.ylabel('x position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "XPositionLagrangianVsBasilisk"
     PlotTitle = "X Position Lagrangian Vs Basilisk"
@@ -1311,6 +1319,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.plot(time, X[1,:],'-b',label = "Lagrangian")
     plt.plot(rOut_BN_N[:,0]*1e-9, (rOut_BN_N[:,2]-rOut_BN_N[0,2]),'r',label = "Basilsik")
     plt.plot([time[25], time[75], time[125], time[175]], [X[1,25], X[1,75], X[1,125], X[1,175],],'ok',label = "Test Points")
+    plt.xlabel('time (s)')
+    plt.ylabel('y position (m)')
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "YPositionLagrangianVsBasilisk"
     PlotTitle = "Y Position Lagrangian Vs Basilisk"
@@ -1322,6 +1332,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.plot(time, X[2,:],'-b',label = "Lagrangian")
     plt.plot(sigmaOut_BN[:,0]*1e-9, thetaOut,'-r',label = "Basilsik")
     plt.plot([time[25], time[75], time[125], time[175]], [X[2,25], X[2,75], X[2,125], X[2,175],],'ok',label = "Test Points")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "ThetaLagrangianVsBasilisk"
     PlotTitle = "Theta Lagrangian Vs Basilisk"
@@ -1333,6 +1345,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.plot(time, X[3,:],'-b',label = "Lagrangian")
     plt.plot(theta1Out[:,0]*1e-9, theta1Out[:,1],'-r',label = "Basilsik")
     plt.plot([time[25], time[75], time[125], time[175]], [X[3,25], X[3,75], X[3,125], X[3,175],],'ok',label = "Test Points")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta 1 (rad)')
     plt.legend(loc ='upper left',numpoints = 1)
     PlotName = "Theta1LagrangianVsBasilisk"
     PlotTitle = "Theta 1 Position Lagrangian Vs Basilisk"
@@ -1344,6 +1358,8 @@ def test_hingedRigidBodyLagrangVsBasilisk(show_plots):
     plt.plot(time, -X[4,:],'-b',label = "Lagrangian")
     plt.plot(theta2Out[:,0]*1e-9, theta2Out[:,1],'-r',label = "Basilsik")
     plt.plot([time[25], time[75], time[125], time[175]], [-X[4,25], -X[4,75], -X[4,125], -X[4,175],],'ok',label = "Test Points")
+    plt.xlabel('time (s)')
+    plt.ylabel('theta 2 (rad)')
     plt.legend(loc ='lower left',numpoints = 1)
     PlotName = "Theta2LagrangianVsBasilisk"
     PlotTitle = "Theta 2 Lagrangian Vs Basilisk"

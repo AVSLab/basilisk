@@ -34,7 +34,7 @@ In this test, the spacecraft is placed in free space (no gravity) and has dampin
 
 \subsection{Steady State Deflection Verification Scenario}
 
-The BOE calculation for the steady state deflection can be seen in Fig.~\ref{fig:BOEThetaSS}. As it can be seen the resulting steady state deflection does not have a closed form solution so a root solving function must be used to converge on the solution. A Newton-Raphson method was chosen and the success criteria for this test is whether Basilisk gives the same results as this BOE calculation within a certain tolerance. The spacecraft has a constant force applied through the whole simulation with the hinged rigid bodies initially undeflected and they have damping. The force is always applied through the center of mass of the spacecraft and results in no rotation of the spacecraft. 
+The BOE calculation for the steady state deflection can be seen in Fig.~\ref{fig:BOEThetaSS}. The resulting steady state deflection does not have a closed form solution so a root solving function must be used to converge on the solution. A Newton-Raphson method was chosen and the success criteria for this test is whether Basilisk gives the same results as this BOE calculation within a certain tolerance. The spacecraft has a constant force applied through the whole simulation with the hinged rigid bodies initially undeflected and they have damping. The force is always applied through the center of mass of the spacecraft and results in no rotation of the spacecraft. 
 
 \begin{figure}[htbp]
 	\centerline{
@@ -161,19 +161,36 @@ which uses the definition of $\theta_{\textnormal{SS}}$ from Fig.~\ref{fig:BOETh
 
 \subsubsection{Max Deflection While Force is Not Being Applied}
 
-Finally, the maximum deflection when the force is not being applied uses approximate energy techniques seen in the following equations:
+Finally, the maximum deflection when the force is not being applied uses energy techniques. Once the force is no longer being applied, energy is conserved and the velocity of the center of mass is constant. The energy when the force is turned off is represented in the following equation:
 
 \begin{equation}
-E_0 = \frac{1}{2} I_{\textnormal{sp}} \dot{\theta}(t_{\textnormal{off}})^2 + \frac{1}{2} m_{\textnormal{sp}} \Big[d \dot{\theta}(t_{\textnormal{off}})\Big]^2 + \frac{1}{2} k \theta(t_{\textnormal{off}})^2
+E_0 = \frac{1}{2} m_{\textnormal{hub}} \dot{y}_{B/N}^2 + 2\Big[\frac{1}{2} m_{\textnormal{sp}} \dot{\bm r}_{\textnormal{sp}} \cdot \dot{\bm r}_{\textnormal{sp}}  +  \frac{1}{2} I_{\textnormal{sp}} \dot{\theta}^2 + \frac{1}{2} k \theta^2\Big]
 \end{equation}
-
-$E_0$ is the energy when force is turned off and time: $t_{\textnormal{off}}$. Next the max deflection can be approximated by using the following equation: 
-
+Where $\dot{\bm r}_{\textnormal{sp}}$ is
 \begin{equation}
-\theta_{\textnormal{max}} = \sqrt{\frac{2 E_0}{k}}
+\dot{\bm r}_{\textnormal{sp}} = \begin{bmatrix}
+-d \dot{\theta} \sin (\theta)\\
+\dot{y}_{B/N}  + d \dot{\theta} \cos (\theta)\\
+\end{bmatrix}
 \end{equation}
+Next, the velocity of the center of mass of the system is defined in the following equation:
+\begin{equation}
+v_{\textnormal{CoM}} = \frac{1}{m_{\textnormal{tot}}}(m_{\textnormal{hub}} \dot{y}_{B/N} + 2 m_{\textnormal{sp}}\dot{ r}_{\textnormal{sp},y})
+\end{equation}
+This value can be computed from the values at the time the force is shut off and is a conserved quantity.
 
-Again, just like the frequency BOE calculation, this is an approximation and neglects the energy stored in the spacecraft hub that a portion will be transfered to the oscillations. The test results for both the frequency and this maximum deflection reflects this approximation in the tolerances. 
+When the panels are deflected at max deflection, $\dot{\theta} = 0$. Leveraging this assumption the final energy is defined as follows:
+\begin{equation}
+E_F = \frac{1}{2} m_{\textnormal{tot}} v_{\textnormal{CoM}}^2 + 2\Big[\frac{1}{2} k \theta_{\textnormal{max}}^2\Big]
+\end{equation}
+Conservation of energy states
+\begin{equation}
+E_0 = \frac{1}{2} m_{\textnormal{tot}} v_{\textnormal{CoM}}^2 + k \theta_{\textnormal{max}}^2
+\end{equation}
+Therefore, $\theta_{\textnormal{max}}$ is found using the following equation:
+\begin{equation}
+\theta_{\textnormal{max}} = \sqrt{\frac{E_0 - \frac{1}{2} m_{\textnormal{tot}} v_{\textnormal{CoM}}^2}{k}}
+\end{equation}
 
 \subsection{Lagrangian vs Basilisk Scenario}
 
