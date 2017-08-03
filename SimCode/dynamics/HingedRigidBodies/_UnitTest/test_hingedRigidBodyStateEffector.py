@@ -1009,12 +1009,6 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
             check = 7
             indexThirdPeak = j-1
 
-    # Find energy to find thetaMax2
-    EnergyAfterForce = 0.5*spacecraft.panel1.Inertia*X[8,stopTime/2/stepSize]**2 + 0.5*spacecraft.panel1.mass*(X[8,stopTime/2/stepSize])**2 + 0.5*spacecraft.panel1.k*X[3,stopTime/2/stepSize]**2
-    thetaMax2 = numpy.sqrt(2*EnergyAfterForce/spacecraft.panel1.k)
-    thetaMax2Sim = max(X[3,:])
-    diffThetaMax2 = abs((thetaMax2 - thetaMax2Sim)/thetaMax2)
-
     # Find the period
     T1 = time[indexSecondPeak] - time[indexFirstPeak]
     T2 = time[indexThirdPeak] - time[indexSecondPeak]
@@ -1047,7 +1041,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     omegaAnalyticalHz = omegaAnalytical/(2*numpy.pi)
     diffFreq = (freqHz-omegaAnalyticalHz)/omegaAnalyticalHz
 
-    # Find steady state value
+    # Find thetaMax - the max deflection while the force is being applied
     variablesIn = boxAndWingParameters()
     variablesIn.k = spacecraft.panel1.k
     variablesIn.d = spacecraft.panel1.d
@@ -1058,7 +1052,22 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     tolerance = 1e-14
     thetaSS = newtonRapshon(boxAndWingsFandFPrime,thetaSSGuess,tolerance,variablesIn)
     thetaMax = 2*thetaSS
+    # Pull thetaMax from the sim
     thetaMaxSim = min(X[3,:])
+
+    # Find energy to find thetaMax2 - the max deflection while the force is not being applied
+    massTotal = spacecraft.hub.mass + 2.0*spacecraft.panel1.mass
+    yHubDotOff = X[6,stopTime/2/stepSize]
+    theta1Off = X[3,stopTime/2/stepSize]
+    theta1OffDot = X[8,stopTime/2/stepSize]
+    Rsp1DotOff = numpy.array([-spacecraft.panel1.d*theta1OffDot*numpy.sin(theta1Off), yHubDotOff + spacecraft.panel1.d*theta1OffDot*numpy.cos(theta1Off)])
+    vYCMOff =  1.0/massTotal*(spacecraft.hub.mass*yHubDotOff + 2*spacecraft.panel1.mass*Rsp1DotOff[1])
+    EnergyOff = 0.5*spacecraft.hub.mass*yHubDotOff**2 + 2*(0.5*spacecraft.panel1.mass*numpy.dot(Rsp1DotOff,Rsp1DotOff) + 0.5*spacecraft.panel1.Inertia*theta1OffDot**2 + 0.5*spacecraft.panel1.k*theta1Off**2)
+    EnergyFinalWithoutSpring = 0.5*massTotal*vYCMOff**2
+    EnergyInSpringFinal = EnergyOff - EnergyFinalWithoutSpring
+    thetaMax2 = numpy.sqrt(EnergyInSpringFinal/spacecraft.panel1.k)
+    # Pull thetaMax2 from the sim
+    thetaMax2Sim = max(X[3,:])
 
     plt.figure()
     plt.clf()
@@ -1075,24 +1084,21 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     plt.show(show_plots)
     plt.close("all")
 
-    accuracy = 0.07
-    if abs((thetaMax2 - thetaMax2Sim)/thetaMax2) > accuracy:
-        testFailCount += 1
-        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
-
-    accuracy = 0.005
+    accuracy = 5e-3
     if abs((freqHz - omegaAnalyticalHz)/omegaAnalyticalHz) > accuracy:
         testFailCount += 1
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed frequency comparison ")
 
-    accuracy = 1e-3
     if abs((thetaMax - thetaMaxSim)/thetaMax) > accuracy:
         testFailCount += 1
         testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max comparison ")
 
+    if abs((thetaMax2 - thetaMax2Sim)/thetaMax2) > accuracy:
+        testFailCount += 1
+        testMessages.append("FAILED: Hinged Rigid Body integrated theta max test failed max 2 comparison ")
 
     if testFailCount == 0:
-        print "PASSED: " + " Hinged Rigid Body steady state Integrated test"
+        print "PASSED: " + " Hinged Rigid Body Frequency and Amplitude Integrated test"
 
     assert testFailCount < 1, testMessages
     # return fail count and join into a single string all messages in the list
