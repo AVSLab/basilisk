@@ -46,7 +46,7 @@
 
 \newcommand{\ModuleName}{hingedRigidBodyStateEffector}
 \newcommand{\subject}{Hinged Rigid Body Dynamics Model}
-\newcommand{\status}{In Review}
+\newcommand{\status}{Reviewed}
 \newcommand{\preparer}{C. Allard}
 \newcommand{\summary}{The hinged rigid body class is an instantiation of the state effector abstract class. The integrated test is validating the interaction between the hinged rigid body module and the rigid body hub that it is attached to. In this case, a hinged rigid body has a diagonal inertia tensor and is attached to the hub by a single degree of freedom torsional hinged with a linear spring constant and linear damping term. The integrated tests has six scenarios it is testing. The first three are: one with gravity and no damping, one without gravity and without damping, and one without gravity with damping. These first three tests are verifying energy and momentum conservation. In the first two cases orbital energy, orbital momentum, rotational energy, and rotational angular momentum should all be conserved. In the third case orbital momentum, orbital energy, and rotational momentum should be conserved. This integrated test validates for all three scenarios that all of these parameters are conserved. The fourth scenario is verifying that the steady state deflection while a constant force is being applied matches the back of the envelope (BOE) calculation. The fifth scenario applies a constant force and removes the force and the test verifies that the frequency and amplitude match the BOE calculations. And the sixth scenario verifies that Basilisk gives identical results to a planar Lagrangian dynamical system created independently.}
 
@@ -97,17 +97,11 @@
 	
 \input{secModelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\input{secModelFunctions.tex} %This includes a concise list of what the module does.
+\input{secModelFunctions.tex} %This includes a concise list of what the module does. It also includes model assumptions and limitations
 
-\input{secModelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\input{secTest.tex} % This includes test description, test parameters, and test results
 
-\input{secTestDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
-
-\input{secTestParameters.tex}
-
-\input{secTestResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
-
-\input{secUserGuide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
+\input{secUserGuide.tex} % Contains a discussion of how to setup and configure  the BSK module
 
 
 
