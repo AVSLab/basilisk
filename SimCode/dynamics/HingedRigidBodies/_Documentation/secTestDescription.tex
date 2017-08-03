@@ -45,6 +45,8 @@ The BOE calculation for the steady state deflection can be seen in Fig.~\ref{fig
 
 \subsection{Frequency and Amplitude Verification Scenario}
 
+\subsubsection{Frequency Test Description}
+
 The BOE calculation for the frequency of oscillation of flexing hinged rigid bodies when a constant force is being applied to the spacecraft is done by making simplifications to the flexing equation seen in the Model Description Section. The following assumptions are made to simplify the equations:
 
 \begin{enumerate}
@@ -148,12 +150,16 @@ The equivalent dynamics matrix for this coupled system is:
 
 Finding the eigenvalues of $[\tilde{A}]$ will describe the coupled natural frequencies of the combined system. The integrated test for this scenario ensures that the analytical coupled frequency of oscillation matches the frequency obtained from the simulation. 
 
+\subsubsection{Max Deflection While Force is Being Applied}
+
 The next BOE calculation that is needed is to find the maximum deflection while the force is being applied and when the force is not being applied (with the assumption that there is no damping). When the force is being applied the following max deflection can be seen in the following equation:
 
 \begin{equation}
 \theta_{\textnormal{max}} = 2 \theta_{\textnormal{SS}}
 \end{equation}
 which uses the definition of $\theta_{\textnormal{SS}}$ from Fig.~\ref{fig:BOEThetaSS}. 
+
+\subsubsection{Max Deflection While Force is Not Being Applied}
 
 Finally, the maximum deflection when the force is not being applied uses approximate energy techniques seen in the following equations:
 

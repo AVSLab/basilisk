@@ -32,6 +32,22 @@ The following figures show the conservation of the quantities described in the s
 \clearpage
 
 \subsection{Frequency and Amplitude Verification Scenario}
+\begin{table}[htbp]
+	\caption{Frequency and Amplitude Test Results}
+	\label{tab:freqAmpResults}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{| c | c | c | c |} % Column formatting, 
+		\hline
+		\textbf{Name}  & \textbf{BOE Calculation}  & \textbf{Basilisk Results} & \textbf{Relative Error} \\
+		\hline
+		Frequency  & \input{AutoTex/FrequencyResults} \\
+		\hline
+		Theta Max 1 & \input{AutoTex/Theta1Results} \\
+		\hline
+		Theta Max 2 & \input{AutoTex/Theta2Results} \\
+		\hline
+	\end{tabular}
+\end{table}
 \input{AutoTex/MaxThetaWhileForcing}
 
 \subsection{Lagrangian vs Basilisk Scenario}

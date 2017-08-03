@@ -21,7 +21,6 @@ import sys, os, inspect
 import numpy
 import pytest
 import math
-from scipy.optimize import fsolve
 
 filename = inspect.getframeinfo(inspect.currentframe()).filename
 path = os.path.dirname(os.path.abspath(filename))
@@ -1054,6 +1053,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     thetaMax = 2*thetaSS
     # Pull thetaMax from the sim
     thetaMaxSim = min(X[3,:])
+    diffThetaMax = abs((thetaMax-thetaMaxSim)/thetaMax)
 
     # Find energy to find thetaMax2 - the max deflection while the force is not being applied
     massTotal = spacecraft.hub.mass + 2.0*spacecraft.panel1.mass
@@ -1068,6 +1068,7 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     thetaMax2 = numpy.sqrt(EnergyInSpringFinal/spacecraft.panel1.k)
     # Pull thetaMax2 from the sim
     thetaMax2Sim = max(X[3,:])
+    diffTheta2Max = abs((thetaMax2-thetaMax2Sim)/thetaMax2)
 
     plt.figure()
     plt.clf()
@@ -1080,6 +1081,17 @@ def test_hingedRigidBodyFrequencyAmp(show_plots):
     PlotTitle = "Max Theta While Forcing"
     format = "width=0.8\\textwidth"
     unitTestSupport.writeFigureLaTeX(PlotName, PlotTitle, plt, format, path)
+
+    # Write Results to tex snippet
+    snippetName = "FrequencyResults"
+    texSnippet =  str(omegaAnalyticalHz) + " & " + str(freqHz) +  " & " + str(diffFreq)
+    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+    snippetName = "Theta1Results"
+    texSnippet =  str(thetaMax) + " & " + str(thetaMaxSim) +  " & " + str(diffThetaMax)
+    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
+    snippetName = "Theta2Results"
+    texSnippet =  str(thetaMax2) + " & " + str(thetaMax2Sim) +  " & " + str(diffTheta2Max)
+    unitTestSupport.writeTeXSnippet(snippetName, texSnippet, path)
 
     plt.show(show_plots)
     plt.close("all")
