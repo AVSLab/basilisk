@@ -13,20 +13,19 @@ sys.path.append(bskPath + 'PythonModules')
 from MonteCarlo.controller import Controller
 from MonteCarlo.dispersions import UniformEulerAngleMRPDispersion, UniformDispersion, NormalVectorCartDispersion
 
-import SimulationBaseClass
-import numpy as np
-import shutil
-
 # import simulation related support
 import spacecraftPlus
 import orbitalMotion
 import gravityEffector
 import simIncludeGravity
 import macros
-from math import fabs
+import SimulationBaseClass
+import numpy as np
 
 import pytest
 import unitTestSupport  # general support file with common unit test functions
+from math import fabs
+import shutil
 
 NUMBER_OF_RUNS = 20
 LENGTH_SHRINKAGE_FACTOR = 50 # make the simulations faster by dividing the length of the sim by this.
@@ -163,34 +162,28 @@ def test_MonteCarloSimulation():
     assert "messages" in retainedData, "Retained data should retain messages"
     assert "inertial_state_output.r_BN_N" in retainedData["messages"], "Retained messages should exist"
     assert "inertial_state_output.v_BN_N" in retainedData["messages"], "Retained messages should exist"
-    oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
 
     # rerun the case and it should be the same, because we dispersed random seeds
+    oldOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
+
     failed = monteCarloLoaded.reRunCases([NUMBER_OF_RUNS-1])
     assert len(failed) == 0, "Should rerun case successfully"
+
     retainedData = monteCarloLoaded.getRetainedData(NUMBER_OF_RUNS-1)
     newOutput = retainedData["messages"]["inertial_state_output.r_BN_N"]
-
-    for (k1,v1) in enumerate(oldOutput):
-        for (k2,v2) in enumerate(v1):
+    for k1, v1 in enumerate(oldOutput):
+        for k2, v2 in enumerate(v1):
             assert fabs(oldOutput[k1][k2] - newOutput[k1][k2]) < .001, \
             "Outputs shouldn't change on runs if random seeds are same"
 
-    params = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
-
-    assert "TaskList[0].TaskModels[0].RNGSeed" in params, "random number seed should be applied"
-    assert disp1Name in params, "dispersion should be applied"
-    assert disp2Name in params, "dispersion should be applied"
-    assert disp3Name in params, "dispersion should be applied"
-    assert disp4Name in params, "dispersion should be applied"
-
-    # assert two different runs had different parameters.
+    # test the initial parameters were saved from runs, and they differ between runs
     params1 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-1)
     params2 = monteCarloLoaded.getParameters(NUMBER_OF_RUNS-2)
-    assert params1[disp1Name] != params2[disp1Name], "dispersion should be different in each run"
-    assert params1[disp2Name] != params2[disp2Name], "dispersion should be different in each run"
-    assert params1[disp3Name] != params2[disp3Name], "dispersion should be different in each run"
-    assert params1[disp4Name] != params2[disp4Name], "dispersion should be different in each run"
+    assert "TaskList[0].TaskModels[0].RNGSeed" in params1, "random number seed should be applied"
+    for dispName in [disp1Name, disp2Name, disp3Name, disp4Name]:
+        assert dispName in params1, "dispersion should be applied"
+        # assert two different runs had different parameters.
+        assert params1[dispName] != params2[dispName], "dispersion should be different in each run"
 
     shutil.rmtree(dirName)
     assert not os.path.exists(dirName), "No leftover data should exist after the test"
