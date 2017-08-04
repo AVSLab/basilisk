@@ -315,7 +315,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     else:
         colorText = 'Red'
         passFailMsg = "Failed: " + name + "."
-        testMessages.append(passFailText)
+        testMessages.append(passFailMsg)
         testMessages. append(" | ")
         passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
 

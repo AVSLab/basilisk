@@ -1,3 +1,5 @@
+% !TEX root = ./Basilisk-CoarseSunSensor-20170803.tex
+
 \section{Model Description}
 
 \begin{figure}[htb]
@@ -7,17 +9,17 @@
 	\caption{Illustration of the CoarseSunSensor() module I/O}
 	\label{fig:moduleDiagram}
 \end{figure}
-\section{Introduction}
+\subsection{Overview}
 This document describes how Coarse Sun Sensor (CSS) devices are modeled in the Basilisk software.  Each CSS is modeled through a nominal cosine response relative to the sunlight incidence angle.  This response can then be corrupted, or reduced due to being in a planet's shadow.  It is possible to add individual CSS sensors to the BSK evaluation stack.  However, it is typically simpler to use the {\tt CSSConstellation()} class to store a list of CSS units which are updated as a group, along with a unique CSS array output message.
 
-\section{Single CSS module}
-\subsection{I/O Messages}
+\subsection{Single CSS module}
+\subsubsection{I/O Messages}
 First, let us discuss the input and output messages of the individual CSS sensor module.  The two required input messages are of the type {\tt SpicePlanetStateSimMsg} and {\tt SCPlusStatesSimMsg}.  The first message is used to determine the sun's location relative to the inertial frame $\leftexp{N}{\bm r}_{\sun/\mathcal{N}}$.  The second message is used to read in the spacecraft inertial position vector relative to the same inertial frame $\leftexp{N}{\bm r}_{\cal B/N}$.  Finally, the last message is optional.  If it is connected, it provides the sun shadow parameter indicating if the spacecraft is in a planet's shadow.  
 
 The output message of an individual CSS unit creates a message containing the simulated CSS sensor.
 
 
-\subsection{CSS Signal Simulation}
+\subsubsection{CSS Signal Simulation}
 To evaluate the sun heading vector $\bm s$, the satellite and sun position vectors are used.
 \begin{equation}
 	\leftexp{N}{\bm s} = \leftexp{N}{\bm r}_{\sun/\mathcal{N}} - \leftexp{N}{\bm r}_{\cal B/N}
@@ -66,3 +68,17 @@ At this point the signal shape is correct, but not the scale.  The final step is
 \begin{equation}
 	\gamma = \hat{\gamma}_{c} \alpha
 \end{equation}
+
+
+\begin{figure}[htb]
+	\centerline{
+	\includegraphics[]{Figures/moduleDiagramConstellation}
+	}
+	\caption{Illustration of the CSS Constellation class}
+	\label{fig:moduleDiagramConstellation}
+\end{figure}
+\subsection{Constellation or Array of CSS Modules}
+The {\tt CSSConstellation} class is defined as a convenience such that the Basilisk update function is called on a group of CSS modules.  Here the CSS BSK modules are created and configured as before, but are then provided to the {\tt CSSConstellation} class object as a list of CSS in python.  The CSS can be configured individually, and must each be connected with the required input messages.  However, the {\tt CSSConstellation} will gather all the CSS outputs and write a single CSS Constellation output message of the type {\tt CSSArraySensorIntMsg} as shown in Figure~\ref{fig:moduleDiagramConstellation}.  
+
+
+

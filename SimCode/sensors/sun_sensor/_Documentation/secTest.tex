@@ -1,3 +1,5 @@
+% !TEX root = ./Basilisk-CoarseSunSensor-20170803.tex
+
 \section{Test Description and Success Criteria}
 The Coarse Sun Sensor Test, test\_coarseSunSensor.py, contains ten tests. The simulation is set up with only the coarse sun sensor(s) and made-up messages to simulation spacecraft, sun, and eclipse information. The spacecraft is in a convenient attitude relative to the sun and rotates all of the sensors in a full circle past the sun.
 \begin{enumerate}
@@ -32,8 +34,10 @@ Pytest runs the following cases (numbered as above) when it is called for this t
 	\label{tab:errortol}
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c | c | c | c | c | c | c | c } % Column formatting, 
-		\hline
-		\textbf{Test}& \textbf{useConstellation}& \textbf{visibilityFactor}& \textbf{fov}& \textbf{kelly}& \textbf{scaleFactor}& \textbf{bias}& \textbf{noiseStd}& \textbf{albedoValue}& \textbf{errTol}\\ \hline
+		\hline\hline
+		\textbf{}& \textbf{use}& \textbf{visibility}& \textbf{}& \textbf{}& \textbf{scale}& \textbf{bias}& \textbf{noise}& \textbf{albedo}& \textbf{errTol}\\ 
+		\textbf{Test}& \textbf{Constellation}& \textbf{Factor}& \textbf{fov}& \textbf{kelly}& \textbf{Factor}& \textbf{bias}& \textbf{Std}& \textbf{Value}& \textbf{errTol}\\ 
+		\hline\hline
 		1      & \input{AutoTex/plainUseConstellation}&\input{AutoTex/plainVisibilityFactor}&\input{AutoTex/plainFov}&\input{AutoTex/plainKelly}&\input{AutoTex/plainScaleFactor}&\input{AutoTex/plainBias}&\input{AutoTex/plainNoiseStd}&\input{AutoTex/plainAlbedoValue}&\input{AutoTex/plainErrTol}	   \\ \hline
 		2	& \input{AutoTex/eclipseUseConstellation}&\input{AutoTex/eclipseVisibilityFactor}&\input{AutoTex/eclipseFov}&\input{AutoTex/eclipseKelly}&\input{AutoTex/eclipseScaleFactor}&\input{AutoTex/eclipseBias}&\input{AutoTex/eclipseNoiseStd}&\input{AutoTex/eclipseAlbedoValue}&\input{AutoTex/eclipseErrTol}	   \\ \hline
 		3	& \input{AutoTex/fieldOfViewUseConstellation}&\input{AutoTex/fieldOfViewVisibilityFactor}&\input{AutoTex/fieldOfViewFov}&\input{AutoTex/fieldOfViewKelly}&\input{AutoTex/fieldOfViewScaleFactor}&\input{AutoTex/fieldOfViewBias}&\input{AutoTex/fieldOfViewNoiseStd}&\input{AutoTex/fieldOfViewAlbedoValue}&\input{AutoTex/fieldOfViewErrTol}	   \\ \hline
@@ -44,6 +48,7 @@ Pytest runs the following cases (numbered as above) when it is called for this t
 		8	& \input{AutoTex/albedoUseConstellation}&\input{AutoTex/albedoVisibilityFactor}&\input{AutoTex/albedoFov}&\input{AutoTex/albedoKelly}&\input{AutoTex/albedoScaleFactor}&\input{AutoTex/albedoBias}&\input{AutoTex/albedoNoiseStd}&\input{AutoTex/albedoAlbedoValue}&\input{AutoTex/albedoErrTol}	   \\ \hline
 		9	& \input{AutoTex/combinedUseConstellation}&\input{AutoTex/combinedVisibilityFactor}&\input{AutoTex/combinedFov}&\input{AutoTex/combinedKelly}&\input{AutoTex/combinedScaleFactor}&\input{AutoTex/combinedBias}&\input{AutoTex/combinedNoiseStd}&\input{AutoTex/combinedAlbedoValue}&\input{AutoTex/combinedErrTol}	   \\ \hline
 		10    & \input{AutoTex/constellationUseConstellation}&\input{AutoTex/constellationVisibilityFactor}&\input{AutoTex/constellationFov}&\input{AutoTex/constellationKelly}&\input{AutoTex/constellationScaleFactor}&\input{AutoTex/constellationBias}&\input{AutoTex/constellationNoiseStd}&\input{AutoTex/constellationAlbedoValue}&\input{AutoTex/constellationErrTol}	   \\ \hline
+		\hline
 	\end{tabular}
 \end{table}
 
