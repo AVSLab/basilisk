@@ -47,7 +47,7 @@ class Controller:
             creationFunction=None,
             executionFunction=None,
             retentionParameters=None,
-            shouldArchive=False,
+            shouldArchiveParameters=False,
             shouldDisperseSeeds=False,
             dispersions=[],
             filename=""
@@ -141,6 +141,9 @@ class Controller:
         """
         self.simParams.verbose = verbose
 
+    def setShouldArchiveParameters(self, shouldArchiveParameters):
+        self.simParams.shouldArchiveParameters = shouldArchiveParameters
+
     def setArchiveDir(self, dirName):
         """ Set-up archives for this MonteCarlo run
         Args:
@@ -149,7 +152,7 @@ class Controller:
                 None, if no archive desired.
         """
         self.archiveDir = os.path.abspath(dirName) + "/"
-        self.simParams.shouldArchive = dirName != None
+        self.simParams.shouldArchiveParameters = dirName != None
         self.simParams.filename = self.archiveDir
 
     def getRetainedData(self, case):
@@ -269,7 +272,7 @@ class Controller:
         if self.simParams.verbose:
             print "Beginning simulation with {0} runs on {1} threads".format(self.executionCount, self.numProcess)
 
-        if self.simParams.shouldArchive:
+        if self.simParams.shouldArchiveParameters:
             if os.path.exists(self.archiveDir):
                 shutil.rmtree(self.archiveDir)
             os.mkdir(self.archiveDir)
@@ -321,7 +324,7 @@ class Controller:
             if self.simParams.verbose:
                 print "Failed", failed, "saving to 'failures.txt'"
 
-            if self.simParams.shouldArchive:
+            if self.simParams.shouldArchiveParameters:
                 # write a file that contains log of failed runs
                 with open(self.archiveDir + "failures.txt", "w") as failFile:
                     failFile.write(str(failed))
@@ -339,14 +342,14 @@ class SimulationParameters():
      - whether randomized seeds should be applied to the simulation
      - whether data should be archived
     '''
-    def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchive, filename, index=None, verbose=False, modifications={}):
+    def __init__(self, creationFunction, executionFunction, retentionParameters, dispersions, shouldDisperseSeeds, shouldArchiveParameters, filename, index=None, verbose=False, modifications={}):
         self.index = index
         self.creationFunction = creationFunction
         self.executionFunction = executionFunction
         self.retentionParameters = retentionParameters
         self.dispersions = dispersions
         self.shouldDisperseSeeds = shouldDisperseSeeds
-        self.shouldArchive = shouldArchive
+        self.shouldArchiveParameters = shouldArchiveParameters
         self.filename = filename
         self.verbose = verbose
         self.modifications = modifications
@@ -387,18 +390,21 @@ class SimulationExecutor():
             # build a list of the parameter and random seed modifications to make
             modifications = simParams.modifications
 
-            # we may want to disperse random seeds and parameters
+            # we may want to disperse random seeds
             if simParams.shouldDisperseSeeds:
                 # generate the random seeds for the model (but don't apply them yet)
                 randomSeedDispersions = cls.disperseSeeds(simInstance)
                 for name, value in randomSeedDispersions.items():
                     modifications[name] = value
 
-                for disp in simParams.dispersions:
-                    modifications[disp.getName()] = disp.generateString(simInstance)
+            # we may want to disperse parameters
+            for disp in simParams.dispersions:
+                name = disp.getName()
+                if name not in modifications: # could be using a saved parameter.
+                    modifications[name] = disp.generateString(simInstance)
 
             # if archiving, this run's parameters and random seeds are saved in its own json file
-            if simParams.shouldArchive:
+            if simParams.shouldArchiveParameters:
                 # save the dispersions and random seeds for this run
                 with open(simParams.filename + ".json", 'w') as outfile:
                     json.dump(modifications, outfile)
@@ -433,13 +439,13 @@ class SimulationExecutor():
 
     @staticmethod
     def disperseSeeds(simInstance):
-        """  disperses the RNG seeds of all the tasks in the model, and returns a statement that contains the seeds
+        """  disperses the RNG seeds of all the tasks in the sim, and returns a statement that contains the seeds
         Args:
             simInstance: SimulationBaseClass
                 A basilisk simulation to set random seeds on
         Returns:
             statement: string
-                A dictionary with the random seeds that should be applied:
+                A dictionary with the random seeds that should be applied to the sim:
                 Example:
                 ""
                 {
@@ -452,19 +458,10 @@ class SimulationExecutor():
         """
 
         randomSeeds = {}
-        i = 0
-        for task in simInstance.TaskList:
-            j = 0
-            for model in task.TaskModels:
+        for i, task in enumerate(simInstance.TaskList):
+            for j, model in enumerate(task.TaskModels):
                 taskVar = 'TaskList[' + str(i) + '].TaskModels' + '[' + str(j) + '].RNGSeed'
-                try:
-                    randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
-                except ValueError:
-                    randomSeeds.pop(taskVar, None) # remove it if it failed
-                    j += 1
-                    continue
-                j += 1
-            i += 1
+                randomSeeds[taskVar] = str(random.randint(0, 1 << 32 - 1))
         return randomSeeds
 
     @staticmethod
