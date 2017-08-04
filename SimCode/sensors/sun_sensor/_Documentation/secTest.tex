@@ -2,15 +2,25 @@
 The Coarse Sun Sensor Test, test\_coarseSunSensor.py, contains ten tests. The simulation is set up with only the coarse sun sensor(s) and made-up messages to simulation spacecraft, sun, and eclipse information. The spacecraft is in a convenient attitude relative to the sun and rotates all of the sensors in a full circle past the sun.
 \begin{enumerate}
 	\item\textbf{Basic Functionality}: A single sensor is run with minimal modifications and compared to a cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve.
 	\item\textbf{Eclipse}: A single sensor is run with an eclipse simulated and compared to an eclipse factored cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve times the eclipse factor input
 	\item\textbf{Field of View}: A single sensor is run with a smaller field of view and compared to a clipped cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve truncated to zero beyond the field of view input.
 	\item\textbf{Kelly Factor}: A single sensor is run with a Kelly factor input and compared to a modified cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve modified by the kelly curve equation seen previously in this report
 	\item\textbf{Scale Factor}: A single sensor is run with a scale factor and compared to a scaled cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve multiplied by the scaleFactor input.
 	\item\textbf{Bias}: A single sensor is run with a bias and compared to a modified cosine.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve shifted in magnitude by the bias input.
 	\item\textbf{Noise}: A single sensor is run with noise and the standard deviation of that noise is compared to the input standard deviation.
+	\subitem \textbf{Success Criteria}: Once a clean cosine curve is subtracted from the output, the standard deviation should match the standard deviation input.
 	\item\textbf{Albedo}: A single sensor is run with an albedo input and shown to be no different than the standard cosine truth value. This is done because there is some albedo functionality programmed into the module but it should be inactive at this time.
+	\subitem \textbf{Success Criteria}: The output curve should match a cosine curve because the albedo input should have no effect.
 	\item\textbf{Combined}: All of the inputs above are run on a single simulation. The expected result without noise is subtracted from the result. Then, the standard deviation of the noise. is compared to the expected standard deviation.
-	\item\textbf{Constellation}: Two constellations of sensors are set up using various set up methods and simulated with a clean signal. The two constellations are tested to be identical to one another.
+	\subitem \textbf{Success Criteria}: Once a cosine curve modified by eclipse, field of view, kelly factor, scale factor, bias, and albedo are subtracted from the output, the standard deviation should match the given standard deviation.
+	\item\textbf{Constellation}: Two constellations of sensors are set up using various set up methods and simulated with a clean signal. The two constellations are tested to be identical to one another. Constellation P1 is established by directly assigning normal vectors to four sensors. Constellation P2 is established by giving angles that specify the placement of the constellation platform relative to the spacecraft body frame. Then, for constellation 2, the unit direction vector for each sensor is set with an azimuth and an elevation via coarseSunSensor.setUnitDirectionVectorWithPerturbation(). Finally, the fourth sensor in constellation P2 is set up in a different way than the others. It is not assigned platform frame angles but it is given incorrect azimuth and elevation headings which are corrected with "perturbation" inputs. Through all of these tests, constellation set up is verified, including the default platform DCM (identity).
+	\subitem \textbf{Success Criteria}: The output curve from constellation P1 should match the output curve from constellation P2.
 \end{enumerate}
 
 
@@ -46,35 +56,25 @@ The results of each test are shown in the table below. If a test did not pass, a
 	\centering \fontsize{10}{10}\selectfont
 	\begin{tabular}{ c | c | c } % Column formatting, 
 		\hline
-		\textbf{Test} 				      & \textbf{Pass/Fail} 						   		   		 & \textbf{Notes} 									        \\ \hline
-		1	   			  	&\input{AutoTex/plainPassFailMsg}      	  &\input{AutoTex/plainFailMsg} 	        \\ \hline
+		\textbf{Test} & \textbf{Pass/Fail} 						   		    & \textbf{Notes} 									      \\ \hline
+		1	   			  	&\input{AutoTex/plainPassedText}      	   &\input{AutoTex/plainPassFailMsg} 	         \\ \hline
+		2	   			  	&\input{AutoTex/eclipsePassedText}       &\input{AutoTex/eclipsePassFailMsg} 	       \\ \hline
+		3	   			  	&\input{AutoTex/fieldOfViewPassedText}&\input{AutoTex/fieldOfViewPassFailMsg} 	 \\ \hline
+		4	   			  	&\input{AutoTex/kellyFactorPassedText} &\input{AutoTex/kellyFactorPassFailMsg} 	   \\ \hline
+		5	   			  	&\input{AutoTex/scaleFactorPassedText}&\input{AutoTex/scaleFactorPassFailMsg} 	 \\ \hline
+		6	   			  	&\input{AutoTex/biasPassedText}      	  &\input{AutoTex/biasPassFailMsg} 	              \\ \hline
+		7	   			  	&\input{AutoTex/deviationPassedText}    &\input{AutoTex/deviationPassFailMsg} 	      \\ \hline
+		8	   			  	&\input{AutoTex/albedoPassedText}      	&\input{AutoTex/albedoPassFailMsg} 	           \\ \hline
+		9	   			  	&\input{AutoTex/combinedPassedText}  &\input{AutoTex/combinedPassFailMsg} 	      \\ \hline
+		10	   			  	&\input{AutoTex/constellationPassedText} &\input{AutoTex/constellationPassFailMsg}\\ \hline
 	
 	\end{tabular}
 \end{table}
 
-\subsection{Unit Test Table Results}
-To automatically create a unit test table to include in the documentation, use the command:
-\begin{verbatim}
-unitTestSupport.writeTableLaTeX(
-tableName,
-tableHeaders,
-caption,
-dataMatrix,
-path)
-\end{verbatim}
+In addition to the tabulated results, test data has been plotted for visual inspection. In Fig. \ref{fig:combinedPlot}, all single coarse sun sensor simulations have been plotted on top of one another. This makes for convenient comparison between the cases. For instance, the scaleFactor case can be seen to peak at 2 rather than 1 whereas the eclipse case peaks at 0.5. Furthermore, the fieldOfView test drops to zero at a value less than $\frac{\pi}{2}$ but it follows the plain case otherwise. The kellyFactor case similarly follows the plain curve, except at the edges. The albedo curve cannot be seen because it lies directly beneath the plain curve. The bias curve is equivalent to the plain curve, but shifted up. Finally, the two curves with noise clearly follow the ordinary curve pattern.
 
+\input{AutoTex/combinedPlot.tex}
+\clearpage
+The constellation test results are shown in Fig. \ref{fig:constellationPlots}. The results are identical to each other and the test has been successful.
 
-
-
-\subsection{Unit Test Figure Results}
-If figures and plots are generated in the python unit tests, these can be also automatically included in the unit test documentation.  This is achieved with the command:
-\begin{verbatim}
-unitTestSupport.writeFigureLaTeX(
-"testPlot",
-"Illustration of Sample Plot",
-plt,
-"width=0.5\\textwidth",
-path)
-\end{verbatim}
-
-
+\input{AutoTex/constellationPlots.tex}

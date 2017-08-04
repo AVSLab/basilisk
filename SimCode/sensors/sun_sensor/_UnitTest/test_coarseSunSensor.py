@@ -66,7 +66,7 @@ import simMessages
       (False, 1.0, np.pi/2., 0.0, 2.0, 0.0, 0.0, 0.0, 1e-12, "scaleFactor", 2, 5.),
       (False, 1.0, np.pi/2., 0.0, 1.0, 0.5, 0.0, 0.0, 1e-12, "bias", 3, 5.),
       (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.25, 0.0, 1e-3, "deviation", -5, 1.),   #low tolerance for std deviation comparison
-      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.5, 1e-12, "albedo", 0, 5.),
+      (False, 1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.5, 1e-12, "albedo", -4, 5.),
       (False, 0.5, 3*np.pi/8., 0.15, 2.0, 0.5, 0.25, 0.5, 1e-3, "combined", -6, 1.),
       (True,  1.0, np.pi/2., 0.0, 1.0, 0.0, 0.0, 0.0, 1e-12, "constellation", 0, 1.)
 ])
@@ -276,7 +276,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('P2 Output Values [ul]')
         plt.legend(loc='upper center')
-        unitTestSupport.writeFigureLaTeX('Constellation Plots', 'Plot of first and second constellation outputs for comparision.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+        unitTestSupport.writeFigureLaTeX('constellationPlots', 'Plot of first and second constellation outputs for comparision.', plt, 'height=0.7\\textwidth, keepaspectratio', path)
     #
     #   Single CSS plotting
     #
@@ -289,9 +289,9 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
         plt.xlabel('Time [min]')
         plt.ylabel('Output Value [ul]')
         if name == "combined":
-            unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to eachother', plt, 'height=0.7\\textwidth, keepaspectratio', path)
+            unitTestSupport.writeFigureLaTeX('combinedPlot', 'Plot of all cases of individual coarse sun sensor in comparison to each other', plt, 'height=0.7\\textwidth, keepaspectratio', path)
 
-    if name == "constellation":# and show_plots: # Don't show plots until last run.
+    if name == "constellation" and show_plots: # Don't show plots until last run.
         plt.show()
 
     #
@@ -309,23 +309,25 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             testFailCount += 1
 
     if testFailCount == 0:
-        colorText = '"Forest Green"'
-        passFailText = "Passed: " + name + "."
+        colorText = 'ForestGreen'
+        passFailMsg = ""#"Passed: " + name + "."
+        passedText = '\\textcolor{' + colorText + '}{' + "PASSED" + '}'
     else:
         colorText = 'Red'
-        passFailText = "Failed: " + name + "."
+        passFailMsg = "Failed: " + name + "."
         testMessages.append(passFailText)
         testMessages. append(" | ")
+        passedText = '\\textcolor{' + colorText + '}{' + "FAILED" + '}'
 
     #Write some snippets for AutoTex
-    snippetName = name + "PassFailMsg"
-    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'
+    snippetName = name + "PassedText"
+    snippetContent = passedText
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
-    print "\n", passFailText
 
-    # snippetName = name + "Tolerance"
-    # snippetContent = '{:1.1e}'.format(errTol)
-    # unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    snippetName = name + "PassFailMsg"
+    snippetContent = passFailMsg
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    print "\n", passFailMsg
 
     #write pytest parameters to AutoTex folder
     # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"
