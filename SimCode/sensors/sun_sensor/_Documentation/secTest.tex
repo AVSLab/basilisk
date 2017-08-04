@@ -1,0 +1,80 @@
+\section{Test Description and Success Criteria}
+The Coarse Sun Sensor Test, test\_coarseSunSensor.py, contains ten tests. The simulation is set up with only the coarse sun sensor(s) and made-up messages to simulation spacecraft, sun, and eclipse information. The spacecraft is in a convenient attitude relative to the sun and rotates all of the sensors in a full circle past the sun.
+\begin{enumerate}
+	\item\textbf{Basic Functionality}: A single sensor is run with minimal modifications and compared to a cosine.
+	\item\textbf{Eclipse}: A single sensor is run with an eclipse simulated and compared to an eclipse factored cosine.
+	\item\textbf{Field of View}: A single sensor is run with a smaller field of view and compared to a clipped cosine.
+	\item\textbf{Kelly Factor}: A single sensor is run with a Kelly factor input and compared to a modified cosine.
+	\item\textbf{Scale Factor}: A single sensor is run with a scale factor and compared to a scaled cosine.
+	\item\textbf{Bias}: A single sensor is run with a bias and compared to a modified cosine.
+	\item\textbf{Noise}: A single sensor is run with noise and the standard deviation of that noise is compared to the input standard deviation.
+	\item\textbf{Albedo}: A single sensor is run with an albedo input and shown to be no different than the standard cosine truth value. This is done because there is some albedo functionality programmed into the module but it should be inactive at this time.
+	\item\textbf{Combined}: All of the inputs above are run on a single simulation. The expected result without noise is subtracted from the result. Then, the standard deviation of the noise. is compared to the expected standard deviation.
+	\item\textbf{Constellation}: Two constellations of sensors are set up using various set up methods and simulated with a clean signal. The two constellations are tested to be identical to one another.
+\end{enumerate}
+
+
+\section{Test Parameters}
+
+Pytest runs the following cases (numbered as above) when it is called for this test:
+	\begin{table}[htbp]
+	\caption{Error tolerance for each test.}
+	\label{tab:errortol}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c | c | c | c | c | c | c | c } % Column formatting, 
+		\hline
+		\textbf{Test}& \textbf{useConstellation}& \textbf{visibilityFactor}& \textbf{fov}& \textbf{kelly}& \textbf{scaleFactor}& \textbf{bias}& \textbf{noiseStd}& \textbf{albedoValue}& \textbf{errTol}\\ \hline
+		1      & \input{AutoTex/plainUseConstellation}&\input{AutoTex/plainVisibilityFactor}&\input{AutoTex/plainFov}&\input{AutoTex/plainKelly}&\input{AutoTex/plainScaleFactor}&\input{AutoTex/plainBias}&\input{AutoTex/plainNoiseStd}&\input{AutoTex/plainAlbedoValue}&\input{AutoTex/plainErrTol}	   \\ \hline
+		2	& \input{AutoTex/eclipseUseConstellation}&\input{AutoTex/eclipseVisibilityFactor}&\input{AutoTex/eclipseFov}&\input{AutoTex/eclipseKelly}&\input{AutoTex/eclipseScaleFactor}&\input{AutoTex/eclipseBias}&\input{AutoTex/eclipseNoiseStd}&\input{AutoTex/eclipseAlbedoValue}&\input{AutoTex/eclipseErrTol}	   \\ \hline
+		3	& \input{AutoTex/fieldOfViewUseConstellation}&\input{AutoTex/fieldOfViewVisibilityFactor}&\input{AutoTex/fieldOfViewFov}&\input{AutoTex/fieldOfViewKelly}&\input{AutoTex/fieldOfViewScaleFactor}&\input{AutoTex/fieldOfViewBias}&\input{AutoTex/fieldOfViewNoiseStd}&\input{AutoTex/fieldOfViewAlbedoValue}&\input{AutoTex/fieldOfViewErrTol}	   \\ \hline
+		4      & \input{AutoTex/kellyFactorUseConstellation}&\input{AutoTex/kellyFactorVisibilityFactor}&\input{AutoTex/kellyFactorFov}&\input{AutoTex/kellyFactorKelly}&\input{AutoTex/kellyFactorScaleFactor}&\input{AutoTex/kellyFactorBias}&\input{AutoTex/kellyFactorNoiseStd}&\input{AutoTex/kellyFactorAlbedoValue}&\input{AutoTex/kellyFactorErrTol}	   \\ \hline
+		5	& \input{AutoTex/scaleFactorUseConstellation}&\input{AutoTex/scaleFactorVisibilityFactor}&\input{AutoTex/scaleFactorFov}&\input{AutoTex/scaleFactorKelly}&\input{AutoTex/scaleFactorScaleFactor}&\input{AutoTex/scaleFactorBias}&\input{AutoTex/scaleFactorNoiseStd}&\input{AutoTex/scaleFactorAlbedoValue}&\input{AutoTex/scaleFactorErrTol}	   \\ \hline
+		6 & \input{AutoTex/biasUseConstellation}&\input{AutoTex/biasVisibilityFactor}&\input{AutoTex/biasFov}&\input{AutoTex/biasKelly}&\input{AutoTex/biasScaleFactor}&\input{AutoTex/biasBias}&\input{AutoTex/biasNoiseStd}&\input{AutoTex/biasAlbedoValue}&\input{AutoTex/biasErrTol}	   \\ \hline
+		7    & \input{AutoTex/deviationUseConstellation}&\input{AutoTex/deviationVisibilityFactor}&\input{AutoTex/deviationFov}&\input{AutoTex/deviationKelly}&\input{AutoTex/deviationScaleFactor}&\input{AutoTex/deviationBias}&\input{AutoTex/deviationNoiseStd}&\input{AutoTex/deviationAlbedoValue}&\input{AutoTex/deviationErrTol}	   \\ \hline
+		8	& \input{AutoTex/albedoUseConstellation}&\input{AutoTex/albedoVisibilityFactor}&\input{AutoTex/albedoFov}&\input{AutoTex/albedoKelly}&\input{AutoTex/albedoScaleFactor}&\input{AutoTex/albedoBias}&\input{AutoTex/albedoNoiseStd}&\input{AutoTex/albedoAlbedoValue}&\input{AutoTex/albedoErrTol}	   \\ \hline
+		9	& \input{AutoTex/combinedUseConstellation}&\input{AutoTex/combinedVisibilityFactor}&\input{AutoTex/combinedFov}&\input{AutoTex/combinedKelly}&\input{AutoTex/combinedScaleFactor}&\input{AutoTex/combinedBias}&\input{AutoTex/combinedNoiseStd}&\input{AutoTex/combinedAlbedoValue}&\input{AutoTex/combinedErrTol}	   \\ \hline
+		10    & \input{AutoTex/constellationUseConstellation}&\input{AutoTex/constellationVisibilityFactor}&\input{AutoTex/constellationFov}&\input{AutoTex/constellationKelly}&\input{AutoTex/constellationScaleFactor}&\input{AutoTex/constellationBias}&\input{AutoTex/constellationNoiseStd}&\input{AutoTex/constellationAlbedoValue}&\input{AutoTex/constellationErrTol}	   \\ \hline
+	\end{tabular}
+\end{table}
+
+\section{Test Results}
+The results of each test are shown in the table below. If a test did not pass, an error message is included.
+
+\begin{table}[H]
+	\caption{Test results.}
+	\label{tab:results}
+	\centering \fontsize{10}{10}\selectfont
+	\begin{tabular}{ c | c | c } % Column formatting, 
+		\hline
+		\textbf{Test} 				      & \textbf{Pass/Fail} 						   		   		 & \textbf{Notes} 									        \\ \hline
+		1	   			  	&\input{AutoTex/plainPassFailMsg}      	  &\input{AutoTex/plainFailMsg} 	        \\ \hline
+	
+	\end{tabular}
+\end{table}
+
+\subsection{Unit Test Table Results}
+To automatically create a unit test table to include in the documentation, use the command:
+\begin{verbatim}
+unitTestSupport.writeTableLaTeX(
+tableName,
+tableHeaders,
+caption,
+dataMatrix,
+path)
+\end{verbatim}
+
+
+
+
+\subsection{Unit Test Figure Results}
+If figures and plots are generated in the python unit tests, these can be also automatically included in the unit test documentation.  This is achieved with the command:
+\begin{verbatim}
+unitTestSupport.writeFigureLaTeX(
+"testPlot",
+"Illustration of Sample Plot",
+plt,
+"width=0.5\\textwidth",
+path)
+\end{verbatim}
+
+

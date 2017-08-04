@@ -309,7 +309,7 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
             testFailCount += 1
 
     if testFailCount == 0:
-        colorText = 'Forest Green'
+        colorText = '"Forest Green"'
         passFailText = "Passed: " + name + "."
     else:
         colorText = 'Red'
@@ -323,9 +323,47 @@ def run(show_plots, useConstellation, visibilityFactor, fov, kelly, scaleFactor,
     unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
     print "\n", passFailText
 
-    snippetName = name + "Tolerance"
-    snippetContent = '{:1.1e}'.format(errTol)
-    unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+    # snippetName = name + "Tolerance"
+    # snippetContent = '{:1.1e}'.format(errTol)
+    # unitTestSupport.writeTeXSnippet(snippetName, snippetContent, path)
+
+    #write pytest parameters to AutoTex folder
+    # "useConstellation, visibilityFactor, fov, kelly, scaleFactor, bias, noiseStd, albedoValue, errTol, name, zLevel, lineWide"
+    useConstellationSnippetName = name + "UseConstellation"
+    useConstellationSnippetContent = str(useConstellation)
+    unitTestSupport.writeTeXSnippet(useConstellationSnippetName, useConstellationSnippetContent, path)
+
+    visibilityFactorSnippetName = name + "VisibilityFactor"
+    visibilityFactorSnippetContent = '{:1.2f}'.format(visibilityFactor)
+    unitTestSupport.writeTeXSnippet(visibilityFactorSnippetName, visibilityFactorSnippetContent, path)
+
+    fovSnippetName = name + "Fov"
+    fovSnippetContent = '{:1.4f}'.format(fov)
+    unitTestSupport.writeTeXSnippet(fovSnippetName, fovSnippetContent, path)
+
+    kellySnippetName = name + "Kelly"
+    kellySnippetContent = '{:1.2f}'.format(kelly)
+    unitTestSupport.writeTeXSnippet(kellySnippetName, kellySnippetContent, path)
+
+    scaleFactorSnippetName = name + "ScaleFactor"
+    scaleFactorSnippetContent = '{:1.2f}'.format(scaleFactor)
+    unitTestSupport.writeTeXSnippet(scaleFactorSnippetName, scaleFactorSnippetContent, path)
+
+    biasSnippetName = name + "Bias"
+    biasSnippetContent = '{:1.2f}'.format(bias)
+    unitTestSupport.writeTeXSnippet(biasSnippetName, biasSnippetContent, path)
+
+    noiseStdSnippetName = name + "NoiseStd"
+    noiseStdSnippetContent = '{:1.2f}'.format(noiseStd)
+    unitTestSupport.writeTeXSnippet(noiseStdSnippetName, noiseStdSnippetContent, path)
+
+    albedoValueSnippetName = name + "AlbedoValue"
+    albedoValueSnippetContent = '{:1.0f}'.format(albedoValue)
+    unitTestSupport.writeTeXSnippet(albedoValueSnippetName, albedoValueSnippetContent, path)
+
+    errTolSnippetName = name + "ErrTol"
+    errTolSnippetContent = '{:1.1e}'.format(errTol)
+    unitTestSupport.writeTeXSnippet(errTolSnippetName, errTolSnippetContent, path)
 
     return [testFailCount, ''.join(testMessages)]
 
