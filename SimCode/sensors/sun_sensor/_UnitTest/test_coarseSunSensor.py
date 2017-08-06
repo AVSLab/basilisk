@@ -24,8 +24,8 @@
 #
 # Purpose:  Test the proper function of the coarse sun sensor (css) module.
 #           For basic functionality, results are compared to simple truth values calculated using np.cos().
-#           For noise testing, noiseless truth values are subject from the output and the standard deviation is compared
-#           to the input standard devation.
+#           For noise testing, noiseless truth values are subtracted from the output and the standard deviation is compared
+#           to the input standard deviation.
 #           For css constellation set up, two identical constellations are set up with different methods and compared to
 #           each other
 # Creation Date:  May. 31, 2017
