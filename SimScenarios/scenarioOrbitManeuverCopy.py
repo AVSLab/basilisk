@@ -236,7 +236,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     earth.isCentralBody = True  # ensure this is the central gravitational body
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector([earth])
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
