@@ -59,7 +59,7 @@ import astroFunctions
 # import simulation related support
 import spacecraftPlus
 import gravityEffector
-import gravBodyUtility
+import simIncludeGravBody
 import pyswice
 
 
@@ -318,7 +318,7 @@ def run(doUnitTests, show_plots, scCase):
     scSim.AddModelToTask(simTaskName, scObject, None, 1)
 
     # setup Gravity Bodies
-    gravFactory = gravBodyUtility.gravBodyFactory()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
     gravBodies = gravFactory.createBodies(['earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter"])
     gravBodies['earth'].isCentralBody = True
     # Other possible ways to access specific gravity bodies include the below

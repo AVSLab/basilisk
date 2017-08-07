@@ -61,7 +61,7 @@ import orbitalMotion
 
 # import simulation related support
 import spacecraftPlus
-import gravBodyUtility
+import simIncludeGravBody
 
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
@@ -231,7 +231,7 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # setup Gravity Body
-    gravFactory = gravBodyUtility.gravBodyFactory()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
     earth = gravFactory.createEarth()
     earth.isCentralBody = True  # ensure this is the central gravitational body
 

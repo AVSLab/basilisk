@@ -204,8 +204,6 @@ class gravBodyFactory(object):
                 The absolute path to the Basilisk source directory (default '').
             time : string
                 The time string.
-            planets : array_like
-                Planet name strings. If argument not supplied
             kwargs :
 
             Other Parameters
