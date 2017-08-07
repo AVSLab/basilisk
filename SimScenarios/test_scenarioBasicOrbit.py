@@ -176,7 +176,12 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #     planet.isCentralBody = True          # ensure this is the central gravitational body
 #~~~~~~~~~~~~~~~~~
 # The gravFactor() class stores the Earth gravitational object within the class, but it also returns a
-# handler to this gravitational object as a convenience.
+# handler to this gravitational object as a convenience.  The celestial object position and velocity
+# vectors are all defaulted to zero values.  If non-zero values are required, this can be manually
+# overriden.  If multiple bodies are simulated, then their positions can be
+# dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
+# done via a SPICE object.
+#
 # If extra customization is required, see the createEarth() macro to change additional values.
 # For example, the spherical harmonics are turned off by default.  To engage them, the following code
 # is used
@@ -216,20 +221,6 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # state effectors such as hinged panels, fuel slosh, imbalanced reaction wheels, etc., then the points Bc and C would
 # not be the same.  Thus, in this simple simulation the body fixed point B and spacecraft center of mass are
 # identical.
-#
-# Finally, the planet ephemeris data must be written to a message.  In this simulation the planet is held at
-# a fixed location with zero position and velocity coordinates, so this message is not updated.
-# If the planets move with time, such as with the SPICE
-# functions, then this message can be written dynamically as well.
-#~~~~~~~~~~~~~~~~~{.py}
-#     simIncludeGravBody.generateCentralBodyEphemerisMsg(scSim.TotalSim, simProcessName, planet)
-#~~~~~~~~~~~~~~~~~
-# Note that this latter default planet ephemeris call should only be used if a single gravitational body
-# is being simulated.  It both writes the required planet simulation ephemeris message, as well as a
-# Visualization message specifying about which celestial object the motion should be shown.
-#  If multiple bodies are simulated, then their positions would need to be
-# dynamically updated.  See [test_scenarioOrbitMultiBody.py](@ref scenarioOrbitMultiBody) to learn how this is
-# done via a SPICE object.
 #
 # Before the simulation is ready to run, it must be initialized.  The following code uses a convenient macro routine
 # which initializes each BSK module (run self init, cross init and reset) and clears the BSK logging stack.
@@ -458,10 +449,7 @@ def run(doUnitTests, show_plots, orbitCase, useSphericalHarmonics, planetCase):
     samplingTime = simulationTime / (numDataPoints-1)
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-    #
-    # create simulation messages
-    #
-    # simIncludeGravBody.generateCentralBodyEphemerisMsg(scSim.TotalSim, simProcessName, planet)
+
 
     #
     #   initialize Simulation:  This function clears the simulation log, and runs the self_init()
