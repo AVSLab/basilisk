@@ -78,7 +78,7 @@ namespace std {
 %include "sys_model.h"
 %include "sys_process.h"
 %include "sys_interface.h"
-%include "message_logger.h"
+%include "../utilities/message_logger.h"
 %include "../messaging/system_messaging.h"
 %include "../utilities/linearAlgebra.h"
 %include "../utilities/rigidBodyKinematics.h"
