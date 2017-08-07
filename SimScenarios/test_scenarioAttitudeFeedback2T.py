@@ -273,7 +273,7 @@ def run(doUnitTests, show_plots, useUnmodeledTorque, useIntGain):
     fswProcess.addTask(scSim.CreateNewTask(fswTaskName, fswTimeStep))
 
     # if this scenario is to interface with the BSK Viz, uncomment the following lines
-    # unitTestSupport.enableVisualization(scSim, dynProcess)
+    # unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 
 
     #
