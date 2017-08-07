@@ -86,8 +86,13 @@ GEN_SIZEOF(THROperationSimMsg)
 GEN_SIZEOF(THROutputSimMsg)
 %include "thrTimePairSimMsg.h"
 GEN_SIZEOF(THRTimePairSimMsg)
+<<<<<<< e7e53bb99b59ae90ebe76d7c6f2e61822fb739b2
 %include "hingedRigidBodySimMsg.h"
 GEN_SIZEOF(HingedRigidBodySimMsg)
+=======
+%include "PyBatteryOutMsg.h"
+GEN_SIZEOF(PyBatteryOutMsg)
+>>>>>>> [WIP] Added simMessages to simulationBaseClass so that we can access message structs for a python module.
 
 %pythoncode %{
     import sys
