@@ -58,7 +58,6 @@ import astroFunctions
 
 # import simulation related support
 import spacecraftPlus
-import gravityEffector
 import simIncludeGravBody
 import pyswice
 
@@ -325,7 +324,7 @@ def run(doUnitTests, show_plots, scCase):
     #   earth = gravBodies['earth']
     #   earth = gravFactory.createEarth()
     gravBodies['earth'].useSphericalHarmParams = True
-    gravityEffector.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S.txt'
+    simIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S.txt'
                                      , gravBodies['earth'].spherHarm
                                      , 100
                                      )

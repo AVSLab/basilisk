@@ -309,3 +309,27 @@ def generateVisCentralBodyEphemerisMsg(simulation, processName, bodyName):
     messageSize = ephemData.getStructSize()
     simulation.CreateNewMessage(processName, msgName, messageSize, 2, "SpicePlanetStateSimMsg")
     simulation.WriteMessageData(msgName, messageSize, 0, ephemData)
+
+
+def loadGravFromFile(fileName, spherHarm, maxDeg=2):
+    """
+            Load the gravitational body spherical harmonics coefficients from a file.
+
+            Parameters
+            ----------
+            fileName : string
+                The full path to the specified data file.
+            spherHarm:
+                The spherical harmonics container of the gravity body.
+            maxDeg : integer
+                maximum degree of spherical harmonincs to load
+
+
+            Notes
+            -----
+            This function is a convenience utility for loading in the spherical harmonics
+            coefficients from a data file.  The default harmonic degree is 2 unless specified.
+            Note that this function calls the gravityEffector function loadGravFromFile().
+    """
+    gravityEffector.loadGravFromFile(fileName, spherHarm, maxDeg)
+
