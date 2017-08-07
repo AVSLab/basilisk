@@ -57,7 +57,7 @@ import macros
 import orbitalMotion
 # import simulation related support
 import spacecraftPlus
-import simIncludeGravity
+import simIncludeGravBody
 import svIntegrators
 
 
@@ -192,14 +192,14 @@ def run(doUnitTests, show_plots, integratorCase):
     scSim.AddModelToTask(simTaskName, scObject)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
 
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True  # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     #   setup orbit and simulation time
@@ -233,10 +233,6 @@ def run(doUnitTests, show_plots, integratorCase):
     samplingTime = simulationTime / numDataPoints
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
-    #
-    # create simulation messages
-    #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, simProcessName)
 
     #
     #   initialize Simulation
@@ -272,7 +268,7 @@ def run(doUnitTests, show_plots, integratorCase):
     fig = plt.gcf()
     ax = fig.gca()
     planetColor= '#008800'
-    planetRadius = simIncludeGravity.gravBodyList[-1].radEquator/1000
+    planetRadius = earth.radEquator/1000
     ax.add_artist(plt.Circle((0, 0), planetRadius, color=planetColor))
     # draw the actual orbit
     rData = []

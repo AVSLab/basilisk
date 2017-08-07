@@ -64,7 +64,7 @@ import sim_model
 
 # import simulation related support
 import spacecraftPlus
-import simIncludeGravity
+import simIncludeGravBody
 import simIncludeRW
 import simple_nav
 import reactionWheelStateEffector
@@ -341,15 +341,15 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     scSim.AddModelToTask(scSim.simTaskPreControlName, scObject, None, 1)
 
     # clear prior gravitational body and SPICE setup definitions
-    simIncludeGravity.clearSetup()
+    gravFactory = simIncludeGravBody.gravBodyFactory()
 
     # setup Earth Gravity Body
-    simIncludeGravity.addEarth()
-    simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-    mu = simIncludeGravity.gravBodyList[-1].mu
+    earth = gravFactory.createEarth()
+    earth.isCentralBody = True  # ensure this is the central gravitational body
+    mu = earth.mu
 
     # attach gravity model to spaceCraftPlus
-    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 
     #
     # add RW devices
@@ -499,7 +499,6 @@ def executeMainSimRun(scSim, show_plots, useJitterSimple, useRWVoltageIO):
     #
     # create simulation messages
     #
-    simIncludeGravity.addDefaultEphemerisMsg(scSim.TotalSim, scSim.simPreControlProc)
 
     # create the FSW vehicle configuration message
     vehicleConfigOut = fswMessages.VehicleConfigFswMsg()
