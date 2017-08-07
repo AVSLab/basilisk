@@ -268,11 +268,6 @@ def run(doUnitTests, show_plots, maneuverCase):
     scSim.TotalSim.logThisMessage(scObject.scStateOutMsgName, samplingTime)
 
     #
-    # create single message for earth gravBody
-    #
-    simIncludeGravBody.generateCentralBodyEphemerisMsg(scSim.TotalSim, simProcessName, earth)
-
-    #
     #   initialize Simulation
     #
     scSim.InitializeSimulationAndDiscover()
