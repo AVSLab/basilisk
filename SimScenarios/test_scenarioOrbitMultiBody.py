@@ -130,34 +130,29 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # For this scenario scripts, it is critical that the Spice object task is evaluated
 # before the spacecraftPlus() model.  Thus, below the Spice object is added with a higher priority task.
 #
-# The first step to adding multiple gravitational bodies is to clear any prior gravity body
-# settings using
+# The first step to create a fresh gravity body factor class through
 # ~~~~~~~~~~~~~~~~~{.py}
-#   simIncludeGravity.clearSetup()
+#   gravFactory = simIncludeGravBody.gravBodyFactory()
 # ~~~~~~~~~~~~~~~~~
-# This is required if the script is run multiple times using 'py.test' or in Monte-Carlo runs.
-# The Earth is included in this scenario with the
+# This clears out the list of gravitational bodies, especially ifthe script is
+# run multiple times using 'py.test' or in Monte-Carlo runs.
+# Next a series of gravitational bodies are included.  Note that it is convenient to include them as a
+# list of SPICE names.  The Earth is included in this scenario with the
 # spherical harmonics turned on.  Note that this is true for both spacecraft simulations.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       simIncludeGravity.addEarth()
-#       simIncludeGravity.gravBodyList[-1].isCentralBody = True          # ensure this is the central gravitational body
-#       simIncludeGravity.gravBodyList[-1].useSphericalHarmParams = True
-#       gravityEffector.loadGravFromFile(splitPath[0]+'/Basilisk/External/LocalGravData/GGM03S.txt'
-#                                      , simIncludeGravity.gravBodyList[-1].spherHarm
-#                                      ,100
-#                                      )
+#    gravBodies = gravFactory.createBodies(['earth', 'mars barycenter', 'sun', 'moon', "jupiter barycenter"])
+#    gravBodies['earth'].isCentralBody = True
+#    gravBodies['earth'].useSphericalHarmParams = True
+#    imIncludeGravBody.loadGravFromFile(bskPath + 'External/LocalGravData/GGM03S.txt'
+#                                     , gravBodies['earth'].spherHarm
+#                                     , 100
+#                                     )
 # ~~~~~~~~~~~~~~~~~
-# Next, this the gravity support macros are used to create the other planetary bodies.  At the end the
-# list of gravitational bodies is passed along the gravity field setting of the spacecraftPlus() object.
+# The configured gravitational bodies are addes to the spacecraft dynamics with the usual command:
 # ~~~~~~~~~~~~~~~~~{.py}
-#       simIncludeGravity.addSun()
-#       simIncludeGravity.addMoon()
-#       simIncludeGravity.addMars()
-#       simIncludeGravity.addJupiter()
-#
-#       # attach gravity model to spaceCraftPlus
-#       scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
+#    scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(gravFactory.gravBodies.values())
 # ~~~~~~~~~~~~~~~~~
+#
 # Next, the default SPICE support module is created and configured.  The first step is to store
 # the date and time of the start of the simulation.
 # ~~~~~~~~~~~~~~~~~{.py}
@@ -168,7 +163,7 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # The following is a support macro that creates a `spiceObject` instance, and fills in typical
 # default parameters.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       simIncludeGravity.addSpiceInterface(bskPath, timeInitString)
+#       gravFactory.createSpiceInterface(bskPath + 'External/EphemerisData/', timeInitString)
 # ~~~~~~~~~~~~~~~~~
 # Next the SPICE module is costumized.  The first step is to specify the zeroBase.  This is the inertial
 # origin relative to which all spacecraft message states are taken.  The simulation defaults to all
@@ -176,32 +171,44 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # or SSB for short.  The spacecraftPlus() state output message is relative to this SBB frame by default.  To change
 # this behavior, the zero based point must be redefined from SBB to another body.  In this simulation we use the Earth.
 # ~~~~~~~~~~~~~~~~~{.py}
-#   simIncludeGravity.spiceObject.zeroBase = 'Earth'
+#   gravFactory.spiceObject.zeroBase = 'Earth'
 # ~~~~~~~~~~~~~~~~~
-# The next customization is importing spacecraft particular SPICE ephemeris data.  This is done with
-# Finally, the spacecraftPlus() is added to the task list.
+# Finally, the SPICE object is added to the simulation task list.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       if scCase is 'NewHorizons':
-#           scEphemerisName = 'nh_pred_od077.bsp'
-#           scSpiceName = 'NEW HORIZONS'
-#           vizPlanetName = "sun"
-#       else:   # default case
-#           scEphemerisName = 'hst_edited.bsp'
-#           scSpiceName = 'HUBBLE SPACE TELESCOPE'
-#           mu = muEarth
-#           vizPlanetName = "earth"
-#       pyswice.furnsh_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
+#       scSim.AddModelToTask(simTaskName, gravFactory.spiceObject, None, -1)
 # ~~~~~~~~~~~~~~~~~
-# Finally, the SPICE object is added to the simulation task list, but with a higher priority
-# than the scObject model execution added earlier.
+# To unload the loaded SPICE kernels, use
 # ~~~~~~~~~~~~~~~~~{.py}
-#       scSim.AddModelToTask(simTaskName, simIncludeGravity.spiceObject, None, 2)
+# gravFactory.unloadSpiceKernels()
 # ~~~~~~~~~~~~~~~~~
-# If this simulation is to interface with the Qt Visualization, then the central planet
-# message must be specified through:
+# This will unload all the kernels that the gravital body factory loaded earlier.
+#
+# Next we would like to import spacecraft specific SPICE ephemeris data into the python enviroment.  This is done
+# such that the BSK computed trajectories can be compared in python with the equivalent SPICE directories.
+# Note that this python SPICE setup is different from the BSK SPICE setup that was just completed.  As a result
+# it is required to load in all the required SPICE kernels.  The following code is used to load either
+# spacecraft data.
 # ~~~~~~~~~~~~~~~~~{.py}
-#       # write Viz display body message
-#       simIncludeGravity.writeVizCentralPlanetMessage(scSim.TotalSim, simProcessName, vizPlanetName)
+#     if scCase is 'NewHorizons':
+#        scEphemerisFileName = 'nh_pred_od077.bsp'
+#         scSpiceName = 'NEW HORIZONS'
+#         vizPlanetName = "sun"
+#     else:  # default case
+#         scEphemerisFileName = 'hst_edited.bsp'
+#         scSpiceName = 'HUBBLE SPACE TELESCOPE'
+#         vizPlanetName = "earth"
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + scEphemerisFileName)  # Hubble Space Telescope data
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+#     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
+# ~~~~~~~~~~~~~~~~~
+# To unload the SPICE kernels loaded into the Python environment, use
+# ~~~~~~~~~~~~~~~~~{.py}
+#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de430.bsp')  # solar system bodies
+#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'naif0011.tls')  # leap second file
+#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
+#     pyswice.unload_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 # ~~~~~~~~~~~~~~~~~
 #
 #
@@ -225,15 +232,6 @@ def test_scenarioOrbitMultiBodyCopy(show_plots, scCase):
 # the planets ephemeris message is being set to the default messages which zero's both the position and orientation
 # states.  However, if Spice is used to setup the bodies, the zeroBase state must be carefully considered.
 #
-# After the simulation has run, and Spice is used to load in some libraries, they should be unloaded again using
-# the following code:
-# ~~~~~~~~~~~~~~~~~{.py}
-#       simIncludeGravity.unloadDefaultSpiceLibraries()
-#       pyswice.unload_c(simIncludeGravity.spiceObject.SPICEDataPath + scEphemerisName)
-# ~~~~~~~~~~~~~~~~~
-# The default libraries loaded with `simIncludeGravity.addSpiceInterface()` unloaded with
-# `simIncludeGravity.unloadDefaultSpiceLibraries()`.  Any custom libraries, such as those of particular
-# spacercraft, must be unloaded individually as shown.
 #
 # Setup 1
 # -----
@@ -366,8 +364,6 @@ def run(doUnitTests, show_plots, scCase):
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'de-403-masses.tpc')  # solar system masses
     pyswice.furnsh_c(gravFactory.spiceObject.SPICEDataPath + 'pck00010.tpc')  # generic Planetary Constants Kernel
 
-    # Generate and write to the message system the Vis central body message
-    simIncludeGravBody.generateVisCentralBodyEphemerisMsg(scSim.TotalSim, simProcessName, vizPlanetName)
 
     #
     #   Setup spacecraft initial states
@@ -581,7 +577,7 @@ def run(doUnitTests, show_plots, scCase):
 # stand-along python script
 #
 if __name__ == "__main__":
-    run(True,  # do unit tests
+    run(False,  # do unit tests
         True,  # show_plots
-        'NewHorizons'  # 'Hubble' or 'NewHorizons'
+        'Hubble'  # 'Hubble' or 'NewHorizons'
         )
