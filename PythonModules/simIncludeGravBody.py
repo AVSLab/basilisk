@@ -244,39 +244,6 @@ class gravBodyFactory(object):
         return
 
 
-def generateCentralBodyEphemerisMsg(simulation, processName, gravBody):
-    """
-        Create a SpicePlanetStateSimMsg data structure and output to the message system.
-
-        Parameters
-        ----------
-        simulation : SimModel
-            The SimModel object of the basilisk simulation.
-        processName : ProcessBaseClass
-            Simulation process in which to create and write the message.
-        gravBody : GravBodyData
-            A gravity body for which the ephemeris message is to be created and written.
-
-        Notes
-        -----
-        This function is a convenience utility for creating and writing a single spice ephemeris
-        message for a simulation using a single gravity body (E.g. LEO spacecraft scenario). Doing
-        so precludes the need to instantiate and add to a task group, a basilisk spice module.
-    """
-
-    ephemData = spice_interface.SpicePlanetStateSimMsg()
-    ephemData.J2000Current = 0.0
-    ephemData.PositionVector = [0.0, 0.0, 0.0]
-    ephemData.VelocityVector = [0.0, 0.0, 0.0]
-    ephemData.J20002Pfix = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
-    ephemData.J20002Pfix_dot = [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-    ephemData.PlanetName = gravBody.bodyInMsgName
-    msgName = gravBody.bodyInMsgName
-    messageSize = ephemData.getStructSize()
-    simulation.CreateNewMessage(processName, msgName, messageSize, 2, 'SpicePlanetStateSimMsg')
-    simulation.WriteMessageData(msgName, messageSize, 0, ephemData)
-    return
-
 
 def generateVisCentralBodyEphemerisMsg(simulation, processName, bodyName):
     """
