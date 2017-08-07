@@ -20,7 +20,6 @@
 
 import gravityEffector
 import spice_interface
-import astroFunctions
 
 
 class gravBodyFactory(object):
@@ -69,35 +68,17 @@ class gravBodyFactory(object):
                 self.createNeptune()
             elif name == "sun":
                 self.createSun()
+            else:
+                print "gravBody " + name + " not found in gravBodyUtilities.py"
         return self.gravBodies
 
-    def createEarth(self):
-        earth = gravityEffector.GravBodyData()
-        earth.bodyInMsgName = "earth_planet_data"
-        earth.outputMsgName = "earth_display_frame_data"
-
-        earth.mu = 0.3986004415E+15  # meters^3/s^2
-        earth.radEquator = 6378136.6  # meters
-
-        # earth.mu = astroFunctions.mu_E*1000*1000*1000  # meters^3/s^2
-        # earth.radEquator = astroFunctions.E_radius*1000  # meters
-
-        earth.isCentralBody = False
-        earth.useSphericalHarmParams = False
-        self.gravBodies['earth'] = earth
-        return earth
 
     def createSun(self):
         sun = gravityEffector.GravBodyData()
         sun.bodyInMsgName = "sun_planet_data"
         sun.outputMsgName = "sun_display_frame_data"
-
         sun.mu = 1.32712440018E20  # meters^3/s^2
         sun.radEquator = 695508000.0  # meters
-
-        # sun.mu = astroFunctions.mu_S*1000*1000*1000  # meters^3/s^2
-        # sun.radEquator = astroFunctions.S_radius*1000  # meters
-
         sun.isCentralBody = False
         sun.useSphericalHarmParams = False
         self.gravBodies['sun'] = sun
@@ -107,8 +88,8 @@ class gravBodyFactory(object):
         mercury = gravityEffector.GravBodyData()
         mercury.bodyInMsgName = "mercury_planet_data"
         mercury.outputMsgName = "mercury_display_frame_data"
-        mercury.mu = astroFunctions.mu_M*1000*1000*1000  # meters^3/s^2
-        mercury.radEquator = astroFunctions.M_radius*1000  # meters
+        mercury.mu = 4.28283100e13  # meters^3/s^2
+        mercury.radEquator = 2439700.0  # meters
         mercury.isCentralBody = False
         mercury.useSphericalHarmParams = False
         self.gravBodies['mercury'] = mercury
@@ -118,12 +99,23 @@ class gravBodyFactory(object):
         venus = gravityEffector.GravBodyData()
         venus.bodyInMsgName = "venus_planet_data"
         venus.outputMsgName = "venus_display_frame_data"
-        venus.mu = astroFunctions.mu_V*1000*1000*1000  # meters^3/s^2
-        venus.radEquator = astroFunctions.V_radius*1000  # meters
+        venus.mu = 3.24858599e14  # meters^3/s^2
+        venus.radEquator = 6051800.0  # meters
         venus.isCentralBody = False
         venus.useSphericalHarmParams = False
         self.gravBodies['venus'] = venus
         return venus
+
+    def createEarth(self):
+        earth = gravityEffector.GravBodyData()
+        earth.bodyInMsgName = "earth_planet_data"
+        earth.outputMsgName = "earth_display_frame_data"
+        earth.mu = 0.3986004415E+15  # meters^3/s^2
+        earth.radEquator = 6378136.6  # meters
+        earth.isCentralBody = False
+        earth.useSphericalHarmParams = False
+        self.gravBodies['earth'] = earth
+        return earth
 
     def createMoon(self):
         moon = gravityEffector.GravBodyData()
@@ -131,9 +123,6 @@ class gravBodyFactory(object):
         moon.outputMsgName = "moon_display_frame_data"
         moon.mu = 4.902799E12  # meters^3/s^2
         moon.radEquator = 1738100.0  # meters
-
-        # moon.mu = astroFunctions.mu_Moon*1000*1000*1000 # meters^3/s^2
-        # moon.radEquator = astroFunctions.Moon_radius*1000  # meters
         moon.isCentralBody = False
         moon.useSphericalHarmParams = False
         self.gravBodies['moon'] = moon
@@ -167,8 +156,6 @@ class gravBodyFactory(object):
         jupiter.outputMsgName = "jupiter_display_frame_data"
         jupiter.mu = 1.266865349093058E17  # meters^3/s^2
         jupiter.radEquator = 71492000.0  # meters
-        # jupiter.mu = astroFunctions.mu_J*1000*1000*1000  # meters^3/s^2
-        # jupiter.radEquator = astroFunctions.J_radius*1000  # meters
         jupiter.isCentralBody = False
         jupiter.useSphericalHarmParams = False
         self.gravBodies['jupiter barycenter'] = jupiter
@@ -178,8 +165,8 @@ class gravBodyFactory(object):
         saturn = gravityEffector.GravBodyData()
         saturn.bodyInMsgName = "saturn barycenter_planet_data"
         saturn.outputMsgName = "saturn_display_frame_data"
-        saturn.mu = astroFunctions.mu_Saturn*1000*1000*1000  # meters^3/s^2
-        saturn.radEquator = astroFunctions.Saturn_radius*1000 # meters
+        saturn.mu = 3.79395000E16  # meters^3/s^2
+        saturn.radEquator = 60268000.0  # meters
         saturn.isCentralBody = False
         saturn.useSphericalHarmParams = False
         self.gravBodies['saturn'] = saturn
@@ -189,8 +176,8 @@ class gravBodyFactory(object):
         uranus = gravityEffector.GravBodyData()
         uranus.bodyInMsgName = "uranus barycenter_planet_data"
         uranus.outputMsgName = "uranus_display_frame_data"
-        uranus.mu = astroFunctions.mu_U*1000*1000*1000  # meters^3/s^2
-        uranus.radEquator = astroFunctions.U_radius*1000  # meters
+        uranus.mu = 5.79396566E15  # meters^3/s^2
+        uranus.radEquator = 25559000.0  # meters
         uranus.isCentralBody = False
         uranus.useSphericalHarmParams = False
         self.gravBodies['uranus'] = uranus
@@ -200,8 +187,8 @@ class gravBodyFactory(object):
         neptune = gravityEffector.GravBodyData()
         neptune.bodyInMsgName = "neptune barycenter_planet_data"
         neptune.outputMsgName = "neptune_display_frame_data"
-        neptune.mu = astroFunctions.mu_N*1000*1000*1000  # meters^3/s^2
-        neptune.radEquator = astroFunctions.N_radius*1000  # meters
+        neptune.mu = 6.83509920E15  # meters^3/s^2
+        neptune.radEquator = 24764000.0  # meters
         neptune.isCentralBody = False
         neptune.useSphericalHarmParams = False
         self.gravBodies['neptune'] = neptune
