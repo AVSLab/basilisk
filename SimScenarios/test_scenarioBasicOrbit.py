@@ -125,11 +125,13 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 # If you wish to transmit the simulation data to the Qt Visualization, then uncomment the following
 # line (line 360 in the script) from the python scenario script.  If the Viz is running, and searching for a connection on
 # 127.0.0.1 (using Open Connection command from the File menu), the simulation is visualized in
-# realtime
+# realtime.  To enable this, uncomment line 360 in this tutorial script.
 #~~~~~~~~~~~~~~{.py}
-# unitTestSupport.enableVisualization(scSim, dynProcess)     (line 360 in the script)
+# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'earth')  # The Viz only support 'earth', 'mars', or 'sun'
 #~~~~~~~~~~~~~~
-# Note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
+# The current Qt based visualiztion is only able to show orbits about either Earth, Mars or the sun.
+# Be sure to match the celestial object name in the line above with the current simulation.
+# Further, note that by default the Viz is running in realtime mode with a 1x speed up factor.  This Viz
 # speed up factor can be increased in the Qt GUI by calling up the
 #
 #       View/Bottom Playback Controls
@@ -323,7 +325,11 @@ def test_scenarioBasicOrbit(show_plots, orbitCase, useSphericalHarmonics, planet
 #        )
 # ~~~~~~~~~~~~~
 # This case illustrates a circular Low Mars Orbit or LMO with a non-zero orbit
-# inclination.  In this case the Earth's spherical harmonics are turned on.  The
+# inclination.  If you wish to visualize this simulation, be sure to change the celestial object name in
+#~~~~~~~~~~~~~~{.py}
+# unitTestSupport.enableVisualization(scSim, dynProcess, simProcessName, 'mars')  # The Viz only support 'earth', 'mars', or 'sun'
+#~~~~~~~~~~~~~~
+# from 'earth' to 'mars'.  In this simulation setup the planet's spherical harmonics are turned on.  The
 # resulting position coordinates and semi-major axis time histories are shown below.
 # ![Inertial Position Coordinates History](Images/Scenarios/scenarioBasicOrbit1LEO0Mars.svg "Position history")
 # ![Perifocal Orbit Illustration](Images/Scenarios/scenarioBasicOrbit2LEO0Mars.svg "Orbit Illustration")
