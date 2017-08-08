@@ -28,6 +28,7 @@ path = os.path.dirname(os.path.abspath(filename))
 splitPath = path.split('SimCode')
 sys.path.append(splitPath[0] + '/modules')
 sys.path.append(splitPath[0] + '/PythonModules')
+sys.path.append(splitPath[0] + '/SimCode/dynamics/gravityEffector')
 
 import SimulationBaseClass
 import unitTestSupport  # general support file with common unit test functions
@@ -39,6 +40,7 @@ import sim_model
 import ctypes
 import pyswice
 import stateArchitecture
+from gravCoeffOps import loadGravFromFileToList
 
 # uncomment this line is this test is to be skipped in the global unit test run, adjust message as needed
 # @pytest.mark.skipif(conditionstring)
@@ -46,6 +48,8 @@ import stateArchitecture
 # @pytest.mark.xfail() # need to update how the RW states are defined
 # provide a unique test method name, starting with test_
 def test_gravityEffectorAllTest(show_plots):
+    [testResults, testMessage] = independentSphericalHarmonics(show_plots)
+    assert testResults < 1, testMessage
     [testResults, testMessage] = sphericalHarmonics(show_plots)
     assert testResults < 1, testMessage
     [testResults, testMessage] = singleGravityBody(show_plots)
