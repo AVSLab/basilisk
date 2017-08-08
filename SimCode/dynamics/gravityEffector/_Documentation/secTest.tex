@@ -8,6 +8,7 @@ This test verifies, via three checks, that the model is appropriately initialize
 			\item \underline{1.2} The second check verifies that the magnitude of the gravity being calculated is reasonable(i.e. between $9.7$ and $9.9$ $m/s^2$). \\
 			\item \underline{1.3} The final check ensures that the maximum degrees value is truly acting as a ceiling on the maximum number of degrees being used in the spherical harmonics algorithms. For example, if the maximum degrees value is set to 20, an attempt is made to call the spherical harmonics algorithms with a degrees value of 100 and another attempt is made with a degrees value of 20. The results are compared and should be equal due to the enforcement of the maximum degrees value.\\
 		\end{itemize}
+\subsection{Independent Spherical Harmonics Check} This test compares the Basilisk gravity module spherical harmonics acceleration output to an independently formulated python solution. Gravity is measured at an arbitrary point. Note that the independent solution has singularities at the poles that lead to minor divergences in total acceleration.
 \subsection{Single-Body Gravity Calculations} This test compares calculated gravity values around the Earth with ephemeris data from the Hubble telescope. The simulation begins shortly after 0200 UTC May 1, 2012 and carries on for two hours, evaluating the gravitational acceleration at two  second intervals.
 \subsection{Multi-Body Gravity Calculations} This test includes gravity effects from Earth, Mars, Jupiter, and the Sun. Calculations are verified by comparing against ephemeris data from the DAWN mission. The simulation begins at midnight, October 24th, 2008 and carries on for just under 22 minutes, evaluating the gravitational acceleration at two second intervals.
 
@@ -23,6 +24,7 @@ This section summarizes the  specific error tolerances for each test. Error tole
 		\hline
 		\textbf{Test}   							    & \textbf{Tolerated Error} 						  \\ \hline
 		Setup Test                           			 & \input{AutoTex/sphericalHarmonicsAccuracy}		   \\ \hline
+		Independent Spherical Harmonics Check  & \input{AutoTex/independentCheckAccuracy}		   \\ \hline
 		Single-Body Gravity						   & \input{AutoTex/singleBodyAccuracy}														   \\ \hline
 		Multi-Body Gravity 						   & \input{AutoTex/multiBodyAccuracy}	 		       \\ \hline
 	\end{tabular}
@@ -40,6 +42,7 @@ All checks within test\_gravityDynEffector.py passed as expected. Table \ref{tab
 		\hline
 		\textbf{Test} 				    & \textbf{Pass/Fail} 						   			           & \textbf{Notes} 									\\ \hline
 		Setup Test       			  	& \input{AutoTex/sphericalHarmonicsPassFail}     & \input{AutoTex/sphericalHarmonicsFailMsg}			 \\ \hline
+		Independent Spherical Harmonics Check  & \input{AutoTex/independentCheckPassFail}                 & \input{AutoTex/independentCheckFailMsg} \\ \hline
 		Single-Body Gravity		   	& \input{AutoTex/singleBodyPassFail}                 & \input{AutoTex/singleBodyFailMsg} \\ \hline
 		Multi-Body Gravity			 &\input{AutoTex/multiBodyPassFail}  			 	 &  \input{AutoTex/multiBodyFailMsg} 			   \\ \hline
 	\end{tabular}
