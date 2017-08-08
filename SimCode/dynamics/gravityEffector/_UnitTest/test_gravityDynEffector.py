@@ -155,6 +155,62 @@ def test_gravityEffectorAllTest(show_plots):
     [testResults, testMessage] = multiBodyGravity(show_plots)
     assert testResults < 1, testMessage
 
+def independentSphericalHarmonics(show_plots):
+    testCase = "independentCheck"
+    # The __tracebackhide__ setting influences pytest showing of tracebacks:
+    # the mrp_steering_tracking() function will not be shown unless the
+    # --fulltrace command line option is specified.
+    __tracebackhide__ = True
+
+    testFailCount = 0  # zero unit test result counter
+    testMessages = []  # create empty list to store test log messages
+
+    spherHarm = gravityEffector.SphericalHarmonics()
+
+    gravityEffector.loadGravFromFile(path + '/GGM03S.txt', spherHarm, 20)
+    gravCheck = computeGravityTo20([15000., 10000., 6378.1363E3])
+    spherHarm.initializeParameters()
+    gravOut = spherHarm.computeField([[15000.0], [10000.0], [(6378.1363) * 1.0E3]], 20, True)
+    gravOutMag = np.linalg.norm(gravOut)
+    gravCheckMag = np.linalg.norm(gravCheck)
+
+    accuracy = 1e-12
+    relative = (gravCheckMag-gravOutMag)/gravCheckMag
+    if abs(relative) > accuracy:
+        testFailCount += 1
+        testMessages.append("Failed independent spherical harmonics check")
+    snippetName = testCase + 'Accuracy'
+    snippetContent = '{:1.1e}'.format(accuracy)  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                    path)  # write formatted LATEX string to file to be used by auto-documentation.
+
+    if testFailCount == 0:
+        passFailText = 'PASSED'
+        print "PASSED: " + testCase
+        colorText = 'ForestGreen'  # color to write auto-documented "PASSED" message in in LATEX.
+        snippetName = testCase + 'FailMsg'
+        snippetContent = ""
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
+    else:
+        passFailText = 'FAILED'
+        colorText = 'Red'  # color to write auto-documented "FAILED" message in in LATEX
+        snippetName = testCase + 'FailMsg'
+        snippetContent = passFailText
+        for message in testMessages:
+            snippetContent += ". " + message
+        snippetContent += "."
+        unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                        path)  # write formatted LATEX string to file to be used by auto-documentation.
+    snippetName = testCase + 'PassFail'  # name of file to be written for auto-documentation which specifies if this test was passed or failed.
+    snippetContent = '\\textcolor{' + colorText + '}{' + passFailText + '}'  # write formatted LATEX string to file to be used by auto-documentation.
+    unitTestSupport.writeTeXSnippet(snippetName, snippetContent,
+                                    path)  # write formatted LATEX string to file to be used by auto-documentation.
+
+    # return fail count and join into a single string all messages in the list
+    # testMessage
+    return [testFailCount, ''.join(testMessages)]
+
 def sphericalHarmonics(show_plots):
     testCase = 'sphericalHarmonics'
     # The __tracebackhide__ setting influences pytest showing of tracebacks:
