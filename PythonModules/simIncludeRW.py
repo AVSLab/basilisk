@@ -31,289 +31,375 @@ sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import macros
-import unitTestSupport
 import simMessages
 
 
-# define RW model types
-BalancedWheels     = 0
-JitterSimple       = 1
-JitterFullyCoupled = 2
-
-class rwOptions:
-    RWModel = BalancedWheels
-    useRWfriction = False
-    useMinTorque = False
-    useMaxTorque = True
-    maxMomentum = 0.0
-    linearFrictionRatio = -1.0          # neg. value turns off this mode by default
 
 
-rwList = []
-options = rwOptions()
+class rwFactory(object):
+    def __init__(self):
+        self.BalancedWheels = 0
+        self.JitterSimple = 1
+        self.JitterFullyCoupled = 2
+        self.rwList = {}
+        self.maxMomentum = 0.0
+        self.RWModel = self.BalancedWheels
+        self.useRWfriction = False
+        self.useMinTorque = False
+        self.useMaxTorque = True
+        self.linearFrictionRatio = -1.0
+        self.Omega = 0.0
+        self.rWB_B = [0., 0., 0.]
 
-#
-#   This function is called to setup a RW device in python, and adds it to the of RW
-#   devices in rwList[].  This list is accessible from the parent python script that
-#   imported this rw library script, and thus any particular value can be over-ridden
-#   by the user.
-#
-#   The first 3 arguments are required, the 4th is optional to set the RW location.  This
-#   location is only used if the simple (oneway decoupled) RW jitter model is employed.
-#
-#   There are some RW options that can be changed.  The defaults are show in the rwOptions
-#   class definition.  The use can change any particular default value prior to calling
-#   the create() commands.  This new option is then applied to all the following
-#   create() calls.
-#
-def create(
-        rwType,
-        gsHat_B,
-        Omega,
-        rWB_B = [0.,0.,0.]
-    ):
-    global rwList
-    global options
+    def create(self, rwType, gsHat_B, **kwargs):
+        """
+            This function is called to setup a RW device in python, and adds it to the RW factory
+            list rwList{}.  The function returns a copy of the device that can be changed if needed.
 
-    # create the blank RW object
-    RW = simMessages.RWConfigSimMsg()
+            The first 2 arguments are required, the remaining arguments are optional with:
+                Omega = 0 RPM
+                rWB_B = [0., 0., 0.] meters
+                RWModel = BalancedWheels
+                useRWfriction = False
+                useMinTorque = False
+                useMaxTorque = True
+                maxMomentum = 0.0 Nms
+                linearFrictionRatio = -1.0          # neg. value turns off this mode by default
 
-    # populate the RW object with the type specific parameters
-    try:
-        eval(rwType + '(RW)')
-    except:
-        print 'ERROR: RW type ' + rwType + ' is not implemented'
-        exit(1)
+            Parameters
+            ----------
+            rwType : string
+                RW manufacturing name.
+            gsHat_B : list
+                Spin axis unit vector gsHat in B-frame components
+            kwargs :
+                Omega : initial RW speed in RPM
+                rWB_B : 3x1 list of RW center of mass position coordinates
+                RWModel : RW model type such as BalancedWheels, JitterSimple and JitterFullyCoupled
+                useRWfriction : BOOL to turn on RW internal wheel friction
+                useMinTorque : BOOL to clip any torque below a minimum torque value
+                useMaxTorque : BOOL to clip any torque value above a maximum torque value
+                maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
+                linearFrictionRatio : has the Coulomb stickage friction as a ratio of maximum wheel speed
+                label : string with the unique device name, must be 10 characters or less
 
-    # spin axis gs inertia [kg*m^2]
-    RW.Js = options.maxMomentum / (RW.Omega_max)
-    RW.Jt = 0.5*RW.Js
-    RW.Jg = RW.Jt
+            Returns
+            -------
+            RWConfigSimMsg : message structure
+                A handle to the RW configuration message
+        """
 
-    # set RW spin axis gsHat
-    norm = numpy.linalg.norm(gsHat_B)
-    if norm>1e-10:
-        gsHat_B = gsHat_B / norm
-    else:
-        print 'Error: RW gsHat input must be non-zero 3x1 vector'
-        exit(1)
-    RW.gsHat_B = [[gsHat_B[0]],[gsHat_B[1]],[gsHat_B[2]]]
+        # create the blank RW object
+        RW = simMessages.RWConfigSimMsg()
 
-    # set RW t and g unit axes
-    w2Hat0_B = numpy.cross(gsHat_B,[1,0,0])
-    norm = numpy.linalg.norm(w2Hat0_B)
-    if norm < 0.01:
-        w2Hat0_B = numpy.cross(gsHat_B,[0,1,0])
+        # process optional input arguments
+        if kwargs.has_key('RWModel'):
+            self.RWModel =  kwargs['RWModel']
+            if not isinstance(self.RWModel, (int)):
+                print 'ERROR: RWModel must be a INT argument'
+                exit(1)
+        if kwargs.has_key('useRWfriction'):
+            self.useRWfriction = kwargs['useRWfriction']
+            if not isinstance(self.useRWfriction, (bool)):
+                print 'ERROR: useRWfriction must be a BOOL argument'
+                exit(1)
+        if kwargs.has_key('useMinTorque'):
+            self.useMinTorque =  kwargs['useMinTorque']
+            if not isinstance(self.useMinTorque, (bool)):
+                print 'ERROR: useMinTorque must be a BOOL argument'
+                exit(1)
+        if kwargs.has_key('useMaxTorque'):
+            self.useMaxTorque =  kwargs['useMaxTorque']
+            if not isinstance(self.useMaxTorque, (bool)):
+                print 'ERROR: useMaxTorque must be a BOOL argument'
+                exit(1)
+        if kwargs.has_key('maxMomentum'):
+            self.maxMomentum =  kwargs['maxMomentum']
+            if not isinstance(self.maxMomentum, (float)):
+                print 'ERROR: maxMomentum must be a FLOAT argument'
+                exit(1)
+        if kwargs.has_key('linearFrictionRatio'):
+            self.linearFrictionRatio =  kwargs['linearFrictionRatio']
+            if not isinstance(self.linearFrictionRatio, (float)):
+                print 'ERROR: linearFrictionRatio must be a FLOAT argument'
+                exit(1)
+
+        # set device label name
+        if kwargs.has_key('label'):
+            rwLabel = kwargs['label']
+            if len(rwLabel) > 10:
+                print 'ERROR: RW label string is longer than 10 characters'
+                exit(1)
+        else:
+            rwLabel = 'RW' + str(len(self.rwList)+1)
+        RW.label = rwLabel
+
+        # populate the RW object with the type specific parameters
+        try:
+            eval('self.' + rwType + '(RW)')
+        except:
+            print 'ERROR: RW type ' + rwType + ' is not implemented'
+            exit(1)
+
+        # spin axis gs inertia [kg*m^2]
+        RW.Js = self.maxMomentum / (RW.Omega_max)
+        RW.Jt = 0.5 * RW.Js
+        RW.Jg = RW.Jt
+
+        # set RW axes
+        self.setGsHat(RW,gsHat_B)
+
+        # set RW position vector
+        if kwargs.has_key('rWB_B'):
+            self.rWB_B =  kwargs['rWB_B']
+            if not isinstance(self.rWB_B, list):
+                print 'ERROR: rWB_B must be a 3x1 list argument'
+                exit(1)
+            if not len(self.rWB_B) == 3:
+                print 'ERROR: rWB_B has dimension ' + str(len(self.rWB_B)) + ', must be a 3x1 list argument'
+                exit(1)
+        RW.rWB_B = self.rWB_B
+
+        # set initial RW states
+        if kwargs.has_key('Omega'):
+            self.Omega =  kwargs['Omega']
+            if not isinstance(self.Omega, (float)):
+                print 'ERROR: linearFrictionRatio must be a FLOAT argument'
+                exit(1)
+        RW.Omega = self.Omega * macros.RPM
+        RW.theta = 0.0 * macros.D2R
+
+        # enforce some RW options
+        RW.RWModel = self.RWModel
+        if not self.useRWfriction:
+            RW.u_f = 0.0
+        if not self.useMaxTorque:
+            RW.u_max = -1  # a negative value turns off RW torque saturation
+        if not self.useMinTorque:
+            RW.u_min = 0.0
+        RW.linearFrictionRatio = self.linearFrictionRatio
+
+        # add RW to the list of RW devices
+        self.rwList[rwLabel] = RW
+        return RW
+
+    def setGsHat(self, RW, gsHat_B):
+        """
+            Function to set the gsHat_B RW spin axis vector.  This function
+            automatically computes to companion transfer axes to complete a
+            wheel reference frame.
+
+        :param RW:
+        :param gsHat_B:
+        """
+        # set RW spin axis gsHat
+        norm = numpy.linalg.norm(gsHat_B)
+        if norm > 1e-10:
+            gsHat_B = gsHat_B / norm
+        else:
+            print 'Error: RW gsHat input must be non-zero 3x1 vector'
+            exit(1)
+        RW.gsHat_B = [[gsHat_B[0]], [gsHat_B[1]], [gsHat_B[2]]]
+
+        # set RW t and g unit axes
+        w2Hat0_B = numpy.cross(gsHat_B, [1, 0, 0])
         norm = numpy.linalg.norm(w2Hat0_B)
-    w2Hat0_B = w2Hat0_B / norm
-    w3Hat0_B = numpy.cross(gsHat_B,w2Hat0_B)
-    RW.w2Hat0_B = [[w2Hat0_B[0]],[w2Hat0_B[1]],[w2Hat0_B[2]]]
-    RW.w3Hat0_B = [[w3Hat0_B[0]],[w3Hat0_B[1]],[w3Hat0_B[2]]]
+        if norm < 0.01:
+            w2Hat0_B = numpy.cross(gsHat_B, [0, 1, 0])
+            norm = numpy.linalg.norm(w2Hat0_B)
+        w2Hat0_B = w2Hat0_B / norm
+        w3Hat0_B = numpy.cross(gsHat_B, w2Hat0_B)
+        RW.w2Hat0_B = [[w2Hat0_B[0]], [w2Hat0_B[1]], [w2Hat0_B[2]]]
+        RW.w3Hat0_B = [[w3Hat0_B[0]], [w3Hat0_B[1]], [w3Hat0_B[2]]]
 
-    # set RW position vector
-    RW.rWB_B = [[rWB_B[0]],[rWB_B[1]],[rWB_B[2]]]
+        return
 
-    # set initial RW states
-    RW.Omega = Omega*macros.RPM
-    RW.theta = 0.0*macros.D2R
+    def addToSpacecraft(self, modelTag, rwStateEffector, scPlus):
+        """
+            This function should be called after all RW devices are created with createRW()
+            It creates the C-class container for the array of RW devices, and attaches
+            this container to the spacecraft object
 
-    # enforce some RW options
-    RW.RWModel = options.RWModel
-    if not options.useRWfriction:
-        RW.u_f = 0.0
-    if not options.useMaxTorque:
-        RW.u_max = -1       # a negative value turns off RW torque saturation
-    if not options.useMinTorque:
-        RW.u_min = 0.0
-    RW.linearFrictionRatio = options.linearFrictionRatio
+            Parameters
+            ----------
+            :param rwStateEffector:
+            :param scPlus:
+        """
+        rwStateEffector.ModelTag = modelTag
 
-    # add RW to the list of RW devices
-    rwList.append(RW)
+        for key, rw in self.rwList.iteritems():
+            rwStateEffector.addReactionWheel(rw)
 
-    return
+        scPlus.addStateEffector(rwStateEffector)
 
-#
-#   This function should be called after all RW devices are created with createRW()
-#   It creates the C-class container for the array of RW devices, and attaches
-#   this container to the spacecraft object
-#
-def addToSpacecraft(modelTag, rwStateEffector, scPlus):
-    global rwList
-
-    rwStateEffector.ModelTag = modelTag
-    for item in rwList:
-        rwStateEffector.addReactionWheel(item)
-
-    scPlus.addStateEffector(rwStateEffector)
-
-    return
-
-#
-#   Call this function before setting up any RWs. This is important if the script is
-#   run multiple times, as in Monte Carlo runs or py.test scripts with multiple tests
-#
-def clearSetup():
-    global rwList
-    global options
-
-    rwList = []
-    options = rwOptions()
-
-    return
+        return
 
 
-def getNumOfDevices():
-    return len(rwList)
 
-#
-#   Honeywell HR16 (100Nm, 75Nm, 50Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR16 RW type using
-#       options.maxMomentum = 100, 75 or 50
-#
-def Honeywell_HR16(RW):
-    global options
-    # maximum allowable wheel speed
-    RW.Omega_max = 6000.0*macros.RPM
-    # maximum RW torque [Nm]
-    RW.u_max = 0.200
-    # minimum RW torque [Nm]
-    RW.u_min = 0.00001
-    # static friction torque [Nm]
-    RW.u_f = 0.0005
-    # RW rotor mass [kg]
-    # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
-    # static RW imbalance [kg*m]
-    # dynamic RW imbalance [kg*m^2]
-    large = 100
-    medium = 75
-    small = 50
-    if options.maxMomentum == large:
-        RW.mass = 12.0
-        RW.U_s = 4.8E-6
-        RW.U_d = 15.4E-7
-    elif options.maxMomentum == medium:
-        RW.mass = 10.4
-        RW.U_s = 3.8E-6
-        RW.U_d = 11.5E-7
-    elif options.maxMomentum == small:
-        RW.mass = 9.0
-        RW.U_s = 2.8E-6
-        RW.U_d = 7.7E-7
-    else:
-        if options.maxMomentum > 0:
-            print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                  +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(options.maxMomentum) + ' Nm'
+    def getNumOfDevices(self):
+        """
+            Returns the number of RW devices setup.
+
+            Returns
+            -------
+            :return: int
+        """
+        return len(self.rwList)
+
+
+
+
+
+
+    #
+    #   Honeywell HR16 (100Nm, 75Nm, 50Nm)
+    #
+    #   RW Information Source:
+    #   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+    #
+    #   There are 3 momentum capacity options for this RW type.  The maximum momentum
+    #   capacity must be set prior to creating the HR16 RW type using
+    #       maxMomentum = 100, 75 or 50
+    #
+    def Honeywell_HR16(self, RW):
+
+        # maximum allowable wheel speed
+        RW.Omega_max = 6000.0*macros.RPM
+        # maximum RW torque [Nm]
+        RW.u_max = 0.200
+        # minimum RW torque [Nm]
+        RW.u_min = 0.00001
+        # static friction torque [Nm]
+        RW.u_f = 0.0005
+        # RW rotor mass [kg]
+        # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # static RW imbalance [kg*m]
+        # dynamic RW imbalance [kg*m^2]
+        large = 100
+        medium = 75
+        small = 50
+
+        if self.maxMomentum == large:
+            RW.mass = 12.0
+            RW.U_s = 4.8E-6
+            RW.U_d = 15.4E-7
+        elif self.maxMomentum == medium:
+            RW.mass = 10.4
+            RW.U_s = 3.8E-6
+            RW.U_d = 11.5E-7
+        elif self.maxMomentum == small:
+            RW.mass = 9.0
+            RW.U_s = 2.8E-6
+            RW.U_d = 7.7E-7
         else:
-            print 'ERROR: ' + sys._getframe().f_code.co_name \
-                  + '() maxMomentum option must be set prior to calling createRW()'
-        exit(1)
+            if self.maxMomentum > 0:
+                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+            else:
+                print 'ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()'
+            exit(1)
 
-    return
+        return
 
 
-#
-#   Honeywell HR14 (25Nm, 50Nm, 75Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR14 RW type using
-#       options.maxMomentum = 75, 50 or 25
-#
-def Honeywell_HR14(RW):
-    global options
-    # maximum allowable wheel speed
-    RW.Omega_max = 6000.0*macros.RPM
-    # maximum RW torque [Nm]
-    RW.u_max = 0.200
-    # minimum RW torque [Nm]
-    RW.u_min = 0.00001
-    # static friction torque [Nm]
-    RW.u_f = 0.0005
-    # RW rotor mass [kg]
-    # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
-    # static RW imbalance [kg*m]
-    # dynamic RW imbalance [kg*m^2]
-    large = 75
-    medium = 50
-    small = 25
-    if options.maxMomentum == large:
-        RW.mass = 10.6
-        RW.U_s = 4.8E-6
-        RW.U_d = 13.7E-7
-    elif options.maxMomentum == medium:
-        RW.mass = 8.5
-        RW.U_s = 3.5E-6
-        RW.U_d = 9.1E-7
-    elif options.maxMomentum == small:
-        RW.mass = 7.5
-        RW.U_s = 2.2E-6
-        RW.U_d = 4.6E-7
-    else:
-        if options.maxMomentum > 0:
-            print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                  +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(options.maxMomentum) + ' Nm'
+    #
+    #   Honeywell HR14 (25Nm, 50Nm, 75Nm)
+    #
+    #   RW Information Source:
+    #   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+    #
+    #   There are 3 momentum capacity options for this RW type.  The maximum momentum
+    #   capacity must be set prior to creating the HR14 RW type using
+    #       options.maxMomentum = 75, 50 or 25
+    #
+    def Honeywell_HR14(self, RW):
+        # maximum allowable wheel speed
+        RW.Omega_max = 6000.0*macros.RPM
+        # maximum RW torque [Nm]
+        RW.u_max = 0.200
+        # minimum RW torque [Nm]
+        RW.u_min = 0.00001
+        # static friction torque [Nm]
+        RW.u_f = 0.0005
+        # RW rotor mass [kg]
+        # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # static RW imbalance [kg*m]
+        # dynamic RW imbalance [kg*m^2]
+        large = 75
+        medium = 50
+        small = 25
+        if self.maxMomentum == large:
+            RW.mass = 10.6
+            RW.U_s = 4.8E-6
+            RW.U_d = 13.7E-7
+        elif self.maxMomentum == medium:
+            RW.mass = 8.5
+            RW.U_s = 3.5E-6
+            RW.U_d = 9.1E-7
+        elif self.maxMomentum == small:
+            RW.mass = 7.5
+            RW.U_s = 2.2E-6
+            RW.U_d = 4.6E-7
         else:
-            print 'ERROR: ' + sys._getframe().f_code.co_name \
-                  + '() maxMomentum option must be set prior to calling createRW()'
-        exit(1)
+            if self.maxMomentum > 0:
+                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+            else:
+                print 'ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()'
+            exit(1)
 
-    return
+        return
 
 
-#
-#   Honeywell HR12 (12Nm, 25Nm, 50Nm)
-#
-#   RW Information Source:
-#   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
-#
-#   There are 3 momentum capacity options for this RW type.  The maximum momentum
-#   capacity must be set prior to creating the HR12 RW type using
-#       options.maxMomentum = 12, 25 or 50
-#
-def Honeywell_HR12(RW):
-    global options
-    # maximum allowable wheel speed
-    RW.Omega_max = 6000.0*macros.RPM
-    # maximum RW torque [Nm]
-    RW.u_max = 0.200
-    # minimum RW torque [Nm]
-    RW.u_min = 0.00001
-    # static friction torque [Nm]
-    RW.u_f = 0.0005
-    # RW rotor mass [kg]
-    # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
-    # static RW imbalance [kg*m]
-    # dynamic RW imbalance [kg*m^2]
-    large = 50
-    medium = 25
-    small = 12
-    if options.maxMomentum == large:
-        RW.mass = 9.5
-        RW.U_s = 4.4E-6
-        RW.U_d = 9.1E-7
-    elif options.maxMomentum == medium:
-        RW.mass = 7.0
-        RW.U_s = 2.4E-6
-        RW.U_d = 4.6E-7
-    elif options.maxMomentum == small:
-        RW.maxx = 6.0
-        RW.U_s = 1.5E-6
-        RW.U_d = 2.2E-7
-    else:
-        if options.maxMomentum > 0:
-            print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
-                  +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(options.maxMomentum) + ' Nm'
+    #
+    #   Honeywell HR12 (12Nm, 25Nm, 50Nm)
+    #
+    #   RW Information Source:
+    #   http://www51.honeywell.com/aero/common/documents/Constellation_Series_Reaction_Wheels.pdf
+    #
+    #   There are 3 momentum capacity self for this RW type.  The maximum momentum
+    #   capacity must be set prior to creating the HR12 RW type using
+    #       maxMomentum = 12, 25 or 50
+    #
+    def Honeywell_HR12(self, RW):
+
+        # maximum allowable wheel speed
+        RW.Omega_max = 6000.0*macros.RPM
+        # maximum RW torque [Nm]
+        RW.u_max = 0.200
+        # minimum RW torque [Nm]
+        RW.u_min = 0.00001
+        # static friction torque [Nm]
+        RW.u_f = 0.0005
+        # RW rotor mass [kg]
+        # Note: the rotor mass here is set equal to the RW mass of the above spec sheet.
+        # static RW imbalance [kg*m]
+        # dynamic RW imbalance [kg*m^2]
+        large = 50
+        medium = 25
+        small = 12
+        if self.maxMomentum == large:
+            RW.mass = 9.5
+            RW.U_s = 4.4E-6
+            RW.U_d = 9.1E-7
+        elif self.maxMomentum == medium:
+            RW.mass = 7.0
+            RW.U_s = 2.4E-6
+            RW.U_d = 4.6E-7
+        elif self.maxMomentum == small:
+            RW.maxx = 6.0
+            RW.U_s = 1.5E-6
+            RW.U_d = 2.2E-7
         else:
-            print 'ERROR: ' + sys._getframe().f_code.co_name \
-                  + '() maxMomentum option must be set prior to calling createRW()'
-        exit(1)
+            if self.maxMomentum > 0:
+                print 'ERROR: ' + sys._getframe().f_code.co_name + '() does not have a correct wheel momentum of '\
+                      +str(large)+', '+str(medium)+' or '+str(small)+' Nm. Provided ' + str(self.maxMomentum) + ' Nm'
+            else:
+                print 'ERROR: ' + sys._getframe().f_code.co_name \
+                      + '() maxMomentum option must be set prior to calling createRW()'
+            exit(1)
 
-    return
+        return
 

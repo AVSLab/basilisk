@@ -479,36 +479,44 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # attach gravity model to spaceCraftPlus
     scObject.gravField.gravBodies = spacecraftPlus.GravBodyVector(simIncludeGravity.gravBodyList)
 
-
+    #
     # add RW devices
-    # The clearRWSetup() is critical if the script is to run multiple times
-    simIncludeRW.clearSetup()
-    # the Honeywell HR16 comes in three momentum configuration, 100, 75 and 50 Nms
-    simIncludeRW.options.maxMomentum = 50
+    #
+    # Make a fresh RW factory instance, this is critical to run multiple times
+    rwFactory = simIncludeRW.rwFactory()
+
+    # store the RW dynamical model type
+    varRWModel = rwFactory.BalancedWheels
     if useJitterSimple:
-        simIncludeRW.options.RWModel = simIncludeRW.JitterSimple
-    # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [1, 0, 0],              # gsHat_B
-            100.0                     # RPM
-            )
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [0, 1, 0],              # gsHat_B
-            200.0                     # RPM
-            )
-    simIncludeRW.create(
-            'Honeywell_HR16',
-            [0, 0, 1],              # gsHat_B
-            300.0,                    # RPM
-            [0.5,0.5,0.5]           # r_B (optional argument)
-            )
-    numRW = simIncludeRW.getNumOfDevices()
+        varRWModel = rwFactory.JitterSimple
+
+    # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+    RW1 = rwFactory.create('Honeywell_HR16'
+                           , [1, 0, 0]
+                           , maxMomentum=50.
+                           , Omega=100.                 # RPM
+                           , RWModel= varRWModel
+                           )
+    RW2 = rwFactory.create('Honeywell_HR16'
+                           , [0, 1, 0]
+                           , maxMomentum=50.
+                           , Omega=200.                 # RPM
+                           , RWModel= varRWModel
+                           )
+
+    RW3 = rwFactory.create('Honeywell_HR16'
+                           , [0, 0, 1]
+                           , maxMomentum=50.
+                           , Omega=300.                 # RPM
+                           , rWB_B = [0.5, 0.5, 0.5]    # meters
+                           , RWModel= varRWModel
+                           )
+
+    numRW = rwFactory.getNumOfDevices()
 
     # create RW object container and tie to spacecraft object
     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-    simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+    rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 
     # add RW object array to the simulation process
     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
@@ -638,7 +646,7 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
     # FSW RW configuration message
     # use the same RW states in the FSW algorithm as in the simulation
     fswSetupRW.clearSetup()
-    for rw in simIncludeRW.rwList:
+    for key, rw in rwFactory.rwList.iteritems():
         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js, 0.2)
     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 
