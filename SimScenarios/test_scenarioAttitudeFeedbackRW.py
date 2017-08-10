@@ -257,7 +257,12 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # ~~~~~~~~~~~~~{.py}
 # RW1.Omega_max = 10000.0*macros.RPM
 # ~~~~~~~~~~~~~
-# These changes must be made before adding the RWs to the spacecraft.
+# These changes must be made before adding the RWs to the spacecraft.  If the `RW1` handler is not
+# stored when the RW is create, any setup RW devices can be recalled through the device label.
+# For example, the above modification could also be done with
+# ~~~~~~~~~~~~~{.py}
+# rwFactory.rwList['RW1'].Omega_max = 10000.0*macros.RPM
+# ~~~~~~~~~~~~~
 #
 # ### Flight Algorithm Changes to Control RWs
 #
