@@ -117,7 +117,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # illustrate how Reaction Wheel (RW) state effector can be added to the rigid
 # spacecraftPlus() hub, and what flight algorithm module is used to control these RWs.
 #  The scenario is
-# setup to be run in multiple setups:
+# setup to be run in multiple configurations:
 # Setup | useJitterSimple    | useRWVoltageIO
 # ----- | -------------------|----------------
 # 1     | False              | False
@@ -157,53 +157,78 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # public RW specifications, customize them if needed, and add them to the spacecraftPlus() module.
 # The specific code required is:
 # ~~~~~~~~~~~~~{.py}
-#     # add RW devices
-#     # The clearRWSetup() is critical if the script is to run multiple times
-#     simIncludeRW.clearSetup()
-#     # the Honeywell HR16 comes in three momentum configuration, 100, 75 and 50 Nms
-#     simIncludeRW.options.maxMomentum = 50
-#     # create each RW by specifying the RW type, the spin axis gsHat and the initial wheel speed Omega
-#     simIncludeRW.create(
-#             'Honeywell_HR16',
-#             [1, 0, 0],              # gsHat_B
-#             100.0                     # RPM
-#             )
-#     simIncludeRW.create(
-#             'Honeywell_HR16',
-#             [0, 1, 0],              # gsHat_B
-#             200.0                     # RPM
-#             )
-#     simIncludeRW.create(
-#             'Honeywell_HR16',
-#             [0, 0, 1],              # gsHat_B
-#             300.0,                    # RPM
-#             [0.5,0.5,0.5]           # r_B (optional argument)
-#             )
-#     numRW = simIncludeRW.getNumOfDevices()
+#     # Make a fresh RW factory instance, this is critical to run multiple times
+#     rwFactory = simIncludeRW.rwFactory()
+#
+#     # store the RW dynamical model type
+#     varRWModel = rwFactory.BalancedWheels
+#     if useJitterSimple:
+#         varRWModel = rwFactory.JitterSimple
+#
+#     # create each RW by specifying the RW type, the spin axis gsHat, plus optional arguments
+#     RW1 = rwFactory.create('Honeywell_HR16'
+#                            , [1, 0, 0]
+#                            , maxMomentum=50.
+#                            , Omega=100.                 # RPM
+#                            , RWModel= varRWModel
+#                            )
+#     RW2 = rwFactory.create('Honeywell_HR16'
+#                            , [0, 1, 0]
+#                            , maxMomentum=50.
+#                            , Omega=200.                 # RPM
+#                            , RWModel= varRWModel
+#                            )
+#
+#     RW3 = rwFactory.create('Honeywell_HR16'
+#                            , [0, 0, 1]
+#                            , maxMomentum=50.
+#                            , Omega=300.                 # RPM
+#                            , rWB_B = [0.5, 0.5, 0.5]    # meters
+#                            , RWModel= varRWModel
+#                            )
+#
+#     numRW = rwFactory.getNumOfDevices()
 #
 #     # create RW object container and tie to spacecraft object
 #     rwStateEffector = reactionWheelStateEffector.ReactionWheelStateEffector()
-#     simIncludeRW.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
+#     rwFactory.addToSpacecraft("ReactionWheels", rwStateEffector, scObject)
 #
 #     # add RW object array to the simulation process
 #     scSim.AddModelToTask(simTaskName, rwStateEffector, None, 2)
 # ~~~~~~~~~~~~~
-# The first task is to call the `clearRWSetup()` function.  the `simIncludeRW.py` macro file creates a local
-# array of RW devices as each is created.  This `clearRWSetup()` call clears this list.  It is a good
-# practice to always call this function prior to setting up RWs.  In particular, if this script is
-# called several times through a Monte-Carlo setup, or a multi-objective `py.test` run, then this ensures
-# that each simulation run begins with a blank list of RW devices.
+# The first task is to create a fresh instance of the RW factory class `rwFactor()`.  This factory is able
+# to create a list of RW devices, and return copies that can easily be manipulated and custumized if needed.
+# The next step in this code is to store the correct `RWModel` state.  This can be either a balanced wheel,
+# a wheel with a simple jitter model, or a wheel with a fully coupled model.
 #
-# The next step is to use create() to include a particular RW devices.  The `simIncludeRW.py` file contains several
+# The next step in this simulation setup is to use create() to include a particular RW devices.
+# The `rwFactory()` class contains several
 # public specifications of RW devices which can be accessed by specifying the wheel name, `Honeywell_HR16`
-# in this case.  The other 2 arguments provide the spin axis \f$\hat{\mathbf g}_B\f$ and initial RW spin \f$\Omega\f$
-# in RPMs.  The 3rd argument is optional, and specifies the body-relative location of the RW center of mass.
-# This information is only used if an off-balanced RW device is being modeled.
+# in this case.  The  2nd required argument is the spin axis \f$\hat{\mathbf g}_B\f$.  It is a unit
+# vector expressed in the \f$\cal B\f$-frame.  The remaining arguments are all optional.  In this simulation
+# each RW is given a different initial RW spin \f$\Omega\f$
+# in units of RPMs.  The 3rd RW specifies the body-relative location of the RW center of mass.  The
+# other two RWs use a default value which is a zero vector.
+# This last position vector is only used if an off-balanced RW device is being modeled.
 #
 # Each RW device has several default options that can be customized if needed.  For example,
-# the `Honeywell_HR16` comes in three different momentum storage configurations.  Before calling the
-# `create()` command, the desired storage capacity must be specified.  Other options include specifying
-# friction models (all turned off by default) or the imbalance models used (default is a balanced wheel).
+# the `Honeywell_HR16` comes in three different momentum storage configurations.  When calling the
+# `create()` command, the desired storage capacity must be specified through the `maxMomentum` argument.
+#
+# The following table provides a comprehensive list of all the optional arguments of the `create()`
+# command.  This table list the arguments, default values, as well as expected units.
+#
+# Argument      | Units    | Type | Description  | Default
+# ------------- | ---------|------|------------- |-------------
+# RWModel       | -        | Integer | flag indicating the RW dynamical model.  Options are BalancedWheels, JitterSimple and  JitterFullyCoupled | BalancedWheels
+# Omega         | RPM      | Float | initial Wheel speed | 0.0
+# maxMomentum   | Nms      | Float | maximum RW angular momentum storage  | 0.0
+# useRWfriction | -        | Bool  | flag to turn on RW wheel friction | False
+# useMinTorque  | -        | Bool  | flag to turn on a min. RW torque | False
+# useMaxTorque  | -        | Bool  | flag to turn on RW torque saturation | True
+# linearFrictionRatio | -  | Float | Coulomb static friction value to model stickage, negative values turn off this feature | -1.0 (turned off)
+# rWB_B         | m        | 3x1 Float | RW center of mass location relative to B, in \f$\cal B\f$-frame components | [0.0, 0.0, 0.0]
+# label         | -        | string | unique device label, must be not exceed 10 characters.  If not provided, the function will autogenerate names using RWi where i is the RW wheel index starting with 1. | RWi
 #
 # The command `addToSpacecraft()` adds all the created RWs to the spacecraftPlus() module.  The final step
 # is as always to add the vector of RW effectors (called `rwStateEffector` above) to the list of simulation
@@ -217,7 +242,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # To log the RW information, the following code is used:
 # ~~~~~~~~~~~~~~~~~{.py}
 #     scSim.TotalSim.logThisMessage(mrpControlConfig.inputRWSpeedsName, samplingTime)
-#     rwOutName = ["rw_bla0_data", "rw_bla1_data", "rw_bla2_data"]
+#     rwOutName = ["rw_config_0_data", "rw_config_1_data", "rw_config_2_data"]
 #     for item in rwOutName:
 #         scSim.TotalSim.logThisMessage(item, samplingTime)
 # ~~~~~~~~~~~~~~~~~
@@ -226,6 +251,13 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 # contain a wealth of information.  Their default naming is automated and shown above.  This
 # allows us to log RW specific information such as the actual RW motor torque being applied.
 #
+# If you want to configure or customize the RWs, the `rwFactor()` class is very convenient. Assume you want
+# to override the default value of the maximum RW speed from 6000RPM to 10,000RPM.  After declaring the RW
+# and keeping a copy named RW1, `Omega_max` stage is changed using:
+# ~~~~~~~~~~~~~{.py}
+# RW1.Omega_max = 10000.0*macros.RPM
+# ~~~~~~~~~~~~~
+# These changes must be made before adding the RWs to the spacecraft.
 #
 # ### Flight Algorithm Changes to Control RWs
 #
@@ -281,7 +313,7 @@ def test_bskAttitudeFeedbackRW(show_plots, useJitterSimple, useRWVoltageIO):
 #     # FSW RW configuration message
 #     # use the same RW states in the FSW algorithm as in the simulation
 #     fswSetupRW.clearSetup()
-#     for rw in simIncludeRW.rwList:
+#     for key, rw in rwFactory.rwList.iteritems():
 #         fswSetupRW.create(unitTestSupport.EigenVector3d2np(rw.gsHat_B), rw.Js)
 #     fswSetupRW.writeConfigMessage(mrpControlConfig.rwParamsInMsgName, scSim.TotalSim, simProcessName)
 # ~~~~~~~~~~~~~~~~
