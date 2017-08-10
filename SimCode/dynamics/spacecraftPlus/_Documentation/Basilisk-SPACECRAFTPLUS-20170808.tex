@@ -44,11 +44,11 @@
 \newcommand{\submiterInstitute}{Autonomous Vehicle Simulation (AVS) Laboratory,\\ University of Colorado}
 
 
-\newcommand{\ModuleName}{Module Name}
-\newcommand{\subject}{Module Name Model}
-\newcommand{\status}{Status}
-\newcommand{\preparer}{F. Last}
-\newcommand{\summary}{Summary of the document goes here.}
+\newcommand{\ModuleName}{spacecraftPlus}
+\newcommand{\subject}{Spacecraft Equations of Motion Model}
+\newcommand{\status}{To be Reviewed}
+\newcommand{\preparer}{C. Allard}
+\newcommand{\summary}{SpacecraftPlus is an instantiation of the dynamicObject abstract class. This abstract class is representing systems that have equations of motion that need to be integrated and therefore the main goal of this dynamic object is finding the state derivatives and interfacing with the integrator to integrate the state forward in time. The spacecraftPlus is specifically geared towards a spacecraft that can have only translational states, only rotational states, or both and has the capability of simulating the system as just a rigid body, or a rigid body with other masses connected to it with their own degrees of freedom. For example the spacecraft could have reacion wheels, solar panels, and fuel slosh as a coupled system. This test is ensuring that all three modes: translational only, rotational only and translation and rotation all operate as expected. Additonally there are back of the envelope calculation checks for both the behavior of translation and rotational motion.}
 
 \begin{document}
 
@@ -65,11 +65,8 @@
 \hline
 {\bfseries Rev} & {\bfseries Change Description} & {\bfseries By}& {\bfseries Date} \\
 \hline
-1.0 & Revision Description & F. Last1 & YYYYMMDD\\
+1.0 & Initial Draft & C. Allard & 20170808\\
 \hline
-1.1 & Revision Description& F. Last2 & YYYYMMDD\\
-\hline
-
 \end{longtable}
 }
 
@@ -94,19 +91,11 @@
 	
 \input{secModelDescription.tex} %This section includes mathematical models, code description, etc.
 
-\input{secModelFunctions.tex} %This includes a concise list of what the module does.
+\input{secModelFunctions.tex} %This includes a concise list of what the module does. It also includes model assumptions and limitations
 
-\input{secModelAssumptionsLimitations.tex} %This explains the assumptions made to reach the final mathematical implementation of the model and how those assumptions limit the model's usefulness.
+\input{secTest.tex} % This includes test description, test parameters, and test results
 
-\input{secTestDescription.tex} %This explains the unit test for the model. I.e. what features are tested and how. It may also include test tolerances, etc.
-
-\input{secTestParameters.tex}
-
-\input{secTestResults.tex} %This displays the test results. This includes both pass/fail statements as well as visual outputs via AutoTeX
-
-\input{secUserGuide.tex} %This section is to provide advice to users on necessary/useful inputs and best practices.
-
-
+\input{secUserGuide.tex} % Contains a discussion of how to setup and configure  the BSK module
 
 
 

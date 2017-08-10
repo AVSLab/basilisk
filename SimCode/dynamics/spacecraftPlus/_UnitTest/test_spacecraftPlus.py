@@ -160,7 +160,7 @@ def test_SCTranslation(show_plots):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalOrbEnergy[i],initialOrbEnergy[i],1,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: SCHub Translation test failed rotational energy unit test")
+            testMessages.append("FAILED: SCHub Translation test failed orbital energy unit test")
 
     if testFailCount == 0:
         print "PASSED: " + " SCHub Translation Integrated Sim Test"
@@ -370,7 +370,7 @@ def test_SCRotation(show_plots):
     unitTestSim.TotalSim.terminateSimulation()
 
     # Create test thread
-    testProcessRate = macros.sec2nano(0.1)  # update process rate update time
+    testProcessRate = macros.sec2nano(0.001)  # update process rate update time
     testProc = unitTestSim.CreateNewProcess(unitProcessName)
     testProc.addTask(unitTestSim.CreateNewTask(unitTaskName, testProcessRate))
 
@@ -382,7 +382,7 @@ def test_SCRotation(show_plots):
     # Define initial conditions of the spacecraft
     scObject.hub.IHubPntBc_B = [[500, 0.0, 0.0], [0.0, 200, 0.0], [0.0, 0.0, 300]]
     scObject.hub.sigma_BNInit = [[0.0], [0.0], [0.0]]
-    scObject.hub.omega_BN_BInit = [[0.001], [-0.002], [0.003]]
+    scObject.hub.omega_BN_BInit = [[0.5], [-0.4], [0.7]]
     scObject.hub.useTranslation = False
     scObject.hub.useRotation = True
 
@@ -391,7 +391,7 @@ def test_SCRotation(show_plots):
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotAngMomPntC_N", testProcessRate, 0, 2, 'double')
     unitTestSim.AddVariableForLogging(scObject.ModelTag + ".totRotEnergy", testProcessRate, 0, 0, 'double')
 
-    stopTime = 60.0*10.0
+    stopTime = 5.0
     unitTestSim.ConfigureStopTime(macros.sec2nano(stopTime))
     unitTestSim.ExecuteSimulation()
 
@@ -422,6 +422,20 @@ def test_SCRotation(show_plots):
     moduleOutput = unitTestSim.pullMessageLogData(scObject.scStateOutMsgName + '.sigma_BN',
                                                   range(3))
 
+    check = 0
+    for i in range(0,len(moduleOutput)):
+        if check == 0 and moduleOutput[i+1,1] > moduleOutput[i,1]:
+            check = 1
+        if check == 1 and moduleOutput[i+1,1] < moduleOutput[i,1]:
+            check = 2
+            index = i
+            break
+
+
+    plt.figure()
+    plt.clf()
+    plt.plot(moduleOutput[:,0]*1e-9, moduleOutput[:,1], moduleOutput[:,0]*1e-9, moduleOutput[:,2], moduleOutput[:,0]*1e-9, moduleOutput[:,3])
+    plt.plot(moduleOutput[index+1,0]*1e-9, moduleOutput[index+1,1],'ro')
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
