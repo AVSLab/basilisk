@@ -43,28 +43,12 @@ class rwFactory(object):
         self.JitterFullyCoupled = 2
         self.rwList = {}
         self.maxMomentum = 0.0
-        self.RWModel = self.BalancedWheels
-        self.useRWfriction = False
-        self.useMinTorque = False
-        self.useMaxTorque = True
-        self.linearFrictionRatio = -1.0
-        self.Omega = 0.0
-        self.rWB_B = [0., 0., 0.]
 
     def create(self, rwType, gsHat_B, **kwargs):
         """
             This function is called to setup a RW device in python, and adds it to the RW factory
             list rwList{}.  The function returns a copy of the device that can be changed if needed.
-
             The first 2 arguments are required, the remaining arguments are optional with:
-                Omega = 0 RPM
-                rWB_B = [0., 0., 0.] meters
-                RWModel = BalancedWheels
-                useRWfriction = False
-                useMinTorque = False
-                useMaxTorque = True
-                maxMomentum = 0.0 Nms
-                linearFrictionRatio = -1.0          # neg. value turns off this mode by default
 
             Parameters
             ----------
@@ -81,7 +65,7 @@ class rwFactory(object):
                 useMaxTorque : BOOL to clip any torque value above a maximum torque value
                 maxMomentum : maximum RW wheel momentum in Nms.  This is a required variable for some wheels.
                 linearFrictionRatio : has the Coulomb stickage friction as a ratio of maximum wheel speed
-                label : string with the unique device name, must be 10 characters or less
+                label : string with the unique device name, must be 5 characters or less
 
             Returns
             -------
@@ -93,46 +77,69 @@ class rwFactory(object):
         RW = simMessages.RWConfigSimMsg()
 
         # process optional input arguments
+        varRWModel = self.BalancedWheels
         if kwargs.has_key('RWModel'):
-            self.RWModel =  kwargs['RWModel']
-            if not isinstance(self.RWModel, (int)):
+            varRWModel =  kwargs['RWModel']
+            if not isinstance(varRWModel, (int)):
                 print 'ERROR: RWModel must be a INT argument'
                 exit(1)
+        else:
+            varRWModel = self.BalancedWheels    # default value
+
         if kwargs.has_key('useRWfriction'):
-            self.useRWfriction = kwargs['useRWfriction']
-            if not isinstance(self.useRWfriction, (bool)):
+            varUseRWfriction = kwargs['useRWfriction']
+            if not isinstance(varUseRWfriction, (bool)):
                 print 'ERROR: useRWfriction must be a BOOL argument'
                 exit(1)
+        else:
+            varUseRWfriction = False            # default value
+
         if kwargs.has_key('useMinTorque'):
-            self.useMinTorque =  kwargs['useMinTorque']
-            if not isinstance(self.useMinTorque, (bool)):
+            varUseMinTorque =  kwargs['useMinTorque']
+            if not isinstance(varUseMinTorque, (bool)):
                 print 'ERROR: useMinTorque must be a BOOL argument'
                 exit(1)
+        else:
+            varUseMinTorque = False             # default value
+
         if kwargs.has_key('useMaxTorque'):
-            self.useMaxTorque =  kwargs['useMaxTorque']
-            if not isinstance(self.useMaxTorque, (bool)):
+            varUseMaxTorque =  kwargs['useMaxTorque']
+            if not isinstance(varUseMaxTorque, (bool)):
                 print 'ERROR: useMaxTorque must be a BOOL argument'
                 exit(1)
+        else:
+            varUseMaxTorque = True              # default value
+
         if kwargs.has_key('maxMomentum'):
-            self.maxMomentum =  kwargs['maxMomentum']
-            if not isinstance(self.maxMomentum, (float)):
+            varMaxMomentum =  kwargs['maxMomentum']
+            if not isinstance(varMaxMomentum, (float)):
                 print 'ERROR: maxMomentum must be a FLOAT argument'
                 exit(1)
+        else:
+            varMaxMomentum = 0.0              # default value
+        self.maxMomentum = varMaxMomentum
+
         if kwargs.has_key('linearFrictionRatio'):
-            self.linearFrictionRatio =  kwargs['linearFrictionRatio']
-            if not isinstance(self.linearFrictionRatio, (float)):
+            print "test1"
+            varLinearFrictionRatio =  kwargs['linearFrictionRatio']
+            if not isinstance(varLinearFrictionRatio, (float)):
                 print 'ERROR: linearFrictionRatio must be a FLOAT argument'
                 exit(1)
+        else:
+            varLinearFrictionRatio = -1.0       # default value
 
         # set device label name
         if kwargs.has_key('label'):
-            rwLabel = kwargs['label']
-            if len(rwLabel) > 10:
-                print 'ERROR: RW label string is longer than 10 characters'
+            varLabel = kwargs['label']
+            if not isinstance(varLabel, (basestring)):
+                print 'ERROR: label must be a string'
+                exit(1)
+            if len(varLabel) > 5:
+                print 'ERROR: RW label string is longer than 5 characters'
                 exit(1)
         else:
-            rwLabel = 'RW' + str(len(self.rwList)+1)
-        RW.label = rwLabel
+            varLabel = 'RW' + str(len(self.rwList)+1)        # default device labeling
+        RW.label = varLabel
 
         # populate the RW object with the type specific parameters
         try:
@@ -151,36 +158,40 @@ class rwFactory(object):
 
         # set RW position vector
         if kwargs.has_key('rWB_B'):
-            self.rWB_B =  kwargs['rWB_B']
-            if not isinstance(self.rWB_B, list):
+            varrWB_B =  kwargs['rWB_B']
+            if not isinstance(varrWB_B, list):
                 print 'ERROR: rWB_B must be a 3x1 list argument'
                 exit(1)
-            if not len(self.rWB_B) == 3:
-                print 'ERROR: rWB_B has dimension ' + str(len(self.rWB_B)) + ', must be a 3x1 list argument'
+            if not len(varrWB_B) == 3:
+                print 'ERROR: rWB_B has dimension ' + str(len(varrWB_B)) + ', must be a 3x1 list argument'
                 exit(1)
-        RW.rWB_B = self.rWB_B
+        else:
+            varrWB_B = [0., 0., 0.]             # default value
+        RW.rWB_B = varrWB_B
 
         # set initial RW states
         if kwargs.has_key('Omega'):
-            self.Omega =  kwargs['Omega']
-            if not isinstance(self.Omega, (float)):
-                print 'ERROR: linearFrictionRatio must be a FLOAT argument'
+            varOmega =  kwargs['Omega']
+            if not isinstance(varOmega, (float)):
+                print 'ERROR: Omega must be a FLOAT argument'
                 exit(1)
-        RW.Omega = self.Omega * macros.RPM
+        else:
+            varOmega = 0.0                      # default value
+        RW.Omega = varOmega * macros.RPM
         RW.theta = 0.0 * macros.D2R
 
         # enforce some RW options
-        RW.RWModel = self.RWModel
-        if not self.useRWfriction:
+        RW.RWModel = varRWModel
+        if not varUseRWfriction:
             RW.u_f = 0.0
-        if not self.useMaxTorque:
+        if not varUseMaxTorque:
             RW.u_max = -1  # a negative value turns off RW torque saturation
-        if not self.useMinTorque:
+        if not varUseMinTorque:
             RW.u_min = 0.0
-        RW.linearFrictionRatio = self.linearFrictionRatio
+        RW.linearFrictionRatio = varLinearFrictionRatio
 
         # add RW to the list of RW devices
-        self.rwList[rwLabel] = RW
+        self.rwList[varLabel] = RW
         return RW
 
     def setGsHat(self, RW, gsHat_B):

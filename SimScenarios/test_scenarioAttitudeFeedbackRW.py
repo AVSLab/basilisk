@@ -540,7 +540,6 @@ def run(doUnitTests, show_plots, useJitterSimple, useRWVoltageIO):
                            , Omega=200.                 # RPM
                            , RWModel= varRWModel
                            )
-
     RW3 = rwFactory.create('Honeywell_HR16'
                            , [0, 0, 1]
                            , maxMomentum=50.
