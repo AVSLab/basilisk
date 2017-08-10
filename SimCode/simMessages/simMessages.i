@@ -19,8 +19,6 @@
 
 %module simMessages
 %{
-#include <Eigen/Dense>
-#include <vector>
 #include "boreAngleSimMsg.h"
 #include "cssRawDataSimMsg.h"
 #include "eclipseSimMsg.h"
@@ -86,7 +84,9 @@ GEN_SIZEOF(THROutputSimMsg)
 %include "thrTimePairSimMsg.h"
 GEN_SIZEOF(THRTimePairSimMsg)
 
+#ifndef CSHARP_ROX
 %pythoncode %{
     import sys
     protectAllClasses(sys.modules[__name__])
     %}
+#endif

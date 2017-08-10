@@ -20,6 +20,8 @@
 #ifndef SIM_THRUSTER_CONFIG_H
 #define SIM_THRUSTER_CONFIG_H
 
+#include <vector>
+#include <Eigen/Dense>
 
 //! @brief Container for overall thruster configuration data for single thruster
 /*! This structure is used to define the overall configuration of an entire
