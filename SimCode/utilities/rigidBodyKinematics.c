@@ -17,10 +17,10 @@
 
  */
 
-#include "utilities/rigidBodyKinematics.h"
+#include "rigidBodyKinematics.h"
 
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "linearAlgebra.h"
+#include "astroConstants.h"
 #include <string.h>
 
 /*

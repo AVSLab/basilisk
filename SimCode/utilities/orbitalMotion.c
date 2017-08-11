@@ -17,14 +17,14 @@
 
  */
 
-#include "utilities/orbitalMotion.h"
+#include "orbitalMotion.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "utilities/linearAlgebra.h"
-#include "utilities/astroConstants.h"
+#include "linearAlgebra.h"
+#include "astroConstants.h"
 
 /*
  * Function: E2f
