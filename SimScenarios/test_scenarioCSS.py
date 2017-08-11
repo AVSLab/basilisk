@@ -89,7 +89,7 @@ def test_bskAttitudeFeedback(show_plots, useCSSConstellation, usePlatform, useEc
 
 
 
-## \defgroup Tutorials_3_0
+## \defgroup Tutorials_4_0
 ##   @{
 ## Demonstrates how to add a Coarse Sun Sensor (CSS) sensor to a spacecraft.
 #
