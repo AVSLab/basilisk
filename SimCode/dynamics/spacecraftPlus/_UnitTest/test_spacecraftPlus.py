@@ -399,7 +399,7 @@ def test_SCRotation(show_plots):
     rotEnergy = unitTestSim.GetLogVariableData(scObject.ModelTag + ".totRotEnergy")
 
     trueSigma = [
-                [2.51538718e-03,  -5.03759541e-03,   7.47497962e-03]
+                [-6.82900501e-01,  -1.39727865e-01,  -2.84781790e-03]
                 ]
 
 
@@ -428,14 +428,35 @@ def test_SCRotation(show_plots):
             check = 1
         if check == 1 and moduleOutput[i+1,1] < moduleOutput[i,1]:
             check = 2
-            index = i
+            index = i+1
             break
 
+    sigmaBeforeSwitch = moduleOutput[index-1,1:4]
+    sigmaBeforeBefore = moduleOutput[index-2,1:4]
+    sigmaAfterSwitch = moduleOutput[index,:]
+    deltaT = (moduleOutput[index-1,0] - moduleOutput[index-2,0])*1e-9
+    yPrime = (sigmaBeforeSwitch - sigmaBeforeBefore)/deltaT
+    sigmaGhost = sigmaBeforeSwitch + yPrime*deltaT
+    sigmaAfterAnalytical = - sigmaGhost/numpy.dot(numpy.linalg.norm(numpy.asarray(sigmaGhost)),numpy.linalg.norm(numpy.asarray(sigmaGhost)))
 
     plt.figure()
     plt.clf()
     plt.plot(moduleOutput[:,0]*1e-9, moduleOutput[:,1], moduleOutput[:,0]*1e-9, moduleOutput[:,2], moduleOutput[:,0]*1e-9, moduleOutput[:,3])
-    plt.plot(moduleOutput[index+1,0]*1e-9, moduleOutput[index+1,1],'ro')
+    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'bo')
+    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'yo')
+    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
+    plt.xlabel("Time (s)")
+    plt.ylabel("MRPs")
+    unitTestSupport.writeFigureLaTeX("MRPs", "Attitude of Spacecraft in MRPs", plt, "width=0.8\\textwidth", path)
+    plt.figure()
+    plt.clf()
+    plt.plot(moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,1], moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,2], moduleOutput[index - 3: index + 3,0]*1e-9, moduleOutput[index - 3: index + 3,3])
+    plt.plot(moduleOutput[index,0]*1e-9, moduleOutput[index,1],'bo')
+    plt.plot(moduleOutput[index,0]*1e-9, sigmaGhost[0],'ko',[moduleOutput[index-1,0]*1e-9, moduleOutput[index,0]*1e-9], [moduleOutput[index-1,1], sigmaGhost[0]],'--k')
+    plt.plot(moduleOutput[index-1,0]*1e-9, moduleOutput[index-1,1],'bo')
+    plt.xlabel("Time (s)")
+    plt.ylabel("MRPs")
+    unitTestSupport.writeFigureLaTeX("MRPSwitching", "MRP Switching", plt, "width=0.8\\textwidth", path)
     plt.figure()
     plt.clf()
     plt.plot(rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,1] - rotAngMom_N[0,1])/rotAngMom_N[0,1], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,2] - rotAngMom_N[0,2])/rotAngMom_N[0,2], rotAngMom_N[:,0]*1e-9, (rotAngMom_N[:,3] - rotAngMom_N[0,3])/rotAngMom_N[0,3])
@@ -449,6 +470,7 @@ def test_SCRotation(show_plots):
     plt.ylabel("Relative Difference")
     unitTestSupport.writeFigureLaTeX("ChangeInRotationalEnergyRotationOnly", "Change in Rotational Energy Rotation Only", plt, "width=0.8\\textwidth", path)
     plt.show(show_plots)
+    plt.close("all")
 
     accuracy = 1e-8
     for i in range(0,len(trueSigma)):
@@ -457,17 +479,23 @@ def test_SCRotation(show_plots):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed attitude unit test")
 
+    accuracy = 1e-10
     for i in range(0,len(initialRotAngMom_N)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalRotAngMom[i],initialRotAngMom_N[i],3,accuracy):
             testFailCount += 1
-            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed orbital angular momentum unit test")
+            testMessages.append("FAILED: Spacecraft Translation and Rotation Integrated test failed rotational angular momentum unit test")
 
     for i in range(0,len(initialRotEnergy)):
         # check a vector values
         if not unitTestSupport.isArrayEqualRelative(finalRotEnergy[i],initialRotEnergy[i],1,accuracy):
             testFailCount += 1
             testMessages.append("FAILED: Spacecraft Rotation Integrated test failed rotational energy unit test")
+
+    accuracy = 1e-5
+    if not unitTestSupport.isArrayEqualRelative(sigmaAfterSwitch,sigmaAfterAnalytical,1,accuracy):
+        testFailCount += 1
+        testMessages.append("FAILED: Spacecraft Rotation Integrated test failed MRP Switching unit test")
 
     if testFailCount == 0:
         print "PASSED: " + "Spacecraft Rotation Integrated test"
