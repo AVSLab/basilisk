@@ -22,17 +22,19 @@
     #include "avsLibrarySelfCheck.h"
 %}
 
-%include "swig_conly_data.i"
+//%include "swig_conly_data.i"
 
 %include "avsLibrarySelfCheck.h"
-%include "rigidBodyKinematics.h"
-%include "linearAlgebra.h"
+//%include "utilities/rigidBodyKinematics.h"
+//%include "utilities/linearAlgebra.h"
 
-%constant int testRigidBodyKinematics(double);
-%ignore testRigidBodyKinematics;
+int testRigidBodyKinematics(double);
+
 
 
 %pythoncode %{
 import sys
 protectAllClasses(sys.modules[__name__])
 %}
+
+

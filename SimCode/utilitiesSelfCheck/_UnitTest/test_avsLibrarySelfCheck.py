@@ -37,7 +37,7 @@ sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
 import SimulationBaseClass
 import macros
-# import avsSelfCheck
+# import avsLibrarySelfCheck
 
 
 
