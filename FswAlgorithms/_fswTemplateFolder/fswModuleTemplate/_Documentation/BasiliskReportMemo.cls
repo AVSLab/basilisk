@@ -31,6 +31,7 @@
 \RequirePackage[absolute]{textpos}
 
 \renewcommand*{\familydefault}{\sfdefault}
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
 
 %
@@ -44,6 +45,8 @@
 \renewcommand{\headrulewidth}{0pt}
 \renewcommand{\footrulewidth}{0pt}
 
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
 
 
 %
