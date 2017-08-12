@@ -30,7 +30,7 @@ extern "C" {
 int testLinearAlgebra(double accuracy);
 int testOrbitalAnomalies(double accuracy);
 int testOrbitalElements(double accuracy);
-int testEnvironment(double accuracy);
+int testOrbitalEnvironment(double accuracy);
 int testRigidBodyKinematics(double accuracy);
 
 #ifdef __cplusplus

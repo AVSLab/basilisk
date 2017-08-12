@@ -1690,7 +1690,7 @@ int testOrbitalElements(double accuracy)
     return errorCount;
 }
 
-int testEnvironment(double accuracy)
+int testOrbitalEnvironment(double accuracy)
 {
     int errorCount = 0;
 
@@ -1705,7 +1705,7 @@ int testEnvironment(double accuracy)
     double check[3];
     int order;
 
-    printf("--testEnvironment, accuracy = %g\n", accuracy);
+    printf("--testOrbitalEnvironment, accuracy = %g\n", accuracy);
 
     A = 2.0;
     Cd = 0.2;

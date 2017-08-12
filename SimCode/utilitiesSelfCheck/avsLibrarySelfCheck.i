@@ -29,14 +29,14 @@ int testRigidBodyKinematics(double);
 int testLinearAlgebra(double);
 int testOrbitalAnomalies(double);
 int testOrbitalElements(double);
-int testEnvironment(double);
+int testOrbitalEnvironment(double);
 %nopythoncallback;
 
 %ignore testRigidBodyKinematics;
 %ignore testLinearAlgebra;
 %ignore testOrbitalAnomalies;
 %ignore testOrbitalElements;
-%ignore testEnvironment;
+%ignore testOrbitalEnvironment;
 
 %include "avsLibrarySelfCheck.h"
 
