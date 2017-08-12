@@ -22,14 +22,23 @@
     #include "avsLibrarySelfCheck.h"
 %}
 
-//%include "swig_conly_data.i"
+%include "swig_conly_data.i"
+
+%pythoncallback;
+int testRigidBodyKinematics(double);
+int testLinearAlgebra(double);
+int testOrbitalAnomalies(double);
+int testOrbitalElements(double);
+int testEnvironment(double);
+%nopythoncallback;
+
+%ignore testRigidBodyKinematics;
+%ignore testLinearAlgebra;
+%ignore testOrbitalAnomalies;
+%ignore testOrbitalElements;
+%ignore testEnvironment;
 
 %include "avsLibrarySelfCheck.h"
-//%include "utilities/rigidBodyKinematics.h"
-//%include "utilities/linearAlgebra.h"
-
-int testRigidBodyKinematics(double);
-
 
 
 %pythoncode %{

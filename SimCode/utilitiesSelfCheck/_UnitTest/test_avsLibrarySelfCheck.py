@@ -35,9 +35,7 @@ splitPath = path.split('Basilisk')
 sys.path.append(splitPath[0] + '/Basilisk/modules')
 sys.path.append(splitPath[0] + '/Basilisk/PythonModules')
 
-import SimulationBaseClass
-import macros
-# import avsLibrarySelfCheck
+import avsLibrarySelfCheck
 
 
 
@@ -49,53 +47,51 @@ import macros
 # uncomment this line if this test has an expected failure, adjust message as needed
 # @pytest.mark.xfail(True)
 
-@pytest.mark.parametrize("testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra", [
-      (True, False, False)
-    , (False, True, False)
-    , (False, False, True)
+@pytest.mark.parametrize("testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra, testEnvironment", [
+      (True, False, False, False)
+    , (False, True, False, False)
+    , (False, False, True, False)
+    , (False, False, False, True)
 ])
 
 
 # provide a unique test method name, starting with test_
-def test_unitDynamicsModes(testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra):
+def test_unitDynamicsModes(testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra, testEnvironment):
     # each test method requires a single assert method to be called
     [testResults, testMessage] = unitAVSLibrarySelfCheck(
-            testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra)
+            testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra, testEnvironment)
     assert testResults < 1, testMessage
 
 
 
-def unitAVSLibrarySelfCheck(testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra):
+def unitAVSLibrarySelfCheck(testRigidBodyKinematics, testOrbitalMotion, testLinearAlgebra, testEnvironment):
     testFailCount = 0                       # zero unit test result counter
     testMessages = []                       # create empty array to store test log messages
-    unitTaskName = "unitTask"
-    unitProcessName = "testProcess"
 
-    scSim = SimulationBaseClass.SimBaseClass()
-    scSim.TotalSim.terminateSimulation()
-
-
-    #
-    #  create the dynamics simulation process
-    #
-
-    dynProcess = scSim.CreateNewProcess(unitProcessName)
-    # create the dynamics task and specify the integration update time
-    dynProcess.addTask(scSim.CreateNewTask(unitTaskName, macros.sec2nano(0.1)))
-
-
-
-
-    #
-    #   initialize the simulation
-    #
-    scSim.InitializeSimulation()
-    scSim.ConfigureStopTime(macros.sec2nano(0.001))
-
-    #
-    #   run the simulation
-    #
-    scSim.ExecuteSimulation()
+    if testRigidBodyKinematics:
+        errorCount = avsLibrarySelfCheck.testRigidBodyKinematics(1e-12)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("Failed: Rigid Body Kinematics Library Self Test.\n")
+    if testOrbitalMotion:
+        errorCount = avsLibrarySelfCheck.testOrbitalAnomalies(1e-12)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("Failed: Orbital Anomalies Library Self Test.\n")
+        errorCount = avsLibrarySelfCheck.testOrbitalElements(1e-11)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("Failed: Orbital Elements Library Self Test.\n")
+    if testLinearAlgebra:
+        errorCount = avsLibrarySelfCheck.testLinearAlgebra(1e-11)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("Failed: Linear Algebra Library Self Test.\n")
+    if testEnvironment:
+        errorCount = avsLibrarySelfCheck.testEnvironment(1e-12)
+        if errorCount:
+            testFailCount += errorCount
+            testMessages.append("Failed: Space Environment Library Self Test.\n")
 
 
 
@@ -115,6 +111,7 @@ if __name__ == "__main__":
     unitAVSLibrarySelfCheck(
                            True,           # rigidBodyKinematics
                            False,           # orbitalMotion
-                           False            # linearAlgebra
+                           True,           # linearAlgebra
+                           False            # environment
                            )
 
