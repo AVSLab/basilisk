@@ -6,9 +6,11 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
 ## In Progress Features
 * new Python packaging of the Basilisk modules
 * ability to integrate custom Basilisk modules that are kept outside of the core Basilisk folder
+* new CSS based sun-heading estimation modules
 * more integrated BSK scenarios and tutorials
 * GPU based methods to evaluate solar radiation pressure forces and torques
 * atmospheric drag evaluation using multi-faceted spacecraft model
+* new multi-threaded Monte-Carlo simulation capability that takes advantage of multi-core processors
 
 ## Version 0.1.5
 <ul>
@@ -25,7 +27,11 @@ This software is currently in a limited alpha public-release.  The Basilisk deve
             <li>Hinged Panel StateEffector module</li>            
         </ul>
     </li>
-    <li>New tutorial script on using CSS modules</li>
+    <li>New tutorial script on
+        <ul>
+            <li>using CSS modules</li>
+        </ul>
+    </li>
     <li>The CSS modules now use the planetary shadow message information to simulated being in a planet's shadow</li>
     <li>SRP DynEffector modules now simulates the impact of being in a planets shadow</li>
     
